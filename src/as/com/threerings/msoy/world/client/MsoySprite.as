@@ -28,8 +28,6 @@ import flash.filters.GlowFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import flash.media.Video;
-
 import flash.net.LocalConnection;
 import flash.net.NetConnection;
 import flash.net.NetStream;
@@ -40,14 +38,9 @@ import flash.system.SecurityDomain;
 
 import flash.net.URLRequest;
 
-import flash.utils.getTimer; // function import
-
-//import mx.controls.VideoDisplay;
-
-//import mx.events.VideoEvent;
-
 import com.threerings.util.Util;
 import com.threerings.util.MediaContainer;
+import com.threerings.util.VideoDisplayer;
 
 import com.threerings.ezgame.util.EZObjectMarshaller;
 
@@ -341,12 +334,6 @@ public class MsoySprite extends MediaContainer
      */
     override public function shutdown (completely :Boolean = true) :void
     {
-//        if (_media is VideoDisplay) {
-//            var vid :VideoDisplay = (_media as VideoDisplay);
-//            Prefs.setMediaPosition(
-//                MediaDesc.hashToString(_desc.hash), vid.playheadTime);
-//        }
-
         // clean up our backend
         if (_backend != null) {
             _backend.shutdown();
@@ -372,13 +359,6 @@ public class MsoySprite extends MediaContainer
 
     override protected function setupSwfOrImage (url :String) :void
     {
-//        if (_desc.mimeType == MediaDesc.APPLICATION_SHOCKWAVE_FLASH) {
-//            // create a unique id for the media
-//            _id = String(getTimer()) + int(Math.random() * int.MAX_VALUE);
-//
-//            // TODO
-//            url += "?oid=" + _id;
-//        }
         super.setupSwfOrImage(url);
 
         _backend = createBackend();
@@ -445,8 +425,8 @@ public class MsoySprite extends MediaContainer
     {
         // if scale is negative, the image is flipped and we need to move
         // the origin
-        var xscale :Number = getMediaScaleX();
-        var yscale :Number = getMediaScaleY();
+        var xscale :Number = _locScale * getMediaScaleX();
+        var yscale :Number = _locScale * getMediaScaleY();
         _media.x = (xscale >= 0) ? 0 : Math.abs(_w * xscale);
         _media.y = (yscale >= 0) ? 0 : Math.abs(_h * yscale);
 
@@ -468,18 +448,6 @@ public class MsoySprite extends MediaContainer
 //                "[event=" + event + "].");
         }
     }
-
-//    override protected function loadVideoReady (event :VideoEvent) :void
-//    {
-//        var vid :VideoDisplay = (event.currentTarget as VideoDisplay);
-//
-//        // TODO: this seems broken, check it
-//        // set the position of the media to the specified timestamp
-//        vid.playheadTime = Prefs.getMediaPosition(
-//            MediaDesc.hashToString(_desc.hash));
-//
-//        super.loadVideoReady(event);
-//    }
 
     override protected function contentDimensionsUpdated () :void
     {
