@@ -189,7 +189,6 @@ public class LobbyPanel extends VBox
         inviteBtn.label = Msgs.GAME.get("b.invite_to_game");
         var buttonBox :VBox = new VBox();
         buttonBox.setStyle("backgroundImage", "/media/static/game/info_bottom.png");
-        buttonBox.setStyle("backgroundSize", "100%");
         buttonBox.setStyle("horizontalAlign", "center");
         buttonBox.percentWidth = 100;
         descriptionBox.addChild(buttonBox);
@@ -215,6 +214,10 @@ public class LobbyPanel extends VBox
         tabsBox.setStyle("backgroundImage", "/media/static/game/box_tile.png");
         tabsBox.setStyle("backgroundSize", "100%");
         tabsBox.setStyle("verticalAlign", "middle");
+        var name :Label = new Label();
+        name.text = controller.game.name;
+        name.styleName = "lobbyGameName";
+        tabsBox.addChild(name);
         var padding :HBox = new HBox();
         padding.percentWidth = 100;
         padding.percentHeight = 100;
@@ -228,13 +231,17 @@ public class LobbyPanel extends VBox
                 controller.game.getIdent());
         });
         tabsBox.addChild(about);
-        var buy :Label = new Label();
-        buy.text = Msgs.GAME.get("b.buy");
-        buy.styleName = "lobbyLink";
-        buy.addEventListener(MouseEvent.CLICK, function () :void {
-            _ctx.getMsoyController().showExternalURL("http://google.com");
-        });
-        tabsBox.addChild(buy);
+        // if ownerId = 0, we were pushed to the catalog's copy, so this is buyable
+        if (controller.game.ownerId == 0) {
+            var buy :Label = new Label();
+            buy.text = Msgs.GAME.get("b.buy");
+            buy.styleName = "lobbyLink";
+            buy.addEventListener(MouseEvent.CLICK, function () :void {
+                CommandEvent.dispatch(thisLobbyPanel, MsoyController.VIEW_ITEM, 
+                    controller.game.getIdent());
+            });
+            tabsBox.addChild(buy);
+        }
 
         var list :MsoyList = new MsoyList(_ctx);
         list.variableRowHeight = true;

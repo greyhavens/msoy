@@ -369,7 +369,12 @@ ListBase
 
 .lobbyInfo {
   fontSize: 12;
-  fontWeight: bold;
   paddingLeft: 7;
   paddingRight: 7;
+}
+
+.lobbyGameName {
+  fontSize: 15;
+  fontWeight: bold;
+  color: #b4cbd7;
 }
