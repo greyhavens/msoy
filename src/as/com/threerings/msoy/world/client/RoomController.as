@@ -59,7 +59,7 @@ public class RoomController extends SceneController
 {
     private const log :Log = Log.getLog(RoomController);
 
-    public static const EDIT_SCENE :String = "edit_scene";
+    public static const EDIT_SCENE :String = "EditScene";
 
     public static const FURNI_CLICKED :String = "FurniClicked";
     public static const AVATAR_CLICKED :String = "AvatarClicked";
@@ -210,20 +210,7 @@ public class RoomController extends SceneController
 
     override public function handleAction (cmd :String, arg :Object) :Boolean
     {
-        if (cmd == EDIT_SCENE) {
-            if (_editor != null) {
-                return true; // handled: we're editing
-            }
-            _roomObj.roomService.editRoom(_mctx.getClient(),
-                new ResultWrapper(
-                    function (cause :String) :void {
-                        _mctx.displayFeedback("general", cause);
-                    },
-                    function (result :Object) :void {
-                        startEditing(result as Array);
-                    }));
-
-        } else if (cmd == TEMP_CLEAR_SCENE_CACHE) {
+        if (cmd == TEMP_CLEAR_SCENE_CACHE) {
             _mctx.TEMPClearSceneCache();
 
         } else {
@@ -231,6 +218,23 @@ public class RoomController extends SceneController
         }
 
         return true; // for handled commands
+    }
+
+    /**
+     * Handles EDIT_SCENE.
+     */
+    public function handleEditScene () :void
+    {
+        if (_editor != null) {
+            return; // handled: we're editing
+        }
+        _roomObj.roomService.editRoom(_mctx.getClient(), new ResultWrapper(
+            function (cause :String) :void {
+                _mctx.displayFeedback("general", cause);
+            },
+            function (result :Object) :void {
+                startEditing(result as Array);
+            }));
     }
 
     /**
