@@ -32,25 +32,23 @@ public class VolumePopup extends Canvas
     {
         owner = DisplayObjectContainer (Application.application);
 
-        styleName = "volumeControl";
+        // styleName = "volumeControl";
 
         // Initialize the window
         var r : Rectangle = trigger.getBounds (trigger.stage);
-        width = r.width;
+        width = 50;
         height = 100;
-        x = trigger.x;
+        x = trigger.x - 15;
         y = r.y - height;
-        verticalScrollPolicy = ScrollPolicy.OFF;
-        horizontalScrollPolicy = ScrollPolicy.OFF;
+        verticalScrollPolicy = horizontalScrollPolicy = ScrollPolicy.OFF;
         
         // Initialize slider
         _slider = new VSlider ();
-        _slider.x = 5;
-        _slider.y = 10;
+        _slider.x = 16;
+        _slider.y = 20;
         _slider.height = 80;
         _slider.minimum = 0;
         _slider.maximum = 1;
-        _slider.tickInterval = 0.5;
         _slider.liveDragging = true;
 
         SoundMixer.soundTransform = new SoundTransform (Prefs.getSoundVolume());

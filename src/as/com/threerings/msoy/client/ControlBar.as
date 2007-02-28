@@ -55,7 +55,7 @@ public class ControlBar extends HBox
         _ctx.getClient().addClientObserver(
             new ClientAdapter(fn, fn, null, null, null, null, fn));
 
-        _controller = new ControlBarController (ctx, this);
+        _controller = new ControlBarController(ctx, this);
         
         checkControls();
     }
@@ -136,22 +136,26 @@ public class ControlBar extends HBox
         footerLeft.styleName = "controlBarFooterLeft";
         addChild (footerLeft);
 
+        var blank :SkinnableCanvas = new SkinnableCanvas();
+        blank.styleName = "controlBar";
+        blank.height = this.height;
+        blank.percentWidth = 100;
+        addChild(blank);
+        
         _goback = new CommandButton();
         _goback.setCommand(ControlBarController.MOVE_BACK, _goback);
         _goback.styleName = "controlBarButtonGoBack";
-        addChild (_goback);
+        addChild(_goback);
 
-        /** commented out for now - this requires more work (robert)
-        var loc :SkinnableTextField = new SkinnableTextField();
-        loc.styleName = "controlBarLocationText";
-        loc.height = this.height;
-        loc.width = 100;
-        addChild(loc);
-        */
+        _loc = new SkinnableCanvasWithText(this.height - 4);
+        _loc.styleName = "controlBarLocationText";
+        _loc.height = this.height;
+        _loc.width = 200;
+        addChild(_loc);
 
-        var spacer :Spacer = new Spacer();
-        spacer.percentWidth = 100;
-        addChild(spacer);
+        var bookend :SkinnableImage = new SkinnableImage();
+        bookend.styleName = "controlBarBookend";
+        addChild(bookend);
         
         var footerRight :SkinnableImage = new SkinnableImage();
         footerRight.styleName = "controlBarFooterRight";
@@ -168,6 +172,12 @@ public class ControlBar extends HBox
         _goback.enabled = value;
     }
 
+    /** Sets location label. */
+    public function set locationLabel (value :String) :void
+    {
+        _loc.text = value;
+    }
+
         
     // IMPLEMENTATION DETAILS
 
@@ -182,14 +192,19 @@ public class ControlBar extends HBox
 
     /** The back-movement button. */
     protected var _goback :CommandButton;
+
+    /** Current location label. */
+    protected var _loc :SkinnableCanvasWithText;
 }
 }
 
 
 import flash.display.DisplayObject;
+import flash.text.TextFieldAutoSize;
 import mx.containers.Canvas;
 import mx.controls.Image;
 import mx.core.IFlexDisplayObject;
+import mx.core.ScrollPolicy;
 import mx.core.UITextField;
 
 /** Internal: helper function that extends ms.control.Image functionality
@@ -208,14 +223,14 @@ internal class SkinnableImage extends Image
 
         var cls : Class = Class(getStyle("backgroundSkin"));
         if (cls != null) {
-            updateSkin (cls);
+            updateSkin(cls);
         }
     }
 
     protected function updateSkin (skinclass : Class) : void
     {
         if (_skin != null) {
-            removeChild (_skin);
+            removeChild(_skin);
         }
         
         _skin = DisplayObject (IFlexDisplayObject (new skinclass()));
@@ -223,57 +238,66 @@ internal class SkinnableImage extends Image
         this.height = _skin.height;
         _skin.x = 0;
         _skin.y = 0;
-        addChild (_skin);
+        addChild(_skin);
     }
 
     protected var _skin : DisplayObject;
 }
 
-/** Internal: helper function that extends ms.core.UITextField
+/** Internal: helper class that extends ms.containers.Canvas
     with automatic background loading from the style sheet (e.g. via an
     external style sheet file). */
 [Style(name="backgroundSkin", type="Class", inherit="no")]
-internal class SkinnableTextField extends Canvas
+internal class SkinnableCanvas extends Canvas
+{
+    public function SkinnableCanvas ()
+    {
+    }
+
+    override public function styleChanged (styleProp:String) :void
+    {
+        super.styleChanged(styleProp);
+        var cls :Class = getStyle("backgroundSkin");
+        setStyle("backgroundImage", cls);
+    }
+}
+
+/** Internal: helper class that extends ms.containers.Canvas
+    with automatic background loading from the style sheet (e.g. via an
+    external style sheet file). */
+internal class SkinnableCanvasWithText extends SkinnableCanvas
 {
     public var textfield :UITextField;
     
-    public function SkinnableTextField ()
+    public function SkinnableCanvasWithText (height :int)
     {
+        this.height = height;
+        horizontalScrollPolicy = verticalScrollPolicy = ScrollPolicy.OFF;
+    }
+
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+        
         textfield = new UITextField ();
-        textfield.styleName = styleName;
-        textfield.x = 0;
-        textfield.y = 1;
-        textfield.height = height - 2;
+        textfield.styleName = "controlBarText";
+        textfield.x = 5;
+        textfield.y = 0;
+        textfield.height = height;
         textfield.width = width;
+        textfield.autoSize = TextFieldAutoSize.LEFT;
         addChild(textfield);
     }
 
     public function set text (message :String) :void
     {
         textfield.text = message;
+        textfield.y = (this.height - textfield.textHeight) / 2;
     }
 
     public function get text () :String
     {
         return textfield.text;
-    }
-        
-    
-    override public function styleChanged (styleProp:String) :void
-    {
-        super.styleChanged(styleProp);
-        textfield.styleName = this.styleName;
-        
-        var cls :Class = getStyle("backgroundSkin");
-        setStyle("backgroundImage", cls);
-    }
-
-    override protected function layoutChrome (
-        unscaledWidth :Number, unscaledHeight :Number) :void
-    {
-        super.layoutChrome (unscaledWidth, unscaledHeight);
-        textfield.width = this.width;
-        textfield.height = this.height;
     }
 }
 

@@ -7,13 +7,13 @@ import flash.events.IEventDispatcher;
 import mx.controls.Button;
 
 import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.SessionObserver;
-import com.threerings.presents.dobj.AttributeChangeListener;
-import com.threerings.presents.dobj.AttributeChangedEvent;
-import com.threerings.presents.data.ClientObject;
-
+import com.threerings.crowd.data.PlaceObject;
+import com.threerings.presents.client.ClientAdapter;
+import com.threerings.whirled.data.Scene;
+import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
+import com.threerings.msoy.client.WorldContext;
 
 
 /**
@@ -25,7 +25,6 @@ import com.threerings.util.Controller;
  * in a web browser.
  */
 public class ControlBarController extends Controller
-    implements SessionObserver, AttributeChangeListener
 {
     public static const log :Log = Log.getLog(ControlBarController);
 
@@ -35,33 +34,29 @@ public class ControlBarController extends Controller
     /** Command to move back to the previous location. */
     public static const MOVE_BACK :String = "handleMoveBack";
 
-    /**
-     * Create the controller.
-     */
+    /** Create the controller. */
     public function ControlBarController (ctx :WorldContext, controlBar :ControlBar)
     {
         _ctx = ctx;
         _controlBar = controlBar;
+        _backstack = new Array ();
         
         setControlledPanel(ctx.getStage());
+        _location = new LocationAdapter(null, this.locationChanged, null);
+        _logon = new ClientAdapter(null, this.logonChanged, null, this.logonChanged);
     }
 
     /**
-     * Registers or unregisters for updates on the client's logging on or off.
-     *
-     * This is the first step of setting up for scene monitoring:
-     * 1. When the ControlBar is created, this function is called, and registers
-     *    the controller for observations about the client's logon/logoff events.
-     * 2. When the client logs on, we register for updates on their sceneId property.
-     * 3. When the sceneId changes, it means they moved to a new scene, so we push
-     *    the new value on the back stack.
+     * Registers or unregisters for updates on the client's location
      */
     public function registerForSessionObservations (registration :Boolean) :void
     {
         if (registration) {
-            _ctx.getClient().addClientObserver(this);
+            _ctx.getClient().addClientObserver(_logon);
+            _ctx.getLocationDirector().addLocationObserver(_location); 
         } else {
-            _ctx.getClient().removeClientObserver(this);
+            _ctx.getClient().removeClientObserver(_logon);
+            _ctx.getLocationDirector().removeLocationObserver(_location);
         }
     }
     
@@ -81,66 +76,42 @@ public class ControlBarController extends Controller
     {
         // The first item on the back stack is the current location. do we have
         // any other locations as well?
-        if (_backstack.length > 1)
-        {
+        if (_backstack.length > 1) {
             // Pop the current location... 
-            _backstack.pop ();
+            _backstack.pop();
             // ...and pop the previous location as well. When we move to previous location,
             // it will be pushed back on top, as a result of attributeChanged notification.
-            var previousId :Object = Object(_backstack.pop());
-            CommandEvent.dispatch (trigger, MsoyController.GO_SCENE, previousId);
+            var previousId :Object = _backstack.pop();
+            CommandEvent.dispatch(trigger, MsoyController.GO_SCENE, previousId);
         }
     }
     
-    // from interface SessionObserver
-    public function clientWillLogon (event :ClientEvent) :void
-    {
-        // don't do anything - we don't care about this case
-    }
-
-    // from interface SessionObserver
-    public function clientDidLogon (event :ClientEvent) :void
-    {
-        // get the player's member object, and register for attribute changes
-        var clientObj :ClientObject = event.getClient().getClientObject();
-        if (clientObj != null) {
-            _backstack = new Array ();
-            clientObj.addListener(this);
-        }
-    }
-
-    // from interface SessionObserver
-    public function clientObjectDidChange (event :ClientEvent) :void
-    {
-        // don't do anything - we don't care about this case
-    }
-
-    // from interface SessionObserver
-    public function clientDidLogoff (event :ClientEvent) :void
-    {
-        // remove this object as a listener on the player's attributes
-        var clientObj :ClientObject = event.getClient().getClientObject();
-        if (clientObj != null) {
-            clientObj.removeListener(this);
-        }
-    }
-
-    // from interface AttributeChangeListener
-    public function attributeChanged (event :AttributeChangedEvent) :void
-    {
-        // if this is a new scene, just push it on the back stack
-        if (event.getName() == "sceneId") {
-            _backstack.push (event.getValue());
-
-            // also, if this is the first scene, disable the back button
-            _controlBar.backMovementPossible = (_backstack.length > 1);
-        }
-    }
-
     // IMPLEMENTATION DETAILS
 
+    /** When location changes, and it's to the scene that we thought
+        we should be entering, set the label appropriately. */
+    public function locationChanged (place :PlaceObject) :void
+    {
+        // is this a valid scene?
+        var scene :Scene = _ctx.getSceneDirector().getScene();
+        if (scene != null) {
+            // Display location name
+            _controlBar.locationLabel = (scene != null) ? scene.getName() : "";
+            // Update the stack. Also, if this is not the first scene, enable the back button.
+            if (_backstack != null) {
+                _backstack.push(scene.getId());
+                _controlBar.backMovementPossible = (_backstack.length > 1);
+            }
+        }
+    }
 
-    
+    /** When the logon changes (the client logs on or off), we reset
+        their scene history. */
+    public function logonChanged (event :ClientEvent) :void
+    {
+        log.info ("*** Logon changed: " + event.toString());
+        _backstack = new Array();
+    }
 
     /** World information. */
     protected var _ctx :WorldContext;
@@ -151,7 +122,10 @@ public class ControlBarController extends Controller
     /** Back-stack of previously visited scenes. */
     protected var _backstack :Array;
 
-}
+    /** Adapter for the locationChanged function. */
+    protected var _location :LocationAdapter;
 
+    /** Adapter for the logonChanged function. */
+    protected var _logon :ClientAdapter;
 }
-
+}

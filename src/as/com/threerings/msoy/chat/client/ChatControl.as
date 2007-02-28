@@ -52,14 +52,6 @@ public class ChatControl extends HBox
 
         _locObs = new LocationAdapter(null, locationDidChange);
 
-        _targetBtn = new Button();
-        _targetBtn.styleName = "chatTargetButton";
-        _targetBtn.minWidth = 130;
-        _targetBtn.maxWidth = 130;
-        _targetBtn.addEventListener(MouseEvent.CLICK, handleTargetClicked);
-        _targetBtn.height = height;
-        addChild(_targetBtn);
-
         addChild(_txt = new TextInput());
         _txt.styleName = "chatInput";
         _txt.height = height;
@@ -244,7 +236,6 @@ public class ChatControl extends HBox
             label = _target.toString();
         }
 
-        _targetBtn.label = label;
         _txt.enabled = enabled;
     }
 
@@ -268,110 +259,12 @@ public class ChatControl extends HBox
             _txt.text = evt.text;
         });
     }
-
-    protected function handleTargetClicked (evt :MouseEvent) :void
-    {
-        var memObj :MemberObject = _ctx.getClientObject();
-        // we're going to build a menu containing recent chatters,
-        // followed by a friends submenu and a recent people submenu
-
-        // make a list of recent chatters
-        var chatters :Array = _ctx.getChatDirector().getChatters();
-        chatters = chatters.map(
-            function (name :MemberName, index :int, array :Array) :Object {
-                return {
-                    label: name.toString(),
-                    callback: targetChosen,
-                    arg: name
-                };
-            });
-
-        // make a list of online friends
-        var friends :Array = memObj.getSortedEstablishedFriends();
-        friends = friends.filter(
-            function (fe :FriendEntry, index :int, array :Array) :Boolean {
-                return fe.online;
-            });
-        friends = friends.map(
-            function (fe :FriendEntry, index :int, array :Array) :Object {
-                return {
-                    label: fe.name.toString(),
-                    callback: targetChosen,
-                    arg: fe.name
-                };
-            });
-        if (friends.length == 0) {
-            friends.push({ label: Msgs.GENERAL.get("m.no_online_friends") });
-        }
-
-        // make a list of people in the room
-        var inRoom :Array;
-        var plobj :PlaceObject = _ctx.getLocationDirector().getPlaceObject();
-        if (plobj != null) {
-            inRoom = plobj.occupantInfo.toArray();
-
-            // filter out guests and ourselves
-            inRoom = inRoom.filter(
-                function (mi :MemberInfo, index :int, array :Array) :Boolean {
-                    return !mi.isGuest() && (mi.bodyOid != memObj.getOid());
-                });
-
-            inRoom = inRoom.map(
-                function (mi :MemberInfo, index :int, array :Array) :Object {
-                    return {
-                        label: mi.username.toString(),
-                        callback: targetChosen,
-                        arg: mi.username
-                    };
-                });
-
-            if (inRoom.length == 0) {
-                inRoom.push({ label: Msgs.GENERAL.get("m.no_occupants") });
-            }
-        }
-
-        // finally, make a list of "recent" people
-        var recent :Array = [ { label: "TODO" } ];
-
-        var menuData :Array = chatters;
-
-        // if we're in a place, add 'world' as a choice
-        if (plobj != null) {
-            menuData.unshift({ type: "separator" });
-            menuData.unshift({ label: Msgs.GENERAL.get("m.world"),
-                               callback: targetChosen });
-        }
-
-        menuData.push({ type: "separator"});
-        menuData.push({ label: Msgs.GENERAL.get("l.friends"),
-                        children: friends });
-        if (inRoom != null) {
-            menuData.push({ label: Msgs.GENERAL.get("l.in_room"),
-                            children: inRoom });
-        }
-        menuData.push({ label: Msgs.GENERAL.get("l.recent_people"),
-                        children: recent });
-
-        CommandMenu.createMenu(menuData).popUp(_targetBtn, true);
-    }
-
-    /**
-     * A callback that's called when a new chat target is selected.
-     */
-    protected function targetChosen (name :MemberName = null) :void
-    {
-        _target = name;
-        updateTarget();
-    }
-
+    
     /** Our client-side context. */
     protected var _ctx :WorldContext;
 
     /** Our location observer. */
     protected var _locObs :LocationAdapter;
-
-    /** The button that may be clicked to choose a new chat target. */
-    protected var _targetBtn :Button;
 
     /** Our actual currently-selected chat target, or null for 'world'. */
     protected var _target :MemberName;

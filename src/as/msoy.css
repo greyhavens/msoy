@@ -252,7 +252,6 @@ ButtonBar {
 }
 
 .controlBarLocationText {
-  color: #dddddd;
   backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/location_tile.png");
   backgroundSize: "100%";
   borderStyle: "none";
@@ -264,6 +263,10 @@ ButtonBar {
 
 .controlBarFooterRight {
   backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/footer_right.png");
+}
+
+.controlBarBookend {
+  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/location_bookend.png");
 }
 
 .volumeControl {
