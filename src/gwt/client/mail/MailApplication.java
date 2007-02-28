@@ -46,9 +46,9 @@ public class MailApplication extends DockPanel
     implements PopupListener, MailUpdateListener
 {
     /** The number of messages we display on-screen at a time. */
-    public static final int HEADER_ROWS = 4;
+    public static final int HEADER_ROWS = 8;
     /** The number of page numbers to display in the pager before we shortcut with ... */
-    private static final int PAGES_TO_SHOW = 2;
+    private static final int PAGES_TO_SHOW = 3;
     
     /**
      * Initialize ths application and build the UI framework.

@@ -6,7 +6,6 @@ package client.msgs;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -108,15 +107,10 @@ public class MailComposition extends BorderedDialog
         _messageBox.setText(bodyText);
         _panel.add(_messageBox);
 
-        FlowPanel messageBar = new FlowPanel();
-        messageBar.setStyleName("Bar");
-        Label star = new Label();
-        star.setStyleName("Star");
-        messageBar.add(star);
-
         // then a button box
         HorizontalPanel buttonBox = new HorizontalPanel();
-        buttonBox.addStyleName("Controls");
+        // this needs a distinctive style name since it's in BorderedDialog's CSS context
+        buttonBox.addStyleName("MailControls");
 
         // with a send button
         Button replyButton = new Button(CMsgs.mmsgs.btnSend());
@@ -136,8 +130,7 @@ public class MailComposition extends BorderedDialog
             }
         });
         buttonBox.add(discardButton);
-        messageBar.add(buttonBox);
-        _panel.add(messageBar);
+        _footer.add(buttonBox);
     }
     
     // send the message off to the backend for delivery
