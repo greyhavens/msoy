@@ -12,6 +12,7 @@ import mx.collections.ArrayCollection;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
+import mx.containers.TabNavigator;
 import mx.controls.ButtonBar;
 import mx.controls.Label;
 import mx.controls.Alert;
@@ -163,10 +164,8 @@ public class LobbyPanel extends VBox
         logo.styleName = "lobbyLogoBox";
         logo.width = 160;
         logo.height = 120;
-        if (controller.game.thumbMedia != null) {
-            logo.addChild(new MediaWrapper(new MediaContainer(
-                                               controller.game.thumbMedia.getMediaPath())));
-        }
+        logo.addChild(new MediaWrapper(new MediaContainer(controller.game.getThumbnailMedia().
+            getMediaPath())));
         logo.setStyle("backgroundImage", "/media/static/game/logo_background.png");
         descriptionBox.addChild(logo);
         descriptionBox.addChild(new MediaWrapper(new MediaContainer(
@@ -245,10 +244,20 @@ public class LobbyPanel extends VBox
             tabsBox.addChild(buy);
         }
 
+        //var tabNav :TabNavigator = new TabNavigator();
+        //tablesBox.addChild(tabNav);
+        //tabNav.percentHeight = 100;
+        //tabNav.percentWidth = 100;
+        //var formingBox :VBox = new VBox();
+        //formingBox.percentHeight = 100;
+        //formingBox.percentWidth = 100;
+        //tabNav.addChild(formingBox);
+        //tabNav.getTabAt(0).label = Msgs.GAME.get("t.forming");
         var list :MsoyList = new MsoyList(_ctx);
         list.variableRowHeight = true;
         list.percentHeight = 100;
         list.percentWidth = 100;
+        //formingBox.addChild(list);
         tablesBox.addChild(list);
 
         var factory :ClassFactory = new ClassFactory(TableRenderer);
