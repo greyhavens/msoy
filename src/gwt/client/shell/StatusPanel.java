@@ -100,6 +100,7 @@ public class StatusPanel extends FlexTable
 
     protected void validateSession (String token)
     {
+        CShell.log("Validating session [token=" + token + "].");
         if (token != null) {
             // validate our session before considering ourselves logged on
             CShell.usersvc.validateSession(token, 1, new AsyncCallback() {
@@ -125,6 +126,7 @@ public class StatusPanel extends FlexTable
     {
         _creds = creds;
         setCookie("creds", _creds.token);
+        setCookie("who", _creds.accountName);
         boolean needHeaderClient = _app.didLogon(_creds);
 
         reset();
@@ -198,9 +200,7 @@ public class StatusPanel extends FlexTable
             setWidget(contents);
             contents.setText(0, 0, "Email:");
             contents.setWidget(0, 1, _email = new TextBox());
-            if (_creds != null) {
-                _email.setText(_creds.accountName);
-            }
+            _email.setText(CookieUtil.get("who"));
             _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
                 public void onClick (Widget sender) {
                     _password.setFocus(true);
