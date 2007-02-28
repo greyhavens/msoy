@@ -24,6 +24,10 @@ import mx.core.ScrollPolicy;
     
 /**
  * Helper UI element for the volume control.
+ *
+ * Volume control has "weak singleton" semantics - an instance can be created with
+ * the 'new' keyword, but if any other instance previously existed, it will be closed
+ * and removed from display prior to displaying the new one.
  */
 public class VolumePopup extends Canvas
 {
@@ -66,16 +70,13 @@ public class VolumePopup extends Canvas
     }
 
     /** Show the popup, by adding it to the application's display list,
-        and register for appropriate events. */
+     *  and register for appropriate events. */
     public function show () : void
     {
-        // If another instance is visible, get rid of it
-        if (_currentInstance != null) {
-            _currentInstance.hide ();
-        }
+        hideCurrentInstance();
         
-        owner.addChild (this);
-        addEventListener (MouseEvent.ROLL_OUT, mouseOutHandler, false, 0, true);
+        owner.addChild(this);
+        addEventListener(MouseEvent.ROLL_OUT, mouseOutHandler, false, 0, true);
         
         // Setting the skin happens after adding to the parent's draw list -
         // this ensures styles are properly loaded
@@ -86,16 +87,28 @@ public class VolumePopup extends Canvas
     }
 
     /** Remove the pop-up from the display list, and unregister
-        from any events. This should make the object ready to be GC'd,
-        if there are no external references holding it. */
+     *  from any events. This should make the object ready to be GC'd,
+     *  if there are no external references holding it. */
     public function hide () : void
     {
-        visible = false;
-        removeEventListener (MouseEvent.ROLL_OUT, mouseOutHandler, false);
+        owner.removeChild(this);
+        removeEventListener(MouseEvent.ROLL_OUT, mouseOutHandler, false);
         _currentInstance = null;
     }
 
+    /** If an instance exists, hide it. */
+    public static function hideCurrentInstance () : void
+    {
+        if (_currentInstance != null) {
+            _currentInstance.hide ();
+        }
+    }
 
+    /** Returns the true if an instance of this window is currently visible. */
+    public static function instanceExists () : Boolean
+    {
+        return (_currentInstance != null);
+    }
 
     // EVENT HANDLERS
 
@@ -108,12 +121,6 @@ public class VolumePopup extends Canvas
             hide ();
         }
     }
-
-
-    // PROTECTED SINGLETON CONSTRUCTOR
-
-
-    // PRIVATE VARIABLES
 
     /** The actual volume slider. */
     protected var _slider : VSlider;

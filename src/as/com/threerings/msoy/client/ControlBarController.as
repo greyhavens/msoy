@@ -65,8 +65,12 @@ public class ControlBarController extends Controller
      */
     public function handlePopVolume (trigger :Button) :void
     {
-        var popup :VolumePopup = new VolumePopup (trigger);
-        popup.show();
+        if (VolumePopup.instanceExists()) {
+            VolumePopup.hideCurrentInstance ();
+        } else {
+            var popup :VolumePopup = new VolumePopup (trigger);
+            popup.show();
+        }
     }
 
     /**
@@ -109,7 +113,6 @@ public class ControlBarController extends Controller
         their scene history. */
     public function logonChanged (event :ClientEvent) :void
     {
-        log.info ("*** Logon changed: " + event.toString());
         _backstack = new Array();
     }
 
