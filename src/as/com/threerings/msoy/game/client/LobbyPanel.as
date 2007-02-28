@@ -12,11 +12,12 @@ import mx.collections.ArrayCollection;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
-import mx.containers.TabNavigator;
+import mx.containers.ViewStack;
 import mx.controls.ButtonBar;
 import mx.controls.Label;
 import mx.controls.Alert;
 import mx.controls.Text;
+import mx.controls.TabBar;
 
 import mx.core.Container;
 import mx.core.ClassFactory;
@@ -86,21 +87,21 @@ public class LobbyPanel extends VBox
     public function didLeavePlace (plobj :PlaceObject) :void
     {
         // clear all the tables
-        _tables.removeAll();
+        _formingTables.removeAll();
     }
 
     // from TableObserver
     public function tableAdded (table :Table) :void
     {
-        _tables.addItem(table);
+        _formingTables.addItem(table);
     }
 
     // from TableObserver
     public function tableUpdated (table :Table) :void
     {
-        var idx :int = ArrayUtil.indexOf(_tables.source, table);
+        var idx :int = ArrayUtil.indexOf(_formingTables.source, table);
         if (idx >= 0) {
-            _tables.setItemAt(table, idx);
+            _formingTables.setItemAt(table, idx);
 
         } else {
             log.warning("Never found table to update: " + table);
@@ -110,10 +111,10 @@ public class LobbyPanel extends VBox
     // from TableObserver
     public function tableRemoved (tableId :int) :void
     {
-        for (var ii :int = 0; ii < _tables.length; ii++) {
-            var table :Table = (_tables.getItemAt(ii) as Table);
+        for (var ii :int = 0; ii < _formingTables.length; ii++) {
+            var table :Table = (_formingTables.getItemAt(ii) as Table);
             if (table.tableId == tableId) {
-                _tables.removeItemAt(ii);
+                _formingTables.removeItemAt(ii);
                 return;
             }
         }
@@ -130,7 +131,7 @@ public class LobbyPanel extends VBox
         // wacky: I think I'd need to refresh the list or something
         // but apparently everything gets re-rendered when any element
         // changes, so I don't. If this turns out to be not true, then
-        // here we'll want to do _tables.refresh() or, if we save
+        // here we'll want to do _formingTables.refresh() or, if we save
         // the list we can do list.updateList().
     }
 
@@ -218,6 +219,8 @@ public class LobbyPanel extends VBox
         name.text = controller.game.name;
         name.styleName = "lobbyGameName";
         tabsBox.addChild(name);
+        var tabBar :TabBar = new TabBar();
+        tabsBox.addChild(tabBar);
         var padding :HBox = new HBox();
         padding.percentWidth = 100;
         padding.percentHeight = 100;
@@ -243,26 +246,31 @@ public class LobbyPanel extends VBox
             tabsBox.addChild(buy);
         }
 
-        //var tabNav :TabNavigator = new TabNavigator();
-        //tablesBox.addChild(tabNav);
-        //tabNav.percentHeight = 100;
-        //tabNav.percentWidth = 100;
-        //var formingBox :VBox = new VBox();
-        //formingBox.percentHeight = 100;
-        //formingBox.percentWidth = 100;
-        //tabNav.addChild(formingBox);
-        //tabNav.getTabAt(0).label = Msgs.GAME.get("t.forming");
+        var tabViews :ViewStack = new ViewStack();
+        tabViews.percentHeight = 100;
+        tabViews.percentWidth = 100;
+        tablesBox.addChild(tabViews);
+        tabBar.dataProvider = tabViews;
+        var formingBox :VBox = new VBox();
+        formingBox.percentHeight = 100;
+        formingBox.percentWidth = 100;
+        formingBox.label = Msgs.GAME.get("t.forming");
+        tabViews.addChild(formingBox);
         var list :MsoyList = new MsoyList(_ctx);
         list.variableRowHeight = true;
         list.percentHeight = 100;
         list.percentWidth = 100;
-        //formingBox.addChild(list);
-        tablesBox.addChild(list);
+        formingBox.addChild(list);
+        var runningBox :VBox = new VBox();
+        runningBox.percentHeight = 100;
+        runningBox.percentWidth = 100;
+        runningBox.label = Msgs.GAME.get("t.running");
+        tabViews.addChild(runningBox);
 
         var factory :ClassFactory = new ClassFactory(TableRenderer);
         factory.properties = { ctx: _ctx, panel: this };
         list.itemRenderer = factory;
-        list.dataProvider = _tables;
+        list.dataProvider = _formingTables;
 
         // and a chat box
         var chatbox :ChatContainer = new ChatContainer(_ctx);
@@ -277,7 +285,10 @@ public class LobbyPanel extends VBox
     /** Are we seated? */
     protected var _isSeated :Boolean;
 
-    /** The currently displayed tables. */
-    protected var _tables :ArrayCollection = new ArrayCollection();
+    /** The currently forming tables. */
+    protected var _formingTables :ArrayCollection = new ArrayCollection();
+
+    /** The currently running tables. */
+    protected var _runningTables :ArrayCollection = new ArrayCollection();
 }
 }
