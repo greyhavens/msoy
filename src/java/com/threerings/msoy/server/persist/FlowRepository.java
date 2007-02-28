@@ -67,6 +67,15 @@ public class FlowRepository extends DepotRepository
                     new FieldOverride(MemberFlowRecord.FLOW, MemberRecord.FLOW_C));
     }
 
+    /**
+     * Return the current anti-abuse factor associated with the given gameId, in [0, 1).
+     */
+    public double getAntiAbuseFactor (int gameId)
+        throws PersistenceException
+    {
+        return (double) getAbuseRecord(gameId, true).abuseFactor / 0x100;
+    }
+
 
     /**
      * Logs an action for a member with optional action-specific data, which may be null.
@@ -127,8 +136,8 @@ public class FlowRepository extends DepotRepository
     }
 
     /**
-     * Assess a game's anti-abuse factor based on flow grants, if it's been
-     * more than RuntimeConfig.server.antiAbuseReassessment player-minutes since last.
+     * Assess a game's anti-abuse factor based on flow grants, if it's been more
+     * than RuntimeConfig.server.antiAbuseReassessment player-minutes since last.
      */
     public void maybeAssessAntiAbuseFactor (int gameId, int playerMinutes)
         throws PersistenceException
@@ -160,18 +169,8 @@ public class FlowRepository extends DepotRepository
             deleteAll(MemberActionLogRecord.class,
                       new Where(GameFlowGrantLogRecord.GAME_ID, gameId),
                       null);
-
         }
         store(gameRecord);
-    }
-
-    /**
-     * Return the current anti-abuse factor associated with the given gameId, in [0, 1).
-     */
-    public double getAntiAbuseFactor (int gameId)
-        throws PersistenceException
-    {
-        return (double) getAbuseRecord(gameId, true).abuseFactor / 0x100;
     }
 
     /**
