@@ -21,6 +21,7 @@
         Path        @PREFIX@/logs
         Path        @PREFIX@/run
         Path        @PREFIX@/tmp
+        Path        @PREFIX@/pages/media
         User        @APPUSER@
         Group       @APPUSER@
         Recursive   yes

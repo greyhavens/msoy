@@ -14,4 +14,12 @@
     # PostInstall     @SCRIPTPATH@/pages-postinst
     # PreUninstall    path/to/preuninstall/script
     # PostUninstall   @SCRIPTPATH@/pages-postrm
+
+    # runtime directory permissions
+    <Permissions>
+        Path        @PREFIX@/pages/media
+        User        @APPUSER@
+        Group       @APPUSER@
+        Recursive   yes
+    </Permissions>
 </Package>
