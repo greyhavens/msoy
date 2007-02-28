@@ -7,6 +7,7 @@ import flash.display.DisplayObject;
 import flash.display.Stage;
 
 import flash.external.ExternalInterface;
+import flash.system.Security;
 
 import mx.resources.ResourceBundle;
 
@@ -76,6 +77,9 @@ public /*abstract*/ class BaseClient extends Client
             // nada: ExternalInterface isn't there. Oh well!
             log.info("Unable to configure external functions.");
         }
+
+        // allow connecting to the game server
+        Security.loadPolicyFile("http://" + DeploymentConfig.serverHost + "/crossdomain.xml");
 
         // configure our server and port info and logon
         setServer(DeploymentConfig.serverHost, DeploymentConfig.serverPorts);
