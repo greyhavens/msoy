@@ -39,17 +39,23 @@ public class KartChooser
         selectText.autoSize = TextFieldAutoSize.CENTER;
         selectText.scaleX = selectText.scaleY = 4;
         selectText.x = (WIDTH - selectText.width) / 2;
+        selectText.y -= 20;
         _chooserSprite.addChild(selectText);
-        var kartM :KartSprite = new KartSprite(KartSprite.KART_MEDIUM, 160);
-        kartM.x = kartM.width / 2;
-        kartM.y = HEIGHT; 
-        kartM.addEventListener(MouseEvent.CLICK, selectedKart);
-        _chooserSprite.addChild(kartM);
-        var kartL :KartSprite = new KartSprite(KartSprite.KART_LIGHT, 200);
-        kartL.x = WIDTH - kartL.width / 2;
+        var kartL :KartSprite = new KartSprite(KartSprite.KART_LIGHT, 160);
+        kartL.x = kartL.width / 2;
         kartL.y = HEIGHT;
         kartL.addEventListener(MouseEvent.CLICK, selectedKart);
         _chooserSprite.addChild(kartL);
+        var kartM :KartSprite = new KartSprite(KartSprite.KART_MEDIUM, 180);
+        kartM.x = WIDTH / 2;
+        kartM.y = HEIGHT; 
+        kartM.addEventListener(MouseEvent.CLICK, selectedKart);
+        _chooserSprite.addChild(kartM);
+        var kartH :KartSprite = new KartSprite(KartSprite.KART_HEAVY, 200);
+        kartH.x = WIDTH - kartH.width / 2;
+        kartH.y = HEIGHT;
+        kartH.addEventListener(MouseEvent.CLICK, selectedKart);
+        _chooserSprite.addChild(kartH);
     }
 
     protected function selectedKart (event :MouseEvent) :void
@@ -91,7 +97,7 @@ public class KartChooser
         }
     }
 
-    protected static const WIDTH :int = 400;
+    protected static const WIDTH :int = 500;
     protected static const HEIGHT :int = 200;
 
     protected var _udInst :UnderwhirledDrift;

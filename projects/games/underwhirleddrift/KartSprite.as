@@ -11,6 +11,7 @@ public class KartSprite extends Sprite
 {
     public static const KART_LIGHT :String = "LightKart";
     public static const KART_MEDIUM :String = "MediumKart";
+    public static const KART_HEAVY :String = "HeavyKart";
 
     public function KartSprite(kartType :String, stopFrame :int = 1)
     {
@@ -91,6 +92,10 @@ public class KartSprite extends Sprite
     /** medium kart swf */
     [Embed(source='rsrc/mediumkart.swf#kart')]
     protected static const MediumKart :Class;
+
+    /** heavy kart swf */
+    [Embed(source='rsrc/heavykart.swf#kart')]
+    protected static const HeavyKart :Class;
 
     /** flags for the _movement bit flag variable */
     protected static const MOVEMENT_FORWARD :int = 0x01;
