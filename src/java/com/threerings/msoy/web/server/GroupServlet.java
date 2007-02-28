@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Collection;
 
-import java.util.logging.Level;
-
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 
