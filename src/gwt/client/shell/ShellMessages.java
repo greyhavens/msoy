@@ -16,12 +16,12 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String tagFlag();
 
   /**
-   * Translated "Stuff".
+   * Translated "Welcome to Whirled! Register here to get your very own house, to join groups and to keep track of your friends.".
    * 
-   * @return translated "Stuff"
-   * @gwt.key menuStuff
+   * @return translated "Welcome to Whirled! Register here to get your very own house, to join groups and to keep track of your friends."
+   * @gwt.key createIntro
    */
-  String menuStuff();
+  String createIntro();
 
   /**
    * Translated "Select one...".
@@ -40,12 +40,28 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String tagRemove();
 
   /**
-   * Translated "Logon".
+   * Translated "Don''t ever tell anyone your password, not even to customer support. You only use your password to logon to Whirled and nowhere else.".
    * 
-   * @return translated "Logon"
-   * @gwt.key menuLogon
+   * @return translated "Don''t ever tell anyone your password, not even to customer support. You only use your password to logon to Whirled and nowhere else."
+   * @gwt.key createPasswordTip
    */
-  String menuLogon();
+  String createPasswordTip();
+
+  /**
+   * Translated "Display name:".
+   * 
+   * @return translated "Display name:"
+   * @gwt.key createDisplayName
+   */
+  String createDisplayName();
+
+  /**
+   * Translated "Please enter a display name.".
+   * 
+   * @return translated "Please enter a display name."
+   * @gwt.key createMissingName
+   */
+  String createMissingName();
 
   /**
    * Translated "Flag".
@@ -72,6 +88,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String menuGames();
 
   /**
+   * Translated "Re-enter your password to confirm it.".
+   * 
+   * @return translated "Re-enter your password to confirm it."
+   * @gwt.key createMissingConfirm
+   */
+  String createMissingConfirm();
+
+  /**
    * Translated "Copyright Violation".
    * 
    * @return translated "Copyright Violation"
@@ -88,12 +112,20 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String tagMatureFlag();
 
   /**
-   * Translated "Are you sure you would like to remove the tag {0}?".
+   * Translated "Confirm:".
    * 
-   * @return translated "Are you sure you would like to remove the tag {0}?"
-   * @gwt.key tagRemoveConfirm
+   * @return translated "Confirm:"
+   * @gwt.key createConfirm
    */
-  String tagRemoveConfirm(String arg0);
+  String createConfirm();
+
+  /**
+   * Translated "Email:".
+   * 
+   * @return translated "Email:"
+   * @gwt.key logonEmail
+   */
+  String logonEmail();
 
   /**
    * Translated "People".
@@ -104,9 +136,17 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String menuPeople();
 
   /**
-   * Translated "Invalid Tag: can't be more than 24 characters.".
+   * Translated "You''ll use your email address to login.".
    * 
-   * @return translated "Invalid Tag: can't be more than 24 characters."
+   * @return translated "You''ll use your email address to login."
+   * @gwt.key createEmailTip
+   */
+  String createEmailTip();
+
+  /**
+   * Translated "Invalid Tag: can''t be more than 24 characters.".
+   * 
+   * @return translated "Invalid Tag: can''t be more than 24 characters."
    * @gwt.key errTagTooLong
    */
   String errTagTooLong();
@@ -120,6 +160,94 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String submit();
 
   /**
+   * Translated "Email address:".
+   * 
+   * @return translated "Email address:"
+   * @gwt.key createEmail
+   */
+  String createEmail();
+
+  /**
+   * Translated "The passwords you''ve entered do not match.".
+   * 
+   * @return translated "The passwords you''ve entered do not match."
+   * @gwt.key createPasswordMismatch
+   */
+  String createPasswordMismatch();
+
+  /**
+   * Translated "Cancel".
+   * 
+   * @return translated "Cancel"
+   * @gwt.key cancel
+   */
+  String cancel();
+
+  /**
+   * Translated "Enter a password for your account.".
+   * 
+   * @return translated "Enter a password for your account."
+   * @gwt.key createMissingPassword
+   */
+  String createMissingPassword();
+
+  /**
+   * Translated "Password:".
+   * 
+   * @return translated "Password:"
+   * @gwt.key createPassword
+   */
+  String createPassword();
+
+  /**
+   * Translated "Stuff".
+   * 
+   * @return translated "Stuff"
+   * @gwt.key menuStuff
+   */
+  String menuStuff();
+
+  /**
+   * Translated "Logon".
+   * 
+   * @return translated "Logon"
+   * @gwt.key menuLogon
+   */
+  String menuLogon();
+
+  /**
+   * Translated "Enter your email address.".
+   * 
+   * @return translated "Enter your email address."
+   * @gwt.key createMissingEmail
+   */
+  String createMissingEmail();
+
+  /**
+   * Translated "Are you sure you would like to remove the tag {0}?".
+   * 
+   * @return translated "Are you sure you would like to remove the tag {0}?"
+   * @gwt.key tagRemoveConfirm
+   */
+  String tagRemoveConfirm(String arg0);
+
+  /**
+   * Translated "Password:".
+   * 
+   * @return translated "Password:"
+   * @gwt.key logonPassword
+   */
+  String logonPassword();
+
+  /**
+   * Translated "Creating account...".
+   * 
+   * @return translated "Creating account..."
+   * @gwt.key creatingAccount
+   */
+  String creatingAccount();
+
+  /**
    * Translated "Quick add:".
    * 
    * @return translated "Quick add:"
@@ -128,12 +256,28 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String tagQuickAdd();
 
   /**
+   * Translated "Create a New Account".
+   * 
+   * @return translated "Create a New Account"
+   * @gwt.key createTitle
+   */
+  String createTitle();
+
+  /**
    * Translated "Invalid tag: use letters, numbers, and underscore.".
    * 
    * @return translated "Invalid tag: use letters, numbers, and underscore."
    * @gwt.key errTagInvalidCharacters
    */
   String errTagInvalidCharacters();
+
+  /**
+   * Translated "Click "Let''s Go" below to create your account!".
+   * 
+   * @return translated "Click "Let''s Go" below to create your account!"
+   * @gwt.key createReady
+   */
+  String createReady();
 
   /**
    * Translated "Places".
@@ -152,6 +296,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String menuMe();
 
   /**
+   * Translated "Your display name will be shown to other users in Whirled.".
+   * 
+   * @return translated "Your display name will be shown to other users in Whirled."
+   * @gwt.key createDisplayNameTip
+   */
+  String createDisplayNameTip();
+
+  /**
    * Translated "Cancel".
    * 
    * @return translated "Cancel"
@@ -168,20 +320,28 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String tagFlagPrompt(String arg0);
 
   /**
+   * Translated "Logging on...".
+   * 
+   * @return translated "Logging on..."
+   * @gwt.key loggingOn
+   */
+  String loggingOn();
+
+  /**
+   * Translated "Let''s Go!".
+   * 
+   * @return translated "Let''s Go!"
+   * @gwt.key createCreate
+   */
+  String createCreate();
+
+  /**
    * Translated "Loading...".
    * 
    * @return translated "Loading..."
    * @gwt.key tagLoading
    */
   String tagLoading();
-
-  /**
-   * Translated "Cancel".
-   * 
-   * @return translated "Cancel"
-   * @gwt.key cancel
-   */
-  String cancel();
 
   /**
    * Translated "Refresh".

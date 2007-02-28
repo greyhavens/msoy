@@ -94,7 +94,9 @@ public abstract class BorderedDialog extends BorderedPopup
     protected Label createTitleLabel (String text, String style)
     {
         Label label = new Label(text);
-        label.setStyleName(style);
+        if (style != null) {
+            label.setStyleName(style);
+        }
         label.addMouseListener(_dragListener);
         return label;
     }

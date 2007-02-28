@@ -4,6 +4,12 @@
 package com.threerings.msoy.server;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.net.MailUtil;
+
+import com.samskivert.servlet.user.InvalidUsernameException;
+import com.samskivert.servlet.user.Password;
+import com.samskivert.servlet.user.UserExistsException;
+import com.samskivert.servlet.user.Username;
 
 import com.threerings.user.OOOUser;
 import com.threerings.user.OOOUserManager;
@@ -12,6 +18,8 @@ import com.threerings.user.OOOUserRepository;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.web.data.ServiceException;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Implements account authentication against the OOO global user database.
@@ -27,6 +35,37 @@ public class OOOAuthenticationDomain
         _usermgr = new OOOUserManager(
             ServerConfig.config.getSubProperties("oooauth"), MsoyServer.conProv);
         _authrep = (OOOUserRepository)_usermgr.getRepository();
+    }
+
+    // from interface MsoyAuthenticator.Domain
+    public MsoyAuthenticator.Account createAccount (String accountName, String password)
+        throws ServiceException, PersistenceException
+    {
+        // create a new account record
+        int userId;
+        try {
+            userId = _authrep.createUser(
+                new MsoyUsername(accountName), Password.makeFromCrypto(password), accountName,
+                OOOUser.METASOY_SITE_ID, 0);
+        } catch (InvalidUsernameException iue) {
+            throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
+        } catch (UserExistsException uee) {
+            throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
+        }
+
+        // load up our newly created record
+        OOOUser user = (OOOUser)_authrep.loadUser(userId);
+        if (user == null) {
+            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+        }
+        _authrep.loadMachineIdents(user);
+
+        // create and return an account metadata record
+        OOOAccount account = new OOOAccount();
+        account.accountName = user.username;
+        account.tokens = new MsoyTokenRing();
+        account.record = user;
+        return account;
     }
 
     // from interface MsoyAuthenticator.Domain
@@ -48,7 +87,6 @@ public class OOOAuthenticationDomain
         int tokens = 0;
         if (user.holdsToken(OOOUser.ADMIN) || user.holdsToken(OOOUser.MAINTAINER)) {
             tokens |= MsoyTokenRing.ADMIN;
-            tokens |= MsoyTokenRing.SUPPORT;
         }
         if (user.holdsToken(OOOUser.SUPPORT)) {
             tokens |= MsoyTokenRing.SUPPORT;
@@ -63,13 +101,12 @@ public class OOOAuthenticationDomain
     }
 
     // from interface MsoyAuthenticator.Domain
-    public void validateAccount (
-        MsoyAuthenticator.Account account, String machIdent, boolean firstLogon)
+    public void validateAccount (MsoyAuthenticator.Account account, String machIdent)
         throws ServiceException, PersistenceException
     {
         OOOAccount oooacc = (OOOAccount)account;
         int rv = _authrep.validateUser(
-            OOOUser.METASOY_SITE_ID, oooacc.record, machIdent, firstLogon);
+            OOOUser.METASOY_SITE_ID, oooacc.record, machIdent, account.firstLogon);
         switch (rv) {
         case OOOUserRepository.ACCOUNT_BANNED:
             throw new ServiceException(MsoyAuthCodes.BANNED);
@@ -93,6 +130,19 @@ public class OOOAuthenticationDomain
     protected static class OOOAccount extends MsoyAuthenticator.Account
     {
         public OOOUser record;
+    }
+
+    protected static class MsoyUsername extends Username
+    {
+        public MsoyUsername (String username) throws InvalidUsernameException {
+            super(username);
+        }
+        @Override
+        protected void validateName (String username) throws InvalidUsernameException {
+            if (!MailUtil.isValidAddress(username)) {
+                throw new InvalidUsernameException("");
+            }
+        }
     }
 
     protected OOOUserRepository _authrep;

@@ -59,6 +59,10 @@
   background: #E9F6FB;
 }
 
+.gwt-PasswordTextBox {
+  background: #E9F6FB;
+}
+
 .gwt-TextArea {
   background: #E9F6FB;
 }
@@ -178,12 +182,25 @@ body {
 
 .statusPanel .Icon {
   padding-top: 2px;
+  padding-right: 3px;
 }
 
-.logonPopup {
-   border: 1px solid #0066FF;
-   background: #6699CC;
-   padding: 5px;
+.createAccount .Intro {
+  width: 400px;
+}
+
+.createAccount .Label {
+  text-align: right;
+}
+
+.createAccount .Tip {
+  width: 400px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.createAccount .Status {
+  width: 400px;
 }
 
 /** Configuration for our bordered popup window */

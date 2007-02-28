@@ -40,6 +40,12 @@ public interface MsoyAuthCodes extends AuthCodes
      * game. */
     public static final String NEWER_VERSION = "m.newer_version";
 
+    /** A code indicating that the username (email address) requested by the client is invalid. */
+    public static final String INVALID_EMAIL = "m.invalid_email";
+
+    /** A code indicating that the username (email address) requested by the client is in use. */
+    public static final String DUPLICATE_EMAIL = "m.duplicate_email";
+
     /** A code indicating that a client's web session has expired. */
     public static final String SESSION_EXPIRED = "m.session_expired";
 }

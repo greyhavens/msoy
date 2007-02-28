@@ -22,7 +22,9 @@ import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.web.data.WebCreds;
 
+import client.util.BorderedPopup;
 import client.util.FlashClients;
+import client.util.MsoyUI;
 
 /**
  * Displays basic player status (name, flow count) and handles logging on and logging off.
@@ -95,12 +97,18 @@ public class StatusPanel extends FlexTable
         _app.didLogoff();
 
         reset();
-        setText(0, 0, "New to MetaSOY? Create an account!");
+        setText(0, 0, "New to Whirled?");
+        setText(0, 1, "");
+        getFlexCellFormatter().setWidth(0, 1, "5px");
+        setWidget(0, 2, MsoyUI.createActionLabel("Create an account!", new ClickListener() {
+            public void onClick (Widget sender) {
+                new CreateAccountDialog(StatusPanel.this).show();
+            }
+        }));
     }
 
     protected void validateSession (String token)
     {
-        CShell.log("Validating session [token=" + token + "].");
         if (token != null) {
             // validate our session before considering ourselves logged on
             CShell.usersvc.validateSession(token, 1, new AsyncCallback() {
@@ -134,6 +142,7 @@ public class StatusPanel extends FlexTable
 
         // create the header Flash client if we don't have a real client on the page
         if (needHeaderClient) {
+            getFlexCellFormatter().setWidth(0, idx, "10px");
             setWidget(0, idx++, FlashClients.createHeaderClient(_creds.token));
         }
 
@@ -188,17 +197,16 @@ public class StatusPanel extends FlexTable
        return $wnd.hex_md5(text);
     }-*/;
 
-    protected class LogonPopup extends PopupPanel
+    protected class LogonPopup extends BorderedPopup
         implements ClickListener
     {
         public LogonPopup ()
         {
             super(true);
-            setStyleName("logonPopup");
 
             FlexTable contents = new FlexTable();
             setWidget(contents);
-            contents.setText(0, 0, "Email:");
+            contents.setText(0, 0, CShell.cmsgs.logonEmail());
             contents.setWidget(0, 1, _email = new TextBox());
             _email.setText(CookieUtil.get("who"));
             _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
@@ -207,8 +215,9 @@ public class StatusPanel extends FlexTable
                 }
             }));
 
-            contents.setText(1, 0, "Password:");
+            contents.setText(1, 0, CShell.cmsgs.logonPassword());
             contents.setWidget(1, 1, _password = new PasswordTextBox());
+            contents.getFlexCellFormatter().setWidth(1, 1, "100%");
             _password.addKeyboardListener(new EnterClickAdapter(this));
 
             contents.setWidget(2, 0, _status = new Label(""));
@@ -231,14 +240,14 @@ public class StatusPanel extends FlexTable
         {
             String account = _email.getText(), password = _password.getText();
             if (account.length() > 0 && password.length() > 0) {
-                _status.setText("Logging in...");
+                _status.setText(CShell.cmsgs.loggingOn());
                 CShell.usersvc.login(account, md5hex(password), 1, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         hide();
                         didLogon((WebCreds)result);
                     }
                     public void onFailure (Throwable caught) {
-                        _status.setText("Error: " + caught.getMessage());
+                        _status.setText(CShell.serverError(caught));
                     }
                 });
             }

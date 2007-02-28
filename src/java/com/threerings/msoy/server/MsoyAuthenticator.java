@@ -46,6 +46,9 @@ public class MsoyAuthenticator extends Authenticator
 
         /** The access privileges conferred to this account. */
         public MsoyTokenRing tokens;
+
+        /** Whether or not this account is logging on for the first time. */
+        public boolean firstLogon;
     }
 
     /** Provides authentication information for a particular partner. */
@@ -65,6 +68,12 @@ public class MsoyAuthenticator extends Authenticator
             throws PersistenceException;
 
         /**
+         * Creates a new account for this authentication domain.
+         */
+        public Account createAccount (String accountName, String password)
+            throws ServiceException, PersistenceException;
+
+        /**
          * Loads up account information for the specified account and checks the supplied password.
          *
          * @exception ServiceException thrown with {@link MsoyAuthCodes#NO_SUCH_USER} if the account
@@ -81,14 +90,12 @@ public class MsoyAuthenticator extends Authenticator
          *
          * @param machIdent a unique identifier assigned to the machine from which this account is
          * logging in.
-         * @param firstLogon if true, this is the first time the specified account has logged on to
-         * the interactive service.
          *
          * @exception ServiceException thrown with {@link MsoyAuthCodes#BANNED} if the account is
          * banned or {@link MsoyAuthCodes#MACHINE_TAINTED} if the machine identifier provided is
          * associated with a banned account and this is the account's first logon.
          */
-        public void validateAccount (Account account, String machIdent, boolean firstLogon)
+        public void validateAccount (Account account, String machIdent)
             throws ServiceException, PersistenceException;
 
         /**
@@ -150,8 +157,7 @@ public class MsoyAuthenticator extends Authenticator
             if (creds.getUsername() == null) {
                 // attempt to load the member by sessionToken
                 if (creds.sessionToken != null) {
-                    member = MsoyServer.memberRepo.loadMemberForSession(
-                        creds.sessionToken);
+                    member = MsoyServer.memberRepo.loadMemberForSession(creds.sessionToken);
                 }
 
                 // GUEST access
@@ -216,8 +222,7 @@ public class MsoyAuthenticator extends Authenticator
                 creds.ident = "";
             }
 
-            // obtain the authentication domain appropriate to their account name (which is their
-            // email address)
+            // obtain the authentication domain appropriate to their account name
             Domain domain = getDomain(accountName);
 
             // load up and authenticate their domain account record
@@ -232,14 +237,26 @@ public class MsoyAuthenticator extends Authenticator
                 member = MsoyServer.memberRepo.loadMember(account.accountName);
                 // if this is their first logon, create them a member record
                 if (member == null) {
-                    member = createMember(account);
+                    member = createMember(account, account.accountName);
+                    account.firstLogon = true;
                 }
                 rdata.sessionToken = MsoyServer.memberRepo.startOrJoinSession(member.memberId, 1);
             }
 
-            // check to see whether this account has been banned or if this is
-            // a first time user logging in from a tainted machine
-            domain.validateAccount(account, creds.ident, member == null);
+            // check to see whether this account has been banned or if this is a first time user
+            // logging in from a tainted machine
+            domain.validateAccount(account, creds.ident);
+
+            // replace the tokens provided by the Domain with tokens derived from their member
+            // record (a newly created record will have its bits set from the Domain values)
+            int tokens = 0;
+            if (member.isSet(MemberRecord.ADMIN_FLAG)) {
+                tokens |= MsoyTokenRing.ADMIN;
+                tokens |= MsoyTokenRing.SUPPORT;
+            } else if (member.isSet(MemberRecord.SUPPORT_FLAG)) {
+                tokens |= MsoyTokenRing.SUPPORT;
+            }
+            account.tokens = new MsoyTokenRing(tokens);
 
 //             // check whether we're restricting non-insider login
 //             if (!RuntimeConfig.server.openToPublic &&
@@ -280,11 +297,38 @@ public class MsoyAuthenticator extends Authenticator
                 } else {
                     // for guests, we use the same Name object as their username and their display
                     // name. We create it here.
-                    creds.setUsername(new MemberName(
-                        GUEST_USERNAME_PREFIX + (++_guestCount),
-                        MemberName.GUEST_ID));
+                    creds.setUsername(new MemberName(GUEST_USERNAME_PREFIX + (++_guestCount),
+                                                     MemberName.GUEST_ID));
                 }
             }
+        }
+    }
+
+    /**
+     * Creates a new account with the supplied credentials.
+     *
+     * @param username the email address of the to-be-created account.
+     * @param password the MD5 encrypted password for this account.
+     * @param displayName the user's initial display name.
+     *
+     * @return the newly created member record.
+     */
+    public MemberRecord createAccount (String username, String password, String displayName)
+        throws ServiceException
+    {
+        try {
+            // create and validate the new account
+            Domain domain = getDomain(username);
+            Account account = domain.createAccount(username, password);
+            account.firstLogon = true;
+            domain.validateAccount(account);
+
+            // create a new member record for the account
+            return createMember(account, displayName);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Error creating new account [for=" + username + "].", pe);
+            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
     }
 
@@ -296,9 +340,6 @@ public class MsoyAuthenticator extends Authenticator
      * @param password the MD5 encrypted password for this account.
      *
      * @return the user's member record.
-     *
-     * @exception ServiceException thrown if the password is incorrect, the user does not exist or
-     * some other problem occurs with logon.
      */
     public MemberRecord authenticateSession (String username, String password)
         throws ServiceException
@@ -307,15 +348,17 @@ public class MsoyAuthenticator extends Authenticator
             // validate their account credentials; make sure they're not banned
             Domain domain = getDomain(username);
             Account account = domain.authenticateAccount(username, password);
-            domain.validateAccount(account);
 
             // load up their member information to get their member id
             MemberRecord mrec = MsoyServer.memberRepo.loadMember(account.accountName);
-
-            // if this is their first logon, insert a skeleton member record
             if (mrec == null) {
-                mrec = createMember(account);
+                // if this is their first logon, insert a skeleton member record
+                mrec = createMember(account, username);
+                account.firstLogon = true;
             }
+
+            // validate that they can logon
+            domain.validateAccount(account);
 
             return mrec;
 
@@ -326,10 +369,10 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     /**
-     * Returns the authentication domain to use for the supplied account name (which is an email
-     * address). We support federation of authentication domains based on the domain of the
-     * address. For example, we could route all @yahoo.com addresses to a custom authenticator that
-     * talked to Yahoo!  to authenticate user accounts.
+     * Returns the authentication domain to use for the supplied account name. We support
+     * federation of authentication domains based on the domain of the address. For example, we
+     * could route all @yahoo.com addresses to a custom authenticator that talked to Yahoo!  to
+     * authenticate user accounts.
      */
     protected Domain getDomain (String accountName)
         throws PersistenceException
@@ -350,14 +393,18 @@ public class MsoyAuthenticator extends Authenticator
     /**
      * Called to create a starting member record for a first-time logger in.
      */
-    protected MemberRecord createMember (Account account)
+    protected MemberRecord createMember (Account account, String displayName)
         throws PersistenceException
     {
         // create their main member record
         MemberRecord mrec = new MemberRecord();
         mrec.accountName = account.accountName;
-        mrec.name = account.accountName;
+        mrec.name = displayName;
         MsoyServer.memberRepo.insertMember(mrec);
+
+        // use the tokens filled in by the domain to assign privileges
+        mrec.setFlag(MemberRecord.SUPPORT_FLAG, account.tokens.isSupport());
+        mrec.setFlag(MemberRecord.ADMIN_FLAG, account.tokens.isAdmin());
 
         // create a blank room for them, store it
         mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(

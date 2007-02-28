@@ -20,7 +20,17 @@ public interface WebUserService extends RemoteService
      * @return a set of credentials including a session cookie that should be provided to
      * subsequent remote service calls that require authentication.
      */
-    public WebCreds login (String username, String password, int expireDays)
+    public WebCreds login (String email, String password, int expireDays)
+        throws ServiceException;
+
+    /**
+     * Requests that an account be created for the specified user. The user will be logged in after
+     * the account is created.
+     *
+     * @return a set of credentials including a session cookie that should be provided to
+     * subsequent remote service calls that require authentication.
+     */
+    public WebCreds register (String email, String password, String displayName, int expireDays)
         throws ServiceException;
 
     /**

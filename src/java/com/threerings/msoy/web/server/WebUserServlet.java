@@ -31,19 +31,17 @@ public class WebUserServlet extends MsoyServiceServlet
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
         MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
-        MemberRecord mrec = auth.authenticateSession(username, password);
+        return startSession(auth.authenticateSession(username, password), expireDays);
+    }
 
-        try {
-            // if they made it through that gauntlet, create or update their session token
-            WebCreds creds = mrec.toCreds(
-                MsoyServer.memberRepo.startOrJoinSession(mrec.memberId, expireDays));
-            mapUser(creds, mrec);
-            return creds;
-
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to start session for [username=" + username + "].", pe);
-            throw new ServiceException(MsoyAuthCodes.SERVER_UNAVAILABLE);
-        }
+    // from interface WebUserService
+    public WebCreds register (String username, String password, String displayName, int expireDays)
+        throws ServiceException
+    {
+        // we are running on a servlet thread at this point and can thus talk to the authenticator
+        // directly as it is thread safe (and it blocks) and we are allowed to block
+        MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
+        return startSession(auth.createAccount(username, password, displayName), expireDays);
     }
 
     // from interface WebUserService
@@ -63,6 +61,22 @@ public class WebUserServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to refresh session [tok=" + authtok + "].", pe);
+            throw new ServiceException(MsoyAuthCodes.SERVER_UNAVAILABLE);
+        }
+    }
+
+    protected WebCreds startSession (MemberRecord mrec, int expireDays)
+        throws ServiceException
+    {
+        try {
+            // if they made it through that gauntlet, create or update their session token
+            WebCreds creds = mrec.toCreds(
+                MsoyServer.memberRepo.startOrJoinSession(mrec.memberId, expireDays));
+            mapUser(creds, mrec);
+            return creds;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to start session [for=" + mrec.accountName + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_UNAVAILABLE);
         }
     }
