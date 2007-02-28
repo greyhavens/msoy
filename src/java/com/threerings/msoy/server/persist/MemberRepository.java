@@ -27,11 +27,12 @@ import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheTraverser;
 import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.SimpleCacheKey;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -62,8 +63,12 @@ public class MemberRepository extends DepotRepository
     {
         super(conprov);
 
+        // TEMP
+        _ctx.registerMigration(MemberRecord.class, new EntityMigration.Retype(4, "lastSession"));
+        // END TEMP
+
         _flowRepo = new FlowRepository(_ctx);
-        
+
         // add a cache invalidator that listens to single FriendRecord updates
         _ctx.addCacheListener(FriendRecord.class, new CacheListener<FriendRecord>() {
             public void entryInvalidated (CacheKey key, FriendRecord friend) {
@@ -91,7 +96,7 @@ public class MemberRepository extends DepotRepository
     {
         return _flowRepo;
     }
-    
+
     /**
      * Loads up the member record associated with the specified account.  Returns null if no
      * matching record could be found. The record will be fetched from the cache if possible and
@@ -231,9 +236,10 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         if (member.created == null) {
-            member.created = new Date(System.currentTimeMillis());
-            member.lastSession = member.created;
-            member.lastHumanityAssessment = new Timestamp(member.created.getTime());
+            long now = System.currentTimeMillis();
+            member.created = new Date(now);
+            member.lastSession = new Timestamp(now);
+            member.lastHumanityAssessment = new Timestamp(now);
             member.humanity = 100;
         }
         insert(member);
@@ -315,19 +321,19 @@ public class MemberRepository extends DepotRepository
     {
         long now = System.currentTimeMillis();
         MemberRecord record = loadMember(memberId);
+        Timestamp nowStamp = new Timestamp(now);
 
         if (RuntimeConfig.server.humanityReassessment > 0 &&
             RuntimeConfig.server.humanityReassessment <
             ((now - record.lastHumanityAssessment.getTime())/1000)) {
-            Timestamp nowStamp = new Timestamp(now);
             record.humanity = _flowRepo.assessHumanity(memberId, record.humanity, nowStamp);
-            record.lastHumanityAssessment = new Timestamp(now);
+            record.lastHumanityAssessment = nowStamp;
         }
         // expire flow without updating MemberObject, since we're dropping session anyway
         _flowRepo.expireFlow(record, minutes);
         record.sessions ++;
         record.sessionMinutes += minutes;
-        record.lastSession = new Date(now);
+        record.lastSession = nowStamp;
         update(record);
     }
 
@@ -339,7 +345,7 @@ public class MemberRepository extends DepotRepository
     {
         _flowRepo.maybeAssessAntiAbuseFactor(gameId, playerMinutes);
     }
-    
+
     /**
      * Returns the NeighborFriendRecords for all the established friends of a given member, through
      * an inner join between {@link MemberRecord} and {@link FriendRecord}.
@@ -402,7 +408,7 @@ public class MemberRepository extends DepotRepository
         @Computed
         public int count;
     }
-    
+
     /**
      * Determine what the friendship status is between one member and another.
      */
@@ -432,7 +438,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Get the FriendEntry record for all friends (pending, too) of the specified memberId. The
      * online status of each friend will be false.
-     * 
+     *
      * The {@link FriendEntry} records returned by this method should be considered read-only,
      * and must be cloned before they are modified or sent to untrusted code.
      */
@@ -476,7 +482,7 @@ public class MemberRepository extends DepotRepository
             public List<FriendEntry> transformCacheHit (CacheKey key, List<FriendEntry> value) {
                 // we do not clone this result
                 return value;
-                
+
             }
         });
     }
@@ -593,6 +599,6 @@ public class MemberRepository extends DepotRepository
                                    new Equals(FriendRecord.INVITEE_ID, memberId))),
                   invalidator);
     }
-    
+
     protected FlowRepository _flowRepo;
 }

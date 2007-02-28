@@ -116,7 +116,7 @@ public class MemberRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     /** A flag denoting this user as having support privileges. */
     public static final int SUPPORT_FLAG = 0x1 << 0;
@@ -147,8 +147,7 @@ public class MemberRecord extends PersistentRecord
     /** The avatar of this user, or 0. */
     public int avatarId;
 
-    /** The time at which this player was created (when they first starting
-     * playing this particular game). */
+    /** The date on which this member record was created. */
     public Date created;
 
     /** The number of sessions this player has played. */
@@ -158,11 +157,13 @@ public class MemberRecord extends PersistentRecord
     public int sessionMinutes;
 
     /** The time at which the player ended their last session. */
-    public Date lastSession;
+    @Column(columnDefinition="lastSession DATETIME NOT NULL")
+    public Timestamp lastSession;
 
     /** This member's current humanity rating, between 0 and 255. */
     public int humanity;
-    
+
+    /** The time at which we last assessed this member's humanity. */
     @Column(columnDefinition="lastHumanityAssessment DATETIME NOT NULL")
     public Timestamp lastHumanityAssessment;
 
