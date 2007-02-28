@@ -73,7 +73,7 @@ public /*abstract*/ class Item
     /** The member id of the member that created this item. */
     public var creatorId :int;
 
-    /** The member id of the member that owns this item, or -1 if the item
+    /** The member id of the member that owns this item, or 0 if the item
      *  is an immutable catalog listing. */
     public var ownerId :int;
 
