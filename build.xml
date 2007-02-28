@@ -668,6 +668,8 @@
     <copy todir="${pkg.base}/data">
       <fileset dir="data" includes="**"/>
     </copy>
+    <!-- need our ehcache.xml file -->
+    <copy file="${deploy.dir}/ehcache.xml" todir="${pkg.base}/${deploy.dir}"/>
     <!-- create some runtime directories -->
     <copy file="log/README" todir="${pkg.base}/log"/>
     <mkdir dir="${pkg.base}/logs"/>
