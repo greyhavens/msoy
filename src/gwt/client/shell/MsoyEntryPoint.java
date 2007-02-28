@@ -33,14 +33,6 @@ public abstract class MsoyEntryPoint
     }
 
     /**
-     * Makes our media work both inside and out of the GWT development shell.
-     */
-    public static String toMediaPath (String path)
-    {
-        return /* GWT.isScript() ? */ path /* : "http://localhost:8080" + path */;
-    }
-
-    /**
      * Returns a URL that displays the details of a given group.
      */
     public static String groupViewPath (int groupId)

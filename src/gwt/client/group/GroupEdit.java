@@ -488,7 +488,7 @@ public class GroupEdit extends BorderedDialog
         public Photo photo;
         protected PhotoThumbnailImage (Photo photo)
         {
-            super(MsoyEntryPoint.toMediaPath(photo.getThumbnailPath()));
+            super(photo.getThumbnailPath());
             this.photo = photo;
         }
     }

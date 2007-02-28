@@ -77,7 +77,7 @@ public class ImageChooserPopup extends PopupPanel
         public Photo photo;
 
         protected PhotoThumbnailImage (Photo photo) {
-            super(MsoyEntryPoint.toMediaPath(photo.getThumbnailPath()));
+            super(photo.getThumbnailPath());
             this.photo = photo;
         }
     }

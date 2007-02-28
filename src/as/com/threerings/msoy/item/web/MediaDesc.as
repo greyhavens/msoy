@@ -206,10 +206,7 @@ public class MediaDesc
      */
     public function getMediaPath () :String
     {
-        return DeploymentConfig.mediaURL +
-            //"http://bogocorp.com/~ray/tempsoy/"
-            "media/"
-            + hashToString(hash) + mimeTypeToSuffix(mimeType);
+        return DeploymentConfig.mediaURL + hashToString(hash) + mimeTypeToSuffix(mimeType);
     }
 
     /**

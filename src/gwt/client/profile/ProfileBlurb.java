@@ -158,7 +158,7 @@ public class ProfileBlurb extends Blurb
     {
         if (photo != null) {
             _profile.photo = photo;
-            _photo.setUrl(MsoyEntryPoint.toMediaPath(photo.getMediaPath()));
+            _photo.setUrl(photo.getMediaPath());
         }
     }
 

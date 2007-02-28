@@ -7,6 +7,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
+import com.threerings.msoy.web.client.DeploymentConfig;
+
 /**
  * Contains information about a piece of media.
  */
@@ -104,7 +106,7 @@ public class MediaDesc implements Streamable, IsSerializable
      */
     public static String getMediaPath (byte[] mediaHash, byte mimeType)
     {
-        return "/media/" + hashToString(mediaHash) +
+        return DeploymentConfig.mediaURL + "/" + hashToString(mediaHash) +
             mimeTypeToSuffix(mimeType);
     }
 

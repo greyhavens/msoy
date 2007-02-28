@@ -121,10 +121,9 @@ public class BaseItemDetailPopup extends BorderedDialog
             // special avatar viewer: TODO: only display in catalog / inventory
             // and not for 3rd parties?
             MediaDesc avatarMedia = ((Avatar)_item).avatarMedia;
-            String path = MsoyEntryPoint.toMediaPath(avatarMedia.getMediaPath());
             return WidgetUtil.createFlashContainer(
                 "avatarViewer", "/clients/avatarviewer.swf", 300, 500,
-                "avatar=" + URL.encodeComponent(path));
+                "avatar=" + URL.encodeComponent(avatarMedia.getMediaPath()));
 
         } else {
             return MediaUtil.createMediaView(item.getPreviewMedia(), MediaDesc.PREVIEW_SIZE);

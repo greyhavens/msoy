@@ -50,12 +50,12 @@ public class HeaderPanel extends FlexTable
     {
         _profile = profile;
         if (profile.photo != null) {
-            _photo.setUrl(MsoyEntryPoint.toMediaPath(profile.photo.getMediaPath()));
+            _photo.setUrl(profile.photo.getMediaPath());
         }
         _name.setText(profile.displayName);
         _headline.setText(profile.headline);
-        _homepage.setHTML("<a href=\"" + profile.homePageURL + "\">" +
-                          profile.homePageURL + "</a>");
+        _homepage.setHTML(
+            "<a href=\"" + profile.homePageURL + "\">" + profile.homePageURL + "</a>");
 
         setWidget(0, 1, _name);
         setWidget(1, 1, _headline);

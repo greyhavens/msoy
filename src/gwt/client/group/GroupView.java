@@ -185,8 +185,8 @@ public class GroupView extends VerticalPanel
         } 
         _table.setWidget(0, 0, infoPanel);
         if (_extras.infoBackground != null) {
-            _table.getMyFlexCellFormatter().setBackgroundImage(0, 0, MsoyEntryPoint.toMediaPath(
-                _extras.infoBackground.getMediaPath()));
+            _table.getMyFlexCellFormatter().setBackgroundImage(
+                0, 0, _extras.infoBackground.getMediaPath());
             if (_extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
                 _table.getMyFlexCellFormatter().setBackgroundNoRepeat(0, 0);
             }
@@ -232,8 +232,8 @@ public class GroupView extends VerticalPanel
             _table.getMyFlexCellFormatter().fillWidth(0, 1);
         }
         if (_extras.detailBackground != null) {
-            _table.getMyFlexCellFormatter().setBackgroundImage(0, 1, 
-                MsoyEntryPoint.toMediaPath(_extras.detailBackground.getMediaPath()));
+            _table.getMyFlexCellFormatter().setBackgroundImage(
+                0, 1, _extras.detailBackground.getMediaPath());
             if (_extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
                 _table.getMyFlexCellFormatter().setBackgroundNoRepeat(0, 1);
             }
@@ -302,8 +302,8 @@ public class GroupView extends VerticalPanel
             peoplePlusCaps.setWidth("100%");
             final Element upperCap = DOM.createElement("div");
             if (_extras.peopleUpperCap != null) {
-                DOM.setStyleAttribute(upperCap, "backgroundImage", "url(" + 
-                    MsoyEntryPoint.toMediaPath(_extras.peopleUpperCap.getMediaPath()) + ")");
+                DOM.setStyleAttribute(upperCap, "backgroundImage",
+                                      "url(" + _extras.peopleUpperCap.getMediaPath() + ")");
                 DOM.setStyleAttribute(upperCap, "height", _extras.peopleUpperCapHeight + "px");
             }
             peoplePlusCaps.add(new Widget () {
@@ -315,13 +315,12 @@ public class GroupView extends VerticalPanel
             people.setWidth("100%");
             if (_extras.peopleBackground != null) {
                 DOM.setStyleAttribute(people.getElement(), "backgroundImage", 
-                    "url(" + MsoyEntryPoint.toMediaPath(_extras.peopleBackground.getMediaPath()) + 
-                    ")");
+                                      "url(" + _extras.peopleBackground.getMediaPath() + ")");
             }
             final Element lowerCap = DOM.createElement("div");
             if (_extras.peopleLowerCap != null) {
-                DOM.setStyleAttribute(lowerCap, "backgroundImage", "url(" + 
-                    MsoyEntryPoint.toMediaPath(_extras.peopleLowerCap.getMediaPath()) + ")");
+                DOM.setStyleAttribute(lowerCap, "backgroundImage",
+                                      "url(" + _extras.peopleLowerCap.getMediaPath() + ")");
                 DOM.setStyleAttribute(lowerCap, "height", _extras.peopleLowerCapHeight + "px");
             }
             peoplePlusCaps.add(new Widget () {
@@ -334,8 +333,8 @@ public class GroupView extends VerticalPanel
             _extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
             _table.setWidget(1, 0, people);
             if (_extras.peopleBackground != null) {
-                _table.getMyFlexCellFormatter().setBackgroundImage(1, 0, 
-                    MsoyEntryPoint.toMediaPath(_extras.peopleBackground.getMediaPath()));
+                _table.getMyFlexCellFormatter().setBackgroundImage(
+                    1, 0, _extras.peopleBackground.getMediaPath());
                 if (_extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
                     _table.getMyFlexCellFormatter().setBackgroundNoRepeat(1, 0);
                 }

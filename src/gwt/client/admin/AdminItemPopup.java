@@ -35,10 +35,9 @@ public class AdminItemPopup extends BaseItemDetailPopup
         // TODO: maybe ItemUtil should handle this
         if (item instanceof Avatar) {
             MediaDesc avatarMedia = ((Avatar)_item).avatarMedia;
-            String path = MsoyEntryPoint.toMediaPath(avatarMedia.getMediaPath());
             return WidgetUtil.createFlashContainer(
                 "avatarViewer", "/clients/avatarviewer.swf", 300, 500,
-                "avatar=" + URL.encodeComponent(path));
+                "avatar=" + URL.encodeComponent(avatarMedia.getMediaPath()));
         } else {
             return super.createPreview(item);
         }

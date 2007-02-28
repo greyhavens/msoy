@@ -214,6 +214,8 @@ public class UploadServlet extends HttpServlet
                 S3FileObject uploadTarget = new S3FileObject(
                     name, target, MediaDesc.mimeTypeToString(info.mimeType));
                 conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget);
+                log.info("Uploaded media to S3 [bucket=" + ServerConfig.mediaS3Bucket +
+                         ", name=" + name + "].");
             } catch (S3Exception e) {
                 log.warning("S3 upload failed [code=" + e.getClass().getName() +
                             ", requestId=" + e.getRequestId() + ", hostId=" + e.getHostId() +

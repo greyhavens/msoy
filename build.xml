@@ -177,9 +177,23 @@
     <antcall target="gmsg"><param name="which" value="world.World"/></antcall>
   </target>
 
+  <!-- prepares to build our GWT client -->
+  <target name="jprepare" depends="prepare">
+    <tstamp>
+      <format property="build_time" pattern="yyyy-MM-dd HH:mm:ss"/>
+    </tstamp>
+    <copy file="${src.dir}/com/threerings/msoy/web/client/DeploymentConfig.java.tmpl"
+          tofile="${src.dir}/com/threerings/msoy/web/client/DeploymentConfig.java" overwrite="true">
+      <filterset>
+        <filter token="build_time" value="${build_time}"/>
+        <filter token="media_url" value="${media_url}"/>
+      </filterset>
+    </copy>
+  </target>
+
   <!-- builds our GWT web client -->
   <property name="pages" value="admin,catalog,game,group,inventory,mail,profile,swiftly,world"/>
-  <target name="gclient" depends="prepare">
+  <target name="gclient" depends="jprepare">
     <for list="${pages}" param="page"><sequential>
       <echo>Compiling @{page} module...</echo>
       <delete dir="pages/@{page}"/>
@@ -248,6 +262,7 @@
         <filter token="server_host" value="${server_host}"/>
         <filter token="server_ports" value="${server_ports}"/>
         <filter token="http_port" value="${http_port}"/>
+        <filter token="media_url" value="${media_url}"/>
       </filterset>
     </copy>
   </target>
@@ -540,7 +555,7 @@
   </target>
 
   <!-- build the java class files -->
-  <target name="compile" depends="prepare">
+  <target name="compile" depends="jprepare">
     <javac srcdir="${src.dir}" destdir="${deploy.dir}/classes"
            debug="on" optimize="off" deprecation="on">
       <classpath refid="classpath"/>
@@ -616,6 +631,7 @@
   <!-- cleans out the compiled code -->
   <target name="clean">
     <delete dir="${deploy.dir}/classes/com"/>
+    <delete file="${src.dir}/com/threerings/msoy/web/client/DeploymentConfig.java"/>
   </target>
 
   <!-- cleans out the compiled ActionScript code and caches -->

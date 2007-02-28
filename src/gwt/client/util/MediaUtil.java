@@ -37,7 +37,7 @@ public class MediaUtil
      */
     public static Widget createMediaView (MediaDesc desc, int width, int height)
     {
-        String path = MsoyEntryPoint.toMediaPath(desc.getMediaPath());
+        String path = desc.getMediaPath();
         Widget view;
 
         switch (MediaDesc.suffixToMimeType(path)) {
