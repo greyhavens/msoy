@@ -73,7 +73,9 @@ public class VolumePopup extends Canvas
      *  and register for appropriate events. */
     public function show () : void
     {
-        hideCurrentInstance();
+        if (_currentInstance != null) {
+            _currentInstance.destroy();
+        }            
         
         owner.addChild(this);
         addEventListener(MouseEvent.ROLL_OUT, mouseOutHandler, false, 0, true);
@@ -86,10 +88,16 @@ public class VolumePopup extends Canvas
         _currentInstance = this;
     }
 
+    /** Makes the pop-up invisible, but doesn't remove it. */
+    public function hide () : void
+    {
+        visible = false;
+    }
+
     /** Remove the pop-up from the display list, and unregister
      *  from any events. This should make the object ready to be GC'd,
      *  if there are no external references holding it. */
-    public function hide () : void
+    public function destroy () : void
     {
         owner.removeChild(this);
         removeEventListener(MouseEvent.ROLL_OUT, mouseOutHandler, false);
@@ -97,17 +105,17 @@ public class VolumePopup extends Canvas
     }
 
     /** If an instance exists, hide it. */
-    public static function hideCurrentInstance () : void
+    public static function destroyCurrentInstance () : void
     {
         if (_currentInstance != null) {
-            _currentInstance.hide ();
+            _currentInstance.destroy ();
         }
     }
 
-    /** Returns the true if an instance of this window is currently visible. */
-    public static function instanceExists () : Boolean
+    /** Returns true if a visible instance of this window exists. */
+    public static function popupExists () : Boolean
     {
-        return (_currentInstance != null);
+        return (_currentInstance != null && _currentInstance.visible);
     }
 
     // EVENT HANDLERS
@@ -117,7 +125,9 @@ public class VolumePopup extends Canvas
     {
         if (event.relatedObject != null)
         {
-            // We rolled out into room view, or other element - close up.
+            // We rolled out into room view, or other element - close up,
+            // but don't delete the object, in case there are still events
+            // queued up for it.
             hide ();
         }
     }

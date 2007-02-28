@@ -21,6 +21,7 @@ import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.world.client.RoomController;
 
 import com.threerings.msoy.chat.client.ChatControl;
 
@@ -38,7 +39,7 @@ public class ControlBar extends HBox
     private static const HEIGHT :int = 24;
     private static const WIDTH :int = 800;
 
-    public function ControlBar (ctx :WorldContext)
+    public function ControlBar (ctx :WorldContext, top :TopPanel)
     {
         _ctx = ctx;
         styleName = "controlBar";
@@ -55,7 +56,7 @@ public class ControlBar extends HBox
         _ctx.getClient().addClientObserver(
             new ClientAdapter(fn, fn, null, null, null, null, fn));
 
-        _controller = new ControlBarController(ctx, this);
+        _controller = new ControlBarController(ctx, top, this);
         
         checkControls();
     }
@@ -109,7 +110,7 @@ public class ControlBar extends HBox
             addChild(prefsBtn);
 
             var editBtn :CommandButton = new CommandButton();
-            editBtn.setCommand(MsoyController.POP_ROOMS_MENU, editBtn);
+            editBtn.setCommand(ControlBarController.EDIT_SCENE);
             editBtn.styleName = "controlBarButtonEdit";
             addChild(editBtn);
 

@@ -14,6 +14,8 @@ import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.data.MsoyScene;
 
 
 /**
@@ -34,10 +36,15 @@ public class ControlBarController extends Controller
     /** Command to move back to the previous location. */
     public static const MOVE_BACK :String = "handleMoveBack";
 
+    /** Command to open room editing mode. */
+    public static const EDIT_SCENE :String = "handleEditScene";
+    
     /** Create the controller. */
-    public function ControlBarController (ctx :WorldContext, controlBar :ControlBar)
+    public function ControlBarController (
+        ctx :WorldContext, topPanel :TopPanel, controlBar :ControlBar)
     {
         _ctx = ctx;
+        _topPanel = topPanel;
         _controlBar = controlBar;
         _backstack = new Array ();
         
@@ -53,7 +60,7 @@ public class ControlBarController extends Controller
     {
         if (registration) {
             _ctx.getClient().addClientObserver(_logon);
-            _ctx.getLocationDirector().addLocationObserver(_location); 
+            _ctx.getLocationDirector().addLocationObserver(_location);
         } else {
             _ctx.getClient().removeClientObserver(_logon);
             _ctx.getLocationDirector().removeLocationObserver(_location);
@@ -65,8 +72,8 @@ public class ControlBarController extends Controller
      */
     public function handlePopVolume (trigger :Button) :void
     {
-        if (VolumePopup.instanceExists()) {
-            VolumePopup.hideCurrentInstance ();
+        if (VolumePopup.popupExists()) {
+            VolumePopup.destroyCurrentInstance ();
         } else {
             var popup :VolumePopup = new VolumePopup (trigger);
             popup.show();
@@ -89,7 +96,20 @@ public class ControlBarController extends Controller
             CommandEvent.dispatch(trigger, MsoyController.GO_SCENE, previousId);
         }
     }
-    
+
+    /**
+     * Handle the EDIT_SCENE command.
+     */
+    public function handleEditScene () :void
+    {
+        var room :RoomView = _topPanel.getPlaceView() as RoomView;
+        var scene :MsoyScene = _ctx.getSceneDirector().getScene() as MsoyScene;
+        
+        if (room != null && scene != null && scene.canEdit (_ctx.getClientObject())) {
+            room.getRoomController().handleEditScene();
+        }
+    }   
+
     // IMPLEMENTATION DETAILS
 
     /** When location changes, and it's to the scene that we thought
@@ -119,6 +139,9 @@ public class ControlBarController extends Controller
     /** World information. */
     protected var _ctx :WorldContext;
 
+    /** The top panel control. */
+    protected var _topPanel :TopPanel;
+    
     /** Control bar that drives these actions. */
     protected var _controlBar :ControlBar;
 

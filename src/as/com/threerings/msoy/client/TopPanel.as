@@ -54,7 +54,7 @@ public class TopPanel extends Canvas
         _placeBox.rawChildren.addChild(_placeMask);
 
         // set up the control bar
-        _controlBar = new ControlBar(ctx);
+        _controlBar = new ControlBar(ctx, this);
         _controlBar.includeInLayout = false;
         _controlBar.setStyle("bottom", 0);
         _controlBar.setStyle("left", 0);
