@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.client {
 
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 
 import flash.events.MouseEvent;
 import flash.events.TextEvent;
@@ -37,6 +38,8 @@ import com.threerings.parlor.client.TableDirector;
 import com.threerings.parlor.client.TableObserver;
 
 import com.threerings.parlor.data.Table;
+
+import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
@@ -218,8 +221,8 @@ public class LobbyPanel extends VBox
         name.text = controller.game.name;
         name.styleName = "lobbyGameName";
         tabsBox.addChild(name);
-        var tabBar :TabBar = new TabBar();
-        tabsBox.addChild(tabBar);
+        // must do this here so that tabs get dropped into the correct location, if they're needed
+        createTablesDisplay(tabsBox, tablesBox);
         var padding :HBox = new HBox();
         padding.percentWidth = 100;
         padding.percentHeight = 100;
@@ -244,34 +247,49 @@ public class LobbyPanel extends VBox
             });
             tabsBox.addChild(buy);
         }
-        var tabViews :ViewStack = new ViewStack();
-        tabViews.percentHeight = 100;
-        tabViews.percentWidth = 100;
-        tablesBox.addChild(tabViews);
-        tabBar.dataProvider = tabViews;
-        var formingBox :VBox = new VBox();
-        formingBox.percentHeight = 100;
-        formingBox.percentWidth = 100;
-        formingBox.label = Msgs.GAME.get("t.forming");
-        tabViews.addChild(formingBox);
-        var list :MsoyList = new MsoyList(_ctx);
-        list.variableRowHeight = true;
-        list.percentHeight = 100;
-        list.percentWidth = 100;
-        formingBox.addChild(list);
-        var runningBox :VBox = new VBox();
-        runningBox.percentHeight = 100;
-        runningBox.percentWidth = 100;
-        runningBox.label = Msgs.GAME.get("t.running");
-        tabViews.addChild(runningBox);
-        var factory :ClassFactory = new ClassFactory(TableRenderer);
-        factory.properties = { ctx: _ctx, panel: this };
-        list.itemRenderer = factory;
-        list.dataProvider = _formingTables;
         var chatbox :ChatContainer = new ChatContainer(_ctx);
         chatbox.percentWidth = 100;
         chatbox.height = 100;
         tablesBox.addChild(chatbox);
+    }
+
+    protected function createTablesDisplay (tabsContainer :DisplayObjectContainer,
+        tablesContainer :DisplayObjectContainer) :void
+    {
+        // our game table data
+        var list :MsoyList = new MsoyList(_ctx);
+        list.variableRowHeight = true;
+        list.percentHeight = 100;
+        list.percentWidth = 100;
+        var factory :ClassFactory = new ClassFactory(TableRenderer);
+        factory.properties = { ctx: _ctx, panel: this };
+        list.itemRenderer = factory;
+        list.dataProvider = _formingTables;
+
+        // only display tabs for seated games
+        if (controller.game.gameType == GameConfig.SEATED_GAME) {
+            var tabBar :TabBar = new TabBar();
+            tabsContainer.addChild(tabBar);
+
+            var tabViews :ViewStack = new ViewStack();
+            tabViews.percentHeight = 100;
+            tabViews.percentWidth = 100;
+            tablesContainer.addChild(tabViews);
+            tabBar.dataProvider = tabViews;
+            var formingBox :VBox = new VBox();
+            formingBox.percentHeight = 100;
+            formingBox.percentWidth = 100;
+            formingBox.label = Msgs.GAME.get("t.forming");
+            tabViews.addChild(formingBox);
+            formingBox.addChild(list);
+            var runningBox :VBox = new VBox();
+            runningBox.percentHeight = 100;
+            runningBox.percentWidth = 100;
+            runningBox.label = Msgs.GAME.get("t.running");
+            tabViews.addChild(runningBox);
+        } else {
+            tablesContainer.addChild(list);
+        }
     }
 
     /** Buy one get one free. */
