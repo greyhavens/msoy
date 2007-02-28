@@ -39,6 +39,7 @@ public class ItemPanel extends DockPanel
             }
         };
         _items.setStyleName("catalogContents");
+        _items.setCellAlignment(ALIGN_CENTER, ALIGN_BOTTOM);
         add(_items, DockPanel.CENTER);
         add(_status = new Label(""), DockPanel.SOUTH);
 
