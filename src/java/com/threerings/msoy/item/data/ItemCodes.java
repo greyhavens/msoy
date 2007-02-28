@@ -21,5 +21,4 @@ public interface ItemCodes extends InvocationCodes
 
     /** An error code for any operation that needs to debit a member's gold. */
     public static final String INSUFFICIENT_GOLD = "m.insufficient_gold";
-
 }
