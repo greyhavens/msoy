@@ -24,6 +24,13 @@ import com.threerings.msoy.swiftly.client.SwiftlyService;
 import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 
+import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
+import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
+
+import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
+import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
+import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -54,15 +61,34 @@ public class SwiftlyManager
         throws InvocationException
     {
         ProjectRoomManager mgr = _managers.get(projectId);
+        ProjectStorage storage;
         if (mgr != null) {
             listener.requestProcessed(mgr.getPlaceObject().getOid());
             return;
         }
 
+        // Load the project storage
+        try {
+            SwiftlyProjectRecord projectRecord = MsoyServer.swiftlyRepo.loadProject(projectId);
+            SwiftlySVNStorageRecord storageRecord =
+                MsoyServer.swiftlyRepo.loadStorageRecordForProject(projectId);
+            storage = new ProjectSVNStorage(projectRecord, storageRecord);    
+        } catch (ProjectStorageException pse) {
+            log.log(Level.WARNING, "Failed to open swiftly project storage [projectId=" +
+                projectId + "].", pse);
+            throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to find project storage record [projectId=" +
+                projectId + "].", pe);
+            throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
+        }
+
+
         ProjectRoomConfig config = new ProjectRoomConfig();
         try {
             config.projectId = projectId;
             mgr = (ProjectRoomManager)MsoyServer.plreg.createPlace(config);
+            mgr.init(storage);
             _managers.put(projectId, mgr);
 
             log.info("Created project room [project=" + projectId +
