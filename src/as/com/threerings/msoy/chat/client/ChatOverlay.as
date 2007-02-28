@@ -78,14 +78,22 @@ public class ChatOverlay
         _userSpeakFmt.bold = true;
         _userSpeakFmt.underline = false;
 
-        if (_history == null) {
-            _history = new HistoryList();
-            _ctx.getChatDirector().addChatDisplay(_history);
-        }
+        ensureHistoryListening(_ctx);
 
         // listen for preferences changes, update history mode
         Prefs.config.addEventListener(ConfigValueSetEvent.TYPE,
             handlePrefsUpdated, false, 0, true);
+    }
+
+    /**
+     * Ensure that the global chat history is now listening for chat events.
+     */
+    public static function ensureHistoryListening (ctx :WorldContext) :void
+    {
+        if (_history == null) {
+            _history = new HistoryList();
+            ctx.getChatDirector().addChatDisplay(_history);
+        }
     }
 
     protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void

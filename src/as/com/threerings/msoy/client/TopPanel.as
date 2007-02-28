@@ -7,8 +7,6 @@ import flash.events.Event;
 
 import flash.geom.Rectangle;
 
-import flash.system.Capabilities;
-
 import mx.core.Application;
 import mx.core.Container;
 import mx.core.ScrollPolicy;
@@ -61,22 +59,6 @@ public class TopPanel extends Canvas
         _controlBar.setStyle("right", 0);
         addChild(_controlBar);
         
-        if (DeploymentConfig.devClient) {
-            // set up the build stamp label
-            _buildStamp = new Label();
-            _buildStamp.includeInLayout = false;
-            _buildStamp.mouseEnabled = false;
-            _buildStamp.mouseChildren = false;
-            _buildStamp.text = "Build: " + DeploymentConfig.buildTime + "  " +
-                Capabilities.version;
-            _buildStamp.setStyle("color", "#F7069A");
-            _buildStamp.setStyle("fontSize", 12);
-            _buildStamp.setStyle("fontWeight", "bold");
-            _buildStamp.setStyle("top", 0);
-            _buildStamp.setStyle("left", 0);
-            addChild(_buildStamp);
-        }
-
         // clear out the application and install ourselves as the only child
         var app :Application = Application(Application.application);
         app.removeAllChildren();

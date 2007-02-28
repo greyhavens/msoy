@@ -7,9 +7,13 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Stage;
 
+import flash.system.Capabilities;
+
 import mx.core.Application;
 
 import mx.managers.ISystemManager;
+
+import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.Client;
 
@@ -23,6 +27,8 @@ import com.threerings.whirled.spot.client.SpotSceneDirector;
 import com.threerings.whirled.util.WhirledContext;
 
 import com.threerings.msoy.client.persist.SharedObjectSceneRepository;
+
+import com.threerings.msoy.chat.client.ChatOverlay;
 
 import com.threerings.msoy.game.client.GameDirector;
 import com.threerings.msoy.item.client.ItemDirector;
@@ -51,6 +57,16 @@ public class WorldContext extends BaseContext
         // set up the top panel
         _topPanel = new TopPanel(this);
         _controller = new MsoyController(this, _topPanel);
+
+        // ensure that the chat history is on..
+        ChatOverlay.ensureHistoryListening(this);
+
+        // and maybe spit out some useful info
+        if (DeploymentConfig.devClient) {
+            var info :String = "Build: " + DeploymentConfig.buildTime + "  " +
+                Capabilities.version;
+            _chatDir.displayInfo(null, MessageBundle.taint(info));
+        }
     }
 
     // from WhirledContext
