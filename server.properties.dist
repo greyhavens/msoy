@@ -36,8 +36,8 @@ webapp_dir = /export/threerings/webapps
 # to S3, if that is enabled) and the URL from which media will be downloaded.
 
 media_dir = /export/msoy/pages/media
-media_url = http://localhost:8080/media
-static_media_url = http://localhost:8080/media/static
+media_url = http://localhost:8080/media/
+static_media_url = http://localhost:8080/media/static/
 
 #
 # Auto-restart server if code changes (used on dev server)
