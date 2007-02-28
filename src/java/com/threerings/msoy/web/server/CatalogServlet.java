@@ -102,11 +102,6 @@ public class CatalogServlet extends MsoyServiceServlet
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.itemMan.purchaseItem(mrec.memberId, ident, waiter);
-                // TODO: Figure out grant vs log, and whences comes the flow constant?
-                MsoyServer.memberMan.grantFlow(
-                    mrec.memberId, 3, UserAction.BOUGHT_ITEM, ident.toString());
-                MsoyServer.memberMan.logUserAction(
-                    mrec.getName(), UserAction.BOUGHT_ITEM, ident.toString());
             }
         });
         return waiter.waitForResult();
