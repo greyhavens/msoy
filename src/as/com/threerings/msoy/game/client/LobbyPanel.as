@@ -22,6 +22,7 @@ import mx.core.ClassFactory;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.MediaContainer;
+import com.threerings.util.CommandEvent;
 
 import com.threerings.crowd.client.PlaceView;
 
@@ -37,6 +38,7 @@ import com.threerings.parlor.data.Table;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.client.MsoyController;
 
 import com.threerings.msoy.chat.client.ChatContainer;
 
@@ -179,8 +181,6 @@ public class LobbyPanel extends VBox
         info.percentHeight = 100;
         info.text = controller.game.description;
         infoBox.addChild(info);
-        //descriptionBox.addChild(new MediaWrapper(new MediaContainer(
-            //"/media/static/game/info_bottom.png")));
         createBtn = new CommandButton(LobbyController.CREATE_TABLE);
         createBtn.height = 22;
         createBtn.label = Msgs.GAME.get("b.create");
@@ -222,9 +222,10 @@ public class LobbyPanel extends VBox
         var about :Label = new Label();
         about.text = Msgs.GAME.get("b.about");
         about.styleName = "lobbyLink";
-        // TODO use the correct URL here and on the buy button
+        var thisLobbyPanel :LobbyPanel = this;
         about.addEventListener(MouseEvent.CLICK, function () :void {
-            _ctx.getMsoyController().showExternalURL("http://google.com");
+            CommandEvent.dispatch(thisLobbyPanel, MsoyController.VIEW_ITEM, 
+                controller.game.getIdent());
         });
         tabsBox.addChild(about);
         var buy :Label = new Label();

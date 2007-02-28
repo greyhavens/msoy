@@ -40,6 +40,8 @@ import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.chat.client.ChatControl;
 import com.threerings.msoy.chat.client.ReportingListener;
 
+import com.threerings.msoy.item.web.ItemIdent;
+
 import com.threerings.msoy.game.client.LobbyService;
 import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.world.client.RoomView;
@@ -321,9 +323,9 @@ public class MsoyController extends Controller
     /**
      * Handle the VIEW_ITEM command.
      */
-    public function handleViewItem (args :Array) :void
+    public function handleViewItem (ident :ItemIdent) :void
     {
-        showExternalURL("/item/index.html#" + args[0] + ";" + args[1]);
+        showExternalURL("/item/index.html#" + ident.type + ";" + ident.itemId);
     }
 
     /**

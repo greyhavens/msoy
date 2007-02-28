@@ -95,10 +95,10 @@ public class AvatarSprite extends ActorSprite
         menuItems.unshift(MenuUtil.createControllerMenuItem(
             Msgs.GENERAL.get("b.view_member"), MsoyController.VIEW_MEMBER,
             minfo.getMemberId(), false, !minfo.isGuest()));
+        var ident :ItemIdent = minfo.getItemIdent();
         menuItems.unshift(MenuUtil.createControllerMenuItem(
             Msgs.GENERAL.get("b.view_item"), MsoyController.VIEW_ITEM,
-            [ Item.getTypeName(minfo.getItemIdent().type), minfo.getItemIdent().itemId ], false,
-            (minfo.getItemIdent().type == Item.AVATAR)));
+            ident, false, (ident.type == Item.AVATAR)));
     }
 
     override public function isInteractive () :Boolean

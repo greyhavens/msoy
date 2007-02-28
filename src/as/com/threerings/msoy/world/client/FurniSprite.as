@@ -135,7 +135,7 @@ public class FurniSprite extends MsoySprite
         if (_furni.itemType != Item.NOT_A_TYPE) {
             menuItems.unshift(MenuUtil.createControllerMenuItem(
                 Msgs.GENERAL.get("b.view_item"), MsoyController.VIEW_ITEM,
-                [ Item.getTypeName(_furni.itemType), _furni.itemId ]));
+                _furni.getItemIdent()));
         }
     }
 
