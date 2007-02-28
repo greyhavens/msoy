@@ -62,7 +62,7 @@ public class SwiftlySVNStorageRecord extends PersistentRecord
         new ColumnExp(SwiftlySVNStorageRecord.class, BASE_DIR);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The id of the project. */
     @Id
@@ -73,11 +73,9 @@ public class SwiftlySVNStorageRecord extends PersistentRecord
     public String protocol;
 
     /** The storage host (FQDN). */
-    @Column(nullable=true)
     public String host;
 
     /** The storage port number. */
-    @Column(nullable=true)
     public int port;
 
     /** The storage base directory. */
@@ -86,7 +84,7 @@ public class SwiftlySVNStorageRecord extends PersistentRecord
     public URI toURI ()
         throws URISyntaxException
     {        
-        if (protocol == ProjectSVNStorage.PROTOCOL_FILE) {
+        if (protocol.equals(ProjectSVNStorage.PROTOCOL_FILE)) {
             // Confusingly (buggily?) one must set an empty authority in order for URI
             // to properly append '//' to the file: scheme. If one calls getAuthority
             // on the resultant URI, it will still return null.

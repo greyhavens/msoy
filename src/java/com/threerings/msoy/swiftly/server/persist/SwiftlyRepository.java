@@ -23,6 +23,9 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
+
+import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
+import com.samskivert.jdbc.depot.operator.Logic.And;
 import com.samskivert.jdbc.depot.clause.Where;
 
 /**
@@ -159,13 +162,18 @@ public class SwiftlyRepository extends DepotRepository
             Collection<SwiftlySVNStorageRecord> result;
             
             result = findAll(SwiftlySVNStorageRecord.class,
-                new Where(SwiftlySVNStorageRecord.PROTOCOL, protocol),
-                new Where(SwiftlySVNStorageRecord.HOST, host),
-                new Where(SwiftlySVNStorageRecord.PORT, port),
-                new Where(SwiftlySVNStorageRecord.BASE_DIR, baseDir));
+                new Where(
+                    new And(
+                        new Equals(SwiftlySVNStorageRecord.PROTOCOL, protocol),
+                        new Equals(SwiftlySVNStorageRecord.HOST, host),
+                        new Equals(SwiftlySVNStorageRecord.PORT, port),
+                        new Equals(SwiftlySVNStorageRecord.BASE_DIR, baseDir)
+                    )
+                )
+            );
 
             // There can only be one!
-            assert(result.size() == 0);
+            assert(result.size() == 1);
             for (SwiftlySVNStorageRecord curRecord : result) {
                 return curRecord;
             }

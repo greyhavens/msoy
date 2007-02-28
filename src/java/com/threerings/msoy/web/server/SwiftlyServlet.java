@@ -111,7 +111,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
             // Until then, we create them in a hard-wired local directory.
             String svnRoot = ServerConfig.serverRoot + "/data/swiftly/projects";
             storeRec = MsoyServer.swiftlyRepo.createSVNStorage(ProjectSVNStorage.PROTOCOL_FILE,
-                null, 0, svnRoot);
+                "", 0, svnRoot);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Creating new project storage record failed.", pe);
