@@ -1,3 +1,9 @@
+/** 
+ * $Id$
+ *
+ * CSS styles shared globally.
+ */
+
 /** Make GWT display some sensible defaults. */
 .gwt-TabBar .gwt-TabBarItem {
   border: 1px solid;
