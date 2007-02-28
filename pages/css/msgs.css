@@ -15,12 +15,11 @@
     width: 100%;
 }
 
-.MailComposer .Headers .Label {
-    width: 8em;
+.MailComposer .Label {
     text-align: right;
 }
 
-.MailComposer .Headers .Value {
+.MailComposer .Value {
     text-align: left;
 }
 
@@ -31,6 +30,8 @@
 .MailComposer .Payload {
     border: none;
     width: 100%;
+    padding-top: 4px;
+    padding-bottom: 4px;
 }
 
 .MailComposer .Body {

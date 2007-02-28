@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 
 import com.threerings.msoy.web.data.MemberName;
 
@@ -74,20 +75,23 @@ public class MailComposition extends BorderedDialog
 
         // set up the recipient/subject header grid
         Grid grid = new Grid(2, 2);
+        CellFormatter formatter = grid.getCellFormatter();
         grid.setStyleName("Headers");
 
         grid.setText(0, 0, CMsgs.mmsgs.hdrTo());
-        grid.getCellFormatter().setStyleName(0, 0, "Label");
+        formatter.setStyleName(0, 0, "Label");
+        formatter.setWidth(0, 0, "6em");
         grid.setWidget(0, 1, _recipientBox = new Label(_recipient.toString()));
-        grid.getCellFormatter().setStyleName(0, 1, "Value");
+        formatter.setStyleName(0, 1, "Value");
 
         grid.setText(1, 0, CMsgs.mmsgs.hdrSubject());
-        grid.getCellFormatter().setStyleName(1, 0, "Label");
+        formatter.setStyleName(1, 0, "Label");
+        formatter.setWidth(1, 0, "6em");
         _subjectBox = new TextBox();
         _subjectBox.addStyleName("SubjectBox");
         _subjectBox.setText(subject);
         grid.setWidget(1, 1, _subjectBox);
-        grid.getCellFormatter().setStyleName(1, 1, "Value");
+        formatter.setStyleName(1, 1, "Value");
         _panel.add(grid);
 
         if (_bodyObjectComposer != null) {
