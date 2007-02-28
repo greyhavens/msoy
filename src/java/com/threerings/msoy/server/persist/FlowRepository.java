@@ -201,7 +201,7 @@ public class FlowRepository extends DepotRepository
         throws PersistenceException
     {
         float dailyExpiration = RuntimeConfig.server.dailyFlowEvaporation;
-        int toExpire = (int) (record.flow * Math.pow(dailyExpiration, (float) dT / (24 * 60)));
+        int toExpire = (int) (record.flow * Math.pow(dailyExpiration, DAY_MINS/dT));
         if (toExpire > 0) {
             record.flow -= toExpire;
             update(record);
@@ -288,4 +288,7 @@ public class FlowRepository extends DepotRepository
         }
         return gameRecord;
     }
+
+    /** Minutes in a day. */
+    protected static final float DAY_MINS = 24 * 60;
 }
