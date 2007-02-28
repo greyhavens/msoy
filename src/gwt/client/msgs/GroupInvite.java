@@ -80,7 +80,6 @@ public abstract class GroupInvite
                             return;
                         }
                         _selectedGroupId = ((GroupMembership)_groups.get(ix)).group.groupId;
-                        Window.alert("groupId now = " + _selectedGroupId);
                     }
                 });
                 grid.setText(0, 0, CMsgs.mmsgs.groupInvite());
