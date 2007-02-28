@@ -154,8 +154,7 @@ public class LobbyPanel extends VBox
         gameBox.styleName = "gameBox";
         addChild(gameBox);
 
-        // the hard-coded URL bits here are temporary, and will be changed to the default supplied
-        // by the Game object, when these fields have been added
+        // left side: logo, description, create table button and invite friend button
         var descriptionBox :VBox = new VBox();
         descriptionBox.width = 160;
         descriptionBox.percentHeight = 100;
@@ -201,12 +200,12 @@ public class LobbyPanel extends VBox
         butbar.addChild(inviteBtn);
         buttonBox.addChild(butbar);
 
+        // right side: name, tabs, about/buy links, tables and chat
         var tablesBox :VBox = new VBox();
         tablesBox.styleName = "tablesBox";
         tablesBox.percentWidth = 100;
         tablesBox.percentHeight = 100;
         gameBox.addChild(tablesBox);
-
         var tabsBox :HBox = new HBox();
         tabsBox.styleName = "tabsBox";
         tabsBox.percentWidth = 100;
@@ -245,7 +244,6 @@ public class LobbyPanel extends VBox
             });
             tabsBox.addChild(buy);
         }
-
         var tabViews :ViewStack = new ViewStack();
         tabViews.percentHeight = 100;
         tabViews.percentWidth = 100;
@@ -266,17 +264,14 @@ public class LobbyPanel extends VBox
         runningBox.percentWidth = 100;
         runningBox.label = Msgs.GAME.get("t.running");
         tabViews.addChild(runningBox);
-
         var factory :ClassFactory = new ClassFactory(TableRenderer);
         factory.properties = { ctx: _ctx, panel: this };
         list.itemRenderer = factory;
         list.dataProvider = _formingTables;
-
-        // and a chat box
         var chatbox :ChatContainer = new ChatContainer(_ctx);
         chatbox.percentWidth = 100;
         chatbox.height = 100;
-        addChild(chatbox);
+        tablesBox.addChild(chatbox);
     }
 
     /** Buy one get one free. */
