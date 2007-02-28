@@ -315,12 +315,13 @@ public class HoodViz extends Sprite
     {
         _tipTile = event.target as ToolTipSprite;
         var neighbor :Neighbor = _tipTile.neighbor;
+        var tipContent :DisplayObjectContainer;
         var rule :Sprite;
         if (neighbor is NeighborMember) {
             var house :NeighborMember = neighbor as NeighborMember;
 
-            _tip = new _plaqueHouse();
-            _tip.addChild(getTextField(house.memberName, -75));
+            tipContent = new _plaqueHouse();
+            tipContent.addChild(getTextField(house.memberName, -75));
 
             var str :String;
             if (house.isOnline) {
@@ -331,17 +332,17 @@ public class HoodViz extends Sprite
             if (str != null) {
                 rule = new _rule();
                 rule.y = -50;
-                _tip.addChild(rule);
-                _tip.addChild(getTextField(str, -40));
+                tipContent.addChild(rule);
+                tipContent.addChild(getTextField(str, -40));
             }
 
         } else if (neighbor is NeighborGroup) {
             var group :NeighborGroup = neighbor as NeighborGroup;
 
-            _tip = new _plaqueGroup();
+            tipContent = new _plaqueGroup();
 
             if (group.getLogoHash() != null) {
-                _tip.addChild(getTextField(group.groupName, -80));
+                tipContent.addChild(getTextField(group.groupName, -80));
 
                 // if there is a logo, we dynamically load it
                 var loader :Loader = new Loader();
@@ -355,25 +356,31 @@ public class HoodViz extends Sprite
 
                 rule = new _rule();
                 rule.y = -65;
-                _tip.addChild(rule);
+                tipContent.addChild(rule);
 
-                _tip.addChild(loader);
+                tipContent.addChild(loader);
                 loader.y = -60;
             } else {
-                _tip.addChild(getTextField(group.groupName, -60));
+                tipContent.addChild(getTextField(group.groupName, -60));
             }
         } else {
             var game :NeighborGame = neighbor as NeighborGame;
 
-            _tip = new _plaqueGame();
-            _tip.addChild(getTextField(group.groupName, -60));
+            tipContent = new _plaqueGame();
+            tipContent.addChild(getTextField(group.groupName, -60));
 
             // TODO: thumbnail?
         }
+        _tip = new ToolTipSprite();
+        _tip.neighbor = neighbor;
+
         _tip.addEventListener(MouseEvent.ROLL_OUT, popupRollOutHandler);
+        _tip.addEventListener(MouseEvent.CLICK, clickHandler);
         _tip.mouseChildren = false;
+        _tip.addChild(tipContent);
 
         this.addChild(_tip);
+
         _tip.x = event.stageX - 20;
         _tip.y = event.stageY - 20;
 
@@ -440,7 +447,7 @@ public class HoodViz extends Sprite
 
     protected var _loader :Loader;
 
-    protected var _tip :Sprite;
+    protected var _tip :ToolTipSprite;
     protected var _tipTile :ToolTipSprite;
 
     protected var _hood :Neighborhood;
