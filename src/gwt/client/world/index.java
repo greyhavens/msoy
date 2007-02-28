@@ -173,7 +173,11 @@ public class index extends MsoyEntryPoint
         if (_client != null) {
             clientLogoff();
         }
-        setContent(_client = FlashClients.createNeighborhood(hood));
+        if (hood == null) {
+            setContent(new Label(CWorld.msgs.noSuchMember()));
+        } else {
+            setContent(_client = FlashClients.createNeighborhood(hood));
+        }
     }
 
     protected void hotSpots (String hotSpots)

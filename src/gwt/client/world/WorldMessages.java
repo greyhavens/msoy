@@ -8,6 +8,14 @@ package client.world;
 public interface WorldMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
+   * Translated "That member could not be found.".
+   * 
+   * @return translated "That member could not be found."
+   * @gwt.key noSuchMember
+   */
+  String noSuchMember();
+
+  /**
    * Translated "temp".
    * 
    * @return translated "temp"

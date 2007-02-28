@@ -268,8 +268,9 @@ public class MemberManager
         ResultListener<Neighborhood> newListener = new ResultListener<Neighborhood>() {
             public void requestCompleted (Neighborhood result) {
                 try {
-                    listener.requestCompleted(
-                        URLEncoder.encode(toJSON(result).toString(), "UTF-8"));
+                    String data = (result == null) ? null :
+                        URLEncoder.encode(toJSON(result).toString(), "UTF-8");
+                    listener.requestCompleted(data);
                 } catch (Exception e) {
                     listener.requestFailed(e);
                 }
@@ -295,6 +296,9 @@ public class MemberManager
                 Neighborhood hood = new Neighborhood();
                 // first load the center member data
                 MemberRecord mRec = _memberRepo.loadMember(memberId);
+                if (mRec == null) {
+                    return null;
+                }
                 hood.member = makeNeighborMember(mRec);
 
                 // then all the data for the groups
@@ -321,8 +325,10 @@ public class MemberManager
 
             // after we finish, have main thread go through
             public void handleSuccess () {
-                // set online status and figure out populations
-                finalizeNeighborhood(_result);
+                if (_result != null) {
+                    // set online status and figure out populations
+                    finalizeNeighborhood(_result);
+                }
                 _listener.requestCompleted(_result);
             }
         });

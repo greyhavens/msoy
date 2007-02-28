@@ -40,9 +40,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String tagRemove();
 
   /**
-   * Translated "Don''t ever tell anyone your password, not even to customer support. You only use your password to logon to Whirled and nowhere else.".
+   * Translated "Don''t ever tell anyone your password, not even us! Only enter your password into the box used to login, nowhere else.".
    * 
-   * @return translated "Don''t ever tell anyone your password, not even to customer support. You only use your password to logon to Whirled and nowhere else."
+   * @return translated "Don''t ever tell anyone your password, not even us! Only enter your password into the box used to login, nowhere else."
    * @gwt.key createPasswordTip
    */
   String createPasswordTip();
@@ -208,9 +208,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String menuStuff();
 
   /**
-   * Translated "Logon".
+   * Translated "Login".
    * 
-   * @return translated "Logon"
+   * @return translated "Login"
    * @gwt.key menuLogon
    */
   String menuLogon();
