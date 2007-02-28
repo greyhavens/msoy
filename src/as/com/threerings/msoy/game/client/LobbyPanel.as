@@ -179,8 +179,27 @@ public class LobbyPanel extends VBox
         info.percentHeight = 100;
         info.text = controller.game.description;
         infoBox.addChild(info);
-        descriptionBox.addChild(new MediaWrapper(new MediaContainer(
-            "/media/static/game/info_bottom.png")));
+        //descriptionBox.addChild(new MediaWrapper(new MediaContainer(
+            //"/media/static/game/info_bottom.png")));
+        createBtn = new CommandButton(LobbyController.CREATE_TABLE);
+        createBtn.height = 22;
+        createBtn.label = Msgs.GAME.get("b.create");
+        var inviteBtn :CommandButton = new CommandButton();
+        inviteBtn.height = 22;
+        inviteBtn.label = Msgs.GAME.get("b.invite_to_game");
+        var buttonBox :VBox = new VBox();
+        buttonBox.setStyle("backgroundImage", "/media/static/game/info_bottom.png");
+        buttonBox.setStyle("backgroundSize", "100%");
+        buttonBox.setStyle("horizontalAlign", "center");
+        buttonBox.percentWidth = 100;
+        descriptionBox.addChild(buttonBox);
+        var butbar :ButtonBar = new ButtonBar();
+        butbar.setStyle("paddingTop", 40);
+        butbar.setStyle("verticalGap", 5);
+        butbar.direction = "vertical";
+        butbar.addChild(createBtn);
+        butbar.addChild(inviteBtn);
+        buttonBox.addChild(butbar);
 
         var tablesBox :VBox = new VBox();
         tablesBox.styleName = "tablesBox";
@@ -215,16 +234,6 @@ public class LobbyPanel extends VBox
             _ctx.getMsoyController().showExternalURL("http://google.com");
         });
         tabsBox.addChild(buy);
-        var inviteBtn :CommandButton = new CommandButton();
-        inviteBtn.height = 22;
-        inviteBtn.label = Msgs.GAME.get("b.invite_to_game");
-        createBtn = new CommandButton(LobbyController.CREATE_TABLE);
-        createBtn.height = 22;
-        createBtn.label = Msgs.GAME.get("b.create");
-        var butbar :ButtonBar = new ButtonBar();
-        butbar.addChild(inviteBtn);
-        butbar.addChild(createBtn);
-        tabsBox.addChild(butbar);
 
         var list :MsoyList = new MsoyList(_ctx);
         list.variableRowHeight = true;
