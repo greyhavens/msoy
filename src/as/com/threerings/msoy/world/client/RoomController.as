@@ -15,10 +15,11 @@ import mx.core.IToolTip;
 import mx.core.UIComponent;
 import mx.managers.ToolTipManager;
 
-import com.threerings.util.MenuUtil;
 import com.threerings.util.NetUtil;
 
 import com.threerings.io.TypedArray;
+
+import com.threerings.flash.MenuUtil;
 
 import com.threerings.flex.CommandMenu;
 
@@ -330,12 +331,6 @@ public class RoomController extends SceneController
             return;
         }
 
-        if (!isCurrentlyEditing && _scene.canEdit(_mctx.getClientObject())) {
-            // TODO: I used to put a separator before this menu item,
-            // but it caused it to break in linux. STRANGE!
-            menuItems.push(createMenuItem(EDIT_SCENE, null, false /*true*/));
-        }
-
         menuItems.push(MenuUtil.createControllerMenuItem(
             "temp: clear scene cache", TEMP_CLEAR_SCENE_CACHE, null, true));
     }
@@ -520,14 +515,6 @@ public class RoomController extends SceneController
 
                 case 93: // ']'
                     _roomView.scrollViewBy(ROOM_SCROLL_INCREMENT);
-                    break;
-                }
-            }
-
-            if (keyDown) {
-                switch (event.keyCode) {
-                case Keyboard.F1:
-                    handleAction(EDIT_SCENE, null);
                     break;
                 }
             }
