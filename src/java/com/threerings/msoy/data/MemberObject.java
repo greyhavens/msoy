@@ -97,7 +97,7 @@ public class MemberObject extends BodyObject
 
     /** The object ID of the in-world game that the user is in, if any. */
     public int inWorldGame;
-    
+
     /** How much lovely flow we've got jangling around on our person. */
     public int flow;
 
@@ -105,12 +105,10 @@ public class MemberObject extends BodyObject
     public int humanity;
 
     /** The recent scenes we've been through. */
-    public DSet<SceneBookmarkEntry> recentScenes =
-        new DSet<SceneBookmarkEntry>();
+    public DSet<SceneBookmarkEntry> recentScenes = new DSet<SceneBookmarkEntry>();
 
     /** The scenes we own. */
-    public DSet<SceneBookmarkEntry> ownedScenes =
-        new DSet<SceneBookmarkEntry>();
+    public DSet<SceneBookmarkEntry> ownedScenes = new DSet<SceneBookmarkEntry>();
 
     /** The user's inventory, lazy-initialized. */
     public DSet<Item> inventory = new DSet<Item>();
@@ -165,7 +163,7 @@ public class MemberObject extends BodyObject
         }
         return Avatar.getDefaultThumbnailMediaFor(Item.AVATAR);
     }
-    
+
     /**
      * Return our assessment of how likely this member is to be human, in [0, 1).
      */
