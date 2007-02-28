@@ -76,11 +76,33 @@ public class FlashClients
     }
 
     /**
+     * Loads our flow gold, and experience levels.
+     */
+    public static int[] getLevels ()
+    {
+        int[] levels = new int[3];
+        JavaScriptObject result = getLevelsNative();
+        int length = (result == null ? 0 : getLength(result));
+        for (int ii = 0; ii < length; ii++) {
+            levels[ii] = getIntElement(result, ii);
+        }
+        return levels;
+    }
+
+    /**
      * Does the actual JavaScript <code>getFriends</code> call.
      */
     protected static native JavaScriptObject getFriendsNative () /*-{
         var client = $doc.getElementById("asclient");
         return (client) ? client.getFriends() : null;
+    }-*/;
+
+    /**
+     * Does the actual JavaScript <code>getLevels</code> call.
+     */
+    protected static native JavaScriptObject getLevelsNative () /*-{
+        var client = $doc.getElementById("asclient");
+        return (client) ? client.getLevels() : null;
     }-*/;
 
     /**

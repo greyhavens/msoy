@@ -17,8 +17,8 @@ import com.threerings.util.ResultAdapter;
 import com.threerings.util.StringUtil;
 
 import com.threerings.presents.client.Client;
-import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DSet;
 
 import com.threerings.presents.dobj.DObjectManager;
 
@@ -45,6 +45,20 @@ import com.threerings.msoy.web.data.FriendEntry;
 public /*abstract*/ class BaseClient extends Client
 {
     public static const log :Log = Log.getLog(BaseClient);
+
+    /**
+     * Notifies our JavaScript shell that our flow, gold, etc. levels have updated.
+     */
+    public static function levelsUpdated () :void
+    {
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.call("levelsUpdated");
+            }
+        } catch (err :Error) {
+            log.warning("ExternalInterface.call('levelsUpdated') failed: " + err);
+        }
+    }
 
     public function BaseClient (stage :Stage)
     {
@@ -109,6 +123,8 @@ public /*abstract*/ class BaseClient extends Client
                 log.warning("Unable to inform javascript about login: " + err);
             }
         }
+
+        log.info("Client logged on [built=" + DeploymentConfig.buildTime + "].");
     }
 
     // from Client
@@ -119,8 +135,13 @@ public /*abstract*/ class BaseClient extends Client
         // set up our logging targets
         LoggingTargets.configureLogging(_ctx);
 
-        // possibly ensure our local storage capacity
+        // listen for flow and gold updates
         _user = (clobj as MemberObject);
+        _user.addListener(new LevelUpdater());
+        // configure our levels to start
+        levelsUpdated();
+
+        // possibly ensure our local storage capacity
         if (!_user.isGuest()) {
             Prefs.config.ensureCapacity(
                 102400, new ResultAdapter(null, function (cause :Error) :void {
@@ -136,6 +157,7 @@ public /*abstract*/ class BaseClient extends Client
     {
         ExternalInterface.addCallback("onUnload", externalOnUnload);
         ExternalInterface.addCallback("getFriends", externalGetFriends);
+        ExternalInterface.addCallback("getLevels", externalGetLevels);
     }
 
     /**
@@ -153,6 +175,7 @@ public /*abstract*/ class BaseClient extends Client
     protected function externalGetFriends () :Array
     {
         if (_user == null) {
+            log.info("externalGetFriends() without MemberObject.");
             return new Array();
         }
 
@@ -166,6 +189,25 @@ public /*abstract*/ class BaseClient extends Client
             fdata.push(entry.online);
         });
         return fdata;
+    }
+
+    /**
+     * Provides this player's flow, gold and level levels to the GWT client.
+     */
+    protected function externalGetLevels () :Array
+    {
+        var levels :Array = new Array(3);
+        if (_user == null) {
+            log.info("externalGetLevels() without MemberObject.");
+            levels[0] = 0;
+            levels[1] = 0;
+            levels[2] = 0;
+        } else {
+            levels[0] = _user.flow;
+            levels[1] = 0; // _user.gold;
+            levels[2] = 1; // _user.level;
+        }
+        return levels;
     }
 
     /**
@@ -201,4 +243,21 @@ public /*abstract*/ class BaseClient extends Client
     protected var _ctx :BaseContext;
     protected var _user :MemberObject;
 }
+}
+
+import flash.external.ExternalInterface;
+
+import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
+
+import com.threerings.msoy.client.BaseClient;
+import com.threerings.msoy.data.MemberObject;
+
+class LevelUpdater implements AttributeChangeListener
+{
+    public function attributeChanged (event :AttributeChangedEvent) :void {
+        if (/* event.getName() == MemberObject.GOLD || */ event.getName() == MemberObject.FLOW) {
+            BaseClient.levelsUpdated();
+        }
+    }
 }

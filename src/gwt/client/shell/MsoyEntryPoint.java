@@ -142,6 +142,14 @@ public abstract class MsoyEntryPoint
     }
 
     /**
+     * Called when our flow, gold or other "levels" have changed.
+     */
+    protected void levelsUpdated ()
+    {
+        _status.refreshLevels();
+    }
+
+    /**
      * Called by our logon panel if the player logs off.
      */
     protected void didLogoff ()
@@ -157,6 +165,9 @@ public abstract class MsoyEntryPoint
     protected static native void configureCallbacks (MsoyEntryPoint mep) /*-{
        $wnd.flashDidLogon = function (displayName, memberId, token) {
            mep.@client.shell.MsoyEntryPoint::didLogonFromFlash(Ljava/lang/String;ILjava/lang/String;)(displayName, memberId, token);
+       };
+       $wnd.levelsUpdated = function () {
+           mep.@client.shell.MsoyEntryPoint::levelsUpdated()();
        };
        $wnd.onunload = function (event) {
            var client = $doc.getElementById("asclient");

@@ -75,6 +75,17 @@ public class StatusPanel extends FlexTable
     }
 
     /**
+     * Rereads our flow, gold, etc. levels and updates our header display.
+     */
+    public void refreshLevels ()
+    {
+        int[] levels = FlashClients.getLevels();
+        setText(0, _flowIdx, String.valueOf(levels[0]));
+        setText(0, _goldIdx, String.valueOf(levels[1]));
+        setText(0, _levelIdx, String.valueOf(levels[2]));
+    }
+
+    /**
      * Clears out our credentials and displays the logon interface.
      */
     public void logoff ()
@@ -128,18 +139,18 @@ public class StatusPanel extends FlexTable
 
         getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
         getFlexCellFormatter().setStyleName(0, idx, "Icon");
-        setWidget(0, idx++, new Image("/images/header/symbol_gold.png"));
-        setText(0, idx++, "47"); // TODO: gold
+        setWidget(0, idx++, new Image("/images/header/symbol_flow.png"));
+        setText(0, _flowIdx = idx++, "0");
 
         getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
         getFlexCellFormatter().setStyleName(0, idx, "Icon");
-        setWidget(0, idx++, new Image("/images/header/symbol_flow.png"));
-        setText(0, idx++, "12895"); // TODO: flow
+        setWidget(0, idx++, new Image("/images/header/symbol_gold.png"));
+        setText(0, _goldIdx = idx++, "0");
 
         getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
         getFlexCellFormatter().setStyleName(0, idx, "Icon");
         setWidget(0, idx++, new Image("/images/header/symbol_level.png"));
-        setText(0, idx++, "638"); // TODO: level
+        setText(0, _levelIdx = idx++, "0");
     }
 
     protected void reset ()
@@ -240,6 +251,8 @@ public class StatusPanel extends FlexTable
 
     protected MsoyEntryPoint _app;
     protected WebCreds _creds;
+
+    protected int _flowIdx, _goldIdx, _levelIdx;
 
     /** The height of the header UI in pixels. */
     protected static final int HEADER_HEIGHT = 50;

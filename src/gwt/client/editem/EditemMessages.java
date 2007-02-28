@@ -272,9 +272,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String petMainTitle();
 
   /**
-   * Translated "Enter a Description to be shown if you list your Item in the Catalog (optional)".
+   * Translated "Enter a Description to be shown if you list your Item in the Catalog".
    * 
-   * @return translated "Enter a Description to be shown if you list your Item in the Catalog (optional)"
+   * @return translated "Enter a Description to be shown if you list your Item in the Catalog"
    * @gwt.key editorDescripTitle
    */
   String editorDescripTitle();
