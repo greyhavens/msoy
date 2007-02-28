@@ -4,6 +4,16 @@
  * CSS styles shared globally.
  */
 
+/** The globalness! */
+a {
+  color: black;
+}
+
+a:visited {
+  color: black;
+}
+
+
 /** Make GWT display some sensible defaults. */
 .gwt-TabBar .gwt-TabBarItem {
   border: 1px solid;
