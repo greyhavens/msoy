@@ -19,6 +19,7 @@ import com.threerings.msoy.person.server.persist.MailMessageRecord;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -30,6 +31,7 @@ import com.threerings.msoy.item.web.ItemIdent;
 
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.data.MailFolder;
+import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.TagHistory;
@@ -58,12 +60,18 @@ public class ItemServlet extends MsoyServiceServlet
         item.creatorId = creds.getMemberId();
         item.ownerId = creds.getMemberId();
 
+        final MemberName name = creds.name;
         // pass the buck to the item manager to do the dirty work
         final ServletWaiter<Item> waiter = new ServletWaiter<Item>(
             "insertItem[" + creds + ", " + item + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.itemMan.insertItem(item, waiter);
+                // TODO: Figure out grant vs log, and whences comes the flow constant?
+                MsoyServer.memberMan.grantFlow(
+                    name.getMemberId(), 3, UserAction.CREATED_ITEM, item.toString());
+                MsoyServer.memberMan.logUserAction(
+                    name, UserAction.CREATED_ITEM, item.toString());
             }
         });
         return waiter.waitForResult().itemId;

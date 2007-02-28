@@ -17,6 +17,7 @@ import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.UserAction;
 
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.BlurbData;
@@ -55,6 +56,10 @@ public class ProfileServlet extends MsoyServiceServlet
                 MsoyServer.omgr.postRunnable(new Runnable() {
                     public void run () {
                         MsoyServer.memberMan.displayNameChanged(name);
+                        // TODO: Figure out grant vs log, and whences comes the flow constant?
+                        MsoyServer.memberMan.grantFlow(
+                            name.getMemberId(), 3, UserAction.UPDATED_PROFILE, null);
+                        MsoyServer.memberMan.logUserAction(name, UserAction.UPDATED_PROFILE, null);
                     }
                 });
             }

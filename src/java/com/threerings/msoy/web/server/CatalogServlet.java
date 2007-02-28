@@ -102,18 +102,18 @@ public class CatalogServlet extends MsoyServiceServlet
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.itemMan.purchaseItem(mrec.memberId, ident, waiter);
-//                // TODO: Figure out where flow constant comes from, actually test code, etc.
-//                MsoyServer.memberMan.grantFlow(
-//                    mrec.getName(), 3, UserAction.BOUGHT_ITEM, ident.toString());
-//                MsoyServer.memberMan.logUserAction(
-//                    mrec.getName(), UserAction.BOUGHT_ITEM, ident.toString());
+                // TODO: Figure out grant vs log, and whences comes the flow constant?
+                MsoyServer.memberMan.grantFlow(
+                    mrec.memberId, 3, UserAction.BOUGHT_ITEM, ident.toString());
+                MsoyServer.memberMan.logUserAction(
+                    mrec.getName(), UserAction.BOUGHT_ITEM, ident.toString());
             }
         });
         return waiter.waitForResult();
     }
 
     // from interface CatalogService
-    public CatalogListing listItem (WebCreds creds, ItemIdent ident, boolean list)
+    public CatalogListing listItem (WebCreds creds, final ItemIdent ident, boolean list)
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser(creds);
@@ -148,7 +148,19 @@ public class CatalogServlet extends MsoyServiceServlet
                 // and finally create & insert the catalog record
                 long now = System.currentTimeMillis();
                 int rarity = CatalogListing.RARITY_COMMON;
-                return repo.insertListing(listItem, 0, 0, rarity, now).toListing();
+                CatalogRecord record= repo.insertListing(listItem, 0, 0, rarity, now);
+                
+                MsoyServer.omgr.postRunnable(new Runnable() {
+                    public void run () {
+                        // TODO: Figure out grant vs log, and whences comes the flow constant?
+                        MsoyServer.memberMan.grantFlow(
+                            mrec.memberId, 3, UserAction.LISTED_ITEM, ident.toString());
+                        MsoyServer.memberMan.logUserAction(
+                            mrec.getName(), UserAction.LISTED_ITEM, ident.toString());
+                    }
+                });
+
+                return record.toListing();
 
             } else {
                 // TODO: validate ownership
