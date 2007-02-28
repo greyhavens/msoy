@@ -6,7 +6,8 @@ package com.threerings.msoy.world.client {
 import flash.events.MouseEvent;
 
 import com.threerings.util.CommandEvent;
-import com.threerings.util.MenuUtil;
+
+import com.threerings.flash.MenuUtil;
 
 import com.threerings.crowd.chat.data.ChatMessage;
 

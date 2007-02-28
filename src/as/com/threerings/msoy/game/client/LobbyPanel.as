@@ -24,8 +24,9 @@ import mx.core.Container;
 import mx.core.ClassFactory;
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.MediaContainer;
 import com.threerings.util.CommandEvent;
+
+import com.threerings.flash.MediaContainer;
 
 import com.threerings.crowd.client.PlaceView;
 

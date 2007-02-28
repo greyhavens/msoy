@@ -7,9 +7,10 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
-import com.threerings.util.MediaContainer;
 import com.threerings.util.Name;
 import com.threerings.util.Util;
+
+import com.threerings.flash.MediaContainer;
 
 import com.threerings.msoy.item.web.MediaDesc;
 

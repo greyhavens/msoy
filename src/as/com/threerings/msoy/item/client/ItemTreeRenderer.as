@@ -9,7 +9,7 @@ import mx.controls.listClasses.BaseListData;
 import mx.controls.treeClasses.TreeItemRenderer;
 import mx.controls.treeClasses.TreeListData;
 
-import com.threerings.util.MediaContainer;
+import com.threerings.flash.MediaContainer;
 
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.ScalingMediaContainer;

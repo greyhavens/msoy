@@ -13,10 +13,11 @@ import flash.ui.ContextMenu;
 import mx.core.Application;
 import mx.resources.ResourceBundle;
 
-import com.threerings.util.MenuUtil;
 import com.threerings.util.Name;
 import com.threerings.util.ResultAdapter;
 import com.threerings.util.StringUtil;
+
+import com.threerings.flash.MenuUtil;
 
 import com.threerings.whirled.data.SceneMarshaller;
 import com.threerings.whirled.spot.data.SpotMarshaller;

@@ -10,8 +10,9 @@ import mx.core.UIComponent;
 
 import mx.controls.Label;
 
-import com.threerings.util.MediaContainer;
 import com.threerings.util.Name;
+
+import com.threerings.flash.MediaContainer;
 
 import com.threerings.flex.CommandButton;
 

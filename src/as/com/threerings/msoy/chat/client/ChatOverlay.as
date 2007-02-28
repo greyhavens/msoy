@@ -30,7 +30,6 @@ import mx.controls.scrollClasses.ScrollBar;
 import mx.controls.VScrollBar;
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.ColorUtil;
 import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.StringUtil;
@@ -41,6 +40,8 @@ import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.SystemMessage;
 import com.threerings.crowd.chat.data.TellFeedbackMessage;
 import com.threerings.crowd.chat.data.UserMessage;
+
+import com.threerings.flash.ColorUtil;
 
 import com.threerings.whirled.spot.data.SpotCodes;
 

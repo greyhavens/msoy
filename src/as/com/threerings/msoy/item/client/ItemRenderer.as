@@ -8,8 +8,9 @@ import mx.controls.Label;
 
 import mx.core.ScrollPolicy;
 
-import com.threerings.util.MediaContainer;
 import com.threerings.util.Util;
+
+import com.threerings.flash.MediaContainer;
 
 import com.threerings.msoy.client.Msgs;
 

@@ -10,10 +10,11 @@ import flash.geom.Rectangle;
 import mx.core.Container;
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.DisplayUtil;
-import com.threerings.util.ColorUtil;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
+
+import com.threerings.flash.ColorUtil;
+import com.threerings.flash.DisplayUtil;
 
 import com.threerings.msoy.client.WorldContext;
 

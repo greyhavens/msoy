@@ -15,7 +15,8 @@ import flash.filters.DisplacementMapFilterMode;
 import flash.geom.Point;
 
 import com.threerings.util.CommandEvent;
-import com.threerings.util.MenuUtil;
+
+import com.threerings.flash.MenuUtil;
 
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;

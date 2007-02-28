@@ -16,7 +16,6 @@ import flash.geom.Rectangle;
 import flash.utils.getTimer; // function import
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.DisplayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 
@@ -27,6 +26,8 @@ import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
+
+import com.threerings.flash.DisplayUtil;
 
 import com.threerings.whirled.spot.data.Location;
 

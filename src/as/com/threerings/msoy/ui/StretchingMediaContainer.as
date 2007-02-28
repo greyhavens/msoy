@@ -1,6 +1,6 @@
 package com.threerings.msoy.ui {
 
-import com.threerings.util.MediaContainer;
+import com.threerings.flash.MediaContainer;
 
 /**
  * A MediaContainer that will stretch its underlying image to take up the full area allotted to it

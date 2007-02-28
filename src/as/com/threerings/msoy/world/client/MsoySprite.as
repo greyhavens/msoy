@@ -39,8 +39,9 @@ import flash.system.SecurityDomain;
 import flash.net.URLRequest;
 
 import com.threerings.util.Util;
-import com.threerings.util.MediaContainer;
-import com.threerings.util.VideoDisplayer;
+
+import com.threerings.flash.MediaContainer;
+import com.threerings.flash.VideoDisplayer;
 
 import com.threerings.ezgame.util.EZObjectMarshaller;
 
