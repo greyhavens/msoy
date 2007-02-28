@@ -64,20 +64,19 @@ public class MsoyClientResolver extends CrowdClientResolver
     protected void resolveMember (MemberObject userObj)
         throws Exception
     {
-        // load up their member information using on their authentication
-        // (account) name
+        // load up their member information using on their authentication (account) name
         MemberRecord member = MsoyServer.memberRepo.loadMember(_username.toString());
         _avatarId = member.avatarId;
 
-        // configure their member name which is a combination of their display
-        // name and their member id
+        // configure their member name which is a combination of their display name and their
+        // member id
         userObj.setMemberName(new MemberName(member.name, member.memberId));
         userObj.setHomeSceneId(member.homeSceneId);
-        
+
         // calculate flow evaporation since last logon
         int dT = (int) ((System.currentTimeMillis() - member.lastSession.getTime()) / 60000);
         int expiredFlow = MsoyServer.memberRepo.getFlowRepository().expireFlow(member, dT);
-        userObj.setFlow(userObj.flow - expiredFlow);
+        userObj.setFlow(member.flow);
 
         userObj.setHumanity(member.humanity);
         userObj.setOwnedScenes(new DSet<SceneBookmarkEntry>(
@@ -109,7 +108,6 @@ public class MsoyClientResolver extends CrowdClientResolver
     protected void finishResolution (ClientObject clobj)
     {
         super.finishResolution(clobj);
-
         final MemberObject user = (MemberObject)clobj;
 
         // load up their friend info
@@ -126,33 +124,29 @@ public class MsoyClientResolver extends CrowdClientResolver
                         // if the friend is online, mark them as such
                         entry.online = true;
                         // and notify them that we're online
-                        FriendEntry oppEntry = friendObj.friends.get(
-                            user.getMemberId());
+                        FriendEntry oppEntry = friendObj.friends.get(user.getMemberId());
                         oppEntry.online = true;
                         friendObj.updateFriends(oppEntry);
                     }
-                    user.setFriends(
-                        new DSet<FriendEntry>(friends.iterator()));
-                    // TODO: we currently never note that friends have
-                    // logged off
+                    user.setFriends(new DSet<FriendEntry>(friends.iterator()));
+                    // TODO: we currently never note that friends have logged off
                 }
                 public void requestFailed (Exception cause) {
-                    log.warning("Failed to load member's friend info " +
-                        "[who=" + user.who() + ", error=" + cause + "].");
+                    log.warning("Failed to load member's friend info [who=" + user.who() +
+                                ", error=" + cause + "].");
                 }
             });
 
             if (_avatarId != 0) {
-                MsoyServer.itemMan.getItem(
-                    new ItemIdent(Item.AVATAR, _avatarId),
-                    new ResultListener<Item>() {
+                MsoyServer.itemMan.getItem(new ItemIdent(Item.AVATAR, _avatarId),
+                                           new ResultListener<Item>() {
                     public void requestCompleted (Item avatar) {
                         user.setAvatar((Avatar) avatar);
                         MsoyServer.memberMan.updateOccupantInfo(user);
                     }
                     public void requestFailed (Exception cause) {
-                        log.warning("Failed to load member's avatar " +
-                            "[who=" + user.who() + ", error=" + cause + "].");
+                        log.warning("Failed to load member's avatar [who=" + user.who() +
+                                    ", error=" + cause + "].");
                     }
                 });
             }
@@ -164,11 +158,9 @@ public class MsoyClientResolver extends CrowdClientResolver
      */
     protected boolean isResolvingGuest ()
     {
-        // this seems strange, but we're testing the authentication
-        // username, which is set to be a MemberName for guests and a regular
-        // Name for members. The reason for this is that the guests
-        // will use the same MemberName object for their display name
-        // and auth name
+        // this seems strange, but we're testing the authentication username, which is set to be a
+        // MemberName for guests and a regular Name for members. The reason for this is that the
+        // guests will use the same MemberName object for their display name and auth name
         return (_username instanceof MemberName);
     }
 
