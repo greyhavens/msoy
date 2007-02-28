@@ -8,7 +8,7 @@ import flash.events.TextEvent;
 
 /**
  * This file should be included by furniture, so that it can communicate
- * with the metasoy world.
+ * with the whirled.
  */
 public class FurniControl extends EntityControl
 {

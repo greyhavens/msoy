@@ -11,11 +11,11 @@ import flash.events.EventDispatcher;
 /**
  * Base class for services that connect back to whirled.
  */
-public class MsoyControl extends EventDispatcher
+public class WhirledControl extends EventDispatcher
 {
     /**
      */
-    public function MsoyControl (disp :DisplayObject)
+    public function WhirledControl (disp :DisplayObject)
     {
         if (isAbstract()) {
             throw new Error("This control is abstract. Please use the " +
@@ -33,7 +33,7 @@ public class MsoyControl extends EventDispatcher
     }
 
     /**
-     * Are we connected and running inside the metasoy world, or are we
+     * Are we connected and running inside the whirled, or are we
      * merely being displayed standalone?
      */
     public function isConnected () :Boolean
@@ -42,7 +42,7 @@ public class MsoyControl extends EventDispatcher
     }
 
     /**
-     * Populate any properties that we provide back to metasoy.
+     * Populate any properties that we provide back to whirled.
      */
     protected function populateProperties (o :Object) :void
     {
@@ -61,9 +61,9 @@ public class MsoyControl extends EventDispatcher
     }
 
     /**
-     * Call an exposed function back in msoy land.
+     * Call an exposed function back in our hosting Whirled.
      */
-    protected function callMsoyCode (name :String, ... args) :*
+    protected function callHostCode (name :String, ... args) :*
     {
         if (_props != null) {
             try {
@@ -96,7 +96,7 @@ public class MsoyControl extends EventDispatcher
         return true;
     }
 
-    /** The properties given us by metasoy. */
+    /** The properties given us by our host. */
     protected var _props :Object;
 }
 }
@@ -104,7 +104,7 @@ public class MsoyControl extends EventDispatcher
 import flash.events.Event;
 
 /**
- * A special event we can use to pass info back to metasoy.
+ * A special event we can use to pass info back to whirled.
  */
 class ConnectEvent extends Event
 {

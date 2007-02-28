@@ -45,7 +45,7 @@ import flash.events.TimerEvent;
  * Handles services that are available to all entities in a room.
  * This includes dispatching trigger events and maintaining memory.
  */
-public class EntityControl extends MsoyControl
+public class EntityControl extends WhirledControl
 {
     /**
      */
@@ -60,7 +60,7 @@ public class EntityControl extends MsoyControl
      */
     public function triggerEvent (event :String, arg :Object = null) :void
     {
-        callMsoyCode("triggerEvent_v1", event, arg);
+        callHostCode("triggerEvent_v1", event, arg);
     }
 
     /**
@@ -71,7 +71,7 @@ public class EntityControl extends MsoyControl
      */
     public function lookupMemory (key :String, defval :Object) :Object
     {
-        var value :Object = callMsoyCode("lookupMemory_v1", key);
+        var value :Object = callHostCode("lookupMemory_v1", key);
         return (value == null) ? defval : value;
     }
 
@@ -90,7 +90,7 @@ public class EntityControl extends MsoyControl
      */
     public function requestControl () :void
     {
-        callMsoyCode("requestControl_v1");
+        callHostCode("requestControl_v1");
     }
 
     /**
@@ -120,7 +120,7 @@ public class EntityControl extends MsoyControl
      */
     public function getInstanceId () :int
     {
-        return int(callMsoyCode("getInstanceId_v1"));
+        return int(callHostCode("getInstanceId_v1"));
     }
 
     /**
@@ -133,7 +133,7 @@ public class EntityControl extends MsoyControl
      */
     public function updateMemory (key :String, value :Object) :Boolean
     {
-        return callMsoyCode("updateMemory_v1", key, value);
+        return callHostCode("updateMemory_v1", key, value);
     }
 
     /**
@@ -145,11 +145,11 @@ public class EntityControl extends MsoyControl
      */
     public function setHotSpot (x :Number, y :Number) :void
     {
-        callMsoyCode("setHotSpot_v1", x, y);
+        callHostCode("setHotSpot_v1", x, y);
     } 
 
     /**
-     * Populate any properties that we provide back to metasoy.
+     * Populate any properties that we provide back to whirled.
      */
     override protected function populateProperties (o :Object) :void
     {

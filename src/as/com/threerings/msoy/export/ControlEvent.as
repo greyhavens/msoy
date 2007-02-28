@@ -48,7 +48,7 @@ public class ControlEvent extends Event
     public static const MEMORY_CHANGED :String = "memoryChanged";
 
     /**
-     * Retrieve the event target, which will be the MsoyControl instance that
+     * Retrieve the event target, which will be the WhirledControl instance that
      * dispatched this event.
      */
     override public function get target () :Object

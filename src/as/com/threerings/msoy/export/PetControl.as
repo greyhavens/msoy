@@ -18,7 +18,7 @@ public class PetControl extends ActorControl
         super(disp);
     }
 
-    // from MsoyControl
+    // from WhirledControl
     override protected function populateProperties (o :Object) :void
     {
         super.populateProperties(o);

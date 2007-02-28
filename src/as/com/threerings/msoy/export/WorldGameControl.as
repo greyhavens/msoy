@@ -7,8 +7,8 @@ import com.threerings.util.Name;
 import com.threerings.ezgame.EZGameControl;
 
 /**
- * This file should be included by world games so that they can communicate with the
- * metasoy world.
+ * This file should be included by world games so that they can communicate
+ * with the whirled.
  */
 public class WorldGameControl extends EZGameControl
 {

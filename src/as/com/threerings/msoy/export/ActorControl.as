@@ -68,7 +68,7 @@ public class ActorControl extends EntityControl
      */
     public function setLocation (x :Number, y :Number, z: Number, orient :Number) :void
     {
-        callMsoyCode("setLocation_v1", x, y, z, orient);
+        callHostCode("setLocation_v1", x, y, z, orient);
     }
 
     /**
@@ -77,10 +77,10 @@ public class ActorControl extends EntityControl
      */
     public function setOrientation (orient :Number) :void
     {
-        callMsoyCode("setOrientation_v1", orient);
+        callHostCode("setOrientation_v1", orient);
     }
 
-    // from MsoyControl
+    // from WhirledControl
     override protected function populateProperties (o :Object) :void
     {
         super.populateProperties(o);
