@@ -15,6 +15,7 @@ import mx.containers.VBox;
 import mx.controls.ButtonBar;
 import mx.controls.Label;
 import mx.controls.Alert;
+import mx.controls.Text;
 
 import mx.core.Container;
 import mx.core.ClassFactory;
@@ -156,8 +157,14 @@ public class LobbyPanel extends VBox
         descriptionBox.percentHeight = 100;
         descriptionBox.styleName = "descriptionBox";
         gameBox.addChild(descriptionBox);
-        descriptionBox.addChild(new MediaWrapper(new MediaContainer(
-            "/media/static/game/logo.png")));
+        var logo :VBox = new VBox();
+        logo.styleName = "lobbyLogoBox";
+        logo.width = 160;
+        logo.height = 120;
+        logo.addChild(new MediaWrapper(new MediaContainer(
+            controller.game.thumbMedia.getMediaPath())));
+        logo.setStyle("backgroundImage", "/media/static/game/logo_background.png");
+        descriptionBox.addChild(logo);
         descriptionBox.addChild(new MediaWrapper(new MediaContainer(
             "/media/static/game/info_top.png")));
         var infoBox :HBox = new HBox();
@@ -166,10 +173,12 @@ public class LobbyPanel extends VBox
         infoBox.setStyle("backgroundImage", "/media/static/game/info_tile.png");
         infoBox.setStyle("backgroundSize", "100%");
         descriptionBox.addChild(infoBox);
-        var infoLabel :Label = new Label();
-        infoLabel.percentWidth = 100;
-        infoLabel.percentHeight = 100;
-        infoBox.addChild(infoLabel);
+        var info :Text = new Text();
+        info.styleName = "lobbyInfo";
+        info.percentWidth = 100;
+        info.percentHeight = 100;
+        info.text = controller.game.description;
+        infoBox.addChild(info);
         descriptionBox.addChild(new MediaWrapper(new MediaContainer(
             "/media/static/game/info_bottom.png")));
 

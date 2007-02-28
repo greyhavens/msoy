@@ -360,3 +360,15 @@ ListBase
   color: #b4cbd7;
   textDecoration: underline;
 }
+
+.lobbyLogoBox {
+  verticalAlign: middle;
+  horizontalAlign: center;
+}
+
+.lobbyInfo {
+  fontSize: 12;
+  fontWeight: bold;
+  paddingLeft: 7;
+  paddingRight: 7;
+}
