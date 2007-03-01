@@ -19,7 +19,9 @@ public enum UserAction
     
     CREATED_ITEM(30),
     BOUGHT_ITEM(31),
-    LISTED_ITEM(32);
+    LISTED_ITEM(32),
+    RETURNED_ITEM(33),
+    ;
 
     /**
      * Look up an {@link UserAction} by its numerical representation and return it.

@@ -29,12 +29,14 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
+import com.threerings.presents.data.InvocationCodes;
 
 import static com.threerings.msoy.Log.log;
 
@@ -112,7 +114,8 @@ public class CatalogServlet extends MsoyServiceServlet
             }
 
             // create the clone row in the database!
-            int cloneId = repo.insertClone(ident.itemId, mrec.memberId);
+            int cloneId = repo.insertClone(
+                ident.itemId, mrec.memberId, listing.flowCost, listing.goldCost);
 
             // then dress the loaded item up as a clone
             listing.item.ownerId = mrec.memberId;
@@ -132,10 +135,13 @@ public class CatalogServlet extends MsoyServiceServlet
                     }
                 });
             }
+
             MsoyServer.memberRepo.getFlowRepository().logUserAction(
                 mrec.memberId, UserAction.BOUGHT_ITEM, ident.type + " " + ident.itemId + " " +
                 listing.flowCost + " " + listing.goldCost);
+
             return listing.item.toItem();
+            
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Purchase failed [item=" + ident + "].", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
@@ -199,6 +205,57 @@ public class CatalogServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "List failed [item=" + ident + ", list=" + list + "].", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
+    }
+
+    // from interface CatalogService
+    public int[] returnItem (WebCreds creds, final ItemIdent ident)
+        throws ServiceException
+    {
+        final MemberRecord mrec = requireAuthedUser(creds);
+
+        // locate the appropriate repository
+        ItemRepository<ItemRecord, ?, ?, ?> repo =
+            MsoyServer.itemMan.getRepository(ident.type);
+
+        try {
+            CloneRecord<ItemRecord> cRec = repo.loadCloneRecord(ident.itemId);
+            if (cRec == null) {
+                log.warning("Failed to find clone record [item=" + ident + "]");
+                throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+            }
+
+            long mSec = System.currentTimeMillis() - cRec.purchaseTime.getTime();
+            int daysLeft = 5 - ((int) (mSec / (24 * 3600 * 1000)));
+            if (daysLeft < 1 || cRec.flowPaid == 0) {
+                return new int[] { 0, 0 };
+            }
+
+            final int flowRefund = (cRec.flowPaid * daysLeft) / 5;
+            final int goldRefund = (0 /* TODO */ * daysLeft) / 5;
+
+            String refundDesc = 20*daysLeft + "%";
+            MsoyServer.memberRepo.getFlowRepository().updateFlow(
+                mrec.memberId, flowRefund, UserAction.RETURNED_ITEM + " " + ident.type +
+                " " + ident.itemId + " " + refundDesc, true);
+            MsoyServer.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    MemberObject mObj = MsoyServer.lookupMember(mrec.memberId);
+                    if (mObj != null) {
+                        mObj.setFlow(mObj.flow + flowRefund);
+                    }
+                }
+            });
+
+            MsoyServer.memberRepo.getFlowRepository().logUserAction(
+                mrec.memberId, UserAction.RETURNED_ITEM, ident.type + " " + ident.itemId + " " +
+                refundDesc + " " + flowRefund + " " + goldRefund);
+
+            return new int[] { flowRefund, goldRefund };
+            
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Purchase failed [item=" + ident + "].", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
     }

@@ -180,6 +180,15 @@ public abstract class ItemRepository<
     }
     
     /**
+     * Loads a single clone record by item id.
+     */
+    public CLT loadCloneRecord (int itemId)
+        throws PersistenceException
+    {
+        return load(getCloneClass(), itemId);
+    }
+
+    /**
      * Loads all the raw clone records associated with a given original item id. This is
      * potentially a very large dataset.
      */
@@ -410,7 +419,7 @@ public abstract class ItemRepository<
      * Insert an item clone into the database with the given owner.  This fills itemId with the
      * next available unique ID and ownerId with the supplied value for the new owner.
      */
-    public int insertClone (int itemId, int newOwnerId)
+    public int insertClone (int itemId, int newOwnerId, int flowPaid, int goldPaid)
         throws PersistenceException
     {
         CLT record;
@@ -421,6 +430,9 @@ public abstract class ItemRepository<
         }
         record.originalItemId = itemId;
         record.ownerId = newOwnerId;
+        record.flowPaid = flowPaid;
+        record.goldPaid = goldPaid;
+        record.purchaseTime = new Timestamp(System.currentTimeMillis());
         insert(record);
         return record.itemId;
     }

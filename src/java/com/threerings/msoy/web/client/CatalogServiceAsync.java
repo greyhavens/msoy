@@ -30,6 +30,11 @@ public interface CatalogServiceAsync
     public void listItem (WebCreds creds, ItemIdent item, boolean list, AsyncCallback callback);
 
     /**
+     *  The asynchronous version of {@link CatalogService#returnItem}
+     */
+    public void returnItem (WebCreds creds, ItemIdent item, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link CatalogService#getPopularTags}.
      */
     public void getPopularTags (byte type, int count, AsyncCallback callback);

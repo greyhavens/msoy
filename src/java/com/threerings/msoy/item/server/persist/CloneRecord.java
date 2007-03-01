@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.sql.Timestamp;
+
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
@@ -33,6 +35,27 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
     public static final ColumnExp OWNER_ID_C =
         new ColumnExp(CloneRecord.class, OWNER_ID);
 
+    /** The column identifier for the {@link #purchaseTime} field. */
+    public static final String PURCHASE_TIME = "purchaseTime";
+
+    /** The qualified column identifier for the {@link #purchaseTime} field. */
+    public static final ColumnExp PURCHASE_TIME_C =
+        new ColumnExp(CloneRecord.class, PURCHASE_TIME);
+
+    /** The column identifier for the {@link #flowPaid} field. */
+    public static final String FLOW_PAID = "flowPaid";
+
+    /** The qualified column identifier for the {@link #flowPaid} field. */
+    public static final ColumnExp FLOW_PAID_C =
+        new ColumnExp(CloneRecord.class, FLOW_PAID);
+
+    /** The column identifier for the {@link #goldPaid} field. */
+    public static final String GOLD_PAID = "goldPaid";
+
+    /** The qualified column identifier for the {@link #goldPaid} field. */
+    public static final ColumnExp GOLD_PAID_C =
+        new ColumnExp(CloneRecord.class, GOLD_PAID);
+
     /** The column identifier for the {@link #used} field. */
     public static final String USED = "used";
 
@@ -48,7 +71,7 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
         new ColumnExp(CloneRecord.class, LOCATION);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** This clone's ID, unique relative all items of the same type. */
     @Id
@@ -60,6 +83,16 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
 
     /** The owner of this clone. */
     public int ownerId;
+
+    /** The time at which this clone was purchased from the catalog. */
+    @Column(columnDefinition="purchaseTime DATETIME NOT NULL")
+    public Timestamp purchaseTime;
+    
+    /** The amount of flow that was paid for this item. */
+    public int flowPaid;
+    
+    /** The amount of gold that was paid for this item. */
+    public int goldPaid;
 
     /** How this item is being used (see Item.USED_AS_FURNITURE). */
     public byte used;

@@ -39,6 +39,13 @@ public interface CatalogService extends RemoteService
         throws ServiceException;
 
     /**
+     * Returns a purchased item, potentially for a (potentially partial) refund.
+     * Returns a two-element array containing { flow refunded, gold refunded }.
+     */
+    public int[] returnItem (WebCreds creds, ItemIdent item)
+        throws ServiceException;
+
+    /**
      * Fetches the N most-used tags for a given item type.
      */
     public Map getPopularTags (byte type, int rows)
