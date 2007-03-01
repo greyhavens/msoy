@@ -62,7 +62,7 @@ public class index extends EditemEntryPoint
     {
         boolean header = super.didLogon(creds);
         displayDashboard();
-        return header;
+        return false; // TEMP: no header client as it conflicts with dashboard
     }
 
     // @Override // from MsoyEntryPoint

@@ -7,6 +7,8 @@ import java.awt.BorderLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.samskivert.swing.util.SwingUtil;
+
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.Client;
@@ -48,6 +50,15 @@ public class AdminPanel extends JPanel
             MessageBundle.taint(cause.getMessage());
     }
 
+    protected void clearDisplay ()
+    {
+        if (_config != null) {
+            remove(_config);
+            SwingUtil.refresh(this);
+            _config = null;
+        }
+    }
+
     protected ClientObserver _clobs = new ClientAdapter() {
         public void clientWillLogon (Client client) {
             client.addServiceGroup(AdminCodes.ADMIN_GROUP);
@@ -57,16 +68,14 @@ public class AdminPanel extends JPanel
             setStatus("m.logged_on");
         }
         public void clientDidLogoff (Client client) {
-            if (_config != null) {
-                remove(_config);
-                _config = null;
-            }
+            clearDisplay();
             setStatus("m.logged_off");
         }
         public void clientFailedToLogon (Client client, Exception cause) {
             setStatus(MessageBundle.compose("m.logon_failed", getNetworkError(cause)));
         }
         public void clientConnectionFailed (Client client, Exception cause) {
+            clearDisplay();
             setStatus(MessageBundle.compose("m.logged_off", getNetworkError(cause)));
         }
     };
