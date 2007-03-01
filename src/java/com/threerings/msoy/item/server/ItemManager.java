@@ -26,7 +26,6 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -35,7 +34,6 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.server.ServletWaiter;
 import com.threerings.msoy.world.data.FurniData;
 
 import com.threerings.msoy.item.web.Avatar;
@@ -47,7 +45,6 @@ import com.threerings.msoy.item.data.ItemCodes;
 
 import com.threerings.msoy.item.server.persist.AudioRepository;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
-import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -672,7 +669,6 @@ public class ItemManager
                 ArrayList<TagHistory> list = new ArrayList<TagHistory>();
                 for (Entry<Byte, ItemRepository<ItemRecord, ?, ?, ?>> entry :
                          _repos.entrySet()) {
-                    byte type = entry.getKey();
                     ItemRepository<ItemRecord, ?, ?, ?> repo = entry.getValue();
                     for (TagHistoryRecord record :
                              repo.getTagRepository().getTagHistoryByMember(memberId)) {
