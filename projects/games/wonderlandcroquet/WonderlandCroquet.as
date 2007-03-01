@@ -70,6 +70,17 @@ public class WonderlandCroquet extends Sprite
         
         _status = new WonderlandStatus(_spr, gameCtrl);
         addChild(_status);
+
+        addEventListener(Event.ENTER_FRAME, firstFrameSetup);
+    }
+
+    /**
+     * Sets up a couple of things that need to wait until the universe has somewhat
+     * settled down.
+     */
+    protected function firstFrameSetup (event :Event) :void
+    {
+        removeEventListener(Event.ENTER_FRAME, firstFrameSetup);
         positionStatus();
     }
 
@@ -78,10 +89,8 @@ public class WonderlandCroquet extends Sprite
      */
     protected function positionStatus () :void
     {
-        if (stage != null) {
-            _status.x = stage.stageWidth - 50;
-            _status.y = stage.stageHeight - 75;
-        }
+        _status.x = stage.stageWidth - 50;
+        _status.y = stage.stageHeight - 75;
     }
 
     protected function stageResize (event :Event) :void
@@ -155,22 +164,28 @@ public class WonderlandCroquet extends Sprite
     public function stateChanged (event :StateChangedEvent) :void
     {
         if (event.type == StateChangedEvent.TURN_CHANGED) {
+            var firstTurn :Boolean = false;
+
+            if (_balls == null) {
+                firstTurn = true;
+                _balls = [];
+                _wickets = [];
+            }
+
             if (gameCtrl.isMyTurn()) {
+                if (firstTurn) {
+                    // FIXME: I'm not quite happy with this, but if I just set it, it doesn't appear
+                    // to have taken effect by the time it's my turn and I need to actually add a
+                    // ball
+                    gameCtrl.setImmediate("balls", _balls);
+                    gameCtrl.setImmediate("wickets", _wickets);
+                }
                 startTurn();
             }
         } else if (event.type == StateChangedEvent.GAME_STARTED) {
             gameCtrl.localChat("Wonderland Croquet!");
 
-            _balls = [];
-            _wickets = [];
             myIdx = gameCtrl.seating.getMyPosition();
-            if (myIdx == 0) {
-                // FIXME: I'm not quite happy with this, but if I just set it, it doesn't appear
-                // to have taken effect by the time it's my turn and I need to actually add a
-                // ball
-                gameCtrl.setImmediate("balls", _balls);
-                gameCtrl.setImmediate("wickets", _wickets);
-            }
 
         } else if (event.type == StateChangedEvent.GAME_ENDED) {
             gameCtrl.localChat("Off with your head!");

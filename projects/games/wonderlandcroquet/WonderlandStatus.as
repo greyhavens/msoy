@@ -67,6 +67,10 @@ public class WonderlandStatus extends Sprite
         }
 
         _cards[0].showFace();
+
+        for (ii = 0; ii < gameCtrl.seating.getPlayerIds().length; ii++) {
+            targetWicket(ii, 0);
+        }
     }
 
     /** The sprite that we scroll around as needed. */
