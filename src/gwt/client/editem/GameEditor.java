@@ -32,7 +32,9 @@ public class GameEditor extends ItemEditor
         _game = (Game)item;
         _minPlayers.setText("" + _game.minPlayers);
         _maxPlayers.setText("" + _game.maxPlayers);
-        _gameType.setSelectedIndex(_game.gameType);
+        // seated continuous (second type) is disabled for now
+        //_gameType.setSelectedIndex(_game.gameType);
+        _gameType.setSelectedIndex(_game.gameType == 0 ? 0 : 1);
         _watchable.setChecked(!_game.unwatchable);
         _gamedef.setText(_game.config);
         _tableUploader.setMedia(_game.getTableMedia());
@@ -88,15 +90,20 @@ public class GameEditor extends ItemEditor
             }
         }));
 
+        // seated continuous games are disabled for now.  re-instate the commented code to
+        // re-enable them as an option.
         bits.setText(row, 0, CEditem.emsgs.gameGameType());
         bits.setWidget(row++, 1, bind(_gameType = new ListBox(), new Binder() {
             public void valueChanged () {
-                _game.gameType = (byte) _gameType.getSelectedIndex();
+                //_game.gameType = (byte) _gameType.getSelectedIndex();
+                _game.gameType = (byte) (_gameType.getSelectedIndex() == 0 ? 0 : 2);
             }
         }));
-        for (int ii = 0; ii < Game.GAME_TYPES; ii++) {
+        /*for (int ii = 0; ii < Game.GAME_TYPES; ii++) {
             _gameType.addItem(CEditem.dmsgs.getString("gameType" + ii));
-        }
+        }*/
+        _gameType.addItem(CEditem.dmsgs.getString("gameType0"));
+        _gameType.addItem(CEditem.dmsgs.getString("gameType2"));
 
         bits.setText(row, 0, CEditem.emsgs.gameWatchable());
         _watchable = new CheckBox();
