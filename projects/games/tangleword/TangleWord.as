@@ -3,6 +3,7 @@ package
 
 import flash.display.Sprite;    
 import flash.display.Shape;
+import flash.text.TextField;
 
 import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.HostCoordinator;
@@ -32,19 +33,28 @@ public class TangleWord extends Sprite
         // Initialize game data
         _gameCtrl = new EZGameControl (this);
         _gameCtrl.registerListener (this);
-        _coordinator = new HostCoordinator (_gameCtrl);
-        _coordinator.addEventListener (HostEvent.CHANGED, hostChangedHandler);
-        _rounds = new RoundProvider (_gameCtrl, _coordinator);
-        
-        // Create MVC elements
-        _controller = new Controller (_gameCtrl, null, _rounds); // we'll set the model later...
-        _display = new Display (_controller, _rounds);
-        _model = new Model (_gameCtrl, _coordinator, _rounds, _display);
-        _controller.setModel (_model);                           // ... as in, right here :)
-        addChild (_display);
-
-        // Try initializing the game state
-        maybeStartGame ();
+        if (_gameCtrl.isConnected())
+        {
+            _coordinator = new HostCoordinator (_gameCtrl);
+            _coordinator.addEventListener (HostEvent.CHANGED, hostChangedHandler);
+            _rounds = new RoundProvider (_gameCtrl, _coordinator);
+            
+            // Create MVC elements
+            _controller = new Controller (_gameCtrl, null, _rounds); // we'll set the model later...
+            _display = new Display (_controller, _rounds);
+            _model = new Model (_gameCtrl, _coordinator, _rounds, _display);
+            _controller.setModel (_model);                           // ... as in, right here :)
+            addChild (_display);
+            
+            // Try initializing the game state
+            maybeStartGame ();
+            
+        } else {
+            var label :TextField = new TextField();
+            label.text = "This game can only be played on Whirled.com.";
+            label.width = 600;  // same as swf width
+            addChild(label);
+        }
     }
 
     /**

@@ -128,13 +128,13 @@ public class Display extends Sprite
     /** Adds a "please wait" message */
     public function logPleaseWait () : void
     {
-        _logger.Log ("Please wait for\n the next round.");
+        _logger.Log ("Please wait for the next round.");
     }
 
     /** Adds a "round started" message */
     public function logRoundStarted () : void
     {
-        _logger.Log ("New round!");
+        _logger.Log ("New round started!");
     }
 
     /** Sets scores based on the scoreboard. */
