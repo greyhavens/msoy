@@ -64,38 +64,42 @@ public class UnderwhirledDrift extends Sprite
         colorBackground.graphics.endFill();
         gameSprite.addChild(colorBackground);
 
-        var camera :Camera = new Camera();
-
-        var ground :Ground = new Ground(camera);
-        ground.y = SKY_HEIGHT;
-        gameSprite.addChild(ground);
-
-        _level = LevelFactory.createLevel(0, ground);
-        ground.setLevel(_level);
-
         _gameCtrl = new EZGameControl(this);
-        _gameCtrl.registerListener(this);
-        _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyEventHandler);
-        _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyEventHandler);
 
-        _messageQueue = new MessageQueue(_gameCtrl);
+        if (_gameCtrl.isConnected()) {
+            var camera :Camera = new Camera();
 
-        _coord = new HostCoordinator(_gameCtrl);
+            var ground :Ground = new Ground(camera);
+            ground.y = SKY_HEIGHT;
+            gameSprite.addChild(ground);
 
-        var chooser :KartChooser = new KartChooser(this, gameSprite, camera, ground);
-        chooser.chooseKart();
+            _level = LevelFactory.createLevel(0, ground);
+            ground.setLevel(_level);
 
-        // names above characters is good, but they should fade out after the race 
-        // starts
-        /*
-        var nameText :TextField = new TextField();
-        nameText.text = _gameCtrl.getOccupantName(_gameCtrl.getMyId());
-        nameText.selectable = false;
-        nameText.autoSize = TextFieldAutoSize.CENTER;
-        nameText.scaleX = nameText.scaleY = 2.5;
-        nameText.x = _kart.x - nameText.width / 2;
-        nameText.y = _kart.y - _kart.height - 5;
-        addChild(nameText);*/
+            _gameCtrl.registerListener(this);
+            _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyEventHandler);
+            _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyEventHandler);
+            _messageQueue = new MessageQueue(_gameCtrl);
+    
+            _coord = new HostCoordinator(_gameCtrl);
+
+            var chooser :KartChooser = new KartChooser(this, gameSprite, camera, ground);
+            chooser.chooseKart();
+
+            // names above characters is good, but they should fade out after the race 
+            // starts
+            /*
+            var nameText :TextField = new TextField();
+            nameText.text = _gameCtrl.getOccupantName(_gameCtrl.getMyId());
+            nameText.selectable = false;
+            nameText.autoSize = TextFieldAutoSize.CENTER;
+            nameText.scaleX = nameText.scaleY = 2.5;
+            nameText.x = _kart.x - nameText.width / 2;
+            nameText.y = _kart.y - _kart.height - 5;
+            addChild(nameText);*/
+        } else {
+            // TODO: Display some kind of splash screen.
+        }
     }
 
     // from StateChangedListener
