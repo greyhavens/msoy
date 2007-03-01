@@ -18,6 +18,8 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.LoggingLogProvider;
 import com.samskivert.util.OneLineLogFormatter;
 
+import net.sf.ehcache.CacheManager;
+
 import com.threerings.util.Name;
 
 import com.threerings.presents.data.ClientObject;
@@ -295,6 +297,9 @@ public class MsoyServer extends WhirledServer
         } catch (InterruptedException ie) {
             log.log(Level.WARNING, "Failed to stop http server.", ie);
         }
+
+        // shutdown the ehcache manager
+        CacheManager.getInstance().shutdown();
 
         // close our audit logs
         _glog.close();
