@@ -52,13 +52,6 @@ public class BallParticle extends CircleParticle
                 points[0], points[1]);
 
             if (scored) {
-                //wc.gameCtrl.localChat("Holy score, batman!");
-                /*
-                wc.gameCtrl.localChat("Holy score, batman! (" +
-                    new Point(ball.x, ball.y) + "->" + new Point(px, py) + ", " +
-                    points[0] + "->" + points[1]);
-                */
-
                 wc.passedWicket();
             }
         }

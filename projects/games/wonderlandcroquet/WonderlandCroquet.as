@@ -200,9 +200,7 @@ public class WonderlandCroquet extends Sprite
         var index :int;
         if (name == "balls") {
             index = event.index;
-            gameCtrl.localChat("ball change: " + index);
             if (index != -1 && _balls[index] == null) {
-                gameCtrl.localChat("Inserting ball at " + index);
                 _balls[index] = new BallParticle(event.newValue[0], event.newValue[1],
                     Ball.RADIUS, index, false);
                 _balls[index].wc = this;
@@ -212,13 +210,11 @@ public class WonderlandCroquet extends Sprite
 
                 if (index == myIdx) {
                     _myBall = _balls[index];
-                    gameCtrl.localChat("Was my ball");
                 }
 
             }
 
         } else if (name == "lastHit") {
-            gameCtrl.localChat("lastHit change: " + event.newValue);
             index = event.newValue[0];
             var x :Number = event.newValue[1];
             var y :Number = event.newValue[2];
@@ -233,7 +229,6 @@ public class WonderlandCroquet extends Sprite
             index = event.index;
             var wicket :int = event.newValue as int;
 
-            gameCtrl.localChat("wicket target change: " + index + " -> " + wicket);
             _wickets[index] = wicket;
             _status.targetWicket(index, wicket);
 
@@ -286,7 +281,6 @@ public class WonderlandCroquet extends Sprite
 
             // It's the first time I've gone, so add my ball at the start
 
-            gameCtrl.localChat("Adding my ball: " + myIdx);
             coord = [map.startPoint.x, map.startPoint.y]; 
             gameCtrl.set("balls", coord, myIdx);
 
