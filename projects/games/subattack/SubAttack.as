@@ -45,6 +45,18 @@ public class SubAttack extends Sprite
         addChild(masker); // the mask must be added to the display
 
         _gameCtrl = new EZGameControl(this);
+        if (!_gameCtrl.isConnected()) {
+            // just show a demo-mode display
+            _seaDisplay.setupSea(VIEW_TILES, VIEW_TILES);
+            _seaDisplay.setStatus(
+                "<P align=\"center\"><font size=\"+2\">Truckyard Shootout</font>" +
+                "<br>A fast-action maze-building and shooting game for " +
+                "2-8 players.<br>Must be played inside Whirled.</P>");
+            var sub :Submarine = new Submarine(0, "Player 1", 3, 3, null);
+            _seaDisplay.addChild(sub);
+            return;
+        }
+
         _board = new Board(_gameCtrl, _seaDisplay);
         _myIndex = _gameCtrl.seating.getMyPosition();
 

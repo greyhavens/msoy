@@ -18,6 +18,7 @@ public class SeaDisplay extends Sprite
     {
         // set up a status text area, to be centered in the main view
         _status = new TextField();
+        _status.multiline = true;
         _status.background = true;
         _status.autoSize = TextFieldAutoSize.CENTER;
         _status.selectable = false;
@@ -77,7 +78,7 @@ public class SeaDisplay extends Sprite
      */
     public function setStatus (msg :String) :void
     {
-        _status.text = msg;
+        _status.htmlText = msg;
         _status.x =
             ((SubAttack.VIEW_TILES * TILE_SIZE) - _status.textWidth) / 2;
         _status.y = 
