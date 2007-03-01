@@ -30,8 +30,11 @@ public class AvatarSelectionDialog extends FloatingPanel
     implements AttributeChangeListener
 {
     /** How many avatars per grid row? */
-    public static const ITEMS_PER_ROW :Number = 3;
+    public static const ITEMS_PER_ROW :Number = 5;
 
+    /** How many rows should we have on screen at a time? */
+    public static const MAX_ROWS :Number = 3; 
+    
     public function AvatarSelectionDialog (ctx :WorldContext)
     {
         super(ctx, Msgs.GENERAL.get("t.avatar_select"));
@@ -90,9 +93,15 @@ public class AvatarSelectionDialog extends FloatingPanel
     {
         super.createChildren();
 
+        // Simple label
+        var label :Label = new Label();
+        label.text = Msgs.GENERAL.get("m.avatars_available");
+        addChild(label);
+        
         // Initializes a grid 
         _avatars = new Grid();
-        _avatars.percentWidth = _avatars.percentHeight = 100;
+        _avatars.percentWidth = 100;
+        _avatars.maxHeight = ItemRenderer.ITEM_SIZE * MAX_ROWS;
         addChild(_avatars);
 
         if (inventoryReady()) {

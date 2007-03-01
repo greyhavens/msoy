@@ -26,6 +26,9 @@ import com.threerings.msoy.item.web.Item;
  */
 public class ItemRenderer extends Box
 {
+    /** Media files will be scaled to fit in a square of this size. */
+    public static const ITEM_SIZE :Number = 100;
+    
     public function ItemRenderer (direction :String = BoxDirection.HORIZONTAL)
     {
         this.direction = direction;
@@ -77,8 +80,8 @@ public class ItemRenderer extends Box
     {
         super.createChildren();
 
-        _container = new ScalingMediaContainer(100, 100);
-        var wrapper :MediaWrapper = new MediaWrapper(_container, 100, 100);
+        _container = new ScalingMediaContainer(ITEM_SIZE, ITEM_SIZE);
+        var wrapper :MediaWrapper = new MediaWrapper(_container, ITEM_SIZE, ITEM_SIZE);
         addChild(wrapper);
 
         addChild(_label = new Label());
