@@ -17,6 +17,9 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The MIME type for plain UTF-8 text. */
     public static final byte TEXT_PLAIN = 0;
 
+    /** The MIME type for Flash ActionScript files. */
+    public static final byte TEXT_ACTIONSCRIPT = 1;
+
     /** The MIME type for PNG image data. */
     public static final byte IMAGE_PNG = 10;
 
@@ -161,6 +164,8 @@ public class MediaDesc implements Streamable, IsSerializable
         mimeType = mimeType.toLowerCase();
         if (mimeType.equals("text/plain")) {
             return TEXT_PLAIN;
+        } else if (mimeType.equals("text/x-actionscript")) {
+            return TEXT_ACTIONSCRIPT;
         } else if (mimeType.equals("image/png")) {
             return IMAGE_PNG;
         } else if (mimeType.equals("image/jpeg")) {
@@ -197,6 +202,8 @@ public class MediaDesc implements Streamable, IsSerializable
         filename = filename.toLowerCase();
         if (filename.endsWith(".txt")) {
             return TEXT_PLAIN;
+        } else if (filename.endsWith(".as")) {
+            return TEXT_ACTIONSCRIPT;
         } else if (filename.endsWith(".png")) {
             return IMAGE_PNG;
         } else if (filename.endsWith(".jpg")) {
@@ -232,6 +239,7 @@ public class MediaDesc implements Streamable, IsSerializable
     {
         switch (mimeType) {
         case TEXT_PLAIN: return ".txt";
+        case TEXT_ACTIONSCRIPT: return ".as";
         case IMAGE_PNG: return ".png";
         case IMAGE_JPEG: return ".jpg";
         case IMAGE_GIF: return ".gif";
@@ -255,6 +263,7 @@ public class MediaDesc implements Streamable, IsSerializable
     {
         switch (mimeType) {
         case TEXT_PLAIN: return "text/plain";
+        case TEXT_ACTIONSCRIPT: return "text/x-actionscript";
         case IMAGE_PNG: return "image/png";
         case IMAGE_JPEG: return "image/jpeg";
         case IMAGE_GIF: return "image/gif";
