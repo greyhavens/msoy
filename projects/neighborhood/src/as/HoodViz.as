@@ -368,7 +368,7 @@ public class HoodViz extends Sprite
             var game :NeighborGame = neighbor as NeighborGame;
 
             tipContent = new _plaqueGame();
-            tipContent.addChild(getTextField(group.groupName, -60));
+            tipContent.addChild(getTextField(game.gameName, -60));
 
             // TODO: thumbnail?
         }
