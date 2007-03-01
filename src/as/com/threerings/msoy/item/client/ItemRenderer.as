@@ -2,7 +2,8 @@ package com.threerings.msoy.item.client {
 
 import flash.display.DisplayObjectContainer;
 
-import mx.containers.HBox;
+import mx.containers.Box;
+import mx.containers.BoxDirection;
 
 import mx.controls.Label;
 
@@ -23,11 +24,11 @@ import com.threerings.msoy.item.web.Item;
  * Renders an item in our inventory.
  * The item should be set to the "data" property.
  */
-public class ItemRenderer extends HBox
+public class ItemRenderer extends Box
 {
-    public function ItemRenderer ()
+    public function ItemRenderer (direction :String = BoxDirection.HORIZONTAL)
     {
-        super();
+        this.direction = direction;
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
     }
