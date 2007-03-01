@@ -98,8 +98,14 @@ HOSTNAME=`hostname`
 # cat $LOGFILE | $MSOY_HOME/projects/tools/bin/lfilter | \
 #     grep -v "Invoker unit" | grep ' ! ' | cut -c 25-80 | sort | uniq -c | \
 #     sort -nr | $MAIL -s "$HOSTNAME: $MSOY_HOME error summary" $LOG_EMAIL
-cat $LOGFILE | $MSOY_HOME/projects/tools/bin/lfilter | \
-    $MAIL -s "$HOSTNAME: $MSOY_HOME filtered log" $LOG_EMAIL
+
+# Mail out warnings from the logs
+FILTLOG=/tmp/msoyfiltered.log
+cat $LOGFILE | $MSOY_HOME/projects/tools/bin/lfilter > $FILTLOG
+if [ -s $FILTLOG ]; then
+    cat $FILTLOG | $MAIL -s "$HOSTNAME: $MSOY_HOME filtered log" $LOG_EMAIL
+fi
+rm -f $FILTLOG
 
 # Archive the server log
 NOW=`date "+%F-%H:%M"`
