@@ -105,18 +105,35 @@ public class LobbyPanel extends VBox
     {
         var idx :int = ArrayUtil.indexOf(_formingTables.source, table);
         if (idx >= 0) {
-            _formingTables.setItemAt(table, idx);
-
+            if (table.gameOid != -1 && controller.game.gameType == GameConfig.SEATED_GAME) {
+                _formingTables.removeItemAt(idx);
+                _runningTables.addItem(table);
+            } else {
+                _formingTables.setItemAt(table, idx);
+            }
         } else {
-            log.warning("Never found table to update: " + table);
+            idx = ArrayUtil.indexOf(_runningTables.source, table);
+            if (idx >= 0) {
+                _runningTables.setItemAt(table, idx);
+            } else {
+                log.warning("Never found table to update: " + table);
+            }
         }
     }
 
     // from TableObserver
     public function tableRemoved (tableId :int) :void
     {
-        for (var ii :int = 0; ii < _formingTables.length; ii++) {
-            var table :Table = (_formingTables.getItemAt(ii) as Table);
+        var table :Table;
+        for (var ii :int = 0; ii < _runningTables.length; ii++) {
+            table = (_runningTables.getItemAt(ii) as Table);
+            if (table.tableId == tableId) {
+                _runningTables.removeItemAt(ii);
+                return;
+            }
+        }
+        for (ii = 0; ii < _formingTables.length; ii++) {
+            table = (_formingTables.getItemAt(ii) as Table);
             if (table.tableId == tableId) {
                 _formingTables.removeItemAt(ii);
                 return;
