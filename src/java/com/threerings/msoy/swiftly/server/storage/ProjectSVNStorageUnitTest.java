@@ -84,17 +84,29 @@ public class ProjectSVNStorageUnitTest extends TestCase
         assertTrue("The returned PathElement list is empty", projectTree.size() != 0);
 
         // Simple sanity check of one of the paths, to ensure that it matches the template
-        boolean foundFile = false;
+        boolean foundPNGFile = false;
+        boolean foundASFile = false;
+        
         for (PathElement node : projectTree) {
-            if (node.getName().equals("test.jpg")) {
-                foundFile = true;
+            if (node.getName().equals("test.png")) {
+                foundPNGFile = true;
                 PathElement parent = node.getParent();
                 assertEquals("media", parent.getName());
                 assertEquals(PathElement.Type.ROOT, parent.getParent().getType());
+                assertEquals("image/png", node.getMimeType());
+            }
+            if (node.getName().equals("UnitTest.as")) {
+                foundASFile = true;
+                PathElement parent = node.getParent();
+                assertEquals(PathElement.Type.ROOT, parent.getType());
+                assertEquals("text/x-actionscript", node.getMimeType());
             }
         }
-        assertTrue("The returned pathElement list does not contain the expected test.jpg file",
-            foundFile == true);
+        assertTrue("The returned pathElement list does not contain the expected test.png file",
+            foundPNGFile == true);
+        assertTrue("The returned pathElement list does not contain the expected UnitTest.as file",
+            foundASFile == true);
+
     }
 
 

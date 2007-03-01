@@ -28,7 +28,7 @@ public class PathElement
      */
     public static PathElement createRoot (String name)
     {
-        return new PathElement(Type.ROOT, name, null);
+        return new PathElement(Type.ROOT, name, null, null);
     }
 
     /**
@@ -36,26 +36,27 @@ public class PathElement
      */
     public static PathElement createDirectory (String name, PathElement parent)
     {
-        return new PathElement(Type.DIRECTORY, name, parent);
+        return new PathElement(Type.DIRECTORY, name, parent, null);
     }
 
     /**
      * Creates a file element.
      */
-    public static PathElement createFile (String name, PathElement parent)
+    public static PathElement createFile (String name, PathElement parent, String mimeType)
     {
-        return new PathElement(Type.FILE, name, parent);
+        return new PathElement(Type.FILE, name, parent, mimeType);
     }
 
     public PathElement ()
     {
     }
 
-    public PathElement (Type type, String name, PathElement parent)
+    public PathElement (Type type, String name, PathElement parent, String mimeType)
     {
         _type = type;
         setName(name);
         setParent(parent);
+        setMimeType(mimeType);
     }
 
     public Type getType ()
@@ -66,6 +67,11 @@ public class PathElement
     public String getName ()
     {
         return _name;
+    }
+
+    public String getMimeType ()
+    {
+        return _mimeType;
     }
 
     public PathElement getParent ()
@@ -113,6 +119,11 @@ public class PathElement
         _name = name;
     }
 
+    public void setMimeType (String mimeType)
+    {
+        _mimeType = mimeType;
+    }
+
     public void setParent (PathElement parent)
     {
         _parent = parent;
@@ -142,7 +153,15 @@ public class PathElement
         return getName();
     }
 
+    /** Directory, File, or Root. */
     protected Type _type;
+
+    /** Relative file name. */
     protected String _name;
+
+    /** Mime type, may be null if unknown. */
+    protected String _mimeType;
+
+    /* Enclosing parent PathElement, if any. */
     protected PathElement _parent = null;
 }

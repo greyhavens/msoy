@@ -14,7 +14,7 @@ public class DocumentElement extends PathElement
 
     public DocumentElement (String name, PathElement parent, String text)
     {
-        super(Type.FILE, name, parent);
+        super(Type.FILE, name, parent, null);
         _text = text;
     }
 

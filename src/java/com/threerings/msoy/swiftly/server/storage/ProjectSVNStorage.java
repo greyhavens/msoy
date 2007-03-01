@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.swiftly.server.storage;
 
+import com.threerings.msoy.item.web.MediaDesc;
+
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.data.PathElement;
@@ -10,19 +12,26 @@ import com.threerings.msoy.swiftly.data.PathElement;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
+import org.semanticdesktop.aperture.mime.identifier.MimeTypeIdentifier;
+import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifier;
 
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNNodeKind;
+import org.tmatesoft.svn.core.SVNProperty;
 import org.tmatesoft.svn.core.SVNURL;
 
 import org.tmatesoft.svn.core.io.ISVNEditor;
@@ -158,6 +167,9 @@ public class ProjectSVNStorage
             // while we were running
             throw new ProjectStorageException.ConsistencyError("Could not load template: "
                 + fnfe, fnfe);
+        } catch (IOException ioe) {
+            throw new ProjectStorageException.InternalError("Could not load template, failure reading input file:" +
+                ioe, ioe);
         }
 
         // Validate the commit
@@ -220,8 +232,9 @@ public class ProjectSVNStorage
         }
 
         try {
+            long latestRevision = svnRepo.getLatestRevision();
             PathElement root = PathElement.createRoot(_projectRecord.projectName);
-            List<PathElement> elements = recurseTree(svnRepo, root, null);
+            List<PathElement> elements = recurseTree(svnRepo, root, null, latestRevision);
             
             // Root element must be added by the caller
             elements.add(root);
@@ -249,7 +262,8 @@ public class ProjectSVNStorage
     /** 
      * Recursively retrieves the entire subversion directory structure.
      */
-    private List<PathElement> recurseTree (SVNRepository svnRepo, PathElement parent, List<PathElement> result)
+    private List<PathElement> recurseTree (SVNRepository svnRepo, PathElement parent,
+        List<PathElement> result, long revision)
         throws SVNException, ProjectStorageException
     {
         if (result == null) {
@@ -257,18 +271,29 @@ public class ProjectSVNStorage
         }
 
         @SuppressWarnings("unchecked")
-        Collection<SVNDirEntry> entries = (Collection<SVNDirEntry>) svnRepo.getDir(parent.getAbsolutePath(), -1, null, (Collection)null);
+        Collection<SVNDirEntry> entries = (Collection<SVNDirEntry>) svnRepo.getDir(parent.getAbsolutePath(), revision, null, (Collection)null);
         for (SVNDirEntry entry : entries) {
             PathElement node;
             SVNNodeKind kind;
+            Map<String,String> properties;
+            String mimeType;
             
             kind = entry.getKind();
             if (kind == SVNNodeKind.DIR) {
                 node = PathElement.createDirectory(entry.getName(), parent);
                 // Recurse
-                recurseTree(svnRepo, node, result);
+                recurseTree(svnRepo, node, result, revision);
             } else if (kind == SVNNodeKind.FILE) {
-                node = PathElement.createFile(entry.getName(), parent);
+                // Fetch the file properties
+                properties = new HashMap<String,String>();
+                svnRepo.getFile(parent.getAbsolutePath() + "/" + entry.getName(), revision,
+                    properties, null);
+                
+                // Pull out the mime type
+                mimeType = properties.get(SVNProperty.MIME_TYPE);
+                
+                // Initialize a new PathElement node
+                node = PathElement.createFile(entry.getName(), parent, mimeType);
             } else {
                 throw new ProjectStorageException.InternalError("Received an unhandled subversion node type: " + kind);
             }
@@ -284,8 +309,10 @@ public class ProjectSVNStorage
      * Recursively add a given local directory to a repository edit instance.
      */
     private static void svnAddDirectory (ISVNEditor editor, String parentPath, File sourceDir)
-        throws SVNException, FileNotFoundException
+        throws SVNException, FileNotFoundException, IOException
     {
+        MimeTypeIdentifier identifier = new MagicMimeTypeIdentifier();
+
         for (File file : sourceDir.listFiles()) {
             String fileName = file.getName();
             String subPath = parentPath + "/" + fileName;
@@ -307,10 +334,42 @@ public class ProjectSVNStorage
             } else if (file.isFile()) {
                 SVNDeltaGenerator deltaGenerator = new SVNDeltaGenerator();
                 String checksum;
+                String mimeType = null;
 
+                /* Identify the mime type */
+                FileInputStream stream = new FileInputStream(targetFile);
+                byte[] firstBytes = new byte[identifier.getMinArrayLength()];
+
+                // Read identifying bytes from the to-be-added file
+                stream.read(firstBytes, 0, firstBytes.length);
+
+                // Attempt magic identification
+                mimeType = identifier.identify(firstBytes, targetFile.getName(), null);
+                
+                // If that failed, try our internal path-based type detection
+                if (mimeType == null) {
+                    // Get the miserly byte mime-type
+                    byte miserMimeType = MediaDesc.suffixToMimeType(targetFile.getName());
+                    
+                    // If a valid type was returned, convert to a string
+                    // Otherwise, don't set a mime type
+                    // TODO: binary file detection
+                    if (miserMimeType != -1) {
+                        mimeType = MediaDesc.mimeTypeToString(miserMimeType);
+                    }
+                }
+
+                // Add the file, generating the delta and checksum
                 editor.addFile(subPath, null, -1);
                 editor.applyTextDelta(subPath, null);
                 checksum = deltaGenerator.sendDelta(subPath, new FileInputStream(targetFile), editor, true);
+                
+                // Set the mimetype, if any
+                if (mimeType != null) {
+                    editor.changeFileProperty(subPath, SVNProperty.MIME_TYPE, mimeType);
+                }
+
+                // Ship it
                 editor.closeFile(subPath, checksum);
             }
         }
