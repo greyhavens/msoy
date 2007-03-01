@@ -66,11 +66,30 @@ public class WonderlandCroquet extends Sprite
         addChild(_scroller);
         _scroller.x = _scroller.width / 2 + 5;
         _scroller.y = _scroller.height / 2 + 5;
+
+        
+        _status = new WonderlandStatus(_spr, gameCtrl);
+        addChild(_status);
+        positionStatus();
+    }
+
+    /**
+     * Moves the status display to the bottom right of our current window.
+     */
+    protected function positionStatus () :void
+    {
+        if (stage != null) {
+            _status.x = stage.stageWidth - 50;
+            _status.y = stage.stageHeight - 75;
+
+            gameCtrl.localChat("Positioning: " + _status.x + ", " + _status.y);
+        }
     }
 
     protected function stageResize (event :Event) :void
     {
         gameCtrl.localChat("Resized: " + stage.stageWidth + "x" + stage.stageHeight);
+        positionStatus();
     }
 
     protected function mouseDown (event :MouseEvent) :void
@@ -203,6 +222,7 @@ public class WonderlandCroquet extends Sprite
 
             gameCtrl.localChat("wicket target change: " + index + " -> " + wicket);
             _wickets[index] = wicket;
+            _status.targetWicket(index, wicket);
 
         } else {
             gameCtrl.localChat("unhandled prop change: " + name);
@@ -216,7 +236,15 @@ public class WonderlandCroquet extends Sprite
     {
         _moveAgain = true;
         _wickets[myIdx]++;
-        gameCtrl.set("wickets", _wickets[myIdx], myIdx);
+        if (_wickets[myIdx] >= map.wickets.length) {
+            // That was the last one. Yay.
+            gameCtrl.sendChat("ZOMG! " + gameCtrl.getOccupantName(gameCtrl.getMyId()) + 
+                              " is teh winnar!!");
+            gameCtrl.endGame(gameCtrl.getMyId());
+
+        } else {
+            gameCtrl.set("wickets", _wickets[myIdx], myIdx);
+        }
     }
 
     /**
@@ -263,6 +291,8 @@ public class WonderlandCroquet extends Sprite
     protected var _haveMoved :Boolean;
 
     protected var _scroller :WonderlandScroller;
+
+    protected var _status :WonderlandStatus;
 
     protected var _spr :Sprite;
 

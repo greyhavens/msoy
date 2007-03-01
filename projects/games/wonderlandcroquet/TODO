@@ -7,5 +7,6 @@
 * HUD
 * Better indication of who owns which ball (name over it when stationary?)
 * Fix drag behavior when mouse leaves window; look at chat's scrollbar to see
-  how it does it
+  how it does it - appears it has to do with hooking into the systemManager to
+  listen for events as well. See also: mx.controls.Button
 * End game indication (right now we NPE looking for the next wicket)
