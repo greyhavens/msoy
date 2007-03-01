@@ -99,6 +99,9 @@ public class MsoyController extends Controller
     /** Command to edit preferences. */
     public static const EDIT_PREFS :String = "EditPrefs";
 
+    /** Command to select a different avatar. */
+    public static const PICK_AVATAR :String = "PickAvatar";
+    
     /** Command to purchase a room. */
     public static const PURCHASE_ROOM :String = "PurchaseRoom";
 
@@ -438,6 +441,14 @@ public class MsoyController extends Controller
     public function handleEditPrefs () :void
     {
         new PrefsDialog(_ctx);
+    }
+
+    /**
+     * Handles PICK_AVATAR.
+     */
+    public function handlePickAvatar () :void
+    {
+        new AvatarSelectionDialog(_ctx);
     }
 
     /**

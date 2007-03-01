@@ -105,7 +105,7 @@ public class ControlBar extends HBox
             addChild(volBtn);
             
             var prefsBtn :CommandButton = new CommandButton();
-            prefsBtn.setCommand(MsoyController.EDIT_PREFS);
+            prefsBtn.setCommand(MsoyController.PICK_AVATAR);
             prefsBtn.styleName = "controlBarButtonAvatar";
             addChild(prefsBtn);
 
