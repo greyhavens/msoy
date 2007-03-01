@@ -36,20 +36,20 @@ public class VolumePopup extends Canvas
     {
         owner = DisplayObjectContainer (Application.application);
 
-        // styleName = "volumeControl";
+        styleName = "volumeControl";
 
         // Initialize the window
         var r : Rectangle = trigger.getBounds(trigger.stage);
-        width = 50;
+        width = 29;
         height = 100;
-        x = trigger.x - 15;
+        x = trigger.x - 1;
         y = r.y - height;
         verticalScrollPolicy = horizontalScrollPolicy = ScrollPolicy.OFF;
         
         // Initialize slider
         _slider = new VSlider ();
-        _slider.x = 16;
-        _slider.y = 20;
+        _slider.x = 4;
+        _slider.y = 10;
         _slider.height = 80;
         _slider.minimum = 0;
         _slider.maximum = 1;

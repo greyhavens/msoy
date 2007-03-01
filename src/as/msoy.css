@@ -1,5 +1,5 @@
 .chatInput {
-    themeColor: #FF00A0;
+    themeColor: #54a9da;
 }
 
 .chatTargetButton
@@ -116,7 +116,6 @@ NumericStepper {
   fillColors: #dadfe3, #9eabb2, #dadfe3, #9eabb2;
   themeColor: #ff0099;
 }
-
 
 ComboBox {
   highlightAlphas: 0.26, 0;
@@ -275,6 +274,11 @@ ButtonBar {
           scaleGridTop="1", scaleGridBottom="23",
           scaleGridLeft="1", scaleGridRight="31");
   backgroundSize: "100%";
+  dropShadowEnabled: "true";
+}
+
+.avatarCellSelected { 
+  backgroundColor: #54a9da;
 }
 
 VScrollBar {
