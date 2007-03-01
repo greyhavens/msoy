@@ -132,7 +132,9 @@ public /*abstract*/ class BaseClient extends Client
             }
         }
 
-        log.info("Client logged on [built=" + DeploymentConfig.buildTime + "].");
+        log.info("Client logged on [built=" + DeploymentConfig.buildTime +
+                 ", mediaURL=" + DeploymentConfig.mediaURL +
+                 ", staticMediaURL=" + DeploymentConfig.staticMediaURL + "].");
     }
 
     // from Client
