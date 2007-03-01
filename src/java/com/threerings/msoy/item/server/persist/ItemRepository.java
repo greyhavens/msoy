@@ -606,6 +606,7 @@ public abstract class ItemRepository<
         int flowForGoldFactor = 600;
         record.goldCost = (int) Math.round(listPrice / (2 * flowForGoldFactor));
         record.flowCost = (int) (listPrice - record.goldCost * flowForGoldFactor);
+        record.repriceCounter = 0;
     }
 
     /**
