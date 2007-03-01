@@ -13,9 +13,9 @@ import java.io.StringReader;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
+import javax.swing.JEditorPane;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 
 import javax.swing.event.DocumentEvent;
@@ -32,7 +32,11 @@ import com.threerings.msoy.swiftly.data.DocumentElement;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
-public class SwiftlyTextPane extends JTextPane
+import sdoc.SyntaxDocument;
+import sdoc.SyntaxEditorKit;
+import sdoc.SyntaxSupport;
+
+public class SwiftlyTextPane extends JEditorPane
 {
     public SwiftlyTextPane (SwiftlyContext ctx, SwiftlyEditor editor, DocumentElement document)
     {
@@ -40,7 +44,7 @@ public class SwiftlyTextPane extends JTextPane
         _editor = editor;
         _document = document;
 
-        _kit = new ActionScriptEditorKit();
+        _kit = new SyntaxEditorKit();
         setEditorKit(_kit);
 
         // setContentType("text/actionscript");
@@ -58,12 +62,17 @@ public class SwiftlyTextPane extends JTextPane
         setForeground(Color.black);
         setBackground(Color.white);
 
+        // TODO pick the lexer based on the mime type
+        SyntaxSupport support = SyntaxSupport.getInstance();
+        support.addSupport(SyntaxSupport.JAVA_LEXER, this);
+        getDocument().putProperty(SyntaxDocument.tabSizeAttribute, new Integer(2));
+
         setDocumentElement(document);
     }
 
     public void setDocumentElement (DocumentElement document)
     {
-        ActionScriptStyledDocument styledDoc = new ActionScriptStyledDocument();
+        SyntaxDocument styledDoc = (SyntaxDocument) getDocument();
         styledDoc.addUndoableEditListener(new UndoHandler());
         styledDoc.addDocumentListener(new DocumentElementListener());
 
@@ -355,7 +364,7 @@ public class SwiftlyTextPane extends JTextPane
     protected SwiftlyEditor _editor;
     protected DocumentElement _document;
 
-    protected ActionScriptEditorKit _kit;
+    protected SyntaxEditorKit _kit;
     protected JPopupMenu _popup;
     protected UndoManager _undo = new UndoManager();
     protected UndoableEditListener _undoHandler = new UndoHandler();

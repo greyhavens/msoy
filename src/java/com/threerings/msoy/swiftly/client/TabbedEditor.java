@@ -18,6 +18,8 @@ import com.threerings.msoy.swiftly.data.DocumentElement;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
+import sdoc.Gutter;
+
 public class TabbedEditor extends JTabbedPane
 {
     public TabbedEditor (SwiftlyContext ctx, SwiftlyEditor editor)
@@ -43,6 +45,8 @@ public class TabbedEditor extends JTabbedPane
         SwiftlyTextPane textPane = new SwiftlyTextPane(_ctx, _editor, document);
         JScrollPane scroller = new JScrollPane(textPane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
             JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        // add line numbers
+        scroller.setRowHeaderView(new Gutter(textPane, scroller));
 
         // add the tab
         add(scroller);

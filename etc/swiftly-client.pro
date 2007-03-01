@@ -19,6 +19,7 @@
     !**/*UnitTest.class,rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
     **/msoy/web/data/**,**/msoy/world/data/WorldMemberInfo.class,**/msoy/item/web/**,
     **/msoy/swiftly/data/**,**/msoy/swiftly/client/**,**/msoy/swiftly/util/**)
+-injars ../dist/lib/sdoc-0.5.0-beta.jar(!META-INF/*)
 
 -dontskipnonpubliclibraryclasses
 -dontobfuscate
