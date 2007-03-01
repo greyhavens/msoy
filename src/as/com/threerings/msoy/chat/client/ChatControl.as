@@ -55,6 +55,7 @@ public class ChatControl extends HBox
         addChild(_txt = new TextInput());
         _txt.styleName = "chatInput";
         _txt.height = height;
+        _txt.width = 200;
         
         var but :Button = new Button();
         but.label = Msgs.GENERAL.get("b.send");
