@@ -56,9 +56,9 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewDeleteAll();
 
   /**
-   * Translated "MetaSOY Dashboard".
+   * Translated "Admin Dashboard".
    * 
-   * @return translated "MetaSOY Dashboard"
+   * @return translated "Admin Dashboard"
    * @gwt.key title
    */
   String title();
