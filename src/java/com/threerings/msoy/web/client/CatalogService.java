@@ -39,7 +39,7 @@ public interface CatalogService extends RemoteService
         throws ServiceException;
 
     /**
-     * Returns a purchased item, potentially for a (potentially partial) refund.
+     * Executes an item return, potentially for a (potentially partial) refund.
      * Returns a two-element array containing { flow refunded, gold refunded }.
      */
     public int[] returnItem (WebCreds creds, ItemIdent item)
