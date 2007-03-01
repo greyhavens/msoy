@@ -956,7 +956,7 @@ public class ChatOverlay
     {
         _historyBar.height = _subtitleHeight;
         _historyBar.move(
-            _target.width - ScrollBar.THICKNESS, //_historyBar.width;
+            _target.width - ScrollBar.THICKNESS + 1, //_historyBar.width;
             _target.height - _subtitleHeight);
     }
 

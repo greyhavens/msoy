@@ -1,15 +1,3 @@
-.chatInput {
-    themeColor: #54a9da;
-}
-
-.chatTargetButton
-{
-    borderColor: #000000;
-    fontWeight: "bold";
-    fillAlphas: 1, 1;
-    fillColors: #E6EEEE, #FFFFFF;
-}
-
 Application {
   backgroundSize: "100%";
   backgroundColor: #b98c3b;
@@ -198,6 +186,13 @@ ButtonBar {
   buttonStyleName: "msoyButtonBar";
 }
 
+.placeBox {
+  borderStyle: "solid";
+  borderThickness: 4;
+  borderColor: #ffffff;
+  borderSides: "top bottom";
+}
+
 .msoyButtonBar {
   fillAlphas: 1, 1, 1, 1;
   fillColors: #d5dcdf, #9ba8b0, #9ba8b0, #d5dcdf;
@@ -207,8 +202,11 @@ ButtonBar {
   horizontalGap: 0;
   verticalGap: 0;
   borderStyle: "none";
-  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
-  backgroundSize: "100%";
+  backgroundColor: #ffffff;
+  paddingBottom: 0;
+  paddingTop: 0;
+  paddingLeft: 0;
+  paddingRight: 0;
 }
 
 .controlBarText { 
@@ -251,6 +249,12 @@ ButtonBar {
   disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/location_bookend.png");
 }
 
+.controlBarSpacer { 
+  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
+  backgroundSize: "100%";
+  borderStyle: "none";
+}
+
 .controlBarLocationText {
   backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/location_tile.png");
   backgroundSize: "100%";
@@ -279,6 +283,22 @@ ButtonBar {
 
 .avatarCellSelected { 
   backgroundColor: #54a9da;
+}
+
+.chatInput {
+    themeColor: #54a9da;
+}
+
+.chatTargetButton {
+    borderColor: #000000;
+    fontWeight: "bold";
+    fillAlphas: 1, 1;
+    fillColors: #E6EEEE, #FFFFFF;
+}
+
+.chatControl {  
+  paddingLeft: 4;
+  paddingRight: 6;
 }
 
 VScrollBar {

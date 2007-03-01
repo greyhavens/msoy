@@ -49,7 +49,8 @@ public class ChatControl extends HBox
         _ctx = ctx;
 
         this.height = height;
-
+        styleName = "chatControl";
+        
         _locObs = new LocationAdapter(null, locationDidChange);
 
         addChild(_txt = new TextInput());

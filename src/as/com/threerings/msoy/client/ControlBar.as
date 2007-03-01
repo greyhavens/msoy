@@ -37,7 +37,6 @@ public class ControlBar extends HBox
 {
     /** The height of the control bar. This is fixed. */
     private static const HEIGHT :int = 24;
-    private static const WIDTH :int = 800;
 
     public function ControlBar (ctx :WorldContext, top :TopPanel)
     {
@@ -48,7 +47,7 @@ public class ControlBar extends HBox
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
         height = HEIGHT;
-        width = WIDTH;
+        percentWidth = 100;
 
         var fn :Function = function (event :ClientEvent) :void {
             checkControls();
@@ -90,10 +89,6 @@ public class ControlBar extends HBox
             var chatControl :ChatControl = new ChatControl(_ctx, this.height - 4);
             addChild(chatControl);
 
-            var sp :Spacer = new Spacer();
-            sp.width = 20;
-            addChild(sp);
-            
             var chatBtn :CommandButton = new CommandButton();
             chatBtn.setCommand(MsoyController.CHAT_PREFS);
             chatBtn.styleName = "controlBarButtonChat";
@@ -118,10 +113,6 @@ public class ControlBar extends HBox
             var logonPanel :LogonPanel = new LogonPanel(_ctx, this.height - 4);
             addChild(logonPanel);
 
-            sp = new Spacer();
-            sp.width = 20;
-            addChild(sp);
-
             volBtn = new CommandButton();
             volBtn.setCommand(ControlBarController.POP_VOLUME, volBtn);
             volBtn.styleName = "controlBarButtonVolume";
@@ -134,7 +125,7 @@ public class ControlBar extends HBox
         addChild (footerLeft);
 
         var blank :SkinnableCanvas = new SkinnableCanvas();
-        blank.styleName = "controlBar";
+        blank.styleName = "controlBarSpacer";
         blank.height = this.height;
         blank.percentWidth = 100;
         addChild(blank);

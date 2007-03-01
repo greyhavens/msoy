@@ -44,6 +44,7 @@ public class TopPanel extends Canvas
         _placeBox = new Canvas();
         _placeBox.autoLayout = false;
         _placeBox.includeInLayout = false;
+        _placeBox.styleName = "placeBox";
         addChild(_placeBox);
 
         // set up a mask on the placebox
