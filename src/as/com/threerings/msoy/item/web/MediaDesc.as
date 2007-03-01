@@ -23,6 +23,9 @@ public class MediaDesc
     /** The MIME type for plain UTF-8 text. */
     public static const TEXT_PLAIN :int = 0;
 
+    /** The MIME type for Flash ActionScript files. */
+    public static const TEXT_ACTIONSCRIPT :int = 1;
+
     /** The MIME type for PNG image data. */
     public static const IMAGE_PNG :int = 10;
 
@@ -94,6 +97,8 @@ public class MediaDesc
         mimeType = mimeType.toLowerCase();
         if (mimeType == "text/plain") {
             return TEXT_PLAIN;
+        } else if (mimeType == "text/x-actionscript") {
+            return TEXT_ACTIONSCRIPT;
         } else if (mimeType == "image/png") {
             return IMAGE_PNG;
         } else if (mimeType == "image/jpeg") {
@@ -130,6 +135,8 @@ public class MediaDesc
         filename = filename.toLowerCase();
         if (StringUtil.endsWith(filename, ".txt")) {
             return TEXT_PLAIN;
+        } else if (StringUtil.endsWith(filename, ".as")) {
+            return TEXT_ACTIONSCRIPT;
         } else if (StringUtil.endsWith(filename, ".png")) {
             return IMAGE_PNG;
         } else if (StringUtil.endsWith(filename, ".jpg")) {
@@ -165,6 +172,7 @@ public class MediaDesc
     {
         switch (mimeType) {
         case TEXT_PLAIN: return ".txt";
+        case TEXT_ACTIONSCRIPT: return ".as";
         case IMAGE_PNG: return ".png";
         case IMAGE_JPEG: return ".jpg";
         case IMAGE_GIF: return ".gif";
