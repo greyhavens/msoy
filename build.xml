@@ -64,6 +64,29 @@
     <file name="${extlib.dir}/ehcache-1.2.jar"/>
     <file name="lib/json.jar"/>
     <file name="lib/jswiff-8.0-beta-2-threerings.jar"/>
+    
+    <!-- The following are used for aperture -->
+    <file name="lib/aperture/aperture-2006.1-alpha-3.jar"/>
+    <file name="lib/aperture/aperture-test-2006.1-alpha-3.jar"/>
+    <file name="lib/aperture/applewrapper-0.1.jar"/>
+    <file name="lib/aperture/bcmail-jdk14-132.jar"/>
+    <file name="lib/aperture/bcprov-jdk14-132.jar"/>
+    <file name="lib/aperture/demork-2.0.jar"/>
+    <file name="lib/aperture/fontbox-0.1.0-dev.jar"/>
+    <file name="lib/aperture/htmlparser-1.6.jar"/>
+    <file name="lib/aperture/ical4j-cvs20061019.jar"/>
+    <file name="lib/aperture/jacob-1.10-pre4.jar"/>
+    <file name="lib/aperture/openrdf-model-2.0-alpha-3.jar"/>
+    <file name="lib/aperture/openrdf-util-2.0-alpha-3.jar"/>
+    <file name="lib/aperture/openrdf-util-crazy-debug.jar"/>
+    <file name="lib/aperture/openrdf-util-fixed-locking.jar"/>
+    <file name="lib/aperture/pdfbox-0.7.3.jar"/>
+    <file name="lib/aperture/poi-3.0-alpha2-20060616.jar"/>
+    <file name="lib/aperture/poi-contrib-3.0-alpha2-20060616.jar"/>
+    <file name="lib/aperture/poi-scratchpad-3.0-alpha2-20060616.jar"/>
+    <file name="lib/aperture/rio-2.0-alpha-3.jar"/>
+    <file name="lib/aperture/sesame-2.0-alpha-3.jar"/>
+    <file name="lib/aperture/winlaf-0.5.1.jar"/>
   </filelist>
 
   <!-- declare our classpath -->
