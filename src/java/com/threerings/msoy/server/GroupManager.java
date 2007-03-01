@@ -23,7 +23,6 @@ import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.GroupRepository;
-import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import static com.threerings.msoy.Log.log;
@@ -54,7 +53,6 @@ public class GroupManager
                 gRec.name = groupDef.name;
                 gRec.blurb = groupDef.blurb;
                 gRec.creatorId = groupDef.creatorId;
-                gRec.creationDate = new Timestamp(groupDef.creationDate.getTime());
                 gRec.policy = groupDef.policy;
                 if (groupDef.logo != null) {
                     gRec.logoMimeType = groupDef.logo.mimeType;

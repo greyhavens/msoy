@@ -8,9 +8,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import java.sql.Date;
+
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
 import com.samskivert.jdbc.depot.DepotRepository;
@@ -49,6 +52,12 @@ public class GroupRepository extends DepotRepository
     public GroupRepository (ConnectionProvider conprov)
     {
         super(conprov);
+
+        // TEMP
+        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Retype(14, "creationDate"));
+        // END TEMP
+
+
         _tagRepo = new TagRepository(_ctx) {
             protected TagRecord createTagRecord () {
                 return new GroupTagRecord();
@@ -136,6 +145,7 @@ public class GroupRepository extends DepotRepository
             throw new PersistenceException(
                 "Group record must have a null id for creation " + record);
         }
+        record.creationDate = new Date(System.currentTimeMillis());
         insert(record);
 
         int sceneId = MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_GROUP, 

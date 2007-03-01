@@ -9,8 +9,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Collection;
 
+import java.util.logging.Level;
+
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.RepositoryListenerUnit;
 
 import com.threerings.msoy.server.MsoyServer;
 
@@ -46,17 +47,16 @@ public class GroupServlet extends MsoyServiceServlet
     public List<Group> getGroupsList (WebCreds creds)
         throws ServiceException
     {
-        final ServletWaiter<List<Group>> waiter = new ServletWaiter<List<Group>>("getGroupsList[]");
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<Group>>(waiter) {
-            public List<Group> invokePersistResult () throws PersistenceException {
-                List<Group> groups = new ArrayList<Group>();
-                for (GroupRecord gRec : MsoyServer.groupRepo.getGroupsList()) {
-                    groups.add(gRec.toGroupObject());
-                }
-                return groups;
+        try {
+            List<Group> groups = new ArrayList<Group>();
+            for (GroupRecord gRec : MsoyServer.groupRepo.getGroupsList()) {
+                groups.add(gRec.toGroupObject());
             }
-        });
-        return waiter.waitForResult();
+            return groups;
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getGroupsList failed", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     /**
@@ -64,46 +64,43 @@ public class GroupServlet extends MsoyServiceServlet
      * does not distinguish between a nonexistent group and a group without members;
      * both situations yield empty collections.
      */
-    public GroupDetail getGroupDetail (WebCreds creds, final int groupId)
+    public GroupDetail getGroupDetail (WebCreds creds, int groupId)
         throws ServiceException
     {
-        // TODO: validate creds
-        final ServletWaiter<GroupDetail> waiter =
-            new ServletWaiter<GroupDetail>("getGroupDetail[" + groupId + "]");
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<GroupDetail>(waiter) {
-            public GroupDetail invokePersistResult () throws Exception {
-                // load the group record
-                GroupRecord gRec = MsoyServer.groupRepo.loadGroup(groupId);
-                if (gRec == null) {
-                    return null;
-                }
-                // load the creator's member record
-                MemberRecord mRec = MsoyServer.memberRepo.loadMember(gRec.creatorId);
-                if (mRec == null) {
-                    log.warning("Couldn't load group creator [groupId=" + groupId +
-                        ", creatorId=" + gRec.creatorId + "]");
-                    throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
-                }
-                // set up the detail
-                GroupDetail detail = new GroupDetail();
-                detail.creator = mRec.getName();
-                detail.group = gRec.toGroupObject();
-                detail.extras = gRec.toExtrasObject();
-                ArrayList<GroupMembership> members = new ArrayList<GroupMembership>();
-                detail.members = members;
-                for (GroupMembershipRecord gmRec : MsoyServer.groupRepo.getMembers(groupId)) {
-                    mRec = MsoyServer.memberRepo.loadMember(gmRec.memberId);
-                    GroupMembership membership = new GroupMembership();
-                    // membership.group left null intentionally 
-                    membership.member = mRec.getName();
-                    membership.rank = gmRec.rank;
-                    membership.rankAssignedDate = gmRec.rankAssigned.getTime();
-                    members.add(membership);
-                }
-                return detail;
+        try {
+            // load the group record
+            GroupRecord gRec = MsoyServer.groupRepo.loadGroup(groupId);
+            if (gRec == null) {
+                return null;
             }
-        });
-        return waiter.waitForResult();
+            // load the creator's member record
+            MemberRecord mRec = MsoyServer.memberRepo.loadMember(gRec.creatorId);
+            if (mRec == null) {
+                log.warning("Couldn't load group creator [groupId=" + groupId +
+                    ", creatorId=" + gRec.creatorId + "]");
+                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            }
+            // set up the detail
+            GroupDetail detail = new GroupDetail();
+            detail.creator = mRec.getName();
+            detail.group = gRec.toGroupObject();
+            detail.extras = gRec.toExtrasObject();
+            ArrayList<GroupMembership> members = new ArrayList<GroupMembership>();
+            detail.members = members;
+            for (GroupMembershipRecord gmRec : MsoyServer.groupRepo.getMembers(groupId)) {
+                mRec = MsoyServer.memberRepo.loadMember(gmRec.memberId);
+                GroupMembership membership = new GroupMembership();
+                // membership.group left null intentionally 
+                membership.member = mRec.getName();
+                membership.rank = gmRec.rank;
+                membership.rankAssignedDate = gmRec.rankAssigned.getTime();
+                members.add(membership);
+            }
+            return detail;
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getGroupDetail failed [groupId=" + groupId + "]", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from GroupService
@@ -121,39 +118,35 @@ public class GroupServlet extends MsoyServiceServlet
     }
     
     // from interface GroupService
-    public List<Group> searchGroups (WebCreds creds, final String searchString) 
+    public List<Group> searchGroups (WebCreds creds, String searchString) 
         throws ServiceException
     {
-        final ServletWaiter<List<Group>> waiter = new ServletWaiter<List<Group>>("searchGroups[" +
-            searchString + "]");
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<Group>>(waiter) {
-            public List<Group> invokePersistResult () throws PersistenceException { 
-                List<Group> groups = new ArrayList<Group>();
-                for (GroupRecord gRec : MsoyServer.groupRepo.searchGroups(searchString)) {
-                    groups.add(gRec.toGroupObject());
-                }
-                return groups;
+        try {
+            List<Group> groups = new ArrayList<Group>();
+            for (GroupRecord gRec : MsoyServer.groupRepo.searchGroups(searchString)) {
+                groups.add(gRec.toGroupObject());
             }
-        });
-        return waiter.waitForResult();
+            return groups;
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "searchGroups failed [searchString=" + searchString + "]", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from interface GroupService
-    public List<Group> searchForTag (WebCreds creds, final String tag)
+    public List<Group> searchForTag (WebCreds creds, String tag)
         throws ServiceException
     {
-        final ServletWaiter<List<Group>> waiter = new ServletWaiter<List<Group>>("searchForTag[" +
-            tag + "]");
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<Group>>(waiter) {
-            public List<Group> invokePersistResult () throws PersistenceException {
-                List<Group> groups = new ArrayList<Group>();
-                for (GroupRecord gRec : MsoyServer.groupRepo.searchForTag(tag)) {
-                    groups.add(gRec.toGroupObject());
-                }
-                return groups;
+        try {
+            List<Group> groups = new ArrayList<Group>();
+            for (GroupRecord gRec : MsoyServer.groupRepo.searchForTag(tag)) {
+                groups.add(gRec.toGroupObject());
             }
-        });
-        return waiter.waitForResult();
+            return groups;
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "searchForTag failed [tag=" + tag + "]", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from interface GroupService
@@ -175,14 +168,15 @@ public class GroupServlet extends MsoyServiceServlet
     public Group createGroup (WebCreds creds, final Group group, final GroupExtras extras) 
         throws ServiceException
     {
-        // TODO: validate creds
+        // we'll need the MemberRec for charging for this in the future
+        MemberRecord memrec = requireAuthedUser(creds);
 
         if(!isValidName(group.name)) {
+            log.log(Level.WARNING, "invalid group name: " + group.name);
             throw new ServiceException("m.invalid_group_name");
         }
 
         final ServletWaiter<Group> waiter = new ServletWaiter<Group>("createGroup[" + group + "]");
-        group.creationDate = new Date(System.currentTimeMillis());
         group.creatorId = creds.getMemberId();
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
@@ -193,38 +187,46 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public void updateGroup (WebCreds creds, final Group group, final GroupExtras extras) 
+    public void updateGroup (WebCreds creds, Group group, GroupExtras extras) 
         throws ServiceException
     {
-        // TODO: validate creds
+        MemberRecord memrec = requireAuthedUser(creds);
         
         if(!isValidName(group.name)) {
+            log.log(Level.WARNING, "in updateGroup, invalid group name: " + group.name);
             throw new ServiceException("m.invalid_group_name");
         }
 
-        final ServletWaiter<Void> waiter = new ServletWaiter<Void>("updateGroup[" + group + "]");
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(waiter) {
-            public Void invokePersistResult () throws PersistenceException {
-                GroupRecord gRec = MsoyServer.groupRepo.loadGroup(group.groupId);
-                if (gRec == null) {
-                    throw new PersistenceException("Group not found! [id=" + group.groupId + 
-                        "]");
-                }
-                Map<String, Object> updates = gRec.findUpdates(group, extras);
-                if (updates.size() > 0) {
-                    MsoyServer.groupRepo.updateGroup(group.groupId, updates);
-                }
-                return null;
+        try {
+            GroupMembershipRecord gmrec = MsoyServer.groupRepo.getMembership(group.groupId, 
+                memrec.memberId);
+            if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
+                log.log(Level.WARNING, "in updateGroup, invalid permissions");
+                throw new ServiceException("m.invalid_permissions");
             }
-        });        
-        waiter.waitForResult();
+
+            GroupRecord gRec = MsoyServer.groupRepo.loadGroup(group.groupId);
+            if (gRec == null) {
+                throw new PersistenceException("Group not found! [id=" + group.groupId + 
+                    "]");
+            }
+            Map<String, Object> updates = gRec.findUpdates(group, extras);
+            if (updates.size() > 0) {
+                MsoyServer.groupRepo.updateGroup(group.groupId, updates);
+            }
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "updateGroup failed [group=" + group + ", extras=" + 
+                extras + "]", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from interface GroupService
     public void leaveGroup (WebCreds creds, final int groupId, final int memberId)
         throws ServiceException
     {
-        // TODO: validate creds
+        requireAuthedUser(creds);
+
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
             "leaveGroup[" + groupId + ", " + memberId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
@@ -239,7 +241,8 @@ public class GroupServlet extends MsoyServiceServlet
     public void joinGroup (WebCreds creds, final int groupId, final int memberId)
         throws ServiceException
     {
-        // TODO: validate creds
+        requireAuthedUser(creds);
+
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
             "joinGroup[" + groupId + ", " + memberId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
@@ -252,121 +255,128 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public void updateMemberRank (WebCreds creds, final int groupId, final int memberId,
-                                  final byte newRank) 
+    public void updateMemberRank (WebCreds creds, int groupId, int memberId, byte newRank) 
         throws ServiceException
     {
-        // TODO: validate creds
-        final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
-            "updateMemberRank[" + groupId + ", " + memberId + "]");
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(waiter) {
-            public Void invokePersistResult() throws PersistenceException {
-                MsoyServer.groupRepo.setRank(groupId, memberId, newRank);
-                return null;
+        MemberRecord memrec = requireAuthedUser(creds);
+
+        try {
+            GroupMembershipRecord gmrec = MsoyServer.groupRepo.getMembership(groupId, 
+                memrec.memberId);
+            if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
+                log.log(Level.WARNING, "in updateMemberRank, invalid permissions");
+                throw new ServiceException("m.invalid_permissions");
             }
-        });
-        waiter.waitForResult();
+
+            MsoyServer.groupRepo.setRank(groupId, memberId, newRank);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "updateMemberRank failed [groupId=" + groupId + ", memberId=" +
+                memberId + ", newRank=" + newRank + "]", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from interface GroupService
-    public TagHistory tagGroup (WebCreds creds, final int groupId, final String tag, 
-        final boolean set) throws ServiceException
+    public TagHistory tagGroup (WebCreds creds, int groupId, String tag, boolean set) 
+        throws ServiceException
     {
-        final String tagName = tag.trim().toLowerCase();
+        String tagName = tag.trim().toLowerCase();
         if (!TagNameRecord.VALID_TAG.matcher(tagName).matches()) {
+            log.log(Level.WARNING, "in tagGroup, invalid tag: " + tagName);
             throw new ServiceException("Invalid tag [tag=" + tagName + "]");
         }
-        final int memberId = creds.getMemberId();
 
-        final ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>(
-            "tagGroup[" + groupId + ", " + tag + ", " + set + "]");
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<TagHistory>(waiter) {
-            public TagHistory invokePersistResult() throws PersistenceException {
-                long now = System.currentTimeMillis();
-                
-                TagRepository tagRepo = MsoyServer.groupRepo.getTagRepository();
-                TagNameRecord tag = tagRepo.getTag(tagName);
+        MemberRecord memrec = requireAuthedUser(creds);
 
-                TagHistoryRecord historyRecord = set ?
-                    tagRepo.tag(groupId, tag.tagId, memberId, now) :
-                    tagRepo.untag(groupId, tag.tagId, memberId, now);
-                if (historyRecord != null) {
-                    MemberRecord mrec = MsoyServer.memberRepo.loadMember(memberId);
-                    TagHistory history = new TagHistory();
-                    history.member = mrec.getName();
-                    history.tag = tag.tag;
-                    history.action = historyRecord.action;
-                    history.time = new Date(historyRecord.time.getTime());
-                    return history;
-                }
-                return null;
+        try {
+            GroupMembershipRecord gmrec = MsoyServer.groupRepo.getMembership(groupId, 
+                memrec.memberId);
+            if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
+                log.log(Level.WARNING, "in tagGroup, invalid permissions");
+                throw new ServiceException("m.invalid_permissions");
             }
-        });
-        return waiter.waitForResult();
+
+            long now = System.currentTimeMillis();
+                
+            TagRepository tagRepo = MsoyServer.groupRepo.getTagRepository();
+            TagNameRecord tagRec = tagRepo.getTag(tagName);
+
+            TagHistoryRecord historyRecord = set ?
+                tagRepo.tag(groupId, tagRec.tagId, memrec.memberId, now) :
+                tagRepo.untag(groupId, tagRec.tagId, memrec.memberId, now);
+            if (historyRecord != null) {
+                TagHistory history = new TagHistory();
+                history.member = memrec.getName();
+                history.tag = tagRec.tag;
+                history.action = historyRecord.action;
+                history.time = new Date(historyRecord.time.getTime());
+                return history;
+            }
+            return null;
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "tagGroup failed [groupId=" + groupId + ", tag=" + tag +
+                ", set=" + set + "]", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from interface GroupService
     public Collection<TagHistory> getRecentTags (WebCreds creds) throws ServiceException
     {
-        final int memberId = creds.getMemberId();
-        final TagRepository tagRepo = MsoyServer.groupRepo.getTagRepository();
-        final ServletWaiter<Collection<TagHistory>> waiter = 
-            new ServletWaiter<Collection<TagHistory>>("getRecentTags[]");
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Collection<TagHistory>>(waiter) {
-            public Collection<TagHistory> invokePersistResult () throws PersistenceException {
-                MemberRecord memRec = MsoyServer.memberRepo.loadMember(memberId);
-                MemberName memName = memRec.getName();
-                ArrayList<TagHistory> list = new ArrayList<TagHistory>();
-                for (TagHistoryRecord record : tagRepo.getTagHistoryByMember(memberId)) {
-                    TagNameRecord tag = record.tagId == -1 ? null :
-                       tagRepo.getTag(record.tagId);
-                    TagHistory history = new TagHistory();
-                    history.member = memName;
-                    history.tag = tag == null ? null : tag.tag;
-                    history.action = record.action;
-                    history.time = new Date(record.time.getTime());
-                    list.add(history); 
-                }
-                return list;
+        MemberRecord memrec = requireAuthedUser(creds);
+        int memberId = memrec.memberId;
+        try {
+            MemberRecord memRec = MsoyServer.memberRepo.loadMember(memberId);
+            MemberName memName = memRec.getName();
+            TagRepository tagRepo = MsoyServer.groupRepo.getTagRepository();
+            ArrayList<TagHistory> list = new ArrayList<TagHistory>();
+            for (TagHistoryRecord record : tagRepo.getTagHistoryByMember(memberId)) {
+                TagNameRecord tag = record.tagId == -1 ? null :
+                    tagRepo.getTag(record.tagId);
+                TagHistory history = new TagHistory();
+                history.member = memName;
+                history.tag = tag == null ? null : tag.tag;
+                history.action = record.action;
+                history.time = new Date(record.time.getTime());
+                list.add(history); 
             }
-        });
-        return waiter.waitForResult();
+            return list;
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getRecentTags failed", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from interface GroupService
-    public Collection<String> getTags (WebCreds creds, final int groupId) throws ServiceException
+    public Collection<String> getTags (WebCreds creds, int groupId) throws ServiceException
     {
-        final ServletWaiter<Collection<String>> waiter = new ServletWaiter<Collection<String>>(
-            "getTags[groupId=" + groupId + "]");
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Collection<String>>(waiter) {
-            public Collection<String> invokePersistResult () throws PersistenceException {
-                ArrayList<String> result = new ArrayList<String>();
-                for (TagNameRecord tagName : MsoyServer.groupRepo.getTagRepository().
-                        getTags(groupId)) {
-                    result.add(tagName.tag);
-                }
-                return result;
+        try {
+            ArrayList<String> result = new ArrayList<String>();
+            for (TagNameRecord tagName : MsoyServer.groupRepo.getTagRepository().
+                    getTags(groupId)) {
+                result.add(tagName.tag);
             }
-        });
-        return waiter.waitForResult();
+            return result;
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getTags failed [groupId=" + groupId + "]", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from interface GroupService
-    public List<String> getPopularTags (WebCreds creds, final int rows) throws ServiceException
+    public List<String> getPopularTags (WebCreds creds, int rows) throws ServiceException
     {
-        final ServletWaiter<List<String>> waiter = new ServletWaiter<List<String>>(
-            "getPopularTags[]");
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<String>>(waiter) {
-            public List<String> invokePersistResult () throws PersistenceException {
-                ArrayList<String> result = new ArrayList<String>();
-                for (TagPopularityRecord popRec : MsoyServer.groupRepo.getTagRepository().
-                        getPopularTags(rows)) {
-                    result.add(popRec.tag);
-                }
-                return result;
+        try {
+            ArrayList<String> result = new ArrayList<String>();
+            for (TagPopularityRecord popRec : MsoyServer.groupRepo.getTagRepository().
+                    getPopularTags(rows)) {
+                result.add(popRec.tag);
             }
-        });
-        return waiter.waitForResult();
+            return result;
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getPopularTags failed [rows=" + rows + "]", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     protected static boolean isValidName (String name) 

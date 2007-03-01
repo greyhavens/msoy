@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.server.persist;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
+
+import java.sql.Date;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
@@ -250,7 +250,7 @@ public class GroupRecord extends PersistentRecord
         new ColumnExp(GroupRecord.class, MEMBER_COUNT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 13;
+    public static final int SCHEMA_VERSION = 14;
 
     /** The unique id of this group. */
     @Id
@@ -349,7 +349,7 @@ public class GroupRecord extends PersistentRecord
     public int homeSceneId;
 
     /** The date and time this group was created. */
-    public Timestamp creationDate;
+    public Date creationDate;
 
     /** The group may be public, invite-only or exclusive as per {@link Group}. */
     public byte policy;
@@ -369,7 +369,7 @@ public class GroupRecord extends PersistentRecord
         group.logo = logoMediaHash == null ? Group.getDefaultGroupLogoMedia() :
             new MediaDesc(logoMediaHash.clone(), logoMimeType, logoMediaConstraint);
         group.creatorId = creatorId;
-        group.creationDate = new Date(creationDate.getTime());
+        group.creationDate = new java.util.Date(creationDate.getTime());
         group.policy = policy;
         group.memberCount = memberCount;
         return group;
