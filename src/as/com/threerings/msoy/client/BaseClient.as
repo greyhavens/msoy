@@ -63,10 +63,6 @@ public /*abstract*/ class BaseClient extends Client
 
     public function BaseClient (stage :Stage)
     {
-        // TODO: we need to be able to load "data" from the media server and establish a socket
-        // connection ot the game servers; this may not be the ideal way to accomplish this
-        Security.exactSettings = false;
-
         super(createStartupCreds(stage), stage);
 
         _ctx = createContext();
@@ -82,8 +78,12 @@ public /*abstract*/ class BaseClient extends Client
             log.info("Unable to configure external functions.");
         }
 
-//         // allow connecting to the game server
-//         Security.loadPolicyFile("http://" + DeploymentConfig.serverHost + "/crossdomain.xml");
+        // allow connecting to the game server
+        Security.loadPolicyFile("http://" + DeploymentConfig.serverHost + "/crossdomain.xml");
+        // and the media server if it differs from the game server
+        if (DeploymentConfig.mediaURL.indexOf(DeploymentConfig.serverHost) == -1) {
+            Security.loadPolicyFile(DeploymentConfig.mediaURL + "crossdomain.xml");
+        }
 
         // configure our server and port info and logon
         setServer(DeploymentConfig.serverHost, DeploymentConfig.serverPorts);
