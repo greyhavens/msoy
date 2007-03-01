@@ -14,6 +14,9 @@ import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientObserver;
 import com.threerings.presents.client.LogonException;
 
+import com.threerings.admin.client.ConfigEditorPanel;
+import com.threerings.admin.data.AdminCodes;
+
 import com.threerings.msoy.admin.util.AdminContext;
 
 /**
@@ -26,7 +29,7 @@ public class AdminPanel extends JPanel
         _ctx = ctx;
         _ctx.getClient().addClientObserver(_clobs);
 
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(5, 5));
         add(_status = new JLabel(""), BorderLayout.SOUTH);
         setStatus("m.logging_on");
     }
@@ -46,12 +49,18 @@ public class AdminPanel extends JPanel
     }
 
     protected ClientObserver _clobs = new ClientAdapter() {
+        public void clientWillLogon (Client client) {
+            client.addServiceGroup(AdminCodes.ADMIN_GROUP);
+        }
         public void clientDidLogon (Client client) {
-            // TODO: display dashboard
+            add(_config = new ConfigEditorPanel(_ctx));
             setStatus("m.logged_on");
         }
         public void clientDidLogoff (Client client) {
-            // TODO: clear dashboard
+            if (_config != null) {
+                remove(_config);
+                _config = null;
+            }
             setStatus("m.logged_off");
         }
         public void clientFailedToLogon (Client client, Exception cause) {
@@ -63,5 +72,6 @@ public class AdminPanel extends JPanel
     };
 
     protected AdminContext _ctx;
+    protected ConfigEditorPanel _config;
     protected JLabel _status;
 }

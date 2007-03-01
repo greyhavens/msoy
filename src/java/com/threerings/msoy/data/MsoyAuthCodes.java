@@ -28,9 +28,8 @@ public interface MsoyAuthCodes extends AuthCodes
     /** A code indicating a bounced check or reversed payment. */
     public static final String DEADBEAT = "m.deadbeat";
 
-    /** A code indicating that the server is under maintenance and normal user
-     * login is not allowed. */
-    public static final String UNDER_MAINTENANCE = "m.under_maintenance";
+    /** A code indicating that the server is closed to non-admins. */
+    public static final String SERVER_CLOSED = "m.server_closed";
 
     /** A code indicating that the client version is out of date. */
     public static final String VERSION_MISMATCH = "m.version_mismatch";
@@ -45,6 +44,9 @@ public interface MsoyAuthCodes extends AuthCodes
 
     /** A code indicating that the username (email address) requested by the client is in use. */
     public static final String DUPLICATE_EMAIL = "m.duplicate_email";
+
+    /** A code indicating that we are not currently allowing new registrations. */
+    public static final String NO_REGISTRATIONS = "m.no_registrations";
 
     /** A code indicating that a client's web session has expired. */
     public static final String SESSION_EXPIRED = "m.session_expired";

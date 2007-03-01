@@ -19,7 +19,7 @@ import com.threerings.presents.dobj.DObjectManager;
 
 import com.threerings.msoy.data.MsoyCredentials;
 
-import com.threerings.msoy.admin.data.AdminCodes;
+import com.threerings.msoy.admin.data.MsoyAdminCodes;
 import com.threerings.msoy.admin.util.AdminContext;
 
 import static com.threerings.msoy.Log.log;
@@ -130,7 +130,7 @@ public class AdminApplet extends JApplet
             return _msgmgr;
         }
         public String xlate (String message) {
-            return _msgmgr.getBundle(AdminCodes.ADMIN_MSGS).xlate(message);
+            return _msgmgr.getBundle(MsoyAdminCodes.ADMIN_MSGS).xlate(message);
         }
     }
 

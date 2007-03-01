@@ -14,6 +14,9 @@ public class ServerConfigObject extends ConfigObject
     /** The field name of the <code>nonAdminsAllowed</code> field. */
     public static final String NON_ADMINS_ALLOWED = "nonAdminsAllowed";
 
+    /** The field name of the <code>registrationEnabled</code> field. */
+    public static final String REGISTRATION_ENABLED = "registrationEnabled";
+
     /** The field name of the <code>dailyFlowEvaporation</code> field. */
     public static final String DAILY_FLOW_EVAPORATION = "dailyFlowEvaporation";
 
@@ -29,6 +32,9 @@ public class ServerConfigObject extends ConfigObject
 
     /** Whether or not to allow non-admins to log on. */
     public boolean nonAdminsAllowed = true;
+
+    /** Whether or not to allow new registrations. */
+    public boolean registrationEnabled = true;
 
     /** The fraction of a user's flow that evaporates over a 24-hour period. */
     public float dailyFlowEvaporation = 0.20f;
@@ -57,6 +63,22 @@ public class ServerConfigObject extends ConfigObject
         requestAttributeChange(
             NON_ADMINS_ALLOWED, Boolean.valueOf(value), Boolean.valueOf(ovalue));
         this.nonAdminsAllowed = value;
+    }
+
+    /**
+     * Requests that the <code>registrationEnabled</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setRegistrationEnabled (boolean value)
+    {
+        boolean ovalue = this.registrationEnabled;
+        requestAttributeChange(
+            REGISTRATION_ENABLED, Boolean.valueOf(value), Boolean.valueOf(ovalue));
+        this.registrationEnabled = value;
     }
 
     /**

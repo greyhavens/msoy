@@ -13,6 +13,9 @@ public interface ServerMessages extends ConstantsWithLookup
     public String internal_error ();
     public String access_denied ();
 
+    public String server_closed ();
+    public String no_registrations ();
+
     public String no_such_user ();
     public String invalid_password ();
     public String session_expired ();

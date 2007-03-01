@@ -14,6 +14,7 @@ import com.threerings.presents.net.AuthResponseData;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.net.AuthingConnection;
 
+import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCredentials;
@@ -266,11 +267,10 @@ public class MsoyAuthenticator extends Authenticator
 //                 throw new ServiceException(NON_PUBLIC_SERVER);
 //             }
 
-//             // check whether we're restricting non-admin login
-//             if (!RuntimeConfig.server.nonAdminsAllowed &&
-//                 !user.isSupportPlus()) {
-//                 throw new ServiceException(UNDER_MAINTENANCE);
-//             }
+            // check whether we're restricting non-admin login
+            if (!RuntimeConfig.server.nonAdminsAllowed && !account.tokens.isSupport()) {
+                throw new ServiceException(MsoyAuthCodes.SERVER_CLOSED);
+            }
 
             // log.info("User logged on [user=" + user.username + "].");
             rsp.authdata = account;
@@ -316,6 +316,10 @@ public class MsoyAuthenticator extends Authenticator
     public MemberRecord createAccount (String username, String password, String displayName)
         throws ServiceException
     {
+        if (!RuntimeConfig.server.registrationEnabled) {
+            throw new ServiceException(MsoyAuthCodes.NO_REGISTRATIONS);
+        }
+
         try {
             // create and validate the new account
             Domain domain = getDomain(username);
