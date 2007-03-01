@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.web.data.SwiftlyConfig;
+import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
 import client.swiftly.ProjectEdit.ProjectEditListener;
@@ -25,7 +25,7 @@ import client.swiftly.ProjectEdit.ProjectEditListener;
 public class SwiftlyPanel extends VerticalPanel
     implements ProjectEditListener
 {
-    public SwiftlyPanel (SwiftlyConfig config, int projectId)
+    public SwiftlyPanel (ConnectConfig config, int projectId)
     {
         super();
         setStyleName("swiftlyPanel");
@@ -95,7 +95,7 @@ public class SwiftlyPanel extends VerticalPanel
     }
 
     protected SwiftlyProject _project;
-    protected SwiftlyConfig _config;
+    protected ConnectConfig _config;
     protected String _authtoken;
     protected HorizontalPanel _errorContainer;
     protected HorizontalPanel _header;

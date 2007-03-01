@@ -18,8 +18,8 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.web.client.SwiftlyService;
 import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.SwiftlyConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -212,14 +212,13 @@ public class SwiftlyServlet extends MsoyServiceServlet
     }
 
     // from interface SwiftlyService
-    public SwiftlyConfig loadSwiftlyConfig (WebCreds creds)
+    public ConnectConfig loadConnectConfig (WebCreds creds)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(creds);
 
         // create an applet config record
-        SwiftlyConfig config = new SwiftlyConfig();
-
+        ConnectConfig config = new ConnectConfig();
         config.server = ServerConfig.serverHost;
         config.port = ServerConfig.serverPorts[0];
         return config;

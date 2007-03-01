@@ -4,8 +4,13 @@
 package client.admin;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Label;
 
+import com.threerings.msoy.web.client.AdminService;
+import com.threerings.msoy.web.client.AdminServiceAsync;
+import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.editem.EditemEntryPoint;
@@ -38,6 +43,10 @@ public class index extends EditemEntryPoint
     {
         super.initContext();
 
+        // wire up our remote services
+        CAdmin.adminsvc = (AdminServiceAsync)GWT.create(AdminService.class);
+        ((ServiceDefTarget)CAdmin.adminsvc).setServiceEntryPoint("/adminsvc");
+
         // load up our translation dictionaries
         CAdmin.msgs = (AdminMessages)GWT.create(AdminMessages.class);
     }
@@ -65,10 +74,19 @@ public class index extends EditemEntryPoint
 
     protected void displayDashboard ()
     {
-        if (CAdmin.creds.isSupport) {
-            setContent(new DashboardPanel());
-        } else {
+        if (!CAdmin.creds.isSupport) {
             setContent(new Label(CAdmin.msgs.lackPrivileges()));
+            return;
         }
+
+        // load up the information needed to display the dashboard applet
+        CAdmin.adminsvc.loadConnectConfig(CAdmin.creds, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                setContent(new DashboardPanel((ConnectConfig)result));
+            }
+            public void onFailure (Throwable cause) {
+                setContent(new Label(CAdmin.serverError(cause)));
+            }
+        });
     }
 }

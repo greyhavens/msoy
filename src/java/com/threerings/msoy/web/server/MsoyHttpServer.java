@@ -73,6 +73,7 @@ public class MsoyHttpServer extends HttpServer
     /** GWT Servlets */
     protected static final String[] SERVLETS = {
         "usersvc", WebUserServlet.class.getName(),
+        "adminsvc", AdminServlet.class.getName(),
         "itemsvc", ItemServlet.class.getName(),
         "catalogsvc", CatalogServlet.class.getName(),
         "profilesvc", ProfileServlet.class.getName(),

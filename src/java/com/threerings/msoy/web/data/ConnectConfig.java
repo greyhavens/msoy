@@ -6,9 +6,9 @@ package com.threerings.msoy.web.data;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
- * Contains all the information needed to launch an instance of the Swiftly applet.
+ * Directs an applet to a particular server to connect (used by Swiftly and the Dashboard).
  */
-public class SwiftlyConfig
+public class ConnectConfig
     implements IsSerializable
 {
     /** The server to which the applet should connect.  */

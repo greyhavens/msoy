@@ -12,21 +12,22 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.web.data.ConnectConfig;
+
 /**
  * Displays the various services available to support and admin personnel.
  */
 public class DashboardPanel extends VerticalPanel
 {
-    public DashboardPanel ()
+    public DashboardPanel (ConnectConfig config)
     {
         add(MsoyUI.createLabel(CAdmin.msgs.title(), "title"));
 
         add(WidgetUtil.createApplet(
                 "admin", "/clients/admin-client.jar",
                 "com.threerings.msoy.admin.client.AdminApplet", 800, 400,
-                // TODO: something annoyingly more complicated
-                new String[] { "server", "localhost", // config.server,
-                               "port", "4010", // "" + config.port,
+                new String[] { "server", config.server,
+                               "port", "" + config.port,
                                "authtoken", CAdmin.creds.token }));
 
         Button reviewButton = new Button(CAdmin.msgs.reviewButton());

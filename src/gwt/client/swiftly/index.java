@@ -14,7 +14,7 @@ import com.threerings.msoy.web.client.SwiftlyService;
 import com.threerings.msoy.web.client.SwiftlyServiceAsync;
 import com.threerings.msoy.web.data.WebCreds;
 
-import com.threerings.msoy.web.data.SwiftlyConfig;
+import com.threerings.msoy.web.data.ConnectConfig;
 
 import client.shell.MsoyEntryPoint;
 
@@ -93,10 +93,10 @@ public class index extends MsoyEntryPoint
             setContent(new ProjectSelectionPanel());
         } else {
             // load up the information needed to launch the applet
-            CSwiftly.swiftlysvc.loadSwiftlyConfig(CSwiftly.creds, new AsyncCallback() {
+            CSwiftly.swiftlysvc.loadConnectConfig(CSwiftly.creds, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     try {
-                        setContent(new SwiftlyPanel((SwiftlyConfig)result,
+                        setContent(new SwiftlyPanel((ConnectConfig)result,
                             Integer.parseInt(historyToken)));
                     } catch (NumberFormatException e) {
                         // display an error message if the supplied projectId did not parse
