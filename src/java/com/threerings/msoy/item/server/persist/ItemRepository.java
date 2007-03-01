@@ -32,7 +32,6 @@ import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
-import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
@@ -601,7 +600,7 @@ public abstract class ItemRepository<
         }
         int currentPopulation = Math.max(0, record.purchases - record.returns);
         double ratio = (double) currentPopulation / targetPopulation;
-        double basePrice = C * ((ratio < 1.0) ? Math.sqrt(ratio) : Math.pow(ratio, 4));
+        double basePrice = 100 + C * ((ratio < 1.0) ? Math.sqrt(ratio) : Math.pow(ratio, 4));
         double S = record.returns >= record.purchases ? 0 : 1 - record.returns / record.purchases;
         double listPrice = Math.max(1, basePrice * (1 - Math.sqrt(S)));
         int flowForGoldFactor = 600;
