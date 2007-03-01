@@ -154,8 +154,6 @@ public class ProfileRecord extends PersistentRecord
         profile.location = location;
         if (photoHash != null) {
             profile.photo = new MediaDesc(photoHash, photoMimeType, photoConstraint);
-        } else {
-            profile.photo = new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "profile_photo");
         }
         return profile;
     }

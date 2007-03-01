@@ -5,13 +5,19 @@ package com.threerings.msoy.web.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.StaticMediaDesc;
 
 /**
  * Contains all member profile data for display on the profile page.
  */
 public class Profile implements IsSerializable
 {
+    /** The default profile photo. */
+    public static final MediaDesc DEFAULT_PHOTO =
+        new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "profile_photo");
+
     /** The member's unique id. */
     public int memberId;
 
@@ -19,7 +25,7 @@ public class Profile implements IsSerializable
     public String displayName;
 
     /** The the member's selected profile picture. */
-    public MediaDesc photo;
+    public MediaDesc photo = DEFAULT_PHOTO;
 
     /** A member provided profile headline. */
     public String headline;

@@ -22,4 +22,9 @@ public interface ProfileServiceAsync
      * The asynchronous version of {@link ProfileService#loadProfile}.
      */
     public void loadProfile (int memberId, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link ProfileService#findProfiles}.
+     */
+    public void findProfiles (String search, AsyncCallback callback);
 }

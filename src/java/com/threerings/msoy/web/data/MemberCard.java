@@ -1,0 +1,24 @@
+//
+// $Id$
+
+package com.threerings.msoy.web.data;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+import com.threerings.msoy.item.web.MediaDesc;
+
+/**
+ * Contains for a particular member the id, display name, profile photo and anything else that we
+ * want to display when displaying a bunch of members.
+ */
+public class MemberCard
+    implements IsSerializable
+{
+    /** The member's display name and id. */
+    public MemberName name;
+
+    /** The member's profile photo (or the default). */
+    public MediaDesc photo = Profile.DEFAULT_PHOTO;
+
+    // TODO: anything else
+}

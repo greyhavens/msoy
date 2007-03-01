@@ -8,11 +8,15 @@ import java.util.List;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.HashIntMap;
 
+import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.person.server.persist.ProfilePhotoRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
+import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.data.MsoyCodes;
@@ -22,6 +26,7 @@ import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.BlurbData;
 import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.GroupMembership;
+import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.ProfileLayout;
@@ -89,6 +94,41 @@ public class ProfileServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failure resolving blurbs [who=" + memberId + "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+    }
+
+    // from interface ProfileService
+    public ArrayList findProfiles (String search)
+        throws ServiceException
+    {
+        try {
+            // locate the members that match the supplied search
+            HashIntMap<MemberCard> cards = new HashIntMap<MemberCard>();
+            for (MemberNameRecord mname :
+                     MsoyServer.memberRepo.findMemberNames(search, MAX_PROFILE_MATCHES)) {
+                MemberCard card = new MemberCard();
+                card.name = new MemberName(mname.name, mname.memberId);
+                cards.put(mname.memberId, card);
+            }
+
+            // load up their profile photo data
+            for (ProfilePhotoRecord photo :
+                     MsoyServer.profileRepo.loadProfilePhotos(cards.intKeySet().toIntArray())) {
+                MemberCard card = cards.get(photo.memberId);
+                if (photo.photoHash != null) {
+                    card.photo = new MediaDesc(photo.photoHash, photo.photoMimeType,
+                                               photo.photoConstraint);
+                }
+            }
+
+            // TODO: sort by match quality?
+            ArrayList<Object> results = new ArrayList<Object>();
+            results.addAll(cards.values());
+            return results;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failure finding profiles [search=" + search + "].", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
     }
@@ -190,4 +230,6 @@ public class ProfileServlet extends MsoyServiceServlet
         // TODO: do we really want the hood on the profile page?
         return null;
     }
+
+    protected static final int MAX_PROFILE_MATCHES = 100;
 }

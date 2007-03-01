@@ -152,6 +152,21 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Returns name information for all members that match the supplied search string. Currently
+     * display name and email address are searched.
+     */
+    public Collection<MemberNameRecord> findMemberNames (String search, int limit)
+        throws PersistenceException
+    {
+        return findAll(MemberNameRecord.class,
+                       new FromOverride(MemberRecord.class),
+                       new Where(new Or(new Like(MemberRecord.NAME_C, "%"+search+"%"),
+                                        new Like(MemberRecord.ACCOUNT_NAME_C, "%"+search+"%"))),
+                       new FieldOverride(MemberNameRecord.MEMBER_ID, MemberRecord.MEMBER_ID_C),
+                       new FieldOverride(MemberNameRecord.NAME, MemberRecord.NAME_C));
+    }
+
+    /**
      * Loads up the member associated with the supplied session token. Returns null if the session
      * has expired or is not valid.
      */

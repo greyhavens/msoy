@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
@@ -29,4 +30,10 @@ public interface ProfileService extends RemoteService
      * on the page.
      */
     public ArrayList loadProfile (int memberId) throws ServiceException;
+
+    /**
+     * Looks for profiles that match the specified search term. We'll aim to be smart about what we
+     * search. Returns a (possibly empty) list of {@link MemberCard} records.
+     */
+    public ArrayList findProfiles (String search) throws ServiceException;
 }
