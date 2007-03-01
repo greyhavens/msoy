@@ -30,6 +30,7 @@ import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.admin.server.AdminProvider;
 import com.threerings.admin.server.ConfigRegistry;
@@ -153,6 +154,9 @@ public class MsoyServer extends WhirledServer
     /** All blocking Swiftly subversion actions must occur on this thread. */
     public static Invoker swiftlyInvoker;
 
+    /** An invoker for sending email. */
+    public static Invoker mailInvoker;
+
     /**
      * Creates an audit log with the specified name (which should not include
      * the <code>.log</code> suffix) in our server log directory.
@@ -271,10 +275,15 @@ public class MsoyServer extends WhirledServer
         swiftlyInvoker.setDaemon(true);
         swiftlyInvoker.start();
 
+        // initialize the mail invoker
+        mailInvoker = new Invoker("mail_invoker", omgr);
+        mailInvoker.setDaemon(true);
+        mailInvoker.start();
+
         // now initialize our runtime configuration, postponing the remaining server initialization
         // until our configuration objects are available
         RuntimeConfig.init(omgr);
-        omgr.postRunnable(new Runnable () {
+        omgr.postRunnable(new PresentsDObjectMgr.LongRunnable () {
             public void run () {
                 try {
                     finishInit();
