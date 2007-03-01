@@ -197,7 +197,8 @@ public class LobbyPanel extends VBox
         buttonBox.percentWidth = 100;
         descriptionBox.addChild(buttonBox);
         var butbar :ButtonBar = new ButtonBar();
-        butbar.setStyle("paddingTop", 40);
+        butbar.setStyle("paddingTop", 35);
+        butbar.setStyle("paddingBottom", 5);
         butbar.setStyle("verticalGap", 5);
         butbar.direction = "vertical";
         butbar.addChild(createBtn);
@@ -270,6 +271,8 @@ public class LobbyPanel extends VBox
         // only display tabs for seated games
         if (controller.game.gameType == GameConfig.SEATED_GAME) {
             var tabBar :TabBar = new TabBar();
+            tabBar.percentHeight = 100;
+            tabBar.styleName = "lobbyTabs";
             tabsContainer.addChild(tabBar);
 
             var tabViews :ViewStack = new ViewStack();
@@ -283,10 +286,20 @@ public class LobbyPanel extends VBox
             formingBox.label = Msgs.GAME.get("t.forming");
             tabViews.addChild(formingBox);
             formingBox.addChild(list);
+
+            var runningList :MsoyList = new MsoyList(_ctx);
+            runningList.variableRowHeight = true;
+            runningList.percentHeight = 100;
+            runningList.percentWidth = 100;
+            var runningFactory :ClassFactory = new ClassFactory(TableRenderer);
+            runningFactory.properties = { ctx: _ctx, panel: this };
+            runningList.itemRenderer = runningFactory;
+            runningList.dataProvider = _runningTables;
             var runningBox :VBox = new VBox();
             runningBox.percentHeight = 100;
             runningBox.percentWidth = 100;
             runningBox.label = Msgs.GAME.get("t.running");
+            runningBox.addChild(runningList);
             tabViews.addChild(runningBox);
         } else {
             tablesContainer.addChild(list);
