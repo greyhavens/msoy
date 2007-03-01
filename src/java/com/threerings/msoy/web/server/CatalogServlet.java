@@ -117,6 +117,9 @@ public class CatalogServlet extends MsoyServiceServlet
             int cloneId = repo.insertClone(
                 ident.itemId, mrec.memberId, listing.flowCost, listing.goldCost);
 
+            // note the new purchase for the item
+            repo.nudgeListing(ident.itemId, true);
+
             // then dress the loaded item up as a clone
             listing.item.ownerId = mrec.memberId;
             listing.item.parentId = listing.item.itemId;
@@ -184,7 +187,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 // and finally create & insert the catalog record
                 long now = System.currentTimeMillis();
                 int rarity = CatalogListing.RARITY_COMMON;
-                CatalogRecord record= repo.insertListing(listItem, 0, 0, rarity, now);
+                CatalogRecord record= repo.insertListing(listItem, rarity, now);
                 
                 MsoyServer.omgr.postRunnable(new Runnable() {
                     public void run () {
@@ -225,6 +228,9 @@ public class CatalogServlet extends MsoyServiceServlet
                 log.warning("Failed to find clone record [item=" + ident + "]");
                 throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
             }
+
+            // note the return for the item
+            repo.nudgeListing(ident.itemId, false);
 
             long mSec = System.currentTimeMillis() - cRec.purchaseTime.getTime();
             int daysLeft = 5 - ((int) (mSec / (24 * 3600 * 1000)));

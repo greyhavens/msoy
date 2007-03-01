@@ -32,18 +32,21 @@ import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
+import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
+import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemIdent;
 
 /**
  * Manages a repository of digital items of a particular type.
@@ -351,6 +354,33 @@ public abstract class ItemRepository<
     }
 
     /**
+     * Update either the 'purchases' or the 'returns' field of a catalog listing,
+     * and figure out if it's time to reprice it.
+     */
+    public void nudgeListing (int itemId, boolean purchased)
+        throws PersistenceException
+    {
+        CAT record = load(getCatalogClass(), itemId);
+        if (record == null) {
+            // if the record managed to vanish, I suppose we don't need to nudge it.
+            return;
+        }
+        if (purchased) {
+            record.purchases += 1;
+            record.repriceCounter += 1;
+        } else {
+            record.returns += 1;
+            record.repriceCounter += 2;
+        }
+        if (record.repriceCounter >= Math.sqrt(record.purchases + record.returns)) {
+            priceRecord(record, false);
+        }
+        String column = purchased ? CatalogRecord.PURCHASES : CatalogRecord.RETURNS;
+        update(record, column, CatalogRecord.REPRICE_COUNTER, CatalogRecord.FLOW_COST,
+               CatalogRecord.GOLD_COST);
+    }
+
+    /**
      * Inserts the supplied item into the database. {@link Item#itemId} will be filled in as a
      * result of this call.
      */
@@ -379,8 +409,7 @@ public abstract class ItemRepository<
      *
      * TODO: this method modifies the input value, totally unintuitive!
      */
-    public CatalogRecord insertListing (
-        ItemRecord listItem, int flowCost, int goldCost, int rarity, long listingTime)
+    public CatalogRecord insertListing (ItemRecord listItem, int rarity, long listingTime)
         throws PersistenceException
     {
         if (listItem.ownerId != 0) {
@@ -388,7 +417,7 @@ public abstract class ItemRepository<
                 "Can't list item with owner [itemId=" + listItem.itemId + "]");
         }
 
-        CatalogRecord<T> record;
+        CAT record;
         try {
             record = getCatalogClass().newInstance();
         } catch (Exception e) {
@@ -396,10 +425,10 @@ public abstract class ItemRepository<
         }
         record.item = listItem;
         record.itemId = listItem.itemId;
-        record.flowCost = flowCost;
-        record.goldCost = goldCost;
-        record.rarity = rarity;
         record.listedDate = new Timestamp(listingTime);
+        record.rarity = rarity;
+        record.purchases = record.returns = 0;
+        priceRecord(record, true);
         // and insert it - done!
         insert(record);
         return record;
@@ -535,6 +564,49 @@ public abstract class ItemRepository<
         // and then smack the new value into the item using yummy depot code
         updatePartial(getItemClass(), itemId, new Object[] { ItemRecord.RATING, newRating });
         return newRating;
+    }
+
+    protected void priceRecord (CAT record, boolean always)
+        throws PersistenceException
+    {
+        // size up the active member population
+        int U = MsoyServer.memberRepo.getActivePopulationCount();
+        // calculate the target item population
+        int C, targetPopulation;
+        switch(record.rarity) {
+        case CatalogListing.RARITY_PLENTIFUL:
+            C = 100;
+            targetPopulation = U/1000; break;
+        case CatalogListing.RARITY_COMMON:
+            C = 300;
+            targetPopulation = U/100; break;
+        case CatalogListing.RARITY_NORMAL:
+            C = 500;
+            targetPopulation = U/10; break;
+        case CatalogListing.RARITY_UNCOMMON:
+            C = 700;
+            targetPopulation = U; break;
+        case CatalogListing.RARITY_RARE:
+            C = 900;
+            targetPopulation = U*10; break;
+        default:
+            throw new PersistenceException(
+                "Uknown rarity [class=" + record.getClass() + ", itemId=" + record.itemId +
+                ", rarity=" + record.rarity + "]");
+        }
+        targetPopulation = Math.max(targetPopulation, 1);
+        // see if really need to reprice this item
+        if (!always && record.repriceCounter < Math.min(Math.sqrt(targetPopulation), 100)) {
+            return;
+        }
+        int currentPopulation = Math.max(0, record.purchases - record.returns);
+        double ratio = (double) currentPopulation / targetPopulation;
+        double basePrice = C * ((ratio < 1.0) ? Math.sqrt(ratio) : Math.pow(ratio, 4));
+        double S = record.returns >= record.purchases ? 0 : 1 - record.returns / record.purchases;
+        double listPrice = Math.max(1, basePrice * (1 - Math.sqrt(S)));
+        int flowForGoldFactor = 600;
+        record.goldCost = (int) Math.round(listPrice / (2 * flowForGoldFactor));
+        record.flowCost = (int) (listPrice - record.goldCost * flowForGoldFactor);
     }
 
     /**

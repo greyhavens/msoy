@@ -67,9 +67,30 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
     /** The qualified column identifier for the {@link #rarity} field. */
     public static final ColumnExp RARITY_C =
         new ColumnExp(CatalogRecord.class, RARITY);
+
+    /** The column identifier for the {@link #purchases} field. */
+    public static final String PURCHASES = "purchases";
+
+    /** The qualified column identifier for the {@link #purchases} field. */
+    public static final ColumnExp PURCHASES_C =
+        new ColumnExp(CatalogRecord.class, PURCHASES);
+
+    /** The column identifier for the {@link #returns} field. */
+    public static final String RETURNS = "returns";
+
+    /** The qualified column identifier for the {@link #returns} field. */
+    public static final ColumnExp RETURNS_C =
+        new ColumnExp(CatalogRecord.class, RETURNS);
+
+    /** The column identifier for the {@link #repriceCounter} field. */
+    public static final String REPRICE_COUNTER = "repriceCounter";
+
+    /** The qualified column identifier for the {@link #repriceCounter} field. */
+    public static final ColumnExp REPRICE_COUNTER_C =
+        new ColumnExp(CatalogRecord.class, REPRICE_COUNTER);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** A reference to the listed item. This value is not persisted. */
     @Transient
@@ -91,6 +112,15 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
     /** The rarity of this item; {@see Item#rarity}. */
     public int rarity;
     
+    /** The number of times this item has been purchased. */
+    public int purchases;
+    
+    /** The number of times this item has been returned. */
+    public int returns;
+    
+    /** A somewhat opaque counter representing how badly this record needs to be repriced. */
+    public int repriceCounter;
+
     public CatalogRecord ()
     {
         super();

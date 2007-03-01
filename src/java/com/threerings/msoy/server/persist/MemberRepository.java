@@ -41,6 +41,7 @@ import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
@@ -116,6 +117,24 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         return load(MemberRecord.class, memberId);
+    }
+
+    /**
+     * Calculate a count of the active member population, currently defined as anybody
+     * whose last session is within the past 60 days.
+     * 
+     * TODO: Cache this!
+     */
+    public int getActivePopulationCount ()
+        throws PersistenceException
+    {
+        MemberCountRecord record = load (
+            MemberCountRecord.class,
+            new FromOverride(MemberRecord.class),
+            new Where(new GreaterThan(MemberRecord.LAST_SESSION_C,
+                                      new LiteralExp("SUBDATE(CURDATE(), 60)"))),
+            new FieldOverride(MemberCountRecord.POPULATION, new LiteralExp("COUNT(*)")));
+        return record.population;
     }
 
     /**
