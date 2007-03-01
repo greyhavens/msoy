@@ -15,6 +15,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import flash.text.TextField;
+import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
 import mx.core.BitmapAsset;
@@ -198,26 +199,14 @@ public class Display extends Sprite
         {
         case 13:
             // If it's an ENTER, try scoring.
-            if (_wordfield.text != "")
-            {
+            if (_wordfield.text != "") {
                 _controller.tryScoreWord (_wordfield.text, true);
             }
             break;
 
-        case 8:
-            // If it's a BACKSPACE, delete the last char
-            if (_wordfield.text != "")
-            {
-                _controller.processKeystroke (event);
-                _wordfield.text = _wordfield.text.substr (0, _wordfield.text.length - 1);
-            }
-            break;
-            
         default:
-            // It's just a regular keystroke. Let the controller know,
-            // and then append to our word field.
+            // It's just a regular keystroke. Let the controller know.
             _controller.processKeystroke (event);
-            _wordfield.appendText (String.fromCharCode(event.charCode).toUpperCase());
         }
     }
             
@@ -258,6 +247,7 @@ public class Display extends Sprite
         _wordfield.defaultTextFormat = format;
         _wordfield.borderColor = Resources.defaultBorderColor;
         _wordfield.border = true;
+        _wordfield.type = TextFieldType.INPUT;
         doLayout (_wordfield, Properties.WORDFIELD);
         addChild (_wordfield);
 

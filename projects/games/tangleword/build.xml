@@ -25,7 +25,7 @@
   </target>
 
   <target name="dist" depends="compile">
-    <copy file="TangleWord.swf" tofile="/export/msoy/pages/media/d5683bbeb201d2bfdb063ffb5c77622f2f7ca91a.swf"/>
+    <copy file="TangleWord.swf" tofile="/export/msoy/pages/media/211d441ad1734986b696c6fe579271a7091206a2.swf"/>
   </target>
 
 
