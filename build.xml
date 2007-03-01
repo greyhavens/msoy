@@ -653,7 +653,7 @@
   </target>
 
   <!-- fully cleans out the application -->
-  <target name="distclean" depends="asclean,gclean">
+  <target name="distclean" depends="clean,asclean,gclean">
     <delete dir="${deploy.dir}"/>
     <delete dir="pages/clients"/>
   </target>
