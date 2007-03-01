@@ -93,8 +93,9 @@ public class Ball extends Sprite
      */
     protected function mouseClick (event :MouseEvent) :void
     {
+
         if (particle.wc.gameCtrl == null || !particle.wc.gameCtrl.isMyTurn() ||
-            particle.velocity.magnitude() != 0) {
+            particle.wc.myIdx != playerIdx || particle.velocity.magnitude() != 0) {
             // Not ours/not our turn/moving
             return;
         }
@@ -110,9 +111,6 @@ public class Ball extends Sprite
 
     // Our flamingo we're using for aiming.
     protected var _flamingo :WonderlandFlamingo;
-
-    // The player that controls this ball.
-    protected var _playerId :int;
 
     // Modifiers applied to this ball.
     protected var _modifiers :int;

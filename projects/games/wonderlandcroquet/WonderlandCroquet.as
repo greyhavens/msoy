@@ -81,14 +81,11 @@ public class WonderlandCroquet extends Sprite
         if (stage != null) {
             _status.x = stage.stageWidth - 50;
             _status.y = stage.stageHeight - 75;
-
-            gameCtrl.localChat("Positioning: " + _status.x + ", " + _status.y);
         }
     }
 
     protected function stageResize (event :Event) :void
     {
-        gameCtrl.localChat("Resized: " + stage.stageWidth + "x" + stage.stageHeight);
         positionStatus();
     }
 
@@ -200,6 +197,7 @@ public class WonderlandCroquet extends Sprite
 
                 if (index == myIdx) {
                     _myBall = _balls[index];
+                    gameCtrl.localChat("Was my ball");
                 }
 
             }

@@ -114,7 +114,7 @@ class StatusCard extends Sprite
 
     public function showFace () :void
     {
-        addChild(_front);
+        addChildAt(_front, 0);
         removeChild(_back);
     }
 
@@ -139,11 +139,11 @@ class StatusCard extends Sprite
     protected function rearrangeBalls () :void
     {
         var x :int = -20;
-        for each (var ball :MovieClip in _balls) {
-            ball.x = x;
-            ball.y = -40
+        for (var ii :int = 0; ii < _balls.length; ii++) {
+            _balls[ii].x = x;
+            _balls[ii].y = -40;
 
-            x += 20;
+            x += 15;
         }
     }
 
