@@ -60,9 +60,6 @@ public class MsoyController extends Controller
     /** Command to display the recent scenes list. */
     public static const POP_ROOMS_MENU :String = "PopRoomsMenu";
 
-    /** Command to display the prefs. */
-    public static const POP_PREFS_MENU :String = "PopPrefsMenu";
-
     /** Command to display the friends menu. */
     public static const POP_FRIENDS_MENU :String = "PopFriendsMenu";
 
@@ -97,7 +94,7 @@ public class MsoyController extends Controller
     public static const TELL :String = "Tell";
 
     /** Command to edit preferences. */
-    public static const EDIT_PREFS :String = "EditPrefs";
+    public static const CHAT_PREFS :String = "ChatPrefs";
 
     /** Command to select a different avatar. */
     public static const PICK_AVATAR :String = "PickAvatar";
@@ -269,23 +266,6 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the POP_PREFS_MENU command.
-     */
-    public function handlePopPrefsMenu (trigger :Button) :void
-    {
-        var menuData :Array = [ ];
-        var memberObj :MemberObject = _ctx.getClientObject();
-        if (!memberObj.isGuest()) {
-            menuData.push(
-                { label: Msgs.GENERAL.get("b.relogon_guest"), command: LOGON },
-                { type: "separator" },
-                { label: Msgs.GENERAL.get("b.edit_prefs"), command: EDIT_PREFS});
-        }
-
-        CommandMenu.createMenu(menuData).popUp(trigger, true);
-    }
-    
-    /**
      * @return true if this player appears to support full-screen mode.
      */
     public function supportsFullScreen () :Boolean
@@ -436,11 +416,11 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handles EDIT_PREFS.
+     * Handles CHAT_PREFS.
      */
-    public function handleEditPrefs () :void
+    public function handleChatPrefs () :void
     {
-        new PrefsDialog(_ctx);
+        new ChatPrefsDialog(_ctx);
     }
 
     /**

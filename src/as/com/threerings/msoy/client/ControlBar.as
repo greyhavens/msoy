@@ -95,7 +95,7 @@ public class ControlBar extends HBox
             addChild(sp);
             
             var chatBtn :CommandButton = new CommandButton();
-            chatBtn.setCommand(MsoyController.POP_FRIENDS_MENU, chatBtn);
+            chatBtn.setCommand(MsoyController.CHAT_PREFS);
             chatBtn.styleName = "controlBarButtonChat";
             addChild(chatBtn);
 
