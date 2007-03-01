@@ -77,19 +77,19 @@ public class SwiftlyEditor extends PlacePanel
         consoleMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.welcome"));
     }
 
-    public void addEditorTab (DocumentElement document)
+    public void addEditorTab (PathElement pathElement)
     {
-        _editorTabs.addEditorTab(document);
+        _editorTabs.addEditorTab(pathElement);
     }
 
-    public void updateTabTitleAt (DocumentElement document)
+    public void updateTabTitleAt (PathElement pathElement)
     {
-        _editorTabs.updateTabTitleAt(document);
+        _editorTabs.updateTabTitleAt(pathElement);
     }
 
-    public void updateTabDocument (DocumentElement document)
+    public void updateTabDocument (PathElement pathElement)
     {
-        _editorTabs.updateTabDocument(document);
+        _editorTabs.updateTabDocument(pathElement);
     }
 
     public void updateCurrentTabTitle ()

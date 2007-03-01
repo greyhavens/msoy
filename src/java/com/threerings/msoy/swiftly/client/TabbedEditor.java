@@ -14,7 +14,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.threerings.msoy.swiftly.data.DocumentElement;
+import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
@@ -33,16 +33,16 @@ public class TabbedEditor extends JTabbedPane
 
     /**
      * Adds a {@link SwiftlyTextPane} to the tabbed panel.
-     * @param the {@link DocumentElement} to load into the text panel.
+     * @param the {@link PathElement} to load into the text panel.
      */
-    public void addEditorTab (DocumentElement document)
+    public void addEditorTab (PathElement pathElement)
     {
-        if (_tabList.containsKey(document)) {
-            setSelectedComponent(_tabList.get(document));
+        if (_tabList.containsKey(pathElement)) {
+            setSelectedComponent(_tabList.get(pathElement));
             return;
         }
 
-        SwiftlyTextPane textPane = new SwiftlyTextPane(_ctx, _editor, document);
+        SwiftlyTextPane textPane = new SwiftlyTextPane(_ctx, _editor, pathElement);
         JScrollPane scroller = new JScrollPane(textPane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
             JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         // add line numbers
@@ -59,16 +59,16 @@ public class TabbedEditor extends JTabbedPane
         assignTabKeys();
 
         // add the scroller, which is the main component, to the tabList
-        _tabList.put(document, scroller);
+        _tabList.put(pathElement, scroller);
     }
 
     /**
-     * Update the title on a tab, using the supplied {@link DocumentElement} as the index.
-     * @param doc the DocumentElement to use as an index into the tabList
+     * Update the title on a tab, using the supplied {@link PathElement} as the index.
+     * @param doc the PathElement to use as an index into the tabList
      */
-    public void updateTabTitleAt (DocumentElement document)
+    public void updateTabTitleAt (PathElement pathElement)
     {
-        JScrollPane tab = _tabList.get(document);
+        JScrollPane tab = _tabList.get(pathElement);
         if (tab != null) {
             updateTabTitleAt(indexOfComponent(tab));
         }
@@ -78,12 +78,13 @@ public class TabbedEditor extends JTabbedPane
      * TEMP: Temporary method to completely overwrite document contents when update is received
      * from server.
      */
-    public void updateTabDocument (DocumentElement document)
+    public void updateTabDocument (PathElement pathElement)
     {
-        JScrollPane tab = _tabList.get(document);
+        JScrollPane tab = _tabList.get(pathElement);
         if (tab != null) {
             SwiftlyTextPane textPane = (SwiftlyTextPane)tab.getViewport().getView();
-            textPane.setDocumentElement(document);
+            // textPane.setPathElement(pathElement);
+            // TODO this should just tell the textPane to reload its document data
             updateTabTitleAt(indexOfComponent(tab));
         }
     }
@@ -107,7 +108,7 @@ public class TabbedEditor extends JTabbedPane
     {
         JScrollPane pane = (JScrollPane)getComponentAt(tabIndex);
         SwiftlyTextPane textPane = (SwiftlyTextPane)pane.getViewport().getView();
-        String title = textPane.getDocumentElement().getName();
+        String title = textPane.getPathElement().getName();
 
         if (textPane.hasUnsavedChanges()) {
             title = "*" + title;
@@ -144,7 +145,7 @@ public class TabbedEditor extends JTabbedPane
             }
         }
 
-        DocumentElement document = textPane.getDocumentElement();
+        PathElement document = textPane.getPathElement();
         remove(_tabList.get(document));
         _tabList.remove(document);
         assignTabKeys();
@@ -225,6 +226,6 @@ public class TabbedEditor extends JTabbedPane
     protected SwiftlyEditor _editor;
 
     // maps the document of the loaded file to the componenet (scroller) holding that textpane
-    protected HashMap<DocumentElement,JScrollPane> _tabList =
-        new HashMap<DocumentElement,JScrollPane>();
+    protected HashMap<PathElement,JScrollPane> _tabList =
+        new HashMap<PathElement,JScrollPane>();
 }

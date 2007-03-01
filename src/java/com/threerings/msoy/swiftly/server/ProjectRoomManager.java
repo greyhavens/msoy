@@ -19,7 +19,6 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.swiftly.client.ProjectRoomService;
-import com.threerings.msoy.swiftly.data.DocumentElement;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
 import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;

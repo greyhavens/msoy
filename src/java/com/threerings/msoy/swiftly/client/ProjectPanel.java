@@ -27,7 +27,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import com.threerings.msoy.swiftly.data.DocumentElement;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.PathElementTreeNode;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
@@ -79,8 +78,8 @@ public class ProjectPanel extends JPanel
         setSelectedNode(node);
 
         PathElement element = getSelectedPathElement();
-        if (element instanceof DocumentElement) {
-            _editor.addEditorTab((DocumentElement)element);
+        if (element.getType() == PathElement.Type.FILE) {
+            _editor.addEditorTab(element);
         }
     }
 
@@ -89,10 +88,10 @@ public class ProjectPanel extends JPanel
     {
         // TODO we are in single selection mode so only one node will ever change [right?]
         PathElementTreeNode node = (PathElementTreeNode)e.getChildren()[0];
-        if (node.getElement() instanceof DocumentElement) {
-            _editor.updateTabTitleAt((DocumentElement)node.getElement());
+        if (node.getElement().getType() == PathElement.Type.FILE) {
+            _editor.updateTabTitleAt(node.getElement());
             // TODO: replace this with super sophisticated fine grained editing model
-            _editor.updateTabDocument((DocumentElement)node.getElement());
+            _editor.updateTabDocument(node.getElement());
         }
     }
 
@@ -172,7 +171,7 @@ public class ProjectPanel extends JPanel
         if (type == PathElement.Type.DIRECTORY) {
             element = PathElement.createDirectory(name, parentElement);
         } else if (type == PathElement.Type.FILE) {
-            element = new DocumentElement(name, parentElement, "");
+            // TODO: element = new DocumentElement(name, parentElement, "");
         } else {
             // other types not implemented
         }
@@ -191,7 +190,7 @@ public class ProjectPanel extends JPanel
 
         // XXX we know the tab was selected in order for delete to work. This might be dangerous.
         // we also know the tab was open.. hmmm
-        if (element instanceof DocumentElement) {
+        if (element.getType() == PathElement.Type.FILE) {
             _editor.closeCurrentTab();
         } else if (element.getType() == PathElement.Type.DIRECTORY) {
             // TODO oh god we have to remove all the tabs associated with this directory

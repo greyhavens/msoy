@@ -29,6 +29,7 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
 import com.threerings.msoy.swiftly.data.DocumentElement;
+import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
@@ -38,16 +39,16 @@ import sdoc.SyntaxSupport;
 
 public class SwiftlyTextPane extends JEditorPane
 {
-    public SwiftlyTextPane (SwiftlyContext ctx, SwiftlyEditor editor, DocumentElement document)
+    public SwiftlyTextPane (SwiftlyContext ctx, SwiftlyEditor editor, PathElement pathElement)
     {
         _ctx = ctx;
         _editor = editor;
-        _document = document;
+        _pathElement = pathElement;
 
         _kit = new SyntaxEditorKit();
         setEditorKit(_kit);
 
-        // setContentType("text/actionscript");
+        setContentType(pathElement.getMimeType());
 
         // setup the actions
         _undoAction = new UndoAction();
@@ -67,30 +68,32 @@ public class SwiftlyTextPane extends JEditorPane
         support.addSupport(SyntaxSupport.JAVA_LEXER, this);
         getDocument().putProperty(SyntaxDocument.tabSizeAttribute, new Integer(2));
 
-        setDocumentElement(document);
+        setDocumentElement(pathElement);
     }
 
-    public void setDocumentElement (DocumentElement document)
+    public void setDocumentElement (PathElement pathElement)
     {
         SyntaxDocument styledDoc = (SyntaxDocument) getDocument();
         styledDoc.addUndoableEditListener(new UndoHandler());
         styledDoc.addDocumentListener(new DocumentElementListener());
 
+        /*
         try {
-            _kit.read(new StringReader(document.getText()), styledDoc, 0);
+            _kit.read(new StringReader(pathElement.getText()), styledDoc, 0);
         } catch (IOException io) {
             // TODO: complain?
         } catch (BadLocationException be) {
             // TODO: complain?
         }
+        */
 
         setDocument(styledDoc);
         setDocumentChanged(false);
     }
 
-    public DocumentElement getDocumentElement ()
+    public PathElement getPathElement ()
     {
-        return _document;
+        return _pathElement;
     }
 
     /**
@@ -99,6 +102,7 @@ public class SwiftlyTextPane extends JEditorPane
      */
     public boolean saveDocument ()
     {
+        /* TODO 
         if (hasUnsavedChanges()) {
             try {
                 _document.setText(getDocument().getText(0, getDocument().getLength()));
@@ -109,6 +113,8 @@ public class SwiftlyTextPane extends JEditorPane
                 // TODO: warn
             }
         }
+        return false;
+        */
         return false;
     }
 
@@ -362,7 +368,7 @@ public class SwiftlyTextPane extends JEditorPane
 
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
-    protected DocumentElement _document;
+    protected PathElement _pathElement;
 
     protected SyntaxEditorKit _kit;
     protected JPopupMenu _popup;
