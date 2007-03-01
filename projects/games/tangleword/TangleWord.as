@@ -4,6 +4,7 @@ package
 import flash.display.Sprite;    
 import flash.display.Shape;
 import flash.text.TextField;
+import mx.core.BitmapAsset;
 
 import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.HostCoordinator;
@@ -50,9 +51,17 @@ public class TangleWord extends Sprite
             maybeStartGame ();
             
         } else {
+            // Initialize the background bitmap
+            var background :BitmapAsset = Resources.makeGameBackground ();
+            Assert.NotNull (background, "Background bitmap failed to initialize!"); 
+            addChild (background);
+            // Error message
             var label :TextField = new TextField();
-            label.text = "This game can only be played on Whirled.com.";
-            label.width = 600;  // same as swf width
+            label.x = Properties.BOARD.x;
+            label.y = Properties.BOARD.y;
+            label.width = Properties.BOARD.width;
+            label.multiline = true;
+            label.htmlText = "<center><p align=\"center\"><font size=\"+2\">TangleWord</font><br/>This game can only be played in <a href=\"http://www.whirled.com\"><u>the Whirled</u></a>.</p>";
             addChild(label);
         }
     }
