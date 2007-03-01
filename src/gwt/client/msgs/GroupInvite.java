@@ -3,12 +3,13 @@
 
 package client.msgs;
 
+import java.util.Iterator;
 import java.util.List;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -19,8 +20,10 @@ import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 
 import com.threerings.gwt.ui.InlineLabel;
 
+import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupInviteObject;
 import com.threerings.msoy.web.data.GroupMembership;
+import com.threerings.msoy.web.data.GroupName;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MemberName;
@@ -70,8 +73,14 @@ public abstract class GroupInvite
                 grid.setStyleName("Headers");
 
                 _groupBox = new ListBox();
+                _groupBox.setSelectedIndex(0);
                 for (int ii = 0; ii < _groups.size(); ii ++) {
-                    _groupBox.addItem(((GroupMembership) _groups.get(ii)).group.groupName);
+                    GroupName group = ((GroupMembership) _groups.get(ii)).group;
+                    _groupBox.addItem(group.groupName);
+                    if (ii == 0) {
+                        // let the first group be the default
+                        _selectedGroupId = group.groupId;
+                    }
                 }
                 _groupBox.addChangeListener(new ChangeListener() {
                     public void onChange (Widget sender) {
@@ -82,8 +91,9 @@ public abstract class GroupInvite
                         _selectedGroupId = ((GroupMembership)_groups.get(ix)).group.groupId;
                     }
                 });
-                grid.setText(0, 0, CMsgs.mmsgs.groupInvite());
+                grid.setText(0, 0, CMsgs.mmsgs.groupInviteTo());
                 formatter.setStyleName(0, 0, "Label");
+                formatter.setWidth(0, 0, "6em");
                 grid.setWidget(0, 1, _groupBox);
                 formatter.setStyleName(0, 1, "Value");
 
@@ -118,23 +128,60 @@ public abstract class GroupInvite
             return new DisplayWidget(false);
         }
 
-        protected class DisplayWidget extends HorizontalPanel
+        protected class DisplayWidget extends DockPanel
         {
             public DisplayWidget (boolean enabled)
             {
                 super();
-                FlowPanel panel = new FlowPanel();
-                panel.add(new InlineLabel(CMsgs.mmsgs.groupClick(), false, false, true));
-                Button joinButton = new Button(CMsgs.mmsgs.groupJoin());
-                joinButton.setEnabled(enabled);
+                _enabled = enabled;
+                setStyleName("GroupInvitation");
+                
+                _status = new Label();
+                add(_status, DockPanel.SOUTH);
+                _content = new FlowPanel();
+                add(_content, DockPanel.CENTER);
+
+                refreshUI();
+            }
+             
+            protected void refreshUI ()
+            {
+                CMsgs.groupsvc.getGroupDetail(
+                    CMsgs.creds, _inviteObject.groupId, new AsyncCallback() {
+                    public void onSuccess (Object result) {
+                        _detail = (GroupDetail) result;
+                        buildUI();
+                    }
+                    public void onFailure (Throwable caught) {
+                        _status.setText(CMsgs.serverError(caught));
+                    }
+                });
+            }
+
+            protected void buildUI ()
+            {
+                _content.clear();
+                Iterator members = _detail.members.iterator();
+                while (members.hasNext()) {
+                    GroupMembership ship = (GroupMembership) members.next();
+                    if (CMsgs.creds.name.equals(ship.member)) {
+                        _content.add(new InlineLabel(
+                            CMsgs.mmsgs.groupAlreadyMember(_detail.group.name)));
+                        return;
+                    }
+                }
+                _content.add(new InlineLabel(
+                    CMsgs.mmsgs.groupInvitation(_detail.group.name), true, false, true));
+                Button joinButton = new Button(CMsgs.mmsgs.groupBtnJoin());
+                joinButton.addStyleName("JoinButton");
+                joinButton.setEnabled(_enabled);
                 joinButton.addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
                         joinGroup();
+                        refreshUI();
                     }
                 });
-                panel.add(joinButton);
-                panel.add(new InlineLabel(CMsgs.mmsgs.groupThe(), false, true, false));
-                add(panel);
+                _content.add(joinButton);
             }
 
             protected void joinGroup ()
@@ -164,7 +211,12 @@ public abstract class GroupInvite
                 });
             }
 
-            protected ListBox _groupBox;
+            protected boolean _enabled;
+            
+            protected GroupDetail _detail;
+            
+            protected Label _status;
+            protected FlowPanel _content;
         }
 
         protected GroupInviteObject _inviteObject;

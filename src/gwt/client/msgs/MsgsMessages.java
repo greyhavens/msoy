@@ -8,12 +8,12 @@ package client.msgs;
 public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "Click to".
+   * Translated "This was an invitation to the group "{0}", which you have since joined.".
    * 
-   * @return translated "Click to"
-   * @gwt.key groupClick
+   * @return translated "This was an invitation to the group "{0}", which you have since joined."
+   * @gwt.key groupAlreadyMember
    */
-  String groupClick();
+  String groupAlreadyMember(String arg0);
 
   /**
    * Translated "Discard".
@@ -40,28 +40,20 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   String popupHeader();
 
   /**
-   * Translated "the group".
-   * 
-   * @return translated "the group"
-   * @gwt.key groupThe
-   */
-  String groupThe();
-
-  /**
-   * Translated "Invite to Group:".
-   * 
-   * @return translated "Invite to Group:"
-   * @gwt.key groupInvite
-   */
-  String groupInvite();
-
-  /**
    * Translated "To:".
    * 
    * @return translated "To:"
    * @gwt.key hdrTo
    */
   String hdrTo();
+
+  /**
+   * Translated "Invite to Group:".
+   * 
+   * @return translated "Invite to Group:"
+   * @gwt.key groupInviteTo
+   */
+  String groupInviteTo();
 
   /**
    * Translated "Subject:".
@@ -72,12 +64,12 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   String hdrSubject();
 
   /**
-   * Translated "join".
+   * Translated "Yes, I want to join!".
    * 
-   * @return translated "join"
-   * @gwt.key groupJoin
+   * @return translated "Yes, I want to join!"
+   * @gwt.key groupBtnJoin
    */
-  String groupJoin();
+  String groupBtnJoin();
 
   /**
    * Translated "Send".
@@ -86,4 +78,12 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key btnSend
    */
   String btnSend();
+
+  /**
+   * Translated "You have received an invitation to become a member of the group "{0}". You may join the group by clicking on the button below, or you can reply to this message if you have any questions for the person who invited you.".
+   * 
+   * @return translated "You have received an invitation to become a member of the group "{0}". You may join the group by clicking on the button below, or you can reply to this message if you have any questions for the person who invited you."
+   * @gwt.key groupInvitation
+   */
+  String groupInvitation(String arg0);
 }

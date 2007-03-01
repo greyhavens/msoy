@@ -55,3 +55,8 @@
 .MailControls .gwt-Button {
     margin-right: 5px;
 }
+
+.GroupInvitation .JoinButton {
+    display: block;
+    margin-left: 8em;
+}
