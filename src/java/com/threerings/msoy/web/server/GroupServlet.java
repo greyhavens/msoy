@@ -32,6 +32,7 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.server.InvocationException;
 
 import static com.threerings.msoy.Log.log;
 
@@ -81,7 +82,7 @@ public class GroupServlet extends MsoyServiceServlet
                 if (mRec == null) {
                     log.warning("Couldn't load group creator [groupId=" + groupId +
                         ", creatorId=" + gRec.creatorId + "]");
-                    throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+                    throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
                 }
                 // set up the detail
                 GroupDetail detail = new GroupDetail();
