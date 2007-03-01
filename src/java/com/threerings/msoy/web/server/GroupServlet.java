@@ -31,6 +31,8 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
+import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.server.InvocationException;
 
 import static com.threerings.msoy.Log.log;
 
@@ -69,11 +71,19 @@ public class GroupServlet extends MsoyServiceServlet
         final ServletWaiter<GroupDetail> waiter =
             new ServletWaiter<GroupDetail>("getGroupDetail[" + groupId + "]");
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<GroupDetail>(waiter) {
-            public GroupDetail invokePersistResult () throws PersistenceException {
+            public GroupDetail invokePersistResult () throws Exception {
                 // load the group record
                 GroupRecord gRec = MsoyServer.groupRepo.loadGroup(groupId);
+                if (gRec == null) {
+                    log.warning("Couldn't load group [groupId=" + groupId + "]");
+                    throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
+                }
                 // load the creator's member record
                 MemberRecord mRec = MsoyServer.memberRepo.loadMember(gRec.creatorId);
+                if (mRec == null) {
+                    log.warning("Couldn't load group creator [creatorId=" + gRec.creatorId + "]");
+                    throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
+                }
                 // set up the detail
                 GroupDetail detail = new GroupDetail();
                 detail.creator = mRec.getName();
