@@ -55,7 +55,6 @@ public class SwiftlyPanel extends VerticalPanel
     {
         _project = project;
         updateProjectLink();
-        _applet.setVisible(true);
     }
 
     protected void loadApplet ()
@@ -67,8 +66,6 @@ public class SwiftlyPanel extends VerticalPanel
         _header.add(projectTitle);
         _header.add(new Button(CSwiftly.msgs.editProject(), new ClickListener() {
             public void onClick (Widget sender) {
-                // TODO: unhack
-                _applet.setVisible(false);
                 new ProjectEdit(_project, SwiftlyPanel.this).show();
             }
         }));
