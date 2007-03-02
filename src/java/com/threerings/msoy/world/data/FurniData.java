@@ -22,7 +22,8 @@ public class FurniData extends SimpleStreamableObject
      * scene. Background music auto-plays. */
     public static final byte BACKGROUND = -1;
 
-    /** An actionType indicating 'no action'. */
+    /** An actionType indicating 'no action'.
+     * actionData = null to capture mouse events, or "-" to pass through. */
     public static final byte ACTION_NONE = 0;
 
     /** An actionType indicating that actionData is a URL.

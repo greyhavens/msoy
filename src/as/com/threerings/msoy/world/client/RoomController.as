@@ -404,6 +404,11 @@ public class RoomController extends SceneController
                 _walkTarget.scaleY = 1 / _roomView.scaleY;
                 showWalkTarget = true;
             }
+
+        } else if (!hitter.hasAction()) {
+            // it may have captured the mouse, but it doesn't actually
+            // have any action, so we don't hover it.
+            hitter = null;
         }
 
         _walkTarget.visible = showWalkTarget;
@@ -412,7 +417,7 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Get the top-most sprite with both an action and a non-transparent
+     * Get the top-most sprite mouse-capturing sprite with a non-transparent
      * pixel at the specified location.
      */
     protected function getHitSprite (
@@ -421,9 +426,9 @@ public class RoomController extends SceneController
         // we search from last-drawn to first drawn to get the topmost...
         for (var dex :int = _roomView.numChildren - 1; dex >= 0; dex--) {
             var spr :MsoySprite = (_roomView.getChildAt(dex) as MsoySprite);
-            if ((spr != null) && spr.hitTestPoint(stageX, stageY, true)) {
-                // we found a hit, but only return it if it has action
-                return spr.hasAction() ? spr : null;
+            if ((spr != null) && spr.capturesMouse() &&
+                    spr.hitTestPoint(stageX, stageY, true)) {
+                return spr;
             }
         }
 
@@ -466,7 +471,10 @@ public class RoomController extends SceneController
         var hitter :MsoySprite = getHitSprite(event.stageX, event.stageY);
 
         if (hitter != null) {
-            hitter.mouseClick(event);
+            if (hitter.hasAction()) {
+                hitter.mouseClick(event);
+            }
+            // otherwise: the sprite simply captures and discards the event
 
         } else {
             var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();

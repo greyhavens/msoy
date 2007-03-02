@@ -21,7 +21,8 @@ public class FurniData
      * scene. Background music auto-plays. */
     public static const BACKGROUND :int = -1;
 
-    /** An actionType indicating 'no action'. */
+    /** An actionType indicating 'no action'.
+        actionData = null to capture mouse events, or "-" to pass through. */
     public static const ACTION_NONE :int = 0;
 
     /** An actionType indicating that actionData is a URL.

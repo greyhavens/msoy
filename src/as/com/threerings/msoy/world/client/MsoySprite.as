@@ -132,6 +132,11 @@ public class MsoySprite extends MediaContainer
         return false;
     }
 
+    public function capturesMouse () :Boolean
+    {
+        return hasAction();
+    }
+
     public function setEditing (editing :Boolean) :void
     {
         _editing = editing;

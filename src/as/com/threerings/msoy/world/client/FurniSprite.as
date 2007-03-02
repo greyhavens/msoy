@@ -308,6 +308,17 @@ public class FurniSprite extends MsoySprite
         }
     }
 
+    override public function capturesMouse () :Boolean
+    {
+        switch (_furni.actionType) {
+        case FurniData.ACTION_NONE:
+            return (_furni.actionData == null);
+
+        default:
+            return super.capturesMouse();
+        }
+    }
+
     override public function toString () :String
     {
         return "FurniSprite[" + _furni.itemType + ":" + _furni.itemId + "]";
