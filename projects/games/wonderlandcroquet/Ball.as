@@ -26,7 +26,7 @@ public class Ball extends Sprite
     {
         this.particle = particle;
         this.playerIdx = playerIdx;
-        _flamingo = null;
+        _mallet = null;
 
         _ballAnimation = MovieClipAsset(new ballAnimations[playerIdx]);
 
@@ -65,13 +65,13 @@ public class Ball extends Sprite
      */
     public function hitBall (p :Point) :void
     {
-        if (_flamingo == null) {
-            // Hit without a flamingo? Wacky
+        if (_mallet == null) {
+            // Hit without a mallet? Wacky
             return;
         }
 
-        removeChild(_flamingo);
-        _flamingo = null;
+        removeChild(_mallet);
+        _mallet = null;
 
         var angle :Number = Math.PI + Math.atan(p.y / p.x);
         var strength :Number = Math.sqrt(p.x*p.x + p.y*p.y) * HIT_STRENGTH_MULTIPLIER;
@@ -100,17 +100,17 @@ public class Ball extends Sprite
             return;
         }
 
-        if (_flamingo != null) {
-            removeChild(_flamingo);
-            _flamingo = null;
+        if (_mallet != null) {
+            removeChild(_mallet);
+            _mallet = null;
             return;
         }
-        _flamingo = new WonderlandFlamingo(this);
-        addChild(_flamingo);
+        _mallet = new WonderlandMallet(this);
+        addChild(_mallet);
     }
 
     // Our flamingo we're using for aiming.
-    protected var _flamingo :WonderlandFlamingo;
+    protected var _mallet :WonderlandMallet;
 
     // Modifiers applied to this ball.
     protected var _modifiers :int;

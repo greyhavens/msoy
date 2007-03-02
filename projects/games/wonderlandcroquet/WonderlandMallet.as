@@ -4,10 +4,10 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.events.MouseEvent; 
 
-public class WonderlandFlamingo extends Sprite
+public class WonderlandMallet extends Sprite
 {
 
-    public function WonderlandFlamingo (ball :Ball)
+    public function WonderlandMallet (ball :Ball)
     {
         _ball = ball;
 
