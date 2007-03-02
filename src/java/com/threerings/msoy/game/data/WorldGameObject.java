@@ -5,14 +5,12 @@ package com.threerings.msoy.game.data;
 
 import com.threerings.presents.dobj.DSet;
 
-import com.threerings.ezgame.data.EZGameObject;
-
 import com.threerings.msoy.world.data.MemoryEntry;
 
 /**
  * A game config for an in-world game.
  */
-public class WorldGameObject extends EZGameObject
+public class WorldGameObject extends MsoyGameObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>config</code> field. */

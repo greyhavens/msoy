@@ -23,12 +23,12 @@ public class MsoyGameMarshaller extends InvocationMarshaller
     public static final int AWARD_FLOW = 1;
 
     // from interface MsoyGameService
-    public void awardFlow (Client arg1, int arg2, int arg3, InvocationService.InvocationListener arg4)
+    public void awardFlow (Client arg1, int arg2, InvocationService.InvocationListener arg3)
     {
-        ListenerMarshaller listener4 = new ListenerMarshaller();
-        listener4.listener = arg4;
+        ListenerMarshaller listener3 = new ListenerMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, AWARD_FLOW, new Object[] {
-            Integer.valueOf(arg2), Integer.valueOf(arg3), listener4
+            Integer.valueOf(arg2), listener3
         });
     }
 }

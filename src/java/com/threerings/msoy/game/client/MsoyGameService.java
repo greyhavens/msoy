@@ -12,10 +12,10 @@ import com.threerings.presents.client.InvocationService;
 public interface MsoyGameService extends InvocationService
 {
     /**
-     * Awards the given amount of flow to the given player. Awarded flow accumulates
+     * Awards the given amount of flow to the 'this' occupant. Awarded flow accumulates
      * server-side and is paid out when the game ends or when the player leaves the
-     * game. If the amount exceeds the return value of {@link #getAvailableFlow}, it
-     * is silently capped at that level.
+     * game. If the amount exceeds the server-calculated cap, it is silently
+     * capped at that level.
      */
-    void awardFlow (Client client, int playerId, int amount, InvocationListener listener);
+    void awardFlow (Client client, int amount, InvocationListener listener);
 }

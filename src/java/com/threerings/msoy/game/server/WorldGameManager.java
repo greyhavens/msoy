@@ -12,8 +12,6 @@ import com.samskivert.util.Invoker;
 
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.ezgame.server.EZGameManager;
-
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
 
@@ -30,7 +28,7 @@ import static com.threerings.msoy.Log.*;
 /**
  * Manages an in-world game.
  */
-public class WorldGameManager extends EZGameManager
+public class WorldGameManager extends MsoyGameManager
 {
     @Override // documentation inherited
     public void startup (PlaceObject plobj)

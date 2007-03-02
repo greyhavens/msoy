@@ -41,7 +41,7 @@ public class MsoyGameDispatcher extends InvocationDispatcher
         case MsoyGameMarshaller.AWARD_FLOW:
             ((MsoyGameProvider)provider).awardFlow(
                 source,
-                ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (InvocationService.InvocationListener)args[2]
+                ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
             );
             return;
 

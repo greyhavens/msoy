@@ -3,14 +3,12 @@
 
 package com.threerings.msoy.game.data;
 
-import com.threerings.ezgame.data.EZGameConfig;
-
 import com.threerings.msoy.item.web.Game;
 
 /**
  * A game config for an in-world game.
  */
-public class WorldGameConfig extends EZGameConfig
+public class WorldGameConfig extends MsoyGameConfig
 {
     /** The game item. */
     public Game game;
