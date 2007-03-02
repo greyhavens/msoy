@@ -3,8 +3,6 @@
 
 package client.admin;
 
-import client.util.MsoyUI;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -16,6 +14,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.data.ConnectConfig;
+
+import client.shell.MsoyEntryPoint;
+import client.util.MsoyUI;
 
 /**
  * Displays the various services available to support and admin personnel.
