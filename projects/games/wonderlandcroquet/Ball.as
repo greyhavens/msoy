@@ -47,7 +47,6 @@ public class Ball extends Sprite
 
         loader.load(new BALL_ART_CLASS());
 
-
         addEventListener(MouseEvent.CLICK, mouseClick);
     }
 
