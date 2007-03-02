@@ -39,6 +39,8 @@ import sdoc.SyntaxSupport;
 
 public class SwiftlyTextPane extends JEditorPane
 {
+    public static final int PRINT_MARGIN_WIDTH = 100; 
+
     public SwiftlyTextPane (SwiftlyContext ctx, SwiftlyEditor editor, PathElement pathElement)
     {
         _ctx = ctx;
@@ -66,7 +68,9 @@ public class SwiftlyTextPane extends JEditorPane
         // TODO pick the lexer based on the mime type
         SyntaxSupport support = SyntaxSupport.getInstance();
         support.addSupport(SyntaxSupport.JAVA_LEXER, this);
-        getDocument().putProperty(SyntaxDocument.tabSizeAttribute, new Integer(2));
+        support.setUseDefaultUndoManager(false);
+        support.setPrintMarginWidth(PRINT_MARGIN_WIDTH);
+        getDocument().putProperty(SyntaxDocument.tabSizeAttribute, new Integer(4));
 
         setDocumentElement(pathElement);
     }
