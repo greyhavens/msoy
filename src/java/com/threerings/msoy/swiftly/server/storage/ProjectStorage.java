@@ -5,8 +5,6 @@ package com.threerings.msoy.swiftly.server.storage;
 
 import com.threerings.msoy.swiftly.data.PathElement;
 
-import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
-
 import java.util.List;
 
 /**

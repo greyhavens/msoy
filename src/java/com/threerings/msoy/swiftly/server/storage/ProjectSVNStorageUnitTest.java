@@ -7,13 +7,9 @@ import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 
-import org.tmatesoft.svn.core.SVNURL;
-import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
-
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.net.URI;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -29,8 +25,6 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public void setUp ()
         throws Exception
     {
-        File svnDir;
-        
         // Create a temporary directory.
         _tempDir = File.createTempFile("svnstorage", "test");
         _tempDir.delete();
