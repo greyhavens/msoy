@@ -167,7 +167,7 @@ public class MsoyServer extends WhirledServer
     }
 
     /**
-     * Loads a message to the general audit log.
+     * Logs a message to the general audit log.
      */
     public static void generalLog (String message)
     {
@@ -175,11 +175,19 @@ public class MsoyServer extends WhirledServer
     }
 
     /**
-     * Loads a message to the item audit log.
+     * Logs a message to the item audit log.
      */
     public static void itemLog (String message)
     {
         _ilog.log(message);
+    }
+
+    /**
+     * Logs a message to the item audit log.
+     */
+    public static void flowLog (String message)
+    {
+        _flog.log(message);
     }
 
     /**
@@ -494,6 +502,7 @@ public class MsoyServer extends WhirledServer
     protected static File _logdir = new File(ServerConfig.serverRoot, "log");
     protected static AuditLogger _glog = createAuditLog("server");
     protected static AuditLogger _ilog = createAuditLog("item");
+    protected static AuditLogger _flog = createAuditLog("flow");
     protected static AuditLogger _stlog = createAuditLog("state");
 
     /** Check for modified code every 30 seconds. */

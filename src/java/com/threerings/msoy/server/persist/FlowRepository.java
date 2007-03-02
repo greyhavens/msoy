@@ -7,7 +7,6 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.logging.Logger;
 
 import com.samskivert.io.PersistenceException;
 
@@ -27,6 +26,7 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.server.MsoyServer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -35,9 +35,6 @@ import static com.threerings.msoy.Log.log;
  */
 public class FlowRepository extends DepotRepository
 {
-    /** The log for flow grants. */
-    public static Logger flowLog = Logger.getLogger("com.threerings.msoy.flow");
-
     /**
      * Creates a flow repository for.
      */
@@ -287,9 +284,8 @@ public class FlowRepository extends DepotRepository
             }
         } while (again);
 
-        flowLog.info(
-            System.currentTimeMillis() + " " + memberId + (grant ? " G " : " S ") +
-            amount + " " + (details != null ? " " + details : ""));
+        MsoyServer.flowLog(
+            memberId + (grant ? " G " : " S ") + amount + (details != null ? " " + details : ""));
 
         // TODO: can we magically get the updated value from the database? stored procedure?
         return loadMemberFlow(memberId).flow;
