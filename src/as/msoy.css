@@ -187,7 +187,7 @@ ButtonBar {
 }
 
 .placeBox {
-  borderStyle: "solid";
+  borderStyle: "none";
   borderThickness: 4;
   borderColor: #ffffff;
   borderSides: "top bottom";
@@ -199,10 +199,12 @@ ButtonBar {
 }
 
 .controlBar { 
+  backgroundColor: #000000;
+  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
+  backgroundSize: "100%";
   horizontalGap: 0;
   verticalGap: 0;
   borderStyle: "none";
-  backgroundColor: #ffffff;
   paddingBottom: 0;
   paddingTop: 0;
   paddingLeft: 0;
