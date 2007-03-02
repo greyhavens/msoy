@@ -29,6 +29,12 @@ public class ProjectTreeModel extends DefaultTreeModel
         _roomObj = roomObj;
         _roomObj.addListener(this);
 
+        // Raise all path elements from the dead, re-binding transient
+        // instance variables.
+        for (PathElement element : _roomObj.pathElements) {
+            element.lazarus(_roomObj.pathElements);
+        }
+
         // construct our tree model based on the room object's contents
         PathElement root = roomObj.getRootElement();
         if (root == null) {
@@ -45,6 +51,10 @@ public class ProjectTreeModel extends DefaultTreeModel
     {
         if (event.getName().equals(ProjectRoomObject.PATH_ELEMENTS)) {
             final PathElement element = (PathElement)event.getEntry();
+
+            // Re-bind transient instance variables
+            element.lazarus(_roomObj.pathElements);
+
             updateNodes(new NodeOp() {
                 public boolean isMatch (PathElementTreeNode node) {
                     return node.getElement().elementId == element.getParent().elementId;
@@ -61,6 +71,10 @@ public class ProjectTreeModel extends DefaultTreeModel
     {
         if (event.getName().equals(ProjectRoomObject.PATH_ELEMENTS)) {
             final PathElement element = (PathElement)event.getEntry();
+
+            // Re-bind transient instance variables
+            element.lazarus(_roomObj.pathElements);
+
             updateNodes(new NodeOp() {
                 public boolean isMatch (PathElementTreeNode node) {
                     return node.getElement().elementId == element.elementId;
@@ -101,7 +115,7 @@ public class ProjectTreeModel extends DefaultTreeModel
     protected void addChildren (PathElementTreeNode node, PathElement parent)
     {
         for (PathElement element : _roomObj.pathElements) {
-            if (element.getParent() != null && element.getParent().elementId == parent.elementId) {
+            if (element.getParent() != null && element.getParent() == parent) {
                 PathElementTreeNode child = new PathElementTreeNode(element);
                 node.add(child);
                 if (element.getType() == PathElement.Type.DIRECTORY) {

@@ -5,10 +5,13 @@ package com.threerings.msoy.swiftly.data;
 
 import java.net.URL;
 
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.threerings.io.ObjectOutputStream;
 import com.threerings.presents.dobj.DSet;
 
 /**
@@ -59,6 +62,19 @@ public class PathElement
         setMimeType(mimeType);
     }
 
+    /**
+     * After serialization, call lazarus with the pathElements DSet
+     * to correctly re-bind the any transient instance variables. This
+     * relies on parent nodes being added to the DSet prior to their children,
+     * and an assert() below makes sure of that.
+     */
+    public void lazarus (DSet<PathElement> pathElements) {
+        if (_parentKey != null) {
+            _parent = pathElements.get(_parentKey);
+            assert(_parent != null);
+        }
+    }
+    
     public Type getType ()
     {
         return _type;
@@ -153,6 +169,20 @@ public class PathElement
         return getName();
     }
 
+    /**
+     * Store the parent's key prior to serialization, such that we can use it to re-bind
+     * the transient parent instance variable when lazarus() is called on the other side
+     * of the wire, post-serialization.
+     */
+    public void writeObject(ObjectOutputStream out)
+        throws IOException
+    {
+        if (_parent != null) {
+            _parentKey = _parent.getKey();            
+        }
+        out.defaultWriteObject();
+    }
+
     /** Directory, File, or Root. */
     protected Type _type;
 
@@ -162,6 +192,10 @@ public class PathElement
     /** Mime type, may be null if unknown. */
     protected String _mimeType;
 
-    /* Enclosing parent PathElement, if any. */
-    protected PathElement _parent = null;
+    /** Enclosing parent PathElement, if any. */
+    protected transient PathElement _parent = null;
+    
+    /** Key for the enclosing parent, used to re-bind the transient _parent instance variable
+     * post-serialization. */
+    private Comparable _parentKey = null;
 }
