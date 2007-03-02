@@ -203,6 +203,7 @@ public class StatusPanel extends FlexTable
         public LogonPopup ()
         {
             super(true);
+            _centerOnShow = false;
 
             FlexTable contents = new FlexTable();
             contents.setStyleName("logonPopup");
