@@ -284,7 +284,7 @@ public class MsoyAuthenticator extends Authenticator
 
         } catch (ServiceException se) {
             rdata.code = se.getMessage();
-            log.info("Rejecting authentication: " + rdata.code);
+            log.info("Rejecting authentication [creds=" + creds + ", code=" + rdata.code + "].");
 
         } finally {
             if (creds != null) {
