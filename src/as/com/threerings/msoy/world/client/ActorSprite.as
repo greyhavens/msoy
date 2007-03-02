@@ -7,6 +7,8 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
+import flash.filters.GlowFilter;
+
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.data.ActorInfo;
@@ -46,6 +48,7 @@ public class ActorSprite extends MsoySprite
         _label = new TextField();
         _label.autoSize = TextFieldAutoSize.CENTER;
         _label.defaultTextFormat = labelFormat;
+        _label.filters = [ new GlowFilter(0, 1, 2, 2, 255) ];
         addChild(_label);
         
         if (occInfo != null) {
