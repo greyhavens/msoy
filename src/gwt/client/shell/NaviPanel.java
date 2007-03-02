@@ -205,7 +205,4 @@ public class NaviPanel extends FlexTable
 
     /** The currently popped up menu, for easy closing. */
     protected PopupPanel _popped;
-
-    /** The iframe used in the hack to make these menus work over Flash in Linux. */
-    protected MenuFrame _menuFrame;
 }
