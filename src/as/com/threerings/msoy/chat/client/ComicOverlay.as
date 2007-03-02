@@ -354,7 +354,7 @@ public class ComicOverlay extends ChatOverlay
         shapeFunction(g, width, height);
         g.endFill();
         // draw the shape with the outline color
-        g.lineStyle(1.5, outline);
+        g.lineStyle(1, outline);
         shapeFunction(g, width, height);
 
         return padding;
