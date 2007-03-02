@@ -31,12 +31,7 @@ public class Wicket extends Sprite
         var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
         loader.addEventListener(Event.COMPLETE, function (event :Event) :void {
             var char :String;
-            if (number == 1) {
-                char = "a";
-            } else {
-                char = "" + (number);
-            }
-            _animation = new (loader.getClass("card" + char))();
+            _animation = new (loader.getClass("card" + number))();
             _animation.x = x;
             _animation.y = y;
             _animation.rotation = rotation;
