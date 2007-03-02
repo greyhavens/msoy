@@ -191,20 +191,6 @@ public class SwiftlyTextPane extends JEditorPane
         getActionMap().put(action, action);
     }
 
-/* TODO: KILL ME 
-    protected void updateDocument ()
-    {
-        if (_document != null) {
-            try {
-                _document.setText(getDocument().getText(0, getDocument().getLength()));
-                _editor.updateDocument(_document);
-            } catch (BadLocationException be) {
-                // TODO: complain?
-            }
-        }
-    }
-*/
-
     protected class PopupListener extends MouseAdapter {
         @Override // from MouseAdapter
         public void mousePressed(MouseEvent e) {
@@ -297,25 +283,6 @@ public class SwiftlyTextPane extends JEditorPane
             }
         }
     }
-
-/* TODO: KILL ME 
-    class DocumentElementListener implements DocumentListener {
-        // from interface DocumentListener
-        public void insertUpdate(DocumentEvent e) {
-            // nada
-        }
-
-        // from interface DocumentListener
-        public void removeUpdate(DocumentEvent e) {
-            // nada
-        }
-
-        // from interface DocumentListener
-        public void changedUpdate(DocumentEvent e) {
-            // nada
-        }
-    }
-*/
 
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
