@@ -303,8 +303,8 @@ public class RoomController extends SceneController
             var memId :int = occInfo.getMemberId();
             var isGuest :Boolean = (memId == MemberName.GUEST_ID);
             var isFriend :Boolean = us.friends.containsKey(memId);
-            menuItems.push({ label: Msgs.GENERAL.get("b.tell"),
-                command: MsoyController.TELL, arg: memId });
+//            menuItems.push({ label: Msgs.GENERAL.get("b.tell"),
+//                command: MsoyController.TELL, arg: memId });
 
             if (!isGuest) {
                 menuItems.push(

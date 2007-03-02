@@ -63,16 +63,11 @@ public class ChatControl extends HBox
         but.height = height;
         addChild(but);
 
-        _txt.addEventListener(KeyboardEvent.KEY_UP, keyEvent, false, 0, true);
+//        _txt.addEventListener(KeyboardEvent.KEY_UP, keyEvent, false, 0, true);
         _txt.addEventListener(FlexEvent.ENTER, sendChat, false, 0, true);
         but.addEventListener(FlexEvent.BUTTON_DOWN, sendChat, false, 0, true);
 
-        _txt.addEventListener(FocusEvent.FOCUS_IN, handleFocusIn,
-            false, 0, true);
-        _txt.addEventListener(FocusEvent.FOCUS_OUT, handleFocusOut,
-            false, 0, true);
-
-        updateTarget();
+//        updateTarget();
     }
 
     /**
@@ -85,14 +80,19 @@ public class ChatControl extends HBox
         }
     }
 
+    override public function setFocus () :void
+    {
+        _txt.setFocus();
+    }
+
     /**
      * Initiate a tell to the specified user.
      */
     public function initiateTell (name :MemberName) :void
     {
-        _ctx.getChatDirector().addChatter(name);
-        _target = name;
-        updateTarget();
+//        _ctx.getChatDirector().addChatter(name);
+//        _target = name;
+//        updateTarget();
     }
 
     override public function parentChanged (p :DisplayObjectContainer) :void
@@ -102,28 +102,20 @@ public class ChatControl extends HBox
         if (p != null) {
             // set up any already-configured text
             _txt.text = _curLine;
-            var willShowTip :Boolean = StringUtil.isBlank(_curLine);
 
             // request focus
             callLater(function () :void {
                 _txt.setFocus();
-                if (willShowTip) {
-                    showTip(true);
-                }
             });
 
             _ctx.getLocationDirector().addLocationObserver(_locObs);
             _controls.push(this);
 
         } else {
-            showTip(false);
             _curLine = _txt.text;
 
             _ctx.getLocationDirector().removeLocationObserver(_locObs);
-            var idx :int = _controls.indexOf(this);
-            if (idx != -1) {
-                _controls.splice(idx, 1);
-            }
+            ArrayUtil.removeAll(_controls, this);
         }
     }
 
@@ -154,38 +146,18 @@ public class ChatControl extends HBox
         _txt.text = "";
     }
 
-    protected function keyEvent (event :KeyboardEvent) :void
-    {
-        switch (event.keyCode) {
-        case Keyboard.DOWN:
-            selectTarget(true);
-            break;
-
-        case Keyboard.UP:
-            selectTarget(false);
-            break;
-        }
-    }
-
-    protected function showTip (show :Boolean) :void
-    {
-        if (show == _showingTip) {
-            return;
-        }
-        if (show) {
-            _txt.setStyle("color", 0x666666);
-            _txt.text = Msgs.GENERAL.get("i.chat");
-            _txt.addEventListener(TextEvent.TEXT_INPUT, handleTextInput,
-                false, 0, true)
-
-        } else {
-            _txt.setStyle("color", 0x000000);
-            _txt.text = "";
-            _txt.removeEventListener(TextEvent.TEXT_INPUT, handleTextInput,
-                false);
-        }
-        _showingTip = show;
-    }
+//    protected function keyEvent (event :KeyboardEvent) :void
+//    {
+//        switch (event.keyCode) {
+//        case Keyboard.DOWN:
+//            selectTarget(true);
+//            break;
+//
+//        case Keyboard.UP:
+//            selectTarget(false);
+//            break;
+//        }
+//    }
 
     /**
      * Routed from our LocationAdapter, we observe the entry or exit
@@ -196,27 +168,27 @@ public class ChatControl extends HBox
         updateTarget();
     }
 
-    /**
-     * Select a different target from the list of chat targets.
-     */
-    protected function selectTarget (down :Boolean) :void
-    {
-        var chatters :Array = _ctx.getChatDirector().getChatters();
-
-        var idx :int = ArrayUtil.indexOf(chatters, _target);
-        if (down) {
-            idx = Math.min(chatters.length - 1, idx + 1);
-        } else {
-            idx = Math.max(-1, idx - 1);
-        }
-
-        if (idx >= 0) {
-            _target = (chatters[idx] as MemberName);
-        } else {
-            _target = null;
-        }
-        updateTarget();
-    }
+//    /**
+//     * Select a different target from the list of chat targets.
+//     */
+//    protected function selectTarget (down :Boolean) :void
+//    {
+//        var chatters :Array = _ctx.getChatDirector().getChatters();
+//
+//        var idx :int = ArrayUtil.indexOf(chatters, _target);
+//        if (down) {
+//            idx = Math.min(chatters.length - 1, idx + 1);
+//        } else {
+//            idx = Math.max(-1, idx - 1);
+//        }
+//
+//        if (idx >= 0) {
+//            _target = (chatters[idx] as MemberName);
+//        } else {
+//            _target = null;
+//        }
+//        updateTarget();
+//    }
 
     /**
      * Called to update the text we display in our target button.
@@ -224,44 +196,24 @@ public class ChatControl extends HBox
     protected function updateTarget () :void
     {
         var plobj :PlaceObject = _ctx.getLocationDirector().getPlaceObject();
-        var label :String;
-        var enabled :Boolean = true;
-        if (_target == null) {
-            if (plobj == null) {
-                label = Msgs.GENERAL.get("l.select_chatter");
-                enabled = false;
-
-            } else {
-                label = Msgs.GENERAL.get("m.world");
-            }
-        } else {
-            label = _target.toString();
-        }
-
-        _txt.enabled = enabled;
+        _txt.enabled = (plobj != null);
+//        var label :String;
+//        var enabled :Boolean = true;
+//        if (_target == null) {
+//            if (plobj == null) {
+//                label = Msgs.GENERAL.get("l.select_chatter");
+//                enabled = false;
+//
+//            } else {
+//                label = Msgs.GENERAL.get("m.world");
+//            }
+//        } else {
+//            label = _target.toString();
+//        }
+//
+//        _txt.enabled = enabled;
     }
 
-    protected function handleFocusIn (evt :FocusEvent) :void
-    {
-        showTip(false);
-    }
-
-    protected function handleFocusOut (evt :FocusEvent) :void
-    {
-        if (_txt.text == "") {
-            showTip(true);
-        }
-    }
-
-    protected function handleTextInput (evt :TextEvent) :void
-    {
-        // turn off tippage, set the entered text to what the user entered
-        showTip(false);
-        callLater(function () :void {
-            _txt.text = evt.text;
-        });
-    }
-    
     /** Our client-side context. */
     protected var _ctx :WorldContext;
 
@@ -273,9 +225,6 @@ public class ChatControl extends HBox
 
     /** The place where the user may enter chat. */
     protected var _txt :TextInput;
-
-    /** Are we showing the text entry tip? */
-    protected var _showingTip :Boolean = false;
 
     /** An array of the currently shown-controls. */
     protected static var _controls :Array = [];

@@ -288,6 +288,7 @@ ButtonBar {
 }
 
 .chatInput {
+    color: #000000;
     themeColor: #54a9da;
     fontFamily: "Arial";
     fontSize: 9;
