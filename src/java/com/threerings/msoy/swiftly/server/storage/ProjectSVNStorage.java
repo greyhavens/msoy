@@ -8,6 +8,7 @@ import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.data.PathElement;
+import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -243,6 +244,14 @@ public class ProjectSVNStorage
 
     }
 
+    // from interface ProjectStorage
+    public SwiftlyDocument getDocument (String path)
+        throws ProjectStorageException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
     /**
      * Given a URI and a project Id, return the project's subversion URL.
      * This is composed of the base server URL + the project ID.
@@ -397,4 +406,5 @@ public class ProjectSVNStorage
       * provides one repository instance per thread, and as such, one should be careful to
       * open and close all transactions within the same method call. */
     private ISVNRepositoryPool _svnPool;
+
 }
