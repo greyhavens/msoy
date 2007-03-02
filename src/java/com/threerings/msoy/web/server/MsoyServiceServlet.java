@@ -9,7 +9,12 @@ import java.util.Map;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+import com.samskivert.io.PersistenceException;
+
 import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.data.ServiceException;
@@ -45,6 +50,20 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     protected void mapUser (WebCreds creds, MemberRecord record)
     {
         _members.put(creds.token, record);
+    }
+
+    /**
+     * A convenience method to record that a user took an action, and potentially award them flow
+     * for doing so.
+     */
+    protected void logUserAction (MemberRecord memrec, UserAction action, String details)
+        throws PersistenceException
+    {
+        int flow = MsoyServer.memberRepo.getFlowRepository().logUserAction(
+            memrec.memberId, action, details);
+        if (flow > 0) {
+            MemberManager.queueFlowUpdated(memrec.memberId, flow);
+        }
     }
 
     /** Contains a mapping of authenticated members. TODO: expire records. */

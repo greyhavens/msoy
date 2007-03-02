@@ -51,10 +51,16 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // TODO: whatever filtering and profanity checking that we want
 
-        // firstly stuff their profile data into the database
         try {
+            // firstly stuff their profile data into the database
             boolean created = MsoyServer.profileRepo.storeProfile(
                 new ProfileRecord(memrec.memberId, profile));
+
+            // record that the user updated their profile
+            logUserAction(memrec, created ? UserAction.CREATED_PROFILE :
+                          UserAction.UPDATED_PROFILE, null);
+
+            // handle a display name change if necessary
             if (memrec.name == null || !memrec.name.equals(profile.displayName)) {
                 MsoyServer.memberRepo.configureDisplayName(memrec.memberId, profile.displayName);
 
@@ -65,14 +71,6 @@ public class ProfileServlet extends MsoyServiceServlet
                         MsoyServer.memberMan.displayNameChanged(name);
                     }
                 });
-            }
-
-            // record that that took the action
-            UserAction action = created ? UserAction.CREATED_PROFILE : UserAction.UPDATED_PROFILE;
-            int flow = MsoyServer.memberRepo.getFlowRepository().logUserAction(
-                memrec.memberId, action, null);
-            if (flow > 0) {
-                MemberManager.queueFlowUpdated(memrec.memberId, flow);
             }
 
         } catch (PersistenceException pe) {

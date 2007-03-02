@@ -133,9 +133,8 @@ public class CatalogServlet extends MsoyServiceServlet
                 MemberManager.queueFlowUpdated(mrec.memberId, flow);
             }
 
-            MsoyServer.memberRepo.getFlowRepository().logUserAction(
-                mrec.memberId, UserAction.BOUGHT_ITEM, ident.type + " " + ident.itemId + " " +
-                listing.flowCost + " " + listing.goldCost);
+            logUserAction(mrec, UserAction.BOUGHT_ITEM, ident.type + " " +
+                          ident.itemId + " " + listing.flowCost + " " + listing.goldCost);
 
             return listing.item.toItem();
             
@@ -208,8 +207,7 @@ public class CatalogServlet extends MsoyServiceServlet
                     " " + ident.itemId + " " + rarity, false);
                 MemberManager.queueFlowUpdated(mrec.memberId, flow);
 
-                MsoyServer.memberRepo.getFlowRepository().logUserAction(
-                    mrec.memberId, UserAction.LISTED_ITEM, ident.toString() + " " + rarity);
+                logUserAction(mrec, UserAction.LISTED_ITEM, ident.toString() + " " + rarity);
 
                 return record.toListing();
 
@@ -259,9 +257,8 @@ public class CatalogServlet extends MsoyServiceServlet
                 " " + ident.itemId + " " + refundDesc, true);
             MemberManager.queueFlowUpdated(mrec.memberId, flow);
 
-            MsoyServer.memberRepo.getFlowRepository().logUserAction(
-                mrec.memberId, UserAction.RETURNED_ITEM, ident.type + " " + ident.itemId + " " +
-                refundDesc + " " + flowRefund + " " + goldRefund);
+            logUserAction(mrec, UserAction.RETURNED_ITEM, ident.type + " " +
+                          ident.itemId + " " + refundDesc + " " + flowRefund + " " + goldRefund);
 
             return new int[] { flowRefund, goldRefund };
             
