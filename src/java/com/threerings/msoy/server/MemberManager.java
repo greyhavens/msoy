@@ -79,6 +79,19 @@ public class MemberManager
     public static final long POPULAR_PLACES_CACHE_LIFE = 5*1000;
 
     /**
+     * This can be called from any thread to queue an update of the member's current flow if they
+     * are online.
+     */
+    public static void queueFlowUpdated (final int memberId, final int flow)
+    {
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.flowUpdated(memberId, flow);
+            }
+        });
+    }
+
+    /**
      * Prepares our member manager for operation.
      */
     public void init (MemberRepository memberRepo, GroupRepository groupRepo)
@@ -157,6 +170,18 @@ public class MemberManager
         if (user != null) {
             user.setMemberName(name);
             updateOccupantInfo(user);
+        }
+    }
+
+    /**
+     * Called when a member's flow is updated. If they are online we update {@link
+     * MemberObject#flow}.
+     */
+    public void flowUpdated (int memberId, int flow)
+    {
+        MemberObject user = MsoyServer.lookupMember(memberId);
+        if (user != null) {
+            user.setFlow(flow);
         }
     }
 
@@ -507,20 +532,13 @@ public class MemberManager
                            final UserAction grantAction, final String details)
     {
         // if the member is logged on, make sure we can update their flow
-        final MemberObject mObj = MsoyServer.lookupMember(memberId);
         MsoyServer.invoker.postUnit(new RepositoryUnit("grantFlow") {
             public void invokePersist () throws PersistenceException {
-                _memberRepo.getFlowRepository().updateFlow(
+                _flow = _memberRepo.getFlowRepository().updateFlow(
                     memberId, amount, grantAction.toString() + " " + details, true);
-                if (mObj != null) {
-                    _flow = _memberRepo.getFlowRepository().loadMemberFlow(memberId).flow;
-                }
             }
             public void handleSuccess () {
-                // TODO: distributed considerations
-                if (mObj != null) {
-                    mObj.setFlow(_flow);
-                }
+                flowUpdated(memberId, _flow);
             }
             public void handleFailure (Exception pe) {
                 log.log(Level.WARNING, "Unable to grant flow [memberId=" + memberId +
@@ -543,46 +561,44 @@ public class MemberManager
         final MemberObject mObj = MsoyServer.lookupMember(memberId);
         MsoyServer.invoker.postUnit(new RepositoryUnit("spendFlow") {
             public void invokePersist () throws PersistenceException {
-                _memberRepo.getFlowRepository().updateFlow(
+                _flow = _memberRepo.getFlowRepository().updateFlow(
                     memberId, amount, spendAction.toString() + " " + details, false);
-                if (mObj != null) {
-                    _flow = _memberRepo.getFlowRepository().loadMemberFlow(memberId).flow;
-                }
             }
             public void handleSuccess () {
-                // TODO: distributed considerations
-                if (mObj != null) {
-                    mObj.setFlow(_flow);
-                }
+                flowUpdated(memberId, _flow);
             }
             public void handleFailure (Exception pe) {
                 log.log(Level.WARNING, "Unable to spend flow [memberId=" + memberId +
-                        ", grantAction=" + spendAction + ", amount=" + amount + ", details=" +
-                        details + "]", pe);
+                        ", grantAction=" + spendAction + ", amount=" + amount +
+                        ", details=" + details + "]", pe);
             }
             protected int _flow;
         });
     }
 
     /**
-     * Register and log an action taken by a specific user for humanity assessment
-     * and conversion analysis purposes.  
+     * Register and log an action taken by a specific user for humanity assessment and conversion
+     * analysis purposes. Some actions grant flow as a result of being taken, this method handles
+     * that granting and updating the member's flow if they are online.
      */
-    public void logUserAction (final MemberName member, final UserAction action,
-                               final String details)
+    public void logUserAction (MemberName member, final UserAction action, final String details)
     {
+        final int memberId = member.getMemberId();
         MsoyServer.invoker.postUnit(new RepositoryUnit("takeAction") {
             public void invokePersist () throws PersistenceException {
-                _memberRepo.getFlowRepository().logUserAction(
-                    member.getMemberId(), action, details);
+                // record that that took the action
+                _flow = _memberRepo.getFlowRepository().logUserAction(memberId, action, details);
             }
             public void handleSuccess () {
-                // yay
+                if (_flow > 0) {
+                    flowUpdated(memberId, _flow);
+                }
             }
             public void handleFailure (Exception pe) {
-                log.warning("Unable to note user action[member=" + member + ", action=" +
-                            action + ", details=" + details + "]");
+                log.warning("Unable to note user action [memberId=" + memberId +
+                            ", action=" + action + ", details=" + details + "]");
             }
+            protected int _flow;
         });
     }
     

@@ -55,10 +55,12 @@ public class ProfileRepository extends DepotRepository
     /**
      * Stores the supplied profile record in the database, overwriting an previously stored profile
      * data.
+     *
+     * @return true if the profile was created, false if it was updated.
      */
-    public void storeProfile (ProfileRecord record)
+    public boolean storeProfile (ProfileRecord record)
         throws PersistenceException
     {
-        store(record);
+        return store(record);
     }
 }

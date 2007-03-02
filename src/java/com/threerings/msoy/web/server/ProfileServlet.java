@@ -51,7 +51,8 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // firstly stuff their profile data into the database
         try {
-            MsoyServer.profileRepo.storeProfile(new ProfileRecord(memrec.memberId, profile));
+            final boolean created = MsoyServer.profileRepo.storeProfile(
+                new ProfileRecord(memrec.memberId, profile));
             if (memrec.name == null || !memrec.name.equals(profile.displayName)) {
                 MsoyServer.memberRepo.configureDisplayName(memrec.memberId, profile.displayName);
 
@@ -60,10 +61,9 @@ public class ProfileServlet extends MsoyServiceServlet
                 MsoyServer.omgr.postRunnable(new Runnable() {
                     public void run () {
                         MsoyServer.memberMan.displayNameChanged(name);
-                        // TODO: Figure out grant vs log, and whences comes the flow constant?
-                        MsoyServer.memberMan.grantFlow(
-                            name.getMemberId(), 3, UserAction.UPDATED_PROFILE, null);
-                        MsoyServer.memberMan.logUserAction(name, UserAction.UPDATED_PROFILE, null);
+                        MsoyServer.memberMan.logUserAction(
+                            name, created ? UserAction.CREATED_PROFILE :
+                            UserAction.UPDATED_PROFILE, null);
                     }
                 });
             }

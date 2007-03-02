@@ -202,6 +202,7 @@ public class MsoyServer extends WhirledServer
      */
     public static MemberObject lookupMember (MemberName name)
     {
+        MsoyServer.requireDObjThread();
         return _online.get(name);
     }
 
@@ -227,6 +228,30 @@ public class MsoyServer extends WhirledServer
 
         // update our members online count in the status object
         adminMan.statObj.setMembersOnline(clmgr.getClientCount());
+    }
+
+    /**
+     * Ensures that the calling thread is the distributed object event dispatch thread, throwing an
+     * {@link IllegalStateException} if it is not.
+     */
+    public static void requireDObjThread ()
+    {
+        if (!omgr.isDispatchThread()) {
+            String errmsg = "This method must be called on the distributed object thread.";
+            throw new IllegalStateException(errmsg);
+        }
+    }
+
+    /**
+     * Ensures that the calling thread <em>is not</em> the distributed object event dispatch
+     * thread, throwing an {@link IllegalStateException} if it is.
+     */
+    public static void refuseDObjThread ()
+    {
+        if (omgr.isDispatchThread()) {
+            String errmsg = "This method must not be called on the distributed object thread.";
+            throw new IllegalStateException(errmsg);
+        }
     }
 
     @Override

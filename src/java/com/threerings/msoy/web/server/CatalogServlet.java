@@ -15,6 +15,7 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
 
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -126,17 +127,10 @@ public class CatalogServlet extends MsoyServiceServlet
             listing.item.itemId = cloneId;
 
             if (listing.flowCost > 0) {
-                MsoyServer.memberRepo.getFlowRepository().updateFlow(
+                int flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
                     mrec.memberId, listing.flowCost, UserAction.BOUGHT_ITEM + " " + ident.type +
                     " " + ident.itemId, false);
-                MsoyServer.omgr.postRunnable(new Runnable() {
-                    public void run () {
-                        MemberObject mObj = MsoyServer.lookupMember(mrec.memberId);
-                        if (mObj != null) {
-                            mObj.setFlow(mObj.flow - listing.flowCost);
-                        }
-                    }
-                });
+                MemberManager.queueFlowUpdated(mrec.memberId, flow);
             }
 
             MsoyServer.memberRepo.getFlowRepository().logUserAction(
@@ -209,20 +203,13 @@ public class CatalogServlet extends MsoyServiceServlet
                 CatalogRecord record= repo.insertListing(
                     listItem, rarity, System.currentTimeMillis());
 
-                MsoyServer.memberRepo.getFlowRepository().updateFlow(
+                int flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
                     mrec.memberId, price, UserAction.LISTED_ITEM + " " + ident.type +
                     " " + ident.itemId + " " + rarity, false);
+                MemberManager.queueFlowUpdated(mrec.memberId, flow);
+
                 MsoyServer.memberRepo.getFlowRepository().logUserAction(
                     mrec.memberId, UserAction.LISTED_ITEM, ident.toString() + " " + rarity);
-
-                MsoyServer.omgr.postRunnable(new Runnable() {
-                    public void run () {
-                        MemberObject mObj = MsoyServer.lookupMember(mrec.memberId);
-                        if (mObj != null) {
-                            mObj.setFlow(mObj.flow - price);
-                        }
-                    }
-                });
 
                 return record.toListing();
 
@@ -267,17 +254,10 @@ public class CatalogServlet extends MsoyServiceServlet
             final int goldRefund = (0 /* TODO */ * daysLeft) / 5;
 
             String refundDesc = 20*daysLeft + "%";
-            MsoyServer.memberRepo.getFlowRepository().updateFlow(
+            int flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
                 mrec.memberId, flowRefund, UserAction.RETURNED_ITEM + " " + ident.type +
                 " " + ident.itemId + " " + refundDesc, true);
-            MsoyServer.omgr.postRunnable(new Runnable() {
-                public void run () {
-                    MemberObject mObj = MsoyServer.lookupMember(mrec.memberId);
-                    if (mObj != null) {
-                        mObj.setFlow(mObj.flow + flowRefund);
-                    }
-                }
-            });
+            MemberManager.queueFlowUpdated(mrec.memberId, flow);
 
             MsoyServer.memberRepo.getFlowRepository().logUserAction(
                 mrec.memberId, UserAction.RETURNED_ITEM, ident.type + " " + ident.itemId + " " +

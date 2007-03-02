@@ -9,18 +9,18 @@ import com.samskivert.util.IntMap;
  */
 public enum UserAction
 {
-    CREATED_PROFILE(1),
-    UPDATED_PROFILE(2),
+    CREATED_PROFILE(1, 500),
+    UPDATED_PROFILE(2, 50),
     
-    SENT_FRIEND_INVITE(10),
-    ACCEPTED_FRIEND_INVITE(11),
+    SENT_FRIEND_INVITE(10, 300),
+    ACCEPTED_FRIEND_INVITE(11, 200),
     
-    PLAYED_GAME(20),
+    PLAYED_GAME(20, 300),
     
-    CREATED_ITEM(30),
-    BOUGHT_ITEM(31),
-    LISTED_ITEM(32),
-    RETURNED_ITEM(33),
+    CREATED_ITEM(30, 200),
+    BOUGHT_ITEM(31, 0),
+    LISTED_ITEM(32, 0),
+    RETURNED_ITEM(33, 0),
     ;
 
     /**
@@ -38,10 +38,19 @@ public enum UserAction
     {
         return _num;
     }
-    
-    UserAction (int num)
+
+    /**
+     * Returns the amount of flow granted when this action is performed.
+     */
+    public int getFlow ()
+    {
+        return _flow;
+    }
+
+    UserAction (int num, int flow)
     {
         _num = num;
+        _flow = flow;
     }
 
     protected static IntMap<UserAction> _reverse;
@@ -53,4 +62,5 @@ public enum UserAction
     }
 
     protected int _num;
+    protected int _flow;
 }

@@ -84,8 +84,11 @@ public class FlowRepository extends DepotRepository
 
     /**
      * Logs an action for a member with optional action-specific data, which may be null.
+     *
+     * @return -1 if no flow was granted as a result of this action, the member's new flow count if
+     * flow was granted by the action.
      */
-    public void logUserAction (int memberId, UserAction action, String data)
+    public int logUserAction (int memberId, UserAction action, String data)
         throws PersistenceException
     {
         MemberActionLogRecord record = new MemberActionLogRecord();
@@ -94,6 +97,13 @@ public class FlowRepository extends DepotRepository
         record.actionTime = new Timestamp(System.currentTimeMillis());
         record.data = data;
         insert(record);
+
+        // if they get flow for performing this action, grant it to them
+        if (action.getFlow() > 0) {
+            return updateFlow(memberId, action.getFlow(), data, true);
+        } else {
+            return -1;
+        }
     }
 
     /**
@@ -182,7 +192,7 @@ public class FlowRepository extends DepotRepository
      * <em>Do not use this method!</em> It exists only because we must work with the coin system
      * which tracks members by username rather than id.
      */
-    public void grantFlow (String accountName, int actionId, String details, int amount)
+    public int grantFlow (String accountName, int actionId, String details, int amount)
         throws PersistenceException
     {
         MemberRecord record =
@@ -191,13 +201,12 @@ public class FlowRepository extends DepotRepository
             throw new PersistenceException(
                 "Unknown member [accountName=" + accountName + ", actionId=" + actionId + "]");
         }
-        updateFlow(record.memberId, amount, details, false);
+        return updateFlow(record.memberId, amount, details, false);
     }
 
     /**
-     * Expire a member's flow given that dT minute passed since last we did so.
-     * The caller should take care to reflect this change in the corresponding
-     * {@link MemberObject} when appropriate.
+     * Expire a member's flow given that dT minute passed since last we did so.  The caller should
+     * take care to reflect this change in the corresponding {@link MemberObject} when appropriate.
      * 
      * @return the amount of flow that was expired on the backend
      */
@@ -213,9 +222,12 @@ public class FlowRepository extends DepotRepository
         return toExpire;
     }
 
-
-    /** Helper function for {@link #spendFlow} and {@link #grantFlow}. */
-    public void updateFlow (int memberId, int amount, String details, boolean grant)
+    /**
+     * Helper function for {@link #spendFlow} and {@link #grantFlow}.
+     *
+     * @return the user's new flow value following the update.
+     */
+    public int updateFlow (int memberId, int amount, String details, boolean grant)
         throws PersistenceException
     {
         String type = (grant ? "grant" : " spend");
@@ -279,6 +291,8 @@ public class FlowRepository extends DepotRepository
             System.currentTimeMillis() + " " + memberId + (grant ? " G " : " S ") +
             amount + " " + (details != null ? " " + details : ""));
 
+        // TODO: can we magically get the updated value from the database? stored procedure?
+        return loadMemberFlow(memberId).flow;
     }
 
     // read a game abuse record or create one if needed, possibly also inserting it into the db
