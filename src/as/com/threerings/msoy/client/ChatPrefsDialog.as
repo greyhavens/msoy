@@ -5,6 +5,7 @@ package com.threerings.msoy.client {
 
 import mx.binding.utils.BindingUtils;
 
+import mx.controls.CheckBox;
 import mx.controls.ComboBox;
 import mx.controls.Label;
 import mx.controls.RadioButton;
@@ -36,6 +37,11 @@ public class ChatPrefsDialog extends FloatingPanel
 
         var ii :int;
         var grid :Grid = new Grid();
+
+        var history :CheckBox = new CheckBox();
+        history.selected = Prefs.getShowingChatHistory();
+        BindingUtils.bindSetter(Prefs.setShowingChatHistory, history, "selected");
+        GridUtil.addRow(grid, Msgs.PREFS.get("l.chat_history"), history);
 
         var decay :ComboBox = new ComboBox();
         var choices :Array = [];
