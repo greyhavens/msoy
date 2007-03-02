@@ -2,13 +2,14 @@ package {
 
 import flash.events.Event;
 
-import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 
+import com.threerings.msoy.export.WhirledGameControl;
+
 public class Board
 {
-    public function Board (gameCtrl :EZGameControl, seaDisplay :SeaDisplay)
+    public function Board (gameCtrl :WhirledGameControl, seaDisplay :SeaDisplay)
     {
         _gameCtrl = gameCtrl;
         _seaDisplay = seaDisplay;
@@ -176,6 +177,14 @@ public class Board
 
                 _gameCtrl.localChat(killer.getPlayerName() + " has shot " +
                     sub.getPlayerName());
+
+                if (killer.getPlayerIndex() == _gameCtrl.seating.getMyPosition()) {
+                    var flowAvailable :Number = _gameCtrl.getAvailableFlow();
+                    trace("Available flow at time of kill: " + flowAvailable);
+                    var awarded :int = int(flowAvailable * .75);
+                    trace("Awarding: " + awarded);
+                    _gameCtrl.awardFlow(awarded);
+                }
             }
         }
 
@@ -426,7 +435,7 @@ public class Board
     }
 
     /** The game Control. */
-    protected var _gameCtrl :EZGameControl;
+    protected var _gameCtrl :WhirledGameControl;
 
     /** The 'sea' where everything lives. */
     protected var _seaDisplay :SeaDisplay;

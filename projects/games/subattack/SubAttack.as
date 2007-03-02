@@ -15,13 +15,14 @@ import flash.ui.Keyboard;
 
 import flash.utils.getTimer; // function import
 
-import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
+
+import com.threerings.msoy.export.WhirledGameControl;
 
 [SWF(width="416", height="416")]
 public class SubAttack extends Sprite
@@ -44,7 +45,7 @@ public class SubAttack extends Sprite
         this.mask = masker;
         addChild(masker); // the mask must be added to the display
 
-        _gameCtrl = new EZGameControl(this);
+        _gameCtrl = new WhirledGameControl(this);
         if (!_gameCtrl.isConnected()) {
             // just show a demo-mode display
             _seaDisplay.setupSea(VIEW_TILES, VIEW_TILES);
@@ -137,7 +138,7 @@ public class SubAttack extends Sprite
     }
 
     /** The game control. */
-    protected var _gameCtrl :EZGameControl;
+    protected var _gameCtrl :WhirledGameControl;
 
     /** Represents our board. */
     protected var _board :Board;
