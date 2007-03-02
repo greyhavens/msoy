@@ -3,23 +3,22 @@
 
 package com.threerings.msoy.swiftly.server.persist;
 
-import java.sql.Timestamp;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
-import com.samskivert.io.PersistenceException;
-
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
-
-import com.threerings.msoy.web.data.SwiftlyProject;
 
 /**
  * Contains the definition of a swiftly svn-based project storage.
+ * 
+ * BEWARE: In a number of locations we artifically constrain the size
+ * of a string column in order to work around the following bug:
+ *    http://bugs.mysql.com/bug.php?id=4541
+ * In short, MySQL doesn't support unique keys composed of values potentially
+ * greater than 1000 bytes. Quick math:
+ *    VARCHAR(255) * (UTF-8 4 bytes) == 1020
  */
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames={"protocol", "host", "port", "baseDir"})})
@@ -62,7 +61,7 @@ public class SwiftlySVNStorageRecord extends PersistentRecord
         new ColumnExp(SwiftlySVNStorageRecord.class, BASE_DIR);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 4;
 
     /** The id of the project. */
     @Id
@@ -70,15 +69,18 @@ public class SwiftlySVNStorageRecord extends PersistentRecord
     public int storageId;
 
     /** The SVN protocol (svn+ssh, svn, https, etc). */
+    @Column(length=10)
     public String protocol;
 
     /** The storage host (FQDN). */
+    @Column(length=128)
     public String host;
 
     /** The storage port number. */
     public int port;
 
     /** The storage base directory. */
+    @Column(length=100)
     public String baseDir;
     
     public URI toURI ()

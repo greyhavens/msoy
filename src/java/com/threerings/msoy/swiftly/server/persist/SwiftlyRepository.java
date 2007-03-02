@@ -36,6 +36,11 @@ public class SwiftlyRepository extends DepotRepository
     public SwiftlyRepository (ConnectionProvider conprov)
     {
         super(conprov);
+
+        // Make sure our column sizes are updated
+        _ctx.registerMigration(SwiftlySVNStorageRecord.class, new EntityMigration.Retype(4, "host"));
+        _ctx.registerMigration(SwiftlySVNStorageRecord.class, new EntityMigration.Retype(4, "protocol"));
+        _ctx.registerMigration(SwiftlySVNStorageRecord.class, new EntityMigration.Retype(4, "baseDir"));
     }
         
     /**
