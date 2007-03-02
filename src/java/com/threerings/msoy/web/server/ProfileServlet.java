@@ -10,17 +10,19 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.HashIntMap;
 
-import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.person.server.persist.ProfilePhotoRecord;
-import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.UserAction;
+
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.person.server.persist.ProfilePhotoRecord;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.BlurbData;
@@ -51,7 +53,7 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // firstly stuff their profile data into the database
         try {
-            final boolean created = MsoyServer.profileRepo.storeProfile(
+            boolean created = MsoyServer.profileRepo.storeProfile(
                 new ProfileRecord(memrec.memberId, profile));
             if (memrec.name == null || !memrec.name.equals(profile.displayName)) {
                 MsoyServer.memberRepo.configureDisplayName(memrec.memberId, profile.displayName);
@@ -61,11 +63,16 @@ public class ProfileServlet extends MsoyServiceServlet
                 MsoyServer.omgr.postRunnable(new Runnable() {
                     public void run () {
                         MsoyServer.memberMan.displayNameChanged(name);
-                        MsoyServer.memberMan.logUserAction(
-                            name, created ? UserAction.CREATED_PROFILE :
-                            UserAction.UPDATED_PROFILE, null);
                     }
                 });
+            }
+
+            // record that that took the action
+            UserAction action = created ? UserAction.CREATED_PROFILE : UserAction.UPDATED_PROFILE;
+            int flow = MsoyServer.memberRepo.getFlowRepository().logUserAction(
+                memrec.memberId, action, null);
+            if (flow > 0) {
+                MemberManager.queueFlowUpdated(memrec.memberId, flow);
             }
 
         } catch (PersistenceException pe) {
