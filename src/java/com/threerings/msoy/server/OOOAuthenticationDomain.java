@@ -67,7 +67,7 @@ public class OOOAuthenticationDomain
 
         // create and return an account metadata record
         OOOAccount account = new OOOAccount();
-        account.accountName = user.username;
+        account.accountName = user.email;
         account.tokens = new MsoyTokenRing();
         account.record = user;
         return account;
@@ -99,7 +99,7 @@ public class OOOAuthenticationDomain
 
         // create and return an account record
         OOOAccount account = new OOOAccount();
-        account.accountName = user.username;
+        account.accountName = user.email;
         account.tokens = new MsoyTokenRing(tokens);
         account.record = user;
         return account;
