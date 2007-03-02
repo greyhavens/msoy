@@ -202,8 +202,8 @@ public class MsoySprite extends MediaContainer
         if (active) {
             configureMouseProperties();
         } else {
-            mouseEnabled = false;
-            mouseChildren = false;
+//            mouseEnabled = false;
+//            mouseChildren = false;
         }
     }
 
@@ -374,31 +374,31 @@ public class MsoySprite extends MediaContainer
 
     protected function configureMouseProperties () :void
     {
-        // TODO: Oh god, we have got to figure this shit out.
-        // It seems that things behave differently depending
-        // on whether the loaded content is an image or
-        // a SWF. Perhaps we need to check that and do the right
-        // thing in either case.
-        // Things may be broken in the currently checked-in state.
-
-        if (_editing) {
-            mouseEnabled = true;
-            mouseChildren = false;
-
-        } else {
-            if (isInteractive()) {
-                mouseEnabled = false; //true;
-                mouseChildren = true;
-
-            } else {
-            /*
-                mouseEnabled = false;
-                mouseChildren = false;
-                */
-                mouseEnabled = true;
-                mouseChildren = true;
-            }
-        }
+//        // TODO: Oh god, we have got to figure this shit out.
+//        // It seems that things behave differently depending
+//        // on whether the loaded content is an image or
+//        // a SWF. Perhaps we need to check that and do the right
+//        // thing in either case.
+//        // Things may be broken in the currently checked-in state.
+//
+//        if (_editing) {
+//            mouseEnabled = true;
+//            mouseChildren = false;
+//
+//        } else {
+//            if (isInteractive()) {
+//                mouseEnabled = false; //true;
+//                mouseChildren = true;
+//
+//            } else {
+//            /*
+//                mouseEnabled = false;
+//                mouseChildren = false;
+//                */
+//                mouseEnabled = true;
+//                mouseChildren = true;
+//            }
+//        }
     }
 
     /**
