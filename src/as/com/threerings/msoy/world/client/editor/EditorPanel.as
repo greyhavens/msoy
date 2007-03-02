@@ -261,9 +261,12 @@ public class EditorPanel extends VBox
         GridUtil.addRow(grid,
             MsoyUI.createLabel(Msgs.EDITING.get("l.scene_depth")),
             _depth = new TextInput());
-        GridUtil.addRow(grid,
-            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_height")),
-            _height = new TextInput());
+
+        _height = new TextInput()
+// TODO: Room Height editing (and making it display correctly!)
+//        GridUtil.addRow(grid,
+//            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_height")),
+//            _height);
         GridUtil.addRow(grid,
             MsoyUI.createLabel(Msgs.EDITING.get("l.horizon")),
             _horizon = new HSlider());
