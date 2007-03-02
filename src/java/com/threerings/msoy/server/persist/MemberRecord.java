@@ -43,6 +43,13 @@ public class MemberRecord extends PersistentRecord
     public static final ColumnExp NAME_C =
         new ColumnExp(MemberRecord.class, NAME);
 
+    /** The column identifier for the {@link #permaName} field. */
+    public static final String PERMA_NAME = "permaName";
+
+    /** The qualified column identifier for the {@link #permaName} field. */
+    public static final ColumnExp PERMA_NAME_C =
+        new ColumnExp(MemberRecord.class, PERMA_NAME);
+
     /** The column identifier for the {@link #flow} field. */
     public static final String FLOW = "flow";
 
@@ -194,6 +201,7 @@ public class MemberRecord extends PersistentRecord
         creds.token = authtok;
         creds.accountName = accountName;
         creds.name = getName();
+        creds.permaName = permaName;
         creds.isSupport = isSupport();
         creds.isAdmin = isAdmin();
         return creds;

@@ -22,6 +22,12 @@ public class MemberName extends Name
         }
     };
 
+    /** The minimum allowable length of a permaname. */
+    public static final int MINIMUM_PERMANAME_LENGTH = 4;
+
+    /** The maximum allowable length of a permaname. */
+    public static final int MAXIMUM_PERMANAME_LENGTH = 12;
+
     /** The "member id" used for guests. */
     public static final int GUEST_ID = 0;
 

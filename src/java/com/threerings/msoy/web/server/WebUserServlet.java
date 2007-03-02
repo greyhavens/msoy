@@ -6,6 +6,8 @@ package com.threerings.msoy.web.server;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.net.MailUtil;
+import com.samskivert.jdbc.DuplicateKeyException;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.server.MsoyAuthenticator;
@@ -13,6 +15,7 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.WebUserService;
+import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -65,6 +68,70 @@ public class WebUserServlet extends MsoyServiceServlet
         }
     }
 
+    // from interface WebUserService
+    public void updateEmail (WebCreds creds, String newEmail)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(creds);
+
+        if (!MailUtil.isValidAddress(newEmail)) {
+            throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
+        }
+
+        try {
+            MsoyServer.memberRepo.configureAccountName(mrec.memberId, newEmail);
+        } catch (DuplicateKeyException dke) {
+            throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to set email [who=" + mrec.memberId +
+                    ", email=" + newEmail + "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
+        // let the authenticator know that we updated our account name
+        MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
+        auth.updateAccount(mrec.accountName, newEmail, null, null);
+    }
+
+    // from interface WebUserService
+    public void updatePassword (WebCreds creds, String newPassword)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(creds);
+        MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
+        auth.updateAccount(mrec.accountName, null, null, newPassword);
+    }
+
+    // from interface WebUserService
+    public void configurePermaName (WebCreds creds, String permaName)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(creds);
+        if (mrec.permaName != null) {
+            log.warning("Rejecting attempt to reassing permaname [who=" + mrec.accountName +
+                        ", oname=" + mrec.permaName + ", nname=" + permaName + "].");
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
+        if (permaName.length() < MemberName.MINIMUM_PERMANAME_LENGTH ||
+            permaName.length() > MemberName.MAXIMUM_PERMANAME_LENGTH ||
+            !permaName.matches(PERMANAME_REGEX)) {
+            throw new ServiceException("e.invalid_permaname");
+        }
+
+        try {
+            MsoyServer.memberRepo.configurePermaName(mrec.memberId, permaName);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to set permaname [who=" + mrec.memberId +
+                    ", pname=" + permaName + "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
+        // let the authenticator know that we updated our permaname
+        MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
+        auth.updateAccount(mrec.accountName, null, permaName, null);
+    }
+
     protected WebCreds startSession (MemberRecord mrec, int expireDays)
         throws ServiceException
     {
@@ -80,4 +147,7 @@ public class WebUserServlet extends MsoyServiceServlet
             throw new ServiceException(MsoyAuthCodes.SERVER_UNAVAILABLE);
         }
     }
+
+    /** The regular expression defining valid permanames. */
+    protected static final String PERMANAME_REGEX = "^[A-Za-z0-9][_A-Za-z0-9]*$";
 }

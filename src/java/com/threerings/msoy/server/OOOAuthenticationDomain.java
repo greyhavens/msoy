@@ -74,6 +74,39 @@ public class OOOAuthenticationDomain
     }
 
     // from interface MsoyAuthenticator.Domain
+    public void updateAccount (String accountName, String newAccountName, String newPermaName,
+                               String newPassword)
+        throws ServiceException, PersistenceException
+    {
+        // load up their user account record
+        OOOUser user = _authrep.loadUserByEmail(accountName, true);
+        if (user == null) {
+            throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
+        }
+
+        // if they are changing their account name, do that first so that we can fail on dups
+        if (newPermaName != null) {
+            try {
+                if (!_authrep.changeUsername(user.userId, newPermaName)) {
+                    log.warning("Failed to set permaname, no such user? [account=" + accountName +
+                                ", pname=" + newPermaName + "].");
+                }
+            } catch (UserExistsException uee) {
+                throw new ServiceException(MsoyAuthCodes.DUPLICATE_PERMANAME);
+            }
+        }
+
+        // update their bits and store the record back to the database
+        if (newAccountName != null) {
+            user.setEmail(newAccountName);
+        }
+        if (newPassword != null) {
+            user.setPassword(Password.makeFromCrypto(newPassword));
+        }
+        _authrep.updateUser(user);
+    }
+
+    // from interface MsoyAuthenticator.Domain
     public MsoyAuthenticator.Account authenticateAccount (String accountName, String password)
         throws ServiceException, PersistenceException
     {

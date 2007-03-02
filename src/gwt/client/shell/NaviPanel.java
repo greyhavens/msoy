@@ -53,7 +53,12 @@ public class NaviPanel extends FlexTable
                 if (CShell.creds.isSupport) {
                     addLink(menu, "/admin/index.html", "Admin");
                 }
-                // TODO: account
+                menu.addItem("Account", true, new Command() {
+                    public void execute () {
+                        new EditAccountDialog().show();
+                        _popped.hide();
+                    }
+                });
                 menu.addItem("Logoff", true, new Command() {
                     public void execute () {
                         _status.logoff();

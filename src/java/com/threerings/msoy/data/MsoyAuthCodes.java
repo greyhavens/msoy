@@ -45,6 +45,9 @@ public interface MsoyAuthCodes extends AuthCodes
     /** A code indicating that the username (email address) requested by the client is in use. */
     public static final String DUPLICATE_EMAIL = "m.duplicate_email";
 
+    /** A code indicating that the permaname requested by the client is in use. */
+    public static final String DUPLICATE_PERMANAME = "m.duplicate_permaname";
+
     /** A code indicating that we are not currently allowing new registrations. */
     public static final String NO_REGISTRATIONS = "m.no_registrations";
 

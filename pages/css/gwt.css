@@ -219,6 +219,16 @@ body {
   width: 400px;
 }
 
+.editAccount .Intro {
+  width: 400px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.editAccount .Status {
+  width: 400px;
+}
+
 /** Configuration for our bordered popup window */
 .borderedPopup {
    background: #FFFFFF;

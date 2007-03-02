@@ -21,6 +21,9 @@ public class WebCreds implements IsSerializable
     /** Our member name and id. */
     public MemberName name;
 
+    /** The permaname assigned to this account. */
+    public String permaName;
+
     /** Indicates that the authenticated user has support (or admin) privileges. */
     public boolean isSupport;
 
@@ -40,7 +43,7 @@ public class WebCreds implements IsSerializable
      */
     public String toString ()
     {
-        return "[auth=" + accountName + ", name=" + name + ", token=" + token +
-            ", privs=" + isSupport + ":" + isAdmin + "]";
+        return "[auth=" + accountName + ", name=" + name + ", pname=" + permaName +
+            ", token=" + token + ", privs=" + isSupport + ":" + isAdmin + "]";
     }
 }

@@ -39,4 +39,22 @@ public interface WebUserService extends RemoteService
      */
     public WebCreds validateSession (String authtok, int expireDays)
         throws ServiceException;
+
+    /**
+     * Updates the email address on file for this account.
+     */
+    public void updateEmail (WebCreds creds, String newEmail)
+        throws ServiceException;
+
+    /**
+     * Updates the password on file for this account.
+     */
+    public void updatePassword (WebCreds creds, String newPassword)
+        throws ServiceException;
+
+    /**
+     * Configures the permaname for this account.
+     */
+    public void configurePermaName (WebCreds creds, String permaName)
+        throws ServiceException;
 }

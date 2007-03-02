@@ -280,12 +280,30 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Configures a member's account name (email address).
+     */
+    public void configureAccountName (int memberId, String accountName)
+        throws PersistenceException
+    {
+        updatePartial(MemberRecord.class, memberId, MemberRecord.ACCOUNT_NAME, accountName);
+    }
+
+    /**
      * Configures a member's display name.
      */
     public void configureDisplayName (int memberId, String name)
         throws PersistenceException
     {
         updatePartial(MemberRecord.class, memberId, MemberRecord.NAME, name);
+    }
+
+    /**
+     * Configures a member's permanent name.
+     */
+    public void configurePermaName (int memberId, String permaName)
+        throws PersistenceException
+    {
+        updatePartial(MemberRecord.class, memberId, MemberRecord.PERMA_NAME, permaName);
     }
 
     /**

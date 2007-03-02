@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 
 import com.samskivert.net.MailUtil;
+import com.samskivert.servlet.user.UserUtil;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Tuple;
 import com.samskivert.velocity.VelocityUtil;
@@ -80,7 +81,7 @@ public class AdminServlet extends MsoyServiceServlet
             String displayName = email.substring(0, email.indexOf("@"));
             MemberRecord record;
             try {
-                record = auth.createAccount(email, password, displayName);
+                record = auth.createAccount(email, UserUtil.encryptPassword(password), displayName);
             } catch (ServiceException se) {
                 results[ii] = se.getMessage();
                 continue;

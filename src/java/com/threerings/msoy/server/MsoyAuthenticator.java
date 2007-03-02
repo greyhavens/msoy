@@ -75,6 +75,18 @@ public class MsoyAuthenticator extends Authenticator
             throws ServiceException, PersistenceException;
 
         /**
+         * Notifies the authentication domain that the supplied information was modified for the
+         * specified account.
+         *
+         * @param newAccountName if non-null, a new email address for this account.
+         * @param newPermaName if non-null, the permaname assigned to this account.
+         * @param newPassword if non-null, the new password to be assigned to this account.
+         */
+        public void updateAccount (String accountName, String newAccountName, String newPermaName,
+                                   String newPassword)
+            throws ServiceException, PersistenceException;
+
+        /**
          * Loads up account information for the specified account and checks the supplied password.
          *
          * @exception ServiceException thrown with {@link MsoyAuthCodes#NO_SUCH_USER} if the account
@@ -332,6 +344,24 @@ public class MsoyAuthenticator extends Authenticator
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Error creating new account [for=" + username + "].", pe);
+            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Updates any of the supplied authentication information for the supplied account. Any of the
+     * new values may be null to indicate that they are not to be updated.
+     */
+    public void updateAccount (String username, String newAccountName, String newPermaName,
+                               String newPassword)
+        throws ServiceException
+    {
+        try {
+            getDomain(username).updateAccount(username, newAccountName, newPermaName, newPassword);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Error updating account [for=" + username +
+                    ", nan=" + newAccountName + ", npn=" + newPermaName +
+                    ", npass=" + newPassword + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
     }
