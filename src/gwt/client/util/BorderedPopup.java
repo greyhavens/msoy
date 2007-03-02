@@ -44,14 +44,25 @@ public class BorderedPopup extends PopupPanel
     // @Override // from PopupPanel
     public void show ()
     {
-        // start off screen so that we are not visible until we can compute our proper location and
-        // center ourselves; we'd call setPopupPosition() but that foolishly bounds our position to
-        // greater than zero, to protect us from ourselves no doubt
-        Element elem = getElement();
-        DOM.setStyleAttribute(elem, "left", "-5000px");
-        DOM.setStyleAttribute(elem, "top", "-5000px");
+        if (_centerOnShow) {
+            // start off screen so that we are not visible until we can compute our proper location
+            // and center ourselves; we'd call setPopupPosition() but that foolishly bounds our
+            // position to greater than zero, to protect us from ourselves no doubt
+            Element elem = getElement();
+            DOM.setStyleAttribute(elem, "left", "-5000px");
+            DOM.setStyleAttribute(elem, "top", "-5000px");
+        }
         super.show();
-        recenter();
+        if (_centerOnShow) {
+            recenter();
+        }
+    }
+
+    // @Override // from PopupPanel
+    public void setPopupPosition (int left, int top)
+    {
+        super.setPopupPosition(left, top);
+        updateFrame();
     }
 
     /**
@@ -70,5 +81,21 @@ public class BorderedPopup extends PopupPanel
     {
     }
 
+    /**
+     * This must be called any time a popup's dimensions change to update the hacky iframe that
+     * ensures that the popup is visible over Flash or Java applets. It is called automatically
+     * when the popup position changes, but there is no way to do it magically for size changes.
+     */
+    protected void updateFrame ()
+    {
+        // if I could access 'impl' here, I wouldn't have to do this lame hack, but the GWT
+        // engineers conveniently made it private, so I can't
+        hide();
+        super.show();
+    }
+
     protected BorderedWidget _widget;
+
+    /** Set this to false to disable the default centering. */
+    protected boolean _centerOnShow = true;
 }
