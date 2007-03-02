@@ -68,14 +68,6 @@ db.default.username = USERNAME
 db.default.password = PASSWORD
 
 #
-# An example of an overridden database configuration
-
-# db.userdb.username = USERNAME
-# db.userdb.password = PASSWORD
-# db.userdb.url = jdbc:mysql://USERDBHOST:3306/USERDB?useServerPrepStmts=false
-# db.sitedb.url = jdbc:mysql://USERDBHOST:3306/USERDB?useServerPrepStmts=false
-
-#
 # Bits for the OOO authenticator
 
 oooauth.login_url = /register/register.wm?from=%R

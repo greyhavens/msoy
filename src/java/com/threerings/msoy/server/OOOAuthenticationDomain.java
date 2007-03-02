@@ -41,6 +41,11 @@ public class OOOAuthenticationDomain
     public MsoyAuthenticator.Account createAccount (String accountName, String password)
         throws ServiceException, PersistenceException
     {
+        // make sure this account is not already in use
+        if (MsoyServer.memberRepo.loadMember(accountName) != null) {
+            throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
+        }
+
         // create a new account record
         int userId;
         try {
@@ -73,7 +78,7 @@ public class OOOAuthenticationDomain
         throws ServiceException, PersistenceException
     {
         // load up their user account record
-        OOOUser user = _authrep.loadUser(accountName, true);
+        OOOUser user = _authrep.loadUserByEmail(accountName, true);
         if (user == null) {
             throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
         }

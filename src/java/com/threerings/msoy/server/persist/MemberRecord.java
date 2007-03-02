@@ -116,7 +116,7 @@ public class MemberRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 4;
+    public static final int SCHEMA_VERSION = 5;
 
     /** A flag denoting this user as having support privileges. */
     public static final int SUPPORT_FLAG = 0x1 << 0;
@@ -135,8 +135,12 @@ public class MemberRecord extends PersistentRecord
     @Column(unique=true)
     public String accountName;
 
-    /** The name by which this member is known in MetaSOY. */
+    /** This member's display name. Is shown in the Whirled, can be changed any time. */
     public String name;
+
+    /** This member's permanent name. Must be URL-safe; used to logon to wiki and forums. */
+    @Column(nullable=true, unique=true)
+    public String permaName;
 
     /** The quantity of flow possessed by this member. */
     public int flow;
