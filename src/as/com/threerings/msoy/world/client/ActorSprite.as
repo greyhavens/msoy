@@ -41,7 +41,7 @@ public class ActorSprite extends MsoySprite
         labelFormat.font = "Arial"; // there be magic here. Arial isn't
         // even available on Linux, but it works it out. The documentation
         // for TextFormat does not indicate this. Bastards.
-        labelFormat.size = 10;
+        labelFormat.size = 12;
         labelFormat.bold = true;
         _label = new TextField();
         _label.autoSize = TextFieldAutoSize.CENTER;
@@ -227,7 +227,7 @@ public class ActorSprite extends MsoySprite
     {
         switch (status) {
         case OccupantInfo.IDLE:
-            return 0xFFFF00;
+            return 0xFFFFFF;
 
         case OccupantInfo.DISCONNECTED:
             return 0xFF0000;
