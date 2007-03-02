@@ -2,6 +2,8 @@ package com.threerings.msoy.export {
 
 import flash.display.DisplayObject;
 
+import com.threerings.ezgame.EZGameControl;
+
 /**
  * Adds whirled-specific controls to EZGameControl
  */
