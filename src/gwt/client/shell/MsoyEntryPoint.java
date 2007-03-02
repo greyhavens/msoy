@@ -48,6 +48,10 @@ public abstract class MsoyEntryPoint
         return "/profile/index.html#" + memberId;
     }
 
+    /** Indicates whether or not we need our iframe popup hack. To avoid making all of our popups
+     * suck, we only do the hack when we actually need it (we're displaying Flash onscreen). */
+    public static boolean needPopupHack = false;
+
     // from interface EntryPoint
     public void onModuleLoad ()
     {
@@ -122,7 +126,7 @@ public abstract class MsoyEntryPoint
     {
         CShell.creds = creds;
         _navi.didLogon(creds);
-        return true;
+        return GWT.isScript();
     }
 
     /**

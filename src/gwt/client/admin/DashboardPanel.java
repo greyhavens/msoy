@@ -75,6 +75,7 @@ public class DashboardPanel extends FlexTable
 
     protected void finishDisplayDashboard (ConnectConfig config)
     {
+        MsoyEntryPoint.needPopupHack = true;
         int row = getRowCount();
         getFlexCellFormatter().setStyleName(row, 0, "Applet");
         setWidget(row, 0, WidgetUtil.createApplet(

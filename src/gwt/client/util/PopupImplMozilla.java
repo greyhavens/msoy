@@ -14,11 +14,17 @@ public class PopupImplMozilla extends PopupImpl
 {
     public native void onHide (Element popup) /*-{
         var frame = popup.__frame;
-        $doc.body.removeChild(frame);
-        popup.__frame = null;
+        if (frame) {
+            $doc.body.removeChild(frame);
+            popup.__frame = null;
+        }
     }-*/;
 
     public native void onShow (Element popup) /*-{
+        if (!@client.shell.MsoyEntryPoint::needPopupHack) {
+            return;
+        }
+
         var frame = $doc.createElement('iframe');
         frame.scrolling = 'no';
         frame.frameBorder = 0;

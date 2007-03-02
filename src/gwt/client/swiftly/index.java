@@ -89,9 +89,12 @@ public class index extends MsoyEntryPoint
         } 
 
         if (historyToken.length() == 0) {
+            MsoyEntryPoint.needPopupHack = false;
             // display the project create/list panel
             setContent(new ProjectSelectionPanel());
+
         } else {
+            MsoyEntryPoint.needPopupHack = true;
             // load up the information needed to launch the applet
             CSwiftly.swiftlysvc.loadConnectConfig(CSwiftly.creds, new AsyncCallback() {
                 public void onSuccess (Object result) {
