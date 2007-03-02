@@ -203,6 +203,7 @@ body {
 
 .logonPopup {
   padding: 10px;
+  width: 350px;
 }
 
 .createAccount .Intro {
@@ -219,10 +220,18 @@ body {
   width: 400px;
 }
 
-.editAccount .Intro {
+.editAccount .Header {
+  font-weight: bold;
+}
+
+.editAccount .Tip {
   width: 400px;
   font-size: 12px;
   text-align: center;
+}
+
+.editAccount .PermaName {
+  font-weight: bold;
 }
 
 .editAccount .Status {

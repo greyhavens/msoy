@@ -121,6 +121,8 @@ public class WebUserServlet extends MsoyServiceServlet
 
         try {
             MsoyServer.memberRepo.configurePermaName(mrec.memberId, permaName);
+        } catch (DuplicateKeyException dke) {
+            throw new ServiceException(MsoyAuthCodes.DUPLICATE_PERMANAME);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to set permaname [who=" + mrec.memberId +
                     ", pname=" + permaName + "].", pe);
@@ -149,5 +151,5 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     /** The regular expression defining valid permanames. */
-    protected static final String PERMANAME_REGEX = "^[A-Za-z0-9][_A-Za-z0-9]*$";
+    protected static final String PERMANAME_REGEX = "^[A-Za-z][_A-Za-z0-9]*$";
 }

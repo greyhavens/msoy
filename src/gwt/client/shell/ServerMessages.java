@@ -21,6 +21,7 @@ public interface ServerMessages extends ConstantsWithLookup
     public String session_expired ();
     public String invalid_email ();
     public String duplicate_email ();
+    public String duplicate_permaname ();
 
     public String insufficient_flow ();
     public String insufficient_gold ();

@@ -48,6 +48,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String createMissingName();
 
   /**
+   * Translated "Your Permaname has been configured.".
+   * 
+   * @return translated "Your Permaname has been configured."
+   * @gwt.key permaNameConfigured
+   */
+  String permaNameConfigured();
+
+  /**
    * Translated "Games".
    * 
    * @return translated "Games"
@@ -128,12 +136,44 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String createPasswordMismatch();
 
   /**
+   * Translated "Permaname:".
+   * 
+   * @return translated "Permaname:"
+   * @gwt.key editPermaName
+   */
+  String editPermaName();
+
+  /**
    * Translated "Enter a password for your account.".
    * 
    * @return translated "Enter a password for your account."
    * @gwt.key createMissingPassword
    */
   String createMissingPassword();
+
+  /**
+   * Translated "Your Permaname cannot be more than twelve characters long.".
+   * 
+   * @return translated "Your Permaname cannot be more than twelve characters long."
+   * @gwt.key editPermaLong
+   */
+  String editPermaLong();
+
+  /**
+   * Translated "Your Permaname can never be changed once it is set. You must create a Permaname to log into the Wiki and the Forums.".
+   * 
+   * @return translated "Your Permaname can never be changed once it is set. You must create a Permaname to log into the Wiki and the Forums."
+   * @gwt.key editPermaNameTip
+   */
+  String editPermaNameTip();
+
+  /**
+   * Translated "Your Permaname can only contain letters, numbers and underscore and must start with a letter.".
+   * 
+   * @return translated "Your Permaname can only contain letters, numbers and underscore and must start with a letter."
+   * @gwt.key editPermaInvalid
+   */
+  String editPermaInvalid();
 
   /**
    * Translated "Stuff".
@@ -166,6 +206,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key editTitle
    */
   String editTitle();
+
+  /**
+   * Translated "Update Email Address".
+   * 
+   * @return translated "Update Email Address"
+   * @gwt.key editEmailHeader
+   */
+  String editEmailHeader();
 
   /**
    * Translated "Are you sure you would like to remove the tag {0}?".
@@ -296,6 +344,30 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String tagMatureFlag();
 
   /**
+   * Translated "Click ''Submit'' to configure your Permaname.".
+   * 
+   * @return translated "Click ''Submit'' to configure your Permaname."
+   * @gwt.key editPermaReady
+   */
+  String editPermaReady();
+
+  /**
+   * Translated "Your Permaname must be at least four characters long.".
+   * 
+   * @return translated "Your Permaname must be at least four characters long."
+   * @gwt.key editPermaShort
+   */
+  String editPermaShort();
+
+  /**
+   * Translated "Update Password".
+   * 
+   * @return translated "Update Password"
+   * @gwt.key editPasswordHeader
+   */
+  String editPasswordHeader();
+
+  /**
    * Translated "You''ll use your email address to login.".
    * 
    * @return translated "You''ll use your email address to login."
@@ -304,9 +376,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String createEmailTip();
 
   /**
-   * Translated "Email:".
+   * Translated "Email Address:".
    * 
-   * @return translated "Email:"
+   * @return translated "Email Address:"
    * @gwt.key logonEmail
    */
   String logonEmail();
@@ -326,6 +398,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key submit
    */
   String submit();
+
+  /**
+   * Translated "Click ''Update'' to update your email address.".
+   * 
+   * @return translated "Click ''Update'' to update your email address."
+   * @gwt.key editEmailReady
+   */
+  String editEmailReady();
 
   /**
    * Translated "Email address updated. Remember, this new address must be used next time you log into Whirled.".
@@ -368,6 +448,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String menuLogon();
 
   /**
+   * Translated "Pick Your Permaname".
+   * 
+   * @return translated "Pick Your Permaname"
+   * @gwt.key editPickPermaNameHeader
+   */
+  String editPickPermaNameHeader();
+
+  /**
    * Translated "Password:".
    * 
    * @return translated "Password:"
@@ -390,6 +478,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key errTagInvalidCharacters
    */
   String errTagInvalidCharacters();
+
+  /**
+   * Translated "Click ''Update'' to update your password.".
+   * 
+   * @return translated "Click ''Update'' to update your password."
+   * @gwt.key editPasswordReady
+   */
+  String editPasswordReady();
 
   /**
    * Translated "Places".

@@ -221,7 +221,6 @@ public class StatusPanel extends FlexTable
             contents.getFlexCellFormatter().setStyleName(1, 0, "rightLabel");
             contents.setText(1, 0, CShell.cmsgs.logonPassword());
             contents.setWidget(1, 1, _password = new PasswordTextBox());
-            contents.getFlexCellFormatter().setWidth(1, 1, "100%");
             _password.addKeyboardListener(new EnterClickAdapter(this));
 
             contents.setWidget(2, 0, _status = new Label(""));

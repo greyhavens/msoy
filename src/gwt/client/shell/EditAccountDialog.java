@@ -15,7 +15,10 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.gwt.ui.EnterClickAdapter;
+
+import com.threerings.msoy.web.data.MemberName;
 
 import client.util.BorderedDialog;
 
@@ -33,9 +36,38 @@ public class EditAccountDialog extends BorderedDialog
         contents.setStyleName("editAccount");
 
         int row = 0;
-        contents.getFlexCellFormatter().setStyleName(row, 0, "Intro");
+
+        if (CShell.creds.permaName == null) {
+            contents.getFlexCellFormatter().setStyleName(row, 0, "Header");
+            contents.getFlexCellFormatter().setColSpan(row, 0, 3);
+            contents.setText(row++, 0, CShell.cmsgs.editPickPermaNameHeader());
+
+            contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+            contents.setText(row, 0, CShell.cmsgs.editPermaName());
+            contents.setWidget(row, 1, _pname = new TextBox());
+            _pname.addKeyboardListener(_valpname);
+            _uppname = new Button(CShell.cmsgs.submit(), new ClickListener() {
+                public void onClick (Widget widget) {
+                    configurePermaName();
+                }
+            });
+            _uppname.setEnabled(false);
+            contents.setWidget(_permaRow = row++, 2, _uppname);
+
+            contents.getFlexCellFormatter().setStyleName(row, 0, "Tip");
+            contents.getFlexCellFormatter().setColSpan(row, 0, 3);
+            contents.setHTML(row++, 0, CShell.cmsgs.editPermaNameTip());
+
+        } else {
+            contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+            contents.setText(row, 0, CShell.cmsgs.editPermaName());
+            contents.getFlexCellFormatter().setStyleName(row, 1, "PermaName");
+            contents.setText(row++, 1, CShell.creds.permaName);
+        }
+
+        contents.getFlexCellFormatter().setStyleName(row, 0, "Header");
         contents.getFlexCellFormatter().setColSpan(row, 0, 3);
-        contents.setText(row++, 0, CShell.cmsgs.editTip());
+        contents.setText(row++, 0, CShell.cmsgs.editEmailHeader());
 
         contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.editEmail());
@@ -49,6 +81,10 @@ public class EditAccountDialog extends BorderedDialog
         });
         _upemail.setEnabled(false);
         contents.setWidget(row++, 2, _upemail);
+
+        contents.getFlexCellFormatter().setStyleName(row, 0, "Header");
+        contents.getFlexCellFormatter().setColSpan(row, 0, 3);
+        contents.setText(row++, 0, CShell.cmsgs.editPasswordHeader());
 
         contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.editPassword());
@@ -74,7 +110,7 @@ public class EditAccountDialog extends BorderedDialog
 
         contents.getFlexCellFormatter().setStyleName(row, 0, "Status");
         contents.getFlexCellFormatter().setColSpan(row, 0, 3);
-        contents.setWidget(row++, 0, _status = new Label(""));
+        contents.setWidget(row++, 0, _status = new Label(CShell.cmsgs.editTip()));
 
         _footer.add(new Button(CShell.cmsgs.dismiss(), new ClickListener() {
             public void onClick (Widget widget) {
@@ -85,7 +121,7 @@ public class EditAccountDialog extends BorderedDialog
 
     protected void updateEmail ()
     {
-        final String email = _email.getText();
+        final String email = _email.getText().trim();
         _upemail.setEnabled(false);
         _email.setEnabled(false);
         CShell.usersvc.updateEmail(CShell.creds, email, new AsyncCallback() {
@@ -104,7 +140,7 @@ public class EditAccountDialog extends BorderedDialog
 
     protected void updatePassword ()
     {
-        final String password = md5hex(_password.getText());
+        final String password = md5hex(_password.getText().trim());
         _uppass.setEnabled(false);
         _password.setEnabled(false);
         _confirm.setEnabled(false);
@@ -125,6 +161,43 @@ public class EditAccountDialog extends BorderedDialog
         });
     }
 
+    protected void configurePermaName ()
+    {
+        final String pname = _pname.getText().trim();
+        _uppname.setEnabled(false);
+        _pname.setEnabled(false);
+        CShell.usersvc.configurePermaName(CShell.creds, pname, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                CShell.creds.permaName = pname;
+                FlexTable contents = (FlexTable)_contents;
+                contents.getFlexCellFormatter().setStyleName(_permaRow, 1, "PermaName");
+                contents.setText(_permaRow, 1, pname);
+                contents.setText(_permaRow, 2, "");
+                contents.setText(_permaRow+1, 0, "");
+                _status.setText(CShell.cmsgs.permaNameConfigured());
+            }
+            public void onFailure (Throwable cause) {
+                _pname.setEnabled(true);
+                _uppname.setEnabled(true);
+                _status.setText(CShell.serverError(cause));
+            }
+        });
+    }
+
+    protected void validateEmail ()
+    {
+        String email = _email.getText().trim();
+        boolean valid = false;
+        if (email.length() < 4 || email.indexOf("@") == -1 ||
+            email.equals(CShell.creds.accountName)) {
+            _status.setText("");
+        } else {
+            _status.setText(CShell.cmsgs.editEmailReady());
+            valid = true;
+        }
+        _upemail.setEnabled(valid);
+    }
+
     protected void validatePasswords ()
     {
         boolean valid = false;
@@ -134,10 +207,37 @@ public class EditAccountDialog extends BorderedDialog
         } else if (!password.equals(confirm)) {
             _status.setText(CShell.cmsgs.editPasswordMismatch());
         } else {
-            _status.setText("");
+            _status.setText(CShell.cmsgs.editPasswordReady());
             valid = true;
         }
         _uppass.setEnabled(valid);
+    }
+
+    protected void validatePermaName ()
+    {
+        String pname = _pname.getText().trim();
+        for (int ii = 0; ii < pname.length(); ii++) {
+            char c = pname.charAt(ii);
+            if ((ii == 0 && !Character.isLetter(c)) ||
+                (!Character.isLetter(c) && !Character.isDigit(c) && c != '_')) {
+                _status.setText(CShell.cmsgs.editPermaInvalid());
+                _uppname.setEnabled(false);
+                return;
+            }
+        }
+
+        boolean valid = false;
+        if (pname.length() == 0) {
+            _status.setText("");
+        } else if (pname.length() < MemberName.MINIMUM_PERMANAME_LENGTH) {
+            _status.setText(CShell.cmsgs.editPermaShort());
+        } else if (pname.length() > MemberName.MAXIMUM_PERMANAME_LENGTH) {
+            _status.setText(CShell.cmsgs.editPermaLong());
+        } else {
+            _status.setText(CShell.cmsgs.editPermaReady());
+            valid = true;
+        }
+        _uppname.setEnabled(valid);
     }
 
     // @Override // from BorderedDialog
@@ -155,7 +255,7 @@ public class EditAccountDialog extends BorderedDialog
             // let the keypress go through, then validate our data
             DeferredCommand.add(new Command() {
                 public void execute () {
-                    _upemail.setEnabled(!_email.getText().equals(CShell.creds.accountName));
+                    validateEmail();
                 }
             });
         }
@@ -172,8 +272,20 @@ public class EditAccountDialog extends BorderedDialog
         }
     };
 
-    protected TextBox _email;
+    protected KeyboardListener _valpname = new KeyboardListenerAdapter() {
+        public void onKeyPress (Widget sender, char keyCode, int modifiers) {
+            // let the keypress go through, then validate our data
+            DeferredCommand.add(new Command() {
+                public void execute () {
+                    validatePermaName();
+                }
+            });
+        }
+    };
+
+    protected TextBox _email, _pname;
     protected PasswordTextBox _password, _confirm;
-    protected Button _upemail, _uppass;
+    protected Button _upemail, _uppass, _uppname;
+    protected int _permaRow;
     protected Label _status;
 }
