@@ -25,7 +25,7 @@ public class DoListItemPopup extends BorderedDialog
     public DoListItemPopup (Item item, final Button parentButton, final Label parentStatus)
     {
         super(false, true);
-        addStyleName("DoListItem");
+        addStyleName("doListItem");
         _item = item;
 
         _status = new Label("");
@@ -49,7 +49,8 @@ public class DoListItemPopup extends BorderedDialog
             }
         });
 
-        _header.add(new Label(CInventory.msgs.doListHdrTop(Item.getTypeName(item.getType()))));
+        String title = CInventory.msgs.doListHdrTop(Item.getTypeName(item.getType()));
+        _header.add(createTitleLabel(title, null));
         HTML blurb = new HTML(CInventory.msgs.doListBlurb());
         blurb.addStyleName("Blurb");
         _content.add(blurb);
@@ -86,6 +87,8 @@ public class DoListItemPopup extends BorderedDialog
         _priceBox.addStyleName("Price");
         flow.add(_priceBox);
         _content.add(flow);
+
+        _content.add(_status);
 
         Button cancel = new Button(CInventory.msgs.doListBtnCancel());
         cancel.addClickListener(new ClickListener() {

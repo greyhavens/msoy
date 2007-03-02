@@ -168,9 +168,9 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String doListBtnListIt();
 
   /**
-   * Translated "List price:".
+   * Translated "Listing cost:".
    * 
-   * @return translated "List price:"
+   * @return translated "Listing cost:"
    * @gwt.key doListHdrPrice
    */
   String doListHdrPrice();

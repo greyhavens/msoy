@@ -4,7 +4,7 @@
  * CSS styles for the Inventory interfaces.
  */
 
-.Status {
+.itemDetailContent .Status {
   width: 125px;
   font-size: 12px;
 }
@@ -65,32 +65,36 @@
   background-image: url(/images/item/detail_preview_bg.png);
 }
 
-.DoListItem {
-    width: 400px;
+.doListItem {
+  width: 400px;
  }
 
-.DoListItem .Content {
-    padding: 10px;
+.doListItem .Content {
+  padding: 10px;
 }
 
-.DoListItem .Blurb {
-    vertical-align: top;
-    font-size: 13px;
+.doListItem .Blurb {
+  vertical-align: top;
+  font-size: 13px;
 }
 
-.DoListItem .RarityRow {
-    margin-left: 40px;
-    margin-top: 5px;
+.doListItem .RarityRow {
+  margin-left: 40px;
+  margin-top: 5px;
 }
 
-.DoListItem .PriceRow {
-    margin-left: 40px;
-    margin-top: 10px;
+.doListItem .PriceRow {
+  margin-left: 40px;
+  margin-top: 10px;
 }
 
 .PriceRow .Price {
-    display: inline;
-    font-family: Helvetica, sans-serif;
-    font-size: 12px;
-    font-weight: bold;
+  display: inline;
+  font-family: Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.doListItem .Status {
+  padding-top: 5px;
 }
