@@ -161,7 +161,7 @@ public class WonderlandCroquet extends Sprite
         if (doneMoving) {
             // Show markers for obstructed balls
             for each (var ball :BallParticle in _balls) {
-                if (ball.ball.ballAnimation.hitTestObject(map.foreground)) {
+                if (ball.ball.hitTestObject(map.foreground)) {
                     _ballMarkerLayer.addChild(ball.ball.ballMarker);
                     ball.ball.ballMarker.x = ball.ball.x;
                     ball.ball.ballMarker.y = ball.ball.y;
