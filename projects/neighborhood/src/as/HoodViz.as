@@ -316,13 +316,19 @@ public class HoodViz extends Sprite
     {
         _tipTile = event.target as ToolTipSprite;
         var neighbor :Neighbor = _tipTile.neighbor;
-        var tipContent :DisplayObjectContainer;
+        var tipContent :Sprite = new Sprite();
+        var tip :DisplayObjectContainer;
         var rule :Sprite;
+        var obj :DisplayObject;
+        var tipHeight :Number = 0;
         if (neighbor is NeighborMember) {
             var house :NeighborMember = neighbor as NeighborMember;
 
-            tipContent = new _plaqueHouse();
-            tipContent.addChild(getTextField(house.memberName, -75));
+            tip = new _plaqueHouse();
+
+            obj = getTextField(house.memberName);
+            obj.y = tipHeight; tipHeight += obj.height;
+            tipContent.addChild(obj);
 
             var str :String;
             if (house.isOnline) {
@@ -332,18 +338,22 @@ public class HoodViz extends Sprite
             }
             if (str != null) {
                 rule = new _rule();
-                rule.y = -50;
+                rule.y = 10 + tipHeight; tipHeight += 10 + rule.height;
                 tipContent.addChild(rule);
-                tipContent.addChild(getTextField(str, -40));
+                obj = getTextField(str);
+                obj.y = 10 + tipHeight; tipHeight += rule.height;
+                tipContent.addChild(obj);
             }
 
         } else if (neighbor is NeighborGroup) {
             var group :NeighborGroup = neighbor as NeighborGroup;
 
-            tipContent = new _plaqueGroup();
+            tip = new _plaqueGroup();
 
             if (group.getLogoHash() != null) {
-                tipContent.addChild(getTextField(group.groupName, -80));
+                obj = getTextField(group.groupName);
+                obj.y = tipHeight; tipHeight += obj.height;
+                tipContent.addChild(obj);
 
                 // if there is a logo, we dynamically load it
                 var loader :Loader = new Loader();
@@ -356,28 +366,37 @@ public class HoodViz extends Sprite
                 loader.load(new URLRequest("/media/" + group.getLogoHash()));
 
                 rule = new _rule();
-                rule.y = -65;
+                rule.y = 10 + tipHeight; tipHeight += 10 + rule.height;
                 tipContent.addChild(rule);
 
                 tipContent.addChild(loader);
-                loader.y = -60;
+                loader.y = 10 + tipHeight; tipHeight += 40;
             } else {
-                tipContent.addChild(getTextField(group.groupName, -60));
+                obj = getTextField(group.groupName);
+                obj.y = tipHeight; tipHeight += obj.height;
+                tipContent.addChild(obj);
             }
         } else {
             var game :NeighborGame = neighbor as NeighborGame;
 
-            tipContent = new _plaqueGame();
-            tipContent.addChild(getTextField(game.gameName, -60));
+            tip = new _plaqueGame();
+            obj = getTextField(game.gameName);
+            obj.y = tipHeight; tipHeight += obj.height;
+            tipContent.addChild(obj);
 
             // TODO: thumbnail?
         }
+
         _tip = new ToolTipSprite();
         _tip.neighbor = neighbor;
 
         _tip.addEventListener(MouseEvent.ROLL_OUT, popupRollOutHandler);
         _tip.addEventListener(MouseEvent.CLICK, clickHandler);
         _tip.mouseChildren = false;
+
+        tip.height = 80 + Math.max(tipHeight, 20);
+        _tip.addChild(tip);
+        tipContent.y = -tip.height/2 - tipHeight/2;
         _tip.addChild(tipContent);
 
         this.addChild(_tip);
@@ -399,12 +418,17 @@ public class HoodViz extends Sprite
         }
     }
 
-    protected function getTextField (text :String, y : Number) :TextField
+    protected function getTextField (text :String) :TextField
     {
+        var format :TextFormat = new TextFormat();
+        format.align = TextFormatAlign.CENTER;
+
         var tipText :TextField = new TextField();
+        tipText.defaultTextFormat = format;
         tipText.text = text;
         tipText.autoSize = TextFieldAutoSize.CENTER;
-        tipText.y = y;
+        tipText.wordWrap = true;
+        tipText.width = 90;
         tipText.x = -tipText.width/2;
         return tipText;
     }
