@@ -68,17 +68,17 @@ public class ChatOverlay
         // value from the default, so if a property is added to the default
         // then it should be explicitely negated if not desired in an override.
         _defaultFmt = new TextFormat();
-        _defaultFmt.font = "Arial";
-        _defaultFmt.size = 12;
+        _defaultFmt.font = FONT;
+        _defaultFmt.size = 10;
         _defaultFmt.color = 0x000070;
-        _defaultFmt.bold = true;
+        _defaultFmt.bold = false;
         _defaultFmt.underline = false;
 
         _userSpeakFmt = new TextFormat();
-        _userSpeakFmt.font = "Arial";
-        _userSpeakFmt.size = 14;
+        _userSpeakFmt.font = FONT;
+        _userSpeakFmt.size = 12;
         _userSpeakFmt.color = 0x000000;
-        _userSpeakFmt.bold = true;
+        _userSpeakFmt.bold = false;
         _userSpeakFmt.underline = false;
 
         ensureHistoryListening(_ctx);
@@ -449,8 +449,8 @@ public class ChatOverlay
     protected function createLinkFormat (url :String) :TextFormat
     {
         var fmt :TextFormat = new TextFormat();
-        fmt.font = "Arial";
-        fmt.size = 12;
+        fmt.font = FONT;
+        fmt.size = 10;
         fmt.underline = true;
         fmt.color = 0xFF0000;
         fmt.bold = true;
@@ -1256,6 +1256,9 @@ public class ChatOverlay
     protected static const GAME_COLOR :uint = 0x777777;
     protected static const BLACK :uint = 0x000000;
     protected static const WHITE :uint = 0xFFFFFF;
+
+    /** The font for all chat. */
+    protected static const FONT :String = "Arial";
 
     /** The normal alpha value for bubbles on the overlay. */
     protected static const ALPHA :Number = .8;
