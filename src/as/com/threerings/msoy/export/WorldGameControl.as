@@ -4,13 +4,12 @@ import flash.display.DisplayObject;
 
 import com.threerings.util.Name;
 
-import com.threerings.ezgame.EZGameControl;
-
 /**
  * This file should be included by world games so that they can communicate
  * with the whirled.
  */
-public class WorldGameControl extends EZGameControl
+// TODO: rename this. It's confusing.
+public class WorldGameControl extends WhirledGameControl
 {
     /**
      * A function that is called when the game's memory has changed. It should have the following
