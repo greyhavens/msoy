@@ -16,8 +16,11 @@ public class ProjectRoomObject extends PlaceObject
     /** The field name of the <code>name</code> field. */
     public static final String NAME = "name";
 
-    /** The field name of the <code>elements</code> field. */
-    public static final String ELEMENTS = "elements";
+    /** The field name of the <code>pathElements</code> field. */
+    public static final String PATH_ELEMENTS = "pathElements";
+
+    /** The field name of the <code>documents</code> field. */
+    public static final String DOCUMENTS = "documents";
 
     /** The field name of the <code>service</code> field. */
     public static final String SERVICE = "service";
@@ -48,7 +51,7 @@ public class ProjectRoomObject extends PlaceObject
     public void addPathElement (PathElement element)
     {
         element.elementId = _nextElementId++;
-        addToElements(element);
+        addToPathElements(element);
     }
 
     /**
@@ -83,36 +86,36 @@ public class ProjectRoomObject extends PlaceObject
 
     /**
      * Requests that the specified entry be added to the
-     * <code>elements</code> set. The set will not change until the event is
+     * <code>pathElements</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void addToElements (PathElement elem)
+    public void addToPathElements (PathElement elem)
     {
-        requestEntryAdd(ELEMENTS, pathElements, elem);
+        requestEntryAdd(PATH_ELEMENTS, pathElements, elem);
     }
 
     /**
      * Requests that the entry matching the supplied key be removed from
-     * the <code>elements</code> set. The set will not change until the
+     * the <code>pathElements</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromElements (Comparable key)
+    public void removeFromPathElements (Comparable key)
     {
-        requestEntryRemove(ELEMENTS, pathElements, key);
+        requestEntryRemove(PATH_ELEMENTS, pathElements, key);
     }
 
     /**
      * Requests that the specified entry be updated in the
-     * <code>elements</code> set. The set will not change until the event is
+     * <code>pathElements</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void updateElements (PathElement elem)
+    public void updatePathElements (PathElement elem)
     {
-        requestEntryUpdate(ELEMENTS, pathElements, elem);
+        requestEntryUpdate(PATH_ELEMENTS, pathElements, elem);
     }
 
     /**
-     * Requests that the <code>elements</code> field be set to the
+     * Requests that the <code>pathElements</code> field be set to the
      * specified value. Generally one only adds, updates and removes
      * entries of a distributed set, but certain situations call for a
      * complete replacement of the set value. The local value will be
@@ -123,10 +126,58 @@ public class ProjectRoomObject extends PlaceObject
      */
     public void setPathElements (DSet<com.threerings.msoy.swiftly.data.PathElement> value)
     {
-        requestAttributeChange(ELEMENTS, value, this.pathElements);
+        requestAttributeChange(PATH_ELEMENTS, value, this.pathElements);
         @SuppressWarnings("unchecked") DSet<com.threerings.msoy.swiftly.data.PathElement> clone =
             (value == null) ? null : value.typedClone();
         this.pathElements = clone;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>documents</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToDocuments (SwiftlyDocument elem)
+    {
+        requestEntryAdd(DOCUMENTS, documents, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>documents</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromDocuments (Comparable key)
+    {
+        requestEntryRemove(DOCUMENTS, documents, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>documents</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateDocuments (SwiftlyDocument elem)
+    {
+        requestEntryUpdate(DOCUMENTS, documents, elem);
+    }
+
+    /**
+     * Requests that the <code>documents</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setDocuments (DSet<com.threerings.msoy.swiftly.data.SwiftlyDocument> value)
+    {
+        requestAttributeChange(DOCUMENTS, value, this.documents);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.swiftly.data.SwiftlyDocument> clone =
+            (value == null) ? null : value.typedClone();
+        this.documents = clone;
     }
 
     /**

@@ -43,7 +43,7 @@ public class ProjectTreeModel extends DefaultTreeModel
     // from interface SetListener
     public void entryAdded (EntryAddedEvent event)
     {
-        if (event.getName().equals(ProjectRoomObject.ELEMENTS)) {
+        if (event.getName().equals(ProjectRoomObject.PATH_ELEMENTS)) {
             final PathElement element = (PathElement)event.getEntry();
             updateNodes(new NodeOp() {
                 public boolean isMatch (PathElementTreeNode node) {
@@ -59,7 +59,7 @@ public class ProjectTreeModel extends DefaultTreeModel
     // from interface SetListener
     public void entryUpdated (EntryUpdatedEvent event)
     {
-        if (event.getName().equals(ProjectRoomObject.ELEMENTS)) {
+        if (event.getName().equals(ProjectRoomObject.PATH_ELEMENTS)) {
             final PathElement element = (PathElement)event.getEntry();
             updateNodes(new NodeOp() {
                 public boolean isMatch (PathElementTreeNode node) {
@@ -76,7 +76,7 @@ public class ProjectTreeModel extends DefaultTreeModel
     // from interface SetListener
     public void entryRemoved (EntryRemovedEvent event)
     {
-        if (event.getName().equals(ProjectRoomObject.ELEMENTS)) {
+        if (event.getName().equals(ProjectRoomObject.PATH_ELEMENTS)) {
             final int elementId = (Integer)event.getKey();
             updateNodes(new NodeOp() {
                 public boolean isMatch (PathElementTreeNode node) {

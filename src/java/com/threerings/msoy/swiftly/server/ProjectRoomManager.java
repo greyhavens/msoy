@@ -81,14 +81,14 @@ public class ProjectRoomManager extends PlaceManager
     public void updatePathElement (ClientObject caller, PathElement element)
     {
         // TODO: check access!
-        _roomObj.updateElements(element);
+        _roomObj.updatePathElements(element);
     }
 
     // from interface ProjectRoomProvider
     public void deletePathElement (ClientObject caller, int elementId)
     {
         // TODO: check access!
-        _roomObj.removeFromElements(elementId);
+        _roomObj.removeFromPathElements(elementId);
     }
 
     // from interface ProjectRoomManager
