@@ -19,6 +19,7 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.swiftly.client.ProjectRoomService;
+import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
 import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
@@ -89,6 +90,29 @@ public class ProjectRoomManager extends PlaceManager
     {
         // TODO: check access!
         _roomObj.removeFromPathElements(elementId);
+    }
+
+    // from interface ProjectRoomProvider
+    public void addDocument (ClientObject caller, SwiftlyDocument document)
+    {
+        // TODO: check access!
+
+        // for now just update the room object
+        _roomObj.addToDocuments(document);
+    }
+
+    // from interface ProjectRoomProvider
+    public void updateDocument (ClientObject caller, SwiftlyDocument document)
+    {
+        // TODO: check access!
+        _roomObj.updateDocuments(document);
+    }
+
+    // from interface ProjectRoomProvider
+    public void deleteDocument (ClientObject caller, int elementId)
+    {
+        // TODO: check access!
+        _roomObj.removeFromDocuments(elementId);
     }
 
     // from interface ProjectRoomManager

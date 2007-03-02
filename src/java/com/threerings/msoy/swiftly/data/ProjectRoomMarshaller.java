@@ -5,6 +5,7 @@ package com.threerings.msoy.swiftly.data;
 
 import com.threerings.msoy.swiftly.client.ProjectRoomService;
 import com.threerings.msoy.swiftly.data.PathElement;
+import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -20,8 +21,19 @@ import com.threerings.presents.dobj.InvocationResponseEvent;
 public class ProjectRoomMarshaller extends InvocationMarshaller
     implements ProjectRoomService
 {
+    /** The method id used to dispatch {@link #addDocument} requests. */
+    public static final int ADD_DOCUMENT = 1;
+
+    // from interface ProjectRoomService
+    public void addDocument (Client arg1, SwiftlyDocument arg2)
+    {
+        sendRequest(arg1, ADD_DOCUMENT, new Object[] {
+            arg2
+        });
+    }
+
     /** The method id used to dispatch {@link #addPathElement} requests. */
-    public static final int ADD_PATH_ELEMENT = 1;
+    public static final int ADD_PATH_ELEMENT = 2;
 
     // from interface ProjectRoomService
     public void addPathElement (Client arg1, PathElement arg2)
@@ -32,7 +44,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #buildProject} requests. */
-    public static final int BUILD_PROJECT = 2;
+    public static final int BUILD_PROJECT = 3;
 
     // from interface ProjectRoomService
     public void buildProject (Client arg1)
@@ -43,7 +55,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #commitProject} requests. */
-    public static final int COMMIT_PROJECT = 3;
+    public static final int COMMIT_PROJECT = 4;
 
     // from interface ProjectRoomService
     public void commitProject (Client arg1, String arg2, InvocationService.ConfirmListener arg3)
@@ -55,8 +67,19 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #deleteDocument} requests. */
+    public static final int DELETE_DOCUMENT = 5;
+
+    // from interface ProjectRoomService
+    public void deleteDocument (Client arg1, int arg2)
+    {
+        sendRequest(arg1, DELETE_DOCUMENT, new Object[] {
+            Integer.valueOf(arg2)
+        });
+    }
+
     /** The method id used to dispatch {@link #deletePathElement} requests. */
-    public static final int DELETE_PATH_ELEMENT = 4;
+    public static final int DELETE_PATH_ELEMENT = 6;
 
     // from interface ProjectRoomService
     public void deletePathElement (Client arg1, int arg2)
@@ -66,8 +89,19 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #updateDocument} requests. */
+    public static final int UPDATE_DOCUMENT = 7;
+
+    // from interface ProjectRoomService
+    public void updateDocument (Client arg1, SwiftlyDocument arg2)
+    {
+        sendRequest(arg1, UPDATE_DOCUMENT, new Object[] {
+            arg2
+        });
+    }
+
     /** The method id used to dispatch {@link #updatePathElement} requests. */
-    public static final int UPDATE_PATH_ELEMENT = 5;
+    public static final int UPDATE_PATH_ELEMENT = 8;
 
     // from interface ProjectRoomService
     public void updatePathElement (Client arg1, PathElement arg2)

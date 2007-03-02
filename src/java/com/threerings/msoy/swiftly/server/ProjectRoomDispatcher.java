@@ -6,6 +6,7 @@ package com.threerings.msoy.swiftly.server;
 import com.threerings.msoy.swiftly.client.ProjectRoomService;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
+import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -39,6 +40,13 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
+        case ProjectRoomMarshaller.ADD_DOCUMENT:
+            ((ProjectRoomProvider)provider).addDocument(
+                source,
+                (SwiftlyDocument)args[0]
+            );
+            return;
+
         case ProjectRoomMarshaller.ADD_PATH_ELEMENT:
             ((ProjectRoomProvider)provider).addPathElement(
                 source,
@@ -59,10 +67,24 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
             );
             return;
 
+        case ProjectRoomMarshaller.DELETE_DOCUMENT:
+            ((ProjectRoomProvider)provider).deleteDocument(
+                source,
+                ((Integer)args[0]).intValue()
+            );
+            return;
+
         case ProjectRoomMarshaller.DELETE_PATH_ELEMENT:
             ((ProjectRoomProvider)provider).deletePathElement(
                 source,
                 ((Integer)args[0]).intValue()
+            );
+            return;
+
+        case ProjectRoomMarshaller.UPDATE_DOCUMENT:
+            ((ProjectRoomProvider)provider).updateDocument(
+                source,
+                (SwiftlyDocument)args[0]
             );
             return;
 

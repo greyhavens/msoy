@@ -8,6 +8,7 @@ import com.threerings.util.*; // for Float, Integer, etc.
 
 import com.threerings.msoy.swiftly.client.ProjectRoomService;
 import com.threerings.msoy.swiftly.data.PathElement;
+import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -24,8 +25,19 @@ import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 public class ProjectRoomMarshaller extends InvocationMarshaller
     implements ProjectRoomService
 {
+    /** The method id used to dispatch {@link #addDocument} requests. */
+    public static const ADD_DOCUMENT :int = 1;
+
+    // from interface ProjectRoomService
+    public function addDocument (arg1 :Client, arg2 :SwiftlyDocument) :void
+    {
+        sendRequest(arg1, ADD_DOCUMENT, [
+            arg2
+        ]);
+    }
+
     /** The method id used to dispatch {@link #addPathElement} requests. */
-    public static const ADD_PATH_ELEMENT :int = 1;
+    public static const ADD_PATH_ELEMENT :int = 2;
 
     // from interface ProjectRoomService
     public function addPathElement (arg1 :Client, arg2 :PathElement) :void
@@ -36,7 +48,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #buildProject} requests. */
-    public static const BUILD_PROJECT :int = 2;
+    public static const BUILD_PROJECT :int = 3;
 
     // from interface ProjectRoomService
     public function buildProject (arg1 :Client) :void
@@ -47,7 +59,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #commitProject} requests. */
-    public static const COMMIT_PROJECT :int = 3;
+    public static const COMMIT_PROJECT :int = 4;
 
     // from interface ProjectRoomService
     public function commitProject (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void
@@ -59,8 +71,19 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch {@link #deleteDocument} requests. */
+    public static const DELETE_DOCUMENT :int = 5;
+
+    // from interface ProjectRoomService
+    public function deleteDocument (arg1 :Client, arg2 :int) :void
+    {
+        sendRequest(arg1, DELETE_DOCUMENT, [
+            Integer.valueOf(arg2)
+        ]);
+    }
+
     /** The method id used to dispatch {@link #deletePathElement} requests. */
-    public static const DELETE_PATH_ELEMENT :int = 4;
+    public static const DELETE_PATH_ELEMENT :int = 6;
 
     // from interface ProjectRoomService
     public function deletePathElement (arg1 :Client, arg2 :int) :void
@@ -70,8 +93,19 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch {@link #updateDocument} requests. */
+    public static const UPDATE_DOCUMENT :int = 7;
+
+    // from interface ProjectRoomService
+    public function updateDocument (arg1 :Client, arg2 :SwiftlyDocument) :void
+    {
+        sendRequest(arg1, UPDATE_DOCUMENT, [
+            arg2
+        ]);
+    }
+
     /** The method id used to dispatch {@link #updatePathElement} requests. */
-    public static const UPDATE_PATH_ELEMENT :int = 5;
+    public static const UPDATE_PATH_ELEMENT :int = 8;
 
     // from interface ProjectRoomService
     public function updatePathElement (arg1 :Client, arg2 :PathElement) :void
