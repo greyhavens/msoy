@@ -19,4 +19,11 @@ public interface AdminService extends RemoteService
      */
     public ConnectConfig loadConnectConfig (WebCreds creds)
         throws ServiceException;
+
+    /**
+     * Creates accounts for the supplied email addresses and sends invitation emails to same.
+     * Returns a string for each address denoting success or failure.
+     */
+    public String[] registerAndInvite (WebCreds creds, String[] emails)
+        throws ServiceException;
 }

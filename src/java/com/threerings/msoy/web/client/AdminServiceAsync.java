@@ -16,4 +16,9 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#loadConnectConfig}.
      */
     public void loadConnectConfig (WebCreds creds, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#registerAndInvite}.
+     */
+    public void registerAndInvite (WebCreds creds, String[] emails, AsyncCallback callback);
 }
