@@ -54,7 +54,7 @@ public class CShell
         if (error instanceof ServiceException) {
             String msg = error.getMessage();
             // ConstantsWithLookup can't handle things that don't look like method names, yay!
-            if (msg.startsWith("m.")) {
+            if (msg.startsWith("m.") || msg.startsWith("e.")) {
                 msg = msg.substring(2);
             }
             try {
