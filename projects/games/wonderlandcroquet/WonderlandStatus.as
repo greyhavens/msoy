@@ -6,10 +6,12 @@ import flash.display.Sprite;
 import flash.events.Event;
 
 import com.threerings.util.EmbeddedSwfLoader;
-import com.threerings.util.EmbeddedSwfLoader;
 
 import com.threerings.ezgame.EZGameControl;
 
+/**
+ * Our little HUD showing who's turn it is, who's targetting what wicket, etc.
+ */
 public class WonderlandStatus extends Sprite
 {
     /** Our game control object. */
@@ -29,14 +31,15 @@ public class WonderlandStatus extends Sprite
         }
     }
 
+    /**
+     * Update the display to show that the specified player is now targetting the specified wicket.
+     */
     public function targetWicket (playerIdx :int, wicketIdx :int) :void
     {
         if (playerIdx == gameCtrl.seating.getMyPosition() && wicketIdx > 0) {
             _cards[wicketIdx - 1].setTargetted(false);
             _cards[wicketIdx].setTargetted(true);
         }
-
-        // TODO: Move their ball to the correct place
 
         if (wicketIdx > 0) {
             _cards[wicketIdx - 1].removeBall(_balls[playerIdx]);
@@ -47,6 +50,9 @@ public class WonderlandStatus extends Sprite
         }
     }
 
+    /**
+     * Does the magic setting things up once the graphics have finished loading.
+     */
     protected function loaderComplete (evt :Event) :void
     {
         var ii :int;
@@ -97,6 +103,9 @@ import flash.display.Sprite;
 
 import flash.display.MovieClip;
 
+/**
+ * The actual cards making up our status display.
+ */
 class StatusCard extends Sprite
 {
     public function StatusCard (front :MovieClip, back :MovieClip)
@@ -109,19 +118,28 @@ class StatusCard extends Sprite
         addChild(_back);
     }
 
+    /**
+     * Moves the animation for this card to the specified frame.
+     */
     public function gotoFrame (frame :int) :void
     {
         _front.gotoAndStop(frame);
         _back.gotoAndStop(frame);
     }
 
-
+    /**
+     * Show the face of this card, rather than its back.
+     */
     public function showFace () :void
     {
+        // TODO: Do a fancy little animation with sliding the card off the screen, then back on.
         addChildAt(_front, 0);
         removeChild(_back);
     }
 
+    /**
+     * Add a marker for a player to this card, indicating they're targetting this wicket.
+     */
     public function addBall (ball :MovieClip) :void
     {
         _balls.push(ball);
@@ -129,6 +147,9 @@ class StatusCard extends Sprite
         addChild(ball);
     }
 
+    /**
+     * Remove the marker for that player's ball from this card.
+     */
     public function removeBall (ball :MovieClip) :void
     {
         var ii :int = _balls.indexOf(ball);
@@ -140,6 +161,9 @@ class StatusCard extends Sprite
         }
     }
 
+    /**
+     * Recalculate positions for the balls representing anyone targetting this wicket.
+     */
     protected function rearrangeBalls () :void
     {
         var x :int = -20;
@@ -158,8 +182,8 @@ class StatusCard extends Sprite
             _front.rotation = -5;
             _front.x = -10;
             gotoFrame(2);
-
         } else {
+            // TODO: Animate this motion
             _front.x = 0;
             _front.rotation = 0;
             gotoFrame(1);

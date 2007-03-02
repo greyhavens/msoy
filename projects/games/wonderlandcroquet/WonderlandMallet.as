@@ -4,6 +4,8 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.events.MouseEvent; 
 
+import com.threerings.util.EmbeddedSwfLoader;
+
 public class WonderlandMallet extends Sprite
 {
 
@@ -58,6 +60,9 @@ public class WonderlandMallet extends Sprite
     protected var _circle :Sprite;
 
     protected var _ball :Ball;
+
+    [Embed(source="rsrc/mallet.swf", mimeType="application/octet-stream")]
+    protected static const MALLET_CLASS :Class;
 }
 }
 

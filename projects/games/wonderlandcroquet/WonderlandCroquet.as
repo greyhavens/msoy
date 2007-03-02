@@ -81,6 +81,9 @@ public class WonderlandCroquet extends Sprite
     protected function firstFrameSetup (event :Event) :void
     {
         removeEventListener(Event.ENTER_FRAME, firstFrameSetup);
+
+        stage.addEventListener(flash.events.Event.RESIZE, stageResize);
+
         positionStatus();
     }
 
@@ -275,10 +278,6 @@ public class WonderlandCroquet extends Sprite
         _moveAgain = false;
 
         if(_myBall == null) {
-
-            // FIXME: this isn't at all an appropriate place to hang this
-            stage.addEventListener(flash.events.Event.RESIZE, stageResize);
-
             // It's the first time I've gone, so add my ball at the start
 
             coord = [map.startPoint.x, map.startPoint.y]; 
