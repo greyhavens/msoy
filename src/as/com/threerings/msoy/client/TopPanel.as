@@ -7,6 +7,8 @@ import flash.events.Event;
 
 import flash.geom.Rectangle;
 
+import flash.system.Capabilities;
+
 import mx.core.Application;
 import mx.core.Container;
 import mx.core.ScrollPolicy;
@@ -17,6 +19,7 @@ import mx.containers.HBox;
 import mx.containers.VBox;
 
 import mx.controls.Label;
+import mx.controls.scrollClasses.ScrollBar;
 
 import mx.events.ResizeEvent;
 
@@ -59,6 +62,21 @@ public class TopPanel extends Canvas
         _controlBar.setStyle("left", 0);
         _controlBar.setStyle("right", 0);
         addChild(_controlBar);
+
+        if (DeploymentConfig.devDeployment) {
+            // show a subtle build-stamp
+            var buildStamp :Label = new Label();
+            buildStamp.includeInLayout = false;
+            buildStamp.mouseEnabled = false;
+            buildStamp.mouseChildren = false;
+            buildStamp.text = "Build: " + DeploymentConfig.buildTime + "  " +
+                Capabilities.version;
+            buildStamp.setStyle("color", "#F7069A");
+            buildStamp.setStyle("fontSize", 8);
+            buildStamp.setStyle("bottom", _controlBar.height);
+            buildStamp.setStyle("right", ScrollBar.THICKNESS);
+            addChild(buildStamp);
+        }
         
         // clear out the application and install ourselves as the only child
         var app :Application = Application(Application.application);
@@ -267,9 +285,6 @@ public class TopPanel extends Canvas
     /** The list of our friends. */
     protected var _friendsList :FriendsList;
     
-    /** A label indicating the build stamp for the client. */
-    protected var _buildStamp :Label;
-
     protected static const SIDE_PANEL_WIDTH :int = 350;
     
     protected static const BOTTOM_PANEL_HEIGHT :int = 50;

@@ -207,12 +207,16 @@
     <tstamp>
       <format property="build_time" pattern="yyyy-MM-dd HH:mm:ss"/>
     </tstamp>
+    <!-- set default properties -->
+    <property name="dev_deployment" value="true"/>
+    <!-- then overwrite with values read from server.properties -->
     <copy file="${src.dir}/com/threerings/msoy/web/client/DeploymentConfig.java.tmpl"
           tofile="${src.dir}/com/threerings/msoy/web/client/DeploymentConfig.java" overwrite="true">
       <filterset>
         <filter token="build_time" value="${build_time}"/>
         <filter token="media_url" value="${media_url}"/>
         <filter token="static_media_url" value="${static_media_url}"/>
+        <filter token="dev_deployment" value="${dev_deployment}"/>
       </filterset>
     </copy>
   </target>
@@ -280,6 +284,9 @@
     <tstamp>
       <format property="build_time" pattern="yyyy-MM-dd HH:mm:ss"/>
     </tstamp>
+    <!-- set default properties -->
+    <property name="dev_deployment" value="true"/>
+    <!-- then overwrite with values read from server.properties -->
     <copy file="${asrc.dir}/com/threerings/msoy/client/DeploymentConfig.as.tmpl"
           tofile="${asrc.dir}/com/threerings/msoy/client/DeploymentConfig.as"
           overwrite="true">
@@ -288,6 +295,7 @@
         <filter token="server_host" value="${server_host}"/>
         <filter token="server_ports" value="${server_ports}"/>
         <filter token="media_url" value="${media_url}"/>
+        <filter token="dev_deployment" value="${dev_deployment}"/>
         <filter token="static_media_url" value="${static_media_url}"/>
       </filterset>
     </copy>

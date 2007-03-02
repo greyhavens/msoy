@@ -236,7 +236,7 @@ public /*abstract*/ class BaseClient extends Client
     {
         var params :Object = stage.loaderInfo.parameters;
         var creds :MsoyCredentials;
-        if (DeploymentConfig.devClient && (params["pass"] != null) && (params["user"] != null)) {
+        if (DeploymentConfig.devDeployment && (params["pass"] != null) && (params["user"] != null)) {
             creds = new MsoyCredentials(new Name(String(params["user"])),
                 MD5.hash(String(params["pass"])));
 

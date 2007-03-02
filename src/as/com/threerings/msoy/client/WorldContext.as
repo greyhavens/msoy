@@ -7,8 +7,6 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Stage;
 
-import flash.system.Capabilities;
-
 import mx.core.Application;
 
 import mx.managers.ISystemManager;
@@ -60,13 +58,6 @@ public class WorldContext extends BaseContext
 
         // ensure that the chat history is on..
         ChatOverlay.ensureHistoryListening(this);
-
-        // and maybe spit out some useful info
-        if (DeploymentConfig.devClient) {
-            var info :String = "Build: " + DeploymentConfig.buildTime + "  " +
-                Capabilities.version;
-            _chatDir.displayInfo(null, MessageBundle.taint(info));
-        }
     }
 
     // from WhirledContext
