@@ -8,6 +8,8 @@ import flash.text.TextField;
 
 import flash.ui.Keyboard;
 
+import com.threerings.flash.ClearingTextField;
+
 [SWF(width="500", height="200")]
 public class KeyJam extends Sprite
 {
