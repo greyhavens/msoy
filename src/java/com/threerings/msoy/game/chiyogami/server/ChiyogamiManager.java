@@ -5,7 +5,7 @@ package com.threerings.msoy.game.chiyogami.server;
 
 import com.samskivert.util.RandomUtil;
 
-import com.threerings.crowd.data.PlaceObject;;
+import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.game.server.GameManager;
 
