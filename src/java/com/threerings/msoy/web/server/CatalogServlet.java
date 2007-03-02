@@ -152,7 +152,8 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public CatalogListing listItem (WebCreds creds, final ItemIdent ident, boolean list)
+    public CatalogListing listItem (WebCreds creds, final ItemIdent ident, final int rarity,
+                                    boolean list)
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser(creds);
@@ -160,9 +161,29 @@ public class CatalogServlet extends MsoyServiceServlet
         // locate the appropriate repository
         ItemRepository<ItemRecord, ?, ?, ?> repo =
             MsoyServer.itemMan.getRepository(ident.type);
-
         try {
             if (list) {
+                final int price;
+                switch(rarity) {
+                case CatalogListing.RARITY_PLENTIFUL:
+                    price = 100; break;
+                case CatalogListing.RARITY_COMMON:
+                    price = 200; break;
+                case CatalogListing.RARITY_NORMAL:
+                    price = 300; break;
+                case CatalogListing.RARITY_UNCOMMON:
+                    price = 400; break;
+                case CatalogListing.RARITY_RARE:
+                    price = 500; break;
+                default:
+                    log.warning("Unknown rarity [item=" + ident + ", rarity=" + rarity + "]");
+                    throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+                }
+                if (mrec.flow < price) {
+                    // only happens if client is buggy, hacked or lagged, or in a blue moon
+                    throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
+                }
+
                 // load a copy of the original item
                 ItemRecord listItem = repo.loadOriginalItem(ident.itemId);
                 if (listItem == null) {
@@ -185,17 +206,21 @@ public class CatalogServlet extends MsoyServiceServlet
                 repo.insertOriginalItem(listItem);
 
                 // and finally create & insert the catalog record
-                long now = System.currentTimeMillis();
-                int rarity = CatalogListing.RARITY_COMMON;
-                CatalogRecord record= repo.insertListing(listItem, rarity, now);
-                
+                CatalogRecord record= repo.insertListing(
+                    listItem, rarity, System.currentTimeMillis());
+
+                MsoyServer.memberRepo.getFlowRepository().updateFlow(
+                    mrec.memberId, price, UserAction.LISTED_ITEM + " " + ident.type +
+                    " " + ident.itemId + " " + rarity, false);
+                MsoyServer.memberRepo.getFlowRepository().logUserAction(
+                    mrec.memberId, UserAction.LISTED_ITEM, ident.toString() + " " + rarity);
+
                 MsoyServer.omgr.postRunnable(new Runnable() {
                     public void run () {
-                        // TODO: Figure out grant vs log, and whences comes the flow constant?
-                        MsoyServer.memberMan.grantFlow(
-                            mrec.memberId, 3, UserAction.LISTED_ITEM, ident.toString());
-                        MsoyServer.memberMan.logUserAction(
-                            mrec.getName(), UserAction.LISTED_ITEM, ident.toString());
+                        MemberObject mObj = MsoyServer.lookupMember(mrec.memberId);
+                        if (mObj != null) {
+                            mObj.setFlow(mObj.flow - price);
+                        }
                     }
                 });
 

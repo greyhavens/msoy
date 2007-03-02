@@ -35,7 +35,7 @@ public interface CatalogService extends RemoteService
     /**
      * Lists or delists the specified item in the catalog.
      */
-    public CatalogListing listItem (WebCreds creds, ItemIdent item, boolean list)
+    public CatalogListing listItem (WebCreds creds, ItemIdent item, int rarity, boolean list)
         throws ServiceException;
 
     /**

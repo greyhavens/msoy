@@ -5,16 +5,12 @@ package client.inventory;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.item.web.Furniture;
-import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.item.web.Photo;
 
 import client.editem.ItemEditor;
 import client.item.BaseItemDetailPopup;
@@ -41,30 +37,12 @@ public class ItemDetailPopup extends BaseItemDetailPopup
 
         // we'll need this now so that we can pass it to our click callbacks
         _status = new Label("");
-        _status.setStyleName("itemDetailStatus");
+        _status.setStyleName("Status");
 
         Button button;
         if (_item.parentId == 0) {
             button = new Button(CInventory.msgs.detailList());
-            new ClickCallback(button, _status) {
-                public boolean callService () {
-                    // make sure the item is kosher; TODO: make this less of a hack
-                    if (_item.name.trim().length() == 0) {
-                        _status.setText(CInventory.msgs.errItemMissingName());
-                        return false;
-                    }
-                    if (_item.description.trim().length() == 0) {
-                        _status.setText(CInventory.msgs.errItemMissingDescrip());
-                        return false;
-                    }
-                    CInventory.catalogsvc.listItem(CInventory.creds, _item.getIdent(), true, this);
-                    return true;
-                }
-                public boolean gotResult (Object result) {
-                    _status.setText(CInventory.msgs.msgItemListed());
-                    return false; // don't reenable list button
-                }
-            };
+            new DoListItemPopup(_item, button, _status);
 
         } else {
             button = new Button(CInventory.msgs.detailRemix());

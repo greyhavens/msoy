@@ -8,20 +8,20 @@ package client.inventory;
 public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "Remix...".
+   * Translated "Common".
    * 
-   * @return translated "Remix..."
-   * @gwt.key detailRemix
+   * @return translated "Common"
+   * @gwt.key doListRarityCommon
    */
-  String detailRemix();
+  String doListRarityCommon();
 
   /**
-   * Translated "Please configure the name of this item. Click Edit above to do so.".
+   * Translated "Rarity:".
    * 
-   * @return translated "Please configure the name of this item. Click Edit above to do so."
-   * @gwt.key errItemMissingName
+   * @return translated "Rarity:"
+   * @gwt.key doListHdrRarity
    */
-  String errItemMissingName();
+  String doListHdrRarity();
 
   /**
    * Translated "List in Catalog...".
@@ -32,20 +32,20 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String detailList();
 
   /**
+   * Translated "Please configure the name of this item. Click Edit above to do so.".
+   * 
+   * @return translated "Please configure the name of this item. Click Edit above to do so."
+   * @gwt.key errItemMissingName
+   */
+  String errItemMissingName();
+
+  /**
    * Translated "Please configure a description for this item. Click Edit above to do so.".
    * 
    * @return translated "Please configure a description for this item. Click Edit above to do so."
    * @gwt.key errItemMissingDescrip
    */
   String errItemMissingDescrip();
-
-  /**
-   * Translated "Delete".
-   * 
-   * @return translated "Delete"
-   * @gwt.key detailDelete
-   */
-  String detailDelete();
 
   /**
    * Translated "Item deleted.".
@@ -56,12 +56,20 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String msgItemDeleted();
 
   /**
-   * Translated "Item remixed.".
+   * Translated "Delete".
    * 
-   * @return translated "Item remixed."
-   * @gwt.key msgItemRemixed
+   * @return translated "Delete"
+   * @gwt.key detailDelete
    */
-  String msgItemRemixed();
+  String detailDelete();
+
+  /**
+   * Translated "Normal".
+   * 
+   * @return translated "Normal"
+   * @gwt.key doListRarityNormal
+   */
+  String doListRarityNormal();
 
   /**
    * Translated "Create new...".
@@ -72,12 +80,12 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String panelCreateNew();
 
   /**
-   * Translated "Inventory".
+   * Translated "Item remixed.".
    * 
-   * @return translated "Inventory"
-   * @gwt.key inventoryTitle
+   * @return translated "Item remixed."
+   * @gwt.key msgItemRemixed
    */
-  String inventoryTitle();
+  String msgItemRemixed();
 
   /**
    * Translated "You have no {0} items.".
@@ -86,6 +94,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key panelNoItems
    */
   String panelNoItems(String arg0);
+
+  /**
+   * Translated "Rare".
+   * 
+   * @return translated "Rare"
+   * @gwt.key doListRarityRare
+   */
+  String doListRarityRare();
 
   /**
    * Translated "Item listed.".
@@ -102,4 +118,76 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key detailEdit
    */
   String detailEdit();
+
+  /**
+   * Translated "Listing your {0}".
+   * 
+   * @return translated "Listing your {0}"
+   * @gwt.key doListHdrTop
+   */
+  String doListHdrTop(String arg0);
+
+  /**
+   * Translated "Listing your item creates a new copy of your item as it is just now and adds it to the catalog, where other users may in turn purchase copies of it.<p>The cost of listing an item is determined by the rarity you choose for it, which in turn influences its purchase price.".
+   * 
+   * @return translated "Listing your item creates a new copy of your item as it is just now and adds it to the catalog, where other users may in turn purchase copies of it.<p>The cost of listing an item is determined by the rarity you choose for it, which in turn influences its purchase price."
+   * @gwt.key doListBlurb
+   */
+  String doListBlurb();
+
+  /**
+   * Translated "Remix...".
+   * 
+   * @return translated "Remix..."
+   * @gwt.key detailRemix
+   */
+  String detailRemix();
+
+  /**
+   * Translated "Inventory".
+   * 
+   * @return translated "Inventory"
+   * @gwt.key inventoryTitle
+   */
+  String inventoryTitle();
+
+  /**
+   * Translated "Uncommon".
+   * 
+   * @return translated "Uncommon"
+   * @gwt.key dolistRarityUncommon
+   */
+  String dolistRarityUncommon();
+
+  /**
+   * Translated "List it!".
+   * 
+   * @return translated "List it!"
+   * @gwt.key doListBtnListIt
+   */
+  String doListBtnListIt();
+
+  /**
+   * Translated "List price:".
+   * 
+   * @return translated "List price:"
+   * @gwt.key doListHdrPrice
+   */
+  String doListHdrPrice();
+
+  /**
+   * Translated "Plentiful".
+   * 
+   * @return translated "Plentiful"
+   * @gwt.key doListRarityPlentiful
+   */
+  String doListRarityPlentiful();
+
+  /**
+   * Translated "Cancel".
+   * 
+   * @return translated "Cancel"
+   * @gwt.key doListBtnCancel
+   */
+  String doListBtnCancel();
 }

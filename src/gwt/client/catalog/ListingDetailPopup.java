@@ -5,7 +5,6 @@ package client.catalog;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -80,7 +79,7 @@ public class ListingDetailPopup extends BaseItemDetailPopup
             Button delist = new Button(CCatalog.msgs.listingDelist());
             new ClickCallback(delist, _status) {
                 public boolean callService () {
-                    CCatalog.catalogsvc.listItem(CCatalog.creds, _item.getIdent(), false, this);
+                    CCatalog.catalogsvc.listItem(CCatalog.creds, _item.getIdent(), -1, false, this);
                     return true;
                 }
                 public boolean gotResult (Object result) {
