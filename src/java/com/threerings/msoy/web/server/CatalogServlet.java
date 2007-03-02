@@ -152,25 +152,30 @@ public class CatalogServlet extends MsoyServiceServlet
         final MemberRecord mrec = requireAuthedUser(creds);
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord, ?, ?, ?> repo =
-            MsoyServer.itemMan.getRepository(ident.type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(ident.type);
         try {
             if (list) {
                 final int price;
-                switch(rarity) {
-                case CatalogListing.RARITY_PLENTIFUL:
-                    price = 100; break;
-                case CatalogListing.RARITY_COMMON:
-                    price = 200; break;
-                case CatalogListing.RARITY_NORMAL:
-                    price = 300; break;
-                case CatalogListing.RARITY_UNCOMMON:
-                    price = 400; break;
-                case CatalogListing.RARITY_RARE:
-                    price = 500; break;
-                default:
-                    log.warning("Unknown rarity [item=" + ident + ", rarity=" + rarity + "]");
-                    throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+                // TEMP: admins don't have to pay to list; when this gets factored into
+                // FinancialAction then admins/support can not pay for anything
+                if (mrec.isAdmin()) {
+                    price = 0;
+                } else {
+                    switch (rarity) {
+                    case CatalogListing.RARITY_PLENTIFUL:
+                        price = 100; break;
+                    case CatalogListing.RARITY_COMMON:
+                        price = 200; break;
+                    case CatalogListing.RARITY_NORMAL:
+                        price = 300; break;
+                    case CatalogListing.RARITY_UNCOMMON:
+                        price = 400; break;
+                    case CatalogListing.RARITY_RARE:
+                        price = 500; break;
+                    default:
+                        log.warning("Unknown rarity [item=" + ident + ", rarity=" + rarity + "]");
+                        throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+                    }
                 }
                 if (mrec.flow < price) {
                     // only happens if client is buggy, hacked or lagged, or in a blue moon
@@ -202,10 +207,12 @@ public class CatalogServlet extends MsoyServiceServlet
                 CatalogRecord record= repo.insertListing(
                     listItem, rarity, System.currentTimeMillis());
 
-                int flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
-                    mrec.memberId, price, UserAction.LISTED_ITEM + " " + ident.type +
-                    " " + ident.itemId + " " + rarity, false);
-                MemberManager.queueFlowUpdated(mrec.memberId, flow);
+                if (price > 0) {
+                    int flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
+                        mrec.memberId, price, UserAction.LISTED_ITEM + " " + ident.type +
+                        " " + ident.itemId + " " + rarity, false);
+                    MemberManager.queueFlowUpdated(mrec.memberId, flow);
+                }
 
                 logUserAction(mrec, UserAction.LISTED_ITEM, ident.toString() + " " + rarity);
 
