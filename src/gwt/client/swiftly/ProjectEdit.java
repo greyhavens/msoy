@@ -54,7 +54,7 @@ public class ProjectEdit extends BorderedDialog
         setStyleName("projectEdit");
 
         VerticalPanel contents = (VerticalPanel)_contents;
-        _header.add(createTitleLabel(_project.projectName, "ProjectName"));
+        _header.add(new InlineLabel(_project.projectName));
 
         _errorContainer = new HorizontalPanel();
         contents.add(_errorContainer);
