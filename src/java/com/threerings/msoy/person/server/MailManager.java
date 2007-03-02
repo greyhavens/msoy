@@ -241,10 +241,10 @@ public class MailManager
             welcome.recipientId = memberId;
             // TODO: We need to be able to send system messages somehow.
             welcome.senderId = memberId;
-            welcome.subject = "Welcome to MetaSOY!";
+            welcome.subject = "Welcome to Whirled!";
             welcome.sent = new Timestamp(System.currentTimeMillis());
             welcome.unread = true;
-            welcome.bodyText = "Welcome to the MetaSOY mail system!\n";
+            welcome.bodyText = "Welcome to the Whirled mail system!\n";
             _mailRepo.fileMessage(welcome);
         }
     }
