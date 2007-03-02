@@ -38,6 +38,9 @@ public class ActorSprite extends MsoySprite
         super(null, null);
 
         var labelFormat :TextFormat = new TextFormat();
+        labelFormat.font = "Arial"; // there be magic here. Arial isn't
+        // even available on Linux, but it works it out. The documentation
+        // for TextFormat does not indicate this. Bastards.
         labelFormat.size = 10;
         labelFormat.bold = true;
         _label = new TextField();
@@ -230,7 +233,7 @@ public class ActorSprite extends MsoySprite
             return 0xFF0000;
 
         default:
-            return 0x00FF00;
+            return 0x99BFFF;
         }
     }
 
