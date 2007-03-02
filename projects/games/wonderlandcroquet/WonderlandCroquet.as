@@ -62,6 +62,11 @@ public class WonderlandCroquet extends Sprite
 
         _spr.addChild(map.foreground);
 
+        _ballMarkerLayer = new Sprite();
+        _ballMarkerLayer.mouseChildren = false;
+        _ballMarkerLayer.mouseEnabled = false;
+        _spr.addChild(_ballMarkerLayer);
+
         _scroller = new WonderlandScroller(_spr);
         addChild(_scroller);
         _scroller.x = _scroller.width / 2 + 5;
@@ -150,6 +155,22 @@ public class WonderlandCroquet extends Sprite
                 if (BallParticle(particle).tick()) {
                     doneMoving = false;
                 }
+            }
+        }
+
+        if (doneMoving) {
+            // Show markers for obstructed balls
+            for each (var ball :BallParticle in _balls) {
+                if (ball.ball.ballAnimation.hitTestObject(map.foreground)) {
+                    _ballMarkerLayer.addChild(ball.ball.ballMarker);
+                    ball.ball.ballMarker.x = ball.ball.x;
+                    ball.ball.ballMarker.y = ball.ball.y;
+                }
+            }
+        } else {
+            // Clear markers for obstructed balls
+            for (var ii :int = 0; ii < _ballMarkerLayer.numChildren; ii++) {
+                _ballMarkerLayer.removeChildAt(0);
             }
         }
 
@@ -303,6 +324,8 @@ public class WonderlandCroquet extends Sprite
     protected var _spr :Sprite;
 
     protected var _ballLayer :Sprite;
+
+    protected var _ballMarkerLayer :Sprite;
 
     protected var _board :WonderlandBoard;
 

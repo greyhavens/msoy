@@ -1,12 +1,16 @@
 package {
 
+import flash.display.DisplayObject;
 import flash.display.Scene;
 import flash.display.Sprite;
+import flash.display.MovieClip;
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
-import mx.core.MovieClipAsset;
 import mx.utils.ObjectUtil;
+
+import com.threerings.util.EmbeddedSwfLoader;
 
 /**
  * A croquet ball.
@@ -22,18 +26,27 @@ public class Ball extends Sprite
     // The index of the player that owns this ball 
     public var playerIdx :int;
 
+    // A marker to show when our ball is obstructed by something
+    public var ballMarker :DisplayObject;
+
     public function Ball (particle :BallParticle, playerIdx :int = 0)
     {
         this.particle = particle;
         this.playerIdx = playerIdx;
         _mallet = null;
 
-        _ballAnimation = MovieClipAsset(new ballAnimations[playerIdx]);
+        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
+        loader.addEventListener(Event.COMPLETE, function (event :Event) :void {
+            ballMarker = new (loader.getClass("ballmarker" + (playerIdx + 1)))();
+            _ballAnimation = new (loader.getClass("ball" + (playerIdx + 1)))();
+            addChild(_ballAnimation);
 
-        _playing = true;
-        stop();
+            _playing = true;
+            stop();
+        });
 
-        addChild(_ballAnimation);
+        loader.load(new BALL_ART_CLASS());
+
 
         addEventListener(MouseEvent.CLICK, mouseClick);
     }
@@ -43,6 +56,10 @@ public class Ball extends Sprite
      */
     public function stop () :void
     {
+        if (_ballAnimation == null) { 
+            return;
+        }
+
         if (_playing) {
             _playing = false;
             _ballAnimation.stop();
@@ -54,6 +71,10 @@ public class Ball extends Sprite
      */
     public function play () :void
     {
+        if (_ballAnimation == null) { 
+            return;
+        }
+
         if (!_playing) {
             _playing = true;
             _ballAnimation.play();
@@ -93,7 +114,6 @@ public class Ball extends Sprite
      */
     protected function mouseClick (event :MouseEvent) :void
     {
-
         if (particle.wc.gameCtrl == null || !particle.wc.gameCtrl.isMyTurn() ||
             particle.wc.myIdx != playerIdx || particle.velocity.magnitude() != 0) {
             // Not ours/not our turn/moving
@@ -116,10 +136,10 @@ public class Ball extends Sprite
     protected var _modifiers :int;
 
     // Our actual artwork
-    protected var _ballAnimation :MovieClipAsset;
+    protected var _ballAnimation :MovieClip;
 
     // Are we currently playing?
-    protected var _playing :Boolean;
+    protected var _playing :Boolean = false;
 
     // Modifier options.
     protected static const MODIFIER_GIANT    :int = 0x1 << 0;
@@ -132,28 +152,8 @@ public class Ball extends Sprite
     // The hardest anyone is allowed to hit a ball
     protected static const MAX_HIT_STRENGTH :int = 300;
 
-    // The ball artwork.
-    [Embed(source="rsrc/ball.swf#ball1")]
-    protected static var BallAnimation1 :Class;
-    [Embed(source="rsrc/ball.swf#ball2")]
-    protected static var BallAnimation2 :Class;
-    [Embed(source="rsrc/ball.swf#ball3")]
-    protected static var BallAnimation3 :Class;
-    [Embed(source="rsrc/ball.swf#ball4")]
-    protected static var BallAnimation4 :Class;
-    [Embed(source="rsrc/ball.swf#ball5")]
-    protected static var BallAnimation5 :Class;
-    [Embed(source="rsrc/ball.swf#ball6")]
-    protected static var BallAnimation6 :Class;
-
-    protected static var ballAnimations :Array = [
-        BallAnimation1,
-        BallAnimation2,
-        BallAnimation3,
-        BallAnimation4,
-        BallAnimation5,
-        BallAnimation6,
-    ];
+    [Embed(source="rsrc/ball.swf", mimeType="application/octet-stream")]
+    protected static const BALL_ART_CLASS :Class;
 }
 
 }

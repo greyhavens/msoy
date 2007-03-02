@@ -45,9 +45,6 @@ public class Wicket extends Sprite
             p.plusEquals(new Vector(x, y));
             particle.position = p;
         }
-        
-        // FIXME: This is a dirty dirty hack, and looks bad.
-        alpha = 0.7;
     }
 
     /**
