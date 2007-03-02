@@ -90,21 +90,25 @@ public class ControlBar extends HBox
             addChild(chatControl);
 
             var chatBtn :CommandButton = new CommandButton();
+            chatBtn.toolTip = Msgs.GENERAL.get("i.chatPrefs");
             chatBtn.setCommand(MsoyController.CHAT_PREFS);
             chatBtn.styleName = "controlBarButtonChat";
             addChild(chatBtn);
 
             var volBtn :CommandButton = new CommandButton();
+            volBtn.toolTip = Msgs.GENERAL.get("i.volume");
             volBtn.setCommand(ControlBarController.POP_VOLUME, volBtn);
             volBtn.styleName = "controlBarButtonVolume";
             addChild(volBtn);
             
             var prefsBtn :CommandButton = new CommandButton();
+            prefsBtn.toolTip = Msgs.GENERAL.get("i.avatar");
             prefsBtn.setCommand(MsoyController.PICK_AVATAR);
             prefsBtn.styleName = "controlBarButtonAvatar";
             addChild(prefsBtn);
 
             _editBtn = new CommandButton();
+            _editBtn.toolTip = Msgs.GENERAL.get("i.editScene");
             _editBtn.setCommand(ControlBarController.EDIT_SCENE);
             _editBtn.styleName = "controlBarButtonEdit";
             addChild(_editBtn);
@@ -165,6 +169,7 @@ public class ControlBar extends HBox
         _loc.includeInLayout = _goback.includeInLayout = _bookend.includeInLayout = 
             _loc.visible = _goback.visible = _bookend.visible = visible;
         _goback.enabled = backEnabled;
+        _goback.toolTip = backEnabled ? Msgs.GENERAL.get("i.goBack") : null;
         if (name != null) {
             _loc.text = name.length < maxLen ? name : (name.substr(0, maxLen) + "...");
         } else {
