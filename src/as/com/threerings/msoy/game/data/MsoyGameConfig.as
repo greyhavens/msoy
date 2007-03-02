@@ -13,12 +13,12 @@ import com.threerings.parlor.game.client.FlexGameConfigurator;
 
 import com.threerings.ezgame.data.EZGameConfig;
 
-import com.threerings.msoy.game.client.FlashGameController;
+import com.threerings.msoy.game.client.MsoyGameController;
 
 /**
- * A game config for a simple multiplayer flash game.
+ * A game config for a simple multiplayer metasoy flash game.
  */
-public class FlashGameConfig extends EZGameConfig
+public class MsoyGameConfig extends EZGameConfig
 {
     override public function createConfigurator () :GameConfigurator
     {
@@ -27,7 +27,7 @@ public class FlashGameConfig extends EZGameConfig
 
     override public function createController () :PlaceController
     {
-        return new FlashGameController();
+        return new MsoyGameController();
     }
 }
 }

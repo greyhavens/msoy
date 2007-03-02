@@ -29,10 +29,10 @@ import com.threerings.msoy.game.data.WorldGameObject;
  * A director that manages invitations and game starting.
  */
 
-// TODO: most of this is temporary and will be re-done, this class
-// may even die.
-//
-
+// TODO: All this Invitation stuff needs to be ripped out.
+// In metasoy you will not invite players to a game configuration (do you?)
+// you instead invite to the lobby... etc.
+// 
 public class GameDirector extends BasicDirector
     implements InvitationHandler, InvitationResponseObserver, AttributeChangeListener, Subscriber
 {
@@ -52,7 +52,8 @@ public class GameDirector extends BasicDirector
      */
     public function configureInvite (invitee :MemberName) :void
     {
-        new InvitePanel(_mctx, invitee);
+        displayFeedback("Hopefully nothing is actually calling this code");
+//        new InvitePanel(_mctx, invitee);
     }
 
     /**

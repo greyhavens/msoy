@@ -7,8 +7,6 @@ import com.threerings.io.ObjectInputStream;
 
 import com.threerings.crowd.client.PlaceController;
 
-import com.threerings.ezgame.data.EZGameConfig;
-
 import com.threerings.msoy.item.web.Game;
 
 import com.threerings.msoy.game.client.WorldGameController;
@@ -16,7 +14,7 @@ import com.threerings.msoy.game.client.WorldGameController;
 /**
  * A game config for an in-world game.
  */
-public class WorldGameConfig extends EZGameConfig
+public class WorldGameConfig extends MsoyGameConfig
 {
     /** The game item. */
     public var game :Game;

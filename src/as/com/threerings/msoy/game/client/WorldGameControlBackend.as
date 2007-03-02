@@ -21,7 +21,6 @@ import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.ezgame.client.GameControlBackend;
-import com.threerings.ezgame.client.EZGameController;
 import com.threerings.ezgame.util.EZObjectMarshaller;
 
 import com.threerings.msoy.client.WorldContext;
@@ -35,11 +34,12 @@ import com.threerings.msoy.world.data.RoomObject;
 
 import com.threerings.msoy.game.data.WorldGameObject;
 
-public class WorldGameControlBackend extends GameControlBackend
+// TODO: this too needs renaming because it's too confusing now
+public class WorldGameControlBackend extends WhirledGameControlBackend
     implements LocationObserver, OccupantObserver
 {
     public function WorldGameControlBackend (
-        ctx :WorldContext, worldGameObj :WorldGameObject, ctrl :EZGameController)
+        ctx :WorldContext, worldGameObj :WorldGameObject, ctrl :MsoyGameController)
     {
         super(ctx, worldGameObj, ctrl);
         _mctx = ctx;

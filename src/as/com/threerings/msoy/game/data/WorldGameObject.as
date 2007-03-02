@@ -12,7 +12,7 @@ import com.threerings.ezgame.data.EZGameObject;
 /**
  * Represents a lobby for a particular game.
  */
-public class WorldGameObject extends EZGameObject
+public class WorldGameObject extends MsoyGameObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>config</code> field. */

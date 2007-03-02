@@ -13,13 +13,11 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.util.CrowdContext;
 
-import com.threerings.ezgame.client.EZGameController;
-
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
 
-public class WorldGameController extends EZGameController
+public class WorldGameController extends MsoyGameController
 {
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
     {
@@ -65,7 +63,7 @@ import com.threerings.msoy.game.client.WorldGameControlBackend;
 import com.threerings.msoy.game.client.WorldGameController;
 import com.threerings.msoy.game.data.WorldGameObject;
 
-class WorldGamePanel extends EZGamePanel
+class WorldGamePanel extends EZGamePanel // we need no chat
 {
     public function WorldGamePanel (ctx :CrowdContext, ctrl :WorldGameController)
     {
@@ -74,6 +72,6 @@ class WorldGamePanel extends EZGamePanel
     
     override protected function createBackend () :GameControlBackend
     {
-        return new WorldGameControlBackend(_ctx as WorldContext, _ezObj as WorldGameObject, _ctrl);
+        return new WorldGameControlBackend(_ctx as WorldContext, _ezObj as WorldGameObject, _ctrl as WorldGameController);
     }
 }

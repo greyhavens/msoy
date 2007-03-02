@@ -19,7 +19,7 @@ import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.item.web.Game;
 
-import com.threerings.msoy.game.data.FlashGameConfig;
+import com.threerings.msoy.game.data.MsoyGameConfig;
 
 public class TableCreationPanel extends FloatingPanel
 {
@@ -76,7 +76,7 @@ public class TableCreationPanel extends FloatingPanel
         }
         _tconfigger.init(_ctx, _gconfigger);
 
-        var config :FlashGameConfig = new FlashGameConfig();
+        var config :MsoyGameConfig = new MsoyGameConfig();
         config.configData = _game.gameMedia.getMediaPath();
         config.persistentGameId = _game.getPrototypeId();
         config.gameType = _game.gameType;
