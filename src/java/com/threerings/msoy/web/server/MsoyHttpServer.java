@@ -15,6 +15,7 @@ import org.mortbay.http.HttpServer;
 import org.mortbay.http.handler.ResourceHandler;
 import org.mortbay.jetty.servlet.ServletHandler;
 import org.mortbay.jetty.servlet.ServletHolder;
+
 import com.threerings.msoy.server.ServerConfig;
 
 /**
@@ -31,12 +32,13 @@ public class MsoyHttpServer extends HttpServer
     {
         // wire up serving of static content (for testing)
         HttpContext context = getContext("/");
-        context.setResourceBase(
-            new File(ServerConfig.serverRoot, "pages").getPath());
-        context.addHandler(new ResourceHandler());
+        context.setResourceBase(new File(ServerConfig.serverRoot, "pages").getPath());
+        ResourceHandler rsrc = new ResourceHandler();
+        rsrc.setDirAllowed(false);
+        context.addHandler(rsrc);
 
         // wire up our GWT servlets
-        ServletHandler handler= new ServletHandler();
+        ServletHandler handler = new ServletHandler();
         for (int ii = 0; ii < SERVLETS.length; ii += 2) {
             String name = SERVLETS[ii];
             handler.addServlet(name, "/msoy/" + name, SERVLETS[ii+1]);
