@@ -39,7 +39,7 @@ public class MsoyGameController extends EZGameController
         var elapsed :int = (getTimer() - _startStamp) / 1000;
         var humanity :Number = (_pctx as WorldContext).getClientObject().getHumanity();
         var flowPerMinute :int = (_gobj as MsoyGameObject).flowPerMinute;
-        return int((humanity * flowPerMinute * elapsed) / 60);
+        return int((humanity * flowPerMinute * elapsed) / 60) - _flowAwarded;
     }
 
     /**
@@ -47,6 +47,7 @@ public class MsoyGameController extends EZGameController
      */
     public function awardFlow_v1 (amount :int) :void
     {
+        _flowAwarded += amount;
         (_gobj as MsoyGameObject).msoyGameService.awardFlow(_pctx.getClient() ,amount,
             new InvocationAdapter(function (cause :String) :void {
                 Log.getLog(MsoyGameController).warning("Unable to award flow: " + cause);
@@ -75,7 +76,7 @@ public class MsoyGameController extends EZGameController
     /** The timestamp at which we started playing. */
     protected var _startStamp :Number;
 
-    /** The amount of flow granted thus far. */
-    protected var _flowGranted :int;
+    /** The amount of flow awarded thus far. */
+    protected var _flowAwarded :int;
 }
 }
