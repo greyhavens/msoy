@@ -60,6 +60,7 @@ public class MailManager
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<MailMessage>(waiter) {
             public MailMessage invokePersistResult () throws PersistenceException {
                 MailMessageRecord record = _mailRepo.getMessage(memberId, folderId, messageId);
+                // TODO: could be null
                 if (record.unread && flagAsRead) {
                     _mailRepo.setUnread(memberId, folderId, messageId, false);
                 }
