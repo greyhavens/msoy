@@ -78,9 +78,6 @@ public class MemberServlet extends MsoyServiceServlet
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.memberMan.alterFriend(creds.getMemberId(), friendId, true, waiter);
-                // TODO: Figure out grant vs log, and whences comes the flow constant?
-                MsoyServer.memberMan.grantFlow(
-                    creds.getMemberId(), 3, UserAction.SENT_FRIEND_INVITE, "" + friendId);
                 MsoyServer.memberMan.logUserAction(
                     creds.name, UserAction.SENT_FRIEND_INVITE, "" + friendId);
             }

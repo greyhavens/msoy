@@ -66,11 +66,7 @@ public class ItemServlet extends MsoyServiceServlet
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.itemMan.insertItem(item, waiter);
-                // TODO: Figure out grant vs log, and whences comes the flow constant?
-                MsoyServer.memberMan.grantFlow(
-                    name.getMemberId(), 3, UserAction.CREATED_ITEM, item.toString());
-                MsoyServer.memberMan.logUserAction(
-                    name, UserAction.CREATED_ITEM, item.toString());
+                MsoyServer.memberMan.logUserAction(name, UserAction.CREATED_ITEM, item.toString());
             }
         });
         return waiter.waitForResult().itemId;
