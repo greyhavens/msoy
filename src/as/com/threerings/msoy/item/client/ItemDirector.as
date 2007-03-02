@@ -26,7 +26,7 @@ public class ItemDirector extends BasicDirector
      */
     public function loadInventory (type :int) :void
     {
-        if (_mctx.getClientObject().isInventoryLoaded(type) ||
+        if (_mctx.getMemberObject().isInventoryLoaded(type) ||
                 _loading[type]) {
             return;
         }

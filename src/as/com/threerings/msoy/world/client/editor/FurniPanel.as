@@ -216,8 +216,8 @@ public class FurniPanel extends SpritePanel
         _destScene.editable = true;
 
         // combine recent and owned scenes into one array
-        var recent :Array = _ctx.getClientObject().recentScenes.toArray();
-        var owned :Array = _ctx.getClientObject().ownedScenes.toArray();
+        var recent :Array = _ctx.getMemberObject().recentScenes.toArray();
+        var owned :Array = _ctx.getMemberObject().ownedScenes.toArray();
         var scenes :Array = recent.concat();
         for each (var sbe :SceneBookmarkEntry in owned) {
             if (!ArrayUtil.contains(recent, sbe)) {

@@ -76,7 +76,7 @@ public class ControlBar extends HBox
         var cls :Class = getStyle("backgroundSkin");
         setStyle("backgroundImage", cls);
             
-        var user :MemberObject = _ctx.getClientObject();
+        var user :MemberObject = _ctx.getMemberObject();
         var isMember :Boolean = (user != null) && !user.isGuest();
         if (numChildren > 1 && (isMember == _isMember)) {
             return;

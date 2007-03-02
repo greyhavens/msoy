@@ -37,7 +37,7 @@ public class MsoyGameController extends EZGameController
             return 0;
         }
         var elapsed :int = (getTimer() - _startStamp) / 1000;
-        var humanity :Number = (_pctx as WorldContext).getClientObject().getHumanity();
+        var humanity :Number = (_pctx as WorldContext).getMemberObject().getHumanity();
         var flowPerMinute :int = (_gobj as MsoyGameObject).flowPerMinute;
         return int((humanity * flowPerMinute * elapsed) / 60) - _flowAwarded;
     }

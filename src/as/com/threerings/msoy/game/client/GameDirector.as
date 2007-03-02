@@ -148,7 +148,7 @@ public class GameDirector extends BasicDirector
      */
     protected function updateInWorldGame () :void
     {
-        var noid :int = _mctx.getClientObject().inWorldGame;
+        var noid :int = _mctx.getMemberObject().inWorldGame;
         if (noid == _worldGameOid) {
             return;
         }

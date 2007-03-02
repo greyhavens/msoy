@@ -32,7 +32,7 @@ public class FriendsList extends MsoyList
         super.parentChanged(p);
 
         if (p != null) {
-            _userObj = _ctx.getClientObject();
+            _userObj = _ctx.getMemberObject();
             _userObj.addListener(this);
             updateFriends();
 

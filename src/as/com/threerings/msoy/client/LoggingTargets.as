@@ -14,7 +14,7 @@ public class LoggingTargets
 {
     public static function configureLogging (ctx :BaseContext) :void
     {
-        var userObj :MemberObject = ctx.getClientObject();
+        var userObj :MemberObject = ctx.getMemberObject();
 
         // for now, everything logs to the FireBug console
         try {

@@ -77,7 +77,7 @@ public class PrefsDialog extends FloatingPanel
         super.parentChanged(p);
 
         if (p != null) {
-            var memberObject :MemberObject = _ctx.getClientObject();
+            var memberObject :MemberObject = _ctx.getMemberObject();
             if (memberObject.isInventoryLoaded(Item.AVATAR)) {
                 // call later, twice, so that the picker has had time to set up the avatars. Kinda
                 // hacky, but what to do?
@@ -112,7 +112,7 @@ public class PrefsDialog extends FloatingPanel
         var tainer :VBox = new VBox();
         tainer.label = Msgs.PREFS.get("t.general");
 
-        var memberObj :MemberObject = _ctx.getClientObject();
+        var memberObj :MemberObject = _ctx.getMemberObject();
 
         var grid :Grid = new Grid();
         GridUtil.addRow(grid,
@@ -182,7 +182,7 @@ public class PrefsDialog extends FloatingPanel
 
     override protected function buttonClicked (buttonId :int) :void
     {
-        var memberObj :MemberObject = _ctx.getClientObject();
+        var memberObj :MemberObject = _ctx.getMemberObject();
 
         // save any changed info
         var newName :String = StringUtil.trim(_name.text);
@@ -207,7 +207,7 @@ public class PrefsDialog extends FloatingPanel
 
     protected function selectCurrentAvatar () :void
     {
-        var memberObj :MemberObject = _ctx.getClientObject();
+        var memberObj :MemberObject = _ctx.getMemberObject();
         if (memberObj.avatar == null) {
             _avatars.setSelectedItem(_defaultAvatar);
 

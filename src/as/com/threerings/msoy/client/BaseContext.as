@@ -77,7 +77,7 @@ public /*abstract*/ class BaseContext
     /**
      * Convenience method.
      */
-    public function getClientObject () :MemberObject
+    public function getMemberObject () :MemberObject
     {
         return (_client.getClientObject() as MemberObject);
     }

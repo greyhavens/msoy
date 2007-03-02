@@ -143,7 +143,7 @@ public class MsoyController extends Controller
      */
     public function handlePopFriendsMenu (trigger :Button) :void
     {
-        var friends :Array = _ctx.getClientObject().getSortedEstablishedFriends();
+        var friends :Array = _ctx.getMemberObject().getSortedEstablishedFriends();
         friends = friends.map(
             function (fe :FriendEntry, index :int, array :Array) :Object {
                 return {
@@ -192,7 +192,7 @@ public class MsoyController extends Controller
             currentSceneId = -1;
         }
 
-        var memberObj :MemberObject = _ctx.getClientObject();
+        var memberObj :MemberObject = _ctx.getMemberObject();
 
         var friends :Array = memberObj.getSortedEstablishedFriends();
         friends = friends.map(
@@ -466,7 +466,7 @@ public class MsoyController extends Controller
     // from ClientObserver
     public function clientDidLogon (event :ClientEvent) :void
     {
-        var memberObj :MemberObject = _ctx.getClientObject();
+        var memberObj :MemberObject = _ctx.getMemberObject();
         // if not a guest, save the username that we logged in with
         if (!memberObj.isGuest()) {
             var creds :MsoyCredentials =
@@ -545,7 +545,7 @@ public class MsoyController extends Controller
         } else {
             var starterSceneId :int = int(params["sceneId"]);
             if (starterSceneId == 0) {
-                starterSceneId = _ctx.getClientObject().homeSceneId;
+                starterSceneId = _ctx.getMemberObject().homeSceneId;
                 if (starterSceneId == 0) {
                     starterSceneId = 1; // for "packwards combatability"
                 }

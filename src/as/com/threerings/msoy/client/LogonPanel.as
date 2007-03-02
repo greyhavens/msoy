@@ -108,7 +108,7 @@ public class LogonPanel extends HBox
         if (_guestBtn != null) {
             // we only get the option here to log in as a guest if
             // we aren't even logged in
-            _guestBtn.visible = (_ctx.getClientObject() == null);
+            _guestBtn.visible = (_ctx.getMemberObject() == null);
         }
     }
 

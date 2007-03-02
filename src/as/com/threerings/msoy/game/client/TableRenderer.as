@@ -134,7 +134,7 @@ public class TableRenderer extends VBox
 
         // if we are the creator, add a button for starting the game now
         if (table.occupants != null && table.occupants.length > 0 &&
-                ctx.getClientObject().getVisibleName().equals(table.occupants[0]) &&
+                ctx.getMemberObject().getVisibleName().equals(table.occupants[0]) &&
                 (table.tconfig.desiredPlayerCount > table.tconfig.minimumPlayerCount)) {
 
             btn = new CommandButton(LobbyController.START_TABLE, table.tableId);
@@ -208,7 +208,7 @@ class SeatRenderer extends VBox
             ? (getChildAt(0) as UIComponent) : null;
 
         if ((occupant == null) ||
-                (weAreSeated && occupant.equals(ctx.getClientObject().getVisibleName()))) {
+                (weAreSeated && occupant.equals(ctx.getMemberObject().getVisibleName()))) {
             // we want to show a button
             var btn :CommandButton;
             if (comp is CommandButton) {

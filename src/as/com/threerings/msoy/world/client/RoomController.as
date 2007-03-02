@@ -75,7 +75,7 @@ public class RoomController extends SceneController
     public function getEntityInstanceId () :int
     {
         // every sprite uses our own OID as the instanceid.
-        return _mctx.getClientObject().getOid();
+        return _mctx.getMemberObject().getOid();
     }
 
     /**
@@ -282,7 +282,7 @@ public class RoomController extends SceneController
     public function handleAvatarClicked (avatar :AvatarSprite) :void
     {
         var occInfo :MemberInfo = (avatar.getActorInfo() as MemberInfo);
-        var us :MemberObject = _mctx.getClientObject();
+        var us :MemberObject = _mctx.getMemberObject();
         var menuItems :Array = [];
         if (occInfo.bodyOid == us.getOid()) {
             // create a menu for clicking on ourselves
@@ -560,7 +560,7 @@ public class RoomController extends SceneController
         if (ctrl == null) {
             return orNobody;
         }
-        return (ctrl.controllerOid == _mctx.getClientObject().getOid());
+        return (ctrl.controllerOid == _mctx.getMemberObject().getOid());
     }
 
     override protected function sceneUpdated (update :SceneUpdate) :void

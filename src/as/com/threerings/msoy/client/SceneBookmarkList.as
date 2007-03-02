@@ -29,7 +29,7 @@ public class SceneBookmarkList extends MsoyList
 
     protected function updateListData () :void
     {
-        var entries :Array = _ctx.getClientObject().recentScenes.toArray();
+        var entries :Array = _ctx.getMemberObject().recentScenes.toArray();
         entries.sort(function (o1 :Object, o2 :Object) :int {
             var sb1 :SceneBookmarkEntry = (o1 as SceneBookmarkEntry);
             var sb2 :SceneBookmarkEntry = (o2 as SceneBookmarkEntry);

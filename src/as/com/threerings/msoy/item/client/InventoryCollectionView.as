@@ -68,7 +68,7 @@ public class InventoryCollectionView extends ArrayCollection
     public function startup () :void
     {
         // start listening on the user object
-        var memObj :MemberObject = _ctx.getClientObject();
+        var memObj :MemberObject = _ctx.getMemberObject();
         if (memObj == _memberObj) {
             return;
         }

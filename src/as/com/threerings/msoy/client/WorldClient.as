@@ -41,6 +41,8 @@ import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
 import com.threerings.msoy.game.client.LobbyController;
 
+import com.threerings.msoy.game.chiyogami.data.ChiyogamiConfig;
+
 /**
  * Handles the main services for the world and game clients.
  */
@@ -80,6 +82,7 @@ public class WorldClient extends BaseClient
         c = LobbyController;
         c = ToyBoxMarshaller;
         c = PetMarshaller;
+        c = ChiyogamiConfig;
 
         // these cause bundles to be compiled in.
         [ResourceBundle("general")]
@@ -154,7 +157,7 @@ public class WorldClient extends BaseClient
         }
 
         log.info("Logging on via external request [id=" + memberId + ", token=" + token + "].");
-        var co :MemberObject = _wctx.getClientObject();
+        var co :MemberObject = _wctx.getMemberObject();
         if (co == null || co.getMemberId() != memberId) {
             _wctx.getMsoyController().handleLogon(createStartupCreds(_wctx.getStage(), token));
         }

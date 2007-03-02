@@ -146,7 +146,7 @@ public class ControlBarController extends Controller
     protected function canEditScene () :Boolean
     {
         var scene :MsoyScene = _ctx.getSceneDirector().getScene() as MsoyScene;
-        return (scene != null && scene.canEdit(_ctx.getClientObject()));
+        return (scene != null && scene.canEdit(_ctx.getMemberObject()));
     }
 
     /** World information. */

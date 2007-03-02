@@ -58,7 +58,7 @@ public class AvatarSelectionDialog extends FloatingPanel
 
         if (p != null) {
             // We just got created - check if we need to start loading the inventory.
-            _memberObj = _ctx.getClientObject();
+            _memberObj = _ctx.getMemberObject();
             if (inventoryReady()) {
                 // Inventory was loaded even before we got here - if controls
                 // have already been set up, just fill them with data.
