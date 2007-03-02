@@ -111,7 +111,6 @@ public class TableRenderer extends VBox
             if (_seatsBox.numChildren <= ii) {
                 seat = new SeatRenderer();
                 _seatsBox.addChild(seat);
-
             } else {
                 seat = (_seatsBox.getChildAt(ii) as SeatRenderer);
             }
@@ -201,7 +200,8 @@ import com.threerings.msoy.game.data.MsoyTable;
 
 class SeatRenderer extends VBox
 {
-    public function update (ctx :WorldContext, table :MsoyTable, index :int, weAreSeated :Boolean) :void
+    public function update (ctx :WorldContext, table :MsoyTable, index :int, 
+        weAreSeated :Boolean) :void
     {
         var occupant :Name = (table.occupants[index] as Name);
         var comp :UIComponent = (numChildren > 0)

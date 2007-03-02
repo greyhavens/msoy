@@ -53,7 +53,7 @@
 .groupView .LabelLink {
     cursor: pointer;
     text-decoration: underline;
-    color: blue;
+    color: black;
 }
 
 .groupView .LogoPanel .gwt-Button {

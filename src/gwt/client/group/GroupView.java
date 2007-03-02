@@ -241,6 +241,9 @@ public class GroupView extends VerticalPanel
 
         FlexTable people = new FlexTable();
         people.setStyleName("PeoplePanel");
+        int pad = _extras.peopleLowerCapHeight == 0 ? 10 : _extras.peopleLowerCapHeight;
+        DOM.setStyleAttribute(people.getElement(), "paddingLeft", pad + "px");
+        DOM.setStyleAttribute(people.getElement(), "paddingRight", pad + "px");
         people.setWidth("100%");
         people.setText(0, 0, CGroup.msgs.viewManagers());
         people.setText(1, 0, CGroup.msgs.viewMembers());
