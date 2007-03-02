@@ -192,6 +192,14 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewDeleteAll();
 
   /**
+   * Translated "Review Flagged Items".
+   * 
+   * @return translated "Review Flagged Items"
+   * @gwt.key reviewTitle
+   */
+  String reviewTitle();
+
+  /**
    * Translated "Mark Mature".
    * 
    * @return translated "Mark Mature"

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.admin;
 
 import java.util.Iterator;
@@ -34,17 +37,19 @@ public class ReviewPopup extends BorderedDialog
     implements EditorHost
 {
     /**
-     * Constructs a new {@link ReviewPopup}. 
+     * Constructs a new {@link ReviewPopup}.
      */
     public ReviewPopup ()
     {
         super(false, true);
-        
+
         _dock.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+
+        _header.add(createTitleLabel(CAdmin.msgs.reviewTitle(), null));
 
         HorizontalPanel buttonRow = new HorizontalPanel();
         buttonRow.setSpacing(10);
-        
+
         Button reloadButton = new Button(CAdmin.msgs.reviewReload());
         reloadButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
@@ -52,7 +57,7 @@ public class ReviewPopup extends BorderedDialog
             }
         });
         buttonRow.add(reloadButton);
-        
+
         Button dismissButton = new Button(CAdmin.msgs.reviewDismiss());
         dismissButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
@@ -60,8 +65,8 @@ public class ReviewPopup extends BorderedDialog
             }
         });
         buttonRow.add(dismissButton);
-        _dock.add(buttonRow, DockPanel.SOUTH);
-        
+        _footer.add(buttonRow);
+
         _status = new Label();
         _dock.add(_status, DockPanel.SOUTH);
         _centerContent = new FlexTable();
@@ -85,8 +90,7 @@ public class ReviewPopup extends BorderedDialog
     // @Override
     protected Widget createContents ()
     {
-        _dock = new DockPanel();
-        return _dock;
+        return _dock = new DockPanel();
     }
 
     // clears the UI and repopuplates the list
@@ -115,7 +119,7 @@ public class ReviewPopup extends BorderedDialog
         Iterator i = list.iterator();
         while (i.hasNext()) {
             ItemDetail itemDetail = (ItemDetail) i.next();
-            
+
             // thumbnail to the left
             _centerContent.setWidget(row, 0, MediaUtil.createMediaView(
                 itemDetail.item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE));
@@ -321,7 +325,7 @@ public class ReviewPopup extends BorderedDialog
                        }
                    });
             }
-            
+
             protected TextArea _area;
             protected Label _feedback;
             protected Button _yesButton;
