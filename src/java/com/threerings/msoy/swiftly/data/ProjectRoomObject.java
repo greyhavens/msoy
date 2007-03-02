@@ -30,7 +30,10 @@ public class ProjectRoomObject extends PlaceObject
     public String name;
 
     /** All resolved elements in this project. */
-    public DSet<PathElement> elements = new DSet<PathElement>();
+    public DSet<PathElement> pathElements = new DSet<PathElement>();
+
+    /** All loaded Swiftly Documents in this project. */
+    public DSet<SwiftlyDocument> documents = new DSet<SwiftlyDocument>();
 
     /** Provides invocation services. */
     public ProjectRoomMarshaller service;
@@ -53,7 +56,7 @@ public class ProjectRoomObject extends PlaceObject
      */
     public PathElement getRootElement ()
     {
-        for (PathElement element : elements) {
+        for (PathElement element : pathElements) {
             if (element.getType() == PathElement.Type.ROOT) {
                 return element;
             }
@@ -85,7 +88,7 @@ public class ProjectRoomObject extends PlaceObject
      */
     public void addToElements (PathElement elem)
     {
-        requestEntryAdd(ELEMENTS, elements, elem);
+        requestEntryAdd(ELEMENTS, pathElements, elem);
     }
 
     /**
@@ -95,7 +98,7 @@ public class ProjectRoomObject extends PlaceObject
      */
     public void removeFromElements (Comparable key)
     {
-        requestEntryRemove(ELEMENTS, elements, key);
+        requestEntryRemove(ELEMENTS, pathElements, key);
     }
 
     /**
@@ -105,7 +108,7 @@ public class ProjectRoomObject extends PlaceObject
      */
     public void updateElements (PathElement elem)
     {
-        requestEntryUpdate(ELEMENTS, elements, elem);
+        requestEntryUpdate(ELEMENTS, pathElements, elem);
     }
 
     /**
@@ -118,12 +121,12 @@ public class ProjectRoomObject extends PlaceObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setElements (DSet<com.threerings.msoy.swiftly.data.PathElement> value)
+    public void setPathElements (DSet<com.threerings.msoy.swiftly.data.PathElement> value)
     {
-        requestAttributeChange(ELEMENTS, value, this.elements);
+        requestAttributeChange(ELEMENTS, value, this.pathElements);
         @SuppressWarnings("unchecked") DSet<com.threerings.msoy.swiftly.data.PathElement> clone =
             (value == null) ? null : value.typedClone();
-        this.elements = clone;
+        this.pathElements = clone;
     }
 
     /**

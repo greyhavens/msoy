@@ -100,7 +100,7 @@ public class ProjectTreeModel extends DefaultTreeModel
 
     protected void addChildren (PathElementTreeNode node, PathElement parent)
     {
-        for (PathElement element : _roomObj.elements) {
+        for (PathElement element : _roomObj.pathElements) {
             if (element.getParent() != null && element.getParent().elementId == parent.elementId) {
                 PathElementTreeNode child = new PathElementTreeNode(element);
                 node.add(child);
