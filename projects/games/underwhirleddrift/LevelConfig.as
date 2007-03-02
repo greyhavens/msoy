@@ -11,10 +11,13 @@ import com.threerings.util.HashMap;
 
 public class LevelConfig 
 {
-    public static const OBJECT_STARTING_LINE_POINT :int = 1;
-    public static const OBJECT_STARTING_POSITION   :int = 2;
-    public static const OBJECT_OBSTACLE            :int = 3;
-    public static const OBJECT_BONUS               :int = 4;
+    public static const OBJECT_STARTING_LINE_POINT :int = 101;
+    public static const OBJECT_STARTING_POSITION   :int = 102;
+    public static const OBJECT_BOOST               :int = 103;
+    public static const OBJECT_JUMP_RAMP           :int = 104;
+
+    public static const OBJECT_BONUS               :int = 201;
+    public static const OBJECT_OBSTACLE            :int = 202;
 
     public function LevelConfig (objectsLayer :Class, map :HashMap) 
     {
@@ -32,24 +35,28 @@ public class LevelConfig
                 if ((layerBitmap.getPixel32(w, h) & 0xFF000000) != 0) {
                     var obj :Object = map.get(layerBitmap.getPixel(w, h));
                     var point :Point = new Point(w - layerImg.width / 2, h - layerImg.height / 2);
-                    switch (obj.type) {
-                    case OBJECT_STARTING_LINE_POINT:
-                        if (_startingLine == null) {
-                            _startingLine = new Line(point, null);
-                        } else {
-                            _startingLine.stop = point;
+                    if (obj != null) {
+                        switch (obj.type) {
+                        case OBJECT_STARTING_LINE_POINT:
+                            if (_startingLine == null) {
+                                _startingLine = new Line(point, null);
+                            } else {
+                                _startingLine.stop = point;
+                            }
+                            break;
+                        case OBJECT_STARTING_POSITION:
+                            _startingPoints.push(point);
+                            break;
+                        case OBJECT_OBSTACLE:
+                            _obstacles.push({cls: obj.cls, point: point});
+                            break;
+                        case OBJECT_BONUS:
+                            _bonuses.push({cls: obj.cls, point: point});
+                            break;
                         }
-                        break;
-                    case OBJECT_STARTING_POSITION:
-                        _startingPoints.push(point);
-                        break;
-                    case OBJECT_OBSTACLE:
-                        _obstacles.push({cls: obj.cls, point: point});
-                        break;
-                    case OBJECT_BONUS:
-                        _bonuses.push({cls: obj.cls, point: point});
-                        break;
-                    // ignore unknown colors
+                    } else {
+                        log.debug("unkown color found @ " + point + ": " + layerBitmap.getPixel(
+                            w, h).toString(16));
                     }
                 }
             }

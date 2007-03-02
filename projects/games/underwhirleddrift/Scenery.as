@@ -77,11 +77,6 @@ public class Scenery extends Sprite
 
     protected function initializeObject (obj :Object) :void
     {
-        // TODO: temp until I have a new objects swf from Nick
-        var mca :MovieClipAsset = obj.sprite as MovieClipAsset;
-        if (mca != null) {
-            mca.gotoAndStop(2);
-        }
         obj.startWidth = obj.sprite.width * 0.1;
         obj.startHeight = obj.sprite.height * 0.1;
         // get that new sprite off the display, thank you

@@ -18,7 +18,7 @@ public class Level extends Sprite
     }
 
     public function initialize (background :Class, rough :Class, track :Class, wall :Class,
-        config :LevelConfig, /** this is temporary! */ objects :Class) :void
+        config :LevelConfig) :void
     {
         _config = config;
         var backgroundImage :Shape;
@@ -46,7 +46,6 @@ public class Level extends Sprite
         addChild(new rough() as DisplayObject);
         addChild(_track = (new track() as DisplayObject));
         addChild(_wall = (new wall() as DisplayObject));
-        addChild(new objects() as DisplayObject);
 
         // because we're waiting both to hear from the host and from the loader, it is not known
         // whether the starting position or the config will be inialized first
