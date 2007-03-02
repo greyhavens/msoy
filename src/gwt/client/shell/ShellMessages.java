@@ -48,9 +48,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String createMissingName();
 
   /**
-   * Translated "Your Permaname has been configured.".
+   * Translated "Your Permaname has been configured. Note: you must use your Permaname to log into the Forums and the Wiki. We plan to fix this in the future.".
    * 
-   * @return translated "Your Permaname has been configured."
+   * @return translated "Your Permaname has been configured. Note: you must use your Permaname to log into the Forums and the Wiki. We plan to fix this in the future."
    * @gwt.key permaNameConfigured
    */
   String permaNameConfigured();
@@ -160,9 +160,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editPermaLong();
 
   /**
-   * Translated "Your Permaname can never be changed once it is set. You must create a Permaname to log into the Wiki and the Forums.".
+   * Translated "<b>Note:</b> your Permaname can never be changed once it is set.<br> You must create a Permaname to log into the Wiki and the Forums.".
    * 
-   * @return translated "Your Permaname can never be changed once it is set. You must create a Permaname to log into the Wiki and the Forums."
+   * @return translated "<b>Note:</b> your Permaname can never be changed once it is set.<br> You must create a Permaname to log into the Wiki and the Forums."
    * @gwt.key editPermaNameTip
    */
   String editPermaNameTip();
