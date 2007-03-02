@@ -24,6 +24,7 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.MsoyGameMarshaller;
 import com.threerings.msoy.game.data.MsoyGameObject;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.web.data.MemberName;
@@ -76,6 +77,9 @@ public class MsoyGameManager extends EZGameManager
         super.didStartup();
 
         _msoyGameObj = (MsoyGameObject) _plobj;
+
+        _msoyGameObj.setMsoyGameService((MsoyGameMarshaller)
+            MsoyServer.invmgr.registerDispatcher(new MsoyGameDispatcher(this)));
 
         // figure out the game's 
         _antiAbuseFactor = -1; // magic number for 'pending'
@@ -176,6 +180,17 @@ public class MsoyGameManager extends EZGameManager
         }
     }
 
+    @Override
+    protected void didShutdown ()
+    {
+        MsoyServer.invmgr.clearDispatcher(_msoyGameObj.msoyGameService);
+
+        super.didShutdown();
+    }
+
+    /**
+     * Initialize an occupant's FlowRecord.
+     */
     protected void initOccupant (int oid)
     {
         MemberObject member = (MemberObject) MsoyServer.omgr.getObject(oid);
