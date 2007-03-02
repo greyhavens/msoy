@@ -342,14 +342,14 @@ public class FurniSprite extends MsoySprite
     {
         switch (_furni.actionType) {
         case FurniData.ACTION_PORTAL:
-            return 0xe04040; // red
+            return PORTAL_HOVER;
 
         case FurniData.ACTION_LOBBY_GAME:
         case FurniData.ACTION_WORLD_GAME:
-            return 0x40e040; // green
+            return GAME_HOVER;
 
         default:
-            return 0xe0e040; // yellow
+            return OTHER_HOVER;
         }
     }
 

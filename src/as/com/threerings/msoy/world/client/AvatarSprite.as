@@ -55,6 +55,11 @@ public class AvatarSprite extends ActorSprite
 //        return (_occInfo as WorldMemberInfo).chatPopStyle;
 //    }
 
+    override public function getHoverColor () :uint
+    {
+        return AVATAR_HOVER;
+    }
+
     override protected function createBackend () :EntityBackend
     {
         return new AvatarBackend();

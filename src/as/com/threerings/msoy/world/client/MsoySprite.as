@@ -261,7 +261,7 @@ public class MsoySprite extends MediaContainer
             // we could just have the roomview take care of applying
             // and removing the glow filter...
             var glow :GlowFilter = new GlowFilter(
-                getHoverColor(), 1, 20, 20);
+                getHoverColor(), 1, 32, 32);
             ourFilters.push(glow);
             filters = ourFilters;
 
@@ -472,7 +472,7 @@ public class MsoySprite extends MediaContainer
 
     public function getHoverColor () :uint
     {
-        return 0x40e0e0;
+        return 0; // black by default
     }
 
     /**
@@ -598,5 +598,11 @@ public class MsoySprite extends MediaContainer
 
     /** Our control backend, communicates with usercode. */
     protected var _backend :EntityBackend;
+
+    /** Hover colors. */
+    protected static const AVATAR_HOVER :uint = 0x40e0e0; // cyanish
+    protected static const PORTAL_HOVER :uint = 0xe04040; // reddish
+    protected static const GAME_HOVER :uint = 0x40e040; // greenish
+    protected static const OTHER_HOVER :uint = 0xe0e040; // yellowy
 }
 }
