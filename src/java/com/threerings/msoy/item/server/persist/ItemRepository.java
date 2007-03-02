@@ -601,8 +601,8 @@ public abstract class ItemRepository<
         int currentPopulation = Math.max(0, record.purchases - record.returns);
         double ratio = (double) currentPopulation / targetPopulation;
         double basePrice = 100 + C * ((ratio < 1.0) ? Math.sqrt(ratio) : Math.pow(ratio, 4));
-        double S = record.returns >= record.purchases ? 0 : 1 - record.returns / record.purchases;
-        double listPrice = Math.max(1, basePrice * (1 - Math.sqrt(S)));
+        double S = Math.max(0, 1 - record.returns / (double)record.purchases);
+        double listPrice = Math.max(1, basePrice * Math.sqrt(S));
         int flowForGoldFactor = 600;
         record.goldCost = (int) Math.round(listPrice / (2 * flowForGoldFactor));
         record.flowCost = (int) (listPrice - record.goldCost * flowForGoldFactor);
