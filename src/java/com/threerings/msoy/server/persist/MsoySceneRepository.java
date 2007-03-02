@@ -450,13 +450,21 @@ public class MsoySceneRepository extends SimpleRepository
         model.name = roomName;
 
         FurniData f = new FurniData();
+
+        f = new FurniData();
         f.id = 1;
+        f.media = new MediaDesc("41e4e18fb88b036b2d15ae3c051bea085e60e4b5.png");
+        f.loc = new MsoyLocation(0.5f, 0, 0, 0);
+        f.actionType = FurniData.BACKGROUND;
+        model.addFurni(f);
+
+        f = new FurniData();
+        f.id = 2;
+        f.media = new MediaDesc("e8b660ec5aa0aa30dab46b267daf3b80996269e7.swf");
+        f.loc = new MsoyLocation(1, 0, 0.5, 0);
+        f.scaleX = 1.4f;
         f.actionType = FurniData.ACTION_PORTAL;
         f.actionData = "1:A common area";
-        f.loc = new MsoyLocation(.8, 0, 1, 0);
-        f.scaleX = f.scaleY = (float) (1 / .55);
-        f.media = new MediaDesc( // aqua door
-            "7fbc0922c7f36e1ce14648466b42c093185b6c1b.png");
         model.addFurni(f);
 
         return executeUpdate(new Operation<Integer>() {
