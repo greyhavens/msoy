@@ -31,6 +31,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailHeaders;
 import com.threerings.msoy.web.data.MailMessage;
+import com.threerings.msoy.web.data.MemberName;
 
 import client.msgs.MailComposition;
 import client.msgs.MailPayloadDisplay;
@@ -488,9 +489,11 @@ public class MailApplication extends DockPanel
             Label date = new Label(formatDate(headers.sent));
             date.setStyleName("Date");
             row.add(date);
-            
-            // the name of the sender
-            Label sender = new Label(headers.sender.toString());
+
+            // the name column
+            MemberName who =
+                _currentFolder == MailFolder.SENT_FOLDER_ID ? headers.recipient : headers.sender;
+            Label sender = new Label(who.toString());
             sender.setStyleName("Sender");
             row.add(sender);
 
