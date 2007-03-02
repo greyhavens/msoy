@@ -115,7 +115,7 @@ public class ProjectRoomManager extends PlaceManager
         _roomObj.removeFromDocuments(elementId);
     }
 
-    // from interface ProjectRoomManager
+    // from interface ProjectRoomProvider
     public void buildProject (ClientObject caller)
     {
         // TODO: check access!
@@ -125,7 +125,7 @@ public class ProjectRoomManager extends PlaceManager
         MsoyServer.swiftlyMan.executor.addTask(new BuildProjectTask());
     }
 
-    // from interface ProjectRoomManager
+    // from interface ProjectRoomProvider
     public void commitProject (ClientObject caller, String commitMsg,
                                ProjectRoomService.ConfirmListener listener)
         throws InvocationException
@@ -135,6 +135,16 @@ public class ProjectRoomManager extends PlaceManager
         // TODO: run the commit on the executor and post the result to the listener on success or
         // failure
         throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
+    }
+
+    // from interface ProjectRoomProvider
+    public void loadDocument (ClientObject caller, PathElement element)
+    {
+        // TODO: check access!
+       
+        SwiftlyDocument doc = new SwiftlyDocument(element);
+        doc.setText("Welcome, to the real whirled.");
+        _roomObj.addSwiftlyDocument(doc);
     }
 
     @Override // from PlaceManager

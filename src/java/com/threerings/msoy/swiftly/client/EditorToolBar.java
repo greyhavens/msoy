@@ -18,18 +18,14 @@ public class EditorToolBar extends JToolBar
 
     public void updateEditorActions(SwiftlyTextPane textPane)
     {
-        _saveButton.setAction(textPane.getSaveAction());
         _undoButton.setAction(textPane.getUndoAction());
         _redoButton.setAction(textPane.getRedoAction());
     }
 
     protected void setupToolbar ()
     {
-        // Save/undo/redo actions get set by updateEditorActions()
+        // undo/redo actions get set by updateEditorActions()
         // TODO add mini icons for these + tooltips with keyboard shortcuts
-        _saveButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.save"));
-        _saveButton.setEnabled(false);
-        add(_saveButton);
         add(_editor.createCloseCurrentTabAction());
 
         addSeparator();

@@ -55,6 +55,16 @@ public class ProjectRoomObject extends PlaceObject
     }
 
     /**
+     * Adds a new swiftly document to the project's distributed state, assigning a unique
+     * identifier to it and then adding it to the distributed state.
+     */
+    public void addSwiftlyDocument (SwiftlyDocument doc)
+    {
+        doc.elementId = _nextDocumentId++;
+        addToDocuments(doc);
+    }
+
+    /**
      * Returns the root path element of this project.
      */
     public PathElement getRootElement ()
@@ -215,4 +225,7 @@ public class ProjectRoomObject extends PlaceObject
 
     /** Used to assign unique identifiers to elements. */
     protected transient int _nextElementId;
+
+    /** Used to assign unique identifiers to documents. */
+    protected transient int _nextDocumentId;
 }

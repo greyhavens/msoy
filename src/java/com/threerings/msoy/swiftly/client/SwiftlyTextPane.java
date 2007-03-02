@@ -28,9 +28,9 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
-import com.threerings.msoy.swiftly.data.DocumentElement;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 import sdoc.SyntaxDocument;
@@ -55,7 +55,6 @@ public class SwiftlyTextPane extends JEditorPane
         // setup the actions
         _undoAction = new UndoAction();
         _redoAction = new RedoAction();
-        _saveAction = new SaveAction();
 
         addKeyBindings();
         addPopupMenu();
@@ -71,75 +70,35 @@ public class SwiftlyTextPane extends JEditorPane
         support.setUseDefaultUndoManager(false);
         support.setPrintMarginWidth(PRINT_MARGIN_WIDTH);
         getDocument().putProperty(SyntaxDocument.tabSizeAttribute, new Integer(4));
+        // TODO: use the SyntaxSupport anti alias font business
+        
+        // initialize the SyntaxDocument
+        SyntaxDocument styledDoc = getSyntaxDoc();
+        styledDoc.addUndoableEditListener(new UndoHandler());
+        setDocument(styledDoc);
 
-        setDocumentElement(pathElement);
+        // lock the editor to input waiting for the document to load
+        setEditable(false);
     }
 
-    public void setDocumentElement (PathElement pathElement)
+    public void setDocument (SwiftlyDocument document)
     {
-        SyntaxDocument styledDoc = (SyntaxDocument) getDocument();
-        styledDoc.addUndoableEditListener(new UndoHandler());
-        styledDoc.addDocumentListener(new DocumentElementListener());
-
-        /*
         try {
-            _kit.read(new StringReader(pathElement.getText()), styledDoc, 0);
+            _kit.read(new StringReader(document.getText()), getSyntaxDoc(), 0);
         } catch (IOException io) {
             // TODO: complain?
         } catch (BadLocationException be) {
             // TODO: complain?
         }
-        */
 
-        setDocument(styledDoc);
-        setDocumentChanged(false);
+        _document = document;
+        // unlock the editor
+        setEditable(true);
     }
 
     public PathElement getPathElement ()
     {
         return _pathElement;
-    }
-
-    /**
-     * Save the document if it contains unsaved changes.
-     * @return true if the save happened, false otherwise.
-     */
-    public boolean saveDocument ()
-    {
-        /* TODO 
-        if (hasUnsavedChanges()) {
-            try {
-                _document.setText(getDocument().getText(0, getDocument().getLength()));
-                _editor.saveDocumentElement(_document);
-                setDocumentChanged(false);
-                return true;
-            } catch (BadLocationException be) {
-                // TODO: warn
-            }
-        }
-        return false;
-        */
-        return false;
-    }
-
-    /**
-     * Sets the value of _documentChanged, as well as handling a number of other bits of business
-     * that need to change whenever _documentChanged does. This should always be used instead of 
-     * setting _documentChanged directly.
-     */
-    public void setDocumentChanged (boolean value)
-    {
-        _documentChanged = value;
-        _editor.updateCurrentTabTitle();
-        _saveAction.setEnabled(value);
-    }
-
-    /**
-     * Returns true if the document has unsaved changes, false otherwise.
-     */
-    public boolean hasUnsavedChanges ()
-    {
-        return _documentChanged;
     }
 
     public AbstractAction getUndoAction ()
@@ -150,11 +109,6 @@ public class SwiftlyTextPane extends JEditorPane
     public AbstractAction getRedoAction ()
     {
         return _redoAction;
-    }
-
-    public Action getSaveAction ()
-    {
-        return _saveAction;
     }
 
     public Action createCutAction ()
@@ -193,12 +147,13 @@ public class SwiftlyTextPane extends JEditorPane
         };
     }
 
+    protected SyntaxDocument getSyntaxDoc ()
+    {
+        return (SyntaxDocument) getDocument();
+    }
+
     protected void addKeyBindings ()
     {
-        // ctrl-s saves the current document
-        addKeyAction(getSaveAction(),
-                     KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
-
         // ctrl-w closes the tab
         addKeyAction(_editor.createCloseCurrentTabAction(),
                      KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
@@ -236,6 +191,20 @@ public class SwiftlyTextPane extends JEditorPane
         getActionMap().put(action, action);
     }
 
+/* TODO: KILL ME 
+    protected void updateDocument ()
+    {
+        if (_document != null) {
+            try {
+                _document.setText(getDocument().getText(0, getDocument().getLength()));
+                _editor.updateDocument(_document);
+            } catch (BadLocationException be) {
+                // TODO: complain?
+            }
+        }
+    }
+*/
+
     protected class PopupListener extends MouseAdapter {
         @Override // from MouseAdapter
         public void mousePressed(MouseEvent e) {
@@ -250,22 +219,6 @@ public class SwiftlyTextPane extends JEditorPane
         protected void maybeShowPopup(MouseEvent e) {
             if (e.isPopupTrigger()) {
                 _popup.show(e.getComponent(), e.getX(), e.getY());
-            }
-        }
-    }
-
-    protected class SaveAction extends AbstractAction
-    {
-        public SaveAction ()
-        {
-            super(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.save"));
-            setEnabled(false);
-        }
-
-        // from interface AbstractAction
-        public void actionPerformed (ActionEvent e) {
-            if (hasUnsavedChanges()) {
-                saveDocument();
             }
         }
     }
@@ -310,10 +263,6 @@ public class SwiftlyTextPane extends JEditorPane
             }
             else {
                 setEnabled(false);
-                // We have undone to the previous save
-                if (hasUnsavedChanges()) {
-                    setDocumentChanged(false);
-                }
             }
         }
     }
@@ -349,19 +298,16 @@ public class SwiftlyTextPane extends JEditorPane
         }
     }
 
+/* TODO: KILL ME 
     class DocumentElementListener implements DocumentListener {
         // from interface DocumentListener
         public void insertUpdate(DocumentEvent e) {
-            if (!hasUnsavedChanges()) {
-                setDocumentChanged(true);
-            }
+            // nada
         }
 
         // from interface DocumentListener
         public void removeUpdate(DocumentEvent e) {
-            if (!hasUnsavedChanges()) {
-                setDocumentChanged(true);
-            }
+            // nada
         }
 
         // from interface DocumentListener
@@ -369,10 +315,12 @@ public class SwiftlyTextPane extends JEditorPane
             // nada
         }
     }
+*/
 
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
     protected PathElement _pathElement;
+    protected SwiftlyDocument _document;
 
     protected SyntaxEditorKit _kit;
     protected JPopupMenu _popup;
@@ -380,6 +328,4 @@ public class SwiftlyTextPane extends JEditorPane
     protected UndoableEditListener _undoHandler = new UndoHandler();
     protected UndoAction _undoAction;
     protected RedoAction _redoAction;
-    protected SaveAction _saveAction;
-    protected boolean _documentChanged = false;
 }

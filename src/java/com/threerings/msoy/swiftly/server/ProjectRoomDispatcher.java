@@ -81,6 +81,13 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
             );
             return;
 
+        case ProjectRoomMarshaller.LOAD_DOCUMENT:
+            ((ProjectRoomProvider)provider).loadDocument(
+                source,
+                (PathElement)args[0]
+            );
+            return;
+
         case ProjectRoomMarshaller.UPDATE_DOCUMENT:
             ((ProjectRoomProvider)provider).updateDocument(
                 source,

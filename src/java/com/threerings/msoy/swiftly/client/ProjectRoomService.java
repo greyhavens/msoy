@@ -37,4 +37,7 @@ public interface ProjectRoomService extends InvocationService
 
     /** Requests pending project modifications be committed. */
     public void commitProject (Client client, String commitMsg, ConfirmListener listener);
+
+    /** Requests a document be loaded. */
+    public void loadDocument (Client client, PathElement element);
 }

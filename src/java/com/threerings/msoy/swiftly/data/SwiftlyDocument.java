@@ -21,6 +21,11 @@ public class SwiftlyDocument
     {
     }
 
+    public SwiftlyDocument (PathElement path)
+    {
+        _path = path;
+    }
+
     public String getText ()
     {
         return _text;
@@ -34,6 +39,11 @@ public class SwiftlyDocument
     public Comparable getKey ()
     {
         return elementId;
+    }
+
+    public PathElement getPathElement ()
+    {
+        return _path;
     }
 
     /**
@@ -61,6 +71,12 @@ public class SwiftlyDocument
             _pathKey = _path.getKey();            
         }
         out.defaultWriteObject();
+    }
+
+    @Override // from Object
+    public String toString ()
+    {
+        return _path.getName();
     }
 
     /** Document contents, ineffeciently stored entirely in memory. */

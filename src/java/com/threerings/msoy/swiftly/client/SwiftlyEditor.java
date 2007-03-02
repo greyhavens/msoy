@@ -19,19 +19,23 @@ import com.samskivert.swing.VGroupLayout;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.EntryAddedEvent;
+import com.threerings.presents.dobj.EntryRemovedEvent;
+import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.crowd.client.PlacePanel;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.msoy.swiftly.data.DocumentElement;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 public class SwiftlyEditor extends PlacePanel
-    implements AttributeChangeListener
+    implements AttributeChangeListener, SetListener
 {
     public SwiftlyEditor (ProjectRoomController ctrl, SwiftlyContext ctx)
     {
@@ -80,6 +84,7 @@ public class SwiftlyEditor extends PlacePanel
     public void addEditorTab (PathElement pathElement)
     {
         _editorTabs.addEditorTab(pathElement);
+        _roomObj.service.loadDocument(_ctx.getClient(), pathElement);
     }
 
     public void updateTabTitleAt (PathElement pathElement)
@@ -87,9 +92,9 @@ public class SwiftlyEditor extends PlacePanel
         _editorTabs.updateTabTitleAt(pathElement);
     }
 
-    public void updateTabDocument (PathElement pathElement)
+    public void setTabDocument (SwiftlyDocument doc)
     {
-        _editorTabs.updateTabDocument(pathElement);
+        _editorTabs.setTabDocument(doc);
     }
 
     public void updateCurrentTabTitle ()
@@ -177,10 +182,40 @@ public class SwiftlyEditor extends PlacePanel
         }
     }
 
-    protected void saveDocumentElement (DocumentElement doc)
+    // from interface SetListener
+    public void entryAdded (EntryAddedEvent event)
     {
-        System.err.println("Saving... " + doc);
-        _roomObj.service.updatePathElement(_ctx.getClient(), doc);
+        if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
+            final SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
+
+            // Re-bind transient instance variables
+            element.lazarus(_roomObj.pathElements);
+
+            // set the document if a tab is opened
+            setTabDocument(element);
+        }
+    }
+
+    // from interface SetListener
+    public void entryUpdated (EntryUpdatedEvent event)
+    {
+        // TODO do we actually want to do anything here?
+        if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
+            final SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
+
+            // Re-bind transient instance variables
+            element.lazarus(_roomObj.pathElements);
+        }
+    }
+
+    // from interface SetListener
+    public void entryRemoved (EntryRemovedEvent event)
+    {
+        // TODO: if that document is still open FREAK OUT. Server is going to refcount so shouldn't
+        // ever happen.
+        if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
+            final int elementId = (Integer)event.getKey();
+        }
     }
 
     protected SwiftlyContext _ctx;

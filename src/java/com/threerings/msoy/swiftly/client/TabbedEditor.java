@@ -16,6 +16,7 @@ import javax.swing.event.ChangeListener;
 
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 import sdoc.Gutter;
@@ -75,17 +76,14 @@ public class TabbedEditor extends JTabbedPane
     }
 
     /**
-     * TEMP: Temporary method to completely overwrite document contents when update is received
-     * from server.
+     * Completely overwrite document contents when update is received from server.
      */
-    public void updateTabDocument (PathElement pathElement)
+    public void setTabDocument (SwiftlyDocument doc)
     {
-        JScrollPane tab = _tabList.get(pathElement);
+        JScrollPane tab = _tabList.get(doc.getPathElement());
         if (tab != null) {
             SwiftlyTextPane textPane = (SwiftlyTextPane)tab.getViewport().getView();
-            // textPane.setPathElement(pathElement);
-            // TODO this should just tell the textPane to reload its document data
-            updateTabTitleAt(indexOfComponent(tab));
+            getCurrentTextPane().setDocument(doc);
         }
     }
 
@@ -109,63 +107,25 @@ public class TabbedEditor extends JTabbedPane
         JScrollPane pane = (JScrollPane)getComponentAt(tabIndex);
         SwiftlyTextPane textPane = (SwiftlyTextPane)pane.getViewport().getView();
         String title = textPane.getPathElement().getName();
-
-        if (textPane.hasUnsavedChanges()) {
-            title = "*" + title;
-        }
-
         setTitleAt(tabIndex, title);
     }
 
     /**
-     * Closes the current tab. If the tab contains unsaved changes, display a dialog box.
-     * @return the {@link JOptionPane} constant selected if a dialog was used.
+     * Closes the current tab.
      */
-    public int closeCurrentTab ()
+    public void closeCurrentTab ()
     {
         // Don't try to remove a tab if we have none.
         if (getTabCount() == 0) {
-            // We're doing nothing which is the same as picking cancel
-            return JOptionPane.CANCEL_OPTION;
+            // do nothing
+            return;
         }
+
         SwiftlyTextPane textPane = getCurrentTextPane();
-
-        int response = -1;
-        if (textPane.hasUnsavedChanges()) {
-            response = JOptionPane.showInternalConfirmDialog(_editor,
-                _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.save_changes"));
-            // Choosing Cancel will return at this point and do nothing
-            if (response == JOptionPane.YES_OPTION) {
-                textPane.saveDocument();
-            } else if (response == JOptionPane.NO_OPTION) {
-                // continue on with the tab closing
-            } else {
-                // return cancel so something calling this method knows to stop
-                return response;
-            }
-        }
-
         PathElement document = textPane.getPathElement();
         remove(_tabList.get(document));
         _tabList.remove(document);
         assignTabKeys();
-        return response;
-    }
-
-    /**
-     * Removes all the tabs from the editor tab panel.
-     */
-    public void removeTabs ()
-    {
-        int tabCount = getTabCount();
-        for (int count = 0; count < tabCount; count++) {
-            setSelectedIndex(0);
-            int response = closeCurrentTab();
-            if (response == JOptionPane.CANCEL_OPTION) {
-                // do nothing more if the user picks cancel
-                return;
-            }
-        }
     }
 
     /**

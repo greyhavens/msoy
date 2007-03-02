@@ -93,8 +93,19 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch {@link #loadDocument} requests. */
+    public static const LOAD_DOCUMENT :int = 7;
+
+    // from interface ProjectRoomService
+    public function loadDocument (arg1 :Client, arg2 :PathElement) :void
+    {
+        sendRequest(arg1, LOAD_DOCUMENT, [
+            arg2
+        ]);
+    }
+
     /** The method id used to dispatch {@link #updateDocument} requests. */
-    public static const UPDATE_DOCUMENT :int = 7;
+    public static const UPDATE_DOCUMENT :int = 8;
 
     // from interface ProjectRoomService
     public function updateDocument (arg1 :Client, arg2 :SwiftlyDocument) :void
@@ -105,7 +116,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updatePathElement} requests. */
-    public static const UPDATE_PATH_ELEMENT :int = 8;
+    public static const UPDATE_PATH_ELEMENT :int = 9;
 
     // from interface ProjectRoomService
     public function updatePathElement (arg1 :Client, arg2 :PathElement) :void

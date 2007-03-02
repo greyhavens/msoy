@@ -49,6 +49,11 @@ public interface ProjectRoomProvider extends InvocationProvider
     public void deletePathElement (ClientObject caller, int arg1);
 
     /**
+     * Handles a {@link ProjectRoomService#loadDocument} request.
+     */
+    public void loadDocument (ClientObject caller, PathElement arg1);
+
+    /**
      * Handles a {@link ProjectRoomService#updateDocument} request.
      */
     public void updateDocument (ClientObject caller, SwiftlyDocument arg1);

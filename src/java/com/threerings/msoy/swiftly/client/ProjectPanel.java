@@ -27,6 +27,8 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.threerings.msoy.item.web.MediaDesc;
+
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.PathElementTreeNode;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
@@ -90,8 +92,6 @@ public class ProjectPanel extends JPanel
         PathElementTreeNode node = (PathElementTreeNode)e.getChildren()[0];
         if (node.getElement().getType() == PathElement.Type.FILE) {
             _editor.updateTabTitleAt(node.getElement());
-            // TODO: replace this with super sophisticated fine grained editing model
-            _editor.updateTabDocument(node.getElement());
         }
     }
 
@@ -153,7 +153,7 @@ public class ProjectPanel extends JPanel
      */
     protected void addPathElement (PathElement.Type type)
     {
-        // prompt the user for the directory name
+        // prompt the user for the name of the path element
         String name = _editor.showSelectPathElementNameDialog(type);
         if (name == null) {
             return; // if the user hit cancel do no more
@@ -171,7 +171,9 @@ public class ProjectPanel extends JPanel
         if (type == PathElement.Type.DIRECTORY) {
             element = PathElement.createDirectory(name, parentElement);
         } else if (type == PathElement.Type.FILE) {
-            // TODO: element = new DocumentElement(name, parentElement, "");
+            // TODO: mime type should be selected by the user
+            element = PathElement.createFile(name, parentElement,
+                MediaDesc.mimeTypeToString(MediaDesc.TEXT_ACTIONSCRIPT));
         } else {
             // other types not implemented
         }
