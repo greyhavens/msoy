@@ -22,7 +22,7 @@ public class ChiyogamiObject extends GameObject
     public static const MUSIC :String = "music";
 
     /** The field name of the <code>BPM</code> field. */
-    public static const BPM :String = "BPM";
+    public static const BEATS_PER_MINUTE :String = "beatsPerMinute";
     
     /** The field name of the <code>bossHealth</code> field. */
     public static const BOSS_HEALTH :String = "bossHealth";
@@ -36,7 +36,7 @@ public class ChiyogamiObject extends GameObject
     public var music :MediaDesc;
 
     /** The beats-per-minute of the music. */
-    public var BPM :Number;
+    public var beatsPerMinute :Number;
 
     /** The boss's health level. */
     public var bossHealth :Number;
@@ -47,7 +47,7 @@ public class ChiyogamiObject extends GameObject
 
         host = (ins.readObject() as MediaDesc);
         music = (ins.readObject() as MediaDesc);
-        BPM = ins.readFloat();
+        beatsPerMinute = ins.readFloat();
         bossHealth = ins.readFloat();
     }
 }

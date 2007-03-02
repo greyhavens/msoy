@@ -19,8 +19,8 @@ public class ChiyogamiObject extends GameObject
     /** The field name of the <code>music</code> field. */
     public static final String MUSIC = "music";
 
-    /** The field name of the <code>BPM</code> field. */
-    public static final String BPM = "BPM";
+    /** The field name of the <code>beatsPerMinute</code> field. */
+    public static final String BEATS_PER_MINUTE = "beatsPerMinute";
 
     /** The field name of the <code>bossHealth</code> field. */
     public static final String BOSS_HEALTH = "bossHealth";
@@ -34,7 +34,7 @@ public class ChiyogamiObject extends GameObject
     public MediaDesc music;
 
     /** The beats-per-minute of the music. */
-    public float BPM;
+    public float beatsPerMinute;
 
     /** The boss's health level. */
     public float bossHealth;
@@ -73,19 +73,19 @@ public class ChiyogamiObject extends GameObject
     }
 
     /**
-     * Requests that the <code>BPM</code> field be set to the
+     * Requests that the <code>beatsPerMinute</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
      * that the attribute did change. Proxied copies of this object (on
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setBPM (float value)
+    public void setBeatsPerMinute (float value)
     {
-        float ovalue = this.BPM;
+        float ovalue = this.beatsPerMinute;
         requestAttributeChange(
-            BPM, Float.valueOf(value), Float.valueOf(ovalue));
-        this.BPM = value;
+            BEATS_PER_MINUTE, Float.valueOf(value), Float.valueOf(ovalue));
+        this.beatsPerMinute = value;
     }
 
     /**
