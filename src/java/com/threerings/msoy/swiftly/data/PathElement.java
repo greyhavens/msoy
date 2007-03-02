@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.swiftly.data;
 
-import java.net.URL;
-
 import java.io.IOException;
+
+import java.net.URL;
 
 import java.util.ArrayList;
 import java.util.Collections;
