@@ -4,7 +4,6 @@
 package client.admin;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Label;
 
@@ -74,19 +73,10 @@ public class index extends EditemEntryPoint
 
     protected void displayDashboard ()
     {
-        if (!CAdmin.creds.isSupport) {
+        if (CAdmin.creds.isSupport) {
+            setContent(new DashboardPanel());
+        } else {
             setContent(new Label(CAdmin.msgs.lackPrivileges()));
-            return;
         }
-
-        // load up the information needed to display the dashboard applet
-        CAdmin.adminsvc.loadConnectConfig(CAdmin.creds, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                setContent(new DashboardPanel((ConnectConfig)result));
-            }
-            public void onFailure (Throwable cause) {
-                setContent(new Label(CAdmin.serverError(cause)));
-            }
-        });
     }
 }

@@ -26,3 +26,11 @@
 .dashboardPanel .Applet {
   padding: 10px;
 }
+
+.invitePlayersPopup {
+  padding: 10px;
+}
+
+.invitePlayersPopup .Tip {
+  width: 400px;
+}

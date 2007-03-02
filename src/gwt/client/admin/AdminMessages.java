@@ -24,9 +24,9 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewDelisted();
 
   /**
-   * Translated "Admin Dashboard".
+   * Translated "Admin Console".
    * 
-   * @return translated "Admin Dashboard"
+   * @return translated "Admin Console"
    * @gwt.key title
    */
   String title();
@@ -48,6 +48,14 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewDelete();
 
   /**
+   * Translated "Enter the email addresses you would like to invite. Accounts will be created for these addresses and an invitation email will be sent.".
+   * 
+   * @return translated "Enter the email addresses you would like to invite. Accounts will be created for these addresses and an invitation email will be sent."
+   * @gwt.key inviteTip
+   */
+  String inviteTip();
+
+  /**
    * Translated "Delist".
    * 
    * @return translated "Delist"
@@ -62,6 +70,14 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key reviewReload
    */
   String reviewReload();
+
+  /**
+   * Translated "Sent!".
+   * 
+   * @return translated "Sent!"
+   * @gwt.key inviteSent
+   */
+  String inviteSent();
 
   /**
    * Translated "Done".
@@ -86,6 +102,22 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key lackPrivileges
    */
   String lackPrivileges();
+
+  /**
+   * Translated "Invite Players".
+   * 
+   * @return translated "Invite Players"
+   * @gwt.key inviteTitle
+   */
+  String inviteTitle();
+
+  /**
+   * Translated "Display Dashboard".
+   * 
+   * @return translated "Display Dashboard"
+   * @gwt.key displayDashboard
+   */
+  String displayDashboard();
 
   /**
    * Translated "Review Flagged Items".
@@ -120,9 +152,9 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String controls();
 
   /**
-   * Translated "To delete this item, enter a message to be sent to the item's creator:".
+   * Translated "To delete this item, enter a message to be sent to the item''s creator:".
    * 
-   * @return translated "To delete this item, enter a message to be sent to the item's creator:"
+   * @return translated "To delete this item, enter a message to be sent to the item''s creator:"
    * @gwt.key reviewDeletionPrompt
    */
   String reviewDeletionPrompt();
@@ -198,6 +230,14 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key itemPopupEdit
    */
   String itemPopupEdit();
+
+  /**
+   * Translated "Send ''em!".
+   * 
+   * @return translated "Send ''em!"
+   * @gwt.key inviteSubmit
+   */
+  String inviteSubmit();
 
   /**
    * Translated "Delete".

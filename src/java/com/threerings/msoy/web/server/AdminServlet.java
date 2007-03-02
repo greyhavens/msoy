@@ -92,8 +92,11 @@ public class AdminServlet extends MsoyServiceServlet
             ctx.put("password", password);
             StringWriter sw = new StringWriter();
             try {
-                ve.mergeTemplate("invite.tmpl", "UTF-8", ctx, sw);
-                MailUtil.deliverMail(email, INVITE_FROM, null, sw.toString());
+                ve.mergeTemplate("rsrc/email/invite.tmpl", "UTF-8", ctx, sw);
+                String body = sw.toString();
+                int nidx = body.indexOf("\n"); // first line is the subject
+                MailUtil.deliverMail(email, INVITE_FROM, body.substring(0, nidx),
+                                     body.substring(nidx+1));
             } catch (Exception e) {
                 results[ii] = e.getMessage();
             }

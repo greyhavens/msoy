@@ -52,19 +52,26 @@ public class CShell
     public static String serverError (Throwable error)
     {
         if (error instanceof ServiceException) {
-            String msg = error.getMessage();
-            // ConstantsWithLookup can't handle things that don't look like method names, yay!
-            if (msg.startsWith("m.") || msg.startsWith("e.")) {
-                msg = msg.substring(2);
-            }
-            try {
-                return smsgs.getString(msg);
-            } catch (MissingResourceException e) {
-                // looking up a missing translation message throws an exception, yay!
-                return "[" + msg + "]";
-            }
+            return serverError(error.getMessage());
         } else {
             return smsgs.getString("internal_error");
+        }
+    }
+
+    /**
+     * Looks up the appropriate response message for the supplied server-generated error.
+     */
+    public static String serverError (String error)
+    {
+        // ConstantsWithLookup can't handle things that don't look like method names, yay!
+        if (error.startsWith("m.") || error.startsWith("e.")) {
+            error = error.substring(2);
+        }
+        try {
+            return smsgs.getString(error);
+        } catch (MissingResourceException e) {
+            // looking up a missing translation message throws an exception, yay!
+            return "[" + error + "]";
         }
     }
 

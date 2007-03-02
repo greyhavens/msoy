@@ -80,20 +80,20 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String tagAddTag();
 
   /**
-   * Translated "Games".
-   * 
-   * @return translated "Games"
-   * @gwt.key menuGames
-   */
-  String menuGames();
-
-  /**
    * Translated "Re-enter your password to confirm it.".
    * 
    * @return translated "Re-enter your password to confirm it."
    * @gwt.key createMissingConfirm
    */
   String createMissingConfirm();
+
+  /**
+   * Translated "Games".
+   * 
+   * @return translated "Games"
+   * @gwt.key menuGames
+   */
+  String menuGames();
 
   /**
    * Translated "Copyright Violation".
@@ -222,6 +222,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key createMissingEmail
    */
   String createMissingEmail();
+
+  /**
+   * Translated "Dismiss".
+   * 
+   * @return translated "Dismiss"
+   * @gwt.key dismiss
+   */
+  String dismiss();
 
   /**
    * Translated "Are you sure you would like to remove the tag {0}?".
