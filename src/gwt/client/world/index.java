@@ -51,7 +51,6 @@ public class index extends MsoyEntryPoint
     // @Override // from MsoyEntryPoint
     protected void onPageLoad ()
     {
-        needPopupHack = true;
         History.addHistoryListener(this);
     }
 
@@ -92,10 +91,12 @@ public class index extends MsoyEntryPoint
 
         // if we're not a dev deployment, disallow guests
         if (!DeploymentConfig.devDeployment && CWorld.creds == null) {
+            needPopupHack = false;
             setContent(MsoyUI.createLabel(CWorld.cmsgs.noGuests(), "infoLabel"));
             return false;
         }
 
+        needPopupHack = true;
         try {
             if (token.startsWith("s")) {
                 // go to a specific scene
