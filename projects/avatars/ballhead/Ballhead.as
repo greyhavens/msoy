@@ -5,8 +5,8 @@ import flash.display.Sprite;
 
 import flash.media.Sound;
 
-import com.threerings.msoy.export.AvatarControl;
-import com.threerings.msoy.export.ControlEvent;
+import com.whirled.AvatarControl;
+import com.whirled.ControlEvent;
 
 [SWF(width="50", height="50")]
 public class Ballhead extends Sprite

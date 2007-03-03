@@ -10,8 +10,8 @@ import flash.display.Sprite;
 
 import flash.utils.getTimer; // function import
 
-import com.threerings.msoy.export.AvatarControl;
-import com.threerings.msoy.export.ControlEvent;
+import com.whirled.AvatarControl;
+import com.whirled.ControlEvent;
 
 [SWF(width="161", height="150")]
 public class ImageFlipper extends Sprite

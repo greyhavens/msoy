@@ -1,7 +1,7 @@
 package
 {
 
-import com.threerings.msoy.export.WhirledGameControl;
+import com.whirled.WhirledGameControl;
 
 import flash.events.KeyboardEvent;
 import flash.geom.Point;

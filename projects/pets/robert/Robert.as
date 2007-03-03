@@ -8,8 +8,8 @@ import flash.display.Sprite;
 
 import flash.events.TimerEvent;
 
-import com.threerings.msoy.export.FurniControl;
-import com.threerings.msoy.export.ControlEvent;
+import com.whirled.FurniControl;
+import com.whirled.ControlEvent;
 
 /**
  * Robert is a plant. He likes sunshine and water.

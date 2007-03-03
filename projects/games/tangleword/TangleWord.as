@@ -12,8 +12,8 @@ import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
-import com.threerings.msoy.export.WhirledGameControl;
 
+import com.whirled.WhirledGameControl;
 
 
 /**

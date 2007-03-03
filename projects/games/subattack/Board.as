@@ -5,7 +5,7 @@ import flash.events.Event;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 
-import com.threerings.msoy.export.WhirledGameControl;
+import com.whirled.WhirledGameControl;
 
 public class Board
 {

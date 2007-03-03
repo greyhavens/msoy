@@ -4,7 +4,7 @@ import flash.display.Bitmap;
 import flash.display.Sprite;
 import flash.display.Graphics;
 
-import com.threerings.msoy.export.PetControl;
+import com.whirled.PetControl;
 
 /**
  * An extremely simple pet that moves randomly around the room.

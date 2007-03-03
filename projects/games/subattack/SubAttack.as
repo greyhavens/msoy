@@ -22,7 +22,7 @@ import com.threerings.ezgame.StateChangedListener;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 
-import com.threerings.msoy.export.WhirledGameControl;
+import com.whirled.WhirledGameControl;
 
 [SWF(width="416", height="416")]
 public class SubAttack extends Sprite

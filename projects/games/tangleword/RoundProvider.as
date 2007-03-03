@@ -1,12 +1,14 @@
 package
 {
 
+import flash.utils.Timer;
+import flash.events.TimerEvent;
+
 import com.threerings.ezgame.HostCoordinator;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
-import com.threerings.msoy.export.WhirledGameControl;
-import flash.utils.Timer;
-import flash.events.TimerEvent;
+
+import com.whirled.WhirledGameControl;
 
 
 /**

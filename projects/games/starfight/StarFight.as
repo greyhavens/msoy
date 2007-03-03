@@ -27,7 +27,7 @@ import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
 import com.threerings.ezgame.SeatingControl;
 
-import com.threerings.msoy.export.WhirledGameControl;
+import com.whirled.WhirledGameControl;
 
 /**
  * The main game class for the client.

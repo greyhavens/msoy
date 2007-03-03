@@ -9,7 +9,8 @@ import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
-import com.threerings.msoy.export.WhirledGameControl;
+
+import com.whirled.WhirledGameControl;
 
 import flash.geom.Point;
 

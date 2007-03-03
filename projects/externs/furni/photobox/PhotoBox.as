@@ -31,8 +31,8 @@ import com.adobe.webapis.flickr.PhotoSize;
 import com.adobe.webapis.flickr.PhotoUrl;
 import com.adobe.webapis.flickr.events.FlickrResultEvent;
 
-import com.threerings.msoy.export.ControlEvent;
-import com.threerings.msoy.export.FurniControl;
+import com.whirled.ControlEvent;
+import com.whirled.FurniControl;
 
 [SWF(width="500", height="550")]
 public class PhotoBox extends Sprite

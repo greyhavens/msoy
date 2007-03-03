@@ -7,7 +7,7 @@ import flash.text.TextFieldAutoSize;
 
 import com.threerings.ezgame.PropertyChangedEvent;
 
-import com.threerings.msoy.export.WorldGameControl;
+import com.whirled.WorldGameControl;
 
 [SWF(width="400", height="100")]
 public class Gotcha extends Sprite
