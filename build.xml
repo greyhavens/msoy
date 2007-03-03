@@ -745,6 +745,9 @@
   <!-- install extra pages stuff into ${pkg.base} -->
   <target name="prepare-pages-extra">
     <antcall target="test_sdk"/>
+    <antcallback target="setdestroot" return="destroot.pkg,pkg.base,pkg.name">
+      <param name="pkg.type" value="pages"/>
+    </antcallback>
     <copy todir="${pkg.base}/pages">
       <fileset dir="${deploy.dir}/sdk" includes="whirled_sdk.zip"/>
     </copy>
