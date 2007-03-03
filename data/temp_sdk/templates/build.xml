@@ -1,18 +1,11 @@
 <!-- build configuration -->
 <project name="@project@" default="compile" basedir=".">
-  <!-- read in our build properties -->
-  <property file="../build.properties"/>
-
   <!-- defines our project name -->
-  <propery name="app.name" value="@project@"/>
+  <property name="app.name" value="@project@"/>
+  <property name="flex.path" value="@flex_path@"/>
 
   <!-- checks that build.properties has been configured -->
   <target name="check">
-    <fail unless="flex.path">
-      Edit build.properties and configure flex.path to point to the location of
-      your Flash SDK installation.
-    </fail>
-
     <available file="${flex.path}/lib/mxmlc.jar" property="mxmlc.present"/>
     <fail unless="mxmlc.present">
       We were not able to find a Flex compiler in '${flex.path}'.

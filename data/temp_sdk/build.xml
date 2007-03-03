@@ -1,0 +1,33 @@
+<!-- build configuration -->
+<project name="Whirled Project Maker" default="help" basedir=".">
+
+  <!-- declare our classpath -->
+  <path id="classpath">
+    <fileset dir="lib" includes="**/*.jar"/>
+  </path>
+
+  <!-- explains things -->
+  <target name="help">
+    <echo>Please indicate which type of project you'd like to create:</echo>
+    <echo>  ant newgame - to create a game</echo>
+    <echo>  ant newavatar - to create an avatar</echo>
+    <echo>  ant newpet - to create a pet</echo>
+    <echo>  ant newfurni - to create a piece of furniture</echo>
+  </target>
+
+  <!-- used to make our projects -->
+  <taskdef name="newproject" classpathref="classpath" classname="com.whirled.tools.NewProjectTask"/>
+  <target name="newgame">
+    <newproject type="Game" templates="templates"/>
+  </target>
+  <target name="newavatar">
+    <newproject type="Avatar" templates="templates"/>
+  </target>
+  <target name="newpet">
+    <newproject type="Pet" templates="templates"/>
+  </target>
+  <target name="newfurni">
+    <newproject type="Furni" templates="templates"/>
+  </target>
+
+</project>
