@@ -129,6 +129,13 @@ public class AvatarSelectionDialog extends FloatingPanel
             // Get avatars from player's inventory
             var items :Array = _memberObj.getItems(Item.AVATAR);
 
+            // hide any 'used' avatars for now
+            for (var ii :int = items.length - 1; ii >= 0; ii--) {
+                if ((items[ii] as Item).isUsed()) {
+                    items.splice(ii, 1);
+                }
+            }
+
             // Add a default avatar
             var defaultAvatar :Avatar = new Avatar();
             defaultAvatar.name = Msgs.GENERAL.get("m.default_avatar");
@@ -139,29 +146,27 @@ public class AvatarSelectionDialog extends FloatingPanel
             // Fill the grid
             var row :GridRow = null;
             for (var i :int = 0; i < items.length; i++) {
-                if (items[i] is Item) {
-                    // Add a new row if necessary
-                    if (i % ITEMS_PER_ROW == 0) {
-                        row = new GridRow();
-                        _avatars.addChild(row);
-                    }
+                // Add a new row if necessary
+                if (i % ITEMS_PER_ROW == 0) {
+                    row = new GridRow();
+                    _avatars.addChild(row);
+                }
 
-                    // Add item
-                    var cell :GridItem = new GridItem();
-                    var render :ItemRenderer = new ItemRenderer(BoxDirection.VERTICAL);
-                    render.data = items[i];
-                    cell.addChild(render);
-                    cell.addEventListener (MouseEvent.CLICK, clickHandler, false, 0, true);
-                    row.addChild(cell);
+                // Add item
+                var cell :GridItem = new GridItem();
+                var render :ItemRenderer = new ItemRenderer(BoxDirection.VERTICAL);
+                render.data = items[i];
+                cell.addChild(render);
+                cell.addEventListener (MouseEvent.CLICK, clickHandler, false, 0, true);
+                row.addChild(cell);
 
-                    // Should this item be marked as selected?
-                    if (_memberObj.avatar == null) {
-                        if (items[i] == defaultAvatar) {
-                            cell.styleName = "avatarCellSelected"; 
-                        }
-                    } else if (_memberObj.avatar.itemId == items[i].itemId) {
-                        cell.styleName = "avatarCellSelected";     
+                // Should this item be marked as selected?
+                if (_memberObj.avatar == null) {
+                    if (items[i] == defaultAvatar) {
+                        cell.styleName = "avatarCellSelected"; 
                     }
+                } else if (_memberObj.avatar.itemId == items[i].itemId) {
+                    cell.styleName = "avatarCellSelected";     
                 }
             }
         }
