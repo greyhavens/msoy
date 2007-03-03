@@ -140,13 +140,28 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void loadDocument (ClientObject caller, PathElement element)
+    public void loadDocument (ClientObject caller, final PathElement element)
     {
         // TODO: check access!
-       
-        // SwiftlyDocument doc = new SwiftlyDocument(element);
-        // doc.setText("Welcome, to the real whirled.");
-        // _roomObj.addSwiftlyDocument(doc);
+
+        // Load the document from the storage provider
+        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
+            public boolean invoke () {
+                try {
+                    _doc = _storage.getDocument(element);
+                    return true;
+                } catch (ProjectStorageException pse) {
+                    // TODO: Handle this how?
+                    return false;
+                }
+            }
+            
+            public void handleResult () {
+                _roomObj.addSwiftlyDocument(_doc);
+            }
+
+            protected SwiftlyDocument _doc;
+        });
     }
 
     @Override // from PlaceManager
