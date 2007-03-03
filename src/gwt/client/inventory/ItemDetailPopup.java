@@ -41,8 +41,12 @@ public class ItemDetailPopup extends BaseItemDetailPopup
 
         Button button;
         if (_item.parentId == 0) {
-            button = new Button(CInventory.msgs.detailList());
-            new DoListItemPopup(_item, button, _status);
+            button = new Button(CInventory.msgs.detailList(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    new DoListItemPopup(_item).show();
+                    hide();
+                }
+            });
 
         } else {
             button = new Button(CInventory.msgs.detailRemix());

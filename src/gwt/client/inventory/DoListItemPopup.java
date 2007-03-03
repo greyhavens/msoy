@@ -2,9 +2,8 @@
 // $Id$
 package client.inventory;
 
-import client.util.BorderedDialog;
-import client.util.ClickCallback;
-
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -12,17 +11,28 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.ui.WidgetUtil;
+
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 
+import client.util.BorderedDialog;
+import client.util.ClickCallback;
+import client.util.InfoPopup;
+import client.util.MsoyUI;
+
 public class DoListItemPopup extends BorderedDialog
 {
-    public DoListItemPopup (Item item, final Button parentButton, final Label parentStatus)
+    public DoListItemPopup (Item item)
     {
         super(false, true);
         addStyleName("doListItem");
@@ -31,29 +41,20 @@ public class DoListItemPopup extends BorderedDialog
         _status = new Label("");
         _status.addStyleName("Status");
 
-        parentButton.addClickListener(new ClickListener() {
-            public void onClick (Widget sender)
-            {
-                // make sure the item is kosher; TODO: make this less of a hack
-                if (_item.name.trim().length() == 0) {
-                    parentStatus.setText(CInventory.msgs.errItemMissingName());
-                    return;
-                }
-                if (_item.description.trim().length() == 0) {
-                    parentStatus.setText(CInventory.msgs.errItemMissingDescrip());
-                    return;
-                }
-                parentButton.setEnabled(false);
-                show();
-
-            }
-        });
-
         String title = CInventory.msgs.doListHdrTop(Item.getTypeName(item.getType()));
         _header.add(createTitleLabel(title, null));
-        HTML blurb = new HTML(CInventory.msgs.doListBlurb());
-        blurb.addStyleName("Blurb");
-        _content.add(blurb);
+        _content.add(MsoyUI.createLabel(CInventory.msgs.doListBlurb(), "Blurb"));
+
+        _content.add(MsoyUI.createLabel(CInventory.msgs.doListDescripHeader(), "Header"));
+        _content.add(MsoyUI.createLabel(CInventory.msgs.doListNeedsDescrip(), "Blurb"));
+        _content.add(_description = new TextArea());
+        _description.setText(item.description);
+        _description.setCharacterWidth(40);
+        _description.setVisibleLines(3);
+        _description.addKeyboardListener(_valdescrip);
+
+        _content.add(MsoyUI.createLabel(CInventory.msgs.doListRarityHeader(), "Header"));
+        _content.add(MsoyUI.createLabel(CInventory.msgs.doListRarityBlurb(), "Blurb"));
 
         FlowPanel flow = new FlowPanel();
         flow.addStyleName("RarityRow");
@@ -90,31 +91,34 @@ public class DoListItemPopup extends BorderedDialog
 
         _content.add(_status);
 
-        Button cancel = new Button(CInventory.msgs.doListBtnCancel());
-        cancel.addClickListener(new ClickListener() {
+        _footer.add(new Button(CInventory.msgs.doListBtnCancel(), new ClickListener() {
             public void onClick (Widget sender) {
-                parentButton.setEnabled(true);
                 hide();
             }
-        });
-        _footer.add(cancel);
+        }));
 
-        Button listIt = new Button(CInventory.msgs.doListBtnListIt());
-        new ClickCallback(listIt, _status) {
+        _footer.add(_listIt = new Button(CInventory.msgs.doListBtnListIt()));
+        new ClickCallback(_listIt, _status) {
             public boolean callService () {
                 int rarity = _rarities[Math.max(0, rarityBox.getSelectedIndex())];
                 CInventory.catalogsvc.listItem(
-                    CInventory.creds, _item.getIdent(), rarity, true, this);
+                    CInventory.creds, _item.getIdent(), _description.getText(), rarity, true, this);
                 return true;
             }
             public boolean gotResult (Object result) {
-                parentStatus.setText(CInventory.msgs.msgItemListed());
-                // leave parentButton disabled
+                // TODO: enhance dialog to link to catalog page to see item
+                new InfoPopup(CInventory.msgs.msgItemListed()).show();
                 hide();
                 return false;
             }
         };
-        _footer.add(listIt);
+
+        validateDescription();
+    }
+
+    protected void validateDescription ()
+    {
+        _listIt.setEnabled(_description.getText().trim().length() > 0);
     }
 
     // @Override
@@ -126,9 +130,22 @@ public class DoListItemPopup extends BorderedDialog
         return _content;
     }
 
+    protected KeyboardListener _valdescrip = new KeyboardListenerAdapter() {
+        public void onKeyPress (Widget sender, char keyCode, int modifiers) {
+            // let the keypress go through, then validate our data
+            DeferredCommand.add(new Command() {
+                public void execute () {
+                    validateDescription();
+                }
+            });
+        }
+    };
+
     protected Label _status;
     protected Label _priceBox;
     protected VerticalPanel _content;
+    protected TextArea _description;
+    protected Button _listIt;
     protected Item _item;
 
     protected static final int[] _rarities = new int[] {

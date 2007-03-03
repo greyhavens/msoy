@@ -27,7 +27,7 @@ public interface CatalogServiceAsync
     /**
      *  The asynchronous version of {@link CatalogService#listItem}
      */
-    public void listItem (WebCreds creds, ItemIdent item, int rarity, boolean list,
+    public void listItem (WebCreds creds, ItemIdent item, String descrip, int rarity, boolean list,
                           AsyncCallback callback);
 
     /**

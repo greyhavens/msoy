@@ -136,6 +136,7 @@
 .itemDetailDetails td {
   padding: 5px;
   font-size: 14px;
+  width: 200px;
 }
 
 .itemDetailControls td {
@@ -151,9 +152,9 @@
 }
 
 .tagDetailPanel .LabelLink {
-    cursor: pointer;
-    text-decoration: underline;
-    color: white;
+  cursor: pointer;
+  text-decoration: underline;
+  color: white;
 }
 
 .itemSearchBox {

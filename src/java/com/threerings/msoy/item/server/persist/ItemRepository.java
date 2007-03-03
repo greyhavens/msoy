@@ -601,7 +601,8 @@ public abstract class ItemRepository<
         int currentPopulation = Math.max(0, record.purchases - record.returns);
         double ratio = (double) currentPopulation / targetPopulation;
         double basePrice = 100 + C * ((ratio < 1.0) ? Math.sqrt(ratio) : Math.pow(ratio, 4));
-        double S = Math.max(0, 1 - record.returns / (double)record.purchases);
+        double S = (record.purchases < MIN_ATTEN_PURCHASES) ? 1f :
+            Math.max(0, 1 - record.returns / (double)record.purchases);
         double listPrice = Math.max(1, basePrice * Math.sqrt(S));
         int flowForGoldFactor = 600;
         record.goldCost = (int) Math.round(listPrice / (2 * flowForGoldFactor));
@@ -674,4 +675,7 @@ public abstract class ItemRepository<
 
     /** Used to manage our item tags. */
     protected TagRepository _tagRepo;
+
+    /** The minimum number of purchases before we'll start attenuating price based on returns. */
+    protected static final int MIN_ATTEN_PURCHASES = 5;
 }

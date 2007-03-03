@@ -3,20 +3,17 @@
 
 package client.util;
 
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Displays a popup informational message.
  */
-public class InfoPopup extends PopupPanel
+public class InfoPopup extends BorderedPopup
 {
     public InfoPopup (String message)
     {
         super(true);
-        setStyleName("infoPopup");
-        setWidget(new Label(message));
+        setWidget(MsoyUI.createLabel(message, "infoPopup"));
     }
 
     public void showNear (Widget parent)

@@ -160,8 +160,8 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public CatalogListing listItem (WebCreds creds, final ItemIdent ident, final int rarity,
-                                    boolean list)
+    public CatalogListing listItem (WebCreds creds, final ItemIdent ident, String descrip,
+                                    final int rarity, boolean list)
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser(creds);
@@ -214,6 +214,9 @@ public class CatalogServlet extends MsoyServiceServlet
 
                 // reset any important bits
                 listItem.clearForListing();
+
+                // use the updated description
+                listItem.description = descrip;
 
                 // then insert it as the immutable copy we list
                 repo.insertOriginalItem(listItem);

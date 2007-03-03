@@ -450,9 +450,7 @@ body {
 }
 
 .infoPopup {
-   border: 1px solid #0066FF;
-   background: #6699CC;
-   padding: 5px;
+   padding: 15px;
 }
 
 .itemPopup {
