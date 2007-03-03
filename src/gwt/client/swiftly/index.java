@@ -17,6 +17,7 @@ import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.ConnectConfig;
 
 import client.shell.MsoyEntryPoint;
+import client.util.MsoyUI;
 
 /**
  * Displays a page that allows a player to launch swiftly for a given project.
@@ -84,7 +85,7 @@ public class index extends MsoyEntryPoint
     {
         // if we have no creds, just display a message saying login
         if (CSwiftly.creds == null) {
-            setContent(new Label(CSwiftly.msgs.indexLogon()));
+            setContent(MsoyUI.createLabel(CSwiftly.msgs.indexLogon(), "infoLabel"));
             return;
         } 
 

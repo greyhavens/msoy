@@ -14,6 +14,7 @@ import com.threerings.msoy.web.data.WebCreds;
 import client.editem.EditemEntryPoint;
 import client.item.ItemEntryPoint;
 import client.shell.MsoyEntryPoint;
+import client.util.MsoyUI;
 
 /**
  * Handles the MetaSOY inventory application.
@@ -77,7 +78,7 @@ public class index extends EditemEntryPoint
     {
         if (CInventory.creds == null) {
             // if we have no creds, just display a message saying login
-            setContent(new Label("Log in above to access your inventory."));
+            setContent(MsoyUI.createLabel(CInventory.msgs.logon(), "infoLabel"));
             _inventory = null;
 
         } else {

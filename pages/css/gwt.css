@@ -453,6 +453,11 @@ body {
   text-align: right;
 }
 
+.infoLabel {
+  font-size: 18px;
+  padding: 25px;
+}
+
 .rowPanelCell {
   padding-right: 10px;
   vertical-align: bottom;

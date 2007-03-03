@@ -120,6 +120,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String createEmail();
 
   /**
+   * Translated "Please logon above to access the Whirled.".
+   * 
+   * @return translated "Please logon above to access the Whirled."
+   * @gwt.key noGuests
+   */
+  String noGuests();
+
+  /**
    * Translated "Cancel".
    * 
    * @return translated "Cancel"

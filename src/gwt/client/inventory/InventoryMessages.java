@@ -104,6 +104,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String doListBlurb();
 
   /**
+   * Translated "Please logon above to view your Inventory.".
+   * 
+   * @return translated "Please logon above to view your Inventory."
+   * @gwt.key logon
+   */
+  String logon();
+
+  /**
    * Translated "The cost of listing an item is determined by the rarity you choose for it, which in turn influences its purchase price.".
    * 
    * @return translated "The cost of listing an item is determined by the rarity you choose for it, which in turn influences its purchase price."

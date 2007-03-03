@@ -10,10 +10,13 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.MsoyEntryPoint;
 import client.util.FlashClients;
+import client.util.MsoyUI;
 
 /**
  * Handles the MetaSOY main page.
@@ -84,6 +87,12 @@ public class index extends MsoyEntryPoint
 
         // don't show the flash client in the GWT shell
         if (!GWT.isScript()) {
+            return false;
+        }
+
+        // if we're not a dev deployment, disallow guests
+        if (!DeploymentConfig.devDeployment && CWorld.creds == null) {
+            setContent(MsoyUI.createLabel(CWorld.cmsgs.noGuests(), "infoLabel"));
             return false;
         }
 

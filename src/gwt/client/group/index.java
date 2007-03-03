@@ -7,10 +7,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.msgs.MsgsEntryPoint;
 import client.shell.MsoyEntryPoint;
+import client.util.MsoyUI;
 
 public class index extends MsgsEntryPoint
     implements HistoryListener
@@ -28,6 +30,12 @@ public class index extends MsgsEntryPoint
     // from interface HistoryListener
     public void onHistoryChanged (String token)
     {
+        // if we're not a dev deployment, disallow guests
+        if (!DeploymentConfig.devDeployment && CGroup.creds == null) {
+            setContent(MsoyUI.createLabel(CGroup.cmsgs.noGuests(), "infoLabel"));
+            return;
+        }
+
         // "list" is used as a token to get to the GroupList, because you can't give GWT an
         // empty token string for either a Hyperlink or History.newItem()
         if (token.length() == 0 || token.equals("list")) {

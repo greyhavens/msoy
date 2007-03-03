@@ -13,6 +13,7 @@ import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.editem.EditemEntryPoint;
+import client.util.MsoyUI;
 import client.shell.MsoyEntryPoint;
 
 /**
@@ -68,7 +69,7 @@ public class index extends EditemEntryPoint
     protected void didLogoff ()
     {
         super.didLogoff();
-        setContent(new Label(CAdmin.msgs.indexLogon()));
+        setContent(MsoyUI.createLabel(CAdmin.msgs.indexLogon(), "infoLabel"));
     }
 
     protected void displayDashboard ()
@@ -76,7 +77,7 @@ public class index extends EditemEntryPoint
         if (CAdmin.creds.isSupport) {
             setContent(new DashboardPanel());
         } else {
-            setContent(new Label(CAdmin.msgs.lackPrivileges()));
+            setContent(MsoyUI.createLabel(CAdmin.msgs.lackPrivileges(), "infoLabel"));
         }
     }
 }

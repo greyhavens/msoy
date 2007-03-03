@@ -168,9 +168,9 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String selectType();
 
   /**
-   * Translated "Log in to view your Swiftly projects.".
+   * Translated "Please logon above to view your Swiftly projects.".
    * 
-   * @return translated "Log in to view your Swiftly projects."
+   * @return translated "Please logon above to view your Swiftly projects."
    * @gwt.key indexLogon
    */
   String indexLogon();

@@ -9,12 +9,14 @@ import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.client.GameServiceAsync;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.MsoyEntryPoint;
+import client.util.MsoyUI;
 
 /**
  * Displays a page that allows a player to play a particular game. If it's
@@ -37,6 +39,12 @@ public class index extends MsoyEntryPoint
     // from interface HistoryListener
     public void onHistoryChanged (String token)
     {
+        // if we're not a dev deployment, disallow guests
+        if (!DeploymentConfig.devDeployment && CGame.creds == null) {
+            setContent(MsoyUI.createLabel(CGame.cmsgs.noGuests(), "infoLabel"));
+            return;
+        }
+
         try {
             displayGamePage(Integer.parseInt(token));
         } catch (Exception e) {

@@ -13,6 +13,7 @@ import com.threerings.msoy.web.data.WebCreds;
 
 import client.msgs.MsgsEntryPoint;
 import client.shell.MsoyEntryPoint;
+import client.util.MsoyUI;
 
 public class index extends MsgsEntryPoint
     implements HistoryListener
@@ -32,7 +33,7 @@ public class index extends MsgsEntryPoint
     {
         // if we have no creds, just display a message saying login
         if (CMail.creds == null) {
-            setContent(new Label("Log in above to access your mail."));
+            setContent(MsoyUI.createLabel(CMail.msgs.logon(), "infoLabel"));
             return;
         }
 

@@ -10,9 +10,12 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
+
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.ProfileLayout;
 import com.threerings.msoy.web.data.WebCreds;
 
+import client.util.MsoyUI;
 import client.msgs.MsgsEntryPoint;
 import client.shell.MsoyEntryPoint;
 
@@ -83,6 +86,12 @@ public class index extends MsgsEntryPoint
     protected void didLogoff ()
     {
         super.didLogoff();
+
+        // if we're not a dev deployment, disallow guests
+        if (!DeploymentConfig.devDeployment && CProfile.creds == null) {
+            setContent(MsoyUI.createLabel(CProfile.cmsgs.noGuests(), "infoLabel"));
+            return;
+        }
 
         if (_memberId == -1) {
             String initToken = History.getToken();
