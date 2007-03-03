@@ -48,7 +48,6 @@ public class NaviPanel extends FlexTable
                 MenuBar menu = new MenuBar(true);
                 menu.setAutoOpen(true);
                 addLink(menu, "/profile/index.html", "Profile");
-                addLink(menu, "/inventory/index.html", "Inventory");
                 addLink(menu, "/mail/index.html", "Mail");
                 if (CShell.creds.isSupport) {
                     addLink(menu, "/admin/index.html", "Admin");
