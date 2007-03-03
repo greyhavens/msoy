@@ -1,5 +1,7 @@
 //
 // $Id$
+//
+// @project@ - a pet for Whirled
 
 package {
 

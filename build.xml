@@ -333,6 +333,7 @@
 
   <target name="checkexportlib">
     <uptodate property="exportlib_is_up_to_date" targetfile="${deploy.dir}/whirled.swc">
+      <srcfiles dir="projects/vilya/src/as/com/threerings/ezgame" includes="**/*.as"/>
       <srcfiles dir="${asrc.dir}/com/whirled" includes="**/*.as"/>
     </uptodate>
   </target>
@@ -343,6 +344,7 @@
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
+      <arg value="-include-sources=projects/vilya/src/as/com/threerings/ezgame"/>
       <arg value="-include-sources=${asrc.dir}/com/whirled/"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/whirled.swc"/>

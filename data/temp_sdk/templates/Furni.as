@@ -1,5 +1,7 @@
 //
 // $Id$
+//
+// @project@ - a piece of furni for Whirled
 
 package {
 
