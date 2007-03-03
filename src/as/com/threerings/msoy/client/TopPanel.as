@@ -59,20 +59,17 @@ public class TopPanel extends Canvas
         _controlBar.setStyle("right", 0);
         addChild(_controlBar);
 
-        if (DeploymentConfig.devDeployment) {
-            // show a subtle build-stamp
-            var buildStamp :Label = new Label();
-            buildStamp.includeInLayout = false;
-            buildStamp.mouseEnabled = false;
-            buildStamp.mouseChildren = false;
-            buildStamp.text = "Build: " + DeploymentConfig.buildTime + "  " +
-                Capabilities.version;
-            buildStamp.setStyle("color", "#F7069A");
-            buildStamp.setStyle("fontSize", 8);
-            buildStamp.setStyle("bottom", _controlBar.height);
-            buildStamp.setStyle("right", ScrollBar.THICKNESS);
-            addChild(buildStamp);
-        }
+        // show a subtle build-stamp
+        var buildStamp :Label = new Label();
+        buildStamp.includeInLayout = false;
+        buildStamp.mouseEnabled = false;
+        buildStamp.mouseChildren = false;
+        buildStamp.text = "Build: " + DeploymentConfig.buildTime + "  " + Capabilities.version;
+        buildStamp.setStyle("color", "#F7069A");
+        buildStamp.setStyle("fontSize", 8);
+        buildStamp.setStyle("bottom", _controlBar.height);
+        buildStamp.setStyle("right", ScrollBar.THICKNESS);
+        addChild(buildStamp);
         
         // clear out the application and install ourselves as the only child
         var app :Application = Application(Application.application);

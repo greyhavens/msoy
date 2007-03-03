@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.util.CookieUtil;
 
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.util.BorderedPopup;
@@ -81,10 +82,14 @@ public class StatusPanel extends FlexTable
      */
     public void refreshLevels ()
     {
-        int[] levels = FlashClients.getLevels();
-        setText(0, _flowIdx, String.valueOf(levels[0]));
-        setText(0, _goldIdx, String.valueOf(levels[1]));
-        setText(0, _levelIdx, String.valueOf(levels[2]));
+        if (_creds != null) {
+            int[] levels = FlashClients.getLevels();
+            setText(0, _flowIdx, String.valueOf(levels[0]));
+            setText(0, _goldIdx, String.valueOf(levels[1]));
+            setText(0, _levelIdx, String.valueOf(levels[2]));
+        } else {
+            CShell.log("Ignoring refreshLevels() request as we're not logged on.");
+        }
     }
 
     /**
@@ -97,14 +102,18 @@ public class StatusPanel extends FlexTable
         _app.didLogoff();
 
         reset();
-        setText(0, 0, "New to Whirled?");
-        setText(0, 1, "");
-        getFlexCellFormatter().setWidth(0, 1, "5px");
-        setWidget(0, 2, MsoyUI.createActionLabel("Create an account!", new ClickListener() {
-            public void onClick (Widget sender) {
-                new CreateAccountDialog(StatusPanel.this).show();
-            }
-        }));
+        if (DeploymentConfig.devDeployment) {
+            setText(0, 0, "New to Whirled?");
+            setText(0, 1, "");
+            getFlexCellFormatter().setWidth(0, 1, "5px");
+            setWidget(0, 2, MsoyUI.createActionLabel("Create an account!", new ClickListener() {
+                public void onClick (Widget sender) {
+                    new CreateAccountDialog(StatusPanel.this).show();
+                }
+            }));
+        } else {
+            setText(0, 0, "Welcome to the First Whirled!");
+        }
     }
 
     protected void validateSession (String token)
