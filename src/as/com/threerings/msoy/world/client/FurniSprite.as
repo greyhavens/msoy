@@ -290,11 +290,6 @@ public class FurniSprite extends MsoySprite
         return 1000;
     }
 
-    override public function isInteractive () :Boolean
-    {
-        return hasAction();
-    }
-
     // documentation inherited
     override public function hasAction () :Boolean
     {

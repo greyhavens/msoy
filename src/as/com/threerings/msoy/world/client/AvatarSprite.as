@@ -107,11 +107,6 @@ public class AvatarSprite extends ActorSprite
             ident, false, (ident.type == Item.AVATAR)));
     }
 
-    override public function isInteractive () :Boolean
-    {
-        return true;
-    }
-
     override public function hasAction () :Boolean
     {
         return true;

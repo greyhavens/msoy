@@ -576,12 +576,12 @@ public class MsoyController extends Controller
         // for LINK events and handle them all here.
         if (_controlledPanel != null) {
             _controlledPanel.removeEventListener(TextEvent.LINK, handleLink);
-            _controlledPanel.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
+            _controlledPanel.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown, true);
         }
         super.setControlledPanel(panel);
         if (_controlledPanel != null) {
             _controlledPanel.addEventListener(TextEvent.LINK, handleLink);
-            _controlledPanel.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
+            _controlledPanel.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown, true);
         }
     }
 
@@ -604,6 +604,8 @@ public class MsoyController extends Controller
             Prefs.setShowingChatHistory(!Prefs.getShowingChatHistory());
             break;
         }
+
+        trace("charCode: " + event.charCode);
     }
 
     /** Provides access to client-side directors and services. */

@@ -165,8 +165,7 @@ public class RoomController extends SceneController
         _roomView.addChild(_walkTarget);
 
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.addEventListener(MouseEvent.ROLL_OUT, mouseLeft);
-        _roomView.addEventListener(MouseEvent.ROLL_OVER, mouseEntered);
+        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
     }
@@ -175,8 +174,6 @@ public class RoomController extends SceneController
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.removeEventListener(MouseEvent.ROLL_OUT, mouseLeft);
-        _roomView.removeEventListener(MouseEvent.ROLL_OVER, mouseEntered);
         _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
@@ -207,8 +204,7 @@ public class RoomController extends SceneController
 
         // turn editing off
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.addEventListener(MouseEvent.ROLL_OUT, mouseLeft);
-        _roomView.addEventListener(MouseEvent.ROLL_OVER, mouseEntered);
+        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
 
         // possibly save the edits
         if (edits != null) {
@@ -323,6 +319,30 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Get the top-most sprite mouse-capturing sprite with a non-transparent
+     * pixel at the specified location.
+     */
+    public function getHitSprite (
+        stageX :Number, stageY :Number) :MsoySprite
+    {
+        if (!_roomView.getGlobalBounds().contains(stageX, stageY)) {
+            // no hits possible, mouse is out-of-bounds
+            return null;
+        }
+
+        // we search from last-drawn to first drawn to get the topmost...
+        for (var dex :int = _roomView.numChildren - 1; dex >= 0; dex--) {
+            var spr :MsoySprite = (_roomView.getChildAt(dex) as MsoySprite);
+            if ((spr != null) && spr.isActive() && spr.capturesMouse() &&
+                    spr.hitTestPoint(stageX, stageY, true)) {
+                return spr;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Called by the RoomView prior to a context menu popping up.
      */
     public function populateContextMenu (menuItems :Array) :void
@@ -354,31 +374,10 @@ public class RoomController extends SceneController
     {
         // set up editing
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.removeEventListener(MouseEvent.ROLL_OUT, mouseLeft);
-        _roomView.removeEventListener(MouseEvent.ROLL_OVER, mouseEntered);
         _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
         _walkTarget.visible = false;
 
         _editor = new EditorController(_mctx, this, _roomView, _scene, items);
-    }
-
-    /**
-     * The mouse has left the roomview, stop checking hovers.
-     */
-    protected function mouseLeft (event :MouseEvent) :void
-    {
-        _walkTarget.visible = false;
-        setHoverSprite(null);
-
-        _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
-    }
-
-    /**
-     * The mouse has entered the roomview, start checking hovers.
-     */
-    protected function mouseEntered (event :MouseEvent) :void
-    {
-        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
     }
 
     /**
@@ -414,25 +413,6 @@ public class RoomController extends SceneController
         _walkTarget.visible = showWalkTarget;
 
         setHoverSprite(hitter, sx, sy);
-    }
-
-    /**
-     * Get the top-most sprite mouse-capturing sprite with a non-transparent
-     * pixel at the specified location.
-     */
-    protected function getHitSprite (
-        stageX :Number, stageY :Number) :MsoySprite
-    {
-        // we search from last-drawn to first drawn to get the topmost...
-        for (var dex :int = _roomView.numChildren - 1; dex >= 0; dex--) {
-            var spr :MsoySprite = (_roomView.getChildAt(dex) as MsoySprite);
-            if ((spr != null) && spr.isActive() && spr.capturesMouse() &&
-                    spr.hitTestPoint(stageX, stageY, true)) {
-                return spr;
-            }
-        }
-
-        return null;
     }
 
     /**
