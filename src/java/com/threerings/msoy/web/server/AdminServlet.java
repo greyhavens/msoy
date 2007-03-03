@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import com.samskivert.net.MailUtil;
 import com.samskivert.servlet.user.UserUtil;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Tuple;
 import com.samskivert.velocity.VelocityUtil;
 
@@ -106,10 +107,15 @@ public class AdminServlet extends MsoyServiceServlet
         return results;
     }
 
-    protected String createTempPassword ()
+    protected static String createTempPassword ()
     {
-        return "secret";
+        StringBuilder builder = new StringBuilder();
+        for (int ii = 0; ii < 12; ii++) {
+            builder.append(PASSWORD_LETTERS.charAt(RandomUtil.getInt(PASSWORD_LETTERS.length())));
+        }
+        return builder.toString();
     }
 
     protected static final String INVITE_FROM = "peas@whirled.com";
+    protected static final String PASSWORD_LETTERS = "abcdefghijklmnopqrstuvwxyz0123456789";
 }
