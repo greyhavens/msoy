@@ -1,15 +1,16 @@
 <!-- build configuration -->
-<project name="PROJECT" default="compile" basedir=".">
+<project name="@project@" default="compile" basedir=".">
   <!-- read in our build properties -->
-  <property file="build.properties"/>
+  <property file="../build.properties"/>
+
+  <!-- defines our project name -->
+  <propery name="app.name" value="@project@"/>
 
   <!-- checks that build.properties has been configured -->
   <target name="check">
-    <fail>
-     <condition><or><not><isset property="app.name"/></not>
-                    <equals arg1="${app.name}" arg2="default"/>
-                    <equals arg1="${flex.path}" arg2=""/></or></condition>
-      Edit build.properties and configure your application.
+    <fail unless="flex.path">
+      Edit build.properties and configure flex.path to point to the location of
+      your Flash SDK installation.
     </fail>
 
     <available file="${flex.path}/lib/mxmlc.jar" property="mxmlc.present"/>
