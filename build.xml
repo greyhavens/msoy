@@ -343,7 +343,7 @@
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
-      <arg value="-include-sources=${asrc.dir}/com/threerings/msoy/export/"/>
+      <arg value="-include-sources=${asrc.dir}/com/whirled/"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/msoy-export.swc"/>
     </java>
@@ -444,6 +444,9 @@
     </copy>
     <mkdir dir="${sdk.build}/lib"/>
     <copy file="${deploy.dir}/ooo.swc" todir="${sdk.build}/lib"/>
+    <copy todir="${sdk.build}">
+      <fileset dir="." includes="src/as/com/whirled/**" excludes="**/WorldGameControl.as"/>
+    </copy>
     <zip destfile="${deploy.dir}/sdk/whirled_sdk.zip" basedir="${deploy.dir}/sdk"
          includes="whirled/**"/>
   </target>
