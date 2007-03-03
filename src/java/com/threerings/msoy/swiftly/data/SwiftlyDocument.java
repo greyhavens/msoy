@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.swiftly.data;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.IOException;
 
 import com.threerings.io.ObjectOutputStream;
@@ -10,6 +13,7 @@ import com.threerings.presents.dobj.DSet;
 
 /**
  * Represents a source file in a project and contains the text of the file.
+ * Brashly assumes UTF-8 encoding.
  */
 public class SwiftlyDocument
     implements DSet.Entry
@@ -21,9 +25,38 @@ public class SwiftlyDocument
     {
     }
 
-    public SwiftlyDocument (PathElement path)
+    /**
+     * Instantiate a new SwiftlyDocument
+     */
+    public SwiftlyDocument (InputStream data, PathElement path)
+        throws IOException
     {
+        StringBuffer textBuffer;
+        FileOutputStream fileOutput;
+        byte[] buf = new byte[1024];
+        int len;
+
+        // Store the pathelemtn
         _path = path;
+
+        // Load and save the base document data.
+        // TODO: Stack of deltas and a mmap()'d base document, such that we
+        // don't waste RAM storing the whole file in memory.
+        _backingStore = File.createTempFile("swiftlydocument", ".basefile");
+        _backingStore.deleteOnExit();
+
+        textBuffer = new StringBuffer();
+        fileOutput = new FileOutputStream(_backingStore);
+        
+        while ((len = data.read(buf)) > 0) {
+            // Write to our base file backing
+            fileOutput.write(buf, 0, len);
+
+            // Write to the memory buffer too, oh boy
+            textBuffer.append(new String(buf, 0, len, "UTF8"));
+        }
+
+        _text = textBuffer.toString();  
     }
 
     public String getText ()
@@ -81,6 +114,9 @@ public class SwiftlyDocument
 
     /** Document contents, ineffeciently stored entirely in memory. */
     protected String _text;
+
+    /** Unmodified disk-backing of the document data. */
+    protected transient File _backingStore;
 
     /** Reference to our associated path element. */
     protected transient PathElement _path = null;
