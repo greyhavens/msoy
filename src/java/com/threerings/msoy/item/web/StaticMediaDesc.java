@@ -21,9 +21,18 @@ public class StaticMediaDesc extends MediaDesc
      */
     public StaticMediaDesc (byte mimeType, byte itemType, String mediaType)
     {
+        this(mimeType, itemType, mediaType, NOT_CONSTRAINED);
+    }
+
+    /**
+     * Creates a configured static media descriptor.
+     */
+    public StaticMediaDesc (byte mimeType, byte itemType, String mediaType, byte constraint)
+    {
         super(null, mimeType);
         _itemType = itemType;
         _mediaType = mediaType;
+        this.constraint = constraint;
     }
 
     /**
