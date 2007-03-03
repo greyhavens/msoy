@@ -53,7 +53,7 @@ public class ChatControl extends HBox
         
         _locObs = new LocationAdapter(null, locationDidChange);
 
-        addChild(_txt = new TextInput());
+        addChild(_txt = new ChatInput());
         _txt.styleName = "chatInput";
         _txt.height = height;
         _txt.width = 200;
@@ -80,6 +80,19 @@ public class ChatControl extends HBox
         }
     }
 
+    /**
+     * Request focus for the oldest ChatControl.
+     */
+    public static function grabFocus () :void
+    {
+        if (_controls.length > 0) {
+            (_controls[0] as ChatControl).setFocus();
+        }
+    }
+
+    /**
+     * Request focus to this chat control.
+     */
     override public function setFocus () :void
     {
         _txt.setFocus();
@@ -224,7 +237,7 @@ public class ChatControl extends HBox
     protected var _target :MemberName;
 
     /** The place where the user may enter chat. */
-    protected var _txt :TextInput;
+    protected var _txt :ChatInput;
 
     /** An array of the currently shown-controls. */
     protected static var _controls :Array = [];

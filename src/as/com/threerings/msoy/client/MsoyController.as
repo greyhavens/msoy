@@ -9,6 +9,8 @@ import flash.events.TextEvent;
 
 import flash.system.Capabilities;
 
+import flash.text.TextField;
+
 import flash.ui.Keyboard;
 
 import mx.controls.Button;
@@ -33,6 +35,8 @@ import com.threerings.whirled.data.SceneObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.SceneBookmarkEntry;
+
+import com.threerings.msoy.chat.client.ChatControl;
 
 import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.MemberName;
@@ -605,7 +609,14 @@ public class MsoyController extends Controller
             break;
         }
 
-        trace("charCode: " + event.charCode);
+        // Listen for general keyboard events, if they're "word characters"
+        // and a textfield doesn't currently have focus, focus chat.
+        if (event.charCode != 0) {
+            var s :String = String.fromCharCode(event.charCode);
+            if ((-1 != s.search(/\w/) && !(_ctx.getStage().focus is TextField))) {
+                ChatControl.grabFocus();
+            }
+        }
     }
 
     /** Provides access to client-side directors and services. */
