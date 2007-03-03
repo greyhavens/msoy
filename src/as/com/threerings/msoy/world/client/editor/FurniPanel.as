@@ -185,7 +185,7 @@ public class FurniPanel extends SpritePanel
             if (selIdx == FurniData.ACTION_NONE) {
                 // I seem to need to do all this by hand. You will
                 // probably break it, O future refactorer.
-                _captureMouse.selected = true;;
+                _captureMouse.selected = true;
                 var furniSprite :FurniSprite = (_sprite as FurniSprite);
                 furniSprite.getFurniData().actionData = null;
             }
