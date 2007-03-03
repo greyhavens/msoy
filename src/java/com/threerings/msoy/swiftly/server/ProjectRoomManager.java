@@ -19,12 +19,13 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.swiftly.client.ProjectRoomService;
-import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
 import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 
@@ -102,10 +103,11 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void updateDocument (ClientObject caller, SwiftlyDocument document)
+    public void updateDocument (ClientObject caller, int elementId, String text)
     {
         // TODO: check access!
-        _roomObj.updateDocuments(document);
+        _roomObj.postEvent(new DocumentUpdatedEvent(
+                               _roomObj.getOid(), caller.getOid(), elementId, text));
     }
 
     // from interface ProjectRoomProvider

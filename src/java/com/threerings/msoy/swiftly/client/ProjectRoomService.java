@@ -26,8 +26,9 @@ public interface ProjectRoomService extends InvocationService
     /** Requests to add a document to the project. */
     public void addDocument (Client client, SwiftlyDocument document);
 
-    /** Requests that the specified document be updated (wholesale). */
-    public void updateDocument (Client client, SwiftlyDocument document);
+    /** Requests that the specified document be updated (currently wholesale but some day with
+     * diffs). */
+    public void updateDocument (Client client, int elementId, String text);
 
     /** Requests that the specified document be removed from the project. */
     public void deleteDocument (Client client, int elementId);

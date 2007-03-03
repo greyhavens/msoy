@@ -56,7 +56,7 @@ public interface ProjectRoomProvider extends InvocationProvider
     /**
      * Handles a {@link ProjectRoomService#updateDocument} request.
      */
-    public void updateDocument (ClientObject caller, SwiftlyDocument arg1);
+    public void updateDocument (ClientObject caller, int arg1, String arg2);
 
     /**
      * Handles a {@link ProjectRoomService#updatePathElement} request.

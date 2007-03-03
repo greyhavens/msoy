@@ -91,7 +91,7 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
         case ProjectRoomMarshaller.UPDATE_DOCUMENT:
             ((ProjectRoomProvider)provider).updateDocument(
                 source,
-                (SwiftlyDocument)args[0]
+                ((Integer)args[0]).intValue(), (String)args[1]
             );
             return;
 

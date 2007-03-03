@@ -108,10 +108,10 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static const UPDATE_DOCUMENT :int = 8;
 
     // from interface ProjectRoomService
-    public function updateDocument (arg1 :Client, arg2 :SwiftlyDocument) :void
+    public function updateDocument (arg1 :Client, arg2 :int, arg3 :String) :void
     {
         sendRequest(arg1, UPDATE_DOCUMENT, [
-            arg2
+            Integer.valueOf(arg2), arg3
         ]);
     }
 

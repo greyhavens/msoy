@@ -104,10 +104,10 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int UPDATE_DOCUMENT = 8;
 
     // from interface ProjectRoomService
-    public void updateDocument (Client arg1, SwiftlyDocument arg2)
+    public void updateDocument (Client arg1, int arg2, String arg3)
     {
         sendRequest(arg1, UPDATE_DOCUMENT, new Object[] {
-            arg2
+            Integer.valueOf(arg2), arg3
         });
     }
 

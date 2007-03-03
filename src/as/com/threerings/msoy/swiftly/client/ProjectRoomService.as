@@ -40,7 +40,7 @@ public interface ProjectRoomService extends InvocationService
     function loadDocument (arg1 :Client, arg2 :PathElement) :void;
 
     // from Java interface ProjectRoomService
-    function updateDocument (arg1 :Client, arg2 :SwiftlyDocument) :void;
+    function updateDocument (arg1 :Client, arg2 :int, arg3 :String) :void;
 
     // from Java interface ProjectRoomService
     function updatePathElement (arg1 :Client, arg2 :PathElement) :void;
