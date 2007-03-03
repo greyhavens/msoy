@@ -744,7 +744,7 @@
 
   <!-- install extra pages stuff into ${pkg.base} -->
   <target name="prepare-pages-extra">
-    <antcall target="test_sdk"/>
+    <antcall target="temp_sdk"/>
     <antcallback target="setdestroot" return="destroot.pkg,pkg.base,pkg.name">
       <param name="pkg.type" value="pages"/>
     </antcallback>
