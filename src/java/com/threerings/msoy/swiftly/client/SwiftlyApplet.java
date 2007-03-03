@@ -16,6 +16,7 @@ import com.samskivert.swing.util.SwingUtil;
 import com.samskivert.util.Config;
 import com.samskivert.util.Interval;
 import com.samskivert.util.OneLineLogFormatter;
+import com.samskivert.util.RunAnywhere;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
 import com.threerings.util.IdentUtil;
@@ -214,9 +215,13 @@ public class SwiftlyApplet extends JApplet
     protected void createGUI ()
     {
         try {
-            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            // TODO the gtk L&F breaks some bits. Just use the default L&F for now.
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            // TODO: The GTK L&F breaks some bits. Just use the default L&F
+            // on anything other than Mac OS and Windows, for now.
+            if (RunAnywhere.isMacOS() || RunAnywhere.isWindows()) {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } else {
+                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());                
+            }
         } catch (Exception e) {
             // this should just fall back on a working theme
         }
