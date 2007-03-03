@@ -78,7 +78,6 @@ public class FlowRepository extends DepotRepository
         return (double) getAbuseRecord(gameId, true).abuseFactor / 0x100;
     }
 
-
     /**
      * Logs an action for a member with optional action-specific data, which may be null.
      *

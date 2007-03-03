@@ -6,6 +6,7 @@ package com.threerings.msoy.web.server;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -19,6 +20,8 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides services used by all remote service servlets.
@@ -35,9 +38,14 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         throws ServiceException
     {
         if (creds != null) {
-            MemberRecord member = _members.get(creds.token);
-            if (member != null && member.memberId == creds.getMemberId()) {
-                return member;
+            Integer memberId = _members.get(creds.token);
+            if (memberId != null && memberId == creds.getMemberId()) {
+                try {
+                    return MsoyServer.memberRepo.loadMember(memberId);
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to load member [id=" + memberId + "].", pe);
+                    throw new ServiceException(ServiceException.INTERNAL_ERROR);
+                }
             }
         }
         throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
@@ -49,7 +57,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
      */
     protected void mapUser (WebCreds creds, MemberRecord record)
     {
-        _members.put(creds.token, record);
+        _members.put(creds.token, record.memberId);
     }
 
     /**
@@ -66,7 +74,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         }
     }
 
-    /** Contains a mapping of authenticated members. TODO: expire records. */
-    protected static Map<String,MemberRecord> _members =
-        Collections.synchronizedMap(new HashMap<String,MemberRecord>());
+    /** Contains a mapping of authenticated members. */
+    protected static Map<String,Integer> _members =
+        Collections.synchronizedMap(new HashMap<String,Integer>());
 }
