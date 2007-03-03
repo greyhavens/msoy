@@ -92,6 +92,7 @@ public class NaviPanel extends FlexTable
                 MenuBar menu = new MenuBar(true);
                 menu.setAutoOpen(true);
                 addLink(menu, "/group/index.html", "Groups");
+                addLink(menu, "http://forums.whirled.com/", "Forums");
                 FriendEntry[] friends = FlashClients.getFriends();
                 if (friends.length > 0) {
                     MenuBar fmenu = new MenuBar(true);
@@ -110,6 +111,7 @@ public class NaviPanel extends FlexTable
                 menu.setAutoOpen(true);
                 addLink(menu, "/inventory/index.html", "Inventory");
                 addLink(menu, "/catalog/index.html", "Catalog");
+                addLink(menu, "http://wiki.whirled.com/", "Wiki");
                 // TODO: bank/alchemist
                 popupMenu(sender, menu);
             }
