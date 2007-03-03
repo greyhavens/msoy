@@ -266,7 +266,7 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
 
         // Player's performance compared to a built-in max. I'm just
         // pulling this out of thin air for now. :)
-        var flow :int = int (Math.max (score / 25 * maxflow, maxflow));
+        var flow :int = int (Math.min (score / 25 * maxflow, maxflow));
 
         _gameCtrl.awardFlow (flow);
         _display.logRoundEnded (score, flow);
