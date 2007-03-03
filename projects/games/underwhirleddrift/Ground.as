@@ -26,16 +26,7 @@ public class Ground extends Sprite
 
         _stripData = new BitmapData(WIDTH, HEIGHT, true, 0);
         addChild(new Bitmap(_stripData));
-    }
 
-    /**
-     * set the level object used by this object.
-     */
-    public function setLevel (level :Level) :void
-    {
-        _level = level;
-
-        // don't start attempting to render frames until we have a valid level object
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
@@ -56,6 +47,14 @@ public class Ground extends Sprite
     }
 
     /**
+     * set the level object used by this object.
+     */
+    public function setLevel (level :Level) :void
+    {
+        _level = level;
+    }
+
+    /**
      * Set the kart location.  This is used by Level at the beginning of the game to correctly
      * position the kart on a starting location.
      *
@@ -67,6 +66,8 @@ public class Ground extends Sprite
         trans.translate(location.x - _camera.position.x, location.y - _camera.position.y + 
             UnderwhirledDrift.KART_OFFSET);
         _camera.position = trans.transformPoint(_camera.position);
+        // TEMP: Until we do camera angles too
+        _camera.angle = 0;
     }
 
     /**
@@ -75,6 +76,9 @@ public class Ground extends Sprite
      */
     public function setScenery (scenery :Scenery) :void
     {
+        if (_scenery != null) {
+            removeChild(_scenery);
+        } 
         addChild(_scenery = scenery);
     }
 

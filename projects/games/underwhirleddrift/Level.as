@@ -10,17 +10,16 @@ import flash.geom.Point;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
 
+import flash.utils.describeType;
+
 public class Level extends Sprite
 {
-    public function Level (ground :Ground)
+    public function Level (ground :Ground, background :Class, rough :Class, track :Class, 
+        wall :Class, config :LevelConfig) :void
     {
         _ground = ground;
-    }
-
-    public function initialize (background :Class, rough :Class, track :Class, wall :Class,
-        config :LevelConfig) :void
-    {
         _config = config;
+
         var backgroundImage :Shape;
         var backgroundSprite :Sprite = (new background() as Sprite);
         var backgroundBitmap :BitmapData = new BitmapData(backgroundSprite.width, 
@@ -47,16 +46,9 @@ public class Level extends Sprite
         addChild(_track = (new track() as DisplayObject));
         addChild(_wall = (new wall() as DisplayObject));
 
-        // because we're waiting both to hear from the host and from the loader, it is not known
-        // whether the starting position or the config will be inialized first
-        if (_startingPosition != -1) {
-            _ground.setKartLocation(_config.getStartingPoint(_startingPosition));
-        }
+        _ground.setLevel(this);
         _ground.setScenery(_scenery = new Scenery(config.getObstacles().concat(
             config.getBonuses())));
-        for (ii = 0; ii < _kartsToAdd.length; ii++) {
-            _scenery.addKart(_kartsToAdd[ii] as KartObstacle);
-        }
     }
 
     public function isOnRoad (loc :Point) :Boolean
@@ -72,9 +64,7 @@ public class Level extends Sprite
     public function setStartingPosition (position :int) :void
     {
         _startingPosition = position;
-        if (_config != null) {
-            _ground.setKartLocation(_config.getStartingPoint(_startingPosition));
-        }
+        _ground.setKartLocation(_config.getStartingPoint(_startingPosition));
     }
 
     /**
@@ -83,11 +73,7 @@ public class Level extends Sprite
     public function addOpponentKart (position :int, kartType :String) :KartObstacle
     {
         var kart :KartObstacle = new KartObstacle(_config.getStartingPoint(position), kartType);
-        if (_scenery != null) {
-            _scenery.addKart(kart);
-        } else {
-            _kartsToAdd.push(kart);
-        }
+        _scenery.addKart(kart);
         return kart;
     }
 
@@ -109,8 +95,5 @@ public class Level extends Sprite
     protected var _config :LevelConfig;
     protected var _startingPosition :int = -1;
     protected var _scenery :Scenery;
-
-    /** Opponent karts to add, once the scenery is available */
-    protected var _kartsToAdd :Array = new Array();
 }
 }

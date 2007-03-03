@@ -1,8 +1,5 @@
 package {
 
-import flash.events.Event;
-
-import com.threerings.util.EmbeddedSwfLoader;
 import com.threerings.util.HashMap;
 
 /**
@@ -10,35 +7,54 @@ import com.threerings.util.HashMap;
  */
 public class LevelFactory 
 {
-    /**
-     * create a Level that is returned, and later initialized.
-     */
     public static function createLevel (level :int, ground :Ground) :Level
     {
-        // TEMP!!!!
-        level = 1;
-
-        var instance :Level = new Level(ground);
-        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
-        // use an anonymous function in order to bind this level instance to it.
-        loader.addEventListener(Event.COMPLETE, function (evt :Event) :void {
-            instance.initialize(loader.getClass("background"), loader.getClass("rough"), 
-                loader.getClass("track"), loader.getClass("wall"), new LevelConfig(
-                loader.getClass("objects"), OBJECT_MAPPING));
-        });
         try {
-            loader.load(new LevelFactory["LEVEL_" + level]());
+            return new Level(ground, LevelFactory["BACKGROUND_" + level],
+                LevelFactory["ROUGH_" + level], LevelFactory["TRACK_" + level],
+                LevelFactory["WALL_" + level], new LevelConfig(LevelFactory["OBJECTS_" + level], 
+                OBJECT_MAPPING));
         } catch (re :ReferenceError) {
-            return null;
+            Log.getLog(LevelFactory).debug("Failed attempt to create level " + level);
         }
-        return instance;
+        return null;
     }
 
-    /** the list of level swfs.  This will probably get pretty long */
-    [Embed(source='rsrc/level_0.swf', mimeType='application/octet-stream')]
-    protected static const LEVEL_0 :Class;
-    [Embed(source='rsrc/level_1.swf', mimeType='application/octet-stream')]
-    protected static const LEVEL_1 :Class;
+    /******* Master List of Level SWFs.  When we get alot of these, the issue surrounding
+     * Application Domains in EmbeddedSwfLoader should be figured out, so that we don't have to 
+     * list a ton of class per level */
+
+    /** Backgrounds */
+    [Embed(source='rsrc/level_0.swf#background')]
+    protected static const BACKGROUND_0 :Class;
+    [Embed(source='rsrc/level_1.swf#background')]
+    protected static const BACKGROUND_1 :Class;
+
+    /** Roughs */
+    [Embed(source='rsrc/level_0.swf#rough')]
+    protected static const ROUGH_0 :Class;
+    [Embed(source='rsrc/level_1.swf#rough')]
+    protected static const ROUGH_1 :Class;
+
+    /** Tracks */
+    [Embed(source='rsrc/level_0.swf#track')]
+    protected static const TRACK_0 :Class;
+    [Embed(source='rsrc/level_1.swf#track')]
+    protected static const TRACK_1 :Class;
+    
+    /** Walls */
+    [Embed(source='rsrc/level_0.swf#wall')]
+    protected static const WALL_0 :Class;
+    [Embed(source='rsrc/level_1.swf#wall')]
+    protected static const WALL_1 :Class;
+
+    /** Object Layers */
+    [Embed(source='rsrc/level_0.swf#objects')]
+    protected static const OBJECTS_0 :Class;
+    [Embed(source='rsrc/level_1.swf#objects')]
+    protected static const OBJECTS_1 :Class;
+
+    /****** Magic fun scenery props from the objects.swf ******/
 
     /** the bonuses */
     [Embed(source='rsrc/objects.swf#dora_box')]

@@ -60,7 +60,7 @@ public class UnderwhirledDrift extends Sprite
         // "sky"
         var colorBackground :Shape = new Shape();
         colorBackground.graphics.beginFill(0x8888FF);
-        colorBackground.graphics.drawRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);//SKY_HEIGHT + 10);
+        colorBackground.graphics.drawRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
         colorBackground.graphics.endFill();
         gameSprite.addChild(colorBackground);
 
@@ -69,12 +69,11 @@ public class UnderwhirledDrift extends Sprite
         if (_gameCtrl.isConnected()) {
             var camera :Camera = new Camera();
 
-            var ground :Ground = new Ground(camera);
-            ground.y = SKY_HEIGHT;
-            gameSprite.addChild(ground);
+            _ground = new Ground(camera);
+            _ground.y = SKY_HEIGHT;
+            gameSprite.addChild(_ground);
 
-            _level = LevelFactory.createLevel(0, ground);
-            ground.setLevel(_level);
+            _level = LevelFactory.createLevel(_currentLevel = 0, _ground);
 
             _gameCtrl.registerListener(this);
             _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyEventHandler);
@@ -83,7 +82,7 @@ public class UnderwhirledDrift extends Sprite
     
             _coord = new HostCoordinator(_gameCtrl);
 
-            var chooser :KartChooser = new KartChooser(this, gameSprite, camera, ground);
+            var chooser :KartChooser = new KartChooser(this, gameSprite, camera, _ground);
             chooser.chooseKart();
 
             // names above characters is good, but they should fade out after the race 
@@ -147,12 +146,6 @@ public class UnderwhirledDrift extends Sprite
     // from MessageReceivedListener
     public function messageReceived (event :MessageReceivedEvent) :void
     {
-        /*if (event.name == "tick") {
-            if (_raceStarted && _kart != null) {
-                var obj :Object = _kart.getUpdate();
-                obj.playerId = _gameCtrl.getMyId();
-                _gameCtrl.sendMessage("positionUpdate", obj);
-            }*/
         if (event.name == "raceStarted") {
             _raceStarted = true;
             var obj :Object = _kart.getUpdate();
@@ -236,7 +229,16 @@ public class UnderwhirledDrift extends Sprite
             case Keyboard.SPACE:
                 if (event.type == KeyboardEvent.KEY_DOWN) {
                     _kart.jump();
-                    }
+                }
+                break;
+            case Keyboard.SHIFT:
+                if (event.type == KeyboardEvent.KEY_DOWN && 
+                        // only allow this in single-player mode
+                        _gameCtrl.seating.getPlayerIds().length == 1) {
+                    _currentLevel = (_currentLevel + 1) % 2;
+                    _level = LevelFactory.createLevel(_currentLevel, _ground);
+                    _level.setStartingPosition(0);
+                }
                 break;
             default:
             // do nothing
@@ -265,9 +267,12 @@ public class UnderwhirledDrift extends Sprite
 
     /** The level object */
     protected var _level :Level;
+    protected var _currentLevel :int;
 
     /** The kart. */
     protected var _kart :Kart;
+
+    protected var _ground :Ground;
     
     /** A hashmap of the opponent's karts. */
     protected var _opponentKarts :HashMap = new HashMap();
