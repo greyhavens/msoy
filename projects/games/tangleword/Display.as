@@ -137,6 +137,13 @@ public class Display extends Sprite
         _logger.Log ("New round started!");
     }
 
+    /** Adds a round summary message */
+    public function logRoundEnded (points :Number, flow :Number) : void
+    {
+        _logger.Log ("Round ended: " + points + " points");
+        _logger.Log ("You received " + flow + " flow!");
+    }
+    
     /** Sets scores based on the scoreboard. */
     public function updateScores (board : Scoreboard) : void
     {
@@ -488,7 +495,7 @@ class ScoreField extends TextField
         var players : Array = board.getPlayers ();
         for each (var player : String in players)
         {
-            var score : Number = board.getScore (player);
+            var score : Number = board.getTotalScore (player);
             var line : String = player + ": " + score + " pts.\n";
             appendText (line);
         }

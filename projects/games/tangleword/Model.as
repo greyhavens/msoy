@@ -2,7 +2,6 @@ package
 {
 
 
-import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.HostCoordinator;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
@@ -10,6 +9,7 @@ import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
+import com.threerings.msoy.export.WhirledGameControl;
 
 import flash.geom.Point;
 
@@ -24,7 +24,7 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
     // PUBLIC METHODS
     
     public function Model (
-        gameCtrl : EZGameControl, coordinator : HostCoordinator,
+        gameCtrl : WhirledGameControl, coordinator : HostCoordinator,
         rounds : RoundProvider, display : Display) : void
     {
         // Squirrel the pointers away
@@ -257,10 +257,19 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         }
     }
 
-    /** Called when the round ends - cleans up data. */
+    /** Called when the round ends - cleans up data, and awards flow! */
     public function roundEndedHandler (newState : String) : void
     {
         removeAllSelectedLetters ();
+        var score :Number = _scoreboard.getRoundScore (_playerName);
+        var maxflow :Number = _gameCtrl.getAvailableFlow ();
+
+        // Player's performance compared to a built-in max. I'm just
+        // pulling this out of thin air for now. :)
+        var flow :int = int (Math.max (score / 25 * maxflow, maxflow));
+
+        _gameCtrl.awardFlow (flow);
+        _display.logRoundEnded (score, flow);
         _scoreboard.resetWordClaims ();
     }
 
@@ -370,7 +379,7 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
     private var _coord : HostCoordinator;
 
     /** Main game control structure */
-    private var _gameCtrl : EZGameControl;
+    private var _gameCtrl : WhirledGameControl;
 
     /** Round provider */
     private var _rounds : RoundProvider;

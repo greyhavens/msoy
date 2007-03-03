@@ -6,13 +6,13 @@ import flash.display.Shape;
 import flash.text.TextField;
 import mx.core.BitmapAsset;
 
-import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.HostCoordinator;
 import com.threerings.ezgame.HostEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
+import com.threerings.msoy.export.WhirledGameControl;
 
 
 
@@ -32,7 +32,7 @@ public class TangleWord extends Sprite
     public function TangleWord () : void
     {
         // Initialize game data
-        _gameCtrl = new EZGameControl (this);
+        _gameCtrl = new WhirledGameControl (this);
         _gameCtrl.registerListener (this);
         if (_gameCtrl.isConnected())
         {
@@ -133,7 +133,7 @@ public class TangleWord extends Sprite
     // PRIVATE MEMBER VARIABLES
 
     /** Game control object */
-    private var _gameCtrl : EZGameControl;
+    private var _gameCtrl : WhirledGameControl;
 
     /** Helps us determine who is the authoritative host */
     private var _coordinator : HostCoordinator;

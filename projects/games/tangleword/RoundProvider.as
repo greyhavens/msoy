@@ -1,10 +1,10 @@
 package
 {
 
-import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.HostCoordinator;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
+import com.threerings.msoy.export.WhirledGameControl;
 import flash.utils.Timer;
 import flash.events.TimerEvent;
 
@@ -45,13 +45,13 @@ public class RoundProvider implements PropertyChangedListener
 
     
     /**
-       Constructor. Expects an instance of EZGameControl.
+       Constructor. Expects an instance of WhirledGameControl.
        A newly-created instance of a round provider is not active,
        and needs to be started with a call to one of the
        initialize...() functions.
     */
     public function RoundProvider (
-        gameCtrl : EZGameControl,
+        gameCtrl : WhirledGameControl,
         coord : HostCoordinator)
     {
         // Store the pointers
@@ -298,7 +298,7 @@ public class RoundProvider implements PropertyChangedListener
     // PRIVATE VARIABLES
 
     /** Local EZ control storage */
-    private var _gameCtrl : EZGameControl;
+    private var _gameCtrl : WhirledGameControl;
 
     /** Local host coordinator storage */
     private var _coord : HostCoordinator;

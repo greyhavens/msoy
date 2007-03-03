@@ -1,8 +1,7 @@
 package
 {
 
-
-import com.threerings.ezgame.EZGameControl;
+import com.threerings.msoy.export.WhirledGameControl;
 
 import flash.events.KeyboardEvent;
 import flash.geom.Point;
@@ -19,7 +18,7 @@ public class Controller
     // PUBLIC METHODS
     
     public function Controller (
-        gameCtrl : EZGameControl, model : Model, rounds : RoundProvider) : void
+        gameCtrl : WhirledGameControl, model : Model, rounds : RoundProvider) : void
     {
         _gameCtrl = gameCtrl;
         _model = model;
@@ -175,7 +174,7 @@ public class Controller
     // PRIVATE VARIABLES
 
     /** Game helper */
-    private var _gameCtrl : EZGameControl;
+    private var _gameCtrl : WhirledGameControl;
     
     /** Game data interface */
     private var _model : Model;
