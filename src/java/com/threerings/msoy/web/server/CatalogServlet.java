@@ -127,10 +127,25 @@ public class CatalogServlet extends MsoyServiceServlet
             listing.item.itemId = cloneId;
 
             if (listing.flowCost > 0) {
+                // take flow from purchaser
                 int flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
                     mrec.memberId, listing.flowCost, UserAction.BOUGHT_ITEM + " " + ident.type +
                     " " + ident.itemId, false);
                 MemberManager.queueFlowUpdated(mrec.memberId, flow);
+
+                // give 30% of it to the creator
+                // TODO: hold this in escrow
+                int creatorPortion = (3 * listing.flowCost) / 10;
+                if (creatorPortion > 0) {
+                    // TODO: This is the first time we give flow to somebody without there
+                    // really being an directly associated UserAction. Do we stuff it into
+                    // UserAction nevertheless (seems ugly)? Do we have a second set of
+                    // constants somewhere (seems possible)?
+                    flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
+                        listing.item.creatorId, creatorPortion, "CREATOR_PAYOUT " + ident.type +
+                        " " + ident.itemId + " " + mrec.memberId, true);
+                    MemberManager.queueFlowUpdated(listing.item.creatorId, flow);
+                }
             }
 
             logUserAction(mrec, UserAction.BOUGHT_ITEM, ident.type + " " +
@@ -246,6 +261,13 @@ public class CatalogServlet extends MsoyServiceServlet
                 throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
             }
 
+            // TODO: WE ONLY NEED THIS UNTIL WE HAVE ESCROW WORKING
+            ItemRecord item = repo.loadOriginalItem(cRec.originalItemId);
+            if (item == null) {
+                log.warning("Failed to find clone record [item=" + ident + "]");
+                throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+            }
+
             // note the return for the item
             repo.nudgeListing(ident.itemId, false);
 
@@ -263,6 +285,14 @@ public class CatalogServlet extends MsoyServiceServlet
                 mrec.memberId, flowRefund, UserAction.RETURNED_ITEM + " " + ident.type +
                 " " + ident.itemId + " " + refundDesc, true);
             MemberManager.queueFlowUpdated(mrec.memberId, flow);
+
+            // now we have to take 30% of the refund away from the creator
+            // TODO: when escrow works, this will blessedly go away
+            int creatorPortion = (3 * flowRefund) / 10;
+            flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
+                item.creatorId, creatorPortion, "CREATOR_PAYOUT " + ident.type +
+                " " + ident.itemId + " " + mrec.memberId, true);
+            MemberManager.queueFlowUpdated(item.creatorId, flow);
 
             logUserAction(mrec, UserAction.RETURNED_ITEM, ident.type + " " +
                           ident.itemId + " " + refundDesc + " " + flowRefund + " " + goldRefund);
