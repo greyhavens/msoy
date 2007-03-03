@@ -80,7 +80,7 @@ public class ActorSprite extends MsoySprite
         _label.textColor = getStatusColor(_occInfo.status);
         _label.text = _occInfo.username.toString();
         _label.y = -1 * _label.textHeight;
-        _label.width = _label.textWidth;
+        _label.width = _label.textWidth + 5; // the magic number
         recheckLabel();
     }
 
