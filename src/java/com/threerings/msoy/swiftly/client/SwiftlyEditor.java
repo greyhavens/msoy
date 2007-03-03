@@ -85,10 +85,12 @@ public class SwiftlyEditor extends PlacePanel
     public void addEditorTab (PathElement pathElement)
     {
         SwiftlyTextPane pane = _editorTabs.addEditorTab(pathElement); 
+        // If this is a new tab, add a documentupdate listener and ask the backend to load
+        // the document contents into the tab
         if (pane != null) {
             _roomObj.addListener(pane);
+            _roomObj.service.loadDocument(_ctx.getClient(), pathElement);
         }
-        _roomObj.service.loadDocument(_ctx.getClient(), pathElement);
     }
 
     public void updateTabTitleAt (PathElement pathElement)
