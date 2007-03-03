@@ -1,0 +1,44 @@
+<!-- build configuration -->
+<project name="PROJECT" default="compile" basedir=".">
+  <!-- read in our build properties -->
+  <property file="build.properties"/>
+
+  <!-- checks that build.properties has been configured -->
+  <target name="check">
+    <fail>
+     <condition><or><not><isset property="app.name"/></not>
+                    <equals arg1="${app.name}" arg2="default"/>
+                    <equals arg1="${flex.path}" arg2=""/></or></condition>
+      Edit build.properties and configure your application.
+    </fail>
+
+    <available file="${flex.path}/lib/mxmlc.jar" property="mxmlc.present"/>
+    <fail unless="mxmlc.present">
+      We were not able to find a Flex compiler in '${flex.path}'.
+      Please make sure that ${flex.path}/lib/mxmlc.jar exists.
+    </fail>
+  </target>
+
+  <!-- builds our project -->
+  <target name="compile" depends="check">
+    <copy file="whirled-config.xml.in" tofile="whirled-config.xml" overwrite="true">
+      <filterset>
+        <filter token="flex_path" value="${flex.path}"/>
+      </filterset>
+    </copy>
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="whirled-config.xml"/>
+      <arg value="-compiler.source-path=."/>
+      <arg value="-file-specs"/>
+      <arg value="${app.name}.as"/>
+    </java>
+  </target>
+
+  <!-- cleans out the compiled code -->
+  <target name="clean">
+    <delete>
+       <fileset file="${app.name}.swf"/>
+    </delete>
+  </target>
+</project>

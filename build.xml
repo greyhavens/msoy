@@ -435,6 +435,19 @@
     <!--<copy file="${deploy.dir}/RemixAnalyzer.swf" todir="bin"/>-->
   </target>
 
+  <!-- TEMP: builds the SDK; this will soon move into the whirled repository -->
+  <target name="temp_sdk">
+    <property name="sdk.build" value="${deploy.dir}/sdk/whirled"/>
+    <mkdir dir="${sdk.build}"/>
+    <copy todir="${sdk.build}">
+      <fileset dir="data/temp_sdk" includes="**"/>
+    </copy>
+    <mkdir dir="${sdk.build}/lib"/>
+    <copy file="${deploy.dir}/ooo.swc" todir="${sdk.build}/lib"/>
+    <zip destfile="${deploy.dir}/sdk/whirled_sdk.zip" basedir="${deploy.dir}/sdk"
+         includes="whirled/**"/>
+  </target>
+
   <!-- builds, runs Proguard on and signs a Java client -->
   <target name="proguard">
     <!-- figure out where the Java rt.jar file lives -->
@@ -703,6 +716,7 @@
     <antcallback target="prepare-server" return="pkg.base"/>
     <antcall target="prepare-server-extra"/>
     <antcall target="prepare-pages"/>
+    <antcall target="prepare-pages-extra"/>
     <antcall target="prepare-docs"/>
   </target>
 
@@ -726,6 +740,14 @@
     <mkdir dir="${pkg.base}/logs"/>
     <mkdir dir="${pkg.base}/run"/>
     <mkdir dir="${pkg.base}/tmp"/>
+  </target>
+
+  <!-- install extra pages stuff into ${pkg.base} -->
+  <target name="prepare-pages-extra">
+    <antcall target="test_sdk"/>
+    <copy todir="${pkg.base}/pages">
+      <fileset dir="${deploy.dir}/sdk" includes="whirled_sdk.zip"/>
+    </copy>
   </target>
 
 </project>
