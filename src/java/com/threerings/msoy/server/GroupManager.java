@@ -23,6 +23,7 @@ import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.GroupRepository;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import static com.threerings.msoy.Log.log;
@@ -103,7 +104,10 @@ public class GroupManager
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<GroupMembership>>(listener) {
             public List<GroupMembership> invokePersistResult () throws PersistenceException {
-                MemberName mName = _memberRepo.loadMember(memberId).getName();
+                MemberRecord mRec = _memberRepo.loadMember(memberId);
+                if (mRec == null) {
+                    throw new PersistenceException("Unknown member [memberId=" + memberId + "]");
+                }
                 List<GroupMembership> result = new ArrayList<GroupMembership>();
                 for (GroupMembershipRecord gmRec : _groupRepo.getMemberships(memberId)) {
                     GroupRecord gRec = _groupRepo.loadGroup(gmRec.groupId);
@@ -118,7 +122,7 @@ public class GroupManager
                         gmRec.rank != GroupMembership.RANK_MANAGER) {
                         continue;
                     }
-                    result.add(gmRec.toGroupMembership(gRec, mName));
+                    result.add(gmRec.toGroupMembership(gRec, mRec.getName()));
                 }
                 return result;
             }
