@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Item;
@@ -19,13 +20,14 @@ import com.threerings.msoy.item.web.Photo;
 
 import client.shell.CShell;
 import client.shell.MsoyEntryPoint;
+import client.util.BorderedPopup;
 
 /**
  * Allows a member to select an image from their inventory. In the future, will support fancy
  * things like immediately uploading an image for use instead of getting one from their inventory,
  * and possibly doing a Google images or Flickr search.
  */
-public class ImageChooserPopup extends PopupPanel
+public class ImageChooserPopup extends BorderedPopup
     implements ClickListener
 {
     public static void displayImageChooser (final AsyncCallback callback)
@@ -49,16 +51,26 @@ public class ImageChooserPopup extends PopupPanel
         super(true);
         _callback = callback;
 
-        HorizontalPanel itemPanel = new HorizontalPanel();
-        ScrollPanel chooser = new ScrollPanel(itemPanel);
-        setStyleName("imageChooser");
-        setWidget(chooser);
+        VerticalPanel contents = new VerticalPanel();
+        contents.setStyleName("imageChooser");
+        setWidget(contents);
 
         // iterate over all our photos and fill the popup panel
-        for (Iterator iter = images.iterator(); iter.hasNext(); ) {
-            Image image = new PhotoThumbnailImage(((Photo) iter.next()));
-            image.addClickListener(this);
-            itemPanel.add(image);
+        if (images.size() > 0) {
+            contents.add(MsoyUI.createLabel(CShell.cmsgs.pickImage(), "Title"));
+
+            HorizontalPanel itemPanel = new HorizontalPanel();
+            ScrollPanel chooser = new ScrollPanel(itemPanel);
+            contents.add(chooser);
+
+            for (Iterator iter = images.iterator(); iter.hasNext(); ) {
+                Image image = new PhotoThumbnailImage(((Photo) iter.next()));
+                image.addClickListener(this);
+                itemPanel.add(image);
+            }
+
+        } else {
+            contents.add(MsoyUI.createLabel(CShell.cmsgs.haveNoImages(), "Title"));
         }
     }
 

@@ -238,6 +238,15 @@ body {
   width: 400px;
 }
 
+.imageChooser {
+  width: 800px;
+}
+
+.imageChooser .Title {
+  font-size: 18px;
+  padding: 10px;
+}
+
 /** Configuration for our bordered popup window */
 .borderedPopup {
    background: #FFFFFF;

@@ -96,9 +96,9 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String doListHdrTop(String arg0);
 
   /**
-   * Translated "Listing your item creates a new copy of your item as it is just now and adds it to the catalog, where other users may in turn purchase copies of it.".
+   * Translated "Listing your item creates a snapshot of your item as it is just now and adds it to the Catalog, where other users may purchase copies of it.".
    * 
-   * @return translated "Listing your item creates a new copy of your item as it is just now and adds it to the catalog, where other users may in turn purchase copies of it."
+   * @return translated "Listing your item creates a snapshot of your item as it is just now and adds it to the Catalog, where other users may purchase copies of it."
    * @gwt.key doListBlurb
    */
   String doListBlurb();

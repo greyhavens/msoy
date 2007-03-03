@@ -384,6 +384,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String logonEmail();
 
   /**
+   * Translated "Choose a Photo from your Inventory:".
+   * 
+   * @return translated "Choose a Photo from your Inventory:"
+   * @gwt.key pickImage
+   */
+  String pickImage();
+
+  /**
    * Translated "Invalid Tag: can''t be more than 24 characters.".
    * 
    * @return translated "Invalid Tag: can''t be more than 24 characters."
@@ -494,6 +502,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key menuPlaces
    */
   String menuPlaces();
+
+  /**
+   * Translated "You have no Photos in your Inventory. Select the ''Stuff'' -> ''Inventory'' from the menu at the top of the page and upload some Photos!".
+   * 
+   * @return translated "You have no Photos in your Inventory. Select the ''Stuff'' -> ''Inventory'' from the menu at the top of the page and upload some Photos!"
+   * @gwt.key haveNoImages
+   */
+  String haveNoImages();
 
   /**
    * Translated "Your display name will be shown to other users in Whirled.".
