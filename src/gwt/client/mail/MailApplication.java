@@ -144,12 +144,14 @@ public class MailApplication extends DockPanel
         topContent.setStyleName("Top");
 
         Widget sidebarHolder = buildFolderPanel();
+        sidebarHolder.setWidth("100%");
         topContent.add(sidebarHolder);
+        topContent.setCellWidth(sidebarHolder, "15%");
         topContent.setCellHeight(sidebarHolder, "100%");
 
         BorderedWidget headerHolder = buildHeaderPanel();
         topContent.add(headerHolder);
-        topContent.setCellWidth(headerHolder, "100%");
+        topContent.setCellWidth(headerHolder, "75%");
         topContent.setCellHeight(headerHolder, "100%");
 
         return topContent;
