@@ -34,8 +34,7 @@ import com.threerings.msoy.export.WhirledGameControl;
  */
 [SWF(width="800", height="530")]
 public class StarFight extends Sprite
-    implements PropertyChangedListener, MessageReceivedListener,
-        StateChangedListener
+    implements PropertyChangedListener, MessageReceivedListener
 {
     public static const WIDTH :int = 800;
     public static const HEIGHT :int = 530;
@@ -87,7 +86,6 @@ public class StarFight extends Sprite
     // from Game
     public function setGameObject () :void
     {
-        _gameCtrl.localChat("Got game object");
         log("Got game object");
 
         _names = _gameCtrl.seating.getPlayerNames();
@@ -97,19 +95,11 @@ public class StarFight extends Sprite
         _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, gameStarted);
         _gameCtrl.localChat("Welcome to Zyraxxus!");
         var boardObj :Board;
-/*MST
-        var boardBytes :ByteArray =  ByteArray(_gameCtrl.get("board"));
-        if (boardBytes != null) {
-            boardObj = new Board(0, 0, false);
-            boardBytes.position = 0;
-            boardObj.readFrom(boardBytes);
-        }
-*/
+
         // Try initializing the game state (if I'm the first host)
         if ((boardObj == null) && (_myIndex == 0)) {
             // We don't already have a board and we're the host?  Create it and our
             //  initial ship array too.
-            _gameCtrl.localChat("We're primary - create a board");
             var size :int =
                 int(Math.sqrt(Math.max(1, _names.length-1)) * 50);
 
@@ -120,16 +110,7 @@ public class StarFight extends Sprite
                 boardObj.width*boardObj.height/MIN_TILES_PER_POWERUP);
             _gameCtrl.setImmediate("powerup", new Array(maxPowerups));
             _gameCtrl.setImmediate("board", boardObj.writeTo(new ByteArray()));
-            _gameCtrl.localChat("We just wrote da board.");
         }
-
-/* MST
-        // If we now have ourselves a board, do something with it...
-        if (boardObj != null) {
-            _gameCtrl.localChat("Got a board due to local creation");
-            gotBoard(boardObj);
-        }
-*/
     }
 
     /**
@@ -137,8 +118,6 @@ public class StarFight extends Sprite
      */
     protected function gotBoard (boardObj :Board) :void
     {
-        _gameCtrl.localChat("Got Board");
-
         _ships = [];
         _shots = [];
         _powerups = [];
@@ -215,8 +194,6 @@ public class StarFight extends Sprite
         var screenTimer :Timer = new Timer(Codes.REFRESH_RATE, 0); // As fast as possible.
         screenTimer.addEventListener(TimerEvent.TIMER, tick);
         screenTimer.start();
-
-        _gameCtrl.localChat("Finished with Board");
     }
 
     /**
@@ -267,9 +244,7 @@ public class StarFight extends Sprite
     public function propertyChanged (event :PropertyChangedEvent) :void
     {
         var name :String = event.name;
-        _gameCtrl.localChat("gotPropChange: " + name + " idx: " + event.index);
         if (name == "board" && (_board == null)) {
-            _gameCtrl.localChat("Board change from event");
             log("Got a board change");
             // Someone else initialized our board.
             var boardBytes :ByteArray =  ByteArray(_gameCtrl.get("board"));
@@ -278,7 +253,6 @@ public class StarFight extends Sprite
             boardObj.readFrom(boardBytes);
             gotBoard(boardObj);
         } else if ((name == "ship") && (event.index >= 0)) {
-            _gameCtrl.localChat("Ship change from event");
             if (_ships != null && event.index != _myIndex) {
                 // Someone else's ship - update our sprite for em.
                 var ship :ShipSprite = _ships[event.index];
@@ -297,7 +271,6 @@ public class StarFight extends Sprite
                 _status.checkHiScore(ship);
             }
         } else if ((name =="powerup") && (event.index >= 0)) {
-            _gameCtrl.localChat("Powerup change from event");
             if (_powerups != null) {
                 if (event.newValue == null) {
                     if (_powerups[event.index] != null) {
@@ -317,26 +290,6 @@ public class StarFight extends Sprite
                 var pBytes :ByteArray = ByteArray(event.newValue);
                 pBytes.position = 0;
                 pow.readFrom(pBytes);
-            }
-        }
-    }
-
-    // from StateChangedListener
-    public function stateChanged (event :StateChangedEvent) :void
-    {
-        _gameCtrl.localChat("Got state changed: " + event.type);
-        if (event.type == StateChangedEvent.GAME_STARTED) {
-            _gameCtrl.localChat("Got game started");
-            
-            var boardObj :Board;
-
-            var boardBytes :ByteArray =  ByteArray(_gameCtrl.get("board"));
-            if (boardBytes != null) {
-                _gameCtrl.localChat("Yay!  Got a board with gamestart");
-                boardObj = new Board(0, 0, false);
-                boardBytes.position = 0;
-                boardObj.readFrom(boardBytes);
-                gotBoard(boardObj);
             }
         }
     }
