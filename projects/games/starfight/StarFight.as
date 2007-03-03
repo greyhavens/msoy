@@ -19,13 +19,15 @@ import flash.events.TimerEvent;
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
-import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
+import com.threerings.ezgame.SeatingControl;
+
+import com.threerings.msoy.export.WhirledGameControl;
 
 /**
  * The main game class for the client.
@@ -43,7 +45,7 @@ public class StarFight extends Sprite
      */
     public function StarFight ()
     {
-        _gameCtrl = new EZGameControl(this);
+        _gameCtrl = new WhirledGameControl(this);
         _gameCtrl.registerListener(this);
 
         _boardLayer = new Sprite();
@@ -87,6 +89,10 @@ public class StarFight extends Sprite
     {
         _gameCtrl.localChat("Got game object");
         log("Got game object");
+
+        _names = _gameCtrl.seating.getPlayerNames();
+        _myIndex = _gameCtrl.seating.getMyPosition();
+
         // set up our listeners
         _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, gameStarted);
         _gameCtrl.localChat("Welcome to Zyraxxus!");
@@ -100,20 +106,20 @@ public class StarFight extends Sprite
         }
 */
         // Try initializing the game state (if I'm the first host)
-        if ((boardObj == null) && (getMyIndex()==0)) {
+        if ((boardObj == null) && (_myIndex == 0)) {
             // We don't already have a board and we're the host?  Create it and our
             //  initial ship array too.
             _gameCtrl.localChat("We're primary - create a board");
             var size :int =
-                int(Math.sqrt(Math.max(1, _gameCtrl.getOccupants().length-1)) * 50);
+                int(Math.sqrt(Math.max(1, _names.length-1)) * 50);
 
             boardObj = new Board(size, size, true);
-            _gameCtrl.set("ship", new Array(_gameCtrl.getOccupants().length));
+            _gameCtrl.setImmediate("ship", new Array(_names.length));
 
             var maxPowerups :int = Math.max(1,
                 boardObj.width*boardObj.height/MIN_TILES_PER_POWERUP);
-            _gameCtrl.set("powerup", new Array(maxPowerups));
-            _gameCtrl.set("board", boardObj.writeTo(new ByteArray()));
+            _gameCtrl.setImmediate("powerup", new Array(maxPowerups));
+            _gameCtrl.setImmediate("board", boardObj.writeTo(new ByteArray()));
             _gameCtrl.localChat("We just wrote da board.");
         }
 
@@ -124,14 +130,6 @@ public class StarFight extends Sprite
             gotBoard(boardObj);
         }
 */
-    }
-
-    /**
-     * Returns the index for the local player.
-     */
-    protected function getMyIndex() : int
-    {
-        return _gameCtrl.seating.getPlayerPosition(_gameCtrl.getMyId());
     }
 
     /**
@@ -150,15 +148,8 @@ public class StarFight extends Sprite
         _board = new BoardSprite(boardObj, _ships, _powerups);
         _boardLayer.addChild(_board);
 
-        var occupants : Array = _gameCtrl.getOccupants ();
-        var names :Array = [];
-        for each (var id : int in occupants) {
-            names.push(_gameCtrl.getOccupantName(id));
-        }       
-        var myIdx :int = getMyIndex();
-
         // Create our local ship and center the board on it.
-        _ownShip = new ShipSprite(_board, this, false, myIdx, names[myIdx],
+        _ownShip = new ShipSprite(_board, this, false, _myIndex, _names[_myIndex],
             true);
         _ownShip.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
         _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
@@ -166,8 +157,8 @@ public class StarFight extends Sprite
         _shipLayer.addChild(_ownShip);
 
         // Add ourselves to the ship array.
-        _gameCtrl.set("ship", _ownShip.writeTo(new ByteArray()),
-            getMyIndex());
+        _gameCtrl.setImmediate("ship", _ownShip.writeTo(new ByteArray()),
+            _myIndex);
 
         // Set up our initial ship sprites.
         var gameShips :Array = (_gameCtrl.get("ship") as Array);
@@ -178,9 +169,9 @@ public class StarFight extends Sprite
             {
                 if (gameShips[ii] == null) {
                     _ships[ii] = null;
-                } else if (ii != getMyIndex()) {
+                } else if (ii != _myIndex) {
                     _ships[ii] = new ShipSprite(_board, this, true, ii,
-                        names[ii], false);
+                        _names[ii], false);
                     gameShips[ii].position = 0;
                     _ships[ii].readFrom(gameShips[ii]);
                     _shipLayer.addChild(_ships[ii]);
@@ -207,14 +198,14 @@ public class StarFight extends Sprite
         }
 
         // The first player is in charge of adding powerups.
-        if (getMyIndex() == 0) {
+        if (_myIndex == 0) {
             addPowerup(null);
             var timer :Timer = new Timer(20000, 0);
             timer.addEventListener(TimerEvent.TIMER, addPowerup);
             timer.start();
         }
 
-        _ships[getMyIndex()] = _ownShip;
+        _ships[_myIndex] = _ownShip;
 
         // Our ship is interested in keystrokes.
         _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, _ownShip.keyPressed);
@@ -255,7 +246,7 @@ public class StarFight extends Sprite
 
                 _powerups[ii] = new Powerup(1+Math.random()*3, x, y);
 
-                _gameCtrl.set("powerup", _powerups[ii].writeTo(new ByteArray()),
+                _gameCtrl.setImmediate("powerup", _powerups[ii].writeTo(new ByteArray()),
                     ii);
                 _board.powerupLayer.addChild(_powerups[ii]);
                 return;
@@ -267,7 +258,7 @@ public class StarFight extends Sprite
 
     public function removePowerup (idx :int) :void
     {
-        _gameCtrl.set("powerup", null, idx);
+        _gameCtrl.setImmediate("powerup", null, idx);
         _board.powerupLayer.removeChild(_powerups[idx]);
         _powerups[idx] = null;
     }
@@ -288,19 +279,19 @@ public class StarFight extends Sprite
             gotBoard(boardObj);
         } else if ((name == "ship") && (event.index >= 0)) {
             _gameCtrl.localChat("Ship change from event");
-            if (_ships != null && event.index != getMyIndex()) {
+            if (_ships != null && event.index != _myIndex) {
                 // Someone else's ship - update our sprite for em.
                 var ship :ShipSprite = _ships[event.index];
                 if (ship == null) {
                     _ships[event.index] =
                         ship = new ShipSprite(_board, this, true, event.index,
-                            _gameCtrl.getOccupantName(event.index), false);
+                            _names[event.index], false);
                     _shipLayer.addChild(ship);
                 }
                 var bytes :ByteArray = ByteArray(event.newValue);
                 bytes.position = 0;
                 var sentShip :ShipSprite = new ShipSprite(_board, this, true,
-                    event.index, _gameCtrl.getOccupantName(event.index), false);
+                    event.index, _names[event.index], false);
                 sentShip.readFrom(bytes);
                 ship.updateForReport(sentShip);
                 _status.checkHiScore(ship);
@@ -590,15 +581,21 @@ public class StarFight extends Sprite
 
         // Every few frames, broadcast our status to everyone else.
         if (_updateCount++ % Codes.FRAMES_PER_UPDATE == 0) {
-            _gameCtrl.set("ship", _ownShip.writeTo(new ByteArray()),
-                getMyIndex());
+            _gameCtrl.setImmediate("ship", _ownShip.writeTo(new ByteArray()),
+                _myIndex);
         }
 
         _lastTickTime = now;
     }
 
     /** Our game control object. */
-    protected var _gameCtrl :EZGameControl;
+    protected var _gameCtrl :WhirledGameControl;
+
+    /** Our seated index. */
+    protected var _myIndex :int;
+
+    /** The names of all the players. */
+    protected var _names :Array;
 
     /** Our local ship. */
     protected var _ownShip :ShipSprite;
