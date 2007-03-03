@@ -81,9 +81,9 @@ public class index extends MsoyEntryPoint
     // @Override from MsoyEntryPoint
     protected boolean didLogon (WebCreds creds)
     {
-        boolean header = super.didLogon(creds);
+        super.didLogon(creds);
         onHistoryChanged(History.getToken());
-        return header;
+        return false;
     }
 
     // @Override from MsoyEntryPoint
