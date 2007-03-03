@@ -605,7 +605,8 @@ public abstract class ItemRepository<
             Math.max(0, 1 - record.returns / (double)record.purchases);
         double listPrice = Math.max(1, basePrice * Math.sqrt(S));
         int flowForGoldFactor = 600;
-        record.goldCost = (int) Math.round(listPrice / (2 * flowForGoldFactor));
+        // TEMP: no gold cost
+        record.goldCost = 0; // (int) Math.round(listPrice / (2.5 * flowForGoldFactor));
         record.flowCost = (int) (listPrice - record.goldCost * flowForGoldFactor);
         record.repriceCounter = 0;
     }
