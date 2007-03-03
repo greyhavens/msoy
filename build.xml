@@ -344,7 +344,8 @@
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
-      <arg value="-include-sources=projects/vilya/src/as/com/threerings/ezgame"/>
+      <arg value="-include-sources=projects/narya/src/as/"/>
+      <arg value="-include-sources=projects/vilya/src/as/com/threerings/ezgame/"/>
       <arg value="-include-sources=${asrc.dir}/com/whirled/"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/whirled.swc"/>
