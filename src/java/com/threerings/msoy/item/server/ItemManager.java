@@ -17,6 +17,7 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ObjectUtil;
+import com.samskivert.util.ObserverList;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
@@ -62,6 +63,15 @@ import static com.threerings.msoy.Log.log;
 public class ItemManager
     implements ItemProvider
 {
+    /** Used to listen for item updates. */
+    public interface ItemUpdateListener
+    {
+        /**
+         * Called when a (mutable) item is updated.
+         */
+        public void itemUpdated (ItemRecord item);
+    }
+
     /**
      * An exception that may be thrown if an item repository doesn't exist.
      */
@@ -150,7 +160,7 @@ public class ItemManager
     {
         return _repos.keySet();
     }
-    
+
 
     /**
      * Returns the repository used to manage items of the specified type. Throws a service
@@ -164,6 +174,34 @@ public class ItemManager
         } catch (MissingRepositoryException mre) {
             log.warning("Requested invalid repository type " + type + ".");
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
+    }
+
+    /**
+     * Registers an item update listener.
+     */
+    public void registerItemUpdateListener (Class<? extends ItemRecord> type,
+                                            ItemUpdateListener listener)
+    {
+        MsoyServer.requireDObjThread();
+        ObserverList<ItemUpdateListener> list = _listeners.get(type);
+        if (list == null) {
+            list = new ObserverList<ItemUpdateListener>(ObserverList.FAST_UNSAFE_NOTIFY);
+            _listeners.put(type, list);
+        }
+        list.add(listener);
+    }
+
+    /**
+     * Removes a previously registered item update listener.
+     */
+    public void removeItemUpdateListener (Class<? extends ItemRecord> type,
+                                          ItemUpdateListener listener)
+    {
+        MsoyServer.requireDObjThread();
+        ObserverList<ItemUpdateListener> list = _listeners.get(type);
+        if (list != null) {
+            list.remove(listener);
         }
     }
 
@@ -434,6 +472,8 @@ public class ItemManager
                 super.handleSuccess();
                 // add the item to the user's cached inventory
                 updateUserCache(record);
+                // notify any item update listeners
+                notifyItemUpdated(record);
             }
         });
     }
@@ -952,6 +992,22 @@ public class ItemManager
     }
 
     /**
+     * Called when a mutable item is updated.
+     */
+    protected void notifyItemUpdated (final ItemRecord record)
+    {
+        ObserverList<ItemUpdateListener> obs = _listeners.get(record.getClass());
+        if (obs != null) {
+            obs.apply(new ObserverList.ObserverOp<ItemUpdateListener>() {
+                public boolean apply (ItemUpdateListener listener) {
+                    listener.itemUpdated(record);
+                    return true;
+                }
+            });
+        }
+    }
+
+    /**
      * A class that helps manage loading or storing a bunch of items that may be spread in
      * difference repositories.
      */
@@ -1091,4 +1147,8 @@ public class ItemManager
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord, ?, ?, ?>> _repos =
         new HashMap<Byte, ItemRepository<ItemRecord, ?, ?, ?>>();
+
+    /** A mapping from item type to update listeners. */
+    protected HashMap<Class<? extends ItemRecord>,ObserverList<ItemUpdateListener>> _listeners =
+        new HashMap<Class<? extends ItemRecord>,ObserverList<ItemUpdateListener>>();
 }

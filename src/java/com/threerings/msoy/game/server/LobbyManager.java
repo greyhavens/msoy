@@ -12,11 +12,17 @@ import com.threerings.presents.dobj.SetAdapter;
 import com.threerings.parlor.server.TableManager;
 import com.threerings.parlor.server.TableManagerProvider;
 
+import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.game.data.LobbyConfig;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyTable;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages a lobby room.
@@ -35,7 +41,7 @@ public class LobbyManager extends PlaceManager
     {
         super.startup(plobj);
 
-        MsoyServer.lobbyReg.lobbyStartup(_gameId, plobj.getOid());
+        MsoyServer.lobbyReg.lobbyStartup(getGameId(), plobj.getOid());
         _tableMgr = new TableManager(this);
         _tableMgr.setTableClass(MsoyTable.class);
 
@@ -46,7 +52,7 @@ public class LobbyManager extends PlaceManager
     public void shutdown ()
     {
         _plobj.removeListener(_tableWatcher);
-        MsoyServer.lobbyReg.lobbyShutdown(_gameId);
+        MsoyServer.lobbyReg.lobbyShutdown(getGameId());
 
         super.shutdown();
     }
@@ -56,7 +62,7 @@ public class LobbyManager extends PlaceManager
      */
     public int getGameId ()
     {
-        return _gameId;
+        return _game.itemId;
     }
     
     @Override
@@ -70,8 +76,31 @@ public class LobbyManager extends PlaceManager
     {
         super.didInit();
 
-        // remember our game id
-        _gameId = ((LobbyConfig) _config).game.itemId;
+        // remember our game
+        _game = ((LobbyConfig) _config).game;
+
+        // if our game is mutable, listen for updates to the GameRecord
+        if (_game.parentId == 0) {
+            _uplist = new ItemManager.ItemUpdateListener() {
+                public void itemUpdated (ItemRecord item) {
+                    if (item.itemId == getGameId()) {
+                        gameUpdatedd((Game)item.toItem());
+                    }
+                }
+            };
+            MsoyServer.itemMan.registerItemUpdateListener(GameRecord.class, _uplist);
+        }
+    }
+
+    @Override
+    protected void didShutdown ()
+    {
+        super.didShutdown();
+
+        // if our game is mutable, clear our update listener
+        if (_uplist != null) {
+            MsoyServer.itemMan.removeItemUpdateListener(GameRecord.class, _uplist);
+        }
     }
 
     @Override
@@ -83,11 +112,23 @@ public class LobbyManager extends PlaceManager
         }
     }
 
-    /** The game id for which we're lobbying. */
-    protected int _gameId;
+    /**
+     * Called if our game record is updated while this lobby is resolved.
+     */
+    protected void gameUpdatedd (Game game)
+    {
+        log.info("Active game updated " + game + ".");
+        // TODO: smarts!
+    }
+
+    /** The game for which we're lobbying. */
+    protected Game _game;
 
     /** Manages the actual tables. */
     protected TableManager _tableMgr;
+
+    /** Used to listen for updates to our game item if necessary. */
+    protected ItemManager.ItemUpdateListener _uplist;
 
     /** Listens for table removal and considers destroying the room. */
     protected SetAdapter _tableWatcher = new SetAdapter() {

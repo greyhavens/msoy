@@ -47,9 +47,8 @@ public class LobbyRegistry
     }
 
     // from LobbyProvider
-    public void identifyLobby (
-        ClientObject caller, final int gameId,
-        InvocationService.ResultListener listener)
+    public void identifyLobby (ClientObject caller, final int gameId,
+                               InvocationService.ResultListener listener)
         throws InvocationException
     {
         // see what we've got..
@@ -72,8 +71,7 @@ public class LobbyRegistry
         list.add(listener);
         _loading.put(gameId, list);
 
-        MsoyServer.itemMan.getItem(new ItemIdent(Item.GAME, gameId),
-            new ResultListener<Item>() {
+        MsoyServer.itemMan.getItem(new ItemIdent(Item.GAME, gameId), new ResultListener<Item>() {
             public void requestCompleted (Item item)
             {
                 try {
