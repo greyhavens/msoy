@@ -538,7 +538,9 @@ public class AbstractRoomView extends Sprite
     protected function setActive (map :HashMap, active :Boolean) :void
     {
         for each (var sprite :MsoySprite in map.values()) {
-            sprite.setActive(active);
+            if (sprite != _bkg) {
+                sprite.setActive(active);
+            }
         }
     }
 

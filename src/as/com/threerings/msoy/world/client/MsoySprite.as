@@ -207,6 +207,12 @@ public class MsoySprite extends MediaContainer
         }
     }
 
+    // TODO: don't rely on our blendmode.. ?
+    public function isActive () :Boolean
+    {
+        return (blendMode == BlendMode.NORMAL);
+    }
+
     /**
      * During editing, set the X scale of this sprite.
      */
