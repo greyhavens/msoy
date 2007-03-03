@@ -640,6 +640,7 @@
       <include name="com/**"/>
       <include name="*.properties"/>
       <include name="rsrc/**/*.properties"/>
+      <include name="rsrc/**/*.tmpl"/>
     </jar>
     <!-- and all of our configuration and media in another -->
     <jar file="${deploy.dir}/${app.name}-media.jar"
