@@ -19,6 +19,9 @@ public interface MsoyCodes extends InvocationCodes
     /** Defines our world invocation services group. */
     public static final String WORLD_GROUP = "msoy.world";
 
+    /** The translation message bundle for our general client bits. */
+    public static final String GENERAL_MSGS = "general";
+
     /** The translation message bundle for our group services. */
     public static final String GROUP_MSGS = "group";
 }

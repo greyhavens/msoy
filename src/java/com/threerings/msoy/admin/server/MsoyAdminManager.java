@@ -7,14 +7,18 @@ import com.samskivert.util.Interval;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.ObjectAccessException;
 import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.server.RebootManager;
 
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.server.MsoyServer;
 
+import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.admin.data.StatusObject;
 
 import static com.threerings.msoy.Log.log;
@@ -80,18 +84,46 @@ public class MsoyAdminManager
 
     /** Used to manage automatic reboots. */
     protected class MsoyRebootManager extends RebootManager
+        implements AttributeChangeListener
     {
         public MsoyRebootManager (MsoyServer server) {
             super(server);
+            RuntimeConfig.server.addListener(this);
+            RuntimeConfig.server.setCustomRebootMsg("");
         }
 
         public void scheduleReboot (long rebootTime, String initiator) {
             super.scheduleReboot(rebootTime, initiator);
-            statObj.setServerRebootTime(rebootTime);
+            if (rebootTime != RuntimeConfig.server.nextReboot) {
+                RuntimeConfig.server.setNextReboot(rebootTime);
+                statObj.setServerRebootTime(rebootTime);
+            }
+        }
+
+        // from interface AttributeChangeListener
+        public void attributeChanged (AttributeChangedEvent event)
+        {
+            if (!ServerConfigObject.NEXT_REBOOT.equals(event.getName())) {
+                return;
+            }
+
+            // figure out who requested the reboot
+            DObject o = MsoyServer.omgr.getObject(event.getSourceOid());
+            String blame;
+            if (o == null) {
+                blame = "automatic";
+            } else if (o instanceof MemberObject) {
+                blame = String.valueOf(((MemberObject)o).memberName);
+            } else {
+                blame = o.toString();
+            }
+
+            // schedule a reboot
+            scheduleReboot(RuntimeConfig.server.nextReboot, blame);
         }
 
         protected void broadcast (String message) {
-            MsoyServer.chatprov.broadcast(null, null /* TODO: MSOY_MSGS? */, message, true);
+            MsoyServer.chatprov.broadcast(null, MsoyCodes.GENERAL_MSGS, message, true);
         }
 
         protected int getDayFrequency () {
@@ -109,7 +141,7 @@ public class MsoyAdminManager
         protected String getCustomRebootMessage () {
             // for now we don't have auto-reboots, so let's not claim every hand scheduled reboot
             // is a "regularly scheduled reboot"
-            return MessageBundle.taint("");
+            return MessageBundle.taint(RuntimeConfig.server.customRebootMsg);
         }
     }
 
