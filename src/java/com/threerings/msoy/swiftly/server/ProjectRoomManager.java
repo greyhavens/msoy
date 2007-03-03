@@ -144,9 +144,9 @@ public class ProjectRoomManager extends PlaceManager
     {
         // TODO: check access!
        
-        SwiftlyDocument doc = new SwiftlyDocument(element);
-        doc.setText("Welcome, to the real whirled.");
-        _roomObj.addSwiftlyDocument(doc);
+        // SwiftlyDocument doc = new SwiftlyDocument(element);
+        // doc.setText("Welcome, to the real whirled.");
+        // _roomObj.addSwiftlyDocument(doc);
     }
 
     @Override // from PlaceManager
