@@ -2,7 +2,7 @@
 <project name="@project@" default="compile" basedir=".">
   <!-- defines our project name -->
   <property name="app.name" value="@project@"/>
-  <property name="flex.path" value="@flex_path@"/>
+  <property name="flex.path" value="@flexpath@"/>
 
   <!-- checks that build.properties has been configured -->
   <target name="check">
@@ -15,11 +15,6 @@
 
   <!-- builds our project -->
   <target name="compile" depends="check">
-    <copy file="whirled-config.xml.in" tofile="whirled-config.xml" overwrite="true">
-      <filterset>
-        <filter token="flex_path" value="${flex.path}"/>
-      </filterset>
-    </copy>
     <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="whirled-config.xml"/>

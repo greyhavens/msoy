@@ -332,7 +332,7 @@
   </target>
 
   <target name="checkexportlib">
-    <uptodate property="exportlib_is_up_to_date" targetfile="${deploy.dir}/msoy-export.swc">
+    <uptodate property="exportlib_is_up_to_date" targetfile="${deploy.dir}/whirled.swc">
       <srcfiles dir="${asrc.dir}/com/whirled" includes="**/*.as"/>
     </uptodate>
   </target>
@@ -345,7 +345,7 @@
       <arg value="-compiler.optimize"/>
       <arg value="-include-sources=${asrc.dir}/com/whirled/"/>
       <arg value="-output"/>
-      <arg value="${deploy.dir}/msoy-export.swc"/>
+      <arg value="${deploy.dir}/whirled.swc"/>
     </java>
   </target>
 
@@ -443,7 +443,12 @@
       <fileset dir="data/temp_sdk" includes="**"/>
     </copy>
     <mkdir dir="${sdk.build}/lib"/>
-    <copy file="${deploy.dir}/ooo.swc" todir="${sdk.build}/lib"/>
+    <copy todir="${sdk.build}/lib">
+     <fileset dir="${deploy.dir}">
+       <include name="whirled.swc"/>
+       <include name="whirled-code.jar"/>
+     </fileset>
+    </copy>
     <copy todir="${sdk.build}">
       <fileset dir="." includes="src/as/com/whirled/**" excludes="**/WorldGameControl.as"/>
     </copy>
@@ -657,6 +662,10 @@
       <include name="*.properties"/>
       <include name="rsrc/**/*.properties"/>
       <include name="rsrc/**/*.tmpl"/>
+    </jar>
+    <!-- (TEMP) stick our exported code into a jar file -->
+    <jar file="${deploy.dir}/whirled-code.jar" basedir="${deploy.dir}/classes">
+      <include name="com/whirled/**"/>
     </jar>
     <!-- and all of our configuration and media in another -->
     <jar file="${deploy.dir}/${app.name}-media.jar"
