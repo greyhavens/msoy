@@ -136,9 +136,9 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewDeletionMailHeader();
 
   /**
-   * Translated "Log in to access admin services.".
+   * Translated "Please logon above to access Admin services.".
    * 
-   * @return translated "Log in to access admin services."
+   * @return translated "Please logon above to access Admin services."
    * @gwt.key indexLogon
    */
   String indexLogon();
