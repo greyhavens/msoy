@@ -235,9 +235,8 @@ public class FlowRepository extends DepotRepository
         String op = grant ? "+" : "-";
 
         Key key = new Key<MemberRecord>(MemberRecord.class, MemberRecord.MEMBER_ID, memberId);
-        _ctx.cacheInvalidate(key);
 
-        int mods = updateLiteral(MemberRecord.class, key, null,
+        int mods = updateLiteral(MemberRecord.class, key, key,
                                  MemberRecord.FLOW, MemberRecord.FLOW + op + amount);
         if (mods == 0) {
             throw new PersistenceException(
