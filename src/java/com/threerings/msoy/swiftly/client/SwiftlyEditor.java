@@ -28,6 +28,7 @@ import com.threerings.crowd.client.PlacePanel;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
@@ -83,7 +84,7 @@ public class SwiftlyEditor extends PlacePanel
 
     public void addEditorTab (PathElement pathElement)
     {
-        _editorTabs.addEditorTab(pathElement);
+        _roomObj.addListener(_editorTabs.addEditorTab(pathElement));
         _roomObj.service.loadDocument(_ctx.getClient(), pathElement);
     }
 
@@ -128,6 +129,11 @@ public class SwiftlyEditor extends PlacePanel
     public ProjectPanel getProjectPanel ()
     {
         return _projectPanel;
+    }
+
+    public void updateDocument (int elementId, String text)
+    {
+        _roomObj.service.updateDocument(_ctx.getClient(), elementId, text);
     }
 
     /**

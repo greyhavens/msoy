@@ -28,6 +28,8 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
+import com.threerings.msoy.swiftly.data.DocumentUpdateListener;
+import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
@@ -38,6 +40,7 @@ import sdoc.SyntaxEditorKit;
 import sdoc.SyntaxSupport;
 
 public class SwiftlyTextPane extends JEditorPane
+    implements DocumentUpdateListener
 {
     public static final int PRINT_MARGIN_WIDTH = 100; 
 
@@ -47,6 +50,7 @@ public class SwiftlyTextPane extends JEditorPane
         _editor = editor;
         _pathElement = pathElement;
 
+        // TODO: this might not be required
         _kit = new SyntaxEditorKit();
         setEditorKit(_kit);
 
@@ -73,9 +77,9 @@ public class SwiftlyTextPane extends JEditorPane
         // TODO: use the SyntaxSupport anti alias font business
         
         // initialize the SyntaxDocument
-        SyntaxDocument styledDoc = getSyntaxDoc();
-        styledDoc.addUndoableEditListener(new UndoHandler());
-        setDocument(styledDoc);
+        _syntaxDoc = (SyntaxDocument) getDocument();
+        _syntaxDoc.addUndoableEditListener(new UndoHandler());
+        _syntaxDoc.addDocumentListener(new DocumentElementListener());
 
         // lock the editor to input waiting for the document to load
         setEditable(false);
@@ -83,17 +87,20 @@ public class SwiftlyTextPane extends JEditorPane
 
     public void setDocument (SwiftlyDocument document)
     {
-        try {
-            _kit.read(new StringReader(document.getText()), getSyntaxDoc(), 0);
-        } catch (IOException io) {
-            // TODO: complain?
-        } catch (BadLocationException be) {
-            // TODO: complain?
-        }
-
         _document = document;
+        loadDocumentText();
         // unlock the editor
         setEditable(true);
+    }
+
+    // from DocumentUpdateListener
+    public void documentUpdated (DocumentUpdatedEvent event) {
+        // only apply the document changes if the event is for this textpane's document
+        // and we were not the sender
+        if (event.getElementId() == _document.elementId && 
+            event.getEditorOid() != _ctx.getClient().getClientOid()) {
+            loadDocumentText();
+        }
     }
 
     public PathElement getPathElement ()
@@ -147,9 +154,15 @@ public class SwiftlyTextPane extends JEditorPane
         };
     }
 
-    protected SyntaxDocument getSyntaxDoc ()
+    protected void loadDocumentText ()
     {
-        return (SyntaxDocument) getDocument();
+        try {
+            _kit.read(new StringReader(_document.getText()), _syntaxDoc, 0);
+        } catch (IOException io) {
+            // TODO: complain?
+        } catch (BadLocationException be) {
+            // TODO: complain?
+        }
     }
 
     protected void addKeyBindings ()
@@ -244,10 +257,9 @@ public class SwiftlyTextPane extends JEditorPane
 
         protected void update ()
         {
-            if(_undo.canUndo()) {
+            if (_undo.canUndo()) {
                 setEnabled(true);
-            }
-            else {
+            } else {
                 setEnabled(false);
             }
         }
@@ -275,12 +287,36 @@ public class SwiftlyTextPane extends JEditorPane
 
         protected void update ()
         {
-            if(_undo.canRedo()) {
+            if (_undo.canRedo()) {
                 setEnabled(true);
-            }
-            else {
+            } else {
                 setEnabled(false);
             }
+        }
+    }
+
+    class DocumentElementListener implements DocumentListener {
+        // from interface DocumentListener
+        public void insertUpdate(DocumentEvent e) {
+            // TODO: broken, infinite edits between human clients, oh god
+            if (_document != null) {
+                try {
+                    _editor.updateDocument(_document.elementId,
+                        _syntaxDoc.getText(0, _syntaxDoc.getLength()));
+                } catch (BadLocationException be) {
+                    // TODO: complain?
+                }
+            }
+        }
+
+        // from interface DocumentListener
+        public void removeUpdate(DocumentEvent e) {
+            // TODO: improve!
+        }
+
+        // from interface DocumentListener
+        public void changedUpdate(DocumentEvent e) {
+            // nada
         }
     }
 
@@ -288,6 +324,7 @@ public class SwiftlyTextPane extends JEditorPane
     protected SwiftlyEditor _editor;
     protected PathElement _pathElement;
     protected SwiftlyDocument _document;
+    protected SyntaxDocument _syntaxDoc;
 
     protected SyntaxEditorKit _kit;
     protected JPopupMenu _popup;

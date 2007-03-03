@@ -14,6 +14,10 @@ import static com.threerings.msoy.Log.log;
  */
 public class DocumentUpdatedEvent extends DEvent
 {
+    public DocumentUpdatedEvent ()
+    {
+    }
+
     public DocumentUpdatedEvent (int targetOid, int editorOid, int elementId, String text)
     {
         super(targetOid);
@@ -28,6 +32,22 @@ public class DocumentUpdatedEvent extends DEvent
     public int getEditorOid ()
     {
         return _editorOid;
+    }
+
+    /**
+     * Returns the elementId of the SwiftlyDocument associated with this event.
+     */
+    public int getElementId ()
+    {
+        return _elementId;
+    }
+
+    /**
+     * Returns the text payload of this document updated event.
+     */
+    public String getText ()
+    {
+        return _text;
     }
 
     // from DEvent

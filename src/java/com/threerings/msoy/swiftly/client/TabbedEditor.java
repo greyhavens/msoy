@@ -35,12 +35,13 @@ public class TabbedEditor extends JTabbedPane
     /**
      * Adds a {@link SwiftlyTextPane} to the tabbed panel.
      * @param the {@link PathElement} to load into the text panel.
+     * @return the SwiftlyTextPane created or that already was open
      */
-    public void addEditorTab (PathElement pathElement)
+    public SwiftlyTextPane addEditorTab (PathElement pathElement)
     {
         if (_tabList.containsKey(pathElement)) {
             setSelectedComponent(_tabList.get(pathElement));
-            return;
+            return getCurrentTextPane();
         }
 
         SwiftlyTextPane textPane = new SwiftlyTextPane(_ctx, _editor, pathElement);
@@ -61,6 +62,8 @@ public class TabbedEditor extends JTabbedPane
 
         // add the scroller, which is the main component, to the tabList
         _tabList.put(pathElement, scroller);
+
+        return textPane;
     }
 
     /**
