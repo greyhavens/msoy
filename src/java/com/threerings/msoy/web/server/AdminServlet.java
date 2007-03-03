@@ -82,7 +82,8 @@ public class AdminServlet extends MsoyServiceServlet
             String displayName = email.substring(0, email.indexOf("@"));
             MemberRecord record;
             try {
-                record = auth.createAccount(email, UserUtil.encryptPassword(password), displayName);
+                record = auth.createAccount(
+                    email, UserUtil.encryptPassword(password), displayName, true);
             } catch (ServiceException se) {
                 results[ii] = se.getMessage();
                 continue;

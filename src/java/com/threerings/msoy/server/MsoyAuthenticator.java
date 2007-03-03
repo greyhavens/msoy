@@ -322,13 +322,15 @@ public class MsoyAuthenticator extends Authenticator
      * @param username the email address of the to-be-created account.
      * @param password the MD5 encrypted password for this account.
      * @param displayName the user's initial display name.
+     * @param ignoreRestrict whether to ignore the registration enabled toggle.
      *
      * @return the newly created member record.
      */
-    public MemberRecord createAccount (String username, String password, String displayName)
+    public MemberRecord createAccount (String username, String password, String displayName,
+                                       boolean ignoreRestrict)
         throws ServiceException
     {
-        if (!RuntimeConfig.server.registrationEnabled) {
+        if (!RuntimeConfig.server.registrationEnabled && !ignoreRestrict) {
             throw new ServiceException(MsoyAuthCodes.NO_REGISTRATIONS);
         }
 

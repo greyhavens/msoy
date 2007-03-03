@@ -44,7 +44,7 @@ public class WebUserServlet extends MsoyServiceServlet
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
         MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
-        return startSession(auth.createAccount(username, password, displayName), expireDays);
+        return startSession(auth.createAccount(username, password, displayName, false), expireDays);
     }
 
     // from interface WebUserService
