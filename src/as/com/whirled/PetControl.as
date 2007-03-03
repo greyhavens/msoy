@@ -1,7 +1,9 @@
 //
 // $Id$
+//
+// Copyright (c) 2007 Three Rings Design, Inc.  Please do not redistribute.
 
-package com.threerings.msoy.export {
+package com.whirled {
 
 import flash.display.DisplayObject;
 

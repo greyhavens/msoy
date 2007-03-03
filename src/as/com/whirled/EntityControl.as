@@ -1,7 +1,9 @@
 //
 // $Id$
+//
+// Copyright (c) 2007 Three Rings Design, Inc.  Please do not redistribute.
 
-package com.threerings.msoy.export {
+package com.whirled {
 
 import flash.display.DisplayObject;
 import flash.utils.Timer;
@@ -14,24 +16,24 @@ import flash.events.TimerEvent;
  * Dispatched when the instance in control sends a trigger event to
  * all instances.
  * 
- * @eventType com.threerings.msoy.export.ControlEvent.EVENT_TRIGGERED
+ * @eventType com.whirled.ControlEvent.EVENT_TRIGGERED
  */
-[Event(name="eventTriggered", type="com.threerings.msoy.export.ControlEvent")]
+[Event(name="eventTriggered", type="com.whirled.ControlEvent")]
 
 /**
  * Dispatched when the instance in control updates the memory of this
  * digital item.
  *
- * @eventType com.threerings.msoy.export.ControlEvent.MEMORY_CHANGED
+ * @eventType com.whirled.ControlEvent.MEMORY_CHANGED
  */
-[Event(name="memoryChanged", type="com.threerings.msoy.export.ControlEvent")]
+[Event(name="memoryChanged", type="com.whirled.ControlEvent")]
 
 /**
  * Dispatched when this instance gains control.
  *
- * @eventType com.threerings.msoy.export.ControlEvent.GOT_CONTROL
+ * @eventType com.whirled.ControlEvent.GOT_CONTROL
  */
-[Event(name="gotControl", type="com.threerings.msoy.export.ControlEvent")]
+[Event(name="gotControl", type="com.whirled.ControlEvent")]
 
 /**
  * Dispatched when this instance has control and a tick interval is

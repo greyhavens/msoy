@@ -1,7 +1,9 @@
 //
 // $Id$
+//
+// Copyright (c) 2007 Three Rings Design, Inc.  Please do not redistribute.
 
-package com.threerings.msoy.export {
+package com.whirled {
 
 import flash.display.DisplayObject;
 
@@ -11,16 +13,16 @@ import flash.errors.IllegalOperationError;
  * Dispatched when the user controlling this avatar speaks. You may
  * trigger a speak animation off of this event.
  * 
- * @eventType com.threerings.msoy.export.ControlEvent.AVATAR_SPOKE
+ * @eventType com.whirled.ControlEvent.AVATAR_SPOKE
  */
-[Event(name="avatarSpoke", type="com.threerings.msoy.export.ControlEvent")]
+[Event(name="avatarSpoke", type="com.whirled.ControlEvent")]
 
 /**
  * Dispatched when the user controlling this avatar triggers an action.
  * 
- * @eventType com.threerings.msoy.export.ControlEvent.ACTION_TRIGGERED
+ * @eventType com.whirled.ControlEvent.ACTION_TRIGGERED
  */
-[Event(name="actionTriggered", type="com.threerings.msoy.export.ControlEvent")]
+[Event(name="actionTriggered", type="com.whirled.ControlEvent")]
 
 /**
  * Defines the mechanism by which avatars interact with the world view.

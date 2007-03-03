@@ -1,7 +1,9 @@
 //
 // $Id$
+//
+// Copyright (c) 2007 Three Rings Design, Inc.  Please do not redistribute.
 
-package com.threerings.msoy.export {
+package com.whirled {
 
 import flash.display.DisplayObject;
 
@@ -10,9 +12,9 @@ import flash.display.DisplayObject;
  * getOrientation() and isMoving() should be re-queried to paint
  * the correct visual for the actor in its current state.
  *
- * @eventType com.threerings.msoy.export.ControlEvent.APPEARANCE_CHANGED
+ * @eventType com.whirled.ControlEvent.APPEARANCE_CHANGED
  */
-[Event(name="appearanceChanged", type="com.threerings.msoy.export.ControlEvent")]
+[Event(name="appearanceChanged", type="com.whirled.ControlEvent")]
 
 
 /**
