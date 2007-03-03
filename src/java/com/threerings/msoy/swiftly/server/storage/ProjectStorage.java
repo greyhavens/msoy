@@ -17,5 +17,5 @@ public interface ProjectStorage
     public List<PathElement> getProjectTree () throws ProjectStorageException;
 
     /** Loads and returns a SwiftlyDocument from cold storage. */
-    public SwiftlyDocument getDocument (String path) throws ProjectStorageException;
+    public SwiftlyDocument getDocument (PathElement path) throws ProjectStorageException;
 }

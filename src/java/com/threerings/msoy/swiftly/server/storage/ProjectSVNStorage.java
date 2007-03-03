@@ -13,7 +13,9 @@ import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -245,11 +247,38 @@ public class ProjectSVNStorage
     }
 
     // from interface ProjectStorage
-    public SwiftlyDocument getDocument (String path)
+    public SwiftlyDocument getDocument (PathElement path)
         throws ProjectStorageException
     {
-        // TODO Auto-generated method stub
-        return null;
+        SVNRepository svnRepo;
+        OutputStream fileOutput;
+        File tempFile;
+        SwiftlyDocument swiftlyDoc;
+
+        try {
+            tempFile = File.createTempFile("swiftly-file", ".svnstorage");
+            tempFile.deleteOnExit();        
+            fileOutput = new FileOutputStream(tempFile);    
+        } catch (IOException ioe) {
+            throw new ProjectStorageException.InternalError("Failed to create temporary data file" +
+                ioe, ioe);
+        }
+
+        try {
+            svnRepo = getSVNRepository();
+            svnRepo.getFile(path.getAbsolutePath(), -1, null, fileOutput);
+        } catch (SVNException svne) {
+            throw new ProjectStorageException.InternalError("A subversion failure occured while" +
+                " fetching the requested document '" + path.getAbsolutePath() + "' : " +
+                svne, svne);
+        }
+
+        try {
+            return new SwiftlyDocument(new FileInputStream(tempFile), path);
+        } catch (IOException ioe) {
+            throw new ProjectStorageException.InternalError("Failure instantiating SwiftlyDocument: " +
+                ioe, ioe);            
+        }
     }
     
     /**

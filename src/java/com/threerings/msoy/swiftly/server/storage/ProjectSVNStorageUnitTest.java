@@ -4,6 +4,8 @@
 package com.threerings.msoy.swiftly.server.storage;
 
 import com.threerings.msoy.swiftly.data.PathElement;
+import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 
@@ -61,7 +63,18 @@ public class ProjectSVNStorageUnitTest extends TestCase
     }
 
 
-    public void testGetProjectSVNURL ()
+    public void testGetDocument ()
+        throws Exception
+    {
+        ProjectSVNStorage storage = new ProjectSVNStorage(_projectRecord, _storageRecord);
+        PathElement path = PathElement.createFile("UnitTest.as", null, null);
+        SwiftlyDocument doc = storage.getDocument(path);
+
+        // Ensure the document data was defrosted correctly
+        assertTrue(doc.getText().startsWith("package {"));
+    }
+
+    public void testGetVNURL ()
         throws Exception
     {
         ProjectSVNStorage storage = new ProjectSVNStorage(_projectRecord, _storageRecord);
