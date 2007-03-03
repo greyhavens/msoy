@@ -20,6 +20,9 @@ public class Ball extends Sprite
     // The radius of a ball
     public static const RADIUS :int = 13;
 
+    // The hardest anyone is allowed to hit a ball
+    public static const MAX_HIT_STRENGTH :int = 300;
+
     // The particle representing this ball
     public var particle :BallParticle;
 
@@ -81,6 +84,14 @@ public class Ball extends Sprite
     }
 
     /**
+     * Figure out how strong a hit is.
+     */
+    public static function computeStrength (dx :Number, dy :Number) :Number
+    {
+        return Math.min(MAX_HIT_STRENGTH, Math.sqrt(dx*dx + dy*dy) * HIT_STRENGTH_MULTIPLIER);
+    }
+
+    /**
      * Hit the ball, with the cursor pulled back to the specified point.
      */
     public function hitBall (p :Point) :void
@@ -90,13 +101,9 @@ public class Ball extends Sprite
             return;
         }
 
-        removeChild(_mallet);
-        _mallet = null;
-
         var angle :Number = Math.PI + Math.atan(p.y / p.x);
-        var strength :Number = Math.sqrt(p.x*p.x + p.y*p.y) * HIT_STRENGTH_MULTIPLIER;
 
-        strength = Math.min(strength, MAX_HIT_STRENGTH);
+        var strength :Number = computeStrength(p.x, p.y);
 
         if (p.x < 0) {
             angle += Math.PI;
@@ -107,6 +114,13 @@ public class Ball extends Sprite
         particle.wc.gameCtrl.set("lastHit", 
             [playerIdx, Math.cos(angle) * strength, Math.sin(angle) * strength]);
     }
+
+    public function destroyMallet () :void
+    {
+        removeChild(_mallet);
+        _mallet = null;
+    }
+
 
     /**
      * Mouse click handler, adds/removes a flamingo.
@@ -148,11 +162,7 @@ public class Ball extends Sprite
     // Multiplier applied to the length of the vector they've drawn for hit strength.
     protected static const HIT_STRENGTH_MULTIPLIER :int = 2;
 
-    // The hardest anyone is allowed to hit a ball
-    protected static const MAX_HIT_STRENGTH :int = 300;
-
     [Embed(source="rsrc/ball.swf", mimeType="application/octet-stream")]
     protected static const BALL_ART_CLASS :Class;
 }
-
 }

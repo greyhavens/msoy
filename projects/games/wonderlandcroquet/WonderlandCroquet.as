@@ -161,7 +161,8 @@ public class WonderlandCroquet extends Sprite
         // TODO: Once hit testing is properly sorted out so we really know when the ball is
         // hidden, it might look nice to show the marker at any time the ball is obstructed,
         // so we get the little ring shooting under the cards. A quick test of it looked nice.
-        if (doneMoving) {
+        //if (doneMoving) {
+        if (false) {
             // Show markers for obstructed balls
             for each (var ball :BallParticle in _balls) {
                 if (ball.ball.hitTestObject(map.foreground)) {
