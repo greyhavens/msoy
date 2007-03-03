@@ -6,6 +6,7 @@ package client.util;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.google.gwt.user.client.ui.HasVerticalAlignment.VerticalAlignmentConstant;
 
 /**
@@ -31,7 +32,7 @@ public class BorderedWidget extends FlexTable
     public BorderedWidget (BorderState left, BorderState right,
                            BorderState up, BorderState down)
     {
-        setStyleName("borderedWidget");
+        addStyleName("borderedWidget");
 
         DOM.setAttribute(getElement(), "cellSpacing", "0");
         DOM.setAttribute(getElement(), "cellPadding", "0");
@@ -61,11 +62,13 @@ public class BorderedWidget extends FlexTable
         _right = state;
         layout();
     }
+    
     public void setUpperBorderState (BorderState state)
     {
         _up = state;
         layout();
     }
+    
     public void setLowerBorderState (BorderState state)
     {
         _down = state;
@@ -74,96 +77,111 @@ public class BorderedWidget extends FlexTable
 
     protected void layout ()
     {
-        FlexCellFormatter formatter = getFlexCellFormatter();
+        CellFormatter formatter = getCellFormatter();
 
-        byte nw = 0, w = 0, sw = 0;
-        byte n = 0, s = 0;
-        byte ne = 0, e = 0, se = 0;
-
-        /* we construct one of eleven tiles:
-         * 
-         * Four corners: P10, P9, P6, P5
-         *   ****   ****   *--*   *--*
-         *   *---   ---*   *---   ---*
-         *   *---   ---*   *---   ---*
-         *   *--*   *--*   ****   ****
-         *   
-         * Straight lines P3, P12
-         *   ****   *--*
-         *   ----   *--*
-         *   ----   *--*
-         *   ****   *--*
-         *   
-         * Three-ways P13, P14, P11, P7:
-         * 
-         *   *--*   *--*   *--*   ****
-         *   ---*   *---   ----   ----
-         *   ---*   *---   ----   ----
-         *   *--*   *--*   ****   *--*
-         *   
-         * And P15.
-         *   *--*
-         *   ----
-         *   ----
-         *   *--*
-         *   
-         * i.e. every permutation except the trivial P0, P1, P2, P4 and P8.
-         */
-
+        int x = 0, y;
         if (_left == BORDER_CLOSED) {
-            nw |= DOWN | RIGHT; w |= UP | DOWN; sw |= UP | RIGHT;
-        } else if (_left == BORDER_TILED) {
-            nw |= LEFT | RIGHT | DOWN; w |= UP | DOWN; sw |= LEFT | RIGHT | UP;
-        } else {
-            nw |= LEFT; sw |= LEFT;
+            y = 0;
+            if (_up == BORDER_CLOSED) {
+                formatter.addStyleName(y ++, x, "northWestOut");
+            }
+            if (_up != BORDER_OPEN) {
+                formatter.addStyleName(y ++, x, "westOut");
+            }
+            formatter.addStyleName(y ++, x, "westOut");
+            if (_down != BORDER_OPEN) {
+                formatter.addStyleName(y ++, x, "westOut");
+            }
+            if (_down == BORDER_CLOSED) {
+                formatter.addStyleName(y ++, x, "southWestOut");
+            }
+            x += 1;
         }
+        if (_left != BORDER_OPEN) {
+            y = 0;
+            if (_up == BORDER_CLOSED) {
+                formatter.addStyleName(y++, x, "northOut");
+            }
+            if (_up != BORDER_OPEN) {
+                formatter.addStyleName(y++, x, "northWestIn");
+            }
+            formatter.addStyleName(y++, x, "westIn");
+            if (_down != BORDER_OPEN) {
+                formatter.addStyleName(y++, x, "southWestIn");
+            }
+            if (_down == BORDER_CLOSED) {
+                formatter.addStyleName(y++, x, "southOut");
+            }
+            x += 1;
+        }
+        y = 0;
         if (_up == BORDER_CLOSED) {
-            nw |= RIGHT | DOWN; n |= LEFT | RIGHT; ne |= LEFT | DOWN;
-        } else if (_up == BORDER_TILED) {
-            nw |= UP | DOWN | RIGHT; n |= LEFT | RIGHT; ne |= UP | DOWN | LEFT;
-        } else {
-            nw |= UP | DOWN; ne |= UP | DOWN;
+            formatter.addStyleName(y++, x, "northOut");
         }
-        if (_right == BORDER_CLOSED) {
-            ne |= DOWN | LEFT; e |= UP | DOWN; se |= UP | LEFT;
-        } else {
-            ne |= LEFT | RIGHT; se |= LEFT | RIGHT;
+        if (_up != BORDER_OPEN) {
+            formatter.addStyleName(y++, x, "northIn");
+        }
+        _tileX = x;
+        _tileY = y;
+        y += 1;
+        if (_down != BORDER_OPEN) {
+            formatter.addStyleName(y++, x, "southIn");
         }
         if (_down == BORDER_CLOSED) {
-            sw |= RIGHT | UP; s |= LEFT | RIGHT; se |= LEFT | UP; 
-        } else {
-            sw |= UP | DOWN; se |= UP | DOWN;
+            formatter.addStyleName(y++, x, "southOut");
         }
-
-        formatter.setStyleName(0, 0, toCSS(nw));
-        formatter.setStyleName(1, 0, toCSS(w));
-        formatter.setStyleName(2, 0, toCSS(sw));
-        formatter.setStyleName(0, 1, toCSS(n));
-        formatter.setStyleName(2, 1, toCSS(s));
-        formatter.setStyleName(0, 2, toCSS(ne));
-        formatter.setStyleName(1, 2, toCSS(e));
-        formatter.setStyleName(2, 2, toCSS(se));
+        x += 1;
+        if (_right != BORDER_OPEN) {
+            y = 0;
+            if (_up == BORDER_CLOSED) {
+                formatter.addStyleName(y++, x, "northOut");
+            }
+            if (_up != BORDER_OPEN) {
+                formatter.addStyleName(y++, x, "northEastIn");
+            }
+            formatter.addStyleName(y++, x, "eastIn");
+            if (_down != BORDER_OPEN) {
+                formatter.addStyleName(y++, x, "southEastIn");
+            }
+            if (_down == BORDER_CLOSED) {
+                formatter.addStyleName(y++, x, "southOut");
+            }
+            x += 1;
+        }
+        if (_right == BORDER_CLOSED) {
+            y = 0;
+            if (_up == BORDER_CLOSED) {
+                formatter.addStyleName(y ++, x, "northEastOut");
+            }
+            if (_up != BORDER_OPEN) {
+                formatter.addStyleName(y ++, x, "eastOut");
+            }
+            formatter.addStyleName(y ++, x, "eastOut");
+            if (_down != BORDER_OPEN) {
+                formatter.addStyleName(y ++, x, "eastOut");
+            }
+            if (_down == BORDER_CLOSED) {
+                formatter.addStyleName(y ++, x, "southEastOut");
+            }
+            x += 1;
+        }
     }
 
     public void setWidget (Widget contents)
     {
-        setWidget(1, 1, contents);
+        setWidget(_tileY, _tileX, contents);
     }
 
     public void setVerticalAlignment (VerticalAlignmentConstant alignment)
     {
-        getCellFormatter().setVerticalAlignment(1, 1, alignment);
+        getCellFormatter().setVerticalAlignment(_tileY, _tileX, alignment);
         
     }
 
-    protected String toCSS (byte mask)
+    public void setHorizontalAlignment (HorizontalAlignmentConstant alignment)
     {
-        String out = "Border";
-        if ((mask & LEFT) != 0) out += "L";
-        if ((mask & RIGHT) != 0) out += "R";
-        if ((mask & UP) != 0) out += "U";
-        if ((mask & DOWN) != 0) out += "D";
-        return out;
+        getCellFormatter().setHorizontalAlignment(_tileY, _tileX, alignment);
+        
     }
 
     protected static class BorderState
@@ -171,7 +189,9 @@ public class BorderedWidget extends FlexTable
     }
     
     protected BorderState _left, _right, _up, _down;
-
+    
+    protected int _tileX, _tileY;
+    
     protected static byte LEFT = 1;
     protected static byte RIGHT = 2;
     protected static byte UP = 4;

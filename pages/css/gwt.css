@@ -243,34 +243,98 @@ body {
    background: #FFFFFF;
 }
 
-.borderedWidget .BorderRD {
-   background-image: url(/images/ui/popup/top_left.png);
-   width: 4px;
-   height: 4px;
+/** First the four verticals */
+.borderedWidget .westOut {
+   background-image: url(/images/ui/quads/e.png);
+   width: 2px;
 }
-.borderedWidget .BorderLR {
-   background-image: url(/images/ui/popup/horiz.png);
-   height: 4px;
+
+.borderedWidget .westIn {
+   background-image: url(/images/ui/quads/w.png);
+   width: 2px;
 }
-.borderedWidget .BorderLD {
-   background-image: url(/images/ui/popup/top_right.png);
-   width: 4px;
-   height: 4px;
+
+.borderedWidget .eastOut {
+   background-image: url(/images/ui/quads/w.png);
+   width: 2px;
 }
-.borderedWidget .BorderUD {
-   background-image: url(/images/ui/popup/vert.png);
-   width: 4px;
+
+.borderedWidget .eastIn {
+   background-image: url(/images/ui/quads/e.png);
+   width: 2px;
 }
-.borderedWidget .BorderRU {
-   background-image: url(/images/ui/popup/bottom_left.png);
-   width: 4px;
-   height: 4px;
+
+/** Then the four horizontals */
+.borderedWidget .northOut {
+   background-image: url(/images/ui/quads/s.png);
+   height: 2px;
 }
-.borderedWidget .BorderLU {
-   background-image: url(/images/ui/popup/bottom_right.png);
-   width: 4px;
-   height: 4px;
+
+.borderedWidget .northIn {
+   background-image: url(/images/ui/quads/n.png);
+   height: 2px;
 }
+
+.borderedWidget .southOut {
+   background-image: url(/images/ui/quads/n.png);
+   height: 2px;
+}
+
+.borderedWidget .southIn {
+   background-image: url(/images/ui/quads/s.png);
+   height: 2px;
+}
+
+/** Then eight corners */
+
+.borderedWidget .northWestIn {
+   background-image: url(/images/ui/quads/nw_in.png);
+   width: 2px;
+   height: 2px;
+}
+
+.borderedWidget .northWestOut {
+   background-image: url(/images/ui/quads/nw_out.png);
+   width: 2px;
+   height: 2px;
+}
+
+.borderedWidget .southWestIn {
+   background-image: url(/images/ui/quads/sw_in.png);
+   width: 2px;
+   height: 2px;
+}
+
+.borderedWidget .southWestOut {
+   background-image: url(/images/ui/quads/sw_out.png);
+   width: 2px;
+   height: 2px;
+}
+
+.borderedWidget .northEastIn {
+   background-image: url(/images/ui/quads/ne_in.png);
+   width: 2px;
+   height: 2px;
+}
+
+.borderedWidget .northEastOut {
+   background-image: url(/images/ui/quads/ne_out.png);
+   width: 2px;
+   height: 2px;
+}
+
+.borderedWidget .southEastIn {
+   background-image: url(/images/ui/quads/se_in.png);
+   width: 2px;
+   height: 2px;
+}
+
+.borderedWidget .southEastOut {
+   background-image: url(/images/ui/quads/se_out.png);
+   width: 2px;
+   height: 2px;
+}
+
 
 .separatorLine {
   background-image: url(/images/ui/separator.png);
