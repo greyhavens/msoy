@@ -100,16 +100,18 @@ public class StarFight extends Sprite
         if ((boardObj == null) && (_myIndex == 0)) {
             // We don't already have a board and we're the host?  Create it and our
             //  initial ship array too.
+
             var size :int =
                 int(Math.sqrt(Math.max(1, _names.length-1)) * 50);
 
             boardObj = new Board(size, size, true);
+            _gameCtrl.setImmediate("board", boardObj.writeTo(new ByteArray()));
+
             _gameCtrl.setImmediate("ship", new Array(_names.length));
 
             var maxPowerups :int = Math.max(1,
                 boardObj.width*boardObj.height/MIN_TILES_PER_POWERUP);
             _gameCtrl.setImmediate("powerup", new Array(maxPowerups));
-            _gameCtrl.setImmediate("board", boardObj.writeTo(new ByteArray()));
         }
     }
 
