@@ -291,7 +291,7 @@ public class CatalogServlet extends MsoyServiceServlet
             int creatorPortion = (3 * flowRefund) / 10;
             flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
                 item.creatorId, creatorPortion, "CREATOR_PAYOUT " + ident.type +
-                " " + ident.itemId + " " + mrec.memberId, true);
+                " " + ident.itemId + " " + mrec.memberId, false);
             MemberManager.queueFlowUpdated(item.creatorId, flow);
 
             logUserAction(mrec, UserAction.RETURNED_ITEM, ident.type + " " +
