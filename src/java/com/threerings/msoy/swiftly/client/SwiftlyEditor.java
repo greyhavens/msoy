@@ -84,7 +84,10 @@ public class SwiftlyEditor extends PlacePanel
 
     public void addEditorTab (PathElement pathElement)
     {
-        _roomObj.addListener(_editorTabs.addEditorTab(pathElement));
+        SwiftlyTextPane pane = _editorTabs.addEditorTab(pathElement); 
+        if (pane != null) {
+            _roomObj.addListener(pane);
+        }
         _roomObj.service.loadDocument(_ctx.getClient(), pathElement);
     }
 
