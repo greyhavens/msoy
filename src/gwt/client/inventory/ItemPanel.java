@@ -6,15 +6,8 @@ package client.inventory;
 import java.util.ArrayList;
 import java.util.List;
 
-import client.editem.AudioEditor;
-import client.editem.AvatarEditor;
-import client.editem.DocumentEditor;
 import client.editem.EditorHost;
-import client.editem.FurnitureEditor;
-import client.editem.GameEditor;
 import client.editem.ItemEditor;
-import client.editem.PetEditor;
-import client.editem.PhotoEditor;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;

@@ -26,6 +26,7 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Pet;
 import com.threerings.msoy.item.web.Photo;
+import com.threerings.msoy.item.web.Video;
 
 /**
  * The base class for all digital items in the MSOY system.
@@ -166,6 +167,8 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
             return new PetRecord((Pet) item);
         } else if (item instanceof Audio) {
             return new AudioRecord((Audio) item);
+        } else if (item instanceof Video) {
+            return new VideoRecord((Video) item);
         }
         throw new RuntimeException("Unknown item type: " + item);
     }

@@ -79,7 +79,7 @@ public class ItemTypePanel extends FlexTable
         addTab(Item.GAME);
         addTab(Item.PHOTO);
         addTab(Item.AUDIO);
-        addTab(Item.DOCUMENT);
+        // addTab(Item.VIDEO);
         getFlexCellFormatter().setStyleName(0, _column++, _rightBit);
         setVisible(true);
     }

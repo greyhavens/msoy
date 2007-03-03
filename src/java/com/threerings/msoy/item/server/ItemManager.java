@@ -53,6 +53,7 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PetRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.server.persist.RatingRecord;
+import com.threerings.msoy.item.server.persist.VideoRepository;
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -95,6 +96,8 @@ public class ItemManager
         _repos.put(Item.PET, repo);
         repo = new PhotoRepository(conProv);
         _repos.put(Item.PHOTO, repo);
+        repo = new VideoRepository(conProv);
+        _repos.put(Item.VIDEO, repo);
 
         // register our invocation service
         MsoyServer.invmgr.registerDispatcher(new ItemDispatcher(this), MsoyCodes.WORLD_GROUP);

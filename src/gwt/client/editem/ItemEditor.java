@@ -51,7 +51,7 @@ public abstract class ItemEditor extends BorderedDialog
          */
         public String updateMedia (MediaDesc desc, int width, int height);
     }
-    
+
     /**
      * Creates an item editor interface for items of the specified type.  Returns null if the type
      * is unknown.
@@ -73,6 +73,8 @@ public abstract class ItemEditor extends BorderedDialog
             editor = new PetEditor();
         } else if (type == Item.AUDIO) {
             editor = new AudioEditor();
+        } else if (type == Item.VIDEO) {
+            editor = new VideoEditor();
         } else {
             return null; // woe be the caller
         }
@@ -176,7 +178,7 @@ public abstract class ItemEditor extends BorderedDialog
     {
         return _item;
     }
-    
+
     /**
      * Creates a blank item for use when creating a new item using this editor.
      */
@@ -463,7 +465,7 @@ public abstract class ItemEditor extends BorderedDialog
         $wnd.setHash = function (id, hash, type, constraint, width, height, thash, ttype, tconstraint) {
            @client.editem.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;IIIILjava/lang/String;II)(id, hash, type, constraint, width, height, thash, ttype, tconstraint);
         };
-    }-*/; 
+    }-*/;
 
     protected EditorHost _parent;
 

@@ -128,6 +128,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String msgItemUpdated();
 
   /**
+   * Translated "Video data must be an FLV, MPEG, WMV or Quicktime file.".
+   * 
+   * @return translated "Video data must be an FLV, MPEG, WMV or Quicktime file."
+   * @gwt.key errVideoNotVideo
+   */
+  String errVideoNotVideo();
+
+  /**
    * Translated "Game Media".
    * 
    * @return translated "Game Media"
@@ -150,6 +158,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key errFurniNotFlash
    */
   String errFurniNotFlash();
+
+  /**
+   * Translated "Upload your video.".
+   * 
+   * @return translated "Upload your video."
+   * @gwt.key videoMainTitle
+   */
+  String videoMainTitle();
 
   /**
    * Translated "Maximum players".
@@ -198,6 +214,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key audioMainTitle
    */
   String audioMainTitle();
+
+  /**
+   * Translated "Video Media".
+   * 
+   * @return translated "Video Media"
+   * @gwt.key videoMainTab
+   */
+  String videoMainTab();
 
   /**
    * Translated "Thumbnail Media".

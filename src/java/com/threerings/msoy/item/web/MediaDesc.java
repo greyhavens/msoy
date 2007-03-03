@@ -403,6 +403,23 @@ public class MediaDesc implements Streamable, IsSerializable
         }
     }
 
+    /**
+     * Is this media video?
+     */
+    public boolean isVideo ()
+    {
+        switch (mimeType) {
+        case VIDEO_FLASH:
+        case VIDEO_MPEG:
+        case VIDEO_QUICKTIME:
+        case VIDEO_MSVIDEO:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
     // @Override // from Object
     public boolean equals (Object other)
     {
