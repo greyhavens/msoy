@@ -333,7 +333,7 @@
 
   <target name="checkexportlib">
     <uptodate property="exportlib_is_up_to_date" targetfile="${deploy.dir}/msoy-export.swc">
-      <srcfiles dir="${asrc.dir}/com/threerings/msoy/export" includes="**/*.as"/>
+      <srcfiles dir="${asrc.dir}/com/whirled" includes="**/*.as"/>
     </uptodate>
   </target>
 
