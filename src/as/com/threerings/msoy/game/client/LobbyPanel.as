@@ -43,8 +43,8 @@ import com.threerings.parlor.data.Table;
 import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.chat.client.ChatContainer;
 
@@ -52,6 +52,7 @@ import com.threerings.msoy.ui.MsoyList;
 import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.game.data.LobbyObject;
+import com.threerings.msoy.item.web.Game;
 
 /**
  * A panel that displays pending table games.
@@ -77,12 +78,20 @@ public class LobbyPanel extends VBox
         controller = ctrl;
     }
 
+    /**
+     * Returns the configuration for the game we're currently matchmaking.
+     */
+    public function getGame () :Game
+    {
+        return _lobbyObj.game;
+    }
+
     // from PlaceView
     public function willEnterPlace (plobj :PlaceObject) :void
     {
         // add all preexisting tables
-        var lobbyObj :LobbyObject = (plobj as LobbyObject);
-        for each (var table :Table in lobbyObj.tables.toArray()) {
+        _lobbyObj = (plobj as LobbyObject);
+        for each (var table :Table in _lobbyObj.tables.toArray()) {
             tableAdded(table);
         }
     }
@@ -105,7 +114,7 @@ public class LobbyPanel extends VBox
     {
         var idx :int = ArrayUtil.indexOf(_formingTables.source, table);
         if (idx >= 0) {
-            if (table.gameOid != -1 && controller.game.gameType == GameConfig.SEATED_GAME) {
+            if (table.gameOid != -1 && getGame().gameType == GameConfig.SEATED_GAME) {
                 _formingTables.removeItemAt(idx);
                 _runningTables.addItem(table);
             } else {
@@ -185,7 +194,7 @@ public class LobbyPanel extends VBox
         logo.styleName = "lobbyLogoBox";
         logo.width = 160;
         logo.height = 120;
-        logo.addChild(new MediaWrapper(new MediaContainer(controller.game.getThumbnailPath())));
+        logo.addChild(new MediaWrapper(new MediaContainer(getGame().getThumbnailPath())));
         logo.setStyle("backgroundImage", "/media/static/game/logo_background.png");
         descriptionBox.addChild(logo);
         descriptionBox.addChild(new MediaWrapper(new MediaContainer(
@@ -200,7 +209,7 @@ public class LobbyPanel extends VBox
         info.styleName = "lobbyInfo";
         info.percentWidth = 100;
         info.percentHeight = 100;
-        info.text = controller.game.description;
+        info.text = getGame().description;
         infoBox.addChild(info);
         createBtn = new CommandButton(LobbyController.CREATE_TABLE);
         createBtn.height = 22;
@@ -237,7 +246,7 @@ public class LobbyPanel extends VBox
         tabsBox.setStyle("backgroundSize", "100%");
         tabsBox.setStyle("verticalAlign", "middle");
         var name :Label = new Label();
-        name.text = controller.game.name;
+        name.text = getGame().name;
         name.styleName = "lobbyGameName";
         tabsBox.addChild(name);
         // must do this here so that tabs get dropped into the correct location, if they're needed
@@ -251,18 +260,18 @@ public class LobbyPanel extends VBox
         about.styleName = "lobbyLink";
         var thisLobbyPanel :LobbyPanel = this;
         about.addEventListener(MouseEvent.CLICK, function () :void {
-            CommandEvent.dispatch(thisLobbyPanel, MsoyController.VIEW_ITEM, 
-                controller.game.getIdent());
+            CommandEvent.dispatch(
+                thisLobbyPanel, MsoyController.VIEW_ITEM, getGame().getIdent());
         });
         tabsBox.addChild(about);
         // if ownerId = 0, we were pushed to the catalog's copy, so this is buyable
-        if (controller.game.ownerId == 0) {
+        if (getGame().ownerId == 0) {
             var buy :Label = new Label();
             buy.text = Msgs.GAME.get("b.buy");
             buy.styleName = "lobbyLink";
             buy.addEventListener(MouseEvent.CLICK, function () :void {
                 CommandEvent.dispatch(thisLobbyPanel, MsoyController.VIEW_ITEM, 
-                    controller.game.getIdent());
+                    getGame().getIdent());
             });
             tabsBox.addChild(buy);
         }
@@ -286,7 +295,7 @@ public class LobbyPanel extends VBox
         list.dataProvider = _formingTables;
 
         // only display tabs for seated games
-        if (controller.game.gameType == GameConfig.SEATED_GAME) {
+        if (getGame().gameType == GameConfig.SEATED_GAME) {
             var tabBar :TabBar = new TabBar();
             tabBar.percentHeight = 100;
             tabBar.styleName = "lobbyTabs";
@@ -325,6 +334,9 @@ public class LobbyPanel extends VBox
 
     /** Buy one get one free. */
     protected var _ctx :WorldContext;
+
+    /** Our lobby object. */
+    protected var _lobbyObj :LobbyObject;
 
     /** Are we seated? */
     protected var _isSeated :Boolean;

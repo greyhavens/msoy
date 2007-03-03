@@ -40,13 +40,9 @@ public class LobbyController extends PlaceController
     /** A command to leave a table. */
     public static const LEAVE :String = "Leave";
 
-    /** The game item that is being played in this lobby. */
-    public var game :Game;
-
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
     {
         _mctx = (ctx as WorldContext);
-        game = (config as LobbyConfig).game;
         super.init(ctx, config);
     }
 
@@ -68,7 +64,7 @@ public class LobbyController extends PlaceController
     public function handleCreateTable () :void
     {
         _panel.createBtn.enabled = false;
-        new TableCreationPanel(_mctx, game, _panel);
+        new TableCreationPanel(_mctx, (_plobj as LobbyObject).game, _panel);
     }
 
     /**

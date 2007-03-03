@@ -45,8 +45,7 @@ public class TableRenderer extends VBox
     {
         super.createChildren();
 
-        _background = new MediaContainer(
-            panel.controller.game.getTableMedia().getMediaPath());
+        _background = new MediaContainer(panel.getGame().getTableMedia().getMediaPath());
         _background.mouseEnabled = false;
         _background.mouseChildren = false;
         // TODO: goddammit, this should be behind!
@@ -148,7 +147,7 @@ public class TableRenderer extends VBox
             var key :String = null;
             switch (table.config.getGameType()) {
             default:
-                if (!panel.controller.game.unwatchable) {
+                if (!panel.getGame().unwatchable) {
                     key = "b.watch";
                 }
                 break;

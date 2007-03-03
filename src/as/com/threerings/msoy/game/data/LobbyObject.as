@@ -24,8 +24,14 @@ public class LobbyObject extends PlaceObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>tables</code> field. */
+    public static const GAME :String = "game";
+
+    /** The field name of the <code>tables</code> field. */
     public static const TABLES :String = "tables";
     // AUTO-GENERATED: FIELDS END
+
+    /** The game we're matchmaking for. */
+    public var game :Game;
 
     /** The tables. */
     public var tables :DSet = new DSet();
@@ -58,6 +64,7 @@ public class LobbyObject extends PlaceObject
     {
         super.readObject(ins);
 
+        game = (ins.readObject() as Game);
         tables = (ins.readObject() as DSet);
     }
 }

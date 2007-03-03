@@ -44,7 +44,6 @@ public class LobbyManager extends PlaceManager
         MsoyServer.lobbyReg.lobbyStartup(getGameId(), plobj.getOid());
         _tableMgr = new TableManager(this);
         _tableMgr.setTableClass(MsoyTable.class);
-
         plobj.addListener(_tableWatcher);
     }
 
@@ -62,7 +61,7 @@ public class LobbyManager extends PlaceManager
      */
     public int getGameId ()
     {
-        return _game.itemId;
+        return _gameId;
     }
     
     @Override
@@ -72,19 +71,22 @@ public class LobbyManager extends PlaceManager
     }
 
     @Override
-    protected void didInit ()
+    protected void didStartup ()
     {
-        super.didInit();
+        super.didStartup();
 
-        // remember our game
-        _game = ((LobbyConfig) _config).game;
+        // publish our game in the lobby object and remember its id
+        Game game = ((LobbyConfig)_config).game;
+        ((LobbyObject)_plobj).setGame(game);
+        _gameId = game.itemId;
 
         // if our game is mutable, listen for updates to the GameRecord
-        if (_game.parentId == 0) {
+        if (game.parentId == 0) {
             _uplist = new ItemManager.ItemUpdateListener() {
                 public void itemUpdated (ItemRecord item) {
                     if (item.itemId == getGameId()) {
-                        gameUpdatedd((Game)item.toItem());
+                        // update the game in the lobby object, everything else is groovy
+                        ((LobbyObject)_plobj).setGame((Game)item.toItem());
                     }
                 }
             };
@@ -106,23 +108,13 @@ public class LobbyManager extends PlaceManager
     @Override
     protected void checkShutdownInterval ()
     {
-        if (_plobj.occupants.size() == 0 &&
-                ((LobbyObject) _plobj).tables.size() == 0) {
+        if (_plobj.occupants.size() == 0 && ((LobbyObject) _plobj).tables.size() == 0) {
             super.checkShutdownInterval();
         }
     }
 
-    /**
-     * Called if our game record is updated while this lobby is resolved.
-     */
-    protected void gameUpdatedd (Game game)
-    {
-        log.info("Active game updated " + game + ".");
-        // TODO: smarts!
-    }
-
     /** The game for which we're lobbying. */
-    protected Game _game;
+    protected int _gameId;
 
     /** Manages the actual tables. */
     protected TableManager _tableMgr;
@@ -137,10 +129,8 @@ public class LobbyManager extends PlaceManager
                 checkShutdownInterval();
             }
         }
-
-        // new tables can't be created without someone entering,
-        // so if we do end up scheduling a shutdown interval after
-        // the last table disappears then it will be cancelled when
-        // someone enters.
+        // new tables can't be created without someone entering, so if we do end up scheduling a
+        // shutdown interval after the last table disappears then it will be cancelled when someone
+        // enters.
     };
 }

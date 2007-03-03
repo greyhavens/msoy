@@ -10,6 +10,8 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableLobbyObject;
 
+import com.threerings.msoy.item.web.Game;
+
 /**
  * Represents a lobby for a particular game.
  */
@@ -17,9 +19,16 @@ public class LobbyObject extends PlaceObject
     implements TableLobbyObject
 {
     // AUTO-GENERATED: FIELDS START
+    /** The field name of the <code>game</code> field. */
+    public static final String GAME = "game";
+
     /** The field name of the <code>tables</code> field. */
     public static final String TABLES = "tables";
     // AUTO-GENERATED: FIELDS END
+
+    /** The game that we're matchmaking for. If the game is mutable, this may be updated while the
+     * lobby is resolved. */
+    public Game game;
 
     /** The tables. */
     public DSet<Table> tables = new DSet<Table>();
@@ -31,6 +40,22 @@ public class LobbyObject extends PlaceObject
     }
 
     // AUTO-GENERATED: METHODS START
+    /**
+     * Requests that the <code>game</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setGame (Game value)
+    {
+        Game ovalue = this.game;
+        requestAttributeChange(
+            GAME, value, ovalue);
+        this.game = value;
+    }
+
     /**
      * Requests that the specified entry be added to the
      * <code>tables</code> set. The set will not change until the event is

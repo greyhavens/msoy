@@ -37,9 +37,10 @@ import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.world.data.PetMarshaller;
 import com.threerings.msoy.world.data.RoomConfig;
 
+import com.threerings.msoy.game.client.LobbyController;
+import com.threerings.msoy.game.data.LobbyConfig;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
-import com.threerings.msoy.game.client.LobbyController;
 
 import com.threerings.msoy.game.chiyogami.data.ChiyogamiConfig;
 
@@ -82,6 +83,7 @@ public class WorldClient extends BaseClient
         c = LobbyController;
         c = ToyBoxMarshaller;
         c = PetMarshaller;
+        c = LobbyConfig;
         c = ChiyogamiConfig;
 
         // these cause bundles to be compiled in.
