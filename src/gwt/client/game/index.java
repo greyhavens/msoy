@@ -66,6 +66,7 @@ public class index extends MsoyEntryPoint
     // @Override from MsoyEntryPoint
     protected void onPageLoad ()
     {
+        needPopupHack = true;
         History.addHistoryListener(this);
     }
 
