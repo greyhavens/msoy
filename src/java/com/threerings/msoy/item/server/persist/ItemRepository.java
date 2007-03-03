@@ -47,6 +47,8 @@ import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Manages a repository of digital items of a particular type.
  */
@@ -598,6 +600,7 @@ public abstract class ItemRepository<
         if (!always && record.repriceCounter < Math.min(Math.sqrt(targetPopulation), 100)) {
             return;
         }
+
         int currentPopulation = Math.max(0, record.purchases - record.returns);
         double ratio = (double) currentPopulation / targetPopulation;
         double basePrice = 100 + C * ((ratio < 1.0) ? Math.sqrt(ratio) : Math.pow(ratio, 4));
@@ -609,6 +612,9 @@ public abstract class ItemRepository<
         record.goldCost = 0; // (int) Math.round(listPrice / (2.5 * flowForGoldFactor));
         record.flowCost = (int) (listPrice - record.goldCost * flowForGoldFactor);
         record.repriceCounter = 0;
+        log.info("Repriced [item=" + record.itemId + ", Ec=" + currentPopulation +
+                 ", Et=" + targetPopulation + ", base=" + basePrice + ", S=" + S +
+                 ", list=" + listPrice + "].");
     }
 
     /**
