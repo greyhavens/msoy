@@ -180,6 +180,16 @@ public class FurniPanel extends SpritePanel
 
         BindingUtils.bindProperty(_actionPanels, "selectedIndex",
             _actionType, "selectedIndex");
+        BindingUtils.bindSetter(function (selIdx :int) :void {
+            // when switching to NONE, be sure to re-enable mouse capture
+            if (selIdx == FurniData.ACTION_NONE) {
+                // I seem to need to do all this by hand. You will
+                // probably break it, O future refactorer.
+                _captureMouse.selected = true;;
+                var furniSprite :FurniSprite = (_sprite as FurniSprite);
+                furniSprite.getFurniData().actionData = null;
+            }
+        }, _actionType, "selectedIndex");
 
         // BEGIN temporary controls
         // add an "expert control" for directly editing the action
