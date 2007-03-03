@@ -186,22 +186,12 @@ ButtonBar {
   buttonStyleName: "msoyButtonBar";
 }
 
-.placeBox {
-  borderStyle: "none";
-  borderThickness: 4;
-  borderColor: #ffffff;
-  borderSides: "top bottom";
-}
-
 .msoyButtonBar {
   fillAlphas: 1, 1, 1, 1;
   fillColors: #d5dcdf, #9ba8b0, #9ba8b0, #d5dcdf;
 }
 
 .controlBar { 
-  backgroundColor: #000000;
-  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
-  backgroundSize: "100%";
   horizontalGap: 0;
   verticalGap: 0;
   borderStyle: "none";

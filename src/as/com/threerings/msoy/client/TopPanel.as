@@ -30,9 +30,6 @@ import com.threerings.crowd.client.PlaceView;
 
 public class TopPanel extends Canvas
 {
-    /** The control bar. */
-    public var controlBar :ControlBar;
-
     /**
      * Construct the top panel.
      */
@@ -47,7 +44,6 @@ public class TopPanel extends Canvas
         _placeBox = new Canvas();
         _placeBox.autoLayout = false;
         _placeBox.includeInLayout = false;
-        _placeBox.styleName = "placeBox";
         addChild(_placeBox);
 
         // set up a mask on the placebox
@@ -200,17 +196,9 @@ public class TopPanel extends Canvas
 
     protected function layoutPanels () :void
     {
-        var sidePanelWidth :int = getSidePanelWidth(),
-            bottomPanelHeight :int = getBottomPanelHeight();
-            
-        _placeBox.setStyle("top", 0);
-        _placeBox.setStyle("bottom", bottomPanelHeight + _controlBar.height);
-        _placeBox.setStyle("left", sidePanelWidth);
-        _placeBox.setStyle("right", 0);
-
         if (_sidePanel != null) {
             _sidePanel.setStyle("top", 0);
-            _sidePanel.setStyle("bottom", bottomPanelHeight + _controlBar.height);
+            _sidePanel.setStyle("bottom", getBottomPanelHeight() + _controlBar.height);
             _sidePanel.setStyle("left", 0);
             _sidePanel.width = SIDE_PANEL_WIDTH;
         }
@@ -230,6 +218,21 @@ public class TopPanel extends Canvas
         var w :int = stage.stageWidth - getSidePanelWidth();
         var h :int = stage.stageHeight - _controlBar.height
             - getBottomPanelHeight();
+        var top :int = 0;
+        var bottom :int = getBottomPanelHeight() + _controlBar.height;
+
+        // actually, for place views, we want to insert decorative margins
+        // above and below the view - so let's tweak the sizes
+        if (_placeView is MsoyPlaceView) {
+            top += DECORATIVE_MARGIN_HEIGHT;
+            bottom += DECORATIVE_MARGIN_HEIGHT;
+            h -= DECORATIVE_MARGIN_HEIGHT * 2;
+        }
+
+        _placeBox.setStyle("top", top);
+        _placeBox.setStyle("bottom", bottom);
+        _placeBox.setStyle("left", getSidePanelWidth());
+        _placeBox.setStyle("right", 0);
 
         _placeMask.graphics.clear();
         _placeMask.graphics.beginFill(0xFFFFFF);
@@ -281,6 +284,9 @@ public class TopPanel extends Canvas
 
     /** Control bar at the bottom of the window. */
     protected var _controlBar :ControlBar;
+
+    /** Storage for a GUI element corresponding to decorative lines. */
+    protected var _decorativeBar :Canvas;
     
     /** The list of our friends. */
     protected var _friendsList :FriendsList;
@@ -288,5 +294,7 @@ public class TopPanel extends Canvas
     protected static const SIDE_PANEL_WIDTH :int = 350;
     
     protected static const BOTTOM_PANEL_HEIGHT :int = 50;
+
+    public static const DECORATIVE_MARGIN_HEIGHT :int = 4;
 }
 }
