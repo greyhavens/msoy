@@ -718,7 +718,7 @@
   <target name="preppkg">
     <antcallback target="prepare-server" return="pkg.base"/>
     <antcall target="prepare-server-extra"/>
-    <antcall target="prepare-pages"/>
+    <antcallback target="prepare-pages" return="pkg.base"/>
     <antcall target="prepare-pages-extra"/>
     <antcall target="prepare-docs"/>
   </target>
@@ -748,9 +748,6 @@
   <!-- install extra pages stuff into ${pkg.base} -->
   <target name="prepare-pages-extra">
     <antcall target="temp_sdk"/>
-    <antcallback target="setdestroot" return="destroot.pkg,pkg.base,pkg.name">
-      <param name="pkg.type" value="pages"/>
-    </antcallback>
     <copy todir="${pkg.base}/pages">
       <fileset dir="${deploy.dir}/sdk" includes="whirled_sdk.zip"/>
     </copy>
