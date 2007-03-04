@@ -89,20 +89,19 @@ public class SwiftlyEditor extends PlacePanel
         // the document contents or pull the already opened document from the dset
         if (pane != null) {
             _roomObj.addListener(pane);
-            boolean found = false;
-            // if the document is already in the dset, load that
+
+            // If the document is already in the dset, load that.
+            // TODO: Get rid of the expensive iteration (map of pathElement ->
+            // documents?)
             for (SwiftlyDocument doc : _roomObj.documents) {
-                // Re-bind transient instance variables
-                doc.lazarus(_roomObj.pathElements);
                 if (doc.getPathElement().elementId == pathElement.elementId) {
-                    found = true;
                     pane.setDocument(doc);
+                    return;
                 }
             }
-            // otherwise load the document from the backend
-            if (!found) {
-                _roomObj.service.loadDocument(_ctx.getClient(), pathElement);
-            }
+
+            // Otherwise load the document from the backend.
+            _roomObj.service.loadDocument(_ctx.getClient(), pathElement);
         }
     }
 
@@ -182,6 +181,12 @@ public class SwiftlyEditor extends PlacePanel
     {
         _roomObj = (ProjectRoomObject)plobj;
         _roomObj.addListener(this);
+
+        // Raise all any documents from the dead, re-binding transient
+        // instance variables.
+        for (SwiftlyDocument document : _roomObj.documents) {
+            document.lazarus(_roomObj.pathElements);
+        }
 
         // let our project panel know about all the roomy goodness
         _projectPanel.setProject(_roomObj);
