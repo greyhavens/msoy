@@ -87,8 +87,6 @@ public class SwiftlyTextPane extends JEditorPane
 
     public void setDocument (SwiftlyDocument document)
     {
-        // this came from the backend so don't send an update to all the clients
-        _dontPropagateThisChange = true;
         _document = document;
         loadDocumentText();
         // unlock the editor
@@ -101,8 +99,6 @@ public class SwiftlyTextPane extends JEditorPane
         // and we were not the sender
         if (event.getElementId() == _document.elementId && 
             event.getEditorOid() != _ctx.getClient().getClientOid()) {
-            // this change came from the network so don't send it back out again
-            _dontPropagateThisChange = true;
             loadDocumentText();
         }
     }
@@ -160,9 +156,21 @@ public class SwiftlyTextPane extends JEditorPane
 
     protected void loadDocumentText ()
     {
+        // remember where the cursor is
         int pos = getCaretPosition();
+
+        // this change came from the network so don't send it back out again
+        _dontPropagateThisChange = true;
+
         setText(_document.getText());
-        setCaretPosition(pos);
+        _dontPropagateThisChange = false;
+
+        // set the cursor back to where it was
+        try {
+            setCaretPosition(pos);
+        } catch (IllegalArgumentException e) {
+            // that's fine, the position has gone away with this edit
+        }
     }
 
     protected void addKeyBindings ()
@@ -309,8 +317,6 @@ public class SwiftlyTextPane extends JEditorPane
             if (!_dontPropagateThisChange) {
                 updateDocument();
             }
-            // reset
-            _dontPropagateThisChange = false;
         }
 
         // from interface DocumentListener
@@ -319,8 +325,6 @@ public class SwiftlyTextPane extends JEditorPane
             if (!_dontPropagateThisChange) {
                 updateDocument();
             }
-            // XXX: since the replacing of the document triggers a remove and insert, we
-            // only reset _dontPropagateThisChange in the insertion.
         }
 
         // from interface DocumentListener

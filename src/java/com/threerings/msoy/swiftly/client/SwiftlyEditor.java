@@ -122,6 +122,7 @@ public class SwiftlyEditor extends PlacePanel
 
     public void closeCurrentTab ()
     {
+        _roomObj.removeListener(_editorTabs.getCurrentTextPane());
         _editorTabs.closeCurrentTab();
     }
 
