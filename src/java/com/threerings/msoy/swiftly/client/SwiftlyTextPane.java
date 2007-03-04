@@ -160,11 +160,9 @@ public class SwiftlyTextPane extends JEditorPane
 
     protected void loadDocumentText ()
     {
-        try {
-            _syntaxDoc.replace(0, _syntaxDoc.getLength(), _document.getText(), null);
-        } catch (BadLocationException be) {
-            // TODO: complain?
-        }
+        int pos = getCaretPosition();
+        setText(_document.getText());
+        setCaretPosition(pos);
     }
 
     protected void addKeyBindings ()
@@ -209,12 +207,7 @@ public class SwiftlyTextPane extends JEditorPane
     protected void updateDocument ()
     {
         if (_document != null) {
-            try {
-                _editor.updateDocument(_document.elementId,
-                    _syntaxDoc.getText(0, _syntaxDoc.getLength()));
-            } catch (BadLocationException be) {
-                // TODO: complain?
-            }
+            _editor.updateDocument(_document.elementId, getText());
         }
     }
 
