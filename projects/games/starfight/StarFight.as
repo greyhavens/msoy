@@ -93,7 +93,6 @@ public class StarFight extends Sprite
 
         // set up our listeners
         _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, gameStarted);
-        _gameCtrl.localChat("Welcome to Zyraxxus!");
         var boardObj :Board;
 
         // Try initializing the game state (if I'm the first host)
@@ -330,6 +329,7 @@ public class StarFight extends Sprite
 
             if (arr[3] == _ownShip.shipId) {
                 addScore(KILL_PTS);
+                _gameCtrl.awardFlow(KILL_FLOW);
             }
         }
     }
@@ -372,6 +372,7 @@ public class StarFight extends Sprite
         } else if (shooterId == _ownShip.shipId) {
             // We hit someone!  Give us some points.
             addScore(HIT_PTS);
+            _gameCtrl.awardFlow(HIT_FLOW);
         }
     }
 
@@ -590,5 +591,9 @@ public class StarFight extends Sprite
     protected static const POWERUP_PTS :int = 25;
     protected static const HIT_PTS :int = 10;
     protected static const KILL_PTS :int = 50;
+
+    /** Flow awarded for various things in the game. */
+    protected static const KILL_FLOW :int = 5;
+    protected static const HIT_FLOW :int = 1;
 }
 }
