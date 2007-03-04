@@ -5,6 +5,7 @@ package com.threerings.msoy.world.client {
 
 import flash.events.MouseEvent;
 
+
 import mx.binding.utils.BindingUtils;
 
 import mx.containers.Canvas;
@@ -57,6 +58,9 @@ public class AvatarViewerComp extends Canvas
         GridUtil.addRow(grid, talking);
 
         var holder :Canvas = new Canvas();
+        holder.width = _avatar.getMaxContentWidth();
+        holder.height = _avatar.getMaxContentWidth();
+
         holder.rawChildren.addChild(_avatar);
         GridUtil.addRow(grid, holder, [2, 1]);
         addChild(grid);
@@ -76,7 +80,10 @@ public class AvatarViewerComp extends Canvas
 }
 }
 
+import flash.display.GradientType;
+import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.geom.Matrix;
 import flash.geom.Point;
 
 import com.threerings.flex.CommandMenu;
@@ -89,6 +96,19 @@ class ViewerAvatarSprite extends AvatarSprite
         super(null);
         setMedia(url);
         configureMouseProperties();
+
+        // , draw a gradient background
+        var matrix :Matrix = new Matrix();
+        var sprite :Sprite = new Sprite();
+        var w :Number = getMaxContentWidth();
+        var h :Number = getMaxContentHeight();
+        matrix.createGradientBox(w, h * 2, Math.PI / 2);
+        sprite.graphics.beginGradientFill(GradientType.RADIAL,
+            [ 0x0000FF, 0xFFFFFF ], [ 1, 1], [0 , 255 ], matrix);
+        sprite.graphics.drawRect(0, 0, w, h);
+        sprite.graphics.endFill();
+        sprite.mouseEnabled = false;
+        addChildAt(sprite, 0);
     }
 
     public function setMoving (moving :Boolean) :void
