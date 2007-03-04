@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.events.MouseEvent;
+
 import mx.binding.utils.BindingUtils;
 
 import mx.containers.Canvas;
@@ -64,6 +66,10 @@ public class AvatarViewerComp extends Canvas
         }, rotation, "value");
 
         BindingUtils.bindSetter(_avatar.setMoving, walking, "selected");
+
+        // listen for mouse clicks on this canvas,
+        // call into the avatar topop up the action menu
+        addEventListener(MouseEvent.CLICK, _avatar.mouseClick);
     }
 
     protected var _avatar :ViewerAvatarSprite;
@@ -82,10 +88,7 @@ class ViewerAvatarSprite extends AvatarSprite
     {
         super(null);
         setMedia(url);
-
-        // add the event listener, because we don't do it ourselves anymore
-        // now that the room handles it for normal avatars
-        addEventListener(MouseEvent.CLICK, mouseClick);
+        configureMouseProperties();
     }
 
     public function setMoving (moving :Boolean) :void
