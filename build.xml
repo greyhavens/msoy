@@ -442,19 +442,25 @@
   <!-- builds the ActionScript documention -->
   <target name="asdoc">
     <mkdir dir="${deploy.dir}/asdoc"/>
+    <!-- we can't do just ezgame/*.as without doing ezgame/**/*.as, so we do this hackery -->
+    <mkdir dir="${deploy.dir}/tmp/ezgame"/>
+    <copy todir="${deploy.dir}/tmp/ezgame">
+      <fileset dir="projects/vilya/src/as/com/threerings/ezgame" includes="*.as"/>
+    </copy>
     <java classpath="${flexsdk.dir}/lib/asdoc.jar" classname="flex2.tools.ASDoc" fork="true">
       <jvmarg value="-Xmx1024m"/>
       <jvmarg value="-Dsun.io.useCanonCashes=false"/>
       <jvmarg value="-Xbootclasspath/p:${flexsdk.dir}/asdoc/lib/xalan.jar"/>
+      <jvmarg value="-Dos.name=Windows"/>
       <arg value="+flexlib=${flexsdk.dir}/frameworks"/>
       <arg line="-library-path ${flexsdk.dir}/frameworks/libs"/>
       <arg line="-library-path ${deploy.dir}/ooo.swc"/>
       <arg line="-templates-path ${flexsdk.dir}/asdoc/templates"/>
-      <arg line="-doc-sources projects/narya/src/as"/>
-      <arg line="-doc-sources projects/vilya/src/as/com/threerings/ezgame"/>
+      <arg line="-doc-sources ${deploy.dir}/tmp/ezgame"/>
       <arg line="-doc-sources src/as/com/whirled"/>
       <arg line="-output ${deploy.dir}/asdoc"/>
     </java>
+    <delete dir="${deploy.dir}/tmp/ezgame"/>
   </target>
 
   <!-- TEMP: builds the SDK; this will soon move into the whirled repository -->
