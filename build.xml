@@ -15,6 +15,7 @@
   <property name="javadoc.dir"   value="${deploy.dir}/docs"/>
   <property name="savedoc.dir"   value="docs"/>
   <property name="gwtout.dir"    value="pages"/>
+  <property name="flexsdk.dir"   value="projects/tools/extern/flex_sdk"/>
 
   <!-- define our subprojects and include the standard build system -->
   <property name="projects" value="samskivert,narya,nenya,vilya,toybox,s3lib/java,threerings"/>
@@ -312,11 +313,11 @@
 
   <!-- builds our Flash library -->
   <target name="aslib" unless="aslib_is_up_to_date" depends="checkaslib">
-    <java jar="projects/tools/extern/flex_sdk/lib/compc.jar" fork="true" failonerror="true">
+    <java jar="${flexsdk.dir}/lib/compc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/aslib-config.xml"/>
       <arg value="-external-library-path"/>
-      <arg value="projects/tools/extern/flex_sdk/frameworks/libs"/>
+      <arg value="${flexsdk.dir}/frameworks/libs"/>
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=projects/narya/src/as/"/>
       <arg value="-compiler.source-path=projects/nenya/src/as/"/>
@@ -340,7 +341,7 @@
 
   <!-- builds our Flash library -->
   <target name="exportlib" unless="exportlib_is_up_to_date" depends="checkexportlib">
-    <java jar="projects/tools/extern/flex_sdk/lib/compc.jar" fork="true" failonerror="true">
+    <java jar="${flexsdk.dir}/lib/compc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
@@ -436,6 +437,24 @@
       <arg value="${asrc.dir}/com/threerings/msoy/item/remix/tools/RemixAnalyzer.as"/>
     </exec>
     <!--<copy file="${deploy.dir}/RemixAnalyzer.swf" todir="bin"/>-->
+  </target>
+
+  <!-- builds the ActionScript documention -->
+  <target name="asdoc">
+    <mkdir dir="${deploy.dir}/asdoc"/>
+    <java classpath="${flexsdk.dir}/lib/asdoc.jar" classname="flex2.tools.ASDoc" fork="true">
+      <jvmarg value="-Xmx1024m"/>
+      <jvmarg value="-Dsun.io.useCanonCashes=false"/>
+      <jvmarg value="-Xbootclasspath/p:${flexsdk.dir}/asdoc/lib/xalan.jar"/>
+      <arg value="+flexlib=${flexsdk.dir}/frameworks"/>
+      <arg line="-library-path ${flexsdk.dir}/frameworks/libs"/>
+      <arg line="-library-path ${deploy.dir}/ooo.swc"/>
+      <arg line="-templates-path ${flexsdk.dir}/asdoc/templates"/>
+      <arg line="-doc-sources projects/narya/src/as"/>
+      <arg line="-doc-sources projects/vilya/src/as/com/threerings/ezgame"/>
+      <arg line="-doc-sources src/as/com/whirled"/>
+      <arg line="-output ${deploy.dir}/asdoc"/>
+    </java>
   </target>
 
   <!-- TEMP: builds the SDK; this will soon move into the whirled repository -->
@@ -625,7 +644,7 @@
     </copy>
   </target>
 
-  <!-- build the javadoc documentation -->
+  <!-- builds the javadoc documentation -->
   <target name="javadoc" depends="prepare">
     <property name="copy.holder"  value="Three Rings Design, Inc."/>
     <javadoc windowtitle="${app.name} API"
