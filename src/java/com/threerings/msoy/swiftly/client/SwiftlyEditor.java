@@ -86,10 +86,23 @@ public class SwiftlyEditor extends PlacePanel
     {
         SwiftlyTextPane pane = _editorTabs.addEditorTab(pathElement); 
         // If this is a new tab, add a documentupdate listener and ask the backend to load
-        // the document contents into the tab
+        // the document contents or pull the already opened document from the dset
         if (pane != null) {
             _roomObj.addListener(pane);
-            _roomObj.service.loadDocument(_ctx.getClient(), pathElement);
+            boolean found = false;
+            // if the document is already in the dset, load that
+            for (SwiftlyDocument doc : _roomObj.documents) {
+                // Re-bind transient instance variables
+                doc.lazarus(_roomObj.pathElements);
+                if (doc.getPathElement().elementId == pathElement.elementId) {
+                    found = true;
+                    pane.setDocument(doc);
+                }
+            }
+            // otherwise load the document from the backend
+            if (!found) {
+                _roomObj.service.loadDocument(_ctx.getClient(), pathElement);
+            }
         }
     }
 

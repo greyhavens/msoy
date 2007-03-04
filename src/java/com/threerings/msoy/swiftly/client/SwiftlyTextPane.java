@@ -87,6 +87,8 @@ public class SwiftlyTextPane extends JEditorPane
 
     public void setDocument (SwiftlyDocument document)
     {
+        // this came from the backend so don't send an update to all the clients
+        _dontPropagateThisChange = true;
         _document = document;
         loadDocumentText();
         // unlock the editor
@@ -99,6 +101,8 @@ public class SwiftlyTextPane extends JEditorPane
         // and we were not the sender
         if (event.getElementId() == _document.elementId && 
             event.getEditorOid() != _ctx.getClient().getClientOid()) {
+            // this change came from the network so don't send it back out again
+            _dontPropagateThisChange = true;
             loadDocumentText();
         }
     }
@@ -157,9 +161,7 @@ public class SwiftlyTextPane extends JEditorPane
     protected void loadDocumentText ()
     {
         try {
-            _kit.read(new StringReader(_document.getText()), _syntaxDoc, 0);
-        } catch (IOException io) {
-            // TODO: complain?
+            _syntaxDoc.replace(0, _syntaxDoc.getLength(), _document.getText(), null);
         } catch (BadLocationException be) {
             // TODO: complain?
         }
@@ -206,7 +208,6 @@ public class SwiftlyTextPane extends JEditorPane
 
     protected void updateDocument ()
     {
-        // TODO: broken, infinite edits between human clients, oh god
         if (_document != null) {
             try {
                 _editor.updateDocument(_document.elementId,
@@ -311,12 +312,22 @@ public class SwiftlyTextPane extends JEditorPane
     class DocumentElementListener implements DocumentListener {
         // from interface DocumentListener
         public void insertUpdate(DocumentEvent e) {
-            updateDocument();
+            // send out the update event only if we didn't get this update from the network
+            if (!_dontPropagateThisChange) {
+                updateDocument();
+            }
+            // reset
+            _dontPropagateThisChange = false;
         }
 
         // from interface DocumentListener
         public void removeUpdate(DocumentEvent e) {
-            updateDocument();
+            // send out the update event only if we didn't get this update from the network
+            if (!_dontPropagateThisChange) {
+                updateDocument();
+            }
+            // XXX: since the replacing of the document triggers a remove and insert, we
+            // only reset _dontPropagateThisChange in the insertion.
         }
 
         // from interface DocumentListener
@@ -330,6 +341,7 @@ public class SwiftlyTextPane extends JEditorPane
     protected PathElement _pathElement;
     protected SwiftlyDocument _document;
     protected SyntaxDocument _syntaxDoc;
+    protected boolean _dontPropagateThisChange;
 
     protected SyntaxEditorKit _kit;
     protected JPopupMenu _popup;
