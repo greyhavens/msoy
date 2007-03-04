@@ -76,7 +76,7 @@ public class NewProjectTask extends Task
 
         // customize the template files and copy them into the right place
         HashMap<String, String> subs = new HashMap<String, String>();
-        subs.put("flexpath", sdkdir.getPath());
+        subs.put("flexpath", sdkdir.getAbsolutePath());
         subs.put("project", project);
 
         copyFile(input, new File(_templates, "whirled-config.xml"),
