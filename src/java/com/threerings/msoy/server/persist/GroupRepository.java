@@ -25,6 +25,7 @@ import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
+import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
@@ -74,30 +75,34 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Returns a list of all groups, sorted by size, then by creation time.
+     * Returns a list of all public and inv-only groups, sorted by size, then by creation time.
      */
     public Collection<GroupRecord> getGroupsList ()
         throws PersistenceException
     {
-        return findAll(GroupRecord.class, new OrderBy(new SQLExpression[] { new ColumnExp(null, 
+        return findAll(GroupRecord.class, new Where(new Not(new Equals(GroupRecord.POLICY, 
+            Group.POLICY_EXCLUSIVE))), new OrderBy(new SQLExpression[] { new ColumnExp(null, 
             GroupRecord.MEMBER_COUNT), new ColumnExp(null, GroupRecord.CREATION_DATE) }, 
             new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.ASC }));
     }
 
 
     /**
-     * Searches all groups for the search string against the indexed blurb, charter and name 
-     * fields.  Results are returned in order of relevance.
+     * Searches all public and inv-only groups for the search string against the indexed blurb, 
+     * charter and name fields.  Results are returned in order of relevance.
      */
     public Collection<GroupRecord> searchGroups (String searchString) 
         throws PersistenceException
     {
         // for now, always operate with boolean searching enabled, without query expansion
-        return findAll(GroupRecord.class, 
-            new Where(new Match(searchString, Match.Mode.BOOLEAN, false, "name", "blurb", 
-            "charter")));
+        return findAll(GroupRecord.class, new Where(new And(new Not(new Equals(GroupRecord.POLICY,
+            Group.POLICY_EXCLUSIVE)), new Match(searchString, Match.Mode.BOOLEAN, false, 
+            "name", "blurb", "charter"))));
     }
 
+    /**
+     * Searches all public and inv-only groups for the specified tag.
+     */
     public Collection<GroupRecord> searchForTag (String tag)
         throws PersistenceException
     {
