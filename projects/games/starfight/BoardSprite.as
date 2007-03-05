@@ -8,6 +8,8 @@ import flash.events.Event;
 
 import flash.geom.Point;
 
+import com.threerings.util.HashMap;
+
 public class BoardSprite extends Sprite
 {
     public var boardWidth :int;
@@ -15,7 +17,7 @@ public class BoardSprite extends Sprite
 
     public var powerupLayer :Sprite;
 
-    public function BoardSprite (board :Board, ships :Array,
+    public function BoardSprite (board :Board, ships :HashMap,
         powerups :Array) :void
     {
         this.boardWidth = board.width;
@@ -55,14 +57,15 @@ public class BoardSprite extends Sprite
 
         if (ignoreShip >= 0) {
             // Check each ship and figure out which one we hit first.
-            for (var ii :int; ii < _ships.length; ii++) {
-                if (ii == ignoreShip || (dx == 0 && dy == 0)) {
-                    continue;
-                }
-                var ship :ShipSprite = _ships[ii];
+            for each (var ship :ShipSprite in _ships.values()) {
                 if (ship == null) {
                     continue;
                 }
+
+                if (ship.shipId == ignoreShip || (dx == 0 && dy == 0)) {
+                    continue;
+                }
+
                 var bX :Number = ship.boardX;
                 var bY :Number = ship.boardY;
                 var r :Number = ShipSprite.COLLISION_RAD + rad;
@@ -221,7 +224,7 @@ public class BoardSprite extends Sprite
     protected var _obstacles :Array;
 
     /** Reference to the array of ships we know about. */
-    protected var _ships :Array;
+    protected var _ships :HashMap;
 
     /** Reference to the array of powerups we know about. */
     protected var _powerups :Array;
