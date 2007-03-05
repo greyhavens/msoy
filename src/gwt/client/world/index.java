@@ -6,6 +6,7 @@ package client.world;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
@@ -161,6 +162,7 @@ public class index extends MsoyEntryPoint
                 }
             }
         });
+        scheduleReload();
     }
 
     protected void displayHotSpots (final int requestEntryCount)
@@ -177,8 +179,18 @@ public class index extends MsoyEntryPoint
                 }
             }
         });
+        scheduleReload();
     }
-
+    
+    protected void scheduleReload ()
+    {
+        new Timer() {
+            public void run() {
+                updateInterface(History.getToken());
+            }
+        }.schedule(NEIGHBORHOOD_REFRESH_TIME * 1000);
+    }
+    
     protected void neighborhood (String hood)
     {
         if (_client != null) {
@@ -253,4 +265,6 @@ public class index extends MsoyEntryPoint
     protected int _entryCounter;
 
     protected HTML _client;
+    
+    protected static final int NEIGHBORHOOD_REFRESH_TIME = 60;
 }
