@@ -67,12 +67,6 @@ public class WonderlandCroquet extends Sprite
         _ballMarkerLayer.mouseEnabled = false;
         _spr.addChild(_ballMarkerLayer);
 
-        _scroller = new WonderlandScroller(_spr);
-        addChild(_scroller);
-        _scroller.x = _scroller.width / 2 + 5;
-        _scroller.y = _scroller.height / 2 + 5;
-
-        
         _status = new WonderlandStatus(_spr, gameCtrl);
         addChild(_status);
 
@@ -320,8 +314,6 @@ public class WonderlandCroquet extends Sprite
 
 
     protected var _haveMoved :Boolean;
-
-    protected var _scroller :WonderlandScroller;
 
     protected var _status :WonderlandStatus;
 
