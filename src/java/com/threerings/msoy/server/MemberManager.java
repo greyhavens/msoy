@@ -267,7 +267,7 @@ public class MemberManager
             JSONObject result = new JSONObject();
             result.put("friends", friends);
             result.put("groups", groups);
-            result.put("games", groups);
+            result.put("games", games);
             listener.requestCompleted(URLEncoder.encode(result.toString(), "UTF-8"));
         } catch (Exception e) {
             listener.requestFailed(e);
