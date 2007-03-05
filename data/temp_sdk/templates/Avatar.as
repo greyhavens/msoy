@@ -7,6 +7,8 @@ package {
 
 import flash.display.Sprite;
 
+import flash.events.Event;
+
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
 
@@ -15,6 +17,9 @@ public class @project@ extends Sprite
 {
     public function @project@ ()
     {
+        // listen for an unload event
+        root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+
         _control = new AvatarControl(this);
 
         // Uncomment this to be notified when your avatar changes orientation
@@ -56,6 +61,14 @@ public class @project@ extends Sprite
      */
     protected function handleAction (event :ControlEvent) :void
     {
+    }
+
+    /**
+     * This is called when your avatar is unloaded.
+     */
+    protected function handleUnload (event :Event) :void
+    {
+        // stop any sounds, clean up any resources that need it
     }
 
     protected var _control :AvatarControl;

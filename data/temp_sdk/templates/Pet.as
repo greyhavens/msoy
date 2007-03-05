@@ -7,6 +7,7 @@ package {
 
 import flash.display.Sprite;
 
+import flash.events.Event;
 import flash.events.TimerEvent;
 
 import com.whirled.PetControl;
@@ -23,6 +24,9 @@ public class @project@ extends Sprite
 
     public function @project@ ()
     {
+        // listen for an unload event
+        root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+
         // instantiate and wire up our control
         _control = new PetControl(this);
 
@@ -59,6 +63,14 @@ public class @project@ extends Sprite
     protected function memoryChanged (event :ControlEvent) :void
     {
         trace("memory changed: " + event.name + " -> " + event.value);
+    }
+
+    /**
+     * This is called when your pet is unloaded.
+     */
+    protected function handleUnload (event :Event) :void
+    {
+        // stop any sounds, clean up any resources that need it
     }
 
     protected var _control :PetControl;
