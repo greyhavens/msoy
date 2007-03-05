@@ -707,7 +707,7 @@
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distall" depends="prepare,distprojects,dist,flashapps,jclients">
+  <target name="distall" depends="prepare,distprojects,dist,flashapps,jclients,tests">
     <antcall target="gclient">
       <param name="full" value="true"/>
     </antcall>
