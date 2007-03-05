@@ -934,10 +934,13 @@ public class MemberManager
 
     /** A mapping of ownerType/ownerId tuples to sets of scene ID's. Cached. */
     protected Map<IntTuple, PopularPlace> _scenesByOwner;
+    
     /** A list of every place (lobby or scene) in the world, sorted by population. */
     protected List<PopularPlace> _topPlaces;
+
     /** The total number of people in the whirled. */
     protected int _totalPopulation;
+
     /** The time when the cached values were last calculated. */
     protected long _popularPlaceStamp;
     
