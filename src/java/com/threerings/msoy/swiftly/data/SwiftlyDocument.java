@@ -112,11 +112,24 @@ public class SwiftlyDocument
         return _path.getName();
     }
 
+    /** Be sure to delete our backing store. */
+    protected void finalize ()
+        throws Throwable
+    {
+        try {
+            if (_backingStore != null) {
+                _backingStore.delete();                
+            }
+        } finally {
+            super.finalize();
+        }
+    }
+
     /** Document contents, ineffeciently stored entirely in memory. */
     protected String _text;
 
     /** Unmodified disk-backing of the document data. */
-    protected transient File _backingStore;
+    protected transient File _backingStore = null;
 
     /** Reference to our associated path element. */
     protected transient PathElement _path = null;
