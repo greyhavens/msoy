@@ -167,6 +167,7 @@ public class UploadServlet extends HttpServlet
         if (info.mimeType == -1) {
             log.warning("Received upload of unknown mime type [type=" + item.getContentType() +
                         ", name=" + item.getName() + "].");
+            output.delete();
             return null;
         }
 
@@ -191,6 +192,7 @@ public class UploadServlet extends HttpServlet
             if (!output.renameTo(target)) {
                 log.warning("Unable to rename uploaded file [temp=" + output +
                             ", perm=" + target + "].");
+                output.delete();
                 return null;
             }
 
