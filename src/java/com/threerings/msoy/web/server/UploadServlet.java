@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.server;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,10 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+
+import org.semanticdesktop.aperture.mime.identifier.MimeTypeIdentifier;
+import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifier;
+
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
 import com.threerings.s3.AWSAuthConnection;
@@ -154,16 +159,38 @@ public class UploadServlet extends HttpServlet
         MediaInfo info = new MediaInfo(), tinfo = null;
         info.hash = StringUtil.hexlate(digest.digest());
 
-        // TODO: this will have to change. We cannot depend on the user supplying us with a valid
-        // content type, not because of malice, but because it's quite common to have a file type
-        // that your own computer doesn't understand but which you can play on the web.
-
         // look up the mime type
         info.mimeType = MediaDesc.stringToMimeType(item.getContentType());
+
+        // if that failed, try inferring the type from the path
         if (info.mimeType == -1) {
-            // if that failed, try inferring the type from the path
             info.mimeType = MediaDesc.suffixToMimeType(item.getName());
         }
+
+        // if we could not discern from the file path, try determining the mime type
+        // from the file data itself.
+        if (info.mimeType == -1) {
+            FileInputStream idStream = new FileInputStream(output);
+            byte[] firstBytes = new byte[_mimeMagic.getMinArrayLength()];
+            String mimeString = null;
+
+            // Read identifying bytes from the uploaded file
+            idStream.read(firstBytes, 0, firstBytes.length);
+
+            // Attempt magic identification
+            mimeString = _mimeMagic.identify(firstBytes, item.getName(), null);
+
+            // Map to mime MediaDesc Mime byte
+            info.mimeType = MediaDesc.stringToMimeType(mimeString);
+
+            // XXX Temporary debugging; want to know the effectiveness, and about any potential
+            // false hits. -- landonf (March 5, 2007)
+            if (info.mimeType != -1) {
+                log.warning("Magically determined unknown mime type [type=" + mimeString +
+                            ", name=" + item.getName() + "].");                
+            }
+        }
+
         if (info.mimeType == -1) {
             log.warning("Received upload of unknown mime type [type=" + item.getContentType() +
                         ", name=" + item.getName() + "].");
@@ -311,6 +338,9 @@ public class UploadServlet extends HttpServlet
         public byte constraint;
         public int width, height;
     }
+
+    /** A magic mime type identifier. */
+    protected final MimeTypeIdentifier _mimeMagic = new MagicMimeTypeIdentifier();
 
     /** Prevent Captain Insano from showing up to fill our drives. */
     protected static final int MAX_UPLOAD_SIZE = 10 * 1024 * 1024;
