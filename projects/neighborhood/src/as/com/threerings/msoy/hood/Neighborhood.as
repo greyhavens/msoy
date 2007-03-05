@@ -14,11 +14,14 @@ public class Neighborhood
     public var centralGroup :NeighborGroup;
 
     /** The member's houses, as {@link NeighborMember} objects. */
-    public var houses:Array;
+    public var houses :Array;
     /** The member's groups, as {@link NeighborGroup} objects. */
-    public var groups:Array;
+    public var groups :Array;
     /** The member's games, as {@link NeighborGame} objects. */
-    public var games:Array;
+    public var games: Array;
+
+    /** The total population to display, or -1 if none given. */
+    public var totalPop :int = -1;
 
     /**
      * Instantiate and populate a {@link Neighborhood} from JSON configuration
@@ -59,6 +62,9 @@ public class Neighborhood
             for (i = 0; i < JSON.games.length; i ++) {
                 hood.games[i] = NeighborGame.fromJSON(JSON.games[i]);
             }
+        }
+        if (JSON.totpop != undefined) {
+            hood.totalPop = JSON.totpop;
         }
         return hood;
     }

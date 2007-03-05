@@ -186,6 +186,20 @@ public class HoodViz extends Sprite
                 }
             }
         }
+
+        if (_hood.totalPop >= 0) {
+            var field :TextField = new TextField();
+            field.text = "Number of people in the Whirled: " + _hood.totalPop;
+            field.autoSize = TextFieldAutoSize.CENTER;
+            field.background = true;
+            field.backgroundColor = 0x8A360F; // burnt sienna
+            field.textColor = 0xFFCC11; // mustard
+            field.wordWrap = false;
+
+            stage.addChild(field);
+        }
+
+
         // figure a canvas scale that'll safely display all that was actually drawn
         var scale :Number = Math.min(SWF_WIDTH / (160 + _bound.width),
                                      SWF_HEIGHT / (120 + _bound.height));
