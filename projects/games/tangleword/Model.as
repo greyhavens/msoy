@@ -2,13 +2,10 @@ package
 {
 
 
-import com.threerings.ezgame.HostCoordinator;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
-import com.threerings.ezgame.StateChangedEvent;
-import com.threerings.ezgame.StateChangedListener;
 
 import com.whirled.WhirledGameControl;
 
@@ -19,18 +16,17 @@ import flash.geom.Point;
    It contains accessors to get the list of players, scores, etc.
 */
 
-public class Model implements MessageReceivedListener, PropertyChangedListener
+public class Model
+    implements MessageReceivedListener, PropertyChangedListener
 {
 
     // PUBLIC METHODS
     
     public function Model (
-        gameCtrl : WhirledGameControl, coordinator : HostCoordinator,
-        rounds : RoundProvider, display : Display) : void
+        gameCtrl : WhirledGameControl, rounds : RoundProvider, display : Display) : void
     {
         // Squirrel the pointers away
         _gameCtrl = gameCtrl;
-        _coord = coordinator;
         _rounds = rounds;
         _display = display;
         _playerName = _gameCtrl.getOccupantName(_gameCtrl.getMyId());
@@ -168,6 +164,9 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         obj.isvalid = isvalid;
 
         _gameCtrl.sendMessage (ADD_SCORE_MSG, obj);
+
+        // reset selection
+        removeAllSelectedLetters ();
     }
 
     /** Sends out a message to everyone, informing them about a new letter set.
@@ -188,9 +187,9 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         game data updates. */
     public function messageReceived (event : MessageReceivedEvent) : void
     {
-        // _gameCtrl.localChat (_coord.amITheHost () ?
-        //                    "Model: I AM THE HOST! :)" :
-        //                    "Model: I'm not the host. :(");
+//        _gameCtrl.localChat (_gameCtrl.amInControl () ?
+//                           "Model: I AM THE HOST! :)" :
+//                           "Model: I'm not the host. :(");
 
         switch (event.name)
         {
@@ -200,8 +199,6 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
             addWordToScoreboard (
                 event.value.player, event.value.word, event.value.score, event.value.isvalid);
 
-            // Reset selection
-            removeAllSelectedLetters ();
             updateScoreDisplay ();
             
             break;
@@ -231,7 +228,6 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
 
             // We recieved a notification of a new shared letter set -
             // let's update the board
-            Assert.True (event.newValue is Array, "Received invalid Shared Letter Set!");
             var s : Array = event.newValue as Array;
             if (s != null)
             {
@@ -241,8 +237,8 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
             break;
 
         default:
-            // Assert.Fail ("Unknown property changed: " + event.name + ", from: " +
-            //             event.oldValue + " to " + event.newValue);
+            //Assert.Fail ("Unknown property changed: " + event.name + ", from: " +
+            //            event.oldValue + " to " + event.newValue);
         }
         
     }
@@ -251,7 +247,7 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         on everyone. */
     public function roundStartedHandler (newState : String) : void
     {
-        if (_coord.status == HostCoordinator.STATUS_HOST)
+        if (_gameCtrl.amInControl ())
         {
             // Share the scoreboard
             _gameCtrl.sendMessage (SCOREBOARD_UPDATE_MSG, _scoreboard.internalScoreObject);
@@ -375,9 +371,6 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
 
     
     // PRIVATE VARIABLES
-
-    /** Authoritative host coordinator */
-    private var _coord : HostCoordinator;
 
     /** Main game control structure */
     private var _gameCtrl : WhirledGameControl;

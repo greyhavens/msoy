@@ -15,10 +15,10 @@ public class Properties
     public static const LOCALE : String = "en-us";
 
     /** Default round length, in seconds */
-    public static const ROUND_LENGTH : Number = 30;
+    public static const ROUND_LENGTH : Number = 90;
 
     /** Default pause length */
-    public static const PAUSE_LENGTH : Number = 5;
+    public static const PAUSE_LENGTH : Number = 10;
 
 
     /**
@@ -59,8 +59,7 @@ public class Properties
     */
     public static const TIMER : Rectangle = new Rectangle (360, 312, 180, 28);
 
-    
-    
+
     /** Each letter is a simple square - but we want to know how big to draw them.
         This is the width and height of each letter in pixels. */
     public static const LETTER_SIZE : int = 50;

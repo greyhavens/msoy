@@ -30,7 +30,8 @@ public class Display extends Sprite
     // PUBLIC FUNCTIONS
 
     /** Initializes the board and everything on it */
-    public function Display (controller : Controller, rounds : RoundProvider) : void
+    public function Display (
+        controller : Controller, rounds : RoundProvider, version : String) : void
     {
         // Copy parameters
         _controller = controller;
@@ -49,12 +50,14 @@ public class Display extends Sprite
         initializeLetters ();
 
         // Initialize UI elements for selection
-        initializeUI ();
+        initializeUI (version);
 
         // Register for events
         addEventListener (MouseEvent.CLICK, clickHandler);
         addEventListener (MouseEvent.MOUSE_MOVE, mouseHandler);
         addEventListener (KeyboardEvent.KEY_UP, typingHandler);
+
+        _logger.Log (version);
     }
 
     /** Called from the model, this accessor modifies the display /text/
@@ -128,7 +131,7 @@ public class Display extends Sprite
     /** Adds a "please wait" message */
     public function logPleaseWait () : void
     {
-        _logger.Log ("Please wait for the next round.");
+        _logger.Log ("Please wait for\n    the next round.");
     }
 
     /** Adds a "round started" message */
@@ -189,7 +192,6 @@ public class Display extends Sprite
         logRoundStarted ();
         _timer.start (Properties.ROUND_LENGTH);
         setEnableState (true);
-        _wordfield.stage.focus = _wordfield; // set focus on input box
     }
 
     /** Called when the round ends - disables display. */
@@ -243,15 +245,14 @@ public class Display extends Sprite
     }
 
     /** Initializes word display, countdown timer, etc. */
-    private function initializeUI () : void
+    private function initializeUI (version : String) : void
     {
         _okbutton = new OKButton (okButtonClickHandler);
         doLayout (_okbutton, Properties.OKBUTTON);
         addChild (_okbutton);
 
-        var format : TextFormat = Resources.makeFormatForUI ();
         _wordfield = new TextField ();
-        _wordfield.defaultTextFormat = format;
+        _wordfield.defaultTextFormat = Resources.makeFormatForUI ();
         _wordfield.borderColor = Resources.defaultBorderColor;
         _wordfield.border = true;
         _wordfield.type = TextFieldType.INPUT;

@@ -107,6 +107,9 @@ public class Controller
         // First, check to make sure it's of the correct length (in characters)
         if (word.length < MIN_WORD_LENGTH) return;
 
+        // Normalize the word
+        word = word.toLowerCase ();
+
         // Now check if it's an actual word.
         _gameCtrl.checkDictionaryWord (Properties.LOCALE, word, success);
 
@@ -156,17 +159,19 @@ public class Controller
                 Math.abs (position.y - origin.y) <= 1);
     }
     
-    /** Initializes a new letter set. */
+    /** If this client is the host, initializes a new letter set. */
     private function initializeLetterSet () : void
     {
-        var success : Function = function (a : Array) : void
+        if (_gameCtrl.amInControl ())
         {
-            _model.sendNewLetterSet (a);
+            var success : Function = function (a : Array) : void
+            {
+                _model.sendNewLetterSet (a);
+            }
+            _gameCtrl.getDictionaryLetterSet (Properties.LOCALE,
+                                              Properties.LETTER_COUNT,
+                                              success);
         }
-        _gameCtrl.getDictionaryLetterSet (Properties.LOCALE,
-                                          Properties.LETTER_COUNT,
-                                          success);
-        
     }
 
 

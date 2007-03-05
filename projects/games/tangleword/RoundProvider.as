@@ -4,7 +4,6 @@ package
 import flash.utils.Timer;
 import flash.events.TimerEvent;
 
-import com.threerings.ezgame.HostCoordinator;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
 
@@ -53,11 +52,9 @@ public class RoundProvider implements PropertyChangedListener
        initialize...() functions.
     */
     public function RoundProvider (
-        gameCtrl : WhirledGameControl,
-        coord : HostCoordinator)
+        gameCtrl : WhirledGameControl)
     {
         // Store the pointers
-        _coord = coord;
         _gameCtrl = gameCtrl;
         _gameCtrl.registerListener (this);
 
@@ -104,7 +101,7 @@ public class RoundProvider implements PropertyChangedListener
         if (checkStateName (newState))
         {
             // Only the host will actually succeed doing this...
-            if (_coord.status == HostCoordinator.STATUS_HOST)
+            if (_gameCtrl.amInControl())
             {
                 var newStateTimeout : Number = (new Date()).time + _timeouts[newState];
                 _gameCtrl.set (ROUND_PROVIDER_CURRENT_STATE_PROPERTY, newState);
@@ -275,7 +272,7 @@ public class RoundProvider implements PropertyChangedListener
     private function setCurrentStateTimeout (value : Number) : Boolean
     {
         // Only the host will actually succeed doing this...
-        if (_coord.status == HostCoordinator.STATUS_HOST)
+        if (_gameCtrl.amInControl())
         {
             _gameCtrl.set (ROUND_PROVIDER_CURRENT_STATE_TIMEOUT, value);
             return true;
@@ -301,9 +298,6 @@ public class RoundProvider implements PropertyChangedListener
 
     /** Local EZ control storage */
     private var _gameCtrl : WhirledGameControl;
-
-    /** Local host coordinator storage */
-    private var _coord : HostCoordinator;
 
     /** Timeout timer. If this variable is null, it means no timer
         was initialized; otherwise it's set to the instance that will
