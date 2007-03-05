@@ -5,7 +5,6 @@ package com.threerings.msoy.world.client {
 
 import flash.events.MouseEvent;
 
-
 import mx.binding.utils.BindingUtils;
 
 import mx.containers.Canvas;
@@ -19,6 +18,8 @@ import mx.controls.Label;
 
 import mx.events.FlexEvent;
 
+import com.threerings.util.ParameterUtil;
+
 import com.threerings.flex.GridUtil;
 
 public class AvatarViewerComp extends Canvas
@@ -27,12 +28,21 @@ public class AvatarViewerComp extends Canvas
     {
     }
 
+    /**
+     * Our ParameterUtil callback.
+     */
+    protected function gotParams (params :Object) :void
+    {
+        _avatar.setMedia(String(params["avatar"]));
+    }
+
     override protected function createChildren () :void
     {
         super.createChildren();
 
-        var params :Object = this.root.loaderInfo.parameters;
-        _avatar = new ViewerAvatarSprite(String(params["avatar"]));
+        _avatar = new ViewerAvatarSprite();
+        // load params after creating the sprite
+        ParameterUtil.getParameters(this, gotParams);
 
         // TODO: replace slider with custom control
         var rotation :HSlider = new HSlider();
@@ -91,10 +101,9 @@ import com.threerings.msoy.world.client.AvatarSprite;
 
 class ViewerAvatarSprite extends AvatarSprite
 {
-    public function ViewerAvatarSprite (url :String)
+    public function ViewerAvatarSprite ()
     {
         super(null);
-        setMedia(url);
         configureMouseProperties();
 
         // , draw a gradient background
