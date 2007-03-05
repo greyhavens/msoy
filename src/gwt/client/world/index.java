@@ -113,6 +113,11 @@ public class index extends MsoyEntryPoint
                 world("memberHome=" + id(token, 1));
                 return false;
 
+            } else if (token.startsWith("l")) {
+                // go to a specific member's home
+                world("location=" + id(token, 1));
+                return false;
+
             } else if (token.startsWith("ng")) {
                 // go to the neighborhood around the specified group
                 displayNeighborhood(_entryCounter, id(token, 2), true);

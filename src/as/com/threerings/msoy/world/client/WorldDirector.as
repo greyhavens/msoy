@@ -30,17 +30,25 @@ public class WorldDirector extends BasicDirector
     /**
      * Request to move to the specified member's home.
      */
-    public function goToMemberHome (memberId :int) :void
+    public function goToMemberHome (memberId :int, direct :Boolean = false) :void
     {
-        goToHome(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);
+        if (direct) {
+            goToHome(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);
+        } else {
+            _mctx.getMsoyController().handleGoMemberHome(memberId, false);
+        }
     }
 
     /**
      * Request to move to the specified group's home.
      */
-    public function goToGroupHome (groupId :int) :void
+    public function goToGroupHome (groupId :int, direct :Boolean = false) :void
     {
-        goToHome(MsoySceneModel.OWNER_TYPE_GROUP, groupId);
+        if (direct) {
+            goToHome(MsoySceneModel.OWNER_TYPE_GROUP, groupId);
+        } else {
+            _mctx.getMsoyController().handleGoGroupHome(groupId, false);
+        }
     }
 
     /**
@@ -65,9 +73,14 @@ public class WorldDirector extends BasicDirector
      */
     protected function goToHome (ownerType :int, ownerId :int) :void
     {
+        if (!_mctx.getClient().isLoggedOn()) {
+            log.warning("Can't go, not online [type=" + ownerType + ", id=" + ownerId + "].");
+            return;
+        }
         _msvc.getHomeId(_mctx.getClient(), ownerType, ownerId, new ResultWrapper(
             function (cause :String) :void {
-                log.warning("Unable to go to home: " + cause);
+                log.warning("Unable to go to home [type=" + ownerType + ", id=" + ownerId +
+                            ", cause=" + cause);
             }, 
             function (sceneId :int) :void {
                 _mctx.getSceneDirector().moveTo(sceneId);

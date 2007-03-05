@@ -291,8 +291,7 @@ public class MsoyController extends Controller
     public function showExternalURL (url :String) :void
     {
         if (!NetUtil.navigateToURL(url, false)) {
-            _ctx.displayFeedback(null,
-                MessageBundle.tcompose("e.no_navigate", url));
+            _ctx.displayFeedback(null, MessageBundle.tcompose("e.no_navigate", url));
         }
     }
 
@@ -328,23 +327,30 @@ public class MsoyController extends Controller
      */
     public function handleGoScene (sceneId :int) :void
     {
-        _ctx.getSceneDirector().moveTo(sceneId);
+        if (!NetUtil.navigateToURL("/world/index.html#s" + sceneId)) {
+            // fall back to breaking the back button
+            _ctx.getSceneDirector().moveTo(sceneId);
+        }
     }
 
     /**
      * Handle the GO_MEMBER_HOME command.
      */
-    public function handleGoMemberHome (memberId :int) :void
+    public function handleGoMemberHome (memberId :int, direct :Boolean = false) :void
     {
-        _ctx.getWorldDirector().goToMemberHome(memberId);
+        if (direct || !NetUtil.navigateToURL("/world/index.html#m" + memberId)) {
+            _ctx.getWorldDirector().goToMemberHome(memberId, true);
+        }
     }
 
     /**
      * Handle the GO_GROUP_HOME command.
      */
-    public function handleGoGroupHome (groupId :int) :void
+    public function handleGoGroupHome (groupId :int, direct :Boolean = false) :void
     {
-        _ctx.getWorldDirector().goToGroupHome(groupId);
+        if (direct || !NetUtil.navigateToURL("/world/index.html#g" + groupId)) {
+            _ctx.getWorldDirector().goToGroupHome(groupId, true);
+        }
     }
 
     /**
@@ -365,7 +371,10 @@ public class MsoyController extends Controller
      */
     public function handleGoLocation (placeOid :int) :void
     {
-        _ctx.getLocationDirector().moveTo(placeOid);
+        if (!NetUtil.navigateToURL("/world/index.html#l" + placeOid, false)) {
+            // fall back to breaking the back button
+            _ctx.getLocationDirector().moveTo(placeOid);
+        }
     }
 
     /**
@@ -468,16 +477,16 @@ public class MsoyController extends Controller
     {
         // first, see if we should hit a specific scene
         if (null != params["memberHome"]) {
-            handleGoMemberHome(int(params["memberHome"]));
+            handleGoMemberHome(int(params["memberHome"]), true);
 
         } else if (null != params["groupHome"]) {
-            handleGoGroupHome(int(params["groupHome"]));
+            handleGoGroupHome(int(params["groupHome"]), true);
 
         } else if (null != params["gameLobby"]) {
             moveToGameLobby(int(params["gameLobby"]));
 
         } else if (null != params["location"]) {
-            handleGoLocation(int(params["location"]));
+            _ctx.getLocationDirector().moveTo(int(params["location"]));
 
         } else if (null != params["noplace"]) {
             // go to no place- we just want to chat with our friends
