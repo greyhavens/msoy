@@ -117,7 +117,7 @@ public class Ball extends Sprite
 
     public function destroyMallet () :void
     {
-        removeChild(_mallet);
+        particle.wc.removeMallet(_mallet);
         _mallet = null;
     }
 
@@ -134,12 +134,15 @@ public class Ball extends Sprite
         }
 
         if (_mallet != null) {
-            removeChild(_mallet);
+            particle.wc.removeMallet(_mallet);
             _mallet = null;
             return;
         }
         _mallet = new WonderlandMallet(this);
-        addChild(_mallet);
+        _mallet.x = x;
+        _mallet.y = y;
+        _mallet.rotation = rotation + 180;
+        particle.wc.addMallet(_mallet);
     }
 
     // Our flamingo we're using for aiming.

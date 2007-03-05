@@ -14,8 +14,6 @@ public class WonderlandMallet extends Sprite
 {
     public function WonderlandMallet (ball :Ball)
     {
-        rotation = 180;
-
         var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
         loader.addEventListener(Event.COMPLETE, function (event :Event) :void {
             _swingAnimation = new (loader.getClass("mallet_swing"))();
@@ -71,7 +69,8 @@ public class WonderlandMallet extends Sprite
                 theta += 180;
             }
         }
-        rotation = theta - _ball.rotation;
+
+        rotation = theta;
 
         // Now stretch it to match our strength
         var strength :Number = Ball.computeStrength(dx, dy);

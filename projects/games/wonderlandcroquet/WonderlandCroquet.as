@@ -1,6 +1,7 @@
 package {
 
 import flash.display.Bitmap;
+import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
 
@@ -71,6 +72,22 @@ public class WonderlandCroquet extends Sprite
         addChild(_status);
 
         addEventListener(Event.ENTER_FRAME, firstFrameSetup);
+    }
+
+    /**
+     * Adds a mallet to be displayed.
+     */
+    public function addMallet (mallet :DisplayObject) :void
+    {
+        _spr.addChild(mallet);
+    }
+
+    /**
+     * Removes a mallet to be displayed.
+     */
+    public function removeMallet (mallet :DisplayObject) :void
+    {
+        _spr.removeChild(mallet);
     }
 
     /**
@@ -311,7 +328,6 @@ public class WonderlandCroquet extends Sprite
         _haveMoved = false;
         panTo(coord[0], coord[1]);
     }
-
 
     protected var _haveMoved :Boolean;
 
