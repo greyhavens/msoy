@@ -19,6 +19,8 @@ import flash.events.TimerEvent;
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
+import com.threerings.ezgame.HostCoordinator;
+import com.threerings.ezgame.HostEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
@@ -47,6 +49,9 @@ public class StarFight extends Sprite
         _gameCtrl = new WhirledGameControl(this);
         _gameCtrl.registerListener(this);
 
+        _coordinator = new HostCoordinator (_gameCtrl);
+        _coordinator.addEventListener (HostEvent.CHANGED, hostChangedHandler);
+        
         _boardLayer = new Sprite();
         _shipLayer = new Sprite();
         _shotLayer = new Sprite();
@@ -93,13 +98,18 @@ public class StarFight extends Sprite
 
         // set up our listeners
         _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, gameStarted);
-        var boardObj :Board;
+    }
 
+    /**
+     * Once the host was found, start the game!
+     */
+    private function hostChangedHandler (event : HostEvent) : void
+    {
         // Try initializing the game state (if I'm the first host)
-        if ((boardObj == null) && (_myIndex == 0)) {
-            // We don't already have a board and we're the host?  Create it and our
-            //  initial ship array too.
-
+        if (event.previousHost == 0 && event.newHost == _gameCtrl.getMyId()) {
+            var boardObj :Board;
+            // We don't already have a board and we're the host?  Create it
+            //  and our initial ship array too.
             var size :int =
                 int(Math.sqrt(Math.max(1, _names.length-1)) * 50);
 
@@ -178,7 +188,7 @@ public class StarFight extends Sprite
         }
 
         // The first player is in charge of adding powerups.
-        if (_myIndex == 0) {
+        if (_coordinator.status == HostCoordinator.STATUS_HOST) {
             addPowerup(null);
             var timer :Timer = new Timer(20000, 0);
             timer.addEventListener(TimerEvent.TIMER, addPowerup);
@@ -546,6 +556,9 @@ public class StarFight extends Sprite
 
     /** Our game control object. */
     protected var _gameCtrl :WhirledGameControl;
+
+    /** Keeps track of whether we are the host client. */
+    protected var _coordinator :HostCoordinator;
 
     /** Our seated index. */
     protected var _myIndex :int;
