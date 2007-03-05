@@ -28,7 +28,7 @@ public class SwiftlyDocument
     /**
      * Instantiate a new SwiftlyDocument
      */
-    public SwiftlyDocument (InputStream data, PathElement path)
+    public SwiftlyDocument (InputStream data, PathElement path, String encoding)
         throws IOException
     {
         StringBuffer textBuffer;
@@ -53,7 +53,7 @@ public class SwiftlyDocument
             fileOutput.write(buf, 0, len);
 
             // Write to the memory buffer too, oh boy
-            textBuffer.append(new String(buf, 0, len, "UTF8"));
+            textBuffer.append(new String(buf, 0, len, encoding));
         }
 
         _text = textBuffer.toString();  

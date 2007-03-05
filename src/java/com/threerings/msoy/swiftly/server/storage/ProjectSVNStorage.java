@@ -74,6 +74,7 @@ public class ProjectSVNStorage
     /** SVN over HTTPS WebDAV Protocol String. */
     public static final String PROTOCOL_HTTPS = "https";
 
+
     /*
      * Static initialization of the SVNKit library
      */
@@ -282,7 +283,7 @@ public class ProjectSVNStorage
         }
 
         try {
-            swiftlyDoc = new SwiftlyDocument(new FileInputStream(tempFile), path);
+            swiftlyDoc = new SwiftlyDocument(new FileInputStream(tempFile), path, TEXT_ENCODING);
         } catch (IOException ioe) {
             throw new ProjectStorageException.InternalError("Failure instantiating SwiftlyDocument: " +
                 ioe, ioe);            
@@ -624,6 +625,8 @@ public class ProjectSVNStorage
         private File _rootPath;
     }
 
+    /** The standard text encoding. Changing this WILL break existing project repositories. */
+    protected static final String TEXT_ENCODING = "utf8";
 
     /** Reference to the project record. */
     protected SwiftlyProjectRecord _projectRecord;

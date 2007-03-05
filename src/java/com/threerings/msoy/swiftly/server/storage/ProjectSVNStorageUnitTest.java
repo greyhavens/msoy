@@ -138,8 +138,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
         assertTrue("Could not read any data from " + srcFile.getName(),
             (len = input.read(data, 0, data.length)) >= 0);
 
-        // We always encode on-disk data as utf8.
-        contents = new String(data, 0, len, "UTF8");
+        contents = new String(data, 0, len, ProjectSVNStorage.TEXT_ENCODING);
         assertTrue("Unexpected file data: " + contents, contents.startsWith("package {"));
     }
 

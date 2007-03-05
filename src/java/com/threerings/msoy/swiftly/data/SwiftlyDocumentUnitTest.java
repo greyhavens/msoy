@@ -28,7 +28,7 @@ public class SwiftlyDocumentUnitTest extends TestCase
         InputStream input = new FileInputStream(inputFile);
         output.write("Hello, World".getBytes("UTF8"));
         
-        SwiftlyDocument doc = new SwiftlyDocument(input, null);
+        SwiftlyDocument doc = new SwiftlyDocument(input, null, "utf8");
         assertEquals("Hello, World", doc.getText());
     }
 }
