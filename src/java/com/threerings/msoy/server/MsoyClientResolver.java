@@ -75,8 +75,8 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         // calculate flow evaporation since last logon
         int dT = (int) ((System.currentTimeMillis() - member.lastSession.getTime()) / 60000);
-        int expiredFlow = MsoyServer.memberRepo.getFlowRepository().expireFlow(member, dT);
-        userObj.setFlow(member.flow - expiredFlow);
+        MsoyServer.memberRepo.getFlowRepository().expireFlow(member, dT); // modifies member.flow
+        userObj.setFlow(member.flow);
 
         userObj.setHumanity(member.humanity);
         userObj.setOwnedScenes(new DSet<SceneBookmarkEntry>(

@@ -201,8 +201,9 @@ public class FlowRepository extends DepotRepository
     }
 
     /**
-     * Expire a member's flow given that dT minute passed since last we did so.  The caller should
-     * take care to reflect this change in the corresponding {@link MemberObject} when appropriate.
+     * Expire a member's flow given that dT minute passed since last we did so.  The flow field of
+     * the supplied MemberRecord is modified by this method: the expired flow is subtracted from
+     * it.
      * 
      * @return the amount of flow that was expired on the backend
      */
