@@ -175,13 +175,13 @@ public class UploadServlet extends HttpServlet
             String mimeString = null;
 
             // Read identifying bytes from the uploaded file
-            idStream.read(firstBytes, 0, firstBytes.length);
+            if (idStream.read(firstBytes, 0, firstBytes.length) >= firstBytes.length) {
+                // Sufficient data was read, attempt magic identification
+                mimeString = _mimeMagic.identify(firstBytes, item.getName(), null);
 
-            // Attempt magic identification
-            mimeString = _mimeMagic.identify(firstBytes, item.getName(), null);
-
-            // Map to mime MediaDesc Mime byte
-            info.mimeType = MediaDesc.stringToMimeType(mimeString);
+                // Map to mime MediaDesc Mime byte
+                info.mimeType = MediaDesc.stringToMimeType(mimeString);                
+            }
 
             // XXX Temporary debugging; want to know the effectiveness, and about any potential
             // false hits. -- landonf (March 5, 2007)

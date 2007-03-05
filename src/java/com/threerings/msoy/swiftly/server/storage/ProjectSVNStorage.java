@@ -380,10 +380,10 @@ public class ProjectSVNStorage
                 byte[] firstBytes = new byte[identifier.getMinArrayLength()];
 
                 // Read identifying bytes from the to-be-added file
-                stream.read(firstBytes, 0, firstBytes.length);
-
-                // Attempt magic identification
-                mimeType = identifier.identify(firstBytes, targetFile.getName(), null);
+                if (stream.read(firstBytes, 0, firstBytes.length) >= firstBytes.length) {
+                    // Required data was read, attempt magic identification
+                    mimeType = identifier.identify(firstBytes, targetFile.getName(), null);                    
+                }
                 
                 // If that failed, try our internal path-based type detection.
                 if (mimeType == null) {
