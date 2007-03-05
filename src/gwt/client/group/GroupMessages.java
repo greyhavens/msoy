@@ -96,6 +96,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String editDescripTab();
 
   /**
+   * Translated "In order to change the group policy to Exclusive, please remove all tags.".
+   * 
+   * @return translated "In order to change the group policy to Exclusive, please remove all tags."
+   * @gwt.key errTagsOnExclusive
+   */
+  String errTagsOnExclusive();
+
+  /**
    * Translated "People Upper Cap".
    * 
    * @return translated "People Upper Cap"

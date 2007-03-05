@@ -247,8 +247,10 @@ public class GroupView extends VerticalPanel
         people.setWidth("100%");
         people.setText(0, 0, CGroup.msgs.viewManagers());
         people.setText(1, 0, CGroup.msgs.viewMembers());
-        people.setText(3, 0, CGroup.msgs.viewTags());
-        people.getFlexCellFormatter().setVerticalAlignment(3, 0, VerticalPanel.ALIGN_MIDDLE);
+        if (_group.policy != Group.POLICY_EXCLUSIVE) {
+            people.setText(3, 0, CGroup.msgs.viewTags());
+            people.getFlexCellFormatter().setVerticalAlignment(3, 0, VerticalPanel.ALIGN_MIDDLE);
+        }
         FlowPanel managers = new FlowPanel();
         FlowPanel members = new FlowPanel();
         Iterator i = _detail.members.iterator();
@@ -343,61 +345,64 @@ public class GroupView extends VerticalPanel
                 }
             }
         }
-        final Panel tags = !amManager ? (Panel)new FlowPanel() : (Panel)new TagDetailPanel(
-            new TagDetailPanel.TagService() {
-                public void tag (String tag, AsyncCallback callback) {
-                    CGroup.groupsvc.tagGroup(CGroup.creds, _group.groupId, tag, true, callback);
-                }
-                public void untag (String tag, AsyncCallback callback) {
-                    CGroup.groupsvc.tagGroup(CGroup.creds, _group.groupId, tag, false, callback);
-                }
-                public void getRecentTags (AsyncCallback callback) {
-                    CGroup.groupsvc.getRecentTags(CGroup.creds, callback);
-                }
-                public void getTags (AsyncCallback callback) {
-                    CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, callback);
-                }
-                public boolean supportFlags () {
-                    return false;
-                }
-                public void setFlags (final byte flag, final Label statusLabel) { }
-                public void addMenuItems (final String tag, PopupMenu menu) {
-                    menu.addMenuItem(CGroup.msgs.viewTagLink(), new Command() {
-                        public void execute () {
-                            History.newItem("tag=" + tag);
-                        }
-                    });
-                }
-            });
-        if (!amManager) {
-            CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, new AsyncCallback () {
-                public void onSuccess (Object result) {
-                    Iterator i = ((Collection) result).iterator();
-                    while (i.hasNext()) {
-                        String tag = (String)i.next();
-                        Hyperlink tagLink = new Hyperlink(tag, "tag=" + tag);
-                        DOM.setStyleAttribute(tagLink.getElement(), "display", "inline");
-                        tags.add(tagLink);
-                        if (i.hasNext()) {
-                            tags.add(new InlineLabel(", "));
-                        }
+        if (_group.policy != Group.POLICY_EXCLUSIVE) {
+            final Panel tags = !amManager ? (Panel)new FlowPanel() : (Panel)new TagDetailPanel(
+                new TagDetailPanel.TagService() {
+                    public void tag (String tag, AsyncCallback callback) {
+                        CGroup.groupsvc.tagGroup(CGroup.creds, _group.groupId, tag, true, callback);
                     }
-                } 
-                public void onFailure (Throwable caught) {
-                    CGroup.log("Failed to fetch tags");
-                    addError(CGroup.serverError(caught));
+                    public void untag (String tag, AsyncCallback callback) {
+                        CGroup.groupsvc.tagGroup(CGroup.creds, _group.groupId, tag, false, 
+                            callback);
+                    }
+                    public void getRecentTags (AsyncCallback callback) {
+                        CGroup.groupsvc.getRecentTags(CGroup.creds, callback);
+                    }
+                    public void getTags (AsyncCallback callback) {
+                        CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, callback);
+                    }
+                    public boolean supportFlags () {
+                        return false;
+                    }
+                    public void setFlags (final byte flag, final Label statusLabel) { }
+                    public void addMenuItems (final String tag, PopupMenu menu) {
+                        menu.addMenuItem(CGroup.msgs.viewTagLink(), new Command() {
+                            public void execute () {
+                                History.newItem("tag=" + tag);
+                            }
+                        });
+                    }
+                });
+            if (!amManager) {
+                CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, new AsyncCallback () {
+                    public void onSuccess (Object result) {
+                        Iterator i = ((Collection) result).iterator();
+                        while (i.hasNext()) {
+                            String tag = (String)i.next();
+                            Hyperlink tagLink = new Hyperlink(tag, "tag=" + tag);
+                            DOM.setStyleAttribute(tagLink.getElement(), "display", "inline");
+                            tags.add(tagLink);
+                            if (i.hasNext()) {
+                                tags.add(new InlineLabel(", "));
+                            }
+                        }
+                    } 
+                    public void onFailure (Throwable caught) {
+                        CGroup.log("Failed to fetch tags");
+                        addError(CGroup.serverError(caught));
+                    }
+                });
+            }
+            people.setWidget(3, 1, tags);
+            people.setWidget(2, 0, new Widget() {
+                {
+                    Element hr = DOM.createElement("hr");
+                    DOM.setStyleAttribute(hr, "color", "black");
+                    DOM.setStyleAttribute(hr, "backgroundColor", "black");
+                    setElement(hr);
                 }
             });
         }
-        people.setWidget(3, 1, tags);
-        people.setWidget(2, 0, new Widget() {
-            {
-                Element hr = DOM.createElement("hr");
-                DOM.setStyleAttribute(hr, "color", "black");
-                DOM.setStyleAttribute(hr, "backgroundColor", "black");
-                setElement(hr);
-            }
-        });
         people.getFlexCellFormatter().setColSpan(2, 0, 2);
         DOM.setAttribute(people.getFlexCellFormatter().getElement(0, 1), "width", "100%");
         _table.getFlexCellFormatter().setColSpan(1, 0, 2);

@@ -101,7 +101,7 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Searches all public and inv-only groups for the specified tag.
+     * Searches all groups for the specified tag.  Tagging is not supported on exclusive groups
      */
     public Collection<GroupRecord> searchForTag (String tag)
         throws PersistenceException

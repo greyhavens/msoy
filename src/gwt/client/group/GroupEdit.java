@@ -3,6 +3,7 @@
 
 package client.group;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -43,6 +44,7 @@ import client.shell.MsoyEntryPoint;
 import client.util.BorderedDialog;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
+import client.util.AlertPopup;
 
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.
@@ -324,10 +326,13 @@ public class GroupEdit extends BorderedDialog
         if (!Character.isLetter(_group.name.charAt(0)) &&
             !Character.isDigit(_group.name.charAt(0))) {
             Window.alert(CGroup.msgs.errInvalidGroupName());
+            (new AlertPopup(CGroup.msgs.errInvalidGroupName()) {
+                public void onButton () {}
+            }).alert();
             return;
         }
 
-        AsyncCallback callback = new AsyncCallback() {
+        final AsyncCallback updateCallback = new AsyncCallback() {
             public void onSuccess (Object result) {
                 hide();
                 if (_listener != null) {
@@ -342,10 +347,30 @@ public class GroupEdit extends BorderedDialog
                 addError(CGroup.serverError(caught));
             }
         };
-        if (_group.groupId > 0) {
-            CGroup.groupsvc.updateGroup(CGroup.creds, _group, _extras, callback);
+        // check if we're trying to set the policy to exclusive on a group that has tags
+        if (_group.policy == Group.POLICY_EXCLUSIVE) {
+            CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, new AsyncCallback () {
+                public void onSuccess (Object result) {
+                    if (((Collection)result).size() > 0) {
+                        (new AlertPopup(CGroup.msgs.errTagsOnExclusive()) {
+                            public void onButton () {}
+                        }).alert();
+                    } else if (_group.groupId > 0) {
+                        CGroup.groupsvc.updateGroup(CGroup.creds, _group, _extras, updateCallback);
+                    } else {
+                        CGroup.groupsvc.createGroup(CGroup.creds, _group, _extras, updateCallback);
+                    }
+                } 
+                public void onFailure (Throwable caught) {
+                    addError(CGroup.serverError(caught));
+                }
+            });
         } else {
-            CGroup.groupsvc.createGroup(CGroup.creds, _group, _extras, callback);
+            if (_group.groupId > 0) {
+                CGroup.groupsvc.updateGroup(CGroup.creds, _group, _extras, updateCallback);
+            } else {
+                CGroup.groupsvc.createGroup(CGroup.creds, _group, _extras, updateCallback);
+            }
         }
     }
 
