@@ -461,6 +461,45 @@ public class MsoyController extends Controller
         });
     }
 
+    /**
+     * Figure out where we should be going, and go there.
+     */
+    public function goToPlace (params :Object) :void
+    {
+        // first, see if we should hit a specific scene
+        if (null != params["memberHome"]) {
+            handleGoMemberHome(int(params["memberHome"]));
+
+        } else if (null != params["groupHome"]) {
+            handleGoGroupHome(int(params["groupHome"]));
+
+        } else if (null != params["gameLobby"]) {
+            moveToGameLobby(int(params["gameLobby"]));
+
+        } else if (null != params["location"]) {
+            handleGoLocation(int(params["location"]));
+
+        } else if (null != params["noplace"]) {
+            // go to no place- we just want to chat with our friends
+            _ctx.getTopPanel().setPlaceView(new NoPlaceView(_ctx));
+
+        } else {
+            var starterSceneId :int = int(params["sceneId"]);
+            if (starterSceneId == 0) {
+                starterSceneId = _ctx.getMemberObject().homeSceneId;
+                if (starterSceneId == 0) {
+                    starterSceneId = 1; // for "packwards combatability"
+                }
+            }
+            _ctx.getSceneDirector().moveTo(starterSceneId);
+        }
+
+        // see if we should join a world game
+        if (null != params["worldGame"]) {
+            handleJoinWorldGame(int(params["worldGame"]));
+        }
+    }
+
     // from ClientObserver
     public function clientWillLogon (event :ClientEvent) :void
     {
@@ -481,7 +520,7 @@ public class MsoyController extends Controller
             }
         }
 
-        goToStartingPlace();
+        goToPlace(_topPanel.loaderInfo.parameters);
     }
 
     // from ClientObserver
@@ -520,47 +559,6 @@ public class MsoyController extends Controller
     public function clientDidClear (event :ClientEvent) :void
     {
         // nada
-    }
-
-    /**
-     * Figure out where we should be going, and go there.
-     */
-    protected function goToStartingPlace () :void
-    {
-        var params :Object = _topPanel.loaderInfo.parameters;
-
-        // first, see if we should hit a specific scene
-        if (null != params["memberHome"]) {
-            handleGoMemberHome(int(params["memberHome"]));
-
-        } else if (null != params["groupHome"]) {
-            handleGoGroupHome(int(params["groupHome"]));
-
-        } else if (null != params["gameLobby"]) {
-            moveToGameLobby(int(params["gameLobby"]));
-
-        } else if (null != params["location"]) {
-            handleGoLocation(int(params["location"]));
-
-        } else if (null != params["noplace"]) {
-            // go to no place- we just want to chat with our friends
-            _ctx.getTopPanel().setPlaceView(new NoPlaceView(_ctx));
-
-        } else {
-            var starterSceneId :int = int(params["sceneId"]);
-            if (starterSceneId == 0) {
-                starterSceneId = _ctx.getMemberObject().homeSceneId;
-                if (starterSceneId == 0) {
-                    starterSceneId = 1; // for "packwards combatability"
-                }
-            }
-            _ctx.getSceneDirector().moveTo(starterSceneId);
-        }
-
-        // see if we should join a world game
-        if (null != params["worldGame"]) {
-            handleJoinWorldGame(int(params["worldGame"]));
-        }
     }
 
     /**

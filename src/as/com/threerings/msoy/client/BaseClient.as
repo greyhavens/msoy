@@ -201,6 +201,10 @@ public /*abstract*/ class BaseClient extends Client
         return fdata;
     }
 
+    protected function externalGetGroups () :Array
+    {
+    }
+
     /**
      * Provides this player's flow, gold and level levels to the GWT client.
      */

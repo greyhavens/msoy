@@ -106,6 +106,7 @@ public class WorldClient extends BaseClient
     {
         super.configureExternalFunctions();
         ExternalInterface.addCallback("clientLogon", externalClientLogon);
+        ExternalInterface.addCallback("clientGo", externalClientGo);
         ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
     }
 
@@ -162,6 +163,22 @@ public class WorldClient extends BaseClient
         var co :MemberObject = _wctx.getMemberObject();
         if (co == null || co.getMemberId() != memberId) {
             _wctx.getMsoyController().handleLogon(createStartupCreds(_wctx.getStage(), token));
+        }
+    }
+
+    /**
+     * Exposed to javascript so that it may notify us to move to a new location.
+     */
+    protected function externalClientGo (where :String) :void
+    {
+        var eidx :int = where.indexOf("=");
+        if (eidx == -1) {
+            log.warning("Dropping malformed go request [where=" + where + "].");
+        } else {
+            log.info("Changing scenes per external request [where=" + where + "].");
+            var params :Object = new Object();
+            params[where.substring(0, eidx)] = where.substring(eidx+1);
+            _wctx.getMsoyController().goToPlace(params);
         }
     }
 

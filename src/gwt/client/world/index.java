@@ -82,7 +82,6 @@ public class index extends MsoyEntryPoint
 
     protected boolean updateInterface (String token)
     {
-        RootPanel.get("content").clear();
         _entryCounter++;
 
         // don't show the flash client in the GWT shell
@@ -181,7 +180,7 @@ public class index extends MsoyEntryPoint
         });
         scheduleReload();
     }
-    
+
     protected void scheduleReload ()
     {
         new Timer() {
@@ -190,12 +189,14 @@ public class index extends MsoyEntryPoint
             }
         }.schedule(NEIGHBORHOOD_REFRESH_TIME * 1000);
     }
-    
+
     protected void neighborhood (String hood)
     {
-        if (_client != null) {
+        if (_mode == WORLD_MODE) {
             clientLogoff();
+            // TODO: start up the header client
         }
+        _mode = HOOD_MODE;
         if (hood == null) {
             setContent(new Label(CWorld.msgs.noSuchMember()));
         } else {
@@ -205,14 +206,26 @@ public class index extends MsoyEntryPoint
 
     protected void hotSpots (String hotSpots)
     {
-        if (_client != null) {
+        if (_mode == WORLD_MODE) {
             clientLogoff();
+            // TODO: start up the header client
         }
+        _mode = POPULAR_MODE;
         setContent(_client = FlashClients.createPopularPlaces(hotSpots));
     }
 
     protected void world (String flashVar)
     {
+        if (_mode == WORLD_MODE) {
+            CWorld.log("Going " + flashVar);
+            if (clientGo(flashVar)) {
+                return;
+            }
+            // otherwise fall through and reload the page
+        }
+
+        CWorld.log("Full reloading " + flashVar);
+        _mode = WORLD_MODE;
         if (CWorld.creds != null) {
             flashVar = "token=" + CWorld.creds.token + "&" + flashVar;
         }
@@ -234,37 +247,45 @@ public class index extends MsoyEntryPoint
      * Logs on the MetaSOY Flash client using magical JavaScript.
      */
     protected static native void clientLogon (int memberId, String token) /*-{
-        try {
-            if ($doc.asclient) {
-                $doc.asclient.clientLogon(memberId, token);
-
-            } else if ($wnd.asclient) {
-                $wnd.asclient.clientLogon(memberId, token);
-            }
-        } catch (e) {
-            // oh well
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            client.clientLogon(memberId, token);
         }
+    }-*/;
+
+    /**
+     * Tells the World client to go to a particular location.
+     */
+    protected static native boolean clientGo (String where) /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            client.clientGo(where);
+            return true;
+        }
+        return false;
     }-*/;
 
     /**
      * Logs off the MetaSOY Flash client using magical JavaScript.
      */
     protected static native void clientLogoff () /*-{
-        try {
-            if ($doc.asclient) {
-                $doc.asclient.clientLogoff();
-            } else if ($wnd.asclient) {
-                $wnd.asclient.clientLogoff();
-            }
-        } catch (e) {
-            // oh well
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            client.clientLogoff();
         }
     }-*/;
 
     /** A counter to help asynchronous callbacks to figure out if they've been obsoleted. */
     protected int _entryCounter;
 
+    /** The display mode we're in. */
+    protected int _mode = -1;
+
     protected HTML _client;
-    
+
     protected static final int NEIGHBORHOOD_REFRESH_TIME = 60;
+
+    protected static final int WORLD_MODE = 0;
+    protected static final int HOOD_MODE = 1;
+    protected static final int POPULAR_MODE = 2;
 }
