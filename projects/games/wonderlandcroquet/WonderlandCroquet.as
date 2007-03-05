@@ -8,7 +8,6 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.events.Event;
 
-import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
@@ -18,6 +17,8 @@ import com.threerings.ezgame.StateChangedListener;
 import mx.core.*;
 import mx.utils.ObjectUtil;
 
+import com.whirled.WhirledGameControl;
+
 import org.cove.ape.*;
 
 [SWF(width="750", height="508")]
@@ -25,7 +26,7 @@ public class WonderlandCroquet extends Sprite
     implements PropertyChangedListener, StateChangedListener
 {
     /** Our game control object. */
-    public var gameCtrl :EZGameControl;
+    public var gameCtrl :WhirledGameControl;
 
     /** Our map. */
     public var map :WonderlandMap;
@@ -35,7 +36,7 @@ public class WonderlandCroquet extends Sprite
 
     public function WonderlandCroquet ()
     {
-        gameCtrl = new EZGameControl(this);
+        gameCtrl = new WhirledGameControl(this);
         gameCtrl.registerListener(this);
 
         _spr = new Sprite();
@@ -283,6 +284,7 @@ public class WonderlandCroquet extends Sprite
     {
         _moveAgain = true;
         _wickets[myIdx]++;
+        gameCtrl.awardFlow(FLOW_MULTIPLIER * _wickets[myIdx]);
         if (_wickets[myIdx] >= map.wickets.length) {
             // That was the last one. Yay.
             gameCtrl.sendChat("ZOMG! " + gameCtrl.getOccupantName(gameCtrl.getMyId()) + 
@@ -348,6 +350,8 @@ public class WonderlandCroquet extends Sprite
     protected var _myBall :BallParticle;
 
     protected var _moveAgain :Boolean;
+
+    protected static const FLOW_MULTIPLIER :int = 10;
 
 }
 }
