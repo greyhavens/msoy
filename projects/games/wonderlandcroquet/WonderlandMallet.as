@@ -36,15 +36,15 @@ public class WonderlandMallet extends Sprite
 
     protected function mouseDown (event :MouseEvent) :void
     {
-        _chargeAnimation.stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
-        _chargeAnimation.stage.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
+        _ball.particle.wc.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
+        _ball.particle.wc.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
 
         _ballPosition = _ball.parent.localToGlobal(new Point(_ball.x, _ball.y));
     }
 
     protected function mouseMove (event :MouseEvent) :void
     {
-        var p :Point = _chargeAnimation.stage.globalToLocal(new Point(event.stageX, event.stageY));
+        var p :Point = _ball.particle.wc.globalToLocal(new Point(event.stageX, event.stageY));
 
         var dx :Number = _ballPosition.x - p.x;
         var dy :Number = _ballPosition.y - p.y;
@@ -82,8 +82,8 @@ public class WonderlandMallet extends Sprite
 
     protected function mouseUp (event :MouseEvent) :void
     {
-        _chargeAnimation.stage.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
-        _chargeAnimation.stage.removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
+        _ball.particle.wc.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
+        _ball.particle.wc.removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
 
         _strikePoint = _ball.globalToLocal(new Point(event.stageX, event.stageY));
 

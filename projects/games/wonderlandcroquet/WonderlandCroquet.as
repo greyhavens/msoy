@@ -3,6 +3,7 @@ package {
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Graphics;
+import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.MouseEvent;
@@ -21,10 +22,16 @@ import com.whirled.WhirledGameControl;
 
 import org.cove.ape.*;
 
-[SWF(width="750", height="508")]
+[SWF(width="800", height="530")]
 public class WonderlandCroquet extends Sprite
     implements PropertyChangedListener, StateChangedListener
 {
+    /** Hard code my goddamned dimensions for now since I can't touch the stage to do this
+     * dynamically with screen resizes.
+     */
+    public static const WIDTH :int = 800;
+    public static const HEIGHT :int = 530;
+
     /** Our game control object. */
     public var gameCtrl :WhirledGameControl;
 
@@ -36,6 +43,15 @@ public class WonderlandCroquet extends Sprite
 
     public function WonderlandCroquet ()
     {
+        // For now, mask us off to my specific size.
+        var mask :Shape = new Shape();
+        addChild(mask);
+        mask.graphics.clear();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, 0, WIDTH, HEIGHT);
+        mask.graphics.endFill();
+        this.mask = mask;
+
         gameCtrl = new WhirledGameControl(this);
         gameCtrl.registerListener(this);
 
@@ -99,7 +115,9 @@ public class WonderlandCroquet extends Sprite
     {
         removeEventListener(Event.ENTER_FRAME, firstFrameSetup);
 
+        /** Argh! I can't touch the stage to find out how big I am!
         stage.addEventListener(flash.events.Event.RESIZE, stageResize);
+        */
 
         positionStatus();
     }
@@ -109,8 +127,13 @@ public class WonderlandCroquet extends Sprite
      */
     protected function positionStatus () :void
     {
+        /** Argh! I can't touch the stage to find out how big I am!
         _status.x = stage.stageWidth - 50;
         _status.y = stage.stageHeight - 75;
+        */
+
+        _status.x = WIDTH - 40;
+        _status.y = HEIGHT - 75;
     }
 
     protected function stageResize (event :Event) :void
