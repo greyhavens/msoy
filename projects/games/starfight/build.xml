@@ -25,7 +25,7 @@
   </target>
 
   <target name="dist" depends="compile">
-    <copy file="StarFight.swf" tofile="/export/msoy/pages/media/46543602cf7880cb78c5200d7d25ef7feadfc388.swf"/>
+    <copy file="StarFight.swf" tofile="/export/msoy/pages/media/50fd156d5e48aa25d319344019640f0dbac657e7.swf"/>
   </target>
 
 

@@ -19,8 +19,6 @@ import flash.events.TimerEvent;
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
-import com.threerings.ezgame.HostCoordinator;
-import com.threerings.ezgame.HostEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
@@ -36,7 +34,7 @@ import com.whirled.WhirledGameControl;
  */
 [SWF(width="800", height="530")]
 public class StarFight extends Sprite
-    implements PropertyChangedListener, MessageReceivedListener
+    implements PropertyChangedListener, MessageReceivedListener, StateChangedListener
 {
     public static const WIDTH :int = 800;
     public static const HEIGHT :int = 530;
@@ -49,9 +47,6 @@ public class StarFight extends Sprite
         _gameCtrl = new WhirledGameControl(this);
         _gameCtrl.registerListener(this);
 
-        _coordinator = new HostCoordinator (_gameCtrl);
-        _coordinator.addEventListener (HostEvent.CHANGED, hostChangedHandler);
-        
         _boardLayer = new Sprite();
         _shipLayer = new Sprite();
         _shotLayer = new Sprite();
@@ -96,32 +91,44 @@ public class StarFight extends Sprite
         _names = _gameCtrl.seating.getPlayerNames();
         _myIndex = _gameCtrl.seating.getMyPosition();
 
-        // set up our listeners
-        _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, gameStarted);
+        // If someone already created the board, let's get it now.  If not, we'll get it on the
+        //  update.
+        var boardBytes :ByteArray =  ByteArray(_gameCtrl.get("board"));
+        if (boardBytes != null) {
+            var boardObj :Board = new Board(0, 0, false);
+            boardBytes.position = 0;
+            boardObj.readFrom(boardBytes);
+            gotBoard(boardObj);
+        }
     }
 
     /**
      * Once the host was found, start the game!
      */
-    private function hostChangedHandler (event : HostEvent) : void
+    private function hostChanged (event : StateChangedEvent) : void
     {
-        // Try initializing the game state (if I'm the first host)
-        if (event.previousHost == 0 && event.newHost == _gameCtrl.getMyId()) {
-            var boardObj :Board;
-            // We don't already have a board and we're the host?  Create it
-            //  and our initial ship array too.
-            var size :int =
-                int(Math.sqrt(Math.max(1, _names.length-1)) * 50);
-
-            boardObj = new Board(size, size, true);
-            _gameCtrl.setImmediate("board", boardObj.writeTo(new ByteArray()));
-
-            _gameCtrl.setImmediate("ship", new Array(_names.length));
-
-            var maxPowerups :int = Math.max(1,
-                boardObj.width*boardObj.height/MIN_TILES_PER_POWERUP);
-            _gameCtrl.setImmediate("powerup", new Array(maxPowerups));
+        // Try initializing the game state if there isn't a board yet.
+        if (_gameCtrl.amInControl() && _gameCtrl.get("board") == null) {
+            createBoard();
         }
+    }
+
+    protected function createBoard () :void
+    {
+        var boardObj :Board;
+        // We don't already have a board and we're the host?  Create it
+        //  and our initial ship array too.
+        var size :int =
+            int(Math.sqrt(Math.max(1, _names.length-1)) * 50);
+        
+        boardObj = new Board(size, size, true);
+        _gameCtrl.setImmediate("board", boardObj.writeTo(new ByteArray()));
+        
+        _gameCtrl.setImmediate("ship", new Array(_names.length));
+        
+        var maxPowerups :int = Math.max(1,
+            boardObj.width*boardObj.height/MIN_TILES_PER_POWERUP);
+        _gameCtrl.setImmediate("powerup", new Array(maxPowerups));
     }
 
     /**
@@ -188,7 +195,7 @@ public class StarFight extends Sprite
         }
 
         // The first player is in charge of adding powerups.
-        if (_coordinator.status == HostCoordinator.STATUS_HOST) {
+        if (_gameCtrl.amInControl()) {
             addPowerup(null);
             var timer :Timer = new Timer(20000, 0);
             timer.addEventListener(TimerEvent.TIMER, addPowerup);
@@ -449,6 +456,18 @@ public class StarFight extends Sprite
     protected function gameStarted (event :StateChangedEvent) :void
     {
         log("Game started");
+        if (_gameCtrl.amInControl() && (_gameCtrl.get("board") == null)) {
+            createBoard();
+        }
+    }
+
+    public function stateChanged (event :StateChangedEvent) :void
+    {
+        if (event.type == StateChangedEvent.GAME_STARTED) {
+            gameStarted(event);
+        } else if (event.type == StateChangedEvent.CONTROL_CHANGED) {
+            hostChanged(event);
+        }
     }
 
     /**
@@ -556,9 +575,6 @@ public class StarFight extends Sprite
 
     /** Our game control object. */
     protected var _gameCtrl :WhirledGameControl;
-
-    /** Keeps track of whether we are the host client. */
-    protected var _coordinator :HostCoordinator;
 
     /** Our seated index. */
     protected var _myIndex :int;
