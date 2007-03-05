@@ -222,6 +222,8 @@ public class WonderlandCroquet extends Sprite
                 }
                 startTurn();
             }
+
+            _status.turnChanged(gameCtrl.seating.getPlayerPosition(gameCtrl.getTurnHolder()));
         } else if (event.type == StateChangedEvent.GAME_STARTED) {
             gameCtrl.localChat("Wonderland Croquet!");
 

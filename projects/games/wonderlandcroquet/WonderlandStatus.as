@@ -32,6 +32,21 @@ public class WonderlandStatus extends Sprite
     }
 
     /**
+     * Updates to show that playerIdx is the current turn holder.
+     */
+    public function turnChanged (playerIdx :int) :void
+    {
+       if (_turnHolder != -1) {
+           _balls[_turnHolder].gotoAndPlay(MARKER_HIDE_FRAME);
+       }
+        _turnHolder = playerIdx;
+
+        if (_balls[_turnHolder] != null) {
+            _balls[_turnHolder].gotoAndPlay(MARKER_SHOW_FRAME);
+        }
+    }
+
+    /**
      * Update the display to show that the specified player is now targetting the specified wicket.
      */
     public function targetWicket (playerIdx :int, wicketIdx :int) :void
@@ -58,6 +73,12 @@ public class WonderlandStatus extends Sprite
         var ii :int;
         for (ii = 0; ii < WonderlandCodes.MAX_PLAYERS; ii ++) {
             _balls[ii] = new (_loader.getClass("marker" + (ii + 1)))();
+            _balls[ii].gotoAndPlay(MARKER_HIDE_FRAME);
+        }
+
+        if (_turnHolder != -1) {
+            // Crap, we've started already? Quick, unroll the right guy.
+            turnChanged(_turnHolder);
         }
 
         var y :int = 0;
@@ -100,6 +121,10 @@ public class WonderlandStatus extends Sprite
     /** Our swf loader. */
     protected var _loader :EmbeddedSwfLoader;
 
+    /** The current turn holder. Have to keep it around to clear when it changes, as well as
+     * keeping things clean if we start a turn before our art is loaded. */
+    protected var _turnHolder :int = -1;
+
     /** Balls. */
     protected var _balls :Array = [];
 
@@ -109,11 +134,17 @@ public class WonderlandStatus extends Sprite
     /** The wicket # each player is targetting. */
     protected var _targets :Array = [];
 
-    /* How far to move on each click on an arrow. */
+    /** How far to move on each click on an arrow. */
     protected static const STEP_SIZE :int = 50;
 
-    /* How many percent to nudge our zoom by. */
+    /** How many percent to nudge our zoom by. */
     protected static const ZOOM_PERCENT :Number = 2.5;
+
+    /** Which frame to go to for the animation showing a marker. */
+    protected static const MARKER_SHOW_FRAME :int = 0;
+
+    /** Which frame to go to for the animation hiding a marker. */
+    protected static const MARKER_HIDE_FRAME :int = 7;
 
     [Embed(source="rsrc/status.swf", mimeType="application/octet-stream")]
     protected static const STATUS_ART_CLASS :Class;
