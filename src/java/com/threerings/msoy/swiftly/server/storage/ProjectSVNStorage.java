@@ -99,7 +99,7 @@ public class ProjectSVNStorage
         SVNCommitInfo commitInfo;
         long latestRevision;
 
-        // If this is a local repository, we'll attempt to create it now
+        // If this is a local repository, we'll attempt to create it now.
         if (storageRecord.protocol.equals(PROTOCOL_FILE)) {
             File repoDir = new File(storageRecord.baseDir, Integer.toString(projectRecord.projectId));
             try {
@@ -137,16 +137,16 @@ public class ProjectSVNStorage
 
         // 
         try {
-            // Open the repository root
+            // Open the repository root.
             editor.openRoot(-1);           
 
-            // Add the template directory to the commit
+            // Add the template directory to the commit.
             svnAddDirectory(editor, "", templateDir);
 
-            // Close the repository root
+            // Close the repository root.
             editor.closeDir();
 
-            // Commit the whole lot
+            // Commit the whole lot.
             commitInfo = editor.closeEdit();
     
         } catch (SVNException e) {
@@ -158,13 +158,13 @@ public class ProjectSVNStorage
                     + eabort, eabort);                
             }
             
-            // Report failure
+            // Report failure.
             throw new ProjectStorageException.InternalError("Failure committing project template: "
                 + e, e);
 
         } catch (FileNotFoundException fnfe) {
             // Either someone handed us a bad template directory, or someone removed things from it
-            // while we were running
+            // while we were running.
             throw new ProjectStorageException.ConsistencyError("Could not load template: "
                 + fnfe, fnfe);
         } catch (IOException ioe) {
@@ -172,7 +172,7 @@ public class ProjectSVNStorage
                 ioe, ioe);
         }
 
-        // Validate the commit
+        // Validate the commit.
         if (commitInfo == null) {
             throw new ProjectStorageException.InternalError("Subversion commit failed, null commit info returned");            
         }
@@ -181,7 +181,7 @@ public class ProjectSVNStorage
             throw new ProjectStorageException.InternalError("Subversion commit failed: " + commitInfo.getErrorMessage());
         }
 
-        // Everything worked, return the now-initialized storage instance
+        // Everything worked, return the now-initialized storage instance.
         return storage;
     }
 
@@ -236,7 +236,7 @@ public class ProjectSVNStorage
             PathElement root = PathElement.createRoot(_projectRecord.projectName);
             List<PathElement> elements = recurseTree(svnRepo, root, null, latestRevision);
             
-            // Root element must be added by the caller
+            // Root element must be added by the caller.
             elements.add(root);
             return elements;
         } catch (SVNException svne) {
@@ -319,15 +319,15 @@ public class ProjectSVNStorage
                 // Recurse
                 recurseTree(svnRepo, node, result, revision);
             } else if (kind == SVNNodeKind.FILE) {
-                // Fetch the file properties
+                // Fetch the file properties.
                 properties = new HashMap<String,String>();
                 svnRepo.getFile(parent.getAbsolutePath() + "/" + entry.getName(), revision,
                     properties, null);
                 
-                // Pull out the mime type
+                // Pull out the mime type.
                 mimeType = properties.get(SVNProperty.MIME_TYPE);
                 
-                // Initialize a new PathElement node
+                // Initialize a new PathElement node.
                 node = PathElement.createFile(entry.getName(), parent, mimeType);
             } else {
                 throw new ProjectStorageException.InternalError("Received an unhandled subversion node type: " + kind);
@@ -360,7 +360,7 @@ public class ProjectSVNStorage
                     continue;
                 }
 
-                // Add the directory
+                // Add the directory.
                 editor.addDir(subPath, null, -1);
 
                 // Recurse
@@ -381,20 +381,20 @@ public class ProjectSVNStorage
                 // Attempt magic identification
                 mimeType = identifier.identify(firstBytes, targetFile.getName(), null);
                 
-                // If that failed, try our internal path-based type detection
+                // If that failed, try our internal path-based type detection.
                 if (mimeType == null) {
                     // Get the miserly byte mime-type
                     byte miserMimeType = MediaDesc.suffixToMimeType(targetFile.getName());
                     
-                    // If a valid type was returned, convert to a string
-                    // Otherwise, don't set a mime type
+                    // If a valid type was returned, convert to a string.
+                    // Otherwise, don't set a mime type.
                     // TODO: binary file detection
                     if (miserMimeType != -1) {
                         mimeType = MediaDesc.mimeTypeToString(miserMimeType);
                     }
                 }
 
-                // Add the file, generating the delta and checksum
+                // Add the file, generating the delta and checksum.
                 editor.addFile(subPath, null, -1);
                 editor.applyTextDelta(subPath, null);
                 checksum = deltaGenerator.sendDelta(subPath, new FileInputStream(targetFile), editor, true);
