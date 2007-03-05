@@ -274,11 +274,15 @@ public class ProjectSVNStorage
         }
 
         try {
-            return new SwiftlyDocument(new FileInputStream(tempFile), path);
+            swiftlyDoc = new SwiftlyDocument(new FileInputStream(tempFile), path);
         } catch (IOException ioe) {
             throw new ProjectStorageException.InternalError("Failure instantiating SwiftlyDocument: " +
                 ioe, ioe);            
+        } finally {
+            tempFile.delete();
         }
+
+        return swiftlyDoc;
     }
     
     /**
