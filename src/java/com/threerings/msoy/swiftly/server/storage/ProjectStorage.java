@@ -6,6 +6,7 @@ package com.threerings.msoy.swiftly.server.storage;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -18,4 +19,9 @@ public interface ProjectStorage
 
     /** Loads and returns a SwiftlyDocument from cold storage. */
     public SwiftlyDocument getDocument (PathElement path) throws ProjectStorageException;
+
+    /**
+     * Exports the entire project repository to a given file system path. All project files
+     * will be created relative to the provided path. */
+    public void export (File exportDirectory) throws ProjectStorageException;
 }

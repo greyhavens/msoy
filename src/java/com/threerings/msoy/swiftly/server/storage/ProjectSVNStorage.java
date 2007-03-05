@@ -26,21 +26,29 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
+
 import org.semanticdesktop.aperture.mime.identifier.MimeTypeIdentifier;
 import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifier;
 
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDirEntry;
+import org.tmatesoft.svn.core.SVNErrorCode;
+import org.tmatesoft.svn.core.SVNErrorMessage;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNProperty;
 import org.tmatesoft.svn.core.SVNURL;
 
 import org.tmatesoft.svn.core.io.ISVNEditor;
+import org.tmatesoft.svn.core.io.ISVNReporter;
+import org.tmatesoft.svn.core.io.ISVNReporterBaton;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
 
 import org.tmatesoft.svn.core.io.diff.SVNDeltaGenerator;
+import org.tmatesoft.svn.core.io.diff.SVNDeltaProcessor;
+import org.tmatesoft.svn.core.io.diff.SVNDiffWindow;
 
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
@@ -83,6 +91,7 @@ public class ProjectSVNStorage
         // file:///
         FSRepositoryFactory.setup();
     }
+
 
     /**
      * Initialize project storage for a given project record. Any .svn directories in the given
@@ -135,7 +144,7 @@ public class ProjectSVNStorage
                 + e, e);
         }
 
-        // 
+        // "svn add" the template.
         try {
             // Open the repository root.
             editor.openRoot(-1);           
@@ -246,6 +255,7 @@ public class ProjectSVNStorage
 
     }
 
+
     // from interface ProjectStorage
     public SwiftlyDocument getDocument (PathElement path)
         throws ProjectStorageException
@@ -284,7 +294,43 @@ public class ProjectSVNStorage
 
         return swiftlyDoc;
     }
-    
+ 
+
+    // from interface ProjectStorage
+    public void export (File exportPath)
+        throws ProjectStorageException
+    {
+        SVNRepository svnRepo;
+        SVNNodeKind nodeKind;
+        ISVNReporterBaton reporterBaton;
+        ISVNEditor exportEditor;
+        long latestRevision;
+
+        // Fire off an export
+        try {
+            // Connect to the repository and get the latest revision. This is what we'll export.
+            svnRepo = getSVNRepository();
+            latestRevision = svnRepo.getLatestRevision();
+
+            // Validate the repository URL
+            nodeKind = svnRepo.checkPath("", latestRevision);
+            if (nodeKind != SVNNodeKind.DIR) {
+                // This really shouldn't happen!
+                throw new ProjectStorageException.ConsistencyError("Project subversion URL " +
+                    "does not refer to a directory.");
+            }
+
+            // Do the actual export
+            reporterBaton = new ExportReporterBaton(latestRevision);
+            exportEditor = new ExportEditor(exportPath);
+            svnRepo.update(latestRevision, null, true, reporterBaton, exportEditor);
+
+        } catch (SVNException svne) {
+            throw new ProjectStorageException.InternalError("Project export failed: " + svne, svne);
+        }
+    }
+
+
     /**
      * Given a URI and a project Id, return the project's subversion URL.
      * This is composed of the base server URL + the project ID.
@@ -422,6 +468,164 @@ public class ProjectSVNStorage
     {
         return _svnPool.createRepository(_svnURL, true);
     }
+
+
+    /**
+     * SVNKit export reporter. Describes the state of local items --
+     * in the case of export, all local items are non-existent.
+     */
+    protected class ExportReporterBaton
+        implements ISVNReporterBaton
+    {
+        /** Export the given revision. */
+        public ExportReporterBaton (long revision)
+        {
+            _exportRevision = revision;
+        }
+
+        public void report (ISVNReporter reporter)
+            throws SVNException
+        {
+            // Set the root path to the export revision, with the startEmpty
+            // flag true to inform the reporter that the directory has no
+            // entries or properties.
+            try {
+                reporter.setPath("", null, _exportRevision, true);
+                reporter.finishReport();                
+            } catch (SVNException svne) {
+                reporter.abortReport();
+            }
+        }
+
+        private long _exportRevision;
+    }
+    
+
+    /**
+     * SVNKit export editor. Responsible for writing provided files
+     * and directories to the file system.
+     */
+     protected class ExportEditor
+        implements ISVNEditor
+    {
+        /**
+         * Instantiate the exporter with the given root directory
+         * to which all exported files will be relative.
+         */
+        public ExportEditor (File rootPath)
+        {
+           _rootPath = rootPath;
+           _deltaProcessor = new SVNDeltaProcessor();
+        }
+
+
+        /** Create a directory. */
+        public void addDir (String relativeDirPath, String copyFromPath, long copyFromRevision)
+            throws SVNException
+        {
+            File newDir = new File(_rootPath, relativeDirPath);
+
+            if (!newDir.isDirectory() && !newDir.mkdirs()) {
+                SVNErrorMessage msg = SVNErrorMessage.create(SVNErrorCode.IO_ERROR,
+                    "Failed to add the directory ''{0}''", newDir);
+                throw new SVNException(msg);
+            }
+        }
+
+        /** Create a file. */
+        public void addFile (String relativeFilePath, String copyFromPath, long copyFromRevision)
+            throws SVNException
+        {
+            File newFile = new File(_rootPath, relativeFilePath);
+            if (newFile.exists()) {
+                SVNErrorMessage msg = SVNErrorMessage.create(SVNErrorCode.IO_ERROR,
+                    "File ''{0}'' already exists", newFile);
+                throw new SVNException(msg);
+            }
+
+            try {
+                newFile.createNewFile();                
+            } catch (IOException ioe) {
+                SVNErrorMessage msg = SVNErrorMessage.create(SVNErrorCode.IO_ERROR,
+                    "Could not create file ''{0}''", newFile);
+                throw new SVNException(msg);
+            }
+        }
+
+        public void applyTextDelta(String relativeFilePath, String baseChecksum)
+            throws SVNException
+        {
+            File editFile = new File(_rootPath, relativeFilePath);
+
+            // Apply the given delta to the local file.
+            _deltaProcessor.applyTextDelta(null, editFile, false);
+        }
+        
+        public OutputStream textDeltaChunk(String path, SVNDiffWindow diffWindow)
+            throws SVNException
+        {
+            // Prepare for the next diff window.
+            return _deltaProcessor.textDeltaChunk(diffWindow);
+        }
+        
+        public void textDeltaEnd(String path)
+            throws SVNException
+        {
+            // Finalize the delta, including computing the checksum (not enabled).
+            _deltaProcessor.textDeltaEnd();
+        } 
+
+        /** Close the edit, commit any remaining changes. */
+        public SVNCommitInfo closeEdit ()
+        {
+            return null;
+        }
+
+        // No implementation necessary on the following. Yay pointless boilerplate!
+
+        /** Target the given revision. */
+        public void targetRevision (long revision) throws SVNException {}
+
+        /** Open the project root. */
+        public void openRoot (long revision) throws SVNException {}
+    
+        /** Open the given directory. */
+        public void openDir (String path, long revision) throws SVNException {}
+        
+        /** Change the directory property. */
+        public void changeDirProperty (String name, String value) throws SVNException {}
+        
+        /** Open the given file. */
+        public void openFile (String path, long revision) throws SVNException {}
+    
+        /** Change the file property. */
+        public void changeFileProperty (String path, String name, String value) throws SVNException {}
+
+        /** Close the currently open directory. */
+        public void closeDir () throws SVNException {}
+
+        /** Close the given file. */
+        public void closeFile (String path, String textChecksum) throws SVNException {}
+        
+        /** Delete the given entry. */
+        public void deleteEntry (String path, long revision) throws SVNException {}
+        
+        /** Absent directory. */
+        public void absentDir (String path) throws SVNException {}
+        
+        /* Absent file. */
+        public void absentFile (String path) throws SVNException {}
+
+        /* Abort the export -- an error occured. */
+        public void abortEdit () throws SVNException {}
+
+        /* Transforms server deltas to file contents. */
+        private SVNDeltaProcessor _deltaProcessor = new SVNDeltaProcessor();
+
+        /** Export root. */
+        private File _rootPath;
+    }
+
 
     /** Reference to the project record. */
     protected SwiftlyProjectRecord _projectRecord;

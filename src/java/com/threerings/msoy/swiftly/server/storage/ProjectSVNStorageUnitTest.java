@@ -12,6 +12,8 @@ import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -116,6 +118,30 @@ public class ProjectSVNStorageUnitTest extends TestCase
 
     }
 
+    /** Try exporting a project to disk. */
+    public void testExportProject ()
+        throws Exception
+    {
+        ProjectStorage storage = new ProjectSVNStorage(_projectRecord, _storageRecord);
+        File exportDir = new File(_tempDir, "export");
+        File srcFile = new File(exportDir, "UnitTest.as");
+
+        storage.export(exportDir);
+        assertTrue(srcFile.getName() + " was not exported.", srcFile.exists());
+
+        // Ensure the document data was exported correctly.
+        InputStream input = new FileInputStream(srcFile);
+        byte data[] = new byte[1024];
+        int len;
+        String contents;
+    
+        assertTrue("Could not read any data from " + srcFile.getName(),
+            (len = input.read(data, 0, data.length)) >= 0);
+
+        // We always encode on-disk data as utf8.
+        contents = new String(data, 0, len, "UTF8");
+        assertTrue("Unexpected file data: " + contents, contents.startsWith("package {"));
+    }
 
     /** Temporary test directory. */
     protected File _tempDir;
