@@ -12,9 +12,6 @@ import flash.ui.Keyboard;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
-import com.threerings.ezgame.EZGameControl;
-import com.threerings.ezgame.HostCoordinator;
-import com.threerings.ezgame.HostEvent;
 import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
@@ -24,6 +21,8 @@ import com.threerings.ezgame.MessageReceivedEvent;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
+
+import com.whirled.WhirledGameControl;
 
 [SWF(width="711", height="400")]
 public class UnderwhirledDrift extends Sprite
@@ -64,9 +63,9 @@ public class UnderwhirledDrift extends Sprite
         colorBackground.graphics.endFill();
         gameSprite.addChild(colorBackground);
 
-        _gameCtrl = new EZGameControl(this);
+        _control = new WhirledGameControl(this);
 
-        if (_gameCtrl.isConnected()) {
+        if (_control.isConnected()) {
             var camera :Camera = new Camera();
 
             _ground = new Ground(camera);
@@ -75,13 +74,11 @@ public class UnderwhirledDrift extends Sprite
 
             _level = LevelFactory.createLevel(_currentLevel = 0, _ground);
 
-            _gameCtrl.registerListener(this);
-            _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyEventHandler);
-            _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyEventHandler);
-            _messageQueue = new MessageQueue(_gameCtrl);
+            _control.registerListener(this);
+            _control.addEventListener(KeyboardEvent.KEY_DOWN, keyEventHandler);
+            _control.addEventListener(KeyboardEvent.KEY_UP, keyEventHandler);
+            _messageQueue = new MessageQueue(_control);
     
-            _coord = new HostCoordinator(_gameCtrl);
-
             var chooser :KartChooser = new KartChooser(this, gameSprite, camera, _ground);
             chooser.chooseKart();
 
@@ -89,7 +86,7 @@ public class UnderwhirledDrift extends Sprite
             // starts
             /*
             var nameText :TextField = new TextField();
-            nameText.text = _gameCtrl.getOccupantName(_gameCtrl.getMyId());
+            nameText.text = _control.getOccupantName(_control.getMyId());
             nameText.selectable = false;
             nameText.autoSize = TextFieldAutoSize.CENTER;
             nameText.scaleX = nameText.scaleY = 2.5;
@@ -105,14 +102,14 @@ public class UnderwhirledDrift extends Sprite
     public function stateChanged (event :StateChangedEvent) :void
     {
         if (event.type == StateChangedEvent.GAME_STARTED) {
-            var playerIds :Array = _gameCtrl.seating.getPlayerIds();
-            if (_coord.status == HostCoordinator.STATUS_HOST || playerIds.length == 1) {
+            var playerIds :Array = _control.seating.getPlayerIds();
+            if (_control.amInControl() || playerIds.length == 1) {
                 // assign everyone a starting position.
                 ArrayUtil.shuffle(playerIds);
                 for (var ii :int = 0; ii < playerIds.length; ii++) {
                     playerIds[ii] = { id: playerIds[ii], position: ii };
                 }
-                _gameCtrl.set("playerPositions", playerIds);
+                _control.set("playerPositions", playerIds);
             }
         }
     }
@@ -124,7 +121,7 @@ public class UnderwhirledDrift extends Sprite
         if (name == "playerPositions") {
             var playerPositions :Array = event.newValue as Array;
             for (var ii: int = 0; ii < playerPositions.length; ii++) {
-                if (playerPositions[ii].id == _gameCtrl.getMyId()) {
+                if (playerPositions[ii].id == _control.getMyId()) {
                     _level.setStartingPosition(playerPositions[ii].position);
                 } else {
                     var playerId :int = playerPositions[ii].id;
@@ -149,16 +146,16 @@ public class UnderwhirledDrift extends Sprite
         if (event.name == "raceStarted") {
             _raceStarted = true;
             var obj :Object = _kart.getUpdate();
-            obj.playerId = _gameCtrl.getMyId();
+            obj.playerId = _control.getMyId();
             _messageQueue.sendMessage("positionUpdate", obj);
         } else if (event.name == "positionUpdate") {
             var playerId :int = event.value.playerId;
-            if (playerId != _gameCtrl.getMyId()) {
+            if (playerId != _control.getMyId()) {
                 (_opponentKarts.get(playerId) as KartObstacle).setPosition(event.value);
             }
         } else if (event.name == "kartChosen") {
             playerId = event.value.playerId;
-            if (playerId != _gameCtrl.getMyId()) {
+            if (playerId != _control.getMyId()) {
                 var kartType :String = event.value.kartType;
                 var position :Object = _opponentKarts.get(playerId);
                 if (position != null) {
@@ -181,7 +178,7 @@ public class UnderwhirledDrift extends Sprite
         // tack on a few pixels to account for the front of the kart
         _kart.y = KART_LOCATION.y + SKY_HEIGHT + KART_OFFSET;
         addChild(_kart);
-        _messageQueue.sendMessage("kartChosen", {playerId: _gameCtrl.getMyId(),
+        _messageQueue.sendMessage("kartChosen", {playerId: _control.getMyId(),
             kartType: _kart.kartType});
         updateRaceStarted();
     }
@@ -192,9 +189,9 @@ public class UnderwhirledDrift extends Sprite
      */
     protected function updateRaceStarted () :void
     {
-        if (_gameCtrl.seating.getPlayerIds().length == 1) {
+        if (_control.seating.getPlayerIds().length == 1) {
             _raceStarted = true;
-        } else if (_coord.status == HostCoordinator.STATUS_HOST) { 
+        } else if (_control.amInControl()) {
             var keys :Array = _opponentKarts.keys();
             for (var ii :int = 0; ii < keys.length; ii++) {
                 if (!(_opponentKarts.get(keys[ii]) is KartObstacle)) {
@@ -234,7 +231,7 @@ public class UnderwhirledDrift extends Sprite
             case Keyboard.SHIFT:
                 if (event.type == KeyboardEvent.KEY_DOWN && 
                         // only allow this in single-player mode
-                        _gameCtrl.seating.getPlayerIds().length == 1) {
+                        _control.seating.getPlayerIds().length == 1) {
                     _currentLevel = (_currentLevel + 1) % 2;
                     _level = LevelFactory.createLevel(_currentLevel, _ground);
                     _level.setStartingPosition(0);
@@ -250,7 +247,7 @@ public class UnderwhirledDrift extends Sprite
             case Keyboard.RIGHT:
             case Keyboard.SPACE:
                 var obj :Object = _kart.getUpdate();
-                obj.playerId = _gameCtrl.getMyId();
+                obj.playerId = _control.getMyId();
                 _messageQueue.sendMessage("positionUpdate", obj);
                 break;
             default:
@@ -260,10 +257,7 @@ public class UnderwhirledDrift extends Sprite
     }
 
     /** the game control. */
-    protected var _gameCtrl :EZGameControl;
-
-    /** The host coordinator */
-    protected var _coord :HostCoordinator;
+    protected var _control :WhirledGameControl;
 
     /** The level object */
     protected var _level :Level;
