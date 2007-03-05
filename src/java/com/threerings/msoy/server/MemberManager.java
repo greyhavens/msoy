@@ -268,6 +268,7 @@ public class MemberManager
             result.put("friends", friends);
             result.put("groups", groups);
             result.put("games", games);
+            result.put("totpop", _totalPopulation);
             listener.requestCompleted(URLEncoder.encode(result.toString(), "UTF-8"));
         } catch (Exception e) {
             listener.requestFailed(e);
@@ -616,6 +617,7 @@ public class MemberManager
         }
         _scenesByOwner = new HashMap<IntTuple, PopularPlace>();
         _topPlaces = new LinkedList<PopularPlace>();
+        _totalPopulation = 0;
         Iterator<?> i = MsoyServer.plreg.enumeratePlaceManagers();
         while (i.hasNext()) {
             PlaceManager plMgr = (PlaceManager) i.next();
@@ -648,12 +650,14 @@ public class MemberManager
                     place.scenePop = count;
                 }
                 place.population += count;
+                _totalPopulation += count;
             } else if (plMgr instanceof LobbyManager) {
                 PopularGamePlace place = new PopularGamePlace();
                 place.name = ((LobbyConfig) plMgr.getConfig()).game.name;
                 place.gameId = ((LobbyManager) plMgr).getGameId();
                 place.population = count;
                 _topPlaces.add(place);
+                _totalPopulation += count;
             }
         }
         Collections.sort(_topPlaces, new Comparator<PopularPlace>() {
@@ -932,9 +936,11 @@ public class MemberManager
     protected Map<IntTuple, PopularPlace> _scenesByOwner;
     /** A list of every place (lobby or scene) in the world, sorted by population. */
     protected List<PopularPlace> _topPlaces;
+    /** The total number of people in the whirled. */
+    protected int _totalPopulation;
     /** The time when the cached values were last calculated. */
     protected long _popularPlaceStamp;
-
+    
     /** Provides access to persistent member data. */
     protected MemberRepository _memberRepo;
     
