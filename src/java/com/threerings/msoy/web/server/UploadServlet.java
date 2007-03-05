@@ -180,14 +180,18 @@ public class UploadServlet extends HttpServlet
                 mimeString = _mimeMagic.identify(firstBytes, item.getName(), null);
 
                 // Map to mime MediaDesc Mime byte
-                info.mimeType = MediaDesc.stringToMimeType(mimeString);                
+                info.mimeType = MediaDesc.stringToMimeType(mimeString);
+                
+                if (mimeString != null) {
+                    // XXX debugging; want to know the effectiveness, any false hits,
+                    // and what types of files are being uploaded -- landonf (March 5, 2007)
+                    log.warning("Magically determined unknown mime type [type=" + mimeString +
+                                ", name=" + item.getName() + "].");                                  
+                }
             }
 
-            // XXX Temporary debugging; want to know the effectiveness, and about any potential
-            // false hits. -- landonf (March 5, 2007)
             if (info.mimeType != -1) {
-                log.warning("Magically determined unknown mime type [type=" + mimeString +
-                            ", name=" + item.getName() + "].");                
+          
             }
         }
 
