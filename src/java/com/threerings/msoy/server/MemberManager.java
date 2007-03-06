@@ -244,6 +244,10 @@ public class MemberManager
             JSONArray groups = new JSONArray();
             JSONArray games = new JSONArray();
             for (PopularPlace place : _topPlaces) {
+                if (place.population == 0) {
+                    // there's no populated places left to show
+                    break;
+                }
                 JSONObject obj = new JSONObject();
                 obj.put("name", place.name);
                 obj.put("pop", place.population);
