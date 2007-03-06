@@ -90,7 +90,7 @@ public class SwiftlyManager
                     SwiftlyProjectRecord projectRecord = MsoyServer.swiftlyRepo.loadProject(projectId);
                     SwiftlySVNStorageRecord storageRecord =
                         MsoyServer.swiftlyRepo.loadStorageRecordForProject(projectId);
-                    _storage = new ProjectSVNStorage(projectRecord, storageRecord);    
+                    _storage = new ProjectSVNStorage(projectRecord.toSwiftlyProject(), storageRecord);    
                     return true;
 
                 } catch (ProjectStorageException pse) {

@@ -5,10 +5,11 @@ package com.threerings.msoy.swiftly.server.storage;
 
 import com.threerings.msoy.item.web.MediaDesc;
 
-import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
-import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
+
+import com.threerings.msoy.web.data.SwiftlyProject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -97,7 +98,7 @@ public class ProjectSVNStorage
      * template directory will be silently ignored.
      * TODO: Destroy the repository directory on failure.
      */
-    public static ProjectSVNStorage initializeStorage (SwiftlyProjectRecord projectRecord,
+    public static ProjectSVNStorage initializeStorage (SwiftlyProject project,
         SwiftlySVNStorageRecord storageRecord, File templateDir)
         throws ProjectStorageException
     {
@@ -109,7 +110,7 @@ public class ProjectSVNStorage
 
         // If this is a local repository, we'll attempt to create it now.
         if (storageRecord.protocol.equals(PROTOCOL_FILE)) {
-            File repoDir = new File(storageRecord.baseDir, Integer.toString(projectRecord.projectId));
+            File repoDir = new File(storageRecord.baseDir, Integer.toString(project.projectId));
             try {
                 SVNRepositoryFactory.createLocalRepository(repoDir, true, false);                
             } catch (SVNException e) {
@@ -119,7 +120,7 @@ public class ProjectSVNStorage
         }
 
         // Connect to the repository
-        storage = new ProjectSVNStorage(projectRecord, storageRecord);
+        storage = new ProjectSVNStorage(project, storageRecord);
 
         // If the revision is not 0, this is not a new project. Exit immediately.
         try {
@@ -197,10 +198,10 @@ public class ProjectSVNStorage
     /** 
      * Construct a new storage instance for the given project record.
      */
-    public ProjectSVNStorage (SwiftlyProjectRecord projectRecord, SwiftlySVNStorageRecord storageRecord)
+    public ProjectSVNStorage (SwiftlyProject project, SwiftlySVNStorageRecord storageRecord)
         throws ProjectStorageException
     {
-        _projectRecord = projectRecord;
+        _project = project;
         _storageRecord = storageRecord;
 
         // Initialize subversion magic
@@ -241,7 +242,7 @@ public class ProjectSVNStorage
 
         try {
             long latestRevision = svnRepo.getLatestRevision();
-            PathElement root = PathElement.createRoot(_projectRecord.projectName);
+            PathElement root = PathElement.createRoot(_project.projectName);
             List<PathElement> elements = recurseTree(svnRepo, root, null, latestRevision);
             
             // Root element must be added by the caller.
@@ -449,7 +450,7 @@ public class ProjectSVNStorage
     {
         URI baseURI = _storageRecord.toURI();            
         SVNURL url = SVNURL.parseURIDecoded(baseURI.toString());
-        return url.appendPath(Integer.toString(_projectRecord.projectId), false);
+        return url.appendPath(Integer.toString(_project.projectId), false);
     }
 
 
@@ -735,8 +736,8 @@ public class ProjectSVNStorage
         private File _rootPath;
     }
 
-    /** Reference to the project record. */
-    protected SwiftlyProjectRecord _projectRecord;
+    /** Reference to the project. */
+    protected SwiftlyProject _project;
 
     /** Reference to the project storage record. */
     protected SwiftlySVNStorageRecord _storageRecord;

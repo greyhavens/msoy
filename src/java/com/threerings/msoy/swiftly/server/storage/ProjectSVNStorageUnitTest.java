@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.swiftly.server.storage;
 
+import com.threerings.msoy.web.data.SwiftlyProject;
+
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
-
-import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 
 import org.apache.commons.io.FileUtils;
@@ -26,16 +26,16 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public static final File GAME_TEMPLATE_DIR = new File("data/swiftly/templates/game");
 
     /** Mock up a project record. */
-    public static SwiftlyProjectRecord mockProjectRecord ()
+    public static SwiftlyProject mockProject ()
     {
-        SwiftlyProjectRecord projectRecord;
+        SwiftlyProject project;
 
         // Mock up a project record.
-        projectRecord = new SwiftlyProjectRecord();
-        projectRecord.projectName = "project-name";
-        projectRecord.ownerId = 0;
+        project = new SwiftlyProject();
+        project.projectName = "project-name";
+        project.ownerId = 0;
 
-        return projectRecord;
+        return project;
     }
 
     /** Mock up an SVN storage record. */
@@ -66,11 +66,11 @@ public class ProjectSVNStorageUnitTest extends TestCase
             throw new Exception("Temporary directory '" + _tempDir + "' already exists!");
         }
 
-        _projectRecord = mockProjectRecord();
+        _project = mockProject();
         _storageRecord = mockStorageRecord(_tempDir);
 
         // Initialize the storage
-        ProjectSVNStorage.initializeStorage(_projectRecord, _storageRecord, TEMPLATE_DIR.getCanonicalFile());
+        ProjectSVNStorage.initializeStorage(_project, _storageRecord, TEMPLATE_DIR.getCanonicalFile());
     }
 
 
@@ -85,14 +85,14 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public void testOpenStorage ()
         throws Exception
     {
-        ProjectStorage storage = new ProjectSVNStorage(_projectRecord, _storageRecord);
+        ProjectStorage storage = new ProjectSVNStorage(_project, _storageRecord);
     }
 
 
     public void testGetDocument ()
         throws Exception
     {
-        ProjectSVNStorage storage = new ProjectSVNStorage(_projectRecord, _storageRecord);
+        ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
         PathElement path = PathElement.createFile("UnitTest.as", null, null);
         SwiftlyDocument doc = storage.getDocument(path);
 
@@ -103,7 +103,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public void testPutDocument ()
         throws Exception
     {
-        ProjectSVNStorage storage = new ProjectSVNStorage(_projectRecord, _storageRecord);
+        ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
         PathElement path = PathElement.createFile("UnitTest.as", null, null);
         SwiftlyDocument doc;
         
@@ -122,8 +122,8 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public void testGetVNURL ()
         throws Exception
     {
-        ProjectSVNStorage storage = new ProjectSVNStorage(_projectRecord, _storageRecord);
-        assertEquals("file://" + _tempDir + "/" + _projectRecord.projectId,
+        ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
+        assertEquals("file://" + _tempDir + "/" + _project.projectId,
             storage.getSVNURL().toString());
     }
 
@@ -131,7 +131,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public void testGetProjectTree ()
         throws Exception
     {
-        ProjectStorage storage = new ProjectSVNStorage(_projectRecord, _storageRecord);
+        ProjectStorage storage = new ProjectSVNStorage(_project, _storageRecord);
         List<PathElement> projectTree = storage.getProjectTree();
         assertTrue("The returned PathElement list is empty", projectTree.size() != 0);
 
@@ -165,7 +165,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public void testExportProject ()
         throws Exception
     {
-        ProjectStorage storage = new ProjectSVNStorage(_projectRecord, _storageRecord);
+        ProjectStorage storage = new ProjectSVNStorage(_project, _storageRecord);
         File exportDir = new File(_tempDir, "export");
         File srcFile = new File(exportDir, "UnitTest.as");
 
@@ -189,7 +189,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
     protected File _tempDir;
 
     /** Mocked up project record. */
-    protected SwiftlyProjectRecord _projectRecord;
+    protected SwiftlyProject _project;
     
     /** Mocked up storage record. */
     protected SwiftlySVNStorageRecord _storageRecord;

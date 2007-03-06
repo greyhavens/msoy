@@ -90,6 +90,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(creds);
+        SwiftlyProject project;
         SwiftlyProjectRecord pRec;
         SwiftlySVNStorageRecord storeRec;
 
@@ -121,7 +122,8 @@ public class SwiftlyServlet extends MsoyServiceServlet
         try {
             pRec = MsoyServer.swiftlyRepo.createProject(
                 memrec.memberId, projectName, projectType, storeRec.storageId, remixable);
-                
+            project = pRec.toSwiftlyProject();
+
             // Set the creator as the first collaborator.
             MsoyServer.swiftlyRepo.joinCollaborators(pRec.projectId, memrec.memberId);
 
@@ -141,7 +143,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
             File templatePath = new File(ServerConfig.serverRoot + "/data/swiftly/templates/"
                 + Item.getTypeName(projectType));
 
-            ProjectSVNStorage.initializeStorage(pRec, storeRec, templatePath);
+            ProjectSVNStorage.initializeStorage(project, storeRec, templatePath);
         } catch (ProjectStorageException pse) {
             log.log(Level.WARNING, "Initializing swiftly project storage failed.", pse);
             try {
@@ -152,7 +154,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }            
 
-        return pRec.toSwiftlyProject();
+        return project;
     }
 
     // from SwiftlyService

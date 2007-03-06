@@ -41,12 +41,11 @@ public class LocalProjectBuilderUnitTest extends TestCase
         }
 
         // Mock up a project record.
-        SwiftlyProjectRecord record = ProjectSVNStorageUnitTest.mockProjectRecord();
-        _project = record.toSwiftlyProject();
+        _project = ProjectSVNStorageUnitTest.mockProject();
         storageRecord = ProjectSVNStorageUnitTest.mockStorageRecord(_tempDir);
 
         // Initialize the storage
-        _storage = ProjectSVNStorage.initializeStorage(record, storageRecord,
+        _storage = ProjectSVNStorage.initializeStorage(_project, storageRecord,
             ProjectSVNStorageUnitTest.GAME_TEMPLATE_DIR.getCanonicalFile());
     }
 
