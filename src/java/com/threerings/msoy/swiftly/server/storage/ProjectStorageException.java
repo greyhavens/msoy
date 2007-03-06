@@ -45,4 +45,16 @@ public class ProjectStorageException extends Exception
             super(message, cause);
         }
     }
+
+    /** A transient failure occured. */
+    public static class TransientFailure extends ProjectStorageException {
+        public TransientFailure (String message) {
+            this(message, null);
+        }
+
+        public TransientFailure (String message, Throwable cause)
+        {
+            super(message, cause);
+        }
+    }
 }

@@ -4,7 +4,9 @@
 package com.threerings.msoy.swiftly.data;
 
 import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 
@@ -13,7 +15,8 @@ import com.threerings.presents.dobj.DSet;
 
 /**
  * Represents a source file in a project and contains the text of the file.
- * Brashly assumes UTF-8 encoding.
+ * Text is stored in the provided encoding, and each document retains an
+ * unmodified copy of its initial data to allow for delta generation.
  */
 public class SwiftlyDocument
     implements DSet.Entry
@@ -56,7 +59,8 @@ public class SwiftlyDocument
             textBuffer.append(new String(buf, 0, len, encoding));
         }
 
-        _text = textBuffer.toString();  
+        _text = textBuffer.toString();
+        _encoding = encoding;
     }
 
     public String getText ()
@@ -77,6 +81,25 @@ public class SwiftlyDocument
     public PathElement getPathElement ()
     {
         return _path;
+    }
+
+    public String getTextEncoding ()
+    {
+        return _encoding;
+    }
+
+    /** Returns an stream corresponding to the unmodified data. */
+    public InputStream getOriginalData ()
+        throws IOException
+    {
+        return new FileInputStream(_backingStore);
+    }
+
+    /** Returns an InputStream corresponding to the modified data. */
+    public InputStream getModifiedData ()
+        throws IOException
+    {
+        return new ByteArrayInputStream(_text.getBytes(_encoding));
     }
 
     /**
@@ -130,6 +153,9 @@ public class SwiftlyDocument
 
     /** Unmodified disk-backing of the document data. */
     protected transient File _backingStore = null;
+
+    /** Text encoding. */
+    protected transient String _encoding;
 
     /** Reference to our associated path element. */
     protected transient PathElement _path = null;

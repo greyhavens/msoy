@@ -76,6 +76,25 @@ public class ProjectSVNStorageUnitTest extends TestCase
         assertTrue(doc.getText().startsWith("package {"));
     }
 
+    public void testPutDocument ()
+        throws Exception
+    {
+        ProjectSVNStorage storage = new ProjectSVNStorage(_projectRecord, _storageRecord);
+        PathElement path = PathElement.createFile("UnitTest.as", null, null);
+        SwiftlyDocument doc;
+        
+        // Get an initial copy of the document
+        doc = storage.getDocument(path);
+
+        // Modify and commit the changes
+        doc.setText("Modified");
+        storage.putDocument(doc, "Testing");
+
+        // Retrieve the document again
+        doc = storage.getDocument(path);
+        assertEquals("Modified", doc.getText());
+    }
+
     public void testGetVNURL ()
         throws Exception
     {

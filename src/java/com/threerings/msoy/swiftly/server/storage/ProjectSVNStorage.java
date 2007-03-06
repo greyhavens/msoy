@@ -293,7 +293,117 @@ public class ProjectSVNStorage
 
         return swiftlyDoc;
     }
- 
+
+    /** Store a document in the repository. */
+    public void putDocument (SwiftlyDocument document, String logMessage)
+        throws ProjectStorageException
+    {
+        SVNRepository svnRepo;
+        ISVNEditor editor;
+        SVNCommitInfo commitInfo;
+        long latestRevision;
+        PathElement pathElement;
+        String filePath;
+        String fileName;
+        String dirPath;
+        boolean newFile = false;
+
+        pathElement = document.getPathElement();
+
+        // Repository-relative paths.
+        filePath = pathElement.getAbsolutePath();
+        fileName = pathElement.getName();
+        dirPath = new File(filePath).getParent();
+
+        // Instantiate a reference to the repository, check if
+        // this is a newly added file.
+        try {
+            svnRepo = getSVNRepository();
+            latestRevision = svnRepo.getLatestRevision();
+
+            // Are we adding a new file, or updating an existing one?
+            SVNNodeKind nodeKind = svnRepo.checkPath(filePath, latestRevision);
+            if (nodeKind == SVNNodeKind.NONE) {
+                newFile = true;
+            } else if (nodeKind != SVNNodeKind.FILE) {
+                throw new ProjectStorageException.InternalError("The subversion root path is not a file");
+            }
+
+            // Fire up the commit editor.
+            editor = svnRepo.getCommitEditor(logMessage, null);
+        } catch (SVNException svne) {
+            throw new ProjectStorageException.InternalError(
+                "Failed to open the storage repository: " + svne, svne);
+        }
+
+        // Store the file in the repository
+        try {
+            SVNDeltaGenerator deltaGenerator;
+            String checksum;
+            
+            // Open the repository root.
+            editor.openRoot(-1);           
+
+            // Open the enclosing directory.
+            editor.openDir(dirPath, -1);
+
+            // Add/open the file.
+            if (newFile) {
+                editor.addFile(fileName, null, -1);
+            } else {
+                editor.openFile(fileName, -1);
+            }
+
+            // Set up and stream deltas.
+            editor.applyTextDelta(fileName, null);
+            deltaGenerator = new SVNDeltaGenerator();
+
+            if (newFile) {
+                checksum = deltaGenerator.sendDelta(fileName, document.getModifiedData(), editor, true);                
+            } else {
+                checksum = deltaGenerator.sendDelta(fileName, document.getOriginalData(), 0, document.getModifiedData(), editor, true);                
+            }
+
+            // (Re)set the mime-type.
+            editor.changeFileProperty(fileName, SVNProperty.MIME_TYPE, pathElement.getMimeType());
+
+            // Close the file.
+            editor.closeFile(fileName, checksum);
+
+            // Close the directory.
+            editor.closeDir();
+
+            // Close the repository root.
+            editor.closeDir();
+
+            // Commit the whole lot.
+            commitInfo = editor.closeEdit();
+        } catch (SVNException e) {
+            try {
+                // We have to abort the open edit. It can also raise an SVNException!
+                editor.abortEdit();                
+            } catch (SVNException eabort) {
+                throw new ProjectStorageException.InternalError("Failure aborting subversion commit: "
+                    + eabort, eabort);                
+            }
+            
+            // Report failure.
+            throw new ProjectStorageException.InternalError("Failure committing project template: "
+                + e, e);
+        } catch (IOException ioe) {
+            throw new ProjectStorageException.InternalError("Could not add/modify file, failure reading input:" +
+                ioe, ioe);
+        }
+
+        // Validate the commit.
+        if (commitInfo == null) {
+            throw new ProjectStorageException.InternalError("Subversion commit failed, null commit info returned");            
+        }
+
+        if (commitInfo.getNewRevision() == -1) {
+            throw new ProjectStorageException.TransientFailure("Subversion commit failed, file(s) out of date: " + commitInfo.getErrorMessage());
+        }
+    }
 
     // from interface ProjectStorage
     public void export (File exportPath)
