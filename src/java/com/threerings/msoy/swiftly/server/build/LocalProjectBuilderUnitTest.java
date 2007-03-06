@@ -62,7 +62,7 @@ public class LocalProjectBuilderUnitTest extends TestCase
     {
         File builds = new File(_tempDir, "builds");
         builds.mkdirs();
-        ProjectBuilder builder = new LocalProjectBuilder(_project, _storage, builds, SDK_DIR);
+        ProjectBuilder builder = new LocalProjectBuilder(_project, _storage, builds, SDK_DIR.getAbsoluteFile());
         builder.build();
     }
 
