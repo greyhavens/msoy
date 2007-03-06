@@ -3,6 +3,8 @@ import flash.geom.Point;
 
 public class Camera 
 {
+    public static const DISTANCE_FROM_KART :int = 30;
+
     public var angle :Number;
     public var position: Point;
     public var height :Number;

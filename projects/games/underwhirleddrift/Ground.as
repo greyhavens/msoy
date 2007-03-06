@@ -98,7 +98,7 @@ public class Ground extends Sprite
         var findKart :Matrix = new Matrix();
         findKart.rotate(_camera.angle);
         findKart.translate(_camera.position.x, _camera.position.y);
-        _kartLocation = findKart.transformPoint(new Point(0, -30));
+        _kartLocation = findKart.transformPoint(new Point(0, -Camera.DISTANCE_FROM_KART));
         var translateRotate :Matrix = new Matrix();
         translateRotate.translate(-_camera.position.x, -_camera.position.y);
         translateRotate.rotate(-_camera.angle);
