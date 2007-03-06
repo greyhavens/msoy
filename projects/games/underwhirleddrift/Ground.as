@@ -100,8 +100,9 @@ public class Ground extends Sprite
         findKart.translate(_camera.position.x, _camera.position.y);
         _kartLocation = findKart.transformPoint(new Point(0, -Camera.DISTANCE_FROM_KART));
         var translateRotate :Matrix = new Matrix();
-        translateRotate.translate(-_camera.position.x, -_camera.position.y);
+        translateRotate.translate(-_kartLocation.x, -_kartLocation.y);
         translateRotate.rotate(-_camera.angle);
+        translateRotate.translate(0, -Camera.DISTANCE_FROM_KART);
         var thisTransform :Matrix = new Matrix();
         var stripHeight :Number = BEGINNING_STRIP_HEIGHT;
         var totalHeight :Number = 0;
