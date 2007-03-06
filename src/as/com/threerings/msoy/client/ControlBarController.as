@@ -6,14 +6,19 @@ package com.threerings.msoy.client {
 import flash.events.IEventDispatcher;
 import mx.controls.Button;
 
-import com.threerings.presents.client.ClientEvent;
-import com.threerings.crowd.data.PlaceObject;
-import com.threerings.presents.client.ClientAdapter;
-import com.threerings.whirled.data.Scene;
-import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
+
+import com.threerings.presents.client.ClientAdapter;
+import com.threerings.presents.client.ClientEvent;
+
+import com.threerings.crowd.client.LocationAdapter;
+import com.threerings.crowd.data.PlaceObject;
+
+import com.threerings.whirled.data.Scene;
+
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.data.MsoyScene;
 
@@ -85,8 +90,7 @@ public class ControlBarController extends Controller
      */
     public function handleMoveBack (trigger :Button) :void
     {
-        // The first item on the back stack is the current location. do we have
-        // any other locations as well?
+        // the first item on the back stack is the current location if we're traversing scenes
         if (_backstack.length > 1) {
             // Pop the current location... 
             _backstack.pop();
@@ -94,6 +98,10 @@ public class ControlBarController extends Controller
             // it will be pushed back on top, as a result of attributeChanged notification.
             var previousId :Object = _backstack.pop();
             CommandEvent.dispatch(trigger, MsoyController.GO_SCENE, previousId);
+
+        } else {
+            // we're in a game, move back to the lobby
+            _ctx.getLocationDirector().moveBack();
         }
     }
 
@@ -124,15 +132,20 @@ public class ControlBarController extends Controller
                 backEnabled = (_backstack.length > 1);
             }
             // Display location name, modify buttons
-            _controlBar.updateNavigationWidgets(
-                true, ((scene != null) ? scene.getName() : ""), backEnabled);
+            _controlBar.updateNavigationWidgets(true, scene.getName(), backEnabled);
             _controlBar.sceneEditPossible = canEditScene();
-            
+            return;
+        }
+
+        // if we're in a game, display the game name and send the back button to the lobby
+        var config :MsoyGameConfig =
+            _ctx.getLocationDirector().getPlaceController().getPlaceConfig() as MsoyGameConfig;
+        if (config != null) {
+            _controlBar.updateNavigationWidgets(true, config.name, true);
         } else {
-            // Invalid scene - don't even try to edit it! :)
-            _controlBar.sceneEditPossible = false;
             _controlBar.updateNavigationWidgets(false, "", false);
         }
+        _controlBar.sceneEditPossible = false;
     }
 
     /** When the logon changes (the client logs on or off), we reset

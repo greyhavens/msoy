@@ -10,6 +10,9 @@ import com.threerings.ezgame.data.EZGameConfig;
  */
 public class MsoyGameConfig extends EZGameConfig
 {
+    /** The name of our game. */
+    public String name;
+
     @Override // documentation inherited
     public String getManagerClassName ()
     {

@@ -9,17 +9,21 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.SetAdapter;
 
+import com.threerings.parlor.data.Table;
+import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.server.TableManager;
 import com.threerings.parlor.server.TableManagerProvider;
+
+import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.web.Game;
-import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.game.data.LobbyConfig;
 import com.threerings.msoy.game.data.LobbyObject;
+import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyTable;
 
 import static com.threerings.msoy.Log.log;
@@ -42,7 +46,16 @@ public class LobbyManager extends PlaceManager
         super.startup(plobj);
 
         MsoyServer.lobbyReg.lobbyStartup(getGameId(), plobj.getOid());
-        _tableMgr = new TableManager(this);
+        _tableMgr = new TableManager(this) {
+            protected GameConfig createConfig (Table table) {
+                MsoyGameConfig config = (MsoyGameConfig)super.createConfig(table);
+                // fill in our game id and name
+                Game game = ((LobbyObject)_plobj).game;
+                config.persistentGameId = game.getPrototypeId();
+                config.name = game.name;
+                return config;
+            }
+        };
         _tableMgr.setTableClass(MsoyTable.class);
         plobj.addListener(_tableWatcher);
     }

@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.game.data {
 
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
+
 import com.threerings.crowd.client.PlaceController;
 
 import com.threerings.parlor.client.TableConfigurator;
@@ -20,6 +23,9 @@ import com.threerings.msoy.game.client.MsoyGameController;
  */
 public class MsoyGameConfig extends EZGameConfig
 {
+    /** The name of our game. */
+    public var name :String;
+
     override public function createConfigurator () :GameConfigurator
     {
         return new FlexGameConfigurator();
@@ -28,6 +34,20 @@ public class MsoyGameConfig extends EZGameConfig
     override public function createController () :PlaceController
     {
         return new MsoyGameController();
+    }
+
+    // from interface Streamable
+    override public function readObject (ins :ObjectInputStream) :void
+    {
+        super.readObject(ins);
+        name = (ins.readField(String) as String);
+    }
+
+    // from interface Streamable
+    override public function writeObject (out :ObjectOutputStream) :void
+    {
+        super.writeObject(out);
+        out.writeField(name);
     }
 }
 }
