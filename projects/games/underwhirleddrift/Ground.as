@@ -63,8 +63,10 @@ public class Ground extends Sprite
     public function setKartLocation (location :Point) :void
     {
         var trans :Matrix = new Matrix();
-        trans.translate(location.x - _camera.position.x, location.y - _camera.position.y + 
-            UnderwhirledDrift.KART_OFFSET);
+        // don't use the kart offset for now, see comment on wackiness in enterFrame
+        trans.translate(location.x - _camera.position.x, location.y - _camera.position.y);
+        //trans.translate(location.x - _camera.position.x, location.y - _camera.position.y + 
+            //UnderwhirledDrift.KART_OFFSET);
         _camera.position = trans.transformPoint(_camera.position);
         // TEMP: Until we do camera angles too
         _camera.angle = 0;
@@ -98,11 +100,15 @@ public class Ground extends Sprite
         var findKart :Matrix = new Matrix();
         findKart.rotate(_camera.angle);
         findKart.translate(_camera.position.x, _camera.position.y);
-        _kartLocation = findKart.transformPoint(new Point(0, -Camera.DISTANCE_FROM_KART));
+        var kartLocation :Point = findKart.transformPoint(new Point(0, Camera.DISTANCE_FROM_KART));
         var translateRotate :Matrix = new Matrix();
-        translateRotate.translate(-_kartLocation.x, -_kartLocation.y);
+        translateRotate.translate(-kartLocation.x, -kartLocation.y);
         translateRotate.rotate(-_camera.angle);
-        translateRotate.translate(0, -Camera.DISTANCE_FROM_KART);
+        // This *should* be putting the rotation under the kart, and the putting the camera back
+        // where it should be.  Its not working, so for now we're just going to fake out the 
+        // system by leaving the view back where it was, and calculating the kart's on-screen
+        // position the same way we used to.  This is wacky and wrong, but it works for now.
+        //translateRotate.translate(0, -Camera.DISTANCE_FROM_KART);
         var thisTransform :Matrix = new Matrix();
         var stripHeight :Number = BEGINNING_STRIP_HEIGHT;
         var totalHeight :Number = 0;
@@ -127,6 +133,14 @@ public class Ground extends Sprite
             var clipping :Rectangle = new Rectangle(0, HEIGHT - totalHeight, WIDTH, 
                 stripHeight);
             _stripData.draw(_level, thisTransform, null, null, clipping);
+            // update status flags - This is wacky and wrong, see comment above
+            var y :int = HEIGHT - totalHeight;
+            if (y <= UnderwhirledDrift.KART_LOCATION.y &&
+                y + stripHeight > UnderwhirledDrift.KART_LOCATION.y) {
+                thisTransform.invert();
+                _kartLocation = thisTransform.transformPoint(
+                    UnderwhirledDrift.KART_LOCATION);
+            }
         }
         _drivingOnRoad = _level.isOnRoad(_kartLocation);
         _drivingIntoWall = _level.isOnWall(_kartLocation);
