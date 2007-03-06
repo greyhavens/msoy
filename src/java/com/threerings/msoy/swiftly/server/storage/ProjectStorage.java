@@ -29,5 +29,5 @@ public interface ProjectStorage
     public void export (File exportDirectory) throws ProjectStorageException;
 
     /** The standard text encoding. Changing this WILL break existing projects. So don't change it. */
-    static final String TEXT_ENCODING = "utf8";
+    public static final String TEXT_ENCODING = "utf8";
 }
