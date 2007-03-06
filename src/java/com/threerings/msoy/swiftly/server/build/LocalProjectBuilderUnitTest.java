@@ -44,7 +44,7 @@ public class LocalProjectBuilderUnitTest extends TestCase
 
         // Initialize the storage
         _storage = ProjectSVNStorage.initializeStorage(_projectRecord, storageRecord,
-            ProjectSVNStorageUnitTest.TEMPLATE_DIR.getCanonicalFile());
+            ProjectSVNStorageUnitTest.GAME_TEMPLATE_DIR.getCanonicalFile());
     }
 
 
@@ -58,7 +58,9 @@ public class LocalProjectBuilderUnitTest extends TestCase
     public void testBuild ()
         throws Exception
     {
-        ProjectBuilder builder = new LocalProjectBuilder(_projectRecord, _storage);
+        File builds = new File(_tempDir, "builds");
+        builds.mkdirs();
+        ProjectBuilder builder = new LocalProjectBuilder(_projectRecord, _storage, builds, SDK_DIR);
         builder.build();
     }
 
@@ -70,4 +72,7 @@ public class LocalProjectBuilderUnitTest extends TestCase
 
     /** Project storage. */
     protected ProjectStorage _storage;
+
+    /** Static, brittle path to the flex SDK. Sorry. */
+    public static final File SDK_DIR = new File("projects/tools/extern/flex_sdk");
 }
