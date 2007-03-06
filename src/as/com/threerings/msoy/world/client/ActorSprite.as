@@ -223,7 +223,7 @@ public class ActorSprite extends MsoySprite
     protected function recheckLabel () :void
     {
         // note: may overflow the media area..
-        _label.x = ((_w * _locScale) - _label.textWidth) / 2;
+        _label.x = (getActionWidth() - _label.textWidth) / 2;
     }
 
     protected function getStatusColor (status :int) :uint
