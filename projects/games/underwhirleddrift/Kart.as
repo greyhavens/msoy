@@ -135,10 +135,6 @@ public class Kart extends KartSprite
         if (inMotion) {
             _movement |= flag;
         } else {
-            // if we're turning off drifting and it was on), cut back _currentSpeed
-            //if (flag == MOVEMENT_DRIFT && (_movement & MOVEMENT_DRIFT)) {
-                //_currentSpeed *= (DRIFT_X_SPEED_FACTOR + DRIFT_Y_SPEED_FACTOR) / 2;
-            //}
             _movement &= ~flag;
         }
     }
