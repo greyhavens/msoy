@@ -93,6 +93,12 @@ public class StarFight extends Sprite
     {
         log("Got game object");
 
+        if (!_gameCtrl.isConnected()) {
+            _myId = 1;
+            createBoard();
+            return;
+        }
+
         _myId = _gameCtrl.getMyId();
 
         // If someone already created the board, let's get it now.  If not, we'll get it on the
@@ -137,11 +143,19 @@ public class StarFight extends Sprite
             int(Math.sqrt(sizeFactor) * 50);
         
         boardObj = new Board(size, size, true);
-        _gameCtrl.setImmediate("board", boardObj.writeTo(new ByteArray()));
+        if (_gameCtrl.isConnected()) {
+            _gameCtrl.setImmediate("board", boardObj.writeTo(new ByteArray()));
+        } else {
+            gotBoard(boardObj);
+        }
                 
         var maxPowerups :int = Math.max(1,
             boardObj.width*boardObj.height/MIN_TILES_PER_POWERUP);
-        _gameCtrl.setImmediate("powerup", new Array(maxPowerups));
+        if (_gameCtrl.isConnected()) {
+            _gameCtrl.setImmediate("powerup", new Array(maxPowerups));
+        } else {
+            _powerups = new Array(maxPowerups);
+        }
     }
 
     /**
@@ -157,72 +171,54 @@ public class StarFight extends Sprite
         _board = new BoardSprite(boardObj, _ships, _powerups);
         _boardLayer.addChild(_board);
 
-/* MST
-        // Create our local ship and center the board on it.
-        _ownShip = new ShipSprite(_board, this, false, _myId, _gameCtrl.getOccupantName(_myId),
-            true);
-        _ownShip.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
-        _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
-        _bg.setAsCenter(_ownShip.boardX, _ownShip.boardY);
-        _shipLayer.addChild(_ownShip);
-
-        // Add ourselves to the ship array.
-        _gameCtrl.setImmediate(shipKey(_myId), _ownShip.writeTo(new ByteArray()));
-*/
         // Set up ships for all ships already in the world.
-        var occupants :Array = _gameCtrl.getOccupants();
-        for (var ii :int = 0; ii < occupants.length; ii++) {
-            // Skip ownship.
-            if (occupants[ii] == _myId) {
-                continue;
+        if (_gameCtrl.isConnected()) {
+            var occupants :Array = _gameCtrl.getOccupants();
+            for (var ii :int = 0; ii < occupants.length; ii++) {
+                // Skip ownship.
+                if (occupants[ii] == _myId) {
+                    continue;
+                }
+                
+                var bytes :ByteArray = ByteArray(_gameCtrl.get(shipKey(occupants[ii])));
+                if (bytes != null) {
+                    var ship :ShipSprite = new ShipSprite(_board, this, true, ii,
+                        _gameCtrl.getOccupantName(occupants[ii]), false);
+                    bytes.position = 0;
+                    ship.readFrom(bytes);
+                    _shipLayer.addChild(ship);
+                    _ships.put(occupants[ii], ship);
+                }
             }
-
-            var bytes :ByteArray = ByteArray(_gameCtrl.get(shipKey(occupants[ii])));
-            if (bytes != null) {
-                var ship :ShipSprite = new ShipSprite(_board, this, true, ii,
-                    _gameCtrl.getOccupantName(occupants[ii]), false);
-                bytes.position = 0;
-                ship.readFrom(bytes);
-                _shipLayer.addChild(ship);
-                _ships.put(occupants[ii], ship);
-            }
-        }
-
-        // Set up our initial powerups.
-        var gamePows :Array = (_gameCtrl.get("powerup") as Array);
-
-        // The game already has some powerups, create sprites for em.
-        if (gamePows != null) {
-            for (var pp :int = 0; pp < gamePows.length; pp++)
-            {
-                if (gamePows[pp] == null) {
-                    _powerups[pp] = null;
-                } else {
-                    _powerups[pp] = new Powerup(0, 0, 0);
-                    gamePows[pp].position = 0;
-                    _powerups[pp].readFrom(gamePows[pp]);
-                    _board.powerupLayer.addChild(_powerups[pp]);
+        
+            // Set up our initial powerups.
+            var gamePows :Array = (_gameCtrl.get("powerup") as Array);
+            
+            // The game already has some powerups, create sprites for em.
+            if (gamePows != null) {
+                for (var pp :int = 0; pp < gamePows.length; pp++)
+                {
+                    if (gamePows[pp] == null) {
+                        _powerups[pp] = null;
+                    } else {
+                        _powerups[pp] = new Powerup(0, 0, 0);
+                        gamePows[pp].position = 0;
+                        _powerups[pp].readFrom(gamePows[pp]);
+                        _board.powerupLayer.addChild(_powerups[pp]);
+                    }
                 }
             }
         }
 
         // The first player is in charge of adding powerups.
-        if (_gameCtrl.amInControl()) {
+        if (_gameCtrl.isConnected() && _gameCtrl.amInControl()) {
             addPowerup(null);
             var timer :Timer = new Timer(20000, 0);
             timer.addEventListener(TimerEvent.TIMER, addPowerup);
             timer.start();
         }
 
-/* MST
-        _ships.put(_myId, _ownShip);
-
-        // Our ship is interested in keystrokes.
-        _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, _ownShip.keyPressed);
-        _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, _ownShip.keyReleased);
-*/
         addChild(new ShipChooser(this));
-        _gameCtrl.localChat("MST Added chooser");
     }
 
     /**
@@ -230,8 +226,14 @@ public class StarFight extends Sprite
      */
     public function chooseShip(typeIdx :int) :void
     {
+        var myName :String = "Guest";
+
+        if (_gameCtrl.isConnected()) {
+            myName = _gameCtrl.getOccupantName(_myId);
+        }
+
         // Create our local ship and center the board on it.
-        _ownShip = new ShipSprite(_board, this, false, _myId, _gameCtrl.getOccupantName(_myId),
+        _ownShip = new ShipSprite(_board, this, false, _myId, myName,
             true);
         _ownShip.setShipType(typeIdx);
 
@@ -241,13 +243,17 @@ public class StarFight extends Sprite
         _shipLayer.addChild(_ownShip);
 
         // Add ourselves to the ship array.
-        _gameCtrl.setImmediate(shipKey(_myId), _ownShip.writeTo(new ByteArray()));
+        if (_gameCtrl.isConnected()) {
+            _gameCtrl.setImmediate(shipKey(_myId), _ownShip.writeTo(new ByteArray()));
+
+            // TODO: Get these in place standalone.
+            // Our ship is interested in keystrokes.
+            _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, _ownShip.keyPressed);
+            _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, _ownShip.keyReleased);
+            
+        }
 
         _ships.put(_myId, _ownShip);
-
-        // Our ship is interested in keystrokes.
-        _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, _ownShip.keyPressed);
-        _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, _ownShip.keyReleased);
 
         // Set up our ticker that will control movement.
         var screenTimer :Timer = new Timer(Codes.REFRESH_RATE, 0); // As fast as possible.

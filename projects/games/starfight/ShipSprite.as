@@ -428,8 +428,6 @@ public class ShipSprite extends Sprite
                 fire();
             }
             _firing = true;
-        } else if (event.keyCode == KV_ENTER) {
-            setShipType((shipType+1)%Codes.SHIP_TYPES.length);
         }
     }
 
