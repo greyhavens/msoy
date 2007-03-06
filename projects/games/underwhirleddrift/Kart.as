@@ -105,12 +105,12 @@ public class Kart extends KartSprite
         }
 
         // alter camera location
-        var speedConfig :Object = {
-            gasAccel: ACCELERATION_GAS,
-            coastAccel: ACCELERATION_COAST,
-            brakeAccel: ACCELERATION_BRAKE,
+        /*var speedConfig :Object = {
+            gasAccel: _movementConstants.accelGas,
+            coastAccel: _movementConstants.accelCoast,
+            brakeAccel: _movementConstants.accelBrake,
             minSpeed: SPEED_MIN,
-            maxSpeed: SPEED_MAX
+            maxSpeed: _movementConstants.maxSpeed
         };
         if (!_ground.drivingOnRoad()) {
             speedConfig.gasAccel *= TERRAIN_SPEED_FACTOR;
@@ -118,13 +118,12 @@ public class Kart extends KartSprite
             speedConfig.brakeAccel /= TERRAIN_SPEED_FACTOR;
             speedConfig.minSpeed *= TERRAIN_SPEED_FACTOR;
             speedConfig.maxSpeed *= TERRAIN_SPEED_FACTOR;
-        }
+        }*/
         // TODO: this will clearly need more intelligent processing
         //if (_ground.drivingIntoWall()) {
             //_currentSpeed = 0;
         //}
-        _camera.position = calculateNewPosition(speedConfig, _camera.position, 
-            _camera.angle);
+        _camera.position = calculateNewPosition(_camera.position, _camera.angle);
         // deal with a jump
         if (_jumpFrameCount > 0) {
             _jumpFrameCount--;

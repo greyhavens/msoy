@@ -17,6 +17,7 @@ public class KartSprite extends Sprite
     {
         try {
             _kart = new KartSprite[kartType]();
+            _movementConstants = KartSprite[kartType + "_Movement"];
         } catch (re :ReferenceError) {
             throw new ArgumentError(kartType + " is not a recognized Kart Type");
         }
@@ -35,31 +36,30 @@ public class KartSprite extends Sprite
     /**
      * This is really only used by the subclasses, but its needed by both.
      */
-    protected function calculateNewPosition (speedConfig :Object, position :Point, 
-        cameraAngle :Number) :Point
+    protected function calculateNewPosition (position :Point, cameraAngle :Number) :Point
     {
         var rotation :Matrix;
         if (_movement & MOVEMENT_FORWARD) {
             if (_currentSpeed >= 0) {
-                _currentSpeed = Math.min(speedConfig.maxSpeed, 
-                    _currentSpeed + speedConfig.gasAccel);
+                _currentSpeed = Math.min(_movementConstants.maxSpeed, 
+                    _currentSpeed + _movementConstants.accelGas);
             } else { 
-                _currentSpeed += speedConfig.brakeAccel;
+                _currentSpeed += _movementConstants.accelBrake;
             }
         } else if (_movement & MOVEMENT_BACKWARD) {
             if (_currentSpeed <= 0 && !_braking) {
-                _currentSpeed = Math.max(speedConfig.minSpeed, 
-                    _currentSpeed - speedConfig.gasAccel);
+                _currentSpeed = Math.max(_movementConstants.minSpeed, 
+                    _currentSpeed - _movementConstants.accelGas);
             } else {
-                _currentSpeed = Math.max(0, _currentSpeed - speedConfig.gasAccel);
+                _currentSpeed = Math.max(0, _currentSpeed - _movementConstants.accelGas);
             }
         } else {
-            if ((_currentSpeed > speedConfig.coastAccel && _currentSpeed > 0) || 
-                (_currentSpeed < speedConfig.coastAccel && _currentSpeed < 0)) {
+            if ((_currentSpeed > _movementConstants.accelCoast && _currentSpeed > 0) || 
+                (_currentSpeed < _movementConstants.accelCoast && _currentSpeed < 0)) {
                 if (_currentSpeed > 0) {
-                    _currentSpeed -= speedConfig.coastAccel;
+                    _currentSpeed -= _movementConstants.accelCoast;
                 } else {
-                    _currentSpeed += speedConfig.coastAccel;
+                    _currentSpeed += _movementConstants.accelCoast;
                 }
             } else {
                 _currentSpeed = 0;
@@ -88,14 +88,35 @@ public class KartSprite extends Sprite
     /** light kart swf */
     [Embed(source='rsrc/lightkart.swf#kart')]
     protected static const LightKart :Class;
+    protected static const LightKart_Movement :Object = {
+        maxSpeed: 12,
+        minSpeed: 0.5, 
+        accelGas: 0.4,
+        accelBrake: 2.5,
+        accelCoast: 0.35
+    };
 
     /** medium kart swf */
     [Embed(source='rsrc/mediumkart.swf#kart')]
     protected static const MediumKart :Class;
+    protected static const MediumKart_Movement :Object = {
+        maxSpeed: 13,
+        minSpeed: 0.5,
+        accelGas: 0.3,
+        accelBrake: 2,
+        accelCoast: 0.3
+    };
 
     /** heavy kart swf */
     [Embed(source='rsrc/heavykart.swf#kart')]
     protected static const HeavyKart :Class;
+    protected static const HeavyKart_Movement :Object = {
+        maxSpeed: 15,
+        minSpeed: 0.5,
+        accelGas: 0.2,
+        accelBrake: 1.5,
+        accelCoast: 0.25
+    };
 
     /** flags for the _movement bit flag variable */
     protected static const MOVEMENT_FORWARD :int = 0x01;
@@ -105,11 +126,6 @@ public class KartSprite extends Sprite
     protected static const MOVEMENT_DRIFT :int = 0x10;
 
     /** constants to control kart motion properties */
-    protected static const SPEED_MAX :int = 15; // 25;
-    protected static const SPEED_MIN :int = -5;
-    protected static const ACCELERATION_GAS :Number = 0.3; //0.5;
-    protected static const ACCELERATION_BRAKE :Number = 2;
-    protected static const ACCELERATION_COAST :Number = 0.2; //0.5;
     protected static const MAX_TURN_ANGLE :Number = 0.0524; // 3 degrees
     protected static const TURN_ACCELERATION :Number = 0.015;
 
@@ -131,5 +147,7 @@ public class KartSprite extends Sprite
 
     /** Frames left before the jump is over */
     protected var _jumpFrameCount :int = 0;
+
+    protected var _movementConstants :Object;
 }
 }
