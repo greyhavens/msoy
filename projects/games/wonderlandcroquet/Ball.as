@@ -4,9 +4,15 @@ import flash.display.DisplayObject;
 import flash.display.Scene;
 import flash.display.Sprite;
 import flash.display.MovieClip;
+
 import flash.events.Event;
 import flash.events.MouseEvent;
+
 import flash.geom.Point;
+
+import flash.text.TextField;
+import flash.text.TextFormat;
+import flash.text.TextFieldAutoSize;
 
 import mx.utils.ObjectUtil;
 
@@ -30,7 +36,7 @@ public class Ball extends Sprite
     public var playerIdx :int;
 
     // A marker to show when our ball is obstructed by something
-    public var ballMarker :DisplayObject;
+    public var ballMarker :Sprite;
 
     public function Ball (particle :BallParticle, playerIdx :int = 0)
     {
@@ -40,7 +46,23 @@ public class Ball extends Sprite
 
         var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
         loader.addEventListener(Event.COMPLETE, function (event :Event) :void {
-            ballMarker = new (loader.getClass("ballmarker" + (playerIdx + 1)))();
+            ballMarker = new Sprite();
+            ballMarker.addChild(new (loader.getClass("ballmarker" + (playerIdx + 1)))());
+            var nameText :TextField = new TextField();
+            nameText.autoSize = TextFieldAutoSize.CENTER;
+            nameText.selectable = false;
+            nameText.x = 0;
+            nameText.y = - (RADIUS * 3);
+
+            var nameFormat :TextFormat = new TextFormat();
+            nameFormat.font = "Verdana";
+            nameFormat.color = BALL_COLORS[playerIdx];
+            nameFormat.size = 16;
+            nameText.defaultTextFormat = nameFormat;
+            nameText.text = (particle.wc.gameCtrl.seating.getPlayerNames())[playerIdx];
+
+            ballMarker.addChild(nameText);
+
             _ballAnimation = new (loader.getClass("ball" + (playerIdx + 1)))();
             addChild(_ballAnimation);
 
@@ -156,6 +178,10 @@ public class Ball extends Sprite
 
     // Are we currently playing?
     protected var _playing :Boolean = false;
+
+    // The colors for our different balls
+    protected static const BALL_COLORS :Array = 
+        [0x0099ff, 0xcc0000, 0x473564, 0xffff00, 0x008040, 0xff9900];
 
     // Modifier options.
     protected static const MODIFIER_GIANT    :int = 0x1 << 0;

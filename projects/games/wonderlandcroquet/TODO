@@ -1,12 +1,9 @@
-* Flamingo mallets for shooting
 * Terrain - hit testing doesn't work if the sprite isn't on screen, so the 
   current method doesn't work unless we force you to be zoomed out enough to 
   see everything whenever something is rolling. Bleh.
 * Fix auto-panning for non-default zoom
 * Pan to coordinate, don't snap
 * Pan and track ball movement
-* HUD
-* Better indication of who owns which ball (name over it when stationary?)
 * Fix drag behavior when mouse leaves window; look at chat's scrollbar to see
   how it does it - appears it has to do with hooking into the systemManager to
   listen for events as well. See also: mx.controls.Button
