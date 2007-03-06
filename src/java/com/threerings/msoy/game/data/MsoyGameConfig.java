@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.data;
 
+import com.threerings.crowd.client.PlaceController;
+
 import com.threerings.ezgame.data.EZGameConfig;
 
 /**
@@ -10,12 +12,27 @@ import com.threerings.ezgame.data.EZGameConfig;
  */
 public class MsoyGameConfig extends EZGameConfig
 {
-    /** The name of our game. */
-    public String name;
+    /** The controller to use, or null for MsoyGameController. */
+    public String controller;
+
+    /** The manager to use, or null for MsoyGameManager. */
+    public String manager;
+
+    @Override
+    public PlaceController createController ()
+    {
+        try {
+            return (PlaceController) Class.forName(controller).newInstance();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override // documentation inherited
     public String getManagerClassName ()
     {
-        return "com.threerings.msoy.game.server.MsoyGameManager";
+        return (manager != null) ? manager
+            : "com.threerings.msoy.game.server.MsoyGameManager";
     }
 }

@@ -77,7 +77,7 @@ public class TableCreationPanel extends FloatingPanel
         _tconfigger.init(_ctx, _gconfigger);
 
         var config :MsoyGameConfig = new MsoyGameConfig();
-        config.configData = _game.gameMedia.getMediaPath();
+        config.gameMedia = _game.gameMedia.getMediaPath();
         config.persistentGameId = _game.getPrototypeId();
         config.gameType = _game.gameType;
         gconf.setGameConfig(config);
