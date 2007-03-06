@@ -311,7 +311,7 @@ public class Board
 
         // maybe end the game and declare them winners
         if (hiScore >= 5 || _totalDeaths >= _maxDeaths) {
-            _gameCtrl.endGame.apply(null, winners);
+            _gameCtrl.endGame(winners);
         }
     }
 
