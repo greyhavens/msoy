@@ -4,6 +4,7 @@
 package client.util;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.HTML;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -54,6 +55,13 @@ public class FlashClients
         return WidgetUtil.createFlashContainer(
             "hotspots","/media/static/HoodViz.swf", FS_WIDTH, FS_HEIGHT,
             "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hotspotData);
+    }
+
+    public static HTML createAvatarViewer (String avatarPath)
+    {
+        return WidgetUtil.createFlashContainer(
+            "avatarViewer", "/clients/avatarviewer.swf", 400, 550,
+            "avatar=" + URL.encodeComponent(avatarPath));
     }
 
     /**

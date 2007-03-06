@@ -5,15 +5,12 @@ package client.item;
 
 import java.util.List;
 
-import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
@@ -22,6 +19,7 @@ import com.threerings.msoy.item.web.MediaDesc;
 
 import client.shell.MsoyEntryPoint;
 import client.util.BorderedDialog;
+import client.util.FlashClients;
 import client.util.MediaUtil;
 import client.util.PopupMenu;
 import client.util.TagDetailPanel;
@@ -120,10 +118,8 @@ public class BaseItemDetailPopup extends BorderedDialog
         if (item instanceof Avatar) {
             // special avatar viewer: TODO: only display in catalog / inventory
             // and not for 3rd parties?
-            MediaDesc avatarMedia = ((Avatar)_item).avatarMedia;
-            return WidgetUtil.createFlashContainer(
-                "avatarViewer", "/clients/avatarviewer.swf", 300, 500,
-                "avatar=" + URL.encodeComponent(avatarMedia.getMediaPath()));
+            return FlashClients.createAvatarViewer(
+                ((Avatar)_item).avatarMedia.getMediaPath());
 
         } else {
             return MediaUtil.createMediaView(item.getPreviewMedia(), MediaDesc.PREVIEW_SIZE);

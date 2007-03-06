@@ -30,20 +30,6 @@ public class AdminItemPopup extends BaseItemDetailPopup
     }
 
     // @Override // BaseItemDetailPopup
-    protected Widget createPreview (Item item)
-    {
-        // TODO: maybe ItemUtil should handle this
-        if (item instanceof Avatar) {
-            MediaDesc avatarMedia = ((Avatar)_item).avatarMedia;
-            return WidgetUtil.createFlashContainer(
-                "avatarViewer", "/clients/avatarviewer.swf", 300, 500,
-                "avatar=" + URL.encodeComponent(avatarMedia.getMediaPath()));
-        } else {
-            return super.createPreview(item);
-        }
-    }
-
-    // @Override // BaseItemDetailPopup
     protected void createInterface (VerticalPanel details, VerticalPanel controls)
     {
         super.createInterface(details, controls);
