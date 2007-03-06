@@ -19,7 +19,35 @@ import java.util.List;
 import junit.framework.TestCase;
 
 public class ProjectSVNStorageUnitTest extends TestCase
-{
+{    
+    /** Static, brittle path to the test template. Sorry. */
+    public static final File TEMPLATE_DIR = new File("data/swiftly/templates/unittest");
+
+    /** Mock up a project record. */
+    public static SwiftlyProjectRecord mockProjectRecord ()
+    {
+        SwiftlyProjectRecord projectRecord;
+
+        // Mock up a project record.
+        projectRecord = new SwiftlyProjectRecord();
+        projectRecord.projectName = "project-name";
+        projectRecord.ownerId = 0;
+
+        return projectRecord;
+    }
+
+    /** Mock up an SVN storage record. */
+    public static SwiftlySVNStorageRecord mockStorageRecord (File tempDir)
+    {
+        SwiftlySVNStorageRecord storageRecord;
+
+        storageRecord = new SwiftlySVNStorageRecord();
+        storageRecord.protocol = ProjectSVNStorage.PROTOCOL_FILE;
+        storageRecord.baseDir = tempDir.getAbsolutePath();
+
+        return storageRecord;
+    }
+
     public ProjectSVNStorageUnitTest (String name)
     {
         super(name);
@@ -36,14 +64,8 @@ public class ProjectSVNStorageUnitTest extends TestCase
             throw new Exception("Temporary directory '" + _tempDir + "' already exists!");
         }
 
-        // Mock up a project record.
-        _projectRecord = new SwiftlyProjectRecord();
-        _projectRecord.projectName = "project-name";
-        _projectRecord.ownerId = 0;
-        
-        _storageRecord = new SwiftlySVNStorageRecord();
-        _storageRecord.protocol = ProjectSVNStorage.PROTOCOL_FILE;
-        _storageRecord.baseDir = _tempDir.getAbsolutePath();
+        _projectRecord = mockProjectRecord();
+        _storageRecord = mockStorageRecord(_tempDir);
 
         // Initialize the storage
         ProjectSVNStorage.initializeStorage(_projectRecord, _storageRecord, TEMPLATE_DIR.getCanonicalFile());
@@ -169,7 +191,4 @@ public class ProjectSVNStorageUnitTest extends TestCase
     
     /** Mocked up storage record. */
     protected SwiftlySVNStorageRecord _storageRecord;
-
-    /** Static, brittle path to the test template. Sorry. */
-    static final File TEMPLATE_DIR = new File("data/swiftly/templates/unittest");
 }
