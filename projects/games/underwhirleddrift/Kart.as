@@ -73,57 +73,51 @@ public class Kart extends KartSprite
 
     public function enterFrame (event :Event) :void
     {
-        // alter camera angle
+        // update camera and kart angles
+        var viewAcceleration :int = Math.abs(_currentViewAngle) > TURN_VIEW_ANGLE ? 
+            VIEW_ACCELERATION * 3 : VIEW_ACCELERATION;
         if (_movement & (MOVEMENT_RIGHT | MOVEMENT_LEFT)) {
+            var maxViewAngle :int = _movement & MOVEMENT_DRIFT ? DRIFT_VIEW_ANGLE : 
+                TURN_VIEW_ANGLE;
             if (_movement & MOVEMENT_RIGHT) {
-                _current3PAngle = Math.min(MAX_TURN_ANGLE, _current3PAngle + TURN_ACCELERATION);
+                _currentTurnAngle = Math.min(MAX_TURN_ANGLE, _currentTurnAngle + TURN_ACCELERATION);
+                _currentViewAngle = Math.min(maxViewAngle, _currentViewAngle + viewAcceleration);
             } else {
-                _current3PAngle = Math.max(-MAX_TURN_ANGLE, _current3PAngle - TURN_ACCELERATION);
+                _currentTurnAngle = Math.max(-MAX_TURN_ANGLE, _currentTurnAngle - 
+                    TURN_ACCELERATION);
+                _currentViewAngle = Math.max(-maxViewAngle, _currentViewAngle - viewAcceleration);
             }
         } else {
-            if (_current3PAngle > 0) {
-                _current3PAngle = Math.max (0, _current3PAngle - TURN_ACCELERATION);
-            } else if (_current3PAngle < 0) {
-                _current3PAngle = Math.min (0, _current3PAngle + TURN_ACCELERATION);
+            if (_currentTurnAngle > 0) {
+                _currentTurnAngle = Math.max(0, _currentTurnAngle - TURN_ACCELERATION);
+            } else if (_currentTurnAngle < 0) {
+                _currentTurnAngle = Math.min(0, _currentTurnAngle + TURN_ACCELERATION);
+            }
+            if (_currentViewAngle > 0) {
+                _currentViewAngle = Math.max(0, _currentViewAngle - viewAcceleration);
+            } else if (_currentViewAngle < 0) {
+                _currentViewAngle = Math.min(0, _currentViewAngle + viewAcceleration);
             }
         }
         if (_currentSpeed > 0) {
-            _camera.angle = (_camera.angle + _current3PAngle) % (Math.PI * 2);
+            _camera.angle = (_camera.angle + _currentTurnAngle) % (Math.PI * 2);
         } else if (_currentSpeed < 0) {
-            _camera.angle = (_camera.angle - _current3PAngle + Math.PI * 2) % (Math.PI * 2);
+            _camera.angle = (_camera.angle - _currentTurnAngle + Math.PI * 2) % (Math.PI * 2);
         }
+
         // update turn animation
-        var max_view_angle :int = _movement & MOVEMENT_DRIFT ? DRIFT_VIEW_ANGLE : TURN_VIEW_ANGLE;
-        var frame :int = Math.ceil((Math.abs(_current3PAngle) / MAX_TURN_ANGLE) * max_view_angle);
-        if (_current3PAngle > 0) {
+        var frame :int = Math.abs(_currentViewAngle) as int;
+        if (_currentViewAngle > 0) {
             frame = 360 - frame;
-        } else if (_current3PAngle == 0) {
+        } else if (_currentViewAngle == 0) {
             frame = 1;
         }
         if (_kart.currentFrame != frame) {
             _kart.gotoAndStop(frame);
         }
 
-        // alter camera location
-        /*var speedConfig :Object = {
-            gasAccel: _movementConstants.accelGas,
-            coastAccel: _movementConstants.accelCoast,
-            brakeAccel: _movementConstants.accelBrake,
-            minSpeed: SPEED_MIN,
-            maxSpeed: _movementConstants.maxSpeed
-        };
-        if (!_ground.drivingOnRoad()) {
-            speedConfig.gasAccel *= TERRAIN_SPEED_FACTOR;
-            speedConfig.coastAccel /= TERRAIN_SPEED_FACTOR;
-            speedConfig.brakeAccel /= TERRAIN_SPEED_FACTOR;
-            speedConfig.minSpeed *= TERRAIN_SPEED_FACTOR;
-            speedConfig.maxSpeed *= TERRAIN_SPEED_FACTOR;
-        }*/
-        // TODO: this will clearly need more intelligent processing
-        //if (_ground.drivingIntoWall()) {
-            //_currentSpeed = 0;
-        //}
         _camera.position = calculateNewPosition(_camera.position, _camera.angle);
+
         // deal with a jump
         if (_jumpFrameCount > 0) {
             _jumpFrameCount--;
@@ -142,9 +136,9 @@ public class Kart extends KartSprite
             _movement |= flag;
         } else {
             // if we're turning off drifting and it was on), cut back _currentSpeed
-            if (flag == MOVEMENT_DRIFT && (_movement & MOVEMENT_DRIFT)) {
-                _currentSpeed *= (DRIFT_X_SPEED_FACTOR + DRIFT_Y_SPEED_FACTOR) / 2;
-            }
+            //if (flag == MOVEMENT_DRIFT && (_movement & MOVEMENT_DRIFT)) {
+                //_currentSpeed *= (DRIFT_X_SPEED_FACTOR + DRIFT_Y_SPEED_FACTOR) / 2;
+            //}
             _movement &= ~flag;
         }
     }
@@ -156,12 +150,16 @@ public class Kart extends KartSprite
     /** reference to the ground object */
     protected var _ground :Ground;
 
-    /** The current angle viewed on the kart by a player in the 3rd person, i.e. the one driving */
-    protected var _current3PAngle :Number = 0;
+    /** The current amount we are adding or subtracting from the kart's turn angle */
+    protected var _currentTurnAngle :Number = 0;
+
+    /** The current angle we are viewing our own kart at */
+    protected var _currentViewAngle :Number = 0;
 
     /** turning constants */
     protected static const TURN_VIEW_ANGLE :int = 15; // in degrees
     protected static const DRIFT_VIEW_ANGLE :int = 45; // in degrees
+    protected static const VIEW_ACCELERATION :int = 4; // degrees per frame
 
     /** values to control jumping */
     protected static const JUMP_DURATION :int = 3;

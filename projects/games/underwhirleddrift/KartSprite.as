@@ -126,8 +126,8 @@ public class KartSprite extends Sprite
     protected static const MOVEMENT_DRIFT :int = 0x10;
 
     /** constants to control kart motion properties */
-    protected static const MAX_TURN_ANGLE :Number = 0.0524; // 3 degrees
-    protected static const TURN_ACCELERATION :Number = 0.015;
+    protected static const MAX_TURN_ANGLE :Number = 0.0436; // 2.5 degrees 0.0524; // 3 degrees
+    protected static const TURN_ACCELERATION :Number = 0.008;
 
     /** values to control drifting */
     protected static const DRIFT_X_SPEED_FACTOR :Number = 0.2;
