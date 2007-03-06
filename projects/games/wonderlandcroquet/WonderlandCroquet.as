@@ -327,8 +327,12 @@ public class WonderlandCroquet extends Sprite
     protected function panTo (x :Number, y: Number) :void
     {
         // FIXME: Animate the pan to here, don't just snap
+        /** Argh! I can't touch the stage to find out how big I am!
         _spr.x = - (x - this.stage.stageWidth/2);
         _spr.y = - (y - this.stage.stageHeight/2);
+        */
+        _spr.x = - (x - WIDTH/2);
+        _spr.y = - (y - HEIGHT/2);
     }
 
     /** 
