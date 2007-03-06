@@ -98,12 +98,11 @@ public class SwiftlyServlet extends MsoyServiceServlet
         if(!isValidName(project.name)) {
             throw new ServiceException("m.invalid_project_name");
         }
-        
-        if(!isValidProjectType(projectType)) {
-            throw new ServiceException("m.invalid_project_type")
-        }
         */
-
+        
+        if(!SwiftlyProject.isValidProjectType(projectType)) {
+            throw new ServiceException("m.invalid_project_type");
+        }
 
         // Initialize the project storage.
         try {

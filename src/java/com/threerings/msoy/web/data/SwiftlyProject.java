@@ -16,6 +16,18 @@ public class SwiftlyProject
     /** The valid project types. */
     public static byte[] PROJECT_TYPES = { Item.GAME, Item.AVATAR };
 
+    /** Returns true if the given project type is supported by Swiftly. */
+    public static boolean isValidProjectType (byte projectType)
+    {
+        for (int i = 0; i < PROJECT_TYPES.length; i++) {
+            if (PROJECT_TYPES[i] == projectType) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /** The id of the project. */
     public int projectId;
     
@@ -30,4 +42,16 @@ public class SwiftlyProject
 
     /** Whether the project is remixable. */
     public boolean remixable;
+    
+    /** Returns the source file name for the project's type. */
+    public String templateSourceName (byte projectType) {
+        // We can't use a switch statement because the type finals are not actually constants
+        if (projectType == Item.GAME) {
+            return "Game.as";
+        } else if (projectType == Item.AVATAR) {
+            return "Avatar.as";            
+        } else {
+            return null;
+        }
+    }
 }
