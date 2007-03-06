@@ -46,6 +46,14 @@ public class FriendsBlurb extends Blurb
                 Hyperlink link = new Hyperlink(
                     friend.name.toString(), String.valueOf(friend.name.getMemberId()));
                 _content.setWidget(ii, 0, link);
+                switch (friend.status) {
+                case FriendEntry.PENDING_MY_APPROVAL:
+                    _content.setText(ii, 1, CProfile.msgs.pendingYou());
+                    break;
+                case FriendEntry.PENDING_THEIR_APPROVAL:
+                    _content.setText(ii, 1, CProfile.msgs.pendingThem());
+                    break;
+                }
             }
         }
 
