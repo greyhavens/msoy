@@ -95,6 +95,10 @@ public class Ground extends Sprite
      */
     protected function enterFrame (event :Event) :void
     {
+        var findKart :Matrix = new Matrix();
+        findKart.rotate(_camera.angle);
+        findKart.translate(_camera.position.x, _camera.position.y);
+        _kartLocation = findKart.transformPoint(new Point(0, -30));
         var translateRotate :Matrix = new Matrix();
         translateRotate.translate(-_camera.position.x, -_camera.position.y);
         translateRotate.rotate(-_camera.angle);
@@ -122,17 +126,9 @@ public class Ground extends Sprite
             var clipping :Rectangle = new Rectangle(0, HEIGHT - totalHeight, WIDTH, 
                 stripHeight);
             _stripData.draw(_level, thisTransform, null, null, clipping);
-            // update status flags
-            var y :int = HEIGHT - totalHeight;
-            if (y <= UnderwhirledDrift.KART_LOCATION.y &&
-                y + stripHeight > UnderwhirledDrift.KART_LOCATION.y) {
-                thisTransform.invert();
-                _kartLocation = thisTransform.transformPoint(
-                    UnderwhirledDrift.KART_LOCATION);
-                _drivingOnRoad = _level.isOnRoad(_kartLocation);
-                _drivingIntoWall = _level.isOnWall(_kartLocation);
-            }
         }
+        _drivingOnRoad = _level.isOnRoad(_kartLocation);
+        _drivingIntoWall = _level.isOnWall(_kartLocation);
         if (_scenery != null) {
             _scenery.updateItems(translateRotate, _camera);
         }
