@@ -42,6 +42,12 @@ public class FriendsBlurb extends Blurb
         } else {
             for (int ii = 0, ll = friends.size(); ii < ll; ii++) {
                 FriendEntry friend = (FriendEntry)friends.get(ii);
+                if (friend.status != FriendEntry.FRIEND &&
+                    !(CProfile.getMemberId() == _memberId ||
+                      CProfile.getMemberId() == friend.getMemberId())) {
+                    // don't show pending friends to other people
+                    continue;
+                }
                 canInvite = canInvite && !(friend.getMemberId() == CProfile.getMemberId());
                 Hyperlink link = new Hyperlink(
                     friend.name.toString(), String.valueOf(friend.name.getMemberId()));
