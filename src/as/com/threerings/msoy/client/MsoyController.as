@@ -521,8 +521,7 @@ public class MsoyController extends Controller
         var memberObj :MemberObject = _ctx.getMemberObject();
         // if not a guest, save the username that we logged in with
         if (!memberObj.isGuest()) {
-            var creds :MsoyCredentials =
-                (_ctx.getClient().getCredentials() as MsoyCredentials);
+            var creds :MsoyCredentials = (_ctx.getClient().getCredentials() as MsoyCredentials);
             var name :Name = creds.getUsername();
             if (name != null) {
                 Prefs.setUsername(name.toString());

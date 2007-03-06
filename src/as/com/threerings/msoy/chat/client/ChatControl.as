@@ -58,14 +58,14 @@ public class ChatControl extends HBox
         _txt.height = height;
         _txt.width = 200;
         
-        var but :Button = new Button();
-        but.label = Msgs.GENERAL.get("b.send");
-        but.height = height;
-        addChild(but);
+        _but = new Button();
+        _but.label = Msgs.GENERAL.get("b.send");
+        _but.height = height;
+        addChild(_but);
 
 //        _txt.addEventListener(KeyboardEvent.KEY_UP, keyEvent, false, 0, true);
         _txt.addEventListener(FlexEvent.ENTER, sendChat, false, 0, true);
-        but.addEventListener(FlexEvent.BUTTON_DOWN, sendChat, false, 0, true);
+        _but.addEventListener(FlexEvent.BUTTON_DOWN, sendChat, false, 0, true);
 
 //        updateTarget();
     }
@@ -96,6 +96,15 @@ public class ChatControl extends HBox
     override public function setFocus () :void
     {
         _txt.setFocus();
+    }
+
+    /**
+     * Enables or disables our chat input.
+     */
+    public function setEnabled (enabled :Boolean) :void
+    {
+        _txt.enabled = enabled;
+        _but.enabled = enabled;
     }
 
     /**
@@ -238,6 +247,9 @@ public class ChatControl extends HBox
 
     /** The place where the user may enter chat. */
     protected var _txt :ChatInput;
+
+    /** The button for sending chat. */
+    protected var _but :Button;
 
     /** An array of the currently shown-controls. */
     protected static var _controls :Array = [];

@@ -25,9 +25,6 @@ import com.threerings.msoy.world.client.RoomController;
 
 import com.threerings.msoy.chat.client.ChatControl;
 
-
-
-
 [Style(name="backgroundSkin", type="Class", inherit="no")]
 
 /**
@@ -52,11 +49,10 @@ public class ControlBar extends HBox
         var fn :Function = function (event :ClientEvent) :void {
             checkControls();
         };
-        _ctx.getClient().addClientObserver(
-            new ClientAdapter(fn, fn, null, null, null, null, fn));
+        _ctx.getClient().addClientObserver(new ClientAdapter(fn, fn, null, null, null, null, fn));
 
         _controller = new ControlBarController(ctx, top, this);
-        
+
         checkControls();
     }
 
@@ -64,9 +60,18 @@ public class ControlBar extends HBox
     override public function parentChanged (p :DisplayObjectContainer) :void
     {
         super.parentChanged(p);
-        _controller.registerForSessionObservations (p != null);
+        _controller.registerForSessionObservations(p != null);
     }
 
+    /**
+     * Enables or disables our chat input.
+     */
+    public function setChatEnabled (enabled :Boolean) :void
+    {
+        if (_chatControl != null) {
+            _chatControl.setEnabled(enabled);
+        }
+    }
 
     /**
      * Check to see which controls the client should see.
@@ -75,19 +80,19 @@ public class ControlBar extends HBox
     {
         var cls :Class = getStyle("backgroundSkin");
         setStyle("backgroundImage", cls);
-            
+
         var user :MemberObject = _ctx.getMemberObject();
         var isMember :Boolean = (user != null) && !user.isGuest();
-        if (numChildren > 1 && (isMember == _isMember)) {
+        if (numChildren > 0 && (isMember == _isMember)) {
             return;
         }
 
         removeAllChildren();
-        
-        if (isMember) {
+        _chatControl = null;
+        _editBtn = null;
 
-            var chatControl :ChatControl = new ChatControl(_ctx, this.height - 4);
-            addChild(chatControl);
+        if (isMember) {
+            addChild(_chatControl = new ChatControl(_ctx, this.height - 4));
 
             var chatBtn :CommandButton = new CommandButton();
             chatBtn.toolTip = Msgs.GENERAL.get("i.chatPrefs");
@@ -100,7 +105,7 @@ public class ControlBar extends HBox
             volBtn.setCommand(ControlBarController.POP_VOLUME, volBtn);
             volBtn.styleName = "controlBarButtonVolume";
             addChild(volBtn);
-            
+
             var prefsBtn :CommandButton = new CommandButton();
             prefsBtn.toolTip = Msgs.GENERAL.get("i.avatar");
             prefsBtn.setCommand(MsoyController.PICK_AVATAR);
@@ -114,8 +119,8 @@ public class ControlBar extends HBox
             addChild(_editBtn);
 
         } else {
-            var logonPanel :LogonPanel = new LogonPanel(_ctx, this.height - 4);
-            addChild(logonPanel);
+//             var logonPanel :LogonPanel = new LogonPanel(_ctx, this.height - 4);
+//             addChild(logonPanel);
 
             volBtn = new CommandButton();
             volBtn.setCommand(ControlBarController.POP_VOLUME, volBtn);
@@ -126,14 +131,14 @@ public class ControlBar extends HBox
         // some elements that are common to guest and logged in users
         var footerLeft :SkinnableImage = new SkinnableImage();
         footerLeft.styleName = "controlBarFooterLeft";
-        addChild (footerLeft);
+        addChild(footerLeft);
 
         var blank :SkinnableCanvas = new SkinnableCanvas();
         blank.styleName = "controlBarSpacer";
         blank.height = this.height;
         blank.percentWidth = 100;
         addChild(blank);
-        
+
         _goback = new CommandButton();
         _goback.setCommand(ControlBarController.MOVE_BACK, _goback);
         _goback.styleName = "controlBarButtonGoBack";
@@ -148,11 +153,11 @@ public class ControlBar extends HBox
         _bookend = new SkinnableImage();
         _bookend.styleName = "controlBarBookend";
         addChild(_bookend);
-        
+
         var footerRight :SkinnableImage = new SkinnableImage();
         footerRight.styleName = "controlBarFooterRight";
         addChild(footerRight);
-        
+
         // and remember how things are set for now
         _isMember = isMember;
     }
@@ -166,7 +171,7 @@ public class ControlBar extends HBox
         visible :Boolean, name :String, backEnabled :Boolean) :void
     {
         const maxLen :int = 25;
-        _loc.includeInLayout = _goback.includeInLayout = _bookend.includeInLayout = 
+        _loc.includeInLayout = _goback.includeInLayout = _bookend.includeInLayout =
             _loc.visible = _goback.visible = _bookend.visible = visible;
         _goback.enabled = backEnabled;
         _goback.toolTip = backEnabled ? Msgs.GENERAL.get("i.goBack") : null;
@@ -176,7 +181,7 @@ public class ControlBar extends HBox
             _loc.text = "";
         }
     }
-    
+
     /** Receives notification whether scene editing is possible for this scene. */
     public function set sceneEditPossible (value :Boolean) :void
     {
@@ -187,15 +192,18 @@ public class ControlBar extends HBox
 
     /** Our clientside context. */
     protected var _ctx :WorldContext;
-    
+
     /** Controller for this object. */
     protected var _controller :ControlBarController;
-    
+
     /** Are we currently configured to show the controls for a member? */
     protected var _isMember :Boolean;
-    
+
     /** The back-movement button. */
     protected var _goback :CommandButton;
+
+    /** Our chat control. */
+    protected var _chatControl :ChatControl;
 
     /** Button for editing the current scene. */
     protected var _editBtn :CommandButton;
@@ -242,7 +250,7 @@ internal class SkinnableImage extends Image
         if (_skin != null) {
             removeChild(_skin);
         }
-        
+
         _skin = DisplayObject (IFlexDisplayObject (new skinclass()));
         this.width = _skin.width;
         this.height = _skin.height;
@@ -278,7 +286,7 @@ internal class SkinnableCanvas extends Canvas
 internal class SkinnableCanvasWithText extends SkinnableCanvas
 {
     public var textfield :UITextField;
-    
+
     public function SkinnableCanvasWithText (height :int)
     {
         this.height = height;
@@ -288,7 +296,7 @@ internal class SkinnableCanvasWithText extends SkinnableCanvas
     override protected function createChildren () :void
     {
         super.createChildren();
-        
+
         textfield = new UITextField ();
         textfield.styleName = "controlBarText";
         textfield.x = 5;

@@ -54,6 +54,14 @@ public class MsoyGameController extends EZGameController
             }));
     }
 
+    /**
+     * This method is used by the WhirledGameControlBackend.
+     */
+    public function setChatEnabled_v1 (enabled :Boolean) :void
+    {
+        (_view as MsoyGamePanel).setChatEnabled(enabled);
+    }
+
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
         return new MsoyGamePanel((ctx as WorldContext), this);

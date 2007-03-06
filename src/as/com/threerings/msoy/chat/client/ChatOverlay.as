@@ -130,9 +130,7 @@ public class ChatOverlay
             setHistoryEnabled(false);
         }
 
-        //
         _target = target;
-
         if (_target != null) {
             // Adding to the new
             _overlay.x = 0;

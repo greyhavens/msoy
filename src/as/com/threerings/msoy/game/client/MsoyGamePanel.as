@@ -27,16 +27,25 @@ public class MsoyGamePanel extends EZGamePanel
         _chatOverlay = new ChatOverlay(ctx);
     }
 
+    /**
+     * Enables or disables the chat overlay. The overlay is hidden while disabled.
+     */
+    public function setChatEnabled (enabled :Boolean) :void
+    {
+        _chatOverlay.setTarget(enabled ? this : null);
+        (_ctx as WorldContext).getTopPanel().getControlBar().setChatEnabled(enabled);
+    }
+
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
         super.willEnterPlace(plobj);
 
-        _chatOverlay.setTarget(this);
         _gameView.addEventListener(ResizeEvent.RESIZE, handleGameContainerResize);
         _gameView.getMediaContainer().addEventListener(
             MediaContainer.SIZE_KNOWN, handleMediaContainerResize);
 
         resizeChatOverlay();
+        setChatEnabled(true);
     }
 
     override public function didLeavePlace (plobj :PlaceObject) :void
@@ -47,6 +56,10 @@ public class MsoyGamePanel extends EZGamePanel
         _chatOverlay.setTarget(null);
 
         super.didLeavePlace(plobj);
+
+        // reenable chat
+        _chatOverlay.setTarget(null);
+        (_ctx as WorldContext).getTopPanel().getControlBar().setChatEnabled(true);
     }
 
     override protected function createBackend () :GameControlBackend
@@ -59,7 +72,7 @@ public class MsoyGamePanel extends EZGamePanel
     {
         resizeChatOverlay ();
     }
-    
+
     protected function handleGameContainerResize (event :ResizeEvent) :void
     {
         resizeChatOverlay ();
@@ -75,10 +88,11 @@ public class MsoyGamePanel extends EZGamePanel
         }
         // in any case, chat window should be at least 100px tall
         h = Math.max(h, 100 / this.height);
-       
+
         _chatOverlay.setSubtitlePercentage(h);
     }
 
+    /** Overlays chat on top of the game. */
     protected var _chatOverlay :ChatOverlay;
 }
 }

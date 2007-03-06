@@ -24,6 +24,7 @@ public class WhirledGameControlBackend extends GameControlBackend
         var ctrl :MsoyGameController = (_ctrl as MsoyGameController);
         o["getAvailableFlow_v1"] = ctrl.getAvailableFlow_v1;
         o["awardFlow_v1"] = ctrl.awardFlow_v1;
+        o["setChatEnabled_v1"] = ctrl.setChatEnabled_v1;
     }
 }
 }

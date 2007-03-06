@@ -70,7 +70,7 @@ public class TopPanel extends Canvas
         buildStamp.setStyle("bottom", _controlBar.height);
         buildStamp.setStyle("right", ScrollBar.THICKNESS);
         addChild(buildStamp);
-        
+
         // clear out the application and install ourselves as the only child
         var app :Application = Application(Application.application);
         app.removeAllChildren();
@@ -78,11 +78,6 @@ public class TopPanel extends Canvas
         layoutPanels();
 
         app.stage.addEventListener(Event.RESIZE, stageResized);
-    }
-
-    protected function stageResized (event :Event) :void
-    {
-        layoutPanels();
     }
 
     /**
@@ -133,6 +128,14 @@ public class TopPanel extends Canvas
         }
     }
 
+    /**
+     * Returns a reference to our ControlBar component.
+     */
+    public function getControlBar () :ControlBar
+    {
+        return _controlBar;
+    }
+
     public function setSidePanel (side :UIComponent) :void
     {
         clearSidePanel(null);
@@ -164,7 +167,7 @@ public class TopPanel extends Canvas
         addChild(_bottomPanel); // add to end
         layoutPanels();
     }
-    
+
     public function clearBottomPanel (bottom :UIComponent) :void
     {
         if ((_bottomPanel != null) && (bottom == null || bottom == _bottomPanel)) {
@@ -173,7 +176,7 @@ public class TopPanel extends Canvas
             layoutPanels();
         }
     }
-    
+
     public function showFriends (show :Boolean) :void
     {
         if (show) {
@@ -191,6 +194,11 @@ public class TopPanel extends Canvas
         }
     }
 
+    protected function stageResized (event :Event) :void
+    {
+        layoutPanels();
+    }
+
     protected function layoutPanels () :void
     {
         if (_sidePanel != null) {
@@ -199,14 +207,14 @@ public class TopPanel extends Canvas
             _sidePanel.setStyle("left", 0);
             _sidePanel.width = SIDE_PANEL_WIDTH;
         }
-        
-        if (_bottomPanel != null) {    
+
+        if (_bottomPanel != null) {
             _bottomPanel.setStyle("bottom", _controlBar.height);
             _bottomPanel.setStyle("left", 0);
             _bottomPanel.width = _controlBar.width;
             _bottomPanel.height = BOTTOM_PANEL_HEIGHT;
         }
-            
+
         updatePlaceViewSize();
     }
 
@@ -254,12 +262,12 @@ public class TopPanel extends Canvas
     {
         return (_sidePanel == null ? 0 : SIDE_PANEL_WIDTH);
     }
-    
+
     protected function getBottomPanelHeight () :int
     {
         return (_bottomPanel == null ? 0 : BOTTOM_PANEL_HEIGHT);
     }
-        
+
     /** The giver of life. */
     protected var _ctx :WorldContext;
 
@@ -284,12 +292,12 @@ public class TopPanel extends Canvas
 
     /** Storage for a GUI element corresponding to decorative lines. */
     protected var _decorativeBar :Canvas;
-    
+
     /** The list of our friends. */
     protected var _friendsList :FriendsList;
-    
+
     protected static const SIDE_PANEL_WIDTH :int = 350;
-    
+
     protected static const BOTTOM_PANEL_HEIGHT :int = 50;
 
     public static const DECORATIVE_MARGIN_HEIGHT :int = 4;
