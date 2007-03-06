@@ -3,13 +3,13 @@ package {
 import flash.display.Sprite;
 
 import flash.events.KeyboardEvent;
+import flash.events.Event;
 
 import flash.geom.Point;
 
 import flash.utils.ByteArray;
 
 import flash.media.Sound;
-import flash.media.SoundTransform;
 
 import flash.text.TextField;
 import flash.text.TextFormat;
@@ -96,7 +96,7 @@ public class ShipSprite extends Sprite
         powerups = 0;
         score = 0;
         if (_isOwnShip && _shieldSound != null) {
-            _shieldSound.soundTransform = Sounds.OFF;
+            _shieldSound.gotoAndStop(2);
             _shieldSound = null;
         }
         this.shipId = shipId;
@@ -234,17 +234,17 @@ public class ShipSprite extends Sprite
 
             // Turn off sound loops.
             if (_thrusterSound != null) {
-                _thrusterSound.soundTransform = Sounds.OFF;
+                _thrusterSound.gotoAndStop(2);
                 _thrusterSound = null;
             }
 
             if (_shieldSound != null) {
-                _shieldSound.soundTransform = Sounds.OFF;
+                _shieldSound.gotoAndStop(2);
                 _shieldSound = null;
             }
 
-            _engineSound.soundTransform = Sounds.OFF;
-
+            _engineSound.gotoAndStop(2);
+        
             setVisible(false);
 
             // Stop moving and firing.
@@ -280,7 +280,8 @@ public class ShipSprite extends Sprite
         turnAccelRate = 0;
         _ship.rotation = 0;
 
-        _engineSound.soundTransform = Sounds.ON;
+        _engineSound.gotoAndStop(1);
+
         _game.forceStatusUpdate();
         setVisible(true);
     }
@@ -391,13 +392,13 @@ public class ShipSprite extends Sprite
             if (_isOwnShip) {
                 // Play the thruster sound, stop any old thrustering.
                 if (_thrusterSound != null && _thrusterRev) {
-                    _thrusterSound.soundTransform = Sounds.OFF;
+                    _thrusterSound.gotoAndStop(2);
                     _thrusterSound = null;
                 }
                 if (_thrusterSound == null) {
                     _thrusterRev = false;
                     _thrusterSound = Sounds.THRUSTER_MOV;
-                    _thrusterSound.soundTransform = Sounds.ON;
+                    _thrusterSound.gotoAndStop(1);
                 }
             }
 
@@ -409,15 +410,14 @@ public class ShipSprite extends Sprite
             if (_isOwnShip) {
                 // Play the thruster sound, stop any old thrustering.
                 if (_thrusterSound != null && !_thrusterRev) {
-                    _thrusterSound.soundTransform = Sounds.OFF;
+                    _thrusterSound.gotoAndStop(2);
                     _thrusterSound = null;
                 }
 
                 if (_thrusterSound == null) {
                     _thrusterRev = true;
-
                     _thrusterSound = Sounds.THRUSTER_RETRO_MOV;
-                    _thrusterSound.soundTransform = Sounds.ON;
+                    _thrusterSound.gotoAndStop(1);
                 }
             }
 
@@ -470,13 +470,13 @@ public class ShipSprite extends Sprite
             if (_isOwnShip) {
                 // Start the engine sound...
                 if (_engineSound != null) {
-                    _engineSound.soundTransform = Sounds.OFF;
+                    _engineSound.gotoAndStop(2);
                     _engineSound = null;
                 }
 
                 // Play the engine sound forever til we stop.
                 _engineSound = Codes.SHIP_TYPES[shipType].ENGINE_MOV;
-                _engineSound.soundTransform = Sounds.ON;
+                _engineSound.gotoAndStop(1);
             }
         }
     }
@@ -521,7 +521,7 @@ public class ShipSprite extends Sprite
 
             // Stop our sound if appropriate.
             if (_isOwnShip && _thrusterSound != null && !_thrusterRev) {
-                _thrusterSound.soundTransform = Sounds.OFF;
+                _thrusterSound.gotoAndStop(2);
                 _thrusterSound = null;
             }
         } else if (event.keyCode == KV_DOWN) {
@@ -529,7 +529,7 @@ public class ShipSprite extends Sprite
 
             // Stop our sound if appropriate.
             if (_isOwnShip && _thrusterSound != null && _thrusterRev) {
-                _thrusterSound.soundTransform = Sounds.OFF;
+                _thrusterSound.gotoAndStop(2);
                 _thrusterSound = null;
             }
         } else if (event.keyCode == KV_SPACE) {
@@ -546,7 +546,7 @@ public class ShipSprite extends Sprite
 
         if (_isOwnShip && type == Powerup.SHIELDS && _shieldSound == null) {
             _shieldSound = Sounds.SHIELDS_MOV;
-            _shieldSound.soundTransform = Sounds.ON;
+            _shieldSound.gotoAndStop(1);
         }
     }
 

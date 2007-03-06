@@ -9,9 +9,7 @@ public class ViperShipType extends ShipType
     public function ViperShipType () :void
     {
         super("Viper", 2.0, 0.014, -0.007, 0.975, 0.825, 0.25, 1.0);
-
-        // Turn off the sound for the movie til we need it.
-        ENGINE_MOV.soundTransform = Sounds.OFF;
+        ENGINE_MOV.gotoAndStop(2);
     }
 
     // Shooting sounds.
@@ -37,7 +35,7 @@ public class ViperShipType extends ShipType
     //  always running, just sometimes really quietly.  Bleh.
 
     // Engine hum.
-    [Embed(source="rsrc/ships/viper/engine_sound.swf")]
+    [Embed(source="rsrc/ships/viper/engine_sound.swf#sound_main")]
     protected static var engineSound :Class;
 
     public const ENGINE_MOV :MovieClipAsset =

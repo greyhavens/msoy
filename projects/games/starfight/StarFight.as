@@ -149,6 +149,7 @@ public class StarFight extends Sprite
      */
     protected function gotBoard (boardObj :Board) :void
     {
+        _gameCtrl.localChat("MST GOT BOARD");
         _shots = [];
         _powerups = [];
 
@@ -628,6 +629,10 @@ public class StarFight extends Sprite
         }
 
         _lastTickTime = now;
+    }
+
+    public function chat (msg :String) :void {
+        _gameCtrl.localChat(msg);
     }
 
     /** Our game control object. */

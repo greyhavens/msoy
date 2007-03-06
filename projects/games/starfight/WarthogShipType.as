@@ -9,9 +9,7 @@ public class WarthogShipType extends ShipType
     public function WarthogShipType () :void
     {
         super("Warthog", 1.75, 0.01, -0.005, 0.975, 0.825, 0.25, 1.5);
-
-        // Turn off the sound for the movie til we need it.
-        ENGINE_MOV.soundTransform = Sounds.OFF;
+        ENGINE_MOV.gotoAndStop(2);
     }
 
     // Shooting sounds.
@@ -37,7 +35,7 @@ public class WarthogShipType extends ShipType
     //  always running, just sometimes really quietly.  Bleh.
 
     // Engine hum.
-    [Embed(source="rsrc/ships/warthog/engine_sound.swf")]
+    [Embed(source="rsrc/ships/warthog/engine_sound.swf#sound_main")]
     public static var engineSound :Class;
 
     public const ENGINE_MOV :MovieClipAsset =

@@ -77,19 +77,19 @@ public class Sounds {
     //  hiccups.  This is pretty hacky - we can't control the looping sound
     //  appropriately, so we just manipulate the volume.  So, the sounds are
     //  always running, just sometimes really quietly.  Bleh.
-    [Embed(source="rsrc/shields_sound.swf")]
+    [Embed(source="rsrc/shields_sound.swf#sound_main")]
     protected static var shieldsSound :Class;
 
     public static const SHIELDS_MOV :MovieClipAsset =
         MovieClipAsset(new shieldsSound());
 
-    [Embed(source="rsrc/thruster_sound.swf")]
+    [Embed(source="rsrc/thruster_sound.swf#sound_main")]
     protected static var thrusterSound :Class;
 
     public static const THRUSTER_MOV :MovieClipAsset =
         MovieClipAsset(new thrusterSound());
 
-    [Embed(source="rsrc/thruster_retro_sound.swf")]
+    [Embed(source="rsrc/thruster_retro_sound.swf#sound_main")]
     protected static var thrusterRetroSound :Class;
 
     public static const THRUSTER_RETRO_MOV :MovieClipAsset =
@@ -97,13 +97,9 @@ public class Sounds {
 
     // Static initialization - make all of our looping sounds silent initially.
     {
-        SHIELDS_MOV.soundTransform = Sounds.OFF;
-        THRUSTER_MOV.soundTransform = Sounds.OFF;
-        THRUSTER_RETRO_MOV.soundTransform = Sounds.OFF;
+        SHIELDS_MOV.gotoAndStop(2);
+        THRUSTER_MOV.gotoAndStop(2);
+        THRUSTER_RETRO_MOV.gotoAndStop(2);
     }
-
-    /** Volume constants - we use these to turn our looping sounds on/off. */
-    public static const OFF :SoundTransform = new SoundTransform(0);
-    public static const ON :SoundTransform = new SoundTransform(1);
 }
 }
