@@ -19,8 +19,8 @@ public class Codes {
 
     /** The different available types of ships. */
     public static const SHIP_TYPES :Array = [
-        new ViperShipType(),
-        new WarthogShipType()
+        new WaspShipType(),
+        new RhinoShipType()
     ]
 
 }
