@@ -24,15 +24,15 @@ import com.whirled.WhirledGameControl;
 
 import org.cove.ape.*;
 
-[SWF(width="800", height="530")]
+[SWF(width="1000", height="506")]
 public class WonderlandCroquet extends Sprite
     implements PropertyChangedListener, StateChangedListener
 {
     /** Hard code my goddamned dimensions for now since I can't touch the stage to do this
      * dynamically with screen resizes.
      */
-    public static const WIDTH :int = 800;
-    public static const HEIGHT :int = 530;
+    public static const WIDTH :int = 1000;
+    public static const HEIGHT :int = 506;
 
     /** Our game control object. */
     public var gameCtrl :WhirledGameControl;
