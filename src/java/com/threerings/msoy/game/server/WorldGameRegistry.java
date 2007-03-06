@@ -103,7 +103,7 @@ public class WorldGameRegistry
                 try {
                     WorldGameConfig config = new WorldGameConfig();
                     config.game = (Game)item;
-                    config.configData = config.game.gameMedia.getMediaPath();
+                    config.gameMedia = config.game.gameMedia.getMediaPath();
                     config.persistentGameId = config.game.getPrototypeId();
                     config.players = new Name[config.game.maxPlayers];
                     
