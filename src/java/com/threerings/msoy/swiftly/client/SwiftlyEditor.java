@@ -341,10 +341,6 @@ public class SwiftlyEditor extends PlacePanel
             setVisible(true);
         }
 
-        public void display ()
-        {
-        }
-
         public String getName ()
         {
             return _text.getText();
