@@ -12,8 +12,6 @@ import flash.ui.Keyboard;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
-import com.threerings.ezgame.PropertyChangedListener;
-import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
@@ -26,7 +24,7 @@ import com.whirled.WhirledGameControl;
 
 [SWF(width="711", height="400")]
 public class UnderwhirledDrift extends Sprite
-    implements PropertyChangedListener, StateChangedListener, MessageReceivedListener
+    implements StateChangedListener, MessageReceivedListener
 {
     /** width of the masked display */
     public static const DISPLAY_WIDTH :int = 711;
@@ -56,15 +54,7 @@ public class UnderwhirledDrift extends Sprite
         _gameSprite.addChild(masker);
         addChild(_gameSprite);
 
-        // "sky"
-        /*var colorBackground :Shape = new Shape();
-        colorBackground.graphics.beginFill(0x8888FF);
-        colorBackground.graphics.drawRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-        colorBackground.graphics.endFill();
-        _gameSprite.addChild(colorBackground);*/
-
         _control = new WhirledGameControl(this);
-
         if (_control.isConnected()) {
             _camera = new Camera();
 
@@ -80,7 +70,6 @@ public class UnderwhirledDrift extends Sprite
             _control.registerListener(this);
             _control.addEventListener(KeyboardEvent.KEY_DOWN, keyEventHandler);
             _control.addEventListener(KeyboardEvent.KEY_UP, keyEventHandler);
-            _messageQueue = new MessageQueue(_control);
     
             var chooser :KartChooser = new KartChooser(this, _gameSprite, _camera, _ground);
             chooser.chooseKart();
@@ -112,17 +101,26 @@ public class UnderwhirledDrift extends Sprite
                 for (var ii :int = 0; ii < playerIds.length; ii++) {
                     playerIds[ii] = { id: playerIds[ii], position: ii };
                 }
-                _control.set("playerPositions", playerIds);
+                _control.sendMessage("playerPositions", playerIds);
+            }
+            if (_control.amInControl()) {
+                // start the ticker that sets up to sending out network updates
+                _control.startTicker("updateTick", SEND_THROTTLE);
             }
         }
     }
 
-    // from PropertyChangedListener
-    public function propertyChanged (event :PropertyChangedEvent) :void
+    // from MessageReceivedListener
+    public function messageReceived (event :MessageReceivedEvent) :void
     {
-        var name :String = event.name;
-        if (name == "playerPositions") {
-            var playerPositions :Array = event.newValue as Array;
+        if (event.name == "updateTick") {
+            if (_kart != null) {
+                var updateObj :Object = _kart.getUpdate();
+                updateObj.playerId = _control.getMyId();
+                _control.sendMessage("positionUpdate", updateObj);
+            }
+        } else if (event.name == "playerPositions") {
+            var playerPositions :Array = event.value as Array;
             for (var ii: int = 0; ii < playerPositions.length; ii++) {
                 if (playerPositions[ii].id == _control.getMyId()) {
                     _level.setStartingPosition(playerPositions[ii].position);
@@ -140,29 +138,23 @@ public class UnderwhirledDrift extends Sprite
             if (playerPositions.length != 1) {
                 updateRaceStarted();
             }
-        }
-    }
-
-    // from MessageReceivedListener
-    public function messageReceived (event :MessageReceivedEvent) :void
-    {
-        if (event.name == "raceStarted") {
+        } else if (event.name == "raceStarted") {
             _raceStarted = true;
             var obj :Object = _kart.getUpdate();
             obj.playerId = _control.getMyId();
-            _messageQueue.sendMessage("positionUpdate", obj);
         } else if (event.name == "positionUpdate") {
-            var playerId :int = event.value.playerId;
+            // variables not being scoped directly to all blocks is really wacky
+            playerId = event.value.playerId;
             if (playerId != _control.getMyId()) {
                 (_opponentKarts.get(playerId) as KartObstacle).setPosition(event.value);
             }
         } else if (event.name == "kartChosen") {
             playerId = event.value.playerId;
             if (playerId != _control.getMyId()) {
-                var kartType :String = event.value.kartType;
-                var position :Object = _opponentKarts.get(playerId);
-                if (position != null) {
-                    _opponentKarts.put(playerId, _level.addOpponentKart(position as int,  
+                kartType = event.value.kartType;
+                var positionObj :Object = _opponentKarts.get(playerId);
+                if (positionObj != null) {
+                    _opponentKarts.put(playerId, _level.addOpponentKart(positionObj as int,  
                         kartType));
                 } else {
                     _opponentKarts.put(playerId, kartType);
@@ -181,7 +173,7 @@ public class UnderwhirledDrift extends Sprite
         // tack on a few pixels to account for the front of the kart
         _kart.y = KART_LOCATION.y + SKY_HEIGHT + KART_OFFSET;
         addChild(_kart);
-        _messageQueue.sendMessage("kartChosen", {playerId: _control.getMyId(),
+        _control.sendMessage("kartChosen", {playerId: _control.getMyId(),
             kartType: _kart.kartType});
         updateRaceStarted();
     }
@@ -202,7 +194,7 @@ public class UnderwhirledDrift extends Sprite
                 }
             }
             if (ii == keys.length) {
-                _messageQueue.sendMessage("raceStarted", true);
+                _control.sendMessage("raceStarted", true);
             }
         }
     }
@@ -247,21 +239,10 @@ public class UnderwhirledDrift extends Sprite
             default:
             // do nothing
             }
-            switch(event.keyCode) {
-            case Keyboard.UP:
-            case Keyboard.DOWN:
-            case Keyboard.LEFT:
-            case Keyboard.RIGHT:
-            case Keyboard.SPACE:
-                var obj :Object = _kart.getUpdate();
-                obj.playerId = _control.getMyId();
-                _messageQueue.sendMessage("positionUpdate", obj);
-                break;
-            default:
-                // do nothing
-            }
         }
     }
+
+    protected static const SEND_THROTTLE :int = 200; // in ms
 
     /** the game control. */
     protected var _control :WhirledGameControl;
@@ -280,8 +261,6 @@ public class UnderwhirledDrift extends Sprite
 
     /** A flag to indicate that the race has started, so its safe to send position update */
     protected var _raceStarted :Boolean = false;
-
-    protected var _messageQueue :MessageQueue;
 
     protected var _horizon :Horizon;
     protected var _gameSprite :Sprite;

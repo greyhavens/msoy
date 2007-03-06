@@ -22,12 +22,10 @@ public class Kart extends KartSprite
     }
 
     /**
-     * If there has been a change in our position since the last update, send it
+     * Get an update object to send to the other clients.
      */
     public function getUpdate () :Object
     {
-        // TODO actually check new position against old position.  Also, create a typed object
-        // for position updates
         var loc :Point = _ground.getKartLocation();
         return {
             posX: loc.x,
