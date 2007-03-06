@@ -90,7 +90,7 @@ public class AvatarViewerComp extends Canvas
 }
 }
 
-import flash.display.GradientType;
+import flash.display.Bitmap;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Matrix;
@@ -106,15 +106,11 @@ class ViewerAvatarSprite extends AvatarSprite
         super(null);
         configureMouseProperties();
 
-        // , draw a gradient background
-        var matrix :Matrix = new Matrix();
+        // draw a gradient background
+        var bmp :Bitmap = Bitmap(new BACKGROUND());
         var sprite :Sprite = new Sprite();
-        var w :Number = getMaxContentWidth();
-        var h :Number = getMaxContentHeight();
-        matrix.createGradientBox(w, h * 2, Math.PI / 2);
-        sprite.graphics.beginGradientFill(GradientType.RADIAL,
-            [ 0x0000FF, 0xFFFFFF ], [ 1, 1], [0 , 255 ], matrix);
-        sprite.graphics.drawRect(0, 0, w, h);
+        sprite.graphics.beginBitmapFill(bmp.bitmapData);
+        sprite.graphics.drawRect(0, 0, getMaxContentWidth(), getMaxContentHeight());
         sprite.graphics.endFill();
         sprite.mouseEnabled = false;
         addChildAt(sprite, 0);
@@ -145,4 +141,7 @@ class ViewerAvatarSprite extends AvatarSprite
     }
 
     protected var _moving :Boolean = false;
+
+    [Embed(source="../../../../../../../pages/images/item/detail_preview_bg.png")]
+    protected static const BACKGROUND :Class;
 }
