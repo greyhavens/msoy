@@ -4,18 +4,27 @@
 package com.threerings.msoy.swiftly.client;        
 
 import java.awt.Container;
-import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 
 import com.samskivert.swing.HGroupLayout;
 import com.samskivert.swing.VGroupLayout;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -27,6 +36,8 @@ import com.threerings.presents.dobj.SetListener;
 import com.threerings.crowd.client.PlacePanel;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
+
+import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.PathElement;
@@ -79,6 +90,7 @@ public class SwiftlyEditor extends PlacePanel
         // _horizSplitPane.setDividerLocation(0.8);
         _horizSplitPane.setDividerLocation(600);
 
+        initFileTypes();
         consoleMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.welcome"));
     }
 
@@ -149,21 +161,42 @@ public class SwiftlyEditor extends PlacePanel
         return _projectPanel;
     }
 
+    /**
+     * Sends a message to the server reporting that the given document element should have its
+     * text replaced with the supplied string.
+     */
     public void updateDocument (int elementId, String text)
     {
         _roomObj.service.updateDocument(_ctx.getClient(), elementId, text);
     }
 
     /**
-     * Shows a modal, internal frame dialog prompting the user to name a {@link FileElement}
-     * @param the type of {@link FileElement} to name
-     * @return true if the user picked a name, false if they clicked cancel
+     * Shows a modal, internal frame dialog prompting the user to name a {@link PathElement}
+     * @param pathElementType the type of {@link PathElement} to name
+     * @return the name of the path element. null if the user clicked cancel
      */
-    public String showSelectPathElementNameDialog (PathElement.Type fileElementType)
+     // TODO: this is only being used to name directories. Consider simplifying
+    public String showSelectPathElementNameDialog (PathElement.Type pathElementType)
     {
         String prompt;
-        prompt = _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.select_name." + fileElementType);
+        prompt = _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.select_name." + pathElementType);
         return JOptionPane.showInternalInputDialog(this, prompt);
+    }
+
+    /**
+     * Shows a modal, external frame dialog prompting the user to name a {@link PathElement.FILE}
+     * and select the mime type for this file.
+     * @param parentElement the PathElement that will be the parent of the returned PathElement
+     * @return the new path element. null if the user clicked cancel
+     */
+    public PathElement showCreateFileDialog (PathElement parentElement)
+    {
+        CreateFileDialog dialog = new CreateFileDialog();
+        // return null if the user hit cancelled or did not set a file name
+        if (dialog.wasCancelled() || StringUtil.isBlank(dialog.getName())) {
+            return null;
+        }
+        return PathElement.createFile(dialog.getName(), parentElement, dialog.getMimeType());
     }
 
     /**
@@ -248,14 +281,120 @@ public class SwiftlyEditor extends PlacePanel
         }
     }
 
+    /** Initialize the file types that can be created */
+    protected void initFileTypes()
+    {
+    _createableFileTypes = new ArrayList<FileTypes>();
+    _createableFileTypes.add(new FileTypes(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.filetypes." +
+        MediaDesc.TEXT_PLAIN), MediaDesc.mimeTypeToString(MediaDesc.TEXT_PLAIN)));
+    _createableFileTypes.add(new FileTypes(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.filetypes." + 
+        MediaDesc.TEXT_ACTIONSCRIPT), MediaDesc.mimeTypeToString(MediaDesc.TEXT_ACTIONSCRIPT)));
+    }
+
+    /** A dialog window to prompt the user for a file name and file type. */
+    protected class CreateFileDialog extends JDialog
+    {
+        public CreateFileDialog () {
+            super(new JFrame(),
+                _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.create_file.title"), true);
+            setLayout(new GridLayout(3, 3));
+
+            // file name input
+            add(new JLabel(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.create_file.name")));
+            _text = new JTextField();
+            _text.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    _cancelled = false;
+                    setVisible(false);
+                }
+            });
+            _text.setEditable(true);
+            add(_text);
+
+            // file type chooser
+            add(new JLabel(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.create_file.type")));
+            _comboBox = new JComboBox(_createableFileTypes.toArray());
+            add(_comboBox);
+
+            // ok/cancel buttons
+            JButton button =
+                new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.create_file.create"));
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    _cancelled = false;
+                    setVisible(false);
+                }
+            });
+            add(button);
+            button =
+                new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.create_file.cancel"));
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    _cancelled = true;
+                    setVisible(false);
+                }
+            });
+            add(button);
+
+            // display the dialog
+            pack();
+            setVisible(true);
+        }
+
+        public void display ()
+        {
+        }
+
+        public String getName ()
+        {
+            return _text.getText();
+        }
+
+        public String getMimeType ()
+        {
+            return ((FileTypes)_comboBox.getSelectedItem()).mimeType;
+        }
+
+        public boolean wasCancelled ()
+        {
+            return _cancelled;
+        }
+
+        protected JTextField _text;
+        protected JComboBox _comboBox;
+        // whether the user clicked cancel. defaults to true to deal with closing the dialog.
+        protected boolean _cancelled = true;
+    }
+
+    /** A class that maps a human friendly name to a mime type. */
+    protected class FileTypes
+    {
+        public FileTypes (String displayName, String mimeType)
+        {
+            this.displayName = displayName;
+            this.mimeType = mimeType;
+        }
+
+        public String toString()
+        {
+            return displayName;
+        }
+
+        public String displayName;
+        public String mimeType;
+    }
+
+    /** A list of files that can be created by Swiftly. */
+    protected ArrayList<FileTypes> _createableFileTypes;
+
     protected SwiftlyContext _ctx;
     protected ProjectRoomObject _roomObj;
+    protected PathElement _project;
 
     protected TabbedEditor _editorTabs;
     protected TabbedConsole _consoleTabs;
     protected EditorToolBar _toolbar;
     protected ProjectPanel _projectPanel;
-    protected PathElement _project;
     protected JSplitPane _vertSplitPane;
     protected JSplitPane _horizSplitPane;
 }

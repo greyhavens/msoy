@@ -166,6 +166,7 @@ public class SwiftlyTextPane extends JEditorPane
         _dontPropagateThisChange = false;
 
         // set the cursor back to where it was
+        // TODO: this is a fairly useless hack that will go away.
         try {
             setCaretPosition(pos);
         } catch (IllegalArgumentException e) {
@@ -219,7 +220,8 @@ public class SwiftlyTextPane extends JEditorPane
         }
     }
 
-    protected class PopupListener extends MouseAdapter {
+    protected class PopupListener extends MouseAdapter
+    {
         @Override // from MouseAdapter
         public void mousePressed(MouseEvent e) {
             maybeShowPopup(e);
@@ -310,7 +312,8 @@ public class SwiftlyTextPane extends JEditorPane
         }
     }
 
-    class DocumentElementListener implements DocumentListener {
+    class DocumentElementListener implements DocumentListener
+    {
         // from interface DocumentListener
         public void insertUpdate(DocumentEvent e) {
             // send out the update event only if we didn't get this update from the network

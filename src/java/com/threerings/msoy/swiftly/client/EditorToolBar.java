@@ -30,7 +30,7 @@ public class EditorToolBar extends JToolBar
 
         addSeparator();
         add(new JButton(_ctrl.buildAction));
-        add(new JButton("Play"));
+        add(new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.play")));
 
         addSeparator();
         _undoButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.undo"));
