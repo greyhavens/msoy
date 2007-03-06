@@ -157,6 +157,7 @@ public class StarFight extends Sprite
         _board = new BoardSprite(boardObj, _ships, _powerups);
         _boardLayer.addChild(_board);
 
+/* MST
         // Create our local ship and center the board on it.
         _ownShip = new ShipSprite(_board, this, false, _myId, _gameCtrl.getOccupantName(_myId),
             true);
@@ -167,7 +168,7 @@ public class StarFight extends Sprite
 
         // Add ourselves to the ship array.
         _gameCtrl.setImmediate(shipKey(_myId), _ownShip.writeTo(new ByteArray()));
-
+*/
         // Set up ships for all ships already in the world.
         var occupants :Array = _gameCtrl.getOccupants();
         for (var ii :int = 0; ii < occupants.length; ii++) {
@@ -212,6 +213,35 @@ public class StarFight extends Sprite
             timer.addEventListener(TimerEvent.TIMER, addPowerup);
             timer.start();
         }
+
+/* MST
+        _ships.put(_myId, _ownShip);
+
+        // Our ship is interested in keystrokes.
+        _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, _ownShip.keyPressed);
+        _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, _ownShip.keyReleased);
+*/
+        addChild(new ShipChooser(this));
+        _gameCtrl.localChat("MST Added chooser");
+    }
+
+    /**
+     * Choose the type of ship for ownship.
+     */
+    public function chooseShip(typeIdx :int) :void
+    {
+        // Create our local ship and center the board on it.
+        _ownShip = new ShipSprite(_board, this, false, _myId, _gameCtrl.getOccupantName(_myId),
+            true);
+        _ownShip.setShipType(typeIdx);
+
+        _ownShip.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
+        _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
+        _bg.setAsCenter(_ownShip.boardX, _ownShip.boardY);
+        _shipLayer.addChild(_ownShip);
+
+        // Add ourselves to the ship array.
+        _gameCtrl.setImmediate(shipKey(_myId), _ownShip.writeTo(new ByteArray()));
 
         _ships.put(_myId, _ownShip);
 

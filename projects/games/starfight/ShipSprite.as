@@ -120,8 +120,10 @@ public class ShipSprite extends Sprite
         setShipType(shipType);
 
         // Play the spawn sound.
-        var sound :Sound = Codes.SHIP_TYPES[shipType].SPAWN;
-        _game.playSoundAt(sound, boardX, boardY);
+        if (_game != null) {
+            var sound :Sound = Codes.SHIP_TYPES[shipType].SPAWN;
+            _game.playSoundAt(sound, boardX, boardY);
+        }
 
         // Add our name as a textfield
         var nameText :TextField = new TextField();
@@ -434,7 +436,7 @@ public class ShipSprite extends Sprite
     /**
      * Sets up our sprites and such for our given shiptype.
      */
-    protected function setShipType (type :int) :void
+    public function setShipType (type :int) :void
     {
         if (type != shipType || _shipMovie == null) {
             shipType = type;
