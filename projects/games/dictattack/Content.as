@@ -48,7 +48,7 @@ public class Content
     public static const PLAYABLE_COLOR :uint = uint(0x99CC66);
 
     /** The background color of the center letter tile. */
-    public static const CENTER_TILE_COLOR :uint = uint(0xFF0033);
+    public static const CENTER_TILE_COLOR :uint = uint(0xFFCC33);
 
     /** The pixels size of the shooter. */
     public static const SHOOTER_SIZE :int = 50;

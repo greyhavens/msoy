@@ -72,6 +72,7 @@ public class GameView extends Sprite
 
     public function roundDidStart () :void
     {
+        _control.setChatEnabled(false);
         _input.text = "Type words here!";
         displayMarquee("Ready...!");
         Util.invokeLater(1000, function () :void {
@@ -89,6 +90,7 @@ public class GameView extends Sprite
         _input.selectable = false;
         _input.stage.focus = null;
         displayMarquee("Game over man!", 3000);
+        _control.setChatEnabled(true);
     }
 
     /**
