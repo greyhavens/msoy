@@ -3,6 +3,8 @@
 
 package {
 
+import flash.text.TextFormat;
+
 import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
@@ -57,6 +59,24 @@ public class Content
 
     /** The location and dimensions of the input field. */
     public static const INPUT_RECT :Rectangle = new Rectangle(100, 470, 250, 20);
+
+    public static function makeInputFormat () :TextFormat
+    {
+        var format : TextFormat = new TextFormat();
+        format.font = FONT_NAME;
+        format.color = FONT_COLOR;
+        format.size = FONT_SIZE;
+        return format;
+    }
+
+    public static function makeMarqueeFormat () :TextFormat
+    {
+        var format : TextFormat = new TextFormat();
+        format.font = FONT_NAME;
+        format.color = uint(0x3333FF);
+        format.size = 36;
+        return format;
+    }
 }
 
 }

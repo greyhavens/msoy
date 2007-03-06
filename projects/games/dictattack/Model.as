@@ -116,7 +116,6 @@ public class Model
             // update our score
             var myidx :int = _control.seating.getMyPosition();
             var scores :Array = (_control.get(Model.SCORES) as Array);
-            trace("New score " + (scores[myidx] + computeScore(word, tookCenter)));
             _control.set(Model.SCORES, scores[myidx] + computeScore(word, tookCenter), myidx);
 
             // if we didn't take the central letter, stop here, otherwise end the game

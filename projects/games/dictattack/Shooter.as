@@ -24,7 +24,6 @@ public class Shooter extends Sprite
         square.graphics.lineTo(Content.SHOOTER_SIZE/2, 0);
         square.graphics.lineTo(0, -Content.SHOOTER_SIZE/2);
         square.graphics.endFill();
-        square.alpha = 0.5;
         square.rotation = posidx * 90;
         addChild(square);
 

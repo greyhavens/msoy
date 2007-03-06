@@ -7,9 +7,6 @@ import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
 
-import flash.events.TimerEvent;
-import flash.utils.Timer;
-
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.whirled.WhirledGameControl;
 
@@ -62,8 +59,7 @@ public class Board extends Sprite
 
     public function resetLetters (used :Array) :void
     {
-        var timer :Timer = new Timer(LETTER_RESET_DELAY, 1);
-        timer.addEventListener(TimerEvent.TIMER, function (event :TimerEvent) :void {
+        Util.invokeLater(LETTER_RESET_DELAY, function () :void {
             for (var ii :int = 0; ii < used.length; ii++) {
                 var letter :Letter = getLetter(used[ii]);
                 if (letter != null) {
@@ -71,7 +67,6 @@ public class Board extends Sprite
                 }
             }
         });
-        timer.start();
     }
 
     public function clearLetter (lidx :int) :void

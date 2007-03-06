@@ -7,6 +7,7 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFieldType;
 import flash.text.TextFormat;
+import flash.text.TextLineMetrics;
 
 import flash.display.Sprite;
 import flash.events.KeyboardEvent;
@@ -28,7 +29,7 @@ public class GameView extends Sprite
 
         // create the text field via which we'll accept player input
         _input = new TextField();
-        _input.defaultTextFormat = makeInputFormat();
+        _input.defaultTextFormat = Content.makeInputFormat();
         _input.border = true;
         _input.type = TextFieldType.INPUT;
         _input.x = Content.INPUT_RECT.x;
@@ -71,15 +72,23 @@ public class GameView extends Sprite
 
     public function roundDidStart () :void
     {
-        addEventListener(KeyboardEvent.KEY_UP, keyReleased);
-        _input.selectable = true;
-        _input.stage.focus = _input;
+        _input.text = "Type words here!";
+        displayMarquee("Ready...!");
+        Util.invokeLater(1000, function () :void {
+            addEventListener(KeyboardEvent.KEY_UP, keyReleased);
+            _input.selectable = true;
+            _input.text = "";
+            _input.stage.focus = _input;
+            displayMarquee("Go!", 1000);
+        });
     }
 
     public function roundDidEnd () :void
     {
         removeEventListener(KeyboardEvent.KEY_UP, keyReleased);
         _input.selectable = false;
+        _input.stage.focus = null;
+        displayMarquee("Game over man!", 3000);
     }
 
     /**
@@ -99,6 +108,36 @@ public class GameView extends Sprite
         } else if (event.name == Model.BOARD_DATA && event.index == -1) {
             // we got our board, update the playable letters display
             _model.updatePlayable(_board);
+        }
+    }
+
+    protected function displayMarquee (text :String, clearMillis :int = -1) :void
+    {
+        clearMarquee();
+
+        // create the text field via which we'll accept player input
+        _marquee = new TextField();
+        _marquee.defaultTextFormat = Content.makeMarqueeFormat();
+        _marquee.autoSize = TextFieldAutoSize.CENTER;
+        _marquee.selectable = false;
+        _marquee.text = text;
+        var metrics :TextLineMetrics = _marquee.getLineMetrics(0);
+        _marquee.x = Content.BOARD_BORDER + (_board.getPixelSize() - metrics.width)/2;
+        _marquee.y = Content.BOARD_BORDER + _board.getPixelSize()/2 - 2*metrics.height;
+        addChild(_marquee);
+
+        if (clearMillis > 0) {
+            Util.invokeLater(clearMillis, function () :void {
+                clearMarquee();
+            });
+        }
+    }
+
+    protected function clearMarquee () :void
+    {
+        if (_marquee != null) {
+            removeChild(_marquee);
+            _marquee = null;
         }
     }
 
@@ -122,19 +161,11 @@ public class GameView extends Sprite
         }
     }
 
-    protected static function makeInputFormat () : TextFormat
-    {
-        var format : TextFormat = new TextFormat();
-        format.font = Content.FONT_NAME;
-        format.color = Content.FONT_COLOR;
-        format.size = Content.FONT_SIZE;
-        return format;
-    }
-
     protected var _control :WhirledGameControl;
     protected var _model :Model;
 
     protected var _input :TextField;
+    protected var _marquee :TextField;
 
     protected var _board :Board;
     protected var _shooters :Array = new Array();
