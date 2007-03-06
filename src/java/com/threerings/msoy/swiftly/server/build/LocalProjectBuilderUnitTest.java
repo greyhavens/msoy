@@ -6,6 +6,7 @@ package com.threerings.msoy.swiftly.server.build;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 
+import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorageUnitTest;
 
@@ -27,6 +28,9 @@ public class LocalProjectBuilderUnitTest extends TestCase
     public void setUp ()
         throws Exception
     {
+        /** Mocked up storage record. */
+        SwiftlySVNStorageRecord storageRecord;
+
         // Create a temporary directory.
         _tempDir = File.createTempFile("localbuilder", "test");
         _tempDir.delete();
@@ -36,10 +40,10 @@ public class LocalProjectBuilderUnitTest extends TestCase
 
         // Mock up a project record.
         _projectRecord = ProjectSVNStorageUnitTest.mockProjectRecord();
-        _storageRecord = ProjectSVNStorageUnitTest.mockStorageRecord(_tempDir);
+        storageRecord = ProjectSVNStorageUnitTest.mockStorageRecord(_tempDir);
 
         // Initialize the storage
-        ProjectSVNStorage.initializeStorage(_projectRecord, _storageRecord,
+        _storage = ProjectSVNStorage.initializeStorage(_projectRecord, storageRecord,
             ProjectSVNStorageUnitTest.TEMPLATE_DIR.getCanonicalFile());
     }
 
@@ -51,9 +55,11 @@ public class LocalProjectBuilderUnitTest extends TestCase
         FileUtils.deleteDirectory(_tempDir);
     }
 
-    public void testSomething ()
+    public void testBuild ()
+        throws Exception
     {
-        // nothing
+        ProjectBuilder builder = new LocalProjectBuilder(_projectRecord, _storage);
+        builder.build();
     }
 
     /** Temporary test directory. */
@@ -61,7 +67,7 @@ public class LocalProjectBuilderUnitTest extends TestCase
 
     /** Mocked up project record. */
     protected SwiftlyProjectRecord _projectRecord;
-    
-    /** Mocked up storage record. */
-    protected SwiftlySVNStorageRecord _storageRecord;
+
+    /** Project storage. */
+    protected ProjectStorage _storage;
 }
