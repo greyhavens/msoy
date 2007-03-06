@@ -52,6 +52,8 @@ public class ShipChooser extends Sprite
         ship.pointUp();
         ship.setShipType(idx);
         ship.addEventListener(MouseEvent.CLICK, chooseHandler);
+        ship.addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
+        ship.addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
 
         ship.x = StarFight.WIDTH/2 + SPACING * (idx - (total-1)/2.0);
         ship.y = StarFight.HEIGHT/2;
@@ -62,6 +64,16 @@ public class ShipChooser extends Sprite
     public function chooseHandler (event :MouseEvent) :void
     {
         choose((event.currentTarget as ShipSprite).shipType);
+    }
+
+    public function mouseOverHandler (event :MouseEvent) :void
+    {
+        (event.currentTarget as ShipSprite).setAnimMode(ShipSprite.FORWARD, false);
+    }
+
+    public function mouseOutHandler (event :MouseEvent) :void
+    {
+        (event.currentTarget as ShipSprite).setAnimMode(ShipSprite.IDLE, false);
     }
 
     /**

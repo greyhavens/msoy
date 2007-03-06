@@ -44,6 +44,11 @@ public class ShipSprite extends Sprite
     public static const SPREAD_MASK :int = 1 << Powerup.SPREAD;
     public static const SHIELDS_MASK :int = 1 << Powerup.SHIELDS;
 
+    /** "frames" within the actionscript for movement animations. */
+    public static const IDLE :int = 1;
+    public static const FORWARD :int = 3;
+    public static const REVERSE :int = 2;
+
     /** How fast the ship is accelerating. */
     public var accel :Number;
 
@@ -322,11 +327,11 @@ public class ShipSprite extends Sprite
 
         move(time);
         if (accel > 0.0) {
-            setAnimMode(FORWARD);
+            setAnimMode(FORWARD, false);
         } else if (accel < 0.0) {
-            setAnimMode(REVERSE);
+            setAnimMode(REVERSE, false);
         } else {
-            setAnimMode(IDLE);
+            setAnimMode(IDLE, false);
         }
 
         if (powerups & SHIELDS_MASK) {
@@ -345,9 +350,9 @@ public class ShipSprite extends Sprite
     /**
      * Sets our animation to show forward/idle/reverse
      */
-    protected function setAnimMode (mode :int) :void
+    public function setAnimMode (mode :int, force :Boolean) :void
     {
-        if (_shipMovie.currentFrame != mode) {
+        if (force || _shipMovie.currentFrame != mode) {
             //TODO : re-enable
             _shipMovie.gotoAndStop(mode);
         }
@@ -450,7 +455,7 @@ public class ShipSprite extends Sprite
             _shieldMovie =
                 MovieClipAsset(new Codes.SHIP_TYPES[shipType].SHIELD_ANIM());
 
-            setAnimMode(IDLE);
+            setAnimMode(IDLE, true);
             _shipMovie.x = WIDTH/2;
             _shipMovie.y = -HEIGHT/2;
             _shipMovie.rotation = 90;
@@ -671,11 +676,6 @@ public class ShipSprite extends Sprite
     protected static const SPEED_BOOST_FACTOR :Number = 1.5;
     protected static const RESPAWN_DELAY :int = 3000;
     protected static const DEAD :Number = 0.001;
-
-    /** "frames" within the actionscript for movement animations. */
-    protected static const IDLE :int = 1;
-    protected static const FORWARD :int = 3;
-    protected static const REVERSE :int = 2;
 
     /** Sounds currently being played - only play sounds for ownship. Note
      * that due to stupid looping behavior these need to be MovieClips to keep
