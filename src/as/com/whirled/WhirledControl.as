@@ -75,7 +75,7 @@ public class WhirledControl extends EventDispatcher
                 }
 
             } catch (err :Error) {
-                trace("Unable to call host code: " + err);
+                throw new Error("Unable to call host code: " + err.message);
             }
         }
 
