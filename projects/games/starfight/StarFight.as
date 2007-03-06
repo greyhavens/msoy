@@ -346,20 +346,23 @@ public class StarFight extends Sprite
             if (id != _myId) {
                 // Someone else's ship - update our sprite for em.
                 var occName :String = _gameCtrl.getOccupantName(id);
-                var ship :ShipSprite = _ships.get(id);
-                if (ship == null) {
-                    ship = new ShipSprite(_board, this, true, event.index,
-                        occName, false);
-                    _ships.put(id, ship);
-                    _shipLayer.addChild(ship);
-                }
                 var bytes :ByteArray = ByteArray(event.newValue);
                 if (bytes == null) {
                     var remShip :ShipSprite = _ships.remove(id);
+                    _gameCtrl.localChat(remShip.playerName + " left the game.");
                     if (remShip != null) {
                         _shipLayer.removeChild(remShip);
                     }
                 } else {
+                    var ship :ShipSprite = _ships.get(id);
+                    if (ship == null) {
+                        ship = new ShipSprite(_board, this, true, event.index,
+                            occName, false);
+                        _ships.put(id, ship);
+                        _shipLayer.addChild(ship);
+                        _gameCtrl.localChat(ship.playerName + " entered the game.");
+                    }
+                
                     bytes.position = 0;
                     var sentShip :ShipSprite = new ShipSprite(_board, this, true,
                         event.index, occName, false);
@@ -550,6 +553,7 @@ public class StarFight extends Sprite
     public function occupantLeft (event :OccupantChangedEvent) :void
     {
         var remShip :ShipSprite = _ships.remove(event.occupantId);
+        _gameCtrl.localChat(remShip.playerName + " left the game.");
         if (remShip != null) {
             _shipLayer.removeChild(remShip);
         }

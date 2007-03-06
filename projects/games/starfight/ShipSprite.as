@@ -135,7 +135,7 @@ public class ShipSprite extends Sprite
         nameText.autoSize = TextFieldAutoSize.CENTER;
         nameText.selectable = false;
         nameText.x = 0;
-        nameText.y = WIDTH/2;
+        nameText.y = HEIGHT/2;
 
         var format:TextFormat = new TextFormat();
         format.font = "Verdana";
