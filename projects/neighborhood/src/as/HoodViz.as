@@ -511,9 +511,11 @@ public class HoodViz extends Sprite
     protected var _plaqueGame :Class;
 
 
-    [Embed(source="../../rsrc/CREABBRG.TTF", fontName="hoodFont", fontWeight="Regular")]
+    [Embed(source="../../rsrc/creative_block_regular.ttf", fontName="hoodFont",
+           fontWeight="Regular")]
     protected var _regularFont :Class;
-    [Embed(source="../../rsrc/CREABBB_.TTF", fontName="hoodFont", fontWeight="Bold")]
+    [Embed(source="../../rsrc/creative_block_bold.ttf", fontName="hoodFont",
+           fontWeight="Bold")]
     protected var _boldFont :Class;
 
     protected var _rule :Class;
