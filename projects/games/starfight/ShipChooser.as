@@ -64,16 +64,23 @@ public class ShipChooser extends Sprite
     public function chooseHandler (event :MouseEvent) :void
     {
         choose((event.currentTarget as ShipSprite).shipType);
+
+        // prevent NPE on further click event handlers
+        event.stopImmediatePropagation();
     }
 
     public function mouseOverHandler (event :MouseEvent) :void
     {
         (event.currentTarget as ShipSprite).setAnimMode(ShipSprite.FORWARD, false);
+        event.currentTarget.scaleX = HIGHLIGHT_SCALE;
+        event.currentTarget.scaleY = HIGHLIGHT_SCALE;
     }
 
     public function mouseOutHandler (event :MouseEvent) :void
     {
         (event.currentTarget as ShipSprite).setAnimMode(ShipSprite.IDLE, false);
+        event.currentTarget.scaleX = 1.0;
+        event.currentTarget.scaleY = 1.0;
     }
 
     /**
@@ -81,11 +88,12 @@ public class ShipChooser extends Sprite
      */
     public function choose (typeIdx :int) :void
     {
-        _game.removeChild(this);
         _game.chooseShip(typeIdx);
+        _game.removeChild(this);
     }
 
     protected static const SPACING :int = 60;
+    protected static const HIGHLIGHT_SCALE :Number = 1.2;
 
     protected var _game :StarFight;
 }

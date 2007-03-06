@@ -83,7 +83,7 @@ public class Sounds {
     public static const SHIELDS_MOV :MovieClipAsset =
         MovieClipAsset(new shieldsSound());
 
-    [Embed(source="rsrc/thruster_retro_sound.swf#sound_main")] // TODO: Replace with proper non-retro thruster sound.
+    [Embed(source="rsrc/thruster_sound.swf#sound_main")]
     protected static var thrusterSound :Class;
 
     public static const THRUSTER_MOV :MovieClipAsset =
