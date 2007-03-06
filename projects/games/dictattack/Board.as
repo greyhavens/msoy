@@ -103,7 +103,8 @@ public class Board extends Sprite
                 }
             } else {
                 // otherwise a single letter was cleared
-                clearLetter(_model.getPosition(int(event.index % _size), int(event.index / _size)));
+                clearLetter(_model.getReversePosition(int(event.index % _size),
+                                                      int(event.index / _size)));
             }
         }
     }

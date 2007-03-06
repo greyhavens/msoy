@@ -165,8 +165,21 @@ public class Model
         switch (_control.seating.getMyPosition()) {
         case 0: pos = yy * _size + xx; break;
         case 1: pos = (_size-1 - yy) * _size + (_size-1 - xx); break;
+        case 2: pos = xx * _size + (_size-1 - yy); break; 
+        case 3: pos = (_size-1 - xx) * _size + yy; break; 
+        }
+        return pos;
+    }
+
+    public function getReversePosition (xx :int, yy :int) :int
+    {
+        var pos :int;
+        // map the coordinates based on our player index
+        switch (_control.seating.getMyPosition()) {
+        case 0: pos = yy * _size + xx; break;
+        case 1: pos = (_size-1 - yy) * _size + (_size-1 - xx); break;
         case 2: pos = (_size-1 - xx) * _size + yy; break; 
-        case 3: pos = (_size-1 - xx) * _size + (_size-1 - yy); break; 
+        case 3: pos = xx * _size + (_size-1 - yy); break; 
         }
         return pos;
     }
@@ -211,7 +224,7 @@ public class Model
     protected function computeScore (word :String, tookCenter :Boolean) :int
     {
         // TODO: fancier scoring
-        var score :int = (word.length - (MIN_WORD_LENGTH-2));
+        var score :int = (word.length - MIN_WORD_LENGTH);
         if (tookCenter) {
             score += 5;
         }
@@ -222,7 +235,7 @@ public class Model
     protected var _control :WhirledGameControl;
 
     // TODO: get from game config
-    protected static const MIN_WORD_LENGTH :int = 5;
+    protected static const MIN_WORD_LENGTH :int = 4;
 }
 
 }
