@@ -26,6 +26,8 @@ import com.threerings.msoy.web.data.Profile;
 
 import client.shell.MsoyEntryPoint;
 import client.util.ImageChooserPopup;
+import client.util.InfoPopup;
+import client.util.MsoyUI;
 
 /**
  * Displays a person's basic profile information.
@@ -123,9 +125,9 @@ public class ProfileBlurb extends Blurb
         ppanel.add(_photo);
         ppanel.add(_ephoto);
         _content.setWidget(0, 0, ppanel);
-        _content.setWidget(0, 1, _ename);
-        _content.setWidget(1, 1, _eheadline);
-        _content.setWidget(2, 1, _ehomepage);
+        _content.setWidget(0, 1, wrapEditor(CProfile.msgs.displayName(), _ename));
+        _content.setWidget(1, 1, wrapEditor(CProfile.msgs.headline(), _eheadline));
+        _content.setWidget(2, 1, wrapEditor(CProfile.msgs.homepage(), _ehomepage));
     }
 
     protected void displayProfile ()
@@ -134,7 +136,8 @@ public class ProfileBlurb extends Blurb
 
         _name.setText(_profile.displayName);
         _headline.setText(_profile.headline);
-        _laston.setText(_profile.lastLogon > 0L ? _lfmt.format(new Date(_profile.lastLogon)) : "");
+        _laston.setText(_profile.lastLogon > 0L ?
+                        CProfile.msgs.lastOnline(_lfmt.format(new Date(_profile.lastLogon))) : "");
 
         if (_profile.homePageURL == null) {
             _homepage.setHTML("");
@@ -154,6 +157,15 @@ public class ProfileBlurb extends Blurb
         }
     }
 
+    protected VerticalPanel wrapEditor (String label, Widget editor)
+    {
+        VerticalPanel panel = new VerticalPanel();
+        panel.setHorizontalAlignment(VerticalPanel.ALIGN_LEFT);
+        panel.add(MsoyUI.createLabel(label, "EditLabel"));
+        panel.add(editor);
+        return panel;
+    }
+
     protected void updatePhoto (MediaDesc photo)
     {
         if (photo != null) {
@@ -164,17 +176,26 @@ public class ProfileBlurb extends Blurb
 
     protected void commitEdit ()
     {
-        // go back to edit mode
-        _edit.setText("Edit");
-        _editing = false;
+        // validate their display name
+        String displayName = _ename.getText().trim();
+        if (displayName.length() < Profile.MIN_DISPLAY_NAME_LENGTH ||
+            displayName.length() > Profile.MAX_DISPLAY_NAME_LENGTH) {
+            new InfoPopup(CProfile.msgs.displayNameInvalid(
+                              "" + Profile.MIN_DISPLAY_NAME_LENGTH,
+                              "" + Profile.MAX_DISPLAY_NAME_LENGTH)).showNear(_ename);
+            return;
+        }
 
         // configure our profile instance with their bits
-        _profile.displayName = _ename.getText();
-        _profile.headline = _eheadline.getText();
-        _profile.homePageURL = _ehomepage.getText();
+        _profile.displayName = displayName;
+        _profile.headline = _eheadline.getText().trim();
+        _profile.homePageURL = _ehomepage.getText().trim();
 
         CProfile.profilesvc.updateProfile(CProfile.creds, _profile, new AsyncCallback() {
             public void onSuccess (Object result) {
+                // go back to edit mode
+                _edit.setText("Edit");
+                _editing = false;
                 displayProfile();
             }
             public void onFailure (Throwable cause) {

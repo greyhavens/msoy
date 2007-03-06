@@ -18,6 +18,12 @@ public class Profile implements IsSerializable
     public static final MediaDesc DEFAULT_PHOTO =
         new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "profile_photo");
 
+    /** The minimum length for a display name. */
+    public static final int MIN_DISPLAY_NAME_LENGTH = 4;
+
+    /** The maximum length for a display name. */
+    public static final int MAX_DISPLAY_NAME_LENGTH = 30;
+
     /** The member's unique id. */
     public int memberId;
 

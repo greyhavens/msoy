@@ -38,3 +38,7 @@
 .profileBlurb .Headline {
    font-style: italic;
 }
+
+.profileBlurb .EditLabel {
+   font-size: 10px;
+}

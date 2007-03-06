@@ -193,6 +193,7 @@ public class ProfileServlet extends MsoyServiceServlet
         // fill in bits from their member record
         profile.memberId = memrec.memberId;
         profile.displayName = memrec.name;
+        // TODO: if they're online right now, show that
         profile.lastLogon = (memrec.lastSession != null) ? memrec.lastSession.getTime() : 0L;
 
         return profile;
