@@ -66,6 +66,14 @@ public class WonderlandStatus extends Sprite
     }
 
     /**
+     * Pans the view by the specified amount.
+     */
+    public function pan (dx :Number, dy :Number) :void
+    {
+        PanControl.pan(_parent, dx, dy);
+    }
+
+    /**
      * Does the magic setting things up once the graphics have finished loading.
      */
     protected function loaderComplete (evt :Event) :void
@@ -324,8 +332,13 @@ class PanControl extends ScrollerControl
 
     override protected function enterFrame (event :Event) :void
     {
-        _parent.x += _dx;
-        _parent.y += _dy;
+        pan (_parent, _dx, _dy);
+    }
+
+    public static function pan (parent :DisplayObject, dx :Number, dy :Number) :void
+    {
+        parent.x += dx;
+        parent.y += dy;
 
         // TODO: lock this to a reasonable border around the parent
     }

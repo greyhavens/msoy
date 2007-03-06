@@ -9,6 +9,8 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.events.Event;
 
+import flash.geom.Point;
+
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
@@ -67,7 +69,6 @@ public class WonderlandCroquet extends Sprite
         map = new MapFancy();
         _spr.addChild(map.background);
         map.background.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-        map.background.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
 
         _spr.addChild(_ballLayer);
 
@@ -144,12 +145,34 @@ public class WonderlandCroquet extends Sprite
 
     protected function mouseDown (event :MouseEvent) :void
     {
-        _spr.startDrag();
+        this.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
+        this.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
+        _lastMousePosition.x = event.stageX;
+        _lastMousePosition.y = event.stageY;
+    }
+
+    protected function mouseMove (event :MouseEvent) :void
+    {
+        if (!event.buttonDown) {
+            // Damnit. They probably dragged outside the flash frame, released the button
+            // and then came back in. We'll just ignore where the mouse is now and register that
+            // the button came back up
+            mouseUp(event);
+            return;
+        }
+
+        var dx :Number = event.stageX - _lastMousePosition.x;
+        var dy :Number = event.stageY - _lastMousePosition.y;
+        _lastMousePosition.x = event.stageX;
+        _lastMousePosition.y = event.stageY;
+
+        _status.pan(dx, dy);
     }
 
     protected function mouseUp (event :MouseEvent) :void
     {
-        _spr.stopDrag();
+        this.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
+        this.removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
     }
 
     /**
@@ -314,7 +337,7 @@ public class WonderlandCroquet extends Sprite
             // That was the last one. Yay.
             gameCtrl.sendChat("ZOMG! " + gameCtrl.getOccupantName(gameCtrl.getMyId()) + 
                               " is teh winnar!!");
-            gameCtrl.endGame(gameCtrl.getMyId());
+            gameCtrl.endGame([gameCtrl.getMyId()]);
 
         } else {
             gameCtrl.set("wickets", _wickets[myIdx], myIdx);
@@ -359,6 +382,8 @@ public class WonderlandCroquet extends Sprite
         _haveMoved = false;
         panTo(coord[0], coord[1]);
     }
+
+    protected var _lastMousePosition :Point = new Point(0, 0);
 
     protected var _haveMoved :Boolean;
 
