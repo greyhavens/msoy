@@ -14,6 +14,12 @@ public class Model
     /** The name of the board data distributed value. */
     public static const BOARD_DATA :String = "boardData";
 
+    /** The scores for each player. */
+    public static const SCORES :String = "scores";
+
+    /** An event sent when a word is played. */
+    public static const WORD_PLAY :String = "wordPlay";
+
     public function Model (size :int, control :WhirledGameControl)
     {
         _size = size;
@@ -39,6 +45,21 @@ public class Model
      */
     public function roundDidEnd () :void
     {
+        // grant ourselves flow based on how many players we defeated
+        var scores :Array = (_control.get(Model.SCORES) as Array);
+        var myidx :int = _control.seating.getMyPosition();
+        var beat :int = 0;
+        for (var ii :int = 0; ii < scores.length; ii++) {
+            if (ii != myidx && scores[ii] < scores[myidx]) {
+                beat++;
+            }
+        }
+        var factor :Number = (0.25 * beat + 0.25);
+        var award: int = int(factor * _control.getAvailableFlow());
+        trace("Defeated: " + beat + " factor: " + factor + " award: " + award);
+        if (award > 0) {
+            _control.awardFlow(award);
+        }
     }
 
     /**
@@ -46,10 +67,13 @@ public class Model
      */
     public function submitWord (board :Board, word :String) :Boolean
     {
-        var used :Array = new Array();
+        if (word.length < MIN_WORD_LENGTH) {
+            return false;
+        }
 
         // make sure this word is on the board and determine the columns used by this word in the
         // process
+        var used :Array = new Array();
         for (var ii :int = 0; ii < word.length; ii++) {
             var c :String = word.charAt(ii);
             var idx :int = locateLetter(c, used);
@@ -65,22 +89,73 @@ public class Model
         // submit the word to the server to see if it is valid
         _control.checkDictionaryWord(
             Content.LOCALE, word, function (word :String, isValid :Boolean) : void {
-            if (isValid) {
-                // TODO: can we do this as one event?
-                for (var ii :int = 0; ii < used.length; ii++) {
-                    // map our local coordinates back to a global position coordinates
-                    var xx :int = int(used[ii] % _size);
-                    var yy :int = int(used[ii] / _size);
-                    _control.set(Model.BOARD_DATA, null, getPosition(xx, yy));
-                }
-            } else {
+            if (!isValid) {
                 // TODO: play a sound indicating the mismatch
                 board.resetLetters(used);
+                return;
             }
+
+            // remove our tiles from the distributed state (we do this in individual events so that
+            // watchers coming into a game half way through will see valid state), also check to
+            // see if we cleared the center tile
+            var tookCenter :Boolean = false;
+            var ii :int;
+            for (ii = 0; ii < used.length; ii++) {
+                // map our local coordinates back to a global position coordinates
+                var xx :int = int(used[ii] % _size);
+                var yy :int = int(used[ii] / _size);
+                if (xx == int(_size/2) && yy == int(_size/2)) {
+                    tookCenter = true;
+                }
+                _control.set(Model.BOARD_DATA, null, getPosition(xx, yy));
+            }
+
+            // broadcast our our played word as a message
+            _control.sendMessage(WORD_PLAY, used);
+
+            // update our score
+            var myidx :int = _control.seating.getMyPosition();
+            var scores :Array = (_control.get(Model.SCORES) as Array);
+            trace("New score " + (scores[myidx] + computeScore(word, tookCenter)));
+            _control.set(Model.SCORES, scores[myidx] + computeScore(word, tookCenter), myidx);
+
+            // if we didn't take the central letter, stop here, otherwise end the game
+            if (!tookCenter) {
+                return;
+            }
+
+            // end the game if our word contained the central letter
+            var highest: int = 0;
+            for (ii = 0; ii < scores.length; ii++) {
+                if (scores[ii] > highest) {
+                    highest = scores[ii];
+                }
+            }
+            var winners :Array = new Array();
+            for (ii = 0; ii < scores.length; ii++) {
+                if (scores[ii] == highest) {
+                    winners.push(_control.seating.getPlayerIds()[ii]);
+                }
+            }
+            _control.endGame(winners);
         });
 
         // the word is on the board at least, so tell the caller to clear the input field
         return true;
+    }
+
+    public function updatePlayable (board :Board) :void
+    {
+        for (var xx :int = 0; xx < _size; xx++) {
+            // scan from the bottom upwards looking for the first letter
+            for (var yy :int = _size-1; yy >= 0; yy--) {
+                var l :String = getLetter(xx, yy);
+                if (l != null) {
+                    board.getLetter(getPosition(xx, yy)).setPlayable(true);
+                    break;
+                }
+            }
+        }
     }
 
     public function getPosition (xx :int, yy :int) :int
@@ -133,8 +208,21 @@ public class Model
         return -1;
     }
 
+    protected function computeScore (word :String, tookCenter :Boolean) :int
+    {
+        // TODO: fancier scoring
+        var score :int = (word.length - (MIN_WORD_LENGTH-2));
+        if (tookCenter) {
+            score += 5;
+        }
+        return score;
+    }
+
     protected var _size :int;
     protected var _control :WhirledGameControl;
+
+    // TODO: get from game config
+    protected static const MIN_WORD_LENGTH :int = 5;
 }
 
 }

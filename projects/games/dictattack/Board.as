@@ -26,9 +26,7 @@ public class Board extends Sprite
 
         for (var yy :int = 0; yy < size; yy++) {
             for (var xx : int = 0; xx < size; xx++) {
-                var color :uint = (xx == int(size/2) && yy == int(size/2)) ?
-                    Content.CENTER_TILE_COLOR : Content.TILE_COLOR;
-                var l :Letter = new Letter(color);
+                var l :Letter = new Letter(xx == int(size/2) && yy == int(size/2));
                 l.setText("?");
                 l.x = (Content.TILE_SIZE + GAP) * xx;
                 l.y = (Content.TILE_SIZE + GAP) * yy;

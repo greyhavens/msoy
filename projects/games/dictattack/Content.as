@@ -42,6 +42,9 @@ public class Content
     /** The background color of the letter tiles. */
     public static const TILE_COLOR :uint = uint(0xCCFF99);
 
+    /** The background color of playable letter tiles. */
+    public static const PLAYABLE_COLOR :uint = uint(0x99CC66);
+
     /** The background color of the center letter tile. */
     public static const CENTER_TILE_COLOR :uint = uint(0xFF0033);
 
@@ -50,7 +53,7 @@ public class Content
 
     /** The color of the shooters. */
     public static const SHOOTER_COLOR :Array =
-        [ uint(0x6699CC), uint(0xCC6600), uint(0x996699), uint(0xCC6666) ];
+        [ uint(0x6699CC), uint(0x336600), uint(0x996699), uint(0xCC6666) ];
 
     /** The location and dimensions of the input field. */
     public static const INPUT_RECT :Rectangle = new Rectangle(100, 470, 250, 20);

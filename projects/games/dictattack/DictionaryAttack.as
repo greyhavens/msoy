@@ -37,20 +37,25 @@ public class DictionaryAttack extends Sprite
         // wire up some listeners
         _control.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
         _control.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+    }
 
+    protected function gameDidStart (event :StateChangedEvent) :void
+    {
         // TODO: get this info from the game config
         var size :int = Content.BOARD_SIZE;
-        var pcount :int = 4;
+
+        // zero out the scores
+        var pcount :int = _control.seating.getPlayerIds().length;
+        if (_control.amInControl()) {
+            _control.set(Model.SCORES, new Array(pcount).map(function (): int { return 0; }));
+        }
 
         // create our model and our view, and initialze them
         _model = new Model(size, _control);
         _view = new GameView(_control, _model);
         _view.init(size, pcount);
         addChild(_view);
-    }
 
-    protected function gameDidStart (event :StateChangedEvent) :void
-    {
         // for now we have just one round
         _model.roundDidStart();
         _view.roundDidStart();

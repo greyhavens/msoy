@@ -12,14 +12,10 @@ import flash.display.Sprite;
 
 public class Letter extends Sprite
 {
-    public function Letter (color :uint)
+    public function Letter (center :Boolean)
     {
-        var square :Shape = new Shape();
-        square.graphics.beginFill(color);
-        // square.graphics.lineStyle(borderSize, borderColor);
-        square.graphics.drawRect(0, 0, Content.TILE_SIZE, Content.TILE_SIZE);
-        square.graphics.endFill();
-        addChild(square);
+        _center = center;
+        setPlayable(false);
 
         _label = new TextField();
         _label.autoSize = TextFieldAutoSize.CENTER;
@@ -34,6 +30,23 @@ public class Letter extends Sprite
     {
         _label.text = text;
         _label.y = (Content.TILE_SIZE - _label.height)/2;
+    }
+
+    public function setPlayable (playable :Boolean) :void
+    {
+        if (_square != null) {
+            removeChild(_square);
+        }
+
+        var color :uint = _center ? Content.CENTER_TILE_COLOR :
+            (playable ? Content.PLAYABLE_COLOR : Content.TILE_COLOR);
+
+        _square = new Shape();
+        _square.graphics.beginFill(color);
+        // square.graphics.lineStyle(borderSize, borderColor);
+        _square.graphics.drawRect(0, 0, Content.TILE_SIZE, Content.TILE_SIZE);
+        _square.graphics.endFill();
+        addChildAt(_square, 0);
     }
 
     public function setHighlighted (highlighted :Boolean) :void
@@ -59,6 +72,8 @@ public class Letter extends Sprite
         return format;
     }
 
+    protected var _center :Boolean;
+    protected var _square :Shape;
     protected var _label :TextField;
 }
 
