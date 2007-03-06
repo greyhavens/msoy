@@ -89,11 +89,13 @@ public class Kart extends KartSprite
                 _current3PAngle = Math.min (0, _current3PAngle + TURN_ACCELERATION);
             }
         }
-        if (_currentSpeed > 0) {
+        /*if (_currentSpeed > 0) {
             _camera.angle = (_camera.angle + _current3PAngle) % (Math.PI * 2);
         } else if (_currentSpeed < 0) {
             _camera.angle = (_camera.angle - _current3PAngle + Math.PI * 2) % (Math.PI * 2);
-        }
+        }*/
+        // TEMP HACK for testing
+        _camera.angle = (_camera.angle + _current3PAngle) % (Math.PI * 2);
         // update turn animation
         var max_view_angle :int = _movement & MOVEMENT_DRIFT ? DRIFT_VIEW_ANGLE : TURN_VIEW_ANGLE;
         var frame :int = Math.ceil((Math.abs(_current3PAngle) / MAX_TURN_ANGLE) * max_view_angle);
