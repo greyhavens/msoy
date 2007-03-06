@@ -12,6 +12,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
@@ -31,6 +32,7 @@ import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.PathElementTreeNode;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.ProjectTreeModel;
+import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 public class ProjectPanel extends JPanel
@@ -43,6 +45,7 @@ public class ProjectPanel extends JPanel
         _editor = editor;
         add(_scrollPane, BorderLayout.CENTER);
         setupToolbar();
+        setupPopup();
         add(_toolbar, BorderLayout.PAGE_END);
     }
 
@@ -119,18 +122,8 @@ public class ProjectPanel extends JPanel
         return new AbstractAction("+") {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
-                addPathElement(PathElement.Type.FILE);
-            }
-        };
-    }
-
-    protected Action createAddDirectoryAction ()
-    {
-        // TODO need icon
-        return new AbstractAction("+Dir") {
-            // from AbstractAction
-            public void actionPerformed (ActionEvent e) {
-                addPathElement(PathElement.Type.DIRECTORY);
+                _popup.show(_plusButton, _plusButton.getX(),
+                    _plusButton.getY() - _popup.getHeight());
             }
         };
     }
@@ -142,6 +135,37 @@ public class ProjectPanel extends JPanel
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
                 deletePathElement();
+            }
+        };
+    }
+
+    protected Action createAddFileAction ()
+    {
+        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.add_file")) {
+            // from AbstractAction
+            public void actionPerformed (ActionEvent e) {
+                addPathElement(PathElement.Type.FILE);
+            }
+        };
+    }
+
+    protected Action createUploadFileAction ()
+    {
+        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.upload_file")) {
+            // from AbstractAction
+            public void actionPerformed (ActionEvent e) {
+                // TODO: implement
+            }
+        };
+    }
+
+    protected Action createAddDirectoryAction ()
+    {
+        return new AbstractAction(
+            _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.add_directory")) {
+            // from AbstractAction
+            public void actionPerformed (ActionEvent e) {
+                addPathElement(PathElement.Type.DIRECTORY);
             }
         };
     }
@@ -210,11 +234,20 @@ public class ProjectPanel extends JPanel
         _minusButton = new JButton(createMinusButtonAction());
         _toolbar.add(_minusButton);
 
-        _addDirectoryButton = new JButton(createAddDirectoryAction());
-        _toolbar.add(_addDirectoryButton);
-
         _toolbar.setFloatable(false);
         disableToolbar();
+    }
+
+    protected void setupPopup ()
+    {
+        _popup = new JPopupMenu();
+        _popup.add(createAddDirectoryAction());
+        _popup.add(createUploadFileAction());
+        _popup.add(createAddFileAction());
+        // in order for getHeight() to give a reasonable value the first time, we need to show
+        // the popup at least once. pack() doesn't seem to do this.
+        _popup.setVisible(true);
+        _popup.setVisible(false);
     }
 
     protected void enableToolbar ()
@@ -231,7 +264,6 @@ public class ProjectPanel extends JPanel
     {
         _plusButton.setEnabled(value);
         _minusButton.setEnabled(value);
-        _addDirectoryButton.setEnabled(value);
     }
 
     protected PathElementTreeNode getSelectedNode ()
@@ -263,6 +295,6 @@ public class ProjectPanel extends JPanel
     protected JToolBar _toolbar = new JToolBar();
     protected JButton _plusButton;
     protected JButton _minusButton;
-    protected JButton _addDirectoryButton;
     protected JScrollPane _scrollPane = new JScrollPane();
+    protected JPopupMenu _popup;
 }
