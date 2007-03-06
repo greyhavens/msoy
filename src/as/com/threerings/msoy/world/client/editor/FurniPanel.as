@@ -193,11 +193,14 @@ public class FurniPanel extends SpritePanel
 
         // BEGIN temporary controls
         // add an "expert control" for directly editing the action
-        var lbl :Label;
-        GridUtil.addRow(this,
-            lbl = MsoyUI.createLabel(Msgs.EDITING.get("l.action")),
-            _actionData = new TextInput());
-        lbl.setStyle("color", 0xFF0000);
+        _actionData = new TextInput();
+        if (_ctx.getMemberObject().tokens.isSupport()) {
+            var lbl :Label;
+            GridUtil.addRow(this,
+                lbl = MsoyUI.createLabel(Msgs.EDITING.get("l.action")),
+                _actionData);
+            lbl.setStyle("color", 0xFF0000);
+        }
         // END: temporary things
     }
 
