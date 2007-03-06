@@ -436,19 +436,22 @@ public class HoodViz extends Sprite
         }
     }
 
-    protected function getTextField (text :String, bold :Boolean = false) :TextField
+    protected function getTextField (text :String, isName :Boolean = false) :TextField
     {
         var format :TextFormat = new TextFormat();
         format.align = TextFormatAlign.CENTER;
-//        format.font = "Arial";
-        format.bold = bold;
+        format.font = "hoodFont";
+        format.size = isName ? (text.length < 10 ? 13 : 12) : 11;
+        format.bold = isName;
+        format.color = 0x660000;
 
         var tipText :TextField = new TextField();
         tipText.defaultTextFormat = format;
+        tipText.embedFonts = true;
         tipText.text = text;
         tipText.autoSize = TextFieldAutoSize.CENTER;
         tipText.wordWrap = true;
-        tipText.width = 100;
+        tipText.width = 110;
         tipText.x = -tipText.width/2;
         return tipText;
     }
@@ -507,8 +510,12 @@ public class HoodViz extends Sprite
     protected var _plaqueGroup :Class;
     protected var _plaqueGame :Class;
 
-//    [Embed(source="Arial.ttf", fontName="hoodFont", fontWeight='Regular')]
-//    protected var _font :Class;
+
+    [Embed(source="../../rsrc/CREABBRG.TTF", fontName="hoodFont", fontWeight="Regular")]
+    protected var _regularFont :Class;
+    [Embed(source="../../rsrc/CREABBB_.TTF", fontName="hoodFont", fontWeight="Bold")]
+    protected var _boldFont :Class;
+
     protected var _rule :Class;
 
     protected var _vacant :Class;
