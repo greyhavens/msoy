@@ -79,7 +79,7 @@ public class ActorSprite extends MsoySprite
 
         _label.textColor = getStatusColor(_occInfo.status);
         _label.text = _occInfo.username.toString();
-        _label.y = -1 * _label.textHeight;
+        _label.y = -1 * (_label.textHeight + 4);
         _label.width = _label.textWidth + 5; // the magic number
         recheckLabel();
     }
@@ -120,15 +120,15 @@ public class ActorSprite extends MsoySprite
     public function moveTo (destLoc :MsoyLocation, scene :MsoyScene) :void
     {
         // if there's already a move, kill it
-        if (_move != null) {
-            _move.cancel();
+        if (_walk != null) {
+            _walk.stop();
         }
 
         // set the orientation towards the new location
         setOrientation(destLoc.orient, false);
 
-        _move = new SceneMover(this, scene, this.loc, destLoc);
-        _move.start();
+        _walk = new WalkAnimation(this, scene, this.loc, destLoc);
+        _walk.start();
         appearanceChanged();
     }
 
@@ -137,7 +137,7 @@ public class ActorSprite extends MsoySprite
      */
     public function isMoving () :Boolean
     {
-        return (_move != null);
+        return (_walk != null);
     }
 
     /**
@@ -145,9 +145,9 @@ public class ActorSprite extends MsoySprite
      */
     public function stopMove () :void
     {
-        if (_move != null) {
-            _move.cancel();
-            _move = null;
+        if (_walk != null) {
+            _walk.stop();
+            _walk = null;
         }
     }
 
@@ -183,11 +183,11 @@ public class ActorSprite extends MsoySprite
     }
 
     /**
-     * A callback from our scene mover.
+     * A callback from our walk animations.
      */
-    public function moveCompleted (orient :Number) :void
+    public function walkCompleted (orient :Number) :void
     {
-        _move = null;
+        _walk = null;
         if (parent is RoomView) {
             (parent as RoomView).moveFinished(this);
         }
@@ -276,6 +276,6 @@ public class ActorSprite extends MsoySprite
 
     protected var _label :TextField;
     protected var _occInfo :ActorInfo;
-    protected var _move :SceneMover;
+    protected var _walk :WalkAnimation;
 }
 }
