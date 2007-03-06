@@ -149,7 +149,6 @@ public class StarFight extends Sprite
      */
     protected function gotBoard (boardObj :Board) :void
     {
-        _gameCtrl.localChat("MST GOT BOARD");
         _shots = [];
         _powerups = [];
 
@@ -191,7 +190,7 @@ public class StarFight extends Sprite
         // Set up our initial powerups.
         var gamePows :Array = (_gameCtrl.get("powerup") as Array);
 
-        // The game already has some ships, create sprites for em.
+        // The game already has some powerups, create sprites for em.
         if (gamePows != null) {
             for (var pp :int = 0; pp < gamePows.length; pp++)
             {
@@ -629,10 +628,6 @@ public class StarFight extends Sprite
         }
 
         _lastTickTime = now;
-    }
-
-    public function chat (msg :String) :void {
-        _gameCtrl.localChat(msg);
     }
 
     /** Our game control object. */
