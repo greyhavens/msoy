@@ -23,11 +23,11 @@ public class MsoyTokenRing extends TokenRing
 
     /**
      * Convenience function for checking whether this ring holds the {@link
-     * #SUPPORT} token.
+     * #SUPPORT} token OR a the ADMIN token.
      */
     public function isSupport () :Boolean
     {
-        return holdsToken(SUPPORT);
+        return holdsAnyToken(SUPPORT | ADMIN);
     }
 }
 }

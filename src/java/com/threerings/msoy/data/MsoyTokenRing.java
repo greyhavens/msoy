@@ -30,10 +30,10 @@ public class MsoyTokenRing extends TokenRing
 
     /**
      * Convenience function for checking whether this ring holds the {@link
-     * #SUPPORT} token.
+     * #SUPPORT} token OR the ADMIN token.
      */
     public boolean isSupport ()
     {
-        return holdsToken(SUPPORT);
+        return holdsAnyToken(SUPPORT | ADMIN);
     }
 }
