@@ -151,7 +151,7 @@ public class Model
             for (var yy :int = _size-1; yy >= 0; yy--) {
                 var l :String = getLetter(xx, yy);
                 if (l != null) {
-                    board.getLetter(getPosition(xx, yy)).setPlayable(true);
+                    board.getLetter(yy * _size + xx).setPlayable(true);
                     break;
                 }
             }
