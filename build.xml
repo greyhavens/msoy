@@ -626,15 +626,28 @@
   <target name="tests" depends="compile" description="Runs unit tests.">
     <taskdef name="unit" classpathref="classpath"
       classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
-    <unit printsummary="no" haltonfailure="yes" fork="true">
-      <classpath refid="classpath"/>
-      <formatter type="brief" usefile="false"/>
-      <batchtest>
-        <fileset dir="${src.dir}">
-          <include name="**/*UnitTest.java"/>
-        </fileset>
-      </batchtest>
-    </unit>
+    <if><isset property="test"/>
+      <then>
+        <!-- Run a single test -->
+        <unit printsummary="yes" haltonfailure="yes">
+          <classpath refid="classpath"/>
+          <formatter type="brief" usefile="false"/>
+          <test name="${test}"/>
+        </unit>
+      </then>
+      <else>
+        <!-- Run all tests -->
+        <unit printsummary="no" haltonfailure="yes" fork="yes">
+          <classpath refid="classpath"/>
+          <formatter type="brief" usefile="false"/>
+          <batchtest>
+            <fileset dir="${src.dir}">
+              <include name="**/*UnitTest.java"/>
+            </fileset>
+          </batchtest>
+        </unit>
+      </else>
+    </if>
   </target>
 
   <!-- build the java class files -->
