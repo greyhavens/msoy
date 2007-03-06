@@ -9,11 +9,14 @@ import com.threerings.ezgame.client.EZGamePanel;
 import com.threerings.ezgame.client.GameControlBackend;
 
 import com.threerings.msoy.client.WorldContext;
-
 import com.threerings.msoy.chat.client.ChatOverlay;
-
 import com.threerings.msoy.game.data.MsoyGameObject;
 
+import com.threerings.flash.MediaContainer;
+
+import com.threerings.util.ValueEvent;
+
+import mx.events.ResizeEvent;
 
 public class MsoyGamePanel extends EZGamePanel
 {
@@ -29,10 +32,18 @@ public class MsoyGamePanel extends EZGamePanel
         super.willEnterPlace(plobj);
 
         _chatOverlay.setTarget(this);
+        _gameView.addEventListener(ResizeEvent.RESIZE, handleGameContainerResize);
+        _gameView.getMediaContainer().addEventListener(
+            MediaContainer.SIZE_KNOWN, handleMediaContainerResize);
+
+        resizeChatOverlay();
     }
 
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
+        _gameView.getMediaContainer().removeEventListener(
+            MediaContainer.SIZE_KNOWN, handleMediaContainerResize);
+        _gameView.removeEventListener(ResizeEvent.RESIZE, handleGameContainerResize);
         _chatOverlay.setTarget(null);
 
         super.didLeavePlace(plobj);
@@ -44,9 +55,30 @@ public class MsoyGamePanel extends EZGamePanel
             (_ctx as WorldContext), (_ezObj as MsoyGameObject), (_ctrl as MsoyGameController));
     }
 
-    /** Overlays chat on top of the game.
-     * TODO: Use an overlay if the game is too big, otherwise
-     * place a nice chatbox under the game. */
+    protected function handleMediaContainerResize (event :ValueEvent) :void
+    {
+        resizeChatOverlay ();
+    }
+    
+    protected function handleGameContainerResize (event :ResizeEvent) :void
+    {
+        resizeChatOverlay ();
+    }
+
+    protected function resizeChatOverlay () :void
+    {
+        var h :Number = 0;
+        var media :MediaContainer = _gameView.getMediaContainer();
+        if (media != null) {
+            // chat box should fit between the game media, and the bottom of the container
+            h = (this.height - media.getContentHeight()) / this.height;
+        }
+        // in any case, chat window should be at least 100px tall
+        h = Math.max(h, 100 / this.height);
+       
+        _chatOverlay.setSubtitlePercentage(h);
+    }
+
     protected var _chatOverlay :ChatOverlay;
 }
 }
