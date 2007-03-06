@@ -15,8 +15,11 @@ import flash.utils.describeType;
 public class Level extends Sprite
 {
     public function Level (ground :Ground, background :Class, rough :Class, track :Class, 
-        wall :Class, config :LevelConfig) :void
+        wall :Class, horizon :Class, config :LevelConfig) :void
     {
+        // this is a goofy place to store it, as the level never actually uses it... this may 
+        // require some refactor magic
+        _horizon = horizon;
         _ground = ground;
         _config = config;
 
@@ -67,6 +70,11 @@ public class Level extends Sprite
         _ground.setKartLocation(_config.getStartingPoint(_startingPosition));
     }
 
+    public function get horizon () :Class
+    {
+        return _horizon;
+    }
+
     /**
      * Adds an opponent's kart to the fray. 
      */
@@ -95,5 +103,6 @@ public class Level extends Sprite
     protected var _config :LevelConfig;
     protected var _startingPosition :int = -1;
     protected var _scenery :Scenery;
+    protected var _horizon :Class;
 }
 }

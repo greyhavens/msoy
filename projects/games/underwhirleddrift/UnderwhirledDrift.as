@@ -35,7 +35,7 @@ public class UnderwhirledDrift extends Sprite
     public static const DISPLAY_HEIGHT :int = 400;
 
     /** height of the sky */
-    public static const SKY_HEIGHT :int = DISPLAY_HEIGHT * 0.4;
+    public static const SKY_HEIGHT :int = DISPLAY_HEIGHT * 0.35;
 
     /** Kart location, relative to the ground coordinates */
     public static const KART_LOCATION :Point = new Point (355, 200);
@@ -47,39 +47,42 @@ public class UnderwhirledDrift extends Sprite
 
     public function UnderwhirledDrift ()
     {
-        var gameSprite :Sprite = new Sprite();
+        _gameSprite = new Sprite();
         var masker :Shape = new Shape();
         masker.graphics.beginFill(0xFFFFFF);
         masker.graphics.drawRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
         masker.graphics.endFill();
-        gameSprite.mask = masker;
-        gameSprite.addChild(masker);
-        addChild(gameSprite);
+        _gameSprite.mask = masker;
+        _gameSprite.addChild(masker);
+        addChild(_gameSprite);
 
         // "sky"
-        var colorBackground :Shape = new Shape();
+        /*var colorBackground :Shape = new Shape();
         colorBackground.graphics.beginFill(0x8888FF);
         colorBackground.graphics.drawRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
         colorBackground.graphics.endFill();
-        gameSprite.addChild(colorBackground);
+        _gameSprite.addChild(colorBackground);*/
 
         _control = new WhirledGameControl(this);
 
         if (_control.isConnected()) {
-            var camera :Camera = new Camera();
+            _camera = new Camera();
 
-            _ground = new Ground(camera);
+            _ground = new Ground(_camera);
             _ground.y = SKY_HEIGHT;
-            gameSprite.addChild(_ground);
+            _gameSprite.addChild(_ground);
 
             _level = LevelFactory.createLevel(_currentLevel = 0, _ground);
+            _gameSprite.addChildAt(_horizon = new Horizon(_level.horizon, _camera), 0);
+            _horizon.y += _horizon.height / 2;
+            _horizon.x += _horizon.width / 2;
 
             _control.registerListener(this);
             _control.addEventListener(KeyboardEvent.KEY_DOWN, keyEventHandler);
             _control.addEventListener(KeyboardEvent.KEY_UP, keyEventHandler);
             _messageQueue = new MessageQueue(_control);
     
-            var chooser :KartChooser = new KartChooser(this, gameSprite, camera, _ground);
+            var chooser :KartChooser = new KartChooser(this, _gameSprite, _camera, _ground);
             chooser.chooseKart();
 
             // names above characters is good, but they should fade out after the race 
@@ -234,6 +237,10 @@ public class UnderwhirledDrift extends Sprite
                         _control.seating.getPlayerIds().length == 1) {
                     _currentLevel = (_currentLevel + 1) % 2;
                     _level = LevelFactory.createLevel(_currentLevel, _ground);
+                    _gameSprite.removeChild(_horizon);
+                    _gameSprite.addChildAt(_horizon = new Horizon(_level.horizon, _camera), 0);
+                    _horizon.y += _horizon.height / 2;
+                    _horizon.x += _horizon.width / 2;
                     _level.setStartingPosition(0);
                 }
                 break;
@@ -275,5 +282,9 @@ public class UnderwhirledDrift extends Sprite
     protected var _raceStarted :Boolean = false;
 
     protected var _messageQueue :MessageQueue;
+
+    protected var _horizon :Horizon;
+    protected var _gameSprite :Sprite;
+    protected var _camera :Camera;
 }
 }

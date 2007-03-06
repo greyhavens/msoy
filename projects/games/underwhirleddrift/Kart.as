@@ -90,9 +90,9 @@ public class Kart extends KartSprite
             }
         }
         if (_currentSpeed > 0) {
-            _camera.angle += _current3PAngle;
+            _camera.angle = (_camera.angle + _current3PAngle) % (Math.PI * 2);
         } else if (_currentSpeed < 0) {
-            _camera.angle -= _current3PAngle;
+            _camera.angle = (_camera.angle - _current3PAngle + Math.PI * 2) % (Math.PI * 2);
         }
         // update turn animation
         var max_view_angle :int = _movement & MOVEMENT_DRIFT ? DRIFT_VIEW_ANGLE : TURN_VIEW_ANGLE;

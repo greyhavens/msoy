@@ -28,7 +28,7 @@ public class MessageQueue
         }
     }
 
-    protected static const SEND_THROTTLE_TIME :int = 10200; // in ms, with a buffer
+    protected static const SEND_THROTTLE_TIME :int = 12000; // in ms, with a buffer
 
     protected var _control :WhirledGameControl;
     protected var _sendTimes :Array = new Array();
