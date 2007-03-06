@@ -479,7 +479,7 @@
     </copy>
     <copy todir="${sdk.build}">
       <fileset dir="." includes="src/as/com/whirled/**" excludes="**/WorldGameControl.as"/>
-      <fileset dir="." includes="projects/vilya/src/as/com/threerings/ezgame/*.as"/>
+      <fileset dir="projects/vilya." includes="src/as/com/threerings/ezgame/*.as"/>
     </copy>
     <zip destfile="${deploy.dir}/sdk/whirled_sdk.zip" basedir="${deploy.dir}/sdk"
          includes="whirled/**"/>
