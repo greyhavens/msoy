@@ -7,8 +7,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import sun.util.logging.resources.logging;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntListUtil;
+import com.samskivert.util.Tuple;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
@@ -43,23 +46,30 @@ public class MailRepository extends DepotRepository
     }
 
     /**
-     * Count the number of read/unread messages in a given folder.
+     * Count the number of read/unread messages in a given folder and return
+     * a Tuple<Integer, Integer> with the number of read messages in the left
+     * spot and the unread ones in the right.
      */
-    public Map<Boolean, Integer> getMessageCount (final int memberId, final int folderId)
+    public Tuple<Integer, Integer> getMessageCount (final int memberId, final int folderId)
         throws PersistenceException
     {
-        Map<Boolean, Integer> map = new HashMap<Boolean, Integer>();
-        for (MailCountRecord record : findAll(
-                 MailCountRecord.class,
-                 new Where(MailMessageRecord.OWNER_ID_C, memberId,
-                           MailMessageRecord.FOLDER_ID_C, folderId),
-                 new FromOverride(MailMessageRecord.class),
-                 new FieldOverride(MailCountRecord.UNREAD, MailMessageRecord.UNREAD_C),
-                 new FieldOverride(MailCountRecord.COUNT, "count(*)"),
-                 new GroupBy(MailMessageRecord.UNREAD_C))) {
-            map.put(record.unread, record.count);
+        int read = 0, unread = 0;
+        Collection<MailCountRecord> records = findAll(
+            MailCountRecord.class,
+            new Where(MailMessageRecord.OWNER_ID_C, memberId,
+                MailMessageRecord.FOLDER_ID_C, folderId),
+                new FromOverride(MailMessageRecord.class),
+                new FieldOverride(MailCountRecord.UNREAD, MailMessageRecord.UNREAD_C),
+                new FieldOverride(MailCountRecord.COUNT, "count(*)"),
+                new GroupBy(MailMessageRecord.UNREAD_C));
+        for (MailCountRecord record : records) {
+            if (record.unread) {
+                unread = record.count;
+            } else {
+                read = record.count;
+            }
         }
-        return map;
+        return new Tuple<Integer, Integer>(read, unread);
     }
 
     /**

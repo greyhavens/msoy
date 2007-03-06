@@ -13,6 +13,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ResultListener;
+import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailHeaders;
@@ -60,7 +61,9 @@ public class MailManager
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<MailMessage>(waiter) {
             public MailMessage invokePersistResult () throws PersistenceException {
                 MailMessageRecord record = _mailRepo.getMessage(memberId, folderId, messageId);
-                // TODO: could be null
+                if (record == null) {
+                    return null;
+                }
                 if (record.unread && flagAsRead) {
                     _mailRepo.setUnread(memberId, folderId, messageId, false);
                 }
@@ -314,11 +317,9 @@ public class MailManager
     protected MailFolder buildFolder (MailFolderRecord record) throws PersistenceException
     {
         MailFolder folder = toMailFolder(record);
-        Map<Boolean, Integer> unread = _mailRepo.getMessageCount(record.ownerId, record.folderId);
-        Integer uCnt = unread.get(Boolean.TRUE);
-        Integer rCnt = unread.get(Boolean.FALSE);
-        folder.unreadCount = uCnt != null ? uCnt.intValue() : 0;
-        folder.readCount = rCnt != null ? rCnt.intValue() : 0;
+        Tuple<Integer, Integer> counts = _mailRepo.getMessageCount(record.ownerId, record.folderId);
+        folder.unreadCount = counts.right != null ? counts.right.intValue() : 0;
+        folder.readCount = counts.left != null ? counts.left.intValue() : 0;
         return folder;
     }
 
