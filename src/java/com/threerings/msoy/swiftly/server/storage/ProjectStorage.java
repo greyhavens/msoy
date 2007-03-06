@@ -27,4 +27,7 @@ public interface ProjectStorage
      * Exports the entire project repository to a given file system path. All project files
      * will be created relative to the provided path. */
     public void export (File exportDirectory) throws ProjectStorageException;
+
+    /** The standard text encoding. Changing this WILL break existing projects. So don't change it. */
+    static final String TEXT_ENCODING = "utf8";
 }

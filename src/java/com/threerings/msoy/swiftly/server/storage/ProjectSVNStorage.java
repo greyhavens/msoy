@@ -283,7 +283,7 @@ public class ProjectSVNStorage
         }
 
         try {
-            swiftlyDoc = new SwiftlyDocument(new FileInputStream(tempFile), path, TEXT_ENCODING);
+            swiftlyDoc = new SwiftlyDocument(new FileInputStream(tempFile), path, ProjectStorage.TEXT_ENCODING);
         } catch (IOException ioe) {
             throw new ProjectStorageException.InternalError("Failure instantiating SwiftlyDocument: " +
                 ioe, ioe);            
@@ -734,9 +734,6 @@ public class ProjectSVNStorage
         /** Export root. */
         private File _rootPath;
     }
-
-    /** The standard text encoding. Changing this WILL break existing project repositories. */
-    protected static final String TEXT_ENCODING = "utf8";
 
     /** Reference to the project record. */
     protected SwiftlyProjectRecord _projectRecord;

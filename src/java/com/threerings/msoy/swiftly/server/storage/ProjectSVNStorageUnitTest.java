@@ -179,7 +179,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
         assertTrue("Could not read any data from " + srcFile.getName(),
             (len = input.read(data, 0, data.length)) >= 0);
 
-        contents = new String(data, 0, len, ProjectSVNStorage.TEXT_ENCODING);
+        contents = new String(data, 0, len, ProjectStorage.TEXT_ENCODING);
         assertTrue("Unexpected file data: " + contents, contents.startsWith("package {"));
     }
 
