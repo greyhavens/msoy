@@ -5,6 +5,7 @@
   <property name="app.name"   value="DictionaryAttack"/>
   <property name="root.path"  value="../../.."/>
   <property name="flex.path"  value="${root.path}/projects/tools/extern/flex_sdk"/>
+  <property file="build.properties"/>
 
   <!-- builds our Flash game -->
   <target name="compile">
@@ -25,8 +26,8 @@
   </target>
 
   <!-- compiles and then jams the SWF into the document tree with the right filename -->
-  <property name="media_hash" value="317a1a3966f3379a0144f1143a4107a30784f7fc"/>
   <target name="dist" depends="compile">
+    <fail unless="media_hash">Create a build.properties file with media_hash in it.</fail>
     <copy file="${app.name}.swf" tofile="${root.path}/pages/media/${media_hash}.swf"/>
   </target>
 
