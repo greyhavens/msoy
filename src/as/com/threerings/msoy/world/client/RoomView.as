@@ -87,8 +87,6 @@ public class RoomView extends AbstractRoomView
         chatOverlay = new ComicOverlay(ctx);
 
         _loadingSpinner = DisplayObject(new LOADING_SPINNER());
-        _loadingSpinner.scaleX = .1;
-        _loadingSpinner.scaleY = .1;
         FurniSprite.setLoadingWatcher(this);
     }
 
@@ -787,7 +785,7 @@ public class RoomView extends AbstractRoomView
     /** The maximum number of pixels to autoscroll per frame. */
     protected static const MAX_AUTO_SCROLL :int = 15;
 
-    [Embed(source="../../../../../../../rsrc/media/test_pattern.swf")]
+    [Embed(source="../../../../../../../rsrc/media/loading.swf")]
     protected static const LOADING_SPINNER :Class;
 }
 }
