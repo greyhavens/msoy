@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.swiftly.server.build;
 
-import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
-
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
+
+import com.threerings.msoy.web.data.SwiftlyProject;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,17 +24,17 @@ public class LocalProjectBuilder
      * Create a new local project builder.
      * @param flexPath: Local path to the Flex SDK.
      */
-    public LocalProjectBuilder (SwiftlyProjectRecord record, ProjectStorage storage,
+    public LocalProjectBuilder (SwiftlyProject project, ProjectStorage storage,
         File buildRoot, File flexPath)
         throws ProjectBuilderException
     {
-        _projectRecord = record;
+        _project = project;
         _storage = storage;
         _flexPath = flexPath;
         
         // Create a temporary build directory
         try {
-            _buildRoot = File.createTempFile(record.projectName, "build", buildRoot);
+            _buildRoot = File.createTempFile("build", Integer.toString(project.projectId), buildRoot);
             _buildRoot.delete();
             if (_buildRoot.mkdir() != true) {
                 throw new ProjectBuilderException("Unable to create temporary build root " +
@@ -65,7 +65,7 @@ public class LocalProjectBuilder
                 "data/temp_sdk/templates/whirled-config.xml",
                 "-compiler.source-path=" + _buildRoot.getAbsolutePath(),
                 "-file-specs",
-                "Game.as"
+                _buildRoot.getAbsolutePath() + "/" + _project.getTemplateSourceName()
             };
             Runtime.getRuntime().exec(cmd);
         } catch (IOException ioe) {
@@ -73,18 +73,8 @@ public class LocalProjectBuilder
         }
     }
 
-    /** Be sure to delete our build root. */
-    protected void finalize ()
-        throws Throwable
-    {
-        try {
-            FileUtils.deleteDirectory(_buildRoot);
-        } finally {
-            super.finalize();
-        }
-    }
-    /** Reference to our project record. */
-    protected SwiftlyProjectRecord _projectRecord;
+    /** Reference to our project. */
+    protected SwiftlyProject _project;
 
     /** Reference to our backing project storage. */
     protected ProjectStorage _storage;

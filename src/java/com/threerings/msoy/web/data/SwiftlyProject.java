@@ -44,7 +44,7 @@ public class SwiftlyProject
     public boolean remixable;
 
     /** Returns the source file name for the project's type. */
-    public String templateSourceName (byte projectType) {
+    public String getTemplateSourceName () {
         // We can't use a switch statement because the type finals are not actually constants
         if (projectType == Item.GAME) {
             return "Game.as";

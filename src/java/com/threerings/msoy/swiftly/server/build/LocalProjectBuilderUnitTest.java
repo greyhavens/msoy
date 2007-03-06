@@ -10,6 +10,8 @@ import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorageUnitTest;
 
+import com.threerings.msoy.web.data.SwiftlyProject;
+
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -39,11 +41,12 @@ public class LocalProjectBuilderUnitTest extends TestCase
         }
 
         // Mock up a project record.
-        _projectRecord = ProjectSVNStorageUnitTest.mockProjectRecord();
+        SwiftlyProjectRecord record = ProjectSVNStorageUnitTest.mockProjectRecord();
+        _project = record.toSwiftlyProject();
         storageRecord = ProjectSVNStorageUnitTest.mockStorageRecord(_tempDir);
 
         // Initialize the storage
-        _storage = ProjectSVNStorage.initializeStorage(_projectRecord, storageRecord,
+        _storage = ProjectSVNStorage.initializeStorage(record, storageRecord,
             ProjectSVNStorageUnitTest.GAME_TEMPLATE_DIR.getCanonicalFile());
     }
 
@@ -60,7 +63,7 @@ public class LocalProjectBuilderUnitTest extends TestCase
     {
         File builds = new File(_tempDir, "builds");
         builds.mkdirs();
-        ProjectBuilder builder = new LocalProjectBuilder(_projectRecord, _storage, builds, SDK_DIR);
+        ProjectBuilder builder = new LocalProjectBuilder(_project, _storage, builds, SDK_DIR);
         builder.build();
     }
 
@@ -68,7 +71,7 @@ public class LocalProjectBuilderUnitTest extends TestCase
     protected File _tempDir;
 
     /** Mocked up project record. */
-    protected SwiftlyProjectRecord _projectRecord;
+    protected SwiftlyProject _project;
 
     /** Project storage. */
     protected ProjectStorage _storage;
