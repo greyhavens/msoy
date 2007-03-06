@@ -120,6 +120,7 @@ public class WonderlandCroquet extends Sprite
         */
 
         positionStatus();
+        panTo(map.startPoint.x, map.startPoint.y);
     }
 
     /**
