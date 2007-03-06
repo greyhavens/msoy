@@ -98,6 +98,14 @@ public class FlashClients
     }
 
     /**
+     * Loads the mail notification status.
+     */
+    public static boolean getMailNotification ()
+    {
+        return getBoolean(getMailNotificationNative());
+    }
+
+    /**
      * Does the actual JavaScript <code>getFriends</code> call.
      */
     protected static native JavaScriptObject getFriendsNative () /*-{
@@ -111,6 +119,14 @@ public class FlashClients
     protected static native JavaScriptObject getLevelsNative () /*-{
         var client = $doc.getElementById("asclient");
         return (client) ? client.getLevels() : null;
+    }-*/;
+
+    /**
+     * Does the actual JavaScript <code>getMailNotification</code> call.
+     */
+    protected static native JavaScriptObject getMailNotificationNative () /*-{
+        var client = $doc.getElementById("asclient");
+        return (client) ? client.getMailNotification() : null;
     }-*/;
 
     /**
@@ -140,6 +156,14 @@ public class FlashClients
     protected static native boolean getBooleanElement (JavaScriptObject array, int index) /*-{
         return array[index];
     }-*/;
+
+    /**
+     * Helpy helper function.
+     */
+    protected static native boolean getBoolean (JavaScriptObject value) /*-{
+        return value;
+    }-*/;
+
 
     protected static final String FS_WIDTH = "100%";
     protected static final String FS_HEIGHT = "530";

@@ -5,6 +5,7 @@ package com.threerings.msoy.data;
 
 import java.util.Iterator;
 
+import com.google.gwt.user.client.rpc.core.java.lang.boolean_Array_CustomFieldSerializer;
 import com.samskivert.util.Predicate;
 
 import com.threerings.presents.dobj.DSet;
@@ -84,6 +85,9 @@ public class MemberObject extends BodyObject
 
     /** The field name of the <code>groups</code> field. */
     public static final String GROUPS = "groups";
+
+    /** The field name of the <code>hasNewMail</code> field. */
+    public static final String HAS_NEW_MAIL = "hasNewMail";
     // AUTO-GENERATED: FIELDS END
 
     /** The name and id information for this user. */
@@ -136,6 +140,9 @@ public class MemberObject extends BodyObject
     /** The groups of this player. */
     public DSet<GroupMembership> groups;
 
+    /** A flag that's true if this member has unread mail. */
+    public boolean hasNewMail;
+    
     /**
      * Returns this member's unique id.
      */
@@ -741,6 +748,22 @@ public class MemberObject extends BodyObject
         @SuppressWarnings("unchecked") DSet<com.threerings.msoy.web.data.GroupMembership> clone =
             (value == null) ? null : value.typedClone();
         this.groups = clone;
+    }
+
+    /**
+     * Requests that the <code>hasNewMail</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setHasNewMail (boolean value)
+    {
+        boolean ovalue = this.hasNewMail;
+        requestAttributeChange(
+            HAS_NEW_MAIL, Boolean.valueOf(value), Boolean.valueOf(ovalue));
+        this.hasNewMail = value;
     }
     // AUTO-GENERATED: METHODS END
 

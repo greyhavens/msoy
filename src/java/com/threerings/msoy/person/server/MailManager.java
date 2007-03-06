@@ -26,6 +26,7 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.person.server.persist.MailFolderRecord;
 import com.threerings.msoy.person.server.persist.MailMessageRecord;
 import com.threerings.msoy.person.server.persist.MailRepository;
@@ -58,6 +59,8 @@ public class MailManager
     public void getMessage (final int memberId, final int folderId, final int messageId,
                             final boolean flagAsRead, ResultListener<MailMessage> waiter)
     {
+        final MemberObject mObj =
+                folderId == MailFolder.INBOX_FOLDER_ID ? MsoyServer.lookupMember(memberId) : null;
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<MailMessage>(waiter) {
             public MailMessage invokePersistResult () throws PersistenceException {
                 MailMessageRecord record = _mailRepo.getMessage(memberId, folderId, messageId);
@@ -66,9 +69,21 @@ public class MailManager
                 }
                 if (record.unread && flagAsRead) {
                     _mailRepo.setUnread(memberId, folderId, messageId, false);
+                    // are we logged in, and did we read an unread message in the inbox?
+                    if (mObj != null) {
+                        // if so, count how many more of those there are
+                        _count = _mailRepo.getMessageCount(memberId, folderId);
+                    }
                 }
                 return toMailMessage(record);
             }
+            public void handleSuccess () {
+                if (_count != null) {
+                    mObj.setHasNewMail(_count.right > 0);
+                }
+                super.handleSuccess();
+            }
+            protected Tuple<Integer, Integer> _count;
         });
     }
 
@@ -184,6 +199,15 @@ public class MailManager
                 record.unread = true;
                 _mailRepo.fileMessage(record);
                 return null;
+            }
+
+            public void handleSuccess () {
+                // if all went well and the recipient is online, notify them they have new mail
+                MemberObject mObj = MsoyServer.lookupMember(recipientId);
+                if (mObj != null) {
+                    mObj.setHasNewMail(true);
+                }
+                super.handleSuccess();
             }
         });
     }

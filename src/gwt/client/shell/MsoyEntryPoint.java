@@ -146,6 +146,14 @@ public abstract class MsoyEntryPoint
     }
 
     /**
+     * Called when our mail notification status has changed.
+     */
+    protected void mailNotificationUpdated ()
+    {
+        _status.refreshMailNotification();
+    }
+
+    /**
      * Called by our logon panel if the player logs off.
      */
     protected void didLogoff ()
@@ -164,6 +172,9 @@ public abstract class MsoyEntryPoint
        };
        $wnd.levelsUpdated = function () {
            mep.@client.shell.MsoyEntryPoint::levelsUpdated()();
+       };
+       $wnd.mailNotificationUpdated = function () {
+           mep.@client.shell.MsoyEntryPoint::mailNotificationUpdated()();
        };
        $wnd.onunload = function (event) {
            var client = $doc.getElementById("asclient");

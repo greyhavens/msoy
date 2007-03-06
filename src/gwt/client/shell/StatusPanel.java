@@ -3,17 +3,19 @@
 
 package client.shell;
 
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -89,6 +91,18 @@ public class StatusPanel extends FlexTable
             setText(0, _levelIdx, String.valueOf(levels[2]));
         } else {
             CShell.log("Ignoring refreshLevels() request as we're not logged on.");
+        }
+    }
+
+    /**
+     * Rereads our mail notification status and updates our header display.
+     */
+    public void refreshMailNotification ()
+    {
+        if (_creds != null) {
+            _mailNotifier.setVisible(FlashClients.getMailNotification());
+        } else {
+            CShell.log("Ignoring refreshMailNotification() request as we're not logged on.");
         }
     }
 
@@ -171,6 +185,16 @@ public class StatusPanel extends FlexTable
         getFlexCellFormatter().setStyleName(0, idx, "Icon");
         setWidget(0, idx++, new Image("/images/header/symbol_level.png"));
         setText(0, _levelIdx = idx++, "0");
+
+        getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
+        getFlexCellFormatter().setStyleName(0, idx, "Icon");
+        _mailNotifier = new HTML(
+            "<a href='/mail'>" +
+            "<img class='MailNotification' src='/images/mail/button_mail.png'/></a>");
+        // begin with 'new mail' turned off until we hear otherwise
+        _mailNotifier.setVisible(false);
+        getFlexCellFormatter().setWidth(0, idx, "20px");
+        setWidget(0, idx++, _mailNotifier);
     }
 
     protected void reset ()
@@ -274,6 +298,7 @@ public class StatusPanel extends FlexTable
     protected WebCreds _creds;
 
     protected int _flowIdx, _goldIdx, _levelIdx;
+    protected HTML _mailNotifier;
 
     /** The height of the header UI in pixels. */
     protected static final int HEADER_HEIGHT = 50;

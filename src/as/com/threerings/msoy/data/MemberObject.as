@@ -81,6 +81,9 @@ public class MemberObject extends BodyObject
 
     /** The field name of the <code>groups</code> field. */
     public static const GROUPS :String = "groups";
+
+    /** The field name of the <code>hasNewMail</code> field. */
+    public static const HAS_NEW_MAIL :String = "hasNewMail";
     // AUTO-GENERATED: FIELDS END
 
     /** The member name and id for this user. */
@@ -130,6 +133,9 @@ public class MemberObject extends BodyObject
 
     /** The groups of this player. */
     public var groups :DSet;
+
+    /** A flag that's true if this member has unread mail. */
+    public var hasNewMail :Boolean;
 
     /**
      * Return this member's unique id.
@@ -388,6 +394,7 @@ public class MemberObject extends BodyObject
         avatar = (ins.readObject() as Avatar);
         friends = (ins.readObject() as DSet);
         groups = (ins.readObject() as DSet);
+        hasNewMail = ins.readBoolean();
     }
 }
 }

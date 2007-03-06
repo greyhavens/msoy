@@ -201,6 +201,11 @@ body {
   padding-right: 3px;
 }
 
+.statusPanel .MailNotification {
+   border: none;
+   height: 10px;
+}
+
 .logonPopup {
   padding: 10px;
   width: 350px;

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.samskivert.util.ResultListener;
+import com.samskivert.util.Tuple;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
 
@@ -14,9 +15,11 @@ import com.threerings.crowd.server.CrowdClientResolver;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.SceneBookmarkEntry;
+import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.data.FriendEntry;
+import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.item.web.Avatar;
@@ -93,6 +96,11 @@ public class MsoyClientResolver extends CrowdClientResolver
             groups.add(record.toGroupMembership(group, null));
         }
         userObj.setGroups(new DSet<GroupMembership>(groups.iterator()));
+
+        MailRepository mailRepo = MsoyServer.mailMan.getRepository();
+        Tuple<Integer, Integer> count = mailRepo.getMessageCount(
+            member.memberId, MailFolder.INBOX_FOLDER_ID);
+        userObj.setHasNewMail(count.right > 0);
     }
 
     /**

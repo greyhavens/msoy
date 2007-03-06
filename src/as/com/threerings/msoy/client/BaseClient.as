@@ -61,6 +61,20 @@ public /*abstract*/ class BaseClient extends Client
         }
     }
 
+    /**
+     * Notifies our JavaScript shell that our mail notification has changed.
+     */
+    public static function mailNotificationUpdated () :void
+    {
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.call("mailNotificationUpdated");
+            }
+        } catch (err :Error) {
+            log.warning("ExternalInterface.call('mailNotificationUpdated') failed: " + err);
+        }
+    }
+
     public function BaseClient (stage :Stage)
     {
         super(createStartupCreds(stage), stage);
@@ -150,6 +164,8 @@ public /*abstract*/ class BaseClient extends Client
         _user.addListener(new LevelUpdater());
         // configure our levels to start
         levelsUpdated();
+        // and our mail notification
+        mailNotificationUpdated();
 
         // possibly ensure our local storage capacity
         if (!_user.isGuest()) {
@@ -168,6 +184,7 @@ public /*abstract*/ class BaseClient extends Client
         ExternalInterface.addCallback("onUnload", externalOnUnload);
         ExternalInterface.addCallback("getFriends", externalGetFriends);
         ExternalInterface.addCallback("getLevels", externalGetLevels);
+        ExternalInterface.addCallback("getMailNotification", externalGetMailNotification);
     }
 
     /**
@@ -225,6 +242,18 @@ public /*abstract*/ class BaseClient extends Client
     }
 
     /**
+     * Provides this player's flow, gold and level levels to the GWT client.
+     */
+    protected function externalGetMailNotification () :Boolean
+    {
+        if (_user == null) {
+            log.info("externalGetMailNotification() without MemberObject.");
+            return false;
+        }
+        return _user.hasNewMail;
+    }
+
+    /**
      * Creates the context we'll use with this client.
      */
     protected function createContext () :BaseContext
@@ -272,6 +301,8 @@ class LevelUpdater implements AttributeChangeListener
     public function attributeChanged (event :AttributeChangedEvent) :void {
         if (/* event.getName() == MemberObject.GOLD || */ event.getName() == MemberObject.FLOW) {
             BaseClient.levelsUpdated();
+        } else if (event.getName() == MemberObject.HAS_NEW_MAIL) {
+            BaseClient.mailNotificationUpdated();
         }
     }
 }
