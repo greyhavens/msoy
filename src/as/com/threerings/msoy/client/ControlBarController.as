@@ -13,6 +13,7 @@ import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 
 import com.threerings.crowd.client.LocationAdapter;
+import com.threerings.crowd.client.PlaceController;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.whirled.data.Scene;
@@ -138,10 +139,10 @@ public class ControlBarController extends Controller
         }
 
         // if we're in a game, display the game name and send the back button to the lobby
-        var config :MsoyGameConfig =
-            _ctx.getLocationDirector().getPlaceController().getPlaceConfig() as MsoyGameConfig;
-        if (config != null) {
-            _controlBar.updateNavigationWidgets(true, config.name, true);
+        var ctrl :PlaceController = _ctx.getLocationDirector().getPlaceController();
+        if (ctrl != null && ctrl.getPlaceConfig() is MsoyGameConfig) {
+            _controlBar.updateNavigationWidgets(
+                true, (ctrl.getPlaceConfig() as MsoyGameConfig).name, true);
         } else {
             _controlBar.updateNavigationWidgets(false, "", false);
         }
