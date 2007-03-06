@@ -30,7 +30,7 @@ public class SwiftlyProject
 
     /** The id of the project. */
     public int projectId;
-    
+
     /** The id of the project owner. */
     public int ownerId;
 
@@ -42,14 +42,14 @@ public class SwiftlyProject
 
     /** Whether the project is remixable. */
     public boolean remixable;
-    
+
     /** Returns the source file name for the project's type. */
     public String templateSourceName (byte projectType) {
         // We can't use a switch statement because the type finals are not actually constants
         if (projectType == Item.GAME) {
             return "Game.as";
         } else if (projectType == Item.AVATAR) {
-            return "Avatar.as";            
+            return "Avatar.as";
         } else {
             return null;
         }
