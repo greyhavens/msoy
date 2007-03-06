@@ -579,6 +579,14 @@ public class ShipSprite extends Sprite
     }
 
     /**
+     * Forces the ship to point upwards (for display purposes).
+     */
+    public function pointUp () :void
+    {
+        _ship.rotation = -90;
+    }
+
+    /**
      * Update our ship to the reported position, BUT if possible try to
      *  set ourselves up to make up for any discrepancy smoothly.
      */

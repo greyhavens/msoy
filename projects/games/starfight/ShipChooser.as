@@ -49,6 +49,7 @@ public class ShipChooser extends Sprite
     protected function addButton (type :ShipType, idx :int, total :int) :void
     {
         var ship :ShipSprite = new ShipSprite(null, null, true, -1, type.name, false);
+        ship.pointUp();
         ship.setShipType(idx);
         ship.addEventListener(MouseEvent.CLICK, chooseHandler);
 
@@ -72,7 +73,7 @@ public class ShipChooser extends Sprite
         _game.chooseShip(typeIdx);
     }
 
-    protected static const SPACING :int = 50;
+    protected static const SPACING :int = 60;
 
     protected var _game :StarFight;
 }
