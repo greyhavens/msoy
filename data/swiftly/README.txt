@@ -12,7 +12,7 @@ flex_sdk/
       this symlink is resolved and the SDK is copied into the server package.
 
 whirled_sdk/
-    - Our local SDK, contails a lib/ symlink to the built whirled SDK
+    - Our local SDK, contains a lib/ symlink to the built whirled SDK
     (../dist/sdk/whirled_sdk/lib). This will need to be revisited when
     the SDK moves to its own repository. This too will be resolved and
     copied in the server package.
