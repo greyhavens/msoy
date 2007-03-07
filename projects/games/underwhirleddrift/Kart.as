@@ -12,6 +12,8 @@ import mx.core.MovieClipAsset;
 
 import com.threerings.util.Line;
 
+[Event(name="crossedFinishLine", type="KartEvent")]
+
 public class Kart extends KartSprite
 {
     public function Kart (kartType :String, camera :Camera, ground :Ground) 
@@ -119,9 +121,9 @@ public class Kart extends KartSprite
         var movedLine :Line = new Line(oldPos, _camera.position);
         var intersection :int = _ground.getLevel().getFinishLine().getIntersectionType(movedLine);
         if (intersection == Line.INTERSECTION_NORTH) {
-            Log.getLog(this).debug("crossed finish line NORTH");
+            dispatchEvent(new KartEvent(KartEvent.CROSSED_FINISH_LINE, 1));
         } else if (intersection == Line.INTERSECTION_SOUTH) {
-            Log.getLog(this).debug("crossed finish line SOUTH");
+            dispatchEvent(new KartEvent(KartEvent.CROSSED_FINISH_LINE, -1));
         }
 
         var boosts :Array = _ground.getLevel().getBoosts();

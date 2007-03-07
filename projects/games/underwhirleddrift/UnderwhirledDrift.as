@@ -203,6 +203,7 @@ public class UnderwhirledDrift extends Sprite
         _control.sendMessage("kartChosen", {playerId: _control.getMyId(),
             kartType: _kart.kartType});
         updateRaceStarted();
+        _kart.addEventListener(KartEvent.CROSSED_FINISH_LINE, crossFinishLine);
     }
 
     /**
@@ -268,6 +269,11 @@ public class UnderwhirledDrift extends Sprite
             // do nothing
             }
         }
+    }
+
+    protected function crossFinishLine (event :KartEvent) :void
+    {
+        Log.getLog(this).debug("crossed finish line: " + event.value);
     }
 
     protected static const SEND_THROTTLE :int = 150; // in ms
