@@ -220,10 +220,16 @@ public class UnderwhirledDrift extends Sprite
                     }
                     _control.sendChat(_control.getOccupantName(event.value.playerId) + 
                         " finished in " + place + " place!");
+                    if (_playerLaps.size() == 0) {
+                        _control.sendMessage("trackComplete", true);
+                    }
                 }
             } else if (!ArrayUtil.contains(_playersFinished, event.value.playerId)) {
                 _playerLaps.put(event.value.playerId, currentLaps);
             }
+        } else if (event.name == "trackComplete") {
+            _control.localChat("This track has been completed by all players.  In the future " + 
+                "this will load the next track");
         }
     }
 
