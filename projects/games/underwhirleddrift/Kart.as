@@ -121,7 +121,7 @@ public class Kart extends KartSprite
         var oldPos :Point = _camera.position;
         _camera.position = calculateNewPosition(_camera.position, _camera.angle,    
             _ground.getKartLocation());
-        var intersection :int = _finishLine.intersects(new Line(oldPos, _camera.position));
+        var intersection :int = _finishLine.getIntersectionType(new Line(oldPos, _camera.position));
         if (intersection == Line.INTERSECTION_NORTH) {
             Log.getLog(this).debug("crossed finish line NORTH");
         } else if (intersection == Line.INTERSECTION_SOUTH) {
