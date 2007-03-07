@@ -166,7 +166,7 @@ public class WonderlandCroquet extends Sprite
         _lastMousePosition.x = event.stageX;
         _lastMousePosition.y = event.stageY;
 
-        _status.pan(dx, dy);
+        _status.pan(dx / _spr.scaleX, dy / _spr.scaleY);
     }
 
     protected function mouseUp (event :MouseEvent) :void
@@ -348,15 +348,15 @@ public class WonderlandCroquet extends Sprite
     }
 
     /**
-     * Pans the view to the specified coordinate.
+     * Pans the view to be centered at the specified coordinate.
      */
     protected function panTo (x :Number, y: Number) :void
     {
         // FIXME: Animate the pan to here, don't just snap
         /** Argh! I can't touch the stage to find out how big I am!
-        _status.panTo(- (x - this.stage.stageWidth/2), - (y - this.stage.stageHeight/2));
+        _status.panTo(x - this.stage.stageWidth/2, y - this.stage.stageHeight/2);
         */
-        _status.panTo(- (x - WIDTH/2), - (y - HEIGHT/2));
+        _status.panTo(x - WIDTH/2, y - HEIGHT/2);
     }
 
     /** 

@@ -78,8 +78,7 @@ public class WonderlandStatus extends Sprite
      */
     public function panTo (x :Number, y :Number) :void
     {
-        PanControl.pan(_parent, ((x * _parent.scaleX) - _parent.x), 
-                                ((y * _parent.scaleY) - _parent.y));
+        PanControl.panTo(_parent, x, y);
     }
 
     /**
@@ -313,13 +312,19 @@ class ZoomControl extends ScrollerControl
 
     public static function zoom (parent :DisplayObject, zoomPercent :Number) :void
     {
-        // FIXME: We potentially want to zoom about the center of the board, or some such.
+
         var scale :Number = parent.scaleX + zoomPercent;
 
         scale = Math.max(0.1,  scale);
         scale = Math.min(2, scale);
+        var newX: Number = -parent.x / parent.scaleX - 
+                           (WonderlandCroquet.WIDTH / 2) * (parent.scaleX - scale) / scale;
+        var newY: Number = -parent.y / parent.scaleY -
+                           (WonderlandCroquet.HEIGHT / 2) * (parent.scaleY - scale) / scale;
 
         parent.scaleX = parent.scaleY = scale;
+
+        PanControl.panTo(parent, newX, newY);
     }
 
     override protected function enterFrame (event :Event) :void
@@ -348,6 +353,14 @@ class PanControl extends ScrollerControl
     {
         parent.x += dx * parent.scaleX;
         parent.y += dy * parent.scaleY;
+
+        // TODO: lock this to a reasonable border around the parent
+    }
+
+    public static function panTo (parent :DisplayObject, x :Number, y :Number) :void
+    {
+        parent.x = - x * parent.scaleX;
+        parent.y = - y * parent.scaleY
 
         // TODO: lock this to a reasonable border around the parent
     }
