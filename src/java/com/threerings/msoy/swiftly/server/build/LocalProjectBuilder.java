@@ -73,7 +73,8 @@ public class LocalProjectBuilder
             InputStream stdout;
             BufferedReader bufferedOutput;
             
-            
+            // Refer the to "Using the Flex Compilers" documentation
+            // http://livedocs.adobe.com/flex/2/docs/00001477.html
             procBuilder = new ProcessBuilder(
                 _flexSDK.getAbsolutePath() + "/bin/mxmlc",
                 "-load-config",
