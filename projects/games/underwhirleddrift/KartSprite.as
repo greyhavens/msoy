@@ -100,25 +100,22 @@ public class KartSprite extends Sprite
         }
 
         var collides :Object = _ground.getScenery().getCollidingObject();
-        if (collides != null) {
-            switch (collides.sceneryType) {
-            case Scenery.OBSTACLE:
-                Log.getLog(this).debug("colliding with obstacle!");
-                break;
-            case Scenery.BONUS:
-                Log.getLog(this).debug("colliding with bonus!");
-                break;
-            case Scenery.KART:
-                Log.getLog(this).debug("colliding with kart!");
-                break;
-            }
-        }
-
-        if (_ground.getLevel().isOnWall(newPosition)) {
-            return position;
+        if ((collides != null && (collides.sceneryType == Scenery.OBSTACLE || 
+            collides.sceneryType == Scenery.KART)) || _ground.getLevel().isOnWall(newPosition)) {
+            return bounce(position, newPosition);
         } else {
             return newPosition;
         }
+    }
+
+    /**
+     * Bounce off of the new point, by interpolating past the old point.  This should be improved 
+     * so that it take into account the direction you hit it from, and bounces you off at 
+     * the correct angle.  Also, in the case of karts, the larger karts have more influence that
+     * smaller karts... they are bounced less.
+    protected function bounce (oldPos :Point, newPos :Point) :Point 
+    {
+        return Point.interpolate(oldPos, newPos, 3);
     }
 
     /** light kart swf */
