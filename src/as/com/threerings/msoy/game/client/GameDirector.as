@@ -125,7 +125,7 @@ public class GameDirector extends BasicDirector
         }
         _worldGameObj = (obj as GameObject);
         // TODO: fixup, create controller the new way (COMING SOON)
-//        _worldGameCtrl = (_worldGameObj.config.createController() as WorldGameController);
+//        _worldGameCtrl = (_worldGameObj.config.createController() as GameController);
 //        _worldGameCtrl.init(_mctx, _worldGameObj.config);
 //        _worldGameCtrl.willEnterPlace(_worldGameObj);
     }

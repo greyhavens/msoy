@@ -21,16 +21,17 @@ import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.server.persist.MemoryRecord;
 
 import com.threerings.msoy.game.data.WorldGameConfig;
-import com.threerings.msoy.game.data.WorldGameObject;
+import com.threerings.msoy.game.data.AVRGameObject;
 
 import static com.threerings.msoy.Log.*;
 
 /**
- * Manages an in-world ez-game.
+ * Manages an in-world ez-game, or an AVRGame-
+ * an Alternate Virtual Reality Game.
  */
-public class WorldGameManager extends MsoyGameManager
+public class AVRGameManager extends MsoyGameManager
 {
-    public WorldGameManager ()
+    public AVRGameManager ()
     {
         addDelegate(_worldDelegate = new WorldGameManagerDelegate(this));
     }
@@ -38,7 +39,7 @@ public class WorldGameManager extends MsoyGameManager
     @Override // documentation inherited
     protected PlaceObject createPlaceObject ()
     {
-        return new WorldGameObject();
+        return new AVRGameObject();
     }
 
     @Override // documentation inherited
@@ -63,14 +64,14 @@ public class WorldGameManager extends MsoyGameManager
             };
 
             public void handleResult () {
-                WorldGameObject worldGameObj = (WorldGameObject)_gameObj;
-                worldGameObj.startTransaction();
+                AVRGameObject avrGameObj = (AVRGameObject)_gameObj;
+                avrGameObj.startTransaction();
                 try {
                     for (MemoryRecord mrec : _mems) {
-                        worldGameObj.addToMemories(mrec.toEntry());
+                        avrGameObj.addToMemories(mrec.toEntry());
                     }
                 } finally {
-                    worldGameObj.commitTransaction();
+                    avrGameObj.commitTransaction();
                 }
             }
 
@@ -107,7 +108,7 @@ public class WorldGameManager extends MsoyGameManager
         
         // flush any modified memory records to the database
         final ArrayList<MemoryRecord> memrecs = new ArrayList<MemoryRecord>();
-        for (MemoryEntry entry : ((WorldGameObject)_gameObj).memories) {
+        for (MemoryEntry entry : ((AVRGameObject)_gameObj).memories) {
             if (entry.modified) {
                 memrecs.add(new MemoryRecord(entry));
             }

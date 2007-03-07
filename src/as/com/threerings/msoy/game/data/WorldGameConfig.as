@@ -9,7 +9,7 @@ import com.threerings.crowd.client.PlaceController;
 
 import com.threerings.msoy.item.web.Game;
 
-import com.threerings.msoy.game.client.WorldGameController;
+import com.threerings.msoy.game.client.AVRGameController;
 
 /**
  * A game config for an in-world game.
@@ -22,7 +22,9 @@ public class WorldGameConfig extends MsoyGameConfig
     override public function createController () :PlaceController
     {
         if (controller == null) {
-            return new WorldGameController();
+            // this is the EZ-game equivalent for WorldGames...
+            return new AVRGameController();
+
         } else {
             return super.createController();
         }

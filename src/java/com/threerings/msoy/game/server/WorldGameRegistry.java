@@ -32,8 +32,8 @@ import com.threerings.msoy.item.web.ItemIdent;
 
 import com.threerings.msoy.world.data.MemoryEntry;
 
+import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.WorldGameConfig;
-import com.threerings.msoy.game.data.WorldGameObject;
 
 import static com.threerings.msoy.Log.*;
 
@@ -187,7 +187,7 @@ public class WorldGameRegistry
         // get their game object
         MemberObject member = (MemberObject)caller;
         GameObject gameObj = (GameObject)MsoyServer.omgr.getObject(member.inWorldGame);
-        if (!(gameObj instanceof WorldGameObject)) {
+        if (!(gameObj instanceof AVRGameObject)) {
             log.warning("Received memory update request from user not in world game [who=" +
                 member.who() + "].");
             return;
@@ -202,7 +202,7 @@ public class WorldGameRegistry
         // TODO: verify that the memory does not exceed legal size
         
         // mark it as modified and update the game object; we'll save it when we unload the game
-        WorldGameObject wgobj = (WorldGameObject) gameObj;
+        AVRGameObject wgobj = (AVRGameObject) gameObj;
         entry.modified = true;
         if (wgobj.memories.contains(entry)) {
             wgobj.updateMemories(entry);

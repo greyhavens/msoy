@@ -8,9 +8,9 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.msoy.world.data.MemoryEntry;
 
 /**
- * A game config for an in-world game.
+ * A game config for an AVR game.
  */
-public class WorldGameObject extends MsoyGameObject
+public class AVRGameObject extends MsoyGameObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>memories</code> field. */

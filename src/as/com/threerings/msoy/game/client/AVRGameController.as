@@ -7,13 +7,12 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.util.CrowdContext;
 
-import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
 
-public class WorldGameController extends MsoyGameController
+public class AVRGameController extends MsoyGameController
 {
-    public function WorldGameController ()
+    public function AVRGameController ()
     {
         super();
         addDelegate(_worldDelegate = new WorldGameControllerDelegate(this));
@@ -27,7 +26,7 @@ public class WorldGameController extends MsoyGameController
     
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
-        _panel = new WorldGamePanel(ctx, this);
+        _panel = new AVRGamePanel(ctx, this);
         return _panel;
     }
     
@@ -50,19 +49,19 @@ import com.threerings.crowd.util.CrowdContext;
 import com.threerings.ezgame.client.EZGamePanel;
 import com.threerings.ezgame.client.GameControlBackend;
 import com.threerings.msoy.client.WorldContext;
-import com.threerings.msoy.game.client.WorldGameControlBackend;
-import com.threerings.msoy.game.client.WorldGameController;
-import com.threerings.msoy.game.data.WorldGameObject;
+import com.threerings.msoy.game.client.AVRGameControlBackend;
+import com.threerings.msoy.game.client.AVRGameController;
+import com.threerings.msoy.game.data.AVRGameObject;
 
-class WorldGamePanel extends EZGamePanel // we need no chat
+class AVRGamePanel extends EZGamePanel // we need no chat
 {
-    public function WorldGamePanel (ctx :CrowdContext, ctrl :WorldGameController)
+    public function AVRGamePanel (ctx :CrowdContext, ctrl :AVRGameController)
     {
         super(ctx, ctrl);
     }
     
     override protected function createBackend () :GameControlBackend
     {
-        return new WorldGameControlBackend(_ctx as WorldContext, _ezObj as WorldGameObject, _ctrl as WorldGameController);
+        return new AVRGameControlBackend(_ctx as WorldContext, _ezObj as AVRGameObject, _ctrl as AVRGameController);
     }
 }

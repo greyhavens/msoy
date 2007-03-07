@@ -17,7 +17,7 @@ public class WorldGameConfig extends MsoyGameConfig
     public String getManagerClassName ()
     {
         if (manager == null) {
-            return "com.threerings.msoy.game.server.WorldGameManager";
+            return "com.threerings.msoy.game.server.AVRGameManager";
 
         } else {
             return super.getManagerClassName();

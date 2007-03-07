@@ -33,23 +33,22 @@ import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomObject;
 
 import com.threerings.msoy.game.data.WorldGameConfig;
-import com.threerings.msoy.game.data.WorldGameObject;
+import com.threerings.msoy.game.data.AVRGameObject;
 
-// TODO: this too needs renaming because it's too confusing now
-public class WorldGameControlBackend extends WhirledGameControlBackend
+public class AVRGameControlBackend extends WhirledGameControlBackend
     implements LocationObserver, OccupantObserver
 {
-    public function WorldGameControlBackend (
-        ctx :WorldContext, worldGameObj :WorldGameObject, ctrl :MsoyGameController)
+    public function AVRGameControlBackend (
+        ctx :WorldContext, avrGameObj :AVRGameObject, ctrl :MsoyGameController)
     {
-        super(ctx, worldGameObj, ctrl);
+        super(ctx, avrGameObj, ctrl);
         _mctx = ctx;
-        _worldGameObj = worldGameObj;
+        _avrGameObj = avrGameObj;
         // the gameIdent matches the prototype of the game
         _gameIdent = new ItemIdent(Item.GAME,
             (ctrl.getPlaceConfig() as WorldGameConfig).persistentGameId);
         
-        _worldGameObj.addListener(_memlist);
+        _avrGameObj.addListener(_memlist);
         
         _mctx.getLocationDirector().addLocationObserver(this);
         _mctx.getOccupantDirector().addOccupantObserver(this);
@@ -115,7 +114,7 @@ public class WorldGameControlBackend extends WhirledGameControlBackend
     {
         super.shutdown();
         
-        _worldGameObj.removeListener(_memlist);
+        _avrGameObj.removeListener(_memlist);
         
         _mctx.getLocationDirector().removeLocationObserver(this);
         _mctx.getOccupantDirector().removeOccupantObserver(this);
@@ -139,7 +138,7 @@ public class WorldGameControlBackend extends WhirledGameControlBackend
     protected function lookupMemory_v1 (key :String) :Object
     {
         var mkey :MemoryEntry = new MemoryEntry(_gameIdent, key),
-            entry :MemoryEntry = _worldGameObj.memories.get(mkey) as MemoryEntry;
+            entry :MemoryEntry = _avrGameObj.memories.get(mkey) as MemoryEntry;
         return (entry == null) ? null : EZObjectMarshaller.decode(entry.value);
     }
 
@@ -159,7 +158,7 @@ public class WorldGameControlBackend extends WhirledGameControlBackend
 
     override public function getPlayers_v1 () :Array
     {
-        return getOccupantIds(_worldGameObj);
+        return getOccupantIds(_avrGameObj);
     }
     
     // helper function for getOccupants_v1 and getPlayers_v1
@@ -202,7 +201,7 @@ public class WorldGameControlBackend extends WhirledGameControlBackend
     }
     
     protected var _mctx :WorldContext;
-    protected var _worldGameObj :WorldGameObject;
+    protected var _avrGameObj :AVRGameObject;
     protected var _gameIdent :ItemIdent;
     protected var _roomObj :RoomObject;
     
@@ -215,12 +214,12 @@ public class WorldGameControlBackend extends WhirledGameControlBackend
     
     protected var _memlist :SetAdapter = new SetAdapter(
         function (event :EntryAddedEvent) :void {
-            if (event.getName() == WorldGameObject.MEMORIES) {
+            if (event.getName() == AVRGameObject.MEMORIES) {
                 callMemoryChanged(event.getEntry() as MemoryEntry);
             }
         },
         function (event :EntryUpdatedEvent) :void {
-            if (event.getName() == WorldGameObject.MEMORIES) {
+            if (event.getName() == AVRGameObject.MEMORIES) {
                 callMemoryChanged(event.getEntry() as MemoryEntry);
             }
         });

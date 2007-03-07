@@ -9,12 +9,16 @@ import flash.display.DisplayObject;
 
 import com.threerings.util.Name;
 
+// NOTE: This API is going to change, a lot, before everything's said and
+// done. Time hasn't been had to give it the love it needs.
+
 /**
- * This file should be included by world games so that they can communicate
+ * This file should be included by AVR games so that they can communicate
  * with the whirled.
+ * AVRGame means: Alternate Virtual Reality Game, and refers to games
+ * played within the whirled environment.
  */
-// TODO: rename this. It's confusing.
-public class WorldGameControl extends WhirledGameControl
+public class AVRGameControl extends WhirledGameControl
 {
     /**
      * A function that is called when the game's memory has changed. It should have the following
@@ -56,7 +60,7 @@ public class WorldGameControl extends WhirledGameControl
     /**
      * Create a world game interface. The display object is your world game.
      */
-    public function WorldGameControl (disp :DisplayObject)
+    public function AVRGameControl (disp :DisplayObject)
     {
         super(disp);
     }

@@ -10,9 +10,9 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.ezgame.data.EZGameObject;
 
 /**
- * Represents a lobby for a particular game.
+ * Holds game state for an AVRGame.
  */
-public class WorldGameObject extends MsoyGameObject
+public class AVRGameObject extends MsoyGameObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>memories</code> field. */
