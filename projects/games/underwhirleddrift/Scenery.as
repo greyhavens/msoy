@@ -10,6 +10,8 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import com.threerings.util.ArrayUtil;
+
 public class Scenery extends Sprite
 {
     public static const OBSTACLE: int = 1;
@@ -88,6 +90,14 @@ public class Scenery extends Sprite
     public function addKart (kart :KartObstacle) :void
     {
         initializeObject(kart, KART);
+    }
+
+    public function removeObject (obj :Object) :void
+    {
+        if (obj.sprite.parent == this) {
+            removeChild(obj.sprite);
+            ArrayUtil.removeFirst(_items, obj);
+        }
     }
 
     protected function initializeObject (obj :Object, type :int) :void

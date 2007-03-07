@@ -123,6 +123,11 @@ public class Kart extends KartSprite
                 }
             }
         }
+
+        var collides :Object = _ground.getScenery().getCollidingObject();
+        if (collides != null && collides.sceneryType == Scenery.BONUS) {
+            _ground.getScenery().removeObject(collides);
+        }
     }
 
     protected function keyAction (inMotion :Boolean, flag :int) :void
