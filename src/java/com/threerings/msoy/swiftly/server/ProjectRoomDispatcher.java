@@ -42,7 +42,7 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
         case ProjectRoomMarshaller.ADD_DOCUMENT:
             ((ProjectRoomProvider)provider).addDocument(
                 source,
-                (PathElement)args[0]
+                (PathElement)args[0], (InvocationService.InvocationListener)args[1]
             );
             return;
 

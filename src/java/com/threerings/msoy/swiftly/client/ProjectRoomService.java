@@ -24,7 +24,7 @@ public interface ProjectRoomService extends InvocationService
     public void deletePathElement (Client client, int elementId);
 
     /** Requests to add a document to the project. element is the "parent" of the new document. */
-    public void addDocument (Client client, PathElement element);
+    public void addDocument (Client client, PathElement element, InvocationListener listener);
 
     /** Requests that the specified document be updated (currently wholesale but some day with
      * diffs). */

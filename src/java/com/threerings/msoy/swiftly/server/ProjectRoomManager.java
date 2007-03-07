@@ -38,7 +38,6 @@ import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 public class ProjectRoomManager extends PlaceManager
     implements ProjectRoomProvider
 {
-
     /**
      * Called by the {@link SwiftlyManager} after creating this project room manager.
      */
@@ -94,7 +93,8 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void addDocument (ClientObject caller, PathElement element)
+    public void addDocument (ClientObject caller, PathElement element,
+                             final ProjectRoomService.InvocationListener listener)
     {
         // TODO: check access!
 
@@ -103,9 +103,9 @@ public class ProjectRoomManager extends PlaceManager
 
         SwiftlyDocument doc = null;
         try {
-            doc = new SwiftlyDocument(element, ProjectStorage.TEXT_ENCODING); 
+            doc = new SwiftlyDocument(element, ProjectStorage.TEXT_ENCODING);
         } catch (IOException e) {
-            // TODO: display an error message to the user
+            listener.requestFailed("e.add_document_failed");
             return;
         }
 

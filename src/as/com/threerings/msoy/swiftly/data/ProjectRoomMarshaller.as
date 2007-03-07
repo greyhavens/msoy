@@ -10,6 +10,7 @@ import com.threerings.msoy.swiftly.client.ProjectRoomService;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
+import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
@@ -28,10 +29,12 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static const ADD_DOCUMENT :int = 1;
 
     // from interface ProjectRoomService
-    public function addDocument (arg1 :Client, arg2 :PathElement) :void
+    public function addDocument (arg1 :Client, arg2 :PathElement, arg3 :InvocationService_InvocationListener) :void
     {
+        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, ADD_DOCUMENT, [
-            arg2
+            arg2, listener3
         ]);
     }
 
