@@ -32,30 +32,83 @@ public class KartChooser
         _chooserSprite.y = (UnderwhirledDrift.DISPLAY_HEIGHT - HEIGHT) / 2;
         _udInst.addChild(_chooserSprite);
 
-
         var selectText :TextField = new TextField();
         selectText.text = "Select Your Kart";
         selectText.selectable = false;
         selectText.autoSize = TextFieldAutoSize.CENTER;
-        selectText.scaleX = selectText.scaleY = 4;
+        selectText.scaleX = selectText.scaleY = 3;
         selectText.x = (WIDTH - selectText.width) / 2;
-        selectText.y -= 20;
+        selectText.y -= 15;
+        selectText.textColor = TEXT_COLOR;
         _chooserSprite.addChild(selectText);
-        var kartL :KartSprite = new KartSprite(KartSprite.KART_LIGHT, null, 160);
-        kartL.x = kartL.width / 2;
-        kartL.y = HEIGHT;
-        kartL.addEventListener(MouseEvent.CLICK, selectedKart);
-        _chooserSprite.addChild(kartL);
-        var kartM :KartSprite = new KartSprite(KartSprite.KART_MEDIUM, null, 180);
-        kartM.x = WIDTH / 2;
-        kartM.y = HEIGHT; 
-        kartM.addEventListener(MouseEvent.CLICK, selectedKart);
-        _chooserSprite.addChild(kartM);
-        var kartH :KartSprite = new KartSprite(KartSprite.KART_HEAVY, null, 200);
-        kartH.x = WIDTH - kartH.width / 2;
-        kartH.y = HEIGHT;
-        kartH.addEventListener(MouseEvent.CLICK, selectedKart);
-        _chooserSprite.addChild(kartH);
+        _chooserSprite.addChild(createKartSelection(LEFT, new KartSprite(KartSprite.KART_LIGHT, 
+            null, 160), "Soul Jelly", 
+            "The smallest and lightest\n" +  
+            "of the karts, Soul Jellies\n" +
+            "have excellent acceleration\n" + 
+            "but the lowest of all top\n" + 
+            "speeds."));
+        _chooserSprite.addChild(createKartSelection(CENTER, new KartSprite(KartSprite.KART_MEDIUM,
+            null, 180), "Devilite", 
+            "Preferring to drive down\n" + 
+            "the middle of the road,\n" + 
+            "Devilites have average stats\n" + 
+            "across the board.  A good\n" + 
+            "choice for beginners."));
+        _chooserSprite.addChild(createKartSelection(RIGHT, new KartSprite(KartSprite.KART_HEAVY,
+            null, 200), "Pit Brute", 
+            "The big lugs can barely\n" + 
+            "squeeze into the karts\n"+ 
+            "they drive. While their\n" + 
+            "acceleration is poor, their\n" + 
+            "blazing top speed can leave\n" + 
+            "all other racers in the dust."));
+    }
+
+    protected function createKartSelection (loc :int, kart :Sprite, title :String, 
+        desc :String) :Sprite
+    {
+        var selection :Sprite = new Sprite();
+        var titleText :TextField = new TextField();
+        titleText.text = title;
+        titleText.selectable = false;
+        titleText.autoSize = TextFieldAutoSize.CENTER;
+        titleText.scaleX = titleText.scaleY = 2.5;
+        titleText.x = -50;
+        titleText.y = -HEIGHT + 30;
+        titleText.textColor = TEXT_COLOR;
+        selection.addChild(titleText);
+
+        selection.addChild(kart);
+        kart.addEventListener(MouseEvent.CLICK, selectedKart);
+        kart.y = -HEIGHT + 230;
+
+        var descText :TextField = new TextField();
+        descText.text = desc;
+        descText.selectable = false;
+        descText.autoSize = TextFieldAutoSize.CENTER;
+        descText.x = -(SELECTION_WIDTH - titleText.width);
+        descText.y = -125;
+        descText.scaleX = descText.scaleY = 1.5;
+        descText.textColor = TEXT_COLOR;
+        selection.addChild(descText);
+
+        selection.y = HEIGHT;
+        switch (loc) {
+        case LEFT:
+            selection.x = SELECTION_WIDTH / 2;
+            titleText.x = -70;
+            break;
+        case CENTER:
+            titleText.x = -55;
+            selection.x = WIDTH / 2;
+            break;
+        case RIGHT:
+            titleText.x = -70;
+            selection.x = WIDTH - SELECTION_WIDTH / 2;
+            break
+        }
+        return selection;
     }
 
     protected function selectedKart (event :MouseEvent) :void
@@ -97,8 +150,15 @@ public class KartChooser
         }
     }
 
-    protected static const WIDTH :int = 500;
-    protected static const HEIGHT :int = 200;
+    protected static const WIDTH :int = 675;
+    protected static const HEIGHT :int = 350;
+    protected static const SELECTION_WIDTH :int = 200;
+
+    protected static const LEFT :int = 1;
+    protected static const CENTER :int = 2;
+    protected static const RIGHT :int = 3;
+
+    protected static const TEXT_COLOR :int = 0xEAEFF1;
 
     protected var _udInst :UnderwhirledDrift;
     protected var _blurObj :DisplayObject;
