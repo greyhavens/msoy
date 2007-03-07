@@ -12,6 +12,8 @@ import flash.geom.Rectangle;
 
 import flash.utils.describeType;
 
+import com.threerings.util.Line;
+
 public class Level extends Sprite
 {
     public function Level (ground :Ground, background :Class, rough :Class, track :Class, 
@@ -66,6 +68,11 @@ public class Level extends Sprite
     {
         _startingPosition = position;
         _ground.setKartLocation(_config.getStartingPoint(_startingPosition));
+    }
+
+    public function getFinishLine () :Line
+    {
+        return _config.getStartingLine();
     }
 
     public function get horizon () :Class

@@ -10,6 +10,8 @@ import flash.utils.describeType;
 
 import mx.core.MovieClipAsset;
 
+import com.threerings.util.Line;
+
 public class Kart extends KartSprite
 {
     public function Kart (kartType :String, camera :Camera, ground :Ground) 
@@ -66,7 +68,12 @@ public class Kart extends KartSprite
         }
     }
 
-    public function enterFrame (event :Event) :void
+    public function setFinishLine (line :Line) :void
+    {
+        _finishLine = line;
+    }
+
+    protected function enterFrame (event :Event) :void
     {
         // update camera and kart angles
         var viewAcceleration :int = Math.abs(_currentViewAngle) > TURN_VIEW_ANGLE ? 
@@ -111,8 +118,15 @@ public class Kart extends KartSprite
             _kart.gotoAndStop(frame);
         }
 
+        var oldPos :Point = _camera.position;
         _camera.position = calculateNewPosition(_camera.position, _camera.angle,    
             _ground.getKartLocation());
+        var intersection :int = _finishLine.intersects(new Line(oldPos, _camera.position));
+        if (intersection == Line.INTERSECTION_NORTH) {
+            Log.getLog(this).debug("crossed finish line NORTH");
+        } else if (intersection == Line.INTERSECTION_SOUTH) {
+            Log.getLog(this).debug("crossed finish line SOUTH");
+        }
 
         // deal with a jump
         if (_jumpFrameCount > 0) {
@@ -140,6 +154,14 @@ public class Kart extends KartSprite
         }
     }
 
+    /** turning constants */
+    protected static const TURN_VIEW_ANGLE :int = 15; // in degrees
+    protected static const DRIFT_VIEW_ANGLE :int = 45; // in degrees
+    protected static const VIEW_ACCELERATION :int = 4; // degrees per frame
+
+    /** values to control jumping */
+    protected static const JUMP_DURATION :int = 3;
+    protected static const JUMP_HEIGHT :int = 15;
    
     /** reference to the camera object */
     protected var _camera :Camera;
@@ -150,13 +172,6 @@ public class Kart extends KartSprite
     /** The current angle we are viewing our own kart at */
     protected var _currentViewAngle :Number = 0;
 
-    /** turning constants */
-    protected static const TURN_VIEW_ANGLE :int = 15; // in degrees
-    protected static const DRIFT_VIEW_ANGLE :int = 45; // in degrees
-    protected static const VIEW_ACCELERATION :int = 4; // degrees per frame
-
-    /** values to control jumping */
-    protected static const JUMP_DURATION :int = 3;
-    protected static const JUMP_HEIGHT :int = 15;
+    protected var _finishLine :Line;
 }
 }
