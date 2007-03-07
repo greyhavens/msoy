@@ -74,6 +74,15 @@ public class WonderlandStatus extends Sprite
     }
 
     /**
+     * Pans the view to the specified point.
+     */
+    public function panTo (x :Number, y :Number) :void
+    {
+        PanControl.pan(_parent, ((x * _parent.scaleX) - _parent.x), 
+                                ((y * _parent.scaleY) - _parent.y));
+    }
+
+    /**
      * Does the magic setting things up once the graphics have finished loading.
      */
     protected function loaderComplete (evt :Event) :void
@@ -337,8 +346,8 @@ class PanControl extends ScrollerControl
 
     public static function pan (parent :DisplayObject, dx :Number, dy :Number) :void
     {
-        parent.x += dx;
-        parent.y += dy;
+        parent.x += dx * parent.scaleX;
+        parent.y += dy * parent.scaleY;
 
         // TODO: lock this to a reasonable border around the parent
     }

@@ -266,7 +266,7 @@ public class WonderlandCroquet extends Sprite
                     gameCtrl.setImmediate("balls", _balls);
                     gameCtrl.setImmediate("wickets", _wickets);
                 }
-                gameCtrl.localChat("Your turn!");
+                gameCtrl.localChat("Your turn!" + _spr.width);
                 startTurn();
             } else {
                 gameCtrl.localChat(gameCtrl.getOccupantName(gameCtrl.getTurnHolder()) + "'s turn");
@@ -354,11 +354,9 @@ public class WonderlandCroquet extends Sprite
     {
         // FIXME: Animate the pan to here, don't just snap
         /** Argh! I can't touch the stage to find out how big I am!
-        _spr.x = - (x - this.stage.stageWidth/2);
-        _spr.y = - (y - this.stage.stageHeight/2);
+        _status.panTo(- (x - this.stage.stageWidth/2), - (y - this.stage.stageHeight/2));
         */
-        _spr.x = - (x - WIDTH/2);
-        _spr.y = - (y - HEIGHT/2);
+        _status.panTo(- (x - WIDTH/2), - (y - HEIGHT/2));
     }
 
     /** 

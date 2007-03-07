@@ -1,7 +1,6 @@
 * Terrain - hit testing doesn't work if the sprite isn't on screen, so the 
   current method doesn't work unless we force you to be zoomed out enough to 
   see everything whenever something is rolling. Bleh.
-* Fix auto-panning for non-default zoom
 * Pan to coordinate, don't snap
 * Pan and track ball movement
 * Take clicks on markers in the status view and pan to that ball
