@@ -41,6 +41,7 @@ public class WorldGameControllerDelegate extends GameControllerDelegate
         var quit :CommandButton = new CommandButton(MsoyController.LEAVE_WORLD_GAME);
         quit.label = Msgs.GAME.get("b.leave_world_game");
         _panel.addChild(quit);
+        _panel.height = 150;
 
         ctx.getTopPanel().setBottomPanel(_panel);
     }

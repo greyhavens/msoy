@@ -66,6 +66,12 @@ public class AbstractRoomView extends Sprite
         updateDrawnRoom();
     }
 
+    // from MsoyPlaceView
+    public function setChatOverlayEnabled (enabled :Boolean) :void
+    {
+        // this is a no-op here, go look in RoomView.
+    }
+
     /**
      * Get the room's stage bounds.
      */

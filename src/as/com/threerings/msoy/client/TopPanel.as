@@ -28,6 +28,8 @@ import com.threerings.util.Name;
 
 import com.threerings.crowd.client.PlaceView;
 
+import com.threerings.msoy.chat.client.ChatContainer;
+
 public class TopPanel extends Canvas
 {
     /**
@@ -67,7 +69,7 @@ public class TopPanel extends Canvas
         buildStamp.text = "Build: " + DeploymentConfig.buildTime + "  " + Capabilities.version;
         buildStamp.setStyle("color", "#F7069A");
         buildStamp.setStyle("fontSize", 8);
-        buildStamp.setStyle("bottom", _controlBar.height);
+        buildStamp.setStyle("bottom", ControlBar.HEIGHT);
         buildStamp.setStyle("right", ScrollBar.THICKNESS);
         addChild(buildStamp);
 
@@ -102,6 +104,7 @@ public class TopPanel extends Canvas
 
         clearPlaceView(null);
         _placeView = view;
+        updatePlaceChatOverlay();
 
         if (disp is UIComponent) {
             _placeBox.addChildAt(disp, 0);
@@ -158,11 +161,37 @@ public class TopPanel extends Canvas
         }
     }
 
+    /**
+     * Set the panel that should be shown along the bottom. The panel
+     * should have an explicit height. If the height is 100 pixels
+     * or larger, a chat box will be placed to the left of it and
+     * removed from the room overlay.
+     */
     public function setBottomPanel (bottom :UIComponent) :void
     {
         clearBottomPanel(null);
-        _bottomPanel = bottom;
+
+        _bottomPanel = new HBox();
+        _bottomPanel.setStyle("bottom", ControlBar.HEIGHT);
+        _bottomPanel.setStyle("left", 0);
+        _bottomPanel.setStyle("right", 0);
+
+        // if the bottom is more than 100 pixels tall, we'll include
+        // a chatbox to the left of it.
+        if (bottom.height >= 100) {
+            var chatBox :ChatContainer = new ChatContainer(_ctx);
+            chatBox.width = 300;
+            chatBox.percentHeight = 100;
+            _bottomPanel.addChild(chatBox);
+            _hasChatBox = true;
+            updatePlaceChatOverlay();
+        }
+
+        _bottomComp = bottom;
+        _bottomComp.percentWidth = 100;
+        _bottomPanel.addChild(bottom);
         _bottomPanel.includeInLayout = false;
+        _bottomPanel.height = bottom.height; // eek?
 
         addChild(_bottomPanel); // add to end
         layoutPanels();
@@ -170,9 +199,12 @@ public class TopPanel extends Canvas
 
     public function clearBottomPanel (bottom :UIComponent) :void
     {
-        if ((_bottomPanel != null) && (bottom == null || bottom == _bottomPanel)) {
+        if ((_bottomComp != null) && (bottom == null || bottom == _bottomComp)) {
             removeChild(_bottomPanel);
             _bottomPanel = null;
+            _bottomComp = null;
+            _hasChatBox = false;
+            updatePlaceChatOverlay();
             layoutPanels();
         }
     }
@@ -203,16 +235,9 @@ public class TopPanel extends Canvas
     {
         if (_sidePanel != null) {
             _sidePanel.setStyle("top", 0);
-            _sidePanel.setStyle("bottom", getBottomPanelHeight() + _controlBar.height);
+            _sidePanel.setStyle("bottom", getBottomPanelHeight() + ControlBar.HEIGHT);
             _sidePanel.setStyle("left", 0);
             _sidePanel.width = SIDE_PANEL_WIDTH;
-        }
-
-        if (_bottomPanel != null) {
-            _bottomPanel.setStyle("bottom", _controlBar.height);
-            _bottomPanel.setStyle("left", 0);
-            _bottomPanel.width = _controlBar.width;
-            _bottomPanel.height = BOTTOM_PANEL_HEIGHT;
         }
 
         updatePlaceViewSize();
@@ -220,11 +245,11 @@ public class TopPanel extends Canvas
 
     protected function updatePlaceViewSize () :void
     {
+        var botHeight :int = getBottomPanelHeight();
         var w :int = stage.stageWidth - getSidePanelWidth();
-        var h :int = stage.stageHeight - _controlBar.height
-            - getBottomPanelHeight();
+        var h :int = stage.stageHeight - ControlBar.HEIGHT - botHeight;
         var top :int = 0;
-        var bottom :int = getBottomPanelHeight() + _controlBar.height;
+        var bottom :int = botHeight + ControlBar.HEIGHT;
 
         // actually, for place views, we want to insert decorative margins
         // above and below the view - so let's tweak the sizes
@@ -265,7 +290,14 @@ public class TopPanel extends Canvas
 
     protected function getBottomPanelHeight () :int
     {
-        return (_bottomPanel == null ? 0 : BOTTOM_PANEL_HEIGHT);
+        return (_bottomPanel == null ? 0 : _bottomPanel.height);
+    }
+
+    protected function updatePlaceChatOverlay () :void
+    {
+        if (_placeView is MsoyPlaceView) {
+            (_placeView as MsoyPlaceView).setChatOverlayEnabled(!_hasChatBox);
+        }
     }
 
     /** The giver of life. */
@@ -284,8 +316,14 @@ public class TopPanel extends Canvas
     /** The current side panel component. */
     protected var _sidePanel :UIComponent;
 
+    /** The thing what holds the bottom panel. */
+    protected var _bottomPanel :HBox;
+
     /** The current bottom panel component. */
-    protected var _bottomPanel :UIComponent;
+    protected var _bottomComp :UIComponent;
+
+    /** True if we're hosting our own chatbox. */
+    protected var _hasChatBox :Boolean;
 
     /** Control bar at the bottom of the window. */
     protected var _controlBar :ControlBar;
@@ -297,8 +335,6 @@ public class TopPanel extends Canvas
     protected var _friendsList :FriendsList;
 
     protected static const SIDE_PANEL_WIDTH :int = 350;
-
-    protected static const BOTTOM_PANEL_HEIGHT :int = 50;
 
     public static const DECORATIVE_MARGIN_HEIGHT :int = 4;
 }

@@ -107,6 +107,14 @@ public class ChatOverlay
     }
 
     /**
+     * Are we active with a target?
+     */
+    public function isActive () :Boolean
+    {
+        return (_target != null);
+    }
+
+    /**
      * Set the target container where this chat should add its overlay.
      *
      * @param target the container to which a chat overlay should be added;

@@ -98,6 +98,13 @@ public class RoomView extends AbstractRoomView
         return _ctrl;
     }
 
+    // from MsoyPlaceView
+    override public function setChatOverlayEnabled (enabled :Boolean) :void
+    {
+        _showChatOverlay = enabled;
+        recheckChatOverlay();
+    }
+
     override public function setScene (scene :MsoyScene) :void
     {
         super.setScene(scene);
@@ -152,6 +159,13 @@ public class RoomView extends AbstractRoomView
      */
     public function moveFinished (sprite :ActorSprite) :void
     {
+//        if (_pendingRemovals.get(sprite.getOid()) != null) {
+//            sprite.whirlOut(_scene);
+//        }
+//    }
+//
+//    public function whirlDone (sprite :ActorSprite) :void
+//    {
         if (null != _pendingRemovals.remove(sprite.getOid())) {
             removeSprite(sprite);
         }
@@ -324,6 +338,27 @@ public class RoomView extends AbstractRoomView
         }
     }
 
+    /**
+     * Check the status of the chat overlay.
+     */
+    protected function recheckChatOverlay () :void
+    {
+        var shouldBeEnabled :Boolean = _showChatOverlay && (_roomObj != null);
+
+        if (chatOverlay.isActive() == shouldBeEnabled) {
+            // all is well
+            return;
+        }
+
+        if (shouldBeEnabled) {
+            chatOverlay.newPlaceEntered(this);
+            chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
+
+        } else {
+            chatOverlay.setTarget(null);
+        }
+    }
+
     // from ChatInfoProvider
     public function getSpeaker (speaker :Name) :Rectangle
     {
@@ -391,11 +426,12 @@ public class RoomView extends AbstractRoomView
 
         _roomObj.addListener(this);
 
-        chatOverlay.newPlaceEntered(this);
-        chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
+        recheckChatOverlay();
 
         addAllOccupants();
 
+        // we add ourselves as a chat display so that we can trigger
+        // speak actions on avatars
         _ctx.getChatDirector().addChatDisplay(this);
 
         // and animate ourselves entering the room (everyone already in the (room will also have
@@ -416,14 +452,15 @@ public class RoomView extends AbstractRoomView
     {
         _roomObj.removeListener(this);
 
-        chatOverlay.setTarget(null);
-
+        // stop listening for avatar speak action triggers
         _ctx.getChatDirector().removeChatDisplay(this);
 
         shutdownMusic();
         removeAllOccupants();
 
         super.didLeavePlace(plobj);
+
+        recheckChatOverlay();
     }
 
     // from AbstractRoomView
@@ -757,6 +794,9 @@ public class RoomView extends AbstractRoomView
 
     /** The background music in the scene. */
     protected var _music :SoundPlayer;
+
+    /** Should our chat overlay be showing? */
+    protected var _showChatOverlay :Boolean = true;
 
     /** When we first enter the room, we only load the background (if any). */
     protected var _loadAllMedia :Boolean = false;

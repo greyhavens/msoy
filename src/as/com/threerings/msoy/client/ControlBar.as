@@ -33,7 +33,7 @@ import com.threerings.msoy.chat.client.ChatControl;
 public class ControlBar extends HBox
 {
     /** The height of the control bar. This is fixed. */
-    private static const HEIGHT :int = 24;
+    public static const HEIGHT :int = 24;
 
     public function ControlBar (ctx :WorldContext, top :TopPanel)
     {
