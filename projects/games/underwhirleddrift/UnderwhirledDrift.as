@@ -185,7 +185,7 @@ public class UnderwhirledDrift extends Sprite
     protected function updateRaceStarted () :void
     {
         if (_control.seating.getPlayerIds().length == 1) {
-            _raceStarted = true;
+            _control.sendMessage("raceStarted", true);
         } else if (_control.amInControl()) {
             var keys :Array = _opponentKarts.keys();
             for (var ii :int = 0; ii < keys.length; ii++) {
@@ -234,6 +234,7 @@ public class UnderwhirledDrift extends Sprite
                     _horizon.y += _horizon.height / 2;
                     _horizon.x += _horizon.width / 2;
                     _level.setStartingPosition(0);
+                    _ground.getScenery().registerKart(_kart);
                 }
                 break;
             default:
@@ -243,6 +244,9 @@ public class UnderwhirledDrift extends Sprite
     }
 
     protected static const SEND_THROTTLE :int = 150; // in ms
+
+    [Embed(source='rsrc/light_board.swf#light_board')]
+    protected static const LIGHT_BOARD :Class;
 
     /** the game control. */
     protected var _control :WhirledGameControl;

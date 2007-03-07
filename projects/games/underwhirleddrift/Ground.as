@@ -62,8 +62,7 @@ public class Ground extends Sprite
     }
 
     /**
-     * Set Scenery.  this and setKartLocation() might work better as a initFinished() to be called
-     * from Level.
+     * Set Scenery.  
      */
     public function setScenery (scenery :Scenery) :void
     {
