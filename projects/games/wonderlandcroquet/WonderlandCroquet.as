@@ -405,7 +405,7 @@ public class WonderlandCroquet extends Sprite
 
     protected var _moveAgain :Boolean;
 
-    protected static const FLOW_MULTIPLIER :int = 10;
+    protected static const FLOW_MULTIPLIER :int = 50;
 
 }
 }
