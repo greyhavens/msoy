@@ -384,7 +384,7 @@ public class MsoyController extends Controller
      */
     protected function handleInternalGo (url :String) :Boolean
     {
-        return shouldLoadNewPages() && NetUtil.navigateToURL(url, false);
+        return shouldLoadNewPages() && NetUtil.navigateToURL(url, true);
     }
 
     /**
