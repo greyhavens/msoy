@@ -9,10 +9,5 @@ public interface MsoyPlaceView extends PlaceView
      */
     function setPlaceSize (
         unscaledWidth :Number, unscaledHeight :Number) :void;
-
-    /**
-     * Tell the placeview whether it should show a chatbox or not.
-     */
-    function setChatOverlayEnabled (enabled :Boolean) :void;
 }
 }

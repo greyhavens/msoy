@@ -14,6 +14,9 @@ import flash.geom.Rectangle;
 import flash.utils.getTimer; // function import
 import flash.utils.ByteArray;
 
+import mx.binding.utils.BindingUtils;
+import mx.binding.utils.ChangeWatcher;
+
 import mx.core.Container;
 
 import com.threerings.util.HashMap;
@@ -96,13 +99,6 @@ public class RoomView extends AbstractRoomView
     public function getRoomController () :RoomController
     {
         return _ctrl;
-    }
-
-    // from MsoyPlaceView
-    override public function setChatOverlayEnabled (enabled :Boolean) :void
-    {
-        _showChatOverlay = enabled;
-        recheckChatOverlay();
     }
 
     override public function setScene (scene :MsoyScene) :void
@@ -338,27 +334,6 @@ public class RoomView extends AbstractRoomView
         }
     }
 
-    /**
-     * Check the status of the chat overlay.
-     */
-    protected function recheckChatOverlay () :void
-    {
-        var shouldBeEnabled :Boolean = _showChatOverlay && (_roomObj != null);
-
-        if (chatOverlay.isActive() == shouldBeEnabled) {
-            // all is well
-            return;
-        }
-
-        if (shouldBeEnabled) {
-            chatOverlay.newPlaceEntered(this);
-            chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
-
-        } else {
-            chatOverlay.setTarget(null);
-        }
-    }
-
     // from ChatInfoProvider
     public function getSpeaker (speaker :Name) :Rectangle
     {
@@ -445,6 +420,9 @@ public class RoomView extends AbstractRoomView
         } else {
             addFurni(background).setLoadedCallback(backgroundFinishedLoading);
         }
+
+        _chatOverlayWatcher = BindingUtils.bindSetter(recheckChatOverlay,
+            _ctx.worldProps, "placeViewShowsChat");
     }
 
     // from interface PlaceView
@@ -461,6 +439,8 @@ public class RoomView extends AbstractRoomView
         super.didLeavePlace(plobj);
 
         recheckChatOverlay();
+        _chatOverlayWatcher.unwatch();
+        _chatOverlayWatcher = null;
     }
 
     // from AbstractRoomView
@@ -540,6 +520,28 @@ public class RoomView extends AbstractRoomView
     override protected function shouldLoadAll () :Boolean
     {
         return _loadAllMedia;
+    }
+
+    /**
+     * Check the status of the chat overlay.
+     * @param args nothing- makes BindingUtils happy.
+     */
+    protected function recheckChatOverlay (... args) :void
+    {
+        var shouldBeEnabled :Boolean = _ctx.worldProps.placeViewShowsChat && (_roomObj != null);
+
+        if (chatOverlay.isActive() == shouldBeEnabled) {
+            // all is well
+            return;
+        }
+
+        if (shouldBeEnabled) {
+            chatOverlay.newPlaceEntered(this);
+            chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
+
+        } else {
+            chatOverlay.setTarget(null);
+        }
     }
 
     protected function scrollView () :void
@@ -795,11 +797,11 @@ public class RoomView extends AbstractRoomView
     /** The background music in the scene. */
     protected var _music :SoundPlayer;
 
-    /** Should our chat overlay be showing? */
-    protected var _showChatOverlay :Boolean = true;
-
     /** When we first enter the room, we only load the background (if any). */
     protected var _loadAllMedia :Boolean = false;
+
+    /** Watches WorldProperties.placeViewShowsChat. */
+    protected var _chatOverlayWatcher :ChangeWatcher;
 
     /** The spinner to show when we're loading room data. */
     protected var _loadingSpinner :DisplayObject;

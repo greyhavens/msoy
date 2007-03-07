@@ -38,6 +38,11 @@ import com.threerings.msoy.world.client.WorldDirector;
 public class WorldContext extends BaseContext
     implements WhirledContext, ParlorContext
 {
+    /** Contains non-persistent properties that are set in various places
+     * and can be bound to to be notified when they change.
+     */
+    public var worldProps :WorldProperties = new WorldProperties();
+
     public function WorldContext (client :Client)
     {
         super(client);

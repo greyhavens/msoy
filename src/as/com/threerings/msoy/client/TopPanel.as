@@ -104,7 +104,6 @@ public class TopPanel extends Canvas
 
         clearPlaceView(null);
         _placeView = view;
-        updatePlaceChatOverlay();
 
         if (disp is UIComponent) {
             _placeBox.addChildAt(disp, 0);
@@ -183,8 +182,7 @@ public class TopPanel extends Canvas
             chatBox.width = 300;
             chatBox.percentHeight = 100;
             _bottomPanel.addChild(chatBox);
-            _hasChatBox = true;
-            updatePlaceChatOverlay();
+            _ctx.worldProps.placeViewShowsChat = false;
         }
 
         _bottomComp = bottom;
@@ -203,8 +201,7 @@ public class TopPanel extends Canvas
             removeChild(_bottomPanel);
             _bottomPanel = null;
             _bottomComp = null;
-            _hasChatBox = false;
-            updatePlaceChatOverlay();
+            _ctx.worldProps.placeViewShowsChat = true;
             layoutPanels();
         }
     }
@@ -293,13 +290,6 @@ public class TopPanel extends Canvas
         return (_bottomPanel == null ? 0 : _bottomPanel.height);
     }
 
-    protected function updatePlaceChatOverlay () :void
-    {
-        if (_placeView is MsoyPlaceView) {
-            (_placeView as MsoyPlaceView).setChatOverlayEnabled(!_hasChatBox);
-        }
-    }
-
     /** The giver of life. */
     protected var _ctx :WorldContext;
 
@@ -321,9 +311,6 @@ public class TopPanel extends Canvas
 
     /** The current bottom panel component. */
     protected var _bottomComp :UIComponent;
-
-    /** True if we're hosting our own chatbox. */
-    protected var _hasChatBox :Boolean;
 
     /** Control bar at the bottom of the window. */
     protected var _controlBar :ControlBar;
