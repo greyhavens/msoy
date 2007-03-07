@@ -76,7 +76,7 @@ public class Scenery extends Sprite
                 _items[ii].sprite.height = _items[ii].startHeight;
             }
 
-            if (Point.distance(_items[ii].origin, kartLocation) < _items[ii].radius) {
+            if (Point.distance(_items[ii].origin, kartLocation) < _items[ii].radius + _kartRadius) {
                 _collidingObject = _items[ii];
             }
         }
@@ -100,6 +100,15 @@ public class Scenery extends Sprite
         }
     }
 
+    /**
+     * This is needed so that the Scenery knows how much area the kart takes up, to properly 
+     * detect collisions.
+     */
+    public function registerKart (kart :KartSprite) :void
+    {
+        _kartRadius = (getOpaqueWidth(kart) * 0.1) / 2;
+    }
+
     protected function initializeObject (obj :Object, type :int) :void
     {
         obj.sceneryType = type;
@@ -115,17 +124,20 @@ public class Scenery extends Sprite
 
     protected function getOpaqueWidth(sprite :Sprite) :int
     {
-        var bitmap :BitmapData = new BitmapData(sprite.width, 1, true, 0);
+        var bitmap :BitmapData = new BitmapData(sprite.width, 25, true, 0);
         var trans :Matrix = new Matrix();
-        // bring it down by 10 pixels to make sure we end up with real image data... the anchor
-        // point was eyeballed, and is not gauranteed to be on the first row of pixels
+        // test the first 25 rows of pixels, and use the widest width found;
         trans.translate(sprite.width / 2, 25);
         bitmap.draw(sprite, trans);
-        for (var left: int = 0; (bitmap.getPixel32(left, 0) & 0xFF000000) == 0 && 
-            left < sprite.width; left++);
-        for (var right: int = sprite.width; (bitmap.getPixel32(right, 0) & 0xFF000000) == 0 &&
-            right >= 0; right--);
-        return right - left;
+        var width :int = 0;
+        for (var row: int = 0; row < bitmap.height; row++) {
+            for (var left: int = 0; (bitmap.getPixel32(left, row) & 0xFF000000) == 0 && 
+                left < sprite.width; left++);
+            for (var right: int = sprite.width; (bitmap.getPixel32(right, row) & 0xFF000000) == 0 &&
+                right >= 0; right--);
+            width = right - left > width ? right - left : width;
+        }
+        return width;
     }
     
     protected function sortOnTransformedY (obj1 :Object, obj2 :Object) :int
@@ -138,5 +150,7 @@ public class Scenery extends Sprite
     protected var _items :Array = new Array();
 
     protected var _collidingObject :Object;
+
+    protected var _kartRadius :Number;
 }
 }

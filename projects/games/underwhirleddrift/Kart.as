@@ -16,6 +16,7 @@ public class Kart extends KartSprite
     {
         super(kartType, ground);
         _camera = camera;
+        ground.getScenery().registerKart(this);
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
