@@ -242,7 +242,7 @@ public class UnderwhirledDrift extends Sprite
         }
     }
 
-    protected static const SEND_THROTTLE :int = 200; // in ms
+    protected static const SEND_THROTTLE :int = 120; // in ms
 
     /** the game control. */
     protected var _control :WhirledGameControl;

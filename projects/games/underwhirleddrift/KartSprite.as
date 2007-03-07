@@ -99,6 +99,21 @@ public class KartSprite extends Sprite
                 -_currentSpeed)));
         }
 
+        var collides :Object = _ground.getScenery().getCollidingObject();
+        if (collides != null) {
+            switch (collides.sceneryType) {
+            case Scenery.OBSTACLE:
+                Log.getLog(this).debug("colliding with obstacle!");
+                break;
+            case Scenery.BONUS:
+                Log.getLog(this).debug("colliding with bonus!");
+                break;
+            case Scenery.KART:
+                Log.getLog(this).debug("colliding with kart!");
+                break;
+            }
+        }
+
         if (_ground.getLevel().isOnWall(newPosition)) {
             return position;
         } else {

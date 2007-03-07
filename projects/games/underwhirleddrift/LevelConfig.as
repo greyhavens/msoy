@@ -48,10 +48,10 @@ public class LevelConfig
                             _startingPoints.push(point);
                             break;
                         case OBJECT_OBSTACLE:
-                            _obstacles.push({cls: obj.cls, point: point});
+                            _obstacles.push({cls: obj.cls, point: point, type: Scenery.OBSTACLE});
                             break;
                         case OBJECT_BONUS:
-                            _bonuses.push({cls: obj.cls, point: point});
+                            _bonuses.push({cls: obj.cls, point: point, type: Scenery.BONUS});
                             break;
                         }
                     } else {

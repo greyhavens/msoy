@@ -11,9 +11,11 @@ import flash.events.Event;
 public class KartObstacle extends KartSprite
 {
     // Fields required by Scenery for properly positioning and sizing scenery objects
+    public var sceneryType :int;
     public var startWidth :Number;
     public var startHeight :Number;
     public var transformedOrigin: Point; 
+    public var radius :Number;
 
     public function KartObstacle (startingPosition :Point, kartType :String, ground :Ground) 
     {

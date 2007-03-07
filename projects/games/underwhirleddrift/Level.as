@@ -17,8 +17,6 @@ public class Level extends Sprite
     public function Level (ground :Ground, background :Class, rough :Class, track :Class, 
         wall :Class, horizon :Class, config :LevelConfig) :void
     {
-        // this is a goofy place to store it, as the level never actually uses it... this may 
-        // require some refactor magic
         _horizon = horizon;
         _ground = ground;
         _config = config;

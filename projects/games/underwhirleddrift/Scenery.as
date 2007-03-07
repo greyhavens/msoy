@@ -2,6 +2,7 @@ package {
 
 import flash.display.Sprite;
 import flash.display.DisplayObject;
+import flash.display.BitmapData;
 
 import mx.core.MovieClipAsset;
 
@@ -11,18 +12,22 @@ import flash.geom.Rectangle;
 
 public class Scenery extends Sprite
 {
+    public static const OBSTACLE: int = 1;
+    public static const BONUS: int = 2;
+    public static const KART: int = 3;
+
     public function Scenery (objects :Array) 
     {
         for (var ii :int = 0; ii < objects.length; ii++) {
             var item :Object = {origin: objects[ii].point, sprite :new objects[ii].cls()};
-            initializeObject(item);
+            initializeObject(item, objects[ii].type);
         }
     }
 
     /**
      * Called when the objects should be re-scaled for display in a new frame.
      */
-    public function updateItems (translateRotate :Matrix, camera :Camera) :void
+    public function updateItems (translateRotate :Matrix, camera :Camera, kartLocation :Point) :void
     {
         var thisTransform :Matrix = new Matrix();
         var minScale :Number = 1 / camera.height;
@@ -30,6 +35,7 @@ public class Scenery extends Sprite
         var maxDistance :Number = camera.distance / minScale;
         var viewRect :Rectangle = new Rectangle(-maxDistance / 2, -maxDistance, maxDistance, 
             maxDistance);
+        _collidingObject = null;
         for (var ii :int = 0; ii < _items.length; ii++) {
             _items[ii].transformedOrigin = translateRotate.transformPoint(_items[ii].origin);
         }
@@ -67,22 +73,49 @@ public class Scenery extends Sprite
                 _items[ii].sprite.width = _items[ii].startWidth;
                 _items[ii].sprite.height = _items[ii].startHeight;
             }
+
+            if (Point.distance(_items[ii].origin, kartLocation) < _items[ii].radius) {
+                _collidingObject = _items[ii];
+            }
         }
+    }
+
+    public function getCollidingObject () :Object
+    {
+        return _collidingObject;
     }
 
     public function addKart (kart :KartObstacle) :void
     {
-        initializeObject(kart);
+        initializeObject(kart, KART);
     }
 
-    protected function initializeObject (obj :Object) :void
+    protected function initializeObject (obj :Object, type :int) :void
     {
+        obj.sceneryType = type;
         obj.startWidth = obj.sprite.width * 0.1;
         obj.startHeight = obj.sprite.height * 0.1;
         // get that new sprite off the display, thank you
         obj.sprite.x = obj.sprite.y = -100000;
+        obj.radius = (getOpaqueWidth(obj.sprite) * 0.1) / 2;
+
         addChild(obj.sprite);
         _items.push(obj);
+    }
+
+    protected function getOpaqueWidth(sprite :Sprite) :int
+    {
+        var bitmap :BitmapData = new BitmapData(sprite.width, 1, true, 0);
+        var trans :Matrix = new Matrix();
+        // bring it down by 10 pixels to make sure we end up with real image data... the anchor
+        // point was eyeballed, and is not gauranteed to be on the first row of pixels
+        trans.translate(sprite.width / 2, 25);
+        bitmap.draw(sprite, trans);
+        for (var left: int = 0; (bitmap.getPixel32(left, 0) & 0xFF000000) == 0 && 
+            left < sprite.width; left++);
+        for (var right: int = sprite.width; (bitmap.getPixel32(right, 0) & 0xFF000000) == 0 &&
+            right >= 0; right--);
+        return right - left;
     }
     
     protected function sortOnTransformedY (obj1 :Object, obj2 :Object) :int
@@ -93,5 +126,7 @@ public class Scenery extends Sprite
 
     /** Collection of scenery objects */
     protected var _items :Array = new Array();
+
+    protected var _collidingObject :Object;
 }
 }

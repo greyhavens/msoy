@@ -73,6 +73,11 @@ public class Ground extends Sprite
         addChild(_scenery = scenery);
     }
 
+    public function getScenery () :Scenery
+    {
+        return _scenery;
+    }
+
     /**
      * Get the current kart location.
      */
@@ -132,7 +137,7 @@ public class Ground extends Sprite
             }
         }
         if (_scenery != null) {
-            _scenery.updateItems(translateRotate, _camera);
+            _scenery.updateItems(translateRotate, _camera, _kartLocation);
         }
     }
 
