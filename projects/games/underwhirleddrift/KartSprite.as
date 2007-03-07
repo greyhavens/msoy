@@ -113,6 +113,7 @@ public class KartSprite extends Sprite
      * so that it take into account the direction you hit it from, and bounces you off at 
      * the correct angle.  Also, in the case of karts, the larger karts have more influence that
      * smaller karts... they are bounced less.
+     */
     protected function bounce (oldPos :Point, newPos :Point) :Point 
     {
         return Point.interpolate(oldPos, newPos, 3);
