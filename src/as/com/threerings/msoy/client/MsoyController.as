@@ -327,7 +327,7 @@ public class MsoyController extends Controller
      */
     public function handleGoScene (sceneId :int) :void
     {
-        if (!NetUtil.navigateToURL("/world/index.html#s" + sceneId)) {
+        if (!handleInternalGo("/world/index.html#s" + sceneId)) {
             // fall back to breaking the back button
             _ctx.getSceneDirector().moveTo(sceneId);
         }
@@ -338,7 +338,7 @@ public class MsoyController extends Controller
      */
     public function handleGoMemberHome (memberId :int, direct :Boolean = false) :void
     {
-        if (direct || !NetUtil.navigateToURL("/world/index.html#m" + memberId)) {
+        if (direct || !handleInternalGo("/world/index.html#m" + memberId)) {
             _ctx.getWorldDirector().goToMemberHome(memberId, true);
         }
     }
@@ -348,7 +348,7 @@ public class MsoyController extends Controller
      */
     public function handleGoGroupHome (groupId :int, direct :Boolean = false) :void
     {
-        if (direct || !NetUtil.navigateToURL("/world/index.html#g" + groupId)) {
+        if (direct || !handleInternalGo("/world/index.html#g" + groupId)) {
             _ctx.getWorldDirector().goToGroupHome(groupId, true);
         }
     }
@@ -358,10 +358,9 @@ public class MsoyController extends Controller
      */
     public function handleGoGameLobby (gameId :int) :void
     {
-        if (!shouldLoadNewPages() || !NetUtil.navigateToURL("/game/index.html#" + gameId)) {
-            // if we shouldn't or couldn't load a new page then we
-            // just load up the module inside this client
-            // TODO
+        if (!handleInternalGo("/game/index.html#" + gameId)) {
+            // if we shouldn't or couldn't load a new page then we just load up the module inside
+            // this client
             moveToGameLobby(int(gameId));
         }
     }
@@ -371,10 +370,21 @@ public class MsoyController extends Controller
      */
     public function handleGoLocation (placeOid :int) :void
     {
-        if (!NetUtil.navigateToURL("/world/index.html#l" + placeOid, false)) {
+        if (!handleInternalGo("/world/index.html#l" + placeOid)) {
             // fall back to breaking the back button
             _ctx.getLocationDirector().moveTo(placeOid);
         }
+    }
+
+    /**
+     * Moves to a new location (scene, game lobby, game room, etc.) by changing the URL of the
+     * browser so that our history mechanism is preserved. Returns true if we did so, false if we
+     * couldn't do so for whatever reason (are in the standalone client) and the caller should just
+     * go there directly.
+     */
+    protected function handleInternalGo (String url) :Boolean
+    {
+        return shouldLoadNewPages() && NetUtil.navigateToURL(url, false);
     }
 
     /**
