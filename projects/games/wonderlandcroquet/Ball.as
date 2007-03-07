@@ -58,6 +58,7 @@ public class Ball extends Sprite
             nameFormat.font = "Verdana";
             nameFormat.color = BALL_COLORS[playerIdx];
             nameFormat.size = 16;
+            nameFormat.bold = true;
             nameText.defaultTextFormat = nameFormat;
             nameText.text = (particle.wc.gameCtrl.seating.getPlayerNames())[playerIdx];
 

@@ -266,7 +266,10 @@ public class WonderlandCroquet extends Sprite
                     gameCtrl.setImmediate("balls", _balls);
                     gameCtrl.setImmediate("wickets", _wickets);
                 }
+                gameCtrl.localChat("Your turn!");
                 startTurn();
+            } else {
+                gameCtrl.localChat(gameCtrl.getOccupantName(gameCtrl.getTurnHolder()) + "'s turn");
             }
 
             _status.turnChanged(gameCtrl.seating.getPlayerPosition(gameCtrl.getTurnHolder()));
@@ -363,7 +366,6 @@ public class WonderlandCroquet extends Sprite
      */
     protected function startTurn () :void
     {
-        gameCtrl.localChat("My turn!");
         var coord :Array = [];
         _moveAgain = false;
 
