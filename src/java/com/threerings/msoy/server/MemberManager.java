@@ -10,10 +10,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import java.util.logging.Level;
 
@@ -33,13 +35,13 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 
+import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.SceneBookmarkEntry;
-import com.threerings.msoy.game.data.LobbyConfig;
 import com.threerings.msoy.game.server.LobbyManager;
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
@@ -48,6 +50,7 @@ import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.GroupName;
 import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.web.data.NeighborEntity;
 import com.threerings.msoy.web.data.NeighborGroup;
 import com.threerings.msoy.web.data.NeighborMember;
 import com.threerings.msoy.web.data.Neighborhood;
@@ -249,18 +252,16 @@ public class MemberManager
                     break;
                 }
                 JSONObject obj = new JSONObject();
-                obj.put("name", place.name);
+                obj.put("name", place.getName());
                 obj.put("pop", place.population);
+                obj.put("id", place.getId());
                 if (place instanceof PopularGamePlace) {
-                    obj.put("id", ((PopularGamePlace) place).gameId);
                     games.put(obj);
                 } else {
-                    obj.put("sceneId", ((PopularScenePlace) place).sceneId);
+                    obj.put("sceneId", ((PopularScenePlace) place).getSceneId());
                     if (place instanceof PopularMemberPlace) {
-                        obj.put("id", ((PopularMemberPlace) place).memberId);
                         friends.put(obj);
                     } else {
-                        obj.put("id", ((PopularGroupPlace) place).groupId);
                         groups.put(obj);
                     }
                 }
@@ -633,32 +634,25 @@ public class MemberManager
                 PopularScenePlace place = (PopularScenePlace) _scenesByOwner.get(owner);
                 if (place == null) {
                     if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                        place = new PopularGroupPlace();
-                        ((PopularGroupPlace) place).groupId = model.ownerId;
+                        place = new PopularGroupPlace((RoomManager) plMgr);
                     } else if (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                        place = new PopularMemberPlace();
-                        ((PopularMemberPlace) place).memberId = model.ownerId;
+                        place = new PopularMemberPlace((RoomManager) plMgr);
                     } else {
                         throw new IllegalArgumentException(
                             "unknown owner type: " + model.ownerType);
                     }
-                    // make sure we immediately acquire a sceneId
-                    place.scenePop = -1;
-                    // and update the main data structures
+                    // update the main data structures
                     _scenesByOwner.put(owner, place);
                     _topPlaces.add(place);
                 }
-                if (count > place.scenePop) {
-                    place.name = scene.getName();
-                    place.sceneId = scene.getId();
-                    place.scenePop = count;
+                if (place.plMgr == null ||
+                    count > place.plMgr.getPlaceObject().occupantInfo.size()) {
+                    place.plMgr = plMgr;
                 }
                 place.population += count;
                 _totalPopulation += count;
             } else if (plMgr instanceof LobbyManager) {
-                PopularGamePlace place = new PopularGamePlace();
-                place.name = ((LobbyConfig) plMgr.getConfig()).game.name;
-                place.gameId = ((LobbyManager) plMgr).getGameId();
+                PopularGamePlace place = new PopularGamePlace((LobbyManager) plMgr);
                 place.population = count;
                 _topPlaces.add(place);
                 _totalPopulation += count;
@@ -830,19 +824,36 @@ public class MemberManager
     // set the population of a neighbour group
     protected void finalizeEntity (NeighborGroup group)
     {
-        PopularPlace place = getPopularPlace(MsoySceneModel.OWNER_TYPE_GROUP, group.group.groupId);
-        group.population = place != null ? place.population : 0;
+        fillInPopulation(
+            group, getPopularPlace(MsoySceneModel.OWNER_TYPE_GROUP, group.group.groupId));
     }
 
     // set the population of a neighbour friend and figure out if it's online
     protected void finalizeEntity (NeighborMember friend)
     {
         int memberId = friend.member.getMemberId();
-        PopularPlace place = getPopularPlace(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);
-        friend.population = place != null ? place.population : 0;
+        fillInPopulation(friend, getPopularPlace(MsoySceneModel.OWNER_TYPE_MEMBER, memberId));
         friend.isOnline = MsoyServer.lookupMember(memberId) != null;
     }
 
+    // set the population of a neighbour
+    protected void fillInPopulation (NeighborEntity entity, PopularPlace place)
+    {
+        entity.popSet = new HashSet<MemberName>();
+        if (place != null) {
+            int cnt = 8;
+            for (OccupantInfo info : place.plMgr.getPlaceObject().occupantInfo) {
+                entity.popSet.add((MemberName) info.username);
+                if (--cnt == 0) {
+                    break;
+                }
+            }
+            entity.popCount = place.plMgr.getPlaceObject().occupantInfo.size();
+        } else {
+            entity.popCount = 0;
+        }
+    }
+    
     protected NeighborGroup makeNeighborGroup (GroupRecord gRec) throws PersistenceException
     {
         NeighborGroup nGroup = new NeighborGroup();
@@ -914,7 +925,10 @@ public class MemberManager
         obj.put("name", member.member.toString());
         obj.put("id", member.member.getMemberId());
         obj.put("isOnline", member.isOnline);
-        obj.put("pop", member.population);
+        obj.put("pop", member.popCount);
+        if (member.popSet != null) {
+            obj.put("peeps", toJSON(member.popSet));
+        }
         obj.put("created", member.created.getTime());
         obj.put("sNum", member.sessions);
         obj.put("sMin", member.sessionMinutes);
@@ -929,13 +943,25 @@ public class MemberManager
         obj.put("name", group.group.groupName);
         obj.put("id", group.group.groupId);
         obj.put("members", group.members);
-        obj.put("pop", group.population);
+        obj.put("pop", group.popCount);
+        if (group.popSet != null) {
+            obj.put("peeps", toJSON(group.popSet));
+        }
         if (group.logo != null) {
             obj.put("logo", group.logo.toString());
         }
         return obj;
     }
 
+    protected <T> JSONArray toJSON (Set<T> set)
+    {
+        JSONArray arr = new JSONArray();
+        for (T bit : set) {
+            arr.put(bit);
+        }
+        return arr;
+    }
+    
     /** A mapping of ownerType/ownerId tuples to sets of scene ID's. Cached. */
     protected Map<IntTuple, PopularPlace> _scenesByOwner;
     
