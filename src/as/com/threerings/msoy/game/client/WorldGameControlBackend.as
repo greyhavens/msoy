@@ -32,6 +32,7 @@ import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomObject;
 
+import com.threerings.msoy.game.data.WorldGameConfig;
 import com.threerings.msoy.game.data.WorldGameObject;
 
 // TODO: this too needs renaming because it's too confusing now
@@ -45,7 +46,8 @@ public class WorldGameControlBackend extends WhirledGameControlBackend
         _mctx = ctx;
         _worldGameObj = worldGameObj;
         // the gameIdent matches the prototype of the game
-        _gameIdent = new ItemIdent(Item.GAME, worldGameObj.config.persistentGameId);
+        _gameIdent = new ItemIdent(Item.GAME,
+            (ctrl.getPlaceConfig() as WorldGameConfig).persistentGameId);
         
         _worldGameObj.addListener(_memlist);
         

@@ -26,32 +26,15 @@ import com.threerings.msoy.game.data.WorldGameObject;
 import static com.threerings.msoy.Log.*;
 
 /**
- * Manages an in-world game.
+ * Manages an in-world ez-game.
  */
 public class WorldGameManager extends MsoyGameManager
 {
-    @Override // documentation inherited
-    public void startup (PlaceObject plobj)
+    public WorldGameManager ()
     {
-        super.startup(plobj);
-        MsoyServer.worldGameReg.gameStartup(this);
+        addDelegate(_worldDelegate = new WorldGameManagerDelegate(this));
     }
 
-    @Override // documentation inherited
-    public void shutdown ()
-    {
-        MsoyServer.worldGameReg.gameShutdown(this);
-        super.shutdown();
-    }
-    
-    /**
-     * Returns the persistent game id.
-     */
-    public int getGameId ()
-    {
-        return _gameId;
-    }
-    
     @Override // documentation inherited
     protected PlaceObject createPlaceObject ()
     {
@@ -59,23 +42,14 @@ public class WorldGameManager extends MsoyGameManager
     }
 
     @Override // documentation inherited
-    protected void didInit ()
-    {
-        super.didInit();
-
-        // remember our game id
-        _gameId = ((WorldGameConfig)_config).persistentGameId;
-    }
-
-    @Override // documentation inherited
     protected void didStartup ()
     {
         super.didStartup();
         
-        WorldGameConfig wgconfig = (WorldGameConfig)_config;
-        ((WorldGameObject)_plobj).config = wgconfig;
-        
-        final int prototypeId = wgconfig.persistentGameId;
+        // TODO: this needs some re-thinking, there could be more than 
+        // one instance of this game running simultaneously and they will
+        // overwrite each other's memory.
+        final int prototypeId = ((WorldGameConfig) _config).persistentGameId;
         MsoyServer.invoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 try {
@@ -153,6 +127,6 @@ public class WorldGameManager extends MsoyGameManager
         }
     }
 
-    /** The id of the world game. */
-    protected int _gameId;
+    /** Our world delegate. */
+    protected WorldGameManagerDelegate _worldDelegate;
 }

@@ -14,7 +14,9 @@ import com.threerings.parlor.client.Invitation;
 import com.threerings.parlor.client.InvitationHandler;
 import com.threerings.parlor.client.InvitationResponseObserver;
 
+import com.threerings.parlor.game.client.GameController;
 import com.threerings.parlor.game.data.GameConfig;
+import com.threerings.parlor.game.data.GameObject;
 
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MemberObject;
@@ -23,7 +25,6 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.game.data.GameCodes;
-import com.threerings.msoy.game.data.WorldGameObject;
 
 /**
  * A director that manages invitations and game starting.
@@ -122,10 +123,11 @@ public class GameDirector extends BasicDirector
             // already subscribed
             return;
         }
-        _worldGameObj = (obj as WorldGameObject);
-        _worldGameCtrl = (_worldGameObj.config.createController() as WorldGameController);
-        _worldGameCtrl.init(_mctx, _worldGameObj.config);
-        _worldGameCtrl.willEnterPlace(_worldGameObj);
+        _worldGameObj = (obj as GameObject);
+        // TODO: fixup, create controller the new way (COMING SOON)
+//        _worldGameCtrl = (_worldGameObj.config.createController() as WorldGameController);
+//        _worldGameCtrl.init(_mctx, _worldGameObj.config);
+//        _worldGameCtrl.willEnterPlace(_worldGameObj);
     }
 
     // from interface Subscriber
@@ -152,7 +154,7 @@ public class GameDirector extends BasicDirector
         if (noid == _worldGameOid) {
             return;
         }
-        if (_worldGameOid > 0) {
+        if (_worldGameOid != 0) {
             if (_worldGameCtrl != null) {
                 _worldGameCtrl.didLeavePlace(_worldGameObj);
                 _worldGameCtrl = null;
@@ -161,7 +163,7 @@ public class GameDirector extends BasicDirector
             _worldGameObj = null;
         }
         _worldGameOid = noid;
-        if (_worldGameOid > 0) {
+        if (_worldGameOid != 0) {
             _mctx.getDObjectManager().subscribeToObject(_worldGameOid, this);
         }
     }
@@ -190,9 +192,9 @@ public class GameDirector extends BasicDirector
     protected var _worldGameOid :int;
 
     /** The current world game object. */
-    protected var _worldGameObj :WorldGameObject;
+    protected var _worldGameObj :GameObject;
 
     /** The controller for the current world game. */
-    protected var _worldGameCtrl :WorldGameController;
+    protected var _worldGameCtrl :GameController;
 }
 }

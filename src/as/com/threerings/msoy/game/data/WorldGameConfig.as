@@ -16,19 +16,23 @@ import com.threerings.msoy.game.client.WorldGameController;
  */
 public class WorldGameConfig extends MsoyGameConfig
 {
-    /** The game item. */
-    public var game :Game;
+    /** The scene id in which the game was started. */
+    public var startSceneId :int;
 
     override public function createController () :PlaceController
     {
-        return new WorldGameController();
+        if (controller == null) {
+            return new WorldGameController();
+        } else {
+            return super.createController();
+        }
     }
 
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
 
-        game = (ins.readObject() as Game);
+        startSceneId = ins.readInt();
     }
 }
 }

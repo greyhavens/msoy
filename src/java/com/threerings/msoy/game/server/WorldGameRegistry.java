@@ -3,8 +3,10 @@
 
 package com.threerings.msoy.game.server;
 
+import java.util.HashMap;
+
 import com.samskivert.util.HashIntMap;
-import com.samskivert.util.IntIntMap;
+import com.samskivert.util.IntTuple;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.ResultListenerList;
 
@@ -15,6 +17,10 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
+
+import com.threerings.parlor.game.data.GameConfig;
+import com.threerings.parlor.game.data.GameObject;
+import com.threerings.parlor.game.server.GameManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -54,14 +60,21 @@ public class WorldGameRegistry
 
     // from WorldGameProvider
     public void joinWorldGame (
-        ClientObject caller, final int gameId, 
+        ClientObject caller, int gameId, 
         final InvocationService.InvocationListener listener)
         throws InvocationException
     {
         // see what we've got..
         final MemberObject member = (MemberObject)caller;
-        int gameOid = _games.get(gameId);
-        if (gameOid > 0) {
+        if (member.sceneId == 0) {
+            log.warning("User joining world game, but not in scene?");
+            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
+        }
+
+        final IntTuple gameKey = new IntTuple(gameId, member.sceneId);
+
+        Integer gameOid = _games.get(gameKey);
+        if (gameOid != null) {
             // if we know the game oid, join immediately
             joinWorldGame(member, gameOid);
             return;
@@ -84,7 +97,7 @@ public class WorldGameRegistry
             }
         };
         
-        ResultListenerList<Integer> list = _loading.get(gameId);
+        ResultListenerList<Integer> list = _loading.get(gameKey);
         if (list != null) {
             // if we're already resolving this game, add this listener
             // to the list of those interested in the outcome
@@ -94,19 +107,35 @@ public class WorldGameRegistry
 
         list = new ResultListenerList<Integer>();
         list.add(rlistener);
-        _loading.put(gameId, list);
+        _loading.put(gameKey, list);
 
         // retrieve the game item
         MsoyServer.itemMan.getItem(new ItemIdent(Item.GAME, gameId),
             new ResultListener<Item>() {
             public void requestCompleted (Item item) {
                 try {
+                    Game game = (Game) item;
                     WorldGameConfig config = new WorldGameConfig();
-                    config.game = (Game)item;
-                    config.gameMedia = config.game.gameMedia.getMediaPath();
-                    config.persistentGameId = config.game.getPrototypeId();
-                    config.players = new Name[config.game.maxPlayers];
-                    
+                    config.name = game.name;
+                    config.persistentGameId = game.getPrototypeId();
+                    config.gameMedia = game.gameMedia.getMediaPath();
+                    config.gameType = game.gameType;
+                    //config.game = game;
+                    config.startSceneId = gameKey.right;
+                    if (game.gameType == GameConfig.PARTY) {
+                        config.players = new Name[0];
+
+                    } else {
+                        config.players = new Name[game.maxPlayers];
+                    }
+                    // TODO: parse the XML config, undo Chiyogami hackery
+                    if (game.config != null &&
+                            game.config.startsWith("Chiyogami")) {
+                        String prefix = "com.threerings.msoy.game.chiyogami.";
+                        config.controller = prefix + "client.ChiyogamiController";
+                        config.manager = prefix + "server.ChiyogamiManager";
+                    }
+
                     MsoyServer.plreg.createPlace(config);
                     
                 } catch (Exception e) {
@@ -114,18 +143,18 @@ public class WorldGameRegistry
                 }
             }
             public void requestFailed (Exception cause) {
-                _loading.remove(gameId).requestFailed(cause);
+                _loading.remove(gameKey).requestFailed(cause);
             }
         });
     }
-    
+
     // from WorldGameProvider
     public void leaveWorldGame (ClientObject caller, InvocationService.InvocationListener arg1)
         throws InvocationException
     {
         leaveWorldGame((MemberObject)caller);
     }
-    
+
     /**
      * Removes the user from the world game he currently occupies (if any).
      */
@@ -133,22 +162,22 @@ public class WorldGameRegistry
         throws InvocationException
     {
         // nothing to do if they aren't in a game
-        if (member.inWorldGame <= 0) {
+        if (member.inWorldGame == 0) {
             return;
         }
         
         // get the game object
-        WorldGameObject wgobj = getWorldGameObject(member, member.inWorldGame);
+        GameObject gobj = getGameObject(member, member.inWorldGame);
         member.setInWorldGame(0);
         
         // remove them from the occupant list
         int memberOid = member.getOid();
-        wgobj.startTransaction();
+        gobj.startTransaction();
         try {
-            wgobj.removeFromOccupantInfo(memberOid);
-            wgobj.removeFromOccupants(memberOid);
+            gobj.removeFromOccupantInfo(memberOid);
+            gobj.removeFromOccupants(memberOid);
         } finally {
-            wgobj.commitTransaction();
+            gobj.commitTransaction();
         }
     }
 
@@ -157,52 +186,62 @@ public class WorldGameRegistry
     {
         // get their game object
         MemberObject member = (MemberObject)caller;
-        WorldGameObject gameObj = (WorldGameObject)MsoyServer.omgr.getObject(member.inWorldGame);
-        if (gameObj == null) {
+        GameObject gameObj = (GameObject)MsoyServer.omgr.getObject(member.inWorldGame);
+        if (!(gameObj instanceof WorldGameObject)) {
             log.warning("Received memory update request from user not in world game [who=" +
                 member.who() + "].");
             return;
         }
-        
+
+        GameManager manager = _managers.get(gameObj.getOid());
+        WorldGameConfig config = (WorldGameConfig) manager.getConfig();
+
         // make sure the entry refers to the game
-        entry.item = new ItemIdent(Item.GAME, gameObj.config.game.getPrototypeId());
+        entry.item = new ItemIdent(Item.GAME, config.persistentGameId);
         
         // TODO: verify that the memory does not exceed legal size
         
         // mark it as modified and update the game object; we'll save it when we unload the game
+        WorldGameObject wgobj = (WorldGameObject) gameObj;
         entry.modified = true;
-        if (gameObj.memories.contains(entry)) {
-            gameObj.updateMemories(entry);
+        if (wgobj.memories.contains(entry)) {
+            wgobj.updateMemories(entry);
         } else {
-            gameObj.addToMemories(entry);
+            wgobj.addToMemories(entry);
         }
     }
     
     /**
-     * Called by WorldGameManager instances after they're all ready to go.
+     * Called by WorldGameManagerDelegates instances after they're all ready to go.
      */
-    public void gameStartup (WorldGameManager manager)
+    public void gameStartup (GameManager manager, int gameOid)
     {
+        WorldGameConfig config = (WorldGameConfig) manager.getConfig();
+
         // record the oid and manager for the game
-        int gameId = manager.getGameId(), gameOid = manager.getPlaceObject().getOid();
-        _games.put(gameId, gameOid);
+        IntTuple gameKey = new IntTuple(config.persistentGameId, config.startSceneId);
+
+        _games.put(gameKey, gameOid);
         _managers.put(gameOid, manager);
         
         // remove the list of listeners and notify each of them
-        _loading.remove(gameId).requestCompleted(gameOid);
+        _loading.remove(gameKey).requestCompleted(gameOid);
     }
 
     /**
-     * Called by WorldGameManager instances when they start to shut down and
+     * Called by WorldGameManagerDelegate instances when they start to shut down and
      * destroy their dobject.
      */
-    public void gameShutdown (WorldGameManager manager)
+    public void gameShutdown (GameManager manager, int gameOid)
     {
+        WorldGameConfig config = (WorldGameConfig) manager.getConfig();
+
         // destroy our record of that game
-        int gameId = manager.getGameId(), gameOid = manager.getPlaceObject().getOid();
-        _games.remove(gameId);
+        IntTuple gameKey = new IntTuple(config.persistentGameId, config.startSceneId);
+
+        _games.remove(gameKey);
         _managers.remove(gameOid);
-        _loading.remove(gameId); // just in case
+        _loading.remove(gameKey); // just in case
     }
 
     /**
@@ -217,20 +256,22 @@ public class WorldGameRegistry
         }
         
         // make sure the game object exists
-        WorldGameObject wgobj = getWorldGameObject(member, gameOid);
+        GameObject gobj = getGameObject(member, gameOid);
+
+        // TODO: verify that there's room for them to join?
         
         // leave the current game, if any
         leaveWorldGame(member);
         
         // add to the occupant list
         int memberOid = member.getOid();
-        WorldGameManager wgmgr = _managers.get(gameOid);
-        wgobj.startTransaction();
+        GameManager gmgr = _managers.get(gameOid);
+        gobj.startTransaction();
         try {
-            wgmgr.buildOccupantInfo(member);
-            wgobj.addToOccupants(memberOid);
+            gmgr.buildOccupantInfo(member);
+            gobj.addToOccupants(memberOid);
         } finally {
-            wgobj.commitTransaction();
+            gobj.commitTransaction();
         }
         
         // set their game field
@@ -240,25 +281,25 @@ public class WorldGameRegistry
     /**
      * Retrieves the world game object, throwing an exception if it does not exist.
      */
-    protected WorldGameObject getWorldGameObject (MemberObject member, int gameOid)
+    protected GameObject getGameObject (MemberObject member, int gameOid)
         throws InvocationException
     {
-        WorldGameObject wgobj = (WorldGameObject)MsoyServer.omgr.getObject(gameOid);
-        if (wgobj == null) {
+        GameObject gobj = (GameObject) MsoyServer.omgr.getObject(gameOid);
+        if (gobj == null) {
             log.warning("Missing world game object [who=" + member.who() +
                 ", oid=" + gameOid + "].");
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
-        return wgobj;
+        return gobj;
     }
     
-    /** Maps game id -> world game oid. */
-    protected IntIntMap _games = new IntIntMap();
+    /** Maps [gameId, sceneId] -> world game oid. */
+    protected HashMap<IntTuple, Integer> _games = new HashMap<IntTuple, Integer>();
     
     /** Maps game oids -> game managers. */
-    protected HashIntMap<WorldGameManager> _managers = new HashIntMap<WorldGameManager>();
+    protected HashIntMap<GameManager> _managers = new HashIntMap<GameManager>();
     
-    /** Maps game id -> listeners waiting for a world game to load. */
-    protected HashIntMap<ResultListenerList<Integer>> _loading =
-        new HashIntMap<ResultListenerList<Integer>>();
+    /** Maps [gameId, sceneId] -> listeners waiting for a world game to load. */
+    protected HashMap<IntTuple, ResultListenerList<Integer>> _loading =
+        new HashMap<IntTuple, ResultListenerList<Integer>>();
 }

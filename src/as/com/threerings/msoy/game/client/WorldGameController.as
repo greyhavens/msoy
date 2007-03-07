@@ -3,12 +3,6 @@
 
 package com.threerings.msoy.game.client {
 
-import flash.events.Event;
-
-import mx.containers.HBox;
-
-import com.threerings.flex.CommandButton;
-
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.util.CrowdContext;
@@ -19,6 +13,12 @@ import com.threerings.msoy.client.MsoyController;
 
 public class WorldGameController extends MsoyGameController
 {
+    public function WorldGameController ()
+    {
+        super();
+        addDelegate(_worldDelegate = new WorldGameControllerDelegate(this));
+    }
+
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
     {
         super.init(ctx, config);
@@ -33,25 +33,16 @@ public class WorldGameController extends MsoyGameController
     
     override protected function setPlaceView () :void
     {
-        _panel.percentWidth = 100;
-        
-        _vcont = new HBox();
-        _vcont.addChild(_panel);
-        
-        var qbutton :CommandButton = new CommandButton(MsoyController.LEAVE_WORLD_GAME);
-        qbutton.label = Msgs.GAME.get("b.leave_world_game");
-        _vcont.addChild(qbutton);
-
-        _mctx.getTopPanel().setBottomPanel(_vcont);
+        _worldDelegate.setPlaceView(_mctx, _panel);
     }
     
     override protected function clearPlaceView () :void
     {
-        _mctx.getTopPanel().clearBottomPanel(_vcont);
+        _worldDelegate.clearPlaceView(_mctx);
     }
     
     protected var _mctx :WorldContext;
-    protected var _vcont :HBox;
+    protected var _worldDelegate :WorldGameControllerDelegate;
 }
 }
 

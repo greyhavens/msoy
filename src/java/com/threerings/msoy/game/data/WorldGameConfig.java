@@ -10,12 +10,17 @@ import com.threerings.msoy.item.web.Game;
  */
 public class WorldGameConfig extends MsoyGameConfig
 {
-    /** The game item. */
-    public Game game;
-    
+    /** The scene id in which the game was started. */
+    public int startSceneId;
+
     @Override // documentation inherited
     public String getManagerClassName ()
     {
-        return "com.threerings.msoy.game.server.WorldGameManager";
+        if (manager == null) {
+            return "com.threerings.msoy.game.server.WorldGameManager";
+
+        } else {
+            return super.getManagerClassName();
+        }
     }
 }

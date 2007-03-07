@@ -15,16 +15,10 @@ import com.threerings.ezgame.data.EZGameObject;
 public class WorldGameObject extends MsoyGameObject
 {
     // AUTO-GENERATED: FIELDS START
-    /** The field name of the <code>config</code> field. */
-    public static const CONFIG :String = "config";
-    
     /** The field name of the <code>memories</code> field. */
     public static const MEMORIES :String = "memories";
     // AUTO-GENERATED: FIELDS END
 
-    /** The game configuration. */
-    public var config :WorldGameConfig;
-    
     /** Contains the game's memories. */
     public var memories :DSet = new DSet();
     
@@ -32,7 +26,6 @@ public class WorldGameObject extends MsoyGameObject
     {
         super.readDefaultFields(ins);
         
-        config = (ins.readObject() as WorldGameConfig);
         memories = (ins.readObject() as DSet);
     }
 }

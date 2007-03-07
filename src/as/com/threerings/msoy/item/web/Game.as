@@ -45,7 +45,8 @@ public class Game extends Item
     public function isInWorld () :Boolean
     {
         // TODO: parse configuration as XML
-        return StringUtil.trim(config) == "avrg";
+        return (StringUtil.trim(config) == "avrg") ||
+            (0 == config.indexOf("Chiyogami"));
     }
     
     /**

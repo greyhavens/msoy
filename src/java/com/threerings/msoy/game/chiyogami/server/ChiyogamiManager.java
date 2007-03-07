@@ -13,6 +13,7 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.StaticMediaDesc;
 
+import com.threerings.msoy.game.server.WorldGameManagerDelegate;
 import com.threerings.msoy.game.chiyogami.data.ChiyogamiObject;
 
 /**
@@ -20,6 +21,11 @@ import com.threerings.msoy.game.chiyogami.data.ChiyogamiObject;
  */
 public class ChiyogamiManager extends GameManager
 {
+    public ChiyogamiManager ()
+    {
+        addDelegate(_worldDelegate = new WorldGameManagerDelegate(this));
+    }
+
     @Override
     protected PlaceObject createPlaceObject ()
     {
@@ -58,6 +64,9 @@ public class ChiyogamiManager extends GameManager
             _gameobj.commitTransaction();
         }
     }
+
+    /** Our world delegate. */
+    protected WorldGameManagerDelegate _worldDelegate;
 
     /** A casted ref to our gameobject, this hides our superclass _gameobj. */
     protected ChiyogamiObject _gameobj;

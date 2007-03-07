@@ -53,7 +53,8 @@ public class Game extends Item
     public boolean isInWorld ()
     {
         // TODO: parse configuration as XML
-        return config.trim().equals("avrg");
+        return config.trim().equals("avrg") ||
+            config.startsWith("Chiyogami");
     }
 
     /**
