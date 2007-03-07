@@ -101,17 +101,18 @@ public class ProjectRoomManager extends PlaceManager
         // Re-bind transient instance variables
         element.lazarus(_roomObj.pathElements);
 
-        // add the path element first
-        _roomObj.addPathElement(element);
-
         SwiftlyDocument doc = null;
         try {
             doc = new SwiftlyDocument(element, ProjectStorage.TEXT_ENCODING); 
         } catch (IOException e) {
-            // not going to happen
+            // TODO: display an error message to the user
+            return;
         }
 
-        // for now just update the room object
+        // add the path element to the dset
+        _roomObj.addPathElement(element);
+
+        // add the swiftly document to the dest
         _roomObj.addSwiftlyDocument(doc);
     }
 
