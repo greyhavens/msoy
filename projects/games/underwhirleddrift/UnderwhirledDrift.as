@@ -151,8 +151,11 @@ public class UnderwhirledDrift extends Sprite
                 if (_lightBoard.currentFrame == _lightBoard.totalFrames) {
                     if (_lightBoard.y == boardTravelStart) {
                         _lightBoard.stop();
-                        _raceStarted = true;
                         _lightBoard.y -= 5;
+                        if (_control.amInControl()) {
+                            // base the real race start on the controller's clock
+                            _control.sendMessage("raceStarted", true);
+                        }
                     } else {
                         if (_lightBoard.y > boardTravelStart - boardTravelHeight) {
                             _lightBoard.y -= 5;
@@ -164,6 +167,8 @@ public class UnderwhirledDrift extends Sprite
             };
             _lightBoard.addEventListener(Event.ENTER_FRAME, boardFrameListener);
             addChild(_lightBoard);
+        } else if (event.name == "raceStarted") {
+            _raceStarted = true;
         } else if (event.name == "positionUpdate") {
             // variables not being scoped directly to all blocks is really wacky
             playerId = event.value.playerId;
