@@ -97,6 +97,10 @@ public class ProjectRoomManager extends PlaceManager
     public void addDocument (ClientObject caller, PathElement element)
     {
         // TODO: check access!
+
+        // Re-bind transient instance variables
+        element.lazarus(_roomObj.pathElements);
+
         // add the path element first
         _roomObj.addPathElement(element);
 
