@@ -49,6 +49,7 @@
     <file name="${extlib.dir}/getdown.jar"/>
     <file name="${extlib.dir}/gwt-user.jar"/>
     <file name="${extlib.dir}/gwt-widgets-0.1.1.jar"/>
+    <file name="${extlib.dir}/groovy-all-1.0-JSR-06.jar"/>
     <file name="${extlib.dir}/jetty/lib/org.mortbay.jetty.jar"/>
     <file name="${extlib.dir}/junit-3.7.jar"/>
     <file name="${extlib.dir}/mail.jar"/>
@@ -786,6 +787,12 @@
     <mkdir dir="${pkg.base}/data"/>
     <copy todir="${pkg.base}/data">
       <fileset dir="data" includes="**"/>
+    </copy>
+    <!-- swiftly needs the flex sdk copied in -->
+    <delete file="${pkg.base}/data/swiftly/flex_sdk"/>
+    <mkdir dir="${pkg.base}/data/swiftly/flex_sdk"/>
+    <copy todir="${pkg.base}/data/swiftly/flex_sdk">
+      <fileset dir="${flexsdk.dir}" includes="**"/>
     </copy>
     <!-- need our ehcache.xml file -->
     <copy file="${deploy.dir}/ehcache.xml" todir="${pkg.base}/${deploy.dir}"/>
