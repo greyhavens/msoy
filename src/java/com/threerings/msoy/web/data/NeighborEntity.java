@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.web.data;
 
-import java.util.Set;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
 
@@ -19,4 +17,5 @@ public class NeighborEntity
 
     /** How many people are currently logged into this entity's home scene. */
     public int population;
+    
 }
