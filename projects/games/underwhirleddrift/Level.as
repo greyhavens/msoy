@@ -80,7 +80,8 @@ public class Level extends Sprite
      */
     public function addOpponentKart (position :int, kartType :String) :KartObstacle
     {
-        var kart :KartObstacle = new KartObstacle(_config.getStartingPoint(position), kartType);
+        var kart :KartObstacle = new KartObstacle(_config.getStartingPoint(position), kartType, 
+            _ground);
         _scenery.addKart(kart);
         return kart;
     }

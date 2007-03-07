@@ -14,9 +14,8 @@ public class Kart extends KartSprite
 {
     public function Kart (kartType :String, camera :Camera, ground :Ground) 
     {
-        super(kartType);
+        super(kartType, ground);
         _camera = camera;
-        _ground = ground;
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
@@ -43,11 +42,6 @@ public class Kart extends KartSprite
 
     public function moveBackward (moving :Boolean) :void
     {
-        if (moving && _currentSpeed > 0) {
-            _braking = true;
-        } else if (!moving && _braking) {
-            _braking = false;
-        }
         keyAction(moving, MOVEMENT_BACKWARD);
     }
 
@@ -116,7 +110,8 @@ public class Kart extends KartSprite
             _kart.gotoAndStop(frame);
         }
 
-        _camera.position = calculateNewPosition(_camera.position, _camera.angle);
+        _camera.position = calculateNewPosition(_camera.position, _camera.angle,    
+            _ground.getKartLocation());
 
         // deal with a jump
         if (_jumpFrameCount > 0) {
@@ -143,9 +138,6 @@ public class Kart extends KartSprite
     /** reference to the camera object */
     protected var _camera :Camera;
 
-    /** reference to the ground object */
-    protected var _ground :Ground;
-
     /** The current amount we are adding or subtracting from the kart's turn angle */
     protected var _currentTurnAngle :Number = 0;
 
@@ -160,8 +152,5 @@ public class Kart extends KartSprite
     /** values to control jumping */
     protected static const JUMP_DURATION :int = 3;
     protected static const JUMP_HEIGHT :int = 15;
-
-    /** Factor to cut speed by when driving off-road */
-    protected static const TERRAIN_SPEED_FACTOR :Number = 0.2;
 }
 }

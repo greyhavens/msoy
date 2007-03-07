@@ -13,7 +13,7 @@ public class KartSprite extends Sprite
     public static const KART_MEDIUM :String = "MediumKart";
     public static const KART_HEAVY :String = "HeavyKart";
 
-    public function KartSprite(kartType :String, stopFrame :int = 1)
+    public function KartSprite(kartType :String, ground :Ground = null, stopFrame :int = 1)
     {
         try {
             _kart = new KartSprite[kartType]();
@@ -26,6 +26,7 @@ public class KartSprite extends Sprite
         }
         addChild(_kart);
         _kartType = kartType;
+        _ground = ground;
     }
 
     public function get kartType () :String
@@ -36,37 +37,52 @@ public class KartSprite extends Sprite
     /**
      * This is really only used by the subclasses, but its needed by both.
      */
-    protected function calculateNewPosition (position :Point, cameraAngle :Number) :Point
+    protected function calculateNewPosition (position :Point, cameraAngle :Number, 
+        kartLocation :Point) :Point
     {
-        var rotation :Matrix;
+        // calculate the new speed
+        var maxSpeed :Number = _movementConstants.maxSpeed;
+        var minSpeed :Number = _movementConstants.minSpeed;
+        var accelGas :Number = _movementConstants.accelGas;
+        var accelBrake :Number = _movementConstants.accelBrake;
+        var accelCoast :Number = _movementConstants.accelCoast;
+        if (!_ground.getLevel().isOnRoad(kartLocation)) {
+            // terrain doesn't affect min speed
+            maxSpeed *= TERRAIN_SPEED_FACTOR;
+            accelGas *= TERRAIN_SPEED_FACTOR;
+            accelBrake /= TERRAIN_SPEED_FACTOR;
+            accelCoast /= TERRAIN_SPEED_FACTOR;
+        }
+
         if (_movement & MOVEMENT_FORWARD) {
             if (_currentSpeed >= 0) {
-                _currentSpeed = Math.min(_movementConstants.maxSpeed, 
-                    _currentSpeed + _movementConstants.accelGas);
+                // if we're going faster than the max, then we probably just went off road...
+                // force a slow-down, but do it gently
+                if (_currentSpeed > maxSpeed) {
+                    _currentSpeed = Math.max(maxSpeed, _currentSpeed - accelCoast);
+                } else {
+                    _currentSpeed = Math.min(maxSpeed, _currentSpeed + accelGas);
+                }
             } else { 
-                _currentSpeed += _movementConstants.accelBrake;
+                _currentSpeed += accelBrake;
             }
         } else if (_movement & MOVEMENT_BACKWARD) {
-            if (_currentSpeed <= 0 && !_braking) {
-                _currentSpeed = Math.max(_movementConstants.minSpeed, 
-                    _currentSpeed - _movementConstants.accelGas);
+            if (_currentSpeed > 0) {
+                _currentSpeed = Math.max(0, _currentSpeed - accelBrake);
             } else {
-                _currentSpeed = Math.max(0, _currentSpeed - _movementConstants.accelGas);
+               _currentSpeed = Math.max(minSpeed, _currentSpeed - accelGas);
             }
         } else {
-            if ((_currentSpeed > _movementConstants.accelCoast && _currentSpeed > 0) || 
-                (_currentSpeed < _movementConstants.accelCoast && _currentSpeed < 0)) {
-                if (_currentSpeed > 0) {
-                    _currentSpeed -= _movementConstants.accelCoast;
-                } else {
-                    _currentSpeed += _movementConstants.accelCoast;
-                }
+            if (_currentSpeed > 0) {
+                _currentSpeed = Math.max(0, _currentSpeed - accelCoast);
             } else {
-                _currentSpeed = 0;
+                _currentSpeed = Math.min(0, _currentSpeed + accelCoast);
             }
         }
+
+        // calculate the new position, based on the new speed
         var newPosition :Point;
-        rotation = new Matrix();
+        var rotation :Matrix = new Matrix();
         rotation.rotate(cameraAngle);
         if ((_movement & MOVEMENT_DRIFT) && _jumpFrameCount == 0) { 
             var driftSpeed :Number = _currentSpeed * DRIFT_Y_SPEED_FACTOR;
@@ -82,7 +98,12 @@ public class KartSprite extends Sprite
             newPosition = position.add(rotation.transformPoint(new Point(0, 
                 -_currentSpeed)));
         }
-        return newPosition;
+
+        if (_ground.getLevel().isOnWall(newPosition)) {
+            return position;
+        } else {
+            return newPosition;
+        }
     }
 
     /** light kart swf */
@@ -90,10 +111,10 @@ public class KartSprite extends Sprite
     protected static const LightKart :Class;
     protected static const LightKart_Movement :Object = {
         maxSpeed: 12,
-        minSpeed: 0.5, 
+        minSpeed: -0.5, 
         accelGas: 0.4,
-        accelBrake: 2.5,
-        accelCoast: 0.35
+        accelBrake: 1,
+        accelCoast: 0.25
     };
 
     /** medium kart swf */
@@ -101,9 +122,9 @@ public class KartSprite extends Sprite
     protected static const MediumKart :Class;
     protected static const MediumKart_Movement :Object = {
         maxSpeed: 13,
-        minSpeed: 0.5,
+        minSpeed: -0.5,
         accelGas: 0.3,
-        accelBrake: 2,
+        accelBrake: 0.8,
         accelCoast: 0.3
     };
 
@@ -112,10 +133,10 @@ public class KartSprite extends Sprite
     protected static const HeavyKart :Class;
     protected static const HeavyKart_Movement :Object = {
         maxSpeed: 15,
-        minSpeed: 0.5,
+        minSpeed: -0.5,
         accelGas: 0.2,
-        accelBrake: 1.5,
-        accelCoast: 0.25
+        accelBrake: 0.6,
+        accelCoast: 0.35
     };
 
     /** flags for the _movement bit flag variable */
@@ -130,15 +151,15 @@ public class KartSprite extends Sprite
     protected static const TURN_ACCELERATION :Number = 0.008;
 
     /** values to control drifting */
-    protected static const DRIFT_X_SPEED_FACTOR :Number = 0.2;
+    protected static const DRIFT_X_SPEED_FACTOR :Number = 0.5;
     protected static const DRIFT_Y_SPEED_FACTOR :Number = 0.5;
+
+    /** Factor to cut speed by when driving off-road */
+    protected static const TERRAIN_SPEED_FACTOR :Number = 0.2;
 
     protected var _kart :MovieClipAsset;
      
     protected var _kartType :String;
-
-    /** a user must lift their finger and re-apply in order to go backwards after braking */
-    protected var _braking :Boolean = false;
 
     protected var _currentSpeed :Number = 0;
 
@@ -149,5 +170,8 @@ public class KartSprite extends Sprite
     protected var _jumpFrameCount :int = 0;
 
     protected var _movementConstants :Object;
+
+    /** reference to the level object */
+    protected var _ground :Ground;
 }
 }

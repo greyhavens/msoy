@@ -15,10 +15,10 @@ public class KartObstacle extends KartSprite
     public var startHeight :Number;
     public var transformedOrigin: Point; 
 
-    public function KartObstacle (startingPosition :Point, kartType :String) 
+    public function KartObstacle (startingPosition :Point, kartType :String, ground :Ground) 
     {
         // medium kart is all we have for now
-        super(kartType);
+        super(kartType, ground);
         _currentPosition = startingPosition;
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
@@ -71,7 +71,7 @@ public class KartObstacle extends KartSprite
     {
         var rotation :Matrix = new Matrix();
         rotation.rotate(_currentAngle);
-        _currentPosition = calculateNewPosition(_currentPosition, _currentAngle);
+        _currentPosition = calculateNewPosition(_currentPosition, _currentAngle, _currentPosition);
     }
     
     protected var _currentPosition :Point;

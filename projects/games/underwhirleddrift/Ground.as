@@ -31,27 +31,16 @@ public class Ground extends Sprite
     }
 
     /**
-     * Returns true if the kart is currently driving on the road surface.
-     */
-    public function drivingOnRoad () :Boolean
-    {
-        return _drivingOnRoad;
-    }
-
-    /**
-     * Returns true if the kart is currently up against a wall.
-     */
-    public function drivingIntoWall () :Boolean
-    {
-        return _drivingIntoWall;
-    }
-
-    /**
      * set the level object used by this object.
      */
     public function setLevel (level :Level) :void
     {
         _level = level;
+    }
+
+    public function getLevel () :Level 
+    {
+        return _level;
     }
 
     /**
@@ -142,8 +131,6 @@ public class Ground extends Sprite
                     UnderwhirledDrift.KART_LOCATION);
             }
         }
-        _drivingOnRoad = _level.isOnRoad(_kartLocation);
-        _drivingIntoWall = _level.isOnWall(_kartLocation);
         if (_scenery != null) {
             _scenery.updateItems(translateRotate, _camera);
         }
@@ -157,12 +144,6 @@ public class Ground extends Sprite
 
     /** camera instance */
     protected var _camera :Camera;
-
-    /** flag to indicate that we're driving on the road */
-    protected var _drivingOnRoad :Boolean = true;
-
-    /** flag to indicate that we're up against a wall */
-    protected var _drivingIntoWall :Boolean = false;
 
     /** Obstacles */
     protected var _scenery :Scenery;
