@@ -29,36 +29,48 @@ public class LevelFactory
     protected static const BACKGROUND_0 :Class;
     [Embed(source='rsrc/level_1.swf#background')]
     protected static const BACKGROUND_1 :Class;
+    [Embed(source='rsrc/level_2.swf#background')]
+    protected static const BACKGROUND_2 :Class;
 
     /** Roughs */
     [Embed(source='rsrc/level_0.swf#rough')]
     protected static const ROUGH_0 :Class;
     [Embed(source='rsrc/level_1.swf#rough')]
     protected static const ROUGH_1 :Class;
+    [Embed(source='rsrc/level_2.swf#rough')]
+    protected static const ROUGH_2 :Class;
 
     /** Tracks */
     [Embed(source='rsrc/level_0.swf#track')]
     protected static const TRACK_0 :Class;
     [Embed(source='rsrc/level_1.swf#track')]
     protected static const TRACK_1 :Class;
+    [Embed(source='rsrc/level_2.swf#track')]
+    protected static const TRACK_2 :Class;
     
     /** Walls */
     [Embed(source='rsrc/level_0.swf#wall')]
     protected static const WALL_0 :Class;
     [Embed(source='rsrc/level_1.swf#wall')]
     protected static const WALL_1 :Class;
+    [Embed(source='rsrc/level_2.swf#wall')]
+    protected static const WALL_2 :Class;
 
     /** Object Layers */
     [Embed(source='rsrc/level_0.swf#objects')]
     protected static const OBJECTS_0 :Class;
     [Embed(source='rsrc/level_1.swf#objects')]
     protected static const OBJECTS_1 :Class;
+    [Embed(source='rsrc/level_2.swf#objects')]
+    protected static const OBJECTS_2 :Class;
 
     /** Horizon images */
     [Embed(source='rsrc/level_0.swf#horizon')]
     protected static const HORIZON_0 :Class;
     [Embed(source='rsrc/level_1.swf#horizon')]
     protected static const HORIZON_1 :Class;
+    [Embed(source='rsrc/level_2.swf#horizon')]
+    protected static const HORIZON_2 :Class;
 
     /****** Magic fun scenery props from the objects.swf ******/
 

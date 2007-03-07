@@ -16,10 +16,10 @@ public class LevelConfig
     public static const OBJECT_JUMP_RAMP           :int = 103;
     // boost lines only point in the cardinal direction, and are defined by two points that
     // create a line perpendicular to the boost direction.  If these numbers are changed, they 
-    // should remain in numerical progression, with EAST set to the lowest number.
+    // should remain in the same order, with a difference of 1 between each.
     public static const OBJECT_BOOST_POINT_EAST    :int = 104;
-    public static const OBJECT_BOOST_POINT_WEST    :int = 105;
-    public static const OBJECT_BOOST_POINT_NORTH   :int = 106;
+    public static const OBJECT_BOOST_POINT_NORTH   :int = 105;
+    public static const OBJECT_BOOST_POINT_WEST    :int = 106;
     public static const OBJECT_BOOST_POINT_SOUTH   :int = 107;
 
     public static const OBJECT_BONUS               :int = 201;

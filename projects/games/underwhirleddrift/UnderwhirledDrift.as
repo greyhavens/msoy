@@ -293,7 +293,7 @@ public class UnderwhirledDrift extends Sprite
                 if (event.type == KeyboardEvent.KEY_DOWN && 
                         // only allow this in single-player mode
                         _control.seating.getPlayerIds().length == 1) {
-                    _currentLevel = (_currentLevel + 1) % 2;
+                    _currentLevel = (_currentLevel + 1) % 3;
                     _level = LevelFactory.createLevel(_currentLevel, _ground);
                     _gameSprite.removeChild(_horizon);
                     _gameSprite.addChildAt(_horizon = new Horizon(_level.horizon, _camera), 0);

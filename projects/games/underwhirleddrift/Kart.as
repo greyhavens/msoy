@@ -129,7 +129,12 @@ public class Kart extends KartSprite
         var boosts :Array = _ground.getLevel().getBoosts();
         for each (var boost :Object in _ground.getLevel().getBoosts()) {
             if (boost.line.isIntersected(movedLine)) {
-                Log.getLog(this).debug("BOOST: " + boost.type);
+                var angle :Number = (Math.PI / 2) * 
+                    (boost.type - LevelConfig.OBJECT_BOOST_POINT_EAST);
+                var percent :Number = 1 - Math.abs((_camera.angle - angle) / (Math.PI * 2));
+                Log.getLog(this).debug("angle: " + angle + ", camera: " + _camera.angle + 
+                    ", percent: " + percent);
+                _currentSpeed += percent * BOOST;
             } 
         }
 
@@ -163,6 +168,8 @@ public class Kart extends KartSprite
     protected static const TURN_VIEW_ANGLE :int = 15; // in degrees
     protected static const DRIFT_VIEW_ANGLE :int = 45; // in degrees
     protected static const VIEW_ACCELERATION :int = 4; // degrees per frame
+
+    protected static const BOOST :int = 10;
 
     /** values to control jumping */
     protected static const JUMP_DURATION :int = 3;
