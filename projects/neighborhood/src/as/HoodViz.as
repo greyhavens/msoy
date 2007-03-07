@@ -346,9 +346,7 @@ public class HoodViz extends Sprite
             tipContent.addChild(obj);
 
             var str :String;
-            if (house.isOnline) {
-                str = "Online";
-            } else if (house.lastSession != null) {
+            if (!house.isOnline && house.lastSession != null) {
                 str = "Last on: " + DateUtil.getConversationalDateString(house.lastSession);
             }
             if (str != null) {
@@ -357,7 +355,17 @@ public class HoodViz extends Sprite
                 tipContent.addChild(rule);
 
                 obj = getTextField(str);
-                obj.y = 10 + tipHeight; tipHeight += obj.height;
+                obj.y = 10 + tipHeight; tipHeight += 10 + obj.height;
+                tipContent.addChild(obj);
+            }
+
+            if (house.peeps != null && house.peeps.length > 0) {
+                str = "Here: " + house.peeps.join(", ");
+                if (house.peeps.length < house.population) {
+                    str += " ...";
+                }
+                obj = getTextField(str, false);
+                obj.y = 10 + tipHeight; tipHeight += 10 + obj.height;
                 tipContent.addChild(obj);
             }
 
@@ -366,13 +374,14 @@ public class HoodViz extends Sprite
 
             tip = new _plaqueGroup();
 
+            var loader :Loader;
             if (group.getLogoHash() != null) {
                 obj = getTextField(group.groupName, true);
                 obj.y = tipHeight; tipHeight += obj.height;
                 tipContent.addChild(obj);
 
                 // if there is a logo, we dynamically load it
-                var loader :Loader = new Loader();
+                loader = new Loader();
 
                 // we want to know when the logo is loaded so we can do resize magic
                 loader.contentLoaderInfo.addEventListener(Event.COMPLETE, popupLogoLoaded);
@@ -381,17 +390,32 @@ public class HoodViz extends Sprite
 
                 loader.load(new URLRequest("/media/" + group.getLogoHash()));
 
-                rule = new _rule();
-                rule.y = 10 + tipHeight; tipHeight += 10 + rule.height;
-                tipContent.addChild(rule);
-
                 tipContent.addChild(loader);
-                loader.y = 10 + tipHeight; tipHeight += 40;
+                loader.y = 10 + tipHeight; tipHeight += 10 + 60;
+
             } else {
                 obj = getTextField(group.groupName, true);
                 obj.y = tipHeight; tipHeight += obj.height;
                 tipContent.addChild(obj);
             }
+
+            if (group.peeps != null && group.peeps.length > 0) {
+                if (loader == null) {
+                    // if we're showing people but no logo, add a rule
+                    rule = new _rule();
+                    rule.y = 10 + tipHeight; tipHeight += 10 + rule.height;
+                    tipContent.addChild(rule);
+                }
+
+                str = "Here: " + group.peeps.join(", ");
+                if (group.peeps.length < group.population) {
+                    str += " ...";
+                }
+                obj = getTextField(str, false);
+                obj.y = 10 + tipHeight; tipHeight += 10 + obj.height;
+                tipContent.addChild(obj);
+            }
+
         } else {
             var game :NeighborGame = neighbor as NeighborGame;
 
@@ -462,7 +486,7 @@ public class HoodViz extends Sprite
         var content: DisplayObject = event.target.content;
         var loader :DisplayObjectContainer = content.parent;
         // now scale the image depending on which dimension is constrained
-        var scale :Number = Math.min(70/content.width, 40/content.height);
+        var scale :Number = Math.min(80/content.width, 60/content.height);
 
         // and center in either the x or y direction as needed
 //        content.x = (holder.width - scale*content.width)/2;

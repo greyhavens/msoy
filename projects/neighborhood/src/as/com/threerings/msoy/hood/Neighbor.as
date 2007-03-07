@@ -7,6 +7,8 @@ public class Neighbor
 {
     /** The number of members occupying this neighbor place. */
     public var population :int;
+    /** The names of people present in this place. */
+    public var peeps :Array;
     /** The scene id, if any, that represents this place. */
     public var sceneId :int;
 
@@ -17,6 +19,7 @@ public class Neighbor
     {
         neighbor.population = JSON.pop;
         neighbor.sceneId = JSON.sceneId;
+        neighbor.peeps = JSON.peeps;
     }
 }
 }
