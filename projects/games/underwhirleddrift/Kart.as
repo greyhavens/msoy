@@ -68,11 +68,6 @@ public class Kart extends KartSprite
         }
     }
 
-    public function setFinishLine (line :Line) :void
-    {
-        _finishLine = line;
-    }
-
     protected function enterFrame (event :Event) :void
     {
         // update camera and kart angles
@@ -121,11 +116,19 @@ public class Kart extends KartSprite
         var oldPos :Point = _camera.position;
         _camera.position = calculateNewPosition(_camera.position, _camera.angle,    
             _ground.getKartLocation());
-        var intersection :int = _finishLine.getIntersectionType(new Line(oldPos, _camera.position));
+        var movedLine :Line = new Line(oldPos, _camera.position);
+        var intersection :int = _ground.getLevel().getFinishLine().getIntersectionType(movedLine);
         if (intersection == Line.INTERSECTION_NORTH) {
             Log.getLog(this).debug("crossed finish line NORTH");
         } else if (intersection == Line.INTERSECTION_SOUTH) {
             Log.getLog(this).debug("crossed finish line SOUTH");
+        }
+
+        var boosts :Array = _ground.getLevel().getBoosts();
+        for each (var boost :Object in _ground.getLevel().getBoosts()) {
+            if (boost.line.isIntersected(movedLine)) {
+                Log.getLog(this).debug("BOOST: " + boost.type);
+            } 
         }
 
         // deal with a jump
@@ -171,7 +174,5 @@ public class Kart extends KartSprite
 
     /** The current angle we are viewing our own kart at */
     protected var _currentViewAngle :Number = 0;
-
-    protected var _finishLine :Line;
 }
 }

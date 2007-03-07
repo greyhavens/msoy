@@ -89,8 +89,11 @@ public class LevelFactory
         OBJECT_MAPPING = new HashMap();
         OBJECT_MAPPING.put(0xFF0000, { cls: null, type: LevelConfig.OBJECT_STARTING_LINE_POINT });
         OBJECT_MAPPING.put(0xFFFFFF, { cls: null, type: LevelConfig.OBJECT_STARTING_POSITION });
-        OBJECT_MAPPING.put(0xFF00FF, { cls: null, type: LevelConfig.OBJECT_BOOST });
         OBJECT_MAPPING.put(0x00FF00, { cls: null, type: LevelConfig.OBJECT_JUMP_RAMP });
+        OBJECT_MAPPING.put(0x00FFFF, { cls: null, type: LevelConfig.OBJECT_BOOST_POINT_EAST });
+        OBJECT_MAPPING.put(0x790000, { cls: null, type: LevelConfig.OBJECT_BOOST_POINT_WEST });
+        OBJECT_MAPPING.put(0xFF00FF, { cls: null, type: LevelConfig.OBJECT_BOOST_POINT_NORTH });
+        OBJECT_MAPPING.put(0x0000FF, { cls: null, type: LevelConfig.OBJECT_BOOST_POINT_SOUTH });
 
         OBJECT_MAPPING.put(0xFFFF00, { cls: DORA_BOX, type: LevelConfig.OBJECT_BONUS });
         OBJECT_MAPPING.put(0xF7941D, { cls: SOUL_WELL, type: LevelConfig.OBJECT_BONUS });

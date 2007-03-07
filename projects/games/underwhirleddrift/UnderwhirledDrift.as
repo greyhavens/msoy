@@ -199,7 +199,6 @@ public class UnderwhirledDrift extends Sprite
         _kart.x = KART_LOCATION.x;
         // tack on a few pixels to account for the front of the kart
         _kart.y = KART_LOCATION.y + SKY_HEIGHT + KART_OFFSET;
-        _kart.setFinishLine(_ground.getLevel().getFinishLine());
         addChild(_kart);
         _control.sendMessage("kartChosen", {playerId: _control.getMyId(),
             kartType: _kart.kartType});
@@ -263,7 +262,6 @@ public class UnderwhirledDrift extends Sprite
                     _horizon.x += _horizon.width / 2;
                     _level.setStartingPosition(0);
                     _ground.getScenery().registerKart(_kart);
-                    _kart.setFinishLine(_ground.getLevel().getFinishLine());
                 }
                 break;
             default:

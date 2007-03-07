@@ -13,8 +13,14 @@ public class LevelConfig
 {
     public static const OBJECT_STARTING_LINE_POINT :int = 101;
     public static const OBJECT_STARTING_POSITION   :int = 102;
-    public static const OBJECT_BOOST               :int = 103;
-    public static const OBJECT_JUMP_RAMP           :int = 104;
+    public static const OBJECT_JUMP_RAMP           :int = 103;
+    // boost lines only point in the cardinal direction, and are defined by two points that
+    // create a line perpendicular to the boost direction.  If these numbers are changed, they 
+    // should remain in numerical progression, with EAST set to the lowest number.
+    public static const OBJECT_BOOST_POINT_EAST    :int = 104;
+    public static const OBJECT_BOOST_POINT_WEST    :int = 105;
+    public static const OBJECT_BOOST_POINT_NORTH   :int = 106;
+    public static const OBJECT_BOOST_POINT_SOUTH   :int = 107;
 
     public static const OBJECT_BONUS               :int = 201;
     public static const OBJECT_OBSTACLE            :int = 202;
@@ -29,6 +35,7 @@ public class LevelConfig
         var trans :Matrix = new Matrix();
         trans.translate(layerImg.width / 2, layerImg.height / 2);
         layerBitmap.draw(layerImg, trans);
+        var boostPoints :Array = [[], [], [], []];
         var log :Log = Log.getLog(UnderwhirledDrift);
         for (var h :int = 0; h < layerImg.height; h++) {
             for (var w :int = 0; w < layerImg.width; w++) {
@@ -43,6 +50,12 @@ public class LevelConfig
                             } else {
                                 _startingLine.stop = point;
                             }
+                            break;
+                        case OBJECT_BOOST_POINT_EAST:
+                        case OBJECT_BOOST_POINT_WEST:
+                        case OBJECT_BOOST_POINT_NORTH:
+                        case OBJECT_BOOST_POINT_SOUTH:
+                            boostPoints[obj.type - OBJECT_BOOST_POINT_EAST].push(point);
                             break;
                         case OBJECT_STARTING_POSITION:
                             _startingPoints.push(point);
@@ -61,6 +74,7 @@ public class LevelConfig
                 }
             }
         }
+        findBoostLines(boostPoints);
         
         // sort the starting points based on distance from the starting line
         trans.identity();
@@ -95,9 +109,46 @@ public class LevelConfig
         return _bonuses;
     }
 
+    public function getBoosts () :Array
+    { 
+        return _boosts;
+    }
+
+    protected function findBoostLines (boostPoints :Array) :void
+    {
+        _boosts = new Array();
+        for (var ii: int = 0; ii < 4; ii++) {
+            var thesePoints :Array = boostPoints[ii];
+            var type :int = ii + OBJECT_BOOST_POINT_EAST;
+            while (thesePoints.length > 0) {
+                var firstP :Point = thesePoints.pop();
+                for (var next :int = 0; next < thesePoints.length; next++) {
+                    if (type == OBJECT_BOOST_POINT_EAST || type == OBJECT_BOOST_POINT_WEST) {
+                        // the next point encountered with a matching x is this one's mate, if the
+                        // objects art is sane
+                        if (thesePoints[next].x == firstP.x) {
+                            _boosts.push({ line: new Line(firstP, thesePoints[next]), type: type });
+                            thesePoints.splice(next, 1);
+                            break;
+                        }
+                    } else {
+                        // the next point encountered with a matching y is this one's mate, if the
+                        // objects are is sane
+                        if (thesePoints[next].y == firstP.y) {
+                            _boosts.push({ line: new Line(firstP, thesePoints[next]), type: type });
+                            thesePoints.splice(next, 1);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     protected var _startingLine :Line;
     protected var _startingPoints :Array;
     protected var _obstacles :Array;
     protected var _bonuses :Array;
+    protected var _boosts :Array;
 }
 }

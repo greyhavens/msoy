@@ -74,6 +74,11 @@ public class Level extends Sprite
     {
         return _config.getStartingLine();
     }
+    
+    public function getBoosts () :Array
+    {
+        return _config.getBoosts();
+    }
 
     public function get horizon () :Class
     {
