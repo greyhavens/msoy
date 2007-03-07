@@ -191,16 +191,13 @@ public class ProjectPanel extends JPanel
                 return; // if the user hit cancel do no more
             }
             element = PathElement.createDirectory(name, parentElement);
+            _roomObj.service.addPathElement(_ctx.getClient(), element);
         } else if (type == PathElement.Type.FILE) {
             element = _editor.showCreateFileDialog(parentElement);
             if (element == null) {
                 return; // if the user hit cancel do no more
             }
-        } else {
-            // other types not implemented
-        }
-        if (element != null) {
-            _roomObj.service.addPathElement(_ctx.getClient(), element);
+            _roomObj.service.addDocument(_ctx.getClient(), element);
         }
     }
 

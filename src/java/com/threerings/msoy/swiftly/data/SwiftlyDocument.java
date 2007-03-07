@@ -29,7 +29,17 @@ public class SwiftlyDocument
     }
 
     /**
-     * Instantiate a new SwiftlyDocument
+     * Instantiate a new, blank SwiftlyDocument.
+     */
+    public SwiftlyDocument (PathElement path, String encoding)
+        throws IOException
+    {
+        this(null, path, encoding);
+    }
+
+    /**
+     * Instantiate a new SwiftlyDocument. Passing null for the InputStream data creates
+     * a new blank document.
      */
     public SwiftlyDocument (InputStream data, PathElement path, String encoding)
         throws IOException
@@ -39,7 +49,7 @@ public class SwiftlyDocument
         byte[] buf = new byte[1024];
         int len;
 
-        // Store the pathelemtn
+        // Store the pathelement
         _path = path;
 
         // Load and save the base document data.
@@ -51,15 +61,19 @@ public class SwiftlyDocument
         textBuffer = new StringBuffer();
         fileOutput = new FileOutputStream(_backingStore);
         
-        while ((len = data.read(buf)) > 0) {
-            // Write to our base file backing
-            fileOutput.write(buf, 0, len);
+        // text will remain blank if this is a new document
+        _text = "";
+        if (data != null) {
+            while ((len = data.read(buf)) > 0) {
+                // Write to our base file backing
+                fileOutput.write(buf, 0, len);
 
-            // Write to the memory buffer too, oh boy
-            textBuffer.append(new String(buf, 0, len, encoding));
+                // Write to the memory buffer too, oh boy
+                textBuffer.append(new String(buf, 0, len, encoding));
+            }
+            _text = textBuffer.toString();
         }
 
-        _text = textBuffer.toString();
         _encoding = encoding;
     }
 

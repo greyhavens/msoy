@@ -6,7 +6,6 @@ package com.threerings.msoy.swiftly.client {
 import flash.utils.ByteArray;
 import com.threerings.msoy.swiftly.client.ProjectRoomService;
 import com.threerings.msoy.swiftly.data.PathElement;
-import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
@@ -19,7 +18,7 @@ import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 public interface ProjectRoomService extends InvocationService
 {
     // from Java interface ProjectRoomService
-    function addDocument (arg1 :Client, arg2 :SwiftlyDocument) :void;
+    function addDocument (arg1 :Client, arg2 :PathElement) :void;
 
     // from Java interface ProjectRoomService
     function addPathElement (arg1 :Client, arg2 :PathElement) :void;

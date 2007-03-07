@@ -5,7 +5,6 @@ package com.threerings.msoy.swiftly.server;
 
 import com.threerings.msoy.swiftly.client.ProjectRoomService;
 import com.threerings.msoy.swiftly.data.PathElement;
-import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -20,7 +19,7 @@ public interface ProjectRoomProvider extends InvocationProvider
     /**
      * Handles a {@link ProjectRoomService#addDocument} request.
      */
-    public void addDocument (ClientObject caller, SwiftlyDocument arg1);
+    public void addDocument (ClientObject caller, PathElement arg1);
 
     /**
      * Handles a {@link ProjectRoomService#addPathElement} request.

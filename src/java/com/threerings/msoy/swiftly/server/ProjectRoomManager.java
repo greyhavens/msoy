@@ -94,12 +94,21 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void addDocument (ClientObject caller, SwiftlyDocument document)
+    public void addDocument (ClientObject caller, PathElement element)
     {
         // TODO: check access!
+        // add the path element first
+        _roomObj.addPathElement(element);
+
+        SwiftlyDocument doc = null;
+        try {
+            doc = new SwiftlyDocument(element, ProjectStorage.TEXT_ENCODING); 
+        } catch (IOException e) {
+            // not going to happen
+        }
 
         // for now just update the room object
-        _roomObj.addToDocuments(document);
+        _roomObj.addSwiftlyDocument(doc);
     }
 
     // from interface ProjectRoomProvider

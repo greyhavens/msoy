@@ -6,7 +6,6 @@ package com.threerings.msoy.swiftly.server;
 import com.threerings.msoy.swiftly.client.ProjectRoomService;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
-import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -43,7 +42,7 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
         case ProjectRoomMarshaller.ADD_DOCUMENT:
             ((ProjectRoomProvider)provider).addDocument(
                 source,
-                (SwiftlyDocument)args[0]
+                (PathElement)args[0]
             );
             return;
 

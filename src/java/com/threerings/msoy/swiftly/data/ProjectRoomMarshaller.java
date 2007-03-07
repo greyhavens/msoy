@@ -5,7 +5,6 @@ package com.threerings.msoy.swiftly.data;
 
 import com.threerings.msoy.swiftly.client.ProjectRoomService;
 import com.threerings.msoy.swiftly.data.PathElement;
-import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -25,7 +24,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int ADD_DOCUMENT = 1;
 
     // from interface ProjectRoomService
-    public void addDocument (Client arg1, SwiftlyDocument arg2)
+    public void addDocument (Client arg1, PathElement arg2)
     {
         sendRequest(arg1, ADD_DOCUMENT, new Object[] {
             arg2
