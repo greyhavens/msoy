@@ -217,6 +217,12 @@ public class ProjectPanel extends JPanel
         // TODO throw up a Are you sure yes/no dialog
         PathElement element = getSelectedPathElement();
 
+        if (_roomObj.project.getTemplateSourceName().equals(element.getName())) {
+            _editor.showErrorDialog(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS,
+                "e.cannot_delete_template"));
+            return;
+        }
+
         // XXX we know the tab was selected in order for delete to work. This might be dangerous.
         // we also know the tab was open.. hmmm
         if (element.getType() == PathElement.Type.FILE) {

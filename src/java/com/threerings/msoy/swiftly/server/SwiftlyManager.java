@@ -24,6 +24,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.swiftly.client.SwiftlyService;
 import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
@@ -88,6 +89,8 @@ public class SwiftlyManager
             public boolean invoke () {
                 try {
                     SwiftlyProjectRecord projectRecord = MsoyServer.swiftlyRepo.loadProject(projectId);
+                    _project = projectRecord.toSwiftlyProject();
+
                     SwiftlySVNStorageRecord storageRecord =
                         MsoyServer.swiftlyRepo.loadStorageRecordForProject(projectId);
                     _storage = new ProjectSVNStorage(projectRecord.toSwiftlyProject(), storageRecord);    
@@ -106,9 +109,10 @@ public class SwiftlyManager
             }
             
             public void handleResult () {
-                mgr.init(_storage);
+                mgr.init(_project, _storage);
             }
             
+            protected SwiftlyProject _project;
             protected ProjectStorage _storage;
         });
 

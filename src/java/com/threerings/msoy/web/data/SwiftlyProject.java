@@ -5,14 +5,20 @@ package com.threerings.msoy.web.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.io.Streamable;
+
 import com.threerings.msoy.item.web.Item;
 
 /**
  * Contains information on a Swiftly Project
  */
 public class SwiftlyProject
-    implements IsSerializable
+    implements IsSerializable, Streamable
 {
+    public SwiftlyProject ()
+    {
+    }
+
     /** The valid project types. */
     public static byte[] PROJECT_TYPES = { Item.GAME, Item.AVATAR };
 

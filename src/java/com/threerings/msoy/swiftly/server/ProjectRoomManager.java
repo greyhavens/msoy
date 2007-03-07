@@ -26,6 +26,7 @@ import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 
@@ -41,9 +42,10 @@ public class ProjectRoomManager extends PlaceManager
     /**
      * Called by the {@link SwiftlyManager} after creating this project room manager.
      */
-    public void init (ProjectStorage storage)
+    public void init (SwiftlyProject project, ProjectStorage storage)
     {
         _storage = storage;
+        _roomObj.setProject(project);
 
         // Load the project tree from the storage provider
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {

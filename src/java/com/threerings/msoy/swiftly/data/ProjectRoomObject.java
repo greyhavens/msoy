@@ -7,14 +7,16 @@ import com.threerings.presents.dobj.DSet;
 
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.msoy.web.data.SwiftlyProject;
+
 /**
  * Maintains the distributed state for a Swiftly project.
  */
 public class ProjectRoomObject extends PlaceObject
 {
     // AUTO-GENERATED: FIELDS START
-    /** The field name of the <code>name</code> field. */
-    public static final String NAME = "name";
+    /** The field name of the <code>project</code> field. */
+    public static final String PROJECT = "project";
 
     /** The field name of the <code>pathElements</code> field. */
     public static final String PATH_ELEMENTS = "pathElements";
@@ -29,8 +31,8 @@ public class ProjectRoomObject extends PlaceObject
     public static final String CONSOLE = "console";
     // AUTO-GENERATED: FIELDS END
 
-    /** The name of the project being edited. */
-    public String name;
+    /** The SwiftlyProject being edited. */
+    public SwiftlyProject project;
 
     /** All resolved elements in this project. */
     public DSet<PathElement> pathElements = new DSet<PathElement>();
@@ -79,19 +81,19 @@ public class ProjectRoomObject extends PlaceObject
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Requests that the <code>name</code> field be set to the
+     * Requests that the <code>project</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
      * that the attribute did change. Proxied copies of this object (on
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setName (String value)
+    public void setProject (SwiftlyProject value)
     {
-        String ovalue = this.name;
+        SwiftlyProject ovalue = this.project;
         requestAttributeChange(
-            NAME, value, ovalue);
-        this.name = value;
+            PROJECT, value, ovalue);
+        this.project = value;
     }
 
     /**
