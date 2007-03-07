@@ -64,12 +64,12 @@ public class ChiyogamiController extends GameController
 
     override protected function setPlaceView () :void
     {
-        _worldDelegate.setPlaceView(_mctx, _panel);
+        _worldDelegate.setPlaceView(_panel);
     }
 
     override protected function clearPlaceView () :void
     {
-        _worldDelegate.clearPlaceView(_mctx);
+        _worldDelegate.clearPlaceView();
     }
 
     /** Our world context. */

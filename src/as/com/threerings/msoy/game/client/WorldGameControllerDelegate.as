@@ -10,6 +10,8 @@ import mx.containers.HBox;
 import com.threerings.flex.CommandButton;
 
 import com.threerings.crowd.client.PlaceView;
+import com.threerings.crowd.data.PlaceConfig;
+import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.parlor.game.client.GameController;
 import com.threerings.parlor.game.client.GameControllerDelegate;
@@ -18,6 +20,10 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.WorldContext;
 
+/**
+ * A delegate controller encapsulating all client-side behavior available
+ * to "World" games, whether AVRG or our own.
+ */
 public class WorldGameControllerDelegate extends GameControllerDelegate
 {
     public function WorldGameControllerDelegate (ctrl :GameController)
@@ -25,10 +31,24 @@ public class WorldGameControllerDelegate extends GameControllerDelegate
         super(ctrl);
     }
 
+    override public function init (ctx :CrowdContext, config :PlaceConfig) :void
+    {
+        super.init(ctx, config);
+        _ctx = (ctx as WorldContext);
+    }
+
+    /**
+     * Sets whether the user is allowed to control their own avatar.
+     */
+    public function setAvatarControl (enabled :Boolean) :void
+    {
+        // TODO
+    }
+
     /**
      *  A special helper method for setting the place view.
      */
-    public function setPlaceView (ctx :WorldContext, view :PlaceView) :void
+    public function setPlaceView (view :PlaceView) :void
     {
         var comp :UIComponent = (view as UIComponent);
 
@@ -43,17 +63,20 @@ public class WorldGameControllerDelegate extends GameControllerDelegate
         _panel.addChild(quit);
         _panel.height = 150;
 
-        ctx.getTopPanel().setBottomPanel(_panel);
+        _ctx.getTopPanel().setBottomPanel(_panel);
     }
 
     /**
      *  A special helper method for clearing the place view.
      */
-    public function clearPlaceView (ctx :WorldContext) :void
+    public function clearPlaceView () :void
     {
-        ctx.getTopPanel().clearBottomPanel(_panel);
+        _ctx.getTopPanel().clearBottomPanel(_panel);
         _panel = null;
     }
+
+    /** Gription on the action. */
+    protected var _ctx :WorldContext;
 
     protected var _panel :HBox;
 }

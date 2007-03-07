@@ -32,12 +32,12 @@ public class AVRGameController extends MsoyGameController
     
     override protected function setPlaceView () :void
     {
-        _worldDelegate.setPlaceView(_mctx, _panel);
+        _worldDelegate.setPlaceView(_panel);
     }
     
     override protected function clearPlaceView () :void
     {
-        _worldDelegate.clearPlaceView(_mctx);
+        _worldDelegate.clearPlaceView();
     }
     
     protected var _mctx :WorldContext;
