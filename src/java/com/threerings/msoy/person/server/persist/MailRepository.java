@@ -7,8 +7,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import sun.util.logging.resources.logging;
-
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.Tuple;
