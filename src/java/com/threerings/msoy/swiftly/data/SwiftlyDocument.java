@@ -10,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 
+import org.apache.commons.io.IOUtils;
+
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.presents.dobj.DSet;
 
@@ -85,6 +87,28 @@ public class SwiftlyDocument
     public void setText (String text)
     {
         _text = text;
+    }
+
+    public void setChanged (boolean changed)
+    {
+        _changed = changed;
+    }
+
+    public boolean wasChanged ()
+    {
+        return _changed;
+    }
+
+    /** Check to see if the document has changed */
+    public boolean isDirty ()
+        throws IOException
+    {
+        // first check to see if the document has received any user input
+        if (_changed) {
+            // if input was received, perform the expensive compare
+            return !IOUtils.contentEquals(getOriginalData(), getModifiedData());
+        }
+        return false;
     }
 
     public Comparable getKey ()
@@ -164,6 +188,9 @@ public class SwiftlyDocument
 
     /** Document contents, ineffeciently stored entirely in memory. */
     protected String _text;
+
+    /** If this document has received any input. */
+    protected boolean _changed = false;
 
     /** Unmodified disk-backing of the document data. */
     protected transient File _backingStore = null;

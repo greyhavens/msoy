@@ -65,6 +65,19 @@ public class SwiftlyDocumentUnitTest extends TestCase
         assertEquals("Hello, World", text);
     }
 
+    public void testIsDirty ()
+        throws Exception
+    {
+        assertTrue(!_doc.isDirty());
+
+        // document hasn't actually changed from backing store so should be false
+        _doc.setChanged(true);
+        assertTrue(!_doc.isDirty());
+
+        // document has changed from backing store so should be true
+        _doc.setText("Goodbye, World");
+        assertTrue(_doc.isDirty());
+    }
 
     protected static final String TEXT_ENCODING = "utf8";
     
