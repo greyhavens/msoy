@@ -31,6 +31,8 @@ import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.GroupName;
 
+import com.threerings.msoy.game.data.WorldGameConfig;
+
 /**
  * Represents a connected msoy user.
  */
@@ -47,8 +49,11 @@ public class MemberObject extends BodyObject
     /** The field name of the <code>clusterOid</code> field. */
     public static final String CLUSTER_OID = "clusterOid";
 
-    /** The field name of the <code>inWorldGame</code> field. */
-    public static final String IN_WORLD_GAME = "inWorldGame";
+    /** The field name of the <code>worldGameOid</code> field. */
+    public static final String WORLD_GAME_OID = "worldGameOid";
+
+    /** The field name of the <code>worldGameCfg</code> field. */
+    public static final String WORLD_GAME_CFG = "worldGameCfg";
 
     /** The field name of the <code>flow</code> field. */
     public static final String FLOW = "flow";
@@ -99,8 +104,11 @@ public class MemberObject extends BodyObject
     /** The object ID of the user's cluster. */
     public int clusterOid;
 
-    /** The object ID of the in-world game that the user is in, if any. */
-    public int inWorldGame;
+    /** The object ID of the in-world game that the user is in, or 0. */
+    public int worldGameOid;
+
+    /** The world game config that goes along with the oid, or null. */
+    public WorldGameConfig worldGameCfg;
 
     /** How much lovely flow we've got jangling around on our person. */
     public int flow;
@@ -383,19 +391,35 @@ public class MemberObject extends BodyObject
     }
 
     /**
-     * Requests that the <code>inWorldGame</code> field be set to the
+     * Requests that the <code>worldGameOid</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
      * that the attribute did change. Proxied copies of this object (on
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setInWorldGame (int value)
+    public void setWorldGameOid (int value)
     {
-        int ovalue = this.inWorldGame;
+        int ovalue = this.worldGameOid;
         requestAttributeChange(
-            IN_WORLD_GAME, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.inWorldGame = value;
+            WORLD_GAME_OID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.worldGameOid = value;
+    }
+
+    /**
+     * Requests that the <code>worldGameCfg</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setWorldGameCfg (WorldGameConfig value)
+    {
+        WorldGameConfig ovalue = this.worldGameCfg;
+        requestAttributeChange(
+            WORLD_GAME_CFG, value, ovalue);
+        this.worldGameCfg = value;
     }
 
     /**

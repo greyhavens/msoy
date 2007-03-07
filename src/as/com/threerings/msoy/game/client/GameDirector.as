@@ -25,6 +25,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.game.data.GameCodes;
+import com.threerings.msoy.game.data.WorldGameConfig;
 
 /**
  * A director that manages invitations and game starting.
@@ -107,8 +108,8 @@ public class GameDirector extends BasicDirector
     // from interface AttributeChangeListener
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
-        if (event.getName() == MemberObject.IN_WORLD_GAME) {
-            updateInWorldGame();
+        if (event.getName() == MemberObject.WORLD_GAME_OID) {
+            updateWorldGame();
         }
     }
 
@@ -119,15 +120,18 @@ public class GameDirector extends BasicDirector
             // we changed our minds!
             _mctx.getDObjectManager().unsubscribeFromObject(obj.getOid(), this);
             return;
+
         } else if (obj == _worldGameObj) {
             // already subscribed
             return;
         }
         _worldGameObj = (obj as GameObject);
-        // TODO: fixup, create controller the new way (COMING SOON)
-//        _worldGameCtrl = (_worldGameObj.config.createController() as GameController);
-//        _worldGameCtrl.init(_mctx, _worldGameObj.config);
-//        _worldGameCtrl.willEnterPlace(_worldGameObj);
+        // the config is set in the memberobject simultaneously with the oid.
+        // so if the oid is up-to-date, we can trust the config as well
+        var cfg :WorldGameConfig = _mctx.getMemberObject().worldGameCfg;
+        _worldGameCtrl = (cfg.createController() as GameController);
+        _worldGameCtrl.init(_mctx, cfg);
+        _worldGameCtrl.willEnterPlace(_worldGameObj);
     }
 
     // from interface Subscriber
@@ -141,16 +145,16 @@ public class GameDirector extends BasicDirector
     override protected function clientObjectUpdated (client :Client) :void
     {
         // listen for changes to the in-world game oid
-        updateInWorldGame();
+        updateWorldGame();
         client.getClientObject().addListener(this);
     }
 
     /**
      * Called to create, remove, or change the in-world game.
      */
-    protected function updateInWorldGame () :void
+    protected function updateWorldGame () :void
     {
-        var noid :int = _mctx.getMemberObject().inWorldGame;
+        var noid :int = _mctx.getMemberObject().worldGameOid;
         if (noid == _worldGameOid) {
             return;
         }

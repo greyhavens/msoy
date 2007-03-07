@@ -27,6 +27,8 @@ import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
 
+import com.threerings.msoy.game.data.WorldGameConfig;
+
 /**
  * Represents a connected msoy user.
  */
@@ -43,8 +45,11 @@ public class MemberObject extends BodyObject
     /** The field name of the <code>clusterOid</code> field. */
     public static const CLUSTER_OID :String = "clusterOid";
 
-    /** The field name of the <code>inWorldGame</code> field. */
-    public static const IN_WORLD_GAME :String = "inWorldGame";
+    /** The field name of the <code>worldGameOid</code> field. */
+    public static const WORLD_GAME_OID :String = "worldGameOid";
+
+    /** The field name of the <code>worldGameCfg</code> field. */
+    public static const WORLD_GAME_CFG :String = "worldGameCfg";
 
     /** The field name of the <code>humanity</code> field. */
     public static const HUMANITY :String = "humanity";
@@ -96,7 +101,10 @@ public class MemberObject extends BodyObject
     public var clusterOid :int;
 
     /** The object ID of the in-world game that the user is in, if any. */
-    public var inWorldGame :int;
+    public var worldGameOid :int;
+
+    /** The world game config that goes along with the oid, or null. */
+    public var worldGameCfg :WorldGameConfig;
 
     /** How much lovely flow we've got jangling around on our person. */
     public var flow :int;
@@ -381,7 +389,8 @@ public class MemberObject extends BodyObject
         memberName = (ins.readObject() as MemberName);
         sceneId = ins.readInt();
         clusterOid = ins.readInt();
-        inWorldGame = ins.readInt();
+        worldGameOid = ins.readInt();
+        worldGameCfg = (ins.readObject() as WorldGameConfig);
         flow = ins.readInt();
         humanity = ins.readInt();
         recentScenes = (ins.readObject() as DSet);

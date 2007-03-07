@@ -32,7 +32,7 @@ public class ChiyogamiPanel extends Canvas
     public function ChiyogamiPanel (ctx :WorldContext, ctrl :ChiyogamiController)
     {
         trace("ChiyogamiPanel starting up.");
-        addChild(new Background(500, 500));
+        //addChild(new Background(500, 500));
 
         _boss = new DancerSprite();
 

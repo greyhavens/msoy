@@ -162,13 +162,19 @@ public class WorldGameRegistry
         throws InvocationException
     {
         // nothing to do if they aren't in a game
-        if (member.inWorldGame == 0) {
+        if (member.worldGameOid == 0) {
             return;
         }
         
         // get the game object
-        GameObject gobj = getGameObject(member, member.inWorldGame);
-        member.setInWorldGame(0);
+        GameObject gobj = getGameObject(member, member.worldGameOid);
+        member.startTransaction();
+        try {
+            member.setWorldGameOid(0);
+            member.setWorldGameCfg(null);
+        } finally {
+            member.commitTransaction();
+        }
         
         // remove them from the occupant list
         int memberOid = member.getOid();
@@ -186,7 +192,7 @@ public class WorldGameRegistry
     {
         // get their game object
         MemberObject member = (MemberObject)caller;
-        GameObject gameObj = (GameObject)MsoyServer.omgr.getObject(member.inWorldGame);
+        GameObject gameObj = (GameObject)MsoyServer.omgr.getObject(member.worldGameOid);
         if (!(gameObj instanceof AVRGameObject)) {
             log.warning("Received memory update request from user not in world game [who=" +
                 member.who() + "].");
@@ -251,7 +257,7 @@ public class WorldGameRegistry
         throws InvocationException
     {
         // make sure they're not already in the game
-        if (member.inWorldGame == gameOid) {
+        if (member.worldGameOid == gameOid) {
             return;
         }
         
@@ -266,6 +272,8 @@ public class WorldGameRegistry
         // add to the occupant list
         int memberOid = member.getOid();
         GameManager gmgr = _managers.get(gameOid);
+        WorldGameConfig wgcfg = (WorldGameConfig) gmgr.getConfig();
+
         gobj.startTransaction();
         try {
             gmgr.buildOccupantInfo(member);
@@ -275,7 +283,14 @@ public class WorldGameRegistry
         }
         
         // set their game field
-        member.setInWorldGame(gameOid);
+        member.startTransaction();
+        try {
+            member.setWorldGameCfg(wgcfg);
+            member.setWorldGameOid(gameOid);
+
+        } finally {
+            member.commitTransaction();
+        }
     }
     
     /**
