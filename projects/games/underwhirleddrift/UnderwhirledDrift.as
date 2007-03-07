@@ -6,11 +6,14 @@ import flash.display.Shape;
 import flash.geom.Point;
 
 import flash.events.KeyboardEvent;
+import flash.events.Event;
 
 import flash.ui.Keyboard;
 
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
+
+import mx.core.MovieClipAsset;
 
 import com.threerings.ezgame.StateChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
@@ -138,10 +141,29 @@ public class UnderwhirledDrift extends Sprite
             if (playerPositions.length != 1) {
                 updateRaceStarted();
             }
-        } else if (event.name == "raceStarted") {
-            _raceStarted = true;
-            var obj :Object = _kart.getUpdate();
-            obj.playerId = _control.getMyId();
+        } else if (event.name == "startRace") {
+            _lightBoard = new LIGHT_BOARD();
+            var boardTravelHeight :int = _lightBoard.height;
+            var boardTravelStart :int = -boardTravelHeight / 2;
+            _lightBoard.x = DISPLAY_WIDTH / 2;
+            _lightBoard.y = boardTravelStart;
+            var boardFrameListener :Function = function (evt :Event) :void {
+                if (_lightBoard.currentFrame == _lightBoard.totalFrames) {
+                    if (_lightBoard.y == boardTravelStart) {
+                        _lightBoard.stop();
+                        _raceStarted = true;
+                        _lightBoard.y -= 5;
+                    } else {
+                        if (_lightBoard.y > boardTravelStart - boardTravelHeight) {
+                            _lightBoard.y -= 5;
+                        } else {
+                            _lightBoard.removeEventListener(Event.ENTER_FRAME, boardFrameListener);
+                        } 
+                    }
+                }
+            };
+            _lightBoard.addEventListener(Event.ENTER_FRAME, boardFrameListener);
+            addChild(_lightBoard);
         } else if (event.name == "positionUpdate") {
             // variables not being scoped directly to all blocks is really wacky
             playerId = event.value.playerId;
@@ -185,7 +207,7 @@ public class UnderwhirledDrift extends Sprite
     protected function updateRaceStarted () :void
     {
         if (_control.seating.getPlayerIds().length == 1) {
-            _control.sendMessage("raceStarted", true);
+            _control.sendMessage("startRace", true);
         } else if (_control.amInControl()) {
             var keys :Array = _opponentKarts.keys();
             for (var ii :int = 0; ii < keys.length; ii++) {
@@ -194,7 +216,7 @@ public class UnderwhirledDrift extends Sprite
                 }
             }
             if (ii == keys.length) {
-                _control.sendMessage("raceStarted", true);
+                _control.sendMessage("startRace", true);
             }
         }
     }
@@ -269,5 +291,7 @@ public class UnderwhirledDrift extends Sprite
     protected var _horizon :Horizon;
     protected var _gameSprite :Sprite;
     protected var _camera :Camera;
+
+    protected var _lightBoard :MovieClipAsset;
 }
 }
