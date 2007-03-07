@@ -190,6 +190,40 @@ public class UnderwhirledDrift extends Sprite
                     updateRaceStarted();
                 }
             }
+        } else if (event.name == "crossedFinishLine") {
+            var currentLaps :int = event.value.direction;
+            if (_playerLaps.containsKey(event.value.playerId)) {
+                currentLaps += _playerLaps.get(event.value.playerId);
+            }
+            if (currentLaps < 5 && !ArrayUtil.contains(_playersFinished, event.value.playerId)) {
+                _playerLaps.put(event.value.playerId, currentLaps);
+                if (event.value.playerId == _control.getMyId() && event.value.direction > 0) {
+                    if (currentLaps < 4) {
+                        _control.localChat("You are on lap " + currentLaps);
+                    } else {
+                        _control.localChat("You are on your final lap!");
+                    }
+                }
+            } else if (currentLaps == 5) {
+                _playerLaps.remove(event.value.playerId);
+                _playersFinished.push(event.value.playerId);
+                if (_control.amInControl()) {
+                    var place :String;
+                    if (_playersFinished.length == 1) {
+                        place = "1st";
+                    } else if (_playersFinished.length == 2) {
+                        place = "2nd";
+                    } else if (_playersFinished.length == 3) {
+                        place = "3rd";
+                    } else {
+                        place = _playersFinished.length + "th";
+                    }
+                    _control.sendChat(_control.getOccupantName(event.value.playerId) + 
+                        " finished in " + place + " place!");
+                }
+            } else if (!ArrayUtil.contains(_playersFinished, event.value.playerId)) {
+                _playerLaps.put(event.value.playerId, currentLaps);
+            }
         }
     }
 
@@ -273,7 +307,8 @@ public class UnderwhirledDrift extends Sprite
 
     protected function crossFinishLine (event :KartEvent) :void
     {
-        Log.getLog(this).debug("crossed finish line: " + event.value);
+        _control.sendMessage("crossedFinishLine", { playerId: _control.getMyId(), direction: 
+            event.value });
     }
 
     protected static const SEND_THROTTLE :int = 150; // in ms
@@ -295,6 +330,8 @@ public class UnderwhirledDrift extends Sprite
     
     /** A hashmap of the opponent's karts. */
     protected var _opponentKarts :HashMap = new HashMap();
+    protected var _playerLaps :HashMap = new HashMap();
+    protected var _playersFinished :Array = [];
 
     /** A flag to indicate that the race has started, so its safe to send position update */
     protected var _raceStarted :Boolean = false;
