@@ -382,7 +382,7 @@ public class MsoyController extends Controller
      * couldn't do so for whatever reason (are in the standalone client) and the caller should just
      * go there directly.
      */
-    protected function handleInternalGo (String url) :Boolean
+    protected function handleInternalGo (url :String) :Boolean
     {
         return shouldLoadNewPages() && NetUtil.navigateToURL(url, false);
     }
