@@ -62,7 +62,8 @@ public class LocalProjectBuilderUnitTest extends TestCase
     {
         File builds = new File(_tempDir, "builds");
         builds.mkdirs();
-        ProjectBuilder builder = new LocalProjectBuilder(_project, _storage, builds, SDK_DIR.getAbsoluteFile());
+        ProjectBuilder builder = new LocalProjectBuilder(_project, _storage, builds,
+            FLEX_SDK_DIR.getAbsoluteFile(), WHIRLED_SDK_DIR.getAbsoluteFile());
         builder.build();
     }
 
@@ -76,5 +77,9 @@ public class LocalProjectBuilderUnitTest extends TestCase
     protected ProjectStorage _storage;
 
     /** Static, brittle path to the flex SDK. Sorry. */
-    public static final File SDK_DIR = new File("projects/tools/extern/flex_sdk");
+    public static final File FLEX_SDK_DIR = new File("data/swiftly/flex_sdk");
+
+    /** Static, brittle path to the whirled SDK. Sorry. */
+    public static final File WHIRLED_SDK_DIR = new File("data/swiftly/whirled_sdk");
+
 }

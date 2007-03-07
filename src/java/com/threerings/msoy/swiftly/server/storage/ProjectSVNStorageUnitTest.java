@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.swiftly.server.storage;
 
+import com.threerings.msoy.item.web.Item;
+
 import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.msoy.swiftly.data.PathElement;
@@ -34,6 +36,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
         project = new SwiftlyProject();
         project.projectName = "project-name";
         project.ownerId = 0;
+        project.projectType = Item.GAME;
 
         return project;
     }

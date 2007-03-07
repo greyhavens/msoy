@@ -8,8 +8,14 @@ import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import java.io.IOException;
+
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
@@ -19,18 +25,19 @@ import org.apache.commons.io.FileUtils;
  */
 public class LocalProjectBuilder
     implements ProjectBuilder
-{
+{    
     /**
      * Create a new local project builder.
-     * @param flexPath: Local path to the Flex SDK.
+     * @param flexSDK: Local path to the Flex SDK.
      */
     public LocalProjectBuilder (SwiftlyProject project, ProjectStorage storage,
-        File buildRoot, File flexPath)
+        File buildRoot, File flexSDK, File whirledSDK)
         throws ProjectBuilderException
     {
         _project = project;
         _storage = storage;
-        _flexPath = flexPath;
+        _flexSDK = flexSDK;
+        _whirledSDK = whirledSDK;
         
         // Create a temporary build directory
         try {
@@ -57,19 +64,53 @@ public class LocalProjectBuilder
                 pse);
         }
 
+        // Build the project
+        // TODO: The mxmlc process and #include any file on the system.
+        // We need to start it under a permissions-limited JVM.
         try {
-            // XXX Totally fragile, broken, and otherwise insecure!
-            String[] cmd = {
-                _flexPath.getAbsolutePath() + "/bin/mxmlc",
+            Process proc;
+            ProcessBuilder procBuilder;
+            InputStream stdout;
+            BufferedReader bufferedOutput;
+            
+            
+            procBuilder = new ProcessBuilder(
+                _flexSDK.getAbsolutePath() + "/bin/mxmlc",
                 "-load-config",
-                "data/temp_sdk/templates/whirled-config.xml",
-                "-compiler.source-path=" + _buildRoot.getAbsolutePath(),
+                _whirledSDK.getAbsolutePath() + "/whirled-config.xml",
+                "-compiler.source-path=.",
+                "+flex_sdk=" + _flexSDK.getAbsolutePath(),
+                "+whirled_sdk=" + _whirledSDK.getAbsolutePath(),
                 "-file-specs",
-                _buildRoot.getAbsolutePath() + "/" + _project.getTemplateSourceName()
-            };
-            Runtime.getRuntime().exec(cmd);
+                _project.getTemplateSourceName()
+            );
+
+            // Direct stderr to stdout.
+            Map<String, String>env = procBuilder.environment();
+            env.clear();
+
+            // Set the working directory to the build root.
+            procBuilder.directory(_buildRoot);
+
+            // Sanitize the environment.
+            procBuilder.redirectErrorStream(true);
+
+            // Run the process and gather output
+            proc = procBuilder.start();
+
+            stdout = proc.getInputStream();
+            bufferedOutput = new BufferedReader(new InputStreamReader(stdout));
+
+            proc.waitFor();
+            String line;
+            while ((line = bufferedOutput.readLine()) != null) {
+              System.out.println(line);
+            }
+
         } catch (IOException ioe) {
-            // Do nothing, this is broken after all.
+            System.out.println("Failed: " + ioe);
+        } catch (InterruptedException ie) {
+            System.out.println("Failed: " + ie);            
         }
     }
 
@@ -80,7 +121,10 @@ public class LocalProjectBuilder
     protected ProjectStorage _storage;
     
     /** Path to the Flex SDK. */
-    protected File _flexPath;
+    protected File _flexSDK;
+
+    /** Path to the Whirled SDK. */
+    protected File _whirledSDK;
 
     /** Instance-specific build directory. */
     protected File _buildRoot;
