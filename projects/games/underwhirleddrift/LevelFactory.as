@@ -65,6 +65,8 @@ public class LevelFactory
     /** the bonuses */
     [Embed(source='rsrc/objects.swf#dora_box')]
     protected static const DORA_BOX :Class;
+    [Embed(source='rsrc/objects.swf#soul_well')]
+    protected static const SOUL_WELL :Class;
 
     /** the obstacles */
     [Embed(source='rsrc/objects.swf#column')]
@@ -77,6 +79,8 @@ public class LevelFactory
     protected static const GREEN_TREE :Class;
     [Embed(source='rsrc/objects.swf#red_tree')]
     protected static const RED_TREE :Class;
+    [Embed(source='rsrc/objects.swf#lava_stalagmite')]
+    protected static const LAVA_STALAGMITE :Class;
 
     // initialize the mapping of colors to objects
     protected static var OBJECT_MAPPING :HashMap;
@@ -89,12 +93,14 @@ public class LevelFactory
         OBJECT_MAPPING.put(0x00FF00, { cls: null, type: LevelConfig.OBJECT_JUMP_RAMP });
 
         OBJECT_MAPPING.put(0xFFFF00, { cls: DORA_BOX, type: LevelConfig.OBJECT_BONUS });
+        OBJECT_MAPPING.put(0xF7941D, { cls: SOUL_WELL, type: LevelConfig.OBJECT_BONUS });
 
         OBJECT_MAPPING.put(0xED145A, { cls: COLUMN, type: LevelConfig.OBJECT_OBSTACLE });
         OBJECT_MAPPING.put(0x9D0039, { cls: COLUMN_BROKEN, type: LevelConfig.OBJECT_OBSTACLE });
         OBJECT_MAPPING.put(0x662D91, { cls: GOLD_TREE, type: LevelConfig.OBJECT_OBSTACLE });
         OBJECT_MAPPING.put(0x00ADEF, { cls: GREEN_TREE, type: LevelConfig.OBJECT_OBSTACLE });
         OBJECT_MAPPING.put(0xA36109, { cls: RED_TREE, type: LevelConfig.OBJECT_OBSTACLE });
+        OBJECT_MAPPING.put(0x005e20, { cls: LAVA_STALAGMITE, type: LevelConfig.OBJECT_OBSTACLE });
     }
     staticInit();
 }
