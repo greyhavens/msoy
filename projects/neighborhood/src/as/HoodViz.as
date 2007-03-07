@@ -188,17 +188,15 @@ public class HoodViz extends Sprite
         }
 
         if (_hood.totalPop >= 0) {
-            var field :TextField = new TextField();
-            field.text = "Number of people in the Whirled: " + _hood.totalPop;
-            field.autoSize = TextFieldAutoSize.CENTER;
-            field.background = true;
-            field.backgroundColor = 0x8A360F; // burnt sienna
-            field.textColor = 0xFFCC11; // mustard
-            field.wordWrap = false;
-
-            stage.addChild(field);
+            var tip : DisplayObjectContainer = new _plaqueGame();
+            var obj :DisplayObject = getTextField(
+                "People online:\n\n" + (_hood.totalPop == 0 ? "None!" : _hood.totalPop));
+            obj.y = -tip.height/2 - obj.height/2;
+            tip.addChild(obj);
+            addChild(tip);
+            tip.x = SWF_WIDTH;
+            tip.y = SWF_HEIGHT - 10;
         }
-
 
         // figure a canvas scale that'll safely display all that was actually drawn
         var scale :Number = Math.min(SWF_WIDTH / (160 + _bound.width),
@@ -509,7 +507,6 @@ public class HoodViz extends Sprite
     protected var _plaqueHouse :Class;
     protected var _plaqueGroup :Class;
     protected var _plaqueGame :Class;
-
 
     [Embed(source="../../rsrc/creative_block_regular.ttf", fontName="hoodFont",
            fontWeight="Regular")]
