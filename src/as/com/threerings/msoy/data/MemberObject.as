@@ -17,8 +17,6 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.TokenRing;
 
-import com.threerings.whirled.spot.data.ClusteredBodyObject;
-
 import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.GroupName;
@@ -32,18 +30,11 @@ import com.threerings.msoy.game.data.WorldGameConfig;
 /**
  * Represents a connected msoy user.
  */
-public class MemberObject extends BodyObject
-    implements ClusteredBodyObject
+public class MemberObject extends MsoyBodyObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>memberName</code> field. */
     public static const MEMBER_NAME :String = "memberName";
-
-    /** The field name of the <code>sceneId</code> field. */
-    public static const SCENE_ID :String = "sceneId";
-
-    /** The field name of the <code>clusterOid</code> field. */
-    public static const CLUSTER_OID :String = "clusterOid";
 
     /** The field name of the <code>worldGameOid</code> field. */
     public static const WORLD_GAME_OID :String = "worldGameOid";
@@ -93,12 +84,6 @@ public class MemberObject extends BodyObject
 
     /** The member name and id for this user. */
     public var memberName :MemberName;
-
-    /** The scene id that the user is currently occupying. */
-    public var sceneId :int;
-
-    /** The object ID of the user's cluster. */
-    public var clusterOid :int;
 
     /** The object ID of the in-world game that the user is in, if any. */
     public var worldGameOid :int;
@@ -186,24 +171,6 @@ public class MemberObject extends BodyObject
     public function getHumanity () :Number
     {
         return humanity / 256;
-    }
-
-    // documentation inherited from superinterface ScenedBodyObject
-    public function getSceneId () :int
-    {
-        return sceneId;
-    }
-
-    // documentation inherited from interface ClusteredBodyObject
-    public function getClusterOid () :int
-    {
-        return clusterOid;
-    }
-
-    // documentation inherited from interface ClusteredBodyObject
-    public function getClusterField () :String
-    {
-        return CLUSTER_OID;
     }
 
     // documentation inherited
@@ -387,8 +354,6 @@ public class MemberObject extends BodyObject
         super.readObject(ins);
 
         memberName = (ins.readObject() as MemberName);
-        sceneId = ins.readInt();
-        clusterOid = ins.readInt();
         worldGameOid = ins.readInt();
         worldGameCfg = (ins.readObject() as WorldGameConfig);
         flow = ins.readInt();

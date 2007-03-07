@@ -15,6 +15,7 @@ import com.threerings.msoy.world.client.AvatarSprite;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.WorldActorInfo;
 import com.threerings.msoy.world.data.WorldMemberInfo;
 import com.threerings.msoy.world.data.WorldPetInfo;
 
@@ -40,13 +41,15 @@ public class MediaDirector extends BasicDirector
         }
 
         var sprite :ActorSprite;
-        if (occInfo is WorldMemberInfo) {
+        if (occInfo is WorldPetInfo) {
+            sprite = new ActorSprite(occInfo);
+
+        } else if (occInfo is WorldMemberInfo || occInfo is WorldActorInfo) {
             sprite = new AvatarSprite(occInfo);
             if (isOurs) {
                 _ourAvatar = (sprite as AvatarSprite);
             }
-        } else if (occInfo is WorldPetInfo) {
-            sprite = new ActorSprite(occInfo);
+
         } else {
             log.warning("Requested to create sprite for unknown occupant " + occInfo + ".");
             // TODO: freakout?

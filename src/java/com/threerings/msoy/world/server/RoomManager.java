@@ -61,6 +61,22 @@ import static com.threerings.msoy.Log.log;
 public class RoomManager extends SpotSceneManager
     implements RoomProvider
 {
+    /**
+     * Forcibly change the location of the specified body.
+     * @return null on success, or an error string.
+     */
+    public String changeLocation (BodyObject body, MsoyLocation loc)
+    {
+        try {
+            handleChangeLoc(body, loc);
+            return null;
+
+        } catch (InvocationException ie) {
+            // return the error string
+            return ie.getMessage();
+        }
+    }
+
     // documentation inherited from RoomProvider
     public void requestControl (ClientObject caller, ItemIdent item)
     {

@@ -21,19 +21,19 @@ public class WorldActorInfo extends ActorInfo
     {
     }
 
+    /**
+     * Creates a world actor info record for the specified actor.
+     */
+    public WorldActorInfo (BodyObject body, ItemIdent ident, MediaDesc media)
+    {
+        super(body, ident);
+        _media = media;
+    }
+
     // from interface WorldOccupantInfo
     public MediaDesc getMedia ()
     {
         return _media;
-    }
-
-    /**
-     * Creates a world actor info record for the specified actor.
-     */
-    protected WorldActorInfo (BodyObject body, ItemIdent ident, MediaDesc media)
-    {
-        super(body, ident);
-        _media = media;
     }
 
     /** The media that represents this occupant. */
