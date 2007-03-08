@@ -25,6 +25,22 @@ public class RoomObject extends SpotSceneObject
     public static const CONTROLLERS :String = "controllers";
     // AUTO-GENERATED: FIELDS END
 
+    /** A message sent by the server to have occupants load, but not play,
+     * the specified music.
+     * Format: [ url ].  */
+    public static const LOAD_MUSIC :String = "loadMusic";
+
+    /** A corresponding message sent by each client when they've got the music
+     * completely loaded. No other status is needed.
+     * Format: [ url ]. */
+    public static const MUSIC_LOADED :String = "musicLoaded";
+
+    /** The message sent by the server to kick-off music playing. The music
+     * should be played once and then disposed-of. No action
+     * should be taken if the music was not loaded. 
+     * Format: [ url ]. */
+    public static const PLAY_MUSIC :String = "playMusic";
+
     /** Our room service marshaller. */
     public var roomService :RoomMarshaller;
 
