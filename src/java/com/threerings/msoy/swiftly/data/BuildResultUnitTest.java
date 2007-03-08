@@ -24,4 +24,15 @@ public class BuildResultUnitTest extends TestCase
             assertEquals(testOutput, output);
         }
     }
+
+    public void testErrorDetection ()
+    {
+        CompilerOutput output = new FlexCompilerOutput("Awesome",
+            CompilerOutput.Level.ERROR, "file.as", 27, 5);
+        BuildResult result = new BuildResult();
+
+        assertEquals(true, result.buildSuccessful());
+        result.appendOutput(output);
+        assertEquals(false, result.buildSuccessful());
+    }
 }
