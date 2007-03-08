@@ -229,6 +229,15 @@ public class RoomView extends AbstractRoomView
     }
 
     /**
+     * Get the actions currently published by our own avatar.
+     */
+    public function getMyActions () :Array
+    {
+        var avatar :AvatarSprite = getMyAvatar();
+        return (avatar != null) ? avatar.getAvatarActions() : [];
+    }
+
+    /**
      * A convenience function to get our personal avatar.
      */
     public function getMyAvatar () :AvatarSprite
