@@ -1,10 +1,14 @@
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
+
+import flash.events.Event;
 import flash.events.MouseEvent;
 
 import mx.core.ScrollPolicy;
+
+import mx.binding.utils.BindingUtils;
+import mx.binding.utils.ChangeWatcher;
 
 import mx.containers.Canvas;
 import mx.containers.HBox;
@@ -53,14 +57,25 @@ public class ControlBar extends HBox
 
         _controller = new ControlBarController(ctx, top, this);
 
+        addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
+        addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
+
         checkControls();
     }
 
-    // from HBox
-    override public function parentChanged (p :DisplayObjectContainer) :void
+    protected function handleAddRemove (event :Event) :void
     {
-        super.parentChanged(p);
-        _controller.registerForSessionObservations(p != null);
+        var added :Boolean = (event.type == Event.ADDED_TO_STAGE);
+        _controller.registerForSessionObservations(added);
+
+        if (added) {
+            _avatarControlWatcher = BindingUtils.bindSetter(
+                recheckAvatarControl, _ctx.worldProps, "userControlsAvatar");
+
+        } else {
+            _avatarControlWatcher.unwatch();
+            _avatarControlWatcher = null;
+        }
     }
 
     /**
@@ -89,6 +104,7 @@ public class ControlBar extends HBox
 
         removeAllChildren();
         _chatControl = null;
+        _avatarBtn = null;
         _editBtn = null;
 
         if (isMember) {
@@ -106,16 +122,17 @@ public class ControlBar extends HBox
             volBtn.styleName = "controlBarButtonVolume";
             addChild(volBtn);
 
-            var prefsBtn :CommandButton = new CommandButton();
-            prefsBtn.toolTip = Msgs.GENERAL.get("i.avatar");
-            prefsBtn.setCommand(MsoyController.PICK_AVATAR);
-            prefsBtn.styleName = "controlBarButtonAvatar";
-            addChild(prefsBtn);
+            _avatarBtn = new CommandButton();
+            _avatarBtn.toolTip = Msgs.GENERAL.get("i.avatar");
+            _avatarBtn.setCommand(MsoyController.PICK_AVATAR);
+            _avatarBtn.styleName = "controlBarButtonAvatar";
+            addChild(_avatarBtn);
 
             _editBtn = new CommandButton();
             _editBtn.toolTip = Msgs.GENERAL.get("i.editScene");
             _editBtn.setCommand(ControlBarController.EDIT_SCENE);
             _editBtn.styleName = "controlBarButtonEdit";
+            _editBtn.enabled = false;
             addChild(_editBtn);
 
         } else {
@@ -160,6 +177,15 @@ public class ControlBar extends HBox
 
         // and remember how things are set for now
         _isMember = isMember;
+
+        recheckAvatarControl();
+    }
+
+    protected function recheckAvatarControl (... ignored) :void
+    {
+        if (_avatarBtn != null) {
+            _avatarBtn.enabled = _ctx.worldProps.userControlsAvatar;
+        }
     }
 
     /** Changes the visibility and parameters of the navigation widgets.
@@ -205,8 +231,14 @@ public class ControlBar extends HBox
     /** Our chat control. */
     protected var _chatControl :ChatControl;
 
+    /** Button for changing your avatar. */
+    protected var _avatarBtn :CommandButton;
+
     /** Button for editing the current scene. */
     protected var _editBtn :CommandButton;
+
+    /** Notifies us of changes to the userControlsAvatar property. */
+    protected var _avatarControlWatcher :ChangeWatcher;
 
     /** Current location label. */
     protected var _loc :SkinnableCanvasWithText;
