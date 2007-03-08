@@ -301,6 +301,12 @@ public class RoomController extends SceneController
     public function handleAvatarClicked (avatar :AvatarSprite) :void
     {
         var occInfo :MemberInfo = (avatar.getActorInfo() as MemberInfo);
+        if (occInfo == null) {
+            log.info("Clicked on non-MemberInfo sprite " +
+                "[info=" + avatar.getActorInfo() + "].");
+            return;
+        }
+
         var us :MemberObject = _mctx.getMemberObject();
         var menuItems :Array = [];
         if (occInfo.bodyOid == us.getOid()) {
@@ -574,6 +580,9 @@ public class RoomController extends SceneController
             if (_loadingMusic != null) {
                 if (_loadingMusic.getURL() == url) {
                     // awesome
+                    if (_music != null) {
+                        _music.close();
+                    }
                     _music = _loadingMusic;
                     _loadingMusic = null;
                     _musicIsBackground = false;
