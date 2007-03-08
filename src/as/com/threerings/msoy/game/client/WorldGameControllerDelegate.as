@@ -21,6 +21,8 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.WorldContext;
 
+import com.threerings.msoy.world.client.RoomView;
+
 /**
  * A delegate controller encapsulating all client-side behavior available
  * to "World" games, whether AVRG or our own.
@@ -52,6 +54,15 @@ public class WorldGameControllerDelegate extends GameControllerDelegate
     public function setAvatarControl (enabled :Boolean) :void
     {
         _ctx.worldProps.userControlsAvatar = enabled;
+    }
+
+    /**
+     * Get a list of our own avatar actions.
+     */
+    public function getMyActions () :Array
+    {
+        var room :RoomView = (_ctx.getTopPanel().getPlaceView() as RoomView);
+        return (room != null) ? room.getMyActions() : [];
     }
 
     /**

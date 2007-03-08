@@ -179,7 +179,8 @@ public class TopPanel extends Canvas
         // a chatbox to the left of it.
         if (bottom.height >= 100) {
             var chatBox :ChatContainer = new ChatContainer(_ctx);
-            chatBox.width = 300;
+            // TODO: get this value in a cleaner way
+            chatBox.width = 278; // align end of send-button area.
             chatBox.percentHeight = 100;
             _bottomPanel.addChild(chatBox);
             _ctx.worldProps.placeViewShowsChat = false;

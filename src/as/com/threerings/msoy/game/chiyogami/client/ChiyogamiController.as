@@ -1,5 +1,7 @@
 package com.threerings.msoy.game.chiyogami.client {
 
+import com.threerings.io.TypedArray;
+
 import com.threerings.presents.dobj.AttributeChangedEvent;
 
 import com.threerings.crowd.client.PlaceView;
@@ -33,7 +35,7 @@ public class ChiyogamiController extends GameController
 
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
-        _gameobj = (plobj as ChiyogamiObject);
+        _gameObj = (plobj as ChiyogamiObject);
         recheckAvatarControl();
 
         super.willEnterPlace(plobj);
@@ -43,19 +45,8 @@ public class ChiyogamiController extends GameController
     {
         super.didLeavePlace(plobj);
 
-        _gameobj = null;
+        _gameObj = null;
     }
-
-//    override public function attributeChanged (event :AttributeChangedEvent) :void
-//    {
-//        var name :String = event.getName();
-//        if (ChiyogamiObject.BOSS == name) {
-//            _panel.setBoss(event.getValue() as MediaDesc);
-//
-//        } else {
-//            super.attributeChanged(event);
-//        }
-//    }
 
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
@@ -82,7 +73,6 @@ public class ChiyogamiController extends GameController
     override protected function gameDidStart () :void
     {
         super.gameDidStart();
-
     }
 
     override protected function gameDidEnd () :void
@@ -96,14 +86,29 @@ public class ChiyogamiController extends GameController
      */
     protected function recheckAvatarControl () :void
     {
-        _worldDelegate.setAvatarControl(!_gameobj.isInPlay());
+        var inPlay :Boolean = _gameObj.isInPlay();
+
+        _worldDelegate.setAvatarControl(!inPlay);
+
+        if (inPlay) {
+            // scrape our actions out and send them off to the server
+            var myActions :Array = _worldDelegate.getMyActions();
+
+            // TODO: filter dance actions here???
+            // for now, we just send a message with our actions
+
+            var actions :TypedArray = TypedArray.create(String);
+            actions.addAll(myActions);
+
+            _gameObj.manager.invoke("setActions", actions);
+        }
     }
 
     /** Our world context. */
     protected var _mctx :WorldContext;
 
     /** Our game object. */
-    protected var _gameobj :ChiyogamiObject;
+    protected var _gameObj :ChiyogamiObject;
 
     /** Our world delegate. */
     protected var _worldDelegate :WorldGameControllerDelegate;

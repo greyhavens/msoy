@@ -4,11 +4,13 @@
 package com.threerings.msoy.game.chiyogami.server;
 
 import com.samskivert.util.Interval;
+import com.samskivert.util.HashIntMap;
 import com.samskivert.util.RandomUtil;
 
 import com.threerings.util.Name;
 
 import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.ObjectAddedEvent;
 import com.threerings.presents.dobj.ObjectRemovedEvent;
 import com.threerings.presents.dobj.OidListListener;
@@ -51,6 +53,13 @@ public class ChiyogamiManager extends GameManager
     public ChiyogamiManager ()
     {
         addDelegate(_worldDelegate = new WorldGameManagerDelegate(this));
+    }
+
+    public void setActions (BodyObject player, String[] actions)
+    {
+        _playerActions.put(player.getOid(), actions);
+
+        updatePlayerAction(player);
     }
 
     @Override
@@ -104,9 +113,20 @@ public class ChiyogamiManager extends GameManager
     }
 
     @Override
+    protected void gameWillStart ()
+    {
+        super.gameWillStart();
+
+        // all player actions must be re-populated
+        _playerActions.clear();
+    }
+
+    @Override
     protected void gameDidStart ()
     {
         super.gameDidStart();
+
+        updateBossAction();
     }
 
     /**
@@ -226,11 +246,13 @@ public class ChiyogamiManager extends GameManager
         double angleIncrement = Math.PI / (numPlayers - 1);
         double angle = 0;
         for (int ii = 0; ii < numPlayers; ii++) {
+            BodyObject player = (BodyObject) MsoyServer.omgr.getObject(
+                _gameObj.occupants.get(ii));
+
             // position players in a semicircle behind the boss
             double x = .5 + .5 * Math.cos(angle);
             double z = .5 + .5 * Math.sin(angle);
-            moveBody((BodyObject) MsoyServer.omgr.getObject(_gameObj.occupants.get(ii)),
-                x, z, 0);
+            moveBody(player, x, z, 0);
 
             angle += angleIncrement;
         }
@@ -257,11 +279,47 @@ public class ChiyogamiManager extends GameManager
         double angle = Math.atan2(x - .5, z - .5);
         int degrees = (int) Math.round(angle * 180 / Math.PI);
         moveBody(body, x, z, degrees);
+        updatePlayerAction(body);
     }
 
     protected void bossSpeak (String utterance)
     {
         SpeakProvider.sendSpeak(_roomObj, _bossObj.username, null, utterance);
+    }
+
+    protected void updatePlayerAction (BodyObject player)
+    {
+        String[] actions = _playerActions.get(player.getOid());
+        if (actions == null || actions.length == 0) {
+            return;
+        }
+
+        // TODO: filtered dance actions
+        // TODO: levels of dancing
+
+        _roomObj.postMessage("avAction", player.getOid(), actions[0]);
+    }
+
+    protected void updateBossAction ()
+    {
+        _roomObj.postMessage("avAction", _bossObj.getOid(), _bossActions[1]);
+    }
+
+    @Override
+    protected void tick (long tickStamp)
+    {
+        super.tick(tickStamp);
+
+        if (!_gameObj.isInPlay()) {
+            return;
+        }
+        int numPlayers = _gameObj.occupants.size();
+        for (int ii = 0; ii < numPlayers; ii++) {
+            BodyObject player = (BodyObject) MsoyServer.omgr.getObject(
+                _gameObj.occupants.get(ii));
+            updatePlayerAction(player);
+        }
+        updateBossAction();
     }
 
     /**
@@ -270,13 +328,20 @@ public class ChiyogamiManager extends GameManager
     protected class RoomListener
         implements OidListListener
     {
+        // from OidListListener
         public void objectAdded (ObjectAddedEvent event)
         {
             if (_bossObj != null && _bossObj.getOid() == event.getOid()) {
                 bossAddedToRoom();
+
+            } else {
+                if (_gameObj.isInPlay()) {
+                    repositionAllPlayers();
+                }
             }
         }
 
+        // from OidListListener
         public void objectRemoved (ObjectRemovedEvent event)
         {
             // when someone leaves the room, kick them out of the chiyogami game
@@ -303,8 +368,6 @@ public class ChiyogamiManager extends GameManager
         {
             if (_gameObj.isActive()) {
                 safeExpired();
-            } else {
-                System.err.println("is not active, not expiring");
             }
         }
 
@@ -334,6 +397,11 @@ public class ChiyogamiManager extends GameManager
 
     /** The boss object. */
     protected BossObject _bossObj;
+
+    /** A mapping of playerOid -> String[] of their actions. */
+    protected HashIntMap<String[]> _playerActions = new HashIntMap<String[]>();
+
+    protected String[] _bossActions = new String[] { "Stop", "Dance 1" };
 
     protected static final String[] MUSICS = { "tarzan" };
 
