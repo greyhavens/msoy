@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.swiftly.server;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.swiftly.client.ProjectRoomService;
+import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
@@ -34,9 +36,11 @@ import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
-
+import com.threerings.msoy.swiftly.server.build.LocalProjectBuilder;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
+
+import org.apache.commons.io.FileUtils;
 
 /**
  * Manages a Swiftly project room.
@@ -50,6 +54,23 @@ public class ProjectRoomManager extends PlaceManager
     public void init (SwiftlyProject project, ProjectStorage storage)
     {
         _storage = storage;
+
+        // setup the builder
+        try {
+            _buildDir = File.createTempFile("localbuilder", String.valueOf(project.projectId));
+            _buildDir.delete();
+            boolean created = _buildDir.mkdirs();
+            // TODO: need to freak out if this is false
+            File flexSdk = new File("data/swiftly/flex_sdk");
+            File whirledSdk = new File("data/swiftly/whirled_sdk");
+            _builder = new LocalProjectBuilder(project, _storage, _buildDir,
+                flexSdk.getAbsoluteFile(), whirledSdk.getAbsoluteFile());
+        } catch (Exception e) {
+            // TODO: oh my JEBUS freak out. log this and then KILL the room
+            // is it worth catching IOException vs. ProjectBuilderException?
+        }
+
+        // stick the project in the dobj
         _roomObj.setProject(project);
 
         // Load the project tree from the storage provider
@@ -250,6 +271,19 @@ public class ProjectRoomManager extends PlaceManager
         // nada
     }
 
+    @Override // from Object
+    public void finalize ()
+        throws Throwable
+    {
+        try {
+            FileUtils.deleteDirectory(_buildDir);
+        } catch (IOException e) {
+            // TODO: log this 
+        } finally {
+            super.finalize();
+        }
+    }
+
     @Override // from PlaceManager
     protected PlaceObject createPlaceObject ()
     {
@@ -381,8 +415,7 @@ public class ProjectRoomManager extends PlaceManager
         // this is called on the executor thread and can go hog wild with the blocking
         public void executeTask () {
             try {
-                throw new IOException("Building is not yet implemented."); // TODO
-
+                _result = _builder.build();
             } catch (Throwable error) {
                 // we'll report this on resultReceived()
                 _error = error;
@@ -405,8 +438,11 @@ public class ProjectRoomManager extends PlaceManager
 
         protected int _projectId;
         protected Throwable _error;
+        protected BuildResult _result;
     }
 
     protected ProjectRoomObject _roomObj;
     protected ProjectStorage _storage;
+    protected LocalProjectBuilder _builder;
+    protected File _buildDir;
 }
