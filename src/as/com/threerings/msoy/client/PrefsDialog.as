@@ -5,6 +5,7 @@ package com.threerings.msoy.client {
 
 import flash.display.DisplayObjectContainer;
 
+import flash.events.Event;
 import flash.events.DataEvent;
 import flash.events.MouseEvent;
 
@@ -60,6 +61,9 @@ public class PrefsDialog extends FloatingPanel
         _avatars.addFakeItem(_defaultAvatar);
 
         open(true);
+
+        addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
+        addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
     }
 
     // from AttributeChangeListener
@@ -72,11 +76,9 @@ public class PrefsDialog extends FloatingPanel
         }
     }
 
-    override public function parentChanged (p :DisplayObjectContainer) :void
+    protected function handleAddRemove (event :Event) :void
     {
-        super.parentChanged(p);
-
-        if (p != null) {
+        if (event.type == Event.ADDED_TO_STAGE) {
             var memberObject :MemberObject = _ctx.getMemberObject();
             if (memberObject.isInventoryLoaded(Item.AVATAR)) {
                 // call later, twice, so that the picker has had time to set up the avatars. Kinda

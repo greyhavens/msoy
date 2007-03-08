@@ -1,6 +1,6 @@
 package com.threerings.msoy.chat.client {
 
-import flash.display.DisplayObjectContainer;
+import flash.events.Event;
 
 import mx.core.Container;
 
@@ -15,13 +15,14 @@ public class ChatContainer extends Container
     {
         _overlay = new ChatOverlay(ctx);
         _overlay.setClickableGlyphs(true);
+
+        addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
+        addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
     }
 
-    override public function parentChanged (p :DisplayObjectContainer) :void
+    protected function handleAddRemove (event :Event) :void
     {
-        super.parentChanged(p);
-
-        _overlay.setTarget((p == null) ? null : this);
+        _overlay.setTarget((event.type == Event.ADDED_TO_STAGE) ? this : null);
     }
 
     /** Actually renders chat. */

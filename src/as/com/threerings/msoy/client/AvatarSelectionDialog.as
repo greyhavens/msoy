@@ -4,7 +4,8 @@
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
+
+import flash.events.Event;
 import flash.events.MouseEvent;
 
 import mx.containers.Grid;
@@ -38,7 +39,10 @@ public class AvatarSelectionDialog extends FloatingPanel
     public function AvatarSelectionDialog (ctx :WorldContext)
     {
         super(ctx, Msgs.GENERAL.get("t.avatar_select"));
-        open (true);
+
+        addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
+        addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
+        open(true);
     }
 
     // from AttributeChangeListener
@@ -52,11 +56,9 @@ public class AvatarSelectionDialog extends FloatingPanel
         }
     }
 
-    override public function parentChanged (p :DisplayObjectContainer) :void
+    protected function handleAddRemove (event :Event) :void
     {
-        super.parentChanged(p);
-
-        if (p != null) {
+        if (event.type == Event.ADDED_TO_STAGE) {
             // We just got created - check if we need to start loading the inventory.
             _memberObj = _ctx.getMemberObject();
             if (inventoryReady()) {
@@ -70,6 +72,7 @@ public class AvatarSelectionDialog extends FloatingPanel
                 _memberObj.addListener(this);
                 _ctx.getItemDirector().loadInventory(Item.AVATAR);
             }
+
         } else {
             // We're getting destroyed - clean up.
             unwatchPlayer();
@@ -199,5 +202,3 @@ public class AvatarSelectionDialog extends FloatingPanel
     protected var _avatars :Grid;
 }
 }
-
-

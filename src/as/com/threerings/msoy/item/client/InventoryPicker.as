@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.client {
 
-import flash.display.DisplayObjectContainer;
 import flash.events.Event;
 
 import mx.binding.utils.BindingUtils;
@@ -74,6 +73,9 @@ public class InventoryPicker extends VBox
 
         _tree.percentWidth = 100;
         _tree.percentHeight = 100;
+
+        addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
+        addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
     }
 
     /**
@@ -112,19 +114,18 @@ public class InventoryPicker extends VBox
         }
     }
 
-    override public function parentChanged (p :DisplayObjectContainer) :void
+    protected function handleAddRemove (event :Event) :void
     {
-        super.parentChanged(p);
-
-        if (p == null) {
-            _collection.shutdown();
-        } else {
+        if (event.type == Event.ADDED_TO_STAGE) {
             _collection.startup();
 
             // if we're only showing one category, open it.
             if (_collection.length == 1) {
                 callLater(_tree.expandItem, [ _collection[0], true ]);
             }
+
+        } else {
+            _collection.shutdown();
         }
     }
 
