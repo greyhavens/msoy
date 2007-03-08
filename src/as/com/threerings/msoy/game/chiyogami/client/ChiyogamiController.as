@@ -34,6 +34,7 @@ public class ChiyogamiController extends GameController
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
         _gameobj = (plobj as ChiyogamiObject);
+        recheckAvatarControl();
 
         super.willEnterPlace(plobj);
     }
@@ -42,7 +43,7 @@ public class ChiyogamiController extends GameController
     {
         super.didLeavePlace(plobj);
 
-        _gameobj= null;
+        _gameobj = null;
     }
 
 //    override public function attributeChanged (event :AttributeChangedEvent) :void
@@ -70,6 +71,32 @@ public class ChiyogamiController extends GameController
     override protected function clearPlaceView () :void
     {
         _worldDelegate.clearPlaceView();
+    }
+
+    override protected function stateDidChange (state :int) :Boolean
+    {
+        recheckAvatarControl();
+        return super.stateDidChange(state);
+    }
+
+    override protected function gameDidStart () :void
+    {
+        super.gameDidStart();
+
+    }
+
+    override protected function gameDidEnd () :void
+    {
+        super.gameDidEnd();
+
+    }
+
+    /**
+     * Check the status of the user being able to control their avatar.
+     */
+    protected function recheckAvatarControl () :void
+    {
+        _worldDelegate.setAvatarControl(!_gameobj.isInPlay());
     }
 
     /** Our world context. */

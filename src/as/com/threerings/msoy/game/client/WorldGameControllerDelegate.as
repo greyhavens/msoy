@@ -11,6 +11,7 @@ import com.threerings.flex.CommandButton;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
+import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.parlor.game.client.GameController;
@@ -37,12 +38,20 @@ public class WorldGameControllerDelegate extends GameControllerDelegate
         _ctx = (ctx as WorldContext);
     }
 
+    override public function didLeavePlace (plobj :PlaceObject) :void
+    {
+        super.didLeavePlace(plobj);
+
+        // ensure the user regains control of their own avatar
+        _ctx.worldProps.userControlsAvatar = true;
+    }
+
     /**
      * Sets whether the user is allowed to control their own avatar.
      */
     public function setAvatarControl (enabled :Boolean) :void
     {
-        // TODO
+        _ctx.worldProps.userControlsAvatar = enabled;
     }
 
     /**

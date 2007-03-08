@@ -281,17 +281,19 @@ public class RoomController extends SceneController
         var us :MemberObject = _mctx.getMemberObject();
         var menuItems :Array = [];
         if (occInfo.bodyOid == us.getOid()) {
-            // create a menu for clicking on ourselves
-            var actions :Array = avatar.getAvatarActions();
-            if (actions.length > 0) {
-                var worldActions :Array = [];
-                for each (var act :String in actions) {
-                    worldActions.push({ label: act,
-                        callback: doWorldAvatarAction, arg: act });
-                }
+            if (_mctx.worldProps.userControlsAvatar) {
+                // create a menu for clicking on ourselves
+                var actions :Array = avatar.getAvatarActions();
+                if (actions.length > 0) {
+                    var worldActions :Array = [];
+                    for each (var act :String in actions) {
+                        worldActions.push({ label: act,
+                            callback: doWorldAvatarAction, arg: act });
+                    }
 
-                menuItems.push({ label: Msgs.GENERAL.get("l.avAction"),
-                    children: worldActions });
+                    menuItems.push({ label: Msgs.GENERAL.get("l.avAction"),
+                        children: worldActions });
+                }
             }
 
         } else {
@@ -315,7 +317,9 @@ public class RoomController extends SceneController
         }
 
         // pop up the menu where the mouse is
-        CommandMenu.createMenu(menuItems).show();
+        if (menuItems.length > 0) {
+            CommandMenu.createMenu(menuItems).show();
+        }
     }
 
     /**
@@ -396,7 +400,7 @@ public class RoomController extends SceneController
         var hitter :MsoySprite = getHitSprite(sx, sy);
         if (hitter == null) {
             var cloc :ClickLocation = _roomView.pointToLocation(sx, sy);
-            if (cloc.click == ClickLocation.FLOOR) {
+            if (cloc.click == ClickLocation.FLOOR && _mctx.worldProps.userControlsAvatar) {
                 _walkTarget.x = _roomView.mouseX - _walkTarget.width/2;
                 _walkTarget.y = _roomView.mouseY - _walkTarget.height/2;
                 _walkTarget.scaleX = 1 / _roomView.scaleX;
@@ -440,7 +444,11 @@ public class RoomController extends SceneController
                         stageX, stageY);
                     var tipComp :UIComponent = UIComponent(_hoverTip);
                     tipComp.styleName = "roomToolTip";
-                    tipComp.setStyle("color", sprite.getHoverColor());
+                    var hoverColor :uint = sprite.getHoverColor();
+                    tipComp.setStyle("color", hoverColor);
+//                    if (hoverColor == 0) {
+//                        tipComp.setStyle("backgroundColor", 0xFFFFFF);
+//                    }
                 }
             }
         }
@@ -456,7 +464,7 @@ public class RoomController extends SceneController
             }
             // otherwise: the sprite simply captures and discards the event
 
-        } else {
+        } else if (_mctx.worldProps.userControlsAvatar) {
             var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();
             if (curLoc == null) {
                 return; // we've already left, ignore the click
