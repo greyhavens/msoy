@@ -49,9 +49,21 @@ public interface ProjectRoomProvider extends InvocationProvider
     public void deletePathElement (ClientObject caller, int arg1);
 
     /**
+     * Handles a {@link ProjectRoomService#finishFileUpload} request.
+     */
+    public void finishFileUpload (ClientObject caller, InvocationService.ConfirmListener arg1)
+        throws InvocationException;
+
+    /**
      * Handles a {@link ProjectRoomService#loadDocument} request.
      */
     public void loadDocument (ClientObject caller, PathElement arg1);
+
+    /**
+     * Handles a {@link ProjectRoomService#startFileUpload} request.
+     */
+    public void startFileUpload (ClientObject caller, PathElement arg1, InvocationService.ConfirmListener arg2)
+        throws InvocationException;
 
     /**
      * Handles a {@link ProjectRoomService#updateDocument} request.
@@ -62,4 +74,9 @@ public interface ProjectRoomProvider extends InvocationProvider
      * Handles a {@link ProjectRoomService#updatePathElement} request.
      */
     public void updatePathElement (ClientObject caller, PathElement arg1);
+
+    /**
+     * Handles a {@link ProjectRoomService#uploadFile} request.
+     */
+    public void uploadFile (ClientObject caller, byte[] arg1);
 }

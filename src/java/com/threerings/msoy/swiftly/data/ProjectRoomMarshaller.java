@@ -90,8 +90,21 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #finishFileUpload} requests. */
+    public static final int FINISH_FILE_UPLOAD = 7;
+
+    // from interface ProjectRoomService
+    public void finishFileUpload (Client arg1, InvocationService.ConfirmListener arg2)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, FINISH_FILE_UPLOAD, new Object[] {
+            listener2
+        });
+    }
+
     /** The method id used to dispatch {@link #loadDocument} requests. */
-    public static final int LOAD_DOCUMENT = 7;
+    public static final int LOAD_DOCUMENT = 8;
 
     // from interface ProjectRoomService
     public void loadDocument (Client arg1, PathElement arg2)
@@ -101,8 +114,21 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #startFileUpload} requests. */
+    public static final int START_FILE_UPLOAD = 9;
+
+    // from interface ProjectRoomService
+    public void startFileUpload (Client arg1, PathElement arg2, InvocationService.ConfirmListener arg3)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, START_FILE_UPLOAD, new Object[] {
+            arg2, listener3
+        });
+    }
+
     /** The method id used to dispatch {@link #updateDocument} requests. */
-    public static final int UPDATE_DOCUMENT = 8;
+    public static final int UPDATE_DOCUMENT = 10;
 
     // from interface ProjectRoomService
     public void updateDocument (Client arg1, int arg2, String arg3)
@@ -113,12 +139,23 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updatePathElement} requests. */
-    public static final int UPDATE_PATH_ELEMENT = 9;
+    public static final int UPDATE_PATH_ELEMENT = 11;
 
     // from interface ProjectRoomService
     public void updatePathElement (Client arg1, PathElement arg2)
     {
         sendRequest(arg1, UPDATE_PATH_ELEMENT, new Object[] {
+            arg2
+        });
+    }
+
+    /** The method id used to dispatch {@link #uploadFile} requests. */
+    public static final int UPLOAD_FILE = 12;
+
+    // from interface ProjectRoomService
+    public void uploadFile (Client arg1, byte[] arg2)
+    {
+        sendRequest(arg1, UPLOAD_FILE, new Object[] {
             arg2
         });
     }

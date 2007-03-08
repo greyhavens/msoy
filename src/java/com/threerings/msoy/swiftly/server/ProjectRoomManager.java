@@ -192,6 +192,30 @@ public class ProjectRoomManager extends PlaceManager
         });
     }
 
+    // from interface ProjectRoomProvider
+    public void startFileUpload (ClientObject caller, PathElement parent,
+                                 ProjectRoomService.ConfirmListener listener)
+    {
+            // TODO: use caller.getOid() as the key into a hash where the new path element
+            // and its handy buffer will live
+            listener.requestProcessed();
+            // listener.requestFailed("e.start_upload_failed");
+    }
+
+    // from interface ProjectRoomProvider
+    public void uploadFile (ClientObject caller, byte[] data)
+    {
+            // TODO: append this to a buffer, hopefully on the file system. use caller.getOid()
+    }
+
+    // from interface ProjectRoomProvider
+    public void finishFileUpload (ClientObject caller, ProjectRoomService.ConfirmListener listener)
+    {
+            // TODO: close the buffer. send a failure if anything in uploadFile failed as well
+            listener.requestProcessed();
+            // listener.requestFailed("e.finish_upload_failed");
+    }
+
     // from interface SetListener
     public void entryAdded (EntryAddedEvent event)
     {

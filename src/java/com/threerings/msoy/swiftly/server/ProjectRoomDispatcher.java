@@ -80,10 +80,24 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
             );
             return;
 
+        case ProjectRoomMarshaller.FINISH_FILE_UPLOAD:
+            ((ProjectRoomProvider)provider).finishFileUpload(
+                source,
+                (InvocationService.ConfirmListener)args[0]
+            );
+            return;
+
         case ProjectRoomMarshaller.LOAD_DOCUMENT:
             ((ProjectRoomProvider)provider).loadDocument(
                 source,
                 (PathElement)args[0]
+            );
+            return;
+
+        case ProjectRoomMarshaller.START_FILE_UPLOAD:
+            ((ProjectRoomProvider)provider).startFileUpload(
+                source,
+                (PathElement)args[0], (InvocationService.ConfirmListener)args[1]
             );
             return;
 
@@ -98,6 +112,13 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
             ((ProjectRoomProvider)provider).updatePathElement(
                 source,
                 (PathElement)args[0]
+            );
+            return;
+
+        case ProjectRoomMarshaller.UPLOAD_FILE:
+            ((ProjectRoomProvider)provider).uploadFile(
+                source,
+                (byte[])args[0]
             );
             return;
 

@@ -8,9 +8,14 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -35,10 +40,15 @@ import com.threerings.msoy.swiftly.data.ProjectTreeModel;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
-import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.presents.client.InvocationService.InvocationListener;
+
+import com.samskivert.swing.util.TaskAdapter;
+import com.samskivert.swing.util.TaskMaster;
+import com.samskivert.swing.util.TaskObserver;
 
 public class ProjectPanel extends JPanel
-    implements TreeSelectionListener, TreeModelListener, InvocationService.InvocationListener
+    implements TreeSelectionListener, TreeModelListener, InvocationListener
 {
     public ProjectPanel (SwiftlyContext ctx, SwiftlyEditor editor)
     {
@@ -72,7 +82,7 @@ public class ProjectPanel extends JPanel
         disableToolbar();
     }
 
-    // from interface InvocationService.InvocationListener
+    // from interface InvocationListener
     public void requestFailed (String reason)
     {
         _editor.showErrorDialog(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, reason));
@@ -162,7 +172,33 @@ public class ProjectPanel extends JPanel
         return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.upload_file")) {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
-                // TODO: implement
+                // TODO: implement filters based on supported MediaDesc mime types
+                // FileNameExtensionFilter filter =
+                // new FileNameExtensionFilter("JPG & GIF Images", "jpg", "gif");
+                // chooser.setFileFilter(filter);
+                JFileChooser fc = new JFileChooser();
+                fc.setApproveButtonText(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.upload"));
+                int returnVal = fc.showOpenDialog(_editor);
+
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    final File file = fc.getSelectedFile();
+                    PathElement element = getSelectedPathElement();
+                    _roomObj.service.startFileUpload(_ctx.getClient(), element,
+                        new ConfirmListener () {
+                        // from interface ConfirmListener
+                        public void requestProcessed ()
+                        {
+                            UploadTask task = new UploadTask(file);
+                            // TODO: constant
+                            TaskMaster.invokeTask("upload file", task, new UploadTaskObserver());
+                        }
+                        // from interface ConfirmListener
+                        public void requestFailed (String reason)
+                        {
+                            _editor.showErrorDialog(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, reason));
+                        }
+                    });
+                }
             }
         };
     }
@@ -294,6 +330,68 @@ public class ProjectPanel extends JPanel
             enableToolbar();
         }
         _selectedNode = node;
+    }
+
+    protected class UploadTask extends TaskAdapter
+    {
+        public UploadTask (File file)
+        {
+            super();
+            _file = file;
+        }
+
+        @Override
+        public Object invoke()
+            throws Exception
+        {
+            // TODO: update a progress bar
+            FileInputStream input = new FileInputStream(_file);
+            int len;
+            byte[] buf = new byte[262144]; // TODO: magic number
+            while ((len = input.read(buf)) > 0) {
+                _roomObj.service.uploadFile(_ctx.getClient(), buf);
+                // wait a little to avoid sending too many messages to presents
+                Thread.sleep(200);
+            }
+            return null; // TODO: meh
+        }
+
+        @Override
+        public boolean abort()
+        {
+            // TODO: support clicking cancel?
+            return false; // TODO: meh
+        }
+
+        protected File _file;
+    }
+
+    protected class UploadTaskObserver
+        implements TaskObserver, ConfirmListener
+    {
+        // from interface TaskObserver
+        public void taskCompleted(String name, Object result)
+        {
+            _roomObj.service.finishFileUpload(_ctx.getClient(), this);
+        }
+
+        // from interface TaskObserver
+        public void taskFailed(String name, Throwable exception)
+        {
+            _editor.showErrorDialog(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "e.upload_failed"));
+        }
+
+        // from interface ConfirmListener
+        public void requestProcessed ()
+        {
+            // nada
+        }
+
+        // from interface ConfirmListener
+        public void requestFailed (String reason)
+        {
+            _editor.showErrorDialog(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, reason));
+        }
     }
 
     protected SwiftlyContext _ctx;
