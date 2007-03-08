@@ -12,6 +12,8 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import flash.utils.getTimer;
+
 import com.threerings.util.ArrayUtil;
 
 public class Scenery extends Sprite
@@ -167,6 +169,16 @@ public class Scenery extends Sprite
         }
         if (bonus != null && bonus.sprite.parent == this) {
             removeChild(bonus.sprite);
+            var regenListener :Function; 
+            regenListener = function (startTime :Number, sprite :Sprite) :Function {
+                return function (evt :Event) :void {
+                    if (getTimer() - startTime > Bonus.BONUS_REGEN_DELAY) {
+                        addChild(sprite);
+                        removeEventListener(Event.ENTER_FRAME, regenListener);
+                    }
+                }
+            }(getTimer(), bonus.sprite);
+            addEventListener(Event.ENTER_FRAME, regenListener);
         } 
     }
 

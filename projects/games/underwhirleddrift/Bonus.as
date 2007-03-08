@@ -10,6 +10,7 @@ public class Bonus extends Sprite
 
     public static const SHIELD_DURATION :int = 20000; // in ms
     public static const FIREBALL_VELOCITY :int = 25;
+    public static const BONUS_REGEN_DELAY :int = 5000; // in ms
 
     /**
      * Randomly selects a bonus and displays it.
