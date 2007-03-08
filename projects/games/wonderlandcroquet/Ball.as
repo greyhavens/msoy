@@ -43,10 +43,10 @@ public class Ball extends Sprite
         this.particle = particle;
         this.playerIdx = playerIdx;
         _mallet = null;
+        ballMarker = new Sprite();
 
         var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
         loader.addEventListener(Event.COMPLETE, function (event :Event) :void {
-            ballMarker = new Sprite();
             ballMarker.addChild(new (loader.getClass("ballmarker" + (playerIdx + 1)))());
             var nameText :TextField = new TextField();
             nameText.autoSize = TextFieldAutoSize.CENTER;
