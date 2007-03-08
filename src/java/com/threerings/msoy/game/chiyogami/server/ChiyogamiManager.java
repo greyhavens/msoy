@@ -118,6 +118,7 @@ public class ChiyogamiManager extends GameManager
         startGame();
         _roomObj.postMessage(RoomObject.PLAY_MUSIC, new Object[] { _music.getMediaPath() });
         bossSpeak("Ok... it's a dance off!");
+        moveBody(_bossObj, .5, .5, 0);
     }
 
     protected void didShutdown ()
@@ -198,10 +199,22 @@ public class ChiyogamiManager extends GameManager
         new ChiInterval() {
             public void safeExpired ()
             {
-                moveBody(_bossObj, .5, .5, 0);
                 bossSpeak("Mind if I take over? HAhahaha!");
             }
         }.schedule(2000);
+
+        new ChiInterval() {
+            public void safeExpired ()
+            {
+                if (!_gameObj.isInPlay()) {
+                    // move the boss randomly
+                    moveBody(_bossObj, Math.random(), Math.random(), 0);
+
+                } else {
+                    cancel();
+                }
+            }
+        }.schedule(3000, 2000);
     }
 
     protected void repositionAllPlayers ()
@@ -327,5 +340,5 @@ public class ChiyogamiManager extends GameManager
     /** TEMP: The filenames of current boss avatars. */
     protected static final String[] BOSSES = { "bboy" };
 
-    protected static final int DELAY = 5000; // 30000;
+    protected static final int DELAY = 10000; // 30000;
 }
