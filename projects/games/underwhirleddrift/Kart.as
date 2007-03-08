@@ -69,6 +69,14 @@ public class Kart extends KartSprite
             y -= JUMP_HEIGHT;
         }
     }
+    
+    public function killMovement () :void
+    {
+        _currentSpeed = 0;
+        _movement = 0;
+        _currentTurnAngle = 0;
+        _currentViewAngle = 0;
+    }
 
     protected function enterFrame (event :Event) :void
     {

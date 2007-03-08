@@ -7,6 +7,8 @@ import com.threerings.util.HashMap;
  */
 public class LevelFactory 
 {
+    public static const TOTAL_LEVELS :int = 3;
+
     public static function createLevel (level :int, ground :Ground) :Level
     {
         try {
