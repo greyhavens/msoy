@@ -268,6 +268,9 @@ public class UnderwhirledDrift extends Sprite
             } else {
                 _opponentKarts.get(event.value.playerId).shieldsUp(event.value.up);
             }
+        } else if (event.name == "fireball") {
+            _ground.getScenery().shootFireball(new Point(event.value.x, event.value.y), 
+                event.value.angle);
         }
     }
 
@@ -281,10 +284,34 @@ public class UnderwhirledDrift extends Sprite
         _control.sendMessage("kartChosen", {playerId: _control.getMyId(),
             kartType: _kart.kartType});
         updateRaceStarted();
-        _kart.addEventListener(KartEvent.CROSSED_FINISH_LINE, crossFinishLine);
-        _kart.addEventListener(KartEvent.BONUS, addBonus);
-        _kart.addEventListener(KartEvent.REMOVE_BONUS, removeBonus);
-        _kart.addEventListener(KartEvent.SHIELD, shield);
+        _kart.addEventListener(KartEvent.CROSSED_FINISH_LINE, function (event :KartEvent) :void {
+            if (_control.seating.getPlayerIds().length != 1) {
+                _control.sendMessage("crossedFinishLine", { playerId: _control.getMyId(), 
+                    direction: event.value });
+            }
+        });
+        _kart.addEventListener(KartEvent.BONUS, function (event :KartEvent) :void {
+            if (_bonus != null) {
+                removeChild(_bonus);
+            }
+            _bonus = event.value as Bonus;
+            _bonus.x = _bonus.width;
+            _bonus.y = _bonus.height;
+            addChild(_bonus = (event.value as Bonus));
+        });
+        _kart.addEventListener(KartEvent.REMOVE_BONUS, function (event :KartEvent) :void {
+            if (_bonus != null) {
+                removeChild(_bonus);
+                _bonus = null;
+            }
+        });
+        _kart.addEventListener(KartEvent.SHIELD, function (event :KartEvent) :void {
+            _control.sendMessage("shieldsUp", { playerId: _control.getMyId(), up: event.value });
+        });
+        _kart.addEventListener(KartEvent.FIREBALL, function (event :KartEvent) :void {
+            _control.sendMessage("fireball", { playerId: _control.getMyId(), x: 
+                _ground.getKartLocation().x, y: _ground.getKartLocation().y, angle: _camera.angle});
+        });
         // now that we've set the kart, add the power up frame
         var powerUpFrame :Sprite = new POWER_UP_FRAME();
         powerUpFrame.x = powerUpFrame.width;
@@ -365,38 +392,6 @@ public class UnderwhirledDrift extends Sprite
             // do nothing
             }
         }
-    }
-
-    protected function crossFinishLine (event :KartEvent) :void
-    {
-        if (_control.seating.getPlayerIds().length != 1) {
-            _control.sendMessage("crossedFinishLine", { playerId: _control.getMyId(), direction: 
-                event.value });
-        }
-    }
-
-    protected function addBonus (event :KartEvent) :void
-    {
-        if (_bonus != null) {
-            removeChild(_bonus);
-        }
-        _bonus = event.value as Bonus;
-        _bonus.x = _bonus.width;
-        _bonus.y = _bonus.height;
-        addChild(_bonus = (event.value as Bonus));
-    }
-
-    protected function removeBonus (event :KartEvent) :void
-    {
-        if (_bonus != null) {
-            removeChild(_bonus);
-            _bonus = null;
-        }
-    }
-
-    protected function shield (event :KartEvent) :void
-    {
-        _control.sendMessage("shieldsUp", { playerId: _control.getMyId(), up: event.value });
     }
 
     protected static const SEND_THROTTLE :int = 150; // in ms

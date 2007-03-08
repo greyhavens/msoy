@@ -98,8 +98,9 @@ public class Kart extends KartSprite
 
     override public function shieldsUp (up :Boolean) :void
     {
+        var shield :Sprite = _shield;
         super.shieldsUp(up);
-        if (up) {
+        if (up && shield != _shield) {
             _shield.addEventListener(Event.ENTER_FRAME, function (startTime :int) :Function {
                 var frameListener :Function = function (evt :Event) :void {
                     if (getTimer() - startTime > Bonus.SHIELD_DURATION) {

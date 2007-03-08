@@ -7,6 +7,7 @@ public class KartEvent extends Event
     public static const BONUS :String = "bonus";
     public static const REMOVE_BONUS :String = "removeBonus";
     public static const SHIELD :String = "shield";
+    public static const FIREBALL :String = "fireball";
 
     public function KartEvent (type :String, value :Object = null) 
     {

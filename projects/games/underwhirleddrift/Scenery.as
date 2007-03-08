@@ -17,6 +17,7 @@ public class Scenery extends Sprite
     public static const OBSTACLE: int = 1;
     public static const BONUS: int = 2;
     public static const KART: int = 3;
+    public static const FIREBALL: int = 4;
 
     public function Scenery (objects :Array) 
     {
@@ -107,6 +108,15 @@ public class Scenery extends Sprite
     public function registerKart (kart :KartSprite) :void
     {
         _kartRadius = (getOpaqueWidth(kart) * 0.1) / 2;
+    }
+
+    public function shootFireball (pos :Point, angle :Number) :void
+    {
+        var fireball :Sprite = new Sprite();
+        var bonus :Sprite = Bonus.getGameSprite(Bonus.FIREBALL);
+        fireball.addChild(bonus);
+        bonus.y = -fireball.height;
+        initializeObject({ origin: pos, sprite: fireball}, FIREBALL);
     }
 
     protected function initializeObject (obj :Object, type :int) :void

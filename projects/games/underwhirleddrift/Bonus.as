@@ -53,6 +53,7 @@ public class Bonus extends Sprite
 
     protected function activateFireball (kart :Kart) :void
     {
+        kart.dispatchEvent(new KartEvent(KartEvent.FIREBALL, true));
     }
 
     protected function activateShield (kart :Kart) :void

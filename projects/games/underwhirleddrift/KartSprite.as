@@ -13,6 +13,7 @@ import mx.core.MovieClipAsset;
 [Event(name="bonus", type="KartEvent")]
 [Event(name="removeBonus", type="KartEvent")]
 [Event(name="shield", type="KartEvent")]
+[Event(name="fireball", type="KartEvent")]
 
 public class KartSprite extends Sprite 
 {
@@ -44,9 +45,11 @@ public class KartSprite extends Sprite
     public function shieldsUp (up :Boolean) :void 
     {
         if (up) {
-            _shield = Bonus.getGameSprite(Bonus.SHIELD);
-            _shield.y -= _shield.height / 2;
-            addChild(_shield);
+            if (_shield == null) {
+                _shield = Bonus.getGameSprite(Bonus.SHIELD);
+                _shield.y -= _shield.height / 2;
+                addChild(_shield);
+            }
         } else {
             if (_shield != null) {
                 removeChild(_shield);
