@@ -1,5 +1,6 @@
 package com.threerings.msoy.game.chiyogami.client {
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -15,43 +16,43 @@ public class TimingBar extends Sprite
         _width = width;
         _pixelsPerMs = _width / msPerBeat;
 
-        // draw the bar
-        with (graphics) {
-            // the background
-            beginFill(0);
-            drawRect(0, 0, width, height);
-            endFill();
+//        // draw the bar
+//        with (graphics) {
+//            // the background
+//            beginFill(0);
+//            drawRect(0, 0, width, height);
+//            endFill();
+//
+//            // the border
+//            lineStyle(2, 0xFFFFFF);
+//            drawRect(0, 0, width, height);
+//
+//            // the red zones!
+//            lineStyle(0, 0, 0);
+//
+//            var target :Number = TARGET_AREA;
+//            for (var ww :int = 8; ww >= 1; ww--) {
+//                beginFill((0xFF / ww) << 16); // redness
+//                var extent :Number = ww * 3;
+//                drawRect(target - extent/2, 0, extent, height);
+//                endFill();
+//            }
+//        }
 
-            // the border
-            lineStyle(2, 0xFFFFFF);
-            drawRect(0, 0, width, height);
+        addNewNeedle();
+        addEventListener(Event.ENTER_FRAME, repositionNeedle);
+    }
 
-            // the red zones!
-            lineStyle(0, 0, 0);
-
-            var target :Number = width * TARGET_AREA;
-            for (var ww :int = 8; ww >= 1; ww--) {
-                beginFill((0xFF / ww) << 16); // redness
-                var extent :Number = ww * 3;
-                drawRect(target - extent/2, 0, extent, height);
-                endFill();
-            }
-        }
-
+    protected function addNewNeedle () :void
+    {
         // create the needle
-        _needle = new Sprite();
-        with (_needle.graphics) {
-            lineStyle(3, 0x00FF00);
-            moveTo(0, 0);
-            lineTo(0, height);
-        }
+        _needle = (new NEEDLE() as DisplayObject);
         addChild(_needle);
         
         // set up a starting needle position
         _needle.x = 0;
+        _needle.y = 5;
         _origStamp = getTimer();
-
-        addEventListener(Event.ENTER_FRAME, repositionNeedle);
     }
 
     /**
@@ -67,17 +68,13 @@ public class TimingBar extends Sprite
         if (_oldNeedle != null) {
             removeChild(_oldNeedle);
         }
-        _oldNeedle = new Sprite();
-        with (_oldNeedle.graphics) {
-            lineStyle(5, 0x0000FF);
-            moveTo(0, 0);
-            lineTo(0, height);
-        }
-        _oldNeedle.x = _needle.x;
-        addChild(_oldNeedle);
+        _oldNeedle = _needle;
+        _oldNeedle.alpha = .55;
+        _needle = null;
+        addNewNeedle();
 
-        var target :Number = _width * TARGET_AREA;
-        return 1 - (Math.abs(target - _needle.x) / target);
+        var target :Number = TARGET_AREA;
+        return 1 - (Math.abs(target - _oldNeedle.x) / target);
     }
 
     /**
@@ -97,12 +94,15 @@ public class TimingBar extends Sprite
 
     protected var _pixelsPerMs :Number;
 
-    protected var _needle :Sprite;
+    protected var _needle :DisplayObject;
 
-    protected var _oldNeedle :Sprite;
+    protected var _oldNeedle :DisplayObject;
 
     protected var _origStamp :Number;
 
-    protected static const TARGET_AREA :Number = .85;
+    protected static const TARGET_AREA :Number = 167;
+
+    [Embed(source="keyjam.swf#needle")]
+    protected static const NEEDLE :Class;
 }
 }

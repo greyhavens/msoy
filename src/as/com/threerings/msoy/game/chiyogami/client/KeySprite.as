@@ -31,15 +31,15 @@ public class KeySprite extends Sprite
         return _key;
     }
 
-    public function setHit (hit :Boolean) :void
+    public function setMode (mode :int) :void
     {
-        _hit = hit;
+        _mode = mode;
         updateVis();
     }
 
     protected function updateVis () :void
     {
-        _arrow.gotoAndStop(_hit ? 1 : 3);
+        _arrow.gotoAndStop(_mode);
     }
 
     /** The key we're representing. */
@@ -47,6 +47,6 @@ public class KeySprite extends Sprite
 
     protected var _arrow :MovieClip;
 
-    protected var _hit :Boolean = false;
+    protected var _mode :int = 1;
 }
 }

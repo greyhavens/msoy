@@ -17,16 +17,14 @@ public class KeyJam extends Sprite
     public function KeyJam (millisPerBeat :Number = 1000)
     {
         var bkg :DisplayObject = new BOOMBOX() as DisplayObject;
-        bkg.y = (100 - bkg.height) / 2;
-        bkg.x = bkg.width / 2;
         addChild(bkg);
 
         // Question: why does Sprite claim to generate key events when
         // I have never seen it capable of doing so? Flash blows.
         var keyGrabber :TextField = new TextField();
         keyGrabber.selectable = false;
-        keyGrabber.width = 400;
-        keyGrabber.height = 200;
+        keyGrabber.width = 450;
+        keyGrabber.height = 100;
         addChild(keyGrabber);
 
         _label = new ClearingTextField();
@@ -38,8 +36,9 @@ public class KeyJam extends Sprite
         _label.y = 200 - _label.height;
         addChild(_label);
 
-        _timingBar = new TimingBar(500, 20, millisPerBeat);
-        _timingBar.y = 100;
+        _timingBar = new TimingBar(200, 20, 2000);
+        _timingBar.x = 127;
+        _timingBar.y = 80;
         addChild(_timingBar);
 
         addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
@@ -61,11 +60,15 @@ public class KeyJam extends Sprite
         var seq :Array = generateKeySequence(
             Math.min(MAX_SEQUENCE_LENGTH, _level + 3));
 
+        var startX :int = (450 - (KeySprite.WIDTH * seq.length)) / 2;
+
         for (var ii :int = 0; ii < seq.length; ii++) {
             var key :int = int(seq[ii]);
             keySprite = new KeySprite(key, classForKey(key));
+            keySprite.setMode((ii == 0) ? MODE_NEXT : MODE_CLEAR);
             _keySprites.push(keySprite);
-            keySprite.x = ii * (KeySprite.WIDTH);
+            keySprite.y = 5;
+            keySprite.x = startX + ii * (KeySprite.WIDTH);
             addChild(keySprite);
         }
         _seqIndex = 0;
@@ -98,8 +101,12 @@ public class KeyJam extends Sprite
             var keySprite :KeySprite = (_keySprites[_seqIndex] as KeySprite);
             if (keySprite.getKey() == code) {
                 // yay
-                keySprite.setHit(true);
+                keySprite.setMode(MODE_HIT);
                 _seqIndex++;
+                if (_keySprites.length > _seqIndex) {
+                    keySprite = (_keySprites[_seqIndex] as KeySprite);
+                    keySprite.setMode(MODE_NEXT);
+                }
 
             } else {
                 // uh-ok, they booched it!
@@ -123,10 +130,15 @@ public class KeyJam extends Sprite
 
     protected function resetSequenceProgress () :void
     {
+        var keySprite :KeySprite;
+        if (_keySprites.length > _seqIndex) {
+            keySprite = (_keySprites[_seqIndex] as KeySprite);
+            keySprite.setMode(MODE_CLEAR);
+        }
         while (_seqIndex > 0) {
             _seqIndex--;
-            var keySprite :KeySprite = (_keySprites[_seqIndex] as KeySprite);
-            keySprite.setHit(false);
+            keySprite = (_keySprites[_seqIndex] as KeySprite);
+            keySprite.setMode((_seqIndex == 0) ? MODE_NEXT : MODE_CLEAR);
         }
 
         _booches++;
@@ -214,6 +226,10 @@ public class KeyJam extends Sprite
         Keyboard.UP, Keyboard.DOWN, Keyboard.LEFT, Keyboard.RIGHT ];
 
     protected static const MAX_SEQUENCE_LENGTH :int = 7;
+
+    protected static const MODE_CLEAR :int = 1;
+    protected static const MODE_NEXT :int = 2;
+    protected static const MODE_HIT :int = 3;
 
     [Embed(source="keyjam.swf#boombox")]
     protected static const BOOMBOX :Class;
