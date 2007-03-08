@@ -40,6 +40,8 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
+import com.threerings.msoy.swiftly.data.CompilerOutput;
+import com.threerings.msoy.swiftly.data.FlexCompilerOutput;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
@@ -242,6 +244,8 @@ public class SwiftlyEditor extends PlacePanel
     {
         if (event.getName().equals(ProjectRoomObject.CONSOLE)) {
             consoleMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, _roomObj.console));
+        } else if (event.getName().equals(ProjectRoomObject.RESULT)) {
+            displayBuildResult();
         }
     }
 
@@ -282,13 +286,24 @@ public class SwiftlyEditor extends PlacePanel
     }
 
     /** Initialize the file types that can be created */
-    protected void initFileTypes()
+    protected void initFileTypes ()
     {
-    _createableFileTypes = new ArrayList<FileTypes>();
-    _createableFileTypes.add(new FileTypes(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.filetypes." +
-        MediaDesc.TEXT_PLAIN), MediaDesc.mimeTypeToString(MediaDesc.TEXT_PLAIN)));
-    _createableFileTypes.add(new FileTypes(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.filetypes." + 
-        MediaDesc.TEXT_ACTIONSCRIPT), MediaDesc.mimeTypeToString(MediaDesc.TEXT_ACTIONSCRIPT)));
+        _createableFileTypes = new ArrayList<FileTypes>();
+        _createableFileTypes.add(new FileTypes(
+            _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.filetypes." +
+            MediaDesc.TEXT_PLAIN), MediaDesc.mimeTypeToString(MediaDesc.TEXT_PLAIN)));
+        _createableFileTypes.add(new FileTypes(
+            _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.filetypes." + 
+            MediaDesc.TEXT_ACTIONSCRIPT), MediaDesc.mimeTypeToString(MediaDesc.TEXT_ACTIONSCRIPT)));
+    }
+
+    /** Displays the build result on the console */
+    protected void displayBuildResult ()
+    {
+        for (CompilerOutput output : _roomObj.result.getOutput()) {
+            FlexCompilerOutput flexOut = (FlexCompilerOutput)output;
+            consoleMessage(flexOut.getMessage());
+        }
     }
 
     /** A dialog window to prompt the user for a file name and file type. */
