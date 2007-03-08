@@ -15,6 +15,7 @@ import mx.core.IToolTip;
 import mx.core.UIComponent;
 import mx.managers.ToolTipManager;
 
+import com.threerings.util.Integer;
 import com.threerings.util.NetUtil;
 
 import com.threerings.io.TypedArray;
@@ -688,7 +689,7 @@ public class RoomController extends SceneController
     protected function doWorldAvatarAction (action :String) :void
     {
         _roomObj.postMessage("avAction",
-            [ _mctx.getClient().getClientOid(), action ]);
+            [ Integer.valueOf(_mctx.getClient().getClientOid()), action ]);
     }
 
     /** The life-force of the client. */
