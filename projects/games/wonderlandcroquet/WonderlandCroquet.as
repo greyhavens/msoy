@@ -356,8 +356,7 @@ public class WonderlandCroquet extends Sprite
         gameCtrl.awardFlow(FLOW_MULTIPLIER * _wickets[myIdx]);
         if (_wickets[myIdx] >= map.wickets.length) {
             // That was the last one. Yay.
-            gameCtrl.sendChat("ZOMG! " + gameCtrl.getOccupantName(gameCtrl.getMyId()) + 
-                              " is teh winnar!!");
+            gameCtrl.sendChat(gameCtrl.getOccupantName(gameCtrl.getMyId()) + " wins!");
             gameCtrl.endGame([gameCtrl.getMyId()]);
 
         } else {
