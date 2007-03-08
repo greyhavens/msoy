@@ -23,6 +23,11 @@ public interface CompilerOutput {
     public int getLineNumber();
 
     /**
+     * Returns the column referenced, or -1 if no column was specified.
+     */
+    public int getColumnNumber();
+
+    /**
      * Returns the file name referenced, or null if no file was specified.
      */
     public String getFileName();

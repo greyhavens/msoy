@@ -15,7 +15,7 @@ public class BuildResultUnitTest extends TestCase
     public void testAppendOutput ()
     {
         CompilerOutput output = new FlexCompilerOutput("Awesome",
-            CompilerOutput.Level.INFO, "file.as", 27);
+            CompilerOutput.Level.INFO, "file.as", 27, 5);
         BuildResult result = new BuildResult();
 
         result.appendOutput(output);
