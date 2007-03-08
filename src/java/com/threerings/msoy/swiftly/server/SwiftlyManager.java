@@ -41,9 +41,13 @@ import static com.threerings.msoy.Log.log;
 public class SwiftlyManager
     implements SwiftlyProvider
 {
-    /** This is used to execute potentially long running project actions (svn operations, builds)
-     * serially on a separate thread so that they do not interfere with normal server operation. */
-    public SerialExecutor executor;
+    /** This is used to execute potentially long running project builds serially on a separate
+     * thread so that they do not interfere with normal server operation. */
+    public SerialExecutor buildExecutor;
+
+    /** This is used to execute potentially long running svn operations serially on a separate
+     * thread so that they do not interfere with normal server operation. */
+    public SerialExecutor svnExecutor;
 
     /**
      * Configures us with our repository.
@@ -53,8 +57,9 @@ public class SwiftlyManager
         // register ourselves as handling the Swiftly invocation service
         invmgr.registerDispatcher(new SwiftlyDispatcher(this), SwiftlyCodes.SWIFTLY_GROUP);
 
-        // create our executor
-        executor = new SerialExecutor(MsoyServer.omgr);
+        // create our executors
+        buildExecutor = new SerialExecutor(MsoyServer.omgr);
+        svnExecutor = new SerialExecutor(MsoyServer.omgr);
     }
 
     // from interface SwiftlyProvider

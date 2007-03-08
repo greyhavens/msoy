@@ -316,9 +316,6 @@ public class SwiftlyTextPane extends JEditorPane
     {
         // from interface DocumentListener
         public void insertUpdate(DocumentEvent e) {
-            if (!_document.wasChanged()) {
-                _document.setChanged(true);
-            }
             // send out the update event only if we didn't get this update from the network
             if (!_dontPropagateThisChange) {
                 updateDocument();
@@ -327,9 +324,6 @@ public class SwiftlyTextPane extends JEditorPane
 
         // from interface DocumentListener
         public void removeUpdate(DocumentEvent e) {
-            if (!_document.wasChanged()) {
-                _document.setChanged(true);
-            }
             // send out the update event only if we didn't get this update from the network
             if (!_dontPropagateThisChange) {
                 updateDocument();

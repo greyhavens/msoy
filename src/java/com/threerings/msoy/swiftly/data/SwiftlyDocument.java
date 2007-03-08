@@ -79,6 +79,21 @@ public class SwiftlyDocument
         _encoding = encoding;
     }
 
+    /** Commit the in memory data to the file backing. */
+    public void commit ()
+        throws IOException
+    {
+        InputStream data = getModifiedData();
+        FileOutputStream fileOutput = new FileOutputStream(_backingStore);
+        byte[] buf = new byte[1024];
+        int len;
+
+        while ((len = data.read(buf)) > 0) {
+            // Write to our base file backing
+            fileOutput.write(buf, 0, len);
+        }
+    }
+
     public String getText ()
     {
         return _text;
