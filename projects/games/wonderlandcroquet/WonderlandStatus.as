@@ -137,14 +137,13 @@ public class WonderlandStatus extends Sprite
 
     protected function markerClicked (event :MouseEvent) :void
     {
-        var playerIdx :int = _balls.indexOf(event.currentTarget);
-        if (playerIdx == -1) {
-            return;
+        try {
+            var ball :Ball = wc.getBallParticle(_balls.indexOf(event.currentTarget)).ball;
+
+            wc.panTo(ball.x, ball.y);
+        } catch (e :Error) {
+            // Meh, we couldn't find their ball. Just ignore it and move on
         }
-
-        var ball :Ball = wc.getBallParticle(playerIdx).ball;
-
-        wc.panTo(ball.x, ball.y);
     }
 
     /** The sprite that we scroll around as needed. */
