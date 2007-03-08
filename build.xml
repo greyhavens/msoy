@@ -802,6 +802,7 @@
     <copy todir="${pkg.base}/pages">
       <fileset dir="${deploy.dir}/sdk" includes="whirled_sdk.zip"/>
     </copy>
+    <mkdir dir="${pkg.base}/pages/buildresults"/>
   </target>
 
 </project>
