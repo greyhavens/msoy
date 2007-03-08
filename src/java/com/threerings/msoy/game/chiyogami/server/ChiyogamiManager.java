@@ -296,10 +296,17 @@ public class ChiyogamiManager extends GameManager
             return;
         }
 
-        // TODO: filtered dance actions
+        // trigger the first action, or the first one that starts with dance
         // TODO: levels of dancing
+        String action = actions[0];
+        for (String act : actions) {
+            if (act.toLowerCase().startsWith("dance")) {
+                action = act;
+                break;
+            }
+        }
 
-        _roomObj.postMessage("avAction", player.getOid(), actions[0]);
+        _roomObj.postMessage("avAction", player.getOid(), action);
     }
 
     protected void updateBossAction ()
