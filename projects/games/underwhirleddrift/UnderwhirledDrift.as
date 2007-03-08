@@ -161,7 +161,10 @@ public class UnderwhirledDrift extends Sprite
             // variables not being scoped directly to all blocks is really wacky
             playerId = event.value.playerId;
             if (playerId != _control.getMyId()) {
-                (_opponentKarts.get(playerId) as KartObstacle).setPosition(event.value);
+                var oppKart :Object = _opponentKarts.get(playerId);
+                if (oppKart is KartObstacle) {
+                    (oppKart as KartObstacle).setPosition(event.value);
+                }
             }
         } else if (event.name == "kartChosen") {
             playerId = event.value.playerId;
@@ -233,8 +236,17 @@ public class UnderwhirledDrift extends Sprite
             _ground.getScenery().registerKart(_kart);
             _playerLaps.clear();
             _playersFinished = [];
+            for each (var key :int in _opponentKarts.keys()) {
+                _opponentKarts.put(key, _opponentKarts.get(key).kartType);
+            }
             if (_control.amInControl()) {
-                _control.sendMessage("startRace", true);
+                var playerIds :Array = _control.seating.getPlayerIds();
+                // assign everyone a new starting position.
+                ArrayUtil.shuffle(playerIds);
+                for (ii = 0; ii < playerIds.length; ii++) {
+                    playerIds[ii] = { id: playerIds[ii], position: ii };
+                }
+                _control.sendMessage("playerPositions", playerIds);
             }
         } else if (event.name == "gameComplete") {
             _control.localChat("The game is complete!  Head back to the game lobby for more " + 
