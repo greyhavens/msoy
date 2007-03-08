@@ -230,6 +230,19 @@ public class WonderlandCroquet extends Sprite
                 }
             }
         } else {
+            // pan to keep the current ball in view
+            var bp :BallParticle = _balls[_currentPlayerIdx];
+
+            var dx :Number = bp.ball.x - ( WIDTH/2 - _spr.x);
+            var dy :Number = bp.ball.y - ( HEIGHT/2 - _spr.y);
+
+            if ((dx*dx + dy*dy) > AUTO_PAN_THRESHOLD * AUTO_PAN_THRESHOLD) {
+                gameCtrl.localChat("Too far: " + (dx*dx + dy*dy) +
+                    " vs " + AUTO_PAN_THRESHOLD * AUTO_PAN_THRESHOLD);
+
+                panTo(bp.ball.x, bp.ball.y);
+            }
+
             // Clear markers for obstructed balls
             for (var ii :int = 0; ii < _ballMarkerLayer.numChildren; ii++) {
                 _ballMarkerLayer.removeChildAt(0);
@@ -263,6 +276,8 @@ public class WonderlandCroquet extends Sprite
                 _wickets = [];
             }
 
+            _currentPlayerIdx = gameCtrl.seating.getPlayerPosition(gameCtrl.getTurnHolder());
+
             if (gameCtrl.isMyTurn()) {
                 if (firstTurn) {
                     // FIXME: I'm not quite happy with this, but if I just set it, it doesn't appear
@@ -277,7 +292,7 @@ public class WonderlandCroquet extends Sprite
                 gameCtrl.localChat(gameCtrl.getOccupantName(gameCtrl.getTurnHolder()) + "'s turn");
             }
 
-            _status.turnChanged(gameCtrl.seating.getPlayerPosition(gameCtrl.getTurnHolder()));
+            _status.turnChanged(_currentPlayerIdx);
         } else if (event.type == StateChangedEvent.GAME_STARTED) {
             gameCtrl.localChat("Wonderland Croquet!");
 
@@ -388,6 +403,8 @@ public class WonderlandCroquet extends Sprite
         panTo(coord[0], coord[1]);
     }
 
+    protected var _currentPlayerIdx :int;
+
     protected var _lastMousePosition :Point = new Point(0, 0);
 
     protected var _haveMoved :Boolean;
@@ -411,6 +428,8 @@ public class WonderlandCroquet extends Sprite
     protected var _moveAgain :Boolean;
 
     protected static const FLOW_MULTIPLIER :int = 50;
+
+    protected static const AUTO_PAN_THRESHOLD :int = 200;
 
 }
 }
