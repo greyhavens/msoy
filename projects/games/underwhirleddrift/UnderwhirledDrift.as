@@ -111,6 +111,7 @@ public class UnderwhirledDrift extends Sprite
                 _control.sendMessage("positionUpdate", updateObj);
             }
         } else if (event.name == "playerPositions") {
+            _control.localChat("received playerPositions");
             var playerPositions :Array = event.value as Array;
             for (var ii: int = 0; ii < playerPositions.length; ii++) {
                 if (playerPositions[ii].id == _control.getMyId()) {
@@ -130,6 +131,7 @@ public class UnderwhirledDrift extends Sprite
                 updateRaceStarted();
             }
         } else if (event.name == "startRace") {
+            _control.localChat("received startRace");
             _lightBoard = new LIGHT_BOARD();
             var boardTravelHeight :int = _lightBoard.height;
             var boardTravelStart :int = -boardTravelHeight / 2;
@@ -212,6 +214,10 @@ public class UnderwhirledDrift extends Sprite
                     }
                     _control.sendChat(_control.getOccupantName(event.value.playerId) + 
                         " finished in " + place + " place!");
+                    // let the player's controller give that player some flow... this decided here
+                    // because the controller is the arbiter of ties
+                    _control.sendMessage("awardFlow", 1 - (_playersFinished.length - 1) / 
+                        _control.seating.getPlayerIds().length, event.value.playerId);
                     if (_playerLaps.size() == 0) {
                         if (_currentLevel == LevelFactory.TOTAL_LEVELS - 1) {
                             _control.sendMessage("gameComplete", true);
@@ -221,6 +227,10 @@ public class UnderwhirledDrift extends Sprite
                     }
                 }
             } 
+        } else if (event.name == "awardFlow") {
+            var flow :int = Math.ceil(_control.getAvailableFlow() * (event.value as Number));
+            _control.awardFlow(flow);
+            _control.localChat("You were awarded " + flow + " flow for your performance!");
         } else if (event.name == "trackComplete") {
             _control.localChat("The current track has been completed by all players... now " +
                 "loading the next track!");
@@ -261,6 +271,7 @@ public class UnderwhirledDrift extends Sprite
         // tack on a few pixels to account for the front of the kart
         _kart.y = KART_LOCATION.y + SKY_HEIGHT + KART_OFFSET;
         addChild(_kart);
+        _control.localChat("sending kartChosen");
         _control.sendMessage("kartChosen", {playerId: _control.getMyId(),
             kartType: _kart.kartType});
         updateRaceStarted();
@@ -284,6 +295,7 @@ public class UnderwhirledDrift extends Sprite
             }
             if (ii == keys.length) {
                 _control.sendMessage("startRace", true);
+                _control.localChat("sending startRace");
             }
         }
     }
@@ -342,7 +354,7 @@ public class UnderwhirledDrift extends Sprite
 
     protected static const SEND_THROTTLE :int = 150; // in ms
     
-    protected static const NUM_LAPS :int = 4; 
+    protected static const NUM_LAPS :int = 1; 
 
     [Embed(source='rsrc/light_board.swf#light_board')]
     protected static const LIGHT_BOARD :Class;
