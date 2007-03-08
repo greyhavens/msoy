@@ -308,13 +308,13 @@ public class ProjectRoomManager extends PlaceManager
 
         // this is called back on the dobj thread and must only report results
         public void resultReceived () {
-            /*
-            // TODO: human readable error ProjectStorageException
-            // _error instanceOf
-            */
             if (_error != null) {
-                _roomObj.setConsole(
-                    MessageBundle.tcompose("m.commit_failed", _error.getMessage()));
+                if (_error instanceof ProjectStorageException) {
+                    _roomObj.setConsole("m.commit_failed");
+                } else {
+                    _roomObj.setConsole(
+                        MessageBundle.tcompose("m.commit_failed_unknown", _error.getMessage()));
+                }
             } else {
                 // if the commit work, run the build if set
                 if (_shouldBuild) {
