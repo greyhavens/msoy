@@ -4,6 +4,8 @@ import flash.display.Sprite;
 import flash.display.DisplayObject;
 import flash.display.BitmapData;
 
+import flash.events.Event;
+
 import mx.core.MovieClipAsset;
 
 import flash.geom.Matrix;
@@ -112,11 +114,17 @@ public class Scenery extends Sprite
 
     public function shootFireball (pos :Point, angle :Number) :void
     {
+        // slightly hacky to get the anchor point down on the bottom, like it is for every other
+        // scenery object.  TODO: ask nick for a new one
         var fireball :Sprite = new Sprite();
         var bonus :Sprite = Bonus.getGameSprite(Bonus.FIREBALL);
         fireball.addChild(bonus);
         bonus.y = -fireball.height;
-        initializeObject({ origin: pos, sprite: fireball}, FIREBALL);
+        var bonusObj :Object = { origin: pos, sprite: fireball };
+        fireball.addEventListener(Event.ENTER_FRAME, function (event :Event) :void {
+            bonusObj.origin = bonusObj.origin.add(Point.polar(Bonus.FIREBALL_VELOCITY, angle));
+        });
+        initializeObject(bonusObj, FIREBALL);
     }
 
     protected function initializeObject (obj :Object, type :int) :void

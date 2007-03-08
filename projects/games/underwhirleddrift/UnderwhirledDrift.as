@@ -310,7 +310,8 @@ public class UnderwhirledDrift extends Sprite
         });
         _kart.addEventListener(KartEvent.FIREBALL, function (event :KartEvent) :void {
             _control.sendMessage("fireball", { playerId: _control.getMyId(), x: 
-                _ground.getKartLocation().x, y: _ground.getKartLocation().y, angle: _camera.angle});
+                _ground.getKartLocation().x, y: _ground.getKartLocation().y, 
+                angle: _camera.angle - Math.PI / 2 });
         });
         // now that we've set the kart, add the power up frame
         var powerUpFrame :Sprite = new POWER_UP_FRAME();
