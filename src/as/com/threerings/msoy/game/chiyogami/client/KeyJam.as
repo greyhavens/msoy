@@ -1,5 +1,6 @@
 package com.threerings.msoy.game.chiyogami.client {
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.events.KeyboardEvent;
@@ -10,11 +11,16 @@ import flash.ui.Keyboard;
 
 import com.threerings.flash.ClearingTextField;
 
-[SWF(width="500", height="200")]
+[SWF(width="450", height="100")]
 public class KeyJam extends Sprite
 {
     public function KeyJam (millisPerBeat :Number = 1000)
     {
+        var bkg :DisplayObject = new BOOMBOX() as DisplayObject;
+        bkg.y = (100 - bkg.height) / 2;
+        bkg.x = bkg.width / 2;
+        addChild(bkg);
+
         // Question: why does Sprite claim to generate key events when
         // I have never seen it capable of doing so? Flash blows.
         var keyGrabber :TextField = new TextField();
@@ -56,13 +62,33 @@ public class KeyJam extends Sprite
             Math.min(MAX_SEQUENCE_LENGTH, _level + 3));
 
         for (var ii :int = 0; ii < seq.length; ii++) {
-            keySprite = new KeySprite(int(seq[ii]));
+            var key :int = int(seq[ii]);
+            keySprite = new KeySprite(key, classForKey(key));
             _keySprites.push(keySprite);
-            keySprite.x = ii * (KeySprite.WIDTH + PAD);
+            keySprite.x = ii * (KeySprite.WIDTH);
             addChild(keySprite);
         }
         _seqIndex = 0;
     }
+
+    protected function classForKey (key :int) :Class
+    {
+        switch (key) {
+        default:
+        case Keyboard.UP:
+            return UP_ARROW;
+
+        case Keyboard.DOWN:
+            return DOWN_ARROW;
+
+        case Keyboard.LEFT:
+            return LEFT_ARROW;
+
+        case Keyboard.RIGHT:
+            return RIGHT_ARROW;
+        }
+    }
+
 
     protected function handleKeyDown (event :KeyboardEvent) :void
     {
@@ -188,5 +214,20 @@ public class KeyJam extends Sprite
         Keyboard.UP, Keyboard.DOWN, Keyboard.LEFT, Keyboard.RIGHT ];
 
     protected static const MAX_SEQUENCE_LENGTH :int = 7;
+
+    [Embed(source="keyjam.swf#boombox")]
+    protected static const BOOMBOX :Class;
+
+    [Embed(source="keyjam.swf#up")]
+    protected static const UP_ARROW :Class;
+
+    [Embed(source="keyjam.swf#down")]
+    protected static const DOWN_ARROW :Class;
+
+    [Embed(source="keyjam.swf#left")]
+    protected static const LEFT_ARROW :Class;
+
+    [Embed(source="keyjam.swf#right")]
+    protected static const RIGHT_ARROW :Class;
 }
 }

@@ -2,6 +2,7 @@ package com.threerings.msoy.game.chiyogami.client {
 
 import flash.display.DisplayObject;
 import flash.display.Loader;
+import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.text.TextField;
@@ -31,6 +32,7 @@ public class ChiyogamiPanel extends Canvas
 {
     public function ChiyogamiPanel (ctx :WorldContext, ctrl :ChiyogamiController)
     {
+        rawChildren.addChild(new SPLASH() as DisplayObject);
         // TODO: Splash screen
     }
 
@@ -47,12 +49,30 @@ public class ChiyogamiPanel extends Canvas
     /**
      * Start things a-moving. TODO
      */
-    public function startup () :void
+    public function gameDidStart () :void
     {
-        var minigame :KeyJam = new KeyJam(500);
-        minigame.y = 500;
-        addChild(minigame);
+        _minigame  = new KeyJam(500);
+        rawChildren.addChild(_minigame);
 
+        var mask :Shape = new Shape();
+        with (mask.graphics) {
+            beginFill(0xffFFff);
+            drawRect(0, 0, 800, 100);
+            endFill();
+        }
+
+        _minigame.mask = mask;
+        rawChildren.addChild(mask);
     }
+
+    public function gameDidEnd () :void
+    {
+        rawChildren.removeChild(_minigame);
+    }
+
+    protected var _minigame :DisplayObject;
+
+    [Embed(source="splash.png")]
+    protected static const SPLASH :Class;
 }
 }

@@ -72,6 +72,8 @@ public class ChiyogamiController extends GameController
 
     override protected function gameDidStart () :void
     {
+        _panel.gameDidStart();
+
         super.gameDidStart();
     }
 
@@ -79,6 +81,7 @@ public class ChiyogamiController extends GameController
     {
         super.gameDidEnd();
 
+        _panel.gameDidEnd();
     }
 
     /**
