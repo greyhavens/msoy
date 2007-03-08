@@ -233,11 +233,13 @@ public class WonderlandCroquet extends Sprite
             // pan to keep the current ball in view
             var bp :BallParticle = _balls[_currentPlayerIdx];
 
-            var dx :Number = bp.ball.x - ( WIDTH/2 - _spr.x);
-            var dy :Number = bp.ball.y - ( HEIGHT/2 - _spr.y);
+            if (bp != null) {
+                var dx :Number = bp.ball.x - ( WIDTH/2 - _spr.x);
+                var dy :Number = bp.ball.y - ( HEIGHT/2 - _spr.y);
 
-            if ((dx*dx + dy*dy) > AUTO_PAN_THRESHOLD * AUTO_PAN_THRESHOLD) {
-                panTo(bp.ball.x, bp.ball.y);
+                if ((dx*dx + dy*dy) > AUTO_PAN_THRESHOLD * AUTO_PAN_THRESHOLD) {
+                    panTo(bp.ball.x, bp.ball.y);
+                }
             }
 
             // Clear markers for obstructed balls
@@ -290,6 +292,10 @@ public class WonderlandCroquet extends Sprite
                 gameCtrl.localChat(gameCtrl.getOccupantName(gameCtrl.getTurnHolder()) + "'s turn");
             }
 
+            if (_balls[_currentPlayerIdx] != null) {
+                panTo(_balls[_currentPlayerIdx].ball.x, _balls[_currentPlayerIdx].ball.y);
+            }
+
             _status.turnChanged(_currentPlayerIdx);
         } else if (event.type == StateChangedEvent.GAME_STARTED) {
             gameCtrl.localChat("Wonderland Croquet!");
@@ -321,6 +327,8 @@ public class WonderlandCroquet extends Sprite
                     _myBall = _balls[index];
                 }
 
+                // Zoom to it.
+                panTo(event.newValue[0], event.newValue[1]);
             }
 
         } else if (name == "lastHit") {
@@ -381,23 +389,18 @@ public class WonderlandCroquet extends Sprite
      */
     protected function startTurn () :void
     {
-        var coord :Array = [];
         _moveAgain = false;
 
         if(_myBall == null) {
             // It's the first time I've gone, so add my ball at the start
 
-            coord = [map.startPoint.x, map.startPoint.y]; 
-            gameCtrl.set("balls", coord, myIdx);
+            gameCtrl.set("balls", [map.startPoint.x, map.startPoint.y], myIdx);
 
             // and target the first wicket
             gameCtrl.set("wickets", 0, myIdx);
-        } else {
-            coord = [_balls[myIdx].px, _balls[myIdx].py];
         }
 
         _haveMoved = false;
-        panTo(coord[0], coord[1]);
     }
 
     protected var _currentPlayerIdx :int;
