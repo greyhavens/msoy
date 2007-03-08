@@ -6,6 +6,7 @@ public class KartEvent extends Event
     public static const CROSSED_FINISH_LINE :String = "crossedFinishLine";
     public static const BONUS :String = "bonus";
     public static const REMOVE_BONUS :String = "removeBonus";
+    public static const SHIELD :String = "shield";
 
     public function KartEvent (type :String, value :Object = null) 
     {

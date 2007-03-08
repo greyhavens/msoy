@@ -262,6 +262,12 @@ public class UnderwhirledDrift extends Sprite
         } else if (event.name == "gameComplete") {
             _control.localChat("The game is complete!  Head back to the game lobby for more " + 
                 "Undewhirled Drift action!");
+        } else if (event.name == "shieldsUp") {
+            if (event.value.playerId == _control.getMyId()) {
+                _kart.shieldsUp(event.value.up);
+            } else {
+                _opponentKarts.get(event.value.playerId).shieldsUp(event.value.up);
+            }
         }
     }
 
@@ -278,6 +284,7 @@ public class UnderwhirledDrift extends Sprite
         _kart.addEventListener(KartEvent.CROSSED_FINISH_LINE, crossFinishLine);
         _kart.addEventListener(KartEvent.BONUS, addBonus);
         _kart.addEventListener(KartEvent.REMOVE_BONUS, removeBonus);
+        _kart.addEventListener(KartEvent.SHIELD, shield);
         // now that we've set the kart, add the power up frame
         var powerUpFrame :Sprite = new POWER_UP_FRAME();
         powerUpFrame.x = powerUpFrame.width;
@@ -385,6 +392,11 @@ public class UnderwhirledDrift extends Sprite
             removeChild(_bonus);
             _bonus = null;
         }
+    }
+
+    protected function shield (event :KartEvent) :void
+    {
+        _control.sendMessage("shieldsUp", { playerId: _control.getMyId(), up: event.value });
     }
 
     protected static const SEND_THROTTLE :int = 150; // in ms

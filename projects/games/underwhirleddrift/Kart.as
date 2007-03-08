@@ -6,15 +6,11 @@ import flash.geom.Point;
 
 import flash.events.Event;
 
-import flash.utils.describeType;
+import flash.utils.getTimer;
 
 import mx.core.MovieClipAsset;
 
 import com.threerings.util.Line;
-
-[Event(name="crossedFinishLine", type="KartEvent")]
-[Event(name="bonus", type="KartEvent")]
-[Event(name="removeBonus", type="KartEvent")]
 
 public class Kart extends KartSprite
 {
@@ -98,6 +94,22 @@ public class Kart extends KartSprite
     public function boostSpeed (percent :Number = 1) :void 
     {
         _currentSpeed = Math.min(_movementConstants.maxSpeed * 2, _currentSpeed + percent * BOOST);
+    }
+
+    override public function shieldsUp (up :Boolean) :void
+    {
+        super.shieldsUp(up);
+        if (up) {
+            _shield.addEventListener(Event.ENTER_FRAME, function (startTime :int) :Function {
+                var frameListener :Function = function (evt :Event) :void {
+                    if (getTimer() - startTime > Bonus.SHIELD_DURATION) {
+                        _shield.removeEventListener(Event.ENTER_FRAME, frameListener);
+                        dispatchEvent(new KartEvent(KartEvent.SHIELD, false));
+                    }
+                }
+                return frameListener;
+            }(getTimer()));
+        }
     }
 
     protected function enterFrame (event :Event) :void

@@ -8,6 +8,8 @@ public class Bonus extends Sprite
     public static const FIREBALL :int = 1;
     public static const SHIELD :int = 2;
 
+    public static const SHIELD_DURATION :int = 20000; // in ms
+
     /**
      * Randomly selects a bonus and displays it.
      */
@@ -35,6 +37,15 @@ public class Bonus extends Sprite
         return _type;
     }
 
+    public static function getGameSprite (type :int) :Sprite
+    {
+        switch (type) {
+        case FIREBALL: return new FIREBALL_GAME();
+        case SHIELD: return new SHIELD_GAME();
+        default: return null;
+        }
+    }
+
     protected function activateBlueBlazes (kart :Kart) :void
     {
         kart.boostSpeed(3);
@@ -46,6 +57,7 @@ public class Bonus extends Sprite
 
     protected function activateShield (kart :Kart) :void
     {
+        kart.dispatchEvent(new KartEvent(KartEvent.SHIELD, true));
     }
 
     [Embed('rsrc/power_ups.swf#blue_blazes_ui')]
