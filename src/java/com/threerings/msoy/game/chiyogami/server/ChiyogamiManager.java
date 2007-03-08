@@ -3,16 +3,22 @@
 
 package com.threerings.msoy.game.chiyogami.server;
 
+import com.samskivert.util.Interval;
 import com.samskivert.util.RandomUtil;
 
 import com.threerings.util.Name;
 
+import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.ObjectAddedEvent;
 import com.threerings.presents.dobj.ObjectRemovedEvent;
 import com.threerings.presents.dobj.OidListListener;
+import com.threerings.presents.server.InvocationException;
 
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
+
+import com.threerings.crowd.chat.server.SpeakProvider;
 
 import com.threerings.parlor.game.server.GameManager;
 
@@ -20,6 +26,7 @@ import com.threerings.whirled.client.SceneService.SceneMoveListener;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.web.Item;
@@ -55,7 +62,7 @@ public class ChiyogamiManager extends GameManager
     @Override
     protected void didStartup ()
     {
-        _gameobj = (ChiyogamiObject) _plobj;
+        _gameObj = (ChiyogamiObject) _plobj;
 
         // get a handle on the room we're in
         _sceneId = ((WorldGameConfig) getConfig()).startSceneId;
@@ -65,15 +72,52 @@ public class ChiyogamiManager extends GameManager
 
         super.didStartup();
 
-        startGame();
+        // wait 30 seconds and then start...
+        new ChiInterval() {
+            public void safeExpired ()
+            {
+                initiateRound();
+            }
+        }.schedule(DELAY);
+    }
+
+    protected void initiateRound ()
+    {
+        // right away pick music
+        pickNewMusic();
+
+        // have the boss show up in 3 seconds
+        new ChiInterval() {
+            public void safeExpired ()
+            {
+                pickNewBoss();
+            }
+        }.schedule(3000);
+
+        // start the round in 30...
+        new ChiInterval() {
+            public void safeExpired ()
+            {
+                startRound();
+            }
+        }.schedule(DELAY);
     }
 
     @Override
     protected void gameDidStart ()
     {
         super.gameDidStart();
+    }
 
-        pickNewBoss();
+    /**
+     * Start the round!
+     */
+    protected void startRound ()
+    {
+        repositionAllPlayers();
+        startGame();
+        _roomObj.postMessage(RoomObject.PLAY_MUSIC, new Object[] { _music.getMediaPath() });
+        bossSpeak("Ok... it's a dance off!");
     }
 
     protected void didShutdown ()
@@ -92,6 +136,14 @@ public class ChiyogamiManager extends GameManager
             MsoyServer.omgr.destroyObject(_bossObj.getOid());
             _bossObj = null;
         }
+    }
+
+    protected void pickNewMusic ()
+    {
+        String song = RandomUtil.pickRandom(MUSICS);
+        _music  = new StaticMediaDesc(
+            MediaDesc.AUDIO_MPEG, Item.AUDIO, "chiyogami/" + song);
+        _roomObj.postMessage(RoomObject.LOAD_MUSIC, new Object[] { _music.getMediaPath() });
     }
 
     /**
@@ -127,12 +179,12 @@ public class ChiyogamiManager extends GameManager
             }
         });
 
-//        _gameobj.startTransaction();
+//        _gameObj.startTransaction();
 //        try {
-//            _gameobj.setBossHealth(1f);
-//            _gameobj.setBoss(
+//            _gameObj.setBossHealth(1f);
+//            _gameObj.setBoss(
 //        } finally {
-//            _gameobj.commitTransaction();
+//            _gameObj.commitTransaction();
 //        }
     }
 
@@ -141,10 +193,62 @@ public class ChiyogamiManager extends GameManager
      */
     protected void bossAddedToRoom ()
     {
-        String error = _roomMgr.changeLocation(_bossObj, new MsoyLocation(.5, 0, .5, 0));
-        if (error != null) {
-            log.warning("Error moving boss [e=" + error + "].");
+        bossSpeak("I'm all up in your room, screwing with your furni");
+
+        new ChiInterval() {
+            public void safeExpired ()
+            {
+                moveBody(_bossObj, .5, .5, 0);
+                bossSpeak("Mind if I take over? HAhahaha!");
+            }
+        }.schedule(2000);
+    }
+
+    protected void repositionAllPlayers ()
+    {
+        // TODO: position based on performance?
+
+        // find all the players and arrange them in a semicircle around the boss
+        int numPlayers = _gameObj.occupants.size();
+        double angleIncrement = Math.PI / (numPlayers - 1);
+        double angle = 0;
+        for (int ii = 0; ii < numPlayers; ii++) {
+            // position players in a semicircle behind the boss
+            double x = .5 + .5 * Math.cos(angle);
+            double z = .5 + .5 * Math.sin(angle);
+            moveBody((BodyObject) MsoyServer.omgr.getObject(_gameObj.occupants.get(ii)),
+                x, z, 0);
+
+            angle += angleIncrement;
         }
+    }
+
+    /**
+     * Move the specified body to a fully-specified location.
+     */
+    protected void moveBody (BodyObject body, double x, double z, int orient)
+    {
+        String error = _roomMgr.changeLocation(body, new MsoyLocation(x, 0, z, orient));
+        if (error != null) {
+            // this shouldn't happen
+            log.warning("Error moving body [e=" + error + "].");
+        }
+    }
+
+    /**
+     * Move the specified body to the specified location, facing center.
+     */
+    protected void moveBody (BodyObject body, double x, double z)
+    {
+        // TODO checkmath
+        double angle = Math.atan2(x - .5, z - .5);
+        int degrees = (int) Math.round(angle * 180 / Math.PI);
+        moveBody(body, x, z, degrees);
+    }
+
+    protected void bossSpeak (String utterance)
+    {
+        SpeakProvider.sendSpeak(_roomObj, _bossObj.username, null, utterance);
     }
 
     /**
@@ -162,9 +266,38 @@ public class ChiyogamiManager extends GameManager
 
         public void objectRemoved (ObjectRemovedEvent event)
         {
-            // nada
+            // when someone leaves the room, kick them out of the chiyogami game
+            int oid = event.getOid();
+            if (_gameObj.occupants.contains(oid)) {
+                try {
+                    MsoyServer.worldGameReg.leaveWorldGame(
+                        (MemberObject) MsoyServer.omgr.getObject(oid));
+                } catch (InvocationException ie) {
+                    log.warning("Error removing user from chiyogami game: " + ie);
+                }
+            }
         }
     } // End: class RoomListener
+
+    protected abstract class ChiInterval extends Interval
+    {
+        public ChiInterval ()
+        {
+            super(MsoyServer.omgr);
+        }
+
+        public void expired ()
+        {
+            if (_gameObj.isActive()) {
+                safeExpired();
+            } else {
+                System.err.println("is not active, not expiring");
+            }
+        }
+
+        public abstract void safeExpired ();
+
+    } // End: class ChiInterval
 
     /** Listens to the room we're boom-chikka-ing. */
     protected RoomListener _roomListener = new RoomListener();
@@ -172,11 +305,13 @@ public class ChiyogamiManager extends GameManager
     /** Our world delegate. */
     protected WorldGameManagerDelegate _worldDelegate;
 
-    /** A casted ref to our gameobject, this hides our superclass _gameobj. */
-    protected ChiyogamiObject _gameobj;
+    /** A casted ref to our gameobject, this hides our superclass _gameObj. */
+    protected ChiyogamiObject _gameObj;
 
     /** The sceneId of the game. */
     protected int _sceneId;
+
+    protected MediaDesc _music;
 
     /** The room manager. */
     protected RoomManager _roomMgr;
@@ -187,6 +322,10 @@ public class ChiyogamiManager extends GameManager
     /** The boss object. */
     protected BossObject _bossObj;
 
+    protected static final String[] MUSICS = { "tarzan" };
+
     /** TEMP: The filenames of current boss avatars. */
     protected static final String[] BOSSES = { "bboy" };
+
+    protected static final int DELAY = 5000; // 30000;
 }

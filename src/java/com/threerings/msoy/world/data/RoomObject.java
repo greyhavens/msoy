@@ -23,6 +23,22 @@ public class RoomObject extends SpotSceneObject
     public static final String CONTROLLERS = "controllers";
     // AUTO-GENERATED: FIELDS END
 
+    /** A message sent by the server to have occupants load, but not play,
+     * the specified music.
+     * Format: [ url ].  */
+    public static final String LOAD_MUSIC = "loadMusic";
+
+    /** A corresponding message sent by each client when they've got the music
+     * completely loaded. No other status is needed.
+     * Format: [ url ]. */
+    public static final String MUSIC_LOADED = "musicLoaded";
+
+    /** The message sent by the server to kick-off music playing. The music
+     * should be played once and then disposed-of. No action
+     * should be taken if the music was not loaded. 
+     * Format: [ url ]. */
+    public static final String PLAY_MUSIC = "playMusic";
+
     /** Our room service marshaller. */
     public RoomMarshaller roomService;
 
