@@ -266,7 +266,7 @@ public class WonderlandCroquet extends Sprite
                     gameCtrl.setImmediate("balls", _balls);
                     gameCtrl.setImmediate("wickets", _wickets);
                 }
-                gameCtrl.localChat("Your turn!" + _spr.width);
+                gameCtrl.localChat("Your turn!");
                 startTurn();
             } else {
                 gameCtrl.localChat(gameCtrl.getOccupantName(gameCtrl.getTurnHolder()) + "'s turn");
