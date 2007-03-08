@@ -324,25 +324,33 @@ public class Model
     private function addWordToScoreboard (
         player : String, word : String, score : Number, isvalid : Boolean) : void
     {
-        if (! isvalid)
-        {
+        // if this message came in after the end of the round, just ignore it
+        if (_rounds.getCurrentState() != RoundProvider.ROUND_STARTED_STATE) {
+            return;
+        }
+
+        // if the word is invalid, display who tried to claim it
+        if (! isvalid) {
             _display.logInvalidWord (player, word);
             return;
         }
-        
-        if (! _scoreboard.isWordClaimed (word))
-        {
+
+        // if the word is valid and not claimed, score!
+        if (! _scoreboard.isWordClaimed (word)) {
             _scoreboard.addWord (player, word, score);
             _display.logSuccess (player, word, score);
             return;
         }
-        
-        if (_playerName == player)
-        {
+
+        // by this point, the word is valid and already claimed.
+        // if this was my word, let me know.
+        if (_playerName == player) {
             _display.logAlreadyClaimed (player, word);
             return;
         }
-    
+
+        // the word was valid and already claimed, when another player tried to claim it.
+        // just ignore.    
     }      
     
     /** Updates a single letter at specified /position/ to display a new /text/.  */

@@ -20,27 +20,31 @@ import flash.text.TextFormat;
 
 import mx.core.BitmapAsset;
 
+import com.threerings.ezgame.EZGameControl;
+
+import com.whirled.WhirledGameControl;
+
+import com.threerings.ezgame.OccupantChangedEvent;
+import com.threerings.ezgame.OccupantChangedListener;
+
 
 /** The Display class represents the game visualization, including UI
     and game state display. */
 public class Display extends Sprite
+    implements OccupantChangedListener
 {
-
-
+    
     // PUBLIC FUNCTIONS
 
     /** Initializes the board and everything on it */
-    public function Display (
-        controller : Controller, rounds : RoundProvider, version : String) : void
+    public function Display (gameCtrl : WhirledGameControl, controller : Controller,
+                             rounds : RoundProvider, version : String) : void
     {
         // Copy parameters
         _controller = controller;
         _rounds = rounds;
+        _gameCtrl = gameCtrl;
 
-        // Register for round updates
-        _rounds.addEventListener (RoundProvider.ROUND_STARTED_STATE, roundStartedHandler);
-        _rounds.addEventListener (RoundProvider.ROUND_ENDED_STATE, roundEndedHandler);
-        
         // Initialize the background bitmap
         _background = Resources.makeGameBackground ();
         Assert.NotNull (_background, "Background bitmap failed to initialize!"); 
@@ -53,6 +57,9 @@ public class Display extends Sprite
         initializeUI (version);
 
         // Register for events
+        _gameCtrl.registerListener (this);
+        _rounds.addEventListener (RoundProvider.ROUND_STARTED_STATE, roundStartedHandler);
+        _rounds.addEventListener (RoundProvider.ROUND_ENDED_STATE, roundEndedHandler);
         addEventListener (MouseEvent.CLICK, clickHandler);
         addEventListener (MouseEvent.MOUSE_MOVE, mouseHandler);
         addEventListener (KeyboardEvent.KEY_UP, typingHandler);
@@ -60,6 +67,17 @@ public class Display extends Sprite
         _logger.Log (version);
     }
 
+    /** Shutdown handler */
+    public function handleUnload (event : Event) : void
+    {
+        _rounds.removeEventListener (RoundProvider.ROUND_STARTED_STATE, roundStartedHandler);
+        _rounds.removeEventListener (RoundProvider.ROUND_ENDED_STATE, roundEndedHandler);
+        removeEventListener (MouseEvent.CLICK, clickHandler);
+        removeEventListener (MouseEvent.MOUSE_MOVE, mouseHandler);
+        removeEventListener (KeyboardEvent.KEY_UP, typingHandler);
+        _gameCtrl.unregisterListener (this);
+    }
+    
     /** Called from the model, this accessor modifies the display /text/
         for one letter at specified board /position/. */
     public function setLetter (position : Point, text : String) : void
@@ -160,6 +178,18 @@ public class Display extends Sprite
         _timer.start (seconds);
     }
  
+    // from interface OccupantChangedListener
+    public function occupantEntered (event : OccupantChangedEvent) : void
+    {
+        var name : String = _gameCtrl.getOccupantName (event.occupantId);
+        _gameCtrl.localChat ("New player entered: " + name);
+    }
+
+    // from interface OccupantChangedListener
+    public function occupantLeft (event : OccupantChangedEvent) : void
+    {
+        _gameCtrl.localChat ("Player left.");
+    }
 
 
     // PRIVATE EVENT HANDLERS
@@ -381,6 +411,9 @@ public class Display extends Sprite
     
     // PRIVATE VARIABLES
 
+    /** Whirled controller */
+    private var _gameCtrl : WhirledGameControl;
+    
     /** Game logic */
     private var _controller : Controller;
 

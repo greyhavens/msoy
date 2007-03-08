@@ -3,6 +3,7 @@ package
 
 import flash.display.Sprite;    
 import flash.display.Shape;
+import flash.events.Event;
 import flash.text.TextField;
 import mx.core.BitmapAsset;
 
@@ -24,6 +25,9 @@ public class TangleWord extends Sprite
     // and other startup information.
     public function TangleWord () : void
     {
+        // Register unloader
+        root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+
         // Initialize game data
         _gameCtrl = new WhirledGameControl (this);
         _gameCtrl.registerListener (this);
@@ -33,7 +37,7 @@ public class TangleWord extends Sprite
             
             // Create MVC elements
             _controller = new Controller (_gameCtrl, null, _rounds); // we'll set the model later...
-            _display = new Display (_controller, _rounds, "Tangleword v. 1.1.0");
+            _display = new Display (_gameCtrl, _controller, _rounds, "Tangleword v. 1.1.0b");
             _model = new Model (_gameCtrl, _rounds, _display);
             _controller.setModel (_model);                           // ... as in, right here :)
             addChild (_display);
@@ -57,6 +61,12 @@ public class TangleWord extends Sprite
         }
     }
 
+    /** Clean up and shut down. */
+    public function handleUnload (event : Event) : void
+    {
+        _display.handleUnload (event);
+    }
+        
     /**
        Sets up the game information. This needs to happen after all of the
        MVC objects have been initialized.
