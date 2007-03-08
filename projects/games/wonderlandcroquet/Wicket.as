@@ -2,7 +2,9 @@ package {
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
+
 import flash.events.Event;
+
 import flash.geom.Point;
 
 import mx.utils.ObjectUtil;
@@ -28,12 +30,14 @@ public class Wicket extends Sprite
         mouseEnabled = false;
         _number = number;
 
+        this.x = x;
+        this.y = y;
+        this.rotation = rotation;
+
+
         var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
         loader.addEventListener(Event.COMPLETE, function (event :Event) :void {
             _animation = new (loader.getClass("card" + number))();
-            _animation.x = x;
-            _animation.y = y;
-            _animation.rotation = rotation;
             _animation.addEventListener(Event.ENTER_FRAME, endAnimation);
             addChild(_animation);
         });
@@ -63,11 +67,11 @@ public class Wicket extends Sprite
      */
     public function getCenterLine () :Array
     {
-        var rad :Number = _animation.rotation * Math.PI/180;
-        var a :Point = new Point(_animation.x + Math.sin(rad)*48.5, 
-                                 _animation.y + Math.cos(rad)*-48.5);
-        var b :Point = new Point(_animation.x + Math.sin(rad)*-60,
-                                 _animation.y + Math.cos(rad)*60);
+        var rad :Number = rotation * Math.PI/180;
+        var a :Point = new Point(x + Math.sin(rad)*48.5, 
+                                 y + Math.cos(rad)*-48.5);
+        var b :Point = new Point(x + Math.sin(rad)*-60,
+                                 y + Math.cos(rad)*60);
         return [a, b];
     }
 
@@ -78,10 +82,10 @@ public class Wicket extends Sprite
         }
     }
 
-    // The card's number.
+    /** The card's number. */
     protected var _number :int;
 
-    // The animation for this card.
+    /** The animation for this card. */
     protected var _animation :MovieClip;
 
     [Embed(source="rsrc/cards.swf", mimeType="application/octet-stream")]
