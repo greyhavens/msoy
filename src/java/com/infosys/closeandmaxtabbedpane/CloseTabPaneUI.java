@@ -67,7 +67,7 @@ import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.text.View;
 
-import com.sun.java.swing.plaf.windows.WindowsIconFactory;
+import javax.swing.plaf.metal.MetalIconFactory;
 
 /**
  * UI for <code>CloseAndMaxTabbedPane</code>.
@@ -173,10 +173,10 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		maxB = new JButton();
 		maxB.setSize(BUTTONSIZE, BUTTONSIZE);
 
-		WindowsIconFactory.createFrameCloseIcon().paintIcon(closeB,
+		MetalIconFactory.getInternalFrameCloseIcon(BUTTONSIZE).paintIcon(closeB,
 				closeImgI.createGraphics(), 0, 0);
 
-		WindowsIconFactory.createFrameMaximizeIcon().paintIcon(maxB,
+		MetalIconFactory.getInternalFrameMaximizeIcon(BUTTONSIZE).paintIcon(maxB,
 				maxImgI.createGraphics(), 0, 0);
 
 		actionPopupMenu = new JPopupMenu();
