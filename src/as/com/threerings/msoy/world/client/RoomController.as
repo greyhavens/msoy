@@ -193,6 +193,16 @@ public class RoomController extends SceneController
         _scene = null;
         _roomObj = null;
 
+        closeAllMusic();
+
+        super.didLeavePlace(plobj);
+    }
+
+    /**
+     * Close and reset all music.
+     */
+    protected function closeAllMusic () :void
+    {
         if (_music != null) {
             _music.close();
             _music = null;
@@ -202,8 +212,6 @@ public class RoomController extends SceneController
             _loadingMusic.close();
             _loadingMusic = null;
         }
-
-        super.didLeavePlace(plobj);
     }
 
     /**
@@ -577,7 +585,11 @@ public class RoomController extends SceneController
             break;
 
         case RoomObject.PLAY_MUSIC:
-            var url :String = String(args[0]);
+            if (args == null || args.length == 0) {
+                closeAllMusic();
+                break;
+            }
+            var url :String = (args[0] as String);
             if (_loadingMusic != null) {
                 if (_loadingMusic.getURL() == url) {
                     // awesome
