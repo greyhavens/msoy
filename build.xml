@@ -787,6 +787,9 @@
     <copy todir="${pkg.base}/data">
       <fileset dir="data" includes="**"/>
     </copy>
+    <chmod perm="755">
+      <fileset dir="${pkg.base}/data/swiftly/flex_sdk/bin"/>
+    </chmod>
     <!-- need our ehcache.xml file -->
     <copy file="${deploy.dir}/ehcache.xml" todir="${pkg.base}/${deploy.dir}"/>
     <!-- create some runtime directories -->
