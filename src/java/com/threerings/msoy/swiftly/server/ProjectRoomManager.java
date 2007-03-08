@@ -416,17 +416,15 @@ public class ProjectRoomManager extends PlaceManager
                 File topBuildDir = new File(ServerConfig.serverRoot + LOCAL_BUILD_DIRECTORY);
 
                 // Create a temporary build directory
-                File buildDir = File.createTempFile("localbuilder", String.valueOf(_projectId), topBuildDir);
-                buildDir.delete();
-                if (buildDir.mkdirs() != true) {
+                _buildDir = File.createTempFile("localbuilder", String.valueOf(_projectId), topBuildDir);
+                _buildDir.delete();
+                if (_buildDir.mkdirs() != true) {
                     // This should -never- happen, try to exit gracefully.
-                    log.warning("Unable to create swiftly build directory: " + buildDir);
+                    log.warning("Unable to create swiftly build directory: " + _buildDir);
                     _error = new Exception("internal error");
                 }
 
-                _result = _builder.build(buildDir);
-                // TODO: Copy out the .swf and clean up the result
-                // FileUtils.deleteDirectory(buildDir);
+                _result = _builder.build(_buildDir);
             } catch (Throwable error) {
                 // we'll report this on resultReceived()
                 _error = error;
@@ -440,7 +438,17 @@ public class ProjectRoomManager extends PlaceManager
             } else {
                 // Check for failure
                 if (_result.buildSuccessful()) {
-                    _roomObj.setConsole("m.build_complete");                    
+                    _roomObj.setConsole("m.build_complete");
+                    // TODO: This is an awful last minute hack!
+                    try {
+                        File endResult = File.createTempFile("buildresult" + Integer.toString(_projectId), ".swf", new File(ServerConfig.serverRoot + "/pages/buildresults/"));
+                        FileUtils.copyFile(_result.getOutputFile(), endResult);
+                        FileUtils.deleteDirectory(_buildDir);
+                        _roomObj.setConsole("http://" + ServerConfig.serverHost + ":" + ServerConfig.getHttpPort() + "/buildresults/" + endResult.getName());
+                    } catch (IOException ioe) {
+                        // XXX HACK HACK HACK
+                    }
+
                 } else {
                     _roomObj.setConsole("m.build_failed");                    
                 }
@@ -455,6 +463,7 @@ public class ProjectRoomManager extends PlaceManager
             _roomObj.setConsole("m.build_timed_out");
         }
 
+        protected File _buildDir;
         protected int _projectId;
         protected Throwable _error;
         protected BuildResult _result;

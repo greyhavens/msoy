@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.swiftly.data;
 
+import java.io.File;
+
 import junit.framework.TestCase;
 
 public class BuildResultUnitTest extends TestCase
@@ -34,5 +36,13 @@ public class BuildResultUnitTest extends TestCase
         assertEquals(true, result.buildSuccessful());
         result.appendOutput(output);
         assertEquals(false, result.buildSuccessful());
+    }
+
+    public void testSetBuildOutputFile ()
+    {
+        BuildResult result = new BuildResult();
+        File outputFile = new File("/tmp/nonexistent");
+
+        result.setOutputFile(outputFile);
     }
 }

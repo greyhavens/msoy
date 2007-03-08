@@ -49,9 +49,11 @@ public class SwiftlyProject
     /** Whether the project is remixable. */
     public boolean remixable;
 
-    /** Returns the source file name for the project's type.
-     *  TODO: Store this in the database upon project creation. Until that's
-     *  implemented changing these will break existing projects, so don't. */
+    /**
+     * Returns the source file name for the project's type.
+     * TODO: Store this in the database upon project creation. Until that's
+     * implemented changing these will break existing projects, so don't.
+     */
     public String getTemplateSourceName () {
         // We can't use a switch statement because the type finals are not actually constants
         if (projectType == Item.GAME) {
@@ -61,5 +63,21 @@ public class SwiftlyProject
         } else {
             return null;
         }
+    }
+
+    /**
+     * Returns the output file name for the project's type.
+     * TODO: Store this in the database upon project creation. Until that's
+     * implemented changing these will break existing projects, so don't.
+     */
+     public String getOutputFileName () {
+         // We can't use a switch statement because the type finals are not actually constants
+         if (projectType == Item.GAME) {
+             return "SwiftlyGame.swf";
+         } else if (projectType == Item.AVATAR) {
+             return "SwiftlyAvatar.swf";
+         } else {
+             return null;
+         }
     }
 }

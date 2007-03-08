@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.swiftly.data;
 
+import java.io.File;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +19,16 @@ public class BuildResult
     public BuildResult ()
     {
         _output = new ArrayList<CompilerOutput>();
+    }
+
+    /** Set compiler output file path. */
+    public void setOutputFile (File path) {
+        _outputFile = path;
+    }
+
+    public File getOutputFile ()
+    {
+        return _outputFile;
     }
 
     /** Return the build compiler's output, in the order it was received. */
@@ -44,4 +56,7 @@ public class BuildResult
     
     /** Did the build succeed. */
     protected boolean _buildSuccess = true;
+
+    /** The build output file. */
+    protected transient File _outputFile;
 }

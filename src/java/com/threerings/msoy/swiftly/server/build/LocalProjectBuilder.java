@@ -109,6 +109,8 @@ public class LocalProjectBuilder
                 }
             }
 
+            result.setOutputFile(new File(buildRoot, _project.getOutputFileName()));
+
             return result;
         } catch (IOException ioe) {
             throw new ProjectBuilderException.InternalError("Failed to execute build process: " + ioe, ioe);
