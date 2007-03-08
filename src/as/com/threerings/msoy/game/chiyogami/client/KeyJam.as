@@ -131,15 +131,14 @@ public class KeyJam extends Sprite
     protected function resetSequenceProgress () :void
     {
         var keySprite :KeySprite;
-        if (_keySprites.length > _seqIndex) {
-            keySprite = (_keySprites[_seqIndex] as KeySprite);
-            keySprite.setMode(MODE_CLEAR);
-        }
-        while (_seqIndex > 0) {
+        while (_seqIndex >= 0) {
+            if (_seqIndex < _keySprites.length) {
+                keySprite = (_keySprites[_seqIndex] as KeySprite);
+                keySprite.setMode((_seqIndex == 0) ? MODE_NEXT : MODE_CLEAR);
+            }
             _seqIndex--;
-            keySprite = (_keySprites[_seqIndex] as KeySprite);
-            keySprite.setMode((_seqIndex == 0) ? MODE_NEXT : MODE_CLEAR);
         }
+        _seqIndex = 0;
 
         _booches++;
         _label.setText("Oh, ye booched it!", 5);
