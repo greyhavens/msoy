@@ -121,9 +121,16 @@ public class Scenery extends Sprite
         fireball.addChild(bonus);
         bonus.y = -fireball.height;
         var bonusObj :Object = { origin: pos, sprite: fireball };
-        fireball.addEventListener(Event.ENTER_FRAME, function (event :Event) :void {
+        var bonusObjListener :Function = function (event :Event) :void {
             bonusObj.origin = bonusObj.origin.add(Point.polar(Bonus.FIREBALL_VELOCITY, angle));
-        });
+            if (Math.abs(bonusObj.origin.x) > 2000 || Math.abs(bonusObj.origin.y) > 2000) {
+                // don't let the damn thing float to infinity (and beyond!)
+                fireball.removeEventListener(Event.ENTER_FRAME, bonusObjListener);
+                fireball.parent.removeChild(fireball);
+                ArrayUtil.removeFirst(_items, bonusObj);
+            }
+        };
+        fireball.addEventListener(Event.ENTER_FRAME, bonusObjListener);
         initializeObject(bonusObj, FIREBALL);
     }
 
