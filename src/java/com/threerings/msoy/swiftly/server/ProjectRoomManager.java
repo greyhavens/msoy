@@ -23,6 +23,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.swiftly.client.ProjectRoomService;
 import com.threerings.msoy.swiftly.data.BuildResult;
@@ -37,10 +38,13 @@ import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.swiftly.server.build.LocalProjectBuilder;
+import com.threerings.msoy.swiftly.server.build.ProjectBuilderException;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 
 import org.apache.commons.io.FileUtils;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages a Swiftly project room.
@@ -53,25 +57,18 @@ public class ProjectRoomManager extends PlaceManager
      */
     public void init (SwiftlyProject project, ProjectStorage storage)
     {
+        // References to our on-disk SDKs
+        File flexSdk = new File(ServerConfig.serverRoot + FLEX_SDK);
+        File whirledSdk = new File(ServerConfig.serverRoot + WHIRLED_SDK);
+        
         _storage = storage;
 
-        // setup the builder
-        try {
-            _buildDir = File.createTempFile("localbuilder", String.valueOf(project.projectId));
-            _buildDir.delete();
-            boolean created = _buildDir.mkdirs();
-            // TODO: need to freak out if this is false
-            File flexSdk = new File("data/swiftly/flex_sdk");
-            File whirledSdk = new File("data/swiftly/whirled_sdk");
-            _builder = new LocalProjectBuilder(project, _storage, _buildDir,
-                flexSdk.getAbsoluteFile(), whirledSdk.getAbsoluteFile());
-        } catch (Exception e) {
-            // TODO: oh my JEBUS freak out. log this and then KILL the room
-            // is it worth catching IOException vs. ProjectBuilderException?
-        }
-
-        // stick the project in the dobj
+        // Stick the project in the dobj
         _roomObj.setProject(project);
+
+        // Setup the builder.
+        _builder = new LocalProjectBuilder(project, _storage, flexSdk.getAbsoluteFile(),
+            whirledSdk.getAbsoluteFile());
 
         // Load the project tree from the storage provider
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
@@ -415,7 +412,21 @@ public class ProjectRoomManager extends PlaceManager
         // this is called on the executor thread and can go hog wild with the blocking
         public void executeTask () {
             try {
-                _result = _builder.build();
+                // Get the local build directory
+                File topBuildDir = new File(ServerConfig.serverRoot + LOCAL_BUILD_DIRECTORY);
+
+                // Create a temporary build directory
+                File buildDir = File.createTempFile("localbuilder", String.valueOf(_projectId), topBuildDir);
+                buildDir.delete();
+                if (buildDir.mkdirs() != true) {
+                    // This should -never- happen, try to exit gracefully.
+                    log.warning("Unable to create swiftly build directory: " + buildDir);
+                    _error = new Exception("internal error");
+                }
+
+                _result = _builder.build(buildDir);
+                // TODO: Copy out the .swf and clean up the result
+                // FileUtils.deleteDirectory(buildDir);
             } catch (Throwable error) {
                 // we'll report this on resultReceived()
                 _error = error;
@@ -445,4 +456,13 @@ public class ProjectRoomManager extends PlaceManager
     protected ProjectStorage _storage;
     protected LocalProjectBuilder _builder;
     protected File _buildDir;
+
+    /** Server-root relative path to the Whirled SDK. */
+    protected static final String WHIRLED_SDK = "/data/swiftly/whirled_sdk";
+
+    /** Server-root relative path to the Flex SDK. */
+    protected static final String FLEX_SDK = "/data/swiftly/flex_sdk";
+
+    /** Server-root relative path to the server build directory. */
+    protected static final String LOCAL_BUILD_DIRECTORY = "/data/swiftly/build";
 }

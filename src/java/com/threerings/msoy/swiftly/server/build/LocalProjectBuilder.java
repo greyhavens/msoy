@@ -6,24 +6,23 @@ package com.threerings.msoy.swiftly.server.build;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 
+import com.threerings.msoy.swiftly.data.BuildResult;
+import com.threerings.msoy.swiftly.data.CompilerOutput;
+import com.threerings.msoy.swiftly.data.FlexCompilerOutput;
+
 import com.threerings.msoy.web.data.SwiftlyProject;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import java.io.IOException;
 
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
-
 import static com.threerings.msoy.Log.log;
-
-import com.threerings.msoy.swiftly.data.BuildResult;
-import com.threerings.msoy.swiftly.data.CompilerOutput;
-import com.threerings.msoy.swiftly.data.FlexCompilerOutput;
 
 /**
  * Server-local project builder.
@@ -37,34 +36,20 @@ public class LocalProjectBuilder
      * @param flexSDK: Local path to the Flex SDK.
      */
     public LocalProjectBuilder (SwiftlyProject project, ProjectStorage storage,
-        File buildRoot, File flexSDK, File whirledSDK)
-        throws ProjectBuilderException
+        File flexSDK, File whirledSDK)
     {
         _project = project;
         _storage = storage;
         _flexSDK = flexSDK;
         _whirledSDK = whirledSDK;
-        
-        // Create a temporary build directory
-        try {
-            _buildRoot = File.createTempFile("build", Integer.toString(project.projectId), buildRoot);
-            _buildRoot.delete();
-            if (_buildRoot.mkdir() != true) {
-                throw new ProjectBuilderException("Unable to create temporary build root " +
-                    "directory, directory already exists: " + _buildRoot);
-            }
-        } catch (IOException ioe) {
-            throw new ProjectBuilderException("Unable to create temporary build root '" +
-                _buildRoot + "': " + ioe, ioe);            
-        }
     }
 
-    public BuildResult build ()
+    public BuildResult build (File buildRoot)
         throws ProjectBuilderException
     {
         // Export the project data
         try {
-            _storage.export(_buildRoot);            
+            _storage.export(buildRoot);            
         } catch (ProjectStorageException pse) {
             throw new ProjectBuilderException("Exporting project data from storage failed: " + pse,
                 pse);
@@ -99,7 +84,7 @@ public class LocalProjectBuilder
             env.clear();
 
             // Set the working directory to the build root.
-            procBuilder.directory(_buildRoot);
+            procBuilder.directory(buildRoot);
 
             // Sanitize the environment.
             procBuilder.redirectErrorStream(true);
@@ -141,7 +126,4 @@ public class LocalProjectBuilder
 
     /** Path to the Whirled SDK. */
     protected File _whirledSDK;
-
-    /** Instance-specific build directory. */
-    protected File _buildRoot;
 }

@@ -64,13 +64,11 @@ public class LocalProjectBuilderUnitTest extends TestCase
     public void testBuild ()
         throws Exception
     {
-        File builds = new File(_tempDir, "builds");
         BuildResult result;
-        builds.mkdirs();
 
-        ProjectBuilder builder = new LocalProjectBuilder(_project, _storage, builds,
+        ProjectBuilder builder = new LocalProjectBuilder(_project, _storage,
             FLEX_SDK_DIR.getAbsoluteFile(), WHIRLED_SDK_DIR.getAbsoluteFile());
-        result = builder.build();
+        result = builder.build(_tempDir);
         // XXX test the output here
     }
 
