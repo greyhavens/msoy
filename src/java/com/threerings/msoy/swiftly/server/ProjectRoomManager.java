@@ -436,10 +436,17 @@ public class ProjectRoomManager extends PlaceManager
         // this is called back on the dobj thread and must only report results
         public void resultReceived () {
             if (_error != null) {
-                _roomObj.setConsole(MessageBundle.tcompose("m.build_failed", _error.getMessage()));
+                _roomObj.setConsole(MessageBundle.tcompose("m.build_failed_reason", _error.getMessage()));
             } else {
+                // Provide build output
                 _roomObj.setResult(_result);
-                _roomObj.setConsole("m.build_complete");
+
+                // Check for failure
+                if (_result.buildSuccessful()) {
+                    _roomObj.setConsole("m.build_complete");                    
+                } else {
+                    _roomObj.setConsole("m.build_failed");                    
+                }
             }
         }
 
