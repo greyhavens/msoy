@@ -4,7 +4,8 @@
 package com.threerings.msoy.swiftly.data;
 
 /** A compiler message. */
-public interface CompilerOutput {
+public interface CompilerOutput
+{
     /** Message severity levels. */
     public enum Level {
         /** Informational message. */

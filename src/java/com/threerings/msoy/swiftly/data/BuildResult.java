@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.swiftly.data;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.threerings.io.Streamable;
@@ -16,7 +16,7 @@ public class BuildResult
 {
     public BuildResult ()
     {
-        _output = new LinkedList<CompilerOutput>();
+        _output = new ArrayList<CompilerOutput>();
     }
 
     /** Return the build compiler's output, in the order it was received. */
