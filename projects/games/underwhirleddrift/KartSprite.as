@@ -128,8 +128,8 @@ public class KartSprite extends Sprite
             collides.sceneryType == Scenery.KART)) || _ground.getLevel().isOnWall(newPosition)) {
             return bounce(position, newPosition);
         } else if (collides != null && collides.sceneryType == Scenery.FIREBALL) {
-            if (this is Kart) {
-                if (_shield == null && !collides.isMyFireball) {
+            if (this is Kart && !collides.isMyFireball) {
+                if (_shield == null) {
                     (this as Kart).killMovement();
                 } else {
                     dispatchEvent(new KartEvent(KartEvent.SHIELD, false));
