@@ -40,6 +40,7 @@ public class Scenery extends Sprite
         var maxDistance :Number = camera.distance / minScale;
         var viewRect :Rectangle = new Rectangle(-maxDistance / 2, -maxDistance, maxDistance, 
             maxDistance);
+        var nonChildren :int = 0;
         _collidingObject = null;
         for (var ii :int = 0; ii < _items.length; ii++) {
             _items[ii].transformedOrigin = translateRotate.transformPoint(_items[ii].origin);
@@ -70,8 +71,13 @@ public class Scenery extends Sprite
                         (scaleFactor / maxScale);
                     kart.updateAngleFrom(camera.position);
                 }
-                // set correct index
-                setChildIndex(_items[ii].sprite, ii);
+                // set correct index - sometimes there are items that are not currently displayed
+                if (_items[ii].sprite.parent == this) {
+                    setChildIndex(_items[ii].sprite, ii - nonChildren);
+                } else {
+                    // prevent going out of bounds on the above setChildIndex call
+                    nonChildren++;
+                }
             } else {
                 // make sure its off the display
                 _items[ii].sprite.x = _items[ii].sprite.y = -100000;
@@ -79,7 +85,8 @@ public class Scenery extends Sprite
                 _items[ii].sprite.height = _items[ii].startHeight;
             }
 
-            if (Point.distance(_items[ii].origin, kartLocation) < _items[ii].radius + _kartRadius) {
+            if (_items[ii].sprite.parent == this && 
+                Point.distance(_items[ii].origin, kartLocation) < _items[ii].radius + _kartRadius) {
                 _collidingObject = _items[ii];
             }
         }
@@ -135,6 +142,20 @@ public class Scenery extends Sprite
         };
         fireball.addEventListener(Event.ENTER_FRAME, bonusObjListener);
         initializeObject(bonusObj, FIREBALL);
+    }
+
+    public function removeBonus (pos :Point) :void 
+    {
+        var bonus :Object;
+        for (var ii: int = 0; ii < _items.length; ii++) {
+            if (_items[ii].origin.equals(pos)) {
+                bonus = _items[ii];
+                break;
+            }
+        }
+        if (bonus != null && bonus.sprite.parent == this) {
+            removeChild(bonus.sprite);
+        } 
     }
 
     protected function initializeObject (obj :Object, type :int) :void

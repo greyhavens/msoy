@@ -197,12 +197,14 @@ public class Kart extends KartSprite
             }
         }
 
+        // pick up bonuses
         var collides :Object = _ground.getScenery().getCollidingObject();
         if (collides != null && collides.sceneryType == Scenery.BONUS) {
-            _ground.getScenery().removeObject(collides);
             if (_bonus == null) {
-                dispatchEvent(new KartEvent(KartEvent.BONUS, _bonus = new Bonus()));
+                _bonus = new Bonus();
             }
+            // pick up the bonus, whether we already have one or not
+            dispatchEvent(new KartEvent(KartEvent.BONUS, { pos: collides.origin, bonus: _bonus }));
         }
     }
 

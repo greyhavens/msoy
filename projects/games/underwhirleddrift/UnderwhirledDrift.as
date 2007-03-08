@@ -271,6 +271,8 @@ public class UnderwhirledDrift extends Sprite
         } else if (event.name == "fireball") {
             _ground.getScenery().shootFireball(new Point(event.value.x, event.value.y), 
                 event.value.angle, event.value.playerId == _control.getMyId());
+        } else if (event.name == "bonusGone") {
+            _ground.getScenery().removeBonus(new Point(event.value.x, event.value.y));
         }
     }
 
@@ -291,13 +293,14 @@ public class UnderwhirledDrift extends Sprite
             }
         });
         _kart.addEventListener(KartEvent.BONUS, function (event :KartEvent) :void {
-            if (_bonus != null) {
-                removeChild(_bonus);
+            var bonus :Bonus = event.value.bonus as Bonus;
+            if (bonus != _bonus) {
+                _bonus = event.value.bonus as Bonus;
+                _bonus.x = _bonus.width;
+                _bonus.y = _bonus.height;
+                addChild(_bonus);
             }
-            _bonus = event.value as Bonus;
-            _bonus.x = _bonus.width;
-            _bonus.y = _bonus.height;
-            addChild(_bonus = (event.value as Bonus));
+            _control.sendMessage("bonusGone", { x: event.value.pos.x, y: event.value.pos.y });
         });
         _kart.addEventListener(KartEvent.REMOVE_BONUS, function (event :KartEvent) :void {
             if (_bonus != null) {

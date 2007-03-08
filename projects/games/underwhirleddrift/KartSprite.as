@@ -145,7 +145,7 @@ public class KartSprite extends Sprite
      * Bounce off of the new point, by interpolating past the old point.  This should be improved 
      * so that it take into account the direction you hit it from, and bounces you off at 
      * the correct angle.  Also, in the case of karts, the larger karts have more influence that
-     * smaller karts... they are bounced less.
+     * smaller karts... they should be bounced less.
      */
     protected function bounce (oldPos :Point, newPos :Point) :Point 
     {
