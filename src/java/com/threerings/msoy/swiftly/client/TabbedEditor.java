@@ -5,6 +5,7 @@ package com.threerings.msoy.swiftly.client;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
 import javax.swing.AbstractAction;
@@ -20,15 +21,24 @@ import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 import sdoc.Gutter;
+import com.infosys.closeandmaxtabbedpane.CloseAndMaxTabbedPane;
+import com.infosys.closeandmaxtabbedpane.CloseListener;
 
-public class TabbedEditor extends JTabbedPane
+public class TabbedEditor extends CloseAndMaxTabbedPane
 {
     public TabbedEditor (SwiftlyContext ctx, SwiftlyEditor editor)
     {
+        super(false);
         _ctx = ctx;
         _editor = editor;
 
         addChangeListener(new TabChangedListener());
+        addCloseListener(new CloseListener() {
+           public void closeOperation(MouseEvent e) {
+              closeTabAt(getOverTabIndex());
+           }
+        });
+        setMaxIcon(false);
         setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     }
 
@@ -118,16 +128,26 @@ public class TabbedEditor extends JTabbedPane
      */
     public void closeCurrentTab ()
     {
+        closeTabAt(getSelectedIndex());
+    }
+
+    /**
+     * Closes the tab at the given index.
+     * @param tabIndex the tab title needing removal
+     */
+    public void closeTabAt (int tabIndex)
+    {
         // Don't try to remove a tab if we have none.
         if (getTabCount() == 0) {
             // do nothing
             return;
         }
 
-        SwiftlyTextPane textPane = getCurrentTextPane();
-        PathElement document = textPane.getPathElement();
-        remove(_tabList.get(document));
-        _tabList.remove(document);
+        JScrollPane pane = (JScrollPane)getComponentAt(tabIndex);
+        SwiftlyTextPane textPane = (SwiftlyTextPane)pane.getViewport().getView();
+        PathElement pathElement = textPane.getPathElement();
+        remove(_tabList.get(pathElement));
+        _tabList.remove(pathElement);
         assignTabKeys();
     }
 

@@ -20,7 +20,7 @@
     !**/*UnitTest.class,rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
     **/msoy/web/data/**,**/msoy/world/data/WorldMemberInfo.class,**/msoy/item/web/**,
     **/msoy/swiftly/data/**,**/msoy/swiftly/client/**,**/msoy/swiftly/util/**,
-    **/msoy/game/data/*Config.class)
+    **/msoy/game/data/*Config.class,**/infosys/closeandmaxtabbedpane/**)
 -injars ../dist/lib/sdoc-0.5.0-beta.jar(!META-INF/*)
 
 -dontskipnonpubliclibraryclasses

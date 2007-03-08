@@ -24,14 +24,16 @@ public class EditorToolBar extends JToolBar
 
     protected void setupToolbar ()
     {
-        // undo/redo actions get set by updateEditorActions()
+        // TODO: REMOVE when close tabs are working all the way
+        // add(_editor.createCloseCurrentTabAction());
+        // addSeparator();
+
         // TODO add mini icons for these + tooltips with keyboard shortcuts
-        add(_editor.createCloseCurrentTabAction());
-
-        addSeparator();
         add(new JButton(_ctrl.buildAction));
-        add(new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.play")));
+        // TODO: enable this when we can actually do something here.
+        // add(new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.play")));
 
+        // undo/redo actions get set by updateEditorActions()
         addSeparator();
         _undoButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.undo"));
         add(_undoButton);
