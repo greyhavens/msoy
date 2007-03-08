@@ -129,12 +129,16 @@ public class KartSprite extends Sprite
             return bounce(position, newPosition);
         } else if (collides != null && collides.sceneryType == Scenery.FIREBALL) {
             if (this is Kart && !collides.isMyFireball) {
+                _ground.getScenery().removeFireball(collides);
                 if (_shield == null) {
                     (this as Kart).killMovement();
                 } else {
                     dispatchEvent(new KartEvent(KartEvent.SHIELD, false));
                 }
-            }  
+            } else if (!(this is Kart)) {
+                // dunno why this isn't working
+                //_ground.getScenery().removeFireball(collides);
+            }
             return newPosition;
         } else {
             return newPosition;

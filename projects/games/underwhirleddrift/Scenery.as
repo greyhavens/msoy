@@ -127,21 +127,33 @@ public class Scenery extends Sprite
         var bonus :Sprite = Bonus.getGameSprite(Bonus.FIREBALL);
         fireball.addChild(bonus);
         bonus.y = -fireball.height;
+        var scenery :Scenery = this;
         // isMyFireball: don't let us shoot ourselves due to lag... if we make fireballs bounce
         // off of walls in the futre, this will need to be smarter, as it will indeed be 
         // possible to shoot ourselves
-        var bonusObj :Object = { origin: pos, sprite: fireball, isMyFireball: isMyFireball};
+        var bonusObj :Object = { origin: pos, sprite: fireball, isMyFireball: isMyFireball };
         var bonusObjListener :Function = function (event :Event) :void {
             bonusObj.origin = bonusObj.origin.add(Point.polar(Bonus.FIREBALL_VELOCITY, angle));
             if (Math.abs(bonusObj.origin.x) > 2000 || Math.abs(bonusObj.origin.y) > 2000) {
                 // don't let the damn thing float to infinity (and beyond!)
                 fireball.removeEventListener(Event.ENTER_FRAME, bonusObjListener);
-                fireball.parent.removeChild(fireball);
+                if (fireball.parent == scenery) {
+                    fireball.parent.removeChild(fireball);
+                }
                 ArrayUtil.removeFirst(_items, bonusObj);
             }
         };
         fireball.addEventListener(Event.ENTER_FRAME, bonusObjListener);
         initializeObject(bonusObj, FIREBALL);
+    }
+
+    public function removeFireball (obj :Object) :void
+    {
+        // the event listener will remove itself with the calculated origin gets far enough away
+        if (obj.sprite.parent == this) {
+            removeChild(obj.sprite);
+            ArrayUtil.removeFirst(_items, obj);
+        }
     }
 
     public function removeBonus (pos :Point) :void 
