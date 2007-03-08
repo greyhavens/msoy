@@ -31,6 +31,13 @@
 .blurbBox .Content {
 }
 
+.profileBlurb .Buttons .gwt-Button {
+    margin-left: 5px;
+    margin-bottom: 5px;
+    font-size: 10px;
+    float: right;
+}
+
 .profileBlurb .Name {
    font-weight: bold;
 }

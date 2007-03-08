@@ -10,7 +10,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -22,9 +24,10 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
+import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.Profile;
 
-import client.shell.MsoyEntryPoint;
+import client.msgs.MailComposition;
 import client.util.ImageChooserPopup;
 import client.util.InfoPopup;
 import client.util.MsoyUI;
@@ -38,10 +41,10 @@ public class ProfileBlurb extends Blurb
     protected Panel createContent ()
     {
         _content = new FlexTable();
-       _content.setStyleName("profileBlurb");
+        _content.setStyleName("profileBlurb");
 
         _content.setWidget(0, 0, _photo = new Image());
-        _content.getFlexCellFormatter().setRowSpan(0, 0, 4);
+        _content.getFlexCellFormatter().setRowSpan(0, 0, 5);
 
         _content.setWidget(0, 1, _name = new Label("name"));
         _name.setStyleName("Name");
@@ -54,6 +57,12 @@ public class ProfileBlurb extends Blurb
         _content.setWidget(1, 2, _blog = new HTML(""));
         _content.setWidget(2, 2, _gallery = new HTML(""));
         // setWidget(3, 2, _hood = new HTML(""));
+        
+        _content.setWidget(4, 1, _buttons = new FlowPanel());
+        _buttons.setStyleName("Buttons");
+        _content.getFlexCellFormatter().setColSpan(4, 1, 3);
+        _content.getRowFormatter().setVerticalAlign(4, HasAlignment.ALIGN_BOTTOM);
+        
         _edit = new Button("Edit");
         _edit.addClickListener(new ClickListener() {
             public void onClick (Widget source) {
@@ -150,10 +159,37 @@ public class ProfileBlurb extends Blurb
         _content.setWidget(0, 1, _name);
         _content.setWidget(1, 1, _headline);
         _content.setWidget(2, 1, _homepage);
+        
+        _buttons.clear();
 
         // display the edit button if this is our profile
         if (_profile.memberId == CProfile.getMemberId()) {
-            _content.setWidget(3, 2, _edit);
+            _buttons.add(_edit);
+        } else {
+            Button mailButton = new Button("Send Mail");
+            mailButton.addClickListener(new ClickListener() {
+                public void onClick (Widget widget) {
+                    new MailComposition(new MemberName(_profile.displayName, _profile.memberId),
+                                        null, null, null).show();
+                }
+            });
+            _buttons.add(mailButton);
+
+            Button hoodButton = new Button("Visit");
+            hoodButton.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    visitHref("/world/#nm" + _profile.memberId);
+                }
+            });
+            _buttons.add(hoodButton);
+
+//            Button homeButton = new Button("Visit Home");
+//            homeButton.addClickListener(new ClickListener() {
+//                public void onClick (Widget sender) {
+//                    visitHref("/world/#m" + _profile.memberId);
+//                }
+//            });
+//            _buttons.add(homeButton);
         }
     }
 
@@ -203,6 +239,11 @@ public class ProfileBlurb extends Blurb
             }
         });
     }
+    
+    // TODO: Do we want button-based navigation or should they all be links?
+    protected native void visitHref(String url) /*-{
+         $wnd.location.href=url;
+    }-*/; 
 
     protected FlexTable _content;
     protected boolean _editing = false;
@@ -216,6 +257,8 @@ public class ProfileBlurb extends Blurb
     protected Button _edit;
     protected Button _ephoto;
     protected TextBox _ename, _eheadline, _ehomepage;
+
+    protected FlowPanel _buttons;
 
     protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
 }
