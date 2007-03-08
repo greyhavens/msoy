@@ -61,10 +61,13 @@ public class LocalProjectBuilderUnitTest extends TestCase
         throws Exception
     {
         File builds = new File(_tempDir, "builds");
+        BuildResult result;
         builds.mkdirs();
+
         ProjectBuilder builder = new LocalProjectBuilder(_project, _storage, builds,
             FLEX_SDK_DIR.getAbsoluteFile(), WHIRLED_SDK_DIR.getAbsoluteFile());
-        builder.build();
+        result = builder.build();
+        // XXX test the output here
     }
 
     /** Temporary test directory. */

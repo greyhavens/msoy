@@ -9,5 +9,5 @@ package com.threerings.msoy.swiftly.server.build;
  */
 public interface ProjectBuilder
 {
-    public void build () throws ProjectBuilderException;
+    public BuildResult build () throws ProjectBuilderException;
 }

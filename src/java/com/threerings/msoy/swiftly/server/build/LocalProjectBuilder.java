@@ -19,6 +19,8 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Server-local project builder.
  * TODO: Cache and update checkouts.
@@ -53,7 +55,7 @@ public class LocalProjectBuilder
         }
     }
 
-    public void build ()
+    public BuildResult build ()
         throws ProjectBuilderException
     {
         // Export the project data
@@ -72,6 +74,8 @@ public class LocalProjectBuilder
             ProcessBuilder procBuilder;
             InputStream stdout;
             BufferedReader bufferedOutput;
+            BuildResult result = new BuildResult();
+            String line;
             
             // Refer the to "Using the Flex Compilers" documentation
             // http://livedocs.adobe.com/flex/2/docs/00001477.html
@@ -102,16 +106,23 @@ public class LocalProjectBuilder
             stdout = proc.getInputStream();
             bufferedOutput = new BufferedReader(new InputStreamReader(stdout));
 
-            proc.waitFor();
-            String line;
             while ((line = bufferedOutput.readLine()) != null) {
-              System.out.println(line);
+                CompilerOutput output = new FlexCompilerOutput(line);
+
+                // Don't provide the user with unparsable output.
+                if (output.getLevel() == CompilerOutput.Level.UNKNOWN) {
+                    // TODO: Remove this logging once we know what output parsing we're missing.
+                    // landonf, Mar 7th, 2007
+                    log.warning("Unparsable swiftly flex compiler output. [line=" + line + "]");
+                    continue;
+                } else {
+                    result.appendOutput(output);
+                }
             }
 
+            return result;
         } catch (IOException ioe) {
-            System.out.println("Failed: " + ioe);
-        } catch (InterruptedException ie) {
-            System.out.println("Failed: " + ie);            
+            throw new ProjectBuilderException.InternalError("Failed to execute build process: " + ioe, ioe);
         }
     }
 
