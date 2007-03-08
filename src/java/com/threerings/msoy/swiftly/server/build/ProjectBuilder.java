@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.swiftly.server.build;
 
+import com.threerings.msoy.swiftly.data.BuildResult;
 
 /**
  * Defines the project builder interface

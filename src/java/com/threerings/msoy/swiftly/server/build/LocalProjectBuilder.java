@@ -21,6 +21,10 @@ import org.apache.commons.io.FileUtils;
 
 import static com.threerings.msoy.Log.log;
 
+import com.threerings.msoy.swiftly.data.BuildResult;
+import com.threerings.msoy.swiftly.data.CompilerOutput;
+import com.threerings.msoy.swiftly.data.FlexCompilerOutput;
+
 /**
  * Server-local project builder.
  * TODO: Cache and update checkouts.

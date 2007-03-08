@@ -18,6 +18,10 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
+import com.threerings.msoy.swiftly.data.BuildResult;
+import com.threerings.msoy.swiftly.data.CompilerOutput;
+import com.threerings.msoy.swiftly.data.FlexCompilerOutput;
+
 public class LocalProjectBuilderUnitTest extends TestCase
 {
     public LocalProjectBuilderUnitTest (String name)

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.swiftly.server.build;
+package com.threerings.msoy.swiftly.data;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,10 +9,15 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+import com.threerings.io.Streamable;
+
 /** A compiler message. */
 public class FlexCompilerOutput
-    implements CompilerOutput
+    implements CompilerOutput, Streamable
 {
+    public FlexCompilerOutput ()
+    {
+    }
 
     /**
      * Create a new FlexCompilerOutput instance by parsing the given compiler message.

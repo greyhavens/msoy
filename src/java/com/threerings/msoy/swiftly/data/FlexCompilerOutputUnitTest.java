@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.swiftly.server.build;
+package com.threerings.msoy.swiftly.data;
 
 import junit.framework.TestCase;
 

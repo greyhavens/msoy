@@ -1,17 +1,19 @@
 //
 // $Id$
 
-package com.threerings.msoy.swiftly.server.build;
+package com.threerings.msoy.swiftly.data;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import com.threerings.io.Streamable;
 
 /**
  * Compilation Build Results.
  */
 public class BuildResult
+    implements Streamable
 {
-
     public BuildResult ()
     {
         _output = new LinkedList<CompilerOutput>();
