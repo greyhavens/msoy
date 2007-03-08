@@ -37,6 +37,7 @@ public class Bonus extends Sprite
 
     protected function activateBlueBlazes (kart :Kart) :void
     {
+        kart.boostSpeed(3);
     }
 
     protected function activateFireball (kart :Kart) :void

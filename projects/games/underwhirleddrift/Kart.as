@@ -80,10 +80,24 @@ public class Kart extends KartSprite
         _currentViewAngle = 0;
     }
 
+    public function activateBonus () :void
+    {
+        if (_bonus != null) {
+            dispatchEvent(new KartEvent(KartEvent.REMOVE_BONUS, _bonus));
+            _bonus.activate(this);
+            _bonus = null;
+        }
+    }
+
     public function destroyBonus () :void
     {
         dispatchEvent(new KartEvent(KartEvent.REMOVE_BONUS, _bonus));
         _bonus = null;
+    }
+
+    public function boostSpeed (percent :Number = 1) :void 
+    {
+        _currentSpeed = Math.min(_movementConstants.maxSpeed * 2, _currentSpeed + percent * BOOST);
     }
 
     protected function enterFrame (event :Event) :void
@@ -152,8 +166,7 @@ public class Kart extends KartSprite
                     (Math.PI * 2)) / (Math.PI / 2);
                 // TODO: figure out what's going on, and do this the right way
                 percent = percent > 1 ? 0 : (percent < 0 ? 1 : percent);
-                _currentSpeed = Math.min(_movementConstants.maxSpeed * 2,
-                    _currentSpeed + percent * BOOST);
+                boostSpeed(percent);
             } 
         }
 

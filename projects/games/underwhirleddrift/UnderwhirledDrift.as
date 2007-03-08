@@ -330,7 +330,14 @@ public class UnderwhirledDrift extends Sprite
                     _kart.jump();
                 }
                 break;
+            // I want to use regular letters for this and some other stuff, but the chat box
+            // is stealing my focus... 
             case Keyboard.SHIFT:
+                if (event.type == KeyboardEvent.KEY_DOWN) {
+                    _kart.activateBonus();
+                }
+                break;
+            case Keyboard.TAB:
                 if (event.type == KeyboardEvent.KEY_DOWN && 
                         // only allow this in single-player mode
                         _control.seating.getPlayerIds().length == 1) {
