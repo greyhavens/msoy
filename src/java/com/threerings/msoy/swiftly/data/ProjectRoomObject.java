@@ -24,6 +24,9 @@ public class ProjectRoomObject extends PlaceObject
     /** The field name of the <code>documents</code> field. */
     public static final String DOCUMENTS = "documents";
 
+    /** The field name of the <code>result</code> field. */
+    public static final String RESULT = "result";
+
     /** The field name of the <code>service</code> field. */
     public static final String SERVICE = "service";
 
@@ -39,6 +42,9 @@ public class ProjectRoomObject extends PlaceObject
 
     /** All loaded Swiftly Documents in this project. */
     public DSet<SwiftlyDocument> documents = new DSet<SwiftlyDocument>();
+
+    /** The build result. */
+    public BuildResult result;
 
     /** Provides invocation services. */
     public ProjectRoomMarshaller service;
@@ -190,6 +196,22 @@ public class ProjectRoomObject extends PlaceObject
         @SuppressWarnings("unchecked") DSet<com.threerings.msoy.swiftly.data.SwiftlyDocument> clone =
             (value == null) ? null : value.typedClone();
         this.documents = clone;
+    }
+
+    /**
+     * Requests that the <code>result</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setResult (BuildResult value)
+    {
+        BuildResult ovalue = this.result;
+        requestAttributeChange(
+            RESULT, value, ovalue);
+        this.result = value;
     }
 
     /**
