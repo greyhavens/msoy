@@ -438,15 +438,15 @@ public class ProjectRoomManager extends PlaceManager
             if (_error != null) {
                 _roomObj.setConsole(MessageBundle.tcompose("m.build_failed_reason", _error.getMessage()));
             } else {
-                // Provide build output
-                _roomObj.setResult(_result);
-
                 // Check for failure
                 if (_result.buildSuccessful()) {
                     _roomObj.setConsole("m.build_complete");                    
                 } else {
                     _roomObj.setConsole("m.build_failed");                    
                 }
+
+                // Provide build output
+                _roomObj.setResult(_result);
             }
         }
 
