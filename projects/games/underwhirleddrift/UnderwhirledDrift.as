@@ -270,7 +270,7 @@ public class UnderwhirledDrift extends Sprite
             }
         } else if (event.name == "fireball") {
             _ground.getScenery().shootFireball(new Point(event.value.x, event.value.y), 
-                event.value.angle);
+                event.value.angle, event.value.playerId == _control.getMyId());
         }
     }
 

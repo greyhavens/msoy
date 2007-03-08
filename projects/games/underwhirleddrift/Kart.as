@@ -104,8 +104,11 @@ public class Kart extends KartSprite
             _shield.addEventListener(Event.ENTER_FRAME, function (startTime :int) :Function {
                 var frameListener :Function = function (evt :Event) :void {
                     if (getTimer() - startTime > Bonus.SHIELD_DURATION) {
-                        _shield.removeEventListener(Event.ENTER_FRAME, frameListener);
-                        dispatchEvent(new KartEvent(KartEvent.SHIELD, false));
+                        evt.target.removeEventListener(Event.ENTER_FRAME, frameListener);
+                        // this shield may have been removed previous to this expiration
+                        if (evt.target == _shield) {
+                            dispatchEvent(new KartEvent(KartEvent.SHIELD, false));
+                        }
                     }
                 }
                 return frameListener;

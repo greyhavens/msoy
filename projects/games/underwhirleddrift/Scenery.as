@@ -112,7 +112,7 @@ public class Scenery extends Sprite
         _kartRadius = (getOpaqueWidth(kart) * 0.1) / 2;
     }
 
-    public function shootFireball (pos :Point, angle :Number) :void
+    public function shootFireball (pos :Point, angle :Number, isMyFireball :Boolean) :void
     {
         // slightly hacky to get the anchor point down on the bottom, like it is for every other
         // scenery object.  TODO: ask nick for a new one
@@ -120,7 +120,10 @@ public class Scenery extends Sprite
         var bonus :Sprite = Bonus.getGameSprite(Bonus.FIREBALL);
         fireball.addChild(bonus);
         bonus.y = -fireball.height;
-        var bonusObj :Object = { origin: pos, sprite: fireball };
+        // isMyFireball: don't let us shoot ourselves due to lag... if we make fireballs bounce
+        // off of walls in the futre, this will need to be smarter, as it will indeed be 
+        // possible to shoot ourselves
+        var bonusObj :Object = { origin: pos, sprite: fireball, isMyFireball: isMyFireball};
         var bonusObjListener :Function = function (event :Event) :void {
             bonusObj.origin = bonusObj.origin.add(Point.polar(Bonus.FIREBALL_VELOCITY, angle));
             if (Math.abs(bonusObj.origin.x) > 2000 || Math.abs(bonusObj.origin.y) > 2000) {
