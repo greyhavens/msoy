@@ -237,9 +237,6 @@ public class WonderlandCroquet extends Sprite
             var dy :Number = bp.ball.y - ( HEIGHT/2 - _spr.y);
 
             if ((dx*dx + dy*dy) > AUTO_PAN_THRESHOLD * AUTO_PAN_THRESHOLD) {
-                gameCtrl.localChat("Too far: " + (dx*dx + dy*dy) +
-                    " vs " + AUTO_PAN_THRESHOLD * AUTO_PAN_THRESHOLD);
-
                 panTo(bp.ball.x, bp.ball.y);
             }
 
@@ -251,7 +248,8 @@ public class WonderlandCroquet extends Sprite
 
         if (_haveMoved && doneMoving && gameCtrl.isMyTurn()) {
             if (_moveAgain) {
-                gameCtrl.localChat("Go again!");
+                gameCtrl.sendChat(gameCtrl.getOccupantName(gameCtrl.getTurnHolder()) + 
+                                  " passed a wicket, and gets an extra swing.");
                 startTurn();
             } else {
                 gameCtrl.endTurn();
