@@ -92,13 +92,20 @@ public class MsoySprite extends MediaContainer
         }
     }
 
+    public function setEffectScales (xscale :Number, yscale :Number) :void
+    {
+        _fxScaleX = xscale;
+        _fxScaleY = yscale;
+        scaleUpdated();
+    }
+
     /**
      * Get the screen width of this sprite, taking into account both
      * horizontal scales.
      */
     public function getActualWidth () :Number
     {
-        return getContentWidth() * _locScale;
+        return getContentWidth() * _locScale * _fxScaleX;
     }
 
     /**
@@ -107,7 +114,7 @@ public class MsoySprite extends MediaContainer
      */
     public function getActualHeight () :Number
     {
-        return getContentHeight() * _locScale;
+        return getContentHeight() * _locScale * _fxScaleY;
     }
 
     /**
@@ -163,8 +170,8 @@ public class MsoySprite extends MediaContainer
     {
         var p :Point = getMediaHotSpot();
         return new Point(
-            Math.abs(p.x * getMediaScaleX() * _locScale),
-            Math.abs(p.y * getMediaScaleY() * _locScale));
+            Math.abs(p.x * getMediaScaleX() * _locScale * _fxScaleX),
+            Math.abs(p.y * getMediaScaleY() * _locScale * _fxScaleY));
     }
 
     /**
@@ -388,8 +395,8 @@ public class MsoySprite extends MediaContainer
     protected function scaleUpdated () :void
     {
         if (!(_media is Perspectivizer)) {
-            _media.scaleX = _locScale * getMediaScaleX();
-            _media.scaleY = _locScale * getMediaScaleY();
+            _media.scaleX = _locScale * getMediaScaleX() * _fxScaleX;
+            _media.scaleY = _locScale * getMediaScaleY() * _fxScaleY;
         }
 
         updateMediaPosition();
@@ -403,8 +410,8 @@ public class MsoySprite extends MediaContainer
     {
         // if scale is negative, the image is flipped and we need to move
         // the origin
-        var xscale :Number = _locScale * getMediaScaleX();
-        var yscale :Number = _locScale * getMediaScaleY();
+        var xscale :Number = _locScale * getMediaScaleX() * _fxScaleX;
+        var yscale :Number = _locScale * getMediaScaleY() * _fxScaleY;
         _media.x = (xscale >= 0) ? 0 : Math.abs(_w * xscale);
         _media.y = (yscale >= 0) ? 0 : Math.abs(_h * yscale);
 
@@ -532,10 +539,12 @@ public class MsoySprite extends MediaContainer
             return;
         }
 
-        _hotSpot.x = x;
-        _hotSpot.y = y;
-        if (!_editing) {
-            locationUpdated();
+        if (x != _hotSpot.x || y != _hotSpot.y) {
+            _hotSpot.x = x;
+            _hotSpot.y = y;
+            if (!_editing) {
+                locationUpdated();
+            }
         }
     }
 
@@ -561,6 +570,9 @@ public class MsoySprite extends MediaContainer
     /** The media hotspot, which should be used to position it. */
     protected var _hotSpot :Point = new Point(0, 0);
 
+    protected var _fxScaleX :Number = 1;
+    protected var _fxScaleY :Number = 1;
+
     /** The 'location' scale of the media: the scaling that is the result of
      * emulating perspective while we move around the room. */
     protected var _locScale :Number = 1;
@@ -572,9 +584,9 @@ public class MsoySprite extends MediaContainer
     protected var _backend :EntityBackend;
 
     /** Hover colors. */
-    protected static const AVATAR_HOVER :uint = 0x40e0e0; // cyanish
+    protected static const AVATAR_HOVER :uint = 0x99BFFF;// light blue
     protected static const PORTAL_HOVER :uint = 0xe04040; // reddish
-    protected static const GAME_HOVER :uint = 0x40e040; // greenish
-    protected static const OTHER_HOVER :uint = 0xe0e040; // yellowy
+    protected static const GAME_HOVER :uint = 0xFFFFFF;  // white
+    protected static const OTHER_HOVER :uint = 0x000000; // black
 }
 }

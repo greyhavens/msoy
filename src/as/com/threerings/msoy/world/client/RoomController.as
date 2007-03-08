@@ -486,9 +486,9 @@ public class RoomController extends SceneController
                     tipComp.styleName = "roomToolTip";
                     var hoverColor :uint = sprite.getHoverColor();
                     tipComp.setStyle("color", hoverColor);
-//                    if (hoverColor == 0) {
-//                        tipComp.setStyle("backgroundColor", 0xFFFFFF);
-//                    }
+                    if (hoverColor == 0) {
+                        tipComp.setStyle("backgroundColor", 0xFFFFFF);
+                    }
                 }
             }
         }

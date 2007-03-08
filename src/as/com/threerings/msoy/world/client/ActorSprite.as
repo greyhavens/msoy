@@ -9,6 +9,8 @@ import flash.text.TextFormat;
 
 import flash.filters.GlowFilter;
 
+import com.threerings.flash.Animation;
+
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.data.ActorInfo;
@@ -131,6 +133,20 @@ public class ActorSprite extends MsoySprite
         _walk.start();
         appearanceChanged();
     }
+
+//    public function whirlOut (scene :MsoyScene) :void
+//    {
+//        _walk = new WhirlwindAnimation(this, scene, loc);
+//        _walk.start();
+//    }
+//
+//    public function whirlDone () :void
+//    {
+//        _walk = null;
+////        if (parent is RoomView) {
+////            (parent as RoomView).whirlDone(this);
+////        }
+//    }
 
     /**
      * @return true if we're moving.
@@ -276,6 +292,6 @@ public class ActorSprite extends MsoySprite
 
     protected var _label :TextField;
     protected var _occInfo :ActorInfo;
-    protected var _walk :WalkAnimation;
+    protected var _walk :Animation;
 }
 }
