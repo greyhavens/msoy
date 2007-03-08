@@ -23,6 +23,7 @@
         Path        @PREFIX@/tmp
         Path        @PREFIX@/pages/media
         Path        @PREFIX@/data/swiftly/projects
+        Path        @PREFIX@/data/swiftly/build
         Path        @PREFIX@/pages/buildresults
         User        @APPUSER@
         Group       @APPUSER@
