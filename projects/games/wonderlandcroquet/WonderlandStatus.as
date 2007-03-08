@@ -138,7 +138,6 @@ public class WonderlandStatus extends Sprite
     protected function markerClicked (event :MouseEvent) :void
     {
         var playerIdx :int = _balls.indexOf(event.currentTarget);
-        wc.gameCtrl.localChat("Clicky! " + playerIdx);
         if (playerIdx == -1) {
             return;
         }
