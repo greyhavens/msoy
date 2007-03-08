@@ -171,6 +171,7 @@ public class TopPanel extends Canvas
         clearBottomPanel(null);
 
         _bottomPanel = new HBox();
+        _bottomPanel.setStyle("horizontalGap", 0);
         _bottomPanel.setStyle("bottom", ControlBar.HEIGHT);
         _bottomPanel.setStyle("left", 0);
         _bottomPanel.setStyle("right", 0);
