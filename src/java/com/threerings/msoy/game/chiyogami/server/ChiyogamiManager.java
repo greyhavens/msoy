@@ -148,11 +148,13 @@ public class ChiyogamiManager extends GameManager
         shutdownBoss();
 
         _roomObj.removeListener(_roomListener);
+        _roomObj.postMessage(RoomObject.PLAY_MUSIC); // no arg stops music
     }
 
     protected void shutdownBoss ()
     {
         if (_bossObj != null) {
+            bossSpeak("I'm outta here.");
             MsoyServer.screg.sceneprov.leaveOccupiedScene(_bossObj);
             MsoyServer.omgr.destroyObject(_bossObj.getOid());
             _bossObj = null;
@@ -178,7 +180,7 @@ public class ChiyogamiManager extends GameManager
         _bossObj = MsoyServer.omgr.registerObject(new BossObject());
         _bossObj.init(new StaticMediaDesc(
             MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.AVATAR, "chiyogami/" + boss));
-        _bossObj.setUsername(new Name("Boss"));
+        _bossObj.setUsername(new Name("Boss B Boy"));
 
         // add the boss to the room
         MsoyServer.screg.sceneprov.moveTo(_bossObj, _sceneId, -1, new SceneMoveListener() {
@@ -403,7 +405,8 @@ public class ChiyogamiManager extends GameManager
 
     protected String[] _bossActions = new String[] { "Stop", "Dance 1" };
 
-    protected static final String[] MUSICS = { "tarzan" };
+    protected static final String[] MUSICS = {
+        "18-Jay-R_MyOtherCarBeatle", "04-Jay-R_SriLankaHigh" };
 
     /** TEMP: The filenames of current boss avatars. */
     protected static final String[] BOSSES = { "bboy" };
