@@ -25,6 +25,10 @@ import com.threerings.flex.CommandMenu;
 
 import com.threerings.presents.client.ResultWrapper;
 
+import com.threerings.presents.dobj.ChangeListener;
+import com.threerings.presents.dobj.MessageAdapter;
+import com.threerings.presents.dobj.MessageEvent;
+
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
@@ -157,6 +161,8 @@ public class RoomController extends SceneController
         super.willEnterPlace(plobj);
 
         _roomObj = (plobj as RoomObject);
+        _roomListener = new MessageAdapter(msgReceivedOnRoomObj);
+        _roomObj.addListener(_roomListener);
 
         // get a copy of the scene
         _scene = (_mctx.getSceneDirector().getScene() as MsoyScene);
@@ -181,8 +187,20 @@ public class RoomController extends SceneController
         _roomView.removeChild(_walkTarget);
         setHoverSprite(null);
 
+        _roomObj.removeListener(_roomListener);
+
         _scene = null;
         _roomObj = null;
+
+        if (_music != null) {
+            _music.close();
+            _music = null;
+            _musicIsBackground = true;
+        }
+        if (_loadingMusic != null) {
+            _loadingMusic.close();
+            _loadingMusic = null;
+        }
 
         super.didLeavePlace(plobj);
     }
@@ -210,6 +228,11 @@ public class RoomController extends SceneController
         if (edits != null) {
             _roomObj.roomService.updateRoom(_mctx.getClient(), edits,
                 new ReportingListener(_mctx));
+        }
+
+        // re-start any music
+        if (_music != null) {
+            _music.play();
         }
     }
 
@@ -381,6 +404,17 @@ public class RoomController extends SceneController
         _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
         _walkTarget.visible = false;
 
+        if (_music != null) {
+            if (_musicIsBackground) {
+                _music.stop();
+
+            } else {
+                _music.close();
+                _music = null;
+                _musicIsBackground = true;
+            }
+        }
+
         _editor = new EditorController(_mctx, this, _roomView, _scene, items);
     }
 
@@ -521,6 +555,80 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Called when a message is received on the room object.
+     */
+    protected function msgReceivedOnRoomObj (event :MessageEvent) :void
+    {
+        var args :Array = event.getArgs();
+        switch (event.getName()) {
+        case RoomObject.LOAD_MUSIC:
+            if (_loadingMusic != null) {
+                _loadingMusic.close();
+            }
+            _loadingMusic = new SoundPlayer(String(args[0]));
+            // TODO: dispatched MUSIC_LOADED back...
+            break;
+
+        case RoomObject.PLAY_MUSIC:
+            var url :String = String(args[0]);
+            if (_loadingMusic != null) {
+                if (_loadingMusic.getURL() == url) {
+                    // awesome
+                    _music = _loadingMusic;
+                    _loadingMusic = null;
+                    _musicIsBackground = false;
+                    _music.play();
+
+                } else {
+                    log.warning("Asked to play music different from loaded? " +
+                        "[loaded=" + _loadingMusic.getURL() +
+                        ", toPlay=" + url + "].");
+                }
+            }
+            break;
+        }
+    }
+
+    public function setBackgroundMusic (music :FurniData) :void
+    {
+        if (!_musicIsBackground) {
+            if (_music.isPlaying()) {
+                // don't disrupt the other music..
+                return;
+
+            } else {
+                // oh, this other music is done. Sure, let's go for
+                // the background music again
+                _music.close();
+                _music = null;
+                _musicIsBackground = true;
+            }
+        }
+
+        var path :String = music.media.getMediaPath();
+        // maybe shutdown old music
+        // if _music is playing the right thing, let it keep on playing
+        if (_music != null && _music.getURL() != path) {
+            _music.close();
+            _music = null;
+        }
+        // set up new music, if needed
+        if (_music == null) {
+            _music = new SoundPlayer(path);
+            // TODO: we probably need to wait for COMPLETE
+            _music.play();
+            //var pos :Number = Prefs.getMediaPosition(music.getMediaId());
+            //_music.loop(pos);
+            // NOTE: the position argument has been disabled because
+            // it causes the flash player to crash, and also seems to booch
+            // proper looping.
+        }
+        // set the volume, even if we're just re-setting it on
+        // already-playing music
+        _music.setVolume(Number(music.actionData));
+    }
+
+    /**
      * Ensures that we can issue a request to update the distributed state of the specified item,
      * returning true if so, false if we don't yet have a room object or are not in control of that
      * item.
@@ -582,9 +690,24 @@ public class RoomController extends SceneController
 
     protected var _roomObj :RoomObject;
 
+    /** Our general-purpose room listener. */
+    protected var _roomListener :ChangeListener;
+
     protected var _hoverSprite :MsoySprite;
 
     protected var _hoverTip :IToolTip;
+
+    /** The music currently playing in the scene, which may or may not be
+     * background music. */
+    protected var _music :SoundPlayer;
+
+    /** True if _music is the room's background music. Otherwise
+     * The music playing is from some other source. */
+    protected var _musicIsBackground :Boolean = true;
+
+    /** Holds loading alternate music. Once triggered to play,
+     * it's shifted to _music. */
+    protected var _loadingMusic :SoundPlayer;
 
     /** The current scene we're viewing. */
     protected var _scene :MsoyScene;

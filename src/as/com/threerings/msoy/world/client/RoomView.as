@@ -141,7 +141,6 @@ public class RoomView extends AbstractRoomView
             _roomObj.removeListener(this);
             removeAllOccupants();
             setCenterSprite(null);
-            shutdownMusic();
 
         } else {
             rereadScene();
@@ -433,7 +432,6 @@ public class RoomView extends AbstractRoomView
         // stop listening for avatar speak action triggers
         _ctx.getChatDirector().removeChatDisplay(this);
 
-        shutdownMusic();
         removeAllOccupants();
 
         super.didLeavePlace(plobj);
@@ -450,23 +448,7 @@ public class RoomView extends AbstractRoomView
 
         var music :FurniData = _scene.getMusic();
         if (music != null) {
-            // maybe shutdown old music
-            if (_music != null && !_music.getMedia().equals(music.media)) {
-                shutdownMusic(); // will set _music = null
-            }
-            // set up the new music
-            if (_music == null) {
-                _music = new SoundPlayer(music.media);
-                _music.loop();
-                //var pos :Number = Prefs.getMediaPosition(music.getMediaId());
-                //_music.loop(pos);
-                // NOTE: the position argument has been disabled because
-                // it causes the flash player to crash, and also seems to booch
-                // proper looping.
-            }
-            // set the volume, even if we're just re-setting it on
-            // already-playing music
-            _music.setVolume(Number(music.actionData));
+            _ctrl.setBackgroundMusic(music);
         }
     }
 
@@ -734,19 +716,6 @@ public class RoomView extends AbstractRoomView
         }
     }
 
-    /**
-     * Shut-down the background music in the room.
-     */
-    protected function shutdownMusic () :void
-    {
-        if (_music != null) {
-            //var pos :Number = _music.getPosition();
-            //Prefs.setMediaPosition(_music.getMedia().getMediaId(), pos);
-            _music.stop();
-            _music = null;
-        }
-    }
-
     protected function addAllOccupants () :void
     {
         if (shouldLoadAll()) {
@@ -793,9 +762,6 @@ public class RoomView extends AbstractRoomView
 
     /** Our controller. */
     protected var _ctrl :RoomController;
-
-    /** The background music in the scene. */
-    protected var _music :SoundPlayer;
 
     /** When we first enter the room, we only load the background (if any). */
     protected var _loadAllMedia :Boolean = false;
