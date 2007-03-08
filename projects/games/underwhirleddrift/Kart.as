@@ -131,10 +131,13 @@ public class Kart extends KartSprite
             if (boost.line.isIntersected(movedLine)) {
                 var angle :Number = (Math.PI / 2) * 
                     (boost.type - LevelConfig.OBJECT_BOOST_POINT_EAST);
-                var percent :Number = 1 - Math.abs((_camera.angle - angle) / (Math.PI * 2));
-                Log.getLog(this).debug("angle: " + angle + ", camera: " + _camera.angle + 
-                    ", percent: " + percent);
-                _currentSpeed += percent * BOOST;
+                angle = angle == 0 ? Math.PI * 2 : angle;
+                var percent :Number = 1 - (Math.abs(-_camera.angle + Math.PI / 2 - angle) % 
+                    (Math.PI * 2)) / (Math.PI / 2);
+                // TODO: figure out what's going on, and do this the right way
+                percent = percent > 1 ? 0 : (percent < 0 ? 1 : percent);
+                _currentSpeed = Math.min(_movementConstants.maxSpeed * 2,
+                    _currentSpeed + percent * BOOST);
             } 
         }
 
@@ -169,7 +172,7 @@ public class Kart extends KartSprite
     protected static const DRIFT_VIEW_ANGLE :int = 45; // in degrees
     protected static const VIEW_ACCELERATION :int = 4; // degrees per frame
 
-    protected static const BOOST :int = 10;
+    protected static const BOOST :Number = 5;
 
     /** values to control jumping */
     protected static const JUMP_DURATION :int = 3;

@@ -116,7 +116,8 @@ public class KartSprite extends Sprite
      */
     protected function bounce (oldPos :Point, newPos :Point) :Point 
     {
-        return Point.interpolate(oldPos, newPos, 3);
+        _currentSpeed *= 0.75;
+        return Point.interpolate(oldPos, newPos, 1.5);
     }
 
     /** light kart swf */
