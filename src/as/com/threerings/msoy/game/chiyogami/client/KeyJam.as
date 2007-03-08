@@ -3,6 +3,7 @@ package com.threerings.msoy.game.chiyogami.client {
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
+import flash.events.Event;
 import flash.events.KeyboardEvent;
 
 import flash.text.TextField;
@@ -41,9 +42,21 @@ public class KeyJam extends Sprite
         _timingBar.y = 80;
         addChild(_timingBar);
 
-        addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
+        keyGrabber.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
 
         setNewSequence();
+
+        addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
+        addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
+    }
+
+    protected function handleAddRemove (event :Event) :void
+    {
+        if (event.type == Event.ADDED_TO_STAGE) {
+            stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
+        } else {
+            stage.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
+        }
     }
 
     protected function setNewSequence () :void
