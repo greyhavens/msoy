@@ -86,7 +86,7 @@ public class WonderlandCroquet extends Sprite
         _ballMarkerLayer.mouseEnabled = false;
         _spr.addChild(_ballMarkerLayer);
 
-        _status = new WonderlandStatus(_spr, gameCtrl);
+        _status = new WonderlandStatus(_spr, this);
         addChild(_status);
 
         addEventListener(Event.ENTER_FRAME, firstFrameSetup);
@@ -246,6 +246,11 @@ public class WonderlandCroquet extends Sprite
         }
     }
 
+    public function getBallParticle (playerIdx :int) :BallParticle
+    {
+        return _balls[playerIdx];
+    }
+
     // from StateChangedListener
     public function stateChanged (event :StateChangedEvent) :void
     {
@@ -350,7 +355,7 @@ public class WonderlandCroquet extends Sprite
     /**
      * Pans the view to be centered at the specified coordinate.
      */
-    protected function panTo (x :Number, y: Number) :void
+    public function panTo (x :Number, y: Number) :void
     {
         // FIXME: Animate the pan to here, don't just snap
         /** Argh! I can't touch the stage to find out how big I am!

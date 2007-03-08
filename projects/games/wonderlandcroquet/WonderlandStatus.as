@@ -1,9 +1,13 @@
 package {
 
 import flash.display.DisplayObject;
+import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import flash.events.Event;
+import flash.events.MouseEvent;
+
+import mx.utils.ArrayUtil;
 
 import com.threerings.util.EmbeddedSwfLoader;
 
@@ -14,13 +18,12 @@ import com.threerings.ezgame.EZGameControl;
  */
 public class WonderlandStatus extends Sprite
 {
-    /** Our game control object. */
-    public var gameCtrl :EZGameControl;
+    public var wc :WonderlandCroquet;
 
-    public function WonderlandStatus (parent :DisplayObject, gameCtrl :EZGameControl)
+    public function WonderlandStatus (parent :DisplayObject, wc :WonderlandCroquet)
     {
         _parent = parent;
-        this.gameCtrl = gameCtrl;
+        this.wc = wc;
 
         _loader = new EmbeddedSwfLoader();
         _loader.addEventListener(Event.COMPLETE, loaderComplete);
@@ -51,7 +54,7 @@ public class WonderlandStatus extends Sprite
      */
     public function targetWicket (playerIdx :int, wicketIdx :int) :void
     {
-        if (playerIdx == gameCtrl.seating.getMyPosition() && wicketIdx > 0) {
+        if (playerIdx == wc.gameCtrl.seating.getMyPosition() && wicketIdx > 0) {
             _cards[wicketIdx - 1].setTargetted(false);
             _cards[wicketIdx].setTargetted(true);
         }
@@ -90,6 +93,7 @@ public class WonderlandStatus extends Sprite
         for (ii = 0; ii < WonderlandCodes.MAX_PLAYERS; ii ++) {
             _balls[ii] = new (_loader.getClass("marker" + (ii + 1)))();
             _balls[ii].gotoAndPlay(MARKER_HIDE_FRAME);
+            _balls[ii].addEventListener(MouseEvent.CLICK, markerClicked);
         }
 
         if (_turnHolder != -1) {
@@ -111,7 +115,7 @@ public class WonderlandStatus extends Sprite
 
         _cards[0].showFace();
 
-        for (ii = 0; ii < gameCtrl.seating.getPlayerIds().length; ii++) {
+        for (ii = 0; ii < wc.gameCtrl.seating.getPlayerIds().length; ii++) {
             targetWicket(ii, 0);
         }
 
@@ -129,6 +133,19 @@ public class WonderlandStatus extends Sprite
         ctrl.addChild(new ZoomControl(new (_loader.getClass("zoomout"))(),
                                       _parent, -ZOOM_PERCENT/100));
         _cards[0].addChild(ctrl);
+    }
+
+    protected function markerClicked (event :MouseEvent) :void
+    {
+        var playerIdx :int = _balls.indexOf(event.currentTarget);
+        wc.gameCtrl.localChat("Clicky! " + playerIdx);
+        if (playerIdx == -1) {
+            return;
+        }
+
+        var ball :Ball = wc.getBallParticle(playerIdx).ball;
+
+        wc.panTo(ball.x, ball.y);
     }
 
     /** The sprite that we scroll around as needed. */

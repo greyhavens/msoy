@@ -3,7 +3,9 @@
   see everything whenever something is rolling. Bleh.
 * Pan to coordinate, don't snap
 * Pan and track ball movement
-* Take clicks on markers in the status view and pan to that ball
 * Fix drag behavior when mouse leaves window; look at chat's scrollbar to see
   how it does it - appears it has to do with hooking into the systemManager to
   listen for events as well. See also: mx.controls.Button
+* Reuse one mallet rather than recreating them over and over
+* Figure out why watching doesn't work (they see the WonderlandStatus just peachy, but don't
+  see the balls. Likely I'm not actually publishing most of that stuff in a reasonable manner)
