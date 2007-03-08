@@ -111,7 +111,6 @@ public class UnderwhirledDrift extends Sprite
                 _control.sendMessage("positionUpdate", updateObj);
             }
         } else if (event.name == "playerPositions") {
-            _control.localChat("received playerPositions");
             var playerPositions :Array = event.value as Array;
             for (var ii: int = 0; ii < playerPositions.length; ii++) {
                 if (playerPositions[ii].id == _control.getMyId()) {
@@ -131,7 +130,6 @@ public class UnderwhirledDrift extends Sprite
                 updateRaceStarted();
             }
         } else if (event.name == "startRace") {
-            _control.localChat("received startRace");
             _lightBoard = new LIGHT_BOARD();
             var boardTravelHeight :int = _lightBoard.height;
             var boardTravelStart :int = -boardTravelHeight / 2;
@@ -246,6 +244,9 @@ public class UnderwhirledDrift extends Sprite
             _ground.getScenery().registerKart(_kart);
             _playerLaps.clear();
             _playersFinished = [];
+            if (_bonus != null) {
+                _kart.destroyBonus();
+            }
             for each (var key :int in _opponentKarts.keys()) {
                 _opponentKarts.put(key, _opponentKarts.get(key).kartType);
             }
@@ -271,11 +272,17 @@ public class UnderwhirledDrift extends Sprite
         // tack on a few pixels to account for the front of the kart
         _kart.y = KART_LOCATION.y + SKY_HEIGHT + KART_OFFSET;
         addChild(_kart);
-        _control.localChat("sending kartChosen");
         _control.sendMessage("kartChosen", {playerId: _control.getMyId(),
             kartType: _kart.kartType});
         updateRaceStarted();
         _kart.addEventListener(KartEvent.CROSSED_FINISH_LINE, crossFinishLine);
+        _kart.addEventListener(KartEvent.BONUS, addBonus);
+        _kart.addEventListener(KartEvent.REMOVE_BONUS, removeBonus);
+        // now that we've set the kart, add the power up frame
+        var powerUpFrame :Sprite = new POWER_UP_FRAME();
+        powerUpFrame.x = powerUpFrame.width;
+        powerUpFrame.y = powerUpFrame.height;
+        addChild(powerUpFrame);
     }
 
     /**
@@ -295,7 +302,6 @@ public class UnderwhirledDrift extends Sprite
             }
             if (ii == keys.length) {
                 _control.sendMessage("startRace", true);
-                _control.localChat("sending startRace");
             }
         }
     }
@@ -336,6 +342,9 @@ public class UnderwhirledDrift extends Sprite
                     _horizon.x += _horizon.width / 2;
                     _level.setStartingPosition(0);
                     _ground.getScenery().registerKart(_kart);
+                    if (_bonus != null) {
+                        _kart.destroyBonus();
+                    }
                 }
                 break;
             default:
@@ -352,12 +361,34 @@ public class UnderwhirledDrift extends Sprite
         }
     }
 
+    protected function addBonus (event :KartEvent) :void
+    {
+        if (_bonus != null) {
+            removeChild(_bonus);
+        }
+        _bonus = event.value as Bonus;
+        _bonus.x = _bonus.width;
+        _bonus.y = _bonus.height;
+        addChild(_bonus = (event.value as Bonus));
+    }
+
+    protected function removeBonus (event :KartEvent) :void
+    {
+        if (_bonus != null) {
+            removeChild(_bonus);
+            _bonus = null;
+        }
+    }
+
     protected static const SEND_THROTTLE :int = 150; // in ms
     
-    protected static const NUM_LAPS :int = 1; 
+    protected static const NUM_LAPS :int = 4; 
 
     [Embed(source='rsrc/light_board.swf#light_board')]
     protected static const LIGHT_BOARD :Class;
+
+    [Embed(source='rsrc/power_ups.swf#power_up_frame')]
+    protected static const POWER_UP_FRAME :Class;
 
     /** the game control. */
     protected var _control :WhirledGameControl;
@@ -384,5 +415,7 @@ public class UnderwhirledDrift extends Sprite
     protected var _camera :Camera;
 
     protected var _lightBoard :MovieClipAsset;
+
+    protected var _bonus :Bonus;
 }
 }

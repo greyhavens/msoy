@@ -1,18 +1,67 @@
 package {
 
+import flash.display.Sprite;
+
 public class Bonus extends Sprite
 {
+    public static const BLUE_BLAZES :int = 0;
+    public static const FIREBALL :int = 1;
+    public static const SHIELD :int = 2;
+
+    /**
+     * Randomly selects a bonus and displays it.
+     */
+    public function Bonus ()
+    {
+        _type = Math.floor(3 * Math.random());
+        switch (_type) {
+        case BLUE_BLAZES: addChild(new BLUE_BLAZES_THUMB()); break;
+        case FIREBALL: addChild(new FIREBALL_THUMB()); break;
+        case SHIELD: addChild(new SHIELD_THUMB()); break;
+        }
+    }
+
+    public function activate (kart :Kart) :void 
+    {
+        switch (_type) {
+        case BLUE_BLAZES: activateBlueBlazes(kart); break;
+        case FIREBALL: activateFireball(kart); break;
+        case SHIELD: activateShield(kart); break;
+        }
+    }
+
+    public function get type () :int
+    {
+        return _type;
+    }
+
+    protected function activateBlueBlazes (kart :Kart) :void
+    {
+    }
+
+    protected function activateFireball (kart :Kart) :void
+    {
+    }
+
+    protected function activateShield (kart :Kart) :void
+    {
+    }
+
     [Embed('rsrc/power_ups.swf#blue_blazes_ui')]
-    protected static const BLUE_BLAZES_THUMB;
+    protected static const BLUE_BLAZES_THUMB :Class;
 
     [Embed('rsrc/power_ups.swf#fireball_game')]
-    protected static const FIREBALL;
+    protected static const FIREBALL_GAME :Class;
     [Embed('rsrc/power_ups.swf#fireball_ui')]
-    protected static const FIREBALL_THUMB;
+    protected static const FIREBALL_THUMB :Class;
 
     [Embed('rsrc/power_ups.swf#shield_game')]
-    protected static const SHIELD;
+    protected static const SHIELD_GAME :Class;
     [Embed('rsrc/power_ups.swf#shield_ui')]
-    protected static const SHIELD_THUMB;
+    protected static const SHIELD_THUMB :Class;
+
+    protected var _type :int;
+
+    protected var _gameSprite :Sprite;
 }
 }

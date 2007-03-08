@@ -13,6 +13,8 @@ import mx.core.MovieClipAsset;
 import com.threerings.util.Line;
 
 [Event(name="crossedFinishLine", type="KartEvent")]
+[Event(name="bonus", type="KartEvent")]
+[Event(name="removeBonus", type="KartEvent")]
 
 public class Kart extends KartSprite
 {
@@ -76,6 +78,12 @@ public class Kart extends KartSprite
         _movement = 0;
         _currentTurnAngle = 0;
         _currentViewAngle = 0;
+    }
+
+    public function destroyBonus () :void
+    {
+        dispatchEvent(new KartEvent(KartEvent.REMOVE_BONUS, _bonus));
+        _bonus = null;
     }
 
     protected function enterFrame (event :Event) :void
@@ -163,6 +171,9 @@ public class Kart extends KartSprite
         var collides :Object = _ground.getScenery().getCollidingObject();
         if (collides != null && collides.sceneryType == Scenery.BONUS) {
             _ground.getScenery().removeObject(collides);
+            if (_bonus == null) {
+                dispatchEvent(new KartEvent(KartEvent.BONUS, _bonus = new Bonus()));
+            }
         }
     }
 
@@ -194,5 +205,7 @@ public class Kart extends KartSprite
 
     /** The current angle we are viewing our own kart at */
     protected var _currentViewAngle :Number = 0;
+
+    protected var _bonus :Bonus;
 }
 }
