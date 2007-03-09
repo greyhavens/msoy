@@ -134,8 +134,8 @@ public class WonderlandCroquet extends Sprite
         _status.y = stage.stageHeight - 75;
         */
 
-        _status.x = WIDTH - 40;
-        _status.y = HEIGHT - 75;
+        _status.x = WIDTH - 21;
+        _status.y = HEIGHT - 25;
     }
 
     protected function stageResize (event :Event) :void

@@ -122,16 +122,22 @@ public class WonderlandStatus extends Sprite
         var ctrl :Sprite = new Sprite();
 
         // Pan
-        ctrl.addChild(new PanControl(new (_loader.getClass("panup"))(),    _parent, 0, STEP_SIZE));
-        ctrl.addChild(new PanControl(new (_loader.getClass("pandown"))(),  _parent, 0, -STEP_SIZE));
-        ctrl.addChild(new PanControl(new (_loader.getClass("panleft"))(),  _parent,  STEP_SIZE, 0));
-        ctrl.addChild(new PanControl(new (_loader.getClass("panright"))(), _parent, -STEP_SIZE, 0));
+        var objs :Array = [];
+        objs.push(new PanControl(new (_loader.getClass("panup"))(),    _parent, 0, STEP_SIZE));
+        objs.push(new PanControl(new (_loader.getClass("pandown"))(),  _parent, 0, -STEP_SIZE));
+        objs.push(new PanControl(new (_loader.getClass("panleft"))(),  _parent,  STEP_SIZE, 0));
+        objs.push(new PanControl(new (_loader.getClass("panright"))(), _parent, -STEP_SIZE, 0));
 
         // Zoom
-        ctrl.addChild(new ZoomControl(new (_loader.getClass("zoomin"))(),  
-                                      _parent,  ZOOM_PERCENT/100));
-        ctrl.addChild(new ZoomControl(new (_loader.getClass("zoomout"))(),
-                                      _parent, -ZOOM_PERCENT/100));
+        objs.push(new ZoomControl(new (_loader.getClass("zoomin"))(),  _parent,  ZOOM_PERCENT/100));
+        objs.push(new ZoomControl(new (_loader.getClass("zoomout"))(), _parent, -ZOOM_PERCENT/100));
+
+        for each (var obj :DisplayObject in objs) {
+            obj.x -= 10;
+            obj.y -= 10;
+            ctrl.addChild(obj);
+        }
+
         _cards[0].addChild(ctrl);
     }
 
