@@ -572,7 +572,7 @@ public class MemberManager
          * */
         Collections.sort(_topPlaces, new Comparator<PopularPlace>() {
             public int compare (PopularPlace o1, PopularPlace o2) {
-                return o1.population < o2.population ? -1 : o1.population == o2.population ? 0 : 1;
+                return o1.population > o2.population ? -1 : o1.population == o2.population ? 0 : 1;
             }
         });
         _popularPlaceStamp = System.currentTimeMillis();
