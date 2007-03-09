@@ -508,9 +508,12 @@ public class MemberManager
         entity.popSet = new HashSet<MemberName>();
         int cnt = 8;
         for (OccupantInfo info : place.plMgr.getPlaceObject().occupantInfo) {
-            entity.popSet.add((MemberName) info.username);
-            if (--cnt == 0) {
-                break;
+            // only count members
+            if (info.username instanceof MemberName) {
+                entity.popSet.add((MemberName) info.username);
+                if (--cnt == 0) {
+                    break;
+                }
             }
         }
         entity.popCount = place.plMgr.getPlaceObject().occupantInfo.size();
@@ -533,6 +536,7 @@ public class MemberManager
         Iterator<?> i = MsoyServer.plreg.enumeratePlaceManagers();
         while (i.hasNext()) {
             PlaceManager plMgr = (PlaceManager) i.next();
+            // TODO: This counts all occupants, not just players -- fix!
             int count = plMgr.getPlaceObject().occupantInfo.size();
             if (plMgr instanceof RoomManager) {
                 MsoyScene scene = (MsoyScene) ((RoomManager) plMgr).getScene();
