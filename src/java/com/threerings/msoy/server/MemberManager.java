@@ -53,6 +53,7 @@ import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.data.WorldMemberInfo;
 import com.threerings.msoy.world.server.RoomManager;
 
 import com.threerings.msoy.server.persist.GroupRecord;
@@ -509,7 +510,7 @@ public class MemberManager
         int cnt = 8;
         for (OccupantInfo info : place.plMgr.getPlaceObject().occupantInfo) {
             // only count members
-            if (info.username instanceof MemberName) {
+            if (info instanceof WorldMemberInfo) {
                 entity.popSet.add((MemberName) info.username);
                 if (--cnt == 0) {
                     break;
