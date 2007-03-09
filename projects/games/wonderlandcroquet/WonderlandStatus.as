@@ -113,12 +113,6 @@ public class WonderlandStatus extends Sprite
             addChildAt(_cards[ii], 0);
         }
 
-        _cards[0].showFace();
-
-        for (ii = 0; ii < wc.gameCtrl.seating.getPlayerIds().length; ii++) {
-            targetWicket(ii, 0);
-        }
-
         var ctrl :Sprite = new Sprite();
 
         // Pan
@@ -134,11 +128,20 @@ public class WonderlandStatus extends Sprite
 
         for each (var obj :DisplayObject in objs) {
             obj.x -= 10;
-            obj.y -= 10;
+            obj.y -= 20;
             ctrl.addChild(obj);
         }
 
+        // Special hackery for the ace.
+        _cards[0].showMarkers = false;
         _cards[0].addChild(ctrl);
+        _cards[0].showFace();
+
+        for (ii = 0; ii < wc.gameCtrl.seating.getPlayerIds().length; ii++) {
+            targetWicket(ii, 0);
+        }
+
+
     }
 
     protected function markerClicked (event :MouseEvent) :void
@@ -200,6 +203,9 @@ import flash.events.Event;
  */
 class StatusCard extends Sprite
 {
+    // Whether or not we show markers. Hack for the aces.
+    public var showMarkers :Boolean = true;
+
     public function StatusCard (front :MovieClip, back :MovieClip)
     {
         _front = front;
@@ -234,6 +240,10 @@ class StatusCard extends Sprite
      */
     public function addBall (ball :MovieClip) :void
     {
+        if (!showMarkers) {
+            return;
+        }
+
         _balls.push(ball);
         rearrangeBalls();
         addChild(ball);
