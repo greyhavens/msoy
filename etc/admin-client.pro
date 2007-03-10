@@ -11,12 +11,15 @@
 -injars ../dist/lib/narya-base.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/narya-distrib.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/nenya-rsrc.jar(!META-INF/*,!**/tools/**,!**/server/**)
+-injars ../dist/lib/vilya-parlor.jar(**/parlor/util/**,**/ezgame/data/EZGameConfig.class,
+    **/parlor/game/data/GameConfig.class)
 -injars ../dist/lib/vilya-whirled.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/**)
 -injars ../dist/msoy-code.jar(
-    rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
+    !**/*UnitTest.class,rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
     **/msoy/web/data/**,**/msoy/world/data/WorldMemberInfo.class,**/msoy/item/web/**,
-    **/msoy/admin/data/**,**/msoy/admin/client/**,**/msoy/admin/util/**)
+    **/msoy/admin/data/**,**/msoy/admin/client/**,**/msoy/admin/util/**,
+    **/msoy/game/data/*Config.class)
 
 -dontskipnonpubliclibraryclasses
 -dontobfuscate
