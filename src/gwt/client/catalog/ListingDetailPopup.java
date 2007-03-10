@@ -12,6 +12,8 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.ItemDetail;
 
+import org.gwtwidgets.client.util.SimpleDateFormat;
+
 import client.item.BaseItemDetailPopup;
 import client.item.ItemUtil;
 import client.util.ClickCallback;
@@ -27,8 +29,9 @@ public class ListingDetailPopup extends BaseItemDetailPopup
         _listing = listing;
         _panel = panel;
 
-        FlexCellFormatter formatter = _price.getFlexCellFormatter();
+        _listed.setText(CCatalog.msgs.listingListed(_lfmt.format(listing.listedDate)));
 
+        FlexCellFormatter formatter = _price.getFlexCellFormatter();
         formatter.setWidth(0, 0, "25px"); // gap!
         formatter.setStyleName(0, 0, "Icon");
         _price.setWidget(0, 0, new Image("/images/header/symbol_gold.png"));
@@ -50,8 +53,9 @@ public class ListingDetailPopup extends BaseItemDetailPopup
 
         ItemUtil.addItemSpecificControls(_item, controls);
 
+        details.add(_listed = new Label());
         details.add(_price = new FlexTable());
- 
+
         // TODO: enable/disable purchase button depending on member's gold/flow wealth?
         controls.add(_purchase = new Button(CCatalog.msgs.listingBuy()));
         new ClickCallback(_purchase, _status) {
@@ -103,5 +107,7 @@ public class ListingDetailPopup extends BaseItemDetailPopup
 
     protected FlexTable _price;
     protected Button _purchase;
-    protected Label _status;
+    protected Label _listed, _status;
+
+    protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
 }
