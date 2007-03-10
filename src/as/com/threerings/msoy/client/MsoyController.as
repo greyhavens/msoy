@@ -32,6 +32,8 @@ import com.threerings.presents.client.ResultWrapper;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneObject;
 
+import com.threerings.ezgame.client.GameContainer;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.SceneBookmarkEntry;
@@ -625,12 +627,20 @@ public class MsoyController extends Controller
             break;
         }
 
-        // Listen for general keyboard events, if they're "word characters"
-        // and a textfield doesn't currently have focus, focus chat.
-        if (event.charCode != 0) {
-            var s :String = String.fromCharCode(event.charCode);
-            if ((-1 != s.search(/\w/) && !(_ctx.getStage().focus is TextField))) {
-                ChatControl.grabFocus();
+        // We check every keyboard event, see if it's a "word" character,
+        // and then if it's not going somewhere reasonable, route it to chat.
+        var c :int = event.charCode;
+        if (c != 0 && !event.ctrlKey && !event.altKey &&
+                // these are the ascii values for a -> z,  A -> Z
+                ((c >= 97 && c <= 122) || (c >= 65 && c <= 90))) {
+            try {
+                var focus :Object = _ctx.getStage().focus;
+                if (!(focus is TextField) && !(focus is GameContainer)) {
+                    ChatControl.grabFocus();
+                }
+            } catch (err :Error) {
+                // TODO: leave this in for now
+                trace(err.getStackTrace());
             }
         }
     }
