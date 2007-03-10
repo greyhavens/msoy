@@ -355,10 +355,11 @@
 
   <!-- just rebuilds the Flash client, assumes nothing has changed -->
   <target name="asquick">
-    <!-- sanity check to avoid confusion if someone tries to call this directly -->
-    <fail message="type property must be specified: ant -Dtype=world ...">
-      <condition><not><isset property="type"/></not></condition>
-    </fail>
+    <if><not><isset property="type"/></not><then>
+      <echo level="warning">No type property specified!
+        Guessing -Dtype=world ...</echo>
+      <property name="type" value="world"/>
+    </then></if>
     <if><equals arg1="${type}" arg2="header"/><then>
       <property name="extension" value="as"/>
     </then><else>
