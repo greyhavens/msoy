@@ -73,6 +73,9 @@ public class MemberManager
     /** Cache popular place computations for five seconds while we're debugging. */
     public static final long POPULAR_PLACES_CACHE_LIFE = 5*1000;
 
+    /** The maximum number of named members to list for a place. */
+    public static final int NAMED_MEMBERS_IN_POPULAR_PLACE = 8;
+    
     /**
      * This can be called from any thread to queue an update of the member's current flow if they
      * are online.
@@ -236,10 +239,6 @@ public class MemberManager
             JSONArray groups = new JSONArray();
             JSONArray games = new JSONArray();
             for (PopularPlace place : _topPlaces) {
-                if (place.population == 0) {
-                    // there's no populated places left to show
-                    break;
-                }
                 JSONObject obj = new JSONObject();
                 obj.put("name", place.getName());
                 obj.put("pop", place.population);
@@ -507,7 +506,7 @@ public class MemberManager
         }
 
         entity.popSet = new HashSet<MemberName>();
-        int cnt = 8;
+        int cnt = NAMED_MEMBERS_IN_POPULAR_PLACE;
         for (OccupantInfo info : place.plMgr.getPlaceObject().occupantInfo) {
             // only count members
             if (info instanceof WorldMemberInfo) {
@@ -537,8 +536,16 @@ public class MemberManager
         Iterator<?> i = MsoyServer.plreg.enumeratePlaceManagers();
         while (i.hasNext()) {
             PlaceManager plMgr = (PlaceManager) i.next();
-            // TODO: This counts all occupants, not just players -- fix!
-            int count = plMgr.getPlaceObject().occupantInfo.size();
+            int count = 0;
+            for (OccupantInfo info : plMgr.getPlaceObject().occupantInfo) {
+                if (info instanceof WorldMemberInfo) {
+                    count ++;
+                }
+            }
+            // don't track places without members in them at all
+            if (count == 0) {
+                continue;
+            }
             if (plMgr instanceof RoomManager) {
                 MsoyScene scene = (MsoyScene) ((RoomManager) plMgr).getScene();
                 MsoySceneModel model = (MsoySceneModel) scene.getSceneModel();
