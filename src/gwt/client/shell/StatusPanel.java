@@ -115,6 +115,9 @@ public class StatusPanel extends FlexTable
         clearCookie("creds");
         _app.didLogoff();
 
+        // give the header client a chance to logoff before we nix it
+        logoffHeaderClient();
+
         reset();
         if (DeploymentConfig.devDeployment) {
             setText(0, 0, "New to Whirled?");
@@ -293,6 +296,16 @@ public class StatusPanel extends FlexTable
         protected PasswordTextBox _password;
         protected Label _status;
     }
+
+    /**
+     * Called when we logoff to give the header client a chance to logoff.
+     */
+    protected static native void logoffHeaderClient () /*-{
+       var client = $doc.getElementById("asclient");
+       if (client) {
+           client.onUnload();
+       }
+    }-*/;
 
     protected MsoyEntryPoint _app;
     protected WebCreds _creds;
