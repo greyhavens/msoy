@@ -79,7 +79,7 @@ public class SwiftlyProjectRecord extends PersistentRecord
         new ColumnExp(SwiftlyProjectRecord.class, DELETED);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 11;
+    public static final int SCHEMA_VERSION = 12;
 
     /** The id of the project. */
     @Id
@@ -93,6 +93,7 @@ public class SwiftlyProjectRecord extends PersistentRecord
     public byte projectType;
 
     /** The time this project was created. */
+    @Column(columnDefinition="creationDate DATETIME NOT NULL")
     public Timestamp creationDate;
 
     /** The project name. */

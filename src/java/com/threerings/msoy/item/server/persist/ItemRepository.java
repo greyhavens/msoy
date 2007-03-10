@@ -18,6 +18,7 @@ import com.samskivert.util.IntListUtil;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheEvictionFilter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -77,6 +78,9 @@ public abstract class ItemRepository<
                 return ItemRepository.this.createTagHistoryRecord();
             }
         };
+
+        // TIMESTAMP -> DATETIME
+        _ctx.registerMigration(getCatalogClass(), new EntityMigration.Retype(4, "listedDate"));
     }
 
     /**

@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Table;
@@ -90,7 +91,7 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
         new ColumnExp(CatalogRecord.class, REPRICE_COUNTER);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     /** A reference to the listed item. This value is not persisted. */
     @Transient
@@ -101,6 +102,7 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
     public int itemId;
 
     /** The time this item was listed in the catalog. */
+    @Column(columnDefinition="listedDate DATETIME NOT NULL")
     public Timestamp listedDate;
 
     /** The amount of flow it costs to purchase a clone of this item. */
