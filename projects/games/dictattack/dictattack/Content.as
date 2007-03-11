@@ -77,8 +77,9 @@ public class Content
     {
         var format : TextFormat = new TextFormat();
         format.font = FONT_NAME;
-        format.color = uint(0x3333FF);
-        format.size = 36;
+        format.bold = true;
+        format.color = uint(0x000000);
+        format.size = 18;
         return format;
     }
 }

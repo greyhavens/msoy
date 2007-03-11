@@ -27,6 +27,8 @@ public class DictionaryAttack extends Sprite
         // create and wire ourselves into our multiplayer game control
         _control = new WhirledGameControl(this);
         _control.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
+        _control.addEventListener(StateChangedEvent.ROUND_STARTED, roundDidStart);
+        _control.addEventListener(StateChangedEvent.ROUND_ENDED, roundDidEnd);
         _control.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
 
         // TODO: get this info from the game config
@@ -47,17 +49,41 @@ public class DictionaryAttack extends Sprite
         if (_control.amInControl()) {
             _control.set(Model.SCORES, new Array(pcount).map(function (): int { return 0; }));
         }
+    }
 
-        // for now we have just one round
+    protected function roundDidStart (event :StateChangedEvent) :void
+    {
         _model.roundDidStart();
         _view.roundDidStart();
     }
 
+    protected function roundDidEnd (event :StateChangedEvent) :void
+    {
+        _view.roundDidEnd();
+        _model.roundDidEnd();
+    }
+
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
-        // for now we have just one round
-        _model.roundDidEnd();
-        _view.roundDidEnd();
+        roundDidEnd(event);
+
+        // grant ourselves flow based on how many players we defeated
+        var scores :Array = (_control.get(Model.SCORES) as Array);
+        var myidx :int = _control.seating.getMyPosition();
+        var beat :int = 0;
+        for (var ii :int = 0; ii < scores.length; ii++) {
+            if (ii != myidx && scores[ii] < scores[myidx]) {
+                beat++;
+            }
+        }
+        var factor :Number = ((0.5/3) * beat + 0.5);
+        var award: int = int(factor * _control.getAvailableFlow());
+        trace("Defeated: " + beat + " factor: " + factor + " award: " + award);
+        if (award > 0) {
+            _control.awardFlow(award);
+        }
+
+        _view.gameDidEnd(award);
     }
 
     protected function handleUnload (event :Event) :void

@@ -17,6 +17,9 @@ public class Model
     /** The scores for each player. */
     public static const SCORES :String = "scores";
 
+    /** The current round points for each player. */
+    public static const POINTS :String = "points";
+
     /** An event sent when a word is played. */
     public static const WORD_PLAY :String = "wordPlay";
 
@@ -24,6 +27,20 @@ public class Model
     {
         _size = size;
         _control = control;
+    }
+
+    public function setView (view :GameView) :void
+    {
+        _view = view;
+    }
+
+    /**
+     * Returns the points needed to win the round.
+     */
+    public function getWinningPoints () :int
+    {
+        // TODO: get from game config
+        return WINNING_POINTS;
     }
 
     /**
@@ -47,8 +64,10 @@ public class Model
      */
     public function roundDidStart () :void
     {
-        // if we are in control, create a board and publish it
+        // if we are in control, zero out the points, create a board and publish it
         if (_control.amInControl()) {
+            var pcount :int = _control.seating.getPlayerIds().length;
+            _control.set(POINTS, new Array(pcount).map(function (): int { return 0; }));
             _control.getDictionaryLetterSet(
                 Content.LOCALE, _size*_size, function (letters :Array) :void {
                 _control.set(BOARD_DATA, letters);
@@ -57,25 +76,21 @@ public class Model
     }
 
     /**
-     * Called when the round ends.
+     * Called when a round ends.
      */
     public function roundDidEnd () :void
     {
-        // grant ourselves flow based on how many players we defeated
-        var scores :Array = (_control.get(Model.SCORES) as Array);
-        var myidx :int = _control.seating.getMyPosition();
-        var beat :int = 0;
-        for (var ii :int = 0; ii < scores.length; ii++) {
-            if (ii != myidx && scores[ii] < scores[myidx]) {
-                beat++;
+        var scorer :String = "";
+        var points :Array = (_control.get(POINTS) as Array);
+        for (var ii :int = 0; ii < points.length; ii++) {
+            if (points[ii] >= WINNING_POINTS) {
+                if (scorer.length > 0) {
+                    scorer += ", ";
+                }
+                scorer += _control.seating.getPlayerNames()[ii];
             }
         }
-        var factor :Number = ((0.5/3) * beat + 0.5);
-        var award: int = int(factor * _control.getAvailableFlow());
-        trace("Defeated: " + beat + " factor: " + factor + " award: " + award);
-        if (award > 0) {
-            _control.awardFlow(award);
-        }
+        _view.marquee.display("Round over. Point to " + scorer + ".", 2000);
     }
 
     /**
@@ -113,49 +128,44 @@ public class Model
 
             // remove our tiles from the distributed state (we do this in individual events so that
             // watchers coming into a game half way through will see valid state), while we're at
-            // it, compute our score
-            var score :int = used.length - MIN_WORD_LENGTH;
+            // it, compute our points
+            var wpoints :int = used.length - MIN_WORD_LENGTH;
             var ii :int, mult :int = 1;
             for (ii = 0; ii < used.length; ii++) {
                 // map our local coordinates back to a global position coordinates
                 var xx :int = int(used[ii] % _size);
                 var yy :int = int(used[ii] / _size);
                 mult = Math.max(TYPE_MULTIPLIER[getType(xx, yy)], mult);
-                _control.set(Model.BOARD_DATA, null, getPosition(xx, yy));
+                _control.set(BOARD_DATA, null, getPosition(xx, yy));
             }
-            // TODO: report multiplier
-            score *= mult;
+            wpoints *= mult;
+            if (mult > 1) {
+                _view.marquee.display(word + " x" + mult + " earned " + wpoints + " points.", 1000);
+            } else {
+                _view.marquee.display(word + " earned " + wpoints + " points.", 1000);
+            }
 
             // broadcast our our played word as a message
             _control.sendMessage(WORD_PLAY, used);
 
-            // update our score
+            // update our points
             var myidx :int = _control.seating.getMyPosition();
-            var scores :Array = (_control.get(Model.SCORES) as Array);
-            var newscore :int = scores[myidx] + score;
-            if (score > 0) {
-                _control.set(Model.SCORES, newscore, myidx);
+            var points :Array = (_control.get(POINTS) as Array);
+            var newpoints :int = points[myidx] + wpoints;
+            if (wpoints > 0) {
+                _control.set(POINTS, newpoints, myidx);
             }
 
-            // if we have not exceeded the winning score, stop here, otherwise end the game
-            if (newscore < WINNING_SCORE) {
-                return;
-            }
-
-            // end the game if our word contained the central letter
-            var highest: int = 0;
-            for (ii = 0; ii < scores.length; ii++) {
-                if (scores[ii] > highest) {
-                    highest = scores[ii];
+            // if we have exceeded the winning points, score a point and end the round 
+            if (newpoints >= getWinningPoints()) {
+                var newscore :int = (_control.get(SCORES) as Array)[myidx] + 1;
+                _control.set(SCORES, newscore, myidx);
+                if (newscore >= WINNING_SCORE) {
+                    _control.endGame(new Array().concat(myidx));
+                } else {
+                    _control.endRound(INTER_ROUND_DELAY);
                 }
             }
-            var winners :Array = new Array();
-            for (ii = 0; ii < scores.length; ii++) {
-                if (scores[ii] == highest) {
-                    winners.push(_control.seating.getPlayerIds()[ii]);
-                }
-            }
-            _control.endGame(winners);
         });
 
         // the word is on the board at least, so tell the caller to clear the input field
@@ -241,12 +251,18 @@ public class Model
 
     protected var _size :int;
     protected var _control :WhirledGameControl;
+    protected var _view :GameView;
 
     // TODO: get from game config
     protected static const MIN_WORD_LENGTH :int = 4;
 
     // TODO: get from game config
-    protected static const WINNING_SCORE :int = 15;
+    protected static const WINNING_POINTS :int = 15;
+
+    // TODO: get from game config
+    protected static const WINNING_SCORE :int = 3;
+
+    protected static const INTER_ROUND_DELAY :int = 5;
 
     protected static const TYPE_NORMAL :int = 0;
     protected static const TYPE_DOUBLE :int = 1;

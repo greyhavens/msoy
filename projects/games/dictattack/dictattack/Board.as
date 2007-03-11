@@ -21,17 +21,6 @@ public class Board extends Sprite
         _control = control;
         _model = model;
 
-        for (var yy :int = 0; yy < size; yy++) {
-            for (var xx : int = 0; xx < size; xx++) {
-                var l :Letter = new Letter(model.getType(xx, yy));
-                l.setText("?");
-                l.x = (Content.TILE_SIZE + GAP) * xx;
-                l.y = (Content.TILE_SIZE + GAP) * yy;
-                addChild(l);
-                _letters[yy * size + xx] = l;
-            }
-        }
-
         // listen for property changed events
         _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
     }
@@ -55,6 +44,24 @@ public class Board extends Sprite
     public function getLetter (pos :int) :Letter
     {
         return (_letters[pos] as Letter);
+    }
+
+    public function roundDidStart () :void
+    {
+        while (numChildren > 0) {
+            removeChildAt(0);
+        }
+
+        for (var yy :int = 0; yy < _size; yy++) {
+            for (var xx : int = 0; xx < _size; xx++) {
+                var ll :Letter = new Letter(_model.getType(xx, yy));
+                ll.setText("?");
+                ll.x = (Content.TILE_SIZE + GAP) * xx;
+                ll.y = (Content.TILE_SIZE + GAP) * yy;
+                addChild(ll);
+                _letters[yy * _size + xx] = ll;
+            }
+        }
     }
 
     public function resetLetters (used :Array) :void

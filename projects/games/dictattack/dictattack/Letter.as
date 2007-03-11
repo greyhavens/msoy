@@ -29,7 +29,7 @@ public class Letter extends Sprite
     public function setText (text :String) :void
     {
         _label.text = text;
-        _label.y = (Content.TILE_SIZE - _label.height)/2;
+        _label.y = (Content.TILE_SIZE - _label.height)/2 - FONT_ADJUST_HACK;
     }
 
     public function setPlayable (playable :Boolean) :void
@@ -73,6 +73,8 @@ public class Letter extends Sprite
     protected var _type :int;
     protected var _square :Shape;
     protected var _label :TextField;
+
+    protected static const FONT_ADJUST_HACK :int = 1;
 }
 
 }
