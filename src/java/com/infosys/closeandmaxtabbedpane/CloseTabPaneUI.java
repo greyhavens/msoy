@@ -864,12 +864,14 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	// protected in the next release where
 	// API changes are allowed
 	//
+        @SuppressWarnings("deprecation")
 	boolean requestMyFocusForVisibleComponent() {
 		Component visibleComponent = getVisibleComponent();
 		if (visibleComponent.isFocusable()) {
 			visibleComponent.requestFocus();
 			return true;
 		} else if (visibleComponent instanceof JComponent) {
+                        // TODO: deprecated, fix
 			if (((JComponent) visibleComponent).requestDefaultFocus()) {
 				return true;
 			}
@@ -1046,6 +1048,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			return calculateMaxTabWidth(tabPlacement);
 		}
 
+                @SuppressWarnings("deprecation")
 		public void layoutContainer(Container parent) {
 			int tabPlacement = tabPane.getTabPlacement();
 			int tabCount = tabPane.getTabCount();
@@ -1075,6 +1078,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 				if (selectedComponent != null) {
 					if (selectedComponent != visibleComponent
 							&& visibleComponent != null) {
+                                                // TODO: deprecated, fix
 						if (SwingUtilities.findFocusOwner(visibleComponent) != null) {
 							shouldChangeFocus = true;
 						}
