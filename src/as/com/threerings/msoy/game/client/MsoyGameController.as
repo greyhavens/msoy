@@ -13,12 +13,14 @@ import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.ezgame.client.EZGameController;
 
+import com.threerings.msoy.client.OccupantReporter;
 import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.game.data.MsoyGameObject;
 
 public class MsoyGameController extends EZGameController
 {
+    // from PlaceController
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
         super.willEnterPlace(plobj);
@@ -26,6 +28,18 @@ public class MsoyGameController extends EZGameController
         if (_gobj.isInPlay()) {
             _startStamp = getTimer();
         }
+
+        // wire up our occupant reporter
+        _occReporter.willEnterPlace(_ctx, plobj);
+    }
+
+    // from PlaceController
+    override public function didLeavePlace (plobj :PlaceObject) :void
+    {
+        super.didLeavePlace(plobj);
+
+        // shut down our occupant reporter
+        _occReporter.didLeavePlace(plobj);
     }
 
     /**
@@ -80,6 +94,9 @@ public class MsoyGameController extends EZGameController
 
         _startStamp = 0;
     }
+
+    /** Reports occupant entry and exit. */
+    protected var _occReporter :OccupantReporter = new OccupantReporter();
 
     /** The timestamp at which we started playing. */
     protected var _startStamp :Number;
