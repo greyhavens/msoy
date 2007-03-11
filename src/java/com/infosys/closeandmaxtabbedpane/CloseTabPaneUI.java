@@ -86,9 +86,9 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	private ContainerListener containerListener;
 
-	private Vector htmlViews;
+	private Vector<View> htmlViews;
 
-	private Hashtable mnemonicToIndexMap;
+	private Hashtable<Integer, Integer> mnemonicToIndexMap;
 
 	/**
 	 * InputMap used for mnemonics. Only non-null if the JTabbedPane has
@@ -568,7 +568,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	 * Installs the state needed for mnemonics.
 	 */
 	private void initMnemonics() {
-		mnemonicToIndexMap = new Hashtable();
+		mnemonicToIndexMap = new Hashtable<Integer, Integer>();
 		mnemonicInputMap = new InputMapUIResource();
 		mnemonicInputMap.setParent(SwingUtilities.getUIInputMap(tabPane,
 				JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT));
@@ -866,7 +866,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	//
 	boolean requestMyFocusForVisibleComponent() {
 		Component visibleComponent = getVisibleComponent();
-		if (visibleComponent.isFocusTraversable()) {
+		if (visibleComponent.isFocusable()) {
 			visibleComponent.requestFocus();
 			return true;
 		} else if (visibleComponent instanceof JComponent) {
@@ -1473,8 +1473,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		}
 	}
 
-	private Vector createHTMLVector() {
-		Vector htmlViews = new Vector();
+	private Vector<View> createHTMLVector() {
+		Vector<View> htmlViews = new Vector<View>();
 		int count = tabPane.getTabCount();
 		if (count > 0) {
 			for (int i = 0; i < count; i++) {

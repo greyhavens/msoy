@@ -193,7 +193,7 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 		
 		frame.addWindowFocusListener(windowFocusListener);
 
-		frame.show();
+		frame.setVisible(true);
 		frame.toFront();
 
 	}
