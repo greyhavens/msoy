@@ -48,14 +48,14 @@ public class MsoyGameManager extends EZGameManager
             throw new InvocationException(E_INTERNAL_ERROR);
         }
 
-        // the final amount of flow this game attempts to pay out is accumulated in-memory
-        // and not capped until the game ends or the player leaves
+        // the final amount of flow this game attempts to pay out is accumulated in-memory and not
+        // capped until the game ends or the player leaves
         int previouslyAwarded = record.awarded;
         record.awarded += amount;
 
-        // for immediate flow payouts that don't have to be precise, we try to make our
-        // estimate more precise (nobody likes to see their flow actually drop at the
-        // end of a game) by taking the cap into account
+        // for immediate flow payouts that don't have to be precise, we try to make our estimate
+        // more precise (nobody likes to see their flow actually drop at the end of a game) by
+        // taking the cap into account
         int secondsSoFar = now() - record.beganStamp;
         int flowBudget = (int) ((record.humanity * _msoyGameObj.flowPerMinute * secondsSoFar) / 60);
         int cappedAmount = Math.min(amount, flowBudget - previouslyAwarded);
@@ -77,18 +77,16 @@ public class MsoyGameManager extends EZGameManager
         super.didStartup();
 
         _msoyGameObj = (MsoyGameObject) _plobj;
-
         _msoyGameObj.setMsoyGameService((MsoyGameMarshaller)
             MsoyServer.invmgr.registerDispatcher(new MsoyGameDispatcher(this)));
 
-        // figure out the game's 
+        // figure out the game's anti-abuse factor
         _antiAbuseFactor = -1; // magic number for 'pending'
         MsoyServer.invoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 try {
-                    _antiAbuseFactor =
-                        MsoyServer.memberRepo.getFlowRepository().getAntiAbuseFactor(
-                            ((MsoyGameConfig) _config).persistentGameId);
+                    _antiAbuseFactor = MsoyServer.memberRepo.getFlowRepository().getAntiAbuseFactor(
+                        ((MsoyGameConfig) _config).persistentGameId);
                 } catch (PersistenceException pe) {
                     log.log(Level.WARNING, "Failed to fetch game's anti-abuse factor [where=" +
                             where() + "]", pe);
@@ -102,8 +100,8 @@ public class MsoyGameManager extends EZGameManager
             // here, we're back on the dobj thread
             public void handleResult ()
             {
-                _msoyGameObj.setFlowPerMinute((int)
-                    ((RuntimeConfig.server.hourlyGameFlowRate * _antiAbuseFactor) / 60d));
+                _msoyGameObj.setFlowPerMinute(
+                    (int)((RuntimeConfig.server.hourlyGameFlowRate * _antiAbuseFactor) / 60d));
             }
         });
     }
@@ -113,10 +111,10 @@ public class MsoyGameManager extends EZGameManager
     {
         super.gameDidStart();
 
-        _startStamp = now();
-
-        for (int i = 0; i < _plobj.occupants.size(); i ++) {
-            initOccupant(_plobj.occupants.get(i));
+        // note the time at which the game started for flow calculations
+        int startStamp = now();
+        for (FlowRecord record : _flowRecords.values()) {
+            record.beganStamp = startStamp;
         }
     }
 
@@ -125,9 +123,11 @@ public class MsoyGameManager extends EZGameManager
     {
         super.gameDidEnd();
 
-        // grant all awarded flow
-        for (IntMap.IntEntry<FlowRecord> entry : _flowRecords.intEntrySet()) {
-            grantAwardedFlow(entry.getIntKey(), entry.getValue());
+        // note all remaining player's seconds played
+        int endStamp = now();
+        for (FlowRecord record : _flowRecords.values()) {
+            record.secondsPlayed = endStamp - record.beganStamp;
+            record.beganStamp = 0;
         }
 
         // TODO: Zell? Something's half-done here.
@@ -138,17 +138,13 @@ public class MsoyGameManager extends EZGameManager
                         int gameId = ((MsoyGameConfig) _config).persistentGameId;
                         MsoyServer.memberRepo.noteGameEnded(gameId, _playerMinutes);
                     } catch (PersistenceException pe) {
-                        log.log(Level.WARNING, "Failed to note end of game [where=" + where() + "]", pe);
+                        log.log(Level.WARNING, "Failed to note end of game [where=" +
+                                where() + "]", pe);
                     }
                     return false;
                 }
             });
         }
-
-        // clear everything out for possible game restart,
-        // or in case new occupants enter
-        _flowRecords.clear();
-        _startStamp = 0;
     }
 
     @Override // from PlaceManager
@@ -156,46 +152,9 @@ public class MsoyGameManager extends EZGameManager
     {
         super.bodyEntered(oid);
 
-        if (_startStamp > 0) {
-            // let any occupant potentially earn flow
-            initOccupant(oid);
-        }
-    }
-
-    @Override // from PlaceManager
-    protected void bodyLeft (int oid)
-    {
-        super.bodyLeft(oid);
-
-        if (_startStamp > 0) {
-            // remove their flow record and grant them the flow
-            FlowRecord flowRecord = _flowRecords.remove(oid);
-            if (flowRecord != null) {
-                grantAwardedFlow(oid, flowRecord);
-
-            } else {
-                log.warning("No flow record found [where=" + where() + ", oid=" + oid + "]");
-                return;
-            }
-        }
-    }
-
-    @Override
-    protected void didShutdown ()
-    {
-        MsoyServer.invmgr.clearDispatcher(_msoyGameObj.msoyGameService);
-
-        super.didShutdown();
-    }
-
-    /**
-     * Initialize an occupant's FlowRecord.
-     */
-    protected void initOccupant (int oid)
-    {
+        // create a flow record for this occupant
         MemberObject member = (MemberObject) MsoyServer.omgr.getObject(oid);
-        if (member == null) {
-            // this should never happen
+        if (member == null) { // this should never happen
             log.warning("Failed to lookup member [where=" + where() + ", oid=" + oid + "]");
             return;
         }
@@ -206,32 +165,63 @@ public class MsoyGameManager extends EZGameManager
             return;
         }
 
-        // create a flow record to track awarded flow and remember things
-        // about the member we'll need to know when they're gone
-        _flowRecords.put(oid, new FlowRecord(member));
+        // create a flow record to track awarded flow and remember things about the member we'll
+        // need to know when they're gone
+        FlowRecord record = new FlowRecord(member);
+        _flowRecords.put(oid, record);
+
+        // if the game is already in play, note that they're "starting" immediately
+        if (_gameobj.isInPlay()) {
+            record.beganStamp = now();
+        }
     }
 
-    // possibly cap and then actually grant the flow the game awarded to this player
-    protected void grantAwardedFlow (int oid, FlowRecord record)
+    @Override // from PlaceManager
+    protected void bodyLeft (int oid)
     {
+        super.bodyLeft(oid);
+
+        // remove their flow record and grant them the flow
+        FlowRecord record = _flowRecords.remove(oid);
+        if (record == null) {
+            log.warning("No flow record found [where=" + where() + ", oid=" + oid + "]");
+            return;
+        }
+
         // see if we even care
         if (record.awarded == 0 || record.memberId == MemberName.GUEST_ID) {
             return;
         }
+
         // see if we're initialized
         if (_antiAbuseFactor == -1) {
             log.warning("Unknown flow rate, but there's a grant. Wha?");
             return;
         }
+
+        // if they're leaving in the middle of a game, update their secondsPlayed
+        if (record.beganStamp != 0) {
+            record.secondsPlayed = now() - record.beganStamp;
+            record.beganStamp = 0;
+        }
+
         // see how much they actually get
-        int secondsPlayed = now() - record.beganStamp;
-        int awarded = Math.min(record.awarded,
-            (int) ((record.humanity * _msoyGameObj.flowPerMinute * secondsPlayed) / 60));
+        int availFlow = (int) ((record.humanity * _msoyGameObj.flowPerMinute *
+                                record.secondsPlayed) / 60);
+        int awarded = Math.min(record.awarded, availFlow);
 
         // award it
         MsoyServer.memberMan.grantFlow(
             record.memberId, awarded, UserAction.PLAYED_GAME,
-            ((EZGameConfig) getConfig()).persistentGameId + " " + secondsPlayed); 
+            ((EZGameConfig) getConfig()).persistentGameId + " " + record.secondsPlayed); 
+    }
+
+    @Override
+    protected void didShutdown ()
+    {
+        MsoyServer.invmgr.clearDispatcher(_msoyGameObj.msoyGameService);
+
+        super.didShutdown();
     }
 
     /**
@@ -251,21 +241,18 @@ public class MsoyGameManager extends EZGameManager
         protected int memberId;
         protected int awarded;
         protected int beganStamp;
+        protected int secondsPlayed;
 
         protected FlowRecord (MemberObject memObj)
         {
             this.humanity = memObj.getHumanity();
             this.memberId = memObj.getMemberId();
             this.awarded = 0;
-            this.beganStamp = now();
         }
     }
 
     protected MsoyGameObject _msoyGameObj;
 
-    /** The time at which the game started, in seconds, or 0 if the game
-     * has not yet started. */
-    protected int _startStamp;
     protected double _antiAbuseFactor;
     protected int _playerMinutes;
     protected IntMap<FlowRecord> _flowRecords = new HashIntMap<FlowRecord>();
