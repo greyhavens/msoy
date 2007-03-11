@@ -48,7 +48,7 @@ import com.samskivert.swing.util.TaskMaster;
 import com.samskivert.swing.util.TaskObserver;
 
 public class ProjectPanel extends JPanel
-    implements TreeSelectionListener, TreeModelListener, InvocationListener
+    implements TreeSelectionListener, TreeModelListener
 {
     public ProjectPanel (SwiftlyContext ctx, SwiftlyEditor editor)
     {
@@ -80,12 +80,6 @@ public class ProjectPanel extends JPanel
 
         _scrollPane.getViewport().setView(_tree);
         disableToolbar();
-    }
-
-    // from interface InvocationListener
-    public void requestFailed (String reason)
-    {
-        _editor.showErrorDialog(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, reason));
     }
 
     // from interface TreeSelectionListener
@@ -241,7 +235,12 @@ public class ProjectPanel extends JPanel
             if (element == null) {
                 return; // if the user hit cancel do no more
             }
-            _roomObj.service.addDocument(_ctx.getClient(), element, this);
+            _roomObj.service.addDocument(_ctx.getClient(), element, new InvocationListener () {
+                public void requestFailed (String reason)
+                {
+                    _editor.showErrorDialog(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, reason));
+                }
+            });
         }
     }
 
