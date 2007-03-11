@@ -14,7 +14,9 @@
       <arg value="${root.path}/etc/msoy-config.xml"/>
       <arg value="-compiler.source-path=."/>
       <arg value="-file-specs"/>
-      <arg value="${app.name}.as"/>
+      <arg value="dictattack/${app.name}.as"/>
+      <arg value="-output"/>
+      <arg value="${app.name}.swf"/>
     </java>
   </target>
 

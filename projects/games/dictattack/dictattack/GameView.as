@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package {
+package dictattack {
 
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -36,7 +36,6 @@ public class GameView extends Sprite
         _input.y = Content.INPUT_RECT.y;
         _input.width = Content.INPUT_RECT.width;
         _input.height = Content.INPUT_RECT.height;
-        addChild(_input);
 
         // listen for property changed and message events
         _control.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
@@ -73,6 +72,8 @@ public class GameView extends Sprite
     public function roundDidStart () :void
     {
         _control.setChatEnabled(false);
+        _input.selectable = false;
+        addChild(_input);
         _input.text = "Type words here!";
         displayMarquee("Ready...!");
         Util.invokeLater(1000, function () :void {
@@ -87,8 +88,8 @@ public class GameView extends Sprite
     public function roundDidEnd () :void
     {
         removeEventListener(KeyboardEvent.KEY_UP, keyReleased);
-        _input.selectable = false;
         _input.stage.focus = null;
+        removeChild(_input);
         displayMarquee("Game over man!", 3000);
         _control.setChatEnabled(true);
     }

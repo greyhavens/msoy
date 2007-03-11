@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package {
+package dictattack {
 
 import com.whirled.WhirledGameControl;
 
@@ -54,7 +54,7 @@ public class Model
                 beat++;
             }
         }
-        var factor :Number = (0.25 * beat + 0.25);
+        var factor :Number = ((0.5/3) * beat + 0.5);
         var award: int = int(factor * _control.getAvailableFlow());
         trace("Defeated: " + beat + " factor: " + factor + " award: " + award);
         if (award > 0) {

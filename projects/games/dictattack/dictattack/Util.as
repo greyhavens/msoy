@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package {
+package dictattack {
 
 import flash.events.TimerEvent;
 import flash.utils.Timer;

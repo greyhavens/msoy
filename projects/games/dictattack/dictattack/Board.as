@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package {
+package dictattack {
 
 import flash.display.Graphics;
 import flash.display.Shape;

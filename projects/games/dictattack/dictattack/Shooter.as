@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package {
+package dictattack {
 
 import flash.text.TextField;
 import flash.text.TextFormat;
@@ -28,14 +28,14 @@ public class Shooter extends Sprite
         addChild(square);
 
         _name = new TextField();
-        _name.text = "0";
+        _name.text = "";
         _name.selectable = false;
         _name.defaultTextFormat = makeTextFormat();
         _name.autoSize = (posidx == 0) ? TextFieldAutoSize.LEFT : TextFieldAutoSize.RIGHT;
         addChild(_name);
 
         _score = new TextField();
-        _score.text = "0";
+        _score.text = "";
         _score.selectable = false;
         _score.defaultTextFormat = makeTextFormat();
         _score.autoSize = (posidx == 0) ? TextFieldAutoSize.LEFT : TextFieldAutoSize.RIGHT;

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package {
+package dictattack {
 
 import flash.text.TextFormat;
 
@@ -21,15 +21,15 @@ public class Content
     public static const LOCALE :String = "en-us";
 
     /** The number of letters along one side of the board. This must be an odd number. */
-    public static const BOARD_SIZE :int = 15;
+    public static const BOARD_SIZE :int = 13;
 
     /** The border around the board in which the shooters reside. */
-    public static const BOARD_BORDER :int = 100;
+    public static const BOARD_BORDER :int = 50;
 
     /** The font used for the letters. */
     public static const FONT_NAME :String = "Verdana";
 
-    /** The point size of the letters when rendered (TODO: scale?). */
+    /** The point size of our general purpose font. */
     public static const FONT_SIZE :int = 12;
 
     /** The foreground color of the letters. */
@@ -39,10 +39,13 @@ public class Content
     public static const HIGH_FONT_COLOR :uint = uint(0xFF0000);
 
     /** The pixels size of the letter tiles (TODO: scale?). */
-    public static const TILE_SIZE :int = 15;
+    public static const TILE_SIZE :int = 25;
 
     /** The background color of the letter tiles. */
     public static const TILE_COLOR :uint = uint(0xCCFF99);
+
+    /** The point size of the letters when rendered (TODO: scale?). */
+    public static const TILE_FONT_SIZE :int = 18;
 
     /** The background color of playable letter tiles. */
     public static const PLAYABLE_COLOR :uint = uint(0x99CC66);

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package {
+package dictattack {
 
 import flash.text.TextField;
 import flash.text.TextFormat;
@@ -59,7 +59,7 @@ public class Letter extends Sprite
         var format : TextFormat = new TextFormat();
         format.font = Content.FONT_NAME;
         format.color = Content.FONT_COLOR;
-        format.size = Content.FONT_SIZE;
+        format.size = Content.TILE_FONT_SIZE;
         return format;
     }
 
@@ -68,7 +68,7 @@ public class Letter extends Sprite
         var format : TextFormat = new TextFormat();
         format.font = Content.FONT_NAME;
         format.color = Content.HIGH_FONT_COLOR;
-        format.size = Content.FONT_SIZE;
+        format.size = Content.TILE_FONT_SIZE;
         return format;
     }
 

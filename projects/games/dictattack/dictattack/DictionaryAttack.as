@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package {
+package dictattack {
 
 import flash.display.Graphics;
 import flash.display.Shape;
@@ -30,6 +30,7 @@ public class DictionaryAttack extends Sprite
             // set up some defaults so that we're visible
             _view = new GameView(_control, null);
             _view.init(Content.BOARD_SIZE, 4);
+            addChild(_view);
             // TODO: attract mode?
             return;
         }
