@@ -38,20 +38,21 @@ public class Content
     /** The highlighted color of the letters. */
     public static const HIGH_FONT_COLOR :uint = uint(0xFF0000);
 
+    /** The point size of the letters when rendered (TODO: scale?). */
+    public static const TILE_FONT_SIZE :int = 18;
+
     /** The pixels size of the letter tiles (TODO: scale?). */
     public static const TILE_SIZE :int = 25;
 
     /** The background color of the letter tiles. */
     public static const TILE_COLOR :uint = uint(0xCCFF99);
 
-    /** The point size of the letters when rendered (TODO: scale?). */
-    public static const TILE_FONT_SIZE :int = 18;
-
     /** The background color of playable letter tiles. */
     public static const PLAYABLE_COLOR :uint = uint(0x99CC66);
 
-    /** The background color of the center letter tile. */
-    public static const CENTER_TILE_COLOR :uint = uint(0xFFCC33);
+    /** The outline colors for our various types of tiles. */
+    public static const TILE_OUTLINE_COLORS :Array =
+        [ uint(0x000000), uint(0x0066FF), uint(0xFF0033) ];
 
     /** The pixels size of the shooter. */
     public static const SHOOTER_SIZE :int = 50;

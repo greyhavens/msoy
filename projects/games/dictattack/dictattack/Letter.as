@@ -12,9 +12,9 @@ import flash.display.Sprite;
 
 public class Letter extends Sprite
 {
-    public function Letter (center :Boolean)
+    public function Letter (type :int)
     {
-        _center = center;
+        _type = type;
         setPlayable(false);
 
         _label = new TextField();
@@ -38,14 +38,12 @@ public class Letter extends Sprite
             removeChild(_square);
         }
 
-        var color :uint = _center ? Content.CENTER_TILE_COLOR :
-            (playable ? Content.PLAYABLE_COLOR : Content.TILE_COLOR);
-
         _square = new Shape();
-        _square.graphics.beginFill(color);
-        // square.graphics.lineStyle(borderSize, borderColor);
+        _square.graphics.beginFill(playable ? Content.PLAYABLE_COLOR : Content.TILE_COLOR);
         _square.graphics.drawRect(0, 0, Content.TILE_SIZE, Content.TILE_SIZE);
         _square.graphics.endFill();
+        _square.graphics.lineStyle(2, Content.TILE_OUTLINE_COLORS[_type]);
+        _square.graphics.drawRect(1, 1, Content.TILE_SIZE-2, Content.TILE_SIZE-2);
         addChildAt(_square, 0);
     }
 
@@ -72,7 +70,7 @@ public class Letter extends Sprite
         return format;
     }
 
-    protected var _center :Boolean;
+    protected var _type :int;
     protected var _square :Shape;
     protected var _label :TextField;
 }

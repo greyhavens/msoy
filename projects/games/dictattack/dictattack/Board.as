@@ -23,7 +23,7 @@ public class Board extends Sprite
 
         for (var yy :int = 0; yy < size; yy++) {
             for (var xx : int = 0; xx < size; xx++) {
-                var l :Letter = new Letter(xx == int(size/2) && yy == int(size/2));
+                var l :Letter = new Letter(model.getType(xx, yy));
                 l.setText("?");
                 l.x = (Content.TILE_SIZE + GAP) * xx;
                 l.y = (Content.TILE_SIZE + GAP) * yy;

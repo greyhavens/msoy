@@ -24,38 +24,29 @@ public class DictionaryAttack extends Sprite
         // wire up our unloader
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        // see if we're wired up to the world
+        // create and wire ourselves into our multiplayer game control
         _control = new WhirledGameControl(this);
-        if (!_control.isConnected()) {
-            // set up some defaults so that we're visible
-            _view = new GameView(_control, null);
-            _view.init(Content.BOARD_SIZE, 4);
-            addChild(_view);
-            // TODO: attract mode?
-            return;
-        }
-
-        // wire up some listeners
         _control.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
         _control.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+
+        // TODO: get this info from the game config
+        var size :int = Content.BOARD_SIZE;
+        var pcount :int = _control.isConnected() ? _control.seating.getPlayerIds().length : 4;
+
+        // create our model and our view, and initialize them
+        _model = new Model(size, _control);
+        _view = new GameView(_control, _model);
+        _view.init(size, pcount);
+        addChild(_view);
     }
 
     protected function gameDidStart (event :StateChangedEvent) :void
     {
-        // TODO: get this info from the game config
-        var size :int = Content.BOARD_SIZE;
-
         // zero out the scores
         var pcount :int = _control.seating.getPlayerIds().length;
         if (_control.amInControl()) {
             _control.set(Model.SCORES, new Array(pcount).map(function (): int { return 0; }));
         }
-
-        // create our model and our view, and initialze them
-        _model = new Model(size, _control);
-        _view = new GameView(_control, _model);
-        _view.init(size, pcount);
-        addChild(_view);
 
         // for now we have just one round
         _model.roundDidStart();

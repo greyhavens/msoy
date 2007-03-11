@@ -27,6 +27,22 @@ public class Model
     }
 
     /**
+     * Returns the type of tile at the specified coordinate.
+     */
+    public function getType (xx :int, yy :int) :int
+    {
+        var half :int = int(_size/2), quarter :int = int(_size/4);
+        if (xx == half && yy == half) {
+            return TYPE_TRIPLE;
+        } else if ((xx == quarter || xx == (half + quarter)) &&
+                   (yy == quarter || yy == (half + quarter))) {
+            return TYPE_DOUBLE;
+        } else {
+            return TYPE_NORMAL;
+        }
+    }
+
+    /**
      * Called when a round starts.
      */
     public function roundDidStart () :void
@@ -96,19 +112,19 @@ public class Model
             }
 
             // remove our tiles from the distributed state (we do this in individual events so that
-            // watchers coming into a game half way through will see valid state), also check to
-            // see if we cleared the center tile
-            var tookCenter :Boolean = false;
-            var ii :int;
+            // watchers coming into a game half way through will see valid state), while we're at
+            // it, compute our score
+            var score :int = used.length - MIN_WORD_LENGTH;
+            var ii :int, mult :int = 1;
             for (ii = 0; ii < used.length; ii++) {
                 // map our local coordinates back to a global position coordinates
                 var xx :int = int(used[ii] % _size);
                 var yy :int = int(used[ii] / _size);
-                if (xx == int(_size/2) && yy == int(_size/2)) {
-                    tookCenter = true;
-                }
+                mult = Math.max(TYPE_MULTIPLIER[getType(xx, yy)], mult);
                 _control.set(Model.BOARD_DATA, null, getPosition(xx, yy));
             }
+            // TODO: report multiplier
+            score *= mult;
 
             // broadcast our our played word as a message
             _control.sendMessage(WORD_PLAY, used);
@@ -116,10 +132,13 @@ public class Model
             // update our score
             var myidx :int = _control.seating.getMyPosition();
             var scores :Array = (_control.get(Model.SCORES) as Array);
-            _control.set(Model.SCORES, scores[myidx] + computeScore(word, tookCenter), myidx);
+            var newscore :int = scores[myidx] + score;
+            if (score > 0) {
+                _control.set(Model.SCORES, newscore, myidx);
+            }
 
-            // if we didn't take the central letter, stop here, otherwise end the game
-            if (!tookCenter) {
+            // if we have not exceeded the winning score, stop here, otherwise end the game
+            if (newscore < WINNING_SCORE) {
                 return;
             }
 
@@ -220,21 +239,20 @@ public class Model
         return -1;
     }
 
-    protected function computeScore (word :String, tookCenter :Boolean) :int
-    {
-        // TODO: fancier scoring
-        var score :int = (word.length - MIN_WORD_LENGTH);
-        if (tookCenter) {
-            score += 5;
-        }
-        return score;
-    }
-
     protected var _size :int;
     protected var _control :WhirledGameControl;
 
     // TODO: get from game config
     protected static const MIN_WORD_LENGTH :int = 4;
+
+    // TODO: get from game config
+    protected static const WINNING_SCORE :int = 15;
+
+    protected static const TYPE_NORMAL :int = 0;
+    protected static const TYPE_DOUBLE :int = 1;
+    protected static const TYPE_TRIPLE :int = 2;
+
+    protected static const TYPE_MULTIPLIER :Array = [ 1, 2, 3 ];
 }
 
 }

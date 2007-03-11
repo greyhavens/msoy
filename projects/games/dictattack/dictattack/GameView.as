@@ -66,6 +66,16 @@ public class GameView extends Sprite
             for (var ii :int = 0; ii < playerCount; ii++) {
                 _shooters[ii].setName(names[ii]);
             }
+
+            var help :TextField = new TextField();
+            help.defaultTextFormat = Content.makeInputFormat();
+            help.x = _board.getPixelSize() + 2*Content.BOARD_BORDER + 25;
+            help.y = 50;
+            help.autoSize = TextFieldAutoSize.LEFT;
+            help.wordWrap = true;
+            help.width = 200;
+            help.htmlText = HELP_CONTENTS;
+            addChild(help);
         }
     }
 
@@ -178,6 +188,12 @@ public class GameView extends Sprite
 
     protected static const SHOOTER_X :Array = [ 0, 0.5, 1, 0.5 ];
     protected static const SHOOTER_Y :Array = [ 0.5, 0, 0.5, 1 ];
+
+    protected static const HELP_CONTENTS :String = "<b>How to Play</b>\n" +
+        "Make words from the row of <b>dark green</b> letters along the bottom of the board. " +
+        "Words score one point for each letter beyond four.\n\n" +
+        "<font color='#0000ff'>Blue</font> squares multiply the word score by two.\n\n" +
+        "<font color='#ff0000'>Red</font> squares multiply the word score by three.";
 }
 
 }
