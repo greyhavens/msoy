@@ -236,7 +236,8 @@ public class MailRepository extends DepotRepository
     protected void testFolders (int memberId)
         throws PersistenceException
     {
-        if (getFolders(memberId).size() == 0) {
+        if (findAll(MailFolderRecord.class,
+                    new Where(MailFolderRecord.OWNER_ID, memberId)).size() == 0) {
             MailFolderRecord record = new MailFolderRecord();
             record.ownerId = memberId;
             record.nextMessageId = 1;
