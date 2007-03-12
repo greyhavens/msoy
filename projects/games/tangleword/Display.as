@@ -24,14 +24,9 @@ import com.threerings.ezgame.EZGameControl;
 
 import com.whirled.WhirledGameControl;
 
-import com.threerings.ezgame.OccupantChangedEvent;
-import com.threerings.ezgame.OccupantChangedListener;
-
-
 /** The Display class represents the game visualization, including UI
     and game state display. */
 public class Display extends Sprite
-    implements OccupantChangedListener
 {
     
     // PUBLIC FUNCTIONS
@@ -178,20 +173,6 @@ public class Display extends Sprite
         _timer.start (seconds);
     }
  
-    // from interface OccupantChangedListener
-    public function occupantEntered (event : OccupantChangedEvent) : void
-    {
-        var name : String = _gameCtrl.getOccupantName (event.occupantId);
-        _gameCtrl.localChat ("New player entered: " + name);
-    }
-
-    // from interface OccupantChangedListener
-    public function occupantLeft (event : OccupantChangedEvent) : void
-    {
-        _gameCtrl.localChat ("Player left.");
-    }
-
-
     // PRIVATE EVENT HANDLERS
 
     private function clickHandler (event : MouseEvent) : void

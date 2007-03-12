@@ -37,7 +37,7 @@ public class TangleWord extends Sprite
             
             // Create MVC elements
             _controller = new Controller (_gameCtrl, null, _rounds); // we'll set the model later...
-            _display = new Display (_gameCtrl, _controller, _rounds, "Tangleword v. 1.1.0b");
+            _display = new Display (_gameCtrl, _controller, _rounds, "Tangleword v. 1.1c");
             _model = new Model (_gameCtrl, _rounds, _display);
             _controller.setModel (_model);                           // ... as in, right here :)
             addChild (_display);
