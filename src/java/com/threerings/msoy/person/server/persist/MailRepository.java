@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.person.server.persist;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +22,7 @@ import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.threerings.msoy.web.data.MailFolder;
 
 /**
  * Manages the persistent store of mail and mailboxes.
@@ -76,6 +78,8 @@ public class MailRepository extends DepotRepository
     public Collection<MailFolderRecord> getFolders (int memberId)
         throws PersistenceException
     {
+        testFolders(memberId);
+
         return findAll(MailFolderRecord.class, new Where(MailFolderRecord.OWNER_ID, memberId));
     }
 
@@ -122,6 +126,8 @@ public class MailRepository extends DepotRepository
      public MailMessageRecord fileMessage (MailMessageRecord record)
          throws PersistenceException
      {
+         testFolders(record.recipientId);
+         
          record.messageId = claimMessageId(record.ownerId, record.folderId, 1);
          insert(record);
          return record;
@@ -205,5 +211,40 @@ public class MailRepository extends DepotRepository
          update(record, MailFolderRecord.NEXT_MESSAGE_ID);
          return firstId;
      }
+
+    // initialize a member's folder structure, if necessary
+    protected void testFolders (int memberId)
+        throws PersistenceException
+    {
+        if (getFolders(memberId).size() == 0) {
+            MailFolderRecord record = new MailFolderRecord();
+            record.ownerId = memberId;
+            record.nextMessageId = 1;
+    
+            record.folderId = MailFolder.INBOX_FOLDER_ID;
+            record.name = "Inbox";
+            createFolder(record);
+    
+            record.folderId = MailFolder.TRASH_FOLDER_ID;
+            record.name = "Trash";
+            createFolder(record);
+    
+            record.folderId = MailFolder.SENT_FOLDER_ID;
+            record.name = "Sent";
+            createFolder(record);
+    
+            MailMessageRecord welcome = new MailMessageRecord();
+            welcome.ownerId = memberId;
+            welcome.folderId = MailFolder.INBOX_FOLDER_ID;
+            welcome.recipientId = memberId;
+            // TODO: We need to be able to send system messages somehow.
+            welcome.senderId = memberId;
+            welcome.subject = "Welcome to Whirled!";
+            welcome.sent = new Timestamp(System.currentTimeMillis());
+            welcome.unread = true;
+            welcome.bodyText = "Welcome to the Whirled mail system!\n";
+            fileMessage(welcome);
+        }
+    }
 
 }

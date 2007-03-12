@@ -124,8 +124,6 @@ public class MailManager
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<MailFolder>>(waiter) {
             public List<MailFolder> invokePersistResult () throws PersistenceException {
-                testFolders(memberId);
-
                 List<MailFolder> result = new ArrayList<MailFolder>();
                 for (MailFolderRecord record : _mailRepo.getFolders(memberId)) {
                     result.add(buildFolder(record));
@@ -166,9 +164,6 @@ public class MailManager
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(waiter) {
             public Void invokePersistResult () throws PersistenceException {
-                testFolders(senderId);
-                testFolders(recipientId);
-                
                 // copy the mail message into record format
                 MailMessageRecord record = new MailMessageRecord();
                 record.senderId = senderId;
@@ -240,41 +235,6 @@ public class MailManager
                 return null;
             }
         });
-    }
-
-    // initialize a member's folder structure, if necessary
-    protected void testFolders (int memberId)
-        throws PersistenceException
-    {
-        if (_mailRepo.getFolders(memberId).size() == 0) {
-            MailFolderRecord record = new MailFolderRecord();
-            record.ownerId = memberId;
-            record.nextMessageId = 1;
-
-            record.folderId = MailFolder.INBOX_FOLDER_ID;
-            record.name = "Inbox";
-            _mailRepo.createFolder(record);
-
-            record.folderId = MailFolder.TRASH_FOLDER_ID;
-            record.name = "Trash";
-            _mailRepo.createFolder(record);
-
-            record.folderId = MailFolder.SENT_FOLDER_ID;
-            record.name = "Sent";
-            _mailRepo.createFolder(record);
-
-            MailMessageRecord welcome = new MailMessageRecord();
-            welcome.ownerId = memberId;
-            welcome.folderId = MailFolder.INBOX_FOLDER_ID;
-            welcome.recipientId = memberId;
-            // TODO: We need to be able to send system messages somehow.
-            welcome.senderId = memberId;
-            welcome.subject = "Welcome to Whirled!";
-            welcome.sent = new Timestamp(System.currentTimeMillis());
-            welcome.unread = true;
-            welcome.bodyText = "Welcome to the Whirled mail system!\n";
-            _mailRepo.fileMessage(welcome);
-        }
     }
 
     // create a MailHeaders object from a a MailMessageRecord
