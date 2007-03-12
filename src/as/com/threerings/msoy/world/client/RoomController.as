@@ -347,6 +347,9 @@ public class RoomController extends SceneController
                     { label: Msgs.GENERAL.get("b.visit_home"),
                       command: MsoyController.GO_MEMBER_HOME,
                       arg: memId },
+                    { label: Msgs.GENERAL.get("b.view_member"),
+                      command: MsoyController.VIEW_MEMBER,
+                      arg: memId },
                     { label: Msgs.GENERAL.get(isFriend ? "b.removeAsFriend"
                                                        : "b.addAsFriend"),
                       command: MsoyController.ALTER_FRIEND,
