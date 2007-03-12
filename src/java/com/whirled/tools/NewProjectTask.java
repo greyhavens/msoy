@@ -161,7 +161,10 @@ public class NewProjectTask extends Task
             while ((line = in.readLine()) != null) {
                 Matcher m = _subre.matcher(line);
                 while (m.find()) {
-                    m.appendReplacement(sline, subs.get(m.group(1)));
+                    // convert single backslashes to double backslashes,
+                    // otherwise appendReplacement will interpret them as escape sequences.
+                    String replacement = subs.get(m.group(1)).replaceAll("\\\\", "\\\\\\\\");
+                    m.appendReplacement(sline, replacement);
                 }
                 m.appendTail(sline);
                 out.write(sline.toString());
