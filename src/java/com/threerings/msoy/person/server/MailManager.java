@@ -3,11 +3,9 @@
 
 package com.threerings.msoy.person.server;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
@@ -180,19 +178,7 @@ public class MailManager
                         throw new PersistenceException(e);
                     }
                 }
-                record.sent = new Timestamp(System.currentTimeMillis());
-
-                // file one copy for ourselves
-                record.ownerId = senderId;
-                record.folderId = MailFolder.SENT_FOLDER_ID;
-                record.unread = false;
-                _mailRepo.fileMessage(record);
-
-                // and make a copy for the recipient
-                record.ownerId = recipientId;
-                record.folderId = MailFolder.INBOX_FOLDER_ID;
-                record.unread = true;
-                _mailRepo.fileMessage(record);
+                _mailRepo.deliverMessage(record);
                 return null;
             }
 

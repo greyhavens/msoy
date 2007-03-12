@@ -5,8 +5,6 @@ package com.threerings.msoy.person.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntListUtil;
@@ -117,6 +115,28 @@ public class MailRepository extends DepotRepository
      {
          insert(record);
          return record;
+     }
+
+     /**
+      * Deliver a message by filing it in the recipient's and the sender's in- and sent boxes
+      * respectively, with ownerId set appropriately. This method modifies the record.
+      */
+     public void deliverMessage (MailMessageRecord record)
+         throws PersistenceException
+     {
+         record.sent = new Timestamp(System.currentTimeMillis());
+
+         // file one copy for ourselves
+         record.ownerId = record.senderId;
+         record.folderId = MailFolder.SENT_FOLDER_ID;
+         record.unread = false;
+         fileMessage(record);
+
+         // and make a copy for the recipient
+         record.ownerId = record.recipientId;
+         record.folderId = MailFolder.INBOX_FOLDER_ID;
+         record.unread = true;
+         fileMessage(record);
      }
 
      /**
