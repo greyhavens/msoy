@@ -159,7 +159,8 @@ public class MsoySprite extends MediaContainer
      */
     public function getMediaHotSpot () :Point
     {
-        return _hotSpot;
+        // the hotspot is null until set-up.
+        return (_hotSpot != null) ? _hotSpot : new Point(0, 0);
     }
 
     /**
@@ -349,6 +350,8 @@ public class MsoySprite extends MediaContainer
         }
 
         super.shutdown(completely);
+
+        _hotSpot = null;
     }
 
     protected function setup (desc :MediaDesc, ident :ItemIdent) :void
@@ -439,8 +442,9 @@ public class MsoySprite extends MediaContainer
         super.contentDimensionsUpdated();
 
         // update the hotspot
-        _hotSpot.x = _w / 2;
-        _hotSpot.y = _h;
+        if (_hotSpot == null) {
+            _hotSpot = new Point(_w / 2, _h);
+        }
         // we'll want to call locationUpdated() now, but it's done for us
         // as a result of calling updateMediaPosition(), below.
 
@@ -539,9 +543,8 @@ public class MsoySprite extends MediaContainer
             return;
         }
 
-        if (x != _hotSpot.x || y != _hotSpot.y) {
-            _hotSpot.x = x;
-            _hotSpot.y = y;
+        if (_hotSpot == null || x != _hotSpot.x || y != _hotSpot.y) {
+            _hotSpot = new Point(x, y);
             if (!_editing) {
                 locationUpdated();
             }
@@ -568,7 +571,7 @@ public class MsoySprite extends MediaContainer
     protected var _ident :ItemIdent;
 
     /** The media hotspot, which should be used to position it. */
-    protected var _hotSpot :Point = new Point(0, 0);
+    protected var _hotSpot :Point = null;
 
     protected var _fxScaleX :Number = 1;
     protected var _fxScaleY :Number = 1;
