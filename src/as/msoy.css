@@ -25,6 +25,7 @@ Panel {
   backgroundColor: #ffffff;
   borderColor: #d6c09c;
   titleStyleName: "msoyTitleStyle";
+  modalTransparencyBlur: 0;
 }
 
 .msoyTitleStyle {
