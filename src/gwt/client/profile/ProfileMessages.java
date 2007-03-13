@@ -16,14 +16,6 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String search();
 
   /**
-   * Translated "(pending their acceptance)".
-   * 
-   * @return translated "(pending their acceptance)"
-   * @gwt.key pendingThem
-   */
-  String pendingThem();
-
-  /**
    * Translated "Last online: {0}".
    * 
    * @return translated "Last online: {0}"
@@ -46,14 +38,6 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key homepage
    */
   String homepage();
-
-  /**
-   * Translated "(pending your acceptance)".
-   * 
-   * @return translated "(pending your acceptance)"
-   * @gwt.key pendingYou
-   */
-  String pendingYou();
 
   /**
    * Translated "Log in to view your profile.".

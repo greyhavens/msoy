@@ -63,7 +63,7 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public byte getFriendStatus (WebCreds creds, final int memberId)
+    public boolean getFriendStatus (WebCreds creds, final int memberId)
         throws ServiceException
     {
         try {

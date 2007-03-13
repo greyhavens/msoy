@@ -48,6 +48,9 @@ import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.web.data.FriendEntry;
+import com.threerings.msoy.web.data.FriendInviteObject;
+import com.threerings.msoy.web.data.MailFolder;
+import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.server.ServletWaiter;
 
@@ -56,6 +59,7 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.WorldMemberInfo;
 import com.threerings.msoy.world.server.RoomManager;
 
+import com.threerings.msoy.person.server.persist.MailMessageRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MemberNameRecord;
@@ -283,7 +287,21 @@ public class MemberManager
                 lner.requestFailed(cause.getMessage());
             }
         };
-        alterFriend(user, user.getMemberId(), friendId, add, rl);
+        if (add) {
+            // an 'add friend' request turns into an invitational mail message
+            MailMessageRecord mailRecord = new MailMessageRecord();
+            mailRecord.senderId = user.memberName.getMemberId();
+            mailRecord.recipientId = friendId;
+            mailRecord.subject = "Be my Friend";
+            mailRecord.payloadType = MailPayload.TYPE_FRIEND_INVITE;
+
+            MsoyServer.mailMan.deliverMessage(
+                user.memberName.getMemberId(), friendId, "Be My Friend",
+                null, new FriendInviteObject(), rl);
+
+        } else {
+            alterFriend(user, user.getMemberId(), friendId, add, rl);
+        }
     }
 
     // from interface MemberProvider
@@ -600,7 +618,7 @@ public class MemberManager
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("alterFriend", lner) {
             public Void invokePersistResult () throws PersistenceException {
                 if (add) {
-                    _entry = _memberRepo.inviteOrApproveFriend(userId, friendId);
+                    _entry = _memberRepo.inviteFriend(userId, friendId);
                     if (user != null) {
                         _userName = user.memberName;
                     } else {
@@ -634,24 +652,13 @@ public class MemberManager
                 } else {
                     // add or update the friend/status
                     _entry.online = (friendObj != null);
-                    byte oppStatus = getOppositeFriendStatus(_entry.status);
                     if (oldEntry == null) {
                         if (user != null) {
                             user.addToFriends(_entry);
                         }
                         if (friendObj != null) {
-                            FriendEntry opp = new FriendEntry(_userName, user != null, oppStatus);
+                            FriendEntry opp = new FriendEntry(_userName, user != null);
                             friendObj.addToFriends(opp);
-                        }
-
-                    } else {
-                        if (user != null) {
-                            user.updateFriends(_entry);
-                        }
-                        if (friendObj != null) {
-                            FriendEntry opp = friendObj.friends.get(userId);
-                            opp.status = oppStatus;
-                            friendObj.updateFriends(opp);
                         }
                     }
                 }
@@ -671,23 +678,6 @@ public class MemberManager
     {
         if (caller.isGuest()) {
             throw new InvocationException(InvocationCodes.ACCESS_DENIED);
-        }
-    }
-
-    /**
-     * Return the status of a friendship as viewed from the other side.
-     */
-    protected byte getOppositeFriendStatus (byte status)
-    {
-        switch (status) {
-        case FriendEntry.PENDING_MY_APPROVAL:
-            return FriendEntry.PENDING_THEIR_APPROVAL;
-
-        case FriendEntry.PENDING_THEIR_APPROVAL:
-            return FriendEntry.PENDING_MY_APPROVAL;
-
-        default:
-            return FriendEntry.FRIEND;
         }
     }
 

@@ -18,26 +18,16 @@ public class FriendEntry
     /** Is the friend online? */
     public boolean online;
 
-    /** The status of this friend (they might not be a friend yet). */
-    public byte status;
-
-    /** Status constants. */
-    public static final byte NONE = -1;
-    public static final byte FRIEND = 0;
-    public static final byte PENDING_MY_APPROVAL = 1;
-    public static final byte PENDING_THEIR_APPROVAL = 2;
-
     /** Suitable for deserialization. */
     public FriendEntry ()
     {
     }
 
     /** Mr. Constructor. */
-    public FriendEntry (MemberName name, boolean online, byte status)
+    public FriendEntry (MemberName name, boolean online)
     {
         this.name = name;
         this.online = online;
-        this.status = status;
     }
 
     /**
@@ -58,10 +48,6 @@ public class FriendEntry
     public int compareTo (Object other)
     {
         FriendEntry that = (FriendEntry) other;
-        // real friends go above not-yet-friends (of whatever kind)
-        if ((this.status == FRIEND) != (that.status == FRIEND)) {
-            return (this.status == FRIEND) ? -1 : 1;
-        }
         // online folks show up above offline folks
         if (this.online != that.online) {
             return this.online ? -1 : 1;

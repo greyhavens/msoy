@@ -93,11 +93,7 @@ public class FriendsList extends MsoyList
     override public function itemToIcon (obj :Object) :Class
     {
         var fe :FriendEntry = (obj as FriendEntry);
-        if (fe.status == FriendEntry.FRIEND) {
-            return fe.online ? OpenEye : CloseEye;
-        } else {
-            return fe.online ? OpenEyePending : CloseEyePending;
-        }
+        return fe.online ? OpenEye : CloseEye;
     }
 
     override public function itemToDataTip (obj :Object) :String

@@ -19,22 +19,12 @@ public class FriendEntry
     /** Is the friend online? */
     public var online :Boolean;
 
-    /** The status of this friend. */
-    public var status :int;
-
-    /** Status constants. */
-    public static const NONE :int = -1;
-    public static const FRIEND :int = 0;
-    public static const PENDING_MY_APPROVAL :int = 1;
-    public static const PENDING_THEIR_APPROVAL :int = 2;
-
     /** Mr. Constructor. */
     public function FriendEntry (
-            name :MemberName = null, online :Boolean = false, status :int = 0)
+            name :MemberName = null, online :Boolean = false)
     {
         this.name = name;
         this.online = online;
-        this.status = status;
     }
 
     public function getMemberId () :int
@@ -52,10 +42,6 @@ public class FriendEntry
     public function compareTo (other :Object) :int
     {
         var that :FriendEntry = (other as FriendEntry);
-        // real friends go above not-yet-friends (of whatever kind)
-        if ((this.status == FRIEND) != (that.status == FRIEND)) {
-            return (this.status == FRIEND) ? -1 : 1;
-        }
         // online folks show up above offline folks
         if (this.online != that.online) {
             return this.online ? -1 : 1;
@@ -82,7 +68,6 @@ public class FriendEntry
     {
         out.writeObject(name);
         out.writeBoolean(online);
-        out.writeByte(status);
     }
 
     // from interface Streamable
@@ -90,7 +75,6 @@ public class FriendEntry
     {
         name = (ins.readObject() as MemberName);
         online = ins.readBoolean();
-        status = ins.readByte();
     }
 
     public function toString () :String

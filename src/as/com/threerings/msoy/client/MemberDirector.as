@@ -38,7 +38,11 @@ public class MemberDirector extends BasicDirector
      */
     public function alterFriend (friendId :int, makeFriend :Boolean) :void
     {
-        _msvc.alterFriend(_bctx.getClient(), friendId, makeFriend, new ReportingListener(_bctx));
+        var listener :ReportingListener = makeFriend ?
+            new ReportingListener(_bctx, "general", null, "m.friend_invited") :
+            new ReportingListener(_bctx);
+
+        _msvc.alterFriend(_bctx.getClient(), friendId, makeFriend, listener);
     }
 
     /**
@@ -55,11 +59,7 @@ public class MemberDirector extends BasicDirector
         var name :String = event.getName();
         if (name == MemberObject.FRIENDS) {
             var entry :FriendEntry = (event.getEntry() as FriendEntry);
-            switch (entry.status) {
-            case FriendEntry.PENDING_MY_APPROVAL:
-                approveFriend(entry.name);
-                break;
-            }
+            _bctx.displayInfo("general", MessageBundle.tcompose("m.friend_added", entry.name));
         }
     }
 
@@ -70,18 +70,8 @@ public class MemberDirector extends BasicDirector
         if (name == MemberObject.FRIENDS) {
             var entry :FriendEntry = (event.getEntry() as FriendEntry);
             var oldEntry :FriendEntry = (event.getOldEntry() as FriendEntry);
-            var msgKey :String = null;
-            if (entry.status == FriendEntry.FRIEND) {
-                if (oldEntry.status != FriendEntry.FRIEND) {
-                    msgKey = "m.friend_confirmed";
-
-                } else if (entry.online && !oldEntry.online) {
-                    msgKey = "m.friend_online";
-                }
-            }
-            if (msgKey != null) {
-                _bctx.displayInfo("general",
-                    MessageBundle.tcompose(msgKey, entry.name));
+            if (entry.online && !oldEntry.online) {
+                _bctx.displayInfo("general", MessageBundle.tcompose("m.friend_online", entry.name));
             }
         }
     }
@@ -92,21 +82,7 @@ public class MemberDirector extends BasicDirector
         var name :String = event.getName();
         if (name == MemberObject.FRIENDS) {
             var oldEntry :FriendEntry = (event.getOldEntry() as FriendEntry);
-            var msgKey :String;
-            switch (oldEntry.status) {
-            case FriendEntry.FRIEND:
-                msgKey = "m.friend_removed";
-                break;
-
-            case FriendEntry.PENDING_THEIR_APPROVAL:
-                // TODO: we don't want this to be reported when WE initiate the removal
-                msgKey = "m.friend_denied";
-                break;
-
-            default:
-                return; // do nothing in every other case
-            }
-            _bctx.displayInfo("general", MessageBundle.tcompose(msgKey, oldEntry.name));
+            _bctx.displayInfo("general", MessageBundle.tcompose("m.friend_removed", oldEntry.name));
         }
     }
 

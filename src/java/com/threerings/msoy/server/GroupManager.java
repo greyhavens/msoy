@@ -5,8 +5,6 @@ package com.threerings.msoy.server;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
-import java.sql.Timestamp;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
@@ -15,10 +13,8 @@ import com.samskivert.util.ResultListener;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.GroupExtras;
-import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.GroupName;
-import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
@@ -219,7 +215,7 @@ public class GroupManager
         gm.group = new GroupName(groupName, groupId);
         gm.rank = groupRank;
         mobj.addToGroups(gm);
-    } 
+    }
 
     /** Provides access to persistent group data. */
     protected GroupRepository _groupRepo;

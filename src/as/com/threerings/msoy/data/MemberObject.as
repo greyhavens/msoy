@@ -148,16 +148,11 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
-     * Get a sorted list of friends that are "real" friends
-     * (the friendship is not in a pending state).
+     * Get a sorted list of friends.
      */
     public function getSortedEstablishedFriends () :Array
     {
         var friends :Array = this.friends.toArray();
-        friends = friends.filter(
-            function (fe :FriendEntry, index :int, arr :Array) :Boolean {
-                return (fe.status == FriendEntry.FRIEND);
-            });
         friends = friends.sort(
             function (fe1 :FriendEntry, fe2 :FriendEntry) :int {
                 return MemberName.BY_DISPLAY_NAME(fe1.name, fe2.name);

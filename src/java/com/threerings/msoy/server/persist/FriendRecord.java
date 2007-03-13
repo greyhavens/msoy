@@ -30,15 +30,9 @@ public class FriendRecord extends PersistentRecord
     public static final ColumnExp INVITEE_ID_C =
         new ColumnExp(FriendRecord.class, INVITEE_ID);
 
-    /** The column identifier for the {@link #status} field. */
-    public static final String STATUS = "status";
-
-    /** The qualified column identifier for the {@link #status} field. */
-    public static final ColumnExp STATUS_C =
-        new ColumnExp(FriendRecord.class, STATUS);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The member id of the inviter. */
     @Id
@@ -47,7 +41,4 @@ public class FriendRecord extends PersistentRecord
     /** The member id of the invitee. */
     @Id
     public int inviteeId;
-
-    /** true if this friendship has been agreed to, false if it pends. */
-    public boolean status;
 }

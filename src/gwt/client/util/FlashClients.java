@@ -77,8 +77,6 @@ public class FlashClients
             friends[ii].name = new MemberName(getStringElement(result, 3*ii),
                                               getIntElement(result, 3*ii+1));
             friends[ii].online = getBooleanElement(result, 3*ii+2);
-            // status is always full-fledged friend
-            friends[ii].status = FriendEntry.FRIEND;
         }
         return friends;
     }

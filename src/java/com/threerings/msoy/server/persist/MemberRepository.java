@@ -66,6 +66,28 @@ public class MemberRepository extends DepotRepository
 
         // TEMP
         _ctx.registerMigration(MemberRecord.class, new EntityMigration.Retype(4, "lastSession"));
+
+        _ctx.registerMigration(FriendRecord.class, new EntityMigration(2) {
+            public int invoke (Connection conn) throws SQLException {
+                if (!JDBCUtil.tableContainsColumn(conn, _tableName, "status")) {
+                    // we'll accept this inconsistency
+                    log.warning(_tableName + ".status already dropped.");
+                    return 0;
+                }
+
+                Statement stmt = conn.createStatement();
+                try {
+                    log.info("Deleting pending friends and dropping 'status' from " + _tableName);
+                    int n = stmt.executeUpdate("delete from " + _tableName + " where status = 0");
+                    n += stmt.executeUpdate("alter table " + _tableName + " drop column status");
+                    return n;
+                } finally {
+                    stmt.close();
+                }
+            }
+            
+        });
+            
         // END TEMP
 
         _flowRepo = new FlowRepository(_ctx);
@@ -416,7 +438,6 @@ public class MemberRepository extends DepotRepository
             new FromOverride(MemberRecord.class),
             OrderBy.descending(MemberRecord.LAST_SESSION),
             new Join(FriendRecord.class, joinCondition),
-            new Where(new Equals(FriendRecord.STATUS_C, true)),
             new FieldOverride(NeighborFriendRecord.CREATED, MemberRecord.CREATED_C),
             new FieldOverride(NeighborFriendRecord.FLOW, MemberRecord.FLOW_C),
             new FieldOverride(NeighborFriendRecord.HOME_SCENE_ID, MemberRecord.HOME_SCENE_ID_C),
@@ -464,7 +485,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Determine what the friendship status is between one member and another.
      */
-    public byte getFriendStatus (int firstId, int secondId)
+    public boolean getFriendStatus (int firstId, int secondId)
         throws PersistenceException
     {
         Collection<FriendRecord> friends = findAll(
@@ -473,18 +494,7 @@ public class MemberRepository extends DepotRepository
                                              new Equals(FriendRecord.INVITEE_ID, secondId)),
                                      new And(new Equals(FriendRecord.INVITER_ID, secondId),
                                              new Equals(FriendRecord.INVITEE_ID, firstId))))));
-        if (friends.size() == 0) {
-            return FriendEntry.NONE;
-        }
-        if (friends.size() > 1) {
-            log.warning("Friendship status query returned " + friends.size() + " records.");
-        }
-        FriendRecord record = friends.iterator().next();
-        if (record.status) {
-            return FriendEntry.FRIEND;
-        }
-        return record.inviterId == firstId ?
-            FriendEntry.PENDING_THEIR_APPROVAL : FriendEntry.PENDING_MY_APPROVAL;
+        return friends.size() > 0;
     }
 
     /**
@@ -505,7 +515,7 @@ public class MemberRepository extends DepotRepository
             public List<FriendEntry> invoke (Connection conn)
                 throws SQLException
             {
-                String query = "select name, memberId, inviterId, status " +
+                String query = "select name, memberId, inviterId " +
                     "from FriendRecord straight join MemberRecord where (" +
                     "(inviterId=" + memberId + " and memberId=inviteeId) or " +
                     "(inviteeId=" + memberId + " and memberId=inviterId))";
@@ -516,12 +526,7 @@ public class MemberRepository extends DepotRepository
                     while (rs.next()) {
                         MemberName name = new MemberName(
                             rs.getString(1), rs.getInt(2));
-                        boolean established = rs.getBoolean(4);
-                        byte status = established ? FriendEntry.FRIEND
-                            : ((memberId == rs.getInt(3))
-                                ? FriendEntry.PENDING_THEIR_APPROVAL
-                                : FriendEntry.PENDING_MY_APPROVAL);
-                        list.add(new FriendEntry(name, false, status));
+                        list.add(new FriendEntry(name, false));
                     }
                     return list;
 
@@ -548,7 +553,7 @@ public class MemberRepository extends DepotRepository
      * @return the new FriendEntry record for this friendship (modulo online information), or null
      * if there was an error finding the friend.
      */
-    public FriendEntry inviteOrApproveFriend (int memberId,  int otherId)
+    public FriendEntry inviteFriend (int memberId,  int otherId)
         throws PersistenceException
     {
         // first load the member record of the potential friend
@@ -572,28 +577,14 @@ public class MemberRepository extends DepotRepository
         _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, memberId));
         _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, otherId));
 
-        if (existing.size() > 0) {
-            FriendRecord rec = existing.get(0);
-            if (rec.inviterId == otherId) {
-                // we're responding to an invite
-                rec.status = true;
-                update(rec);
-                return new FriendEntry(other.getName(), false, FriendEntry.FRIEND);
-
-            } else {
-                // we've already done all we can
-                return new FriendEntry(other.getName(), false, rec.status ? FriendEntry.FRIEND :
-                                       FriendEntry.PENDING_THEIR_APPROVAL);
-            }
-
-        } else {
-            // there is no connection yet: invite the other
+        if (existing.size() == 0) {
+            // there is no connection yet: add the other
             FriendRecord rec = new FriendRecord();
             rec.inviterId = memberId;
             rec.inviteeId = otherId;
             insert(rec);
-            return new FriendEntry(other.getName(), false, FriendEntry.PENDING_THEIR_APPROVAL);
         }
+        return new FriendEntry(other.getName(), false);
     }
 
     /**

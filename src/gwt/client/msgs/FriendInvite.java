@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 
-import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.FriendInviteObject;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
@@ -102,7 +101,7 @@ public abstract class FriendInvite
                 CMsgs.membersvc.getFriendStatus(
                     CMsgs.creds, _message.headers.sender.getMemberId(), new AsyncCallback() {
                        public void onSuccess (Object result) {
-                           buildUI(((Byte) result).byteValue());
+                           buildUI(((Boolean) result).booleanValue());
                        }
                        public void onFailure (Throwable caught) {
                            _status.setText(CMsgs.serverError(caught));
@@ -110,16 +109,11 @@ public abstract class FriendInvite
                     });
             }
             
-            protected void buildUI (byte friendStatus)
+            protected void buildUI (boolean friendStatus)
             {
                 _content.clear();
-                if (friendStatus == FriendEntry.FRIEND) {
+                if (friendStatus) {
                     _content.add(new InlineLabel("This invitation has been accepted."));
-                    return;
-                }
-                if (friendStatus == FriendEntry.NONE ||
-                    friendStatus == FriendEntry.PENDING_THEIR_APPROVAL) {
-                    _content.add(new InlineLabel("This invitation has been rejected."));
                     return;
                 }
                 if (_thirdPerson) {
