@@ -102,8 +102,14 @@ public class PhotoBox extends Sprite
         _loader.mouseEnabled = true;
         _loader.mouseChildren = true;
         _loader.addEventListener(MouseEvent.CLICK, handleClick);
+        _loader.addEventListener(MouseEvent.ROLL_OVER, handleMouseRoll);
+        _loader.addEventListener(MouseEvent.ROLL_OUT, handleMouseRoll);
         _loader.y = 50;
         addChild(_loader);
+
+        _overlay = new Sprite();
+        _overlay.y = _loader.y;
+        addChild(_overlay);
     }
 
     /**
@@ -165,6 +171,11 @@ public class PhotoBox extends Sprite
         // from now.
         if (_photos != null) {
             _sendTimer.reset();
+            // when there are photos queued, throttle back the send timer
+            // unfortunately this favors new instances, which won't
+            // throttle as quickly because the other throttling instances
+            // won't be filling their queue as quickly
+            _sendTimer.delay = 7 * Math.max(1, _displayPhotos.length);
             _sendTimer.start();
         }
     }
@@ -312,6 +323,7 @@ public class PhotoBox extends Sprite
         }
         _loader.unload();
         _displayPageURL = null;
+        handleMouseRoll(null);
     }
 
     /**
@@ -326,6 +338,20 @@ public class PhotoBox extends Sprite
             flash.net.navigateToURL(new URLRequest(_displayPageURL));
         } catch (err :Error) {
             trace("Oh my gosh: " + err);
+        }
+    }
+
+    protected function handleMouseRoll (event :MouseEvent) :void
+    {
+        var draw :Boolean = (event == null || event.type == MouseEvent.ROLL_OVER) &&
+            (_displayPageURL != null);
+
+        with (_overlay.graphics) {
+            clear();
+            if (draw) {
+                lineStyle(1, 0xFF4040);
+                drawRect(0, 0, _loader.width - 1, _loader.height - 1);
+            }
         }
     }
 
@@ -360,6 +386,9 @@ public class PhotoBox extends Sprite
 
     /** The page url for the photo we're currently showing. */
     protected var _displayPageURL :String;
+
+    /** A sprite drawn on top of everything, for use in drawing UI. */
+    protected var _overlay :Sprite;
 
 //    protected var _hasFocus :Boolean;
 //
