@@ -4,22 +4,22 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="WhirledGameControl,com.whirled.WhirledGameControl,getAvailableFlow,awardFlow,setChatEnabled" name="keywords">
-<title>com.whirled.WhirledGameControl</title>
+<meta content="AVRGameControl,com.whirled.AVRGameControl,memoryChanged,enteredRoom,leftRoom,occupantEntered,occupantLeft,occupantMoved,lookupMemory,updateMemory,getOccupantLocation,populateProperties,memoryChanged_v1,enteredRoom_v1,leftRoom_v1,occupantEntered_v1,occupantLeft_v1,occupantMoved_v1" name="keywords">
+<title>com.whirled.AVRGameControl</title>
 </head>
 <body>
 <script type="text/javascript" language="javascript" src="../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../cookies.js"></script><script type="text/javascript" language="javascript">
 <!--
-				asdocTitle = 'WhirledGameControl - API Documentation';
+				asdocTitle = 'AVRGameControl - API Documentation';
 				var baseRef = '../../';
 				window.onload = configPage;
 			--></script>
 <table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
 <tr>
-<td align="left" class="titleTableTitle">API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../all-classes.html')" href="../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../all-classes.html')" href="../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../index-list.html')" href="../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../index.html?com/whirled/WhirledGameControl.html&amp;com/whirled/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../images/logo.jpg"></td>
+<td align="left" class="titleTableTitle">API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../all-classes.html')" href="../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../all-classes.html')" href="../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../index-list.html')" href="../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../index.html?com/whirled/AVRGameControl.html&amp;com/whirled/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
-<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;WhirledGameControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a></td>
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;AVRGameControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a></td>
 </tr>
 <tr class="titleTableRow3">
 <td colspan="2">&nbsp;</td>
@@ -27,7 +27,7 @@
 </table>
 <script type="text/javascript" language="javascript">
 <!--
-if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class WhirledGameControl"); titleBar_setSubNav(false,true,false,false,true,false,true,false,false,false,false,false,false,false);}
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class AVRGameControl"); titleBar_setSubNav(false,true,false,false,true,false,true,false,false,false,false,false,false,false);}
 --></script>
 <div class="MainContent">
 <table cellspacing="0" cellpadding="0" class="classHeaderTable">
@@ -35,17 +35,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.whirled</a></td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class WhirledGameControl</td>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class AVRGameControl</td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">WhirledGameControl <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="../threerings/ezgame/BaseControl.html">BaseControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
-</tr>
-<tr>
-<td class="classHeaderTableLabel">Subclasses</td><td><a href="../whirled/AVRGameControl.html">AVRGameControl</a></td>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">AVRGameControl <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="WhirledGameControl.html">WhirledGameControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="../threerings/ezgame/BaseControl.html">BaseControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
 </tr>
 </table>
 <p></p>
- Adds whirled-specific controls to EZGameControl
+ This file should be included by AVR games so that they can communicate
+ with the whirled.
+ AVRGame means: Alternate Virtual Reality Game, and refers to games
+ played within the whirled environment.
  <p></p>
 <br>
 <hr>
@@ -61,7 +61,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a onclick="javascript:setInheritedVisible(true,'Property');" href="#propertySummary" class="showHideLink"><img src="../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Public Properties</a>
 </div>
 </div>
-<table id="summaryTableProperty" class="summaryTable hideInheritedProperty" cellpadding="3" cellspacing="0">
+<table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
@@ -71,6 +71,36 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Get the CollectionsControl, which contains methods for utilizing the server to dispatch
      private information.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#enteredRoom">enteredRoom</a> : Function<div class="summaryTableDescription">
+     A function that will get called when the user enters a room.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#leftRoom">leftRoom</a> : Function<div class="summaryTableDescription">
+     A function that will get called when the user leaves a room.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#memoryChanged">memoryChanged</a> : Function<div class="summaryTableDescription">
+     A function that is called when the game's memory has changed.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#occupantEntered">occupantEntered</a> : Function<div class="summaryTableDescription">
+     A function that will get called when an occupant enters the room.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#occupantLeft">occupantLeft</a> : Function<div class="summaryTableDescription">
+     A function that will get called when an occupant leaves the room.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#occupantMoved">occupantMoved</a> : Function<div class="summaryTableDescription">
+     A function that will get called when an occupant moves to a new location.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="hideInheritedProperty">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#seating">seating</a> : <a href="../threerings/ezgame/SeatingControl.html">SeatingControl</a>
@@ -138,9 +168,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#WhirledGameControl()">WhirledGameControl</a>(disp:DisplayObject)</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">WhirledGameControl</td>
+<a class="signatureLink" href="#AVRGameControl()">AVRGameControl</a>(disp:DisplayObject)</div>
+<div class="summaryTableDescription">
+     Create a world game interface.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -157,13 +188,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Returns true if we are in control of this game.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
 </tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#awardFlow()">awardFlow</a>(amount:int):void</div>
+<a class="signatureLink" href="WhirledGameControl.html#awardFlow()">awardFlow</a>(amount:int):void</div>
 <div class="summaryTableDescription">
      Award flow to this occupant.</div>
-</td><td class="summaryTableOwnerCol">WhirledGameControl</td>
+</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -229,14 +260,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Get a property from data.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
 </tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getAvailableFlow()">getAvailableFlow</a>():int</div>
+<a class="signatureLink" href="WhirledGameControl.html#getAvailableFlow()">getAvailableFlow</a>():int</div>
 <div class="summaryTableDescription">
      Get the amount of flow that's <i>currently</i> available to award to the occupant who has
      instantiated this game control.</div>
-</td><td class="summaryTableOwnerCol">WhirledGameControl</td>
+</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -269,6 +300,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Returns this client's player id.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getOccupantLocation()">getOccupantLocation</a>(occupantId:int):Array</div>
+<div class="summaryTableDescription">
+     Returns the specified occupant's current location in the scene.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -346,6 +385,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      observers in the game room.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#lookupMemory()">lookupMemory</a>(key:String, defval:Object):Object</div>
+<div class="summaryTableDescription">
+     Returns the value associated with the supplied key in this game's memory.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
@@ -386,13 +433,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Set a property that will be distributed.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
 </tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#setChatEnabled()">setChatEnabled</a>(enabled:Boolean):void</div>
+<a class="signatureLink" href="WhirledGameControl.html#setChatEnabled()">setChatEnabled</a>(enabled:Boolean):void</div>
 <div class="summaryTableDescription">
      Enables or disables chat.</div>
-</td><td class="summaryTableOwnerCol">WhirledGameControl</td>
+</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -443,6 +490,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Unregister the specified object from receiving events.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#updateMemory()">updateMemory</a>(key:String, value:Object):Boolean</div>
+<div class="summaryTableDescription">
+     Requests that this game's memory be updated with the supplied key/value pair.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
 </table>
 </div>
 <a name="protectedMethodSummary"></a>
@@ -456,7 +511,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a onclick="javascript:setInheritedVisible(true,'ProtectedMethod');" href="#protectedMethodSummary" class="showHideLink"><img src="../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Protected Methods</a>
 </div>
 </div>
-<table id="summaryTableProtectedMethod" class="summaryTable hideInheritedProtectedMethod" cellpadding="3" cellspacing="0">
+<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
@@ -476,6 +531,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Throw an error if we're not connected.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#enteredRoom_v1()">enteredRoom_v1</a>():void</div>
+<div class="summaryTableDescription">
+     Called when the user enters a room.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
 <tr class="hideInheritedProtectedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
@@ -484,14 +547,52 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Internal method that is called whenever the mouse clicks our root.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
 </tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#populateProperties()">populateProperties</a>(o:Object):void</div>
+<a class="signatureLink" href="#leftRoom_v1()">leftRoom_v1</a>():void</div>
 <div class="summaryTableDescription">
-     Populate any properties or functions we want to expose to the other side of the ezgame
-     security boundary.</div>
-</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+     Called when the user leaves the room.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#memoryChanged_v1()">memoryChanged_v1</a>(key:String, value:Object):void</div>
+<div class="summaryTableDescription">
+     Called when one of this item's memory entries has changed.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#occupantEntered_v1()">occupantEntered_v1</a>(occupant:int):void</div>
+<div class="summaryTableDescription">
+     Called when an occupant enters the room.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#occupantLeft_v1()">occupantLeft_v1</a>(occupant:int):void</div>
+<div class="summaryTableDescription">
+     Called when an occupant leaves the room.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#occupantMoved_v1()">occupantMoved_v1</a>(occupant:int):void</div>
+<div class="summaryTableDescription">
+     Called when an occupant moves to a new location within the room.</div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#populateProperties()">populateProperties</a>(o:Object):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="hideInheritedProtectedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -606,16 +707,86 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 showHideInherited();
 --></script>
 <div class="MainContent">
-<a name="constructorDetail"></a>
-<div class="detailSectionHeader">Constructor detail</div>
-<a name="WhirledGameControl()"></a>
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="enteredRoom"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">WhirledGameControl</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+<td class="detailHeaderName">enteredRoom</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function WhirledGameControl(disp:DisplayObject)</code><span class="label">Parameters</span>
+<code>public var enteredRoom:Function</code><p>
+     A function that will get called when the user enters a room.
+     </p></div>
+<a name="leftRoom"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">leftRoom</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var leftRoom:Function</code><p>
+     A function that will get called when the user leaves a room.
+     </p></div>
+<a name="memoryChanged"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">memoryChanged</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var memoryChanged:Function</code><p>
+     A function that is called when the game's memory has changed. It should have the following
+     signature:
+          <pre>function (key :String, value :Object) :void</pre>
+     
+     <code>key</code> will be the key that was modified or null if we have just been initialized
+     and we are being provided with our memory for the first time. <code>value</code> will be the
+     value associated with that key if key is non-null, or null.
+     </p></div>
+<a name="occupantEntered"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">occupantEntered</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var occupantEntered:Function</code><p>
+     A function that will get called when an occupant enters the room.
+     </p></div>
+<a name="occupantLeft"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">occupantLeft</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var occupantLeft:Function</code><p>
+     A function that will get called when an occupant leaves the room.
+     </p></div>
+<a name="occupantMoved"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">occupantMoved</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var occupantMoved:Function</code><p>
+     A function that will get called when an occupant moves to a new location.
+     </p></div>
+<a name="constructorDetail"></a>
+<div class="detailSectionHeader">Constructor detail</div>
+<a name="AVRGameControl()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">AVRGameControl</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function AVRGameControl(disp:DisplayObject)</code><p>
+     Create a world game interface. The display object is your world game.
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">disp</span>:DisplayObject</code></td>
@@ -624,57 +795,196 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="awardFlow()"></a>
+<a name="enteredRoom_v1()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">awardFlow</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">enteredRoom_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function awardFlow(amount:int):void</code><p>
-     Award flow to this occupant. See getAvailableFlow(). NOTE: awards must be completed before
-     the game is ended.
-     </p><span class="label">Parameters</span>
+<code>protected function enteredRoom_v1():void</code><p>
+     Called when the user enters a room.
+     </p></div>
+<a name="getOccupantLocation()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getOccupantLocation</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getOccupantLocation(occupantId:int):Array</code><p>
+     Returns the specified occupant's current location in the scene.
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">amount</span>:int</code></td>
+<td width="20px"></td><td><code><span class="label">occupantId</span>:int</code></td>
 </tr>
 </table>
-</div>
-<a name="getAvailableFlow()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">getAvailableFlow</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function getAvailableFlow():int</code><p>
-     Get the amount of flow that's <i>currently</i> available to award to the occupant who has
-     instantiated this game control.  In other words, your game is only responsible for granting
-     flow to the occupantId returned by getMyId(). You should grant flow based on the performance
-     in the game, but can also grant flow to non-players.
-     </p><p></p>
+<p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>int</code></td>
+<td width="20"></td><td><code>Array</code> &mdash; an array containing [ x, y, z ]. x, y, and z are Numbers between 0 and 1 or null if
+     the location is unknown.
+     </td>
 </tr>
 </table>
 </div>
-<a name="setChatEnabled()"></a>
+<a name="leftRoom_v1()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">setChatEnabled</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">leftRoom_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function setChatEnabled(enabled:Boolean):void</code><p>
-     Enables or disables chat. When chat is disabled, it is not visible which is useful for games
-     in which the chat overlay obstructs the view during play.
+<code>protected function leftRoom_v1():void</code><p>
+     Called when the user leaves the room.
+     </p></div>
+<a name="lookupMemory()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">lookupMemory</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function lookupMemory(key:String, defval:Object):Object</code><p>
+     Returns the value associated with the supplied key in this game's memory. If no value is
+     mapped in the game's memory, the supplied default value will be returned.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">defval</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code> &mdash; the value for the specified key from this game's memory or the supplied default.
+     </td>
+</tr>
+</table>
+</div>
+<a name="memoryChanged_v1()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">memoryChanged_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function memoryChanged_v1(key:String, value:Object):void</code><p>
+     Called when one of this item's memory entries has changed.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">enabled</span>:Boolean</code></td>
+<td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
+</tr>
+</table>
+</div>
+<a name="occupantEntered_v1()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">occupantEntered_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function occupantEntered_v1(occupant:int):void</code><p>
+     Called when an occupant enters the room.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">occupant</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="occupantLeft_v1()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">occupantLeft_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function occupantLeft_v1(occupant:int):void</code><p>
+     Called when an occupant leaves the room.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">occupant</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="occupantMoved_v1()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">occupantMoved_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function occupantMoved_v1(occupant:int):void</code><p>
+     Called when an occupant moves to a new location within the room.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">occupant</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="populateProperties()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">populateProperties</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected override function populateProperties(o:Object):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">o</span>:Object</code></td>
+</tr>
+</table>
+</div>
+<a name="updateMemory()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">updateMemory</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function updateMemory(key:String, value:Object):Boolean</code><p>
+     Requests that this game's memory be updated with the supplied key/value pair. The supplied
+     value must be a simple object (Integer, Number, String) or an Array of simple objects. The
+     contents of the game's memory (keys and values) must not exceed 4096 bytes when AMF3 encoded.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if the memory was updated, false if the memory update could not be completed
+     due to size restrictions.
+     </td>
 </tr>
 </table>
 </div>

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="EZGameControl,com.threerings.ezgame.EZGameControl,_gameData,_funcs,_collections,_seating,collections,seating,addEventListener,removeEventListener,isConnected,get,set,setImmediate,testAndSet,registerListener,unregisterListener,getDictionaryLetterSet,checkDictionaryWord,sendMessage,startTicker,stopTicker,sendChat,localChat,getOccupants,getOccupantName,getMyId,getTurnHolder,getUserCookie,setUserCookie,isMyTurn,isInPlay,endTurn,endGame,populateProperties,setEZProps,callEZCode,callEZCodeFriend,checkIsConnected,handleRootClick" name="keywords">
+<meta content="EZGameControl,com.threerings.ezgame.EZGameControl,_gameData,_gameConfig,_funcs,_collections,_seating,collections,seating,addEventListener,removeEventListener,isConnected,getConfig,get,set,setImmediate,testAndSet,registerListener,unregisterListener,getDictionaryLetterSet,checkDictionaryWord,sendMessage,startTicker,stopTicker,sendChat,localChat,getOccupants,getOccupantName,getMyId,amInControl,getControllerId,getTurnHolder,getRound,getUserCookie,setUserCookie,isMyTurn,isInPlay,endTurn,endRound,endGame,populateProperties,setEZProps,callEZCode,callEZCodeFriend,checkIsConnected,handleRootClick" name="keywords">
 <title>com.threerings.ezgame.EZGameControl</title>
 </head>
 <body>
@@ -61,15 +61,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#collections">collections</a> : <a href="../ezgame/CollectionsControl.html">CollectionsControl</a>
 <div class="summaryTableDescription">[read-only]
-     Get the CollectionsControl, which contains methods for utilizing
-     the server to dispatch private information.</div>
+     Get the CollectionsControl, which contains methods for utilizing the server to dispatch
+     private information.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#seating">seating</a> : <a href="../ezgame/SeatingControl.html">SeatingControl</a>
 <div class="summaryTableDescription">[read-only]
-     Get the SeatingControl, which contains methods for checking
-     and assigning player seating positions.</div>
+     Get the SeatingControl, which contains methods for checking and assigning player seating
+     positions.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 </table>
@@ -88,6 +88,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_funcs">_funcs</a> : Object<div class="summaryTableDescription"> Contains functions exposed to us from the EZGame host.</div>
+</td><td class="summaryTableOwnerCol">EZGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_gameConfig">_gameConfig</a> : Object<div class="summaryTableDescription"> Contains any custom game configuration data.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
@@ -121,8 +125,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#EZGameControl()">EZGameControl</a>(disp:DisplayObject)</div>
 <div class="summaryTableDescription">
-     Create an EZGameControl object using some display object currently
-     on the hierarchy.</div>
+     Create an EZGameControl object using some display object currently on the hierarchy.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
@@ -130,6 +133,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#addEventListener()">addEventListener</a>(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void</div>
 <div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">EZGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#amInControl()">amInControl</a>():Boolean</div>
+<div class="summaryTableDescription">
+     Returns true if we are in control of this game.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
@@ -167,9 +178,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#endGame()">endGame</a>(... winnerIds):void</div>
+<a class="signatureLink" href="#endGame()">endGame</a>(winnerIds:Array):void</div>
 <div class="summaryTableDescription">
      End the game.</div>
+</td><td class="summaryTableOwnerCol">EZGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#endRound()">endRound</a>(nextRoundDelay:int = 0):void</div>
+<div class="summaryTableDescription">
+     Ends the current round.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
@@ -191,6 +210,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#getConfig()">getConfig</a>():Object</div>
+<div class="summaryTableDescription">
+     Get any game-specific configurations that were set up in the lobby.</div>
+</td><td class="summaryTableOwnerCol">EZGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getControllerId()">getControllerId</a>():int</div>
+<div class="summaryTableDescription">
+     Returns the player id of the client that is in control of this game.</div>
+</td><td class="summaryTableOwnerCol">EZGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#getDictionaryLetterSet()">getDictionaryLetterSet</a>(locale:String, count:int, callback:Function):void</div>
 <div class="summaryTableDescription">
      Requests a set of random letters from the dictionary service.</div>
@@ -200,7 +235,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#getMyId()">getMyId</a>():int</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Returns this client's player id.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
@@ -215,14 +251,24 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#getOccupants()">getOccupants</a>():Array</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Returns the player ids of all occupants in the game room.</div>
+</td><td class="summaryTableOwnerCol">EZGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getRound()">getRound</a>():int</div>
+<div class="summaryTableDescription">
+     Returns the current round number.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#getTurnHolder()">getTurnHolder</a>():int</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Returns the player id of the current turn holder.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
@@ -238,8 +284,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#isConnected()">isConnected</a>():Boolean</div>
 <div class="summaryTableDescription">
-     Are we connected and running inside the EZGame environment, or
-     has someone just loaded up this swf by itself?
+     Are we connected and running inside the EZGame environment, or has someone just loaded up
+     this swf by itself?
      </div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
@@ -265,8 +311,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#localChat()">localChat</a>(msg:String):void</div>
 <div class="summaryTableDescription">
-     Display the specified message immediately locally: not sent
-     to any other players or observers in the game room.</div>
+     Display the specified message immediately locally: not sent to any other players or
+     observers in the game room.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
@@ -274,8 +320,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#registerListener()">registerListener</a>(obj:Object):void</div>
 <div class="summaryTableDescription">
-     Register an object to receive whatever events it should receive,
-     based on which event listeners it implements.</div>
+     Register an object to receive whatever events it should receive, based on which event
+     listeners it implements.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
@@ -290,8 +336,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#sendChat()">sendChat</a>(msg:String):void</div>
 <div class="summaryTableDescription">
-     Send a message that will be heard by everyone in the game room,
-     even observers.</div>
+     Send a message that will be heard by everyone in the game room, even observers.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
@@ -315,8 +360,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#setImmediate()">setImmediate</a>(propName:String, value:Object, index:int = -1):void</div>
 <div class="summaryTableDescription">
-     Set a property, but have this client immediately set the value so that
-     it can be re-read.</div>
+     Set a property, but have this client immediately set the value so that it can be
+     re-read.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
@@ -324,8 +369,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#setUserCookie()">setUserCookie</a>(cookie:Object):Boolean</div>
 <div class="summaryTableDescription">
-     Store persistent data that can later be retrieved by an instance
-     of this game.</div>
+     Store persistent data that can later be retrieved by an instance of this game.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
@@ -349,8 +393,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#testAndSet()">testAndSet</a>(propName:String, newValue:Object, testValue:Object, index:int = -1):void</div>
 <div class="summaryTableDescription">
-     Set a property that will be distributed, but only if it's equal
-     to the specified test value.</div>
+     Set a property that will be distributed, but only if it's equal to the specified test value.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
@@ -399,8 +442,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#populateProperties()">populateProperties</a>(o:Object):void</div>
 <div class="summaryTableDescription">
-     Populate any properties or functions we want to expose to
-     the other side of the ezgame security boundary.</div>
+     Populate any properties or functions we want to expose to the other side of the ezgame
+     security boundary.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
@@ -408,8 +451,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#setEZProps()">setEZProps</a>(o:Object):void</div>
 <div class="summaryTableDescription">
-     Sets the properties we received from the EZ game framework
-     on the other side of the security boundary.</div>
+     Sets the properties we received from the EZ game framework on the other side of the security
+     boundary.</div>
 </td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 </table>
@@ -424,18 +467,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#event:GameEnded">GameEnded</a>
+<a class="signatureLink" href="#event:ControlChanged">ControlChanged</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
- Dispatched when the game ends.</td><td class="summaryTableOwnerCol">EZGameControl</td>
+ Dispatched when the controller changes for the game.</td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#event:GameStarted">GameStarted</a>
+<a class="signatureLink" href="#event:GameEnded">GameEnded</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
- Dispatched when the turn changes in a turn-based game.</td><td class="summaryTableOwnerCol">EZGameControl</td>
+ Dispatched when the game ends.</td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -467,8 +510,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#event:msgReceived">msgReceived</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
- Dispatched when a message arrives with information that is not part
- of the shared game state.</td><td class="summaryTableOwnerCol">EZGameControl</td>
+ Dispatched when a message arrives with information that is not part of the shared game state.</td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -477,6 +519,30 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
  Dispatched when a property has changed in the shared game state.</td><td class="summaryTableOwnerCol">EZGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:RoundEnded">RoundEnded</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when a round ends.</td><td class="summaryTableOwnerCol">EZGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:RoundStarted">RoundStarted</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when a round starts.</td><td class="summaryTableOwnerCol">EZGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:TurnChanged">TurnChanged</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when the turn changes in a turn-based game.</td><td class="summaryTableOwnerCol">EZGameControl</td>
 </tr>
 </table>
 </div>
@@ -503,8 +569,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>collections:<a href="../ezgame/CollectionsControl.html">CollectionsControl</a></code>&nbsp;&nbsp;[read-only]<p>
-     Get the CollectionsControl, which contains methods for utilizing
-     the server to dispatch private information.
+     Get the CollectionsControl, which contains methods for utilizing the server to dispatch
+     private information.
      </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get collections():<a href="../ezgame/CollectionsControl.html">CollectionsControl</a></code>
@@ -518,6 +584,14 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected var _funcs:Object</code><p> Contains functions exposed to us from the EZGame host. </p></div>
+<a name="_gameConfig"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_gameConfig</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _gameConfig:Object</code><p> Contains any custom game configuration data. </p></div>
 <a name="_gameData"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -543,8 +617,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>seating:<a href="../ezgame/SeatingControl.html">SeatingControl</a></code>&nbsp;&nbsp;[read-only]<p>
-     Get the SeatingControl, which contains methods for checking
-     and assigning player seating positions.
+     Get the SeatingControl, which contains methods for checking and assigning player seating
+     positions.
      </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get seating():<a href="../ezgame/SeatingControl.html">SeatingControl</a></code>
@@ -560,8 +634,7 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function EZGameControl(disp:DisplayObject)</code><p>
-     Create an EZGameControl object using some display object currently
-     on the hierarchy.
+     Create an EZGameControl object using some display object currently on the hierarchy.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -606,6 +679,23 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">useWeakReference</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
+</tr>
+</table>
+</div>
+<a name="amInControl()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">amInControl</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function amInControl():Boolean</code><p>
+     Returns true if we are in control of this game. False if another client is in control.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>
@@ -675,9 +765,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function checkDictionaryWord(locale:String, word:String, callback:Function):void</code><p>
-     Requests a set of random letters from the dictionary service.
-     The letters will arrive in a separate message with the specified key,
-     as an array of strings.
+     Requests a set of random letters from the dictionary service.  The letters will arrive in a
+     separate message with the specified key, as an array of strings.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -696,9 +785,9 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">callback</span>:Function</code> &mdash; the function that will process the results, of the form:
-              function (word :String, result :Boolean) :void
-            where word is a copy of the word that was requested, and result
-            specifies whether the word is valid given language settings
+     <pre>function (word :String, result :Boolean) :void</pre>
+     where word is a copy of the word that was requested, and result specifies whether the word
+     is valid given language settings
      </td>
 </tr>
 </table>
@@ -720,12 +809,30 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function endGame(... winnerIds):void</code><p>
+<code>public function endGame(winnerIds:Array):void</code><p>
      End the game. The specified player ids are winners!
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code>... <span class="label">winnerIds</span></code></td>
+<td width="20px"></td><td><code><span class="label">winnerIds</span>:Array</code></td>
+</tr>
+</table>
+</div>
+<a name="endRound()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">endRound</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function endRound(nextRoundDelay:int = 0):void</code><p>
+     Ends the current round. If nextRoundDelay is greater than zero, the next round will be
+     started in the specified number of seconds, otherwise no next round
+     will be started.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">nextRoundDelay</span>:int</code> (default = <code>0</code>)<code></code></td>
 </tr>
 </table>
 </div>
@@ -737,8 +844,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function endTurn(nextPlayerId:int = 0):void</code><p>
-     End the current turn. If no next player id is specified,
-     then the next player after the current one is used.
+     End the current turn. If no next player id is specified, then the next player after the
+     current one is used.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -775,6 +882,40 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="getConfig()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getConfig</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getConfig():Object</code><p>
+     Get any game-specific configurations that were set up in the lobby.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
+</div>
+<a name="getControllerId()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getControllerId</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getControllerId():int</code><p>
+     Returns the player id of the client that is in control of this game.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
 <a name="getDictionaryLetterSet()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -783,9 +924,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function getDictionaryLetterSet(locale:String, count:int, callback:Function):void</code><p>
-     Requests a set of random letters from the dictionary service.
-     The letters will arrive in a separate message with the specified key,
-     as an array of strings.
+     Requests a set of random letters from the dictionary service.  The letters will arrive in a
+     separate message with the specified key, as an array of strings.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -804,9 +944,9 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">callback</span>:Function</code> &mdash; the function that will process the results, of the form:
-              function (letters :Array) :void
-            where letters is an array of strings containing letters
-            for the given language settings (potentially empty).
+     <pre>function (letters :Array) :void</pre>
+     where letters is an array of strings containing letters for the given language settings
+     (potentially empty).
      </td>
 </tr>
 </table>
@@ -818,8 +958,9 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getMyId():int</code>
-<p></p>
+<code>public function getMyId():int</code><p>
+     Returns this client's player id.
+     </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -835,9 +976,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function getOccupantName(playerId:int):String</code><p>
-     Get the display name of the specified occupant.
-     Two players may have the same name: always use playerId to
-     purposes of identification and comparison. The name is for display
+     Get the display name of the specified occupant.  Two players may have the same name: always
+     use playerId to purposes of identification and comparison. The name is for display
      only. Will be null is the specified playerId is not in the game.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -860,12 +1000,29 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getOccupants():Array</code>
-<p></p>
+<code>public function getOccupants():Array</code><p>
+     Returns the player ids of all occupants in the game room.
+     </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="getRound()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getRound</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getRound():int</code><p>
+     Returns the current round number. Rounds start at 1 and increase if the game calls {</p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
 </tr>
 </table>
 </div>
@@ -876,8 +1033,9 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getTurnHolder():int</code>
-<p></p>
+<code>public function getTurnHolder():int</code><p>
+     Returns the player id of the current turn holder.
+     </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -893,9 +1051,9 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function getUserCookie(occupantId:int, callback:Function):void</code><p>
-     Get the user-specific game data for the specified user. The
-     first time this is requested per game instance it will be retrieved
-     from the database. After that, it will be returned from memory.
+     Get the user-specific game data for the specified user. The first time this is requested per
+     game instance it will be retrieved from the database. After that, it will be returned from
+     memory.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -933,8 +1091,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function isConnected():Boolean</code><p>
-     Are we connected and running inside the EZGame environment, or
-     has someone just loaded up this swf by itself?
+     Are we connected and running inside the EZGame environment, or has someone just loaded up
+     this swf by itself?
      </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -985,8 +1143,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function localChat(msg:String):void</code><p>
-     Display the specified message immediately locally: not sent
-     to any other players or observers in the game room.
+     Display the specified message immediately locally: not sent to any other players or
+     observers in the game room.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1002,8 +1160,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected function populateProperties(o:Object):void</code><p>
-     Populate any properties or functions we want to expose to
-     the other side of the ezgame security boundary.
+     Populate any properties or functions we want to expose to the other side of the ezgame
+     security boundary.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1019,8 +1177,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function registerListener(obj:Object):void</code><p>
-     Register an object to receive whatever events it should receive,
-     based on which event listeners it implements.
+     Register an object to receive whatever events it should receive, based on which event
+     listeners it implements.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1062,8 +1220,7 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function sendChat(msg:String):void</code><p>
-     Send a message that will be heard by everyone in the game room,
-     even observers.
+     Send a message that will be heard by everyone in the game room, even observers.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1079,15 +1236,14 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function sendMessage(messageName:String, value:Object, playerId:int = 0):void</code><p>
-     Send a "message" to other clients subscribed to the game.
-     These is similar to setting a property, except that the
-     value will not be saved- it will merely end up coming out
-     as a MessageReceivedEvent.
+     Send a "message" to other clients subscribed to the game.  These is similar to setting a
+     property, except that the value will not be saved- it will merely end up coming out as a
+     MessageReceivedEvent.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">messageName</span>:String</code> &mdash; if 0 (or unset), sends to all players, otherwise
-     the message will be private to just one player
+<td width="20px"></td><td><code><span class="label">messageName</span>:String</code> &mdash; if 0 (or unset), sends to all players, otherwise the message will be private
+     to just one player
      </td>
 </tr>
 <tr>
@@ -1140,8 +1296,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected function setEZProps(o:Object):void</code><p>
-     Sets the properties we received from the EZ game framework
-     on the other side of the security boundary.
+     Sets the properties we received from the EZ game framework on the other side of the security
+     boundary.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1157,13 +1313,12 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function setImmediate(propName:String, value:Object, index:int = -1):void</code><p>
-     Set a property, but have this client immediately set the value so that
-     it can be re-read. The property change event will still arrive and
-     will be your clue as to when the other clients will see the newly
-     set value. Be careful with this method, as it can allow data
-     inconsistency: two clients may see different values for a property
-     if one of them recently set it immediately, and the resultant
-     PropertyChangedEvent's oldValue also may not be consistent.
+     Set a property, but have this client immediately set the value so that it can be
+     re-read. The property change event will still arrive and will be your clue as to when the
+     other clients will see the newly set value. Be careful with this method, as it can allow
+     data inconsistency: two clients may see different values for a property if one of them
+     recently set it immediately, and the resultant PropertyChangedEvent's oldValue also may not
+     be consistent.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1191,11 +1346,9 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function setUserCookie(cookie:Object):Boolean</code><p>
-     Store persistent data that can later be retrieved by an instance
-     of this game. The maximum size of this data is 4096 bytes AFTER
-     AMF3 encoding.
-          Note: there is no playerIndex parameter because a cookie may only
-     be stored for the current player.
+     Store persistent data that can later be retrieved by an instance of this game. The maximum
+     size of this data is 4096 bytes AFTER AMF3 encoding.  Note: there is no playerId parameter
+     because a cookie may only be stored for the current player.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1206,11 +1359,10 @@ showHideInherited();
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Boolean</code> &mdash; false if the cookie could not be encoded to 4096 bytes
-     or less; true if the cookie is going to try to be saved. There is
-     no guarantee it will be saved and no way to find out if it failed,
-     but if it fails it will be because the shit hit the fan so hard that
-     there's nothing you can do anyway.
+<td width="20"></td><td><code>Boolean</code> &mdash; false if the cookie could not be encoded to 4096 bytes or less; true if the cookie
+     is going to try to be saved. There is no guarantee it will be saved and no way to find out
+     if it failed, but if it fails it will be because the shit hit the fan so hard that there's
+     nothing you can do anyway.
      </td>
 </tr>
 </table>
@@ -1223,10 +1375,9 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function startTicker(tickerName:String, msOfDelay:int):void</code><p>
-     Start the ticker with the specified name. It will deliver
-     messages to the game object at the specified delay,
-     the value of each message being a single integer, starting with 0
-     and increasing by one with each messsage.
+     Start the ticker with the specified name. It will deliver messages to the game object at the
+     specified delay, the value of each message being a single integer, starting with 0 and
+     increasing by one with each messsage.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -1264,17 +1415,16 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function testAndSet(propName:String, newValue:Object, testValue:Object, index:int = -1):void</code><p>
-     Set a property that will be distributed, but only if it's equal
-     to the specified test value.
-          Please note that, unlike in the standard set() function, the property
-     will not be updated right away, but will require a request to the server
-     and a response back. For this reason, there may be a considerable delay
-     between calling testAndSet, and seeing the result of the update.
-          The operation is 'atomic', in the sense that testing and setting take place
-     during the same server event. In comparison, a separate 'get' followed by
-     a 'set' operation would involve two events with two network round-trips,
-     and no guarantee that the value won't change between the events.
-     </p><span class="label">Parameters</span>
+     Set a property that will be distributed, but only if it's equal to the specified test value.
+          </p><p> Please note that, unlike in the standard set() function, the property will not be
+     updated right away, but will require a request to the server and a response back. For this
+     reason, there may be a considerable delay between calling testAndSet, and seeing the result
+     of the update.
+          <p> The operation is 'atomic', in the sense that testing and setting take place during the
+     same server event. In comparison, a separate 'get' followed by a 'set' operation would
+     involve two events with two network round-trips, and no guarantee that the value won't
+     change between the events.
+     <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">propName</span>:String</code></td>
@@ -1316,10 +1466,22 @@ showHideInherited();
 </table>
 </div>
 <div class="detailSectionHeader">Event detail</div>
+<a name="event:ControlChanged"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ControlChanged</td><td class="detailHeaderType">event&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../ezgame/StateChangedEvent.html"><code>com.threerings.ezgame.StateChangedEvent</code></a>
+<br>
+<p></p><p>
+ Dispatched when the controller changes for the game.
+  </p></div>
 <a name="event:GameEnded"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">GameEnded</td><td class="detailHeaderType">event&nbsp;</td>
+<td class="detailHeaderName">GameEnded</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -1327,18 +1489,6 @@ showHideInherited();
 <br>
 <p></p><p>
  Dispatched when the game ends.
-  </p></div>
-<a name="event:GameStarted"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">GameStarted</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<span class="label">Event object type: </span><a href="../ezgame/StateChangedEvent.html"><code>com.threerings.ezgame.StateChangedEvent</code></a>
-<br>
-<p></p><p>
- Dispatched when the turn changes in a turn-based game.
   </p></div>
 <a name="event:GameStarted"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -1386,8 +1536,7 @@ showHideInherited();
 <span class="label">Event object type: </span><a href="../ezgame/MessageReceivedEvent.html"><code>com.threerings.ezgame.MessageReceivedEvent</code></a>
 <br>
 <p></p><p>
- Dispatched when a message arrives with information that is not part
- of the shared game state.
+ Dispatched when a message arrives with information that is not part of the shared game state.
   </p></div>
 <a name="event:PropChanged"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -1400,6 +1549,42 @@ showHideInherited();
 <br>
 <p></p><p>
  Dispatched when a property has changed in the shared game state.
+  </p></div>
+<a name="event:RoundEnded"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RoundEnded</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../ezgame/StateChangedEvent.html"><code>com.threerings.ezgame.StateChangedEvent</code></a>
+<br>
+<p></p><p>
+ Dispatched when a round ends.
+  </p></div>
+<a name="event:RoundStarted"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">RoundStarted</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../ezgame/StateChangedEvent.html"><code>com.threerings.ezgame.StateChangedEvent</code></a>
+<br>
+<p></p><p>
+ Dispatched when a round starts.
+  </p></div>
+<a name="event:TurnChanged"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">TurnChanged</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../ezgame/StateChangedEvent.html"><code>com.threerings.ezgame.StateChangedEvent</code></a>
+<br>
+<p></p><p>
+ Dispatched when the turn changes in a turn-based game.
   </p></div>
 <br>
 <br>

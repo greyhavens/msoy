@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="StateChangedEvent,com.threerings.ezgame.StateChangedEvent,GAME_STARTED,GAME_ENDED,TURN_CHANGED,toString,clone" name="keywords">
+<meta content="StateChangedEvent,com.threerings.ezgame.StateChangedEvent,GAME_STARTED,GAME_ENDED,ROUND_STARTED,ROUND_ENDED,CONTROL_CHANGED,TURN_CHANGED,toString,clone" name="keywords">
 <title>com.threerings.ezgame.StateChangedEvent</title>
 </head>
 <body>
@@ -130,11 +130,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#CONTROL_CHANGED">CONTROL_CHANGED</a> : String = "ControlChanged"<div class="summaryTableDescription">[static] Indicates that a new controller has been assigned.</div>
+</td><td class="summaryTableOwnerCol">StateChangedEvent</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#GAME_ENDED">GAME_ENDED</a> : String = "GameEnded"<div class="summaryTableDescription">[static] Indicates that the game has transitioned to a ended state.</div>
 </td><td class="summaryTableOwnerCol">StateChangedEvent</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#GAME_STARTED">GAME_STARTED</a> : String = "GameStarted"<div class="summaryTableDescription">[static] Indicates that the game has transitioned to a started state.</div>
+</td><td class="summaryTableOwnerCol">StateChangedEvent</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ROUND_ENDED">ROUND_ENDED</a> : String = "RoundEnded"<div class="summaryTableDescription">[static] Indicates that the current round has ended.</div>
+</td><td class="summaryTableOwnerCol">StateChangedEvent</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ROUND_STARTED">ROUND_STARTED</a> : String = "RoundStarted"<div class="summaryTableDescription">[static] Indicates that a round has started.</div>
 </td><td class="summaryTableOwnerCol">StateChangedEvent</td>
 </tr>
 <tr class="">
@@ -206,10 +218,18 @@ showHideInherited();
 </div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
+<a name="CONTROL_CHANGED"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">CONTROL_CHANGED</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const CONTROL_CHANGED:String = "ControlChanged"</code><p> Indicates that a new controller has been assigned. </p></div>
 <a name="GAME_ENDED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">GAME_ENDED</td><td class="detailHeaderType">constant</td>
+<td class="detailHeaderName">GAME_ENDED</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -222,6 +242,23 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const GAME_STARTED:String = "GameStarted"</code><p> Indicates that the game has transitioned to a started state. </p></div>
+<a name="ROUND_ENDED"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ROUND_ENDED</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const ROUND_ENDED:String = "RoundEnded"</code><p> Indicates that the current round has ended. </p></div>
+<a name="ROUND_STARTED"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ROUND_STARTED</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const ROUND_STARTED:String = "RoundStarted"</code><p> Indicates that a round has started. Games that do not require multiple rounds can ignore
+     this event. </p></div>
 <a name="TURN_CHANGED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>

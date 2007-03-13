@@ -151,6 +151,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="EntityControl.html#sendMessage()">sendMessage</a>(name:String, arg:Object = null):void</div>
+<div class="summaryTableDescription">
+     Send a message to other instances of this entity, resulting
+     in a MESSAGE_RECEIVED event.</div>
+</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#setHotSpot()">setHotSpot</a>(x:Number, y:Number):void</div>
 <div class="summaryTableDescription">
      Set the layout "hotspot" for your item, specified as pixels relative
@@ -168,9 +177,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#triggerEvent()">triggerEvent</a>(event:String, arg:Object = null):void</div>
+<a class="signatureLink" href="EntityControl.html#triggerAction()">triggerAction</a>(name:String, arg:Object = null):void</div>
 <div class="summaryTableDescription">
-     Triggers an event on this scene object.</div>
+     Triggers an action on this scene object.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -218,14 +227,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedProtectedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#eventTriggered_v1()">eventTriggered_v1</a>(event:String, arg:Object):void</div>
-<div class="summaryTableDescription">
-     Called when an event is triggered on this scene object.</div>
-</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
-</tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#gotControl_v1()">gotControl_v1</a>():void</div>
 <div class="summaryTableDescription">
      Called when this client has been assigned control of this object.</div>
@@ -251,6 +252,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="EntityControl.html#memoryChanged_v1()">memoryChanged_v1</a>(key:String, value:Object):void</div>
 <div class="summaryTableDescription">
      Called when one of this item's memory entries has changed.</div>
+</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="EntityControl.html#messageReceived_v1()">messageReceived_v1</a>(name:String, arg:Object, isAction:Boolean):void</div>
+<div class="summaryTableDescription">
+     Called when an action or message is triggered on this scene object.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedProtectedMethod">
@@ -297,10 +306,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#event:eventTriggered">eventTriggered</a>
+<a class="signatureLink" href="EntityControl.html#event:actionTriggered">actionTriggered</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
- Dispatched when the instance in control sends a trigger event to
+ Dispatched when the instance in control sends a trigger action to
  all instances.</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedEvent">
@@ -319,6 +328,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableDescription summaryTableCol">
  Dispatched when the instance in control updates the memory of this
  digital item.</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedEvent">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="EntityControl.html#event:messageReceived">messageReceived</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when any instance sends a message to all instances.</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
