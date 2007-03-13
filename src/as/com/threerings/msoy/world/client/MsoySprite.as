@@ -283,11 +283,19 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Called when a trigger event is received for this sprite.
+     * Called when an action or message to received for this sprite.
      */
-    public function eventTriggered (event: String, arg :Object) :void
+    public function messageReceived (name :String, arg :Object, isAction :Boolean) :void
     {
-        callUserCode("eventTriggered_v1", event, arg);
+        callUserCode("messageReceived_v1", name, arg, isAction);
+
+        // TODO: remove someday
+        // TEMP: dispatch a backwards compatible event to older style
+        // entities. This older method was deprecated 2007-03-12, so hopefully
+        // we don't have to keep this around too long.
+        if (isAction) {
+            callUserCode("eventTriggered_v1", name, arg);
+        }
     }
 
     /**
@@ -481,13 +489,13 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Trigger an event on this sprite in all clients.
+     * This sprite is sending a message to all clients.
      * Called by our backend in response to a request from usercode.
      */
-    internal function triggerEvent (event :String, arg :Object = null) :void
+    internal function sendMessage (name :String, arg :Object, isAction :Boolean) :void
     {
         if (_ident != null && parent is RoomView) {
-            (parent as RoomView).getRoomController().triggerEvent(_ident, event, arg);
+            (parent as RoomView).getRoomController().sendSpriteMessage(_ident, name, arg, isAction);
         }
     }
 

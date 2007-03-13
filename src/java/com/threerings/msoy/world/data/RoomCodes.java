@@ -11,7 +11,7 @@ import com.threerings.presents.data.InvocationCodes;
 public interface RoomCodes extends InvocationCodes
 {
     /** A message event type dispatched on the room object. */
-    public static final String TRIGGER_EVENT = "triggerEvent";
+    public static final String SPRITE_MESSAGE = "sprMsg";
 
     /** An error (sort of) reported when an entity requests control but is already being controlled
      * by another client. */

@@ -63,10 +63,10 @@ public class RoomDispatcher extends InvocationDispatcher
             );
             return;
 
-        case RoomMarshaller.TRIGGER_EVENT:
-            ((RoomProvider)provider).triggerEvent(
+        case RoomMarshaller.SEND_SPRITE_MESSAGE:
+            ((RoomProvider)provider).sendSpriteMessage(
                 source,
-                (ItemIdent)args[0], (String)args[1], (byte[])args[2]
+                (ItemIdent)args[0], (String)args[1], (byte[])args[2], ((Boolean)args[3]).booleanValue()
             );
             return;
 

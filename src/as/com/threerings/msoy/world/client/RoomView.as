@@ -67,6 +67,7 @@ import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
@@ -336,8 +337,8 @@ public class RoomView extends AbstractRoomView
             performAvatarAction(int(args[0]), (args[1] as String));
             break;
 
-        case "triggerEvent": // TODO: RoomCodes.TRIGGER_EVENT
-            dispatchTriggerEvent((args[0] as ItemIdent), (args[1] as String), (args[2] as ByteArray));
+        case RoomCodes.SPRITE_MESSAGE:
+            dispatchSpriteMessage((args[0] as ItemIdent), (args[1] as String), (args[2] as ByteArray), (args[3] as Boolean));
             break;
         }
     }
@@ -656,13 +657,13 @@ public class RoomView extends AbstractRoomView
     }
 
     /**
-     * Called when a trigger event arrives on the room object.
+     * Called when a sprite message arrives on the room object.
      */
-    protected function dispatchTriggerEvent (item :ItemIdent, event :String, arg :ByteArray) :void
+    protected function dispatchSpriteMessage (item :ItemIdent, name :String, arg :ByteArray, isAction :Boolean) :void
     {
         var sprite :MsoySprite = (_entities.get(item) as MsoySprite);
         if (sprite != null) {
-            sprite.eventTriggered(event, EZObjectMarshaller.decode(arg));
+            sprite.messageReceived(name, EZObjectMarshaller.decode(arg), isAction);
         }
     }
 

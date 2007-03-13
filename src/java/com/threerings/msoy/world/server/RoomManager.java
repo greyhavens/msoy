@@ -91,19 +91,19 @@ public class RoomManager extends SpotSceneManager
     }
 
     // documentation inherited from RoomProvider
-    public void triggerEvent (ClientObject caller, ItemIdent item, String event, byte[] arg)
+    public void sendSpriteMessage (ClientObject caller, ItemIdent item, String name, byte[] arg, boolean isAction)
     {
         // make sure the caller is in the room
         MemberObject who = (MemberObject)caller;
         if (!_roomObj.occupants.contains(who.getOid())) {
-            log.warning("Rejecting event trigger request by non-occupant [who=" + who.who() +
-                        ", item=" + item + ", event=" + event + "].");
+            log.warning("Rejecting sprite message request by non-occupant [who=" + who.who() +
+                        ", item=" + item + ", name=" + name + "].");
             return;
         }
 
         // if this client does not currently control this entity; ignore the request; if no one
         // controls it, this will assign this client as controller
-        if (!checkAssignControl(who, item, "triggerEvent")) {
+        if (isAction && !checkAssignControl(who, item, "triggerAction")) {
             return;
         }
 
@@ -117,7 +117,7 @@ public class RoomManager extends SpotSceneManager
 //         }
 
         // dispatch this as a simple MessageEvent
-        _roomObj.postMessage(RoomCodes.TRIGGER_EVENT, item, event, arg);
+        _roomObj.postMessage(RoomCodes.SPRITE_MESSAGE, item, name, arg, isAction);
     }
 
     // documentation inherited from RoomProvider

@@ -36,9 +36,9 @@ public interface RoomProvider extends InvocationProvider
     public void requestControl (ClientObject caller, ItemIdent arg1);
 
     /**
-     * Handles a {@link RoomService#triggerEvent} request.
+     * Handles a {@link RoomService#sendSpriteMessage} request.
      */
-    public void triggerEvent (ClientObject caller, ItemIdent arg1, String arg2, byte[] arg3);
+    public void sendSpriteMessage (ClientObject caller, ItemIdent arg1, String arg2, byte[] arg3, boolean arg4);
 
     /**
      * Handles a {@link RoomService#updateMemory} request.

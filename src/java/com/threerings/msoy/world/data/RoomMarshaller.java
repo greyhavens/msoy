@@ -58,14 +58,14 @@ public class RoomMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #triggerEvent} requests. */
-    public static final int TRIGGER_EVENT = 4;
+    /** The method id used to dispatch {@link #sendSpriteMessage} requests. */
+    public static final int SEND_SPRITE_MESSAGE = 4;
 
     // from interface RoomService
-    public void triggerEvent (Client arg1, ItemIdent arg2, String arg3, byte[] arg4)
+    public void sendSpriteMessage (Client arg1, ItemIdent arg2, String arg3, byte[] arg4, boolean arg5)
     {
-        sendRequest(arg1, TRIGGER_EVENT, new Object[] {
-            arg2, arg3, arg4
+        sendRequest(arg1, SEND_SPRITE_MESSAGE, new Object[] {
+            arg2, arg3, arg4, Boolean.valueOf(arg5)
         });
     }
 

@@ -13,12 +13,19 @@ import flash.events.EventDispatcher;
 import flash.events.TimerEvent;
 
 /**
- * Dispatched when the instance in control sends a trigger event to
+ * Dispatched when the instance in control sends a trigger action to
  * all instances.
  * 
- * @eventType com.whirled.ControlEvent.EVENT_TRIGGERED
+ * @eventType com.whirled.ControlEvent.ACTION_TRIGGERED
  */
-[Event(name="eventTriggered", type="com.whirled.ControlEvent")]
+[Event(name="actionTriggered", type="com.whirled.ControlEvent")]
+
+/**
+ * Dispatched when any instance sends a message to all instances.
+ * 
+ * @eventType com.whirled.ControlEvent.MESSAGE_RECEIVED
+ */
+[Event(name="messageReceived", type="com.whirled.ControlEvent")]
 
 /**
  * Dispatched when the instance in control updates the memory of this
@@ -57,12 +64,22 @@ public class EntityControl extends WhirledControl
     }
 
     /**
-     * Triggers an event on this scene object. The event will be properly distributed to the object
-     * running in every client in the scene, resulting in a call to {@link #eventTriggered}.
+     * Triggers an action on this scene object. The action will be properly distributed to the object
+     * running in every client in the scene, resulting in a ACTION_TRIGGERED
+     * event.
      */
-    public function triggerEvent (event :String, arg :Object = null) :void
+    public function triggerAction (name :String, arg :Object = null) :void
     {
-        callHostCode("triggerEvent_v1", event, arg);
+        callHostCode("actionOrMessage_v1", name, arg, true);
+    }
+
+    /**
+     * Send a message to other instances of this entity, resulting
+     * in a MESSAGE_RECEIVED event.
+     */
+    public function sendMessage (name :String, arg :Object = null) :void
+    {
+        callHostCode("actionOrMessage_v1", name, arg, false);
     }
 
     /**
@@ -155,17 +172,18 @@ public class EntityControl extends WhirledControl
      */
     override protected function populateProperties (o :Object) :void
     {
-        o["eventTriggered_v1"] = eventTriggered_v1;
         o["memoryChanged_v1"] = memoryChanged_v1;
         o["gotControl_v1"] = gotControl_v1;
+        o["messageReceived_v1"] = messageReceived_v1;
     }
 
     /**
-     * Called when an event is triggered on this scene object.
+     * Called when an action or message is triggered on this scene object.
      */
-    protected function eventTriggered_v1 (event :String, arg :Object) :void
+    protected function messageReceived_v1 (name :String, arg :Object, isAction :Boolean) :void
     {
-        dispatch(ControlEvent.EVENT_TRIGGERED, event, arg);
+        dispatch(isAction ? ControlEvent.ACTION_TRIGGERED
+                          : ControlEvent.MESSAGE_RECEIVED, name, arg);
     }
 
     /**

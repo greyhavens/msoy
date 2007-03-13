@@ -63,14 +63,14 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #triggerEvent} requests. */
-    public static const TRIGGER_EVENT :int = 4;
+    /** The method id used to dispatch {@link #sendSpriteMessage} requests. */
+    public static const SEND_SPRITE_MESSAGE :int = 4;
 
     // from interface RoomService
-    public function triggerEvent (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray) :void
+    public function sendSpriteMessage (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray, arg5 :Boolean) :void
     {
-        sendRequest(arg1, TRIGGER_EVENT, [
-            arg2, arg3, arg4
+        sendRequest(arg1, SEND_SPRITE_MESSAGE, [
+            arg2, arg3, arg4, langBoolean.valueOf(arg5)
         ]);
     }
 

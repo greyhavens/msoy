@@ -96,17 +96,19 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Handles a request by an item in our room to trigger an event.
+     * Handles a request by an item in our room to send an "action" (requires control) or
+     * a "message" (doesn't require control).
      */
-    public function triggerEvent (ident :ItemIdent, event :String, arg :Object) :void
+    public function sendSpriteMessage (
+        ident :ItemIdent, name :String, arg :Object, isAction :Boolean) :void
     {
-        if (!checkCanRequest(ident, "triggerEvent")) {
+        if (isAction && !checkCanRequest(ident, "triggerAction")) {
             return;
         }
 
         // send the request off to the server
         var data :ByteArray = (EZObjectMarshaller.encode(arg, false) as ByteArray);
-        _roomObj.roomService.triggerEvent(_mctx.getClient(), ident, event, data);
+        _roomObj.roomService.sendSpriteMessage(_mctx.getClient(), ident, name, data, isAction);
     }
 
     /**

@@ -18,23 +18,23 @@ public class ControlEvent extends Event
      */
     public static const APPEARANCE_CHANGED :String = "appearanceChanged";
 
-    /** An event type dispatched when an event is triggered.
-     * name: The event name
-     * value: unused
+    /** An event type dispatched when a message is received.
+     * name: message name
+     * value: message value
      */
-    public static const EVENT_TRIGGERED :String = "eventTriggered";
+    public static const MESSAGE_RECEIVED :String = "messageRecieved";
+
+    /** An event type dispatched when an action is triggered.
+     * name: action name 
+     * value: action value
+     */
+    public static const ACTION_TRIGGERED :String = "actionTriggered";
 
     /** An event type dispatched when this avatar speaks.
      * name: unused
      * value: unused
      */
     public static const AVATAR_SPOKE :String = "avatarSpoke";
-
-    /** An event type dispatched when this avatar is playing a custom action.
-     * name: action name
-     * value: action argument
-     */
-    public static const ACTION_TRIGGERED :String = "actionTriggered";
 
     /** An event type dispatched when this client-side instance of the item
      * has gained "control" over the other client-side instances.

@@ -26,13 +26,15 @@ public interface RoomService extends InvocationService
     public void requestControl (Client client, ItemIdent item);
 
     /**
-     * Requests to trigger an event on the specified item or globally.
+     * Requests to send a sprite message.
      *
      * @param item the identifier of the item on which to trigger the event, or null if it should
      * be delivered to all items.
-     * @param event the event to trigger.
+     * @param name the message name.
+     * @param arg the data
+     * @param isAction if the message is a "action".
      */
-    public void triggerEvent (Client client, ItemIdent item, String event, byte[] arg);
+    public void sendSpriteMessage (Client client, ItemIdent item, String name, byte[] arg, boolean isAction);
 
     /**
      * Requests to edit the client's current room.

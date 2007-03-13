@@ -30,7 +30,7 @@ public interface RoomService extends InvocationService
     function requestControl (arg1 :Client, arg2 :ItemIdent) :void;
 
     // from Java interface RoomService
-    function triggerEvent (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray) :void;
+    function sendSpriteMessage (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray, arg5 :Boolean) :void;
 
     // from Java interface RoomService
     function updateMemory (arg1 :Client, arg2 :MemoryEntry) :void;
