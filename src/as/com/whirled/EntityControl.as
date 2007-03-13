@@ -70,7 +70,7 @@ public class EntityControl extends WhirledControl
      */
     public function triggerAction (name :String, arg :Object = null) :void
     {
-        callHostCode("actionOrMessage_v1", name, arg, true);
+        callHostCode("sendMessage_v1", name, arg, true);
     }
 
     /**
@@ -79,7 +79,7 @@ public class EntityControl extends WhirledControl
      */
     public function sendMessage (name :String, arg :Object = null) :void
     {
-        callHostCode("actionOrMessage_v1", name, arg, false);
+        callHostCode("sendMessage_v1", name, arg, false);
     }
 
     /**
