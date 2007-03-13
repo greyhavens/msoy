@@ -10,7 +10,8 @@ import com.threerings.parlor.client.DefaultFlexTableConfigurator;
 import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.parlor.game.client.GameConfigurator;
-import com.threerings.parlor.game.client.FlexGameConfigurator;
+
+import com.threerings.ezgame.client.EZGameConfigurator;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
@@ -64,9 +65,10 @@ public class TableCreationPanel extends FloatingPanel
      */
     protected function createConfigInterface () :void
     {
-        var gconf :FlexGameConfigurator = new FlexGameConfigurator();
+        var gconf :EZGameConfigurator = new EZGameConfigurator();
         _gconfigger = gconf;
         _gconfigger.init(_ctx);
+        gconf.setXMLConfig(_game.config);
         if (_game.gameType == GameConfig.PARTY) {
             _tconfigger = new DefaultFlexTableConfigurator(-1, -1, -1, true);
 
