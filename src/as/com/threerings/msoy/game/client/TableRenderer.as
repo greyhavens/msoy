@@ -9,6 +9,7 @@ import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
 import mx.controls.Label;
+import mx.controls.Text;
 
 import com.threerings.util.Name;
 
@@ -17,6 +18,8 @@ import com.threerings.flash.MediaContainer;
 import com.threerings.flex.CommandButton;
 
 import com.threerings.parlor.game.data.GameConfig;
+
+import com.threerings.ezgame.data.EZGameConfig;
 
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
@@ -60,7 +63,9 @@ public class TableRenderer extends VBox
         addChild(_buttonsBox = new HBox());
 
         _watcherCount = new Label();
+        _config = new Text();
         _labelsBox.addChild(_watcherCount);
+        _labelsBox.addChild(_config);
     }
 
     override protected function measure () :void
@@ -100,6 +105,8 @@ public class TableRenderer extends VBox
         }
 
         updateButtons(table);
+
+        updateConfig(table);
     }
 
     protected function updateSeats (table :MsoyTable) :void
@@ -169,10 +176,34 @@ public class TableRenderer extends VBox
         }
     }
 
+    /**
+     * Update the displayed custom configuration options.
+     */
+    protected function updateConfig (table :MsoyTable) :void
+    {
+        var customConfig :Object = null;
+        if (table.config is EZGameConfig) {
+            customConfig = (table.config as EZGameConfig).customConfig;
+        }
+
+        var config :String = "";
+        if (customConfig != null) {
+            for (var s :String in customConfig) {
+                if (config != "") {
+                    config += "\n";
+                }
+                config += s.replace("_", " ") + ": " + customConfig[s];
+            }
+        }
+        _config.text = config;
+    }
+
     /** Holds our game's branding background. */
     protected var _background :MediaContainer;
 
     protected var _watcherCount :Label; // TODO
+
+    protected var _config :Text;
 
     protected var _labelsBox :HBox;
     protected var _seatsBox :HBox;
