@@ -29,10 +29,10 @@ import com.threerings.presents.client.ClientObserver;
 import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.ResultWrapper;
 
+import com.threerings.crowd.chat.client.ChatCantStealFocus;
+
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneObject;
-
-import com.threerings.ezgame.client.GameContainer;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCredentials;
@@ -635,7 +635,7 @@ public class MsoyController extends Controller
                 ((c >= 97 && c <= 122) || (c >= 65 && c <= 90))) {
             try {
                 var focus :Object = _ctx.getStage().focus;
-                if (!(focus is TextField) && !(focus is GameContainer)) {
+                if (!(focus is TextField) && !(focus is ChatCantStealFocus)) {
                     ChatControl.grabFocus();
                 }
             } catch (err :Error) {
