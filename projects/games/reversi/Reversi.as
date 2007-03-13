@@ -17,16 +17,22 @@ public class Reversi extends Sprite
 {
     public function Reversi ()
     {
-        // all we have to do is add the players display, it will
-        // work automatically
-        var players :ReversiPlayersDisplay = new ReversiPlayersDisplay();
-        // position it to the right of the play board
-        players.x = Piece.SIZE * BOARD_SIZE + 10;
-        players.y = 0;
-        addChild(players);
-
         _gameCtrl = new EZGameControl(this);
         _gameCtrl.registerListener(this);
+
+        var config :Object = _gameCtrl.getConfig();
+        if ("boardSize" in config) {
+            _boardSize = int(config["boardSize"]);
+
+        } else {
+            _boardSize = 8;
+        }
+
+        var players :ReversiPlayersDisplay = new ReversiPlayersDisplay();
+        // position it to the right of the play board
+        players.x = Piece.SIZE * _boardSize + 10;
+        players.y = 0;
+        addChild(players);
 
         players.setGameControl(_gameCtrl);
     }
@@ -38,7 +44,7 @@ public class Reversi extends Sprite
     {
         _pieces = new Array();
         var ii :int;
-        for (ii = 0; ii < BOARD_SIZE * BOARD_SIZE; ii++) {
+        for (ii = 0; ii < _boardSize * _boardSize; ii++) {
             var piece :Piece = new Piece(this, ii);
             piece.x = Piece.SIZE * _board.idxToX(ii);
             piece.y = Piece.SIZE * _board.idxToY(ii);
@@ -47,14 +53,14 @@ public class Reversi extends Sprite
         }
 
         // draw the board
-        var max :int = BOARD_SIZE * Piece.SIZE;
+        var max :int = _boardSize * Piece.SIZE;
         graphics.clear();
         graphics.beginFill(0x77FF77);
         graphics.drawRect(0, 0, max, max);
         graphics.endFill();
 
         graphics.lineStyle(1.2);
-        for (ii = 0; ii <= BOARD_SIZE; ii++) {
+        for (ii = 0; ii <= _boardSize; ii++) {
             var d :int = (ii * Piece.SIZE);
             graphics.moveTo(0, d);
             graphics.lineTo(max, d);
@@ -116,7 +122,7 @@ public class Reversi extends Sprite
                         break;
                     }
                 }
-                _gameCtrl.endGame(winnerId);
+                _gameCtrl.endGame([winnerId]);
                 if (winnerId == 0) {
                     _gameCtrl.sendChat("The game was a tie!");
                 } else {
@@ -154,7 +160,7 @@ public class Reversi extends Sprite
             _gameCtrl.localChat("Reversi superchallenge: go!");
 
             // configure the board
-            _board = new Board(_gameCtrl, BOARD_SIZE);
+            _board = new Board(_gameCtrl, _boardSize);
 
         } else if (event.type == StateChangedEvent.GAME_ENDED) {
             _gameCtrl.localChat("Thank you for playing Reversi!");
@@ -180,7 +186,7 @@ public class Reversi extends Sprite
 
     protected var _pieces :Array;
 
-    protected static const BOARD_SIZE :int = 4;
+    protected var _boardSize :int;
 
     protected var _board :Board;
 
