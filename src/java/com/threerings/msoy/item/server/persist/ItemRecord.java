@@ -192,8 +192,8 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The member id of the member that created this item. */
     public int creatorId;
 
-    /** The member id of the member that owns this item, or 0 if the item is an immutable catalog
-     * listing. */
+    /** The member id of the member that owns this item, or 0 if it's not in any inventory;
+     * e.g. it's listed in the catalog or a gifted item in a mail message. */
     public int ownerId;
 
     /** The current rating of this item, from 1 to 5. */

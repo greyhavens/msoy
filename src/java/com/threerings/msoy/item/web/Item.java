@@ -83,8 +83,8 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
     /** The member id of the member that created this item. */
     public int creatorId;
 
-    /** The member id of the member that owns this item, or 0 if the item is an immutable catalog
-     *  listing. */
+    /** The member id of the member that owns this item, or 0 if it's not in any inventory;
+     * e.g. it's listed in the catalog or a gifted item in a mail message. */
     public int ownerId;
 
     /** The current rating of this item, either 0 or between 1 and 5. */
