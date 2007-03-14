@@ -129,7 +129,7 @@ public class Model
             // remove our tiles from the distributed state (we do this in individual events so that
             // watchers coming into a game half way through will see valid state), while we're at
             // it, compute our points
-            var wpoints :int = used.length - MIN_WORD_LENGTH;
+            var wpoints :int = used.length - MIN_WORD_LENGTH + 1;
             var ii :int, mult :int = 1;
             for (ii = 0; ii < used.length; ii++) {
                 // map our local coordinates back to a global position coordinates

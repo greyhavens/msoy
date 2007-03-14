@@ -183,9 +183,10 @@ public class GameView extends Sprite
 
     protected static const HELP_CONTENTS :String = "<b>How to Play</b>\n" +
         "Make words from the row of <b>dark green</b> letters along the bottom of the board. " +
-        "Words score one point for each letter beyond four.\n\n" +
+        "Words score one point for each letter beyond three.\n\n" +
         "<font color='#0000ff'>Blue</font> squares multiply the word score by two.\n\n" +
-        "<font color='#ff0000'>Red</font> squares multiply the word score by three.";
+        "<font color='#ff0000'>Red</font> squares multiply the word score by three.\n\n" +
+        "Be the first to score 15 points to win the round. Win three rounds to win the game.";
 }
 
 }
