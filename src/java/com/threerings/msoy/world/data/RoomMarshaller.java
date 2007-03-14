@@ -69,8 +69,19 @@ public class RoomMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #setActorState} requests. */
+    public static final int SET_ACTOR_STATE = 5;
+
+    // from interface RoomService
+    public void setActorState (Client arg1, ItemIdent arg2, int arg3, String arg4)
+    {
+        sendRequest(arg1, SET_ACTOR_STATE, new Object[] {
+            arg2, Integer.valueOf(arg3), arg4
+        });
+    }
+
     /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static final int UPDATE_MEMORY = 5;
+    public static final int UPDATE_MEMORY = 6;
 
     // from interface RoomService
     public void updateMemory (Client arg1, MemoryEntry arg2)
@@ -81,7 +92,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static final int UPDATE_ROOM = 6;
+    public static final int UPDATE_ROOM = 7;
 
     // from interface RoomService
     public void updateRoom (Client arg1, SceneUpdate[] arg2, InvocationService.InvocationListener arg3)

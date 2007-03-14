@@ -20,4 +20,9 @@ public interface WorldOccupantInfo
      * Returns the media that is used to display this occupant.
      */
     public MediaDesc getMedia ();
+
+    /**
+     * Return the current state of the occupant, which may be null.
+     */
+    public String getState ();
 }

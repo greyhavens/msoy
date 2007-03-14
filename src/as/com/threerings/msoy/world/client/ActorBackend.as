@@ -8,6 +8,8 @@ public class ActorBackend extends EntityBackend
 
         o["setLocation_v1"] = setLocation_v1;
         o["setOrientation_v1"] = setOrientation_v1;
+        o["setState_v1"] = setState_v1;
+        o["getState_v1"] = getState_v1;
     }
 
     /**
@@ -24,6 +26,25 @@ public class ActorBackend extends EntityBackend
     protected function setOrientation_v1 (orient :Number) :void
     {
         (_sprite as ActorSprite).setOrientationFromUser(orient);
+    }
+
+    /**
+     * Called by user code when it wants to change the actor's state.
+     */
+    protected function setState_v1 (state :String) :void
+    {
+        if (state != null && state.length > 64) {
+            throw new ArgumentError("States may only be a maximum of 64 characters");
+        }
+        (_sprite as ActorSprite).setState(state);
+    }
+
+    /**
+     * Called by user code when it wants to inquire about the actor's state.
+     */
+    protected function getState_v1 () :String
+    {
+        return (_sprite as ActorSprite).getState();
     }
 }
 }

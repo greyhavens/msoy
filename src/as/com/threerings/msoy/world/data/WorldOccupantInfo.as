@@ -20,5 +20,10 @@ public interface WorldOccupantInfo
      * Returns the media that is used to display this occupant.
      */
     function getMedia () :MediaDesc;
+
+    /**
+     * Return the current state of the occupant, which may be null.
+     */
+    function getState () :String;
 }
 }

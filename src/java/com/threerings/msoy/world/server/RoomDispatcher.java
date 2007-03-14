@@ -70,6 +70,13 @@ public class RoomDispatcher extends InvocationDispatcher
             );
             return;
 
+        case RoomMarshaller.SET_ACTOR_STATE:
+            ((RoomProvider)provider).setActorState(
+                source,
+                (ItemIdent)args[0], ((Integer)args[1]).intValue(), (String)args[2]
+            );
+            return;
+
         case RoomMarshaller.UPDATE_MEMORY:
             ((RoomProvider)provider).updateMemory(
                 source,

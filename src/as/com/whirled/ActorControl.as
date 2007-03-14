@@ -18,6 +18,13 @@ import flash.display.DisplayObject;
 
 
 /**
+ * Dispatched as notification that the actor's state has changed.
+ *
+ * @eventType com.whirled.ControlEvent.STATE_CHANGED
+ */
+[Event(name="stateChanged", type="com.whirled.ControlEvent")]
+
+/**
  * Defines actions, accessors and callbacks available to all in-world mobiles. An mobile is
  * something that has an orientation in the scene and can request to change locations.
  */
@@ -82,12 +89,33 @@ public class ActorControl extends EntityControl
         callHostCode("setOrientation_v1", orient);
     }
 
+    /**
+     * Set the state of this actor. An actor can only be in one state at a time,
+     * but it is persistent across rooms.
+     *
+     * @param state A String identifier, may be null, indicating the state.
+     * The maximum length is 64 characters.
+     */
+    public function setState (state :String) :void
+    {
+        callHostCode("setState_v1", state);
+    }
+
+    /**
+     * Get the current state. If no state has been set, null will be returned.
+     */
+    public function getState () :String
+    {
+        return (callHostCode("getState_v1") as String);
+    }
+
     // from WhirledControl
     override protected function populateProperties (o :Object) :void
     {
         super.populateProperties(o);
 
         o["appearanceChanged_v1"] = appearanceChanged_v1;
+        o["stateSet_v1"] = stateSet_v1;
     }
 
     /**
@@ -99,6 +127,14 @@ public class ActorControl extends EntityControl
         _orient = orient;
         _isMoving = moving;
         dispatch(ControlEvent.APPEARANCE_CHANGED);
+    }
+
+    /**
+     * Called when a new state is set.
+     */
+    protected function stateSet_v1 (newState :String) :void
+    {
+        dispatch(ControlEvent.STATE_CHANGED, newState);
     }
 
     /** Contains our current location in the scene [x, y, z], or null. */

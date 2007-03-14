@@ -37,6 +37,11 @@ public interface RoomService extends InvocationService
     public void sendSpriteMessage (Client client, ItemIdent item, String name, byte[] arg, boolean isAction);
 
     /**
+     * Requests to update an actor's state.
+     */
+    public void setActorState (Client client, ItemIdent item, int actorOid, String state);
+
+    /**
      * Requests to edit the client's current room.
      *
      * @param listener will be informed with an array of items in the room.

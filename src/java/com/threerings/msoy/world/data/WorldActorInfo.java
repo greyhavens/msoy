@@ -3,12 +3,11 @@
 
 package com.threerings.msoy.world.data;
 
-import com.threerings.crowd.data.BodyObject;
-
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.data.ActorInfo;
+import com.threerings.msoy.data.MsoyBodyObject;
 
 /**
  * Contains extra information for an occupant when they are in the virtual world.
@@ -16,6 +15,9 @@ import com.threerings.msoy.data.ActorInfo;
 public class WorldActorInfo extends ActorInfo
     implements WorldOccupantInfo
 {
+    /** The current state of the occupant's avatar. */
+    public String state;
+
     /** Used for unserialization. */
     public WorldActorInfo ()
     {
@@ -24,9 +26,11 @@ public class WorldActorInfo extends ActorInfo
     /**
      * Creates a world actor info record for the specified actor.
      */
-    public WorldActorInfo (BodyObject body, ItemIdent ident, MediaDesc media)
+    public WorldActorInfo (MsoyBodyObject body, ItemIdent ident, MediaDesc media)
     {
         super(body, ident);
+
+        state = body.avatarState;
         _media = media;
     }
 
@@ -34,6 +38,12 @@ public class WorldActorInfo extends ActorInfo
     public MediaDesc getMedia ()
     {
         return _media;
+    }
+
+    // from interface WorldOccupantInfo
+    public String getState ()
+    {
+        return state;
     }
 
     /** The media that represents this occupant. */

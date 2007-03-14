@@ -112,6 +112,19 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Handles a request by an actor item to change its persistent state.
+     * Requires control.
+     */
+    public function setActorState (ident :ItemIdent, actorOid :int, state :String) :void
+    {
+        if (!checkCanRequest(ident, "setState")) {
+            return;
+        }
+
+        _roomObj.roomService.setActorState(_mctx.getClient(), ident, actorOid, state);
+    }
+
+    /**
      * Handles a request by an item in our room to update its memory.
      */
     public function updateMemory (ident :ItemIdent, key :String, value: Object) :Boolean
@@ -328,11 +341,23 @@ public class RoomController extends SceneController
                     var worldActions :Array = [];
                     for each (var act :String in actions) {
                         worldActions.push({ label: act,
-                            callback: doWorldAvatarAction, arg: act });
+                            callback: doAvatarAction, arg: act });
                     }
 
                     menuItems.push({ label: Msgs.GENERAL.get("l.avAction"),
                         children: worldActions });
+                }
+
+                var states :Array = avatar.getAvatarStates();
+                if (states.length > 0) {
+                    var worldStates :Array = [];
+                    for each (var state :String in states) {
+                        worldStates.push({ label: state,
+                            callback: doAvatarState, arg :state });
+                    }
+
+                    menuItems.push({ label: Msgs.GENERAL.get("l.avStates"),
+                        children: worldStates });
                 }
             }
 
@@ -703,10 +728,19 @@ public class RoomController extends SceneController
     /**
      * Called to enact the avatar action globally: all users will see it.
      */
-    protected function doWorldAvatarAction (action :String) :void
+    protected function doAvatarAction (action :String) :void
     {
         sendSpriteMessage(_roomView.getMyAvatar().getItemIdent(),
             action, null, true);
+    }
+
+    /**
+     * Called to enact an avatar state change.
+     */
+    protected function doAvatarState (state :String) :void
+    {
+        var avatar :AvatarSprite = _roomView.getMyAvatar();
+        setActorState(avatar.getItemIdent(), avatar.getOid(), state);
     }
 
     /** The life-force of the client. */

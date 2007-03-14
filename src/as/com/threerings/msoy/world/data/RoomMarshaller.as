@@ -74,8 +74,19 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch {@link #setActorState} requests. */
+    public static const SET_ACTOR_STATE :int = 5;
+
+    // from interface RoomService
+    public function setActorState (arg1 :Client, arg2 :ItemIdent, arg3 :int, arg4 :String) :void
+    {
+        sendRequest(arg1, SET_ACTOR_STATE, [
+            arg2, Integer.valueOf(arg3), arg4
+        ]);
+    }
+
     /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static const UPDATE_MEMORY :int = 5;
+    public static const UPDATE_MEMORY :int = 6;
 
     // from interface RoomService
     public function updateMemory (arg1 :Client, arg2 :MemoryEntry) :void
@@ -86,7 +97,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static const UPDATE_ROOM :int = 6;
+    public static const UPDATE_ROOM :int = 7;
 
     // from interface RoomService
     public function updateRoom (arg1 :Client, arg2 :Array, arg3 :InvocationService_InvocationListener) :void

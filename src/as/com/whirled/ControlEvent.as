@@ -30,6 +30,14 @@ public class ControlEvent extends Event
      */
     public static const ACTION_TRIGGERED :String = "actionTriggered";
 
+
+    /** An event type dispatched to actors to indicate that they should
+     * be in the specified state.
+     * name: state name
+     * value: unused
+     */
+    public static const STATE_CHANGED :String = "stateChanged";
+
     /** An event type dispatched when this avatar speaks.
      * name: unused
      * value: unused

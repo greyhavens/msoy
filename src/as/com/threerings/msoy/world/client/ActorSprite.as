@@ -9,6 +9,8 @@ import flash.text.TextFormat;
 
 import flash.filters.GlowFilter;
 
+import com.threerings.util.Util;
+
 import com.threerings.flash.Animation;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -70,20 +72,37 @@ public class ActorSprite extends MsoySprite
     /**
      * Updates this actor's occupant info.
      */
-    public function setActorInfo (occInfo :ActorInfo) :void
+    public function setActorInfo (newInfo :ActorInfo) :void
     {
-        var winfo :WorldOccupantInfo = (occInfo as WorldOccupantInfo);
-        _occInfo = occInfo;
+        var winfo :WorldOccupantInfo = (newInfo as WorldOccupantInfo);
         var newMedia :MediaDesc = winfo.getMedia();
+        var changed :Boolean = false;
         if (!newMedia.equals(_desc)) {
             setup(newMedia, winfo.getItemIdent());
+            changed = true;
         }
 
-        _label.textColor = getStatusColor(_occInfo.status);
-        _label.text = _occInfo.username.toString();
-        _label.y = -1 * (_label.textHeight + 4);
-        _label.width = _label.textWidth + 5; // the magic number
-        recheckLabel();
+        if (_occInfo == null || (_occInfo.status != newInfo.status) ||
+                !_occInfo.username.equals(newInfo.username)) {
+            _label.textColor = getStatusColor(newInfo.status);
+            _label.text = newInfo.username.toString();
+            _label.y = -1 * (_label.textHeight + 4);
+            _label.width = _label.textWidth + 5; // the magic number
+            recheckLabel();
+            changed = true;
+        }
+
+        // if nothing's changed but the state, we want to dispatch
+        // a state update
+        if (!changed) {
+            var oldWinfo :WorldOccupantInfo = (_occInfo as WorldOccupantInfo);
+            if (!Util.equals(oldWinfo.getState(), winfo.getState())) {
+                callUserCode("stateSet_v1", winfo.getState());
+            }
+        }
+
+        // assign the new one
+        _occInfo = newInfo;
     }
 
     /**
@@ -280,6 +299,28 @@ public class ActorSprite extends MsoySprite
     internal function setOrientationFromUser (orient :Number) :void
     {
         // TODO
+        Log.getLog(this).debug("user-set orientation is currently TODO.");
+    }
+
+    /**
+     * Update the actor's state.
+     * Called by user code when it wants to change the actor's state.
+     */
+    internal function setState (state :String) :void
+    {
+        if (_ident != null && parent is RoomView) {
+            (parent as RoomView).getRoomController().setActorState(
+                _ident, _occInfo.bodyOid, state);
+        }
+    }
+
+    /**
+     * Get the actor's current state.
+     * Called by user code.
+     */
+    internal function getState () :String
+    {
+        return (_occInfo as WorldOccupantInfo).getState();
     }
 
     /**

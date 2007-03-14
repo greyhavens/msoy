@@ -27,6 +27,9 @@ public class MsoyBodyObject extends BodyObject
     /** The cluster object we're in. */
     public int clusterOid;
 
+    /** The current state of the body's actor avatar, or null if unset/unknown/default. */
+    public transient String avatarState;
+
     // from ScenedBodyObject
     public int getSceneId ()
     {

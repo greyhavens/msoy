@@ -78,6 +78,19 @@ public class AvatarSprite extends ActorSprite
         return arr;
     }
 
+    /**
+     * Get a list of the names of the states that this avatar may be in.
+     */
+    public function getAvatarStates () :Array
+    {
+        var arr :Array = (callUserCode("getStates_v1") as Array);
+        if (arr == null) {
+            arr = [];
+        }
+        // TODO: filter the returned array, ensure strings, max 64 chars
+        return arr;
+    }
+
     override public function messageReceived (name :String, arg :Object, isAction :Boolean) :void
     {
         super.messageReceived(name, arg, isAction);

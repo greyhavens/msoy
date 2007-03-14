@@ -15,6 +15,7 @@ import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
@@ -36,6 +37,7 @@ import com.threerings.whirled.spot.server.SpotSceneManager;
 
 import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.server.MsoyServer;
@@ -50,7 +52,9 @@ import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomMarshaller;
 import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.msoy.world.data.WorldActorInfo;
 import com.threerings.msoy.world.data.WorldMemberInfo;
+import com.threerings.msoy.world.data.WorldOccupantInfo;
 
 import com.threerings.msoy.world.server.persist.MemoryRecord;
 
@@ -118,6 +122,65 @@ public class RoomManager extends SpotSceneManager
 
         // dispatch this as a simple MessageEvent
         _roomObj.postMessage(RoomCodes.SPRITE_MESSAGE, item, name, arg, isAction);
+    }
+
+    // documentation inherited from RoomProvider
+    public void setActorState (ClientObject caller, ItemIdent item, int actorOid, String state)
+    {
+        MemberObject who = (MemberObject) caller;
+        if (!_roomObj.occupants.contains(who.getOid())) {
+            log.warning("Rejecting actor state request by non-occupant [who=" + who.who() +
+                        ", item=" + item + ", state=" + state + "].");
+            return;
+        }
+
+        // make sure the actor to be state-changed is also in this room
+        MsoyBodyObject actor;
+        if (who.getOid() != actorOid) {
+            if (!_roomObj.occupants.contains(actorOid)) {
+                log.warning("Rejecting actor state request for non-occupant [who=" + who.who() +
+                    ", item=" + item + ", state=" + state + "].");
+                return;
+            }
+            actor = (MsoyBodyObject) MsoyServer.omgr.getObject(actorOid);
+
+        } else {
+            // the actor is the caller
+            actor = who;
+        }
+
+        // TODO: consider doing the control check only for non-self actors.
+
+        // if this client does not currently control this entity; ignore the request; if no one
+        // controls it, this will assign this client as controller
+        if (!checkAssignControl(who, item, "setState")) {
+            return;
+        }
+
+        // update the state in the body object
+        actor.avatarState = state;
+
+        // update the occupant info
+        OccupantInfo occInfo = getOccupantInfo(actorOid);
+        WorldOccupantInfo winfo = (WorldOccupantInfo) occInfo;
+        if (ObjectUtil.equals(winfo.getState(), state)) {
+            // no change, no event
+            return;
+        }
+
+        // TODO: consider, instead of updating the whole dang occInfo,
+        // of dispatching a custom event that will update the state
+        // and serve as the trigger event to usercode...
+        if (occInfo instanceof WorldMemberInfo) {
+            ((WorldMemberInfo) occInfo).state = state;
+
+        } else if (occInfo instanceof WorldActorInfo) {
+            ((WorldActorInfo) occInfo).state = state;
+
+        } else {
+            log.warning("Wtf kind of occupant info is this: " + occInfo);
+        }
+        updateOccupantInfo(occInfo);
     }
 
     // documentation inherited from RoomProvider

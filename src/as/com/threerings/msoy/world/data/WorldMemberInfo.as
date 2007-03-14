@@ -17,6 +17,9 @@ import com.threerings.msoy.item.web.MediaDesc;
 public class WorldMemberInfo extends MemberInfo
     implements WorldOccupantInfo
 {
+    /** The current state of the member's avatar. */
+    public var state :String;
+
 //    /** The style of chat bubble to use. */
 //    public var chatStyle :int;
 //
@@ -29,12 +32,19 @@ public class WorldMemberInfo extends MemberInfo
         return _media;
     }
 
+    // from interface WorldOccupantInfo
+    public function getState () :String
+    {
+        return state;
+    }
+
     // documentation inherited
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
 //        chatStyle = ins.readShort();
 //        chatPopStyle = ins.readShort();
+        state = (ins.readField(String) as String);
         _media = (ins.readObject() as MediaDesc);
     }
 

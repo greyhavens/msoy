@@ -13,7 +13,11 @@ import com.threerings.msoy.item.web.MediaDesc;
  * Extends MemberInfo with world-specific information.
  */
 public class WorldMemberInfo extends MemberInfo
+    implements WorldOccupantInfo
 {
+    /** The state of the member's avatar. */
+    public String state;
+
 //    /** The style of chat bubble to use. */
 //    public short chatStyle;
 //
@@ -42,12 +46,20 @@ public class WorldMemberInfo extends MemberInfo
         } else {
             _media = Avatar.getDefaultMemberAvatarMedia();
         }
+
+        state = user.avatarState;
     }
 
     // from interface WorldOccupantInfo
     public MediaDesc getMedia ()
     {
         return _media;
+    }
+
+    // from interface WorldOccupantInfo
+    public String getState ()
+    {
+        return state;
     }
 
     protected MediaDesc _media;
