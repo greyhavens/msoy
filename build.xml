@@ -680,6 +680,7 @@
       <link href="http://samskivert.com/code/samskivert/samskivert/docs/api"/>
       <fileset dir="${src.dir}" includes="**/*.java"/>
       <fileset dir="${gsrc.dir}" includes="client/**/*.java"/>
+      <tag name="gwt.key" enabled="false"/>
     </javadoc>
   </target>
 
