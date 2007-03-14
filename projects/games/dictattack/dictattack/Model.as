@@ -35,12 +35,27 @@ public class Model
     }
 
     /**
+     * Returns the minimum world length.
+     */
+    public function getMinWordLength () :int
+    {
+        return int(_control.getConfig()["Minimum word length"]);
+    }
+
+    /**
      * Returns the points needed to win the round.
      */
     public function getWinningPoints () :int
     {
-        // TODO: get from game config
-        return WINNING_POINTS;
+        return int(_control.getConfig()["Points per round"]);
+    }
+
+    /**
+     * Returns the number of round wins needed to win the game.
+     */
+    public function getWinningScore () :int
+    {
+        return int(_control.getConfig()["Round wins"]);
     }
 
     /**
@@ -83,7 +98,7 @@ public class Model
         var scorer :String = "";
         var points :Array = (_control.get(POINTS) as Array);
         for (var ii :int = 0; ii < points.length; ii++) {
-            if (points[ii] >= WINNING_POINTS) {
+            if (points[ii] >= getWinningPoints()) {
                 if (scorer.length > 0) {
                     scorer += ", ";
                 }
@@ -98,7 +113,7 @@ public class Model
      */
     public function submitWord (board :Board, word :String) :Boolean
     {
-        if (word.length < MIN_WORD_LENGTH) {
+        if (word.length < getMinWordLength()) {
             return false;
         }
 
@@ -129,7 +144,7 @@ public class Model
             // remove our tiles from the distributed state (we do this in individual events so that
             // watchers coming into a game half way through will see valid state), while we're at
             // it, compute our points
-            var wpoints :int = used.length - MIN_WORD_LENGTH + 1;
+            var wpoints :int = used.length - getMinWordLength() + 1;
             var ii :int, mult :int = 1;
             for (ii = 0; ii < used.length; ii++) {
                 // map our local coordinates back to a global position coordinates
@@ -160,7 +175,7 @@ public class Model
             if (newpoints >= getWinningPoints()) {
                 var newscore :int = (_control.get(SCORES) as Array)[myidx] + 1;
                 _control.set(SCORES, newscore, myidx);
-                if (newscore >= WINNING_SCORE) {
+                if (newscore >= getWinningScore()) {
                     _control.endGame(new Array().concat(myidx));
                 } else {
                     _control.endRound(INTER_ROUND_DELAY);
@@ -252,15 +267,6 @@ public class Model
     protected var _size :int;
     protected var _control :WhirledGameControl;
     protected var _view :GameView;
-
-    // TODO: get from game config
-    protected static const MIN_WORD_LENGTH :int = 4;
-
-    // TODO: get from game config
-    protected static const WINNING_POINTS :int = 15;
-
-    // TODO: get from game config
-    protected static const WINNING_SCORE :int = 3;
 
     protected static const INTER_ROUND_DELAY :int = 5;
 
