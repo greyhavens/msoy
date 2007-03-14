@@ -312,17 +312,17 @@ public class ItemServlet extends MsoyServiceServlet
 
             int deletionCount = 0;
             owners.add(item.creatorId);
-            if (item.ownerId == 0) {
-                // if this is a listed item, unlist it
-                repo.removeListing(item.itemId);
 
-                // then delete all the clones
-                for (CloneRecord record : repo.loadCloneRecords(item.itemId)) {
-                    repo.deleteItem(record.itemId);
-                    deletionCount ++;
-                    owners.add(record.ownerId);
-                }
+            // this item may be listed; make sure to unlist it
+            repo.removeListing(item.itemId);
+
+            // then delete any potential clones
+            for (CloneRecord record : repo.loadCloneRecords(item.itemId)) {
+                repo.deleteItem(record.itemId);
+                deletionCount ++;
+                owners.add(record.ownerId);
             }
+            
             // finally delete the actual item
             repo.deleteItem(item.itemId);
             deletionCount ++;

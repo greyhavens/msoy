@@ -203,10 +203,7 @@ public class CatalogServlet extends MsoyServiceServlet
                     log.warning("Can't find item to list [item= " + ident + "]");
                     throw new ServiceException(ItemCodes.INTERNAL_ERROR);
                 }
-                if (listItem.ownerId == 0) {
-                    log.warning("Item is already listed [item=" + ident + "]");
-                    throw new ServiceException(ItemCodes.INTERNAL_ERROR);
-                } else if (listItem.ownerId != mrec.memberId) {
+                if (listItem.ownerId != mrec.memberId) {
                     log.warning("Member requested to list unowned item [who=" + mrec.accountName +
                                 ", ident="+ ident + "].");
                     throw new ServiceException(ItemCodes.ACCESS_DENIED);
