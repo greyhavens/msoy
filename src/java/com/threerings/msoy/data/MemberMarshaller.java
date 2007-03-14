@@ -23,9 +23,9 @@ public class MemberMarshaller extends InvocationMarshaller
     public static final int ALTER_FRIEND = 1;
 
     // from interface MemberService
-    public void alterFriend (Client arg1, int arg2, boolean arg3, InvocationService.InvocationListener arg4)
+    public void alterFriend (Client arg1, int arg2, boolean arg3, InvocationService.ConfirmListener arg4)
     {
-        ListenerMarshaller listener4 = new ListenerMarshaller();
+        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
         listener4.listener = arg4;
         sendRequest(arg1, ALTER_FRIEND, new Object[] {
             Integer.valueOf(arg2), Boolean.valueOf(arg3), listener4

@@ -274,14 +274,14 @@ public class MemberManager
 
     // from interface MemberProvider
     public void alterFriend (ClientObject caller, int friendId, boolean add,
-                             final InvocationService.InvocationListener lner)
+                             final InvocationService.ConfirmListener lner)
         throws InvocationException
     {
         MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
         ResultListener<Void> rl = new ResultListener<Void>() {
             public void requestCompleted (Void result) {
-                // that's cool
+                lner.requestProcessed();
             }
             public void requestFailed (Exception cause) {
                 lner.requestFailed(cause.getMessage());

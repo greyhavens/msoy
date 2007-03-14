@@ -18,7 +18,7 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#alterFriend} request.
      */
-    public void alterFriend (ClientObject caller, int arg1, boolean arg2, InvocationService.InvocationListener arg3)
+    public void alterFriend (ClientObject caller, int arg1, boolean arg2, InvocationService.ConfirmListener arg3)
         throws InvocationException;
 
     /**

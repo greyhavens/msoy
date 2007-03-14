@@ -41,7 +41,7 @@ public class MemberDispatcher extends InvocationDispatcher
         case MemberMarshaller.ALTER_FRIEND:
             ((MemberProvider)provider).alterFriend(
                 source,
-                ((Integer)args[0]).intValue(), ((Boolean)args[1]).booleanValue(), (InvocationService.InvocationListener)args[2]
+                ((Integer)args[0]).intValue(), ((Boolean)args[1]).booleanValue(), (InvocationService.ConfirmListener)args[2]
             );
             return;
 
