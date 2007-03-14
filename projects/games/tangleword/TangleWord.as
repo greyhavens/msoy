@@ -33,11 +33,12 @@ public class TangleWord extends Sprite
         _gameCtrl.registerListener (this);
         if (_gameCtrl.isConnected())
         {
-            _rounds = new RoundProvider (_gameCtrl);
+            _rounds = new RoundProvider (
+                _gameCtrl, Properties.ROUND_LENGTH, Properties.PAUSE_LENGTH);
             
             // Create MVC elements
             _controller = new Controller (_gameCtrl, null, _rounds); // we'll set the model later...
-            _display = new Display (_gameCtrl, _controller, _rounds, "Tangleword v. 1.1c");
+            _display = new Display (_gameCtrl, _controller, _rounds, "Tangleword v. 1.2");
             _model = new Model (_gameCtrl, _rounds, _display);
             _controller.setModel (_model);                           // ... as in, right here :)
             addChild (_display);
@@ -64,7 +65,10 @@ public class TangleWord extends Sprite
     /** Clean up and shut down. */
     public function handleUnload (event : Event) : void
     {
+        _model.handleUnload (event);
         _display.handleUnload (event);
+        _controller.handleUnload (event);
+        _rounds.handleUnload (event);
     }
         
     /**
@@ -73,23 +77,17 @@ public class TangleWord extends Sprite
     */
     private function startGame () : void
     {
-        _rounds.setTimeout (RoundProvider.SYSTEM_STARTED_STATE, 0); 
-        _rounds.setTimeout (RoundProvider.ROUND_STARTED_STATE, Properties.ROUND_LENGTH);
-        _rounds.setTimeout (RoundProvider.ROUND_ENDED_STATE, Properties.PAUSE_LENGTH);
+        _rounds.initialize();
         
         // If I joined an existing game, display time remaining till next round
-        if (! isNaN (_rounds.getCurrentStateTimeout ()))
+        if (! _gameCtrl.amInControl ())
         {
-            var timeout : Number = _rounds.getCurrentStateTimeout ();
-            var timenow : Number = (new Date()).time;
-            var delta : Number = (timeout - timenow) / 1000;
+            var now : int = (new Date()).time;
+            var delta : int = Math.round((_rounds.endTime - now) / 1000);
             _display.forceTimerStart (delta);
             _display.logPleaseWait ();
-        }
-        
-        // However, if I somehow became the host, just initialize everything anew.
-        if (_gameCtrl.amInControl()) {
-            _rounds.setCurrentState (RoundProvider.SYSTEM_STARTED_STATE);
+        } else {
+            // However, if I somehow became the host, just initialize everything anew.
             initializeScoreboard ();
         }
     }

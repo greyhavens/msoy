@@ -3,6 +3,7 @@ package
 
 import com.whirled.WhirledGameControl;
 
+import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.geom.Point;
 
@@ -23,10 +24,18 @@ public class Controller
         _gameCtrl = gameCtrl;
         _model = model;
         _rounds = rounds;
-        _rounds.addEventListener (RoundProvider.ROUND_STARTED_STATE, roundStartedHandler);
-        _rounds.addEventListener (RoundProvider.ROUND_ENDED_STATE, roundEndedHandler);
+        _rounds.addEventListener (RoundProviderEvent.STARTED, roundStartedHandler);
+        _rounds.addEventListener (RoundProviderEvent.ENDED, roundEndedHandler);
     }
 
+    /** Shutdown handler */
+    public function handleUnload (event : Event) : void
+    {
+        _rounds.removeEventListener (RoundProviderEvent.STARTED, roundStartedHandler);
+        _rounds.removeEventListener (RoundProviderEvent.ENDED, roundEndedHandler);
+    }
+
+    /** Update model that's being controlled. */
     public function setModel (model : Model) : void
     {
         _model = model;
@@ -134,14 +143,14 @@ public class Controller
     // EVENT HANDLERS
 
     /** Called when the round starts - enables user input, randomizes data. */
-    private function roundStartedHandler (newState : String) : void
+    private function roundStartedHandler (event : RoundProviderEvent) : void
     {
         initializeLetterSet ();
         enabled = true;
     }
 
     /** Called when the round ends - disables user input. */
-    private function roundEndedHandler (newState : String) : void
+    private function roundEndedHandler (event : RoundProviderEvent) : void
     {
         enabled = false;
     }

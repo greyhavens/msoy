@@ -1,6 +1,7 @@
 package
 {
 
+import flash.events.Event;
 
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
@@ -33,14 +34,20 @@ public class Model
 
         // Register for updates
         _gameCtrl.registerListener (this);
-        _rounds.addEventListener (RoundProvider.ROUND_STARTED_STATE, roundStartedHandler);
-        _rounds.addEventListener (RoundProvider.ROUND_ENDED_STATE, roundEndedHandler);
+        _rounds.addEventListener (RoundProviderEvent.STARTED, roundStartedHandler);
+        _rounds.addEventListener (RoundProviderEvent.ENDED, roundEndedHandler);
 
         // Initialize game data storage
         initializeStorage ();
     }
 
-
+    /** Shutdown handler */
+    public function handleUnload (event : Event) : void
+    {
+        _rounds.removeEventListener (RoundProviderEvent.STARTED, roundStartedHandler);
+        _rounds.removeEventListener (RoundProviderEvent.ENDED, roundEndedHandler);
+    }
+    
     //
     //
     // LETTER ACCESSORS
@@ -245,7 +252,7 @@ public class Model
 
     /** Called at the beginning of a round - push my scoreboard
         on everyone. */
-    public function roundStartedHandler (newState : String) : void
+    public function roundStartedHandler (event : RoundProviderEvent) : void
     {
         if (_gameCtrl.amInControl ())
         {
@@ -255,7 +262,7 @@ public class Model
     }
 
     /** Called when the round ends - cleans up data, and awards flow! */
-    public function roundEndedHandler (newState : String) : void
+    public function roundEndedHandler (event : RoundProviderEvent) : void
     {
         removeAllSelectedLetters ();
         var score :Number = _scoreboard.getRoundScore (_playerName);
@@ -325,7 +332,7 @@ public class Model
         player : String, word : String, score : Number, isvalid : Boolean) : void
     {
         // if this message came in after the end of the round, just ignore it
-        if (_rounds.getCurrentState() != RoundProvider.ROUND_STARTED_STATE) {
+        if (_rounds.inPause) {
             return;
         }
 

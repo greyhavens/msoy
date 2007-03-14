@@ -24,6 +24,8 @@ import com.threerings.ezgame.EZGameControl;
 
 import com.whirled.WhirledGameControl;
 
+import com.threerings.flash.ScrollContainer;
+
 /** The Display class represents the game visualization, including UI
     and game state display. */
 public class Display extends Sprite
@@ -53,8 +55,8 @@ public class Display extends Sprite
 
         // Register for events
         _gameCtrl.registerListener (this);
-        _rounds.addEventListener (RoundProvider.ROUND_STARTED_STATE, roundStartedHandler);
-        _rounds.addEventListener (RoundProvider.ROUND_ENDED_STATE, roundEndedHandler);
+        _rounds.addEventListener (RoundProviderEvent.STARTED, roundStartedHandler);
+        _rounds.addEventListener (RoundProviderEvent.ENDED, roundEndedHandler);
         addEventListener (MouseEvent.CLICK, clickHandler);
         addEventListener (MouseEvent.MOUSE_MOVE, mouseHandler);
         addEventListener (KeyboardEvent.KEY_UP, typingHandler);
@@ -65,8 +67,8 @@ public class Display extends Sprite
     /** Shutdown handler */
     public function handleUnload (event : Event) : void
     {
-        _rounds.removeEventListener (RoundProvider.ROUND_STARTED_STATE, roundStartedHandler);
-        _rounds.removeEventListener (RoundProvider.ROUND_ENDED_STATE, roundEndedHandler);
+        _rounds.removeEventListener (RoundProviderEvent.STARTED, roundStartedHandler);
+        _rounds.removeEventListener (RoundProviderEvent.ENDED, roundEndedHandler);
         removeEventListener (MouseEvent.CLICK, clickHandler);
         removeEventListener (MouseEvent.MOUSE_MOVE, mouseHandler);
         removeEventListener (KeyboardEvent.KEY_UP, typingHandler);
@@ -198,17 +200,17 @@ public class Display extends Sprite
     }
 
     /** Called when the round starts - enables display. */
-    private function roundStartedHandler (newState : String) : void
+    private function roundStartedHandler (event : RoundProviderEvent) : void
     {
         logRoundStarted ();
-        _timer.start (Properties.ROUND_LENGTH);
+        _timer.start (int(Math.round(event.lengthMs / 1000)));
         setEnableState (true);
     }
 
     /** Called when the round ends - disables display. */
-    private function roundEndedHandler (newState : String) : void
+    private function roundEndedHandler (event : RoundProviderEvent) : void
     {
-        _timer.clear ();
+        _timer.start (int(Math.round(event.lengthMs / 1000)));
         setEnableState (false);
     }
 
@@ -274,6 +276,10 @@ public class Display extends Sprite
         doLayout (_logger, Properties.LOGFIELD);
         addChild (_logger);
 
+//        _logger.scrollRect = new Rectangle (0, 0, 50, 50);
+//        var box :ScrollContainer = new ScrollContainer (_logger, 100, 200);
+//        this.addChild(box);
+
         _scorefield = new ScoreField ();
         doLayout (_scorefield, Properties.SCOREFIELD);
         addChild (_scorefield);
@@ -306,7 +312,7 @@ public class Display extends Sprite
         }
         
         // Set other UI elements
-        _wordfield.visible = _okbutton.visible = _timer.visible = value;
+        _wordfield.visible = _okbutton.visible = value;
     }
     
 

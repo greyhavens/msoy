@@ -15,10 +15,10 @@ public class Properties
     public static const LOCALE : String = "en-us";
 
     /** Default round length, in seconds */
-    public static const ROUND_LENGTH : Number = 90;
+    public static const ROUND_LENGTH : Number = 120;
 
     /** Default pause length */
-    public static const PAUSE_LENGTH : Number = 10;
+    public static const PAUSE_LENGTH : Number = 30;
 
 
     /**

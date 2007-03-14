@@ -2,328 +2,182 @@ package
 {
 
 import flash.utils.Timer;
+import flash.events.Event;
 import flash.events.TimerEvent;
+import flash.events.EventDispatcher;
 
-import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.PropertyChangedListener;
+import com.threerings.ezgame.StateChangedEvent;
+import com.threerings.ezgame.StateChangedListener;
 
 import com.whirled.WhirledGameControl;
 
 
 /**
-   RoundProvider takes care of starting and ending rounds based on
-   a timer, or manual state changes. Rounds can be diagrammed
-   as the following state space:
-
-   [ Stopped ] ==> [ Started ] ==> [ Round Started ] <==> [ Round Ended ]
-
-   Each state can have an associated timeout, after which the system
-   will transition to the next state. Timeouts are set using setTimeout ():
-     _provider.setTimeout (ROUND_STARTED_STATE, 60);
-     
-   Every state transition can result in callbacks; to receive them,
-   the client needs to register using addEventListener(), for example:
-     _provider.addEventListener (ROUND_ENDED_STATE, scoringHandler);
-
-   System state can also be set manually, by calling setCurrentState (), e.g.
-     _provider.setCurrentState (RoundProvider.ROUND_STARTED_STATE);
-   However, only the authoritative host will succeed in changing the state.     
-*/
-
-public class RoundProvider implements PropertyChangedListener
+ * Round provider extends EZGameControl's round functionality with automatic host management,
+ * tracking time till end of round (or end of pause between rounds), and other convenience
+ * functions.
+ *
+ * The provider fires two events, RoundProviderEvent.STARTED and .ENDED, which happen
+ * /after/ the provider's internal data has been updated. Clients can subscribe to these events
+ * with a guarantee that provider's data will be ready for use after the event was sent out.
+ *
+ * Usage example:
+ *
+ * <pre>
+ * _rounds = new RoundProvider(game, 60, 20); // 60 second rounds with 20 second breaks
+ * _rounds.addEventListener(RoundProviderEvent.STARTED, handleStart);
+ * ...
+ * protected function handleStart (event :RoundProviderEvent) :void {
+ *   _countdownClock.updateDisplay(_rounds.endTime); 
+ * }
+ * 
+ */
+public class RoundProvider extends EventDispatcher
+    implements StateChangedListener
 {
-    /** These constants describe system states. */
-    public static const SYSTEM_STOPPED_STATE : String = "System Stopped";
-    public static const SYSTEM_STARTED_STATE : String = "System Started";
-    public static const ROUND_STARTED_STATE  : String = "Round Started";
-    public static const ROUND_ENDED_STATE    : String = "Round Ended";
-
-    public static const STATE_LIST : Array =
-        [ SYSTEM_STOPPED_STATE,
-          SYSTEM_STARTED_STATE,
-          ROUND_STARTED_STATE,
-          ROUND_ENDED_STATE ];
-
-    
-    /**
-       Constructor. Expects an instance of WhirledGameControl.
-       A newly-created instance of a round provider is not active,
-       and needs to be started with a call to one of the
-       initialize...() functions.
-    */
+    /** Constructor. Expects and instance of WhirledGameControl, and round and
+     *  pause lengths /in seconds/. Tries to start the first round automatically
+     *  with the given round length. */
     public function RoundProvider (
-        gameCtrl : WhirledGameControl)
+        gameCtrl : WhirledGameControl, roundLength :int, pauseLength :int)
     {
-        // Store the pointers
+        _roundLengthMs = roundLength * 1000;
+        _pauseLengthMs = pauseLength * 1000;
         _gameCtrl = gameCtrl;
-        _gameCtrl.registerListener (this);
+        _gameCtrl.registerListener(this);
 
-        // Initialize
-        initializeTables ();
-        setCurrentState (SYSTEM_STOPPED_STATE);
+        // this timer is only used for timing rounds (not pauses between rounds)
+        _timer = new Timer(0);
+        _timer.addEventListener(TimerEvent.TIMER, handleTimer);
     }
 
-    /**
-       Sets a timeout for the specified state. Transition out of this state
-       will happen after the number of seconds specified in /timeout/.
-       
-       Parameters:
-         state - constant string, one of RoundProvider.*_STATE
-         seconds - timeout value in seconds
-    */
-    public function setTimeout (state : String, seconds : Number) : void
+    /** Starts the first round. This function should be called after all listeners
+     *  had a chance to subscribe to the appropriate events. */
+    public function initialize () :void
     {
-        // Initialize the timer, if necessary
-        if (_timer == null)
-        {
-            _timer = new Timer (200, 0); // updates every few hundred ms
-            _timer.addEventListener (TimerEvent.TIMER, timerHandler);
-            _timer.start ();
+        // how long should we wait? if i'm the first player in the game (i.e. the host),
+        // just start a full first round. otherwise, set the timer to trigger when the
+        // existing first round is *supposed* to end.
+        if (_gameCtrl.amInControl()) {
+            setupRoundEndTimer(_roundLengthMs);
+        } else {
+            setupRoundEndTimer(endTime - now);
         }
-
-        // Now set the timeout
-        _timeouts[state] = seconds * 1000; // convert to milliseconds
     }
-        
+
+    /** Removes any listeners. */
+    public function handleUnload (event : Event) : void
+    {
+        _timer.removeEventListener(TimerEvent.TIMER, handleTimer);
+        _gameCtrl.unregisterListener(this);
+    }
+
+    /** Returns true if a round is active. */
+    public function get inRound () :Boolean
+    {
+        return (_gameCtrl.getRound() > 0);
+    }
+
+    /** Returns true if a pause is active. */
+    public function get inPause () :Boolean
+    {
+        return !inRound;
+    }
     
-    /**
-       Sets the current state to the specified value, along with the
-       appropriate timeout. Returns true if the client was an authoritative
-       host and succeeded in setting the state; false otherwise.
-
-       Parameters:
-         newState - constant string, one of RoundProvider.*_STATE.
-    */
-    public function setCurrentState (newState : String) : Boolean
+    /** Handles round changes. Beginning of a new round is the interesting case,
+     *  since it will be used to start the timer that will eventually end the round. */
+    public function stateChanged (event :StateChangedEvent) :void
     {
-        Assert.NotNull (newState, "Trying to set state to null.");
-        Assert.True (checkStateName (newState), "Trying to set invalid state: " + newState);
-        if (checkStateName (newState))
-        {
-            // Only the host will actually succeed doing this...
-            if (_gameCtrl.amInControl())
-            {
-                var newStateTimeout : Number = (new Date()).time + _timeouts[newState];
-                _gameCtrl.set (ROUND_PROVIDER_CURRENT_STATE_PROPERTY, newState);
-                _gameCtrl.set (ROUND_PROVIDER_CURRENT_STATE_TIMEOUT, newStateTimeout);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /** Retrieves current state */
-    public function getCurrentState () : String
-    {
-        return (_gameCtrl.get (ROUND_PROVIDER_CURRENT_STATE_PROPERTY) as String);
-    }
-
-    /** Retrieves the desired end-time for the current state, in the same format
-        as returned from Date.time (i.e. milliseconds since the beginnning of
-        the Unix epoch). If the current state does not have a defined timeout,
-        it will return a NaN.
-
-        Note: this timeout value may be a few hundred milliseconds off from what
-        is used to trigger events, and should be used for UI/display purposes only. 
-    */
-    public function getCurrentStateTimeout () : Number
-    {
-        return (_gameCtrl.get (ROUND_PROVIDER_CURRENT_STATE_TIMEOUT) as Number);
-    }
-
-    /** Adds the specified function to the list of state change callbacks;
-        it will be called when the specified /newState/ is entered.
-        
-        The listener function is required to have the following signature:
-          function (newState : String) : void
-
-        Please note that the listener function will only be called once,
-        at the transition into the new state.
-    */
-    public function addEventListener (newState : String, listener : Function) : void
-    {
-        if (checkStateName (newState))
-        {
-            var listeners : Array = _stateListeners[newState];
-            listeners.push (listener);
-        }
-    }
-
-    /** Removes the listener function. */
-    public function removeEventListener (state : String, listener : Function) : void
-    {
-        if (checkStateName (state))
-        {
-            var listeners : Array = _stateListeners[state];
-            var i : int = listeners.indexOf (listener);
-            if (i > -1)
-            {
-                listeners.splice (i, 1);
-            }
-        }
-    }
-
-
-    // EVENT HANDLERS
-
-    /**
-       From PropertySetListener: when the authoritative host changed
-       the current state, this event should be propagated to any of our
-       listeners.
-    */
-    public function propertyChanged (event : PropertyChangedEvent) : void
-    {
-        switch (event.name)
-        {
-        case ROUND_PROVIDER_CURRENT_STATE_PROPERTY:
-        
-            // Pull out state name
-            var state : String = event.newValue as String;
-            var valid : Boolean = checkStateName (state);
-            Assert.True (valid, "Received a set state message, but the state is invalid!");
-
-            if (valid)
-            {
-                // Remember the time when we entered this state
-                var now : Date = new Date();
-                _timestamps[state] = now.time;
-
-                // Now call any listeners
-                var listeners : Array = _stateListeners[state];
-                Assert.NotNull (listeners, "Listeners array for " + state + " doesn't exist!");
-
-                for each (var fn : Function in listeners)
-                {
-                    fn.call (null, state);
-                }
-            }
+        switch (event.type) {
+            
+        case StateChangedEvent.ROUND_STARTED:
+            setupRoundEndTimer(_roundLengthMs);
             break;
 
-        case ROUND_PROVIDER_CURRENT_STATE_TIMEOUT:
-        
-            // _gameCtrl.localChat ("Current state timeout: " + event.newValue);
+        case StateChangedEvent.ROUND_ENDED:
+            cleanupRoundEndTimer();
             break;
-
-
-        }
-    }          
-
-    /**
-       Processes ticks from the timer. These arrive every few hundred ms,
-       and we use them to determine whether to time out of the current state.
-
-       Please note: all clients receive timer events, but only the
-       authoritative host will be able to actually change the state.
-    */
-    public function timerHandler (event : TimerEvent) : void
-    {
-        // Do we even have a timeout defined for this state?
-        var currentState : String = getCurrentState ();
-        if (_timeouts[currentState] != undefined)
-        {
-            // Okay, let's get the last timestamp
-            var timeout : Number = _timeouts[currentState] as Number;
-            var timestamp : Number = _timestamps[currentState] as Number;
-            
-            var now : Date = new Date();
-            var deltams : Number = (now.time - timestamp);
-
-            if (deltams >= timeout)
-            {
-                // We're done here; try to transition to a new state
-                var nextState : String = _nextState [currentState];
-                setCurrentState (nextState);
-            }
-        }
-    }
-            
-
-
-    // PRIVATE FUNCTIONS
-
-    /** Initializes the state transition and message tables */
-    private function initializeTables () : void
-    {
-        // State transitions
-        _nextState [SYSTEM_STOPPED_STATE] = SYSTEM_STARTED_STATE;
-        _nextState [SYSTEM_STARTED_STATE] = ROUND_STARTED_STATE;
-        _nextState [ROUND_STARTED_STATE]  = ROUND_ENDED_STATE;
-        _nextState [ROUND_ENDED_STATE]    = ROUND_STARTED_STATE;
-
-        // State listeners
-        for each (var state : String in STATE_LIST)
-        {
-            _stateListeners[state] = new Array ();
-        }
+        } 
     }
 
-    /** Checks if the state name is valid */
-    private function checkStateName (stateName : String) : Boolean
+    /** Returns time when the current round (or pause) is scheduled to end, in Date.time format
+     *  (i.e., milliseconds since the beginning of Unix epoch. */
+    public function get endTime () :int
     {
-        return (STATE_LIST.indexOf (stateName) > -1);
+        return int(_gameCtrl.get("_round_provider_endtime"));
     }
 
-    /**
-       For authoritative hosts only:
-       Sets the shared variable to represent timeout for the current state,
-       in milliseconds since the beginning of the Unix epoch
-    */
-    private function setCurrentStateTimeout (value : Number) : Boolean
+    // IMPLEMENTATION DETAILS
+
+    /** Sets the time when the current round (or pause) is scheduled to end,
+     *  in Date.time format (i.e. milliseconds since the beginning of Unix epoch).
+     *  Setting this variable does not actually change the timers that schedule
+     *  round start or end; this variable is used for visual feedback only.
+     */
+    protected function setEndTime (time :int) :void
     {
-        // Only the host will actually succeed doing this...
-        if (_gameCtrl.amInControl())
-        {
-            _gameCtrl.set (ROUND_PROVIDER_CURRENT_STATE_TIMEOUT, value);
-            return true;
-        }
-        
-        return false;
+        _gameCtrl.set("_round_provider_endtime", time);
     }
 
-
-    // PRIVATE CONSTANTS
-
-    /** Variable that holds current state */
-    private static const ROUND_PROVIDER_CURRENT_STATE_PROPERTY : String =
-        "_round_current_state";
-
-    /** Variable that holds the current state timeout */
-    private static const ROUND_PROVIDER_CURRENT_STATE_TIMEOUT : String =
-        "_round_current_timeout";
-       
+    /** Returns current time, in Date.time format. */
+    protected function get now () :int
+    {
+        return (new Date()).time;
+    }
     
-    
-    // PRIVATE VARIABLES
+    /** Starts the timer that will eventually cause the round to end. */
+    protected function setupRoundEndTimer (roundLengthMs :int) :void
+    {
+        // all clients start the round timer
+        _timer.reset();
+        _timer.delay = roundLengthMs;
+        _timer.start();
+        // if i'm the host, update the timeout variable
+        if (_gameCtrl.amInControl()) {
+            setEndTime(now + roundLengthMs);
+        }
+        // inform listeners
+        this.dispatchEvent (
+            new RoundProviderEvent (RoundProviderEvent.STARTED, _gameCtrl, roundLengthMs));
+    }
 
-    /** Local EZ control storage */
-    private var _gameCtrl : WhirledGameControl;
+    /** After the round had ended, stop the timer. This will have happened after
+     *  the call to endRound(). */
+    protected function cleanupRoundEndTimer () :void
+    {
+        // all clients stop the round timer
+        _timer.stop();
+        // inform listeners
+        this.dispatchEvent (
+            new RoundProviderEvent (RoundProviderEvent.ENDED, _gameCtrl, _pauseLengthMs));
+    }
+
+    /** Handles round end timer events - when the timer triggers, the host client will
+     *  tell the game to treat the round as ended, and schedule a new round to begin
+     *  after the specified delay. */
+    protected function handleTimer (event :TimerEvent) :void
+    {
+        // if i'm the host, tell the EZ game to end the round, and start a pause of a specific
+        // length. also, update the timeout variable.
+        if (_gameCtrl.amInControl()) {
+            _gameCtrl.endRound(int(_pauseLengthMs / 1000));
+            setEndTime(now + _pauseLengthMs);
+        }
+    }
+    
+    /** Local game control storage. */
+    protected var _gameCtrl :WhirledGameControl;
+
+    /** Length of each round, in milliseconds. */
+    protected var _roundLengthMs :int;
+
+    /** Length of each pause between rounds, in milliseconds. */
+    protected var _pauseLengthMs :int;
 
     /** Timeout timer. If this variable is null, it means no timer
-        was initialized; otherwise it's set to the instance that will
-        call our callback function. */
-    private var _timer : Timer;
+     *  was initialized; otherwise it's set to the instance that will
+     *  call our callback function. */
+    protected var _timer :Timer;
 
-
-    /** Private timeout object: an associative list mapping state names
-        to timeout values (in milliseconds). If the state doesn't exist
-        as a key, it means there is no timeout defined for that state. */
-    private var _timeouts : Object = new Object ();
-
-    /** Private timestamp object: an associative list mapping state names
-        to the time when the state was last entered (in milliseconds since
-        the beginning of the Unix epoch). If the state doesn't exist
-        as a key, it means it has not been visited yet. */
-    private var _timestamps : Object = new Object ();
-
-    /** State transition table */
-    private var _nextState : Object = new Object ();
-
-    /** State to message table */
-    private var _stateListeners : Object = new Object ();
 }
-
-
-
-
 }
