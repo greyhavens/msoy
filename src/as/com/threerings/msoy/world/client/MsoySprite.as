@@ -100,6 +100,14 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
+     * Return the item ident used to identify this sprite.
+     */
+    public function getItemIdent () :ItemIdent
+    {
+        return _ident;
+    }
+
+    /**
      * Get the screen width of this sprite, taking into account both
      * horizontal scales.
      */

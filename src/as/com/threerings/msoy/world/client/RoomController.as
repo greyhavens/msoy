@@ -705,8 +705,8 @@ public class RoomController extends SceneController
      */
     protected function doWorldAvatarAction (action :String) :void
     {
-        _roomObj.postMessage("avAction",
-            [ Integer.valueOf(_mctx.getClient().getClientOid()), action ]);
+        sendSpriteMessage(_roomView.getMyAvatar().getItemIdent(),
+            action, null, true);
     }
 
     /** The life-force of the client. */

@@ -78,12 +78,16 @@ public class AvatarSprite extends ActorSprite
         return arr;
     }
 
-    /**
-     * Have this avatar perform an action.
-     */
-    public function performAvatarAction (actionName :String) :void
+    override public function messageReceived (name :String, arg :Object, isAction :Boolean) :void
     {
-        callUserCode("action_v1", actionName);
+        super.messageReceived(name, arg, isAction);
+
+        // TODO: remove someday
+        // TEMP: dispatch an old-style avatar action notification
+        // Deprecated 2007-03-13
+        if (isAction) {
+            callUserCode("action_v1", name); // no arg
+        }
     }
 
     /**

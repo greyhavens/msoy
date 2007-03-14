@@ -333,10 +333,6 @@ public class RoomView extends AbstractRoomView
     {
         var args :Array = event.getArgs();
         switch (event.getName()) {
-        case "avAction":
-            performAvatarAction(int(args[0]), (args[1] as String));
-            break;
-
         case RoomCodes.SPRITE_MESSAGE:
             dispatchSpriteMessage((args[0] as ItemIdent), (args[1] as String), (args[2] as ByteArray), (args[3] as Boolean));
             break;
@@ -740,17 +736,6 @@ public class RoomView extends AbstractRoomView
     {
         removeAll(_actors);
         removeAll(_pendingRemovals);
-    }
-
-    /**
-     * Make that avatar dance, or whatever.
-     */
-    protected function performAvatarAction (bodyOid :int, action :String) :void
-    {
-        var avatar :AvatarSprite = (getActor(bodyOid) as AvatarSprite);
-        if (avatar != null) {
-            avatar.performAvatarAction(action);
-        }
     }
 
     // from AbstractRoomView
