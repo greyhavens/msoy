@@ -17,12 +17,12 @@ public abstract class MailPayload
     implements IsSerializable, Streamable
 {
     /**
-     * The identifying integer of a {@link GroupInvite} payload. 
+     * The identifying integer of a {@link GroupInviteObject} payload. 
      */
     public static final int TYPE_GROUP_INVITE = 1;
 
     /**
-     * The identifying integer of a {@link FriendInvite} payload.
+     * The identifying integer of a {@link FriendInviteObject} payload.
      */
     public static final int TYPE_FRIEND_INVITE = 2;
 
