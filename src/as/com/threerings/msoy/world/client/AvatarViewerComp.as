@@ -140,6 +140,14 @@ class ViewerAvatarSprite extends AvatarSprite
         CommandMenu.createMenu(menuItems).show(event.stageX, event.stageY);
     }
 
+    /**
+     * Callback adapter used in our menu.
+     */
+    protected function performAvatarAction (action :String) :void
+    {
+        messageReceived(action, null, true);
+    }
+
     protected var _moving :Boolean = false;
 
     [Embed(source="../../../../../../../pages/images/item/detail_preview_bg.png")]
