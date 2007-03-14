@@ -5,10 +5,8 @@
     width="100%" height="100%"
     applicationComplete="logic.init(this);">
 <mx:VBox>
-    <mx:HBox>
-        <mx:ComboBox id="stateBox" prompt="Select state"/>
-        <mx:ComboBox id="stationBox" prompt="Select weather station"/>
-    </mx:HBox>
+    <mx:ComboBox id="stateBox" prompt="Select state"/>
+    <mx:ComboBox id="stationBox" prompt="Select weather station" enabled="false"/>
     <mx:HBox>
         <mx:Image id="iconArea"/>
         <mx:VBox verticalGap="0">

@@ -35,6 +35,7 @@ public class WeatherLogic
     {
         var state :String = String(_box.stateBox.selectedItem);
         _box.stationBox.dataProvider = _svc.getStations(state);
+        _box.stationBox.enabled = true;
     }
 
     protected function handleStationPicked (event :Event) :void
