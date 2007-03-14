@@ -130,14 +130,41 @@ class ViewerAvatarSprite extends AvatarSprite
     override public function mouseClick (event :MouseEvent) :void
     {
         var actions :Array = getAvatarActions();
-        var menuItems :Array = [];
-
+        var actionItems :Array = [];
         for each (var act :String in actions) {
-            menuItems.push({ label: act, callback: performAvatarAction,
+            actionItems.push({ label: act, callback: performAvatarAction,
                 arg: act });
         }
 
+        var states :Array = getAvatarStates();
+        var stateItems :Array = [];
+        for each (var state :String in states) {
+            stateItems.push({ label: state, callback: setState,
+                arg: state });
+        }
+
+        var menuItems :Array = [];
+        if (actionItems.length > 0) {
+            menuItems.push({ label: "Perform action...",
+                children: actionItems });
+        }
+        if (stateItems.length > 0) {
+            menuItems.push({ label: "Change state...",
+                children: stateItems });
+        }
+
         CommandMenu.createMenu(menuItems).show(event.stageX, event.stageY);
+    }
+
+    override public function getState () :String
+    {
+        return _state;
+    }
+
+    override public function setState (state :String) :void
+    {
+        _state = state;
+        callUserCode("stateSet_v1", state);
     }
 
     /**
@@ -149,6 +176,8 @@ class ViewerAvatarSprite extends AvatarSprite
     }
 
     protected var _moving :Boolean = false;
+
+    protected var _state :String;
 
     [Embed(source="../../../../../../../pages/images/item/detail_preview_bg.png")]
     protected static const BACKGROUND :Class;
