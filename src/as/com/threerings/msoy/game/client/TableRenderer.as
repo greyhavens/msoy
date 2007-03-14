@@ -192,7 +192,7 @@ public class TableRenderer extends VBox
                 if (config != "") {
                     config += "\n";
                 }
-                config += s.replace("_", " ") + ": " + customConfig[s];
+                config += s + ": " + customConfig[s];
             }
         }
         _config.text = config;
