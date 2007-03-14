@@ -639,7 +639,7 @@
       </then>
       <else>
         <!-- Run all tests -->
-        <unit printsummary="no" haltonfailure="yes" fork="yes">
+        <unit printsummary="no" haltonfailure="yes" fork="yes" dir="${basedir}">
           <classpath refid="classpath"/>
           <formatter type="brief" usefile="false"/>
           <batchtest>
@@ -722,7 +722,7 @@
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distall" depends="prepare,distprojects,dist,flashapps,jclients,temp_sdk">
+  <target name="distall" depends="prepare,distprojects,dist,flashapps,jclients,temp_sdk,tests">
     <antcall target="gclient">
       <param name="full" value="true"/>
     </antcall>
