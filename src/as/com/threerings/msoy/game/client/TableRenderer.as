@@ -186,6 +186,8 @@ public class TableRenderer extends VBox
             customConfig = (table.config as EZGameConfig).customConfig;
         }
 
+        // TODO: Ray: re-parse XML and show the options in the
+        // right order, with the right names, and the tooltips
         var config :String = "";
         if (customConfig != null) {
             for (var s :String in customConfig) {
