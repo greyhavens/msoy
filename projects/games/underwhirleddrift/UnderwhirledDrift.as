@@ -350,50 +350,59 @@ public class UnderwhirledDrift extends Sprite
     protected function keyEventHandler (event :KeyboardEvent) :void
     {
         if (_kart != null && _raceStarted) {
-            switch (event.keyCode) {
-            case Keyboard.UP:
-                _kart.moveForward(event.type == KeyboardEvent.KEY_DOWN);
-                break;
-            case Keyboard.DOWN:
-                _kart.moveBackward(event.type == KeyboardEvent.KEY_DOWN);
-                break;
-            case Keyboard.LEFT:
-                _kart.turnLeft(event.type == KeyboardEvent.KEY_DOWN);
-                break;
-            case Keyboard.RIGHT:
-                _kart.turnRight(event.type == KeyboardEvent.KEY_DOWN);
-                break;
-            case Keyboard.SPACE:
-                if (event.type == KeyboardEvent.KEY_DOWN) {
-                    _kart.jump();
-                }
-                break;
-            // I want to use regular letters for this and some other stuff, but the chat box
-            // is stealing my focus... 
-            case Keyboard.SHIFT:
-                if (event.type == KeyboardEvent.KEY_DOWN) {
-                    _kart.activateBonus();
-                }
-                break;
-            case Keyboard.TAB:
-                if (event.type == KeyboardEvent.KEY_DOWN && 
-                        // only allow this in single-player mode
-                        _control.seating.getPlayerIds().length == 1) {
-                    _currentLevel = (_currentLevel + 1) % LevelFactory.TOTAL_LEVELS;
-                    _level = LevelFactory.createLevel(_currentLevel, _ground);
-                    _gameSprite.removeChild(_horizon);
-                    _gameSprite.addChildAt(_horizon = new Horizon(_level.horizon, _camera), 0);
-                    _horizon.y += _horizon.height / 2;
-                    _horizon.x += _horizon.width / 2;
-                    _level.setStartingPosition(0);
-                    _ground.getScenery().registerKart(_kart);
-                    if (_bonus != null) {
-                        _kart.destroyBonus();
+            // checking character codes and key codes in the same switch is complete bullshit.  
+            // flash should be capable of letting me check both in one switch.
+            var c :int = event.charCode;
+            if (c >= "a".charCodeAt(0) && c <= "z".charCodeAt(0)) {
+                switch (event.charCode) {
+                case "f".charCodeAt(0):
+                    if (event.type == KeyboardEvent.KEY_DOWN) {
+                        _kart.activateBonus();
                     }
+                    break;
                 }
-                break;
-            default:
-            // do nothing
+            } else {
+                switch (event.keyCode) {
+                case Keyboard.UP:
+                    _kart.moveForward(event.type == KeyboardEvent.KEY_DOWN);
+                    break;
+                case Keyboard.DOWN:
+                    _kart.moveBackward(event.type == KeyboardEvent.KEY_DOWN);
+                    break;
+                case Keyboard.LEFT:
+                    _kart.turnLeft(event.type == KeyboardEvent.KEY_DOWN);
+                    break;
+                case Keyboard.RIGHT:
+                    _kart.turnRight(event.type == KeyboardEvent.KEY_DOWN);
+                    break;
+                case Keyboard.SPACE:
+                    if (event.type == KeyboardEvent.KEY_DOWN) {
+                        _kart.jump();
+                    }
+                    break;
+                case Keyboard.SHIFT:
+                    if (event.type == KeyboardEvent.KEY_DOWN) {
+                        _kart.activateBonus();
+                    }
+                    break;
+                case Keyboard.TAB:
+                    if (event.type == KeyboardEvent.KEY_DOWN && 
+                            // only allow this in single-player mode
+                            _control.seating.getPlayerIds().length == 1) {
+                        _currentLevel = (_currentLevel + 1) % LevelFactory.TOTAL_LEVELS;
+                        _level = LevelFactory.createLevel(_currentLevel, _ground);
+                        _gameSprite.removeChild(_horizon);
+                        _gameSprite.addChildAt(_horizon = new Horizon(_level.horizon, _camera), 0);
+                        _horizon.y += _horizon.height / 2;
+                        _horizon.x += _horizon.width / 2;
+                        _level.setStartingPosition(0);
+                        _ground.getScenery().registerKart(_kart);
+                        if (_bonus != null) {
+                        _kart.destroyBonus();
+                        }
+                    }
+                    break;
+                }
             }
         }
     }
