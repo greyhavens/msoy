@@ -265,6 +265,7 @@ public class LobbyPanel extends VBox
         });
         tabsBox.addChild(about);
         // if ownerId = 0, we were pushed to the catalog's copy, so this is buyable
+        // TODO: make sure we can't get here with a game that's a gift in somebody's mailbox!
         if (getGame().ownerId == 0) {
             var buy :Label = new Label();
             buy.text = Msgs.GAME.get("b.buy");
