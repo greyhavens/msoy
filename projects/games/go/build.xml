@@ -1,0 +1,33 @@
+<!-- build configuration -->
+<project name="go" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name"   value="Go"/>
+  <property name="root.path"  value="../../.."/>
+  <property name="flex.path"  value="${root.path}/projects/tools/extern/flex_sdk"/>
+
+  <!-- builds our Flash game -->
+  <target name="compile">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=."/>
+      <arg value="-file-specs"/>
+      <arg value="${app.name}.as"/>
+    </java>
+  </target>
+
+  <!-- cleans out the compiled code -->
+  <target name="clean">
+    <delete>
+      <fileset file="${app.name}.swf"/>
+    </delete>
+  </target>
+
+  <!-- compiles and then jams the SWF into the document tree with the right filename -->
+  <property name="media_hash" value="afc510471ea77686c983862462d45fca1e55a129"/>
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" tofile="${root.path}/pages/media/${media_hash}.swf"/>
+  </target>
+
+</project>
