@@ -631,8 +631,8 @@ public class MsoyController extends Controller
         // and then if it's not going somewhere reasonable, route it to chat.
         var c :int = event.charCode;
         if (c != 0 && !event.ctrlKey && !event.altKey &&
-                // these are the ascii values for a -> z,  A -> Z
-                ((c >= 97 && c <= 122) || (c >= 65 && c <= 90))) {
+                // these are the ascii values for '/', a -> z,  A -> Z
+                (c == 47 || (c >= 97 && c <= 122) || (c >= 65 && c <= 90))) {
             try {
                 var focus :Object = _ctx.getStage().focus;
                 if (!(focus is TextField) && !(focus is ChatCantStealFocus)) {
