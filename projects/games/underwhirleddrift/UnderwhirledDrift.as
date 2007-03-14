@@ -59,6 +59,10 @@ public class UnderwhirledDrift extends Sprite
 
         _control = new WhirledGameControl(this);
         if (_control.isConnected()) {
+            var config :Object = _control.getConfig();
+            _numLaps = config["number of laps"] != null ? config["number of laps"] : 4;
+            _numRounds = config["number of rounds"] != null ? config["number of rounds"] : 3;
+
             _camera = new Camera();
 
             _ground = new Ground(_camera);
@@ -186,17 +190,17 @@ public class UnderwhirledDrift extends Sprite
             if (_playerLaps.containsKey(event.value.playerId)) {
                 currentLaps += _playerLaps.get(event.value.playerId);
             }
-            if (currentLaps < NUM_LAPS + 1 && 
+            if (currentLaps < _numLaps + 1 && 
                 !ArrayUtil.contains(_playersFinished, event.value.playerId)) {
                 _playerLaps.put(event.value.playerId, currentLaps);
                 if (event.value.playerId == _control.getMyId() && event.value.direction > 0) {
-                    if (currentLaps < NUM_LAPS) {
+                    if (currentLaps < _numLaps) {
                         _control.localChat("You are on lap " + currentLaps);
                     } else {
                         _control.localChat("You are on your final lap!");
                     }
                 }
-            } else if (currentLaps == NUM_LAPS + 1) {
+            } else if (currentLaps == _numLaps + 1) {
                 _playerLaps.remove(event.value.playerId);
                 _playersFinished.push(event.value.playerId);
                 if (_control.amInControl()) {
@@ -217,7 +221,7 @@ public class UnderwhirledDrift extends Sprite
                     _control.sendMessage("awardFlow", 1 - (_playersFinished.length - 1) / 
                         _control.seating.getPlayerIds().length, event.value.playerId);
                     if (_playerLaps.size() == 0) {
-                        if (_currentLevel == LevelFactory.TOTAL_LEVELS - 1) {
+                        if (_currentLevel == _numRounds - 1) {
                             _control.sendMessage("gameComplete", true);
                         } else {
                             _control.sendMessage("trackComplete", true);
@@ -234,8 +238,8 @@ public class UnderwhirledDrift extends Sprite
                 "loading the next track!");
             _raceStarted = false;
             _kart.killMovement();
-            _currentLevel = _currentLevel + 1;
-            _level = LevelFactory.createLevel(_currentLevel, _ground);
+            _currentLevel++;
+            _level = LevelFactory.createLevel(_currentLevel % LevelFactory.TOTAL_LEVELS, _ground);
             _gameSprite.removeChild(_horizon);
             _gameSprite.addChildAt(_horizon = new Horizon(_level.horizon, _camera), 0);
             _horizon.y += _horizon.height / 2;
@@ -350,14 +354,32 @@ public class UnderwhirledDrift extends Sprite
     protected function keyEventHandler (event :KeyboardEvent) :void
     {
         if (_kart != null && _raceStarted) {
-            // checking character codes and key codes in the same switch is complete bullshit.  
-            // flash should be capable of letting me check both in one switch.
+            // not checking character codes and key codes in the same switch is complete bullshit.  
+            // flash should be capable of letting me check both at once
             var c :int = event.charCode;
             if (c >= "a".charCodeAt(0) && c <= "z".charCodeAt(0)) {
-                switch (event.charCode) {
+                switch (c) {
                 case "f".charCodeAt(0):
                     if (event.type == KeyboardEvent.KEY_DOWN) {
                         _kart.activateBonus();
+                    }
+                    break;
+                case "n".charCodeAt(0):
+                    if (event.type == KeyboardEvent.KEY_DOWN && 
+                            // only allow this in single-player mode
+                            _control.seating.getPlayerIds().length == 1) {
+                        _currentLevel++;
+                        _level = LevelFactory.createLevel(_currentLevel % LevelFactory.TOTAL_LEVELS,
+                            _ground);
+                        _gameSprite.removeChild(_horizon);
+                        _gameSprite.addChildAt(_horizon = new Horizon(_level.horizon, _camera), 0);
+                        _horizon.y += _horizon.height / 2;
+                        _horizon.x += _horizon.width / 2;
+                        _level.setStartingPosition(0);
+                        _ground.getScenery().registerKart(_kart);
+                        if (_bonus != null) {
+                        _kart.destroyBonus();
+                        }
                     }
                     break;
                 }
@@ -380,28 +402,6 @@ public class UnderwhirledDrift extends Sprite
                         _kart.jump();
                     }
                     break;
-                case Keyboard.SHIFT:
-                    if (event.type == KeyboardEvent.KEY_DOWN) {
-                        _kart.activateBonus();
-                    }
-                    break;
-                case Keyboard.TAB:
-                    if (event.type == KeyboardEvent.KEY_DOWN && 
-                            // only allow this in single-player mode
-                            _control.seating.getPlayerIds().length == 1) {
-                        _currentLevel = (_currentLevel + 1) % LevelFactory.TOTAL_LEVELS;
-                        _level = LevelFactory.createLevel(_currentLevel, _ground);
-                        _gameSprite.removeChild(_horizon);
-                        _gameSprite.addChildAt(_horizon = new Horizon(_level.horizon, _camera), 0);
-                        _horizon.y += _horizon.height / 2;
-                        _horizon.x += _horizon.width / 2;
-                        _level.setStartingPosition(0);
-                        _ground.getScenery().registerKart(_kart);
-                        if (_bonus != null) {
-                        _kart.destroyBonus();
-                        }
-                    }
-                    break;
                 }
             }
         }
@@ -409,8 +409,6 @@ public class UnderwhirledDrift extends Sprite
 
     protected static const SEND_THROTTLE :int = 150; // in ms
     
-    protected static const NUM_LAPS :int = 4; 
-
     [Embed(source='rsrc/light_board.swf#light_board')]
     protected static const LIGHT_BOARD :Class;
 
@@ -444,5 +442,8 @@ public class UnderwhirledDrift extends Sprite
     protected var _lightBoard :MovieClipAsset;
 
     protected var _bonus :Bonus;
+
+    protected var _numLaps :int;
+    protected var _numRounds :int;
 }
 }
