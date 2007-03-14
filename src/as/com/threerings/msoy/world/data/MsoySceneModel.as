@@ -64,7 +64,7 @@ public class MsoySceneModel extends SceneModel
     public var horizon :Number;
 
     /** The furniture in the scene. */
-    public var furnis :TypedArray;
+    public var furnis :TypedArray /* of FurniData */;
 
     /** The entrance location. */
     public var entrance :MsoyLocation;
