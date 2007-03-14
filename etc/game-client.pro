@@ -19,7 +19,7 @@
 -injars ../dist/msoy-code.jar(
     rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
     **/msoy/web/data/**,**/msoy/world/data/WorldMemberInfo.class,**/msoy/item/web/**,
-    **/msoy/game/data/**,**/msoy/game/client/**)
+    **/msoy/game/data/**,**/msoy/game/client/**,**/msoy/world/data/WorldOccupantInfo.class)
 
 -dontskipnonpubliclibraryclasses
 -dontobfuscate
