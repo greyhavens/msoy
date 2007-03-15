@@ -9,7 +9,6 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.EntityMigration;
 
 import com.threerings.toybox.server.ToyBoxManager;
-import com.threerings.toybox.server.persist.Game;
 import com.threerings.toybox.xml.GameParser;
 
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -44,7 +43,7 @@ public class GameRepository extends ItemRepository<
     }
 
     // from ToyBoxManager.GameRepository
-    public Game loadGame (int gameId)
+    public ToyBoxGameRecord loadGame (int gameId)
         throws PersistenceException
     {
         // load up the GameRecord for this game and do some conversion
@@ -56,16 +55,12 @@ public class GameRepository extends ItemRepository<
         // we create a custom parser that will create a custom game definition
         // that will look for the game jar file using the digest as a name
         // instead of the game ident
-        Game tgame = new Game() {
-            protected GameParser createParser () {
-                return new MsoyGameParser();
-            }
-        };
+        ToyBoxGameRecord tgame = new ToyBoxGameRecord();
 
         tgame.gameId = gameId;
         tgame.name = game.name;
         tgame.maintainerId = game.creatorId;
-        tgame.status = Game.Status.READY.toString();
+        tgame.status = ToyBoxGameRecord.Status.READY.toString();
         tgame.host = ""; // TODO
         tgame.definition = game.config; 
         tgame.digest = MediaDesc.hashToString(game.gameMediaHash);
