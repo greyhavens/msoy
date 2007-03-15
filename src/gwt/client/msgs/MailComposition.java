@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.threerings.msoy.web.data.MemberName;
 
 import client.util.BorderedDialog;
+import client.util.BorderedPopup;
 
 /**
  * A mail composition popup.
@@ -118,6 +119,13 @@ public class MailComposition extends BorderedDialog
         Button replyButton = new Button(CMsgs.mmsgs.btnSend());
         replyButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
+                if (_bodyObjectComposer != null) {
+                    String msg = _bodyObjectComposer.okToSend();
+                    if (msg != null) {
+                        showError(msg);
+                        return;
+                    }
+                }
                 deliverMail();
             }
         });
@@ -147,18 +155,7 @@ public class MailComposition extends BorderedDialog
             }
             public void onFailure (Throwable caught) {
                 // for now, just show that something went wrong and return to the composer
-                PopupPanel popup = new PopupPanel(false);
-                VerticalPanel panel = new VerticalPanel();
-                panel.add(new Label("Ai! The message could not be sent."));
-                Button okButton = new Button("OK");
-                okButton.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        hide();
-                    }
-                });
-                panel.add(okButton);
-                popup.setWidget(panel);
-                popup.show();
+                showError("Ai! The message could not be sent.");
             }
         };
         CMsgs.mailsvc.deliverMessage(CMsgs.creds, _recipient.getMemberId(), _subjectBox.getText(),
@@ -166,6 +163,22 @@ public class MailComposition extends BorderedDialog
                                      null : _bodyObjectComposer.getComposedPayload(), callback);
     }
 
+    protected void showError (String msg)
+    {
+        final PopupPanel popup = new BorderedPopup(false);
+        VerticalPanel panel = new VerticalPanel();
+        panel.add(new Label(msg));
+        Button okButton = new Button("OK");
+        okButton.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                popup.hide();
+            }
+        });
+        panel.add(okButton);
+        popup.setWidget(panel);
+        popup.show();
+    }
+    
     protected int _senderId;
     protected MemberName _recipient;
     protected VerticalPanel _panel;
