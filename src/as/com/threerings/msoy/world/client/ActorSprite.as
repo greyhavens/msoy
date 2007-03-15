@@ -306,7 +306,7 @@ public class ActorSprite extends MsoySprite
      * Update the actor's state.
      * Called by user code when it wants to change the actor's state.
      */
-    internal function setState (state :String) :void
+    public function setState (state :String) :void
     {
         if (_ident != null && parent is RoomView) {
             (parent as RoomView).getRoomController().setActorState(
@@ -318,7 +318,7 @@ public class ActorSprite extends MsoySprite
      * Get the actor's current state.
      * Called by user code.
      */
-    internal function getState () :String
+    public function getState () :String
     {
         return (_occInfo as WorldOccupantInfo).getState();
     }
