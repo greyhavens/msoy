@@ -36,7 +36,9 @@ import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.StaticMediaDesc;
 
 import com.threerings.msoy.world.data.MsoyLocation;
+import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.msoy.world.data.WorldOccupantInfo;
 import com.threerings.msoy.world.server.RoomManager;
 
 import com.threerings.msoy.game.data.WorldGameConfig;
@@ -289,6 +291,7 @@ public class ChiyogamiManager extends GameManager
         SpeakProvider.sendSpeak(_roomObj, _bossObj.username, null, utterance);
     }
 
+    // TODO: use states, not actions
     protected void updatePlayerAction (BodyObject player)
     {
         String[] actions = _playerActions.get(player.getOid());
@@ -306,12 +309,20 @@ public class ChiyogamiManager extends GameManager
             }
         }
 
-        _roomObj.postMessage("avAction", player.getOid(), action);
+        updateAction(player.getOid(), action);
     }
 
     protected void updateBossAction ()
     {
-        _roomObj.postMessage("avAction", _bossObj.getOid(), _bossActions[1]);
+        updateAction(_bossObj.getOid(), _bossActions[1]);
+    }
+
+    protected void updateAction (int oid, String action)
+    {
+        WorldOccupantInfo winfo = (WorldOccupantInfo) _roomObj.occupantInfo.get(oid);
+
+        _roomObj.postMessage(RoomCodes.SPRITE_MESSAGE, winfo.getItemIdent(),
+            action, null, true);
     }
 
     @Override
