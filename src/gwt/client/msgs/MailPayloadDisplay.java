@@ -58,6 +58,17 @@ public abstract class MailPayloadDisplay
     public abstract Widget widgetForOthers ();
 
     /**
+     * Asks this if the payload represented by this display widget may be deleted, in which
+     * case we return null. If it may not, return a string with the human-readable reason;
+     * it will be displayed to the user.
+     * 
+     * TODO: Ideally this should be some kind of delete-button-outgraying callback mechanism,
+     * but that may be over the top.
+     */
+
+    public abstract String okToDelete ();
+    
+    /**
      * Performs a server request to update the state for this message. If the callback
      * argument is null, one is created for you which does nothing on success and throws
      * a RuntimeException on failure.

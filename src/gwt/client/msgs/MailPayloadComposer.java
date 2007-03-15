@@ -28,6 +28,16 @@ public interface MailPayloadComposer
     public Widget widgetForComposition ();
 
     /**
+     * Asks if this composision widget ss ready to be sent, in which case it should return null;
+     * if not, a string giving the reason is returned and displayed to the user. This is mostly
+     * used for multi-stage UI's.
+     * 
+     * TODO: Ideally this should be some kind of send-button-outgraying callback mechanism, but
+     * that may be over the top.
+     */
+    public String okToSend ();
+
+    /**
      * Returns the {@link MailPayload} to be included in the message being composed.  Typically,
      * the value has been configured according to the user's desire through the widget supplied by
      * {@link #widgetForComposition()}. This method may return null, in which case no {@link

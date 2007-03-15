@@ -43,19 +43,26 @@ public abstract class GroupInvite
             _groups = groups;
         }
 
-        // @Override
+        // from MailPayloadComposer
         public MailPayload getComposedPayload ()
         {
             return new GroupInviteObject(_selectedGroupId, false);
         }
 
-        // @Override
+        // from MailPayloadComposer
         public Widget widgetForComposition ()
         {
             return new CompositionWidget();
         }
 
-        // @Override
+        // from MailPayloadComposer
+        public String okToSend ()
+        {
+            // we're always ready to be sent
+            return null;
+        }
+
+        // from MailPayloadComposer
         public void messageSent (MemberName recipient)
         {
             // TODO: if we implement backend tracking of group invites, do something here.
@@ -126,6 +133,13 @@ public abstract class GroupInvite
         public Widget widgetForOthers ()
         {
             return new DisplayWidget(false);
+        }
+
+        // @Override
+        public String okToDelete ()
+        {
+            // we're always happy to be deleted
+            return null;
         }
 
         protected class DisplayWidget extends DockPanel

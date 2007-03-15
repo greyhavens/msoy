@@ -24,18 +24,26 @@ public abstract class FriendInvite
     public static class Composer
         implements MailPayloadComposer
     {
+        // from MailPayloadComposer
         public Widget widgetForComposition ()
         {
             return new InvitationWidget();
         }
 
-        // @Override
+        // from MailPayloadComposer
         public MailPayload getComposedPayload ()
         {
             return new FriendInviteObject();
         }
 
-        // @Override
+        // from MailPayloadComposer
+        public String okToSend ()
+        {
+            // we're always ready to be sent
+            return null;
+        }
+        
+        // from MailPayloadComposer
         public void messageSent (MemberName recipient)
         {
             CMsgs.membersvc.inviteFriend(CMsgs.creds, recipient.getMemberId(), new AsyncCallback() {
@@ -78,6 +86,13 @@ public abstract class FriendInvite
         public Widget widgetForOthers ()
         {
             return new InvitationWidget(true);
+        }
+
+        // @Override
+        public String okToDelete ()
+        {
+            // we're always happy to be deleted
+            return null;
         }
 
         protected class InvitationWidget extends DockPanel
