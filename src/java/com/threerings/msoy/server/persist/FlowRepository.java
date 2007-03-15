@@ -96,7 +96,7 @@ public class FlowRepository extends DepotRepository
 
         // if they get flow for performing this action, grant it to them
         if (action.getFlow() > 0) {
-            return updateFlow(memberId, action.getFlow(), data, true);
+            return updateFlow(memberId, action.getFlow(), action.toString() + " " + data, true);
         } else {
             return -1;
         }
