@@ -14,6 +14,8 @@ import com.threerings.whirled.data.SceneImpl;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotScene;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Implementation of the Msoy scene interface.
  */
@@ -31,20 +33,29 @@ public class MsoyScene extends SceneImpl
      */
     public boolean canEdit (MemberObject member)
     {
-        if (member.getTokens().isAdmin()) {
+        boolean hasRights;
+        switch (_model.ownerType) {
+        case MsoySceneModel.OWNER_TYPE_MEMBER:
+            hasRights = (_model.ownerId == member.getMemberId());
+            break;
+
+        case MsoySceneModel.OWNER_TYPE_GROUP:
+            hasRights = member.isGroupManager(_model.ownerId);
+            break;
+
+        default:
+            hasRights = false;
+            break;
+        }
+
+        if (!hasRights && member.getTokens().isAdmin()) {
+            log.info("Allowing admin to edit scene in which they otherwise wouldn't have rights " +
+                "[sceneId=" + getId() + ", sceneName=\"" + getName() + "\", " +
+                "admin=" + member.who() + "].");
             return true;
         }
 
-        switch (_model.ownerType) {
-        case MsoySceneModel.OWNER_TYPE_MEMBER:
-            return (_model.ownerId == member.getMemberId());
-
-        case MsoySceneModel.OWNER_TYPE_GROUP:
-            return member.isGroupManager(_model.ownerId);
-
-        default:
-            return false;
-        }
+        return hasRights;
     }
 
     /**

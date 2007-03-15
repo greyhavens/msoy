@@ -32,20 +32,30 @@ public class MsoyScene extends SceneImpl
      */
     public function canEdit (member :MemberObject) :Boolean
     {
-        if (member.getTokens().isAdmin()) {
+        var hasRights :Boolean;
+        switch (_msoyModel.ownerType) {
+        case MsoySceneModel.OWNER_TYPE_MEMBER:
+            hasRights = (_msoyModel.ownerId == member.getMemberId());
+            break;
+
+        case MsoySceneModel.OWNER_TYPE_GROUP:
+            hasRights = member.isGroupManager(_msoyModel.ownerId);
+            break;
+
+        default:
+            hasRights = false;
+            break;
+        }
+
+        if (!hasRights && member.getTokens().isAdmin()) {
+//            Log.getLog(this).info("Allowing admin to edit scene in which " +
+//                "they otherwise wouldn't have rights " +
+//                "[sceneId=" + getId() + ", sceneName=\"" + getName() + "\", " +
+//                "admin=" + member.who() + "].");
             return true;
         }
 
-        switch (_msoyModel.ownerType) {
-        case MsoySceneModel.OWNER_TYPE_MEMBER:
-            return (_msoyModel.ownerId == member.getMemberId());
-
-        case MsoySceneModel.OWNER_TYPE_GROUP:
-            return member.isGroupManager(_msoyModel.ownerId);
-
-        default:
-            return false;
-        }
+        return hasRights;
     }
 
     /**
