@@ -704,6 +704,7 @@ public class MemberManager
                     }
                 });
                 user.setAvatar(avatar);
+                user.avatarState = null; // clear out the state
                 updateOccupantInfo(user);
             }
 
