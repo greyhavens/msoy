@@ -75,6 +75,8 @@ public abstract class ItemEditor extends BorderedDialog
             editor = new AudioEditor();
         } else if (type == Item.VIDEO) {
             editor = new VideoEditor();
+        } else if (type == Item.DECOR) {
+            editor = new DecorEditor();
         } else {
             return null; // woe be the caller
         }

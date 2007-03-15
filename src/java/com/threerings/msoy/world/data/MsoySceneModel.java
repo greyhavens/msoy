@@ -18,21 +18,6 @@ import com.threerings.whirled.spot.data.Portal;
  */
 public class MsoySceneModel extends SceneModel
 {
-    /** A type constant indicating a normal room where defaultly
-     * draw some walls. */
-    public static final byte DRAWN_ROOM = 0;
-
-    /** A type constant indicating a room where the background image should
-     * be drawn covering everything, but layered behind everything else such
-     * that the background image IS the scene to the viewer. */
-    public static final byte IMAGE_OVERLAY = 1;
-
-    /** A type constant indicating a image that does not scroll. */
-    public static final byte FIXED_IMAGE = 2;
-
-    /** The number of type constants. */
-    public static final int TYPE_COUNT = 3;
-
     /** Constant for Member room owners **/
     public static final byte OWNER_TYPE_MEMBER = 1;
 
@@ -62,6 +47,9 @@ public class MsoySceneModel extends SceneModel
 
     /** The entrance location. */
     public MsoyLocation entrance;
+
+    /** The id of the decor object that describes room background and parameters. */
+    public int decorId; //FIXME ROBERT: DecorData
 
     /**
      * Add a piece of furniture to this model.

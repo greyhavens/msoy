@@ -33,6 +33,7 @@ import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.data.SceneBookmarkEntry;
 
+import com.threerings.msoy.item.web.Decor;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.StaticMediaDesc;
@@ -331,7 +332,7 @@ public class MsoySceneRepository extends SimpleRepository
                         model.entrance = new MsoyLocation(
                             rs.getFloat(9), rs.getFloat(10), rs.getFloat(11),
                             180);
-
+                        
                     } else {
                         return Boolean.FALSE; // no scene found
                     }
@@ -739,7 +740,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         if (sceneId == 1) {
             // crayon room
-            model.sceneType = MsoySceneModel.IMAGE_OVERLAY;
+            model.sceneType = Decor.IMAGE_OVERLAY;
             model.width = 1600;
 
             portal.loc = new MsoyLocation(0, 0, .3, 0);
@@ -835,7 +836,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 2) {
             // alley
-            model.sceneType = MsoySceneModel.IMAGE_OVERLAY;
+            model.sceneType = Decor.IMAGE_OVERLAY;
 
             portal.loc = new MsoyLocation(0, .1, .53, 180);
             portal.actionData = "1:-1";
@@ -867,7 +868,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 3) {
             // cliff
-            model.sceneType = MsoySceneModel.IMAGE_OVERLAY;
+            model.sceneType = Decor.IMAGE_OVERLAY;
             model.width = 800;
 
             portal.loc = new MsoyLocation(.5, 0, .5, 0);
@@ -899,7 +900,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 4) {
             // fans
-            model.sceneType = MsoySceneModel.IMAGE_OVERLAY;
+            model.sceneType = Decor.IMAGE_OVERLAY;
             model.width = 800;
 
             portal.loc = new MsoyLocation(0, 0, .8, 0);
@@ -964,7 +965,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 5) {
             // faucet
-            model.sceneType = MsoySceneModel.IMAGE_OVERLAY;
+            model.sceneType = Decor.IMAGE_OVERLAY;
             model.width = 1600;
 
             portal.loc = new MsoyLocation(.3125, .71, 0, 0);
@@ -982,7 +983,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 6) {
             // comic
-            model.sceneType = MsoySceneModel.IMAGE_OVERLAY;
+            model.sceneType = Decor.IMAGE_OVERLAY;
             model.width = 1600;
 
             portal.loc = new MsoyLocation(0, 0, .5, 0);

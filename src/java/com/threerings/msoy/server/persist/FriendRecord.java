@@ -29,7 +29,6 @@ public class FriendRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #inviteeId} field. */
     public static final ColumnExp INVITEE_ID_C =
         new ColumnExp(FriendRecord.class, INVITEE_ID);
-
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;

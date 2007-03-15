@@ -256,6 +256,38 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String petMainTab();
 
   /**
+   * Translated "Room Decor Media".
+   * 
+   * @return translated "Room Decor Media"
+   * @gwt.key decorMainTab
+   */
+  String decorMainTab();
+
+  /**
+   * Translated "Room width".
+   * 
+   * @return translated "Room width"
+   * @gwt.key decorWidth
+   */
+  String decorWidth();
+
+  /**
+   * Translated "Room depth".
+   * 
+   * @return translated "Room depth"
+   * @gwt.key decorDepth
+   */
+  String decorDepth();
+
+  /**
+   * Translated "Room horizon".
+   * 
+   * @return translated "Room horizon"
+   * @gwt.key decorHorizon
+   */
+  String decorHorizon();
+
+  /**
    * Translated "Extra Info".
    * 
    * @return translated "Extra Info"

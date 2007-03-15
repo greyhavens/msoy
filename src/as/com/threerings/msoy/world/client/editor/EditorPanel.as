@@ -31,6 +31,7 @@ import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
 
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.Decor;
 import com.threerings.msoy.item.client.InventoryPicker;
 import com.threerings.msoy.item.client.ItemList;
 
@@ -246,7 +247,7 @@ public class EditorPanel extends VBox
             MsoyUI.createLabel(Msgs.EDITING.get("l.scene_type")),
             _type = new ComboBox());
         var types :Array = [];
-        for (var ii :int = 0; ii < MsoySceneModel.TYPE_COUNT; ii++) {
+        for (var ii :int = 0; ii < Decor.TYPE_COUNT; ii++) {
             types.push({ label: Msgs.EDITING.get("m.scene_type_" + ii),
                          data: ii });
         }
@@ -274,9 +275,9 @@ public class EditorPanel extends VBox
         _horizon.maximum = 1;
         _horizon.liveDragging = true;
 
-        GridUtil.addRow(grid,
-            MsoyUI.createLabel(Msgs.EDITING.get("l.background_image")),
-            _backgroundImage = new SingleItemSelector(_ctx));
+        GridUtil.addRow(
+            grid, MsoyUI.createLabel(Msgs.EDITING.get("l.background_image")),
+            _backgroundImage = new SingleItemSelector(_ctx, Item.DECOR));
         _backgroundImage.selectionChanged = newBackgroundImageSelected;
 
 /*
@@ -363,10 +364,19 @@ public class EditorPanel extends VBox
     {
         var bgItem :Item = _backgroundImage.getSelectedItem();
 
-        _sceneModel.sceneType = (bgItem == null) ? MsoySceneModel.DRAWN_ROOM
-                                            : MsoySceneModel.IMAGE_OVERLAY;
+        _sceneModel.sceneType = (bgItem == null) ? Decor.DRAWN_ROOM
+                                            : Decor.IMAGE_OVERLAY;
 
-        //var bgFurni :FurniData = MsoyS
+        // for now, just clobber room data with decor data (FIXME ROBERT)
+        var decor :Decor = bgItem as Decor;
+        if (decor != null) {
+            _sceneModel.width = decor.width;
+            _sceneModel.depth = decor.depth;
+            _ctrl.sceneModelUpdated();
+
+            _width.text = String(decor.width);
+            _depth.text = String(decor.depth);
+        }
     }
 
     protected function newBackgroundAudioSelected () :void

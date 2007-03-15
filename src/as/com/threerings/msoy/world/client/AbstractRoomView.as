@@ -35,6 +35,7 @@ import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.Decor;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -438,7 +439,7 @@ public class AbstractRoomView extends Sprite
 
     protected function scrollRectUpdated () :void
     {
-        if (_bkg != null && _scene.getSceneType() == MsoySceneModel.FIXED_IMAGE) {
+        if (_bkg != null && _scene.getSceneType() == Decor.FIXED_IMAGE) {
             locationUpdated(_bkg);
         }
     }
@@ -455,7 +456,7 @@ public class AbstractRoomView extends Sprite
 
         var p :Point = projectedLocation(scale, loc.x, loc.y);
         var hotSpot :Point = sprite.getLayoutHotSpot();
-        if (sprite == _bkg && _scene.getSceneType() == MsoySceneModel.FIXED_IMAGE) {
+        if (sprite == _bkg && _scene.getSceneType() == Decor.FIXED_IMAGE) {
             // adjust the background image
             p.x += getScrollOffset();
         }
@@ -619,7 +620,7 @@ public class AbstractRoomView extends Sprite
             g.endFill();
         }
  
-        var drawWalls :Boolean = (_scene.getSceneType() == MsoySceneModel.DRAWN_ROOM);
+        var drawWalls :Boolean = (_scene.getSceneType() == Decor.DRAWN_ROOM);
         var drawEdges :Boolean = drawWalls || _editing;
         if (!drawEdges) {
             return; // nothing to draw

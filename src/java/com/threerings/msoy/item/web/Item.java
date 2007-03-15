@@ -30,6 +30,7 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
     public static final byte PET = registerItemType(Pet.class, 6);
     public static final byte AUDIO = registerItemType(Audio.class, 7);
     public static final byte VIDEO = registerItemType(Video.class, 8);
+    public static final byte DECOR = registerItemType(Decor.class, 9);
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
     //
     // Note: If the number of item types surpasses 31, we need to change the loadedInventory field
@@ -169,6 +170,8 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
             return "audio";
         } else if (type == VIDEO) {
             return "video";
+        } else if (type == DECOR) {
+            return "decor";
         } else {
             return "unknown:" + type;
         }

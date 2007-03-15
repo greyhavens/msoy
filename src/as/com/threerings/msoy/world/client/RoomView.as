@@ -50,6 +50,7 @@ import com.threerings.ezgame.util.EZObjectMarshaller;
 
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.Decor;
 
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.WorldContext;
@@ -464,7 +465,7 @@ public class RoomView extends AbstractRoomView
 
         // if we moved the _centerSprite, possibly update the scroll position
         if (sprite == _centerSprite &&
-            ((sprite != _bkg) || _scene.getSceneType() != MsoySceneModel.FIXED_IMAGE)) {
+            ((sprite != _bkg) || _scene.getSceneType() != Decor.FIXED_IMAGE)) {
             scrollView();
         }
     }

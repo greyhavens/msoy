@@ -18,21 +18,6 @@ import com.threerings.msoy.item.web.MediaDesc;
 
 public class MsoySceneModel extends SceneModel
 {
-    /** A type constant indicating a normal room where defaultly
-     * draw some walls. */
-    public static const DRAWN_ROOM :int = 0;
-
-    /** A type constant indicating a room where the background image should
-     * be drawn covering everything, but layered behind everything else such
-     * that the background image IS the scene to the viewer. */
-    public static const IMAGE_OVERLAY :int = 1;
-
-    /** A type constant indicating a background image that does not scroll. */
-    public static const FIXED_IMAGE :int = 2;
-
-    /** The number of type constants. */
-    public static const TYPE_COUNT :int = 3;
-
     /** Constant for Member room owners **/
     public static const OWNER_TYPE_MEMBER :int = 1;
 
@@ -68,6 +53,9 @@ public class MsoySceneModel extends SceneModel
 
     /** The entrance location. */
     public var entrance :MsoyLocation;
+
+    /** The id of the decor object that describes room background and parameters. */
+    public var decorId :int; //FIXME ROBERT: DecorData;
 
     /**
      * Add a piece of furniture to this model.
@@ -212,6 +200,7 @@ public class MsoySceneModel extends SceneModel
         model.horizon = horizon;
         model.furnis = (furnis.clone() as TypedArray);
         model.entrance = entrance;
+        model.decorId = decorId;
 
         return model;
     }
@@ -229,6 +218,7 @@ public class MsoySceneModel extends SceneModel
         out.writeFloat(horizon);
         out.writeObject(furnis);
         out.writeObject(entrance);
+        out.writeInt(decorId);
     }
 
     // documentation inherited
@@ -244,12 +234,13 @@ public class MsoySceneModel extends SceneModel
         horizon = ins.readFloat();
         furnis = (ins.readObject() as TypedArray);
         entrance = (ins.readObject() as MsoyLocation);
+        decorId = ins.readInt();
     }
 
     override public function toString () :String
     {
         return "MsoySceneModel[\"" + name + "\" (" + sceneId + ")" +
-            ", version=" + version + ", sceneType=" + sceneType + "]";
+            ", version=" + version + ", sceneType=" + sceneType + ", decor=" + decorId + "]";
     }
 
     /** Cached portal info. Not streamed. */
