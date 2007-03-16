@@ -121,6 +121,11 @@ public class WorldClient extends BaseClient
         var custom :Array = menu.customItems;
         custom.length = 0;
 
+        // add the About menu item
+        custom.push(MenuUtil.createControllerMenuItem(
+                        Msgs.GENERAL.get("b.about"),
+                        MsoyController.ABOUT));
+
         custom.push(MenuUtil.createControllerMenuItem(
                         Msgs.GENERAL.get("b.toggle_fullscreen"),
                         MsoyController.TOGGLE_FULLSCREEN, null, false,
