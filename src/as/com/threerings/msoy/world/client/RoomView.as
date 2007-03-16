@@ -52,7 +52,6 @@ import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Decor;
 
-import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.ActorInfo;
@@ -76,7 +75,7 @@ import com.threerings.msoy.world.data.SceneAttrsUpdate;
  * Displays a room or scene in the virtual world.
  */
 public class RoomView extends AbstractRoomView
-    implements ContextMenuProvider, SetListener, MessageListener,
+    implements SetListener, MessageListener,
                ChatDisplay, ChatInfoProvider, LoadingWatcher
 {
     /** The chat overlay. */
@@ -196,17 +195,14 @@ public class RoomView extends AbstractRoomView
         setActive(_furni, !setDim);
     }
 
-    // from ContextMenuProvider
-    public function populateContextMenu (menuItems :Array) :void
-    {
-        var sprite :MsoySprite = _ctrl.getHitSprite(stage.mouseX, stage.mouseY);
-        if (sprite is ContextMenuProvider) {
-            (sprite as ContextMenuProvider).populateContextMenu(menuItems);
-        }
-
-        // our controller may have a few of its own
-        _ctrl.populateContextMenu(menuItems);
-    }
+//    // from ContextMenuProvider
+//    public function populateContextMenu (menuItems :Array) :void
+//    {
+//        var sprite :MsoySprite = _ctrl.getHitSprite(stage.mouseX, stage.mouseY);
+//        if (sprite is ContextMenuProvider) {
+//            (sprite as ContextMenuProvider).populateContextMenu(menuItems);
+//        }
+//    }
 
     /**
      * Called by our controller when a scene update is received.

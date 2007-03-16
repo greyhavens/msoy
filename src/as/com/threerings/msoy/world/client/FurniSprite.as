@@ -18,7 +18,6 @@ import com.threerings.util.CommandEvent;
 
 import com.threerings.flash.MenuUtil;
 
-import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
@@ -28,7 +27,6 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.world.data.FurniData;
 
 public class FurniSprite extends MsoySprite
-    implements ContextMenuProvider
 {
     /**
      * Set the LoadingWatcher that will be used to track whether any
@@ -127,16 +125,6 @@ public class FurniSprite extends MsoySprite
                 "[actionType=" + _furni.actionType +
                 ", actionData=" + _furni.actionData + "].");
             return null;
-        }
-    }
-
-    // from ContextMenuProvider
-    public function populateContextMenu (menuItems :Array) :void
-    {
-        if (_furni.itemType != Item.NOT_A_TYPE) {
-            menuItems.unshift(MenuUtil.createControllerMenuItem(
-                Msgs.GENERAL.get("b.view_item"), MsoyController.VIEW_ITEM,
-                _furni.getItemIdent()));
         }
     }
 

@@ -58,6 +58,7 @@ import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.msoy.world.data.WorldOccupantInfo;
 
 import com.threerings.msoy.chat.client.ReportingListener;
 
@@ -69,8 +70,6 @@ public class RoomController extends SceneController
 
     public static const FURNI_CLICKED :String = "FurniClicked";
     public static const AVATAR_CLICKED :String = "AvatarClicked";
-
-    public static const TEMP_CLEAR_SCENE_CACHE :String = "clrScenes";
 
     /**
      * Get the instanceId of all the entity instances in the room.
@@ -260,18 +259,6 @@ public class RoomController extends SceneController
         }
     }
 
-    override public function handleAction (cmd :String, arg :Object) :Boolean
-    {
-        if (cmd == TEMP_CLEAR_SCENE_CACHE) {
-            _mctx.TEMPClearSceneCache();
-
-        } else {
-            return super.handleAction(cmd, arg);
-        }
-
-        return true; // for handled commands
-    }
-
     /**
      * Handles EDIT_SCENE.
      */
@@ -415,19 +402,6 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Called by the RoomView prior to a context menu popping up.
-     */
-    public function populateContextMenu (menuItems :Array) :void
-    {
-        if (_scene == null) {
-            return;
-        }
-
-        menuItems.push(MenuUtil.createControllerMenuItem(
-            "temp: clear scene cache", TEMP_CLEAR_SCENE_CACHE, null, true));
-    }
-
-    /**
      * Add the specified command to the context menu for the current scene.
      */
     protected function createMenuItem (
@@ -538,7 +512,10 @@ public class RoomController extends SceneController
         var hitter :MsoySprite = getHitSprite(event.stageX, event.stageY);
 
         if (hitter != null) {
-            if (hitter.hasAction()) {
+            if (event.shiftKey) {
+                showItemMenu(hitter);
+
+            } else if (hitter.hasAction()) {
                 hitter.mouseClick(event);
             }
             // otherwise: the sprite simply captures and discards the event
@@ -561,6 +538,28 @@ public class RoomController extends SceneController
                 newLoc.orient = (degrees + 90 + 360) % 360;
                 _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
             }
+        }
+    }
+
+    /**
+     * Show the menu containing item-specific options.
+     */
+    protected function showItemMenu (sprite :MsoySprite) :void
+    {
+        var menuItems :Array = [];
+
+        var ident :ItemIdent = sprite.getItemIdent();
+        if (ident != null) {
+            menuItems.push(
+                { label: Msgs.GENERAL.get("b.view_item"),
+                  command: MsoyController.VIEW_ITEM,
+                  arg: ident });
+        }
+        // TODO: more..?
+
+        // pop up the menu where the mouse is
+        if (menuItems.length > 0) {
+            CommandMenu.createMenu(menuItems).show();
         }
     }
 

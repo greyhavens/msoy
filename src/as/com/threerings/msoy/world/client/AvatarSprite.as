@@ -11,7 +11,6 @@ import com.threerings.flash.MenuUtil;
 
 import com.threerings.crowd.chat.data.ChatMessage;
 
-import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
@@ -29,7 +28,6 @@ import com.threerings.msoy.world.data.WorldMemberInfo;
  * Displays a member's avatar in the virtual world.
  */
 public class AvatarSprite extends ActorSprite
-    implements ContextMenuProvider
 {
     /**
      * Creates an avatar sprite for the supplied occupant.
@@ -109,19 +107,6 @@ public class AvatarSprite extends ActorSprite
     public function performAvatarSpoke () :void
     {
         callUserCode("avatarSpoke_v1");
-    }
-
-    // from ContextMenuProvider
-    public function populateContextMenu (menuItems :Array) :void
-    {
-        var minfo :WorldMemberInfo = (_occInfo as WorldMemberInfo);
-        menuItems.unshift(MenuUtil.createControllerMenuItem(
-            Msgs.GENERAL.get("b.view_member"), MsoyController.VIEW_MEMBER,
-            minfo.getMemberId(), false, !minfo.isGuest()));
-        var ident :ItemIdent = minfo.getItemIdent();
-        menuItems.unshift(MenuUtil.createControllerMenuItem(
-            Msgs.GENERAL.get("b.view_item"), MsoyController.VIEW_ITEM,
-            ident, false, (ident.type == Item.AVATAR)));
     }
 
     override public function hasAction () :Boolean

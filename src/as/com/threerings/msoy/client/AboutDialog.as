@@ -47,6 +47,11 @@ public class AboutDialog extends FloatingPanel
             pets.label = "show pets dialog...";
             vbox.addChild(pets);
 
+            var clearCache :CommandButton = new CommandButton();
+            clearCache.label = "clear scene cache";
+            clearCache.setFunction(_ctx.TEMPClearSceneCache);
+            vbox.addChild(clearCache);
+
             addChild(vbox);
         }
 
