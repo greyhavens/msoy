@@ -80,10 +80,6 @@ public class AvatarViewerComp extends Canvas
         }, rotation, "value");
 
         BindingUtils.bindSetter(_avatar.setMoving, walking, "selected");
-
-        // listen for mouse clicks on this canvas,
-        // call into the avatar topop up the action menu
-        addEventListener(MouseEvent.CLICK, _avatar.mouseClick);
     }
 
     protected var _avatar :ViewerAvatarSprite;
@@ -114,6 +110,8 @@ class ViewerAvatarSprite extends AvatarSprite
         sprite.graphics.endFill();
         sprite.mouseEnabled = false;
         addChildAt(sprite, 0);
+
+        addEventListener(MouseEvent.CLICK, mouseClick);
     }
 
     public function setMoving (moving :Boolean) :void
