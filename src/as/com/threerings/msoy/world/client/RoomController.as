@@ -509,11 +509,10 @@ public class RoomController extends SceneController
 
     protected function mouseClicked (event :MouseEvent) :void
     {
-        // if the shift key is down, we're not interested in what the sprite
+        // If the shift key is down, we're not interested in what the sprite
         // represents, we're intrested in the sprite itself.
-        // TODO: Oh fer chrissakes. Shift/Ctrl don't seem to be detected
-        // on windows!!!
-        var isItemContext :Boolean = event.shiftKey;
+        // (_shiftDepressed is a workaround for windows: shiftKey is never true)
+        var isItemContext :Boolean = _shiftDepressed || event.shiftKey;
 
         var hitter :MsoySprite = getHitSprite(event.stageX, event.stageY, isItemContext);
 
@@ -585,6 +584,10 @@ public class RoomController extends SceneController
             case Keyboard.F6:
                 _roomView.chatOverlay.setClickableGlyphs(keyDown);
                 return;
+
+            case Keyboard.SHIFT:
+                _shiftDepressed = keyDown;
+                break;
             }
 
             if (keyDown) {
@@ -777,6 +780,10 @@ public class RoomController extends SceneController
 
     /** The current scene we're viewing. */
     protected var _scene :MsoyScene;
+
+    /** Whether the shift key is depressed, to work around an apparent bug
+     * in the windows player. */
+    protected var _shiftDepressed :Boolean;
 
     [Embed(source="../../../../../../../rsrc/media/walkable.swf")]
     protected static const WALKTARGET :Class;
