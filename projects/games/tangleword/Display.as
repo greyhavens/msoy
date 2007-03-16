@@ -24,8 +24,6 @@ import com.threerings.ezgame.EZGameControl;
 
 import com.whirled.WhirledGameControl;
 
-import com.threerings.flash.ScrollContainer;
-
 /** The Display class represents the game visualization, including UI
     and game state display. */
 public class Display extends Sprite
