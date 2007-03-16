@@ -43,13 +43,7 @@ public class ProfileRepository extends DepotRepository
     {
         return findAll(ProfilePhotoRecord.class,
                        new FromOverride(ProfileRecord.class),
-                       new Where(new In(ProfileRecord.MEMBER_ID_C, IntListUtil.box(memberIds))),
-                       new FieldOverride(ProfilePhotoRecord.MEMBER_ID, ProfileRecord.MEMBER_ID_C),
-                       new FieldOverride(ProfilePhotoRecord.PHOTO_HASH, ProfileRecord.PHOTO_HASH_C),
-                       new FieldOverride(ProfilePhotoRecord.PHOTO_MIME_TYPE,
-                                         ProfileRecord.PHOTO_MIME_TYPE_C),
-                       new FieldOverride(ProfilePhotoRecord.PHOTO_CONSTRAINT,
-                                         ProfileRecord.PHOTO_CONSTRAINT_C));
+                       new Where(new In(ProfileRecord.MEMBER_ID_C, IntListUtil.box(memberIds))));
     }
 
     /**

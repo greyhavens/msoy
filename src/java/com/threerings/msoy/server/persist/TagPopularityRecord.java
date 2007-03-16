@@ -13,7 +13,7 @@ import com.threerings.io.Streamable;
 /**
  * Maps a tag to a count of the targets that reference it.
  */
-@Computed
+@Computed(shadowOf=TagNameRecord.class)
 @Entity
 public class TagPopularityRecord extends PersistentRecord
     implements Streamable

@@ -10,7 +10,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 /**
  * A computed persistent entity that's used to fetch (and cache) member flow information only.
  */
-@Computed
+@Computed(shadowOf=MemberRecord.class)
 @Entity
 public class MemberFlowRecord extends PersistentRecord
 {

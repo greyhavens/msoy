@@ -187,9 +187,7 @@ public class MemberRepository extends DepotRepository
         Comparable[] idArr = IntListUtil.box(memberIds);
         return findAll(MemberNameRecord.class,
                        new FromOverride(MemberRecord.class),
-                       new Where(new In(MemberRecord.MEMBER_ID_C, idArr)),
-                       new FieldOverride(MemberNameRecord.MEMBER_ID, MemberRecord.MEMBER_ID_C),
-                       new FieldOverride(MemberNameRecord.NAME, MemberRecord.NAME_C));
+                       new Where(new In(MemberRecord.MEMBER_ID_C, idArr)));
     }
 
     /**
@@ -202,9 +200,7 @@ public class MemberRepository extends DepotRepository
         return findAll(MemberNameRecord.class,
                        new FromOverride(MemberRecord.class),
                        new Where(new Or(new Like(MemberRecord.NAME_C, "%"+search+"%"),
-                                        new Like(MemberRecord.ACCOUNT_NAME_C, "%"+search+"%"))),
-                       new FieldOverride(MemberNameRecord.MEMBER_ID, MemberRecord.MEMBER_ID_C),
-                       new FieldOverride(MemberNameRecord.NAME, MemberRecord.NAME_C));
+                                        new Like(MemberRecord.ACCOUNT_NAME_C, "%"+search+"%"))));
     }
 
     /**
@@ -432,20 +428,11 @@ public class MemberRepository extends DepotRepository
                            new Equals(FriendRecord.INVITEE_ID_C, MemberRecord.MEMBER_ID_C)),
                    new And(new Equals(FriendRecord.INVITEE_ID_C, memberId),
                            new Equals(FriendRecord.INVITER_ID_C, MemberRecord.MEMBER_ID_C)));
-        // OK, we definitely need some kind of default class for computed classes...
         return findAll(
             NeighborFriendRecord.class,
             new FromOverride(MemberRecord.class),
             OrderBy.descending(MemberRecord.LAST_SESSION),
-            new Join(FriendRecord.class, joinCondition),
-            new FieldOverride(NeighborFriendRecord.CREATED, MemberRecord.CREATED_C),
-            new FieldOverride(NeighborFriendRecord.FLOW, MemberRecord.FLOW_C),
-            new FieldOverride(NeighborFriendRecord.HOME_SCENE_ID, MemberRecord.HOME_SCENE_ID_C),
-            new FieldOverride(NeighborFriendRecord.LAST_SESSION, MemberRecord.LAST_SESSION_C),
-            new FieldOverride(NeighborFriendRecord.MEMBER_ID, MemberRecord.MEMBER_ID_C),
-            new FieldOverride(NeighborFriendRecord.NAME, MemberRecord.NAME_C),
-            new FieldOverride(NeighborFriendRecord.SESSION_MINUTES, MemberRecord.SESSION_MINUTES_C),
-            new FieldOverride(NeighborFriendRecord.SESSIONS, MemberRecord.SESSIONS_C));
+            new Join(FriendRecord.class, joinCondition));
     }
 
     /**
@@ -462,15 +449,7 @@ public class MemberRepository extends DepotRepository
         return findAll(
             NeighborFriendRecord.class,
             new FromOverride(MemberRecord.class),
-            new Where(new In(MemberRecord.MEMBER_ID_C, idArr)),
-            new FieldOverride(NeighborFriendRecord.CREATED, MemberRecord.CREATED_C),
-            new FieldOverride(NeighborFriendRecord.FLOW, MemberRecord.FLOW_C),
-            new FieldOverride(NeighborFriendRecord.HOME_SCENE_ID, MemberRecord.HOME_SCENE_ID_C),
-            new FieldOverride(NeighborFriendRecord.LAST_SESSION, MemberRecord.LAST_SESSION_C),
-            new FieldOverride(NeighborFriendRecord.MEMBER_ID, MemberRecord.MEMBER_ID_C),
-            new FieldOverride(NeighborFriendRecord.NAME, MemberRecord.NAME_C),
-            new FieldOverride(NeighborFriendRecord.SESSION_MINUTES, MemberRecord.SESSION_MINUTES_C),
-            new FieldOverride(NeighborFriendRecord.SESSIONS, MemberRecord.SESSIONS_C));
+            new Where(new In(MemberRecord.MEMBER_ID_C, idArr)));
     }
 
     @Entity

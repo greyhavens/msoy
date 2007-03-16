@@ -10,7 +10,7 @@ import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 /**
  * Used to load profile photo information from the {@link ProfileRecord} table.
  */
-@Computed
+@Computed(shadowOf=ProfileRecord.class)
 @Entity
 public class ProfilePhotoRecord extends PersistentRecord
 {
