@@ -6,7 +6,7 @@ package client.msgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
-import com.threerings.msoy.item.client.ItemService;
+import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.client.GroupService;
 import com.threerings.msoy.web.client.GroupServiceAsync;
 import com.threerings.msoy.web.client.ItemServiceAsync;
