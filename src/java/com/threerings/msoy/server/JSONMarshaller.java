@@ -125,11 +125,33 @@ public class JSONMarshaller<T>
          throws JSONMarshallingException
     {
         try {
-            if (isJSONPrimitive(dClass)) {
+            // try the exhaustive list of possible JSON types
+            if (state instanceof String) {
                 return state;
             }
-            if (dClass.isArray()) {
-                if (!state.getClass().equals(JSONArray.class)) {
+            if (state instanceof Integer) {
+                if (dClass.equals(Byte.class) || dClass.equals(Byte.TYPE)) {
+                    // try to cram a JSON integer into a byte
+                    return ((Integer) state).byteValue();
+                }
+                if (dClass.equals(Short.class) || dClass.equals(Short.TYPE)) {
+                    // try to cram a JSON integer into a short
+                    return ((Integer) state).shortValue();
+                }
+                return state;
+            }
+            if (state instanceof Long) {
+                // if the field can't handle it our caller will deal
+                return state;
+            }
+            if (state instanceof Double) {
+                if (dClass.equals(Float.class) || dClass.equals(Float.TYPE)) {
+                    return ((Double) state).floatValue();
+                }
+                return state;
+            }
+            if (state instanceof JSONArray) {
+                if (!dClass.isArray()) {
                     throw new JSONMarshallingException(
                         "Can't stuff non-array state into array field [dClass=" + dClass + "]");
                 }
@@ -165,7 +187,8 @@ public class JSONMarshaller<T>
                     // log? throw exception?
                     continue;
                 }
-                field.set(obj, deserialize(jObj.get(key), field.getType()));
+                Object value = deserialize(jObj.get(key), field.getType());
+                field.set(obj, value);
             }
             return obj;
         } catch (Exception e) {
