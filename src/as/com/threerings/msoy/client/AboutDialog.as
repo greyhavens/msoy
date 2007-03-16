@@ -30,8 +30,7 @@ public class AboutDialog extends FloatingPanel
 
         var textArea :Text = new Text();
         textArea.percentWidth = 100;
-        // we need to manually add the copyright symbol into the string.. fuckinflash!
-        textArea.htmlText = Msgs.GENERAL.get("m.about", String.fromCharCode(0x00A9)); // unicode for &copy;
+        textArea.htmlText = Msgs.GENERAL.get("m.about");
         addChild(textArea);
 
         // for now, let's add in our secret admin/support options to this panel.
