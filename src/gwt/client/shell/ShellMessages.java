@@ -432,6 +432,22 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String emailUpdated();
 
   /**
+   * Translated "{0}...".
+   * 
+   * @return translated "{0}..."
+   * @gwt.key truncName
+   */
+  String truncName(String arg0);
+
+  /**
+   * Translated "No description provided for this item.".
+   * 
+   * @return translated "No description provided for this item."
+   * @gwt.key noDescrip
+   */
+  String noDescrip();
+
+  /**
    * Translated "Password:".
    * 
    * @return translated "Password:"
@@ -480,6 +496,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String logonPassword();
 
   /**
+   * Translated "Play!".
+   * 
+   * @return translated "Play!"
+   * @gwt.key detailPlay
+   */
+  String detailPlay();
+
+  /**
    * Translated "Creating account...".
    * 
    * @return translated "Creating account..."
@@ -494,6 +518,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key errTagInvalidCharacters
    */
   String errTagInvalidCharacters();
+
+  /**
+   * Translated "<no name>".
+   * 
+   * @return translated "<no name>"
+   * @gwt.key noName
+   */
+  String noName();
 
   /**
    * Translated "Click ''Update'' to update your password.".

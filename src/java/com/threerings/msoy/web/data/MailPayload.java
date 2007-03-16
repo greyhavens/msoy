@@ -26,12 +26,22 @@ public abstract class MailPayload
      */
     public static final int TYPE_FRIEND_INVITE = 2;
 
+    /**
+     * The identifying integer of a {@link ItemGiftObject} payload.
+     */
+    public static final int TYPE_ITEM_GIFT = 3;
+
+    /**
+     * Return 
+     */
     public static Class getPayloadClass (int type) {
         switch(type) {
         case TYPE_GROUP_INVITE:
             return GroupInviteObject.class;
         case TYPE_FRIEND_INVITE:
             return FriendInviteObject.class;
+        case TYPE_ITEM_GIFT:
+            return ItemGiftObject.class;
         }
         throw new IllegalArgumentException("Unknown payload [type= " + type + "]");
     }

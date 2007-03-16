@@ -8,28 +8,12 @@ package client.editem;
 public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "Avatars must be a web-viewable media.".
-   * 
-   * @return translated "Avatars must be a web-viewable media."
-   * @gwt.key errAvatarNotFlash
-   */
-  String errAvatarNotFlash();
-
-  /**
    * Translated "Main Photo image".
    * 
    * @return translated "Main Photo image"
    * @gwt.key photoMainTitle
    */
   String photoMainTitle();
-
-  /**
-   * Translated "Audio Media".
-   * 
-   * @return translated "Audio Media"
-   * @gwt.key audioMainTab
-   */
-  String audioMainTab();
 
   /**
    * Translated "Lobby Table".
@@ -40,20 +24,20 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameTableTab();
 
   /**
+   * Translated "Room horizon level, between 0 and 1".
+   * 
+   * @return translated "Room horizon level, between 0 and 1"
+   * @gwt.key decorHorizon
+   */
+  String decorHorizon();
+
+  /**
    * Translated "Item Name".
    * 
    * @return translated "Item Name"
    * @gwt.key editorName
    */
   String editorName();
-
-  /**
-   * Translated "Photo Media".
-   * 
-   * @return translated "Photo Media"
-   * @gwt.key photoMainTab
-   */
-  String photoMainTab();
 
   /**
    * Translated "Furniture Media".
@@ -64,28 +48,12 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String editorFurniTab();
 
   /**
-   * Translated "Head Shot Media".
-   * 
-   * @return translated "Head Shot Media"
-   * @gwt.key avatarThumbTab
-   */
-  String avatarThumbTab();
-
-  /**
    * Translated "Game Definition".
    * 
    * @return translated "Game Definition"
    * @gwt.key gameDefinition
    */
   String gameDefinition();
-
-  /**
-   * Translated "Head Shots must be an image type.".
-   * 
-   * @return translated "Head Shots must be an image type."
-   * @gwt.key errThumbNotImage
-   */
-  String errThumbNotImage();
 
   /**
    * Translated "Table images must be an image type.".
@@ -96,20 +64,12 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String errTableNotImage();
 
   /**
-   * Translated "Update".
+   * Translated "Room width, in pixels".
    * 
-   * @return translated "Update"
-   * @gwt.key editorUpdate
+   * @return translated "Room width, in pixels"
+   * @gwt.key decorWidth
    */
-  String editorUpdate();
-
-  /**
-   * Translated "Avatar as seen in the World".
-   * 
-   * @return translated "Avatar as seen in the World"
-   * @gwt.key avatarMainTitle
-   */
-  String avatarMainTitle();
+  String decorWidth();
 
   /**
    * Translated "Game Lobby Table background image".
@@ -120,12 +80,12 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameTableTitle();
 
   /**
-   * Translated "Item updated.".
+   * Translated "Game Media".
    * 
-   * @return translated "Item updated."
-   * @gwt.key msgItemUpdated
+   * @return translated "Game Media"
+   * @gwt.key gameMainTab
    */
-  String msgItemUpdated();
+  String gameMainTab();
 
   /**
    * Translated "Video data must be an FLV, MPEG, WMV or Quicktime file.".
@@ -136,20 +96,20 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String errVideoNotVideo();
 
   /**
-   * Translated "Game Media".
-   * 
-   * @return translated "Game Media"
-   * @gwt.key gameMainTab
-   */
-  String gameMainTab();
-
-  /**
    * Translated "Pets must be a web-viewable image type.".
    * 
    * @return translated "Pets must be a web-viewable image type."
    * @gwt.key errPetNotFlash
    */
   String errPetNotFlash();
+
+  /**
+   * Translated "Room depth, in pixels".
+   * 
+   * @return translated "Room depth, in pixels"
+   * @gwt.key decorDepth
+   */
+  String decorDepth();
 
   /**
    * Translated "Furniture must be an web-viewable image type.".
@@ -160,52 +120,12 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String errFurniNotFlash();
 
   /**
-   * Translated "Upload your video.".
-   * 
-   * @return translated "Upload your video."
-   * @gwt.key videoMainTitle
-   */
-  String videoMainTitle();
-
-  /**
    * Translated "Maximum players".
    * 
    * @return translated "Maximum players"
    * @gwt.key gameMaxPlayers
    */
   String gameMaxPlayers();
-
-  /**
-   * Translated "Edit an Item".
-   * 
-   * @return translated "Edit an Item"
-   * @gwt.key editorEditTitle
-   */
-  String editorEditTitle();
-
-  /**
-   * Translated "Audio data must be an MP3 file.".
-   * 
-   * @return translated "Audio data must be an MP3 file."
-   * @gwt.key errAudioNotAudio
-   */
-  String errAudioNotAudio();
-
-  /**
-   * Translated "Image show in a Game Lobby".
-   * 
-   * @return translated "Image show in a Game Lobby"
-   * @gwt.key avatarThumbTitle
-   */
-  String avatarThumbTitle();
-
-  /**
-   * Translated "Image shown for Item in Inventory and Catalog".
-   * 
-   * @return translated "Image shown for Item in Inventory and Catalog"
-   * @gwt.key editorThumbTitle
-   */
-  String editorThumbTitle();
 
   /**
    * Translated "Upload your audio.".
@@ -224,20 +144,20 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String videoMainTab();
 
   /**
-   * Translated "Thumbnail Media".
-   * 
-   * @return translated "Thumbnail Media"
-   * @gwt.key editorThumbTab
-   */
-  String editorThumbTab();
-
-  /**
    * Translated "Upload a New Item".
    * 
    * @return translated "Upload a New Item"
    * @gwt.key editorUploadTitle
    */
   String editorUploadTitle();
+
+  /**
+   * Translated "Thumbnail Media".
+   * 
+   * @return translated "Thumbnail Media"
+   * @gwt.key editorThumbTab
+   */
+  String editorThumbTab();
 
   /**
    * Translated "Document Media".
@@ -256,44 +176,172 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String petMainTab();
 
   /**
-   * Translated "Room Decor Media".
+   * Translated "Enter a Description to be shown if you list your Item in the Catalog".
    * 
-   * @return translated "Room Decor Media"
-   * @gwt.key decorMainTab
+   * @return translated "Enter a Description to be shown if you list your Item in the Catalog"
+   * @gwt.key editorDescripTitle
    */
-  String decorMainTab();
+  String editorDescripTitle();
 
   /**
-   * Translated "Room width".
+   * Translated "Configuration".
    * 
-   * @return translated "Room width"
-   * @gwt.key decorWidth
+   * @return translated "Configuration"
+   * @gwt.key gameConfigTab
    */
-  String decorWidth();
+  String gameConfigTab();
 
   /**
-   * Translated "Room depth".
+   * Translated "Minimum players".
    * 
-   * @return translated "Room depth"
-   * @gwt.key decorDepth
+   * @return translated "Minimum players"
+   * @gwt.key gameMinPlayers
    */
-  String decorDepth();
+  String gameMinPlayers();
 
   /**
-   * Translated "Room horizon".
+   * Translated "Main Game media".
    * 
-   * @return translated "Room horizon"
-   * @gwt.key decorHorizon
+   * @return translated "Main Game media"
+   * @gwt.key gameMainTitle
    */
-  String decorHorizon();
+  String gameMainTitle();
 
   /**
-   * Translated "Extra Info".
+   * Translated "Image shown when Item is placed in the World as Furniture".
    * 
-   * @return translated "Extra Info"
-   * @gwt.key editorExtraTab
+   * @return translated "Image shown when Item is placed in the World as Furniture"
+   * @gwt.key editorFurniTitle
    */
-  String editorExtraTab();
+  String editorFurniTitle();
+
+  /**
+   * Translated "Main Room Decor media".
+   * 
+   * @return translated "Main Room Decor media"
+   * @gwt.key decorMainTitle
+   */
+  String decorMainTitle();
+
+  /**
+   * Translated "Photos must be a web-viewable image type.".
+   * 
+   * @return translated "Photos must be a web-viewable image type."
+   * @gwt.key errPhotoNotFlash
+   */
+  String errPhotoNotFlash();
+
+  /**
+   * Translated "Configuration".
+   * 
+   * @return translated "Configuration"
+   * @gwt.key decorConfigTab
+   */
+  String decorConfigTab();
+
+  /**
+   * Translated "Avatars must be a web-viewable media.".
+   * 
+   * @return translated "Avatars must be a web-viewable media."
+   * @gwt.key errAvatarNotFlash
+   */
+  String errAvatarNotFlash();
+
+  /**
+   * Translated "Audio Media".
+   * 
+   * @return translated "Audio Media"
+   * @gwt.key audioMainTab
+   */
+  String audioMainTab();
+
+  /**
+   * Translated "Head Shot Media".
+   * 
+   * @return translated "Head Shot Media"
+   * @gwt.key avatarThumbTab
+   */
+  String avatarThumbTab();
+
+  /**
+   * Translated "Photo Media".
+   * 
+   * @return translated "Photo Media"
+   * @gwt.key photoMainTab
+   */
+  String photoMainTab();
+
+  /**
+   * Translated "Head Shots must be an image type.".
+   * 
+   * @return translated "Head Shots must be an image type."
+   * @gwt.key errThumbNotImage
+   */
+  String errThumbNotImage();
+
+  /**
+   * Translated "Avatar as seen in the World".
+   * 
+   * @return translated "Avatar as seen in the World"
+   * @gwt.key avatarMainTitle
+   */
+  String avatarMainTitle();
+
+  /**
+   * Translated "Update".
+   * 
+   * @return translated "Update"
+   * @gwt.key editorUpdate
+   */
+  String editorUpdate();
+
+  /**
+   * Translated "Item updated.".
+   * 
+   * @return translated "Item updated."
+   * @gwt.key msgItemUpdated
+   */
+  String msgItemUpdated();
+
+  /**
+   * Translated "Edit an Item".
+   * 
+   * @return translated "Edit an Item"
+   * @gwt.key editorEditTitle
+   */
+  String editorEditTitle();
+
+  /**
+   * Translated "Upload your video.".
+   * 
+   * @return translated "Upload your video."
+   * @gwt.key videoMainTitle
+   */
+  String videoMainTitle();
+
+  /**
+   * Translated "Image show in a Game Lobby".
+   * 
+   * @return translated "Image show in a Game Lobby"
+   * @gwt.key avatarThumbTitle
+   */
+  String avatarThumbTitle();
+
+  /**
+   * Translated "Audio data must be an MP3 file.".
+   * 
+   * @return translated "Audio data must be an MP3 file."
+   * @gwt.key errAudioNotAudio
+   */
+  String errAudioNotAudio();
+
+  /**
+   * Translated "Image shown for Item in Inventory and Catalog".
+   * 
+   * @return translated "Image shown for Item in Inventory and Catalog"
+   * @gwt.key editorThumbTitle
+   */
+  String editorThumbTitle();
 
   /**
    * Translated "Upload".
@@ -302,6 +350,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key upload
    */
   String upload();
+
+  /**
+   * Translated "Extra Info".
+   * 
+   * @return translated "Extra Info"
+   * @gwt.key editorExtraTab
+   */
+  String editorExtraTab();
 
   /**
    * Translated "Item created.".
@@ -328,12 +384,12 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String petMainTitle();
 
   /**
-   * Translated "Enter a Description to be shown if you list your Item in the Catalog".
+   * Translated "Room Decor Media".
    * 
-   * @return translated "Enter a Description to be shown if you list your Item in the Catalog"
-   * @gwt.key editorDescripTitle
+   * @return translated "Room Decor Media"
+   * @gwt.key decorMainTab
    */
-  String editorDescripTitle();
+  String decorMainTab();
 
   /**
    * Translated "Game Type".
@@ -344,22 +400,6 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameGameType();
 
   /**
-   * Translated "Configuration".
-   * 
-   * @return translated "Configuration"
-   * @gwt.key gameConfigTab
-   */
-  String gameConfigTab();
-
-  /**
-   * Translated "Minimum players".
-   * 
-   * @return translated "Minimum players"
-   * @gwt.key gameMinPlayers
-   */
-  String gameMinPlayers();
-
-  /**
    * Translated "Avatar Media".
    * 
    * @return translated "Avatar Media"
@@ -368,28 +408,12 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String avatarMainTab();
 
   /**
-   * Translated "Main Game media".
+   * Translated "Upload".
    * 
-   * @return translated "Main Game media"
-   * @gwt.key gameMainTitle
+   * @return translated "Upload"
+   * @gwt.key editorUpload
    */
-  String gameMainTitle();
-
-  /**
-   * Translated "Image shown when Item is placed in the World as Furniture".
-   * 
-   * @return translated "Image shown when Item is placed in the World as Furniture"
-   * @gwt.key editorFurniTitle
-   */
-  String editorFurniTitle();
-
-  /**
-   * Translated "Photos must be a web-viewable image type.".
-   * 
-   * @return translated "Photos must be a web-viewable image type."
-   * @gwt.key errPhotoNotFlash
-   */
-  String errPhotoNotFlash();
+  String editorUpload();
 
   /**
    * Translated "Main Document media".
@@ -398,12 +422,4 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key documentMainTitle
    */
   String documentMainTitle();
-
-  /**
-   * Translated "Upload".
-   * 
-   * @return translated "Upload"
-   * @gwt.key editorUpload
-   */
-  String editorUpload();
 }

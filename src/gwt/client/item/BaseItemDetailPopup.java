@@ -20,6 +20,7 @@ import com.threerings.msoy.item.web.MediaDesc;
 import client.shell.MsoyEntryPoint;
 import client.util.BorderedDialog;
 import client.util.FlashClients;
+import client.util.ItemUtil;
 import client.util.MediaUtil;
 import client.util.PopupMenu;
 import client.util.TagDetailPanel;

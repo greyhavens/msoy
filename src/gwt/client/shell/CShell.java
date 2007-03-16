@@ -13,8 +13,6 @@ import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.util.FlashClients;
-
 /**
  * Contains a reference to the various bits that we're likely to need in the web client interface.
  */

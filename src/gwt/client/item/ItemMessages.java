@@ -16,22 +16,6 @@ public interface ItemMessages extends com.google.gwt.i18n.client.Messages {
   String searchSearch();
 
   /**
-   * Translated "Play!".
-   * 
-   * @return translated "Play!"
-   * @gwt.key detailPlay
-   */
-  String detailPlay();
-
-  /**
-   * Translated "No description provided for this item.".
-   * 
-   * @return translated "No description provided for this item."
-   * @gwt.key noDescrip
-   */
-  String noDescrip();
-
-  /**
    * Translated "(clear)".
    * 
    * @return translated "(clear)"
@@ -46,14 +30,6 @@ public interface ItemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key currentTag
    */
   String currentTag();
-
-  /**
-   * Translated "<no name>".
-   * 
-   * @return translated "<no name>"
-   * @gwt.key noName
-   */
-  String noName();
 
   /**
    * Translated "Sort by:".
@@ -86,12 +62,4 @@ public interface ItemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key msgNoTags
    */
   String msgNoTags();
-
-  /**
-   * Translated "{0}...".
-   * 
-   * @return translated "{0}..."
-   * @gwt.key truncName
-   */
-  String truncName(String arg0);
 }

@@ -14,8 +14,8 @@ import com.threerings.msoy.item.web.Item;
 
 import client.editem.ItemEditor;
 import client.item.BaseItemDetailPopup;
-import client.item.ItemUtil;
 import client.util.ClickCallback;
+import client.util.ItemUtil;
 
 /**
  * Displays a popup detail view of an item from the user's inventory.

@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.MediaDesc;
 
-import client.item.ItemUtil;
+import client.util.ItemUtil;
 import client.util.MediaUtil;
 
 /**

@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
-import client.item.ItemUtil;
+import client.util.ItemUtil;
 import client.util.MediaUtil;
 
 /**

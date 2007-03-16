@@ -1,0 +1,39 @@
+package client.util;
+
+import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.threerings.msoy.item.web.Item;
+
+/**
+ * A little widget to carry a thumbnail and a label; a light-weight {@link ItemContainer} perhaps.
+ */
+public class ItemThumbnail extends FlexTable
+{
+    public ItemThumbnail (Item item, ClickListener listener) {
+        _item = item;
+
+        setStyleName("itemThumbnail");
+
+        setCellPadding(0);
+        setCellSpacing(0);
+        
+        Image image = new Image(item.getThumbnailPath());
+        image.addStyleName("Image");
+        image.addClickListener(listener);
+        setWidget(0, 0, image);
+
+        Label label = new Label(ItemUtil.getName(item));
+        label.addStyleName("Text");
+        label.addClickListener(listener);
+        setWidget(1, 0, label);
+    }
+    
+    public Item getItem ()
+    {
+        return _item;
+    }
+
+    protected Item _item;
+}

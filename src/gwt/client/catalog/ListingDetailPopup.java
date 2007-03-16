@@ -15,8 +15,8 @@ import com.threerings.msoy.item.web.ItemDetail;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import client.item.BaseItemDetailPopup;
-import client.item.ItemUtil;
 import client.util.ClickCallback;
+import client.util.ItemUtil;
 
 /**
  * Displays a popup detail view of an item from the catalog.

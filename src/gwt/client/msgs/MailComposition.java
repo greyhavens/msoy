@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -18,8 +18,8 @@ import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 
 import com.threerings.msoy.web.data.MemberName;
 
+import client.util.AlertPopup;
 import client.util.BorderedDialog;
-import client.util.BorderedPopup;
 
 /**
  * A mail composition popup.
@@ -35,8 +35,7 @@ public class MailComposition extends BorderedDialog
         super(false);
         _senderId = CMsgs.getMemberId();
         _recipient = recipient;
-        _bodyObjectComposer = bodyObjectComposer;
-        buildUI(subject, bodyText);
+        buildUI(subject, bodyText, bodyObjectComposer);
     }
 
     /**
@@ -70,7 +69,7 @@ public class MailComposition extends BorderedDialog
     }
 
     // generate the composer UI, prepopulated wih the given subject line and body text
-    protected void buildUI (String subject, String bodyText)
+    protected void buildUI (String subject, String bodyText, MailPayloadComposer composer)
     {
         _header.add(createTitleLabel(CMsgs.mmsgs.popupHeader(), "ComposerTitle"));
 
@@ -93,13 +92,8 @@ public class MailComposition extends BorderedDialog
         formatter.setStyleName(1, 1, "Value");
         _panel.add(grid);
 
-        if (_bodyObjectComposer != null) {
-            Widget widget = _bodyObjectComposer.widgetForComposition();
-            if (widget != null) {
-                widget.addStyleName("Payload");
-                _panel.add(widget);
-            }
-        }
+        _payloadBox = new SimplePanel();
+        _panel.add(_payloadBox);
 
         // then the textarea where we enter the body of the text
         // TODO: give us focus if this is a reply (otherwise the subject line)
@@ -119,8 +113,8 @@ public class MailComposition extends BorderedDialog
         Button replyButton = new Button(CMsgs.mmsgs.btnSend());
         replyButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                if (_bodyObjectComposer != null) {
-                    String msg = _bodyObjectComposer.okToSend();
+                if (_payloadComposer != null) {
+                    String msg = _payloadComposer.okToSend();
                     if (msg != null) {
                         showError(msg);
                         return;
@@ -140,7 +134,33 @@ public class MailComposition extends BorderedDialog
             }
         });
         buttonBox.add(discardButton);
+        
+        // if there is not already a payload, add an 'attach' button
+        if (composer == null) {
+            Button attachButton = new Button(CMsgs.mmsgs.btnAttach());
+            attachButton.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    setPayloadComposer(new ItemGift.Composer());
+                }
+            });
+            buttonBox.add(attachButton);
+        } else {
+            setPayloadComposer(composer);
+        }
+
         _footer.add(buttonBox);
+    }
+
+    protected void setPayloadComposer (MailPayloadComposer composer)
+    {
+        _payloadComposer = composer;
+        if (composer != null) {
+            Widget widget = _payloadComposer.widgetForComposition();
+            if (widget != null) {
+                widget.addStyleName("Payload");
+                _payloadBox.setWidget(widget);
+            }
+        }
     }
     
     // send the message off to the backend for delivery
@@ -148,8 +168,8 @@ public class MailComposition extends BorderedDialog
     {
         AsyncCallback callback = new AsyncCallback() {
             public void onSuccess (Object result) {
-                if (_bodyObjectComposer != null) {
-                    _bodyObjectComposer.messageSent(_recipient);
+                if (_payloadComposer != null) {
+                    _payloadComposer.messageSent(_recipient);
                 }
                 hide();
             }
@@ -159,31 +179,24 @@ public class MailComposition extends BorderedDialog
             }
         };
         CMsgs.mailsvc.deliverMessage(CMsgs.creds, _recipient.getMemberId(), _subjectBox.getText(),
-                                     _messageBox.getText(), (_bodyObjectComposer == null) ?
-                                     null : _bodyObjectComposer.getComposedPayload(), callback);
+                                     _messageBox.getText(), (_payloadComposer == null) ?
+                                     null : _payloadComposer.getComposedPayload(), callback);
     }
 
     protected void showError (String msg)
     {
-        final PopupPanel popup = new BorderedPopup(false);
-        VerticalPanel panel = new VerticalPanel();
-        panel.add(new Label(msg));
-        Button okButton = new Button("OK");
-        okButton.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                popup.hide();
-            }
-        });
-        panel.add(okButton);
-        popup.setWidget(panel);
-        popup.show();
+        new AlertPopup(msg) {
+            public void onButton () {}
+        }.alert();
     }
     
     protected int _senderId;
     protected MemberName _recipient;
     protected VerticalPanel _panel;
-    protected MailPayloadComposer _bodyObjectComposer;
+    protected MailPayloadComposer _payloadComposer;
+    
     protected TextBox _subjectBox;
+    protected SimplePanel _payloadBox;
     protected Label _recipientBox;
     protected TextArea _messageBox;
 }

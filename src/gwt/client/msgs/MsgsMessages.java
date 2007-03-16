@@ -32,6 +32,14 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   String memberId(String arg0);
 
   /**
+   * Translated "Attach Item".
+   * 
+   * @return translated "Attach Item"
+   * @gwt.key btnAttach
+   */
+  String btnAttach();
+
+  /**
    * Translated "Compose Mail".
    * 
    * @return translated "Compose Mail"

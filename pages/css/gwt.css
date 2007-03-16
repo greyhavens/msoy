@@ -252,6 +252,20 @@ body {
   padding: 10px;
 }
 
+.itemThumbnail {
+  padding-left: 5px;
+}
+
+.itemThumbnail .Image {
+  width: 160px;
+  height: 120px;
+  vertical-align: middle;
+}
+
+.itemThumbnail .Text {
+  font-size: small;
+}
+
 /** Configuration for our bordered popup window */
 .borderedPopup {
    background: #FFFFFF;

@@ -31,6 +31,8 @@ public abstract class MailPayloadDisplay
             return new GroupInvite.Display(message);
         case MailPayload.TYPE_FRIEND_INVITE:
             return new FriendInvite.Display(message);
+        case MailPayload.TYPE_ITEM_GIFT:
+            return new ItemGift.Display(message);
         }
         throw new IllegalArgumentException(
             "Unknown payload requested [type=" + message.payload.getType() + "]");
@@ -65,7 +67,6 @@ public abstract class MailPayloadDisplay
      * TODO: Ideally this should be some kind of delete-button-outgraying callback mechanism,
      * but that may be over the top.
      */
-
     public abstract String okToDelete ();
     
     /**

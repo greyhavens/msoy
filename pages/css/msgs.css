@@ -60,3 +60,13 @@
     display: block;
     margin-left: 8em;
 }
+
+.itemGift {
+    width: 100%;
+    padding: 5px;
+}
+
+.itemGift .Title {
+    border-bottom: black solid 2px;
+    margin-bottom: 5px;
+}

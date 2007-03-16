@@ -1,7 +1,9 @@
 //
 // $Id$
 
-package client.item;
+package client.util;
+
+import client.shell.CShell;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
@@ -29,9 +31,9 @@ public class ItemUtil
      */
     public static String getName (Item item, boolean truncate)
     {
-        String name = (item.name.trim().length() == 0) ? CItem.imsgs.noName() : item.name;
+        String name = (item.name.trim().length() == 0) ? CShell.cmsgs.noName() : item.name;
         if (name.length() > 32 && truncate) {
-            name = CItem.imsgs.truncName(name.substring(0, 29));
+            name = CShell.cmsgs.truncName(name.substring(0, 29));
         }
         return name;
     }
@@ -42,7 +44,7 @@ public class ItemUtil
      */
     public static String getDescription (Item item)
     {
-        return (item.description.trim().length() == 0) ? CItem.imsgs.noDescrip() : item.description;
+        return (item.description.trim().length() == 0) ? CShell.cmsgs.noDescrip() : item.description;
     }
 
     /**
@@ -53,7 +55,7 @@ public class ItemUtil
     {
         if (item instanceof Game) {
             panel.add(new HTML("<a href=\"/game/index.html#" + item.getPrototypeId() + "\">" +
-                               CItem.imsgs.detailPlay() + "</a>"));
+                               CShell.cmsgs.detailPlay() + "</a>"));
         }
     }
 }
