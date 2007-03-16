@@ -5,6 +5,7 @@ package com.threerings.msoy.item.server.persist;
 
 import java.sql.Timestamp;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
@@ -99,4 +100,18 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
 
     /** Where it's being used. */
     public int location;
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #CloneRecord}
+     * with the supplied key values.
+     */
+    public static Key<CloneRecord> getKey (int itemId)
+    {
+        return new Key<CloneRecord>(
+                CloneRecord.class,
+                new String[] { ITEM_ID },
+                new Comparable[] { itemId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

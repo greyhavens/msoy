@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server.persist;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
@@ -40,4 +41,18 @@ public class FriendRecord extends PersistentRecord
     /** The member id of the invitee. */
     @Id
     public int inviteeId;
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #FriendRecord}
+     * with the supplied key values.
+     */
+    public static Key<FriendRecord> getKey (int inviterId, int inviteeId)
+    {
+        return new Key<FriendRecord>(
+                FriendRecord.class,
+                new String[] { INVITER_ID, INVITEE_ID },
+                new Comparable[] { inviterId, inviteeId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

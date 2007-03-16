@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server.persist;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
@@ -64,4 +65,18 @@ public class SessionRecord extends PersistentRecord
     {
         token = sessionToken;
     }
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #SessionRecord}
+     * with the supplied key values.
+     */
+    public static Key<SessionRecord> getKey (String token)
+    {
+        return new Key<SessionRecord>(
+                SessionRecord.class,
+                new String[] { TOKEN },
+                new Comparable[] { token });
+    }
+    // AUTO-GENERATED: METHODS END
 }

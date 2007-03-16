@@ -6,6 +6,7 @@ package com.threerings.msoy.item.server.persist;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -148,4 +149,18 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
         listing.rarity = rarity;
         return listing;
     }
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #CatalogRecord}
+     * with the supplied key values.
+     */
+    public static Key<CatalogRecord> getKey (int itemId)
+    {
+        return new Key<CatalogRecord>(
+                CatalogRecord.class,
+                new String[] { ITEM_ID },
+                new Comparable[] { itemId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

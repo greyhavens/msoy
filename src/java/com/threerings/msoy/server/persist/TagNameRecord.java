@@ -5,6 +5,7 @@ package com.threerings.msoy.server.persist;
 
 import java.util.regex.Pattern;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
@@ -51,4 +52,18 @@ public class TagNameRecord extends PersistentRecord
 
     /** The actual tag. */
     public String tag;
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #TagNameRecord}
+     * with the supplied key values.
+     */
+    public static Key<TagNameRecord> getKey (int tagId)
+    {
+        return new Key<TagNameRecord>(
+                TagNameRecord.class,
+                new String[] { TAG_ID },
+                new Comparable[] { tagId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

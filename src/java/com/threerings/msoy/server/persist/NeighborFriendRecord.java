@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server.persist;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
@@ -113,4 +114,18 @@ public class NeighborFriendRecord extends PersistentRecord
     {
         return StringUtil.fieldsToString(this);
     }
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #NeighborFriendRecord}
+     * with the supplied key values.
+     */
+    public static Key<NeighborFriendRecord> getKey (int memberId)
+    {
+        return new Key<NeighborFriendRecord>(
+                NeighborFriendRecord.class,
+                new String[] { MEMBER_ID },
+                new Comparable[] { memberId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

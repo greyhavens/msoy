@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server.persist;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
@@ -48,4 +49,18 @@ public class MemberActionSummaryRecord extends PersistentRecord
     
     /** How many times this action has occured. */
     public int count;
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #MemberActionSummaryRecord}
+     * with the supplied key values.
+     */
+    public static Key<MemberActionSummaryRecord> getKey (int memberId, int actionId)
+    {
+        return new Key<MemberActionSummaryRecord>(
+                MemberActionSummaryRecord.class,
+                new String[] { MEMBER_ID, ACTION_ID },
+                new Comparable[] { memberId, actionId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

@@ -7,6 +7,7 @@ import java.sql.Date;
 
 import com.samskivert.util.StringUtil;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Id;
@@ -157,4 +158,18 @@ public class ProfileRecord extends PersistentRecord
         }
         return profile;
     }
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #ProfileRecord}
+     * with the supplied key values.
+     */
+    public static Key<ProfileRecord> getKey (int memberId)
+    {
+        return new Key<ProfileRecord>(
+                ProfileRecord.class,
+                new String[] { MEMBER_ID },
+                new Comparable[] { memberId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

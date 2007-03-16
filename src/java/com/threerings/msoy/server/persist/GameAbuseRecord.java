@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server.persist;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
@@ -47,4 +48,18 @@ public class GameAbuseRecord extends PersistentRecord
 
     /** The current abuse factor, from 0 to 255. */
     public int abuseFactor;
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #GameAbuseRecord}
+     * with the supplied key values.
+     */
+    public static Key<GameAbuseRecord> getKey (int gameId)
+    {
+        return new Key<GameAbuseRecord>(
+                GameAbuseRecord.class,
+                new String[] { GAME_ID },
+                new Comparable[] { gameId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

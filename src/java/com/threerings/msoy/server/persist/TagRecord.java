@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server.persist;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -42,4 +43,18 @@ public abstract class TagRecord extends PersistentRecord
      /** The ID of the tagged target. */
     @Id
     public int targetId;
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #TagRecord}
+     * with the supplied key values.
+     */
+    public static Key<TagRecord> getKey (int tagId, int targetId)
+    {
+        return new Key<TagRecord>(
+                TagRecord.class,
+                new String[] { TAG_ID, TARGET_ID },
+                new Comparable[] { tagId, targetId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

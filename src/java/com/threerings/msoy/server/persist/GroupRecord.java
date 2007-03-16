@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import java.sql.Date;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.Column;
@@ -491,4 +492,18 @@ public class GroupRecord extends PersistentRecord
         StringUtil.fieldsToString(buf, this);
         return buf.append("]").toString();
     }
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #GroupRecord}
+     * with the supplied key values.
+     */
+    public static Key<GroupRecord> getKey (int groupId)
+    {
+        return new Key<GroupRecord>(
+                GroupRecord.class,
+                new String[] { GROUP_ID },
+                new Comparable[] { groupId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

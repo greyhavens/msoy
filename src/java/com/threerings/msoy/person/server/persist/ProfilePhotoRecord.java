@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.person.server.persist;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
@@ -56,4 +57,18 @@ public class ProfilePhotoRecord extends PersistentRecord
 
     /** The constraint for the photo image. */
     public byte photoConstraint;
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #ProfilePhotoRecord}
+     * with the supplied key values.
+     */
+    public static Key<ProfilePhotoRecord> getKey (int memberId)
+    {
+        return new Key<ProfilePhotoRecord>(
+                ProfilePhotoRecord.class,
+                new String[] { MEMBER_ID },
+                new Comparable[] { memberId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.person.server.persist;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
@@ -76,4 +77,18 @@ public class MailFolderRecord extends PersistentRecord
         StringUtil.fieldsToString(buf, this);
         return buf.append("]").toString();
     }
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #MailFolderRecord}
+     * with the supplied key values.
+     */
+    public static Key<MailFolderRecord> getKey (int folderId, int ownerId)
+    {
+        return new Key<MailFolderRecord>(
+                MailFolderRecord.class,
+                new String[] { FOLDER_ID, OWNER_ID },
+                new Comparable[] { folderId, ownerId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

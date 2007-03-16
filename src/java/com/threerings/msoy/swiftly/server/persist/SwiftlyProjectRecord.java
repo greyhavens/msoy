@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
@@ -140,4 +141,18 @@ public class SwiftlyProjectRecord extends PersistentRecord
         sp.remixable = remixable;
         return sp;
     }
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #SwiftlyProjectRecord}
+     * with the supplied key values.
+     */
+    public static Key<SwiftlyProjectRecord> getKey (int projectId)
+    {
+        return new Key<SwiftlyProjectRecord>(
+                SwiftlyProjectRecord.class,
+                new String[] { PROJECT_ID },
+                new Comparable[] { projectId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

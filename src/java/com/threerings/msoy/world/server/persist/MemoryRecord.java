@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.world.server.persist;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -90,4 +91,18 @@ public class MemoryRecord extends PersistentRecord
         entry.value = datumValue;
         return entry;
     }
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #MemoryRecord}
+     * with the supplied key values.
+     */
+    public static Key<MemoryRecord> getKey (byte itemType, int itemId, String datumKey)
+    {
+        return new Key<MemoryRecord>(
+                MemoryRecord.class,
+                new String[] { ITEM_TYPE, ITEM_ID, DATUM_KEY },
+                new Comparable[] { itemType, itemId, datumKey });
+    }
+    // AUTO-GENERATED: METHODS END
 }

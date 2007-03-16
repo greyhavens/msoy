@@ -5,6 +5,7 @@ package com.threerings.msoy.swiftly.server.persist;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
@@ -103,4 +104,18 @@ public class SwiftlySVNStorageRecord extends PersistentRecord
             }
         }
     }
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #SwiftlySVNStorageRecord}
+     * with the supplied key values.
+     */
+    public static Key<SwiftlySVNStorageRecord> getKey (int storageId)
+    {
+        return new Key<SwiftlySVNStorageRecord>(
+                SwiftlySVNStorageRecord.class,
+                new String[] { STORAGE_ID },
+                new Comparable[] { storageId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

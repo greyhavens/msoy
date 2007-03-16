@@ -5,6 +5,7 @@ package com.threerings.msoy.person.server.persist;
 
 import java.sql.Timestamp;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -167,4 +168,18 @@ public class MailMessageRecord extends PersistentRecord
         StringUtil.fieldsToString(buf, this);
         return buf.append("]").toString();
     }
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #MailMessageRecord}
+     * with the supplied key values.
+     */
+    public static Key<MailMessageRecord> getKey (int messageId, int folderId, int ownerId)
+    {
+        return new Key<MailMessageRecord>(
+                MailMessageRecord.class,
+                new String[] { MESSAGE_ID, FOLDER_ID, OWNER_ID },
+                new Comparable[] { messageId, folderId, ownerId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

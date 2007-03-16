@@ -5,6 +5,7 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Date;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
@@ -50,4 +51,18 @@ public class DailyFlowRecord extends PersistentRecord
 
     /** The total amount of flow spent or granted. */
     public int amount;
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #DailyFlowRecord}
+     * with the supplied key values.
+     */
+    public static Key<DailyFlowRecord> getKey (String type, Date date)
+    {
+        return new Key<DailyFlowRecord>(
+                DailyFlowRecord.class,
+                new String[] { TYPE, DATE },
+                new Comparable[] { type, date });
+    }
+    // AUTO-GENERATED: METHODS END
 }
