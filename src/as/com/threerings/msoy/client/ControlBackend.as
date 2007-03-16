@@ -61,6 +61,9 @@ public class ControlBackend
         // pass back ours
         var hostProps :Object = new Object();
         populateControlProperties(hostProps);
+        var initProps :Object = new Object();
+        populateControlInitProperties(initProps);
+        hostProps["initProps"] = initProps;
         evt.hostProps = hostProps;
     }
 
@@ -90,9 +93,7 @@ public class ControlBackend
      */
     protected function populateControlProperties (o :Object) :void
     {
-        var initProps :Object = {};
-        populateControlInitProperties(initProps);
-        o["initProps"] = initProps;
+        // nothing by default
     }
 
     /**
