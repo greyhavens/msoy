@@ -126,13 +126,13 @@ public class MemberRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 5;
 
     /** A flag denoting this user as having support privileges. */
-    public static final int SUPPORT_FLAG = 0x1 << 0;
+    public static final int SUPPORT_FLAG = 1 << 0;
 
     /** A flag denoting this user as having admin privileges. */
-    public static final int ADMIN_FLAG = 0x1 << 1;
+    public static final int ADMIN_FLAG = 1 << 1;
 
     /** A flag denoting this user has having elected to see mature content. */
-    public static final int FLAG_SHOW_MATURE = 0x1 << 2;
+    public static final int FLAG_SHOW_MATURE = 1 << 2;
 
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
