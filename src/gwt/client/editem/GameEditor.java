@@ -16,6 +16,13 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.google.gwt.xml.client.XMLParser;
+import com.google.gwt.xml.client.Document;
+import com.google.gwt.xml.client.NodeList;
+import com.google.gwt.xml.client.Node;
+import com.google.gwt.xml.client.DOMException;
+import com.google.gwt.xml.client.Element;
+
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.MediaDesc;
@@ -25,18 +32,106 @@ import com.threerings.msoy.item.web.MediaDesc;
  */
 public class GameEditor extends ItemEditor
 {
+    /** Constants from com.threerings.parlor.game.data.GameConfig */
+    public static int SEATED_GAME = 0;
+    public static int SEATED_CONTINUOUS = 1;
+    public static int PARTY = 2;
+
     // @Override from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
         _game = (Game)item;
-        _minPlayers.setText("" + _game.minPlayers);
-        _maxPlayers.setText("" + _game.maxPlayers);
-        // seated continuous (second type) is disabled for now
-        //_gameType.setSelectedIndex(_game.gameType);
-        _gameType.setSelectedIndex(_game.gameType == 0 ? 0 : 1);
-        _watchable.setChecked(!_game.unwatchable);
-        _gamedef.setText(_game.config);
+
+        try {
+            _configXML = XMLParser.parse(_game.config);
+        } catch (DOMException de) {
+            CEditem.log("XML Parse Failed", de);
+        } 
+        if (_configXML == null) {
+            _configXML = XMLParser.createDocument();
+        }
+        if (!_configXML.hasChildNodes()) {
+            _configXML.appendChild(_configXML.createElement("game"));
+        }
+        NodeList matches = _configXML.getElementsByTagName("match");
+        if (matches.getLength() > 0) {
+            _match = (Element)matches.item(0);
+            Node option = _match.getFirstChild();
+            // TODO <start_seats>, also game_type might be merged with the "type" attributed on 
+            // <match> - right now it merely refers to which type of table game we're playing
+            while (option != null) {
+                if (option.getNodeType() == Node.ELEMENT_NODE) {
+                    if ("min_seats".equals(option.getNodeName())) {
+                        _minPlayers.setText(option.getFirstChild().toString());;
+                        _minPlayersXML = (Element)option;
+                    } else if ("max_seats".equals(option.getNodeName())) {
+                        _maxPlayers.setText(option.getFirstChild().toString());
+                        _maxPlayersXML = (Element)option;
+                    } else if ("watchable".equals(option.getNodeName())) {
+                        _watchable.setChecked(option.getFirstChild().toString().equals("true"));
+                        _watchableXML = (Element)option;
+                    }
+                }
+                option = option.getNextSibling();
+            }
+            if (_match.hasAttribute("type")) {
+                // this will be more sensible when SEATED_CONTINUOUS is re-instated as a game type
+                _gameType.setSelectedIndex(("" + SEATED_GAME).equals(
+                    _match.getAttribute("type")) ? 0 : 1);
+            } else {
+                _match.setAttribute("type", "" + SEATED_GAME);
+                _gameType.setSelectedIndex(0);
+            }
+        } else {
+            _match = _configXML.createElement("match");
+            _match.setAttribute("type", "" + SEATED_GAME);
+            _gameType.setSelectedIndex(0);
+            _configXML.getFirstChild().appendChild(_match);
+        }
+
+        if (_minPlayersXML == null) {
+            _minPlayers.setText("0");
+            _minPlayersXML = _configXML.createElement("min_seats");
+            _minPlayersXML.appendChild(_configXML.createTextNode(_minPlayers.getText()));
+            _match.appendChild(_minPlayersXML);
+        } 
+        if (_maxPlayersXML == null) {
+            _maxPlayers.setText("0");
+            _maxPlayersXML = _configXML.createElement("max_seats");
+            _maxPlayersXML.appendChild(_configXML.createTextNode(_maxPlayers.getText()));
+            _match.appendChild(_maxPlayersXML);
+        }
+        if (_watchableXML == null) {
+            _watchable.setChecked(true);
+            _watchableXML = _configXML.createElement("watchable");
+            _watchableXML.appendChild(_configXML.createTextNode(_watchable.isChecked() ? 
+                "true" : "false"));
+            _match.appendChild(_watchableXML);
+        }
+
+        NodeList params = _configXML.getElementsByTagName("params");
+        if (params.getLength() > 0) {
+            _params = (Element)params.item(0);
+            Node child = _params.getFirstChild();
+            String childrenText = "";
+            while (child != null) {
+                // TODO make this create spiffy widgets for editing these parameters, rather than
+                // the XML 
+                if (child.getNodeType() == Node.ELEMENT_NODE) {
+                    childrenText += child + "\n";
+                }
+                child = child.getNextSibling();
+            }
+            _gamedef.setText(childrenText);
+        } else {
+            _params = _configXML.createElement("params");
+            _gamedef.setText("");
+            _configXML.getFirstChild().appendChild(_params);
+        }
+
+        _game.config = _configXML.toString();
+
         _tableUploader.setMedia(_game.getTableMedia());
     }
 
@@ -79,29 +174,29 @@ public class GameEditor extends ItemEditor
         bits.setText(row, 0, CEditem.emsgs.gameMinPlayers());
         bits.setWidget(row++, 1, bind(_minPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
-                _game.minPlayers = asShort(text);
+                setOnlyChild(_minPlayersXML, _configXML.createTextNode(text));
+                _game.config = _configXML.toString();
             }
         }));
 
         bits.setText(row, 0, CEditem.emsgs.gameMaxPlayers());
         bits.setWidget(row++, 1, bind(_maxPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
-                _game.maxPlayers = asShort(text);
+                setOnlyChild(_maxPlayersXML, _configXML.createTextNode(text));
+                _game.config = _configXML.toString();
             }
         }));
 
-        // seated continuous games are disabled for now.  re-instate the commented code to
-        // re-enable them as an option.
+        // seated continuous games are disabled for now. 
         bits.setText(row, 0, CEditem.emsgs.gameGameType());
         bits.setWidget(row++, 1, bind(_gameType = new ListBox(), new Binder() {
             public void valueChanged () {
-                //_game.gameType = (byte) _gameType.getSelectedIndex();
-                _game.gameType = (byte) (_gameType.getSelectedIndex() == 0 ? 0 : 2);
+                // this will also do something more sensible when we're using SEATED_CONTINUOUS
+                _match.setAttribute("type", _gameType.getSelectedIndex() == 0 ? 
+                    "" + SEATED_GAME : "" + PARTY);
+                _game.config = _configXML.toString();
             }
         }));
-        /*for (int ii = 0; ii < Game.GAME_TYPES; ii++) {
-            _gameType.addItem(CEditem.dmsgs.getString("gameType" + ii));
-        }*/
         _gameType.addItem(CEditem.dmsgs.getString("gameType0"));
         _gameType.addItem(CEditem.dmsgs.getString("gameType2"));
 
@@ -110,12 +205,9 @@ public class GameEditor extends ItemEditor
         _watchable.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 if (_game != null) {
-                    DeferredCommand.add(new Command() {
-                        public void execute () {
-                            _game.unwatchable = !_watchable.isChecked();
-                            updateSubmittable();
-                        }
-                    });
+                    setOnlyChild(_watchableXML, _configXML.createTextNode(_watchable.isChecked() ?
+                        "true" : "false"));
+                    _game.config = _configXML.toString();
                 }
             }
         });
@@ -124,7 +216,30 @@ public class GameEditor extends ItemEditor
         bits.setText(row++, 0, CEditem.emsgs.gameDefinition());
         bits.setWidget(row, 0, bind(_gamedef = new TextArea(), new Binder() {
             public void textUpdated (String text) {
-                _game.config = text;
+                // this won't be so odd once we have widgets to make this XML for these options
+                // for us
+                try {
+                    // need a valid document (single child element) for parsing to work
+                    Document params = XMLParser.parse("<params>" + text + "</params>");
+                    while (_params.hasChildNodes()) {
+                        _params.removeChild(_params.getFirstChild());
+                    }
+                    if (params.getFirstChild() != null && params.getFirstChild().hasChildNodes()) {
+                        Node param = params.getFirstChild().getFirstChild();
+                        while (param != null) {
+                            // only support elements as children of <params> - this strips out 
+                            // whitespace and comments and random bits of text
+                            if (param.getNodeType() == Node.ELEMENT_NODE) {
+                                _params.appendChild(param.cloneNode(true));
+                            }
+                            param = param.getNextSibling();
+                        }
+                    }
+                } catch (DOMException de) {
+                    // this is nothing to be alarmed about - parsing will fail most of the time
+                    // (hopefully not when they're done editing)
+                } 
+                _game.config = _configXML.toString();
             }
         }));
         bits.getFlexCellFormatter().setColSpan(row++, 0, 2);
@@ -154,12 +269,27 @@ public class GameEditor extends ItemEditor
         }
     }
 
+    protected static void setOnlyChild (Node parent, Node child) 
+    {
+        while (parent.hasChildNodes()) {
+            parent.removeChild(parent.getFirstChild());
+        }
+        parent.appendChild(child);
+    }
+
     protected Game _game;
 
     protected TextBox _minPlayers, _maxPlayers;
     protected ListBox _gameType;
     protected CheckBox _watchable;
     protected TextArea _gamedef;
+
+    protected Document _configXML;
+    protected Element _match;
+    protected Element _params;
+    protected Element _minPlayersXML;
+    protected Element _maxPlayersXML;
+    protected Element _watchableXML;
 
     protected MediaUploader _tableUploader;
 

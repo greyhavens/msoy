@@ -68,20 +68,26 @@ public class TableCreationPanel extends FloatingPanel
         var gconf :EZGameConfigurator = new EZGameConfigurator();
         _gconfigger = gconf;
         _gconfigger.init(_ctx);
-        gconf.setXMLConfig(_game.config);
-        if (_game.gameType == GameConfig.PARTY) {
+        var configXML :XML = XML(_game.config);
+        gconf.setXMLConfig(configXML);
+        if (parseInt(configXML..match.@type) == GameConfig.PARTY) {
             _tconfigger = new DefaultFlexTableConfigurator(-1, -1, -1, true);
-
-        } else {
-            _tconfigger = new DefaultFlexTableConfigurator(
-                _game.minPlayers, _game.minPlayers, _game.maxPlayers, true);
+        } else if (parseInt(configXML..match.@type) == GameConfig.SEATED_GAME)  {
+            // using min_seats for start_seats until we put start_seats in the configuration
+            _tconfigger = new DefaultFlexTableConfigurator(parseInt(
+                configXML..match.min_seats[0]), parseInt(configXML..match.min_seats[0]),
+                parseInt(configXML..match.max_seats[0]), true);
+        } else { 
+            Log.getLog(this).warning("<match type='" + configXML..match.@type + 
+                "'> is not a valid type");
+            return;
         }
         _tconfigger.init(_ctx, _gconfigger);
 
         var config :MsoyGameConfig = new MsoyGameConfig();
         config.gameMedia = _game.gameMedia.getMediaPath();
         config.persistentGameId = _game.getPrototypeId();
-        config.gameType = _game.gameType;
+        config.gameType = configXML..match.@type;
         gconf.setGameConfig(config);
 
         addChild(gconf.getContainer());

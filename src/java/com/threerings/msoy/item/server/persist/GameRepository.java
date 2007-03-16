@@ -40,6 +40,13 @@ public class GameRepository extends ItemRepository<
     public GameRepository (ConnectionProvider provider)
     {
         super(provider);
+
+        // TEMP
+        _ctx.registerMigration(GameRecord.class, new EntityMigration.Drop(8007, "gameType"));
+        _ctx.registerMigration(GameRecord.class, new EntityMigration.Drop(8007, "minPlayers"));
+        _ctx.registerMigration(GameRecord.class, new EntityMigration.Drop(8007, "maxPlayers"));
+        _ctx.registerMigration(GameRecord.class, new EntityMigration.Drop(8007, "unwatchable"));
+        // END TEMP
     }
 
     // from ToyBoxManager.GameRepository

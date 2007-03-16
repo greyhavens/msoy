@@ -19,7 +19,8 @@
     !**/*UnitTest.class,rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
     **/msoy/web/data/**,**/msoy/world/data/WorldMemberInfo.class,**/msoy/item/web/**,
     **/msoy/admin/data/**,**/msoy/admin/client/**,**/msoy/admin/util/**,
-    **/msoy/game/data/*Config.class,**/msoy/world/data/WorldOccupantInfo.class)
+    !**/msoy/game/data/MsoyMatchConfig.class,**/msoy/game/data/*Config.class,
+    **/msoy/world/data/WorldOccupantInfo.class)
 
 -dontskipnonpubliclibraryclasses
 -dontobfuscate

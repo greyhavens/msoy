@@ -14,18 +14,6 @@ public class Game extends Item
     /** Defines the number of different game types. See GameConfig. */
     public static final int GAME_TYPES = 3;
 
-    /** The type of game, see GameConfig. */
-    public byte gameType;
-
-    /** The minimum number of players. */
-    public short minPlayers;
-
-    /** The maximum number of players. */
-    public short maxPlayers;
-
-    /** Is this game unwatchable? Applicable only for non-continuous games. */
-    public boolean unwatchable;
-
     /** The XML game configuration. */
     public String config;
 
@@ -73,9 +61,7 @@ public class Game extends Item
         if (!super.isConsistent() || !nonBlank(name)) {
             return false;
         }
-        if (minPlayers < 1 || minPlayers > maxPlayers) {
-            return false;
-        }
+        // TODO: Check over the values in the XML to make sure they are sane
         return (gameMedia != null);
     }
 }

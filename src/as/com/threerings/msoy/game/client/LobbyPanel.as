@@ -114,7 +114,8 @@ public class LobbyPanel extends VBox
     {
         var idx :int = ArrayUtil.indexOf(_formingTables.source, table);
         if (idx >= 0) {
-            if (table.gameOid != -1 && getGame().gameType == GameConfig.SEATED_GAME) {
+            if (table.gameOid != -1 && GameConfig.SEATED_GAME == 
+                parseInt(XML(getGame().config)..match.@type)) {
                 _formingTables.removeItemAt(idx);
                 _runningTables.addItem(table);
             } else {
@@ -296,7 +297,7 @@ public class LobbyPanel extends VBox
         list.dataProvider = _formingTables;
 
         // only display tabs for seated games
-        if (getGame().gameType == GameConfig.SEATED_GAME) {
+        if (GameConfig.SEATED_GAME == parseInt(XML(getGame().config)..match.@type)) {
             var tabBar :TabBar = new TabBar();
             tabBar.percentHeight = 100;
             tabBar.styleName = "lobbyTabs";

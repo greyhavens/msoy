@@ -22,6 +22,10 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.data.GameObject;
 import com.threerings.parlor.game.server.GameManager;
 
+import com.threerings.toybox.data.TableMatchConfig;
+import com.threerings.toybox.xml.GameParser;
+import com.threerings.toybox.server.persist.GameRecord;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.server.MsoyServer;
@@ -34,6 +38,7 @@ import com.threerings.msoy.world.data.MemoryEntry;
 
 import com.threerings.msoy.game.data.AVRGameObject;
 import com.threerings.msoy.game.data.WorldGameConfig;
+import com.threerings.msoy.game.xml.MsoyGameParser;
 
 import static com.threerings.msoy.Log.*;
 
@@ -115,20 +120,27 @@ public class WorldGameRegistry
             public void requestCompleted (Item item) {
                 try {
                     Game game = (Game) item;
+                    TableMatchConfig match = (TableMatchConfig)(new GameRecord () {
+                        protected GameParser createParser () {
+                            return new MsoyGameParser();
+                        }
+                    }).parseGameDefinition().match;
                     WorldGameConfig config = new WorldGameConfig();
                     config.name = game.name;
                     config.persistentGameId = game.getPrototypeId();
                     config.gameMedia = game.gameMedia.getMediaPath();
-                    config.gameType = game.gameType;
+                    // when we support SEATED_CONTINUOUS, MsoyMatchConfig will need to recognize 
+                    // that as a game type in the XML definition, and do something better than a
+                    // isPartyGame boolean
+                    config.gameType = match.isPartyGame ? GameConfig.PARTY : GameConfig.SEATED_GAME;
                     //config.game = game;
                     config.startSceneId = gameKey.right;
-                    if (game.gameType == GameConfig.PARTY) {
+                    if (config.gameType == GameConfig.PARTY) {
                         config.players = new Name[0];
-
                     } else {
-                        config.players = new Name[game.maxPlayers];
+                        config.players = new Name[match.maxSeats];
                     }
-                    // TODO: parse the XML config, undo Chiyogami hackery
+                    // TODO: fix Chiyogami stuff... game.config will never be non-xml anymore
                     if (game.config != null &&
                             game.config.startsWith("Chiyogami")) {
                         String prefix = "com.threerings.msoy.game.chiyogami.";
@@ -137,7 +149,6 @@ public class WorldGameRegistry
                     }
 
                     MsoyServer.plreg.createPlace(config);
-                    
                 } catch (Exception e) {
                     requestFailed(e);
                 }

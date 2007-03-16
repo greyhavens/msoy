@@ -9,7 +9,12 @@ import com.samskivert.io.PersistenceException;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
-import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.toybox.xml.GameParser;
+import com.threerings.toybox.server.persist.GameRecord;
+
+import com.threerings.msoy.game.xml.MsoyGameParser;
+import com.threerings.msoy.game.data.MsoyMatchConfig;
+
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.web.Game;
@@ -21,6 +26,7 @@ import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.server.InvocationException;
 
 import static com.threerings.msoy.Log.log;
 
@@ -38,29 +44,42 @@ public class GameServlet extends MsoyServiceServlet
 
         // load up the metadata for this game
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(Item.GAME);
-        GameRecord gRec;
+        ItemRecord itemRec;
         try {
-            gRec = (GameRecord) repo.loadOriginalItem(gameId);
-            if (gRec == null) {
+            itemRec = repo.loadOriginalItem(gameId);
+            if (itemRec == null) {
                 return null;
             }
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load game record [gameId=" + gameId + "]", pe);
             throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
         }
-        Game game = (Game) gRec.toItem();
+        final Game game = (Game)itemRec.toItem();
 
         // create a launch config record for the game
         LaunchConfig config = new LaunchConfig();
         config.gameId = game.itemId;
 
+        MsoyMatchConfig match;
+        try {
+            match = (MsoyMatchConfig)(new GameRecord () {
+                { definition = game.config; }
+                protected GameParser createParser () {
+                    return new MsoyGameParser();
+                }
+            }).parseGameDefinition().match;
+        } catch (InvocationException ie) {
+            log.log(Level.WARNING, "Failed to parse XML game definition [gameId=" + gameId + "]", 
+                ie);
+            throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+        }
         switch (game.gameMedia.mimeType) {
         case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
             config.type = (game.isInWorld() ? LaunchConfig.FLASH_IN_WORLD :
-                (game.maxPlayers == 1 ? LaunchConfig.FLASH_SOLO : LaunchConfig.FLASH_LOBBIED));
+                (match.maxSeats == 1 ? LaunchConfig.FLASH_SOLO : LaunchConfig.FLASH_LOBBIED));
             break;
         case MediaDesc.APPLICATION_JAVA_ARCHIVE:
-            config.type = (game.maxPlayers == 1 ?
+            config.type = (match.maxSeats == 1 ?
                 LaunchConfig.JAVA_SOLO : LaunchConfig.JAVA_LOBBIED);
             break;
         default:
