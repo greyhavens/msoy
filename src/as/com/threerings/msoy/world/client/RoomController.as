@@ -382,7 +382,7 @@ public class RoomController extends SceneController
      * pixel at the specified location.
      */
     public function getHitSprite (
-        stageX :Number, stageY :Number) :MsoySprite
+        stageX :Number, stageY :Number, all :Boolean = false) :MsoySprite
     {
         if (!_roomView.getGlobalBounds().contains(stageX, stageY)) {
             // no hits possible, mouse is out-of-bounds
@@ -392,7 +392,7 @@ public class RoomController extends SceneController
         // we search from last-drawn to first drawn to get the topmost...
         for (var dex :int = _roomView.numChildren - 1; dex >= 0; dex--) {
             var spr :MsoySprite = (_roomView.getChildAt(dex) as MsoySprite);
-            if ((spr != null) && spr.isActive() && spr.capturesMouse() &&
+            if ((spr != null) && (all || (spr.isActive() && spr.capturesMouse())) &&
                     spr.hitTestPoint(stageX, stageY, true)) {
                 return spr;
             }
@@ -509,10 +509,16 @@ public class RoomController extends SceneController
 
     protected function mouseClicked (event :MouseEvent) :void
     {
-        var hitter :MsoySprite = getHitSprite(event.stageX, event.stageY);
+        // if the shift key is down, we're not interested in what the sprite
+        // represents, we're intrested in the sprite itself.
+        // TODO: Oh fer chrissakes. Shift/Ctrl don't seem to be detected
+        // on windows!!!
+        var isItemContext :Boolean = event.shiftKey;
+
+        var hitter :MsoySprite = getHitSprite(event.stageX, event.stageY, isItemContext);
 
         if (hitter != null) {
-            if (event.shiftKey) {
+            if (isItemContext) {
                 showItemMenu(hitter);
 
             } else if (hitter.hasAction()) {
@@ -520,7 +526,7 @@ public class RoomController extends SceneController
             }
             // otherwise: the sprite simply captures and discards the event
 
-        } else if (_mctx.worldProps.userControlsAvatar) {
+        } else if (!isItemContext && _mctx.worldProps.userControlsAvatar) {
             var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();
             if (curLoc == null) {
                 return; // we've already left, ignore the click
