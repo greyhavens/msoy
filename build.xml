@@ -607,6 +607,7 @@
   </target>
 
   <!-- generates ActionScript versions of our Streamable classes -->
+  <!--
   <target name="genascript">
     <taskdef name="genscript" classpathref="classpath"
              classname="com.threerings.presents.tools.GenActionScriptTask"/>
@@ -615,6 +616,7 @@
       <fileset dir="${src.dir}" includes="**/data/*.java"/>
     </genscript>
   </target>
+  -->
 
   <!-- creates the serialized color repository config -->
   <target name="colorpos">
