@@ -57,6 +57,9 @@ public class MsoyController extends Controller
 {
     public static const log :Log = Log.getLog(MsoyController);
 
+    /** Command to show the 'about' dialog. */
+    public static const ABOUT :String = "About";
+
     /** Command to log us on. */
     public static const LOGON :String = "Logon";
 
@@ -259,6 +262,14 @@ public class MsoyController extends Controller
         }
 
         CommandMenu.createMenu(menuData).popUp(trigger, true);
+    }
+
+    /**
+     * Handle the ABOUT command.
+     */
+    public function handleAbout () :void
+    {
+        new AboutDialog(_ctx);
     }
 
     /**
