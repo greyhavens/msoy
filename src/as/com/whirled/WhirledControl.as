@@ -30,6 +30,10 @@ public class WhirledControl extends EventDispatcher
         event.userProps = userProps;
         disp.root.loaderInfo.sharedEvents.dispatchEvent(event);
         _props = event.hostProps;
+        if ("initProps" in _props) {
+            gotInitProperties(_props["initProps"]);
+            delete _props["initProps"]; // not needed after startup
+        }
 
         disp.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload, false, 0, true);
     }
@@ -47,6 +51,14 @@ public class WhirledControl extends EventDispatcher
      * Populate any properties that we provide back to whirled.
      */
     protected function populateProperties (o :Object) :void
+    {
+        // nada
+    }
+
+    /**
+     * Initialize/examine any properties sent from whirled after connecting.
+     */
+    protected function gotInitProperties (o :Object) :void
     {
         // nada
     }

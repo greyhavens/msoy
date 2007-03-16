@@ -12,6 +12,16 @@ public class ActorBackend extends EntityBackend
         o["getState_v1"] = getState_v1;
     }
 
+    override protected function populateControlInitProperties (o :Object) :void
+    {
+        super.populateControlInitProperties(o);
+
+        var sprite :ActorSprite = (_sprite as ActorSprite);
+        o["location"] = [ sprite.loc.x, sprite.loc.y, sprite.loc.z ];
+        o["orient"] = sprite.loc.orient;
+        o["isMoving"] = sprite.isMoving();
+    }
+
     /**
      * Called by user code when it wants to change the actor's scene location.
      */

@@ -118,6 +118,16 @@ public class ActorControl extends EntityControl
         o["stateSet_v1"] = stateSet_v1;
     }
 
+    // from WhirledControl
+    override protected function gotInitProperties (o :Object) :void
+    {
+        super.gotInitProperties(o);
+
+        _location = (o["location"] as Array);
+        _orient = (o["orient"] as Number);
+        _isMoving = (o["isMoving"] as Boolean);
+    }
+
     /**
      * Called when we start or stop moving or change orientation.
      */

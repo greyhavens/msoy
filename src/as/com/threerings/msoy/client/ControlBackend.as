@@ -90,6 +90,17 @@ public class ControlBackend
      */
     protected function populateControlProperties (o :Object) :void
     {
+        var initProps :Object = {};
+        populateControlInitProperties(initProps);
+        o["initProps"] = initProps;
+    }
+
+    /**
+     * Populate any properties that will only be needed when the control
+     * is first initialized.
+     */
+    protected function populateControlInitProperties (o :Object) :void
+    {
         // nothing by default
     }
 
