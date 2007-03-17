@@ -30,7 +30,7 @@ public class WhirledControl extends EventDispatcher
         event.userProps = userProps;
         disp.root.loaderInfo.sharedEvents.dispatchEvent(event);
         _props = event.hostProps;
-        if ("initProps" in _props) {
+        if (_props != null && "initProps" in _props) {
             gotInitProperties(_props["initProps"]);
             delete _props["initProps"]; // not needed after startup
         }
