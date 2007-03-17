@@ -5,9 +5,11 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
 
@@ -58,8 +60,10 @@ public class GroupMembershipRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 2;
 
     /** The id of the member in the group membership. */
+    @Id
     public int memberId;
 
+    @Id
     /** The id of the group in the group membership. */ 
     public int groupId;
     
@@ -92,4 +96,18 @@ public class GroupMembershipRecord extends PersistentRecord
         StringUtil.fieldsToString(buf, this);
         return buf.append("]").toString();
     }
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #GroupMembershipRecord}
+     * with the supplied key values.
+     */
+    public static Key<GroupMembershipRecord> getKey (int memberId, int groupId)
+    {
+        return new Key<GroupMembershipRecord>(
+                GroupMembershipRecord.class,
+                new String[] { MEMBER_ID, GROUP_ID },
+                new Comparable[] { memberId, groupId });
+    }
+    // AUTO-GENERATED: METHODS END
 }
