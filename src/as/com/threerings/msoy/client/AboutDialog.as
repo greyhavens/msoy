@@ -29,7 +29,7 @@ public class AboutDialog extends FloatingPanel
         super.createChildren();
 
         var textArea :Text = new Text();
-        textArea.percentWidth = 100;
+        textArea.width = 300;
         textArea.htmlText = Msgs.GENERAL.get("m.about");
         addChild(textArea);
 
