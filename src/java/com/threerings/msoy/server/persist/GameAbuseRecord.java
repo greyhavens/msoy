@@ -22,12 +22,12 @@ public class GameAbuseRecord extends PersistentRecord
     public static final ColumnExp GAME_ID_C =
         new ColumnExp(GameAbuseRecord.class, GAME_ID);
 
-    /** The column identifier for the {@link #accumMinutesSinceLastAssessment} field. */
-    public static final String ACCUM_MINUTES_SINCE_LAST_ASSESSMENT = "accumMinutesSinceLastAssessment";
+    /** The column identifier for the {@link #accumMinutes} field. */
+    public static final String ACCUM_MINUTES = "accumMinutes";
 
-    /** The qualified column identifier for the {@link #accumMinutesSinceLastAssessment} field. */
-    public static final ColumnExp ACCUM_MINUTES_SINCE_LAST_ASSESSMENT_C =
-        new ColumnExp(GameAbuseRecord.class, ACCUM_MINUTES_SINCE_LAST_ASSESSMENT);
+    /** The qualified column identifier for the {@link #accumMinutes} field. */
+    public static final ColumnExp ACCUM_MINUTES_C =
+        new ColumnExp(GameAbuseRecord.class, ACCUM_MINUTES);
 
     /** The column identifier for the {@link #abuseFactor} field. */
     public static final String ABUSE_FACTOR = "abuseFactor";
@@ -37,14 +37,14 @@ public class GameAbuseRecord extends PersistentRecord
         new ColumnExp(GameAbuseRecord.class, ABUSE_FACTOR);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The id of the game we're tracking. */
     @Id
     public int gameId;
 
     /** The accumulated number of player minutes since we last assessed the abuse factor. */
-    public int accumMinutesSinceLastAssessment;
+    public int accumMinutes;
 
     /** The current abuse factor, from 0 to 255. */
     public int abuseFactor;

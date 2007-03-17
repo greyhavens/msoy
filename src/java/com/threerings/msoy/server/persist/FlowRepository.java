@@ -12,6 +12,7 @@ import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
@@ -42,6 +43,11 @@ public class FlowRepository extends DepotRepository
     {
         super(ctx);
 
+        // let this long long column name be replaced by something more sensible
+        _ctx.registerMigration(
+            GameAbuseRecord.class,
+            new EntityMigration.Rename(2, "accumMinutesSinceLastAssessment", "accumMinutes")); 
+        
         // add a cache invalidator that listens to MemberRecord updates
         _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
             public void entryInvalidated (CacheKey key, MemberRecord member) {
@@ -155,9 +161,9 @@ public class FlowRepository extends DepotRepository
             return;
         }
         GameAbuseRecord gameRecord = getAbuseRecord(gameId, false);
-        gameRecord.accumMinutesSinceLastAssessment += playerMinutes;
+        gameRecord.accumMinutes += playerMinutes;
 
-        if (gameRecord.accumMinutesSinceLastAssessment >= 
+        if (gameRecord.accumMinutes >= 
                 RuntimeConfig.server.abuseFactorReassessment) {
             // load all actions logged since our last assessment
             Collection<GameFlowSummaryRecord> records =
@@ -171,7 +177,7 @@ public class FlowRepository extends DepotRepository
 
             // write an algorithm that actually does something with 'records' here
             gameRecord.abuseFactor = 123;
-            gameRecord.accumMinutesSinceLastAssessment = 0;
+            gameRecord.accumMinutes = 0;
             
             // then delete the records
             deleteAll(MemberActionLogRecord.class,
@@ -296,7 +302,7 @@ public class FlowRepository extends DepotRepository
             gameRecord = new GameAbuseRecord();
             gameRecord.gameId = gameId;
             gameRecord.abuseFactor = 100;
-            gameRecord.accumMinutesSinceLastAssessment = 0;
+            gameRecord.accumMinutes = 0;
             if (insertOnCreation) {
                 insert(gameRecord);
             }
