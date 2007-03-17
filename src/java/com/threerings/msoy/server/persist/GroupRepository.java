@@ -219,10 +219,7 @@ public class GroupRepository extends DepotRepository
     public void setRank (int groupId, int memberId, byte newRank)
         throws PersistenceException
     {
-        Key<GroupMembershipRecord> key = new Key<GroupMembershipRecord>(
-                GroupMembershipRecord.class,
-                GroupMembershipRecord.GROUP_ID, groupId,
-                GroupMembershipRecord.MEMBER_ID, memberId);
+        Key key = GroupMembershipRecord.getKey(memberId, groupId);
         int rows = updatePartial(GroupMembershipRecord.class, key, key,
                                  GroupMembershipRecord.RANK, newRank);
         if (rows == 0) {
@@ -251,10 +248,7 @@ public class GroupRepository extends DepotRepository
     public boolean leaveGroup (int groupId, int memberId)
         throws PersistenceException
     {
-        Key<GroupMembershipRecord> key = new Key<GroupMembershipRecord>(
-                GroupMembershipRecord.class,
-                GroupMembershipRecord.GROUP_ID, groupId,
-                GroupMembershipRecord.MEMBER_ID, memberId);
+        Key key = GroupMembershipRecord.getKey(memberId, groupId);
         int rows = deleteAll(GroupMembershipRecord.class, key, key);
         updateMemberCount(groupId);
         return rows > 0;

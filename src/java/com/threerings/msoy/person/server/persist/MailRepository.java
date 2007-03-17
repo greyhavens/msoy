@@ -195,11 +195,7 @@ public class MailRepository extends DepotRepository
      public void setPayloadState (int ownerId, int folderId, int messageId, byte[] state)
          throws PersistenceException
      {
-         Key<MailMessageRecord> key =
-             new Key<MailMessageRecord>(MailMessageRecord.class,
-                     MailMessageRecord.OWNER_ID, ownerId,
-                     MailMessageRecord.FOLDER_ID, folderId,
-                     MailMessageRecord.MESSAGE_ID, messageId);
+         Key<MailMessageRecord> key = MailMessageRecord.getKey(messageId, folderId, ownerId);
          updatePartial(MailMessageRecord.class, key, key, MailMessageRecord.PAYLOAD_STATE, state);
      }
 
@@ -209,11 +205,7 @@ public class MailRepository extends DepotRepository
      public void setUnread (int ownerId, int folderId, int messageId, boolean unread)
          throws PersistenceException
      {
-         Key<MailMessageRecord> key =
-             new Key<MailMessageRecord>(MailMessageRecord.class,
-                     MailMessageRecord.OWNER_ID, ownerId,
-                     MailMessageRecord.FOLDER_ID, folderId,
-                     MailMessageRecord.MESSAGE_ID, messageId);
+         Key<MailMessageRecord> key = MailMessageRecord.getKey(messageId, folderId, ownerId);
          updatePartial(MailMessageRecord.class, key, key, MailMessageRecord.UNREAD, unread);
      }
 

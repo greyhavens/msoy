@@ -51,8 +51,7 @@ public class FlowRepository extends DepotRepository
         // add a cache invalidator that listens to MemberRecord updates
         _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
             public void entryInvalidated (CacheKey key, MemberRecord member) {
-                _ctx.cacheInvalidate(new Key<MemberFlowRecord>(
-                        MemberFlowRecord.class, MemberFlowRecord.MEMBER_ID, member.memberId));
+                _ctx.cacheInvalidate(MemberFlowRecord.getKey(member.memberId));
             }
             public void entryCached (CacheKey key, MemberRecord newEntry, MemberRecord oldEntry) {
                 // TODO: To be fancy, construct & cache our own MemberFlowRecord here
@@ -238,7 +237,7 @@ public class FlowRepository extends DepotRepository
 
         String op = grant ? "+" : "-";
 
-        Key key = new Key<MemberRecord>(MemberRecord.class, MemberRecord.MEMBER_ID, memberId);
+        Key key = MemberFlowRecord.getKey(memberId);
 
         int mods = updateLiteral(MemberRecord.class, key, key,
                                  MemberRecord.FLOW, MemberRecord.FLOW + op + amount);

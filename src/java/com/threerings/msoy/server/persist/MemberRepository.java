@@ -106,8 +106,7 @@ public class MemberRepository extends DepotRepository
         // add a cache invalidator that listens to MemberRecord updates
         _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
             public void entryInvalidated (CacheKey key, MemberRecord member) {
-                _ctx.cacheInvalidate(new Key<MemberNameRecord>(
-                        MemberNameRecord.class, MemberNameRecord.MEMBER_ID, member.memberId));
+                _ctx.cacheInvalidate(MemberNameRecord.getKey(member.memberId));
             }
             public void entryCached (CacheKey key, MemberRecord newEntry, MemberRecord oldEntry) {
             }
@@ -575,16 +574,10 @@ public class MemberRepository extends DepotRepository
         _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, memberId));
         _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, otherId));
 
-        Key<FriendRecord> key = new Key<FriendRecord>(
-                FriendRecord.class,
-                FriendRecord.INVITER_ID, memberId,
-                FriendRecord.INVITEE_ID, otherId);
+        Key key = FriendRecord.getKey(memberId, otherId);
         deleteAll(FriendRecord.class, key, key);
 
-        key = new Key<FriendRecord>(
-                FriendRecord.class,
-                FriendRecord.INVITER_ID, otherId,
-                FriendRecord.INVITEE_ID, memberId);
+        key = FriendRecord.getKey(otherId, memberId);
         deleteAll(FriendRecord.class, key, key);
     }
 
