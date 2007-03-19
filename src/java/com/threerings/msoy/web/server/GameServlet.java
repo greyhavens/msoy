@@ -6,8 +6,10 @@ package com.threerings.msoy.web.server;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
-import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.ServerConfig;
+import com.samskivert.util.StringUtil;
+
+import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.server.InvocationException;
 
 import com.threerings.toybox.xml.GameParser;
 import com.threerings.toybox.server.persist.GameRecord;
@@ -21,12 +23,13 @@ import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
+import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.ServerConfig;
+
 import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
-import com.threerings.presents.data.InvocationCodes;
-import com.threerings.presents.server.InvocationException;
 
 import static com.threerings.msoy.Log.log;
 
@@ -62,17 +65,25 @@ public class GameServlet extends MsoyServiceServlet
 
         MsoyMatchConfig match;
         try {
-            match = (MsoyMatchConfig)(new GameRecord () {
-                { definition = game.config; }
-                protected GameParser createParser () {
-                    return new MsoyGameParser();
-                }
-            }).parseGameDefinition().match;
+            if (StringUtil.isBlank(game.config)) {
+                // fall back to a sensible default for our legacy games
+                match = new MsoyMatchConfig();
+                match.minSeats = match.startSeats = 1;
+                match.maxSeats = 2;
+            } else {
+                match = (MsoyMatchConfig)(new GameRecord() {
+                    { definition = game.config; } // anonymous constructor
+                    protected GameParser createParser () {
+                        return new MsoyGameParser();
+                    }
+                }).parseGameDefinition().match;
+            }
+
         } catch (InvocationException ie) {
-            log.log(Level.WARNING, "Failed to parse XML game definition [gameId=" + gameId + "]", 
-                ie);
+            log.log(Level.WARNING, "Failed to parse XML game definition [id=" + gameId + "]", ie);
             throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
         }
+
         switch (game.gameMedia.mimeType) {
         case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
             config.type = (game.isInWorld() ? LaunchConfig.FLASH_IN_WORLD :
