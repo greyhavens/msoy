@@ -200,6 +200,9 @@ public class JSONMarshaller<T>
     protected Object serialize (Object value, Class<?> dClass)
         throws JSONException, IllegalAccessException
     {
+        if (value == null) {
+            return null;
+        }
         if (isJSONPrimitive(dClass)) {
             return value;
         }
