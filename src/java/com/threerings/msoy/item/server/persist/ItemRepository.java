@@ -580,7 +580,7 @@ public abstract class ItemRepository<
                 item.itemId < 0 ? getCloneClass() : getItemClass(),
                 new Where(ItemRecord.ITEM_ID, item.itemId,
                           ItemRecord.OWNER_ID, item.ownerId),
-                item.itemId < 0 ? ItemRecord.getKey(item.itemId) : CloneRecord.getKey(item.itemId),
+                item.itemId < 0 ? CloneRecord.getKey(item.itemId) : ItemRecord.getKey(item.itemId),
                 ItemRecord.OWNER_ID, newOwnerId);
         if (modifiedRows == 0) {
             throw new PersistenceException(

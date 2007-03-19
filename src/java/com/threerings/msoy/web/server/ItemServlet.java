@@ -265,7 +265,7 @@ public class ItemServlet extends MsoyServiceServlet
                 repo.updateOwnerId(item, creds.getMemberId());
             }
         } catch (PersistenceException pe) {
-        log.log(Level.WARNING, "Failed to wrap item [item=" + ident + ", wrap=" + wrap + "]");
+            log.log(Level.WARNING, "Failed to wrap item [item=" + ident + ", wrap=" + wrap + "]");
         }
     }
     
