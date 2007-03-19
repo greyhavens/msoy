@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
@@ -57,7 +58,7 @@ public abstract class FriendInvite
             protected InvitationWidget ()
             {
                 super();
-                add(new InlineLabel("You are inviting the recipient of this message to be your friend."));
+                add(new InlineLabel(CMsgs.mmsgs.friendInviting()));
             }
         }
     }
@@ -94,43 +95,47 @@ public abstract class FriendInvite
             {
                 super();
                 _thirdPerson = thirdPerson;
-                setStyleName("InvitationWidget");
+                setStyleName("friendshipInvitation");
 
                 _status = new Label();
                 add(_status, DockPanel.SOUTH);
-                _content = new FlowPanel();
+                _content = new VerticalPanel();
                 add(_content, DockPanel.CENTER);
                 
-                refreshUI();
+                refreshUI(false);
             }
 
-            protected void refreshUI ()
+            protected void refreshUI (final boolean roundtrip)
             {
                 CMsgs.membersvc.getFriendStatus(
                     CMsgs.creds, _message.headers.sender.getMemberId(), new AsyncCallback() {
                        public void onSuccess (Object result) {
-                           buildUI(((Boolean) result).booleanValue());
+                           buildUI(((Boolean) result).booleanValue(), roundtrip);
                        }
                        public void onFailure (Throwable caught) {
                            _status.setText(CMsgs.serverError(caught));
                        }
                     });
             }
-            
-            protected void buildUI (boolean friendStatus)
+
+            protected void buildUI (boolean friendStatus, boolean roundtrip)
             {
                 _content.clear();
                 if (friendStatus) {
-                    _content.add(new InlineLabel("This invitation has been accepted."));
+                    _content.add(new InlineLabel(roundtrip ? 
+                        CMsgs.mmsgs.friendAccepted(_message.headers.sender.toString()) :
+                        CMsgs.mmsgs.friendAlreadyFriend(_message.headers.sender.toString())));
                     return;
                 }
                 if (_thirdPerson) {
-                    _content.add(new InlineLabel("This invitation is still pending."));
+                    _content.add(new InlineLabel(CMsgs.mmsgs.friendPending()));
                     return;
                 }
 
-                _content.add(new InlineLabel("You can "));
-                Button ayeButton = new Button("ACCEPT");
+                _content.add(new InlineLabel(CMsgs.mmsgs.friendInvitation()));
+
+                Button ayeButton = new Button(CMsgs.mmsgs.friendBtnAccept());
+                ayeButton.addStyleName("AyeButton");
                 new ClickCallback(ayeButton, _status) {
                     public boolean callService () {
                         CMsgs.membersvc.addFriend(
@@ -138,42 +143,37 @@ public abstract class FriendInvite
                         return true;
                     }
                     public boolean gotResult (Object result) {
-                        mailResponse(true);
-                        refreshUI();
+                        mailResponse();
+                        refreshUI(true);
                         return false;
                     }
                 };
                 _content.add(ayeButton);
-                _content.add(new InlineLabel(" this invitation, reply to it, or simply delete it."));
             }
 
-            protected void mailResponse (boolean accepted)
+            protected void mailResponse ()
             {
                 MemberName inviter = _message.headers.sender;
                 MemberName invitee = _message.headers.recipient;
-                String subject, body;
-                if (accepted) {
-                    subject = "Your friend invitation was accepted!";
-                    body = "Your invitation to " + invitee + " was accepted! " +
-                        "They are now a friend of yours.";
-                } else {
-                    subject = "Your friends invitation has been declined.";
-                    body = "Your invitation to " + invitee + " was declined. Alas!";
-                }
-                CMsgs.mailsvc.deliverMessage(CMsgs.creds, inviter.getMemberId(), subject, body,
-                                             null, new AsyncCallback() {
-                    public void onSuccess (Object result) {
-                        // Well that's nice.
-                    }
-                    public void onFailure (Throwable caught) {
-                        // I am not sure anything useful can be done here.
-                    }
-                });
+
+                CMsgs.mailsvc.deliverMessage(
+                    CMsgs.creds, inviter.getMemberId(),
+                    CMsgs.mmsgs.friendReplySubject(),
+                    CMsgs.mmsgs.friendReplyBody(invitee.toString()),
+                    null,
+                    new AsyncCallback() {
+                        public void onSuccess (Object result) {
+                            // Well that's nice.
+                        }   
+                        public void onFailure (Throwable caught) {
+                            // I am not sure anything useful can be done here.
+                        }
+                    });
             }
 
             protected boolean _thirdPerson;
             protected Label _status;
-            protected FlowPanel _content;
+            protected VerticalPanel _content;
         }
     }
 }

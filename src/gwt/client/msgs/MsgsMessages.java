@@ -8,12 +8,28 @@ package client.msgs;
 public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "This was an invitation to the group "{0}", which you have since joined.".
+   * Translated "This friendship invitation is still pending.".
    * 
-   * @return translated "This was an invitation to the group "{0}", which you have since joined."
-   * @gwt.key groupAlreadyMember
+   * @return translated "This friendship invitation is still pending."
+   * @gwt.key friendPending
    */
-  String groupAlreadyMember(String arg0);
+  String friendPending();
+
+  /**
+   * Translated "You are inviting the recipient of this message to be your friend.".
+   * 
+   * @return translated "You are inviting the recipient of this message to be your friend."
+   * @gwt.key friendInviting
+   */
+  String friendInviting();
+
+  /**
+   * Translated "Be Friends!".
+   * 
+   * @return translated "Be Friends!"
+   * @gwt.key friendBtnAccept
+   */
+  String friendBtnAccept();
 
   /**
    * Translated "Discard".
@@ -22,6 +38,14 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key btnDiscard
    */
   String btnDiscard();
+
+  /**
+   * Translated "This is an old friendship invitation from "{0}", who has since become your friend.".
+   * 
+   * @return translated "This is an old friendship invitation from "{0}", who has since become your friend."
+   * @gwt.key friendAlreadyFriend
+   */
+  String friendAlreadyFriend(String arg0);
 
   /**
    * Translated "Member {0}".
@@ -40,6 +64,46 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   String btnAttach();
 
   /**
+   * Translated "Invite to Group:".
+   * 
+   * @return translated "Invite to Group:"
+   * @gwt.key groupInviteTo
+   */
+  String groupInviteTo();
+
+  /**
+   * Translated "Send".
+   * 
+   * @return translated "Send"
+   * @gwt.key btnSend
+   */
+  String btnSend();
+
+  /**
+   * Translated "This was an invitation to the group "{0}", which you have since joined.".
+   * 
+   * @return translated "This was an invitation to the group "{0}", which you have since joined."
+   * @gwt.key groupAlreadyMember
+   */
+  String groupAlreadyMember(String arg0);
+
+  /**
+   * Translated "Invitation accepted!".
+   * 
+   * @return translated "Invitation accepted!"
+   * @gwt.key friendReplySubject
+   */
+  String friendReplySubject();
+
+  /**
+   * Translated "Your friendship invitation to "{0}" was accepted, and they are now a friend of yours. ".
+   * 
+   * @return translated "Your friendship invitation to "{0}" was accepted, and they are now a friend of yours. "
+   * @gwt.key friendReplyBody
+   */
+  String friendReplyBody(String arg0);
+
+  /**
    * Translated "Compose Mail".
    * 
    * @return translated "Compose Mail"
@@ -56,12 +120,20 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   String hdrTo();
 
   /**
-   * Translated "Invite to Group:".
+   * Translated "You''ve accepted this friendship invitation, and "{0}" is now your friend.".
    * 
-   * @return translated "Invite to Group:"
-   * @gwt.key groupInviteTo
+   * @return translated "You''ve accepted this friendship invitation, and "{0}" is now your friend."
+   * @gwt.key friendAccepted
    */
-  String groupInviteTo();
+  String friendAccepted(String arg0);
+
+  /**
+   * Translated "This is a friendship invitation. You may accept it by clicking the button below, you can reply to it, or you can simply delete it.".
+   * 
+   * @return translated "This is a friendship invitation. You may accept it by clicking the button below, you can reply to it, or you can simply delete it."
+   * @gwt.key friendInvitation
+   */
+  String friendInvitation();
 
   /**
    * Translated "Subject:".
@@ -78,14 +150,6 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key groupBtnJoin
    */
   String groupBtnJoin();
-
-  /**
-   * Translated "Send".
-   * 
-   * @return translated "Send"
-   * @gwt.key btnSend
-   */
-  String btnSend();
 
   /**
    * Translated "You have received an invitation to become a member of the group "{0}". You may join the group by clicking on the button below, or you can reply to this message if you have any questions for the person who invited you.".
