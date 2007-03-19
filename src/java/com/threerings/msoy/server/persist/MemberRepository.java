@@ -496,7 +496,8 @@ public class MemberRepository extends DepotRepository
                 String query = "select name, memberId, inviterId " +
                     "from FriendRecord straight join MemberRecord where (" +
                     "(inviterId=" + memberId + " and memberId=inviteeId) or " +
-                    "(inviteeId=" + memberId + " and memberId=inviterId))";
+                    "(inviteeId=" + memberId + " and memberId=inviterId)) " +
+                    "order by name";
                 ArrayList<FriendEntry> list = new ArrayList<FriendEntry>();
                 Statement stmt = conn.createStatement();
                 try {
