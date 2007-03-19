@@ -25,6 +25,7 @@ import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
 
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.Game;
 
 import com.threerings.msoy.game.data.MsoyTable;
 
@@ -48,7 +49,7 @@ public class TableRenderer extends VBox
     {
         super.createChildren();
 
-        _background = new MediaContainer(panel.getGame().getTableMedia().getMediaPath());
+        _background = new MediaContainer((_game = panel.getGame()).getTableMedia().getMediaPath());
         _background.mouseEnabled = false;
         _background.mouseChildren = false;
         // TODO: goddammit, this should be behind!
@@ -154,7 +155,7 @@ public class TableRenderer extends VBox
             var key :String = null;
             switch (table.config.getGameType()) {
             default:
-                if (XML(panel.getGame().config)..match.unwatchable == undefined) {
+                if (!_game.getGameDefinition().unwatchable) {
                     key = "b.watch";
                 }
                 break;
@@ -210,6 +211,8 @@ public class TableRenderer extends VBox
     protected var _labelsBox :HBox;
     protected var _seatsBox :HBox;
     protected var _buttonsBox :HBox;
+
+    protected var _game :Game;
 }
 }
 

@@ -8,6 +8,8 @@ import com.threerings.util.StringUtil;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
+import com.threerings.msoy.game.data.GameDefinition;
+
 public class Game extends Item
 {
     /** Identifies our lobby table background media. */
@@ -32,7 +34,6 @@ public class Game extends Item
      */
     public function isInWorld () :Boolean
     {
-        // TODO: parse configuration as XML
         return (StringUtil.trim(config) == "avrg") ||
             (0 == config.indexOf("Chiyogami"));
     }
@@ -45,6 +46,11 @@ public class Game extends Item
     {
         return (tableMedia != null) ? tableMedia :
             new StaticMediaDesc(MediaDesc.IMAGE_PNG, GAME, TABLE_MEDIA);
+    }
+    
+    public function getGameDefinition() :GameDefinition 
+    {
+        return _gameDef;
     }
 
     override public function writeObject (out :ObjectOutputStream) :void
@@ -63,6 +69,11 @@ public class Game extends Item
         config = (ins.readField(String) as String);
         gameMedia = (ins.readObject() as MediaDesc);
         tableMedia = (ins.readObject() as MediaDesc);
+
+        _gameDef = new GameDefinition(config);
     }
+
+    /** transient Actionscript-only field for pre-parsed game configuration data */
+    protected var _gameDef :GameDefinition;
 }
 }

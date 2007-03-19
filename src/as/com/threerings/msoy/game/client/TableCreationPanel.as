@@ -21,6 +21,7 @@ import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.item.web.Game;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.GameDefinition;
 
 public class TableCreationPanel extends FloatingPanel
 {
@@ -68,18 +69,16 @@ public class TableCreationPanel extends FloatingPanel
         var gconf :EZGameConfigurator = new EZGameConfigurator();
         _gconfigger = gconf;
         _gconfigger.init(_ctx);
-        var configXML :XML = XML(_game.config);
-        gconf.setXMLConfig(configXML);
-        if (parseInt(configXML..match.@type) == GameConfig.PARTY) {
+        var gameDef :GameDefinition = _game.getGameDefinition();
+        gconf.setXMLConfig(gameDef.config);
+        if (gameDef.gameType == GameConfig.PARTY) {
             _tconfigger = new DefaultFlexTableConfigurator(-1, -1, -1, true);
-        } else if (parseInt(configXML..match.@type) == GameConfig.SEATED_GAME)  {
+        } else if (gameDef.gameType == GameConfig.SEATED_GAME)  {
             // using min_seats for start_seats until we put start_seats in the configuration
-            _tconfigger = new DefaultFlexTableConfigurator(parseInt(
-                configXML..match.min_seats[0]), parseInt(configXML..match.min_seats[0]),
-                parseInt(configXML..match.max_seats[0]), true);
+            _tconfigger = new DefaultFlexTableConfigurator(gameDef.minSeats, gameDef.minSeats,
+                gameDef.maxSeats, true);
         } else { 
-            Log.getLog(this).warning("<match type='" + configXML..match.@type + 
-                "'> is not a valid type");
+            Log.getLog(this).warning("<match type='" + gameDef.gameType + "'> is not a valid type");
             return;
         }
         _tconfigger.init(_ctx, _gconfigger);
@@ -87,7 +86,7 @@ public class TableCreationPanel extends FloatingPanel
         var config :MsoyGameConfig = new MsoyGameConfig();
         config.gameMedia = _game.gameMedia.getMediaPath();
         config.persistentGameId = _game.getPrototypeId();
-        config.gameType = configXML..match.@type;
+        config.gameType = gameDef.gameType;
         gconf.setGameConfig(config);
 
         addChild(gconf.getContainer());
