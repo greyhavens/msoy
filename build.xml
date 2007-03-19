@@ -21,10 +21,10 @@
   <property name="projects" value="samskivert,narya,nenya,vilya,toybox,s3lib/java,threerings"/>
   <import file="projects/tools/etc/build-support.xml"/>
   <fileset dir="." id="check.paths">
-    <include name="projects/s3lib/java/src/java/**/*.java"/> 
-    <include name="projects/toybox/src/java/**/*.java"/> 
-    <include name="${src.dir}/**/*.java"/> 
-    <include name="${gsrc.dir}/**/*.java"/> 
+    <include name="projects/s3lib/java/src/java/**/*.java"/>
+    <include name="projects/toybox/src/java/**/*.java"/>
+    <include name="${src.dir}/**/*.java"/>
+    <include name="${gsrc.dir}/**/*.java"/>
   </fileset>
 
   <!-- declare the properties files. -->
@@ -68,7 +68,7 @@
     <file name="lib/json.jar"/>
     <file name="lib/jswiff-8.0-beta-2-threerings.jar"/>
     <file name="lib/sdoc-0.5.0-beta.jar"/>
-    
+
     <!-- The following are used for aperture -->
     <file name="lib/aperture/aperture-2006.1-alpha-3.jar"/>
     <file name="lib/aperture/aperture-test-2006.1-alpha-3.jar"/>
@@ -278,7 +278,7 @@
     <var name="redirector.out" unset="true"/>
     <var name="has.errors" unset="true"/>
     </sequential></for>
-  </target> 
+  </target>
 
   <!-- prepares to build our Flash client -->
   <target name="asprepare" depends="prepare">
@@ -589,7 +589,7 @@
 
   <!-- generates sender and decoder classes for all invocation -->
   <!-- receiver declarations -->
-  <target name="genreceiver" depends="prepare"> 
+  <target name="genreceiver" depends="prepare">
     <taskdef name="receiver"
              classname="com.threerings.presents.tools.GenReceiverTask"
              classpathref="classpath"/>
