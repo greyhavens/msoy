@@ -49,7 +49,6 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.FriendInviteObject;
-import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.server.ServletWaiter;
@@ -193,8 +192,7 @@ public class MemberManager
     public void alterFriend (int userId, int friendId, boolean add,
                              ResultListener<Void> listener)
     {
-        MemberObject user = MsoyServer.lookupMember(userId);
-        alterFriend(user, userId, friendId, add, listener);
+        alterFriend(MsoyServer.lookupMember(userId), userId, friendId, add, listener);
     }
 
     /**

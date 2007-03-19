@@ -34,17 +34,12 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#acceptFriend}.
      */
-    public void acceptFriend (WebCreds creds, int friendId, AsyncCallback callback);
-
-    /**
-     * The asynchronous version of {@link MemberService#inviteFriend}.
-     */
-    public void inviteFriend (WebCreds creds, int friendId, AsyncCallback callback);
+    public void addFriend (WebCreds creds, int friendId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MemberService#declineFriend}.
      */
-    public void declineFriend (WebCreds creds, int friendId, AsyncCallback callback);
+    public void removeFriend (WebCreds creds, int friendId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MemberService#loadInventory}.

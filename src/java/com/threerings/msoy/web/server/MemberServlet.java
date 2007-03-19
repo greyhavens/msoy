@@ -89,23 +89,7 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public void inviteFriend (final WebCreds creds, final int friendId)
-        throws ServiceException
-    {
-        final ServletWaiter<Void> waiter =
-            new ServletWaiter<Void>("inviteFriend[" + friendId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.memberMan.alterFriend(creds.getMemberId(), friendId, true, waiter);
-                MsoyServer.memberMan.logUserAction(
-                    creds.name, UserAction.SENT_FRIEND_INVITE, "" + friendId);
-            }
-        });
-        waiter.waitForResult();
-    }
-
-    // from MemberService
-    public void acceptFriend (final WebCreds creds, final int friendId)
+    public void addFriend (final WebCreds creds, final int friendId)
         throws ServiceException
     {
         final ServletWaiter<Void> waiter =
@@ -119,11 +103,11 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public void declineFriend (final WebCreds creds, final int friendId)
+    public void removeFriend (final WebCreds creds, final int friendId)
         throws ServiceException
     {
         final ServletWaiter<Void> waiter =
-            new ServletWaiter<Void>("declineFriend[" + friendId + "]");
+            new ServletWaiter<Void>("removeFriend[" + friendId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.memberMan.alterFriend(creds.getMemberId(), friendId, false, waiter);

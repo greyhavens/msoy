@@ -41,21 +41,15 @@ public interface MemberService extends RemoteService
         throws ServiceException;
 
     /**
-     * Invite somebody to be your friend.
-     */
-    public void inviteFriend (WebCreds creds, int friendId)
-        throws ServiceException;
-
-    /**
      * Accept a friend invitation.
      */
-    public void acceptFriend (WebCreds creds, int friendId)
+    public void addFriend (WebCreds creds, int friendId)
         throws ServiceException;
 
     /**
-     * Decline a friend invitation.
+     * Remove a friend.
      */
-    public void declineFriend (WebCreds creds, int friendId)
+    public void removeFriend (WebCreds creds, int friendId)
         throws ServiceException;
 
     /**

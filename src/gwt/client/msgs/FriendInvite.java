@@ -46,14 +46,7 @@ public abstract class FriendInvite
         // from MailPayloadComposer
         public void messageSent (MemberName recipient)
         {
-            CMsgs.membersvc.inviteFriend(CMsgs.creds, recipient.getMemberId(), new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    // good -- nothing to do here
-                }
-                public void onFailure (Throwable caught) {
-                    // this'll get slightly confusing, but not a huge deal
-                }
-            });
+            // there is no invitation backend, nothing to do here
         }
 
         /**
@@ -140,7 +133,7 @@ public abstract class FriendInvite
                 Button ayeButton = new Button("ACCEPT");
                 new ClickCallback(ayeButton, _status) {
                     public boolean callService () {
-                        CMsgs.membersvc.acceptFriend(
+                        CMsgs.membersvc.addFriend(
                             CMsgs.creds, _message.headers.sender.getMemberId(), this);
                         return true;
                     }
@@ -151,22 +144,7 @@ public abstract class FriendInvite
                     }
                 };
                 _content.add(ayeButton);
-                _content.add(new InlineLabel(" this invitation, or "));
-                Button nayButton = new Button("DECLINE");
-                new ClickCallback(nayButton, _status) {
-                    public boolean callService () {
-                        CMsgs.membersvc.declineFriend(
-                            CMsgs.creds, _message.headers.sender.getMemberId(), this);
-                        return true;
-                    }
-                    public boolean gotResult (Object result) {
-                        mailResponse(false);
-                        refreshUI();
-                        return false;
-                    }
-                };
-                _content.add(nayButton);
-                _content.add(new InlineLabel(" it."));
+                _content.add(new InlineLabel(" this invitation, reply to it, or simply delete it."));
             }
 
             protected void mailResponse (boolean accepted)
