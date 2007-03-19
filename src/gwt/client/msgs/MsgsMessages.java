@@ -24,36 +24,20 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   String friendInviting();
 
   /**
+   * Translated "Choose Another Item".
+   * 
+   * @return translated "Choose Another Item"
+   * @gwt.key giftBtnAnother
+   */
+  String giftBtnAnother();
+
+  /**
    * Translated "Be Friends!".
    * 
    * @return translated "Be Friends!"
    * @gwt.key friendBtnAccept
    */
   String friendBtnAccept();
-
-  /**
-   * Translated "Discard".
-   * 
-   * @return translated "Discard"
-   * @gwt.key btnDiscard
-   */
-  String btnDiscard();
-
-  /**
-   * Translated "This is an old friendship invitation from "{0}", who has since become your friend.".
-   * 
-   * @return translated "This is an old friendship invitation from "{0}", who has since become your friend."
-   * @gwt.key friendAlreadyFriend
-   */
-  String friendAlreadyFriend(String arg0);
-
-  /**
-   * Translated "Member {0}".
-   * 
-   * @return translated "Member {0}"
-   * @gwt.key memberId
-   */
-  String memberId(String arg0);
 
   /**
    * Translated "Attach Item".
@@ -64,12 +48,20 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   String btnAttach();
 
   /**
-   * Translated "Invite to Group:".
+   * Translated "Please finish selecting an item to attach before sending your message.".
    * 
-   * @return translated "Invite to Group:"
-   * @gwt.key groupInviteTo
+   * @return translated "Please finish selecting an item to attach before sending your message."
+   * @gwt.key giftNoItem
    */
-  String groupInviteTo();
+  String giftNoItem();
+
+  /**
+   * Translated "There is an item attached to this message. Click the thumbnail to place the item in your inventory.".
+   * 
+   * @return translated "There is an item attached to this message. Click the thumbnail to place the item in your inventory."
+   * @gwt.key giftItem
+   */
+  String giftItem();
 
   /**
    * Translated "Send".
@@ -80,28 +72,12 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   String btnSend();
 
   /**
-   * Translated "This was an invitation to the group "{0}", which you have since joined.".
+   * Translated "You have no items of this type in your inventory.".
    * 
-   * @return translated "This was an invitation to the group "{0}", which you have since joined."
-   * @gwt.key groupAlreadyMember
+   * @return translated "You have no items of this type in your inventory."
+   * @gwt.key giftNoItems
    */
-  String groupAlreadyMember(String arg0);
-
-  /**
-   * Translated "Invitation accepted!".
-   * 
-   * @return translated "Invitation accepted!"
-   * @gwt.key friendReplySubject
-   */
-  String friendReplySubject();
-
-  /**
-   * Translated "Your friendship invitation to "{0}" was accepted, and they are now a friend of yours. ".
-   * 
-   * @return translated "Your friendship invitation to "{0}" was accepted, and they are now a friend of yours. "
-   * @gwt.key friendReplyBody
-   */
-  String friendReplyBody(String arg0);
+  String giftNoItems();
 
   /**
    * Translated "Compose Mail".
@@ -120,6 +96,94 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   String hdrTo();
 
   /**
+   * Translated "Subject:".
+   * 
+   * @return translated "Subject:"
+   * @gwt.key hdrSubject
+   */
+  String hdrSubject();
+
+  /**
+   * Translated "This message once had an item attached to it.".
+   * 
+   * @return translated "This message once had an item attached to it."
+   * @gwt.key giftGone
+   */
+  String giftGone();
+
+  /**
+   * Translated "Please choose the item to attach by clicking on its thumbnail.".
+   * 
+   * @return translated "Please choose the item to attach by clicking on its thumbnail."
+   * @gwt.key giftChoose
+   */
+  String giftChoose();
+
+  /**
+   * Translated "Member {0}".
+   * 
+   * @return translated "Member {0}"
+   * @gwt.key memberId
+   */
+  String memberId(String arg0);
+
+  /**
+   * Translated "This is an old friendship invitation from "{0}", who has since become your friend.".
+   * 
+   * @return translated "This is an old friendship invitation from "{0}", who has since become your friend."
+   * @gwt.key friendAlreadyFriend
+   */
+  String friendAlreadyFriend(String arg0);
+
+  /**
+   * Translated "Discard".
+   * 
+   * @return translated "Discard"
+   * @gwt.key btnDiscard
+   */
+  String btnDiscard();
+
+  /**
+   * Translated "Invite to Group:".
+   * 
+   * @return translated "Invite to Group:"
+   * @gwt.key groupInviteTo
+   */
+  String groupInviteTo();
+
+  /**
+   * Translated "You can't delete this message until you've accepted the attached item.".
+   * 
+   * @return translated "You can't delete this message until you've accepted the attached item."
+   * @gwt.key giftNoDelete
+   */
+  String giftNoDelete();
+
+  /**
+   * Translated "This was an invitation to the group "{0}", which you have since joined.".
+   * 
+   * @return translated "This was an invitation to the group "{0}", which you have since joined."
+   * @gwt.key groupAlreadyMember
+   */
+  String groupAlreadyMember(String arg0);
+
+  /**
+   * Translated "Your friendship invitation to "{0}" was accepted, and they are now a friend of yours. ".
+   * 
+   * @return translated "Your friendship invitation to "{0}" was accepted, and they are now a friend of yours. "
+   * @gwt.key friendReplyBody
+   */
+  String friendReplyBody(String arg0);
+
+  /**
+   * Translated "Invitation accepted!".
+   * 
+   * @return translated "Invitation accepted!"
+   * @gwt.key friendReplySubject
+   */
+  String friendReplySubject();
+
+  /**
    * Translated "You''ve accepted this friendship invitation, and "{0}" is now your friend.".
    * 
    * @return translated "You''ve accepted this friendship invitation, and "{0}" is now your friend."
@@ -136,20 +200,20 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   String friendInvitation();
 
   /**
-   * Translated "Subject:".
-   * 
-   * @return translated "Subject:"
-   * @gwt.key hdrSubject
-   */
-  String hdrSubject();
-
-  /**
    * Translated "Yes, I want to join!".
    * 
    * @return translated "Yes, I want to join!"
    * @gwt.key groupBtnJoin
    */
   String groupBtnJoin();
+
+  /**
+   * Translated "The item you're sending:".
+   * 
+   * @return translated "The item you're sending:"
+   * @gwt.key giftChosen
+   */
+  String giftChosen();
 
   /**
    * Translated "You have received an invitation to become a member of the group "{0}". You may join the group by clicking on the button below, or you can reply to this message if you have any questions for the person who invited you.".

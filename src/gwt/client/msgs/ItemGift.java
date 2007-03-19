@@ -48,7 +48,7 @@ public abstract class ItemGift
         public String okToSend ()
         {
             if (_item == null) {
-                return "Please select an item before sending your message.";
+                return CMsgs.mmsgs.giftNoItem();
             }
             return null;
         }
@@ -56,7 +56,18 @@ public abstract class ItemGift
         // from MailPayloadComposer
         public void messageSent (MemberName recipient)
         {
-            // TODO
+            CMsgs.itemsvc.wrapItem(CMsgs.creds, _item.getIdent(), true, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    // good
+                }
+                public void onFailure (Throwable caught) {
+                    // this would be bad. we must write the server-side code defensively,
+                    // with good logging, and also TODO: there should be a last-minute check
+                    // that the item is still owned by the user in getComposedPayload().
+                    CMsgs.log("Failed to wrap item [creds=" + CMsgs.creds + ", item=" +
+                              _item + "]", caught);
+                }
+            });
         }
 
         protected class CompositionWidget extends BorderedWidget
@@ -71,7 +82,7 @@ public abstract class ItemGift
                 _status = new Label();
                 panel.add(_status, DockPanel.SOUTH);
 
-                _title = new Label("Please choose the item to send.");
+                _title = new Label(CMsgs.mmsgs.giftChoose());
                 _title.addStyleName("Title");
                 panel.add(_title, DockPanel.NORTH);
 
@@ -86,10 +97,10 @@ public abstract class ItemGift
                 _imageChooser = new AsyncCallback() {
                     public void onSuccess (Object result) {
                         _item = (Item) result;
-                        _title.setText("The item you're sending:");
+                        _title.setText(CMsgs.mmsgs.giftChosen());
                         VerticalPanel selectedBits = new VerticalPanel();
                         selectedBits.add(new Image(_item.getThumbnailPath()));
-                        Button backButton = new Button("Choose Another");
+                        Button backButton = new Button(CMsgs.mmsgs.giftBtnAnother());
                         backButton.addClickListener(new ClickListener() {
                             public void onClick (Widget sender) {
                                 _item = null;
@@ -135,18 +146,20 @@ public abstract class ItemGift
                 _left.setWidget(box);
             }
 
-            protected void rightBits (byte type)
+            protected void rightBits (final byte type)
             {
                 CMsgs.membersvc.loadInventory(CMsgs.creds, type, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         if (((List) result).size() == 0) {
-                            _status.setText("You have no items of this type.");
+                            _status.setText(CMsgs.mmsgs.giftNoItems());
                             return;
                         }
                         _right.setWidget(
                             new ItemChooser((List) result, _imageChooser));
                     }
                     public void onFailure (Throwable caught) {
+                        CMsgs.log("Failed to load inventory [creds=" + CMsgs.creds + ", type=" +
+                                  type + "]", caught);
                         _status.setText(CMsgs.serverError(caught));
                         
                     }
@@ -190,7 +203,7 @@ public abstract class ItemGift
             if (_giftObject.item == null) {
                 return null;
             }
-            return "You can't delete this message until you've accepted the attached item.";
+            return CMsgs.mmsgs.giftNoDelete();
         }
         
         protected class DisplayWidget extends DockPanel
@@ -199,15 +212,21 @@ public abstract class ItemGift
             {
                 super();
                 _enabled = enabled;
-
+                buildUI();
+            }
+            
+            protected void buildUI ()
+            {
+                clear();
+                
                 if (_giftObject.item == null) {
-                    _title = new Label("This message once had an item attached to it.");
+                    _title = new Label(CMsgs.mmsgs.giftGone());
                     _title.addStyleName("Title");
                     add(_title, DockPanel.NORTH);
                     return;
                 }
                 
-                _title = new Label("There is an item attached to this message:");
+                _title = new Label(CMsgs.mmsgs.giftItem());
                 add(_title, DockPanel.NORTH);
 
                 _status = new Label();
@@ -217,7 +236,7 @@ public abstract class ItemGift
 
                 final ClickListener listener = new ClickListener() {
                     public void onClick (Widget sender) {
-                        // TODO
+                        unwrapItem();
                     }
                 };
                 
@@ -226,12 +245,43 @@ public abstract class ItemGift
                          _content.add(new ItemThumbnail((Item) result, listener));
                     }
                     public void onFailure (Throwable caught) {
+                        CMsgs.log("Failed to load item [creds=" + CMsgs.creds + ", item=" +
+                                  _giftObject.item + "]", caught);
                         _status.setText(CShell.serverError(caught));
                     }
                 });
 
             }
-             
+
+            protected void unwrapItem ()
+            {
+                CMsgs.itemsvc.wrapItem(
+                    CMsgs.creds, _giftObject.item, false, new AsyncCallback() {
+                        public void onSuccess (Object result) {
+                            // the item is unwrapped, just update the payload
+                            _giftObject.item = null;
+                            updateState(_giftObject, new AsyncCallback() {
+                                public void onSuccess (Object result) {
+                                    // all went well: rebuild the view
+                                    buildUI();
+                                }
+                                public void onFailure (Throwable caught) {
+                                    // this is an unpleasant inconsistency
+                                    CMsgs.log("Failed to update payload state [creds=" +
+                                              CMsgs.creds + ", item=" + _giftObject.item + "]",
+                                              caught);
+                                    _status.setText(CShell.serverError(caught));
+                                }
+                            });
+                        }
+                        public void onFailure (Throwable caught) {
+                            CMsgs.log("Failed to unwrap item [creds=" + CMsgs.creds + ", item=" +
+                                      _giftObject.item + "]", caught);
+                            _status.setText(CShell.serverError(caught));
+                        }
+                    });
+            };
+
             protected boolean _enabled;
             
             protected Label _status, _title;
