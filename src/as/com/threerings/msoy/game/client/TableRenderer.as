@@ -154,7 +154,7 @@ public class TableRenderer extends VBox
             var key :String = null;
             switch (table.config.getGameType()) {
             default:
-                if ("true" == XML(panel.getGame().config)..match.watchable[0]) {
+                if (XML(panel.getGame().config)..match.unwatchable == undefined) {
                     key = "b.watch";
                 }
                 break;

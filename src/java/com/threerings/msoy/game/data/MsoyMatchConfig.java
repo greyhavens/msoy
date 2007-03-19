@@ -10,6 +10,6 @@ import com.threerings.toybox.data.TableMatchConfig;
  */
 public class MsoyMatchConfig extends TableMatchConfig 
 {
-    /** Whether this game is watchable or not. */
-    public boolean watchable;
+    /** Whether this game is watchable or not. defaults to watchable */
+    public boolean unwatchable = false;
 }

@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.game.xml;
 
+import org.xml.sax.Attributes;
 import org.apache.commons.digester.Digester;
+import org.apache.commons.digester.Rule;
 import com.samskivert.xml.SetFieldRule;
 
 import com.threerings.toybox.xml.GameParser;
@@ -25,7 +27,7 @@ public class MsoyGameParser extends GameParser
     }
 
     @Override // from GameParser
-    protected void addMatchParsingRules (Digester digester, String type)
+    protected void addMatchParsingRules (final Digester digester, String type)
         throws Exception
     {
         if (("" + GameConfig.SEATED_GAME).equals(type)) {
@@ -33,14 +35,18 @@ public class MsoyGameParser extends GameParser
             digester.addRule("game/match/min_seats", new SetFieldRule("minSeats"));
             digester.addRule("game/match/max_seats", new SetFieldRule("maxSeats"));
             digester.addRule("game/match/start_seats", new SetFieldRule("startSeats"));
-            digester.addRule("game/match/watchable", new SetFieldRule("watchable"));
+            digester.addRule("game/match/unwatchable", new Rule() {
+                public void begin (String namespace, String name, Attributes attrs) 
+                    throws Exception {
+                    ((MsoyMatchConfig)digester.peek()).unwatchable = true;
+                } 
+            });
         } else if (("" + GameConfig.PARTY).equals(type)) {
             // TODO: only display seat settings for non-party games (in GameEditor), as those 
             // settings are ignored for party games anyway
             MsoyMatchConfig config = new MsoyMatchConfig();
             config.minSeats = config.maxSeats = config.startSeats = 1;
             config.isPartyGame = true;
-            config.watchable = false;
             digester.push(config);
         } else {
             throw new Exception("Unknown match type '" + type + "'.");

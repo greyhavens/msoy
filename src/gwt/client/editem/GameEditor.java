@@ -68,9 +68,9 @@ public class GameEditor extends ItemEditor
                     } else if ("max_seats".equals(option.getNodeName())) {
                         _maxPlayers.setText(option.getFirstChild().toString());
                         _maxPlayersXML = (Element)option;
-                    } else if ("watchable".equals(option.getNodeName())) {
-                        _watchable.setChecked(option.getFirstChild().toString().equals("true"));
-                        _watchableXML = (Element)option;
+                    } else if ("unwatchable".equals(option.getNodeName())) {
+                        _watchable.setChecked(false);
+                        _unwatchableXML = (Element)option;
                     }
                 }
                 option = option.getNextSibling();
@@ -102,12 +102,9 @@ public class GameEditor extends ItemEditor
             _maxPlayersXML.appendChild(_configXML.createTextNode(_maxPlayers.getText()));
             _match.appendChild(_maxPlayersXML);
         }
-        if (_watchableXML == null) {
-            _watchable.setChecked(true);
-            _watchableXML = _configXML.createElement("watchable");
-            _watchableXML.appendChild(_configXML.createTextNode(_watchable.isChecked() ? 
-                "true" : "false"));
-            _match.appendChild(_watchableXML);
+        if (_unwatchableXML == null) {
+            // this only gets appended to _match is the watchable checkbox is unchecked
+            _unwatchableXML = _configXML.createElement("unwatchable");
         }
 
         NodeList params = _configXML.getElementsByTagName("params");
@@ -204,13 +201,16 @@ public class GameEditor extends ItemEditor
         _watchable = new CheckBox();
         _watchable.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
-                if (_game != null) {
-                    setOnlyChild(_watchableXML, _configXML.createTextNode(_watchable.isChecked() ?
-                        "true" : "false"));
-                    _game.config = _configXML.toString();
+                if (_watchable.isChecked()) {
+                    _match.removeChild(_unwatchableXML);
+                } else {
+                    _match.appendChild(_unwatchableXML);
                 }
+                _game.config = _configXML.toString();
             }
         });
+        // watchable defaults to true, and might not be specified in the XML
+        _watchable.setChecked(true);
         bits.setWidget(row++, 1, _watchable);
 
         bits.setText(row++, 0, CEditem.emsgs.gameDefinition());
@@ -289,7 +289,7 @@ public class GameEditor extends ItemEditor
     protected Element _params;
     protected Element _minPlayersXML;
     protected Element _maxPlayersXML;
-    protected Element _watchableXML;
+    protected Element _unwatchableXML;
 
     protected MediaUploader _tableUploader;
 
