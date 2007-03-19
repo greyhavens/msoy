@@ -19,7 +19,6 @@ import com.whirled.ControlEvent;
 public class Artvatar extends Sprite
 {
     public static const DRAW_ACTION :String = "Drawl!";
-    public static const DONE_ACTION :String = "Done";
 
     public function Artvatar ()
     {
@@ -56,10 +55,6 @@ public class Artvatar extends Sprite
         switch (event.name) {
         case DRAW_ACTION:
             startDrawing();
-            break;
-
-        case DONE_ACTION:
-            finishDrawing();
             break;
         }
     }
