@@ -1,0 +1,31 @@
+<!-- build configuration -->
+<project name="Artvatar" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name"         value="Artvatar"/>
+  <property name="root.path"        value="../../.."/>
+  <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
+
+  <!-- builds our Flash avatar -->
+  <target name="compile">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=."/>
+      <arg value="-file-specs"/>
+      <arg value="artvatar/${app.name}.as"/>
+      <arg value="-output"/>
+      <arg value="${app.name}.swf"/>
+    </java>
+  </target>
+
+  <!-- cleans out our build results -->
+  <target name="clean">
+    <delete file="${app.name}.swf"/>
+  </target>
+
+  <!-- our fingers have a habit of typing 'ant clean dist' -->
+  <target name="dist" depends="compile">
+  </target>
+
+</project>
