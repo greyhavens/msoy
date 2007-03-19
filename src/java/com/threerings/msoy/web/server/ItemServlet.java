@@ -34,6 +34,7 @@ import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.TagHistory;
+import com.threerings.presents.data.InvocationCodes;
 
 /**
  * Provides the server implementation of {@link ItemService}.
@@ -234,6 +235,40 @@ public class ItemServlet extends MsoyServiceServlet
         });
         return waiter.waitForResult();
     }
+    
+    // from interface ItemService
+    public void wrapItem (WebCreds creds, ItemIdent ident, boolean wrap)
+        throws ServiceException
+    {
+        byte type = ident.type;
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
+        try {
+            ItemRecord item = repo.loadItem(ident.itemId);
+            if (item == null) {
+                log.warning("Trying to " + (wrap ? "" : "un") + "wrap non-existent item [creds=" +
+                            creds + ", item=" + item + "]");
+                throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+            }
+            if (wrap) {
+                if (item.ownerId != creds.getMemberId()) {
+                    log.warning("Trying to wrap un-owned item [creds=" + creds + ", item=" +
+                        item + "]");
+                    throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+                }
+                repo.updateOwnerId(item, 0);
+            } else {
+                if (item.ownerId != 0) {
+                    log.warning("Trying to unwrap owned item [creds=" + creds + ", item=" +
+                        item + "]");
+                    throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+                }
+                repo.updateOwnerId(item, creds.getMemberId());
+            }
+        } catch (PersistenceException pe) {
+        log.log(Level.WARNING, "Failed to wrap item [item=" + ident + ", wrap=" + wrap + "]");
+        }
+    }
+    
     
     // from interface ItemService
     public void setFlags (final WebCreds creds, final ItemIdent ident, final byte mask,

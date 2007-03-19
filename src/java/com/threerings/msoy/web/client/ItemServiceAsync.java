@@ -76,6 +76,11 @@ public interface ItemServiceAsync
         WebCreds creds, ItemIdent item, String tag, boolean set, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link ItemService.wrapItem}.
+     */
+    public void wrapItem (WebCreds creds, ItemIdent item, boolean wrap, AsyncCallback callback);
+    
+    /**
      * The asynchronous version of {@link ItemService.setFlags}.
      */
     public void setFlags (WebCreds creds, ItemIdent ident, byte mask, byte values,

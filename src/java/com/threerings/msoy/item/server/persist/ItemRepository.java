@@ -46,7 +46,6 @@ import com.threerings.msoy.server.persist.TagRepository;
 
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemIdent;
 
 import static com.threerings.msoy.Log.log;
 
@@ -569,6 +568,24 @@ public abstract class ItemRepository<
         // and then smack the new value into the item using yummy depot code
         updatePartial(getItemClass(), itemId, new Object[] { ItemRecord.RATING, newRating });
         return newRating;
+    }
+
+    /**
+     * Safely changes the owner of an item record with a sanity-check against race conditions.
+     */
+    public void updateOwnerId (ItemRecord item, int newOwnerId)
+        throws PersistenceException
+    {
+        int modifiedRows =  updatePartial(
+                item.itemId < 0 ? getCloneClass() : getItemClass(),
+                new Where(ItemRecord.ITEM_ID, item.itemId,
+                          ItemRecord.OWNER_ID, item.ownerId),
+                item.itemId < 0 ? ItemRecord.getKey(item.itemId) : CloneRecord.getKey(item.itemId),
+                ItemRecord.OWNER_ID, newOwnerId);
+        if (modifiedRows == 0) {
+            throw new PersistenceException(
+                "Failed to safely update ownerId [item=" + item + ", newOwnerId=" + newOwnerId + "]"); 
+        }
     }
 
     protected void priceRecord (CAT record, boolean always)

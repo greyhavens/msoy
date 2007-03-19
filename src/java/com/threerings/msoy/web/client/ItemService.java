@@ -106,6 +106,13 @@ public interface ItemService extends RemoteService
         throws ServiceException;
     
     /**
+     * Wraps an item up as a gift, i.e. clears its ownership. If 'wrap' is false, we
+     * unwrap the item instead (settings its owner to the unwrapper).
+     */
+    public void wrapItem (WebCreds creds, ItemIdent item, boolean wrap)
+        throws ServiceException;
+    
+    /**
      * Atomically sets or clears one or more flags on an item.
      */
     public void setFlags (WebCreds creds, ItemIdent ident, byte mask, byte values)
