@@ -127,8 +127,7 @@
 }
 
 .HeaderPanel .Row {
-    padding: 3px;
-    height: 1em;
+    padding: 5px;
 }
 
 .HeaderPanel .Row-unread {
@@ -139,24 +138,26 @@
     background: #CAE0EB;
 }
 
+.HeaderPanel .Row td {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
 .HeaderPanel .Row .CheckBox {
     width: 20px;
-    float: left;
 }
 
 .HeaderPanel .Row .Subject {
-    float: left;
     margin-left: 5px;
+    width: 100%;
 }
 
 .HeaderPanel .Row .Sender {
-    width: 18em;
-    float: right;
+    width: 150px;
 }
 
 .HeaderPanel .Row .Date {
-    width: 8em;
-    float: right;
+    width: 80px;
 }
 
 .MessagePanel {

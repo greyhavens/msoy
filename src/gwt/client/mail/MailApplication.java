@@ -15,6 +15,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -146,12 +147,11 @@ public class MailApplication extends DockPanel
         Widget sidebarHolder = buildFolderPanel();
         sidebarHolder.setWidth("100%");
         topContent.add(sidebarHolder);
-        topContent.setCellWidth(sidebarHolder, "15%");
+        topContent.setCellWidth(sidebarHolder, "120px");
         topContent.setCellHeight(sidebarHolder, "100%");
 
         BorderedWidget headerHolder = buildHeaderPanel();
         topContent.add(headerHolder);
-        topContent.setCellWidth(headerHolder, "75%");
         topContent.setCellHeight(headerHolder, "100%");
 
         return topContent;
@@ -443,22 +443,26 @@ public class MailApplication extends DockPanel
             _headerPager.setVisible(false);
             return;
         }
+
         // build the actual headers
-        VerticalPanel headerRows = new VerticalPanel();
-        headerRows.setStyleName("Rows");
+        FlexTable rows = new FlexTable();
+        rows.setCellPadding(0);
+        rows.setCellSpacing(0);
+        rows.setStyleName("Rows");
+        rows.setWidth("100%");
 
         // now build row after row of data
         int lastMsg = Math.min(_headers.size(), _currentOffset + HEADER_ROWS);
         for (int msg = _currentOffset; msg < lastMsg; msg ++) {
             MailHeaders headers = (MailHeaders) _headers.get(msg);
+            int rowCnt = rows.getRowCount();
 
-            FlowPanel row = new FlowPanel();
-            row.setStyleName("Row");
+            rows.getRowFormatter().setStyleName(rowCnt, "Row");
             if (headers.unread) {
-                row.addStyleName("Row-unread");
+                rows.getRowFormatter().addStyleName(rowCnt, "Row-unread");
             }
             if (_currentMessage == headers.messageId) {
-                row.addStyleName("Row-selected");
+                rows.getRowFormatter().addStyleName(rowCnt, "Row-selected");
             }
 
             // first, a checkbox with a listener that maintains a set of checked messages
@@ -478,32 +482,35 @@ public class MailApplication extends DockPanel
                     }
                 }
             });
-            row.add(cBox);
+            rows.setWidget(rowCnt, 0, cBox);
+            rows.getFlexCellFormatter().setWidth(rowCnt, 0, "20px");
             _checkboxes.add(cBox);
 
             // next, the subject line, the only variable-width element in the row
             Widget link = new Hyperlink(headers.subject, "f" + _currentFolder + "." +
                 _currentOffset + "." + headers.messageId);
             link.setStyleName("Subject");
-            row.add(link);
-
-            // the date the message was sent, in fancy shorthand form
-            Label date = new Label(formatDate(headers.sent));
-            date.setStyleName("Date");
-            row.add(date);
+            rows.setWidget(rowCnt, 1, link);
+//            headerRows.getFlexCellFormatter().setWidth(row, 1, "100%");
 
             // the name column
             MemberName who =
                 _currentFolder == MailFolder.SENT_FOLDER_ID ? headers.recipient : headers.sender;
             Label sender = new Label(who.toString());
             sender.setStyleName("Sender");
-            row.add(sender);
+            rows.setWidget(rowCnt, 2, sender);
+            rows.getFlexCellFormatter().setWidth(rowCnt, 2, "150px");
 
-            // the date the message was sent, in fancy shorthand form            
-            headerRows.add(row);
+            // the date the message was sent, in fancy shorthand form
+            Label date = new Label(formatDate(headers.sent));
+            date.setStyleName("Date");
+            rows.setWidget(rowCnt, 3, date);
+            rows.getFlexCellFormatter().setWidth(rowCnt, 3, "80px");
+
+            rowCnt ++;
         }
         // when the UI is fully constructed, switch it in
-        _headerContainer.setWidget(headerRows);
+        _headerContainer.setWidget(rows);
 
         boolean nextButton = _currentOffset + HEADER_ROWS < _headers.size();
         boolean prevButton = _currentOffset > 0;
