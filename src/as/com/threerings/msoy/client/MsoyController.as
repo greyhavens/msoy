@@ -340,7 +340,7 @@ public class MsoyController extends Controller
      */
     public function handleGoScene (sceneId :int) :void
     {
-        if (!handleInternalGo("/world/index.html#s" + sceneId)) {
+        if (!handleInternalGo("world", "s" + sceneId)) {
             // fall back to breaking the back button
             _ctx.getSceneDirector().moveTo(sceneId);
         }
@@ -351,7 +351,7 @@ public class MsoyController extends Controller
      */
     public function handleGoMemberHome (memberId :int, direct :Boolean = false) :void
     {
-        if (direct || !handleInternalGo("/world/index.html#m" + memberId)) {
+        if (direct || !handleInternalGo("world", "m" + memberId)) {
             _ctx.getWorldDirector().goToMemberHome(memberId, true);
         }
     }
@@ -361,7 +361,7 @@ public class MsoyController extends Controller
      */
     public function handleGoGroupHome (groupId :int, direct :Boolean = false) :void
     {
-        if (direct || !handleInternalGo("/world/index.html#g" + groupId)) {
+        if (direct || !handleInternalGo("world", "g" + groupId)) {
             _ctx.getWorldDirector().goToGroupHome(groupId, true);
         }
     }
@@ -371,7 +371,7 @@ public class MsoyController extends Controller
      */
     public function handleGoGameLobby (gameId :int) :void
     {
-        if (!handleInternalGo("/game/index.html#" + gameId)) {
+        if (!handleInternalGo("game", "" + gameId)) {
             // if we shouldn't or couldn't load a new page then we just load up the module inside
             // this client
             moveToGameLobby(int(gameId));
@@ -383,7 +383,7 @@ public class MsoyController extends Controller
      */
     public function handleGoLocation (placeOid :int) :void
     {
-        if (!handleInternalGo("/world/index.html#l" + placeOid)) {
+        if (!handleInternalGo("world", "l" + placeOid)) {
             // fall back to breaking the back button
             _ctx.getLocationDirector().moveTo(placeOid);
         }
@@ -395,9 +395,9 @@ public class MsoyController extends Controller
      * couldn't do so for whatever reason (are in the standalone client) and the caller should just
      * go there directly.
      */
-    protected function handleInternalGo (url :String) :Boolean
+    protected function handleInternalGo (page :String, args :String) :Boolean
     {
-        return shouldLoadNewPages() && NetUtil.navigateToURL(url, true);
+        return shouldLoadNewPages() && NetUtil.navigateToURL("#" + page + "-" + args, true);
     }
 
     /**
