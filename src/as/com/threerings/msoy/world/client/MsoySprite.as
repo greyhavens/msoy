@@ -219,6 +219,7 @@ public class MsoySprite extends MediaContainer
     {
         alpha = active ? 1.0 : 0.4;
         blendMode = active ? BlendMode.NORMAL : BlendMode.LAYER;
+        configureMouseProperties();
     }
 
     // TODO: don't rely on our blendmode.. ?
@@ -404,8 +405,9 @@ public class MsoySprite extends MediaContainer
 
     protected function configureMouseProperties () :void
     {
-        mouseChildren = !_editing && !hasAction() && capturesMouse();
-        mouseEnabled = true;
+        var active :Boolean = isActive();
+        mouseChildren = active && !_editing && !hasAction() && capturesMouse();
+        mouseEnabled = active;
     }
 
     /**
