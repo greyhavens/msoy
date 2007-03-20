@@ -5,6 +5,7 @@ package client.util;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -22,7 +23,7 @@ public class FlashClients
     public static HTML createWorldClient (String flashVars)
     {
         return WidgetUtil.createFlashContainer(
-            "asclient", "/clients/world-client.swf", FS_WIDTH, FS_HEIGHT, flashVars);
+            "asclient", "/clients/world-client.swf", "100%", getClientHeight(), flashVars);
     }
 
     public static HTML createHeaderClient (String token)
@@ -34,13 +35,13 @@ public class FlashClients
     public static HTML createLobbyClient (int gameId, String token)
     {
         return WidgetUtil.createFlashContainer(
-            "asclient", "/clients/world-client.swf", FS_WIDTH, FS_HEIGHT,
+            "asclient", "/clients/world-client.swf", "100%", getClientHeight(),
             "gameLobby=" + gameId + "&token=" + token);
     }
 
     public static HTML createNeighborhood (String hoodData)
     {
-        return createNeighborhood(hoodData, FS_WIDTH, FS_HEIGHT);
+        return createNeighborhood(hoodData, "100%", getClientHeight());
     }
 
     public static HTML createNeighborhood (String hoodData, String width, String height)
@@ -53,7 +54,7 @@ public class FlashClients
     public static HTML createPopularPlaces (String hotspotData)
     {
         return WidgetUtil.createFlashContainer(
-            "hotspots","/media/static/HoodViz.swf", FS_WIDTH, FS_HEIGHT,
+            "hotspots","/media/static/HoodViz.swf", "100%", getClientHeight(),
             "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hotspotData);
     }
 
@@ -63,7 +64,7 @@ public class FlashClients
             "avatarViewer", "/clients/avatarviewer.swf", 400, 550,
             "avatar=" + URL.encodeComponent(avatarPath));
     }
-
+            
     public static HTML createVideoViewer (String videoPath)
     {
         return WidgetUtil.createFlashContainer(
@@ -108,6 +109,16 @@ public class FlashClients
     public static boolean getMailNotification ()
     {
         return getBoolean(getMailNotificationNative());
+    }
+
+    /**
+     * Computes the height to use for our Flash clients based on the smaller of our desired client
+     * height and the vertical room available minus the header and an annoying "we don't know how
+     * to implement scrollbars" bullshit browser factor.
+     */
+    protected static String getClientHeight ()
+    {
+        return String.valueOf(Math.min(Window.getClientHeight()-HEADER_HEIGHT-10, CLIENT_HEIGHT));
     }
 
     /**
@@ -169,7 +180,7 @@ public class FlashClients
         return value;
     }-*/;
 
-
-    protected static final String FS_WIDTH = "100%";
-    protected static final String FS_HEIGHT = "530";
+    // TODO: put this in Application?
+    protected static final int HEADER_HEIGHT = 50;
+    protected static final int CLIENT_HEIGHT = 550;
 }
