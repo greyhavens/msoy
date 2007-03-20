@@ -60,6 +60,11 @@ public class MailComposition extends BorderedDialog
         });
     }
 
+    public void removePayload ()
+    {
+        setPayloadComposer(null);
+    }
+    
     // @Override
     protected Widget createContents ()
     {
@@ -134,22 +139,22 @@ public class MailComposition extends BorderedDialog
             }
         });
         buttonBox.add(discardButton);
-        
-        // if there is not already a payload, add an 'attach' button
-        if (composer == null) {
-            Button attachButton = new Button(CMsgs.mmsgs.btnAttach());
-            attachButton.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    setPayloadComposer(new ItemGift.Composer());
-                }
-            });
-            buttonBox.add(attachButton);
-        } else {
-            setPayloadComposer(composer);
-        }
+
+        // add a button for attaching items
+        _attachButton = new Button(CMsgs.mmsgs.btnAttach());
+        _attachButton.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                _attachButton.setEnabled(false);
+                setPayloadComposer(new ItemGift.Composer(MailComposition.this));
+            }
+        });
+        buttonBox.add(_attachButton);
+
+        setPayloadComposer(composer);
 
         _footer.add(buttonBox);
     }
+
 
     protected void setPayloadComposer (MailPayloadComposer composer)
     {
@@ -160,6 +165,10 @@ public class MailComposition extends BorderedDialog
                 widget.addStyleName("Payload");
                 _payloadBox.setWidget(widget);
             }
+            _attachButton.setEnabled(false);
+        } else {
+            _payloadBox.clear();
+            _attachButton.setEnabled(true);
         }
     }
     
@@ -194,6 +203,8 @@ public class MailComposition extends BorderedDialog
     protected MemberName _recipient;
     protected VerticalPanel _panel;
     protected MailPayloadComposer _payloadComposer;
+
+    protected Button _attachButton;
     
     protected TextBox _subjectBox;
     protected SimplePanel _payloadBox;

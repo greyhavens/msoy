@@ -80,6 +80,14 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   String giftNoItems();
 
   /**
+   * Translated "Cancel Attachment".
+   * 
+   * @return translated "Cancel Attachment"
+   * @gwt.key giftCancel
+   */
+  String giftCancel();
+
+  /**
    * Translated "Compose Mail".
    * 
    * @return translated "Compose Mail"

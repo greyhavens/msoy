@@ -75,3 +75,9 @@
     border-bottom: black solid 2px;
     margin-bottom: 5px;
 }
+
+.itemGift .ControlButton {
+    margin-left: 4px;
+    margin-top: 4px;
+    float: right;
+}

@@ -32,6 +32,11 @@ public abstract class ItemGift
     public static final class Composer
         implements MailPayloadComposer
     {
+        public Composer (MailComposition composer)
+        {
+            _composer = composer;
+        }
+
         // from MailPayloadComposer
         public MailPayload getComposedPayload ()
         {
@@ -75,12 +80,26 @@ public abstract class ItemGift
             public CompositionWidget ()
             {
                 super();
-
+                buildUI();
+            }
+            
+            protected void buildUI ()
+            {
                 DockPanel panel = new DockPanel();
                 panel.setStyleName("itemGift");
 
                 _status = new Label();
-                panel.add(_status, DockPanel.SOUTH);
+                final FlowPanel southBits = new FlowPanel();
+                southBits.add(_status);
+                Button cancelButton = new Button(CMsgs.mmsgs.giftCancel());
+                cancelButton.addStyleName("ControlButton");
+                cancelButton.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        _composer.removePayload();
+                    }
+                });
+                southBits.add(cancelButton);
+                panel.add(southBits, DockPanel.SOUTH);
 
                 _title = new Label(CMsgs.mmsgs.giftChoose());
                 _title.addStyleName("Title");
@@ -101,14 +120,14 @@ public abstract class ItemGift
                         VerticalPanel selectedBits = new VerticalPanel();
                         selectedBits.add(new Image(_item.getThumbnailPath()));
                         Button backButton = new Button(CMsgs.mmsgs.giftBtnAnother());
+                        backButton.addStyleName("ControlButton");
                         backButton.addClickListener(new ClickListener() {
                             public void onClick (Widget sender) {
                                 _item = null;
-                                leftBits();
-                                rightBits(Item.PHOTO);
+                                buildUI();
                             }
                         });
-                        selectedBits.add(backButton);
+                        southBits.add(backButton);
                         _left.setWidget(selectedBits);
                         _right.clear();
                     }
@@ -117,14 +136,6 @@ public abstract class ItemGift
                     }
                 };
 
-                leftBits();
-                rightBits(Item.PHOTO);
-
-                setWidget(panel);
-            }
-            
-            protected void leftBits ()
-            {
                 final ListBox box = new ListBox();
                 final byte[] types = new byte[] {
                     Item.PHOTO, Item.DOCUMENT, Item.FURNITURE, Item.GAME, Item.AVATAR,
@@ -144,6 +155,10 @@ public abstract class ItemGift
                     }
                 });
                 _left.setWidget(box);
+
+                rightBits(Item.PHOTO);
+
+                setWidget(panel);
             }
 
             protected void rightBits (final byte type)
@@ -169,9 +184,11 @@ public abstract class ItemGift
             protected Label _status;
             protected Label _title;
             protected SimplePanel _left, _right;
-            
+
             protected AsyncCallback _imageChooser;
         }
+        
+        protected MailComposition _composer;
         
         protected Item _item;
     }
