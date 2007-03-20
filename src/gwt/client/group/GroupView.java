@@ -367,7 +367,7 @@ public class GroupView extends VerticalPanel
                     public void addMenuItems (final String tag, PopupMenu menu) {
                         menu.addMenuItem(CGroup.msgs.viewTagLink(), new Command() {
                             public void execute () {
-                                History.newItem("tag=" + tag);
+                                History.newItem(Application.createLinkToken("group", "tag=" + tag));
                             }
                         });
                     }
