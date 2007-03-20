@@ -235,7 +235,7 @@
            <arg value="${gsrc.dir}/@{page}.gwt.xml"/>
          </exec>
       </else></if>
-      <java fork="true" maxmemory="128M" failonerror="false" resultproperty="gwt.result"
+      <java fork="true" maxmemory="512M" failonerror="false" resultproperty="gwt.result"
             classname="com.google.gwt.dev.GWTCompiler">
         <classpath>
           <pathelement location="${deploy.dir}/classes"/>
