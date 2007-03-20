@@ -116,14 +116,17 @@ public class BaseItemDetailPopup extends BorderedDialog
 
     protected Widget createPreview (Item item)
     {
+        MediaDesc preview = item.getPreviewMedia();
         if (item instanceof Avatar) {
             // special avatar viewer: TODO: only display in catalog / inventory
             // and not for 3rd parties?
-            return FlashClients.createAvatarViewer(
-                ((Avatar)_item).avatarMedia.getMediaPath());
+            return FlashClients.createAvatarViewer(preview.getMediaPath());
 
+        } else if (preview.isVideo()) {
+            return FlashClients.createVideoViewer(preview.getMediaPath());
+         
         } else {
-            return MediaUtil.createMediaView(item.getPreviewMedia(), MediaDesc.PREVIEW_SIZE);
+            return MediaUtil.createMediaView(preview, MediaDesc.PREVIEW_SIZE);
         }
     }
 

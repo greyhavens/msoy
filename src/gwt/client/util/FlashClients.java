@@ -64,6 +64,13 @@ public class FlashClients
             "avatar=" + URL.encodeComponent(avatarPath));
     }
 
+    public static HTML createVideoViewer (String videoPath)
+    {
+        return WidgetUtil.createFlashContainer(
+            "videoViewer", "/clients/videoviewer.swf", 320, 240,
+            "video=" + URL.encodeComponent(videoPath));
+    }
+
     /**
      * Calls into the Flash client and gets the list of our friends.
      */
