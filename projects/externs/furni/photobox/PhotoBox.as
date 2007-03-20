@@ -5,6 +5,7 @@ package {
 
 import flash.display.DisplayObject;
 import flash.display.Loader;
+import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.text.TextField;
@@ -35,7 +36,7 @@ import com.adobe.webapis.flickr.events.FlickrResultEvent;
 import com.whirled.ControlEvent;
 import com.whirled.FurniControl;
 
-[SWF(width="500", height="550")]
+[SWF(width="500", height="526")]
 public class PhotoBox extends Sprite
 {
     public function PhotoBox ()
@@ -58,15 +59,19 @@ public class PhotoBox extends Sprite
             handlePhotoUrlKnown);
 
         // try to set up our UI
-        var width :int = -1;
+        var configureNow :Boolean = false;
         try {
-            width = root.loaderInfo.width;
+            _width = root.loaderInfo.width;
+            _height = root.loaderInfo.height;
+            configureNow = true; // but do it outside the try/catch...
+
         } catch (err :Error) {
             // we couldn't access the width yet, wait until we can
             root.loaderInfo.addEventListener(Event.COMPLETE, handleLoaded, false, 0, true);
         }
-        if (width != -1) {
-            configureUI(width);
+
+        if (configureNow) {
+            configureUI();
         }
     }
 
@@ -75,45 +80,47 @@ public class PhotoBox extends Sprite
      */
     protected function handleLoaded (event :Event) :void
     {
-        configureUI(root.loaderInfo.width);
+        _width = root.loaderInfo.width;
+        _height = root.loaderInfo.height;
+        configureUI();
     }
 
     /**
      * Configure the UI. Called from the constructor.
      */
-    protected function configureUI (totalWidth :int) :void
+    protected function configureUI () :void
     {
-        var logo :DisplayObject = DisplayObject(new LOGO());
-        addChild(logo);
+        _logo = DisplayObject(new LOGO());
+        _logo.y = _height - _logo.height;
+        addChild(_logo);
 
-//        var prompt :TextField = new TextField();
-//        prompt.autoSize = TextFieldAutoSize.LEFT;
-//        prompt.background = true;
-//        prompt.backgroundColor = 0xFFFFFF;
-//        var format :TextFormat = new TextFormat();
-//        format.size = 16;
-//        format.bold = true;
-//        prompt.defaultTextFormat = format;
-//        prompt.text = "Enter tags:";
-//        prompt.y = logo.height;
-//        prompt.autoSize = TextFieldAutoSize.NONE;
-//        prompt.width = Math.max(prompt.width, logo.width);
-//        addChild(prompt);
+        var pad :Shape = new Shape();
+        with (pad.graphics) {
+            beginFill(0xFFFFFF);
+            drawRect(0, 0, PAD, _logo.height);
+            endFill();
+        }
+        pad.y = _logo.y;
+        pad.x = _logo.width;
+        addChild(pad);
 
         _tagDisplay = new TextField();
         _tagDisplay.background = true;
         _tagDisplay.backgroundColor = 0xFFFFFF;
-        _tagDisplay.height = logo.height;
-        _tagDisplay.x = logo.width;
-        _tagDisplay.width = (totalWidth - logo.width) / 2;
+        _tagDisplay.height = _logo.height;
+        _tagDisplay.x = _logo.width + PAD;
+        _tagDisplay.y = _logo.y;
+        _tagDisplay.width = (_width - (_logo.width + PAD)) / 2;
 
         _tagEntry = new TextField();
         _tagEntry.type = TextFieldType.INPUT;
         _tagEntry.background = true;
         _tagEntry.backgroundColor = 0xCCFFFF;
-        _tagEntry.height = logo.height;
+        _tagEntry.border = true;
+        _tagEntry.height = _logo.height;
         _tagEntry.x = _tagDisplay.x + _tagDisplay.width;
-        _tagEntry.width = totalWidth - _tagEntry.x;
+        _tagEntry.y = _logo.y;
+        _tagEntry.width = _width - _tagEntry.x;
 
         var format :TextFormat = new TextFormat();
         format.size = 18;
@@ -133,11 +140,9 @@ public class PhotoBox extends Sprite
         _loader.addEventListener(MouseEvent.CLICK, handleClick);
         _loader.addEventListener(MouseEvent.ROLL_OVER, handleMouseRoll);
         _loader.addEventListener(MouseEvent.ROLL_OUT, handleMouseRoll);
-        _loader.y = logo.height;
         addChild(_loader);
 
         _overlay = new Sprite();
-        _overlay.y = _loader.y;
         addChild(_overlay);
 
         // request control, or pretend we're it
@@ -246,10 +251,10 @@ public class PhotoBox extends Sprite
         }
 
         var sizes :Array = (evt.data.photoSizes as Array);
-        var url :String = getMediumPhotoSource(sizes);
-        if (url != null) {
+        var p :PhotoSize = getMediumPhotoSource(sizes);
+        if (p != null) {
             // yay! We've looked-up our next photo item
-            _ourReadyPhoto = [ url, _ourPageURL, _ourTags ];
+            _ourReadyPhoto = [ p.source, p.width, p.height, _ourPageURL, _ourTags ];
 
             if (_furni.isConnected()) {
                 // send a message to the instance in control..
@@ -290,8 +295,15 @@ public class PhotoBox extends Sprite
     {
         clearLoader();
         var url :String = String(photo[0]);
-        _displayPageURL = String(photo[1]);
-        _tagDisplay.text = String(photo[2]);
+        var imgWidth :Number = Number(photo[1]);
+        var imgHeight :Number = Number(photo[2]);
+        _displayPageURL = String(photo[3]);
+        _tagDisplay.text = String(photo[4]);
+
+        _loader.x = (_width - imgWidth) / 2;
+        _loader.y = (_height - _logo.height - imgHeight);
+        _overlay.x = _loader.x;
+        _overlay.y = _loader.y;
         _loader.load(new URLRequest(url));
 
         // if it's our personal photo, clear it 
@@ -304,11 +316,11 @@ public class PhotoBox extends Sprite
      * Given an array of PhotoSize objects, return the source url
      * for the medium size photo.
      */
-    protected function getMediumPhotoSource (sizes :Array) :String
+    protected function getMediumPhotoSource (sizes :Array) :PhotoSize
     {
         for each (var p :PhotoSize in sizes) {
             if (p.label == "Medium") {
-                return p.source;
+                return p;
             }
         }
 
@@ -426,6 +438,10 @@ public class PhotoBox extends Sprite
                 _displayPhotos = [];
                 _furni.triggerAction("show", photoInfo);
 
+                // reset the timer so that the next photo is 7 seconds away
+                _ctrlTimer.reset();
+                _ctrlTimer.start();
+
             } else {
                 // we'll save that for later
                 _displayPhotos.push(photoInfo);
@@ -438,6 +454,9 @@ public class PhotoBox extends Sprite
 
     /** The interface through which we make flickr API requests. */
     protected var _flickr :FlickrService;
+
+    /** The flickr logo. */
+    protected var _logo :DisplayObject;
 
     /** The text area to display tags. */
     protected var _tagDisplay :TextField;
@@ -468,6 +487,10 @@ public class PhotoBox extends Sprite
     /** The page url for the photo we're currently showing. */
     protected var _displayPageURL :String;
 
+    /** Our actual width/height, determined at runtime. */
+    protected var _width :int;
+    protected var _height :int;
+
     //=========================
 
     /** Timer used by the instance in control to coordinate the others. */
@@ -478,5 +501,8 @@ public class PhotoBox extends Sprite
 
     [Embed(source="flickr_logo.gif")]
     protected const LOGO :Class;
+
+    /** The amount of padding to the right of the logo. */
+    protected static const PAD :int = 20;
 }
 }
