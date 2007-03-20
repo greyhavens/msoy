@@ -34,9 +34,10 @@ import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifie
 
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
-import com.threerings.s3.AWSAuthConnection;
-import com.threerings.s3.S3FileObject;
-import com.threerings.s3.S3Exception;
+import com.threerings.s3.client.AWSAuthConnection;
+import com.threerings.s3.client.S3FileObject;
+import com.threerings.s3.client.S3Exception;
+import com.threerings.s3.client.S3ServerException;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
@@ -249,10 +250,14 @@ public class UploadServlet extends HttpServlet
                 conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget);
                 log.info("Uploaded media to S3 [bucket=" + ServerConfig.mediaS3Bucket +
                          ", name=" + name + "].");
-            } catch (S3Exception e) {
+            } catch (S3ServerException e) {
+                // S3 Server-side Exception
                 log.warning("S3 upload failed [code=" + e.getClass().getName() +
                             ", requestId=" + e.getRequestId() + ", hostId=" + e.getHostId() +
                             ", message=" + e.getMessage() + "].");
+            } catch (S3Exception e) {
+                // S3 Client-side Exception
+                log.warning("S3 upload failed: " + e);
             }
         }
     }
