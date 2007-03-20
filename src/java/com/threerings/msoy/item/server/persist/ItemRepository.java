@@ -592,8 +592,8 @@ public abstract class ItemRepository<
         throws PersistenceException
     {
         Key key = item.itemId < 0 ?
-            new Key<CLT>(getCloneClass(), ItemRecord.ITEM_ID, item.itemId) :
-            new Key<T>(getItemClass(), CloneRecord.ITEM_ID, item.itemId);
+            new Key<CLT>(getCloneClass(), CloneRecord.ITEM_ID, item.itemId) :
+            new Key<T>(getItemClass(), ItemRecord.ITEM_ID, item.itemId);
         int modifiedRows =  updatePartial(
             item.itemId < 0 ? getCloneClass() : getItemClass(),
             new Where(ItemRecord.ITEM_ID, item.itemId,
