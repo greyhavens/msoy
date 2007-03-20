@@ -92,17 +92,18 @@ public class PhotoBox extends Sprite
     {
         _logo = DisplayObject(new LOGO());
         _logo.y = _height - _logo.height;
-        addChild(_logo);
 
-        var pad :Shape = new Shape();
-        with (pad.graphics) {
+        // create a big white box undearneath the logo/tagfields
+        // so that no cracks show through
+        var bottom :Shape = new Shape();
+        with (bottom.graphics) {
             beginFill(0xFFFFFF);
-            drawRect(0, 0, PAD, _logo.height);
+            drawRect(0, 0, _width, _logo.height);
             endFill();
         }
-        pad.y = _logo.y;
-        pad.x = _logo.width;
-        addChild(pad);
+        bottom.y = _logo.y;
+        addChild(bottom);
+        addChild(_logo);
 
         _tagDisplay = new TextField();
         _tagDisplay.background = true;
