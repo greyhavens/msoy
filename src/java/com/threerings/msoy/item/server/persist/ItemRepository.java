@@ -19,6 +19,7 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheEvictionFilter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -590,12 +591,14 @@ public abstract class ItemRepository<
     public void updateOwnerId (ItemRecord item, int newOwnerId)
         throws PersistenceException
     {
+        Key key = item.itemId < 0 ?
+            new Key<CLT>(getCloneClass(), ItemRecord.ITEM_ID, item.itemId) :
+            new Key<T>(getItemClass(), CloneRecord.ITEM_ID, item.itemId);
         int modifiedRows =  updatePartial(
                 item.itemId < 0 ? getCloneClass() : getItemClass(),
                 new Where(ItemRecord.ITEM_ID, item.itemId,
                           ItemRecord.OWNER_ID, item.ownerId),
-                item.itemId < 0 ? CloneRecord.getKey(item.itemId) : ItemRecord.getKey(item.itemId),
-                ItemRecord.OWNER_ID, newOwnerId);
+                key, ItemRecord.OWNER_ID, newOwnerId);
         if (modifiedRows == 0) {
             throw new PersistenceException(
                 "Failed to safely update ownerId [item=" + item + ", newOwnerId=" + newOwnerId + "]"); 
