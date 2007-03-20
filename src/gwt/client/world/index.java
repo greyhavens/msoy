@@ -39,6 +39,16 @@ public class index extends Page
     }
 
     // @Override // from Page
+    public void onPageUnload ()
+    {
+        super.onPageUnload();
+
+        if (_refresher != null) {
+            _refresher.cancel();
+        }
+    }
+
+    // @Override // from Page
     protected boolean needsHeaderClient ()
     {
         String token = getPageArgs();
@@ -179,11 +189,12 @@ public class index extends Page
 
     protected void scheduleReload ()
     {
-        new Timer() {
+        _refresher = new Timer() {
             public void run() {
                 updateInterface(getPageArgs());
             }
-        }.schedule(NEIGHBORHOOD_REFRESH_TIME * 1000);
+        };
+        _refresher.schedule(NEIGHBORHOOD_REFRESH_TIME * 1000);
     }
 
     protected void neighborhood (String hood)
@@ -273,6 +284,9 @@ public class index extends Page
 
     /** A counter to help asynchronous callbacks to figure out if they've been obsoleted. */
     protected int _entryCounter;
+
+    /** Handles periodic refresh of the popular places view. */
+    protected Timer _refresher;
 
     /** The display mode we're in. */
     protected int _mode = -1;

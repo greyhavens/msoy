@@ -47,14 +47,6 @@ public class Application
     }
 
     /**
-     * Returns a {@link Hyperlink} that navigates to the specified application page.
-     */
-    public static Hyperlink createLink (String label, String page)
-    {
-        return createLink(label, page, "");
-    }
-
-    /**
      * Returns a {@link Hyperlink} that navigates to the specified application page with the
      * specified arguments. A page should use this method to pass itself arguments.
      */
