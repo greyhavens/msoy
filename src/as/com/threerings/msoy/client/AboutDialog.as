@@ -57,7 +57,7 @@ public class AboutDialog extends FloatingPanel
                 var room :CommandButton = new CommandButton(MsoyController.PURCHASE_ROOM);
                 room.label = Msgs.GENERAL.xlate(
                     MessageBundle.compose("b.purchase_room", roomType));
-                addChild(room);
+                vbox.addChild(room);
             }
 
             var pets :CommandButton = new CommandButton(MsoyController.SHOW_PETS);
