@@ -424,19 +424,19 @@
     <copy file="${deploy.dir}/avatarviewer.swf" todir="pages/clients"/>
   </target>
 
-  <!-- builds our RemixAnalyzer -->
-  <target name="remixer">
+  <!-- builds our video viewer thingy -->
+  <target name="videoviewer" depends="asprepare,aslib">
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-output"/>
-      <arg value="${deploy.dir}/RemixAnalyzer.swf"/>
+      <arg value="${deploy.dir}/videoviewer.swf"/>
       <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/com/threerings/msoy/item/remix/tools/RemixAnalyzer.as"/>
+      <arg value="${asrc.dir}/VideoViewer.as"/>
     </exec>
-    <!--<copy file="${deploy.dir}/RemixAnalyzer.swf" todir="bin"/>-->
+    <copy file="${deploy.dir}/videoviewer.swf" todir="pages/clients"/>
   </target>
 
   <!-- builds the ActionScript documention -->
@@ -719,7 +719,7 @@
   </target>
 
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="avatarviewer">
+  <target name="flashapps" depends="avatarviewer,videoviewer">
     <antcall target="asclient"><param name="type" value="world"/></antcall>
     <antcall target="asclient"><param name="type" value="header"/></antcall>
   </target>
