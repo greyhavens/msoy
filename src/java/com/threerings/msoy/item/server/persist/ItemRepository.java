@@ -595,10 +595,10 @@ public abstract class ItemRepository<
             new Key<CLT>(getCloneClass(), ItemRecord.ITEM_ID, item.itemId) :
             new Key<T>(getItemClass(), CloneRecord.ITEM_ID, item.itemId);
         int modifiedRows =  updatePartial(
-                item.itemId < 0 ? getCloneClass() : getItemClass(),
-                new Where(ItemRecord.ITEM_ID, item.itemId,
-                          ItemRecord.OWNER_ID, item.ownerId),
-                key, ItemRecord.OWNER_ID, newOwnerId);
+            item.itemId < 0 ? getCloneClass() : getItemClass(),
+            new Where(ItemRecord.ITEM_ID, item.itemId,
+                      ItemRecord.OWNER_ID, item.ownerId),
+            key, ItemRecord.OWNER_ID, newOwnerId);
         if (modifiedRows == 0) {
             throw new PersistenceException(
                 "Failed to safely update ownerId [item=" + item + ", newOwnerId=" + newOwnerId + "]"); 
