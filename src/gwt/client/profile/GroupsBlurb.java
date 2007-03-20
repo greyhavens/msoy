@@ -13,8 +13,6 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.Anchor;
-
 import com.threerings.msoy.web.data.GroupMembership;
 
 import client.msgs.GroupInvite;

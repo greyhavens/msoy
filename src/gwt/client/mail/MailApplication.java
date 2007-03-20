@@ -663,11 +663,11 @@ public class MailApplication extends DockPanel
     // anytime we wish to update the URL with a snapshot of the state, we call this
     protected void updateHistory ()
     {
+        String args = "f" + _currentFolder + "." + _currentOffset;
         if (_currentMessage >= 0) {
-            History.newItem("f" + _currentFolder + "." + _currentOffset + "." + _currentMessage);
-        } else {
-            History.newItem("f" + _currentFolder + "." + _currentOffset);
+            args += "." + _currentMessage;
         }
+        History.newItem(Application.createLinkToken("mail", args));
     }
 
     // scans a text, generating HTML that respects leading/consecutive spaces and newlines,

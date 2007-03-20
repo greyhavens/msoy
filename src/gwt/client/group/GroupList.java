@@ -23,7 +23,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
-import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
