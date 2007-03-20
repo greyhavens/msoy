@@ -40,63 +40,92 @@ public class PhotoBox extends Sprite
 {
     public function PhotoBox ()
     {
-        // configure our conrols
-        _furni = new FurniControl(this);
-        _furni.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessage);
+        // be prepared to clean up after ourselves...
+        root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload, false, 0, true);
 
-        // this is my (Ray Greenwell)'s personal Flickr key!!
+        // configure our conrol
+        _furni = new FurniControl(this);
+        _furni.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessageReceived);
+        _furni.addEventListener(ControlEvent.ACTION_TRIGGERED, handleActionTriggered);
+        _furni.addEventListener(ControlEvent.GOT_CONTROL, handleGotControl);
+
+        // Set up the flickr service
+        // This is my (Ray Greenwell)'s personal Flickr key!!
         _flickr = new FlickrService("7aa4cc43b7fd51f0f118b0022b7ab13e")
         _flickr.addEventListener(FlickrResultEvent.PHOTOS_SEARCH,
-            handlePhotoSearch);
+            handlePhotoSearchResult);
         _flickr.addEventListener(FlickrResultEvent.PHOTOS_GET_SIZES,
-            handlePhotoSizes);
+            handlePhotoUrlKnown);
 
-        _sendTimer = new Timer(7000, 1); // 7 seconds, fire once
-        _sendTimer.addEventListener(TimerEvent.TIMER, queuePhotoForDisplay);
-        _displayTimer = new Timer(7000, 1);
-        _displayTimer.addEventListener(TimerEvent.TIMER, showNextPhoto);
+        // try to set up our UI
+        var width :int = -1;
+        try {
+            width = root.loaderInfo.width;
+        } catch (err :Error) {
+            // we couldn't access the width yet, wait until we can
+            root.loaderInfo.addEventListener(Event.COMPLETE, handleLoaded, false, 0, true);
+        }
+        if (width != -1) {
+            configureUI(width);
+        }
+    }
 
-        root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
-
-        configureUI();
+    /**
+     * Waits until we're fully loaded to configure our UI.
+     */
+    protected function handleLoaded (event :Event) :void
+    {
+        configureUI(root.loaderInfo.width);
     }
 
     /**
      * Configure the UI. Called from the constructor.
      */
-    protected function configureUI () :void
+    protected function configureUI (totalWidth :int) :void
     {
         var logo :DisplayObject = DisplayObject(new LOGO());
         addChild(logo);
 
-        var prompt :TextField = new TextField();
-        prompt.autoSize = TextFieldAutoSize.LEFT;
-        prompt.background = true;
-        prompt.backgroundColor = 0xFFFFFF;
-        var format :TextFormat = new TextFormat();
-        format.size = 16;
-        format.bold = true;
-        prompt.defaultTextFormat = format;
-        prompt.text = "Enter tags:";
-        prompt.y = logo.height;
-        prompt.autoSize = TextFieldAutoSize.NONE;
-        prompt.width = Math.max(prompt.width, logo.width);
-        addChild(prompt);
+//        var prompt :TextField = new TextField();
+//        prompt.autoSize = TextFieldAutoSize.LEFT;
+//        prompt.background = true;
+//        prompt.backgroundColor = 0xFFFFFF;
+//        var format :TextFormat = new TextFormat();
+//        format.size = 16;
+//        format.bold = true;
+//        prompt.defaultTextFormat = format;
+//        prompt.text = "Enter tags:";
+//        prompt.y = logo.height;
+//        prompt.autoSize = TextFieldAutoSize.NONE;
+//        prompt.width = Math.max(prompt.width, logo.width);
+//        addChild(prompt);
+
+        _tagDisplay = new TextField();
+        _tagDisplay.background = true;
+        _tagDisplay.backgroundColor = 0xFFFFFF;
+        _tagDisplay.height = logo.height;
+        _tagDisplay.x = logo.width;
+        _tagDisplay.width = (totalWidth - logo.width) / 2;
 
         _tagEntry = new TextField();
         _tagEntry.type = TextFieldType.INPUT;
         _tagEntry.background = true;
         _tagEntry.backgroundColor = 0xCCFFFF;
-        _tagEntry.x = Math.max(prompt.width, logo.width);
-        _tagEntry.height = prompt.height + logo.height;
-        _tagEntry.width = 500 - _tagEntry.x;
-        addChild(_tagEntry);
-        _tagEntry.addEventListener(KeyboardEvent.KEY_DOWN, handleKey);
-//        _tagEntry.addEventListener(FocusEvent.FOCUS_IN, handleTagFocus);
-//        _tagEntry.addEventListener(FocusEvent.FOCUS_OUT, handleTagFocus);
-        format = new TextFormat();
-        format.size = 36;
+        _tagEntry.height = logo.height;
+        _tagEntry.x = _tagDisplay.x + _tagDisplay.width;
+        _tagEntry.width = totalWidth - _tagEntry.x;
+
+        var format :TextFormat = new TextFormat();
+        format.size = 18;
         _tagEntry.defaultTextFormat = format;
+        _tagDisplay.defaultTextFormat = format;
+
+        addChild(_tagDisplay);
+        addChild(_tagEntry);
+
+        _tagEntry.text = "<Click to enter tags>";
+        _tagEntry.addEventListener(FocusEvent.FOCUS_IN, handleTagEntryFocus);
+        _tagEntry.addEventListener(KeyboardEvent.KEY_DOWN, handleTagEntryKey);
 
         _loader = new Loader();
         _loader.mouseEnabled = true;
@@ -104,103 +133,37 @@ public class PhotoBox extends Sprite
         _loader.addEventListener(MouseEvent.CLICK, handleClick);
         _loader.addEventListener(MouseEvent.ROLL_OVER, handleMouseRoll);
         _loader.addEventListener(MouseEvent.ROLL_OUT, handleMouseRoll);
-        _loader.y = 50;
+        _loader.y = logo.height;
         addChild(_loader);
 
         _overlay = new Sprite();
         _overlay.y = _loader.y;
         addChild(_overlay);
+
+        // request control, or pretend we're it
+        if (_furni.isConnected()) {
+            _furni.requestControl();
+
+        } else {
+            // fake that we got control
+            handleGotControl(null);
+        }
     }
 
     /**
-     * Handle the results of a tag search.
+     * Handle focus received to our tag entry area.
      */
-    protected function handlePhotoSearch (evt :FlickrResultEvent) :void
+    protected function handleTagEntryFocus (event :FocusEvent) :void
     {
-        if (!evt.success) {
-            trace("Failure searching for photos " +
-                "[" + evt.data.error.errorMessage + "]");
-            return;
-        }
-
-        _photos = (evt.data.photos as PagedPhotoList).photos;
-        queuePhotoForDisplay();
+        // prepare for user input, stop listening
+        _tagEntry.text = "";
+//        _tagEntry.removeEventListener(FocusEvent.FOCUS_IN, handleTagEntryFocus);
     }
-
-    /**
-     * Load the next photo in the photo list maintained by this
-     * photobox.
-     */
-    protected function queuePhotoForDisplay (... ignored) :void
-    {
-        if (_photos == null || _photos.length == 0) {
-            _photos = null;
-            return;
-        }
-
-        var photo :Photo = (_photos.shift() as Photo);
-        _pageURL = "http://www.flickr.com/photos/" + photo.ownerId + "/" + 
-            photo.id;
-        _flickr.photos.getSizes(photo.id);
-    }
-
-    /**
-     * Handle data arriving as a result of a getSizes() request.
-     */
-    protected function handlePhotoSizes (evt :FlickrResultEvent) :void
-    {
-        if (!evt.success) {
-            trace("Failure getting photo sizes " +
-                "[" + evt.data.error.errorMessage + "]");
-            return;
-        }
-
-        var sizes :Array = (evt.data.photoSizes as Array);
-        var url :String = getMediumPhotoSource(sizes);
-        if (url != null) {
-            var args :Array = [ url, _pageURL ];
-            if (_furni.isConnected()) {
-                _furni.sendMessage("photo", args);
-
-            } else {
-                queuePhotoDisplay(args);
-            }
-        }
-
-        // if we have more photos to send, queue up the send for 7 seconds
-        // from now.
-        if (_photos != null) {
-            _sendTimer.reset();
-            // when there are photos queued, throttle back the send timer
-            // unfortunately this favors new instances, which won't
-            // throttle as quickly because the other throttling instances
-            // won't be filling their queue as quickly
-            _sendTimer.delay = 7 * Math.max(1, _displayPhotos.length);
-            _sendTimer.start();
-        }
-    }
-
-//    /**
-//     * Handle focus changes to our tag entry area.
-//     */
-//    protected function handleTagFocus (event :FocusEvent) :void
-//    {
-//        if (event.type == FocusEvent.FOCUS_IN) {
-//            _tagEntry.backgroundColor = 0xFFFFFF;
-//            _tagEntry.text = "";
-////            _hasFocus = true;
-//
-//        } else {
-//            _tagEntry.backgroundColor = 0xCCFFFF;
-//            _tagEntry.text = _displayedTags;
-////            _hasFocus = false;
-//        }
-//    }
 
     /**
      * Handle a user-generated keypress.
      */
-    protected function handleKey (event :KeyboardEvent) :void
+    protected function handleTagEntryKey (event :KeyboardEvent) :void
     {
         if (event.keyCode == Keyboard.ENTER) {
             var tags :String = _tagEntry.text;
@@ -208,91 +171,133 @@ public class PhotoBox extends Sprite
             tags = tags.replace(/,+/g, ","); // prune consecutive commas
             tags = tags.replace(/^,/, ""); // remove spurious comma at start
             tags = tags.replace(/,$/, ""); // remove spurious comma at end
-//            _enteredTags = tags;
-//            _displayedTags = tags;
-//            _shownOwn = false;
-            _flickr.photos.search("", tags, "all");
 
             // unfocus the tag entry area
             // (This seems to work even when we're in a security boundary)
             stage.focus = null; // will trigger unfocus event
+
+            _ourTags = tags;
+            _ourPhotos = null;
+            _flickr.photos.search("", tags, "all");
+
+        } else {
+            // the user is entering stuff, clear everything out
+            _ourPhotos = null;
+            _ourTags = null;
         }
     }
 
     /**
-     * Handle a message event from other instances of this photobox
-     * running on other clients.
+     * Handle the results of a tag search.
      */
-    protected function handleMessage (event :ControlEvent) :void
+    protected function handlePhotoSearchResult (evt :FlickrResultEvent) :void
     {
-        if (event.name == "photo") {
-            var args :Array  = (event.value as Array);
-            queuePhotoDisplay(args);
-        }
-    }
-//
-//            var newId :int = int(args[0]);
-//            var url :String = String(args[1]);
-//            var tags :String = String(args[2]);
-//            if (newId > _controlId) {
-//                _controlId = newId;
-//                _photos = null; // kill our own display of photos
-//
-//            } else if (newId == _controlId) {
-//                if (tags == _enteredTags) {
-//                    _shownOwn = true;
-//
-//                } else if (!_shownOwn) {
-//                    // sorry charlie, we were second to try this controlId
-//                    _photos = null;
-//                }
-//            }
-//
-//            if (_photos == null) {
-//                displayPhoto(url);
-//                _displayedTags = tags;
-//                if (!_hasFocus) {
-//                    _tagEntry.text = tags;
-//                }
-//
-//            } else {
-//                // else, ignore our own events
-//                //trace("ignoring " + url);
-//            }
-//        }
-//    }
-
-    /**
-     * Display the photo at the specified url.
-     */
-    protected function queuePhotoDisplay (args :Array) :void
-    {
-        _displayPhotos.push(args);
-
-        if (!_displayTimer.running) {
-            showNextPhoto();
-        }
-    }
-
-    /**
-     * Handle the timer expiring.
-     */
-    protected function showNextPhoto (... ignored) :void
-    {
-        if (_displayPhotos.length == 0) {
+        if (!evt.success) {
+            trace("Failure searching for photos " +
+                "[" + evt.data.error.errorMessage + "]");
             return;
         }
 
-        // show the photo!
+        // if the tags have since been cleared, throw away these results
+        if (_ourTags == null) {
+            return;
+        }
+
+        // save the metadata about photos
+        _ourPhotos = (evt.data.photos as PagedPhotoList).photos;
+
+        if (!_furni.isConnected()) {
+            // if we're not connected, just get the next URL immediatly
+            getNextPhotoUrl();
+        }
+    }
+
+    /**
+     * Get the next URL for photos that we ourselves have found via tags.
+     */
+    protected function getNextPhotoUrl () :void
+    {
+        if (_ourPhotos == null || _ourPhotos.length == 0) {
+            _ourPhotos = null;
+            return;
+        }
+
+        var photo :Photo = (_ourPhotos.shift() as Photo);
+        _ourPageURL = "http://www.flickr.com/photos/" + photo.ownerId + "/" + 
+            photo.id;
+        _flickr.photos.getSizes(photo.id);
+    }
+
+    /**
+     * Handle data arriving as a result of a getSizes() request.
+     */
+    protected function handlePhotoUrlKnown (evt :FlickrResultEvent) :void
+    {
+        if (!evt.success) {
+            trace("Failure getting photo sizes " +
+                "[" + evt.data.error.errorMessage + "]");
+            return;
+        }
+
+        // if either of these are null, the user has started searching
+        // on new tags...
+        if (_ourTags == null || _ourPhotos == null) {
+            return;
+        }
+
+        var sizes :Array = (evt.data.photoSizes as Array);
+        var url :String = getMediumPhotoSource(sizes);
+        if (url != null) {
+            // yay! We've looked-up our next photo item
+            _ourReadyPhoto = [ url, _ourPageURL, _ourTags ];
+
+            if (_furni.isConnected()) {
+                // send a message to the instance in control..
+                _furni.sendMessage("queue", _ourReadyPhoto);
+
+            } else {
+                // just freaking show it
+                showPhoto(_ourReadyPhoto);
+            }
+        }
+    }
+
+    /**
+     * Handle a command to show a photo from the entity that's in control.
+     */
+    protected function handleActionTriggered (event :ControlEvent) :void
+    {
+        switch (event.name) {
+        case "show":
+            showPhoto(event.value as Array);
+            break;
+
+        case "send_photos":
+            // hey, the instance in control wants us to send our goodies!
+            if (_ourReadyPhoto != null) {
+                _furni.sendMessage("queue", _ourReadyPhoto);
+
+            } else {
+                getNextPhotoUrl();
+            }
+        }
+    }
+
+    /**
+     * Show the photo specified.
+     */
+    protected function showPhoto (photo :Array) :void
+    {
         clearLoader();
-        var nextPhoto :Array = (_displayPhotos.shift() as Array);
-        var url :String = String(nextPhoto[0]);
-        _displayPageURL = String(nextPhoto[1]);
+        var url :String = String(photo[0]);
+        _displayPageURL = String(photo[1]);
+        _tagDisplay.text = String(photo[2]);
         _loader.load(new URLRequest(url));
 
-        // queue a timer for the next one
-        _displayTimer.reset();
-        _displayTimer.start();
+        // if it's our personal photo, clear it 
+        if ((_ourReadyPhoto != null) && (url == _ourReadyPhoto[0])) {
+            _ourReadyPhoto = null;
+        }
     }
 
     /**
@@ -360,54 +365,116 @@ public class PhotoBox extends Sprite
      */
     protected function handleUnload (event :Event) :void
     {
-        _sendTimer.stop();
-        _displayTimer.stop();
+        if (_ctrlTimer != null) {
+            _ctrlTimer.stop();
+            _ctrlTimer = null;
+        }
         clearLoader();
     }
 
-    /** The interface through which we make flickr API requests. */
-    protected var _flickr :FlickrService;
+    // ============ Methods only used on the instance in "control"
+
+    protected function handleGotControl (event :ControlEvent) :void
+    {
+        // set up the control timer, only used by the one in control...
+        _ctrlTimer = new Timer(7000); // 7 seconds
+        _ctrlTimer.addEventListener(TimerEvent.TIMER, handleCtrlTimer);
+        _ctrlTimer.start();
+
+        handleCtrlTimer(); // kick things off
+    }
+
+    protected function handleCtrlTimer (event :TimerEvent = null) :void
+    {
+        // if we're not even connected
+        // call this by hand..
+        if (!_furni.isConnected()) {
+            getNextPhotoUrl();
+            return;
+        }
+
+        if (_displayPhotos == null || _displayPhotos.length == 0) {
+            // send out a message to all other boxes that we're
+            // ready for their next photo
+            _displayPhotos = null;
+            _furni.triggerAction("send_photos");
+            return;
+        }
+
+        // otherwise, trigger an action to show the next photo
+        var nextPhoto :Array = (_displayPhotos.shift() as Array);
+        _furni.triggerAction("show", nextPhoto)
+    }
+
+    /**
+     * Handle a message event from other instances of this photobox
+     * running on other clients.
+     */
+    protected function handleMessageReceived (event :ControlEvent) :void
+    {
+        if (!_furni.hasControl()) {
+            // ignore messages from the ones not in control.
+            return;
+        }
+
+        if (event.name == "queue") {
+            var photoInfo :Array  = (event.value as Array);
+
+            if (_displayPhotos == null) {
+                // show it immediately, create the array as a marker
+                // to not show the next one immediately.
+                _displayPhotos = [];
+                _furni.triggerAction("show", photoInfo);
+
+            } else {
+                // we'll save that for later
+                _displayPhotos.push(photoInfo);
+            }
+        }
+    }
 
     /** The interface through which we communicate with metasoy. */
     protected var _furni :FurniControl;
 
-    /** Handles the countdown to dispatching the next photo. */
-    protected var _sendTimer :Timer;
+    /** The interface through which we make flickr API requests. */
+    protected var _flickr :FlickrService;
 
-    /** Handles the countdown to showing the next photo. */
-    protected var _displayTimer :Timer;
+    /** The text area to display tags. */
+    protected var _tagDisplay :TextField;
 
     /** The text entry area for tags. */
     protected var _tagEntry :TextField;
 
-    /** The url of the photo page for the photo we're currently doing
-     * a size lookup upon. */
-    protected var _pageURL :String;
-
-    /** The page url for the photo we're currently showing. */
-    protected var _displayPageURL :String;
+    /** Loads up photos for display. */
+    protected var _loader :Loader;
 
     /** A sprite drawn on top of everything, for use in drawing UI. */
     protected var _overlay :Sprite;
 
-//    protected var _hasFocus :Boolean;
-//
-//    protected var _displayedTags :String = "";
-//
-//    protected var _enteredTags :String;
-//
-//    /** Whether or not we've shown one of our own at the current controlId. */
-//    protected var _shownOwn :Boolean;
+    /** The tags we've entered, associated with ourPhotos. */
+    protected var _ourTags :String;
 
-    /** Loads up photos for display. */
-    protected var _loader :Loader;
+    /** The high-level metadata for the result set of photos from our
+     * tag search. */
+    protected var _ourPhotos :Array;
 
-    /** If this instance was used to do a tag search, this contains the
-     * resultant photos which are queued up for display on other instances.  */
-    protected var _photos :Array;
+    /** The url of the photo page for the photo we're currently doing
+     * a size lookup upon. */
+    protected var _ourPageURL :String;
+
+    /** The full data for the next photo we'd like to show. */
+    protected var _ourReadyPhoto :Array;
+
+    /** The page url for the photo we're currently showing. */
+    protected var _displayPageURL :String;
+
+    //=========================
+
+    /** Timer used by the instance in control to coordinate the others. */
+    protected var _ctrlTimer :Timer;
 
     /** The photos to display. */
-    protected var _displayPhotos :Array = [];
+    protected var _displayPhotos :Array;
 
     [Embed(source="flickr_logo.gif")]
     protected const LOGO :Class;
