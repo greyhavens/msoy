@@ -22,6 +22,10 @@ public class MemberName extends Name
         }
     };
 
+    /** Used to reprepsent a member that has been deleted but is still referenced as an item
+     * creator or mail message sender, etc. */
+    public static final MemberName DELETED_MEMBER = new MemberName("", -1);
+
     /** The minimum allowable length of a permaname. */
     public static final int MINIMUM_PERMANAME_LENGTH = 4;
 

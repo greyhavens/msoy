@@ -29,6 +29,8 @@ import com.threerings.msoy.person.server.persist.MailFolderRecord;
 import com.threerings.msoy.person.server.persist.MailMessageRecord;
 import com.threerings.msoy.person.server.persist.MailRepository;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Manage msoy mail.
  */
@@ -52,7 +54,7 @@ public class MailManager
     }
 
     /**
-     * Fetch and return a single message from the database. 
+     * Fetch and return a single message from the database.
      */
     public void getMessage (final int memberId, final int folderId, final int messageId,
                             final boolean flagAsRead, ResultListener<MailMessage> waiter)
@@ -86,7 +88,7 @@ public class MailManager
     }
 
     /**
-     * Fetch and return all the messages in a folder from the database. 
+     * Fetch and return all the messages in a folder from the database.
      */
     public void getHeaders (final int memberId, final int folderId,
                              ResultListener<List<MailHeaders>> waiter)
@@ -103,7 +105,7 @@ public class MailManager
     }
 
     /**
-     * Fetch and return a single folder from the database. 
+     * Fetch and return a single folder from the database.
      */
     public void getFolder (final int memberId, final int folderId,
                            ResultListener<MailFolder> waiter)
@@ -155,7 +157,7 @@ public class MailManager
     /**
      * Deliver a message, i.e. file one copy of it in the sender's 'Sent' folder,
      * and one copy in the recipient's 'Inbox' folder.
-     */    
+     */
     public void deliverMessage (final int senderId, final int recipientId, final String subject,
                                 final String text, final MailPayload payload,
                                 ResultListener<Void> waiter)
@@ -168,7 +170,7 @@ public class MailManager
                 record.recipientId = recipientId;
                 record.subject = subject;
                 record.bodyText = text;
-                
+
                 if (payload != null) {
                     record.payloadType = payload.getType();
                     try {
@@ -207,7 +209,7 @@ public class MailManager
         });
 
     }
-    
+
     /**
      * Bulk delete a number of messages from the database. Note: This actually
      * DELETES the messages, it doesn't move them to the Trash folder.
@@ -234,20 +236,20 @@ public class MailManager
         headers.subject = record.subject;
         headers.sent = new Date(record.sent.getTime());
         headers.unread = record.unread;
-        
+
         if (record.senderId != 0) {
             MemberRecord memRec = _memberRepo.loadMember(record.senderId);
-            headers.sender = new MemberName(memRec.name, memRec.memberId);
+            headers.sender = (memRec == null) ? MemberName.DELETED_MEMBER : memRec.getName();
         } else {
             // TODO: This should not be hard-coded here.
             headers.sender = new MemberName("System Administrators", 0);
         }
 
         MemberRecord memRec = _memberRepo.loadMember(record.recipientId);
-        headers.recipient = new MemberName(memRec.name, memRec.memberId);
+        headers.recipient = (memRec == null) ? MemberName.DELETED_MEMBER : memRec.getName();
         return headers;
     }
-    
+
     // convert a MailMessageRecord to a MailMessage
     @SuppressWarnings("unchecked")
     protected MailMessage toMailMessage (MailMessageRecord record)
@@ -295,7 +297,7 @@ public class MailManager
 
     /** Provides access to persistent mail data. */
     protected MailRepository _mailRepo;
-    
+
     /** Provides access to persistent member data. */
     protected MemberRepository _memberRepo;
 }
