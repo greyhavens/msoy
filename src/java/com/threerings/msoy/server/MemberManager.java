@@ -34,6 +34,8 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.server.PlaceManager;
 
+import com.threerings.whirled.server.SceneManager;
+
 import com.threerings.msoy.data.PopularPlace;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.MemberObject;
@@ -384,15 +386,27 @@ public class MemberManager
     {
         final MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
-        final int memberId = user.getMemberId();
-        final String roomName = user.memberName + "'s new room";
+
+        // figure out if they want a group or a personal room
+        SceneManager sceneMan = MsoyServer.screg.getSceneManager(user.sceneId);
+        MsoyScene scene = (MsoyScene) sceneMan.getScene();
+        if (!scene.canEdit(user)) {
+            throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
+        }
+        MsoySceneModel model = (MsoySceneModel) scene.getSceneModel();
+        boolean isGroup = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP);
+
+        final byte ownerType = isGroup ? MsoySceneModel.OWNER_TYPE_GROUP
+                                       : MsoySceneModel.OWNER_TYPE_MEMBER;
+        final int ownerId = isGroup ? model.ownerId : user.getMemberId();
+        final String roomName = isGroup ? "New 'somegroup' room"
+                                        : (user.memberName + "'s new room");
 
         // TODO: charge some flow
 
         MsoyServer.invoker.postUnit(new RepositoryUnit("purchaseRoom") {
             public void invokePersist () throws PersistenceException {
-                _newRoomId = MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER,
-                    memberId, roomName);
+                _newRoomId = MsoyServer.sceneRepo.createBlankRoom(ownerType, ownerId, roomName);
             }
             public void handleSuccess () {
                 user.addToOwnedScenes(new SceneBookmarkEntry(_newRoomId, roomName, 0));

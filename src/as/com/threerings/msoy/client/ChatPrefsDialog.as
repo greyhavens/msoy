@@ -14,10 +14,7 @@ import mx.controls.RadioButtonGroup;
 import mx.containers.Grid;
 import mx.containers.VBox;
 
-import com.threerings.crowd.data.TokenRing;
-import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.ui.FloatingPanel;
 
 public class ChatPrefsDialog extends FloatingPanel
@@ -74,18 +71,7 @@ public class ChatPrefsDialog extends FloatingPanel
         tainer.addChild(grid);
         addChild(tainer);
 
-        // TEMPORARY: 'add room' button, for admins only
-        // This is here so that admins have a way to expand the whirled,
-        // until we figure out the correct way of buying and installing new rooms.
-        var memberObj :MemberObject = _ctx.getMemberObject();
-        if (memberObj != null && memberObj.tokens.isAdmin()) {
-            var btn :CommandButton = new CommandButton(MsoyController.PURCHASE_ROOM);
-            btn.label = Msgs.GENERAL.get("b.purchase_room");
-            tainer.addChild(btn);
-        }
-        
         addButtons(OK_BUTTON);
     }
-
 }
 }
