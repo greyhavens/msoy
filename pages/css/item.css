@@ -151,7 +151,7 @@
   padding-right: 10px;
 }
 
-.tagDetailPanel .LabelLink {
+.borderedDialog .tagDetailPanel .LabelLink {
   cursor: pointer;
   text-decoration: underline;
   color: white;
