@@ -4,6 +4,7 @@ import flash.display.*;
 import flash.text.*;
 import flash.geom.*;
 import flash.events.*;
+import flash.filters.*;
 import flash.net.*;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
@@ -264,11 +265,29 @@ public class HoodViz extends Sprite
         bitHolder.y = p.y;
         if (neighbor != null) {
             bitHolder.neighbor = neighbor;
+
             bitHolder.addEventListener(MouseEvent.ROLL_OVER, rollOverHandler);
             bitHolder.addEventListener(MouseEvent.ROLL_OUT, rollOutHandler);
             bitHolder.addEventListener(MouseEvent.CLICK, clickHandler);
         }
         _canvas.addChild(bitHolder);
+
+        if (neighbor != null) {
+            var format :TextFormat = new TextFormat();
+            format.font = "hoodFont";
+            format.size = 24;
+            format.color = 0xFFFFFF;
+
+            var text :TextField = new TextField();
+            text.defaultTextFormat = format;
+            text.embedFonts = true;
+            text.text = neighbor.getName();
+            text.filters = [ new GlowFilter(0x660000, 1, 3, 3, 255) ];
+            text.x = p.x;
+            text.y = p.y;
+
+            _canvas.addChild(text);
+        }
 
         if (update) {
             _bound = _bound.union(bitHolder.getBounds(_canvas));

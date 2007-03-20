@@ -48,5 +48,11 @@ public class NeighborMember extends Neighbor
         }
         return member;
     }
+
+    // from Neighbor
+    override public function getName () :String
+    {
+        return memberName;
+    }
 }
 }

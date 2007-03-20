@@ -21,5 +21,11 @@ public class Neighbor
         neighbor.sceneId = JSON.sceneId;
         neighbor.peeps = JSON.peeps;
     }
+
+    /** Return a name for this neighbour. Must be overriden. */
+    public function getName () :String
+    {
+        return null;
+    }
 }
 }

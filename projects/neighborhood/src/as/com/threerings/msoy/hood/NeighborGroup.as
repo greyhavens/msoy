@@ -35,6 +35,12 @@ public class NeighborGroup extends Neighbor
         return group;
     }
 
+    // from Neighbor
+    override public function getName () :String
+    {
+        return groupName;
+    }
+
     // from LogoHolder
     public function getLogoHash () :String
     {

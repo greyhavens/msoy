@@ -31,6 +31,12 @@ public class NeighborGame extends Neighbor
         return game;
     }
 
+    // from Neighbor
+    override public function getName () :String
+    {
+        return gameName;
+    }
+
     // from LogoHolder
     public function getLogoHash () :String
     {
