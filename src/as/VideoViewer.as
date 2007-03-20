@@ -6,12 +6,13 @@ import com.threerings.util.ParameterUtil;
 
 import com.threerings.flash.VideoDisplayer;
 
-[SWF(width="640", height="480")]
+[SWF(width="320", height="240")]
 public class VideoViewer extends Sprite
 {
     public function VideoViewer ()
     {
         _vid = new VideoDisplayer();
+        addChild(_vid);
 
         ParameterUtil.getParameters(this, gotParams);
     }
