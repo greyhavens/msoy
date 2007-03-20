@@ -3,8 +3,11 @@
 
 package client.util;
 
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ClickListener;
 
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
@@ -55,9 +58,26 @@ public class ItemUtil
      */
     public static void addItemSpecificControls (Item item, Panel panel)
     {
+        addItemSpecificControls(item, panel, null);
+    }
+
+    /**
+     * Adds item specific controls to be shown in the item detail popup in a member's inventory or
+     * in the catalog, with the option to hide the parent panel if a link is clicked.
+     */
+    public static void addItemSpecificControls (Item item, Panel panel, final PopupPanel popup)
+    {
         if (item instanceof Game) {
-            panel.add(new HTML(Application.createLinkHtml(CShell.cmsgs.detailPlay(), "game",
-                                                          "" + item.getPrototypeId())));
+            HTML link = new HTML(Application.createLinkHtml(CShell.cmsgs.detailPlay(), "game",
+                "" + item.getPrototypeId()));
+            if (popup != null) {
+                link.addClickListener(new ClickListener () {
+                    public void onClick (Widget sender) {
+                        popup.hide();
+                    }
+                });
+            }
+            panel.add(link);
         }
     }
 }

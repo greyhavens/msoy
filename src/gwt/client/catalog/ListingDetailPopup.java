@@ -51,7 +51,7 @@ public class ListingDetailPopup extends BaseItemDetailPopup
         // we need to create this here so we can pass it to our click callback
         _status = new Label("");
 
-        ItemUtil.addItemSpecificControls(_item, controls);
+        ItemUtil.addItemSpecificControls(_item, controls, this);
 
         details.add(_listed = new Label());
         details.add(_price = new FlexTable());

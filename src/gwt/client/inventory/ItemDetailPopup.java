@@ -33,7 +33,7 @@ public class ItemDetailPopup extends BaseItemDetailPopup
     {
         super.createInterface(details, controls);
 
-        ItemUtil.addItemSpecificControls(_item, controls);
+        ItemUtil.addItemSpecificControls(_item, controls, this);
 
         // we'll need this now so that we can pass it to our click callbacks
         _status = new Label("");
