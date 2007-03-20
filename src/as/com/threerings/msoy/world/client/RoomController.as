@@ -89,9 +89,19 @@ public class RoomController extends SceneController
     {
         if (_roomObj == null) {
             log.warning("Cannot request entity control, no room object [ident=" + ident + "].");
-        } else {
-            _roomObj.roomService.requestControl(_mctx.getClient(), ident);
+            return;
         }
+
+        var ctrl :EntityControl = (_roomObj.controllers.get(ident) as EntityControl);
+        if (ctrl == null) {
+            // go for it
+            _roomObj.roomService.requestControl(_mctx.getClient(), ident);
+
+        } else if (ctrl.controllerOid == _mctx.getMemberObject().getOid()) {
+            // it's us!
+            _roomView.dispatchControlAssigned(ctrl);
+
+        } // else: not us, already assigned, do nothing
     }
 
     /**

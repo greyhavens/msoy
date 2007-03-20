@@ -689,7 +689,7 @@ public class RoomView extends AbstractRoomView
     /**
      * Called when control of an entity is assigned to some client.
      */
-    protected function dispatchControlAssigned (ctrl :EntityControl) :void
+    public function dispatchControlAssigned (ctrl :EntityControl) :void
     {
         if (ctrl.controllerOid == _ctx.getMemberObject().getOid()) {
             var sprite :MsoySprite = (_entities.get(ctrl.ident) as MsoySprite);
