@@ -43,6 +43,8 @@ public class WorldClient extends Widget
         if (_client != null) {
             RootPanel.get("content").setWidth("724px");
             // TODO: tell the client it's in minimized land
+        } else {
+            RootPanel.get("content").setWidth("100%");
         }
     }
 
@@ -56,7 +58,10 @@ public class WorldClient extends Widget
     public static void didLogoff ()
     {
         if (_client != null) {
-            clientLogoff();
+            clientUnload();
+            RootPanel.get("client").clear();
+            _client = null;
+            RootPanel.get("content").setWidth("100%");
         }
     }
 
@@ -85,10 +90,10 @@ public class WorldClient extends Widget
     /**
      * Logs off the MetaSOY Flash client using magical JavaScript.
      */
-    protected static native void clientLogoff () /*-{
+    protected static native void clientUnload () /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.clientLogoff();
+            client.onUnload();
         }
     }-*/;
 

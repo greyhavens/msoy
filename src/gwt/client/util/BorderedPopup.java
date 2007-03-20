@@ -44,14 +44,12 @@ public class BorderedPopup extends PopupPanel
     // @Override // from PopupPanel
     public void show ()
     {
-        if (_centerOnShow) {
-            // start off screen so that we are not visible until we can compute our proper location
-            // and center ourselves; we'd call setPopupPosition() but that foolishly bounds our
-            // position to greater than zero, to protect us from ourselves no doubt
-            Element elem = getElement();
-            DOM.setStyleAttribute(elem, "left", "-5000px");
-            DOM.setStyleAttribute(elem, "top", "-5000px");
-        }
+        // start off screen so that we are not visible until we can compute our proper location and
+        // center ourselves; we'd call setPopupPosition() but that foolishly bounds our position to
+        // greater than zero, to protect us from ourselves no doubt
+        Element elem = getElement();
+        DOM.setStyleAttribute(elem, "left", "-5000px");
+        DOM.setStyleAttribute(elem, "top", "-5000px");
         super.show();
         if (_centerOnShow) {
             recenter();
