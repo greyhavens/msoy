@@ -4,7 +4,9 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.MediaDesc;
 
 /**
  * A little widget to carry a thumbnail and a label; a light-weight {@link ItemContainer} perhaps.
@@ -18,8 +20,10 @@ public class ItemThumbnail extends FlexTable
 
         setCellPadding(0);
         setCellSpacing(0);
-        
-        Image image = new Image(item.getThumbnailPath());
+
+        // the thumbnail is always an image, so we can cast safely here
+        Image image = (Image) MediaUtil.createMediaView(
+            item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
         image.addStyleName("Image");
         image.addClickListener(listener);
         setWidget(0, 0, image);
