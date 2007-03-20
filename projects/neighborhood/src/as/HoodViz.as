@@ -302,21 +302,21 @@ public class HoodViz extends Sprite
     protected function clickHandler (event :MouseEvent) :void
     {
         var neighbor :Neighbor = (event.currentTarget as ToolTipSprite).neighbor;
-        var url :String = "/world/#";
+        var url :String = "#world-";
         if (neighbor.sceneId > 0) {
-            url = "/world/#s" + neighbor.sceneId;
+            url = "#world-s" + neighbor.sceneId;
         } else if (neighbor is NeighborMember) {
             var house :NeighborMember = neighbor as NeighborMember;
             // clicking on a member takes us to their home scene
-            url = "/world/#m" + house.memberId;
+            url = "#world-m" + house.memberId;
         } else if (neighbor is NeighborGroup) {
             var group :NeighborGroup = neighbor as NeighborGroup;
             // clicking on a group takes us to that group's home scene
-            url = "/world/#g" + group.groupId;
+            url = "#world-g" + group.groupId;
         } else {
             var game :NeighborGame = neighbor as NeighborGame;
             // clicking on a game takes us to that game's lobby
-            url = "/game/#" + game.gameId;
+            url = "#game-" + game.gameId;
         }
         NetUtil.navigateToURL(url);
     }
