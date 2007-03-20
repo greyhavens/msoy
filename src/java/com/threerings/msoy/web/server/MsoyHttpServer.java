@@ -32,6 +32,7 @@ public class MsoyHttpServer extends HttpServer
     {
         // wire up serving of static content (for testing)
         HttpContext context = getContext("/");
+        context.setWelcomeFiles(new String[] { "index.html" });
         context.setResourceBase(new File(ServerConfig.serverRoot, "pages").getPath());
         ResourceHandler rsrc = new ResourceHandler();
         rsrc.setDirAllowed(false);
