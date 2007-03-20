@@ -45,6 +45,7 @@ public class index extends Page
 
         if (_refresher != null) {
             _refresher.cancel();
+            _refresher = null;
         }
     }
 
@@ -84,6 +85,12 @@ public class index extends Page
     protected boolean updateInterface (String token)
     {
         _entryCounter++;
+
+        // cancel our refresher interval as we'll restart it if needed below
+        if (_refresher != null) {
+            _refresher.cancel();
+            _refresher = null;
+        }
 
         // don't show the flash client in the GWT shell
         if (!GWT.isScript()) {
