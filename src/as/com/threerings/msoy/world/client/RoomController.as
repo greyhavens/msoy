@@ -402,18 +402,6 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Add the specified command to the context menu for the current scene.
-     */
-    protected function createMenuItem (
-        cmd :String, arg :Object = null, separatorBefore :Boolean = false,
-        enabled :Boolean = true, visible :Boolean = true) :ContextMenuItem
-    {
-        var menuText :String = Msgs.GENERAL.get("b." + cmd);
-        return MenuUtil.createControllerMenuItem(menuText, cmd, arg,
-                separatorBefore, enabled, visible);
-    }
-
-    /**
      * Begin editing the scene.
      */
     protected function startEditing (items :Array) :void
