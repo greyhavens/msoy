@@ -1,9 +1,0 @@
-<module>
-  <inherits name='shell'/>
-  <inherits name='com.google.gwt.xml.XML'/>
-  <entry-point class='client.inventory.index'/>
-  <public path="public/inventory"/>
-  <source path="client/item"/>
-  <source path="client/editem"/>
-  <source path="client/inventory"/>
-</module>

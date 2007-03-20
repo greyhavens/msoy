@@ -1,7 +1,0 @@
-<module>
-  <inherits name='shell'/>
-  <entry-point class='client.group.index'/>
-  <public path="public/group"/>
-  <source path="client/msgs"/>
-  <source path="client/group"/>
-</module>

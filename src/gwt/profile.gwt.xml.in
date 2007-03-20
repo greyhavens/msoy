@@ -1,7 +1,0 @@
-<module>
-  <inherits name='shell'/>
-  <entry-point class='client.profile.index'/>
-  <public path="public/profile"/>
-  <source path="client/msgs"/>
-  <source path="client/profile"/>
-</module>

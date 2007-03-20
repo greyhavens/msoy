@@ -1,7 +1,35 @@
 <module>
-  <inherits name='shell'/>
-  <inherits name='com.google.gwt.xml.XML'/>
-  <entry-point class='client.shell.Application'/>
+  <inherits name="com.google.gwt.user.User"/>
+  <inherits name="com.google.gwt.http.HTTP"/>
+  <inherits name="com.google.gwt.i18n.I18N"/>
+  <inherits name="com.google.gwt.xml.XML"/>
+
   <public path="public"/>
   <source path="client"/>
+  <source path="org/gwtwidgets/client"/>
+  <source path="com/threerings/presents/dobj"/>
+  <source path="com/threerings/io"/>
+  <source path="com/threerings/gwt"/>
+  <source path="com/threerings/util"/>
+  <source path="com/threerings/msoy/web/client"/>
+  <source path="com/threerings/msoy/web/data"/>
+  <source path="com/threerings/msoy/item/web"/>
+
+  <entry-point class="client.shell.Application"/>
+
+  <replace-with class="client.util.PopupImplMozilla">
+    <when-type-is class="com.google.gwt.user.client.ui.impl.PopupImpl"/>
+    <any>
+      <when-property-is name="user.agent" value="gecko"/>
+      <when-property-is name="user.agent" value="gecko1_8"/>
+    </any>
+  </replace-with>
+
+  <replace-with class="com.threerings.gwt.ui.WidgetUtilImplMozilla">
+    <when-type-is class="com.threerings.gwt.ui.WidgetUtilImpl"/>
+    <any>
+      <when-property-is name="user.agent" value="gecko"/>
+      <when-property-is name="user.agent" value="gecko1_8"/>
+    </any>
+  </replace-with>
 </module>

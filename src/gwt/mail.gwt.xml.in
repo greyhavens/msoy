@@ -1,7 +1,0 @@
-<module>
-  <inherits name='shell'/>
-  <entry-point class='client.mail.index'/>
-  <public path="public/mail"/>
-  <source path="client/msgs"/>
-  <source path="client/mail"/>
-</module>
