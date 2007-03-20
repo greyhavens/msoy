@@ -728,7 +728,6 @@
   <!-- builds top-level flash applications. -->
   <target name="flashapps" depends="avatarviewer,videoviewer">
     <antcall target="asclient"><param name="type" value="world"/></antcall>
-    <antcall target="asclient"><param name="type" value="header"/></antcall>
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
