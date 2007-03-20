@@ -14,22 +14,24 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
-import com.threerings.gwt.ui.Hyperlink;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.item.web.Item;
+
+import client.shell.Application;
 
 /**
  * Displays the client interface for selecting or creating a swiftly project.
@@ -141,8 +143,8 @@ public class ProjectSelectionPanel extends VerticalPanel
                     _remixableHeader.add(new Label(CSwiftly.msgs.remixableProjects()));
                     while (iter.hasNext()) {
                         final SwiftlyProject project = (SwiftlyProject)iter.next();
-                        Hyperlink projectLink = new Hyperlink(
-                            project.projectName, String.valueOf(project.projectId));
+                        Hyperlink projectLink = Application.createLink(
+                            project.projectName, "swiftly", String.valueOf(project.projectId));
                         DOM.setStyleAttribute(projectLink.getElement(), "display", "inline");
                         _remixableProjects.add(projectLink);
                     }
@@ -167,8 +169,8 @@ public class ProjectSelectionPanel extends VerticalPanel
                     _membersHeader.add(new Label(CSwiftly.msgs.membersProjects()));
                     while (iter.hasNext()) {
                         final SwiftlyProject project = (SwiftlyProject)iter.next();
-                        Hyperlink projectLink = new Hyperlink(
-                            project.projectName, String.valueOf(project.projectId));
+                        Hyperlink projectLink = Application.createLink(
+                            project.projectName, "swiftly", String.valueOf(project.projectId));
                         DOM.setStyleAttribute(projectLink.getElement(), "display", "inline");
                         _membersProjects.add(projectLink);
                     }

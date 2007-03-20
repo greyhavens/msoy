@@ -15,7 +15,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.data.ConnectConfig;
 
-import client.shell.MsoyEntryPoint;
+import client.shell.Page;
 import client.util.MsoyUI;
 
 /**
@@ -76,7 +76,7 @@ public class DashboardPanel extends FlexTable
 
     protected void finishDisplayDashboard (ConnectConfig config)
     {
-        MsoyEntryPoint.needPopupHack = true;
+        Page.needPopupHack = true;
         int row = getRowCount();
         getFlexCellFormatter().setStyleName(row, 0, "Applet");
         setWidget(row, 0, WidgetUtil.createApplet(

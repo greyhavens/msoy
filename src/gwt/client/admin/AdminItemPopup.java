@@ -5,7 +5,7 @@ package client.admin;
 
 import client.editem.ItemEditor;
 import client.item.BaseItemDetailPopup;
-import client.shell.MsoyEntryPoint;
+import client.shell.Page;
 
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.Button;

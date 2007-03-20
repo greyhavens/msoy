@@ -4,36 +4,34 @@
 package client.mail;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.msgs.MsgsEntryPoint;
-import client.shell.MsoyEntryPoint;
+import client.shell.Page;
 import client.util.MsoyUI;
 
 public class index extends MsgsEntryPoint
-    implements HistoryListener
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
     {
         return new Creator() {
-            public MsoyEntryPoint createEntryPoint () {
+            public Page createPage () {
                 return new index();
             }
         };
     }
 
-    // from interface HistoryListener
+    // @Override // from Page
     public void onHistoryChanged (String token)
     {
         // if we have no creds, just display a message saying login
         if (CMail.creds == null) {
             setContent(MsoyUI.createLabel(CMail.msgs.logon(), "infoLabel"));
+            _mainView = null;
             return;
         }
 
@@ -69,41 +67,19 @@ public class index extends MsgsEntryPoint
         _mainView.show(folderId, headerOffset, messageId);
     }
 
-    // @Override // from MsoyEntryPoint
+    // @Override // from Page
     protected String getPageId ()
     {
         return "mail";
     }
 
-    // @Override // from MsoyEntryPoint
+    // @Override // from Page
     protected void initContext ()
     {
         super.initContext();
 
         // load up our translation dictionaries
         CMail.msgs = (MailMessages)GWT.create(MailMessages.class);
-    }
-
-    // @Override // from MsoyEntryPoint
-    protected void onPageLoad ()
-    {
-        History.addHistoryListener(this);
-    }
-
-    // @Override from MsoyEntryPoint
-    protected boolean didLogon (WebCreds creds)
-    {
-        boolean header = super.didLogon(creds);
-        onHistoryChanged(History.getToken());
-        return header;
-    }
-
-    // @Override from MsoyEntryPoint
-    protected void didLogoff ()
-    {
-        super.didLogoff();
-        _mainView = null;
-        onHistoryChanged(null);
     }
 
     protected MailApplication _mainView;

@@ -89,6 +89,11 @@ public class GroupServlet extends MsoyServiceServlet
             detail.members = members;
             for (GroupMembershipRecord gmRec : MsoyServer.groupRepo.getMembers(groupId)) {
                 mRec = MsoyServer.memberRepo.loadMember(gmRec.memberId);
+                if (mRec == null) {
+                    log.warning("Group has non-existent member [groupId=" + groupId +
+                                ", memberId=" + gmRec.memberId + "].");
+                    continue;
+                }
                 GroupMembership membership = new GroupMembership();
                 // membership.group left null intentionally 
                 membership.member = mRec.getName();

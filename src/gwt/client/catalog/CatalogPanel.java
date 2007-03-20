@@ -50,7 +50,7 @@ public class CatalogPanel extends FlexTable
         setWidget(row, 0, new Label(CCatalog.msgs.catalogTitle()));
         getFlexCellFormatter().setStyleName(row, 0, "Title");
 
-        setWidget(row, 1, _typeTabs = new ItemTypePanel(this));
+        setWidget(row, 1, _typeTabs = new ItemTypePanel("catalog", this));
         getFlexCellFormatter().setStyleName(row++, 1, "Tabs");
 
         _items = new PagedGrid(ROWS, COLUMNS) {

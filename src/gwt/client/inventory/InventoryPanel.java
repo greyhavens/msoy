@@ -28,7 +28,7 @@ public class InventoryPanel extends FlexTable
 
         setWidget(0, 0, new Label(CInventory.msgs.inventoryTitle()));
         getFlexCellFormatter().setStyleName(0, 0, "Title");
-        setWidget(0, 1, _itemTabs = new ItemTypePanel(this));
+        setWidget(0, 1, _itemTabs = new ItemTypePanel("inventory", this));
         getFlexCellFormatter().setStyleName(0, 1, "Tabs");
         setWidget(1, 0, _itemPaneContainer = new SimplePanel());
         getFlexCellFormatter().setColSpan(1, 0, 2);

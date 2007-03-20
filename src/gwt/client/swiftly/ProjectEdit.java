@@ -28,7 +28,7 @@ import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.gwt.ui.InlineLabel;
 
-import client.shell.MsoyEntryPoint;
+import client.shell.Application;
 import client.util.BorderedDialog;
 import client.util.PromptPopup;
 
@@ -206,8 +206,8 @@ public class ProjectEdit extends BorderedDialog
     {
         // MenuBar(true) creates a vertical menu
         MenuBar menu = new MenuBar(true);
-        menu.addItem("<a href='" + MsoyEntryPoint.memberViewPath(name.getMemberId()) + "'>" +
-            CSwiftly.msgs.viewProfile() + "</a>", true, (Command)null);
+        menu.addItem(Application.createLinkHtml(CSwiftly.msgs.viewProfile(), "profile",
+                                                "" + name.getMemberId()), true, (Command)null);
         MenuItem remove = new MenuItem(CSwiftly.msgs.viewRemove(), new Command() {
             public void execute() {
                 (new PromptPopup(CSwiftly.msgs.viewRemovePrompt(name.toString(),

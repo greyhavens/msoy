@@ -1,6 +1,7 @@
 <module>
   <inherits name='shell'/>
-  <entry-point class='client.shell.EntryPointDispatcher'/>
+  <inherits name='com.google.gwt.xml.XML'/>
+  <entry-point class='client.shell.Application'/>
   <public path="public"/>
   <source path="client"/>
 </module>

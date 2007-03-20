@@ -19,7 +19,8 @@ import com.threerings.msoy.web.data.GroupMembership;
 
 import client.msgs.GroupInvite;
 import client.msgs.MailComposition;
-import client.shell.MsoyEntryPoint;
+import client.shell.Application;
+import client.shell.Page;
 
 /**
  * Displays a list of the groups of which a person is a member.
@@ -46,9 +47,8 @@ public class GroupsBlurb extends Blurb
         } else {
             for (int ii = 0, ll = blurbGroups.size(); ii < ll; ii++) {
                 GroupMembership group = (GroupMembership)blurbGroups.get(ii);
-                Anchor link = new Anchor(MsoyEntryPoint.groupViewPath(group.group.groupId),
-                    group.group.groupName);
-                _content.setWidget(ii, 0, link);
+                _content.setWidget(
+                    ii, 0, Application.groupViewLink(group.group.groupName, group.group.groupId));
             }
         }
         _invitationPanel = new SimplePanel();

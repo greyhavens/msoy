@@ -12,7 +12,7 @@ import client.item.ItemEntryPoint;
  */
 public abstract class EditemEntryPoint extends ItemEntryPoint
 {
-    // @Override // from MsoyEntryPoint
+    // @Override // from Page
     protected void initContext ()
     {
         super.initContext();

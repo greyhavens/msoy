@@ -10,7 +10,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.MemberName;
 
-import client.shell.MsoyEntryPoint;
+import client.shell.Application;
+import client.shell.Page;
 
 /**
  * Displays a creator's name with "by Foozle" where Foozle is a link to the creator's profile page.
@@ -33,8 +34,8 @@ public class CreatorLabel extends Widget
     public void setMember (MemberName name)
     {
         _name = name;
-        String ppage = MsoyEntryPoint.memberViewPath(_name.getMemberId());
-        DOM.setInnerHTML(_text, "<a href=\"" + ppage + "\">" + _name.toString() + "</a>");
+        DOM.setInnerHTML(_text, Application.createLinkHtml(
+                             _name.toString(), "profile", ""+ _name.getMemberId()));
     }
 
     protected MemberName _name;

@@ -11,14 +11,14 @@ import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.client.CatalogServiceAsync;
 
-import client.shell.MsoyEntryPoint;
+import client.shell.Page;
 
 /**
  * Configures {@link CItem} for item-derived pages.
  */
-public abstract class ItemEntryPoint extends MsoyEntryPoint
+public abstract class ItemEntryPoint extends Page
 {
-    // @Override // from MsoyEntryPoint
+    // @Override // from Page
     protected void initContext ()
     {
         super.initContext();

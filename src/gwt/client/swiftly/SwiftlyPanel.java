@@ -87,7 +87,7 @@ public class SwiftlyPanel extends VerticalPanel
 
     protected void updateProjectLink ()
     {
-        _projectLink.setTargetHistoryToken(String.valueOf(_project.projectId));
+        _projectLink.setTargetHistoryToken("swiftly;" + String.valueOf(_project.projectId));
         _projectLink.setText(_project.projectName);
     }
 

@@ -4,8 +4,6 @@
 package client.world;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
@@ -15,47 +13,40 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.shell.MsoyEntryPoint;
+import client.shell.Page;
 import client.util.FlashClients;
 import client.util.MsoyUI;
 
 /**
  * Handles the MetaSOY main page.
  */
-public class index extends MsoyEntryPoint
-    implements HistoryListener
+public class index extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
     {
         return new Creator() {
-            public MsoyEntryPoint createEntryPoint () {
+            public Page createPage () {
                 return new index();
             }
         };
     }
 
-    // from interface HistoryListener
+    // @Override // from Page
     public void onHistoryChanged (String token)
     {
         updateInterface(token);
     }
 
-    // @Override // from MsoyEntryPoint
+    // @Override // from Page
     protected boolean needsHeaderClient ()
     {
-        String token = History.getToken();
+        String token = getPageArgs();
         return (token.startsWith("ng") || token.startsWith("nm") || token.startsWith("p") ||
                 CWorld.creds == null);
     }
 
-    // @Override // from MsoyEntryPoint
-    protected void onPageLoad ()
-    {
-        History.addHistoryListener(this);
-    }
-
-    // @Override // from MsoyEntryPoint
+    // @Override // from Page
     protected void initContext ()
     {
         super.initContext();
@@ -64,20 +55,20 @@ public class index extends MsoyEntryPoint
         CWorld.msgs = (WorldMessages)GWT.create(WorldMessages.class);
     }
 
-    // @Override // from MsoyEntryPoint
+    // @Override // from Page
     protected boolean didLogon (WebCreds creds)
     {
-        super.didLogon(creds);
+        // super.didLogon(creds);
         clientLogon(creds.getMemberId(), creds.token);
-        return updateInterface(History.getToken());
+        return updateInterface(getPageArgs());
     }
 
-    // @Override // from MsoyEntryPoint
+    // @Override // from Page
     protected void didLogoff ()
     {
-        super.didLogoff();
+        // super.didLogoff();
         clientLogoff();
-        updateInterface(History.getToken());
+        updateInterface(getPageArgs());
     }
 
     protected boolean updateInterface (String token)
@@ -190,7 +181,7 @@ public class index extends MsoyEntryPoint
     {
         new Timer() {
             public void run() {
-                updateInterface(History.getToken());
+                updateInterface(getPageArgs());
             }
         }.schedule(NEIGHBORHOOD_REFRESH_TIME * 1000);
     }
@@ -242,7 +233,7 @@ public class index extends MsoyEntryPoint
         return Integer.valueOf(token.substring(index)).intValue();
     }
 
-    // @Override // from MsoyEntryPoint
+    // @Override // from Page
     protected String getPageId ()
     {
         return "world";

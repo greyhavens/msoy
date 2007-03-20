@@ -17,7 +17,7 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.MediaDesc;
 
-import client.shell.MsoyEntryPoint;
+import client.shell.Page;
 import client.util.BorderedDialog;
 import client.util.FlashClients;
 import client.util.ItemUtil;

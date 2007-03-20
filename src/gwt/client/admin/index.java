@@ -14,7 +14,7 @@ import com.threerings.msoy.web.data.WebCreds;
 
 import client.editem.EditemEntryPoint;
 import client.util.MsoyUI;
-import client.shell.MsoyEntryPoint;
+import client.shell.Page;
 
 /**
  * Displays an admin dashboard with various server status information and administrative
@@ -26,19 +26,29 @@ public class index extends EditemEntryPoint
     public static Creator getCreator ()
     {
         return new Creator() {
-            public MsoyEntryPoint createEntryPoint () {
+            public Page createPage () {
                 return new index();
             }
         };
     }
 
-    // @Override // from MsoyEntryPoint
+    // @Override from Page
+    public void onHistoryChanged (String token)
+    {
+        if (CAdmin.creds == null) {
+            setContent(MsoyUI.createLabel(CAdmin.msgs.indexLogon(), "infoLabel"));
+        } else {
+            displayDashboard();
+        }
+    }
+
+    // @Override // from Page
     protected String getPageId ()
     {
         return "admin";
     }
 
-    // @Override // from MsoyEntryPoint
+    // @Override // from Page
     protected void initContext ()
     {
         super.initContext();
@@ -49,27 +59,6 @@ public class index extends EditemEntryPoint
 
         // load up our translation dictionaries
         CAdmin.msgs = (AdminMessages)GWT.create(AdminMessages.class);
-    }
-
-    // @Override // from MsoyEntryPoint
-    protected void onPageLoad ()
-    {
-        // nothing to do here
-    }
-
-    // @Override // from MsoyEntryPoint
-    protected boolean didLogon (WebCreds creds)
-    {
-        boolean header = super.didLogon(creds);
-        displayDashboard();
-        return false; // TEMP: no header client as it conflicts with dashboard
-    }
-
-    // @Override // from MsoyEntryPoint
-    protected void didLogoff ()
-    {
-        super.didLogoff();
-        setContent(MsoyUI.createLabel(CAdmin.msgs.indexLogon(), "infoLabel"));
     }
 
     protected void displayDashboard ()

@@ -40,7 +40,7 @@ import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.MemberName;
 
-import client.shell.MsoyEntryPoint;
+import client.shell.Application;
 import client.util.MediaUtil;
 import client.util.PopupMenu;
 import client.util.PrettyTextPanel;
@@ -144,8 +144,8 @@ public class GroupView extends VerticalPanel
         InlineLabel byLabel = new InlineLabel(CGroup.msgs.viewBy());
         DOM.setStyleAttribute(byLabel.getElement(), "marginRight", "3px");
         creatorPanel.add(byLabel);
-        creatorPanel.add(new Anchor(MsoyEntryPoint.memberViewPath(  
-            _detail.creator.getMemberId()), _detail.creator.toString()));
+        creatorPanel.add(Application.memberViewLink(_detail.creator.toString(),
+                                                    _detail.creator.getMemberId()));
         established.add(creatorPanel);
         infoPanel.add(established);
         InlineLabel policy = new InlineLabel(getPolicyName(_group.policy));
@@ -295,8 +295,7 @@ public class GroupView extends VerticalPanel
                 });
                 peoplePanel.add(person);
             } else {
-                peoplePanel.add(new Anchor(MsoyEntryPoint.memberViewPath(
-                    name.getMemberId()), name.toString()));
+                peoplePanel.add(Application.memberViewLink(name.toString(), name.getMemberId()));
             }
         }
         people.setWidget(0, 1, managers);
@@ -379,7 +378,7 @@ public class GroupView extends VerticalPanel
                         Iterator i = ((Collection) result).iterator();
                         while (i.hasNext()) {
                             String tag = (String)i.next();
-                            Hyperlink tagLink = new Hyperlink(tag, "tag=" + tag);
+                            Hyperlink tagLink = Application.createLink(tag, "group", "tag=" + tag);
                             DOM.setStyleAttribute(tagLink.getElement(), "display", "inline");
                             tags.add(tagLink);
                             if (i.hasNext()) {
@@ -438,13 +437,13 @@ public class GroupView extends VerticalPanel
     /**
      * Get the menus for use by managers when perusing the members of their group.
      */
-    protected MenuBar getManagerMenuBar(final GroupMembership membership, final PopupPanel parent) 
+    protected MenuBar getManagerMenuBar (final GroupMembership membership, final PopupPanel parent) 
     {
         // MenuBar(true) creates a vertical menu
         MenuBar menu = new MenuBar(true);
-        menu.addItem("<a href='" + MsoyEntryPoint.memberViewPath(
-            membership.member.getMemberId()) + "'>" + CGroup.msgs.viewViewProfile() + "</a>", true, 
-            (Command)null);
+        menu.addItem(Application.createLinkHtml(CGroup.msgs.viewViewProfile(), "profile",
+                                                "" + membership.member.getMemberId()),
+                     true, (Command)null);
         MenuItem promote = new MenuItem(CGroup.msgs.viewPromote(), new Command() {
             public void execute() {
                 (new PromptPopup(CGroup.msgs.viewPromotePrompt(membership.member.toString())) {

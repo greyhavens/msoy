@@ -37,6 +37,7 @@ import com.threerings.msoy.web.data.MemberName;
 import client.msgs.MailComposition;
 import client.msgs.MailPayloadDisplay;
 import client.msgs.MailUpdateListener;
+import client.shell.Application;
 import client.util.BorderedWidget;
 
 /**
@@ -397,7 +398,7 @@ public class MailApplication extends DockPanel
             if (folder.unreadCount > 0) {
                 name += " (" + folder.unreadCount + ")";
             }
-            Hyperlink link = new Hyperlink(name, "f" + folder.folderId);
+            Hyperlink link = Application.createLink(name, "mail", "f" + folder.folderId);
             link.setStyleName("Folder");
             if (folder.unreadCount > 0) {
                 link.addStyleName("Folder-unread");
@@ -487,8 +488,9 @@ public class MailApplication extends DockPanel
             _checkboxes.add(cBox);
 
             // next, the subject line, the only variable-width element in the row
-            Widget link = new Hyperlink(headers.subject, "f" + _currentFolder + "." +
-                _currentOffset + "." + headers.messageId);
+            Widget link = Application.createLink(
+                headers.subject, "mail",
+                "f" + _currentFolder + "." + _currentOffset + "." + headers.messageId);
             link.setStyleName("Subject");
             rows.setWidget(rowCnt, 1, link);
 //            headerRows.getFlexCellFormatter().setWidth(row, 1, "100%");

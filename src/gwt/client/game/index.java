@@ -4,8 +4,6 @@
 package client.game;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
@@ -15,7 +13,7 @@ import com.threerings.msoy.web.client.GameServiceAsync;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.shell.MsoyEntryPoint;
+import client.shell.Page;
 import client.util.MsoyUI;
 
 /**
@@ -23,20 +21,26 @@ import client.util.MsoyUI;
  * single player the game is shown, if it's multiplayer the lobby is first
  * shown where the player can find opponents against which to play.
  */
-public class index extends MsoyEntryPoint
-    implements HistoryListener
+public class index extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
     {
         return new Creator() {
-            public MsoyEntryPoint createEntryPoint () {
+            public Page createPage () {
                 return new index();
             }
         };
     }
 
-    // from interface HistoryListener
+    // @Override from Page
+    public void onPageLoad ()
+    {
+        super.onPageLoad();
+        needPopupHack = true;
+    }
+
+    // @Override from Page
     public void onHistoryChanged (String token)
     {
         // if we're not a dev deployment, disallow guests
@@ -52,13 +56,13 @@ public class index extends MsoyEntryPoint
         }
     }
 
-    // @Override // from MsoyEntryPoint
+    // @Override // from Page
     protected String getPageId ()
     {
         return "game";
     }
 
-    // @Override // from MsoyEntryPoint
+    // @Override // from Page
     protected void initContext ()
     {
         super.initContext();
@@ -69,28 +73,6 @@ public class index extends MsoyEntryPoint
 
         // load up our translation dictionaries
         CGame.msgs = (GameMessages)GWT.create(GameMessages.class);
-    }
-
-    // @Override from MsoyEntryPoint
-    protected void onPageLoad ()
-    {
-        needPopupHack = true;
-        History.addHistoryListener(this);
-    }
-
-    // @Override from MsoyEntryPoint
-    protected boolean didLogon (WebCreds creds)
-    {
-        super.didLogon(creds);
-        onHistoryChanged(History.getToken());
-        return false;
-    }
-
-    // @Override from MsoyEntryPoint
-    protected void didLogoff ()
-    {
-        super.didLogoff();
-        onHistoryChanged(History.getToken());
     }
 
     protected void displayGamePage (int gameId)

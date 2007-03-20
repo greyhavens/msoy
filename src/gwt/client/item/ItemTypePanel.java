@@ -14,6 +14,8 @@ import com.google.gwt.user.client.ui.TabListener;
 
 import com.threerings.msoy.item.web.Item;
 
+import client.shell.Application;
+
 /**
  * Displays an item type selection tab bar. The tabs are designed to work with the history system,
  * meaning they use {@link Hyperlink} to switch the browser's URL and expect the containing
@@ -22,11 +24,12 @@ import com.threerings.msoy.item.web.Item;
 public class ItemTypePanel extends FlexTable
     implements SourcesTabEvents
 {
-    public ItemTypePanel (TabListener listener)
+    public ItemTypePanel (String page, TabListener listener)
     {
         setStyleName("itemTypePanel");
         setCellPadding(0);
         setCellSpacing(0);
+        _page = page;
         _selectedType = -1;
         addTabListener(listener);
         redrawPanel();
@@ -100,12 +103,15 @@ public class ItemTypePanel extends FlexTable
             }
         }
         String name = CItem.dmsgs.getString("pItemType" + itemType);
-        Hyperlink button = new Hyperlink(name, ""+itemType);
+        Hyperlink button = Application.createLink(name, _page, ""+itemType);
         button.setStyleName("Button");
         getFlexCellFormatter().setStyleName(0, _column, prefix + "Tab");
         setWidget(0, _column++, button);
         _rightBit = prefix + "Right";
     }
+
+    /** The page on which we're operating. */
+    protected String _page;
 
     /** A list of objects that want to know about our tab events. */
     protected List _listeners = new ArrayList();

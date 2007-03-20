@@ -14,17 +14,17 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.EnterClickAdapter;
-import com.threerings.gwt.ui.Hyperlink;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
@@ -32,6 +32,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.web.data.Group;
 
+import client.shell.Application;
 import client.util.MediaUtil;
 
 /**
@@ -133,7 +134,7 @@ public class GroupList extends VerticalPanel
                 } else {
                     while (iter.hasNext()) {
                         final String tag = (String)iter.next();
-                        Hyperlink tagLink = new Hyperlink(tag, "tag=" + tag);
+                        Hyperlink tagLink = Application.createLink(tag, "group", "tag=" + tag);
                         DOM.setStyleAttribute(tagLink.getElement(), "display", "inline");
                         _popularTagsContainer.add(tagLink);
                         if (iter.hasNext()) {
@@ -162,7 +163,8 @@ public class GroupList extends VerticalPanel
                     DOM.setStyleAttribute(tagLabel.getElement(), "fontWeight", "bold");
                     _currentTagContainer.add(tagLabel);
                     _currentTagContainer.add(new InlineLabel("("));
-                    Hyperlink clearLink = new Hyperlink(CGroup.msgs.listTagClear(), "list");
+                    Hyperlink clearLink = Application.createLink(
+                        CGroup.msgs.listTagClear(), "group", "");
                     DOM.setStyleAttribute(clearLink.getElement(), "display", "inline");
                     _currentTagContainer.add(clearLink);
                     _currentTagContainer.add(new InlineLabel(")"));
@@ -217,7 +219,7 @@ public class GroupList extends VerticalPanel
             getFlexCellFormatter().setRowSpan(0, 0, 2);
 
             FlowPanel titleLine = new FlowPanel();
-            Hyperlink title = new Hyperlink(group.name, "" + group.groupId);
+            Hyperlink title = Application.createLink(group.name, "group", "" + group.groupId);
             title.addStyleName("Title");
             titleLine.add(title);
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");

@@ -21,7 +21,7 @@ public class PopupImplMozilla extends PopupImpl
     }-*/;
 
     public native void onShow (Element popup) /*-{
-        if (!@client.shell.MsoyEntryPoint::needPopupHack) {
+        if (!@client.shell.Page::needPopupHack) {
             return;
         }
 

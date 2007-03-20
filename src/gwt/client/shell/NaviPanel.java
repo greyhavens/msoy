@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -27,12 +28,11 @@ import client.util.MsoyUI;
  */
 public class NaviPanel extends FlexTable
 {
-    public NaviPanel (String page, StatusPanel status)
+    public NaviPanel (StatusPanel status)
     {
         setStyleName("naviPanel");
         setCellPadding(0);
         setCellSpacing(0);
-
         _status = status;
     }
 
@@ -47,10 +47,10 @@ public class NaviPanel extends FlexTable
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 menu.setAutoOpen(true);
-                addLink(menu, "/profile/index.html", "Profile");
-                addLink(menu, "/mail/index.html", "Mail");
+                addLink(menu, "Profile", "profile", "");
+                addLink(menu, "Mail", "mail", "");
                 if (CShell.creds.isSupport) {
-                    addLink(menu, "/admin/index.html", "Admin");
+                    addLink(menu, "Admin", "admin", "");
                 }
                 menu.addItem("Account", true, new Command() {
                     public void execute () {
@@ -71,18 +71,19 @@ public class NaviPanel extends FlexTable
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 menu.setAutoOpen(true);
-                addLink(menu, "/world/index.html#m" + creds.getMemberId(), "My Home");
+                addLink(menu, "My Home", "world", "m" + creds.getMemberId());
                 FriendEntry[] friends = FlashClients.getFriends();
                 if (friends.length > 0) {
                     MenuBar fmenu = new MenuBar(true);
                     for (int ii = 0; ii < friends.length; ii++) {
-                        addLink(fmenu, "/world/index.html#m" + friends[ii].name.getMemberId(),
-                                (friends[ii].online ? "* " : "") + friends[ii].name + "'s Home");
+                        String prefix = (friends[ii].online ? "* " : "");
+                        addLink(fmenu, prefix + friends[ii].name + "'s Home", "world",
+                                "m" + friends[ii].name.getMemberId());
                     }
                     menu.addItem("Friends' Homes", fmenu);
                 }
-                addLink(menu, "/world/index.html#nm" + creds.getMemberId(), "My Neighborhood");
-                addLink(menu, "/world/index.html#p", "Popular Spots");
+                addLink(menu, "My Neighborhood", "world", "nm" + creds.getMemberId());
+                addLink(menu, "Popular Spots", "world", "p");
                 // TODO: bank/alchemist
                 popupMenu(sender, menu);
             }
@@ -91,14 +92,14 @@ public class NaviPanel extends FlexTable
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 menu.setAutoOpen(true);
-                addLink(menu, "/group/index.html", "Groups");
-                addLink(menu, "http://forums.whirled.com/", "Forums");
+                addLink(menu, "Groups", "group", "");
+                addLink(menu, "Forums", "http://forums.whirled.com/");
                 FriendEntry[] friends = FlashClients.getFriends();
                 if (friends.length > 0) {
                     MenuBar fmenu = new MenuBar(true);
                     for (int ii = 0; ii < friends.length; ii++) {
-                        addLink(fmenu, "/profile/index.html#" + friends[ii].name.getMemberId(),
-                                (friends[ii].online ? "* " : "") + friends[ii].name);
+                        addLink(fmenu, (friends[ii].online ? "* " : "") + friends[ii].name,
+                                "profile", "" + friends[ii].name.getMemberId());
                     }
                     menu.addItem("Friends", fmenu);
                 } // TODO: add "invite" link if no friends?
@@ -109,9 +110,9 @@ public class NaviPanel extends FlexTable
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 menu.setAutoOpen(true);
-                addLink(menu, "/inventory/index.html", "Inventory");
-                addLink(menu, "/catalog/index.html", "Catalog");
-                addLink(menu, "http://wiki.whirled.com/", "Wiki");
+                addLink(menu, "Inventory", "inventory", "");
+                addLink(menu, "Catalog", "catalog", "");
+                addLink(menu, "Wiki", "http://wiki.whirled.com/");
                 // TODO: bank/alchemist
                 popupMenu(sender, menu);
             }
@@ -120,8 +121,8 @@ public class NaviPanel extends FlexTable
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 menu.setAutoOpen(true);
-                addLink(menu, "/inventory/index.html#4", "My Games");
-                addLink(menu, "/catalog/index.html#4", "Browse");
+                addLink(menu, "My Games", "inventory", "" + Item.GAME);
+                addLink(menu, "Browse", "catalog", "" + Item.GAME);
                 // TODO: popular games
                 popupMenu(sender, menu);
             }
@@ -142,28 +143,28 @@ public class NaviPanel extends FlexTable
         setMenu(menuidx++, "Places", CShell.cmsgs.menuPlaces(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
-                addLink(menu, "/world/index.html#p", "Popular Spots");
+                addLink(menu, "Popular Spots", "world", "p");
                 popupMenu(sender, menu);
             }
         });
         setMenu(menuidx++, "People", CShell.cmsgs.menuPeople(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
-                addLink(menu, "/group/index.html", "Groups");
+                addLink(menu, "Groups", "group", "");
                 popupMenu(sender, menu);
             }
         });
         setMenu(menuidx++, "Stuff", CShell.cmsgs.menuStuff(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
-                addLink(menu, "/catalog/index.html", "Catalog");
+                addLink(menu, "Catalog", "catalog", "");
                 popupMenu(sender, menu);
             }
         });
         setMenu(menuidx++, "Games", CShell.cmsgs.menuGames(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
-                addLink(menu, "/catalog/index.html#4", "Browse");
+                addLink(menu, "Browse", "catalog", "" + Item.GAME);
                 // TODO: popular games
                 popupMenu(sender, menu);
             }
@@ -179,7 +180,16 @@ public class NaviPanel extends FlexTable
         getFlexCellFormatter().setStyleName(0, menuidx, ident);
     }
 
-    protected void addLink (MenuBar menu, String href, String text)
+    protected void addLink (MenuBar menu, String text, String page, String args)
+    {
+        menu.addItem(Application.createLinkHtml(text, page, args), true, new Command() {
+            public void execute () {
+                _popped.hide();
+            }
+        });
+    }
+
+    protected void addLink (MenuBar menu, String text, String href)
     {
         menu.addItem("<a href=\"" + href + "\">" + text + "</a>", true, new Command() {
             public void execute () {

@@ -129,10 +129,6 @@
 
   <!-- runs the GWT debugging shell -->
   <target name="gshell">
-    <fail unless="page">
-      Please specify a page: ant -Dpage=inventory gshell
-    </fail>
-
     <available property="gwtdir.present" file="lib/gwt"/>
     <fail message="You must symlink 'lib/gwt' to a current GWT distribution."
           unless="gwtdir.present"/>
@@ -158,7 +154,7 @@
         <arg value="${http_port}"/>
         <arg value="-out"/>
         <arg value="${gwtout.dir}"/>
-        <arg value="${page}/index.html"/>
+        <arg value="msoy/index.html"/>
       </java>
     </then><else>
       <java classpathref="gwt.classpath" fork="true" maxmemory="256M"
@@ -168,7 +164,7 @@
         <arg value="${http_port}"/>
         <arg value="-out"/>
         <arg value="${gwtout.dir}"/>
-        <arg value="${page}/index.html"/>
+        <arg value="msoy/index.html"/>
       </java>
     </else></if>
   </target>
@@ -224,7 +220,7 @@
   </target>
 
   <!-- builds our GWT web client -->
-  <property name="pages" value="admin,catalog,game,group,inventory,mail,profile,swiftly,world"/>
+  <property name="pages" value="msoy"/>
   <target name="gclient" depends="jprepare">
     <for list="${pages}" param="page"><sequential>
       <echo>Compiling @{page} module...</echo>
@@ -274,9 +270,11 @@
           <isset property="has.errors"/>
         </or></condition>
       </fail>
-    <var name="gwt.result" unset="true"/>
-    <var name="redirector.out" unset="true"/>
-    <var name="has.errors" unset="true"/>
+
+      <!-- clear out some variables -->
+      <var name="gwt.result" unset="true"/>
+      <var name="redirector.out" unset="true"/>
+      <var name="has.errors" unset="true"/>
     </sequential></for>
   </target>
 

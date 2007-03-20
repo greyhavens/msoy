@@ -4,8 +4,6 @@
 package client.inventory;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.msoy.item.web.Item;
@@ -13,44 +11,37 @@ import com.threerings.msoy.web.data.WebCreds;
 
 import client.editem.EditemEntryPoint;
 import client.item.ItemEntryPoint;
-import client.shell.MsoyEntryPoint;
+import client.shell.Page;
 import client.util.MsoyUI;
 
 /**
  * Handles the MetaSOY inventory application.
  */
 public class index extends EditemEntryPoint
-    implements HistoryListener
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
     {
         return new Creator() {
-            public MsoyEntryPoint createEntryPoint () {
+            public Page createPage () {
                 return new index();
             }
         };
     }
 
-    // from interface HistoryListener
+    // @Override from Page
     public void onHistoryChanged (String token)
     {
         updateInterface(token);
     }
 
-    // @Override // from MsoyEntryPoint
+    // @Override // from Page
     protected String getPageId ()
     {
         return "inventory";
     }
 
-    // @Override from MsoyEntryPoint
-    protected void onPageLoad ()
-    {
-        History.addHistoryListener(this);
-    }
-
-    // @Override // from MsoyEntryPoint
+    // @Override // from Page
     protected void initContext ()
     {
         super.initContext();
@@ -59,22 +50,7 @@ public class index extends EditemEntryPoint
         CInventory.msgs = (InventoryMessages)GWT.create(InventoryMessages.class);
     }
 
-    // @Override from MsoyEntryPoint
-    protected boolean didLogon (WebCreds creds)
-    {
-        boolean header = super.didLogon(creds);
-        updateInterface(History.getToken());
-        return header;
-    }
-
-    // @Override from MsoyEntryPoint
-    protected void didLogoff ()
-    {
-        super.didLogoff();
-        updateInterface(null);
-    }
-
-    protected void updateInterface (String historyToken)
+    protected void updateInterface (String args)
     {
         if (CInventory.creds == null) {
             // if we have no creds, just display a message saying login
@@ -87,8 +63,8 @@ public class index extends EditemEntryPoint
             }
             byte type = Item.AVATAR;
             try {
-                if (historyToken != null) {
-                    type = Byte.parseByte(historyToken);
+                if (args != null) {
+                    type = Byte.parseByte(args);
                 }
             } catch (Exception e) {
                 // whatever, just show the default

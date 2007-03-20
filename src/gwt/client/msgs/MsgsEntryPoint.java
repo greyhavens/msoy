@@ -15,14 +15,14 @@ import com.threerings.msoy.web.client.MailServiceAsync;
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.client.ProfileServiceAsync;
 
-import client.shell.MsoyEntryPoint;
+import client.shell.Page;
 
 /**
  * Configures our {@link CMsgs} for msgs-derived pages.
  */
-public abstract class MsgsEntryPoint extends MsoyEntryPoint
+public abstract class MsgsEntryPoint extends Page
 {
-    // @Override // from MsoyEntryPoint
+    // @Override // from Page
     protected void initContext ()
     {
         super.initContext();

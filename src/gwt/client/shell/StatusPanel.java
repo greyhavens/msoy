@@ -34,12 +34,11 @@ import client.util.MsoyUI;
  */
 public class StatusPanel extends FlexTable
 {
-    public StatusPanel (MsoyEntryPoint app)
+    public StatusPanel (Application app)
     {
         setStyleName("statusPanel");
         setCellPadding(0);
         setCellSpacing(0);
-
         _app = app;
     }
 
@@ -307,7 +306,7 @@ public class StatusPanel extends FlexTable
        }
     }-*/;
 
-    protected MsoyEntryPoint _app;
+    protected Application _app;
     protected WebCreds _creds;
 
     protected int _flowIdx, _goldIdx, _levelIdx;
