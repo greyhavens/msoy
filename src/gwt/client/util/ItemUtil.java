@@ -3,13 +3,14 @@
 
 package client.util;
 
-import client.shell.CShell;
-
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
+
+import client.shell.Application;
+import client.shell.CShell;
 
 /**
  * Contains utility methods for item related user interface business.
@@ -44,7 +45,8 @@ public class ItemUtil
      */
     public static String getDescription (Item item)
     {
-        return (item.description.trim().length() == 0) ? CShell.cmsgs.noDescrip() : item.description;
+        return (item.description.trim().length() == 0) ?
+            CShell.cmsgs.noDescrip() : item.description;
     }
 
     /**
@@ -54,8 +56,8 @@ public class ItemUtil
     public static void addItemSpecificControls (Item item, Panel panel)
     {
         if (item instanceof Game) {
-            panel.add(new HTML("<a href=\"/game/index.html#" + item.getPrototypeId() + "\">" +
-                               CShell.cmsgs.detailPlay() + "</a>"));
+            panel.add(new HTML(Application.createLinkHtml(CShell.cmsgs.detailPlay(), "game",
+                                                          "" + item.getPrototypeId())));
         }
     }
 }
