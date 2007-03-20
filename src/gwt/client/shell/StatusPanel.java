@@ -160,16 +160,10 @@ public class StatusPanel extends FlexTable
         _creds = creds;
         setCookie("creds", _creds.token);
         setCookie("who", _creds.accountName);
-        boolean needHeaderClient = _app.didLogon(_creds);
+        _app.didLogon(_creds);
 
         reset();
         int idx = 0;
-
-        // create the header Flash client if we don't have a real client on the page
-        if (needHeaderClient) {
-            getFlexCellFormatter().setWidth(0, idx, "10px");
-            setWidget(0, idx++, FlashClients.createHeaderClient(_creds.token));
-        }
 
         setText(0, idx++, _creds.name + ":");
 

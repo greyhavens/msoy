@@ -89,6 +89,7 @@ public abstract class Page
      */
     protected void setContent (Widget content)
     {
+        WorldClient.minimize();
         RootPanel.get("content").clear();
         RootPanel.get("content").add(content);
     }
@@ -96,14 +97,11 @@ public abstract class Page
     /**
      * Called when we the player logs on while viewing this page. The default implementation
      * redisplays the current page with the current args (by calling {@link #onHistoryChanged}.
-     *
-     * @return true if we need a headless header Flash client, false if the page is providing a
-     * Flash client for us.
      */
-    protected boolean didLogon (WebCreds creds)
+    protected void didLogon (WebCreds creds)
     {
+        WorldClient.didLogon(creds);
         onHistoryChanged(getPageArgs());
-        return GWT.isScript();
     }
 
     /**
@@ -112,6 +110,7 @@ public abstract class Page
      */
     protected void didLogoff ()
     {
+        WorldClient.didLogoff();
         onHistoryChanged(getPageArgs());
     }
 }
