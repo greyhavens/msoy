@@ -92,6 +92,14 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
+     * Retrieve the room decor.
+     */
+    public DecorData getDecorData ()
+    {
+        return _model.decorData;
+    }
+    
+    /**
      * Add the specified furniture to the scene.
      */
     public void addFurni (FurniData furn)

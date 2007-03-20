@@ -39,6 +39,7 @@ import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomView;
 
+import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -367,15 +368,34 @@ public class EditorPanel extends VBox
         _sceneModel.sceneType = (bgItem == null) ? Decor.DRAWN_ROOM
                                             : Decor.IMAGE_OVERLAY;
 
-        // for now, just clobber room data with decor data (FIXME ROBERT)
+        // for now, just clobber room dimensions with decor data dimensions
         var decor :Decor = bgItem as Decor;
         if (decor != null) {
-            _sceneModel.width = decor.width;
-            _sceneModel.depth = decor.depth;
-            _ctrl.sceneModelUpdated();
 
-            _width.text = String(decor.width);
-            _depth.text = String(decor.depth);
+            var dd :DecorData = _sceneModel.decorData;
+            
+            // populate furni attributes
+            dd.itemId = decor.itemId;
+            dd.media = decor.furniMedia;
+            dd.actionType = FurniData.BACKGROUND;
+            dd.loc = new MsoyLocation(.5, 0, 0, 0); // center, up front
+            
+            // populate decor attributes
+            dd.type = decor.type;
+            dd.height = decor.height;
+            dd.width = decor.width;
+            dd.depth = decor.depth;
+            dd.horizon = decor.horizon;
+
+            // clobber scene model parameters
+            _sceneModel.width = dd.width;
+            _sceneModel.depth = dd.depth;
+            _sceneModel.horizon = dd.horizon;
+            
+            _width.text = String(dd.width);
+            _depth.text = String(dd.depth);
+            _horizon.value = dd.horizon;
+            _ctrl.setBackground(dd);
         }
     }
 

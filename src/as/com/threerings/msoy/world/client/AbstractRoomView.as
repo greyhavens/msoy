@@ -36,6 +36,7 @@ import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Decor;
+import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -116,6 +117,10 @@ public class AbstractRoomView extends Sprite
     {
         _editing = editing;
         _furni.forEach(spriteVisitFn);
+        
+        if (_bg != null) {
+            spriteVisitFn(null, _bg);
+        }
 
         if (editing) {
 
@@ -297,6 +302,33 @@ public class AbstractRoomView extends Sprite
     }
 
     /**
+     * Sets the background sprite. If the data value is null, simply removes the old one.
+     * Note: this 
+     */
+    public function setBackground (decordata :DecorData) :void
+    {
+        if (_bg != null) {
+            removeSprite(_bg); 
+            _bg = null;
+        }
+        if (decordata != null) {
+            _bg = _ctx.getMediaDirector().getDecor(decordata);
+            addChild(_bg);
+            setChildIndex(_bg, 0);
+            _bg.setLocation(new MsoyLocation(.5, 0, 0)); // center, up front
+            _bg.setEditing(_editing);
+        }
+    }
+
+    /**
+     * Retrieves the background sprite, if any.
+     */
+    public function getBackground () :DecorSprite
+    {
+        return _bg;
+    }
+    
+    /**
      * Calculate the info needed to perspectivize a piece of furni.
      */
     public function getPerspInfo (sprite :MsoySprite, contentWidth :int, contentHeight :int,
@@ -372,10 +404,24 @@ public class AbstractRoomView extends Sprite
         relayout();
     }
 
+    /**
+     * Updates the background sprite, in case background data had changed.
+     */
+    public function updateBackground () :void
+    {
+        var data :DecorData = _scene.getDecorData();
+        if (_bg != null && data != null && data.itemId != 0)
+        {
+            _bg.update(data);
+        }
+    }
+
+    /**
+     * Updates background and furniture sprites from their data objects.
+     */
     public function updateAllFurni () :void
     {
         if (shouldLoadAll()) {
-            // set up any furniture
             for each (var furni :FurniData in _scene.getFurni()) {
                 if (!furni.media.isAudio()) {
                     updateFurni(furni);
@@ -439,8 +485,8 @@ public class AbstractRoomView extends Sprite
 
     protected function scrollRectUpdated () :void
     {
-        if (_bkg != null && _scene.getSceneType() == Decor.FIXED_IMAGE) {
-            locationUpdated(_bkg);
+        if (_bg != null && _scene.getSceneType() == Decor.FIXED_IMAGE) {
+            locationUpdated(_bg);
         }
     }
 
@@ -456,7 +502,7 @@ public class AbstractRoomView extends Sprite
 
         var p :Point = projectedLocation(scale, loc.x, loc.y);
         var hotSpot :Point = sprite.getLayoutHotSpot();
-        if (sprite == _bkg && _scene.getSceneType() == Decor.FIXED_IMAGE) {
+        if (sprite == _bg && _scene.getSceneType() == Decor.FIXED_IMAGE) {
             // adjust the background image
             p.x += getScrollOffset();
         }
@@ -539,7 +585,7 @@ public class AbstractRoomView extends Sprite
     protected function setActive (map :HashMap, active :Boolean) :void
     {
         for each (var sprite :MsoySprite in map.values()) {
-            if (sprite != _bkg) {
+            if (sprite != _bg) {
                 sprite.setActive(active);
             }
         }
@@ -562,7 +608,6 @@ public class AbstractRoomView extends Sprite
         addChild(sprite);
         sprite.setLocation(furni.loc);
         _furni.put(furni.id, sprite);
-        checkIsBackground(sprite);
         return sprite;
     }
 
@@ -571,22 +616,8 @@ public class AbstractRoomView extends Sprite
         var sprite :FurniSprite = (_furni.get(furni.id) as FurniSprite);
         if (sprite != null) {
             sprite.update(furni);
-            checkIsBackground(sprite);
-
         } else {
             addFurni(furni);
-        }
-    }
-
-    protected function checkIsBackground (sprite :FurniSprite) :void
-    {
-        if (sprite.isBackground()) {
-            _bkg = sprite;
-            setChildIndex(_bkg, 0);
-            locationUpdated(sprite);
-
-        } else if (sprite == _bkg) {
-            _bkg = null;
         }
     }
 
@@ -597,10 +628,6 @@ public class AbstractRoomView extends Sprite
     {
         removeChild(sprite);
         _ctx.getMediaDirector().returnSprite(sprite);
-
-        if (sprite == _bkg) {
-            _bkg = null;
-        }
     }
 
     protected function updateDrawnRoom () :void
@@ -709,7 +736,7 @@ public class AbstractRoomView extends Sprite
     protected var _roomObj :RoomObject;
 
     /** Our background sprite, if any. */
-    protected var _bkg :FurniSprite;
+    protected var _bg :DecorSprite;
 
     /** A map of id -> Furni. */
     protected var _furni :HashMap = new HashMap();

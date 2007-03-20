@@ -65,6 +65,7 @@ import com.threerings.msoy.chat.client.ChatInfoProvider;
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.ComicOverlay;
 
+import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemoryEntry;
@@ -205,10 +206,10 @@ public class RoomView extends AbstractRoomView
     {
         var sprite :MsoySprite = _ctrl.getHitSprite(stage.mouseX, stage.mouseY, true);
         if (sprite == null) {
-            if (_bkg == null) {
+            if (_bg == null) {
                 return;
             } else {
-                sprite = _bkg;
+                sprite = _bg;
             }
         }
         var ident :ItemIdent = sprite.getItemIdent();
@@ -230,7 +231,8 @@ public class RoomView extends AbstractRoomView
             }
 
         } else if (update is SceneAttrsUpdate) {
-            rereadScene(); // re-read our scene and that's it
+            rereadScene(); // re-read our scene
+            updateBackground();
             return;
 
         } else {
@@ -431,11 +433,18 @@ public class RoomView extends AbstractRoomView
         portalTraversed(getMyCurrentLocation(), true);
 
         // now load the background image first
-        var background :FurniData = _scene.getBackground();
-        if (background == null) {
-            backgroundFinishedLoading();
+        var decordata :DecorData = _scene.getDecorData();
+        if (decordata != null && decordata.itemId != 0) {
+            setBackground(decordata);
+            _bg.setLoadedCallback(backgroundFinishedLoading);
         } else {
-            addFurni(background).setLoadedCallback(backgroundFinishedLoading);
+            // try legacy background image support
+            var background :FurniData = _scene.getBackgroundFurniture();
+            if (background != null) {
+                addFurni(background).setLoadedCallback(backgroundFinishedLoading);
+            } else {
+                backgroundFinishedLoading();
+            }
         }
 
         _chatOverlayWatcher = BindingUtils.bindSetter(recheckChatOverlay,
@@ -476,7 +485,7 @@ public class RoomView extends AbstractRoomView
 
         // if we moved the _centerSprite, possibly update the scroll position
         if (sprite == _centerSprite &&
-            ((sprite != _bkg) || _scene.getSceneType() != Decor.FIXED_IMAGE)) {
+            ((sprite != _bg) || _scene.getSceneType() != Decor.FIXED_IMAGE)) {
             scrollView();
         }
     }

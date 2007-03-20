@@ -31,17 +31,20 @@ import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.item.client.InventoryPicker;
 import com.threerings.msoy.item.web.Audio;
+import com.threerings.msoy.item.web.Decor;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.world.client.ClickLocation;
+import com.threerings.msoy.world.client.DecorSprite;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomDragHandler;
 import com.threerings.msoy.world.client.RoomView;
 
+import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -81,6 +84,10 @@ public class EditorController extends Controller
         _entranceSprite.setLocation(editModel.entrance);
         enableEditingVisitor(null, _entranceSprite);
         _roomView.addOtherSprite(_entranceSprite);
+
+        if (_roomView.getBackground() != null) {
+            _previousBackgroundData = _roomView.getBackground().getDecorData();
+        }
 
         _roomView.setEditing(true, enableEditingVisitor);
 
@@ -124,6 +131,8 @@ public class EditorController extends Controller
         for each (sprite in _removedSprites) {
             _roomView.addChild(sprite);
         }
+
+        _roomView.setBackground(_previousBackgroundData);
         _roomView.removeOtherSprite(_entranceSprite);
 
         _ctx.getTopPanel().clearSidePanel(_panel);
@@ -144,7 +153,9 @@ public class EditorController extends Controller
                     (editModel.depth != origModel.depth) ||
                     (editModel.width != origModel.width) ||
                     (editModel.horizon != origModel.horizon) ||
-                    (!Util.equals(_entranceSprite.loc, origModel.entrance))) {
+                    (editModel.decorData.itemId != origModel.decorData.itemId) || 
+                    (!Util.equals(_entranceSprite.loc, origModel.entrance)))
+            {
                 var attrUpdate :SceneAttrsUpdate = new SceneAttrsUpdate();
                 attrUpdate.init(sceneId, version++);
 
@@ -154,6 +165,10 @@ public class EditorController extends Controller
                 attrUpdate.width = editModel.width;
                 attrUpdate.horizon = editModel.horizon;
                 attrUpdate.entrance = _entranceSprite.loc;
+                // the server should validate this decor data entry, because otherwise
+                // rogue clients will be able to specify any decor items, even if the player
+                // doesn't own it. FIXME ROBERT
+                attrUpdate.decorData = (editModel.decorData.clone() as DecorData);
                 edits.push(attrUpdate);
             }
 
@@ -347,6 +362,15 @@ try {
         endEditing(false);
     }
 
+    /**
+     * Called by the panel, to specify a new background sprite for preview.
+     */
+    public function setBackground (decordata :DecorData) :void
+    {
+        _roomView.setBackground(decordata);
+        sceneModelUpdated();
+    }
+   
     /**
      * Called by our panel to notify us that the scene model has changed.
      */
@@ -878,6 +902,9 @@ try {
 
     protected var _addedSprites :Array = new Array();
     protected var _removedSprites :Array = new Array();
+
+    /** Definition of the previous background in this scene. */
+    protected var _previousBackgroundData :DecorData;
 
     /** True if we want to center on the sprite during positioning. */
     protected var _centering :Boolean;

@@ -31,6 +31,9 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** The new horizon. */
     public var horizon :Number;
 
+    /** Full description of the new decor. */
+    public var decorData :DecorData;
+    
     /** The new entrance location. */
     public var entrance :MsoyLocation;
 
@@ -44,6 +47,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         mmodel.depth = depth;
         mmodel.width = width;
         mmodel.horizon = horizon;
+        mmodel.decorData = (decorData.clone() as DecorData);
         mmodel.entrance = entrance;
     }
 
@@ -56,6 +60,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         out.writeShort(depth);
         out.writeShort(width);
         out.writeFloat(horizon);
+        out.writeObject(decorData);
         out.writeObject(entrance);
     }
 
@@ -68,6 +73,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         depth = ins.readShort();
         width = ins.readShort();
         horizon = ins.readFloat();
+        decorData = (ins.readObject() as DecorData);
         entrance = (ins.readObject() as MsoyLocation);
     }
 }

@@ -97,13 +97,21 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
-     * Retrieve the background image.
+     * Retrieve the room decor.
      */
-    public function getBackground () :FurniData
+    public function getDecorData () :DecorData
+    {
+        return _msoyModel.decorData;
+    }
+
+    /**
+     * Legacy function: finds a furniture object whose background flag is set.
+     */
+    public function getBackgroundFurniture () :FurniData
     {
         for each (var furni :FurniData in getFurni()) {
             if (furni.actionType == FurniData.BACKGROUND &&
-                    furni.media.hasFlashVisual()) {
+                furni.media.hasFlashVisual()) {
                 return furni;
             }
         }

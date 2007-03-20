@@ -12,8 +12,10 @@ import com.threerings.msoy.data.ActorInfo;
 
 import com.threerings.msoy.world.client.ActorSprite;
 import com.threerings.msoy.world.client.AvatarSprite;
+import com.threerings.msoy.world.client.DecorSprite;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
+import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.WorldActorInfo;
 import com.threerings.msoy.world.data.WorldMemberInfo;
@@ -65,6 +67,14 @@ public class MediaDirector extends BasicDirector
         return new FurniSprite(furni);
     }
 
+    /**
+     * Get a Decor sprite for the specified decor data, caching as appropriate.
+     */
+    public function getDecor (decor :DecorData) :DecorSprite
+    {
+        return new DecorSprite(decor);
+    }
+    
     /**
      * Release any references to the specified sprite, if appropriate.
      */

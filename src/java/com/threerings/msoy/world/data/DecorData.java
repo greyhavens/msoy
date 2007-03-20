@@ -7,6 +7,7 @@ import com.samskivert.util.ObjectUtil;
 
 import com.threerings.io.SimpleStreamableObject;
 
+import com.threerings.msoy.item.web.Decor;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
@@ -14,15 +15,8 @@ import com.threerings.msoy.item.web.MediaDesc;
 /**
  * Contains information on the location of furniture in a scene.
  */
-public class DecorData extends SimpleStreamableObject
-    implements Cloneable
+public class DecorData extends FurniData
 {
-    /** The id of this piece of decor. */
-    public short id;
-
-    /** Info about the media that represents this piece of decor. */
-    public MediaDesc media;
-
     /** Room type. Controls how the background wallpaper image is handled. */
     public byte type;
     
@@ -38,8 +32,8 @@ public class DecorData extends SimpleStreamableObject
     /** Horizon position, in [0, 1]. */
     public float horizon;
 
-
     // documentation inherited
+    @Override
     public boolean equals (Object other)
     {
         return (other instanceof DecorData) &&
@@ -47,39 +41,33 @@ public class DecorData extends SimpleStreamableObject
     }
 
     // documentation inherited
+    @Override
     public int hashCode ()
     {
         return id;
     }
 
-    /**
-     * @return true if the other DecorData is identical.
-     */
-    public boolean equivalent (DecorData that)
+
+    @Override
+    public boolean equivalent (FurniData that)
     {
-        return this.id == that.id &&
-            this.media.equals(that.media) &&
-            this.type == that.type &&
-            this.height == that.height &&
-            this.width == that.width &&
-            this.depth == that.depth &&
-            this.horizon == that.horizon;
+        if (! (that instanceof DecorData)) {
+            return false;
+        } else {
+            DecorData data = (DecorData) that;
+            return super.equivalent(that) &&
+                this.type == data.type &&
+                this.height == data.height &&
+                this.width == data.width &&
+                this.depth == data.depth &&
+                this.horizon == data.horizon;
+        }
     }
 
     @Override
     public String toString ()
     {
-        String s = "Decor[id=" + id + ", type=" + type + "]";
+        String s = "Decor[itemId=" + itemId + ", type=" + type + ", media=" + media + "]";
         return s;
-    }
-
-    // documentation inherited
-    public Object clone ()
-    {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException cnse) {
-            throw new RuntimeException(cnse); // not going to happen
-        }
     }
 }

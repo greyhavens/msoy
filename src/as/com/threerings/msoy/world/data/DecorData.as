@@ -9,19 +9,14 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
 
+import com.threerings.msoy.item.web.Decor;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 
-public class DecorData
+public class DecorData extends FurniData
     implements Cloneable, Hashable, Streamable
 {
-    /** The id of this piece of decor. */
-    public var id :int;
-
-    /** Info about the media that represents this piece of decor. */
-    public var media :MediaDesc;
-
     /** Room type. Controls how the background wallpaper image is handled. */
     public var type :int;
     
@@ -37,60 +32,68 @@ public class DecorData
     /** Horizon position, in [0, 1]. */
     public var horizon :Number;
 
-
     // documentation inherited from superinterface Equalable
-    public function equals (other :Object) :Boolean
+    override public function equals (other :Object) :Boolean
     {
         return (other is DecorData) &&
             (other as DecorData).id == this.id;
     }
 
     // documentation inherited from interface Hashable
-    public function hashCode () :int
+    override public function hashCode () :int
     {
         return id;
     }
 
-    /**
-     * @return true if the other DecorData is identical.
-     */
-    public function equivalent (that :DecorData) :Boolean
+    // documentation inherited from FurniData
+    override public function equivalent (that :FurniData) :Boolean
     {
-        return this.id == that.id &&
-            this.media.equals(that.media) &&
-            this.type == that.type &&
-            this.height == that.height &&
-            this.width == that.width &&
-            this.depth == that.depth &&
-            this.horizon == that.horizon;
+        if (! (that is DecorData)) {
+            return false;
+        } else {
+            var data :DecorData = that as DecorData;
+            return super.equivalent(that) &&
+                this.type == data.type &&
+                this.height == data.height &&
+                this.width == data.width &&
+                this.depth == data.depth &&
+                this.horizon == data.horizon;
+        }
     }
 
-    public function toString () :String
+    override public function toString () :String
     {
-        var s :String = "Decor[id=" + id + ", type=" + type + "]";
+        var s :String = "Decor[itemId=" + itemId + ", type=" + type + ", media=" + media + "]";
         return s;
     }
 
+    /** Overwrites this instance's fields with a shallow copy of the other object. */
+    override protected function copyFrom (that :FurniData) :void
+    {
+        super.copyFrom(that);
+        if (that is DecorData) {
+            var data :DecorData = that as DecorData;
+            this.type = data.type;
+            this.height = data.height;
+            this.width = data.width;
+            this.depth = data.depth;
+            this.horizon = data.horizon;
+        }
+    }
+    
     // documentation inherited from interface Cloneable
-    public function clone () :Object
+    override public function clone () :Object
     {
         // just a shallow copy at present
         var that :DecorData = (ClassUtil.newInstance(this) as DecorData);
-        that.id = this.id;
-        that.media = this.media;
-        that.type = this.type;
-        that.height = this.height;
-        that.width = this.width;
-        that.depth = this.depth;
-        that.horizon = this.horizon;
+        that.copyFrom(this);
         return that;
     }
 
     // documentation inherited from interface Streamable
-    public function writeObject (out :ObjectOutputStream) :void
+    override public function writeObject (out :ObjectOutputStream) :void
     {
-        out.writeShort(id);
-        out.writeObject(media);
+        super.writeObject(out);
         out.writeByte(type);
         out.writeShort(height);
         out.writeShort(width);
@@ -99,15 +102,14 @@ public class DecorData
     }
 
     // documentation inherited from interface Streamable
-    public function readObject (ins :ObjectInputStream) :void
+    override public function readObject (ins :ObjectInputStream) :void
     {
-        id = ins.readShort();
-        media = (ins.readObject() as MediaDesc);
-        type = ins.readByte(type);
-        height = ins.readShort(height);
-        width = ins.readShort(width);
-        depth = ins.readShort(depth);
-        horizon = ins.readFloat(horizon);
+        super.readObject(ins);
+        type = ins.readByte();
+        height = ins.readShort();
+        width = ins.readShort();
+        depth = ins.readShort();
+        horizon = ins.readFloat();
     }
 }
 }

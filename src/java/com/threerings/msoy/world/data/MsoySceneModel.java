@@ -48,9 +48,9 @@ public class MsoySceneModel extends SceneModel
     /** The entrance location. */
     public MsoyLocation entrance;
 
-    /** The id of the decor object that describes room background and parameters. */
-    public int decorId; //FIXME ROBERT: DecorData
-
+    /** Decor data representation. */
+    public DecorData decorData = new DecorData();
+    
     /**
      * Add a piece of furniture to this model.
      */
@@ -203,6 +203,7 @@ public class MsoySceneModel extends SceneModel
     {
         MsoySceneModel model = (MsoySceneModel) super.clone();
         model.furnis = furnis.clone();
+        model.decorData = (DecorData) decorData.clone();
         model.invalidatePortalInfo();
         return model;
     }
@@ -213,9 +214,10 @@ public class MsoySceneModel extends SceneModel
     public static MsoySceneModel blankMsoySceneModel ()
     {
         MsoySceneModel model = new MsoySceneModel();
-        model.depth = 400;
-        model.width = 800;
-        model.horizon = .5f;
+        model.decorData = new DecorData();
+        model.decorData.depth = model.depth = 400;
+        model.decorData.width = model.width = 800;
+        model.decorData.horizon = model.horizon = .5f;
         model.entrance = new MsoyLocation(.5, 0, .5, 180);
         populateBlankMsoySceneModel(model);
         return model;

@@ -23,6 +23,7 @@ public class FurniItemRenderer extends ItemRenderer
             var furni :FurniData = (data as FurniData);
             if (!Util.equals(furni, _furni)) {
                 _furni = furni;
+                trace("configuring: " + furni + "/" + furni.media.getMediaPath());
 
                 _container.setMedia(furni.media.getMediaPath());
                 _label.text = "<Prop>"

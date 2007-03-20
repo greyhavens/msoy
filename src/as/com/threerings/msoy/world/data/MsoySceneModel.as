@@ -54,9 +54,9 @@ public class MsoySceneModel extends SceneModel
     /** The entrance location. */
     public var entrance :MsoyLocation;
 
-    /** The id of the decor object that describes room background and parameters. */
-    public var decorId :int; //FIXME ROBERT: DecorData;
-
+    /** Decor data representation. */
+    public var decorData :DecorData;
+    
     /**
      * Add a piece of furniture to this model.
      */
@@ -200,7 +200,7 @@ public class MsoySceneModel extends SceneModel
         model.horizon = horizon;
         model.furnis = (furnis.clone() as TypedArray);
         model.entrance = entrance;
-        model.decorId = decorId;
+        model.decorData = (decorData.clone() as DecorData);
 
         return model;
     }
@@ -218,7 +218,7 @@ public class MsoySceneModel extends SceneModel
         out.writeFloat(horizon);
         out.writeObject(furnis);
         out.writeObject(entrance);
-        out.writeInt(decorId);
+        out.writeObject(decorData);
     }
 
     // documentation inherited
@@ -234,13 +234,14 @@ public class MsoySceneModel extends SceneModel
         horizon = ins.readFloat();
         furnis = (ins.readObject() as TypedArray);
         entrance = (ins.readObject() as MsoyLocation);
-        decorId = ins.readInt();
+        decorData = (ins.readObject() as DecorData);
     }
 
     override public function toString () :String
     {
         return "MsoySceneModel[\"" + name + "\" (" + sceneId + ")" +
-            ", version=" + version + ", sceneType=" + sceneType + ", decor=" + decorId + "]";
+            ", version=" + version + ", sceneType=" + sceneType +
+            ", decor=" + decorData.itemId + "]";
     }
 
     /** Cached portal info. Not streamed. */

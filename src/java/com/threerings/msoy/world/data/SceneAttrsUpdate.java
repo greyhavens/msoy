@@ -29,6 +29,9 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** The new horizon. */
     public float horizon;
 
+    /** Full description of the new decor. */
+    public DecorData decorData;
+    
     /** The new entrance location. */
     public MsoyLocation entrance;
 
@@ -43,6 +46,16 @@ public class SceneAttrsUpdate extends SceneUpdate
         mmodel.depth = depth;
         mmodel.width = width;
         mmodel.horizon = horizon;
+        mmodel.decorData = (DecorData) decorData.clone();
         mmodel.entrance = entrance;
     }
+
+    @Override
+    public void validate (SceneModel model)
+        throws IllegalStateException
+    {
+        super.validate(model);
+        // FIXME ROBERT: we should validate this update's decor data here, on the server side
+    }
+
 }

@@ -163,21 +163,27 @@ public class FurniData
         return s;
     }
 
+    /** Overwrites this instance's fields with a shallow copy of the other object. */
+    protected function copyFrom (that :FurniData) :void
+    {
+        this.id = that.id;
+        this.itemType = that.itemType;
+        this.itemId = that.itemId;
+        this.media = that.media;
+        this.loc = that.loc;
+        this.layoutInfo = that.layoutInfo;
+        this.scaleX = that.scaleX;
+        this.scaleY = that.scaleY;
+        this.actionType = that.actionType;
+        this.actionData = that.actionData;
+    }
+    
     // documentation inherited from interface Cloneable
     public function clone () :Object
     {
         // just a shallow copy at present
         var that :FurniData = (ClassUtil.newInstance(this) as FurniData);
-        that.id = this.id;
-        that.itemType = this.itemType;
-        that.itemId = this.itemId;
-        that.media = this.media;
-        that.loc = this.loc;
-        that.layoutInfo = this.layoutInfo;
-        that.scaleX = this.scaleX;
-        that.scaleY = this.scaleY;
-        that.actionType = this.actionType;
-        that.actionData = this.actionData;
+        that.copyFrom(this);
         return that;
     }
 
