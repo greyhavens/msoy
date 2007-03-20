@@ -64,6 +64,9 @@ public abstract class ItemRepository<
         public int count;
         public int sum;
     }
+    
+    /** The factor by which we split item cost into gold and flow. */
+    public final static int FLOW_FOR_GOLD = 600;
 
     public ItemRepository (ConnectionProvider provider)
     {
@@ -259,17 +262,25 @@ public abstract class ItemRepository<
                                         int offset, int rows)
         throws PersistenceException
     {
-        SQLExpression sortExp;
+        OrderBy sortExp;
 
         switch(sortBy) {
         case CatalogListing.SORT_BY_NOTHING:
             sortExp = null;
             break;
         case CatalogListing.SORT_BY_LIST_DATE:
-            sortExp = new ColumnExp(getCatalogClass(), CatalogRecord.LISTED_DATE);
+            sortExp = OrderBy.descending(
+                new ColumnExp(getCatalogClass(), CatalogRecord.LISTED_DATE));
             break;
         case CatalogListing.SORT_BY_RATING:
-            sortExp = new Div(new FunctionExp("floor", getItemColumn(ItemRecord.RATING)), 2);
+            sortExp = OrderBy.descending(
+                new Div(new FunctionExp("floor", getItemColumn(ItemRecord.RATING)), 2));
+            break;
+        case CatalogListing.SORT_BY_PRICE:
+            sortExp = OrderBy.ascending(
+                new Add(new ColumnExp(getCatalogClass(), CatalogRecord.FLOW_COST),
+                        new Mul(new ColumnExp(getCatalogClass(), CatalogRecord.GOLD_COST),
+                                FLOW_FOR_GOLD)));
             break;
         default:
             throw new IllegalArgumentException(
@@ -285,7 +296,7 @@ public abstract class ItemRepository<
         };
         
         if (sortExp != null) {
-            clauses = ArrayUtil.append(clauses, OrderBy.descending(sortExp));
+            clauses = ArrayUtil.append(clauses, sortExp);
         }
 
         if (search != null && search.length() > 0) {
@@ -628,10 +639,9 @@ public abstract class ItemRepository<
         double S = (record.purchases < MIN_ATTEN_PURCHASES) ? 1f :
             Math.max(0, 1 - record.returns / (double)record.purchases);
         double listPrice = Math.max(1, basePrice * Math.sqrt(S));
-        int flowForGoldFactor = 600;
         // TEMP: no gold cost
         record.goldCost = 0; // (int) Math.round(listPrice / (2.5 * flowForGoldFactor));
-        record.flowCost = (int) (listPrice - record.goldCost * flowForGoldFactor);
+        record.flowCost = (int) (listPrice - record.goldCost * FLOW_FOR_GOLD);
         record.repriceCounter = 0;
         log.info("Repriced [item=" + record.itemId + ", Ec=" + currentPopulation +
                  ", Et=" + targetPopulation + ", base=" + basePrice + ", S=" + S +

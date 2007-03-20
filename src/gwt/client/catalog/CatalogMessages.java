@@ -110,4 +110,12 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key errListingNotFound
    */
   String errListingNotFound();
+
+  /**
+   * Translated "Price".
+   * 
+   * @return translated "Price"
+   * @gwt.key sortByPrice
+   */
+  String sortByPrice();
 }

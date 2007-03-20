@@ -33,7 +33,7 @@ public class ItemSearchSortPanel extends HorizontalPanel
     /** The current sort order. */
     public byte sortBy;
 
-    public ItemSearchSortPanel (Listener listener, String[] sortNames, byte[] sortValues,
+    public ItemSearchSortPanel (Listener listener, String[] sortNames, final byte[] sortValues,
                                 int selectedSortIndex)
     {
         setStyleName("itemSearchPanel");
@@ -65,13 +65,13 @@ public class ItemSearchSortPanel extends HorizontalPanel
         ListBox sortBox = new ListBox();
         sortBox.addStyleName("itemSortBox");
         for (int ii = 0; ii < sortNames.length; ii ++) {
-            sortBox.addItem(sortNames[ii], String.valueOf(sortValues[ii]));
+            sortBox.addItem(sortNames[ii]);
         }
         sortBox.setSelectedIndex(selectedSortIndex);
         sortBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget widget) {
                 ListBox box = (ListBox) widget;
-                sortBy = Byte.parseByte(box.getValue(box.getSelectedIndex()));
+                sortBy = sortValues[box.getSelectedIndex()];
                 _listener.sort(ItemSearchSortPanel.this);
             }
         });

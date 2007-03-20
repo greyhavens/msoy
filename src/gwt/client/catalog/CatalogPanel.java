@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
@@ -73,9 +72,18 @@ public class CatalogPanel extends FlexTable
         getFlexCellFormatter().setColSpan(row++, 0, 2);
 
         _searchSortPanel = new ItemSearchSortPanel(
-            this, new String[] { CCatalog.msgs.sortByRating(), CCatalog.msgs.sortByListDate() },
-            new byte[] { CatalogListing.SORT_BY_RATING, CatalogListing.SORT_BY_LIST_DATE }, 0);
+            this,
+            new String[] {
+                CCatalog.msgs.sortByRating(),
+                CCatalog.msgs.sortByListDate(),
+                CCatalog.msgs.sortByPrice() },
+            new byte[] {
+                CatalogListing.SORT_BY_RATING,
+                CatalogListing.SORT_BY_LIST_DATE,
+                CatalogListing.SORT_BY_PRICE },
+            0);
         _sortBy = CatalogListing.SORT_BY_RATING;
+
         _items.addToHeader(WidgetUtil.makeShim(15, 1));
         _items.addToHeader(_searchSortPanel);
 
