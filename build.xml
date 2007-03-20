@@ -222,6 +222,13 @@
   <!-- builds our GWT web client -->
   <property name="pages" value="msoy"/>
   <target name="gclient" depends="jprepare">
+    <!-- TODO: TEMP: remove this (added 2007/03/20) -->
+    <!-- delete old crap -->
+    <for list="mail,world,admin,group,inventory,profile,swiftly,editem,game,catalog" param="page"><sequential>
+      <delete dir="pages/@{page}"/>
+    </sequential></for>
+    <!-- END: TEMP -->
+
     <for list="${pages}" param="page"><sequential>
       <echo>Compiling @{page} module...</echo>
       <delete dir="pages/@{page}"/>
