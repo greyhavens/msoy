@@ -30,25 +30,17 @@ public class WorldDirector extends BasicDirector
     /**
      * Request to move to the specified member's home.
      */
-    public function goToMemberHome (memberId :int, direct :Boolean = false) :void
+    public function goToMemberHome (memberId :int) :void
     {
-        if (direct) {
-            goToHome(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);
-        } else {
-            _mctx.getMsoyController().handleGoMemberHome(memberId, false);
-        }
+        goToHome(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);
     }
 
     /**
      * Request to move to the specified group's home.
      */
-    public function goToGroupHome (groupId :int, direct :Boolean = false) :void
+    public function goToGroupHome (groupId :int) :void
     {
-        if (direct) {
-            goToHome(MsoySceneModel.OWNER_TYPE_GROUP, groupId);
-        } else {
-            _mctx.getMsoyController().handleGoGroupHome(groupId, false);
-        }
+        goToHome(MsoySceneModel.OWNER_TYPE_GROUP, groupId);
     }
 
     /**

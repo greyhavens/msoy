@@ -47,9 +47,8 @@ public class WorldContext extends BaseContext
     {
         super(client);
 
-        _sceneRepo = new SharedObjectSceneRepository()
-        _sceneDir = new SceneDirector(this, _locDir, _sceneRepo,
-            new MsoySceneFactory());
+        _sceneRepo = new SharedObjectSceneRepository();
+        _sceneDir = new MsoySceneDirector(this, _locDir, _sceneRepo);
         _spotDir = new SpotSceneDirector(this, _locDir, _sceneDir);
         _parlorDir = new ParlorDirector(this);
         _mediaDir = new MediaDirector(this);

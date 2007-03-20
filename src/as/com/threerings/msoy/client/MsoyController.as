@@ -340,10 +340,7 @@ public class MsoyController extends Controller
      */
     public function handleGoScene (sceneId :int) :void
     {
-        if (!handleInternalGo("world", "s" + sceneId)) {
-            // fall back to breaking the back button
-            _ctx.getSceneDirector().moveTo(sceneId);
-        }
+        _ctx.getSceneDirector().moveTo(sceneId);
     }
 
     /**
@@ -351,9 +348,7 @@ public class MsoyController extends Controller
      */
     public function handleGoMemberHome (memberId :int, direct :Boolean = false) :void
     {
-        if (direct || !handleInternalGo("world", "m" + memberId)) {
-            _ctx.getWorldDirector().goToMemberHome(memberId, true);
-        }
+        _ctx.getWorldDirector().goToMemberHome(memberId);
     }
 
     /**
@@ -361,9 +356,7 @@ public class MsoyController extends Controller
      */
     public function handleGoGroupHome (groupId :int, direct :Boolean = false) :void
     {
-        if (direct || !handleInternalGo("world", "g" + groupId)) {
-            _ctx.getWorldDirector().goToGroupHome(groupId, true);
-        }
+        _ctx.getWorldDirector().goToGroupHome(groupId);
     }
 
     /**
@@ -387,34 +380,6 @@ public class MsoyController extends Controller
             // fall back to breaking the back button
             _ctx.getLocationDirector().moveTo(placeOid);
         }
-    }
-
-    /**
-     * Moves to a new location (scene, game lobby, game room, etc.) by changing the URL of the
-     * browser so that our history mechanism is preserved. Returns true if we did so, false if we
-     * couldn't do so for whatever reason (are in the standalone client) and the caller should just
-     * go there directly.
-     */
-    protected function handleInternalGo (page :String, args :String) :Boolean
-    {
-        return shouldLoadNewPages() && NetUtil.navigateToURL("#" + page + "-" + args, true);
-    }
-
-    /**
-     * Called to move to the lobby specified.
-     */
-    protected function moveToGameLobby (gameId :int) :void
-    {
-        // TODO: move to a game director?
-        var lsvc :LobbyService = (_ctx.getClient().requireService(LobbyService) as LobbyService);
-        lsvc.identifyLobby(_ctx.getClient(), gameId,
-            new ResultWrapper(function (cause :String) :void {
-                log.warning("Ack: " + cause);
-            },
-            function (result :Object) :void {
-                _ctx.getSceneDirector().didLeaveScene();
-                _ctx.getLocationDirector().moveTo(int(result));
-            }));
     }
 
     /**
@@ -532,6 +497,16 @@ public class MsoyController extends Controller
         }
     }
 
+    /**
+     * Called by the scene director when we've traveled to a new scene.
+     */
+    public function wentToScene (sceneId :int) :void
+    {
+        // this will result in another request to move to the scene we're already in, but we'll
+        // ignore it because we're already there
+        handleInternalGo("world", "s" + sceneId);
+    }
+
     // from ClientObserver
     public function clientWillLogon (event :ClientEvent) :void
     {
@@ -600,6 +575,34 @@ public class MsoyController extends Controller
     {
         var pt :String = Capabilities.playerType;
         return (pt !== "StandAlone") && (pt !== "External")
+    }
+
+    /**
+     * Moves to a new location (scene, game lobby, game room, etc.) by changing the URL of the
+     * browser so that our history mechanism is preserved. Returns true if we did so, false if we
+     * couldn't do so for whatever reason (are in the standalone client) and the caller should just
+     * go there directly.
+     */
+    protected function handleInternalGo (page :String, args :String) :Boolean
+    {
+        return shouldLoadNewPages() && NetUtil.navigateToURL("#" + page + "-" + args, true);
+    }
+
+    /**
+     * Called to move to the lobby specified.
+     */
+    protected function moveToGameLobby (gameId :int) :void
+    {
+        // TODO: move to a game director?
+        var lsvc :LobbyService = (_ctx.getClient().requireService(LobbyService) as LobbyService);
+        lsvc.identifyLobby(_ctx.getClient(), gameId,
+            new ResultWrapper(function (cause :String) :void {
+                log.warning("Ack: " + cause);
+            },
+            function (result :Object) :void {
+                _ctx.getSceneDirector().didLeaveScene();
+                _ctx.getLocationDirector().moveTo(int(result));
+            }));
     }
 
     override protected function setControlledPanel (
