@@ -26,7 +26,9 @@ public class CatalogListing
     /** A constant for requesting catalog search results to be returned in a certain order. */
     public static final byte SORT_BY_SATISFACTION = 3;
     /** A constant for requesting catalog search results to be returned in a certain order. */
-    public static final byte SORT_BY_PRICE = 4;
+    public static final byte SORT_BY_PRICE_ASC = 4;
+    /** A constant for requesting catalog search results to be returned in a certain order. */
+    public static final byte SORT_BY_PRICE_DESC = 5;
     
     /** A constant that encodes the rarity of a listed item. */
     public static final int RARITY_PLENTIFUL = 1;

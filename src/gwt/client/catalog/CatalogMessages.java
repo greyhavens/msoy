@@ -8,6 +8,22 @@ package client.catalog;
 public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
+   * Translated "Lowest Price".
+   * 
+   * @return translated "Lowest Price"
+   * @gwt.key sortByPriceAsc
+   */
+  String sortByPriceAsc();
+
+  /**
+   * Translated "Highest Price".
+   * 
+   * @return translated "Highest Price"
+   * @gwt.key sortByPriceDesc
+   */
+  String sortByPriceDesc();
+
+  /**
    * Translated "Rating".
    * 
    * @return translated "Rating"
@@ -110,12 +126,4 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key errListingNotFound
    */
   String errListingNotFound();
-
-  /**
-   * Translated "Price".
-   * 
-   * @return translated "Price"
-   * @gwt.key sortByPrice
-   */
-  String sortByPrice();
 }

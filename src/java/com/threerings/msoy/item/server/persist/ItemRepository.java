@@ -276,11 +276,14 @@ public abstract class ItemRepository<
             sortExp = OrderBy.descending(
                 new Div(new FunctionExp("floor", getItemColumn(ItemRecord.RATING)), 2));
             break;
-        case CatalogListing.SORT_BY_PRICE:
-            sortExp = OrderBy.ascending(
+        case CatalogListing.SORT_BY_PRICE_ASC:
+        case CatalogListing.SORT_BY_PRICE_DESC:
+            SQLExpression bit = 
                 new Add(new ColumnExp(getCatalogClass(), CatalogRecord.FLOW_COST),
                         new Mul(new ColumnExp(getCatalogClass(), CatalogRecord.GOLD_COST),
-                                FLOW_FOR_GOLD)));
+                                FLOW_FOR_GOLD));
+            sortExp = sortBy == CatalogListing.SORT_BY_PRICE_ASC ?
+                OrderBy.ascending(bit) : OrderBy.descending(bit);
             break;
         default:
             throw new IllegalArgumentException(

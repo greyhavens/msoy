@@ -76,11 +76,13 @@ public class CatalogPanel extends FlexTable
             new String[] {
                 CCatalog.msgs.sortByRating(),
                 CCatalog.msgs.sortByListDate(),
-                CCatalog.msgs.sortByPrice() },
+                CCatalog.msgs.sortByPriceAsc(),
+                CCatalog.msgs.sortByPriceDesc() },
             new byte[] {
                 CatalogListing.SORT_BY_RATING,
                 CatalogListing.SORT_BY_LIST_DATE,
-                CatalogListing.SORT_BY_PRICE },
+                CatalogListing.SORT_BY_PRICE_ASC,
+                CatalogListing.SORT_BY_PRICE_DESC },
             0);
         _sortBy = CatalogListing.SORT_BY_RATING;
 
