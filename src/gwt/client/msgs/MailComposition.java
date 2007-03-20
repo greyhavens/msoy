@@ -60,6 +60,10 @@ public class MailComposition extends BorderedDialog
         });
     }
 
+    /**
+     * Remove the payload from the message currently being composed. This can be safely called
+     * from payload implementations if they wish to vanish.
+     */
     public void removePayload ()
     {
         setPayloadComposer(null);
