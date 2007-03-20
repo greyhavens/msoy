@@ -20,7 +20,10 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.EntryRemovedEvent;
+import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.SetAdapter;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.ResultAdapter;
 
@@ -323,6 +326,8 @@ public class RoomManager extends SpotSceneManager
         _roomObj.setRoomService((RoomMarshaller)
                                 MsoyServer.invmgr.registerDispatcher(new RoomDispatcher(this)));
 
+        _roomObj.addListener(_roomListener);
+
         // determine which (if any) items in this room have a memories and load them up
         ArrayIntSet furniIds = new ArrayIntSet();
         for (FurniData furni : ((MsoyScene) _scene).getFurni()) {
@@ -361,6 +366,7 @@ public class RoomManager extends SpotSceneManager
     @Override // from PlaceManager
     protected void didShutdown ()
     {
+        _roomObj.removeListener(_roomListener);
         MsoyServer.invmgr.clearDispatcher(_roomObj.roomService);
         super.didShutdown();
 
@@ -594,6 +600,43 @@ public class RoomManager extends SpotSceneManager
         return true;
     }
 
+    /** Listens to the room. */
+    protected class RoomListener extends SetAdapter
+    {
+        @Override
+        public void entryUpdated (EntryUpdatedEvent event)
+        {
+            if (event.getName() == PlaceObject.OCCUPANT_INFO) {
+                checkRemoveControlIdent(event.getOldEntry(), event.getEntry());
+            }
+        }
+
+        @Override
+        public void entryRemoved (EntryRemovedEvent event)
+        {
+            if (event.getName() == PlaceObject.OCCUPANT_INFO) {
+                checkRemoveControlIdent(event.getOldEntry(), null);
+            }
+        }
+
+        /**
+         * If control was assigned to the itemIdent that just left the scene..
+         */
+        protected void checkRemoveControlIdent (Object oldInfo, Object newInfo)
+        {
+            if (!(oldInfo instanceof WorldOccupantInfo)) {
+                return;
+            }
+
+            ItemIdent oldIdent = ((WorldOccupantInfo) oldInfo).getItemIdent();
+            ItemIdent newIdent = (newInfo instanceof WorldOccupantInfo) ?
+                ((WorldOccupantInfo) newInfo).getItemIdent() : null;
+            if (!oldIdent.equals(newIdent) && _roomObj.controllers.containsKey(oldIdent)) {
+                _roomObj.removeFromControllers(oldIdent);
+            }
+        }
+    }
+
     /** Used during the process of controller assignment. */
     protected static class Controller implements Comparable<Controller>
     {
@@ -613,8 +656,11 @@ public class RoomManager extends SpotSceneManager
         public int compareTo (Controller other) {
             return (items - other.items);
         }
-    }
+    } // End: static class Controller
 
     /** The room object. */
     protected RoomObject _roomObj;
+
+    /** Listens to the room object. */
+    protected RoomListener _roomListener = new RoomListener();
 }
