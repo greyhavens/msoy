@@ -283,6 +283,10 @@ public class HoodViz extends Sprite
             text.embedFonts = true;
             text.text = neighbor.getName();
             text.filters = [ new GlowFilter(0x660000, 1, 3, 3, 255) ];
+            text.autoSize = TextFieldAutoSize.CENTER;
+            text.wordWrap = true;
+            text.width = text.textWidth + 5;
+            text.height = text.textHeight + 4;
             text.x = p.x;
             text.y = p.y;
 
