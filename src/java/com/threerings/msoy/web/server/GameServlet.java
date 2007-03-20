@@ -86,12 +86,15 @@ public class GameServlet extends MsoyServiceServlet
 
         switch (game.gameMedia.mimeType) {
         case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
+            // ignore maxSeats in the case of a party game - always display a lobby
             config.type = (game.isInWorld() ? LaunchConfig.FLASH_IN_WORLD :
-                (match.maxSeats == 1 ? LaunchConfig.FLASH_SOLO : LaunchConfig.FLASH_LOBBIED));
+                ((!match.isPartyGame && match.maxSeats == 1) ? LaunchConfig.FLASH_SOLO : 
+                LaunchConfig.FLASH_LOBBIED));
             break;
         case MediaDesc.APPLICATION_JAVA_ARCHIVE:
-            config.type = (match.maxSeats == 1 ?
-                LaunchConfig.JAVA_SOLO : LaunchConfig.JAVA_LOBBIED);
+            // ignore maxSeats in the case of a party game - always display a lobby
+            config.type = (!match.isPartyGame && match.maxSeats == 1) ?
+                LaunchConfig.JAVA_SOLO : LaunchConfig.JAVA_LOBBIED;
             break;
         default:
             log.warning("Requested config for game of unknown media type " +
