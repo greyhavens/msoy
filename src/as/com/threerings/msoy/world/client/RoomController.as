@@ -509,23 +509,15 @@ public class RoomController extends SceneController
 
     protected function mouseClicked (event :MouseEvent) :void
     {
-        // If the shift key is down, we're not interested in what the sprite
-        // represents, we're intrested in the sprite itself.
-        // (_shiftDepressed is a workaround for windows: shiftKey is never true)
-        var isItemContext :Boolean = _shiftDepressed || event.shiftKey;
-
-        var hitter :MsoySprite = getHitSprite(event.stageX, event.stageY, isItemContext);
+        var hitter :MsoySprite = getHitSprite(event.stageX, event.stageY);
 
         if (hitter != null) {
-            if (isItemContext) {
-                showItemMenu(hitter);
-
-            } else if (hitter.hasAction()) {
+            if (hitter.hasAction()) {
                 hitter.mouseClick(event);
             }
             // otherwise: the sprite simply captures and discards the event
 
-        } else if (!isItemContext && _mctx.worldProps.userControlsAvatar) {
+        } else if (_mctx.worldProps.userControlsAvatar) {
             var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();
             if (curLoc == null) {
                 return; // we've already left, ignore the click
@@ -546,28 +538,6 @@ public class RoomController extends SceneController
         }
     }
 
-    /**
-     * Show the menu containing item-specific options.
-     */
-    protected function showItemMenu (sprite :MsoySprite) :void
-    {
-        var menuItems :Array = [];
-
-        var ident :ItemIdent = sprite.getItemIdent();
-        if (ident != null) {
-            menuItems.push(
-                { label: Msgs.GENERAL.get("b.view_item"),
-                  command: MsoyController.VIEW_ITEM,
-                  arg: ident });
-        }
-        // TODO: more..?
-
-        // pop up the menu where the mouse is
-        if (menuItems.length > 0) {
-            CommandMenu.createMenu(menuItems).show();
-        }
-    }
-
     protected function keyEvent (event :KeyboardEvent) :void
     {
         try {
@@ -584,10 +554,6 @@ public class RoomController extends SceneController
             case Keyboard.F6:
                 _roomView.chatOverlay.setClickableGlyphs(keyDown);
                 return;
-
-            case Keyboard.SHIFT:
-                _shiftDepressed = keyDown;
-                break;
             }
 
             if (keyDown) {
@@ -780,10 +746,6 @@ public class RoomController extends SceneController
 
     /** The current scene we're viewing. */
     protected var _scene :MsoyScene;
-
-    /** Whether the shift key is depressed, to work around an apparent bug
-     * in the windows player. */
-    protected var _shiftDepressed :Boolean;
 
     [Embed(source="../../../../../../../rsrc/media/walkable.swf")]
     protected static const WALKTARGET :Class;

@@ -37,6 +37,11 @@ public class AvatarSprite extends ActorSprite
         super(occInfo);
     }
 
+    override public function getDesc () :String
+    {
+        return "m.avatar";
+    }
+
 //    /**
 //     * Returns the style of chat bubble to use for this occupant.
 //     */

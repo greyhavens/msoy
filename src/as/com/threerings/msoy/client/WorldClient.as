@@ -8,6 +8,7 @@ import flash.display.Stage;
 import flash.events.ContextMenuEvent;
 import flash.external.ExternalInterface;
 import flash.geom.Point;
+import flash.system.Capabilities;
 import flash.ui.ContextMenu;
 
 import mx.core.Application;
@@ -121,27 +122,17 @@ public class WorldClient extends BaseClient
         var custom :Array = menu.customItems;
         custom.length = 0;
 
-        // add the About menu item
-        custom.push(MenuUtil.createControllerMenuItem(
-                        Msgs.GENERAL.get("b.about"),
-                        MsoyController.ABOUT));
-
-        custom.push(MenuUtil.createControllerMenuItem(
-                        Msgs.GENERAL.get("b.toggle_fullscreen"),
-                        MsoyController.TOGGLE_FULLSCREEN, null, false,
-                        _wctx.getMsoyController().supportsFullScreen()));
+//        custom.push(MenuUtil.createControllerMenuItem(
+//                        Msgs.GENERAL.get("b.toggle_fullscreen"),
+//                        MsoyController.TOGGLE_FULLSCREEN, null, false,
+//                        _wctx.getMsoyController().supportsFullScreen()));
 
         try {
-            // TODO: this doesn't seem to find or get triggered by
-            // perspectivized furniture. It should.
-//        trace("Inacc: " + _stage.areInaccessibleObjectsUnderPoint(
-//            new Point(_stage.mouseX, _stage.mouseY)));
             var allObjects :Array =
                 _stage.getObjectsUnderPoint(new Point(_stage.mouseX, _stage.mouseY));
             var seenObjects :Array = [];
             for each (var disp :DisplayObject in allObjects) {
                 do {
-//                trace("Checking " + disp);
                     seenObjects.push(disp);
                     if (disp is ContextMenuProvider) {
                         (disp as ContextMenuProvider).populateContextMenu(custom);
@@ -153,6 +144,15 @@ public class WorldClient extends BaseClient
         } catch (e :Error) {
             Log.getLog(this).logStackTrace(e);
         }
+
+        // HACK: putting the separator in the menu causes the item to not
+        // work in linux, so we don't do it in linux.
+        var useSep :Boolean = (-1 == Capabilities.os.search("Linux"));
+
+        // add the About menu item
+        custom.push(MenuUtil.createControllerMenuItem(
+                        Msgs.GENERAL.get("b.about"),
+                        MsoyController.ABOUT, null, useSep));
 
         // then, the menu will pop up
     }

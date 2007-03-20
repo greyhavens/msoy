@@ -100,6 +100,15 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
+     * Get a translatable message briefly describing this type of item.
+     */
+    public function getDesc () :String
+    {
+        // should return something like m.furni, m.avatar...
+        throw new Error("abstract");
+    }
+
+    /**
      * Return the item ident used to identify this sprite.
      */
     public function getItemIdent () :ItemIdent
@@ -234,10 +243,10 @@ public class MsoySprite extends MediaContainer
         throw new Error("Cannot set scale of abstract MsoySprite");
     }
 
-    public function getDesc () :MediaDesc
-    {
-        return _desc;
-    }
+//    public function getMediaDesc () :MediaDesc
+//    {
+//        return _desc;
+//    }
 
     /**
      * Turn on or off the glow surrounding this sprite.

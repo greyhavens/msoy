@@ -62,6 +62,24 @@ public class FurniSprite extends MsoySprite
         return !isBackground();
     }
 
+    override public function getDesc () :String
+    {
+        switch (_furni.actionType) {
+        case FurniData.BACKGROUND:
+            return "m.decor";
+
+        case FurniData.ACTION_PORTAL:
+            return "m.portal";
+
+        case FurniData.ACTION_LOBBY_GAME:
+        case FurniData.ACTION_WORLD_GAME:
+            return "m.game";
+
+        default:
+            return "m.furni";
+        }
+    }
+
     public function getFurniData () :FurniData
     {
         return _furni;

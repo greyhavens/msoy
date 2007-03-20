@@ -24,6 +24,7 @@ import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.WorldOccupantInfo;
+import com.threerings.msoy.world.data.WorldPetInfo;
 
 /**
  * Handles sprites for actors (things in a scene that move around).
@@ -58,6 +59,14 @@ public class ActorSprite extends MsoySprite
         if (occInfo != null) {
             setActorInfo(occInfo);
         }
+    }
+
+    override public function getDesc () :String
+    {
+        if (_occInfo is WorldPetInfo) {
+            return "m.pet";
+        }
+        return "m.actor";
     }
 
     /**
