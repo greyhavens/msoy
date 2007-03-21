@@ -93,12 +93,10 @@ public class RoomController extends SceneController
             return;
         }
 
-        var result :Object = hasEntityControl(ident, false);
-        if (result == true) {
-            // go ahead and tell the thing that we already have control
-            _roomView.dispatchControlAssigned(ident);
-
-        } else if (result == null) {
+        var result :Object = hasEntityControl(ident);
+        // side-effect of calling hasEntityControl: the sprite
+        // will be notified (possibly again) that it has control if it does
+        if (result == null) {
             // only if nobody currently has control do we issue the request
             _roomObj.roomService.requestControl(_mctx.getClient(), ident);
         }
@@ -680,11 +678,12 @@ public class RoomController extends SceneController
     /**
      * Does this client have control over the specified entity?
      *
-     * @param dispatchToAvatars if true, this should automatically inform
-     *        avatars that they have control if we determine that they do.
+     * Side-effect: The gotControl() will always be re-dispatched to the entity if it does.
+     * The newest EntityControl will suppress repeats.
+     *
      * @returns true, false, or null if nobody currently has control.
      */
-    protected function hasEntityControl (ident :ItemIdent, dispatchToAvatars :Boolean = true) :Object
+    protected function hasEntityControl (ident :ItemIdent) :Object
     {
         var ourOid :int = _mctx.getMemberObject().getOid();
 
@@ -694,11 +693,9 @@ public class RoomController extends SceneController
                 var winfo :WorldMemberInfo = (occInfo as WorldMemberInfo);
                 if (ident.equals(winfo.getItemIdent())) {
                     if (winfo.bodyOid == ourOid) {
-                        if (dispatchToAvatars) {
-                            // dispatch got-control to the avatar, it should
-                            // supress repeats
-                            _roomView.getMyAvatar().gotControl();
-                        }
+                        // dispatch got-control to the avatar, it should
+                        // supress repeats
+                        _roomView.dispatchGotControl(ident);
                         return true;
 
                     } else {
@@ -712,8 +709,16 @@ public class RoomController extends SceneController
         var ctrl :EntityControl = (_roomObj.controllers.get(ident) as EntityControl);
         if (ctrl == null) {
             return null;
+
+        } else if (ctrl.controllerOid == ourOid) {
+            // redispatch that we have control, just in case the media
+            // started up after the last dispatch...
+            _roomView.dispatchGotControl(ident);
+            return true;
+
+        } else {
+            return false;
         }
-        return (ctrl.controllerOid == ourOid); // return true or false
     }
 
     override protected function sceneUpdated (update :SceneUpdate) :void
