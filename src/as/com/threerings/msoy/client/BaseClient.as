@@ -166,14 +166,6 @@ public /*abstract*/ class BaseClient extends Client
         levelsUpdated();
         // and our mail notification
         mailNotificationUpdated();
-
-        // possibly ensure our local storage capacity
-        if (!_user.isGuest()) {
-            Prefs.config.ensureCapacity(
-                102400, new ResultAdapter(null, function (cause :Error) :void {
-                log.warning("User denied request to increase local storage capacity.");
-            }));
-        }
     }
 
     /**
