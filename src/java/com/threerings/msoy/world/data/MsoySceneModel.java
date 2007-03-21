@@ -203,7 +203,8 @@ public class MsoySceneModel extends SceneModel
     {
         MsoySceneModel model = (MsoySceneModel) super.clone();
         model.furnis = furnis.clone();
-        model.decorData = (DecorData) decorData.clone();
+        model.entrance = (MsoyLocation) entrance.clone();
+        model.decorData = (decorData == null) ? null : (DecorData) decorData.clone();
         model.invalidatePortalInfo();
         return model;
     }
