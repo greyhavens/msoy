@@ -46,7 +46,7 @@ public class ItemServlet extends MsoyServiceServlet
     public int createItem (WebCreds creds, final Item item)
         throws ServiceException
     {
-        // TODO: validate this user's creds
+        MemberRecord memrec = requireAuthedUser(creds);
 
         // validate the item
         if (!item.isConsistent()) {
@@ -57,8 +57,8 @@ public class ItemServlet extends MsoyServiceServlet
         // TODO: validate anything else?
 
         // configure the item's creator and owner
-        item.creatorId = creds.getMemberId();
-        item.ownerId = creds.getMemberId();
+        item.creatorId = memrec.memberId;
+        item.ownerId = memrec.memberId;
 
         final MemberName name = creds.name;
         // pass the buck to the item manager to do the dirty work
@@ -117,7 +117,7 @@ public class ItemServlet extends MsoyServiceServlet
     {
         final ServletWaiter<ItemDetail> waiter = new ServletWaiter<ItemDetail>(
             "loadItem[" + ident + "]");
-        final int memberId = (creds == null) ? -1 : creds.getMemberId();
+        final int memberId = getMemberId(creds);
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.itemMan.getItemDetail(ident, memberId, waiter);
@@ -143,10 +143,11 @@ public class ItemServlet extends MsoyServiceServlet
     public void deleteItem (final WebCreds creds, final ItemIdent ident)
         throws ServiceException
     {
+        final MemberRecord memrec = requireAuthedUser(creds);
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>("deleteItem[" + ident + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.deleteItemFor(creds.getMemberId(), ident, waiter);
+                MsoyServer.itemMan.deleteItemFor(memrec.memberId, ident, waiter);
             }
         });
         waiter.waitForResult();
@@ -169,10 +170,11 @@ public class ItemServlet extends MsoyServiceServlet
     public float rateItem (final WebCreds creds, final ItemIdent ident, final byte rating)
         throws ServiceException
     {
+        final MemberRecord memrec = requireAuthedUser(creds);
         final ServletWaiter<Float> waiter = new ServletWaiter<Float>("rateItem[" + ident + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.rateItem(ident, creds.getMemberId(), rating, waiter);
+                MsoyServer.itemMan.rateItem(ident, memrec.memberId, rating, waiter);
             }
         });
         return waiter.waitForResult();
@@ -210,7 +212,7 @@ public class ItemServlet extends MsoyServiceServlet
     public Collection<TagHistory> getRecentTags (WebCreds creds)
         throws ServiceException
     {
-        final int memberId = creds.getMemberId();
+        final int memberId = getMemberId(creds);
         final ServletWaiter<Collection<TagHistory>> waiter =
             new ServletWaiter<Collection<TagHistory>>("getTagHistory[" + memberId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
@@ -226,11 +228,12 @@ public class ItemServlet extends MsoyServiceServlet
                                final boolean set)
         throws ServiceException
     {
+        final MemberRecord memrec = requireAuthedUser(creds);
         final ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>(
             "tagItem[" + ident + ", " + set + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.tagItem(ident, creds.getMemberId(), tag, set, waiter);
+                MsoyServer.itemMan.tagItem(ident, memrec.memberId, tag, set, waiter);
             }
         });
         return waiter.waitForResult();
@@ -240,6 +243,7 @@ public class ItemServlet extends MsoyServiceServlet
     public void wrapItem (WebCreds creds, ItemIdent ident, boolean wrap)
         throws ServiceException
     {
+        MemberRecord memrec = requireAuthedUser(creds);
         byte type = ident.type;
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
         try {
@@ -250,7 +254,7 @@ public class ItemServlet extends MsoyServiceServlet
                 throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
             }
             if (wrap) {
-                if (item.ownerId != creds.getMemberId()) {
+                if (item.ownerId != memrec.memberId) {
                     log.warning("Trying to wrap un-owned item [creds=" + creds + ", item=" +
                         item + "]");
                     throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
@@ -262,7 +266,7 @@ public class ItemServlet extends MsoyServiceServlet
                         item + "]");
                     throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
                 }
-                repo.updateOwnerId(item, creds.getMemberId());
+                repo.updateOwnerId(item, memrec.memberId);
             }
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to wrap item [item=" + ident + ", wrap=" + wrap + "]");

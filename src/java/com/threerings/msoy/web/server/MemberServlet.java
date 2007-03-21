@@ -67,7 +67,7 @@ public class MemberServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            return MsoyServer.memberRepo.getFriendStatus(creds.getMemberId(), memberId);
+            return MsoyServer.memberRepo.getFriendStatus(getMemberId(creds), memberId);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "isFriend failed [memberId=" + memberId + "].", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
@@ -92,11 +92,12 @@ public class MemberServlet extends MsoyServiceServlet
     public void addFriend (final WebCreds creds, final int friendId)
         throws ServiceException
     {
+        final MemberRecord memrec = requireAuthedUser(creds);
         final ServletWaiter<Void> waiter =
             new ServletWaiter<Void>("acceptFriend[" + friendId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.alterFriend(creds.getMemberId(), friendId, true, waiter);
+                MsoyServer.memberMan.alterFriend(memrec.memberId, friendId, true, waiter);
             }
         });
         waiter.waitForResult();
@@ -106,11 +107,12 @@ public class MemberServlet extends MsoyServiceServlet
     public void removeFriend (final WebCreds creds, final int friendId)
         throws ServiceException
     {
+        final MemberRecord memrec = requireAuthedUser(creds);
         final ServletWaiter<Void> waiter =
             new ServletWaiter<Void>("removeFriend[" + friendId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.alterFriend(creds.getMemberId(), friendId, false, waiter);
+                MsoyServer.memberMan.alterFriend(memrec.memberId, friendId, false, waiter);
             }
         });
         waiter.waitForResult();
@@ -120,7 +122,7 @@ public class MemberServlet extends MsoyServiceServlet
     public ArrayList loadInventory (final WebCreds creds, final byte type)
         throws ServiceException
     {
-        // TODO: validate this user's creds
+        final MemberRecord memrec = requireAuthedUser(creds);
 
         // convert the string they supplied to an item enumeration
         if (Item.getClassForType(type) == null) {
@@ -131,10 +133,10 @@ public class MemberServlet extends MsoyServiceServlet
 
         // load their inventory via the item manager
         final ServletWaiter<ArrayList<Item>> waiter = new ServletWaiter<ArrayList<Item>>(
-            "loadInventory[" + creds.getMemberId() + ", " + type + "]");
+            "loadInventory[" + memrec.memberId + ", " + type + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.loadInventory(creds.getMemberId(), type, waiter);
+                MsoyServer.itemMan.loadInventory(memrec.memberId, type, waiter);
             }
         });
         return waiter.waitForResult();

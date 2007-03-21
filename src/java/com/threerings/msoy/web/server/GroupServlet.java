@@ -73,6 +73,7 @@ public class GroupServlet extends MsoyServiceServlet
             if (gRec == null) {
                 return null;
             }
+
             // load the creator's member record
             MemberRecord mRec = MsoyServer.memberRepo.loadMember(gRec.creatorId);
             if (mRec == null) {
@@ -80,6 +81,7 @@ public class GroupServlet extends MsoyServiceServlet
                     ", creatorId=" + gRec.creatorId + "]");
                 throw new ServiceException(ServiceException.INTERNAL_ERROR);
             }
+
             // set up the detail
             GroupDetail detail = new GroupDetail();
             detail.creator = mRec.getName();
@@ -102,6 +104,7 @@ public class GroupServlet extends MsoyServiceServlet
                 members.add(membership);
             }
             return detail;
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getGroupDetail failed [groupId=" + groupId + "]", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
@@ -132,6 +135,7 @@ public class GroupServlet extends MsoyServiceServlet
                 groups.add(gRec.toGroupObject());
             }
             return groups;
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "searchGroups failed [searchString=" + searchString + "]", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
@@ -155,18 +159,48 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public List<GroupMembership> getMembershipGroups (WebCreds creds, final int memberId,
-                                                      final boolean canInvite)
+    public List<GroupMembership> getMembershipGroups (
+        WebCreds creds, final int memberId, final boolean canInvite)
         throws ServiceException
     {
-        final ServletWaiter<List<GroupMembership>> waiter =
-            new ServletWaiter<List<GroupMembership>>("getMembershipGroups[]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.groupMan.getMembershipGroups(memberId, canInvite, waiter);
+        int requesterId = getMemberId(creds);
+
+        try {
+            List<GroupMembership> result = new ArrayList<GroupMembership>();
+            MemberRecord mRec = MsoyServer.memberRepo.loadMember(memberId);
+            if (mRec == null) {
+                log.warning("Requested group membership for unknown member [id=" + memberId + "].");
+                return result;
             }
-        });
-        return waiter.waitForResult();
+
+            for (GroupMembershipRecord gmRec : MsoyServer.groupRepo.getMemberships(memberId)) {
+                GroupRecord gRec = MsoyServer.groupRepo.loadGroup(gmRec.groupId);
+                if (gRec == null) {
+                    log.warning("Unknown group membership [memberId=" + memberId +
+                                ", groupId=" + gmRec.groupId + "]");
+                    continue;
+                }
+
+                // if we're not the person in question, don't show exclusive groups
+                if (memberId != requesterId && gRec.policy == Group.POLICY_EXCLUSIVE) {
+                    continue;
+                }
+
+                // if we're only including groups we can invite to, strip out non-public groups of
+                // which we're not managers
+                if (canInvite && gRec.policy != Group.POLICY_PUBLIC &&
+                    gmRec.rank != GroupMembership.RANK_MANAGER) {
+                    continue;
+                }
+
+                result.add(gmRec.toGroupMembership(gRec, mRec.getName()));
+            }
+            return result;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getMembershipGroups failed [id=" + memberId + "]", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from interface GroupService
@@ -182,7 +216,7 @@ public class GroupServlet extends MsoyServiceServlet
         }
 
         final ServletWaiter<Group> waiter = new ServletWaiter<Group>("createGroup[" + group + "]");
-        group.creatorId = creds.getMemberId();
+        group.creatorId = memrec.memberId;
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.groupMan.createGroup(group, extras, waiter);

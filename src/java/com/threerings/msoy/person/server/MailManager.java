@@ -207,22 +207,6 @@ public class MailManager
                 return null;
             }
         });
-
-    }
-
-    /**
-     * Bulk delete a number of messages from the database. Note: This actually
-     * DELETES the messages, it doesn't move them to the Trash folder.
-     */
-    public void deleteMessages (final int memberId, final int folderId, final int[] msgIdArr,
-                                ResultListener<Void> waiter)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(waiter) {
-            public Void invokePersistResult () throws PersistenceException {
-            	_mailRepo.deleteMessage(memberId, folderId, msgIdArr);
-                return null;
-            }
-        });
     }
 
     // create a MailHeaders object from a a MailMessageRecord

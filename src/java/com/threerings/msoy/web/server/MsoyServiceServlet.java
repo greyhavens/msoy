@@ -29,6 +29,23 @@ import static com.threerings.msoy.Log.log;
 public class MsoyServiceServlet extends RemoteServiceServlet
 {
     /**
+     * Returns the member id of the client that provided the supplied creds or -1 if the creds are
+     * null. Throws a session expired exception if the creds have expired.
+     */
+    protected int getMemberId (WebCreds creds)
+        throws ServiceException
+    {
+        if (creds == null) {
+            return -1;
+        }
+        Integer memberId = _members.get(creds.token);
+        if (memberId != null) {
+            return memberId;
+        }
+        throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
+    }
+
+    /**
      * Looks up the member information associated with the supplied session authentication
      * information.
      *

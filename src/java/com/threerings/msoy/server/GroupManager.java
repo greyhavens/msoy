@@ -38,10 +38,10 @@ public class GroupManager
     /**
      * Creates a new group record in the database and return a {@link Group} for
      * it. This method assigns the group a new, unique id.
-     * 
+     *
      * TODO: Sanity checks on group name.
      */
-    public void createGroup (final Group groupDef, final GroupExtras extrasDef,    
+    public void createGroup (final Group groupDef, final GroupExtras extrasDef,
         ResultListener<Group> listener)
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Group>(listener) {
@@ -62,7 +62,7 @@ public class GroupManager
                     gRec.infoBackgroundMimeType = extrasDef.infoBackground.mimeType;
                     gRec.infoBackgroundHash = extrasDef.infoBackground.hash;
                 }
-                if (extrasDef.detailBackground != null) { 
+                if (extrasDef.detailBackground != null) {
                     gRec.detailBackgroundMimeType = extrasDef.detailBackground.mimeType;
                     gRec.detailBackgroundHash = extrasDef.detailBackground.hash;
                 }
@@ -75,14 +75,14 @@ public class GroupManager
                 _groupRepo.createGroup(gRec);
                 _groupId = gRec.groupId;
                 _groupRepo.joinGroup(_groupId, gRec.creatorId, GroupMembership.RANK_MANAGER);
-    
+
                 return gRec.toGroupObject();
             }
 
             public void handleSuccess () {
                 super.handleSuccess();
 
-                updateMemberGroup(groupDef.creatorId, _groupId, groupDef.name, 
+                updateMemberGroup(groupDef.creatorId, _groupId, groupDef.name,
                     GroupMembership.RANK_MANAGER);
             }
 
@@ -90,42 +90,6 @@ public class GroupManager
         });
     }
 
-    /**
-     * Fetches the groups a given person is a member of, as {@link GroupMembership} records.
-     * This method does not distinguish between a nonexistent person, and a person who is
-     * a member of no groups; both situations yield empty collections.
-     */
-    public void getMembershipGroups (final int memberId, final boolean canInvite,
-                                     ResultListener<List<GroupMembership>> listener)
-    {
-        assert(memberId != 0);
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<GroupMembership>>(listener) {
-            public List<GroupMembership> invokePersistResult () throws PersistenceException {
-                MemberRecord mRec = _memberRepo.loadMember(memberId);
-                if (mRec == null) {
-                    throw new PersistenceException("Unknown member [memberId=" + memberId + "]");
-                }
-                List<GroupMembership> result = new ArrayList<GroupMembership>();
-                for (GroupMembershipRecord gmRec : _groupRepo.getMemberships(memberId)) {
-                    GroupRecord gRec = _groupRepo.loadGroup(gmRec.groupId);
-                    if (gRec == null) {
-                        log.warning("Unknown group membership [memberId=" + memberId +
-                                    ", groupId=" + gmRec.groupId + "]");
-                        continue;
-                    }
-                    // if we're only including groups we can invite to, strip out exclusive groups
-                    // of which we're not managers
-                    if (canInvite && gRec.policy == Group.POLICY_EXCLUSIVE &&
-                        gmRec.rank != GroupMembership.RANK_MANAGER) {
-                        continue;
-                    }
-                    result.add(gmRec.toGroupMembership(gRec, mRec.getName()));
-                }
-                return result;
-            }
-        });
-    }
-    
     /**
      * Cancels the given person's membership in the given group.
      */
@@ -177,7 +141,7 @@ public class GroupManager
             }
 
             protected String _groupName;
-        });        
+        });
     }
 
     /**
