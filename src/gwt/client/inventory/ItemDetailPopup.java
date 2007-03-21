@@ -50,7 +50,7 @@ public class ItemDetailPopup extends BaseItemDetailPopup
 
         } else {
             button = new Button(CInventory.msgs.detailRemix());
-            new ClickCallback(button, _status) {
+            new ClickCallback(button) {
                 public boolean callService () {
                     CInventory.itemsvc.remixItem(CInventory.creds, _item.getIdent(), this);
                     return true;
@@ -65,7 +65,7 @@ public class ItemDetailPopup extends BaseItemDetailPopup
         controls.add(button);
 
         button = new Button(CInventory.msgs.detailDelete());
-        new ClickCallback(button, _status) {
+        new ClickCallback(button) {
             public boolean callService () {
                 CInventory.itemsvc.deleteItem(CInventory.creds, _item.getIdent(), this);
                 return true;

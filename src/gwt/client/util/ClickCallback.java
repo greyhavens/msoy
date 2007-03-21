@@ -10,34 +10,24 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.shell.CShell;
+import client.util.InfoPopup;
 
 /**
- * Allows one to wire up a button, a status label and a service call into one concisely specified
- * little chunk of code. Be sure to call <code>super.onSuccess()</code> and
- * <code>super.onFailure()</code> if you override those methods so that they can automatically
- * reenable the trigger button.
+ * Allows one to wire up a button and a service call into one concisely specified little chunk of
+ * code. Be sure to call <code>super.onSuccess()</code> and <code>super.onFailure()</code> if you
+ * override those methods so that they can automatically reenable the trigger button.
  */
 public abstract class ClickCallback
     implements AsyncCallback
 {
     /**
      * Creates a callback for the supplied trigger (the constructor will automatically add this
-     * callback to the trigger as a click listener).
+     * callback to the trigger as a click listener). Failure will automatically be reported via an
+     * {@link InfoPopup}.
      */
     public ClickCallback (Button trigger)
     {
-        this(trigger, null);
-    }
-
-    /**
-     * Creates a callback for the supplied trigger (the constructor will automatically add this
-     * callback to the trigger as a click listener). Failure will automatically be reported to the
-     * supplied status label.
-     */
-    public ClickCallback (Button trigger, Label status)
-    {
         _trigger = trigger;
-        _status = status;
         _trigger.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 if (callService()) {
@@ -69,14 +59,10 @@ public abstract class ClickCallback
     // from interface AsyncCallback
     public void onFailure (Throwable cause)
     {
+        CShell.log("Callback failure [for=" + _trigger.getText() + "]", cause);
         _trigger.setEnabled(true);
-        if (_status != null) {
-            _status.setText(CShell.serverError(cause));
-        } else {
-            CShell.log("Callback failure [for=" + _trigger.getText() + "]", cause);
-        }
+        new InfoPopup(CShell.serverError(cause)).showNear(_trigger);
     }
 
     protected Button _trigger;
-    protected Label _status;
 }

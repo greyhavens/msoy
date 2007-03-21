@@ -163,7 +163,7 @@ public class ReviewPopup extends BorderedDialog
             // TODO: Let's nix 'delist' for a bit and see if we need it later.
 //          if (item.ownerId == 0) {
 //          Button button = new Button("Delist");
-//          new ClickCallback(button, _status) {
+//          new ClickCallback(button) {
 //          public boolean callService () {
 //          CAdmin.catalogsvc.listItem(CAdmin.creds, item.getIdent(), false, this);
 //          return true;
@@ -183,7 +183,7 @@ public class ReviewPopup extends BorderedDialog
             // a button to mark someting as mature
             if (_item.isSet(Item.FLAG_FLAGGED_MATURE)) {
                 markButton = new Button(CAdmin.msgs.reviewMark());
-                new ClickCallback(markButton, _status) {
+                new ClickCallback(markButton) {
                     public boolean callService () {
                         _status.setText("");
                         if (_item == null) {
@@ -219,7 +219,7 @@ public class ReviewPopup extends BorderedDialog
 
             // a button to signal we're done
             doneButton = new Button(CAdmin.msgs.reviewDone());
-            new ClickCallback(doneButton, _status) {
+            new ClickCallback(doneButton) {
                 public boolean callService () {
                     _status.setText("");
                     if (_item == null) {

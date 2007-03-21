@@ -98,7 +98,7 @@ public class DoListItemPopup extends BorderedDialog
         }));
 
         _footer.add(_listIt = new Button(CInventory.msgs.doListBtnListIt()));
-        new ClickCallback(_listIt, _status) {
+        new ClickCallback(_listIt) {
             public boolean callService () {
                 int rarity = _rarities[Math.max(0, rarityBox.getSelectedIndex())];
                 CInventory.catalogsvc.listItem(

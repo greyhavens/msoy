@@ -19,6 +19,8 @@ import client.msgs.GroupInvite;
 import client.msgs.MailComposition;
 import client.shell.Application;
 import client.shell.Page;
+import client.util.ClickCallback;
+import client.util.InfoPopup;
 
 /**
  * Displays a list of the groups of which a person is a member.
@@ -34,13 +36,12 @@ public class GroupsBlurb extends Blurb
     // @Override // from Blurb
     protected void didInit (Object blurbData)
     {
-        setHeader("Groups");
+        setHeader(CProfile.msgs.groupsTitle());
 
         List blurbGroups = (List)blurbData;
         if (blurbGroups.size() == 0) {
-            setStatus(CProfile.getMemberId() == _memberId ?
-                      "You're not a member of any groups. Boo hoo." :
-                      "This person is not a member of any groups.");
+            setStatus(CProfile.getMemberId() == _memberId ? CProfile.msgs.notInGroupsSelf() :
+                      CProfile.msgs.notInGroupsOther());
 
         } else {
             for (int ii = 0, ll = blurbGroups.size(); ii < ll; ii++) {
@@ -49,38 +50,35 @@ public class GroupsBlurb extends Blurb
                     ii, 0, Application.groupViewLink(group.group.groupName, group.group.groupId));
             }
         }
-        _invitationPanel = new SimplePanel();
-        _content.setWidget(_content.getRowCount(), 0, _invitationPanel);
 
-        if (CProfile.getMemberId() != _memberId) {
-            CProfile.groupsvc.getMembershipGroups(
-                CProfile.creds, CProfile.getMemberId(), true, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    final List inviteGroups = (List) result;
+        if (CProfile.getMemberId() > 0 && CProfile.getMemberId() != _memberId) {
+            Button inviteButton = new Button(CProfile.msgs.inviteToGroup());
+            new ClickCallback(inviteButton) {
+                public boolean callService () {
+                    CProfile.groupsvc.getMembershipGroups(
+                        CProfile.creds, CProfile.getMemberId(), true, this);
+                    return true;
+                }
+                public boolean gotResult (Object result) {
+                    List inviteGroups = (List) result;
                     if (inviteGroups.size() == 0) {
-                        return;
+                        new InfoPopup(CProfile.msgs.haveNoGroups()).showNear(_trigger);
+                    } else {
+                        new MailComposition(_memberId, "Join this group!",
+                                            new GroupInvite.Composer(inviteGroups),
+                                            "Check out this scrumptious group.").show();
                     }
-                    Button inviteButton = new Button("Invite To A Group");
-                    inviteButton.addClickListener(new ClickListener() {
-                        public void onClick (Widget sender) {
-                            new MailComposition(_memberId, "Join this group!",
-                                                new GroupInvite.Composer(inviteGroups),
-                                                "Check out this scrumptious group.").show();
-                        }
-                    });
-                    _invitationPanel.setWidget(inviteButton);
+                    return true;
                 }
-                public void onFailure (Throwable caught) {
-                    // TODO: silently ignore? need coherent error strategy.
-                }
-            });
+            };
+            _content.setWidget(_content.getRowCount(), 0, inviteButton);
         }
     }
 
     // @Override // from Blurb
     protected void didFail (String cause)
     {
-        setHeader("Error");
+        setHeader(CProfile.msgs.errorTitle());
         setStatus("Failed to load friends: " + cause);
     }
 
@@ -88,6 +86,7 @@ public class GroupsBlurb extends Blurb
     {
         _content.setText(0, 0, text);
     }
+
     protected SimplePanel _invitationPanel;
     protected FlexTable _content;
 }

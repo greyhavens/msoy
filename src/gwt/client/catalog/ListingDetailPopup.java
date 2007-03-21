@@ -58,7 +58,7 @@ public class ListingDetailPopup extends BaseItemDetailPopup
 
         // TODO: enable/disable purchase button depending on member's gold/flow wealth?
         controls.add(_purchase = new Button(CCatalog.msgs.listingBuy()));
-        new ClickCallback(_purchase, _status) {
+        new ClickCallback(_purchase) {
             public boolean callService () {
                 CCatalog.catalogsvc.purchaseItem(CCatalog.creds, _item.getIdent(), this);
                 return true;
@@ -81,7 +81,7 @@ public class ListingDetailPopup extends BaseItemDetailPopup
         // if we are the creator (lister) of this item, allow us to delist it
         if (_listing.creator.getMemberId() == CCatalog.getMemberId()) {
             Button delist = new Button(CCatalog.msgs.listingDelist());
-            new ClickCallback(delist, _status) {
+            new ClickCallback(delist) {
                 public boolean callService () {
                     CCatalog.catalogsvc.listItem(
                         CCatalog.creds, _item.getIdent(), null, -1, false, this);

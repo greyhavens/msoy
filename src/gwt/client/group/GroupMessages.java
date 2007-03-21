@@ -72,9 +72,9 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String viewManagers();
 
   /**
-   * Translated "Area you sure you wish to demote {0}?".
+   * Translated "Are you sure you wish to demote {0}?".
    * 
-   * @return translated "Area you sure you wish to demote {0}?"
+   * @return translated "Are you sure you wish to demote {0}?"
    * @gwt.key viewDemotePrompt
    */
   String viewDemotePrompt(String arg0);
@@ -400,9 +400,9 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String viewEstablishedAbbreviated();
 
   /**
-   * Translated "Area you sure you wish to promote {0}?".
+   * Translated "Are you sure you wish to promote {0}?".
    * 
-   * @return translated "Area you sure you wish to promote {0}?"
+   * @return translated "Are you sure you wish to promote {0}?"
    * @gwt.key viewPromotePrompt
    */
   String viewPromotePrompt(String arg0);
@@ -440,9 +440,9 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String listNoPopularTags();
 
   /**
-   * Translated "Area you sure you wish to leave {0}?".
+   * Translated "Are you sure you wish to leave {0}?".
    * 
-   * @return translated "Area you sure you wish to leave {0}?"
+   * @return translated "Are you sure you wish to leave {0}?"
    * @gwt.key viewLeavePrompt
    */
   String viewLeavePrompt(String arg0);

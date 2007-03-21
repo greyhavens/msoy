@@ -24,12 +24,12 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String lastOnline(String arg0);
 
   /**
-   * Translated "Your display name must be between {0} and {1} characters long.".
+   * Translated "Groups".
    * 
-   * @return translated "Your display name must be between {0} and {1} characters long."
-   * @gwt.key displayNameInvalid
+   * @return translated "Groups"
+   * @gwt.key groupsTitle
    */
-  String displayNameInvalid(String arg0,  String arg1);
+  String groupsTitle();
 
   /**
    * Translated "Home Page".
@@ -40,6 +40,54 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String homepage();
 
   /**
+   * Translated "You're not a member of any groups. Boo hoo.".
+   * 
+   * @return translated "You're not a member of any groups. Boo hoo."
+   * @gwt.key notInGroupsSelf
+   */
+  String notInGroupsSelf();
+
+  /**
+   * Translated "Sorry parder. You don't have invite privileges for any groups.".
+   * 
+   * @return translated "Sorry parder. You don't have invite privileges for any groups."
+   * @gwt.key haveNoGroups
+   */
+  String haveNoGroups();
+
+  /**
+   * Translated "Invite to Group".
+   * 
+   * @return translated "Invite to Group"
+   * @gwt.key inviteToGroup
+   */
+  String inviteToGroup();
+
+  /**
+   * Translated "Your display name must be between {0} and {1} characters long.".
+   * 
+   * @return translated "Your display name must be between {0} and {1} characters long."
+   * @gwt.key displayNameInvalid
+   */
+  String displayNameInvalid(String arg0,  String arg1);
+
+  /**
+   * Translated "This person is not a member of any groups.".
+   * 
+   * @return translated "This person is not a member of any groups."
+   * @gwt.key notInGroupsOther
+   */
+  String notInGroupsOther();
+
+  /**
+   * Translated "Error".
+   * 
+   * @return translated "Error"
+   * @gwt.key errorTitle
+   */
+  String errorTitle();
+
+  /**
    * Translated "Log in to view your profile.".
    * 
    * @return translated "Log in to view your profile."
@@ -48,18 +96,18 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String indexLogon();
 
   /**
-   * Translated "Headline".
-   * 
-   * @return translated "Headline"
-   * @gwt.key headline
-   */
-  String headline();
-
-  /**
    * Translated "Display Name".
    * 
    * @return translated "Display Name"
    * @gwt.key displayName
    */
   String displayName();
+
+  /**
+   * Translated "Headline".
+   * 
+   * @return translated "Headline"
+   * @gwt.key headline
+   */
+  String headline();
 }

@@ -136,7 +136,7 @@ public abstract class FriendInvite
 
                 Button ayeButton = new Button(CMsgs.mmsgs.friendBtnAccept());
                 ayeButton.addStyleName("AyeButton");
-                new ClickCallback(ayeButton, _status) {
+                new ClickCallback(ayeButton) {
                     public boolean callService () {
                         CMsgs.membersvc.addFriend(
                             CMsgs.creds, _message.headers.sender.getMemberId(), this);
