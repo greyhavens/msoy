@@ -40,8 +40,9 @@ public class ProjectEdit extends BorderedDialog
     /**
      * A callback interface for classes that want to know when a project was committed.
      */
-    public static interface ProjectEditListener {
-        public void projectSubmitted(SwiftlyProject project);
+    public static interface ProjectEditListener
+    {
+        public void projectSubmitted (SwiftlyProject project);
     }
         
     public ProjectEdit (SwiftlyProject project, ProjectEditListener listener)

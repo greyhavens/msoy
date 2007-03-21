@@ -545,7 +545,7 @@ public class GroupView extends VerticalPanel
                     loadGroup(_group.groupId);
                 } else { 
                     // will reload the GroupList page
-                    History.newItem("list");
+                    History.newItem(Application.createLinkToken("group", "list"));
                 }
             }
             public void onFailure (Throwable caught) {

@@ -122,7 +122,7 @@ public class ProjectSelectionPanel extends VerticalPanel
             public void onSuccess (Object result) {
                 CSwiftly.log("Project created: " + projectName);
                 SwiftlyProject newProject = (SwiftlyProject)result;
-                History.newItem("" + newProject.projectId);
+                History.newItem(Application.createLinkToken("swiftly", "" + newProject.projectId));
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("createProject(" + projectName + ") failed", caught);

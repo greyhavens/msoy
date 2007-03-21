@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -47,10 +48,11 @@ public class TabbedConsole extends JTabbedPane
         setDisplayedMnemonicIndexAt(0, 1);
 
         // add the chat tab
-        JPanel panel = new JPanel(new HGroupLayout(HGroupLayout.STRETCH, HGroupLayout.STRETCH,
-            5, HGroupLayout.LEFT));
+        JPanel panel = new JPanel(
+            new HGroupLayout(HGroupLayout.STRETCH, HGroupLayout.STRETCH, 5, HGroupLayout.LEFT));
+        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         panel.setPreferredSize(new Dimension(0, 200));
-        panel.add(new ChatPanel(_ctx));
+        panel.add(new ChatPanel(_ctx, true));
         OccupantList ol;
         panel.add(ol = new OccupantList(_ctx), HGroupLayout.FIXED);
         ol.setPreferredSize(new Dimension(100, 0));

@@ -17,13 +17,13 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
-import client.swiftly.ProjectEdit.ProjectEditListener;
+import client.shell.Application;
 
 /**
  * Displays the client interface for a particular swiftly project.
  */
 public class SwiftlyPanel extends VerticalPanel
-    implements ProjectEditListener
+    implements ProjectEdit.ProjectEditListener
 {
     public SwiftlyPanel (ConnectConfig config, int projectId)
     {
@@ -48,9 +48,11 @@ public class SwiftlyPanel extends VerticalPanel
         });
 
         _header = new HorizontalPanel();
+        _header.setSpacing(5);
         add(_header);
     }
 
+    // from ProjectEdit.ProjectEditListener
     public void projectSubmitted (SwiftlyProject project)
     {
         _project = project;
@@ -59,11 +61,9 @@ public class SwiftlyPanel extends VerticalPanel
 
     protected void loadApplet ()
     {
-        // Add a header for the applet
-        HorizontalPanel projectTitle = new HorizontalPanel();
-        projectTitle.add(new Label(CSwiftly.msgs.swiftlyEditing()));
-        projectTitle.add(_projectLink);
-        _header.add(projectTitle);
+        // Add project information to the header
+        _header.add(new Label(CSwiftly.msgs.swiftlyEditing()));
+        _header.add(_projectLink);
         _header.add(new Button(CSwiftly.msgs.editProject(), new ClickListener() {
             public void onClick (Widget sender) {
                 new ProjectEdit(_project, SwiftlyPanel.this).show();
@@ -87,7 +87,8 @@ public class SwiftlyPanel extends VerticalPanel
 
     protected void updateProjectLink ()
     {
-        _projectLink.setTargetHistoryToken("swiftly;" + String.valueOf(_project.projectId));
+        _projectLink.setTargetHistoryToken(
+            Application.createLinkToken("swiftly", String.valueOf(_project.projectId)));
         _projectLink.setText(_project.projectName);
     }
 
