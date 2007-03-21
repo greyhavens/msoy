@@ -516,7 +516,8 @@
       </then>
       <else>
         <!-- No official keystore, use the development keystore -->
-        <echo message="Signing with self-signed development certificate (cert_dir is not set, using development keystore)"/>
+        <echo message="Signing with self-signed development certificate"/>
+        <echo message="(cert_dir is not set, using development keystore)"/>
         <property name="sign.keystore" value="lib/dev-keystore.dat"/>
         <property name="sign.storepass" value="secret"/>
         <property name="sign.alias" value="threerings-dev"/>
@@ -575,9 +576,8 @@
   <!-- generates marshaller and dispatcher classes for all invocation -->
   <!-- service declarations -->
   <target name="genservice" depends="prepare">
-    <taskdef name="service"
-             classname="com.threerings.presents.tools.GenServiceTask"
-             classpathref="classpath"/>
+    <taskdef name="service" classpathref="classpath"
+             classname="com.threerings.presents.tools.GenServiceTask"/>
     <!-- make sure the service class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${deploy.dir}/classes"
            debug="on" optimize="${build.optimize}" deprecation="on">
@@ -595,9 +595,8 @@
   <!-- generates sender and decoder classes for all invocation -->
   <!-- receiver declarations -->
   <target name="genreceiver" depends="prepare">
-    <taskdef name="receiver"
-             classname="com.threerings.presents.tools.GenReceiverTask"
-             classpathref="classpath"/>
+    <taskdef name="receiver" classpathref="classpath"
+             classname="com.threerings.presents.tools.GenReceiverTask"/>
     <!-- make sure the receiver class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${deploy.dir}/classes"
            debug="on" optimize="${build.optimize}" deprecation="on">
@@ -677,11 +676,9 @@
   <!-- builds the javadoc documentation -->
   <target name="javadoc" depends="prepare">
     <property name="copy.holder"  value="Three Rings Design, Inc."/>
-    <javadoc windowtitle="${app.name} API"
-             doctitle="${app.name} API"
+    <javadoc windowtitle="${app.name} API" doctitle="${app.name} API"
              bottom="Copyright &#169; 2006-2007 ${copy.holder}. All Rights Reserved."
-             destdir="${javadoc.dir}"
-             additionalparam="-breakiterator">
+             destdir="${javadoc.dir}" additionalparam="-breakiterator">
       <classpath refid="classpath"/>
       <link href="http://java.sun.com/j2se/1.5/docs/api/"/>
       <link href="http://samskivert.com/code/samskivert/samskivert/docs/api"/>
@@ -709,8 +706,7 @@
   <!-- builds the distribution jar files -->
   <target name="dist" depends="prepare,compile">
     <!-- stick all our code in one jar file -->
-    <jar file="${deploy.dir}/${app.name}-code.jar"
-         basedir="${deploy.dir}/classes">
+    <jar file="${deploy.dir}/${app.name}-code.jar" basedir="${deploy.dir}/classes">
       <include name="com/**"/>
       <include name="*.properties"/>
       <include name="rsrc/**/*.properties"/>
