@@ -584,17 +584,23 @@ public class GroupView extends VerticalPanel
     protected class MyFlexTable extends FlexTable {
         public class MyFlexCellFormatter extends FlexTable.FlexCellFormatter {
             public void setBackgroundImage (int row, int column, String url) {
-                DOM.setStyleAttribute(getElement(row, column), "backgroundImage", "url(" + url + 
-                    ")");
+                if (row <= getRowCount() && column <= getCellCount(row)) {
+                    DOM.setStyleAttribute(
+                        getElement(row, column), "backgroundImage", "url(" + url + ")");
+                }
             }
             public void setBackgroundRepeat (int row, int column, String repeat) {
-                DOM.setStyleAttribute(getElement(row, column), "backgroundRepeat", repeat);
+                if (row <= getRowCount() && column <= getCellCount(row)) {
+                    DOM.setStyleAttribute(getElement(row, column), "backgroundRepeat", repeat);
+                }
             }
             public void setBackgroundNoRepeat (int row, int column) {
                 setBackgroundRepeat(row, column, "no-repeat");
             }
             public void fillWidth (int row, int column) {
-                DOM.setStyleAttribute(getElement(row, column), "width", "100%");
+                if (row < getRowCount() && column < getCellCount(row)) {
+                    DOM.setStyleAttribute(getElement(row, column), "width", "100%");
+                }
             }
         }
 
