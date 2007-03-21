@@ -49,13 +49,13 @@ public class LobbyController extends PlaceController
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
         super.willEnterPlace(plobj);
-        _tableDir.willEnterPlace(plobj);
+        _tableDir.setTableObject(plobj);
     }
 
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
         super.didLeavePlace(plobj);
-        _tableDir.didLeavePlace(plobj);
+        _tableDir.clearTableObject();
     }
 
     /**

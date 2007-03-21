@@ -46,7 +46,7 @@ public class LobbyManager extends PlaceManager
         super.startup(plobj);
 
         MsoyServer.lobbyReg.lobbyStartup(getGameId(), plobj.getOid());
-        _tableMgr = new TableManager(this) {
+        _tableMgr = new TableManager(plobj) {
             protected GameConfig createConfig (Table table) {
                 MsoyGameConfig config = (MsoyGameConfig)super.createConfig(table);
                 // fill in our game id and name

@@ -13,6 +13,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableLobbyObject;
+import com.threerings.parlor.data.TableMarshaller;
 
 import com.threerings.msoy.item.web.Game;
 
@@ -35,6 +36,9 @@ public class LobbyObject extends PlaceObject
 
     /** The tables. */
     public var tables :DSet = new DSet();
+
+    /** Used to communicate with table manager. */
+    public var tableService :TableMarshaller;
 
     // from TableLobbyObject
     public function getTables () :DSet
@@ -60,12 +64,25 @@ public class LobbyObject extends PlaceObject
         throw new IllegalOperationError(); // not applicable on client
     }
 
+    // from TableLobbyObject
+    public function getTableService () :TableMarshaller
+    {
+        return tableService;
+    }
+
+    // from TableLobbyObject
+    public function setTableService (tableService :TableMarshaller) :void
+    {
+        throw new IllegalOperationError(); // not applicable on client
+    }
+
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
 
         game = (ins.readObject() as Game);
         tables = (ins.readObject() as DSet);
+        tableService = (ins.readObject() as TableMarshaller);
     }
 }
 }

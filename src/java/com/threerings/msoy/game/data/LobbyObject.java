@@ -9,6 +9,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableLobbyObject;
+import com.threerings.parlor.data.TableMarshaller;
 
 import com.threerings.msoy.item.web.Game;
 
@@ -24,6 +25,9 @@ public class LobbyObject extends PlaceObject
 
     /** The field name of the <code>tables</code> field. */
     public static final String TABLES = "tables";
+
+    /** The field name of the <code>tableService</code> field. */
+    public static final String TABLE_SERVICE = "tableService";
     // AUTO-GENERATED: FIELDS END
 
     /** The game that we're matchmaking for. If the game is mutable, this may be updated while the
@@ -33,10 +37,19 @@ public class LobbyObject extends PlaceObject
     /** The tables. */
     public DSet<Table> tables = new DSet<Table>();
 
+    /** Used to communicate to the table manager. */
+    public TableMarshaller tableService;
+
     // from TableLobbyObject
     public DSet getTables ()
     {
         return tables;
+    }
+
+    // from TableLobbyObject
+    public TableMarshaller getTableService ()
+    {
+        return tableService;
     }
 
     // AUTO-GENERATED: METHODS START
@@ -102,6 +115,22 @@ public class LobbyObject extends PlaceObject
         @SuppressWarnings("unchecked") DSet<com.threerings.parlor.data.Table> clone =
             (value == null) ? null : value.typedClone();
         this.tables = clone;
+    }
+
+    /**
+     * Requests that the <code>tableService</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setTableService (TableMarshaller value)
+    {
+        TableMarshaller ovalue = this.tableService;
+        requestAttributeChange(
+            TABLE_SERVICE, value, ovalue);
+        this.tableService = value;
     }
     // AUTO-GENERATED: METHODS END
 }
