@@ -66,17 +66,16 @@ public class index extends Page
         } 
 
         if (args.length() == 0) {
-            Page.needPopupHack = false;
             // display the project create/list panel
             setContent(new ProjectSelectionPanel());
 
         } else {
-            Page.needPopupHack = true;
             // load up the information needed to launch the applet
             CSwiftly.swiftlysvc.loadConnectConfig(CSwiftly.creds, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     try {
-                        setContent(new SwiftlyPanel((ConnectConfig)result, Integer.parseInt(args)));
+                        int projectId = Integer.parseInt(args);
+                        setContent(new SwiftlyPanel((ConnectConfig)result, projectId), true);
                     } catch (NumberFormatException e) {
                         // display an error message if the supplied projectId did not parse
                         setContent(new Label(CSwiftly.msgs.invalidProjectId(args))); 

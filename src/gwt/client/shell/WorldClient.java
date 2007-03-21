@@ -3,7 +3,11 @@
 
 package client.shell;
 
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -16,34 +20,59 @@ import client.util.FlashClients;
  */
 public class WorldClient extends Widget
 {
-    public static void display (String args)
+    public static void display (String page, String token, String flashArgs)
     {
-        // clear out our content
+        // clear out our content and the expand/close controls
         RootPanel.get("content").clear();
+        RootPanel.get("content").setWidth("0px");
+        if (_controls.isAttached()) {
+            RootPanel.get("client").remove(_controls);
+        }
+
+        // note that we need to hack our popups
+        Page.needPopupHack = true;
 
         // create our client if necessary
         if (_client == null) {
             if (CShell.creds != null) {
-                args = "token=" + CShell.creds.token + (args == null ? "" : ("&" + args));;
+                flashArgs = "token=" + CShell.creds.token +
+                    (flashArgs == null ? "" : ("&" + flashArgs));;
             }
             RootPanel.get("client").clear();
-            RootPanel.get("client").add(_client = FlashClients.createWorldClient(args));
+            RootPanel.get("client").add(_client = FlashClients.createWorldClient(flashArgs));
 
         } else {
             // TODO: tell the client that it's not minimized
-            clientGo(args);
+            clientGo(flashArgs);
         }
 
-        // widen that bad boy on up; we're now the star of the show
-        RootPanel.get("content").setWidth("0px");
+        // note our current page and history token
+        _curPage = page;
+        _curToken = token;
     }
 
     public static void minimize ()
     {
+        // note that we don't need to hack our popups
+        Page.needPopupHack = false;
+
         if (_client != null) {
             RootPanel.get("content").setWidth("724px");
+            if (!_controls.isAttached()) {
+                RootPanel.get("client").add(_controls);
+            }
             // TODO: tell the client it's in minimized land
         } else {
+            RootPanel.get("content").setWidth("100%");
+        }
+    }
+
+    public static void clearClient ()
+    {
+        if (_client != null) {
+            clientUnload();
+            RootPanel.get("client").clear();
+            _client = null;
             RootPanel.get("content").setWidth("100%");
         }
     }
@@ -57,12 +86,7 @@ public class WorldClient extends Widget
 
     public static void didLogoff ()
     {
-        if (_client != null) {
-            clientUnload();
-            RootPanel.get("client").clear();
-            _client = null;
-            RootPanel.get("content").setWidth("100%");
-        }
+        clearClient();
     }
 
     /**
@@ -97,5 +121,28 @@ public class WorldClient extends Widget
         }
     }-*/;
 
+    protected static class ControlPanel extends HorizontalPanel
+    {
+        public ControlPanel () {
+            setSpacing(5);
+            add(new Button("<<<", new ClickListener() {
+                public void onClick (Widget sender) {
+                    clearControls();
+                    History.newItem(Application.createLinkToken(_curPage, _curToken));
+                }
+            }));
+            add(new Button(">>>", new ClickListener() {
+                public void onClick (Widget sender) {
+                    clearClient();
+                }
+            }));
+        }
+
+        protected void clearControls () {
+        }
+    }
+
     protected static Widget _client;
+    protected static ControlPanel _controls = new ControlPanel();
+    protected static String _curPage, _curToken;
 }

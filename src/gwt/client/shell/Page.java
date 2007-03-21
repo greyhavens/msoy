@@ -89,6 +89,15 @@ public abstract class Page
      */
     protected void setContent (Widget content)
     {
+        setContent(content, false);
+    }
+
+    /**
+     * Clears out any existing content and sets the specified widget as the main page content.
+     */
+    protected void setContent (Widget content, boolean contentBreaksPopups)
+    {
+        needPopupHack = contentBreaksPopups;
         WorldClient.minimize();
         RootPanel.get("content").clear();
         RootPanel.get("content").add(content);

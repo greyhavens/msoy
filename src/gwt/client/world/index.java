@@ -51,28 +51,26 @@ public class index extends Page
 
         // if we're not a dev deployment, disallow guests
         if (!DeploymentConfig.devDeployment && CWorld.creds == null) {
-            needPopupHack = false;
             setContent(MsoyUI.createLabel(CWorld.cmsgs.noGuests(), "infoLabel"));
             return;
         }
 
-        needPopupHack = true;
         try {
             if (token.startsWith("s")) {
                 // go to a specific scene
-                WorldClient.display("sceneId=" + id(token, 1));
+                WorldClient.display("world", token, "sceneId=" + id(token, 1));
 
             } else if (token.startsWith("g")) {
                 // go to a specific group's scene group
-                WorldClient.display("groupHome=" + id(token, 1));
+                WorldClient.display("world", token, "groupHome=" + id(token, 1));
 
             } else if (token.startsWith("m")) {
                 // go to a specific member's home
-                WorldClient.display("memberHome=" + id(token, 1));
+                WorldClient.display("world", token, "memberHome=" + id(token, 1));
 
             } else if (token.startsWith("l")) {
                 // go to a specific member's home
-                WorldClient.display("location=" + id(token, 1));
+                WorldClient.display("world", token, "location=" + id(token, 1));
 
             } else if (token.startsWith("ng")) {
                 // go to the neighborhood around the specified group
@@ -88,7 +86,7 @@ public class index extends Page
 
             } else if (CWorld.creds != null) {
                 // we're logged in, go to our home
-                WorldClient.display(null);
+                WorldClient.display("world", token, null);
 
             } else {
                 // we're not logged in, show popular places
@@ -186,13 +184,13 @@ public class index extends Page
         if (hood == null) {
             setContent(new Label(CWorld.msgs.noSuchMember()));
         } else {
-            setContent(FlashClients.createNeighborhood(hood));
+            setContent(FlashClients.createNeighborhood(hood), true);
         }
     }
 
     protected void hotSpots (String hotSpots)
     {
-        setContent(FlashClients.createPopularPlaces(hotSpots));
+        setContent(FlashClients.createPopularPlaces(hotSpots), true);
     }
 
     protected int id (String token, int index)

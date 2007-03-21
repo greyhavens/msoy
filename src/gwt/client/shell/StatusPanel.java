@@ -40,6 +40,11 @@ public class StatusPanel extends FlexTable
         setCellPadding(0);
         setCellSpacing(0);
         _app = app;
+
+        // create our mail notifier for use later
+        String mailImg = "<img class='MailNotification' src='/images/mail/button_mail.png'/>";
+        _mailNotifier = new HTML(Application.createLinkHtml(mailImg, "mail", ""));
+        _mailNotifier.setWidth("20px");
     }
 
     /**
@@ -84,10 +89,8 @@ public class StatusPanel extends FlexTable
     public void refreshLevels ()
     {
         if (_creds != null) {
-            int[] levels = FlashClients.getLevels();
-            setText(0, _flowIdx, String.valueOf(levels[0]));
-            setText(0, _goldIdx, String.valueOf(levels[1]));
-            setText(0, _levelIdx, String.valueOf(levels[2]));
+            _levels.refreshLevels();
+            _levels.setVisible(true);
         } else {
             CShell.log("Ignoring refreshLevels() request as we're not logged on.");
         }
@@ -114,14 +117,13 @@ public class StatusPanel extends FlexTable
         clearCookie("creds");
         _app.didLogoff();
 
-        // give the header client a chance to logoff before we nix it
-        logoffHeaderClient();
+        // hide our logged on bits
+        _levels.setVisible(false);
+        _mailNotifier.setVisible(false);
 
-        reset();
         if (DeploymentConfig.devDeployment) {
             setText(0, 0, "New to Whirled?");
-            setText(0, 1, "");
-            getFlexCellFormatter().setWidth(0, 1, "5px");
+            setHTML(0, 1, "&nbsp;");
             setWidget(0, 2, MsoyUI.createActionLabel("Create an account!", new ClickListener() {
                 public void onClick (Widget sender) {
                     new CreateAccountDialog(StatusPanel.this).show();
@@ -162,45 +164,14 @@ public class StatusPanel extends FlexTable
         setCookie("who", _creds.accountName);
         _app.didLogon(_creds);
 
-        reset();
         int idx = 0;
+        setText(0, idx++, _creds.name.toString());
+        setWidget(0, idx++, _levels);
+        _levels.setVisible(false); // we'll soon have a call to refreshLevels()
 
-        setText(0, idx++, _creds.name + ":");
-
-        getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
-        getFlexCellFormatter().setStyleName(0, idx, "Icon");
-        setWidget(0, idx++, new Image("/images/header/symbol_flow.png"));
-        setText(0, _flowIdx = idx++, "0");
-
-        getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
-        getFlexCellFormatter().setStyleName(0, idx, "Icon");
-        setWidget(0, idx++, new Image("/images/header/symbol_gold.png"));
-        setText(0, _goldIdx = idx++, "0");
-
-        getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
-        getFlexCellFormatter().setStyleName(0, idx, "Icon");
-        setWidget(0, idx++, new Image("/images/header/symbol_level.png"));
-        setText(0, _levelIdx = idx++, "0");
-
-        getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
-        getFlexCellFormatter().setStyleName(0, idx, "Icon");
-        _mailNotifier = new HTML(
-            "<a href='/mail'>" +
-            "<img class='MailNotification' src='/images/mail/button_mail.png'/></a>");
         // begin with 'new mail' turned off until we hear otherwise
-        _mailNotifier.setVisible(false);
-        getFlexCellFormatter().setWidth(0, idx, "20px");
         setWidget(0, idx++, _mailNotifier);
-    }
-
-    protected void reset ()
-    {
-        if (getRowCount() > 0) {
-            for (int col = 0; col < getCellCount(0); col++) {
-                clearCell(0, col);
-                getFlexCellFormatter().setWidth(0, col, "0px");
-            }
-        }
+        _mailNotifier.setVisible(false);
     }
 
     protected void actionClicked ()
@@ -290,20 +261,46 @@ public class StatusPanel extends FlexTable
         protected Label _status;
     }
 
-    /**
-     * Called when we logoff to give the header client a chance to logoff.
-     */
-    protected static native void logoffHeaderClient () /*-{
-       var client = $doc.getElementById("asclient");
-       if (client) {
-           client.onUnload();
-       }
-    }-*/;
+    protected static class LevelsDisplay extends FlexTable
+    {
+        public LevelsDisplay () {
+            setCellPadding(0);
+            setCellSpacing(0);
+
+            int idx = 0;
+            getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
+            getFlexCellFormatter().setStyleName(0, idx, "Icon");
+            setWidget(0, idx++, new Image("/images/header/symbol_flow.png"));
+            setText(0, _flowIdx = idx++, "0");
+
+            getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
+            getFlexCellFormatter().setStyleName(0, idx, "Icon");
+            setWidget(0, idx++, new Image("/images/header/symbol_gold.png"));
+            setText(0, _goldIdx = idx++, "0");
+
+            getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
+            getFlexCellFormatter().setStyleName(0, idx, "Icon");
+            setWidget(0, idx++, new Image("/images/header/symbol_level.png"));
+            setText(0, _levelIdx = idx++, "0");
+
+            getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
+            getFlexCellFormatter().setStyleName(0, idx, "Icon");
+        }
+
+        public void refreshLevels () {
+            int[] levels = FlashClients.getLevels();
+            setText(0, _flowIdx, String.valueOf(levels[0]));
+            setText(0, _goldIdx, String.valueOf(levels[1]));
+            setText(0, _levelIdx, String.valueOf(levels[2]));
+        }
+
+        protected int _flowIdx, _goldIdx, _levelIdx;
+    }
 
     protected Application _app;
     protected WebCreds _creds;
 
-    protected int _flowIdx, _goldIdx, _levelIdx;
+    protected LevelsDisplay _levels = new LevelsDisplay();
     protected HTML _mailNotifier;
 
     /** The height of the header UI in pixels. */

@@ -38,13 +38,6 @@ public class index extends Page
     }
 
     // @Override from Page
-    public void onPageLoad ()
-    {
-        super.onPageLoad();
-        needPopupHack = true;
-    }
-
-    // @Override from Page
     public void onHistoryChanged (String token)
     {
         // if we're not a dev deployment, disallow guests
@@ -95,17 +88,20 @@ public class index extends Page
     protected void launchGame (LaunchConfig config)
     {
         Widget display = null;
+        boolean contentBreaksPopups = false;
+
         switch (config.type) {
         case LaunchConfig.FLASH_IN_WORLD:
-            WorldClient.display("worldGame=" + config.gameId);
+            WorldClient.display("game", getPageArgs(), "worldGame=" + config.gameId);
             break;
 
         case LaunchConfig.FLASH_LOBBIED:
-            WorldClient.display("gameLobby=" + config.gameId);
+            WorldClient.display("game", getPageArgs(), "gameLobby=" + config.gameId);
             break;
 
         case LaunchConfig.FLASH_SOLO:
             display = WidgetUtil.createFlashContainer("game", config.gameMediaPath, 800, 600, null);
+            contentBreaksPopups = true;
             break;
 
         case LaunchConfig.JAVA_LOBBIED:
@@ -118,6 +114,7 @@ public class index extends Page
                                "server", config.server,
                                "port", "" + config.port,
                                "authtoken", (CGame.creds == null) ? "" : CGame.creds.token });
+            contentBreaksPopups = true;
             break;
 
         case LaunchConfig.JAVA_SOLO:
@@ -130,7 +127,7 @@ public class index extends Page
         }
 
         if (display != null) {
-            setContent(display);
+            setContent(display, contentBreaksPopups);
         }
     }
 }

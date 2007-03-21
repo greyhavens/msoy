@@ -21,7 +21,9 @@ public class PopupImplMozilla extends PopupImpl
     }-*/;
 
     public native void onShow (Element popup) /*-{
-        if (!@client.shell.Page::needPopupHack) {
+        // we only need this hack on Linux, and only sometimes
+        if (!@client.shell.Page::needPopupHack ||
+            navigator.userAgent.toLowerCase().indexOf("linux") == -1) {
             return;
         }
 
