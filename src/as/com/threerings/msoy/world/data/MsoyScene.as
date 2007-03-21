@@ -47,11 +47,11 @@ public class MsoyScene extends SceneImpl
             break;
         }
 
-        if (!hasRights && member.getTokens().isAdmin()) {
-//            Log.getLog(this).info("Allowing admin to edit scene in which " +
+        if (!hasRights && member.tokens.isSupport()) {
+//            Log.getLog(this).info("Allowing support+ to edit scene in which " +
 //                "they otherwise wouldn't have rights " +
 //                "[sceneId=" + getId() + ", sceneName=\"" + getName() + "\", " +
-//                "admin=" + member.who() + "].");
+//                "support=" + member.who() + "].");
             return true;
         }
 

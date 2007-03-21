@@ -13,7 +13,7 @@ import com.threerings.whirled.spot.data.Location;
  * has been incorporated.
  */
 public class MsoyLocation
-    implements Location
+    implements Location // Location extends Cloneable, Streamable, Hashable
 {
     /** The body's x position (interpreted by the display system). */
     public var x :Number;
