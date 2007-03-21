@@ -57,18 +57,18 @@ public class ProjectRoomManager extends PlaceManager
      */
     public void init (SwiftlyProject project, ProjectStorage storage)
     {
-        // References to our on-disk SDKs
-        File flexSdk = new File(ServerConfig.serverRoot + FLEX_SDK);
-        File whirledSdk = new File(ServerConfig.serverRoot + WHIRLED_SDK);
-        
         _storage = storage;
 
         // Stick the project in the dobj
         _roomObj.setProject(project);
 
+        // References to our on-disk SDKs
+        File flexSdk = new File(ServerConfig.serverRoot + FLEX_SDK);
+        File whirledSdk = new File(ServerConfig.serverRoot + WHIRLED_SDK);
+
         // Setup the builder.
-        _builder = new LocalProjectBuilder(project, _storage, flexSdk.getAbsoluteFile(),
-            whirledSdk.getAbsoluteFile());
+        _builder = new LocalProjectBuilder(
+            project, _storage, flexSdk.getAbsoluteFile(), whirledSdk.getAbsoluteFile());
 
         // Load the project tree from the storage provider
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
@@ -83,7 +83,7 @@ public class ProjectRoomManager extends PlaceManager
                     return false;
                 }
             }
-            
+
             public void handleResult () {
                 for (PathElement element : _projectTree) {
                     _roomObj.addPathElement(element);
@@ -153,8 +153,8 @@ public class ProjectRoomManager extends PlaceManager
             _roomObj.updateDocuments(doc);
         }
 
-        _roomObj.postEvent(new DocumentUpdatedEvent(
-                               _roomObj.getOid(), caller.getOid(), elementId, text));
+        _roomObj.postEvent(
+            new DocumentUpdatedEvent(_roomObj.getOid(), caller.getOid(), elementId, text));
     }
 
     // from interface ProjectRoomProvider
@@ -201,7 +201,7 @@ public class ProjectRoomManager extends PlaceManager
                     return false;
                 }
             }
-            
+
             public void handleResult () {
                 _roomObj.addSwiftlyDocument(_doc);
             }
@@ -214,24 +214,24 @@ public class ProjectRoomManager extends PlaceManager
     public void startFileUpload (ClientObject caller, PathElement parent,
                                  ProjectRoomService.ConfirmListener listener)
     {
-            // TODO: use caller.getOid() as the key into a hash where the new path element
-            // and its handy buffer will live
-            listener.requestProcessed();
-            // listener.requestFailed("e.start_upload_failed");
+        // TODO: use caller.getOid() as the key into a hash where the new path element
+        // and its handy buffer will live
+        listener.requestProcessed();
+        // listener.requestFailed("e.start_upload_failed");
     }
 
     // from interface ProjectRoomProvider
     public void uploadFile (ClientObject caller, byte[] data)
     {
-            // TODO: append this to a buffer, hopefully on the file system. use caller.getOid()
+        // TODO: append this to a buffer, hopefully on the file system. use caller.getOid()
     }
 
     // from interface ProjectRoomProvider
     public void finishFileUpload (ClientObject caller, ProjectRoomService.ConfirmListener listener)
     {
-            // TODO: close the buffer. send a failure if anything in uploadFile failed as well
-            listener.requestProcessed();
-            // listener.requestFailed("e.finish_upload_failed");
+        // TODO: close the buffer. send a failure if anything in uploadFile failed as well
+        listener.requestProcessed();
+        // listener.requestFailed("e.finish_upload_failed");
     }
 
     // from interface SetListener
@@ -261,7 +261,7 @@ public class ProjectRoomManager extends PlaceManager
             element.lazarus(_roomObj.pathElements);
         }
     }
-    
+
     // from interface SetListener
     public void entryRemoved (EntryRemovedEvent event)
     {
@@ -275,7 +275,7 @@ public class ProjectRoomManager extends PlaceManager
         try {
             FileUtils.deleteDirectory(_buildDir);
         } catch (IOException e) {
-            // TODO: log this 
+            // TODO: log this
         } finally {
             super.finalize();
         }
@@ -286,7 +286,7 @@ public class ProjectRoomManager extends PlaceManager
     {
         return new ProjectRoomObject();
     }
-    
+
     @Override // from PlaceManager
     protected void didStartup ()
     {
@@ -308,11 +308,10 @@ public class ProjectRoomManager extends PlaceManager
         MsoyServer.swiftlyMan.projectDidShutdown(this);
     }
 
-
     /**
-     * Issue a request on the executor to commit this project; any log output should be
-     * collected, then published on _roomObj.console. If the commit works, it will
-     * start the build if true was passed as a parameter.
+     * Issue a request on the executor to commit this project; any log output should be collected,
+     * then published on _roomObj.console. If the commit works, it will start the build if true was
+     * passed as a parameter.
      */
     protected void doCommit (boolean shouldBuild)
     {
@@ -416,7 +415,8 @@ public class ProjectRoomManager extends PlaceManager
                 File topBuildDir = new File(ServerConfig.serverRoot + LOCAL_BUILD_DIRECTORY);
 
                 // Create a temporary build directory
-                _buildDir = File.createTempFile("localbuilder", String.valueOf(_projectId), topBuildDir);
+                _buildDir = File.createTempFile(
+                    "localbuilder", String.valueOf(_projectId), topBuildDir);
                 _buildDir.delete();
                 if (_buildDir.mkdirs() != true) {
                     // This should -never- happen, try to exit gracefully.
@@ -434,28 +434,35 @@ public class ProjectRoomManager extends PlaceManager
         // this is called back on the dobj thread and must only report results
         public void resultReceived () {
             if (_error != null) {
-                _roomObj.setConsole(MessageBundle.tcompose("m.build_failed_reason", _error.getMessage()));
-            } else {
-                // Check for failure
-                if (_result.buildSuccessful()) {
-                    _roomObj.setConsole("m.build_complete");
-                    // TODO: This is an awful last minute hack!
-                    try {
-                        File endResult = File.createTempFile("buildresult" + Integer.toString(_projectId), ".swf", new File(ServerConfig.serverRoot + "/pages/buildresults/"));
-                        FileUtils.copyFile(_result.getOutputFile(), endResult);
-                        FileUtils.deleteDirectory(_buildDir);
-                        _roomObj.setConsole("http://" + ServerConfig.serverHost + ":" + ServerConfig.getHttpPort() + "/buildresults/" + endResult.getName());
-                    } catch (IOException ioe) {
-                        // XXX HACK HACK HACK
-                    }
+                _roomObj.setConsole(
+                    MessageBundle.tcompose("m.build_failed_reason", _error.getMessage()));
+                return;
+            }
 
-                } else {
-                    _roomObj.setConsole("m.build_failed");                    
+            // Check for failure
+            if (_result.buildSuccessful()) {
+                _roomObj.setConsole("m.build_complete");
+
+                // TODO: This is an awful last minute hack!
+                try {
+                    File endResult = File.createTempFile(
+                        "buildresult" + Integer.toString(_projectId), ".swf",
+                        new File(ServerConfig.serverRoot + "/pages/buildresults/"));
+                    FileUtils.copyFile(_result.getOutputFile(), endResult);
+                    FileUtils.deleteDirectory(_buildDir);
+                    String url = "http://" + ServerConfig.serverHost + ":" +
+                        ServerConfig.getHttpPort() + "/buildresults/" + endResult.getName();
+                    _roomObj.setConsole(MessageBundle.taint(url));
+                } catch (IOException ioe) {
+                    // XXX HACK HACK HACK
                 }
 
-                // Provide build output
-                _roomObj.setResult(_result);
+            } else {
+                _roomObj.setConsole("m.build_failed");
             }
+
+            // Provide build output
+            _roomObj.setResult(_result);
         }
 
         // this is called back on the dobj thread and must only report failure
