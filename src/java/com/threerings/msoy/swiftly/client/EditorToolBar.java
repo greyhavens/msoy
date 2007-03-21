@@ -1,5 +1,6 @@
 package com.threerings.msoy.swiftly.client;
 
+import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 
@@ -29,7 +30,10 @@ public class EditorToolBar extends JToolBar
         // addSeparator();
 
         // TODO add mini icons for these + tooltips with keyboard shortcuts
-        add(new JButton(_ctrl.buildAction));
+        JButton build = new JButton(_ctrl.buildAction);
+        build.setFont(build.getFont().deriveFont(Font.BOLD));
+        add(build);
+
         // TODO: enable this when we can actually do something here.
         // add(new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.play")));
 

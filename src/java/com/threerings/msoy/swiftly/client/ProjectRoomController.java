@@ -51,7 +51,7 @@ public class ProjectRoomController extends PlaceController
     @Override // from PlaceController
     protected PlaceView createPlaceView (CrowdContext ctx)
     {
-        return new SwiftlyEditor(this, (SwiftlyContext)ctx);
+        return (_editor = new SwiftlyEditor(this, (SwiftlyContext)ctx));
     }
 
     /**
@@ -59,10 +59,13 @@ public class ProjectRoomController extends PlaceController
      */
     protected void buildProject ()
     {
+        // report to the user that we're starting the build
+        _editor.consoleMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.build_started"));
         // the results of this request will be communicated via _roomObj.console
         _roomObj.service.buildProject(_ctx.getClient());
     }
 
     protected SwiftlyContext _ctx;
     protected ProjectRoomObject _roomObj;
+    protected SwiftlyEditor _editor;
 }

@@ -11,7 +11,9 @@ import java.util.regex.Matcher;
 
 import com.threerings.io.Streamable;
 
-/** A compiler message. */
+/**
+ * Represents a single message from the compiler output.
+ */
 public class FlexCompilerOutput
     implements CompilerOutput, Streamable
 {
@@ -28,7 +30,7 @@ public class FlexCompilerOutput
 
         // Match standard flex compiler messages.
         match = _FLEX_MSG_PATTERN.matcher(flexMessage);
-        if (match.matches() == true) {
+        if (match.matches()) {
             String level;
 
             // If the regex matched, there's no way the integers can be
@@ -52,13 +54,13 @@ public class FlexCompilerOutput
         _fileName = null;
         _lineNumber = -1;
         _columnNumber = -1;
-        return;
     }
 
     /**
      * Create a new FlexCompilerOutput instance with the provided settings.
      */
-    public FlexCompilerOutput (String message, Level level, String fileName, int lineNumber, int columnNumber)
+    public FlexCompilerOutput (String message, Level level, String fileName, int lineNumber,
+                               int columnNumber)
     {
         _message = message;
         _level = level;
@@ -74,7 +76,8 @@ public class FlexCompilerOutput
     }
 
     // from CompilerOutput interface
-    public int getColumnNumber () {
+    public int getColumnNumber ()
+    {
         return _columnNumber;
     }
 
@@ -96,37 +99,45 @@ public class FlexCompilerOutput
         return _level;
     }
 
+    /**
+     * Summarizes this message usefully.
+     */
+    public String toString ()
+    {
+        return _fileName.substring(_fileName.lastIndexOf("/")+1) + ":" +
+            _lineNumber + ": " + _message;
+    }
+
     @Override
     public boolean equals (Object other)
     {
-        if (other instanceof CompilerOutput) {
-            CompilerOutput that = (CompilerOutput) other;
-            // Line numbers and columns must be equal
-            if (_lineNumber != that.getLineNumber() || _columnNumber != that.getColumnNumber()) {
-                return false;
-            }
-
-            // Levels must be equal
-            if (!_level.equals(that.getLevel())) {
-                return false;
-            }
-
-            // File name must either be null (and thus equal), or the strings
-            // must be equal
-            if (_fileName != that.getFileName() && !_fileName.equals(that.getFileName())) {
-                return false;
-            }
-
-            // Message must be equal
-            if (!_message.equals(that.getMessage())) {
-                return false;
-            }
-
-            // We got this far, it must be true!
-            return true;
-        } else {
-            return false;                
+        if (!(other instanceof CompilerOutput)) {
+            return false;
         }
+        CompilerOutput that = (CompilerOutput) other;
+
+        // Line numbers and columns must be equal
+        if (_lineNumber != that.getLineNumber() || _columnNumber != that.getColumnNumber()) {
+            return false;
+        }
+
+        // Levels must be equal
+        if (!_level.equals(that.getLevel())) {
+            return false;
+        }
+
+        // File name must either be null (and thus equal), or the strings must be equal
+        if (_fileName != that.getFileName() && !_fileName.equals(that.getFileName())) {
+            return false;
+        }
+
+        // Message must be equal
+        if (!_message.equals(that.getMessage())) {
+            return false;
+        }
+
+        // We got this far, it must be true!
+        return true;
     }
     
     /** Line number referenced. -1 if no line number. */
@@ -148,10 +159,12 @@ public class FlexCompilerOutput
      * Matches standard flex error/warning messages.
      * Ex: /srcpath/Mirror/Mirror.as(39): col: 50 Error: Something bad happened true
      */
-    protected static final Pattern _FLEX_MSG_PATTERN = Pattern.compile("(.*)\\(([0-9]+)\\): col: ([0-9]+) ([A-Za-z]+): (.*)");
+    protected static final Pattern _FLEX_MSG_PATTERN =
+        Pattern.compile("(.*)\\(([0-9]+)\\): col: ([0-9]+) ([A-Za-z]+): (.*)");
 
     /** Map flex compiler level strings to CompilerOutput.Level enums. */
-    protected static final Map<String,CompilerOutput.Level> _messageLevels = new HashMap<String,CompilerOutput.Level>();
+    protected static final Map<String,CompilerOutput.Level> _messageLevels =
+        new HashMap<String,CompilerOutput.Level>();
 
     // Initialize String -> Enum level mappings.
     static {

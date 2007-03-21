@@ -25,6 +25,7 @@ import javax.swing.JTextField;
 import com.samskivert.swing.HGroupLayout;
 import com.samskivert.swing.VGroupLayout;
 import com.samskivert.util.StringUtil;
+import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -55,6 +56,7 @@ public class SwiftlyEditor extends PlacePanel
     {
         super(ctrl);
         _ctx = ctx;
+        _msgs = _ctx.getMessageManager().getBundle(SwiftlyCodes.SWIFTLY_MSGS);
 
         setLayout(new VGroupLayout(VGroupLayout.STRETCH, VGroupLayout.STRETCH, 5,
                                    VGroupLayout.TOP));
@@ -93,7 +95,7 @@ public class SwiftlyEditor extends PlacePanel
         _horizSplitPane.setDividerLocation(600);
 
         initFileTypes();
-        consoleMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.welcome"));
+        consoleMessage(_msgs.get("m.welcome"));
     }
 
     public void addEditorTab (PathElement pathElement)
@@ -181,7 +183,7 @@ public class SwiftlyEditor extends PlacePanel
     public String showSelectPathElementNameDialog (PathElement.Type pathElementType)
     {
         String prompt;
-        prompt = _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.select_name." + pathElementType);
+        prompt = _msgs.get("m.dialog.select_name." + pathElementType);
         return JOptionPane.showInternalInputDialog(this, prompt);
     }
 
@@ -203,13 +205,11 @@ public class SwiftlyEditor extends PlacePanel
 
     /**
      * Shows a modal, internal frame dialog reporting an error to the user.
-     * @param the error message to display
      */
     public void showErrorDialog (String message)
     {
-        JOptionPane.showInternalMessageDialog(this, message,
-            _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.error.title"),
-            JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showInternalMessageDialog(
+            this, message, _msgs.get("m.dialog.error.title"), JOptionPane.ERROR_MESSAGE);
     }
 
     @Override // from PlacePanel
@@ -243,7 +243,7 @@ public class SwiftlyEditor extends PlacePanel
     public void attributeChanged (AttributeChangedEvent event)
     {
         if (event.getName().equals(ProjectRoomObject.CONSOLE)) {
-            consoleMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, _roomObj.console));
+            consoleMessage(_msgs.xlate(_roomObj.console));
         } else if (event.getName().equals(ProjectRoomObject.RESULT)) {
             displayBuildResult();
         }
@@ -289,12 +289,11 @@ public class SwiftlyEditor extends PlacePanel
     protected void initFileTypes ()
     {
         _createableFileTypes = new ArrayList<FileTypes>();
-        _createableFileTypes.add(new FileTypes(
-            _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.filetypes." +
-            MediaDesc.TEXT_PLAIN), MediaDesc.mimeTypeToString(MediaDesc.TEXT_PLAIN)));
-        _createableFileTypes.add(new FileTypes(
-            _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.filetypes." + 
-            MediaDesc.TEXT_ACTIONSCRIPT), MediaDesc.mimeTypeToString(MediaDesc.TEXT_ACTIONSCRIPT)));
+        _createableFileTypes.add(new FileTypes(_msgs.get("m.filetypes." + MediaDesc.TEXT_PLAIN),
+                                               MediaDesc.mimeTypeToString(MediaDesc.TEXT_PLAIN)));
+        _createableFileTypes.add(
+            new FileTypes(_msgs.get("m.filetypes." + MediaDesc.TEXT_ACTIONSCRIPT),
+                          MediaDesc.mimeTypeToString(MediaDesc.TEXT_ACTIONSCRIPT)));
     }
 
     /** Displays the build result on the console */
@@ -302,7 +301,7 @@ public class SwiftlyEditor extends PlacePanel
     {
         for (CompilerOutput output : _roomObj.result.getOutput()) {
             FlexCompilerOutput flexOut = (FlexCompilerOutput)output;
-            consoleMessage(flexOut.getMessage());
+            consoleMessage(flexOut.toString());
         }
     }
 
@@ -310,12 +309,11 @@ public class SwiftlyEditor extends PlacePanel
     protected class CreateFileDialog extends JDialog
     {
         public CreateFileDialog () {
-            super(new JFrame(),
-                _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.create_file.title"), true);
-            setLayout(new GridLayout(3, 3));
+            super(new JFrame(), _msgs.get("m.dialog.create_file.title"), true);
+            setLayout(new GridLayout(3, 3, 5, 5));
 
             // file name input
-            add(new JLabel(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.create_file.name")));
+            add(new JLabel(_msgs.get("m.dialog.create_file.name")));
             _text = new JTextField();
             _text.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -327,13 +325,12 @@ public class SwiftlyEditor extends PlacePanel
             add(_text);
 
             // file type chooser
-            add(new JLabel(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.create_file.type")));
+            add(new JLabel(_msgs.get("m.dialog.create_file.type")));
             _comboBox = new JComboBox(_createableFileTypes.toArray());
             add(_comboBox);
 
             // ok/cancel buttons
-            JButton button =
-                new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.create_file.create"));
+            JButton button = new JButton(_msgs.get("m.dialog.create_file.create"));
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     _cancelled = false;
@@ -341,8 +338,7 @@ public class SwiftlyEditor extends PlacePanel
                 }
             });
             add(button);
-            button =
-                new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.create_file.cancel"));
+            button = new JButton(_msgs.get("m.dialog.create_file.cancel"));
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     _cancelled = true;
@@ -373,7 +369,8 @@ public class SwiftlyEditor extends PlacePanel
 
         protected JTextField _text;
         protected JComboBox _comboBox;
-        // whether the user clicked cancel. defaults to true to deal with closing the dialog.
+
+        /** Whether the user clicked cancel. defaults to true to deal with closing the dialog. */
         protected boolean _cancelled = true;
     }
 
@@ -399,6 +396,7 @@ public class SwiftlyEditor extends PlacePanel
     protected ArrayList<FileTypes> _createableFileTypes;
 
     protected SwiftlyContext _ctx;
+    protected MessageBundle _msgs;
     protected ProjectRoomObject _roomObj;
     protected PathElement _project;
 
