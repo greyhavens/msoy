@@ -178,19 +178,14 @@ public class LobbyPanel extends VBox
     {
         super.createChildren();
         styleName = "lobbyPanel";
+        percentWidth = 100;
+        percentHeight = 100;
 
-        var gameBox :HBox = new HBox();
-        gameBox.percentWidth = 100;
-        gameBox.percentHeight = 100;
-        gameBox.styleName = "gameBox";
-        addChild(gameBox);
-
-        // left side: logo, description, create table button and invite friend button
-        var descriptionBox :VBox = new VBox();
-        descriptionBox.width = 160;
-        descriptionBox.percentHeight = 100;
+        var descriptionBox :HBox = new HBox();
+        descriptionBox.percentWidth = 100;
+        descriptionBox.height = 120;
         descriptionBox.styleName = "descriptionBox";
-        gameBox.addChild(descriptionBox);
+        addChild(descriptionBox);
         var logo :VBox = new VBox();
         logo.styleName = "lobbyLogoBox";
         logo.width = 160;
@@ -198,46 +193,25 @@ public class LobbyPanel extends VBox
         logo.addChild(new MediaWrapper(new MediaContainer(getGame().getThumbnailPath())));
         logo.setStyle("backgroundImage", "/media/static/game/logo_background.png");
         descriptionBox.addChild(logo);
-        descriptionBox.addChild(new MediaWrapper(new MediaContainer(
-            "/media/static/game/info_top.png")));
-        var infoBox :HBox = new HBox();
-        infoBox.width = 160;
-        infoBox.percentHeight = 100;
-        infoBox.setStyle("backgroundImage", "/media/static/game/info_tile.png");
-        infoBox.setStyle("backgroundSize", "100%");
-        descriptionBox.addChild(infoBox);
+        // TODO get new art from jon for this, and get it working in here
+        //descriptionBox.addChild(new MediaWrapper(new MediaContainer(
+            //"/media/static/game/info_top.png")));
         var info :Text = new Text();
         info.styleName = "lobbyInfo";
         info.percentWidth = 100;
         info.percentHeight = 100;
         info.text = getGame().description;
-        infoBox.addChild(info);
+        descriptionBox.addChild(info);
         createBtn = new CommandButton(LobbyController.CREATE_TABLE);
         createBtn.height = 22;
         createBtn.label = Msgs.GAME.get("b.create");
-        var inviteBtn :CommandButton = new CommandButton();
-        inviteBtn.height = 22;
-        inviteBtn.label = Msgs.GAME.get("b.invite_to_game");
-        var buttonBox :VBox = new VBox();
-        buttonBox.setStyle("backgroundImage", "/media/static/game/info_bottom.png");
-        buttonBox.setStyle("horizontalAlign", "center");
-        buttonBox.percentWidth = 100;
-        descriptionBox.addChild(buttonBox);
-        var butbar :ButtonBar = new ButtonBar();
-        butbar.setStyle("paddingTop", 35);
-        butbar.setStyle("paddingBottom", 5);
-        butbar.setStyle("verticalGap", 5);
-        butbar.direction = "vertical";
-        butbar.addChild(createBtn);
-        butbar.addChild(inviteBtn);
-        buttonBox.addChild(butbar);
+        descriptionBox.addChild(createBtn);
 
-        // right side: name, tabs, about/buy links, tables and chat
         var tablesBox :VBox = new VBox();
         tablesBox.styleName = "tablesBox";
         tablesBox.percentWidth = 100;
         tablesBox.percentHeight = 100;
-        gameBox.addChild(tablesBox);
+        addChild(tablesBox);
         var tabsBox :HBox = new HBox();
         tabsBox.styleName = "tabsBox";
         tabsBox.percentWidth = 100;
@@ -277,10 +251,6 @@ public class LobbyPanel extends VBox
             });
             tabsBox.addChild(buy);
         }
-        var chatbox :ChatContainer = new ChatContainer(_ctx);
-        chatbox.percentWidth = 100;
-        chatbox.height = 100;
-        tablesBox.addChild(chatbox);
     }
 
     protected function createTablesDisplay (tabsContainer :DisplayObjectContainer,
