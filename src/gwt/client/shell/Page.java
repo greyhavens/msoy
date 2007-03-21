@@ -97,8 +97,8 @@ public abstract class Page
      */
     protected void setContent (Widget content, boolean contentBreaksPopups)
     {
-        needPopupHack = contentBreaksPopups;
         WorldClient.minimize();
+        needPopupHack = contentBreaksPopups;
         RootPanel.get("content").clear();
         RootPanel.get("content").add(content);
     }
