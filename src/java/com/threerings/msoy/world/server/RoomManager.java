@@ -6,6 +6,7 @@ package com.threerings.msoy.world.server;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
@@ -20,10 +21,11 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.MessageEvent;
-import com.threerings.presents.dobj.SetAdapter;
+import com.threerings.presents.dobj.SetListener;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.ResultAdapter;
 
@@ -88,13 +90,9 @@ public class RoomManager extends SpotSceneManager
     // documentation inherited from RoomProvider
     public void requestControl (ClientObject caller, ItemIdent item)
     {
-        // if this entity already has a controller, no go
-        if (_roomObj.controllers.containsKey(item)) {
-            return;
-        }
-
-        // select a new controller for this item, and publish a mapping for it
-        assignControllers(Collections.singleton(item));
+        MemberObject member = (MemberObject) caller;
+        boolean gotControl = checkAssignControl(member, item, "requestControl");
+        // TODO: throw invocationexception on failure?
     }
 
     // documentation inherited from RoomProvider
@@ -151,8 +149,6 @@ public class RoomManager extends SpotSceneManager
             // the actor is the caller
             actor = who;
         }
-
-        // TODO: consider doing the control check only for non-self actors.
 
         // if this client does not currently control this entity; ignore the request; if no one
         // controls it, this will assign this client as controller
@@ -514,6 +510,18 @@ public class RoomManager extends SpotSceneManager
      */
     protected boolean checkAssignControl (MemberObject who, ItemIdent item, String from)
     {
+        Integer memberOid = _avatarIdents.get(item);
+        if (memberOid != null) {
+            if (who.getOid() == memberOid.intValue()) {
+                // yes, you may control your own avatar
+                return true;
+            }
+            log.warning("Some user is trying to control another's avatar! " +
+                "[who=" + who.who() + ", avatar=" + item + "].");
+            return false;
+        }
+        // otherwise, it's for some entity other than a user's avatar...
+
         EntityControl ctrl = _roomObj.controllers.get(item);
         if (ctrl == null) {
             log.info("Assigning control [item=" + item + ", to=" + who.who() + "].");
@@ -601,38 +609,53 @@ public class RoomManager extends SpotSceneManager
     }
 
     /** Listens to the room. */
-    protected class RoomListener extends SetAdapter
+    protected class RoomListener
+        implements SetListener
     {
-        @Override
-        public void entryUpdated (EntryUpdatedEvent event)
+        // from SetListener
+        public void entryAdded (EntryAddedEvent event)
         {
-            if (event.getName() == PlaceObject.OCCUPANT_INFO) {
-                checkRemoveControlIdent(event.getOldEntry(), event.getEntry());
+            String name = event.getName();
+            if (name == PlaceObject.OCCUPANT_INFO) {
+                updateAvatarIdent(null, event.getEntry());
             }
         }
 
-        @Override
+        // from SetListener
+        public void entryUpdated (EntryUpdatedEvent event)
+        {
+            String name = event.getName();
+            if (name == PlaceObject.OCCUPANT_INFO) {
+                updateAvatarIdent(event.getOldEntry(), event.getEntry());
+            }
+        }
+
+        // from SetListener
         public void entryRemoved (EntryRemovedEvent event)
         {
-            if (event.getName() == PlaceObject.OCCUPANT_INFO) {
-                checkRemoveControlIdent(event.getOldEntry(), null);
+            String name = event.getName();
+            if (name == PlaceObject.OCCUPANT_INFO) {
+                updateAvatarIdent(event.getOldEntry(), null);
             }
         }
 
         /**
-         * If control was assigned to the itemIdent that just left the scene..
+         * Maintain a mapping of ItemIdent -> oid for all WorldMemberInfos.
          */
-        protected void checkRemoveControlIdent (Object oldInfo, Object newInfo)
+        protected void updateAvatarIdent (Object oldInfo, Object newInfo)
         {
-            if (!(oldInfo instanceof WorldOccupantInfo)) {
-                return;
+            // we only track WorldMemberInfo, as those are the only things
+            // that represent MemberObjects
+
+            WorldMemberInfo info;
+            if (oldInfo instanceof WorldMemberInfo) {
+                info = (WorldMemberInfo) oldInfo;
+                _avatarIdents.remove(info.getItemIdent());
             }
 
-            ItemIdent oldIdent = ((WorldOccupantInfo) oldInfo).getItemIdent();
-            ItemIdent newIdent = (newInfo instanceof WorldOccupantInfo) ?
-                ((WorldOccupantInfo) newInfo).getItemIdent() : null;
-            if (!oldIdent.equals(newIdent) && _roomObj.controllers.containsKey(oldIdent)) {
-                _roomObj.removeFromControllers(oldIdent);
+            if (newInfo instanceof WorldMemberInfo) {
+                info = (WorldMemberInfo) newInfo;
+                _avatarIdents.put(info.getItemIdent(), info.bodyOid);
             }
         }
     }
@@ -663,4 +686,7 @@ public class RoomManager extends SpotSceneManager
 
     /** Listens to the room object. */
     protected RoomListener _roomListener = new RoomListener();
+
+    /** For all WorldMemberInfo's, a mapping of ItemIdent to the member's oid. */
+    protected HashMap<ItemIdent,Integer> _avatarIdents = new HashMap<ItemIdent,Integer>();
 }

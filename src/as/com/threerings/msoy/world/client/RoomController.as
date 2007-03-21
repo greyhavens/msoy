@@ -58,6 +58,7 @@ import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.msoy.world.data.WorldMemberInfo;
 import com.threerings.msoy.world.data.WorldOccupantInfo;
 
 import com.threerings.msoy.chat.client.ReportingListener;
@@ -92,16 +93,15 @@ public class RoomController extends SceneController
             return;
         }
 
-        var ctrl :EntityControl = (_roomObj.controllers.get(ident) as EntityControl);
-        if (ctrl == null) {
-            // go for it
+        var result :Object = hasEntityControl(ident, false);
+        if (result == true) {
+            // go ahead and tell the thing that we already have control
+            _roomView.dispatchControlAssigned(ident);
+
+        } else if (result == null) {
+            // only if nobody currently has control do we issue the request
             _roomObj.roomService.requestControl(_mctx.getClient(), ident);
-
-        } else if (ctrl.controllerOid == _mctx.getMemberObject().getOid()) {
-            // it's us!
-            _roomView.dispatchControlAssigned(ctrl);
-
-        } // else: not us, already assigned, do nothing
+        }
     }
 
     /**
@@ -666,7 +666,9 @@ public class RoomController extends SceneController
         }
 
         // make sure we are in control of this entity (or that no one has control)
-        if (hasEntityControl(ident, true)) {
+        var result :Object = hasEntityControl(ident);
+        if (result == null || result == true) {
+            // it's ok if nobody has control
             return true;
         }
 
@@ -678,17 +680,40 @@ public class RoomController extends SceneController
     /**
      * Does this client have control over the specified entity?
      *
-     * @param orNobody if true, claim that we have entity control when nobody
-     * yet has control.
+     * @param dispatchToAvatars if true, this should automatically inform
+     *        avatars that they have control if we determine that they do.
+     * @returns true, false, or null if nobody currently has control.
      */
-    protected function hasEntityControl (
-        ident :ItemIdent, orNobody :Boolean = false) :Boolean
+    protected function hasEntityControl (ident :ItemIdent, dispatchToAvatars :Boolean = true) :Object
     {
+        var ourOid :int = _mctx.getMemberObject().getOid();
+
+        // first, let's check all the WorldMemberInfos
+        for each (var occInfo :Object in _roomObj.occupantInfo.toArray()) {
+            if (occInfo is WorldMemberInfo) {
+                var winfo :WorldMemberInfo = (occInfo as WorldMemberInfo);
+                if (ident.equals(winfo.getItemIdent())) {
+                    if (winfo.bodyOid == ourOid) {
+                        if (dispatchToAvatars) {
+                            // dispatch got-control to the avatar, it should
+                            // supress repeats
+                            _roomView.getMyAvatar().gotControl();
+                        }
+                        return true;
+
+                    } else {
+                        return false; // we can't control another's avatar!
+                    }
+                }
+            }
+        }
+        // ok, the ident does not belong to a member's avatar..
+
         var ctrl :EntityControl = (_roomObj.controllers.get(ident) as EntityControl);
         if (ctrl == null) {
-            return orNobody;
+            return null;
         }
-        return (ctrl.controllerOid == _mctx.getMemberObject().getOid());
+        return (ctrl.controllerOid == ourOid); // return true or false
     }
 
     override protected function sceneUpdated (update :SceneUpdate) :void

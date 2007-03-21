@@ -312,7 +312,10 @@ public class RoomView extends AbstractRoomView
             dispatchMemoryChanged(event.getEntry() as MemoryEntry);
 
         } else if (RoomObject.CONTROLLERS == name) {
-            dispatchControlAssigned(event.getEntry() as EntityControl);
+            var ctrl :EntityControl = (event.getEntry() as EntityControl);
+            if (ctrl.controllerOid == _ctx.getMemberObject().getOid()) {
+                dispatchControlAssigned(ctrl.ident);
+            }
         }
     }
 
@@ -696,15 +699,13 @@ public class RoomView extends AbstractRoomView
     }
 
     /**
-     * Called when control of an entity is assigned to some client.
+     * Called when control of an entity is assigned to us.
      */
-    public function dispatchControlAssigned (ctrl :EntityControl) :void
+    public function dispatchControlAssigned (ident :ItemIdent) :void
     {
-        if (ctrl.controllerOid == _ctx.getMemberObject().getOid()) {
-            var sprite :MsoySprite = (_entities.get(ctrl.ident) as MsoySprite);
-            if (sprite != null) {
-                sprite.gotControl();
-            }
+        var sprite :MsoySprite = (_entities.get(ident) as MsoySprite);
+        if (sprite != null) {
+            sprite.gotControl();
         }
     }
 
