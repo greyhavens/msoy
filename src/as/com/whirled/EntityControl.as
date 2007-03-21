@@ -199,6 +199,9 @@ public class EntityControl extends WhirledControl
      */
     protected function gotControl_v1 () :void
     {
+        if (_hasControl) {
+            return; // avoid re-dispatching
+        }
         _hasControl = true;
 
         // dispatch to user code..
