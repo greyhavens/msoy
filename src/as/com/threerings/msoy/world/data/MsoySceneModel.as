@@ -199,8 +199,8 @@ public class MsoySceneModel extends SceneModel
         model.width = width;
         model.horizon = horizon;
         model.furnis = (furnis.clone() as TypedArray);
-        model.entrance = entrance;
-        model.decorData = (decorData.clone() as DecorData);
+        model.entrance = (entrance.clone() as MsoyLocation);
+        model.decorData = (decorData == null) ? null : (decorData.clone() as DecorData);
 
         return model;
     }
