@@ -36,7 +36,7 @@ import com.adobe.webapis.flickr.events.FlickrResultEvent;
 import com.whirled.ControlEvent;
 import com.whirled.FurniControl;
 
-[SWF(width="500", height="526")]
+[SWF(width="500", height="530")]
 public class PhotoBox extends Sprite
 {
     public function PhotoBox ()
@@ -90,49 +90,57 @@ public class PhotoBox extends Sprite
      */
     protected function configureUI () :void
     {
-        _logo = DisplayObject(new LOGO());
-        _logo.y = _height - _logo.height;
+        var bar :DisplayObject = DisplayObject(new BAR());
+        bar.width = _width;
+        bar.y = (_height - BAR_HEIGHT);
+        addChild(bar);
 
-        // create a big white box undearneath the logo/tagfields
-        // so that no cracks show through
-        var bottom :Shape = new Shape();
-        with (bottom.graphics) {
-            beginFill(0xFFFFFF);
-            drawRect(0, 0, _width, _logo.height);
-            endFill();
-        }
-        bottom.y = _logo.y;
-        addChild(bottom);
-        addChild(_logo);
+        var logo :DisplayObject = DisplayObject(new LOGO());
+        logo.x = PAD;
+        logo.y = bar.y + ((BAR_HEIGHT - logo.height) / 2);
+        addChild(logo);
 
-        _tagDisplay = new TextField();
-        _tagDisplay.background = true;
-        _tagDisplay.backgroundColor = 0xFFFFFF;
-        _tagDisplay.height = _logo.height;
-        _tagDisplay.x = _logo.width + PAD;
-        _tagDisplay.y = _logo.y;
-        _tagDisplay.width = (_width - (_logo.width + PAD)) / 2;
-
-        _tagEntry = new TextField();
-        _tagEntry.type = TextFieldType.INPUT;
-        _tagEntry.background = true;
-        _tagEntry.backgroundColor = 0xCCFFFF;
-        _tagEntry.border = true;
-        _tagEntry.height = _logo.height;
-        _tagEntry.x = _tagDisplay.x + _tagDisplay.width;
-        _tagEntry.y = _logo.y;
-        _tagEntry.width = _width - _tagEntry.x;
+        var tagWidths :int = (_width - (PAD * 4) - logo.width) / 2;
 
         var format :TextFormat = new TextFormat();
-        format.size = 18;
-        _tagEntry.defaultTextFormat = format;
-        _tagDisplay.defaultTextFormat = format;
+        format.size = 16;
 
+        _tagEntry = new TextField();
+        _tagEntry.defaultTextFormat = format;
+        _tagEntry.type = TextFieldType.INPUT;
+        _tagEntry.text = PROMPT;
+        _tagEntry.height = _tagEntry.textHeight + 4;
+        _tagEntry.x = _width - PAD - tagWidths;
+        _tagEntry.y = logo.y;
+        _tagEntry.width = tagWidths;
+
+        _tagDisplay = new TextField();
+        _tagDisplay.defaultTextFormat = format;
+        _tagDisplay.selectable = false;
+        _tagDisplay.height = _tagEntry.height;
+        _tagDisplay.x = logo.width + (PAD * 2);
+        _tagDisplay.y = logo.y;
+        _tagDisplay.width = tagWidths;
+
+        var entrySkin :DisplayObject = DisplayObject(new ENTRY_SKIN());
+        entrySkin.x = _tagEntry.x;
+        entrySkin.y = _tagEntry.y;
+        entrySkin.width = tagWidths;
+        entrySkin.height = _tagEntry.height;
+
+        var dispSkin :DisplayObject = DisplayObject(new DISPLAY_SKIN());
+        dispSkin.x = _tagDisplay.x;
+        dispSkin.y = _tagDisplay.y;
+        dispSkin.width = tagWidths;
+        dispSkin.height = _tagDisplay.height;
+
+        addChild(dispSkin);
         addChild(_tagDisplay);
+        addChild(entrySkin);
         addChild(_tagEntry);
 
-        _tagEntry.text = "<Click to enter tags>";
         _tagEntry.addEventListener(FocusEvent.FOCUS_IN, handleTagEntryFocus);
+        _tagEntry.addEventListener(FocusEvent.FOCUS_OUT, handleTagEntryFocus);
         _tagEntry.addEventListener(KeyboardEvent.KEY_DOWN, handleTagEntryKey);
 
         _loader = new Loader();
@@ -161,9 +169,14 @@ public class PhotoBox extends Sprite
      */
     protected function handleTagEntryFocus (event :FocusEvent) :void
     {
-        // prepare for user input, stop listening
-        _tagEntry.text = "";
-//        _tagEntry.removeEventListener(FocusEvent.FOCUS_IN, handleTagEntryFocus);
+        if (_readyForNewTags) {
+            if (event.type == FocusEvent.FOCUS_IN) {
+                _tagEntry.text = "";
+
+            } else {
+                _tagEntry.text = PROMPT;
+            }
+        }
     }
 
     /**
@@ -184,12 +197,14 @@ public class PhotoBox extends Sprite
 
             _ourTags = tags;
             _ourPhotos = null;
+            _readyForNewTags = true;
             _flickr.photos.search("", tags, "all");
 
         } else {
             // the user is entering stuff, clear everything out
             _ourPhotos = null;
             _ourTags = null;
+            _readyForNewTags = false;
         }
     }
 
@@ -302,7 +317,7 @@ public class PhotoBox extends Sprite
         _tagDisplay.text = String(photo[4]);
 
         _loader.x = (_width - imgWidth) / 2;
-        _loader.y = (_height - _logo.height - imgHeight);
+        _loader.y = (_height - BAR_HEIGHT - imgHeight);
         _overlay.x = _loader.x;
         _overlay.y = _loader.y;
         _loader.load(new URLRequest(url));
@@ -456,9 +471,6 @@ public class PhotoBox extends Sprite
     /** The interface through which we make flickr API requests. */
     protected var _flickr :FlickrService;
 
-    /** The flickr logo. */
-    protected var _logo :DisplayObject;
-
     /** The text area to display tags. */
     protected var _tagDisplay :TextField;
 
@@ -470,6 +482,9 @@ public class PhotoBox extends Sprite
 
     /** A sprite drawn on top of everything, for use in drawing UI. */
     protected var _overlay :Sprite;
+
+    /** Are we ready for new tags? */
+    protected var _readyForNewTags :Boolean = true;
 
     /** The tags we've entered, associated with ourPhotos. */
     protected var _ourTags :String;
@@ -500,10 +515,23 @@ public class PhotoBox extends Sprite
     /** The photos to display. */
     protected var _displayPhotos :Array;
 
-    [Embed(source="flickr_logo.gif")]
+    protected static const PROMPT :String = "<Click to enter tags>";
+
+    [Embed(source="flickr_logo_small.png")]
     protected const LOGO :Class;
 
-    /** The amount of padding to the right of the logo. */
-    protected static const PAD :int = 20;
+    [Embed(source="skins.swf#background")]
+    protected const BAR :Class;
+
+    [Embed(source="skins.swf#textbox")]
+    protected const ENTRY_SKIN :Class;
+
+    [Embed(source="skins.swf#plaque")]
+    protected const DISPLAY_SKIN :Class;
+
+    protected static const BAR_HEIGHT :int = 30;
+
+    /** The amount of padding between elements on the bar. */
+    protected static const PAD :int = 10;
 }
 }
