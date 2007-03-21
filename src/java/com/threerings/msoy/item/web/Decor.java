@@ -47,7 +47,9 @@ public class Decor extends Item
     // @Override
     public boolean isConsistent ()
     {
-        return super.isConsistent() && true; //FIXME ROBERT: implement actual consistency test ***
+        return super.isConsistent() &&
+            type < TYPE_COUNT && width > 0 && height > 0 && depth > 0 &&
+            horizon <= 1.0f && horizon >= 0.0f;
     }
 
     // @Override // from Item

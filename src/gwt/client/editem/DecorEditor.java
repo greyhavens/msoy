@@ -24,6 +24,7 @@ public class DecorEditor extends ItemEditor
         super.setItem(item);
         _decor = (Decor)item;
         _width.setText("" + _decor.width);
+        _height.setText("" + _decor.height);
         _depth.setText("" + _decor.depth);
         _horizon.setText("" + _decor.horizon);
     }
@@ -33,8 +34,9 @@ public class DecorEditor extends ItemEditor
     {
         Decor d = new Decor();
         d.type = Decor.FIXED_IMAGE;
-        d.width = 200;
-        d.depth = 200;
+        d.width = 800;
+        d.height = (short) Math.round(800 / ((1 + Math.sqrt(5)) / 2)); 
+        d.depth = 400;
         d.horizon = 0.5f;
         return d;
     }
@@ -55,6 +57,15 @@ public class DecorEditor extends ItemEditor
                 _decor.width = asShort(text);
             }
         }));
+
+        bits.setText(row, 0, CEditem.emsgs.decorHeight());
+        bits.setWidget(row++, 1, bind(_height = new TextBox(), new Binder() {
+            public void textUpdated (String text) {
+                _decor.height = asShort(text);
+            }
+        }));
+
+        _height.setEnabled(false); // Don't let users edit this value just yet...
 
         bits.setText(row, 0, CEditem.emsgs.decorDepth());
         bits.setWidget(row++, 1, bind(_depth = new TextBox(), new Binder() {
@@ -125,7 +136,7 @@ public class DecorEditor extends ItemEditor
     }
 
     protected Decor _decor;
-    protected TextBox _width, _depth, _horizon;
+    protected TextBox _width, _height, _depth, _horizon;
     protected ListBox _type;
 
 }

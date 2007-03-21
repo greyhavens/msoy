@@ -176,6 +176,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String petMainTab();
 
   /**
+   * Translated "Room height, in pixels".
+   * 
+   * @return translated "Room height, in pixels"
+   * @gwt.key decorHeight
+   */
+  String decorHeight();
+
+  /**
    * Translated "Enter a Description to be shown if you list your Item in the Catalog".
    * 
    * @return translated "Enter a Description to be shown if you list your Item in the Catalog"
