@@ -75,7 +75,7 @@ public class MailManager
                         _count = _mailRepo.getMessageCount(memberId, folderId);
                     }
                 }
-                return toMailMessage(record);
+                return record.toMailMessage(_memberRepo);
             }
             public void handleSuccess () {
                 if (_count != null) {
@@ -84,73 +84,6 @@ public class MailManager
                 super.handleSuccess();
             }
             protected Tuple<Integer, Integer> _count;
-        });
-    }
-
-    /**
-     * Fetch and return all the messages in a folder from the database.
-     */
-    public void getHeaders (final int memberId, final int folderId,
-                             ResultListener<List<MailHeaders>> waiter)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<MailHeaders>>(waiter) {
-            public List<MailHeaders> invokePersistResult () throws PersistenceException {
-                List<MailHeaders> result = new ArrayList<MailHeaders>();
-                for (MailMessageRecord record : _mailRepo.getMessages(memberId, folderId)) {
-                    result.add(toMailHeaders(record));
-                }
-                return result;
-            }
-        });
-    }
-
-    /**
-     * Fetch and return a single folder from the database.
-     */
-    public void getFolder (final int memberId, final int folderId,
-                           ResultListener<MailFolder> waiter)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<MailFolder>(waiter) {
-            public MailFolder invokePersistResult () throws PersistenceException {
-                return buildFolder(_mailRepo.getFolder(memberId, folderId));
-            }
-        });
-    }
-
-    /**
-     * Fetch and return all of a given member's folders from the database.
-     */
-    public void getFolders (final int memberId, ResultListener<List<MailFolder>> waiter)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<MailFolder>>(waiter) {
-            public List<MailFolder> invokePersistResult () throws PersistenceException {
-                List<MailFolder> result = new ArrayList<MailFolder>();
-                for (MailFolderRecord record : _mailRepo.getFolders(memberId)) {
-                    result.add(buildFolder(record));
-                }
-                return result;
-            }
-        });
-    }
-
-
-    /**
-     * Overwrite the serialized state of a message's payload with the new supplied data.
-     */
-    public void updatePayload (final int memberId, final int folderId, final int messageId,
-                               final MailPayload payload, ResultListener<Void> waiter)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(waiter) {
-            public Void invokePersistResult () throws PersistenceException {
-                try {
-                    byte[] state =
-                        JSONMarshaller.getMarshaller(payload.getClass()).getStateBytes(payload);
-                    _mailRepo.setPayloadState(memberId, folderId, messageId, state);
-                } catch (Exception e) {
-                    throw new PersistenceException(e);
-                }
-                return null;
-            }
         });
     }
 
@@ -207,76 +140,6 @@ public class MailManager
                 return null;
             }
         });
-    }
-
-    // create a MailHeaders object from a a MailMessageRecord
-    protected MailHeaders toMailHeaders (MailMessageRecord record)
-        throws PersistenceException
-    {
-        MailHeaders headers = new MailHeaders();
-        headers.messageId = record.messageId;
-        headers.folderId = record.folderId;
-        headers.ownerId = record.ownerId;
-        headers.subject = record.subject;
-        headers.sent = new Date(record.sent.getTime());
-        headers.unread = record.unread;
-
-        if (record.senderId != 0) {
-            MemberRecord memRec = _memberRepo.loadMember(record.senderId);
-            headers.sender = (memRec == null) ? MemberName.DELETED_MEMBER : memRec.getName();
-        } else {
-            // TODO: This should not be hard-coded here.
-            headers.sender = new MemberName("System Administrators", 0);
-        }
-
-        MemberRecord memRec = _memberRepo.loadMember(record.recipientId);
-        headers.recipient = (memRec == null) ? MemberName.DELETED_MEMBER : memRec.getName();
-        return headers;
-    }
-
-    // convert a MailMessageRecord to a MailMessage
-    @SuppressWarnings("unchecked")
-    protected MailMessage toMailMessage (MailMessageRecord record)
-        throws PersistenceException
-    {
-        MailMessage message = new MailMessage();
-        message.headers = toMailHeaders(record);
-        message.bodyText = record.bodyText;
-        if (record.payloadType != 0) {
-            if (record.payloadState != null) {
-                try {
-                    Class<? extends MailPayload> objectClass =
-                        MailPayload.getPayloadClass(record.payloadType);
-                    JSONMarshaller<? extends MailPayload> marsh =
-                        JSONMarshaller.getMarshaller(objectClass);
-                    message.payload = marsh.newInstance(record.payloadState);
-                } catch (Exception e) {
-                    throw new PersistenceException("Failed to unserialize message payload", e);
-                }
-            }
-        }
-        return message;
-    }
-
-    // convert a MailFolderRecord to its MailFolder form
-    protected MailFolder toMailFolder (MailFolderRecord record)
-        throws PersistenceException
-    {
-        MailFolder folder = new MailFolder();
-        folder.folderId = record.folderId;
-        folder.ownerId = record.ownerId;
-        folder.name = record.name;
-        return folder;
-    }
-
-    // build a MailFolder object, including the message counts which require a separate query
-    protected MailFolder buildFolder (MailFolderRecord record) throws PersistenceException
-    {
-        MailFolder folder = toMailFolder(record);
-        Tuple<Integer, Integer> counts = _mailRepo.getMessageCount(record.ownerId, record.folderId);
-        folder.unreadCount = counts.right != null ? counts.right.intValue() : 0;
-        folder.readCount = counts.left != null ? counts.left.intValue() : 0;
-        return folder;
     }
 
     /** Provides access to persistent mail data. */

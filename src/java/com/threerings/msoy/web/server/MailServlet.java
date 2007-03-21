@@ -3,12 +3,18 @@
 
 package com.threerings.msoy.web.server;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
+import com.samskivert.util.Tuple;
 
+import com.threerings.msoy.person.server.persist.MailFolderRecord;
+import com.threerings.msoy.person.server.persist.MailMessageRecord;
+import com.threerings.msoy.person.server.persist.MailRepository;
+import com.threerings.msoy.server.JSONMarshaller;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -17,6 +23,7 @@ import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailHeaders;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
+import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -34,7 +41,7 @@ public class MailServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = requireAuthedUser(creds);
         try {
-            MsoyServer.mailMan.getRepository().deleteMessage(memrec.memberId, folderId, msgIdArr);
+            getMailRepo().deleteMessage(memrec.memberId, folderId, msgIdArr);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to delete messages [mid=" + memrec.memberId +
                     ", fid=" + folderId + ", mids=" + StringUtil.toString(msgIdArr) + "].", pe);
@@ -60,65 +67,68 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     // from MailService
-    public void updatePayload (final WebCreds creds, final int folderId, final int messageId,
-                               final MailPayload payload)
+    public void updatePayload (WebCreds creds, final int folderId, final int messageId,
+                               MailPayload payload)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(creds);
-        final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
-            "updatePayload[" + folderId + ", " + messageId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.mailMan.updatePayload(
-                    memrec.memberId, folderId, messageId, payload, waiter);
-            }
-        });
-        waiter.waitForResult();
+        MemberRecord memrec = requireAuthedUser(creds);
+        try {
+            byte[] state = JSONMarshaller.getMarshaller(payload.getClass()).getStateBytes(payload);
+            getMailRepo().setPayloadState(memrec.memberId, folderId, messageId, state);
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed update payload [mid=" + memrec.memberId +
+                    ", fid=" + folderId + ", mid=" + messageId + ", pay=" + payload + "].", e);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from MailService
-    public MailFolder getFolder (final WebCreds creds, final int folderId)
+    public MailFolder getFolder (WebCreds creds, final int folderId)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(creds);
-        final ServletWaiter<MailFolder> waiter = new ServletWaiter<MailFolder>(
-            "deliverMessage[" + folderId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.mailMan.getFolder(memrec.memberId, folderId, waiter);
-            }
-        });
-        return waiter.waitForResult();
+        MemberRecord memrec = requireAuthedUser(creds);
+        try {
+            return buildFolder(getMailRepo().getFolder(memrec.memberId, folderId));
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getFolder failed [mid=" + memrec.memberId +
+                    ", fid=" + folderId + "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from MailService
-    public List<MailFolder> getFolders (final WebCreds creds)
+    public List<MailFolder> getFolders (WebCreds creds)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(creds);
-        final ServletWaiter<List<MailFolder>> waiter = new ServletWaiter<List<MailFolder>>(
-            "getFolders[]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.mailMan.getFolders(memrec.memberId, waiter);
+        MemberRecord memrec = requireAuthedUser(creds);
+        try {
+            List<MailFolder> result = new ArrayList<MailFolder>();
+            for (MailFolderRecord record : getMailRepo().getFolders(memrec.memberId)) {
+                result.add(buildFolder(record));
             }
-        });
-        return waiter.waitForResult();
+            return result;
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getFolders failed [mid=" + memrec.memberId + "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from MailService
     public List<MailHeaders> getHeaders (final WebCreds creds, final int folderId)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(creds);
-        final ServletWaiter<List<MailHeaders>> waiter = new ServletWaiter<List<MailHeaders>>(
-            "getHeaders[]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.mailMan.getHeaders(memrec.memberId, folderId, waiter);
+        MemberRecord memrec = requireAuthedUser(creds);
+        try {
+            List<MailHeaders> result = new ArrayList<MailHeaders>();
+            for (MailMessageRecord record : getMailRepo().getMessages(memrec.memberId, folderId)) {
+                result.add(record.toMailHeaders(MsoyServer.memberRepo));
             }
-        });
-        return waiter.waitForResult();
+            return result;
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getHeaders failed [mid=" + memrec.memberId +
+                    ", fid=" + folderId + "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from MailService
@@ -135,5 +145,33 @@ public class MailServlet extends MsoyServiceServlet
             }
         });
         return waiter.waitForResult();
+    }
+
+    // build a MailFolder object, including the message counts which require a separate query
+    protected MailFolder buildFolder (MailFolderRecord record)
+        throws PersistenceException
+    {
+        MailFolder folder = toMailFolder(record);
+        Tuple<Integer, Integer> counts =
+            getMailRepo().getMessageCount(record.ownerId, record.folderId);
+        folder.unreadCount = counts.right != null ? counts.right.intValue() : 0;
+        folder.readCount = counts.left != null ? counts.left.intValue() : 0;
+        return folder;
+    }
+
+    // convert a MailFolderRecord to its MailFolder form
+    protected MailFolder toMailFolder (MailFolderRecord record)
+        throws PersistenceException
+    {
+        MailFolder folder = new MailFolder();
+        folder.folderId = record.folderId;
+        folder.ownerId = record.ownerId;
+        folder.name = record.name;
+        return folder;
+    }
+
+    protected static MailRepository getMailRepo ()
+    {
+        return MsoyServer.mailMan.getRepository();
     }
 }

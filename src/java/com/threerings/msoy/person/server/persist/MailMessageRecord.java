@@ -4,6 +4,9 @@
 package com.threerings.msoy.person.server.persist;
 
 import java.sql.Timestamp;
+import java.util.Date;
+
+import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -15,11 +18,20 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.server.JSONMarshaller;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+
+import com.threerings.msoy.web.data.MailHeaders;
+import com.threerings.msoy.web.data.MailMessage;
+import com.threerings.msoy.web.data.MailPayload;
+import com.threerings.msoy.web.data.MemberName;
+
 /**
  * Represents a message, with some meta-data, in a folder belonging to a member.
  * From this record is generated {@link MailHeaders}, {@link MailMessage} and in
  * some cases, a {@link MailPayloadDisplay}.
- * 
+ *
  * TODO: Should we allow multiple recipients? It can be good to know who else received
  *       a certain message, and 'reply all' can be a wonderful feature.
  * TODO: How do we deal with messages that do not have a real sender? System messages of
@@ -130,14 +142,14 @@ public class MailMessageRecord extends PersistentRecord
 
     /** The subject of this message. */
     public String subject;
-    
+
     /** The time at which the message was delivered. */
     @Column(columnDefinition="sent DATETIME NOT NULL")
     public Timestamp sent;
 
     /** Whether or not this message is yet to be read. */
     public boolean unread;
-    
+
     /** The text part of the message body, possibly null. */
     @Column(length=32768, nullable=true)
     public String bodyText;
@@ -157,7 +169,62 @@ public class MailMessageRecord extends PersistentRecord
         clone.sent = sent != null ? (Timestamp) sent.clone() : null;
         return clone;
     }
-    
+
+    /**
+     * Converts this record to a {@link MailHeaders} object. The sender and recipient will be
+     * looked up using the supplied member repository.
+     */
+    public MailHeaders toMailHeaders (MemberRepository memberRepo)
+        throws PersistenceException
+    {
+        MailHeaders headers = new MailHeaders();
+        headers.messageId = messageId;
+        headers.folderId = folderId;
+        headers.ownerId = ownerId;
+        headers.subject = subject;
+        headers.sent = new Date(sent.getTime());
+        headers.unread = unread;
+
+        if (senderId != 0) {
+            MemberRecord memRec = memberRepo.loadMember(senderId);
+            headers.sender = (memRec == null) ? MemberName.DELETED_MEMBER : memRec.getName();
+        } else {
+            // TODO: This should not be hard-coded here.
+            headers.sender = new MemberName("System Administrators", 0);
+        }
+
+        MemberRecord memRec = memberRepo.loadMember(recipientId);
+        headers.recipient = (memRec == null) ? MemberName.DELETED_MEMBER : memRec.getName();
+        return headers;
+    }
+
+    /**
+     * Converts this record to a {@link MailMessage} object. The sender and recipient will be
+     * looked up using the supplied member repository.
+     */
+    public MailMessage toMailMessage (MemberRepository memberRepo)
+        throws PersistenceException
+    {
+        MailMessage message = new MailMessage();
+        message.headers = toMailHeaders(memberRepo);
+        message.bodyText = bodyText;
+        if (payloadType != 0) {
+            if (payloadState != null) {
+                try {
+                    @SuppressWarnings("unchecked") Class<? extends MailPayload> objectClass =
+                        MailPayload.getPayloadClass(payloadType);
+                    JSONMarshaller<? extends MailPayload> marsh =
+                        JSONMarshaller.getMarshaller(objectClass);
+                    message.payload = marsh.newInstance(payloadState);
+                } catch (Exception e) {
+                    throw new PersistenceException(
+                        "Failed to unserialize message payload [id=" + messageId + "]", e);
+                }
+            }
+        }
+        return message;
+    }
+
     /**
      * Generates a string representation of this instance.
      */
