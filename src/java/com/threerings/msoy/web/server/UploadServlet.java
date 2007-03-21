@@ -34,6 +34,7 @@ import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifie
 
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
+import com.threerings.s3.client.acl.AccessControlList;
 import com.threerings.s3.client.AWSAuthConnection;
 import com.threerings.s3.client.S3FileObject;
 import com.threerings.s3.client.S3Exception;
@@ -245,9 +246,13 @@ public class UploadServlet extends HttpServlet
             try {
                 AWSAuthConnection conn = new AWSAuthConnection(
                     ServerConfig.mediaS3Id, ServerConfig.mediaS3Key);
+
                 S3FileObject uploadTarget = new S3FileObject(
                     name, target, MediaDesc.mimeTypeToString(info.mimeType));
-                conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget);
+
+                conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget,
+                    AccessControlList.StandardPolicy.PUBLIC_READ);
+
                 log.info("Uploaded media to S3 [bucket=" + ServerConfig.mediaS3Bucket +
                          ", name=" + name + "].");
             } catch (S3ServerException e) {
