@@ -450,6 +450,9 @@ public class MsoyServer extends WhirledServer
                 public void expired () {
                     checkAutoRestart();
                 }
+                public String toString () {
+                    return "checkAutoRestart interval";
+                }
             }.schedule(AUTO_RESTART_CHECK_INTERVAL, true);
         }
 
