@@ -5,4 +5,4 @@
 # Command line launcher for the Msoy development server
 
 CLASS=com.threerings.msoy.server.MsoyServer
-`dirname $0`/msoyjava -server -Djava.awt.headless=true $CLASS $*
+`dirname $0`/msoyjava -ea -server -Djava.awt.headless=true $CLASS $*

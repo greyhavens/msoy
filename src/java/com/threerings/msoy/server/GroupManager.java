@@ -98,6 +98,7 @@ public class GroupManager
     public void getMembershipGroups (final int memberId, final boolean canInvite,
                                      ResultListener<List<GroupMembership>> listener)
     {
+        assert(memberId != 0);
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<GroupMembership>>(listener) {
             public List<GroupMembership> invokePersistResult () throws PersistenceException {
                 MemberRecord mRec = _memberRepo.loadMember(memberId);
@@ -130,6 +131,7 @@ public class GroupManager
      */
     public void leaveGroup (final int groupId, final int memberId, ResultListener<Void> listener)
     {
+        assert(groupId != 0 && memberId != 0);
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
             public Void invokePersistResult() throws PersistenceException {
                 _groupRepo.leaveGroup(groupId, memberId);
@@ -160,6 +162,7 @@ public class GroupManager
     public void joinGroup (final int groupId, final int memberId, final byte rank,
                            ResultListener<Void> listener)
     {
+        assert(groupId != 0 && memberId != 0 && GroupMembership.isValidRank(rank));
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
             public Void invokePersistResult() throws PersistenceException {
                 _groupRepo.joinGroup(groupId, memberId, rank);
@@ -182,6 +185,7 @@ public class GroupManager
      */
     public void getRank (final int groupId, final int memberId, ResultListener<Byte> listener)
     {
+        assert(groupId != 0 && memberId != 0);
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Byte>(listener) {
             public Byte invokePersistResult() throws PersistenceException {
                 GroupMembershipRecord gmr = _groupRepo.getMembership(groupId, memberId);
@@ -193,9 +197,10 @@ public class GroupManager
     /**
      * Updates or Adds to the groups set on the given member's object, as appropriate.
      */
-    protected void updateMemberGroup (int memberId, int groupId, String groupName, 
-        byte groupRank)
+    protected void updateMemberGroup (int memberId, int groupId, String groupName, byte groupRank)
     {
+        assert(groupId != 0 && memberId != 0 && groupName != null &&
+               GroupMembership.isValidRank(groupRank));
         MemberObject mobj = MsoyServer.lookupMember(memberId);
         if (mobj == null) {
             return; // no need to update anything

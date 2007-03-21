@@ -38,6 +38,15 @@ public class GroupMembership
     /** The date this member's rank was assigned, as represented by java.util.Date.getTime() */
     public long rankAssignedDate;
 
+    /**
+     * Returns true if the supplied rank is a valid rank (not {@link #RANK_NON_MEMBER} or an
+     * otherwise invalid number.
+     */
+    public static boolean isValidRank (byte rank)
+    {
+        return rank >= RANK_MEMBER && rank <= RANK_MANAGER;
+    }
+
     /** 
      * Get the date this member's rank was assigned on as a Date object.
      */
