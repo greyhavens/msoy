@@ -36,3 +36,17 @@ body {
     font-weight: bold;
     background-color: transparent;
 }
+
+.projectSelectionPanel {
+  width: 750px;
+  padding: 10px;
+}
+
+.projectSelectionPanel .Header {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.projectSelectionPanel td {
+  vertical-align: top;
+}

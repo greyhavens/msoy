@@ -8,15 +8,12 @@ import java.util.Iterator;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -32,35 +29,50 @@ import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.item.web.Item;
 
 import client.shell.Application;
+import client.util.ClickCallback;
+import client.util.InfoPopup;
 
 /**
  * Displays the client interface for selecting or creating a swiftly project.
  */
-public class ProjectSelectionPanel extends VerticalPanel
+public class ProjectSelectionPanel extends FlexTable
 {
     public ProjectSelectionPanel ()
     {
         super();
-        setWidth("100%");
         setStyleName("projectSelectionPanel");
+        setCellPadding(5);
+        setCellSpacing(0);
 
-        _errorContainer = new HorizontalPanel();
-        add(_errorContainer);
+        int row = 0;
+        setHTML(row, 0, CSwiftly.msgs.swiftlyIntro());
+        getFlexCellFormatter().setColSpan(row++, 0, 2);
 
-        FlexTable table = new FlexTable();
-        table.setWidth("100%");
-        add(table);
-
-        // a list of the member's projects
-        _membersProjects = new VerticalPanel();
+        // add the UI for displaying this member's projects and for creating a project
+        setText(row, 0, CSwiftly.msgs.membersProjects());
+        getFlexCellFormatter().setStyleName(row, 0, "Header");
+        setText(row, 1, CSwiftly.msgs.startProject());
+        getFlexCellFormatter().setStyleName(row++, 1, "Header");
+        setWidget(row, 0, _membersProjects = new VerticalPanel());
         _membersProjects.setStyleName("membersProjects");
-        _membersHeader = new HorizontalPanel();
-        VerticalPanel membersContainer = new VerticalPanel();
-        membersContainer.add(_membersHeader);
-        membersContainer.add(_membersProjects);
+        setWidget(row++, 1, createCreateUI());
 
+        // add a display for all remixable projects
+        setText(row, 0, CSwiftly.msgs.remixableProjects());
+        getFlexCellFormatter().setStyleName(row, 0, "Header");
+        getFlexCellFormatter().setColSpan(row++, 0, 2);
+        setWidget(row, 0, _remixableProjects = new VerticalPanel());
+        getFlexCellFormatter().setColSpan(row++, 0, 2);
+
+        // populate the data from the backend
+        loadRemixableProjects();
+        loadMembersProjects();
+    }
+
+    protected FlexTable createCreateUI ()
+    {
         // a drop down to select the project type
-        FlexTable createContainer = new FlexTable();
+        FlexTable table = new FlexTable();
         _projectTypes = new ListBox();
         _projectTypes.setStyleName("projectTypes");
         _projectTypes.addChangeListener(new ChangeListener() {
@@ -79,56 +91,36 @@ public class ProjectSelectionPanel extends VerticalPanel
         final TextBox projectName = new TextBox();
         projectName.setMaxLength(50);
         projectName.setVisibleLength(25);
-        _remixable = new CheckBox(CSwiftly.msgs.remixable());
+        _remixable = new CheckBox();
 
-        // a click listener for the create project button
-        ClickListener doCreate = new ClickListener() {
-            public void onClick (Widget sender) {
-                createProject(projectName.getText());
+        table.setText(0, 0, CSwiftly.msgs.projectName());
+        table.setWidget(0, 1, projectName);
+        table.setText(1, 0, CSwiftly.msgs.selectType());
+        table.setWidget(1, 1, _projectTypes);
+        table.setText(2, 0, CSwiftly.msgs.remixable());
+        table.setWidget(2, 1, _remixable);
+
+        Button create = new Button(CSwiftly.msgs.createProject());
+        table.setWidget(3, 1, create);
+        new ClickCallback(create) {
+            public boolean callService () {
+                String name = projectName.getText().trim();
+                if (name.length() == 0) {
+                    new InfoPopup(CSwiftly.msgs.pleaseEnterProjectName()).show();
+                    return false;
+                }
+                CSwiftly.swiftlysvc.createProject(CSwiftly.creds, name, _selectedProjectType,
+                                                  _remixable.isChecked(), this);
+                return true;
+            }
+            public boolean gotResult (Object result) {
+                SwiftlyProject newProject = (SwiftlyProject)result;
+                History.newItem(Application.createLinkToken("swiftly", "" + newProject.projectId));
+                return true;
             }
         };
 
-        createContainer.setWidget(0, 0, new InlineLabel(CSwiftly.msgs.startProject()));
-        createContainer.setWidget(1, 0, new InlineLabel(CSwiftly.msgs.projectName()));
-        createContainer.setWidget(1, 1, projectName);
-        createContainer.setWidget(2, 0, new InlineLabel(CSwiftly.msgs.selectType()));
-        createContainer.setWidget(2, 1, _projectTypes);
-        createContainer.setWidget(3, 0, _remixable);
-        createContainer.setWidget(3, 1, new Button(CSwiftly.msgs.createProject(), doCreate));
-
-        // a list of all remixable projects
-        _remixableProjects = new VerticalPanel();
-        _remixableProjects.setStyleName("remixableProjects");
-        _remixableHeader = new HorizontalPanel();
-        VerticalPanel remixableContainer = new VerticalPanel();
-        remixableContainer.add(_remixableHeader);
-        remixableContainer.add(_remixableProjects);
-
-        // layout the main table
-        table.setWidget(0, 0, membersContainer);
-        table.setWidget(0, 1, createContainer);
-        table.setWidget(1, 0, remixableContainer);
-        table.getFlexCellFormatter().setColSpan(1, 0, 2);
-
-        // populate the data from the backend
-        loadRemixableProjects();
-        loadMembersProjects();
-    }
-
-    protected void createProject (final String projectName)
-    {
-        CSwiftly.swiftlysvc.createProject(CSwiftly.creds, projectName, _selectedProjectType, 
-            _remixable.isChecked(), new AsyncCallback() {
-            public void onSuccess (Object result) {
-                CSwiftly.log("Project created: " + projectName);
-                SwiftlyProject newProject = (SwiftlyProject)result;
-                History.newItem(Application.createLinkToken("swiftly", "" + newProject.projectId));
-            }
-            public void onFailure (Throwable caught) {
-                CSwiftly.log("createProject(" + projectName + ") failed", caught);
-                addError(CSwiftly.serverError(caught));
-            }
-        });
+        return table;
     }
 
     // get the list of projects that are remixable
@@ -138,9 +130,8 @@ public class ProjectSelectionPanel extends VerticalPanel
             public void onSuccess (Object result) {
                 Iterator iter = ((List)result).iterator();
                 if (!iter.hasNext()) {
-                    _remixableHeader.add(new Label(CSwiftly.msgs.noRemixableProjects()));
+                    _remixableProjects.add(new Label(CSwiftly.msgs.noRemixableProjects()));
                 } else {
-                    _remixableHeader.add(new Label(CSwiftly.msgs.remixableProjects()));
                     while (iter.hasNext()) {
                         final SwiftlyProject project = (SwiftlyProject)iter.next();
                         Hyperlink projectLink = Application.createLink(
@@ -152,7 +143,7 @@ public class ProjectSelectionPanel extends VerticalPanel
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("getMembersProjects failed", caught);
-                addError(CSwiftly.serverError(caught));
+                _remixableProjects.add(new Label(CSwiftly.serverError(caught)));
             }
         });
     }
@@ -164,9 +155,8 @@ public class ProjectSelectionPanel extends VerticalPanel
             public void onSuccess (Object result) {
                 Iterator iter = ((List)result).iterator();
                 if (!iter.hasNext()) {
-                    _membersHeader.add(new Label(CSwiftly.msgs.noMembersProjects()));
+                    _membersProjects.add(new Label(CSwiftly.msgs.noMembersProjects()));
                 } else {
-                    _membersHeader.add(new Label(CSwiftly.msgs.membersProjects()));
                     while (iter.hasNext()) {
                         final SwiftlyProject project = (SwiftlyProject)iter.next();
                         Hyperlink projectLink = Application.createLink(
@@ -178,7 +168,7 @@ public class ProjectSelectionPanel extends VerticalPanel
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("getMembersProjects failed", caught);
-                addError(CSwiftly.serverError(caught));
+                _membersProjects.add(new Label(CSwiftly.serverError(caught)));
             }
         });
     }
@@ -192,24 +182,10 @@ public class ProjectSelectionPanel extends VerticalPanel
         _selectedProjectType = Byte.parseByte(_projectTypes.getValue(tx));
     }
 
-    protected void addError (String error)
-    {
-        _errorContainer.add(new Label(error));
-    }
-
-    protected void clearErrors ()
-    {
-        _errorContainer.clear();
-    }
-
     protected VerticalPanel _membersProjects;
     protected VerticalPanel _remixableProjects;
+
     protected ListBox _projectTypes;
     protected CheckBox _remixable;
-    protected HorizontalPanel _membersHeader;
-    protected HorizontalPanel _remixableHeader;
-    protected HorizontalPanel _errorContainer;
     protected byte _selectedProjectType;
-
-
 }

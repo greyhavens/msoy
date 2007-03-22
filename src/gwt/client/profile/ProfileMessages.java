@@ -56,9 +56,9 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String haveNoGroups();
 
   /**
-   * Translated "Invite to Group".
+   * Translated "Invite to Join Group".
    * 
-   * @return translated "Invite to Group"
+   * @return translated "Invite to Join Group"
    * @gwt.key inviteToGroup
    */
   String inviteToGroup();

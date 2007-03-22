@@ -32,36 +32,12 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String remixable();
 
   /**
-   * Translated "Your projects:".
-   * 
-   * @return translated "Your projects:"
-   * @gwt.key membersProjects
-   */
-  String membersProjects();
-
-  /**
    * Translated "You have not created any projects.".
    * 
    * @return translated "You have not created any projects."
    * @gwt.key noMembersProjects
    */
   String noMembersProjects();
-
-  /**
-   * Translated "Remixable projects:".
-   * 
-   * @return translated "Remixable projects:"
-   * @gwt.key remixableProjects
-   */
-  String remixableProjects();
-
-  /**
-   * Translated "Create Project".
-   * 
-   * @return translated "Create Project"
-   * @gwt.key createProject
-   */
-  String createProject();
 
   /**
    * Translated "Start a project!".
@@ -96,30 +72,6 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String editProject();
 
   /**
-   * Translated "You have no more friends to add as collaborators.".
-   * 
-   * @return translated "You have no more friends to add as collaborators."
-   * @gwt.key noFriends
-   */
-  String noFriends();
-
-  /**
-   * Translated "Add Collaborators".
-   * 
-   * @return translated "Add Collaborators"
-   * @gwt.key addCollaborators
-   */
-  String addCollaborators();
-
-  /**
-   * Translated "Not a valid projectId: {0}".
-   * 
-   * @return translated "Not a valid projectId: {0}"
-   * @gwt.key invalidProjectId
-   */
-  String invalidProjectId(String arg0);
-
-  /**
    * Translated "Submit".
    * 
    * @return translated "Submit"
@@ -134,22 +86,6 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key noCollaborators
    */
   String noCollaborators();
-
-  /**
-   * Translated "View profile".
-   * 
-   * @return translated "View profile"
-   * @gwt.key viewProfile
-   */
-  String viewProfile();
-
-  /**
-   * Translated "Remove".
-   * 
-   * @return translated "Remove"
-   * @gwt.key viewRemove
-   */
-  String viewRemove();
 
   /**
    * Translated "Are you sure you wish to remove {0} from {1}?".
@@ -176,20 +112,100 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String indexLogon();
 
   /**
-   * Translated "Project name".
-   * 
-   * @return translated "Project name"
-   * @gwt.key projectName
-   */
-  String projectName();
-
-  /**
    * Translated "Cancel".
    * 
    * @return translated "Cancel"
    * @gwt.key cancel
    */
   String cancel();
+
+  /**
+   * Translated "Please enter a name for your new project.".
+   * 
+   * @return translated "Please enter a name for your new project."
+   * @gwt.key pleaseEnterProjectName
+   */
+  String pleaseEnterProjectName();
+
+  /**
+   * Translated "Your projects:".
+   * 
+   * @return translated "Your projects:"
+   * @gwt.key membersProjects
+   */
+  String membersProjects();
+
+  /**
+   * Translated "Remixable projects:".
+   * 
+   * @return translated "Remixable projects:"
+   * @gwt.key remixableProjects
+   */
+  String remixableProjects();
+
+  /**
+   * Translated "Create Project".
+   * 
+   * @return translated "Create Project"
+   * @gwt.key createProject
+   */
+  String createProject();
+
+  /**
+   * Translated "Add Collaborators".
+   * 
+   * @return translated "Add Collaborators"
+   * @gwt.key addCollaborators
+   */
+  String addCollaborators();
+
+  /**
+   * Translated "You have no more friends to add as collaborators.".
+   * 
+   * @return translated "You have no more friends to add as collaborators."
+   * @gwt.key noFriends
+   */
+  String noFriends();
+
+  /**
+   * Translated "Not a valid projectId: {0}".
+   * 
+   * @return translated "Not a valid projectId: {0}"
+   * @gwt.key invalidProjectId
+   */
+  String invalidProjectId(String arg0);
+
+  /**
+   * Translated "View profile".
+   * 
+   * @return translated "View profile"
+   * @gwt.key viewProfile
+   */
+  String viewProfile();
+
+  /**
+   * Translated "Remove".
+   * 
+   * @return translated "Remove"
+   * @gwt.key viewRemove
+   */
+  String viewRemove();
+
+  /**
+   * Translated "Welcome to <b>Swiftly</b> the Whirled Integrated Development Environment.  <p><font size="-1">Beware that Swiftly <i>really</i> Alpha and a lot of work remains to be done. That said, play with it and enjoy, and soon we'll be asking for your feedback. Right now we're really busy implementing a bunch of stuff that we <i>know</i> needs to be done.</font></p>".
+   * 
+   * @return translated "Welcome to <b>Swiftly</b> the Whirled Integrated Development Environment.  <p><font size="-1">Beware that Swiftly <i>really</i> Alpha and a lot of work remains to be done. That said, play with it and enjoy, and soon we'll be asking for your feedback. Right now we're really busy implementing a bunch of stuff that we <i>know</i> needs to be done.</font></p>"
+   * @gwt.key swiftlyIntro
+   */
+  String swiftlyIntro();
+
+  /**
+   * Translated "Project name".
+   * 
+   * @return translated "Project name"
+   * @gwt.key projectName
+   */
+  String projectName();
 
   /**
    * Translated "No remixable projects found.".
