@@ -13,7 +13,6 @@ import com.samskivert.util.HashIntMap;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
 
-import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
@@ -44,7 +43,7 @@ public class ProfileServlet extends MsoyServiceServlet
     implements ProfileService
 {
     // from interface ProfileService
-    public void updateProfile (WebCreds creds, Profile profile)
+    public void updateProfile (WebCreds creds, String displayName, Profile profile)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(creds);
@@ -61,11 +60,11 @@ public class ProfileServlet extends MsoyServiceServlet
                           UserAction.UPDATED_PROFILE, null);
 
             // handle a display name change if necessary
-            if (memrec.name == null || !memrec.name.equals(profile.displayName)) {
-                MsoyServer.memberRepo.configureDisplayName(memrec.memberId, profile.displayName);
+            if (memrec.name == null || !memrec.name.equals(displayName)) {
+                MsoyServer.memberRepo.configureDisplayName(memrec.memberId, displayName);
 
                 // let the member manager know about the display name change
-                final MemberName name = new MemberName(profile.displayName, memrec.memberId);
+                final MemberName name = new MemberName(displayName, memrec.memberId);
                 MsoyServer.omgr.postRunnable(new Runnable() {
                     public void run () {
                         MsoyServer.memberMan.displayNameChanged(name);
@@ -92,6 +91,7 @@ public class ProfileServlet extends MsoyServiceServlet
             ProfileLayout layout = loadLayout(memrec);
             ArrayList<Object> data = new ArrayList<Object>();
             data.add(layout);
+            data.add(memrec.getName());
             for (Object bdata : layout.blurbs) {
                 data.add(resolveBlurbData(memrec, (BlurbData)bdata));
             }
@@ -190,9 +190,6 @@ public class ProfileServlet extends MsoyServiceServlet
         ProfileRecord prec = MsoyServer.profileRepo.loadProfile(memrec.memberId);
         Profile profile = (prec == null) ? new Profile() : prec.toProfile();
 
-        // fill in bits from their member record
-        profile.memberId = memrec.memberId;
-        profile.displayName = memrec.name;
         // TODO: if they're online right now, show that
         profile.lastLogon = (memrec.lastSession != null) ? memrec.lastSession.getTime() : 0L;
 

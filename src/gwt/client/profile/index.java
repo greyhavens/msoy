@@ -10,8 +10,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ProfileLayout;
-import com.threerings.msoy.web.data.WebCreds;
 
 import client.util.MsoyUI;
 import client.msgs.MsgsEntryPoint;
@@ -81,13 +81,14 @@ public class index extends MsgsEntryPoint
             public void onSuccess (Object result) {
                 ArrayList data = (ArrayList)result;
                 ProfileLayout layout = (ProfileLayout)data.remove(0);
+                MemberName name = (MemberName)data.remove(0);
                 switch (layout.layout) {
                 default:
                 case ProfileLayout.ONE_COLUMN_LAYOUT:
-                    setContent(new OneColumnLayout(_memberId, layout, data));
+                    setContent(new OneColumnLayout(name, layout, data));
                     break;
                 case ProfileLayout.TWO_COLUMN_LAYOUT:
-                    setContent(new TwoColumnLayout(_memberId, layout, data));
+                    setContent(new TwoColumnLayout(name, layout, data));
                     break;
                 }
             }

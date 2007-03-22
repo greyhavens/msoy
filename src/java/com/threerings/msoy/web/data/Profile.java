@@ -24,12 +24,6 @@ public class Profile implements IsSerializable
     /** The maximum length for a display name. */
     public static final int MAX_DISPLAY_NAME_LENGTH = 30;
 
-    /** The member's unique id. */
-    public int memberId;
-
-    /** The member's display name. */
-    public String displayName;
-
     /** The the member's selected profile picture. */
     public MediaDesc photo = DEFAULT_PHOTO;
 

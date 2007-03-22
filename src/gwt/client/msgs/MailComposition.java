@@ -27,37 +27,14 @@ import client.util.BorderedDialog;
 public class MailComposition extends BorderedDialog
 {
     /**
-     * Initializes a new composer when we already have the full name.
+     * Initializes a new composer.
      */
     public MailComposition (MemberName recipient, String subject,
                             MailPayloadComposer bodyObjectComposer, String bodyText)
     {
         super(false);
-        _senderId = CMsgs.getMemberId();
         _recipient = recipient;
         buildUI(subject, bodyText, bodyObjectComposer);
-    }
-
-    /**
-     * Initializes a new composer with a recipient id; we do a backend request to look
-     * up the recipient's current name, and inject the name into the right UI element.
-     */
-    public MailComposition (int recipientId, String subject, MailPayloadComposer factory,
-                            String bodyText)
-    {
-        this(new MemberName(CMsgs.mmsgs.memberId(String.valueOf(recipientId)), recipientId),
-             subject, factory, bodyText);
-        CMsgs.membersvc.getName(recipientId, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                if (result != null) {
-                    _recipient = (MemberName) result;
-                    _recipientBox.setText(_recipient.toString());
-                }
-            }
-            public void onFailure (Throwable caught) {
-                // let's ignore this error, it's just a display thing
-            }
-        });
     }
 
     /**
@@ -203,7 +180,6 @@ public class MailComposition extends BorderedDialog
         }.alert();
     }
     
-    protected int _senderId;
     protected MemberName _recipient;
     protected VerticalPanel _panel;
     protected MailPayloadComposer _payloadComposer;

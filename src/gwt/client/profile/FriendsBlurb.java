@@ -35,9 +35,10 @@ public class FriendsBlurb extends Blurb
         setHeader("Friends");
 
         ArrayList friends = (ArrayList)blurbData;
-        boolean canInvite = (CProfile.getMemberId() > 0 && CProfile.getMemberId() != _memberId);
+        boolean canInvite =
+            CProfile.getMemberId() > 0 && CProfile.getMemberId() != _name.getMemberId();
         if (friends.size() == 0) {
-            setStatus(CProfile.getMemberId() == _memberId ?
+            setStatus(CProfile.getMemberId() == _name.getMemberId() ?
                       "You have no friends. Boo hoo." : "This person has no friends. How sad.");
 
         } else {
@@ -54,7 +55,7 @@ public class FriendsBlurb extends Blurb
             Button inviteButton = new Button("Invite To Be Your Friend");
             inviteButton.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    new MailComposition(_memberId, "Be my Friend", new FriendInvite.Composer(),
+                    new MailComposition(_name, "Be my Friend", new FriendInvite.Composer(),
                                         "Let's be buddies!").show();
                 }
             });

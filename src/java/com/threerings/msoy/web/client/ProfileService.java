@@ -22,7 +22,8 @@ public interface ProfileService extends RemoteService
      *
      * @param creds an authentication cookie identifying the requesting user.
      */
-    public void updateProfile (WebCreds creds, Profile profile) throws ServiceException;
+    public void updateProfile (WebCreds creds, String displayName, Profile profile)
+        throws ServiceException;
 
     /**
      * Loads the blurbs for the specified member's profile page. The first entry in the list will

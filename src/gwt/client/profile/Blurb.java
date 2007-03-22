@@ -6,11 +6,11 @@ package client.profile;
 import client.profile.HoodBlurb;
 
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 
 import com.threerings.msoy.web.data.BlurbData;
+import com.threerings.msoy.web.data.MemberName;
 
 /**
  * Contains a chunk of content that a user would want to display on their
@@ -41,9 +41,9 @@ public abstract class Blurb extends FlexTable
      * Configures this blurb with a context and the member id for whom it is
      * displaying content.
      */
-    public void init (int memberId, int blurbId, Object blurbData)
+    public void init (MemberName name, int blurbId, Object blurbData)
     {
-        _memberId = memberId;
+        _name = name;
         _blurbId = blurbId;
         if (blurbData instanceof BlurbData.ResolutionFailure) {
             didFail(((BlurbData.ResolutionFailure)blurbData).cause);
@@ -91,7 +91,7 @@ public abstract class Blurb extends FlexTable
      */
     protected abstract void didFail (String cause);
 
-    protected int _memberId;
+    protected MemberName _name;
     protected int _blurbId;
     protected Label _header;
 }

@@ -46,8 +46,8 @@ public class ProfileBlurb extends Blurb
         _content.setWidget(0, 0, _photo = new Image());
         _content.getFlexCellFormatter().setRowSpan(0, 0, 5);
 
-        _content.setWidget(0, 1, _name = new Label("name"));
-        _name.setStyleName("Name");
+        _content.setWidget(0, 1, _displayName = new Label("name"));
+        _displayName.setStyleName("Name");
         _content.getFlexCellFormatter().setColSpan(0, 1, 2);
         _content.setWidget(1, 1, _headline = new Label("headline"));
         _headline.setStyleName("Headline");
@@ -90,7 +90,7 @@ public class ProfileBlurb extends Blurb
     protected void didFail (String cause)
     {
         setHeader("Error");
-        _name.setText("Failed to load profile data: " + cause);
+        _displayName.setText("Failed to load profile data: " + cause);
     }
 
     protected void startEdit ()
@@ -126,7 +126,7 @@ public class ProfileBlurb extends Blurb
             _ehomepage.setVisibleLength(50);
         }
 
-        _ename.setText(_profile.displayName);
+        _ename.setText(_name.toString());
         _eheadline.setText(_profile.headline == null ? "" : _profile.headline);
         _ehomepage.setText(_profile.homePageURL == null ? "" : _profile.homePageURL);
 
@@ -143,7 +143,7 @@ public class ProfileBlurb extends Blurb
     {
         updatePhoto(_profile.photo);
 
-        _name.setText(_profile.displayName);
+        _displayName.setText(_name.toString());
         _headline.setText(_profile.headline);
         _laston.setText(_profile.lastLogon > 0L ?
                         CProfile.msgs.lastOnline(_lfmt.format(new Date(_profile.lastLogon))) : "");
@@ -156,20 +156,20 @@ public class ProfileBlurb extends Blurb
         }
 
         _content.setWidget(0, 0, _photo);
-        _content.setWidget(0, 1, _name);
+        _content.setWidget(0, 1, _displayName);
         _content.setWidget(1, 1, _headline);
         _content.setWidget(2, 1, _homepage);
         
         _buttons.clear();
 
         // display the edit button if this is our profile
-        if (_profile.memberId == CProfile.getMemberId()) {
+        if (_name.getMemberId() == CProfile.getMemberId()) {
             _buttons.add(_edit);
         } else {
             Button mailButton = new Button("Send Mail");
             mailButton.addClickListener(new ClickListener() {
                 public void onClick (Widget widget) {
-                    new MailComposition(new MemberName(_profile.displayName, _profile.memberId),
+                    new MailComposition(new MemberName(_name.toString(), _name.getMemberId()),
                                         null, null, null).show();
                 }
             });
@@ -178,7 +178,7 @@ public class ProfileBlurb extends Blurb
             Button hoodButton = new Button("Visit");
             hoodButton.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    visitHref("/world/#nm" + _profile.memberId);
+                    visitHref("/world/#nm" + _name.getMemberId());
                 }
             });
             _buttons.add(hoodButton);
@@ -186,7 +186,7 @@ public class ProfileBlurb extends Blurb
 //            Button homeButton = new Button("Visit Home");
 //            homeButton.addClickListener(new ClickListener() {
 //                public void onClick (Widget sender) {
-//                    visitHref("/world/#m" + _profile.memberId);
+//                    visitHref("/world/#m" + _name.getMemberId());
 //                }
 //            });
 //            _buttons.add(homeButton);
@@ -213,9 +213,9 @@ public class ProfileBlurb extends Blurb
     protected void commitEdit ()
     {
         // validate their display name
-        String displayName = _ename.getText().trim();
-        if (displayName.length() < Profile.MIN_DISPLAY_NAME_LENGTH ||
-            displayName.length() > Profile.MAX_DISPLAY_NAME_LENGTH) {
+        String name = _ename.getText().trim();
+        if (name.length() < Profile.MIN_DISPLAY_NAME_LENGTH ||
+            name.length() > Profile.MAX_DISPLAY_NAME_LENGTH) {
             new InfoPopup(CProfile.msgs.displayNameInvalid(
                               "" + Profile.MIN_DISPLAY_NAME_LENGTH,
                               "" + Profile.MAX_DISPLAY_NAME_LENGTH)).showNear(_ename);
@@ -223,11 +223,10 @@ public class ProfileBlurb extends Blurb
         }
 
         // configure our profile instance with their bits
-        _profile.displayName = displayName;
         _profile.headline = _eheadline.getText().trim();
         _profile.homePageURL = _ehomepage.getText().trim();
 
-        CProfile.profilesvc.updateProfile(CProfile.creds, _profile, new AsyncCallback() {
+        CProfile.profilesvc.updateProfile(CProfile.creds, name, _profile, new AsyncCallback() {
             public void onSuccess (Object result) {
                 // go back to edit mode
                 _edit.setText("Edit");
@@ -251,7 +250,7 @@ public class ProfileBlurb extends Blurb
     protected Profile _profile;
     protected Image _photo;
     protected HTML _homepage;
-    protected Label _name, _headline, _laston;
+    protected Label _displayName, _headline, _laston;
     protected HTML _blog, _gallery, _hood;
 
     protected Button _edit;

@@ -5,20 +5,16 @@ package client.profile;
 
 import java.util.List;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.GroupMembership;
 
 import client.msgs.GroupInvite;
 import client.msgs.MailComposition;
 import client.shell.Application;
-import client.shell.Page;
 import client.util.ClickCallback;
 import client.util.InfoPopup;
 
@@ -40,8 +36,8 @@ public class GroupsBlurb extends Blurb
 
         List blurbGroups = (List)blurbData;
         if (blurbGroups.size() == 0) {
-            setStatus(CProfile.getMemberId() == _memberId ? CProfile.msgs.notInGroupsSelf() :
-                      CProfile.msgs.notInGroupsOther());
+            setStatus(CProfile.getMemberId() == _name.getMemberId() ?
+                      CProfile.msgs.notInGroupsSelf() : CProfile.msgs.notInGroupsOther());
 
         } else {
             for (int ii = 0, ll = blurbGroups.size(); ii < ll; ii++) {
@@ -51,7 +47,7 @@ public class GroupsBlurb extends Blurb
             }
         }
 
-        if (CProfile.getMemberId() > 0 && CProfile.getMemberId() != _memberId) {
+        if (CProfile.getMemberId() > 0 && CProfile.getMemberId() != _name.getMemberId()) {
             Button inviteButton = new Button(CProfile.msgs.inviteToGroup());
             new ClickCallback(inviteButton) {
                 public boolean callService () {
@@ -64,7 +60,7 @@ public class GroupsBlurb extends Blurb
                     if (inviteGroups.size() == 0) {
                         new InfoPopup(CProfile.msgs.haveNoGroups()).showNear(_trigger);
                     } else {
-                        new MailComposition(_memberId, "Join this group!",
+                        new MailComposition(_name, "Join this group!",
                                             new GroupInvite.Composer(inviteGroups),
                                             "Check out this scrumptious group.").show();
                     }
