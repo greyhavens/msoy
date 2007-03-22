@@ -401,7 +401,7 @@ public class MemberManager
             }
             public void handleFailure (Exception pe) {
                 log.warning("Unable to create a new room [user=" + user.which() +
-                            ", error=" + pe + "].");
+                            ", error=" + pe + ", cause=" + pe.getCause() + "].");
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
             protected int _newRoomId;

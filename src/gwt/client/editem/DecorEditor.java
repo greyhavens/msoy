@@ -33,7 +33,7 @@ public class DecorEditor extends ItemEditor
     public Item createBlankItem ()
     {
         Decor d = new Decor();
-        d.type = Decor.FIXED_IMAGE;
+        d.type = Decor.IMAGE_OVERLAY;
         d.width = 800;
         d.height = (short) Math.round(800 / ((1 + Math.sqrt(5)) / 2)); 
         d.depth = 400;

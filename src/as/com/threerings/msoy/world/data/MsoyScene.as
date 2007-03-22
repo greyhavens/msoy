@@ -63,7 +63,7 @@ public class MsoyScene extends SceneImpl
      */
     public function getSceneType () :int
     {
-        return _msoyModel.sceneType;
+        return _msoyModel.decorData.type;
     }
 
     /**
@@ -71,7 +71,7 @@ public class MsoyScene extends SceneImpl
      */
     public function getDepth () :int
     {
-        return _msoyModel.depth;
+        return _msoyModel.decorData.depth;
     }
 
     /**
@@ -79,12 +79,12 @@ public class MsoyScene extends SceneImpl
      */
     public function getWidth () :int
     {
-        return _msoyModel.width;
+        return _msoyModel.decorData.width;
     }
 
     public function getHeight () :int
     {
-        return _msoyModel.height;
+        return _msoyModel.decorData.height;
     }
 
     /**
@@ -93,7 +93,7 @@ public class MsoyScene extends SceneImpl
      */
     public function getHorizon () :Number
     {
-        return _msoyModel.horizon;
+        return _msoyModel.decorData.horizon;
     }
 
     /**

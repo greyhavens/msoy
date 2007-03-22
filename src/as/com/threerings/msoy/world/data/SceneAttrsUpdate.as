@@ -19,18 +19,6 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** The new name. */
     public var name :String;
 
-    /** The new type. */
-    public var sceneType :int;
-
-    /** The new depth. */
-    public var depth :int;
-
-    /** The new width. */
-    public var width :int;
-
-    /** The new horizon. */
-    public var horizon :Number;
-
     /** Full description of the new decor. */
     public var decorData :DecorData;
     
@@ -43,10 +31,6 @@ public class SceneAttrsUpdate extends SceneUpdate
 
         var mmodel :MsoySceneModel = (model as MsoySceneModel);
         mmodel.name = name;
-        mmodel.sceneType = sceneType;
-        mmodel.depth = depth;
-        mmodel.width = width;
-        mmodel.horizon = horizon;
         mmodel.decorData = (decorData.clone() as DecorData);
         mmodel.entrance = entrance;
     }
@@ -56,10 +40,6 @@ public class SceneAttrsUpdate extends SceneUpdate
         super.writeObject(out);
 
         out.writeField(name);
-        out.writeByte(sceneType);
-        out.writeShort(depth);
-        out.writeShort(width);
-        out.writeFloat(horizon);
         out.writeObject(decorData);
         out.writeObject(entrance);
     }
@@ -69,10 +49,6 @@ public class SceneAttrsUpdate extends SceneUpdate
         super.readObject(ins);
 
         name = (ins.readField(String) as String);
-        sceneType = ins.readByte();
-        depth = ins.readShort();
-        width = ins.readShort();
-        horizon = ins.readFloat();
         decorData = (ins.readObject() as DecorData);
         entrance = (ins.readObject() as MsoyLocation);
     }

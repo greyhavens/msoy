@@ -17,10 +17,6 @@ public class ModifyFurniUpdate extends SceneUpdate
     /** The furniture added to the scene (or null for none). */
     public FurniData[] furniAdded;
 
-    //FIXME ROBERT:
-    //ADD: decor id
-    //ADD: decor data object
-        
     /**
      * Initialize the update with all necessary data.
      */

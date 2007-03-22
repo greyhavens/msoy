@@ -9,6 +9,8 @@ import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.ListUtil;
 
+import com.threerings.msoy.item.web.MediaDesc;
+
 import com.threerings.whirled.data.SceneModel;
 
 import com.threerings.whirled.spot.data.Portal;
@@ -29,18 +31,6 @@ public class MsoySceneModel extends SceneModel
 
     /** The id of the owner of this scene, interpreted using ownerType. */
     public int ownerId;
-
-    /** The type of scene that this is. Determines how it is rendered. */
-    public byte sceneType;
-
-    /** The "pixel" depth of the room. */
-    public short depth;
-
-    /** The pixel width of the room. */
-    public short width;
-
-    /** A value between 0 - 1, for the height of the horizon in the room. */
-    public float horizon;
 
     /** The furniture in the scene. */
     public FurniData[] furnis = new FurniData[0];
@@ -210,23 +200,34 @@ public class MsoySceneModel extends SceneModel
     }
 
     /**
-     * Create a blank scene.
+     * Create a blank scene, with default decor data. 
      */
     public static MsoySceneModel blankMsoySceneModel ()
     {
         MsoySceneModel model = new MsoySceneModel();
-
-        DecorData decor = new DecorData();
-        decor.id = 1;
-        decor.depth = model.depth = 400;
-        decor.width = model.width = 800;
-        decor.height = 494;
-        decor.horizon = model.horizon = .5f;
-
-        model.decorData = decor;
+        model.decorData = createDefaultDecorData();
         model.entrance = new MsoyLocation(.5, 0, .5, 180);
         populateBlankMsoySceneModel(model);
         return model;
+    }
+
+    /**
+     * Creates a blank decor data room descriptor. The decor doesn't refer to any
+     * decor item in storage; instead it specifies default room dimensions and
+     * a default background.
+     */
+    public static DecorData createDefaultDecorData ()
+    {
+        DecorData decor = new DecorData();
+        decor.media = new MediaDesc("41e4e18fb88b036b2d15ae3c051bea085e60e4b5.png");
+        decor.id = 0; // it's not an actual furni...
+        decor.depth = 400;
+        decor.width = 800;
+        decor.height = 494;
+        decor.horizon = .5f;
+        decor.loc = new MsoyLocation(.5, 0, 0, 0);
+        decor.actionType = FurniData.BACKGROUND;
+        return decor;
     }
 
     protected static void populateBlankMsoySceneModel (MsoySceneModel model)

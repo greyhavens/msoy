@@ -64,7 +64,7 @@ public class MsoyScene extends SceneImpl
      */
     public byte getSceneType ()
     {
-        return _model.sceneType;
+        return _model.decorData.type;
     }
 
     /**
@@ -72,7 +72,7 @@ public class MsoyScene extends SceneImpl
      */
     public short getDepth ()
     {
-        return _model.depth;
+        return _model.decorData.depth;
     }
 
     /**
@@ -80,7 +80,7 @@ public class MsoyScene extends SceneImpl
      */
     public short getWidth ()
     {
-        return _model.width;
+        return _model.decorData.width;
     }
 
     /**
@@ -89,7 +89,7 @@ public class MsoyScene extends SceneImpl
      */
     public float getHorizon ()
     {
-        return _model.horizon;
+        return _model.decorData.horizon;
     }
 
     /**

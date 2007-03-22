@@ -67,7 +67,7 @@ public class DecorData extends FurniData
         return s;
     }
 
-    /** Overwrites this instance's fields with a shallow copy of the other object. */
+    // documentation from FurniData
     override protected function copyFrom (that :FurniData) :void
     {
         super.copyFrom(that);

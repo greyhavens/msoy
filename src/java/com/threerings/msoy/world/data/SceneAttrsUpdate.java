@@ -17,18 +17,6 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** The new name. */
     public String name;
 
-    /** The new type. */
-    public byte sceneType;
-
-    /** The new depth. */
-    public short depth;
-
-    /** The new width. */
-    public short width;
-
-    /** The new horizon. */
-    public float horizon;
-
     /** Full description of the new decor. */
     public DecorData decorData;
     
@@ -42,10 +30,6 @@ public class SceneAttrsUpdate extends SceneUpdate
 
         MsoySceneModel mmodel = (MsoySceneModel) model;
         mmodel.name = name;
-        mmodel.sceneType = sceneType;
-        mmodel.depth = depth;
-        mmodel.width = width;
-        mmodel.horizon = horizon;
         mmodel.decorData = (DecorData) decorData.clone();
         mmodel.entrance = entrance;
     }

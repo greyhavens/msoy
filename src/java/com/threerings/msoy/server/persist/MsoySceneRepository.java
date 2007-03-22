@@ -166,6 +166,18 @@ public class MsoySceneRepository extends SimpleRepository
                 JDBCUtil.close(stmt);
             }
         }
+        // second round of decor additions
+        if (!JDBCUtil.tableContainsColumn(conn, "SCENES", "HEIGHT")) {
+            // delete stale updates
+            Statement stmt = conn.createStatement();
+            try {
+                stmt.executeUpdate("delete from SCENE_UPDATES");
+            } finally {
+                JDBCUtil.close(stmt);
+            }
+            // the height column will get added here
+        }
+
         // END: temp
 
     }
@@ -326,6 +338,10 @@ public class MsoySceneRepository extends SimpleRepository
         throws PersistenceException, NoSuchSceneException
     {
         final MsoySceneModel model = new MsoySceneModel();
+        // TEMP compatibility mode: since we have some scenes with decor and some without,
+        // just create a default decor for every scene, and clobber the defaults with
+        // what we get from the database.
+        model.decorData = MsoySceneModel.createDefaultDecorData();
         model.sceneId = sceneId;
 
         Boolean success = execute(new Operation<Boolean>() {
@@ -341,23 +357,25 @@ public class MsoySceneRepository extends SimpleRepository
                         "DECOR_ID, DECOR_MEDIA_HASH, DECOR_MEDIA_TYPE " +
                         "from SCENES where SCENE_ID=" + sceneId);
                     if (rs.next()) {
-                        model.decorData = new DecorData();
                         model.ownerType = rs.getByte(1);
                         model.ownerId = rs.getInt(2);
                         model.version = rs.getInt(3);
                         model.name = rs.getString(4).intern();
-                        model.sceneType = rs.getByte(5);
-                        model.decorData.depth = model.depth = rs.getShort(6);
-                        model.decorData.width = model.width = rs.getShort(7);
-                        model.decorData.horizon = model.horizon = rs.getFloat(8);
                         model.entrance = new MsoyLocation(
                             rs.getFloat(9), rs.getFloat(10), rs.getFloat(11),
                             180);
-                        model.decorData.itemId = rs.getInt(12);
-                        if (model.decorData.itemId != 0) {
-                            model.decorData.media =
-                                createMediaDesc(rs.getBytes(13), rs.getByte(14));
+
+                        DecorData d = model.decorData;
+                        d.itemId = rs.getInt(12);
+                        d.type = rs.getByte(5);
+                        d.depth = rs.getShort(6);
+                        d.width = rs.getShort(7);
+                        d.height = 494;      // height will eventually come from the db
+                        d.horizon = rs.getFloat(8);
+                        if (d.itemId != 0) { // only clobber media if the decor item exists
+                            d.media = createMediaDesc(rs.getBytes(13), rs.getByte(14));
                         }
+
                     } else {
                         return Boolean.FALSE; // no scene found
                     }
@@ -444,7 +462,7 @@ public class MsoySceneRepository extends SimpleRepository
                     "where SCENE_ID=" + mmodel.sceneId);
                 try {
                     stmt.setString(1, update.name);
-                    stmt.setByte(2, update.sceneType);
+                    stmt.setByte(2, update.decorData.type);
                     stmt.setInt(3, update.decorData.itemId);
                     stmt.setBytes(4, flattenMediaDesc(update.decorData.media));
                     stmt.setByte(5, update.decorData.media.mimeType);
@@ -479,23 +497,14 @@ public class MsoySceneRepository extends SimpleRepository
         model.version = 1;
         model.name = roomName;
 
-        DecorData d = model.decorData;
-        d.media = new MediaDesc("41e4e18fb88b036b2d15ae3c051bea085e60e4b5.png");
-        d.loc = new MsoyLocation(0.5f, 0, 0, 0);
-
         FurniData f = new FurniData();
-        f.id = 2; // be careful, decorData will be id=1
+        f.id = 1; 
         f.media = new MediaDesc("e8b660ec5aa0aa30dab46b267daf3b80996269e7.swf");
         f.loc = new MsoyLocation(1, 0, 0.5, 0);
         f.scaleX = 1.4f;
         f.actionType = FurniData.ACTION_PORTAL;
         f.actionData = "1:A common area";
         model.addFurni(f);
-
-        // TEMP
-        // TODO
-        d.actionType = FurniData.BACKGROUND;
-        model.addFurni(d);
 
         return executeUpdate(new Operation<Integer>() {
             public Integer invoke (Connection conn, DatabaseLiaison liaison)
@@ -538,19 +547,18 @@ public class MsoySceneRepository extends SimpleRepository
             stmt.setInt(2, model.ownerId);
             stmt.setInt(3, model.version);
             stmt.setString(4, model.name);
-            stmt.setByte(5, model.sceneType);
+            stmt.setByte(5, model.decorData.type);
             stmt.setInt(6, model.decorData.itemId);
             stmt.setBytes(7, flattenMediaDesc(model.decorData.media));
             stmt.setByte(8, model.decorData.media.mimeType);
-            stmt.setShort(9, model.depth);
-            stmt.setShort(10, model.width);
-            stmt.setFloat(11, model.horizon);
+            stmt.setShort(9, model.decorData.depth);
+            stmt.setShort(10, model.decorData.width);
+            stmt.setFloat(11, model.decorData.horizon);
             stmt.setFloat(12, model.entrance.x);
             stmt.setFloat(13, model.entrance.y);
             stmt.setFloat(14, model.entrance.z);
             JDBCUtil.checkedUpdate(stmt, 1);
             return liaison.lastInsertedId(conn);
-
         } finally {
             JDBCUtil.close(stmt);
         }
@@ -763,6 +771,8 @@ public class MsoySceneRepository extends SimpleRepository
      */
     protected MsoySceneModel createSampleScene (int sceneId)
     {
+        // TODO: this probably doesn't work well without decor. all this needs
+        // cleaning up once we've migrated background furniture over.
         MsoySceneModel model = MsoySceneModel.blankMsoySceneModel();
         model.sceneId = sceneId;
         model.version = 1;
@@ -776,8 +786,8 @@ public class MsoySceneRepository extends SimpleRepository
 
         if (sceneId == 1) {
             // crayon room
-            model.sceneType = Decor.IMAGE_OVERLAY;
-            model.width = 1600;
+            model.decorData.type = Decor.IMAGE_OVERLAY;
+            model.decorData.width = 1600;
 
             portal.loc = new MsoyLocation(0, 0, .3, 0);
             portal.actionData = "2:51";
@@ -872,7 +882,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 2) {
             // alley
-            model.sceneType = Decor.IMAGE_OVERLAY;
+            model.decorData.type = Decor.IMAGE_OVERLAY; 
 
             portal.loc = new MsoyLocation(0, .1, .53, 180);
             portal.actionData = "1:-1";
@@ -904,8 +914,8 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 3) {
             // cliff
-            model.sceneType = Decor.IMAGE_OVERLAY;
-            model.width = 800;
+            model.decorData.type = Decor.IMAGE_OVERLAY; 
+            model.decorData.width = 800;
 
             portal.loc = new MsoyLocation(.5, 0, .5, 0);
             portal.actionData = "6:52";
@@ -936,8 +946,8 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 4) {
             // fans
-            model.sceneType = Decor.IMAGE_OVERLAY;
-            model.width = 800;
+            model.decorData.type = Decor.IMAGE_OVERLAY;
+            model.decorData.width = 800;
 
             portal.loc = new MsoyLocation(0, 0, .8, 0);
             portal.actionData = "1:53";
@@ -1001,8 +1011,8 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 5) {
             // faucet
-            model.sceneType = Decor.IMAGE_OVERLAY;
-            model.width = 1600;
+            model.decorData.type = Decor.IMAGE_OVERLAY;
+            model.decorData.width = 1600;
 
             portal.loc = new MsoyLocation(.3125, .71, 0, 0);
             portal.actionData = "1:54";
@@ -1019,8 +1029,8 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 6) {
             // comic
-            model.sceneType = Decor.IMAGE_OVERLAY;
-            model.width = 1600;
+            model.decorData.type = Decor.IMAGE_OVERLAY;
+            model.decorData.width = 1600;
 
             portal.loc = new MsoyLocation(0, 0, .5, 0);
             portal.actionData = "1:52";
@@ -1053,7 +1063,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 7) {
             // game room background
-            model.width = 800;
+            model.decorData.width = 800;
 
             furn = new FurniData();
             furn.id = 1;

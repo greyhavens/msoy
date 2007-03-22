@@ -302,12 +302,12 @@ public class EditorPanel extends VBox
      */
     public function updateInputFields () :void
     {
-        _type.selectedIndex = _sceneModel.sceneType;
         _name.text = _sceneModel.name;
-        _width.text = String(_sceneModel.width);
-        _depth.text = String(_sceneModel.depth);
-        _height.text = String(_sceneModel.height);
-        _horizon.value = _sceneModel.horizon;
+        _type.selectedIndex = _sceneModel.decorData.type;
+        _width.text = String(_sceneModel.decorData.width);
+        _depth.text = String(_sceneModel.decorData.depth);
+        _height.text = String(_sceneModel.decorData.height);
+        _horizon.value = _sceneModel.decorData.horizon;
 
         var bgImage :FurniData = SceneUtils.getBackgroundImage(_sceneModel);
 //        _backgroundImage.setSelectedItem(bgImage);
@@ -323,7 +323,7 @@ public class EditorPanel extends VBox
         updateInputFields();
 
         BindingUtils.bindSetter(function (o :Object) :void {
-            _sceneModel.sceneType = int(o.data);
+            _sceneModel.decorData.type = int(o.data);
             _ctrl.sceneModelUpdated();
         }, _type, "selectedItem");
 
@@ -334,7 +334,7 @@ public class EditorPanel extends VBox
         BindingUtils.bindSetter(function (o :Object) :void {
             var val :Number = Number(o);
             if (!isNaN(val)) {
-                _sceneModel.width = int(val);
+                _sceneModel.decorData.width = int(val);
                 _ctrl.sceneModelUpdated();
             }
         }, _width, "text");
@@ -342,7 +342,7 @@ public class EditorPanel extends VBox
         BindingUtils.bindSetter(function (o :Object) :void {
             var val :Number = Number(o);
             if (!isNaN(val)) {
-                _sceneModel.depth = int(val);
+                _sceneModel.decorData.depth = int(val);
                 _ctrl.sceneModelUpdated();
             }
         }, _depth, "text");
@@ -350,14 +350,14 @@ public class EditorPanel extends VBox
         BindingUtils.bindSetter(function (o :Object) :void {
             var val :Number = Number(o);
             if (!isNaN(val)) {
-                _sceneModel.height = int(val);
+                _sceneModel.decorData.height = int(val);
                 _ctrl.sceneModelUpdated();
             }
         }, _height, "text");
 
         BindingUtils.bindSetter(function (o :Object) :void {
             var val :Number = Number(o);
-            _sceneModel.horizon = val;
+            _sceneModel.decorData.horizon = val;
             _ctrl.sceneModelUpdated();
         }, _horizon, "value");
     }
@@ -366,8 +366,9 @@ public class EditorPanel extends VBox
     {
         var bgItem :Item = _backgroundImage.getSelectedItem();
 
-        _sceneModel.sceneType = (bgItem == null) ? Decor.DRAWN_ROOM
-                                            : Decor.IMAGE_OVERLAY;
+        // default type, if no decor is selected
+        _sceneModel.decorData.type =
+            (bgItem == null) ? Decor.DRAWN_ROOM : Decor.IMAGE_OVERLAY;
 
         // for now, just clobber room dimensions with decor data dimensions
         var decor :Decor = bgItem as Decor;
@@ -388,11 +389,6 @@ public class EditorPanel extends VBox
             dd.depth = decor.depth;
             dd.horizon = decor.horizon;
 
-            // clobber scene model parameters
-            _sceneModel.width = dd.width;
-            _sceneModel.depth = dd.depth;
-            _sceneModel.horizon = dd.horizon;
-            
             _width.text = String(dd.width);
             _depth.text = String(dd.depth);
             _horizon.value = dd.horizon;

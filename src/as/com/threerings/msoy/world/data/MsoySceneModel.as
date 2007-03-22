@@ -30,24 +30,6 @@ public class MsoySceneModel extends SceneModel
     /** The id of the owner of this scene, interpreted using ownerType. */
     public var ownerId :int;
 
-    /** The type of scene. */
-    public var sceneType :int;
-
-    /** The "pixel" depth of the room. */
-    public var depth :int;
-
-    /** The pixel width of the room. */
-    public var width :int;
-
-    /** The pixel height of the room. */
-    // Probably all these attributes: type/depth/width/height/horizon will be
-    // moving to the new Wallpaper object, and we'll specify the wallpaper
-    // in here as a special variable, a subclass of FurniData, maybe.
-    public var height :int = 800 / ((1 + Math.sqrt(5)) / 2);
-
-    /** A value between 0 - 1, for the height of the horizon in the room. */
-    public var horizon :Number;
-
     /** The furniture in the scene. */
     public var furnis :TypedArray /* of FurniData */;
 
@@ -194,10 +176,6 @@ public class MsoySceneModel extends SceneModel
 
         model.ownerType = ownerType;
         model.ownerId = ownerId;
-        model.sceneType = sceneType;
-        model.depth = depth;
-        model.width = width;
-        model.horizon = horizon;
         model.furnis = (furnis.clone() as TypedArray);
         model.entrance = (entrance.clone() as MsoyLocation);
         model.decorData = (decorData == null) ? null : (decorData.clone() as DecorData);
@@ -212,10 +190,6 @@ public class MsoySceneModel extends SceneModel
 
         out.writeByte(ownerType);
         out.writeInt(ownerId);
-        out.writeByte(sceneType);
-        out.writeShort(depth);
-        out.writeShort(width);
-        out.writeFloat(horizon);
         out.writeObject(furnis);
         out.writeObject(entrance);
         out.writeObject(decorData);
@@ -228,10 +202,6 @@ public class MsoySceneModel extends SceneModel
 
         ownerType = ins.readByte();
         ownerId = ins.readInt();
-        sceneType = ins.readByte();
-        depth = ins.readShort();
-        width = ins.readShort();
-        horizon = ins.readFloat();
         furnis = (ins.readObject() as TypedArray);
         entrance = (ins.readObject() as MsoyLocation);
         decorData = (ins.readObject() as DecorData);
@@ -240,7 +210,7 @@ public class MsoySceneModel extends SceneModel
     override public function toString () :String
     {
         return "MsoySceneModel[\"" + name + "\" (" + sceneId + ")" +
-            ", version=" + version + ", sceneType=" + sceneType +
+            ", version=" + version + ", sceneType=" + decorData.type +
             ", decor=" + decorData.itemId + "]";
     }
 

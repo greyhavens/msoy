@@ -435,21 +435,26 @@ public class RoomView extends AbstractRoomView
         // seen it)
         portalTraversed(getMyCurrentLocation(), true);
 
-        // now load the background image first
+        // load the background image first
+        var legacyBg :FurniData = null;
         var decordata :DecorData = _scene.getDecorData();
-        if (decordata != null && decordata.itemId != 0) {
-            setBackground(decordata);
-            _bg.setLoadedCallback(backgroundFinishedLoading);
-        } else {
-            // try legacy background image support
-            var background :FurniData = _scene.getBackgroundFurniture();
-            if (background != null) {
-                addFurni(background).setLoadedCallback(backgroundFinishedLoading);
-            } else {
-                backgroundFinishedLoading();
-            }
+
+        if (decordata.itemId == 0) {
+            // this means there is no actual decor item attached - so let's see if we can find
+            // a legacy furni to load instead.
+            legacyBg = _scene.getBackgroundFurniture();
         }
 
+        if (legacyBg != null) {
+            // decor item was not specified, but a legacy furni exists - let's load it
+            addFurni(legacyBg).setLoadedCallback(backgroundFinishedLoading);
+        } else {
+            // decor item was specified, or if it wasn't, neither was a legacy background.
+            // load the decor data we have, even if it's just default values.
+            setBackground(decordata);
+            _bg.setLoadedCallback(backgroundFinishedLoading);
+        }
+        
         _chatOverlayWatcher = BindingUtils.bindSetter(recheckChatOverlay,
             _ctx.worldProps, "placeViewShowsChat");
     }
