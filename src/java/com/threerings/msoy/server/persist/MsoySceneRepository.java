@@ -158,24 +158,27 @@ public class MsoySceneRepository extends SimpleRepository
             JDBCUtil.addColumn(conn, "SCENES", "DECOR_ID", "int not null", "SCENE_TYPE");
             JDBCUtil.addColumn(conn, "SCENES", "DECOR_MEDIA_TYPE", "tinyint not null", "DECOR_ID");
             JDBCUtil.addColumn(conn, "SCENES", "DECOR_MEDIA_HASH", "tinyblob not null", "DECOR_ID");
-            // delete stale updates
-            Statement stmt = conn.createStatement();
-            try {
-                stmt.executeUpdate("delete from SCENE_UPDATES");
-            } finally {
-                JDBCUtil.close(stmt);
-            }
         }
         // second round of decor additions
         if (!JDBCUtil.tableContainsColumn(conn, "SCENES", "HEIGHT")) {
-            // delete stale updates
+
+            // add the height column
+            JDBCUtil.addColumn(conn, "SCENES", "HEIGHT", "integer not null", "WIDTH");
+
+            // insert default height values
             Statement stmt = conn.createStatement();
-            try {
-                stmt.executeUpdate("delete from SCENE_UPDATES");
+            try { 
+                stmt.executeUpdate("update SCENES set HEIGHT=494");
             } finally {
                 JDBCUtil.close(stmt);
             }
-            // the height column will get added here
+            
+            Statement deletestmt = conn.createStatement();
+            try { // separately, try to delete any new stale updates
+                deletestmt.executeUpdate("delete from SCENE_UPDATES");
+            } finally {
+                JDBCUtil.close(deletestmt);
+            }
         }
 
         // END: temp
@@ -352,8 +355,9 @@ public class MsoySceneRepository extends SimpleRepository
                 try {
                     // Load: basic scene data
                     ResultSet rs = stmt.executeQuery(
-                        "select OWNER_TYPE, OWNER_ID, VERSION, NAME, SCENE_TYPE, " +
-                        "DEPTH, WIDTH, HORIZON, ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z, " +
+                        "select OWNER_TYPE, OWNER_ID, VERSION, NAME, " +
+                        "ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z, SCENE_TYPE, " +
+                        "DEPTH, WIDTH, HEIGHT, HORIZON,  " +
                         "DECOR_ID, DECOR_MEDIA_HASH, DECOR_MEDIA_TYPE " +
                         "from SCENES where SCENE_ID=" + sceneId);
                     if (rs.next()) {
@@ -362,20 +366,19 @@ public class MsoySceneRepository extends SimpleRepository
                         model.version = rs.getInt(3);
                         model.name = rs.getString(4).intern();
                         model.entrance = new MsoyLocation(
-                            rs.getFloat(9), rs.getFloat(10), rs.getFloat(11),
+                            rs.getFloat(5), rs.getFloat(6), rs.getFloat(7),
                             180);
 
                         DecorData d = model.decorData;
-                        d.itemId = rs.getInt(12);
-                        d.type = rs.getByte(5);
-                        d.depth = rs.getShort(6);
-                        d.width = rs.getShort(7);
-                        d.height = 494;      // height will eventually come from the db
-                        d.horizon = rs.getFloat(8);
+                        d.type = rs.getByte(8);
+                        d.depth = rs.getShort(9);
+                        d.width = rs.getShort(10);
+                        d.height = rs.getShort(11); 
+                        d.horizon = rs.getFloat(12);
+                        d.itemId = rs.getInt(13);
                         if (d.itemId != 0) { // only clobber media if the decor item exists
-                            d.media = createMediaDesc(rs.getBytes(13), rs.getByte(14));
+                            d.media = createMediaDesc(rs.getBytes(14), rs.getByte(15));
                         }
-
                     } else {
                         return Boolean.FALSE; // no scene found
                     }
@@ -456,9 +459,9 @@ public class MsoySceneRepository extends SimpleRepository
                 throws SQLException, PersistenceException
             {
                 PreparedStatement stmt = conn.prepareStatement(
-                    "update SCENES set NAME=?, SCENE_TYPE=?, " +
-                    "DECOR_ID=?, DECOR_MEDIA_HASH=?, DECOR_MEDIA_TYPE=?, " +
-                    "DEPTH=?, WIDTH=?, HORIZON=?, ENTRANCE_X=?, ENTRANCE_Y=?, ENTRANCE_Z=? " +
+                    "update SCENES set NAME=?, SCENE_TYPE=?, DECOR_ID=?, DECOR_MEDIA_HASH=?, " +
+                    "DECOR_MEDIA_TYPE=?, DEPTH=?, WIDTH=?, HEIGHT=?," +
+                    "HORIZON=?, ENTRANCE_X=?, ENTRANCE_Y=?, ENTRANCE_Z=? " +
                     "where SCENE_ID=" + mmodel.sceneId);
                 try {
                     stmt.setString(1, update.name);
@@ -468,10 +471,11 @@ public class MsoySceneRepository extends SimpleRepository
                     stmt.setByte(5, update.decorData.media.mimeType);
                     stmt.setInt(6, update.decorData.depth);
                     stmt.setInt(7, update.decorData.width);
-                    stmt.setFloat(8, update.decorData.horizon);
-                    stmt.setFloat(9, update.entrance.x);
-                    stmt.setFloat(10, update.entrance.y);
-                    stmt.setFloat(11, update.entrance.z);
+                    stmt.setInt(8, update.decorData.height);
+                    stmt.setFloat(9, update.decorData.horizon);
+                    stmt.setFloat(10, update.entrance.x);
+                    stmt.setFloat(11, update.entrance.y);
+                    stmt.setFloat(12, update.entrance.z);
 
                     JDBCUtil.checkedUpdate(stmt, 1);
                 } finally {
@@ -540,8 +544,9 @@ public class MsoySceneRepository extends SimpleRepository
             "insert into SCENES " +
             "(OWNER_TYPE, OWNER_ID, VERSION, NAME, " +
             "SCENE_TYPE, DECOR_ID, DECOR_MEDIA_HASH, DECOR_MEDIA_TYPE, " +
-            "DEPTH, WIDTH, HORIZON, ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z) " +
-            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            "DEPTH, WIDTH, HEIGHT, HORIZON, " +
+            "ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z) " +
+            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         try {
             stmt.setByte(1, model.ownerType);
             stmt.setInt(2, model.ownerId);
@@ -553,10 +558,11 @@ public class MsoySceneRepository extends SimpleRepository
             stmt.setByte(8, model.decorData.media.mimeType);
             stmt.setShort(9, model.decorData.depth);
             stmt.setShort(10, model.decorData.width);
-            stmt.setFloat(11, model.decorData.horizon);
-            stmt.setFloat(12, model.entrance.x);
-            stmt.setFloat(13, model.entrance.y);
-            stmt.setFloat(14, model.entrance.z);
+            stmt.setShort(11, model.decorData.height);
+            stmt.setFloat(12, model.decorData.horizon);
+            stmt.setFloat(13, model.entrance.x);
+            stmt.setFloat(14, model.entrance.y);
+            stmt.setFloat(15, model.entrance.z);
             JDBCUtil.checkedUpdate(stmt, 1);
             return liaison.lastInsertedId(conn);
         } finally {
@@ -733,6 +739,7 @@ public class MsoySceneRepository extends SimpleRepository
             "DECOR_MEDIA_TYPE tinyint not null",
             "DEPTH integer not null",
             "WIDTH integer not null",
+            "HEIGHT integer not null",
             "HORIZON float not null",
             "ENTRANCE_X float not null",
             "ENTRANCE_Y float not null",
