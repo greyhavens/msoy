@@ -79,14 +79,10 @@ public class LocalProjectBuilder
                 _project.getTemplateSourceName()
             );
 
-            // Direct stderr to stdout.
-            Map<String, String>env = procBuilder.environment();
-            env.clear();
-
             // Set the working directory to the build root.
             procBuilder.directory(buildRoot);
 
-            // Sanitize the environment.
+            // Direct stderr to stdout.
             procBuilder.redirectErrorStream(true);
 
             // Run the process and gather output
