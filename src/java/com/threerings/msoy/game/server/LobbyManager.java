@@ -12,7 +12,6 @@ import com.threerings.presents.dobj.SetAdapter;
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.server.TableManager;
-import com.threerings.parlor.server.TableManagerProvider;
 
 import com.threerings.msoy.server.MsoyServer;
 
@@ -32,14 +31,7 @@ import static com.threerings.msoy.Log.log;
  * Manages a lobby room.
  */
 public class LobbyManager extends PlaceManager
-    implements TableManagerProvider
 {
-    // from TableManagerProvider
-    public TableManager getTableManager ()
-    {
-        return _tableMgr;
-    }
-
     @Override
     public void startup (PlaceObject plobj)
     {
