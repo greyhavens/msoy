@@ -118,6 +118,8 @@ public class HoodViz extends Sprite
         // sort the metric according to distance
         distances.sortOn([ "dist", "x", "y" ], Array.NUMERIC);
 
+        _labels = new Array();
+
         // then go through buildings in order of radial distance and register houses and groups
         // pick tiles randomly from weighted intervals - generalizes to N tile types
         var housesLeft :int = _hood.houses.length;
@@ -186,6 +188,11 @@ public class HoodViz extends Sprite
                     }
                 }
             }
+        }
+
+        // now add all the labels, which should be on top of any tiles drawn
+        for (var ii :int = 0; ii < _labels.length; ii ++) {
+            _canvas.addChild(_labels[ii]);
         }
 
         if (_hood.totalPop >= 0) {
@@ -285,12 +292,11 @@ public class HoodViz extends Sprite
             text.filters = [ new GlowFilter(0x660000, 1, 3, 3, 255) ];
             text.autoSize = TextFieldAutoSize.CENTER;
             text.wordWrap = true;
-            text.width = text.textWidth + 5;
-            text.height = text.textHeight + 4;
+            text.width = 200;
             text.x = p.x;
             text.y = p.y;
 
-            _canvas.addChild(text);
+            _labels.push(text);
         }
 
         if (update) {
@@ -544,8 +550,12 @@ public class HoodViz extends Sprite
     protected var _tipTile :ToolTipSprite;
 
     protected var _hood :Neighborhood;
+
     protected var _canvas :Sprite;
+
     protected var _bound :Rectangle = new Rectangle();
+
+    protected var _labels :Array;
 
     protected var _house :Building;
     protected var _group :Building;
