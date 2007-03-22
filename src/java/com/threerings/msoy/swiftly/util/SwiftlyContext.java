@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.swiftly.util;
 
+import java.applet.AppletContext;
+
 import com.threerings.crowd.util.CrowdContext;
 import com.threerings.util.MessageManager;
 
@@ -20,4 +22,7 @@ public interface SwiftlyContext extends CrowdContext
 
     /** Translates the specified message using the specified message bundle. */
     public String xlate (String bundle, String message);
+
+    /** Returns the applet context */
+    public AppletContext getAppletContext ();
 }

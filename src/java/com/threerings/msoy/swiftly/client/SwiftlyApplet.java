@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.swiftly.client;
 
+import java.applet.AppletContext;
 import java.awt.EventQueue;
+
 import java.util.logging.Level;
 import javax.swing.JApplet;
 import javax.swing.JComponent;
@@ -55,6 +57,7 @@ public class SwiftlyApplet extends JApplet
         _locdtr = new LocationDirector(_ctx);
         _occdtr = new OccupantDirector(_ctx);
         _chatdtr = new ChatDirector(_ctx, _msgmgr, "chat");
+        _appletContext = getAppletContext();
 
         // Get the supplied projectId
         _projectId = Integer.parseInt(getParameter("projectId"));
@@ -252,6 +255,9 @@ public class SwiftlyApplet extends JApplet
         public ChatDirector getChatDirector () {
             return _chatdtr;
         }
+        public AppletContext getAppletContext () {
+            return _appletContext;
+        }
 
         public void setPlaceView (PlaceView view) {
             setContentPane(_editor = (SwiftlyEditor)view);
@@ -279,6 +285,7 @@ public class SwiftlyApplet extends JApplet
     protected OccupantDirector _occdtr;
     protected ChatDirector _chatdtr;
     protected SwiftlyEditor _editor;
+    protected AppletContext _appletContext;
 
     protected int _projectId;
 
