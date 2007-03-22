@@ -445,8 +445,8 @@ public class MsoyServer extends WhirledServer
         // start up an interval that checks to see if our code has changed and auto-restarts the
         // server as soon as possible when it has
         if (ServerConfig.config.getValue("auto_restart", false)) {
-            _codeModified = new File(ServerConfig.serverRoot, "dist/msoy-code.jar").lastModified();
-            new Interval(omgr) {
+            _codeModified = codeModifiedTime();
+            new Interval() { // Note well: this interval does not run on the dobj thread
                 public void expired () {
                     checkAutoRestart();
                 }
@@ -459,21 +459,53 @@ public class MsoyServer extends WhirledServer
         log.info("Msoy server initialized.");
     }
 
+    /**
+     * Check the filesystem and return the newest timestamp for any of
+     * our code jars. This method should remain safe to run on any thread.
+     */
+    protected long codeModifiedTime ()
+    {
+        // just the one...
+        return new File(ServerConfig.serverRoot, "dist/msoy-code.jar").lastModified();
+    }
+
+    /**
+     * Check to see if the server should be restarted.
+     * Note: This method is safe to call from any thread.
+     */
     protected void checkAutoRestart ()
     {
-        long lastModified = new File(ServerConfig.serverRoot, "dist/msoy-code.jar").lastModified();
+        // look up the last-modified time (takes a while)
+        final long lastModified = codeModifiedTime();
+
+        // then, ensure we do step 2 on the dobj thread
+        if (omgr.isDispatchThread()) {
+            checkAutoRestart2(lastModified);
+
+        } else {
+            omgr.postRunnable(new Runnable() {
+                public void run () {
+                    checkAutoRestart2(lastModified);
+                }
+            });
+        }
+    }
+
+    protected void checkAutoRestart2 (long lastModified)
+    {
         if (lastModified <= _codeModified || adminMan.statObj.serverRebootTime != 0L) {
             return;
         }
 
         // if someone is online, give 'em two minutes, otherwise reboot immediately
-        int players = 0;
+        boolean playersOnline = false;
         for (Iterator<ClientObject> iter = clmgr.enumerateClientObjects(); iter.hasNext(); ) {
             if (iter.next() instanceof MemberObject) {
-                players++;
+                playersOnline = true;
+                break;
             }
         }
-        adminMan.scheduleReboot((players == 0) ? 0 : 2, "codeUpdateAutoRestart");
+        adminMan.scheduleReboot(playersOnline ? 2 : 0, "codeUpdateAutoRestart");
     }
 
     public static void main (String[] args)
