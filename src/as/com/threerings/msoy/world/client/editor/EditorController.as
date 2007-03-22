@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.world.client.editor {
 
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.KeyboardEvent;
 
@@ -95,6 +96,8 @@ public class EditorController extends Controller
 
         // pop up our control kit
         _panel = new EditorPanel(ctx, this, roomView, _scene, items);
+        _panel.addEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
+
 
         // set it as our controlled panel
         setControlledPanel(_panel);
@@ -109,9 +112,18 @@ public class EditorController extends Controller
     }
 
     /**
+     * Called when this object is removed from the stage
+     */
+    public function handleRemovedFromStage (evt :Event) :void 
+    {
+        _panel.removeEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
+        endEditing(false, true);
+    }
+
+    /**
      * Called by the controller to end editing.
      */
-    public function endEditing (saveEdits :Boolean) :void
+    public function endEditing (saveEdits :Boolean, alreadyRemoved :Boolean = false) :void
     {
         setEditSprite(null);
 
@@ -135,7 +147,10 @@ public class EditorController extends Controller
         _roomView.setBackground(_previousBackgroundData);
         _roomView.removeOtherSprite(_entranceSprite);
 
-        _ctx.getTopPanel().clearSidePanel(_panel);
+        if (!alreadyRemoved) {
+            _panel.removeEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
+            _ctx.getTopPanel().clearSidePanel(_panel);
+        }
 
         var edits :TypedArray = null;
         if (saveEdits) {
