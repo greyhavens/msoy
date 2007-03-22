@@ -479,23 +479,23 @@ public class MsoySceneRepository extends SimpleRepository
         model.version = 1;
         model.name = roomName;
 
+        DecorData d = model.decorData;
+        d.media = new MediaDesc("41e4e18fb88b036b2d15ae3c051bea085e60e4b5.png");
+        d.loc = new MsoyLocation(0.5f, 0, 0, 0);
+
         FurniData f = new FurniData();
-
-        f = new FurniData();
-        f.id = 1;
-        f.media = new MediaDesc("41e4e18fb88b036b2d15ae3c051bea085e60e4b5.png");
-        f.loc = new MsoyLocation(0.5f, 0, 0, 0);
-        f.actionType = FurniData.BACKGROUND;
-        model.addFurni(f);
-
-        f = new FurniData();
-        f.id = 2;
+        f.id = 2; // be careful, decorData will be id=1
         f.media = new MediaDesc("e8b660ec5aa0aa30dab46b267daf3b80996269e7.swf");
         f.loc = new MsoyLocation(1, 0, 0.5, 0);
         f.scaleX = 1.4f;
         f.actionType = FurniData.ACTION_PORTAL;
         f.actionData = "1:A common area";
         model.addFurni(f);
+
+        // TEMP
+        // TODO
+        d.actionType = FurniData.BACKGROUND;
+        model.addFurni(d);
 
         return executeUpdate(new Operation<Integer>() {
             public Integer invoke (Connection conn, DatabaseLiaison liaison)

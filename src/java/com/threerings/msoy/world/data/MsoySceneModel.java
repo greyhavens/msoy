@@ -215,10 +215,15 @@ public class MsoySceneModel extends SceneModel
     public static MsoySceneModel blankMsoySceneModel ()
     {
         MsoySceneModel model = new MsoySceneModel();
-        model.decorData = new DecorData();
-        model.decorData.depth = model.depth = 400;
-        model.decorData.width = model.width = 800;
-        model.decorData.horizon = model.horizon = .5f;
+
+        DecorData decor = new DecorData();
+        decor.id = 1;
+        decor.depth = model.depth = 400;
+        decor.width = model.width = 800;
+        decor.height = 494;
+        decor.horizon = model.horizon = .5f;
+
+        model.decorData = decor;
         model.entrance = new MsoyLocation(.5, 0, .5, 180);
         populateBlankMsoySceneModel(model);
         return model;
