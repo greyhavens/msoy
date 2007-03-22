@@ -288,13 +288,6 @@ public class MemberManager
             }
         };
         if (add) {
-            // an 'add friend' request turns into an invitational mail message
-            MailMessageRecord mailRecord = new MailMessageRecord();
-            mailRecord.senderId = user.memberName.getMemberId();
-            mailRecord.recipientId = friendId;
-            mailRecord.subject = "Be my Friend";
-            mailRecord.payloadType = MailPayload.TYPE_FRIEND_INVITE;
-
             MsoyServer.mailMan.deliverMessage(
                 user.memberName.getMemberId(), friendId, "Be My Friend",
                 null, new FriendInviteObject(), rl);
