@@ -40,6 +40,9 @@ public class LobbyController extends Controller implements Subscriber
     /** A command to leave a table. */
     public static const LEAVE :String = "Leave";
 
+    /** A command to leave the lobby. */
+    public static const LEAVE_LOBBY :String = "LeaveLobby";
+
     public function LobbyController (mctx :WorldContext, oid :int) 
     {
         _mctx = mctx;
@@ -117,6 +120,17 @@ public class LobbyController extends Controller implements Subscriber
     public function handleStartTable (tableId :int) :void
     {
         _tableDir.startTableNow(tableId);
+    }
+
+    /**
+     * Handles LEAVE_LOBBY.
+     */
+    public function handleLeaveLobby () :void
+    {
+        if (_tableDir.isSeated()) {
+            _tableDir.leaveTable(_tableDir.getSeatedTable().tableId);
+        }
+        _mctx.getTopPanel().clearSidePanel(_panel);
     }
 
     /** The provider of free cheese. */

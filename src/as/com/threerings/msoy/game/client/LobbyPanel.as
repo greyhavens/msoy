@@ -192,6 +192,10 @@ public class LobbyPanel extends VBox
         createBtn.height = 22;
         createBtn.label = Msgs.GAME.get("b.create");
         descriptionBox.addChild(createBtn);
+        var leaveBtn :CommandButton = new CommandButton(LobbyController.LEAVE_LOBBY);
+        leaveBtn.height = 22;
+        leaveBtn.label = Msgs.GAME.get("b.leave_lobby");
+        descriptionBox.addChild(leaveBtn);
 
         var tablesBox :VBox = new VBox();
         tablesBox.styleName = "tablesBox";
