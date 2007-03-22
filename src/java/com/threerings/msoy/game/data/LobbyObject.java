@@ -4,8 +4,7 @@
 package com.threerings.msoy.game.data;
 
 import com.threerings.presents.dobj.DSet;
-
-import com.threerings.crowd.data.PlaceObject;
+import com.threerings.presents.dobj.DObject;
 
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableLobbyObject;
@@ -16,8 +15,7 @@ import com.threerings.msoy.item.web.Game;
 /**
  * Represents a lobby for a particular game.
  */
-public class LobbyObject extends PlaceObject
-    implements TableLobbyObject
+public class LobbyObject extends DObject implements TableLobbyObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>game</code> field. */

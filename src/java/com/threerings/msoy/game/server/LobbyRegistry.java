@@ -23,7 +23,7 @@ import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 
-import com.threerings.msoy.game.data.LobbyConfig;
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages the lobbies in use.
@@ -31,13 +31,6 @@ import com.threerings.msoy.game.data.LobbyConfig;
 public class LobbyRegistry
     implements LobbyProvider
 {
-    /**
-     * Create the lobby registry.
-     */
-    public LobbyRegistry ()
-    {
-    }
-    
     /**
      * Initialize the lobby registry.
      */
@@ -75,9 +68,19 @@ public class LobbyRegistry
             public void requestCompleted (Item item)
             {
                 try {
-                    LobbyConfig config = new LobbyConfig();
-                    config.game = (Game) item;
-                    MsoyServer.plreg.createPlace(config);
+                    LobbyManager lmgr = new LobbyManager((Game)item);
+                    int gameId = lmgr.getGameId();
+                    Integer lobbyOid = lmgr.getLobbyId();
+                    
+                    // record the lobby oid for the game
+                    _lobbies.put(gameId, lobbyOid);
+
+                    // remove the list of listeners and notify each of them
+                    ArrayList<InvocationService.ResultListener> list =
+                        _loading.remove(gameId);
+                    for (InvocationService.ResultListener listener : list) {
+                        listener.requestProcessed(lobbyOid);
+                    }
 
                 } catch (Exception e) {
                     requestFailed(e);
@@ -93,22 +96,6 @@ public class LobbyRegistry
                 }
             }
         });
-    }
-
-    /**
-     * Called by LobbyManager instances after they're all ready to go.
-     */
-    public void lobbyStartup (int gameId, Integer lobbyOid)
-    {
-        // record the lobby oid for the game
-        _lobbies.put(gameId, lobbyOid);
-
-        // remove the list of listeners and notify each of them
-        ArrayList<InvocationService.ResultListener> list =
-            _loading.remove(gameId);
-        for (InvocationService.ResultListener listener : list) {
-            listener.requestProcessed(lobbyOid);
-        }
     }
 
     /**

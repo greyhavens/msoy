@@ -39,7 +39,6 @@ import com.threerings.msoy.world.data.PetMarshaller;
 import com.threerings.msoy.world.data.RoomConfig;
 
 import com.threerings.msoy.game.client.LobbyController;
-import com.threerings.msoy.game.data.LobbyConfig;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.WorldGameConfig;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
@@ -85,7 +84,6 @@ public class WorldClient extends BaseClient
         c = LobbyController;
         c = ToyBoxMarshaller;
         c = PetMarshaller;
-        c = LobbyConfig;
         c = WorldGameConfig;
         c = ChiyogamiController;
 

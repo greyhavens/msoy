@@ -143,6 +143,7 @@ public class TopPanel extends Canvas
         clearSidePanel(null);
         _sidePanel = side;
         _sidePanel.includeInLayout = false;
+        _sidePanel.width = side.width;
 
         addChild(_sidePanel); // add to end
         layoutPanels();
@@ -236,7 +237,6 @@ public class TopPanel extends Canvas
             _sidePanel.setStyle("top", 0);
             _sidePanel.setStyle("bottom", getBottomPanelHeight() + ControlBar.HEIGHT);
             _sidePanel.setStyle("left", 0);
-            _sidePanel.width = SIDE_PANEL_WIDTH;
         }
 
         updatePlaceViewSize();
@@ -284,7 +284,7 @@ public class TopPanel extends Canvas
 
     protected function getSidePanelWidth () :int
     {
-        return (_sidePanel == null ? 0 : SIDE_PANEL_WIDTH);
+        return (_sidePanel == null ? 0 : _sidePanel.width);
     }
 
     protected function getBottomPanelHeight () :int
@@ -322,8 +322,6 @@ public class TopPanel extends Canvas
 
     /** The list of our friends. */
     protected var _friendsList :FriendsList;
-
-    protected static const SIDE_PANEL_WIDTH :int = 350;
 
     public static const DECORATIVE_MARGIN_HEIGHT :int = 4;
 }

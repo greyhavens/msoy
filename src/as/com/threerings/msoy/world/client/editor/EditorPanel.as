@@ -71,6 +71,7 @@ public class EditorPanel extends VBox
 
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
+        width = EDITOR_PANEL_WIDTH;
 
         itemList = new ItemList(_ctx, FurniItemRenderer);
         itemList.percentWidth = 100;
@@ -454,6 +455,8 @@ public class EditorPanel extends VBox
         }
         return null;
     }
+
+    protected static const EDITOR_PANEL_WIDTH :int = 350; // in px
 
     protected var _ctx :WorldContext;
 

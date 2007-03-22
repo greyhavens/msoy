@@ -48,6 +48,7 @@ import com.threerings.msoy.chat.client.ReportingListener;
 
 import com.threerings.msoy.item.web.ItemIdent;
 
+import com.threerings.msoy.game.client.LobbyController;
 import com.threerings.msoy.game.client.LobbyService;
 import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.world.client.RoomView;
@@ -87,8 +88,8 @@ public class MsoyController extends Controller
     /** Command to go to a group's home scene. */
     public static const GO_GROUP_HOME :String = "GoGroupHome";
 
-    /** Command to go to a game lobby. */
-    public static const GO_GAME_LOBBY :String = "GoGameLobby";
+    /** Command to join a game lobby. */
+    public static const JOIN_GAME_LOBBY :String = "JoinGameLobby";
 
     /** Command to join an in-world game. */
     public static const JOIN_WORLD_GAME :String = "JoinWorldGame";
@@ -360,16 +361,16 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the GO_GAME_LOBBY command.
+     * Handle the GO_GAME_LOBBY command. TODO this is going away! handle things appropriately
      */
-    public function handleGoGameLobby (gameId :int) :void
+    /*public function handleGoGameLobby (gameId :int) :void
     {
         if (!handleInternalGo("game", "" + gameId)) {
             // if we shouldn't or couldn't load a new page then we just load up the module inside
             // this client
             moveToGameLobby(int(gameId));
         }
-    }
+    }*/
 
     /**
      * Handle the GO_LOCATION command to go to a placeobject.
@@ -380,6 +381,22 @@ public class MsoyController extends Controller
             // fall back to breaking the back button
             _ctx.getLocationDirector().moveTo(placeOid);
         }
+    }
+
+    /**
+     * Handle JOIN_GAME_LOBBY.
+     */
+    public function handleJoinGameLobby (gameId :int) :void
+    {
+        var lsvc :LobbyService = (_ctx.getClient().requireService(LobbyService) as LobbyService);
+        lsvc.identifyLobby(_ctx.getClient(), gameId,
+            new ResultWrapper(function (cause :String) :void {
+                log.warning("fetching LobbyObject oid failed: " + cause);
+            },
+            function (result :Object) :void {
+                // this will create a panel and add it to the side panel on the top level
+                new LobbyController(_ctx, int(result)); 
+            }));
     }
 
     /**
@@ -470,9 +487,6 @@ public class MsoyController extends Controller
         } else if (null != params["groupHome"]) {
             handleGoGroupHome(int(params["groupHome"]), true);
 
-        } else if (null != params["gameLobby"]) {
-            moveToGameLobby(int(params["gameLobby"]));
-
         } else if (null != params["location"]) {
             _ctx.getLocationDirector().moveTo(int(params["location"]));
 
@@ -494,6 +508,8 @@ public class MsoyController extends Controller
         // see if we should join a world game
         if (null != params["worldGame"]) {
             handleJoinWorldGame(int(params["worldGame"]));
+        } else if (null != params["gameLobby"]) {
+            handleJoinGameLobby(int(params["gameLobby"]));
         }
     }
 
@@ -586,23 +602,6 @@ public class MsoyController extends Controller
     protected function handleInternalGo (page :String, args :String) :Boolean
     {
         return shouldLoadNewPages() && NetUtil.navigateToURL("#" + page + "-" + args, true);
-    }
-
-    /**
-     * Called to move to the lobby specified.
-     */
-    protected function moveToGameLobby (gameId :int) :void
-    {
-        // TODO: move to a game director?
-        var lsvc :LobbyService = (_ctx.getClient().requireService(LobbyService) as LobbyService);
-        lsvc.identifyLobby(_ctx.getClient(), gameId,
-            new ResultWrapper(function (cause :String) :void {
-                log.warning("Ack: " + cause);
-            },
-            function (result :Object) :void {
-                _ctx.getSceneDirector().didLeaveScene();
-                _ctx.getLocationDirector().moveTo(int(result));
-            }));
     }
 
     override protected function setControlledPanel (

@@ -241,21 +241,16 @@ public class MemberManager
         try {
             JSONArray friends = new JSONArray();
             JSONArray groups = new JSONArray();
-            JSONArray games = new JSONArray();
             for (PopularPlace place : _topPlaces) {
                 JSONObject obj = new JSONObject();
                 obj.put("name", place.getName());
                 obj.put("pop", place.population);
                 obj.put("id", place.getId());
-                if (place instanceof PopularGamePlace) {
-                    games.put(obj);
+                obj.put("sceneId", ((PopularScenePlace) place).getSceneId());
+                if (place instanceof PopularMemberPlace) {
+                    friends.put(obj);
                 } else {
-                    obj.put("sceneId", ((PopularScenePlace) place).getSceneId());
-                    if (place instanceof PopularMemberPlace) {
-                        friends.put(obj);
-                    } else {
-                        groups.put(obj);
-                    }
+                    groups.put(obj);
                 }
                 if (--n <= 0) {
                     break;
@@ -264,7 +259,6 @@ public class MemberManager
             JSONObject result = new JSONObject();
             result.put("friends", friends);
             result.put("groups", groups);
-            result.put("games", games);
             result.put("totpop", _totalPopulation);
             listener.requestCompleted(URLEncoder.encode(result.toString(), "UTF-8"));
         } catch (Exception e) {
@@ -569,36 +563,29 @@ public class MemberManager
             if (count == 0) {
                 continue;
             }
-            if (plMgr instanceof RoomManager) {
-                MsoyScene scene = (MsoyScene) ((RoomManager) plMgr).getScene();
-                MsoySceneModel model = (MsoySceneModel) scene.getSceneModel();
-                IntTuple owner = new IntTuple(model.ownerType, model.ownerId);
-                PopularScenePlace place = (PopularScenePlace) _scenesByOwner.get(owner);
-                if (place == null) {
-                    if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                        place = new PopularGroupPlace((RoomManager) plMgr);
-                    } else if (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                        place = new PopularMemberPlace((RoomManager) plMgr);
-                    } else {
-                        throw new IllegalArgumentException(
-                            "unknown owner type: " + model.ownerType);
-                    }
-                    // update the main data structures
-                    _scenesByOwner.put(owner, place);
-                    _topPlaces.add(place);
+            MsoyScene scene = (MsoyScene) ((RoomManager) plMgr).getScene();
+            MsoySceneModel model = (MsoySceneModel) scene.getSceneModel();
+            IntTuple owner = new IntTuple(model.ownerType, model.ownerId);
+            PopularScenePlace place = (PopularScenePlace) _scenesByOwner.get(owner);
+            if (place == null) {
+                if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+                    place = new PopularGroupPlace((RoomManager) plMgr);
+                } else if (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
+                    place = new PopularMemberPlace((RoomManager) plMgr);
+                } else {
+                    throw new IllegalArgumentException(
+                        "unknown owner type: " + model.ownerType);
                 }
-                if (place.plMgr == null ||
-                    count > place.plMgr.getPlaceObject().occupantInfo.size()) {
-                    place.plMgr = plMgr;
-                }
-                place.population += count;
-                _totalPopulation += count;
-            } else if (plMgr instanceof LobbyManager) {
-                PopularGamePlace place = new PopularGamePlace((LobbyManager) plMgr);
-                place.population = count;
+                // update the main data structures
+                _scenesByOwner.put(owner, place);
                 _topPlaces.add(place);
-                _totalPopulation += count;
             }
+            if (place.plMgr == null ||
+                count > place.plMgr.getPlaceObject().occupantInfo.size()) {
+                place.plMgr = plMgr;
+            }
+            place.population += count;
+            _totalPopulation += count;
         }
         /*
          * TODO: this is currently O(N log N) in the number of rooms; if that is unrealistic in

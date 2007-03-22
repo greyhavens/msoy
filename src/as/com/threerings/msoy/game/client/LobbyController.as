@@ -3,27 +3,25 @@
 
 package com.threerings.msoy.game.client {
 
-import com.threerings.crowd.client.PlaceController;
-import com.threerings.crowd.client.PlaceView;
-
-import com.threerings.crowd.data.PlaceConfig;
-import com.threerings.crowd.data.PlaceObject;
-
-import com.threerings.crowd.util.CrowdContext;
-
 import com.threerings.parlor.client.TableDirector;
 import com.threerings.parlor.data.TableConfig;
 
 import com.threerings.parlor.game.data.GameConfig;
 
+import com.threerings.presents.dobj.Subscriber;
+import com.threerings.presents.dobj.DObject;
+import com.threerings.presents.dobj.ObjectAccessError;
+import com.threerings.presents.util.SafeSubscriber;
+
 import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.item.web.Game;
 
-import com.threerings.msoy.game.data.LobbyConfig;
 import com.threerings.msoy.game.data.LobbyObject;
 
-public class LobbyController extends PlaceController
+import com.threerings.util.Controller;
+
+public class LobbyController extends Controller implements Subscriber
 {
     /** A command to create a new table. */
     public static const CREATE_TABLE :String = "CreateTable";
@@ -40,22 +38,31 @@ public class LobbyController extends PlaceController
     /** A command to leave a table. */
     public static const LEAVE :String = "Leave";
 
-    override public function init (ctx :CrowdContext, config :PlaceConfig) :void
+    public function LobbyController (mctx :WorldContext, oid :int) 
     {
-        _mctx = (ctx as WorldContext);
-        super.init(ctx, config);
+        _mctx = mctx;
+
+        (new SafeSubscriber(oid, this)).subscribe(_mctx.getDObjectManager());
     }
 
-    override public function willEnterPlace (plobj :PlaceObject) :void
+    // from Subscriber
+    public function objectAvailable (obj :DObject) :void 
     {
-        super.willEnterPlace(plobj);
-        _tableDir.setTableObject(plobj);
+        _lobj = obj as LobbyObject;
+        _panel = new LobbyPanel(_mctx, this, _lobj);
+        setControlledPanel(_panel);
+
+        _tableDir = new TableDirector(_mctx, LobbyObject.TABLES, _panel);
+        _tableDir.setTableObject(obj);
+        _tableDir.addSeatednessObserver(_panel);
+
+        _mctx.getTopPanel().setSidePanel(_panel);
     }
 
-    override public function didLeavePlace (plobj :PlaceObject) :void
+    // from Subscriber
+    public function requestFailed (oid :int, cause :ObjectAccessError) :void 
     {
-        super.didLeavePlace(plobj);
-        _tableDir.clearTableObject();
+        Log.getLog(this).warning("request for the LobbyObject failed: ", cause);
     }
 
     /**
@@ -64,7 +71,7 @@ public class LobbyController extends PlaceController
     public function handleCreateTable () :void
     {
         _panel.createBtn.enabled = false;
-        new TableCreationPanel(_mctx, (_plobj as LobbyObject).game, _panel);
+        new TableCreationPanel(_mctx, _lobj.game, _panel);
     }
 
     /**
@@ -99,14 +106,6 @@ public class LobbyController extends PlaceController
         _tableDir.startTableNow(tableId);
     }
 
-    override protected function createPlaceView (ctx :CrowdContext) :PlaceView
-    {
-        _panel = new LobbyPanel(_mctx, this);
-        _tableDir = new TableDirector(_mctx, LobbyObject.TABLES, _panel);
-        _tableDir.addSeatednessObserver(_panel);
-        return _panel;
-    }
-    
     /** The provider of free cheese. */
     protected var _mctx :WorldContext;
 
@@ -115,5 +114,8 @@ public class LobbyController extends PlaceController
 
     /** The table director. */
     protected var _tableDir :TableDirector;
+
+    /** Our distributed LobbyObject */
+    protected var _lobj :LobbyObject;
 }
 }

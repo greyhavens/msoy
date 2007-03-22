@@ -28,10 +28,6 @@ import com.threerings.util.CommandEvent;
 
 import com.threerings.flash.MediaContainer;
 
-import com.threerings.crowd.client.PlaceView;
-
-import com.threerings.crowd.data.PlaceObject;
-
 import com.threerings.flex.CommandButton;
 
 import com.threerings.parlor.client.SeatednessObserver;
@@ -57,8 +53,8 @@ import com.threerings.msoy.item.web.Game;
 /**
  * A panel that displays pending table games.
  */
-public class LobbyPanel extends VBox
-    implements PlaceView, TableObserver, SeatednessObserver
+public class LobbyPanel extends VBox 
+    implements TableObserver, SeatednessObserver
 {
     /** Our log. */
     private const log :Log = Log.getLog(LobbyPanel);
@@ -72,10 +68,17 @@ public class LobbyPanel extends VBox
     /**
      * Create a new LobbyPanel.
      */
-    public function LobbyPanel (ctx :WorldContext, ctrl :LobbyController)
+    public function LobbyPanel (ctx :WorldContext, ctrl :LobbyController, lobbyObj :LobbyObject)
     {
         _ctx = ctx;
         controller = ctrl;
+        _lobbyObj = lobbyObj;
+        // add all preexisting tables
+        for each (var table :Table in _lobbyObj.tables.toArray()) {
+            tableAdded(table);
+        }
+
+        width = LOBBY_PANEL_WIDTH;
     }
 
     /**
@@ -86,26 +89,18 @@ public class LobbyPanel extends VBox
         return _lobbyObj.game;
     }
 
-    // from PlaceView
-    public function willEnterPlace (plobj :PlaceObject) :void
-    {
-        // add all preexisting tables
-        _lobbyObj = (plobj as LobbyObject);
-        for each (var table :Table in _lobbyObj.tables.toArray()) {
-            tableAdded(table);
-        }
-    }
-
-    // from PlaceView
-    public function didLeavePlace (plobj :PlaceObject) :void
+    // from PlaceView TODO
+    /*public function didLeavePlace (plobj :PlaceObject) :void
     {
         // clear all the tables
         _formingTables.removeAll();
-    }
+        _runningTables.removeAll();
+    }*/
 
     // from TableObserver
     public function tableAdded (table :Table) :void
     {
+        // TODO check if this is a single-player table - if so, add directly to running tables
         _formingTables.addItem(table);
     }
 
@@ -178,7 +173,6 @@ public class LobbyPanel extends VBox
     {
         super.createChildren();
         styleName = "lobbyPanel";
-        percentWidth = 100;
         percentHeight = 100;
 
         var descriptionBox :HBox = new HBox();
@@ -303,6 +297,8 @@ public class LobbyPanel extends VBox
             tablesContainer.addChild(list);
         }
     }
+
+    protected static const LOBBY_PANEL_WIDTH :int = 724; // in px
 
     /** Buy one get one free. */
     protected var _ctx :WorldContext;
