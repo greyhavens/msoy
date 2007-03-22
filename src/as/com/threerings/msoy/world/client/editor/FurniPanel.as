@@ -156,40 +156,30 @@ public class FurniPanel extends SpritePanel
         _actionType.dataProvider = [
             { label: Msgs.EDITING.get("l.action_none"),
               data: FurniData.ACTION_NONE },
+            { label: Msgs.EDITING.get("l.action_portal"),
+              data: FurniData.ACTION_PORTAL },
+            { label: Msgs.EDITING.get("l.action_url"),
+              data: FurniData.ACTION_URL },
             { label: Msgs.EDITING.get("l.background"),
               data: FurniData.BACKGROUND },
             { label: Msgs.EDITING.get("l.action_lobby_game"),
               data: FurniData.ACTION_LOBBY_GAME },
             { label: Msgs.EDITING.get("l.action_world_game"),
-              data: FurniData.ACTION_WORLD_GAME },
-            { label: Msgs.EDITING.get("l.action_url"),
-              data: FurniData.ACTION_URL },
-            { label: Msgs.EDITING.get("l.action_portal"),
-              data: FurniData.ACTION_PORTAL }
+              data: FurniData.ACTION_WORLD_GAME }
         ];
 
         _actionPanels = new ViewStack();
         _actionPanels.resizeToContent = true;
         _actionPanels.addChild(createMouseCaptureEditor()); // ACTION_NONE
+        _actionPanels.addChild(createPortalEditor()); // ACTION_PORTAL
+        _actionPanels.addChild(createURLEditor()); // ACTION_URL
         _actionPanels.addChild(createBackgroundEditor()); // BACKGROUND
         _actionPanels.addChild(new VBox()); // ACTION_LOBBY_GAME (nothing to edit)
         _actionPanels.addChild(new VBox()); // ACTION_WORLD_GAME
-        _actionPanels.addChild(createURLEditor()); // ACTION_URL
-        _actionPanels.addChild(createPortalEditor()); // ACTION_PORTAL
         GridUtil.addRow(this, _actionPanels, [2, 1]);
 
         BindingUtils.bindProperty(_actionPanels, "selectedIndex",
             _actionType, "selectedIndex");
-        BindingUtils.bindSetter(function (selIdx :int) :void {
-            // when switching to NONE, be sure to re-enable mouse capture
-            if (selIdx == FurniData.ACTION_NONE) {
-                // I seem to need to do all this by hand. You will
-                // probably break it, O future refactorer.
-                _captureMouse.selected = true;
-                var furniSprite :FurniSprite = (_sprite as FurniSprite);
-                furniSprite.getFurniData().actionData = null;
-            }
-        }, _actionType, "selectedIndex");
 
         // BEGIN temporary controls
         // add an "expert control" for directly editing the action
@@ -267,7 +257,20 @@ public class FurniPanel extends SpritePanel
         BindingUtils.bindSetter(function (o :Object) :void {
             var furni :FurniData = (_sprite as FurniSprite).getFurniData();
             var item :Object = _actionType.selectedItem;
-            furni.actionType = int(item.data);
+
+            var newActionType :int = int(item.data);
+            if (newActionType == furni.actionType) {
+                return; // no change
+            }
+            furni.actionType = newActionType;
+
+            // when switching back from a different action, turn
+            // capturesMouse back to true.
+            if (newActionType == FurniData.ACTION_NONE) {
+                furni.actionData = null;
+                // I seem to need to do this part by hand.
+                _captureMouse.selected = true;
+            }
 
             // force the sprite to recheck props, so that it re-reads
             // whether it's a background
