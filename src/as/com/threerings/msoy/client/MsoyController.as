@@ -361,18 +361,6 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the GO_GAME_LOBBY command. TODO this is going away! handle things appropriately
-     */
-    /*public function handleGoGameLobby (gameId :int) :void
-    {
-        if (!handleInternalGo("game", "" + gameId)) {
-            // if we shouldn't or couldn't load a new page then we just load up the module inside
-            // this client
-            moveToGameLobby(int(gameId));
-        }
-    }*/
-
-    /**
      * Handle the GO_LOCATION command to go to a placeobject.
      */
     public function handleGoLocation (placeOid :int) :void
