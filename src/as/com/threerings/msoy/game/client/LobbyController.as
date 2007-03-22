@@ -73,6 +73,9 @@ public class LobbyController extends Controller implements Subscriber
     {
         _panel.removeEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
         _subscriber.unsubscribe(_mctx.getDObjectManager());
+        if (_tableDir.isSeated()) {
+            _tableDir.leaveTable(_tableDir.getSeatedTable().tableId);
+        }
     }
 
     // from Subscriber
@@ -127,9 +130,6 @@ public class LobbyController extends Controller implements Subscriber
      */
     public function handleLeaveLobby () :void
     {
-        if (_tableDir.isSeated()) {
-            _tableDir.leaveTable(_tableDir.getSeatedTable().tableId);
-        }
         _mctx.getTopPanel().clearSidePanel(_panel);
     }
 
