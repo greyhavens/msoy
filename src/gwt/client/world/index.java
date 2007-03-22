@@ -139,6 +139,9 @@ public class index extends Page
         CWorld.membersvc.serializeNeighborhood(
             CWorld.creds, entityId, isGroup, new AsyncCallback() {
             public void onSuccess (Object result) {
+                if (result == null) {
+                    setContent(new Label(CWorld.msgs.noSuchNeighborhood()));
+                }
                 if (requestEntryCount == _entryCounter) {
                     neighborhood((String) result);
                 }

@@ -22,4 +22,12 @@ public interface WorldMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key temp
    */
   String temp();
+
+  /**
+   * Translated "That neighborhood could not be found.".
+   * 
+   * @return translated "That neighborhood could not be found."
+   * @gwt.key noSuchNeighborhood
+   */
+  String noSuchNeighborhood();
 }

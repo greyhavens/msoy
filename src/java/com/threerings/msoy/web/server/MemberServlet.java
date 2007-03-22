@@ -163,7 +163,6 @@ public class MemberServlet extends MsoyServiceServlet
         try {
             hood = forGroup ? getGroupNeighborhood(id) : getMemberNeighborhood(id);
              if (hood == null) {
-                 // does this make sense?
                  return null;
              }
         } catch (PersistenceException e) {
@@ -231,7 +230,12 @@ public class MemberServlet extends MsoyServiceServlet
     {
         Neighborhood hood = new Neighborhood();
         // first load the center group data
-        hood.group = makeNeighborGroup(MsoyServer.groupRepo.loadGroup(groupId));
+        GroupRecord gRec = MsoyServer.groupRepo.loadGroup(groupId);
+        if (gRec == null) {
+            // if there is no such group, there is no neighborhood
+            return null;
+        }
+        hood.group = makeNeighborGroup(gRec);
         hood.group.members = MsoyServer.groupRepo.countMembers(groupId);
 
         // we have no other groups
