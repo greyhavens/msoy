@@ -90,11 +90,11 @@ public class SwiftlyEditor extends PlacePanel
         ol.setPreferredSize(new Dimension(100, 0));
         chatPanel.add(new ChatPanel(_ctx, false));
 
-        _consoleTabs = new TabbedConsole(_ctx, this);
-        _consoleTabs.setMinimumSize(new Dimension(0, 0));
+        _console = new Console(_ctx, this);
+        _console.setMinimumSize(new Dimension(0, 0));
 
         JSplitPane bottomPane =
-            new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chatPanel, _consoleTabs);
+            new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chatPanel, _console);
         bottomPane.setOneTouchExpandable(true);
         bottomPane.setDividerLocation(400);
 
@@ -151,11 +151,11 @@ public class SwiftlyEditor extends PlacePanel
     }
 
     /**
-     * See {@link TabbedConsole} for documentation.
+     * See {@link Console} for documentation.
      */
     public void consoleMessage (String message)
     {
-        _consoleTabs.consoleMessage(message);
+        _console.consoleMessage(message);
     }
 
     public AbstractAction createCloseCurrentTabAction ()
@@ -411,7 +411,7 @@ public class SwiftlyEditor extends PlacePanel
     protected PathElement _project;
 
     protected TabbedEditor _editorTabs;
-    protected TabbedConsole _consoleTabs;
+    protected Console _console;
     protected EditorToolBar _toolbar;
     protected ProjectPanel _projectPanel;
 }
