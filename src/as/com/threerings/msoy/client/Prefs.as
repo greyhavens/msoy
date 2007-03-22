@@ -2,6 +2,8 @@ package com.threerings.msoy.client {
 
 import com.threerings.util.Config;
 
+import com.threerings.msoy.client.persist.SharedObjectSceneRepository;
+
 public class Prefs
 {
     /** The underlying config object used to store our prefs. A listener
@@ -141,8 +143,17 @@ public class Prefs
      */
     private static function staticInit () :void
     {
-        // TEMP: remove obsolete keys
-        config.remove("password");
+        var lastBuild :String = (config.getValue("lastBuild", null) as String);
+        if (lastBuild == null) {
+            // TEMP: added 2007-03-21, can be removed after a while.
+            // We need to ensure that all cached scenes are no more.
+            (new SharedObjectSceneRepository()).TEMPClearSceneCache();
+        }
+
+        // update our stored last build time
+        if (lastBuild != DeploymentConfig.buildTime) {
+            config.setValue("lastBuild", DeploymentConfig.buildTime);
+        }
     }
     staticInit();
 }

@@ -24,7 +24,7 @@ import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.spot.client.SpotSceneDirector;
 import com.threerings.whirled.util.WhirledContext;
 
-import com.threerings.msoy.client.persist.SharedObjectSceneRepository;
+import com.threerings.msoy.client.persist.RuntimeSceneRepository;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 
@@ -47,8 +47,7 @@ public class WorldContext extends BaseContext
     {
         super(client);
 
-        _sceneRepo = new SharedObjectSceneRepository();
-        _sceneDir = new MsoySceneDirector(this, _locDir, _sceneRepo);
+        _sceneDir = new MsoySceneDirector(this, _locDir, new RuntimeSceneRepository());
         _spotDir = new SpotSceneDirector(this, _locDir, _sceneDir);
         _parlorDir = new ParlorDirector(this);
         _mediaDir = new MediaDirector(this);
@@ -141,11 +140,6 @@ public class WorldContext extends BaseContext
         return _topPanel;
     }
 
-    public function TEMPClearSceneCache () :void
-    {
-        _sceneRepo.TEMPClearSceneCache();
-    }
-
     protected var _topPanel :TopPanel;
     protected var _controller :MsoyController;
 
@@ -156,7 +150,5 @@ public class WorldContext extends BaseContext
     protected var _mediaDir :MediaDirector;
     protected var _worldDir :WorldDirector;
     protected var _itemDir :ItemDirector;
-
-    protected var _sceneRepo :SharedObjectSceneRepository;
 }
 }

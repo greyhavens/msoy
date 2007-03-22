@@ -17,6 +17,7 @@ import com.threerings.whirled.util.NoSuchSceneError;
  * A client-side scene repository that uses possibly-available
  * SharedObjects to store data.
  */
+// TODO: this class is no longer used
 public class SharedObjectSceneRepository
     implements SceneRepository
 {
@@ -90,10 +91,11 @@ public class SharedObjectSceneRepository
      */
     public function TEMPClearSceneCache () :void
     {
+        trace("Cleaning old scene cache...");
         // TODO: this is unbelievably slow
         // What we likely need to do is maintain a directory of stored scenes
         // as noted in the constructor's note
-        for (var ii :int = 0; ii < 100; ii++) {
+        for (var ii :int = 0; ii < 500; ii++) {
             deleteSceneModel(ii);
         }
     }
