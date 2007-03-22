@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.events.Event;
+
 import com.threerings.parlor.client.TableDirector;
 import com.threerings.parlor.data.TableConfig;
 
@@ -42,7 +44,8 @@ public class LobbyController extends Controller implements Subscriber
     {
         _mctx = mctx;
 
-        (new SafeSubscriber(oid, this)).subscribe(_mctx.getDObjectManager());
+        _subscriber = new SafeSubscriber(oid, this)
+        _subscriber.subscribe(_mctx.getDObjectManager());
     }
 
     // from Subscriber
@@ -50,6 +53,7 @@ public class LobbyController extends Controller implements Subscriber
     {
         _lobj = obj as LobbyObject;
         _panel = new LobbyPanel(_mctx, this, _lobj);
+        _panel.addEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
         setControlledPanel(_panel);
 
         _tableDir = new TableDirector(_mctx, LobbyObject.TABLES, _panel);
@@ -57,6 +61,15 @@ public class LobbyController extends Controller implements Subscriber
         _tableDir.addSeatednessObserver(_panel);
 
         _mctx.getTopPanel().setSidePanel(_panel);
+    }
+
+    /**
+     * Event handler for Event.REMOVED_FORM_STAGE
+     */
+    public function handleRemovedFromStage (evt :Event) :void
+    {
+        _panel.removeEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
+        _subscriber.unsubscribe(_mctx.getDObjectManager());
     }
 
     // from Subscriber
@@ -117,5 +130,7 @@ public class LobbyController extends Controller implements Subscriber
 
     /** Our distributed LobbyObject */
     protected var _lobj :LobbyObject;
+
+    protected var _subscriber :SafeSubscriber;
 }
 }

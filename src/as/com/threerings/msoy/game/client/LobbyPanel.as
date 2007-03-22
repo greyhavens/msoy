@@ -89,14 +89,6 @@ public class LobbyPanel extends VBox
         return _lobbyObj.game;
     }
 
-    // from PlaceView TODO
-    /*public function didLeavePlace (plobj :PlaceObject) :void
-    {
-        // clear all the tables
-        _formingTables.removeAll();
-        _runningTables.removeAll();
-    }*/
-
     // from TableObserver
     public function tableAdded (table :Table) :void
     {
