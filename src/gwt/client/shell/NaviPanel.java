@@ -49,6 +49,7 @@ public class NaviPanel extends FlexTable
                 menu.setAutoOpen(true);
                 addLink(menu, "Profile", "profile", "");
                 addLink(menu, "Mail", "mail", "");
+                addLink(menu, "Projects", "swiftly", "");
                 if (CShell.creds.isSupport) {
                     addLink(menu, "Admin", "admin", "");
                 }

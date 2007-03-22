@@ -184,13 +184,13 @@ public class index extends Page
         if (hood == null) {
             setContent(new Label(CWorld.msgs.noSuchMember()));
         } else {
-            setContent(FlashClients.createNeighborhood(hood), true);
+            setContent(FlashClients.createNeighborhood(hood), true, false);
         }
     }
 
     protected void hotSpots (String hotSpots)
     {
-        setContent(FlashClients.createPopularPlaces(hotSpots), true);
+        setContent(FlashClients.createPopularPlaces(hotSpots), true, false);
     }
 
     protected int id (String token, int index)

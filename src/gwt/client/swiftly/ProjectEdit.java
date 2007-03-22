@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -30,6 +31,8 @@ import com.threerings.gwt.ui.InlineLabel;
 
 import client.shell.Application;
 import client.util.BorderedDialog;
+import client.util.ClickCallback;
+import client.util.InfoPopup;
 import client.util.PromptPopup;
 
 /**
@@ -52,36 +55,37 @@ public class ProjectEdit extends BorderedDialog
         _project = project;
         _listener = listener;
         _amOwner = (CSwiftly.creds.getMemberId() == project.ownerId);
-        setStyleName("projectEdit");
 
-        VerticalPanel contents = (VerticalPanel)_contents;
         _header.add(new InlineLabel(_project.projectName));
 
-        _errorContainer = new HorizontalPanel();
-        contents.add(_errorContainer);
+        FlexTable contents = (FlexTable)_contents;
+        contents.setStyleName("projectEdit");
 
+        int idx = 0;
+        contents.setText(idx, 0, CSwiftly.msgs.projectName());
         TextBox projectName = new TextBox();
+        contents.setWidget(idx++, 1, projectName);
         projectName.setText(_project.projectName);
         projectName.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
                 _project.projectName = ((TextBox)sender).getText().trim();
             }
         });
-        contents.add(new InlineLabel(CSwiftly.msgs.projectName()));
-        contents.add(projectName);
-        _remixable = new CheckBox(CSwiftly.msgs.remixable());
+
+        contents.setText(idx, 0, CSwiftly.msgs.remixable());
+        contents.setWidget(idx++, 1, _remixable = new CheckBox());
         _remixable.setChecked(_project.remixable);
         _remixable.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 _project.remixable = _remixable.isChecked();
             }
         });
-        contents.add(_remixable);
 
-        // List of project collaborators
+        contents.setText(idx, 0, CSwiftly.msgs.collaborators());
+        contents.getFlexCellFormatter().setHeight(idx, 0, "100%");
         _collaborators = new HorizontalPanel();
         _collaboratorsSet = new HashSet();
-        contents.add(_collaborators);
+        contents.setWidget(idx, 1, _collaborators);
 
         // Add collaborators button if project owner
         if (_amOwner) {
@@ -104,15 +108,23 @@ public class ProjectEdit extends BorderedDialog
                 public void onMouseEnter (Widget sender) { }
                 public void onMouseMove (Widget sender, int x, int y) { }
             });
-            contents.add(addCollabs);
+            contents.setWidget(idx, 2, addCollabs);
         }
+        idx++;
 
         // Submit button
-        _footer.add(new Button(CSwiftly.msgs.submit(), new ClickListener() {
-            public void onClick (Widget sender) {
-                commitEdit();
+        Button submit = new Button(CSwiftly.msgs.submit());
+        _footer.add(submit);
+        new ClickCallback(submit) {
+            public boolean callService () {
+                CSwiftly.swiftlysvc.updateProject(CSwiftly.creds, _project, this);
+                return true;
             }
-        }));
+            public boolean gotResult (Object result) {
+                closeDialog();
+                return true;
+            }
+        };
 
         // Cancel button
         _footer.add(new Button(CSwiftly.msgs.cancel(),new ClickListener() {
@@ -121,29 +133,15 @@ public class ProjectEdit extends BorderedDialog
             }
         }));
 
+        // TODO: don't call this all over the place
         loadCollaborators();
     }
 
-    // from BorderedDialog.  This is called in the super constructor, so no UI components
-    // that depend on members that are set in this object's constructor can be used here.
+    // from BorderedDialog.  This is called in the super constructor, so no UI components that
+    // depend on members that are set in this object's constructor can be used here.
     public Widget createContents ()
     {
-        VerticalPanel contents = new VerticalPanel();
-        return contents;
-    }
-
-    protected void commitEdit()
-    {
-        // save the project record
-        CSwiftly.swiftlysvc.updateProject(CSwiftly.creds, _project, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                closeDialog();
-            }
-            public void onFailure (Throwable caught) {
-                CSwiftly.serverError(caught);
-                addError(CSwiftly.serverError(caught));
-            }
-        });
+        return new FlexTable();
     }
 
     protected void closeDialog()
@@ -156,48 +154,58 @@ public class ProjectEdit extends BorderedDialog
 
     protected void loadCollaborators()
     {
-        CSwiftly.swiftlysvc.getProjectCollaborators(CSwiftly.creds, _project.projectId,
-            new AsyncCallback() {
+        CSwiftly.swiftlysvc.getProjectCollaborators(
+            CSwiftly.creds, _project.projectId, new AsyncCallback() {
             public void onSuccess (Object result) {
-                Iterator iter = ((List)result).iterator();
-                _collaborators.clear();
-                _collaboratorsSet.clear();
-                if (!iter.hasNext()) {
-                    _collaborators.add(new Label(CSwiftly.msgs.noCollaborators()));
-                } else {
-                    _collaborators.add(new InlineLabel(CSwiftly.msgs.collaborators()));
-                    while (iter.hasNext()) {
-                        MemberName name = (MemberName)iter.next();
-                        _collaboratorsSet.add(name.toString());
-                        final PopupPanel collabMenuPanel = new PopupPanel(true);
-                        MenuBar menu = getOwnerMenuBar(name, collabMenuPanel);
-                        collabMenuPanel.add(menu);
-                        final InlineLabel collaborator = new InlineLabel(name.toString());
-                        collaborator.addStyleName("LabelLink");
-                        // use a MouseListener instead of ClickListener to get at the mouse (x,y)
-                        collaborator.addMouseListener(new MouseListener() {
-                            public void onMouseDown (Widget sender, int x, int y) {
-                                collabMenuPanel.setPopupPosition(collaborator.getAbsoluteLeft() + x,
-                                    collaborator.getAbsoluteTop() + y);
-                                collabMenuPanel.show();
-                            }
-                            public void onMouseLeave (Widget sender) { }
-                            public void onMouseUp (Widget sender, int x, int y) { }
-                            public void onMouseEnter (Widget sender) { }
-                            public void onMouseMove (Widget sender, int x, int y) { }
-                        });
-                        _collaborators.add(collaborator);
-                        if (iter.hasNext()) {
-                            _collaborators.add(new InlineLabel(", "));
-                        }
-                    }
-                }
+                gotCollaborators((List)result);
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("getProjectCollaborators failed", caught);
-                addError(CSwiftly.serverError(caught));
+                new InfoPopup(CSwiftly.serverError(caught)).show();
             }
         });
+    }
+
+    protected void gotCollaborators (List members)
+    {
+        _collaborators.clear();
+        _collaboratorsSet.clear();
+
+        Iterator iter = members.iterator();
+        if (!iter.hasNext()) {
+            _collaborators.add(new Label(CSwiftly.msgs.noCollaborators()));
+            return;
+        }
+
+        while (iter.hasNext()) {
+            MemberName name = (MemberName)iter.next();
+            _collaboratorsSet.add(name.toString());
+            final PopupPanel collabMenuPanel = new PopupPanel(true);
+            MenuBar menu = getOwnerMenuBar(name, collabMenuPanel);
+            collabMenuPanel.add(menu);
+            final InlineLabel collaborator = new InlineLabel(name.toString());
+            collaborator.addStyleName("LabelLink");
+            // use a MouseListener instead of ClickListener to get at the mouse (x,y)
+            collaborator.addMouseListener(new MouseListener() {
+                public void onMouseDown (Widget sender, int x, int y) {
+                    collabMenuPanel.setPopupPosition(collaborator.getAbsoluteLeft() + x,
+                                                     collaborator.getAbsoluteTop() + y);
+                    collabMenuPanel.show();
+                }
+                public void onMouseLeave (Widget sender) {
+                }
+                public void onMouseUp (Widget sender, int x, int y) {
+                }
+                public void onMouseEnter (Widget sender) {
+                }
+                public void onMouseMove (Widget sender, int x, int y) {
+                }
+            });
+            _collaborators.add(collaborator);
+            if (iter.hasNext()) {
+                _collaborators.add(new InlineLabel(", "));
+            }
+        }
     }
 
     /**
@@ -281,27 +289,7 @@ public class ProjectEdit extends BorderedDialog
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("Listing friends failed memberId=[" + memberId + "]", caught);
-                addError(CSwiftly.serverError(caught));
-            }
-        });
-    }
-
-    /**
-     * Remove the indicated member from this project. 
-     *
-     * @param memberId The member to remove.
-     */
-    protected void removeCollaborator (final int memberId)
-    {
-        CSwiftly.swiftlysvc.leaveCollaborators(CSwiftly.creds, _project.projectId, memberId,
-            new AsyncCallback() {
-            public void onSuccess (Object result) {
-                loadCollaborators();
-            }
-            public void onFailure (Throwable caught) {
-                CSwiftly.log("Failed to remove collaborator [projectId=" + _project.projectId +
-                           ", memberId=" + memberId + "]", caught);
-                addError(CSwiftly.serverError(caught));
+                new InfoPopup(CSwiftly.serverError(caught)).show();
             }
         });
     }
@@ -313,36 +301,46 @@ public class ProjectEdit extends BorderedDialog
      */
     protected void addCollaborator (final int memberId)
     {
-        CSwiftly.swiftlysvc.joinCollaborators(CSwiftly.creds, _project.projectId, memberId,
-            new AsyncCallback() {
+        CSwiftly.swiftlysvc.joinCollaborators(
+            CSwiftly.creds, _project.projectId, memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 loadCollaborators();
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("Failed to add collaborator [projectId=" + _project.projectId +
                            ", memberId=" + memberId + "]", caught);
-                addError(CSwiftly.serverError(caught));
+                new InfoPopup(CSwiftly.serverError(caught)).show();
             }
         });
     }
 
-    protected void addError (String error)
+    /**
+     * Remove the indicated member from this project. 
+     *
+     * @param memberId The member to remove.
+     */
+    protected void removeCollaborator (final int memberId)
     {
-        _errorContainer.add(new Label(error));
-    }
-
-    protected void clearErrors ()
-    {
-        _errorContainer.clear();
+        CSwiftly.swiftlysvc.leaveCollaborators(
+            CSwiftly.creds, _project.projectId, memberId, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                loadCollaborators();
+            }
+            public void onFailure (Throwable caught) {
+                CSwiftly.log("Failed to remove collaborator [projectId=" + _project.projectId +
+                             ", memberId=" + memberId + "]", caught);
+                new InfoPopup(CSwiftly.serverError(caught)).show();
+            }
+        });
     }
 
     protected SwiftlyProject _project;
     protected ProjectEditListener _listener;
+    protected HashSet _collaboratorsSet;
     protected boolean _amOwner;
+
     protected CheckBox _remixable;
     protected HorizontalPanel _collaborators;
-    protected HorizontalPanel _errorContainer;
     protected MenuBar _collabMenu;
     protected PopupPanel _collabMenuPanel;
-    protected HashSet _collaboratorsSet;
 }

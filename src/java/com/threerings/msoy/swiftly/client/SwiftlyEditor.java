@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 
 import com.samskivert.swing.HGroupLayout;
 import com.samskivert.swing.VGroupLayout;
+import com.samskivert.swing.util.SwingUtil;
 import com.samskivert.util.StringUtil;
 import com.threerings.util.MessageBundle;
 
@@ -38,6 +39,8 @@ import com.threerings.crowd.client.PlacePanel;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.micasa.client.ChatPanel;
+import com.threerings.micasa.client.OccupantList;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
@@ -58,41 +61,46 @@ public class SwiftlyEditor extends PlacePanel
         _ctx = ctx;
         _msgs = _ctx.getMessageManager().getBundle(SwiftlyCodes.SWIFTLY_MSGS);
 
-        setLayout(new VGroupLayout(VGroupLayout.STRETCH, VGroupLayout.STRETCH, 5,
-                                   VGroupLayout.TOP));
+        setLayout(new VGroupLayout(
+                      VGroupLayout.STRETCH, VGroupLayout.STRETCH, 5, VGroupLayout.TOP));
         // let's not jam ourselves up against the edges of the window
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        // setup the components
+        // add our toolbar
+        add(_toolbar = new EditorToolBar(ctrl, _ctx, this), VGroupLayout.FIXED);
+
+        // set up the top pane: project panel and editor
         _editorTabs = new TabbedEditor(_ctx, this);
         _editorTabs.setMinimumSize(new Dimension(400, 400));
-
-        _consoleTabs = new TabbedConsole(_ctx, this);
-        _consoleTabs.setMinimumSize(new Dimension(0, 0));
 
         _projectPanel = new ProjectPanel(_ctx, this);
         _projectPanel.setMinimumSize(new Dimension(0, 0));
 
-        _toolbar = new EditorToolBar(ctrl, _ctx, this);
+        JSplitPane topPane =
+            new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _projectPanel, _editorTabs);
+        topPane.setOneTouchExpandable(true);
+        topPane.setDividerLocation(200);
 
-        _vertSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, _editorTabs, _consoleTabs);
-        // TODO apparently GTK does not have the graphic for this. What to do?
-        _vertSplitPane.setOneTouchExpandable(true);
-        _vertSplitPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        // set up the bottom pane: chat and console
+        JPanel chatPanel = new JPanel(
+            new HGroupLayout(HGroupLayout.STRETCH, HGroupLayout.STRETCH, 5, HGroupLayout.LEFT));
+        chatPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        OccupantList ol;
+        chatPanel.add(ol = new OccupantList(_ctx), HGroupLayout.FIXED);
+        ol.setPreferredSize(new Dimension(100, 0));
+        chatPanel.add(new ChatPanel(_ctx, false));
 
-        _horizSplitPane =
-            new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _vertSplitPane, _projectPanel);
-        _horizSplitPane.setOneTouchExpandable(true);
-        _horizSplitPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        _consoleTabs = new TabbedConsole(_ctx, this);
+        _consoleTabs.setMinimumSize(new Dimension(0, 0));
 
-        // layout the window
-        add(_toolbar, VGroupLayout.FIXED);
-        add(_horizSplitPane);
+        JSplitPane bottomPane =
+            new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chatPanel, _consoleTabs);
+        bottomPane.setOneTouchExpandable(true);
+        bottomPane.setDividerLocation(400);
 
-        // TODO this is an ideal way to layout the splits, but is not working. revisit
-        // _vertSplitPane.setDividerLocation(0.8);
-        // _horizSplitPane.setDividerLocation(0.8);
-        _horizSplitPane.setDividerLocation(600);
+        JSplitPane contentPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topPane, bottomPane);
+        contentPane.setOneTouchExpandable(true);
+        add(contentPane);
 
         initFileTypes();
         consoleMessage(_msgs.get("m.welcome"));
@@ -310,7 +318,8 @@ public class SwiftlyEditor extends PlacePanel
     {
         public CreateFileDialog () {
             super(new JFrame(), _msgs.get("m.dialog.create_file.title"), true);
-            setLayout(new GridLayout(3, 3, 5, 5));
+            setLayout(new GridLayout(3, 3, 10, 10));
+            setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
             // file name input
             add(new JLabel(_msgs.get("m.dialog.create_file.name")));
@@ -349,6 +358,7 @@ public class SwiftlyEditor extends PlacePanel
 
             // display the dialog
             pack();
+            setLocationRelativeTo(_projectPanel);
             setVisible(true);
         }
 
@@ -404,6 +414,4 @@ public class SwiftlyEditor extends PlacePanel
     protected TabbedConsole _consoleTabs;
     protected EditorToolBar _toolbar;
     protected ProjectPanel _projectPanel;
-    protected JSplitPane _vertSplitPane;
-    protected JSplitPane _horizSplitPane;
 }

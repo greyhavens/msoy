@@ -23,9 +23,13 @@ public abstract class Page
         public Page createPage ();
     }
 
-    /** Indicates whether or not we need our iframe popup hack. To avoid making all of our popups
-     * suck, we only do the hack when we actually need it (we're displaying Flash onscreen). */
-    public static boolean needPopupHack = false;
+    /** Indicates whether we are currently displaying a Flash applet over the parts of the page
+     * where popups might show up. */
+    public static boolean displayingFlash = false;
+
+    /** Indicates whether we are currently displaying a Java applet over the parts of the page
+     * where popups might show up. */
+    public static boolean displayingJava = false;
 
     /**
      * Returns the current page arguments extracted from the history token.
@@ -89,16 +93,17 @@ public abstract class Page
      */
     protected void setContent (Widget content)
     {
-        setContent(content, false);
+        setContent(content, false, false);
     }
 
     /**
      * Clears out any existing content and sets the specified widget as the main page content.
      */
-    protected void setContent (Widget content, boolean contentBreaksPopups)
+    protected void setContent (Widget content, boolean contentIsFlash, boolean contentIsJava)
     {
         WorldClient.minimize();
-        needPopupHack = contentBreaksPopups;
+        displayingFlash = contentIsFlash;
+        displayingJava = contentIsJava;
         RootPanel.get("content").clear();
         RootPanel.get("content").add(content);
     }

@@ -21,9 +21,11 @@ public class PopupImplMozilla extends PopupImpl
     }-*/;
 
     public native void onShow (Element popup) /*-{
-        // we only need this hack on Linux, and only sometimes
-        if (!@client.shell.Page::needPopupHack ||
-            navigator.userAgent.toLowerCase().indexOf("linux") == -1) {
+        // if we're displaying a Java applet, we always need the popup hack, but for Flash we only
+        // need it on Linux
+        if (!@client.shell.Page::displayingJava &&
+            (!@client.shell.Page::displayingFlash ||
+             navigator.userAgent.toLowerCase().indexOf("linux") == -1)) {
             return;
         }
 

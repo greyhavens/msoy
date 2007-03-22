@@ -75,7 +75,7 @@ public class index extends Page
                 public void onSuccess (Object result) {
                     try {
                         int projectId = Integer.parseInt(args);
-                        setContent(new SwiftlyPanel((ConnectConfig)result, projectId), true);
+                        setContent(new SwiftlyPanel((ConnectConfig)result, projectId), false, true);
                     } catch (NumberFormatException e) {
                         // display an error message if the supplied projectId did not parse
                         setContent(new Label(CSwiftly.msgs.invalidProjectId(args))); 

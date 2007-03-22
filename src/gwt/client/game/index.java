@@ -88,7 +88,7 @@ public class index extends Page
     protected void launchGame (LaunchConfig config)
     {
         Widget display = null;
-        boolean contentBreaksPopups = false;
+        boolean contentIsFlash = false, contentIsJava = false;
 
         switch (config.type) {
         case LaunchConfig.FLASH_IN_WORLD:
@@ -101,7 +101,7 @@ public class index extends Page
 
         case LaunchConfig.FLASH_SOLO:
             display = WidgetUtil.createFlashContainer("game", config.gameMediaPath, 800, 600, null);
-            contentBreaksPopups = true;
+            contentIsFlash = true;
             break;
 
         case LaunchConfig.JAVA_LOBBIED:
@@ -114,7 +114,7 @@ public class index extends Page
                                "server", config.server,
                                "port", "" + config.port,
                                "authtoken", (CGame.creds == null) ? "" : CGame.creds.token });
-            contentBreaksPopups = true;
+            contentIsJava = true;
             break;
 
         case LaunchConfig.JAVA_SOLO:
@@ -127,7 +127,7 @@ public class index extends Page
         }
 
         if (display != null) {
-            setContent(display, contentBreaksPopups);
+            setContent(display, contentIsFlash, contentIsJava);
         }
     }
 }

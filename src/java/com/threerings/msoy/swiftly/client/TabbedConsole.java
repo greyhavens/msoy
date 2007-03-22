@@ -42,25 +42,10 @@ public class TabbedConsole extends JTabbedPane
             JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         _consoleText.setEditable(false);
         add(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.console.tab.console"), scrollPane);
-        // Alt-O gives you the console TODO what do we want to set here?
-        setMnemonicAt(0, KeyEvent.VK_O);
-        // underline C_o_nsole to give a hint
-        setDisplayedMnemonicIndexAt(0, 1);
-
-        // add the chat tab
-        JPanel panel = new JPanel(
-            new HGroupLayout(HGroupLayout.STRETCH, HGroupLayout.STRETCH, 5, HGroupLayout.LEFT));
-        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        panel.setPreferredSize(new Dimension(0, 200));
-        panel.add(new ChatPanel(_ctx, true));
-        OccupantList ol;
-        panel.add(ol = new OccupantList(_ctx), HGroupLayout.FIXED);
-        ol.setPreferredSize(new Dimension(100, 0));
-        add(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.console.tab.chat"), panel);
-        // Alt-C gives you the console TODO what do we want to set here?
-        setMnemonicAt(1, KeyEvent.VK_C);
-        // underline _C_hat to give a hint
-        setDisplayedMnemonicIndexAt(1, 0);
+        // Alt-C gives you the console
+        setMnemonicAt(0, KeyEvent.VK_C);
+        // underline _C_onsole to give a hint
+        setDisplayedMnemonicIndexAt(0, 0);
     }
 
     /**

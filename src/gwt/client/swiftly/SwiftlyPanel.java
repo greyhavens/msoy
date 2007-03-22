@@ -6,6 +6,8 @@ package client.swiftly;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
@@ -47,8 +49,10 @@ public class SwiftlyPanel extends VerticalPanel
             }
         });
 
-        _header = new HorizontalPanel();
-        _header.setSpacing(5);
+        _header = new FlexTable();
+        _header.setWidth("100%");
+        _header.setCellPadding(5);
+        _header.setCellSpacing(0);
         add(_header);
     }
 
@@ -62,13 +66,14 @@ public class SwiftlyPanel extends VerticalPanel
     protected void loadApplet ()
     {
         // Add project information to the header
-        _header.add(new Label(CSwiftly.msgs.swiftlyEditing()));
-        _header.add(_projectLink);
-        _header.add(new Button(CSwiftly.msgs.editProject(), new ClickListener() {
+        _header.setText(0, 0, CSwiftly.msgs.swiftlyEditing());
+        _header.setWidget(0, 1, _projectLink);
+        _header.setWidget(0, 2, new Button(CSwiftly.msgs.editProject(), new ClickListener() {
             public void onClick (Widget sender) {
                 new ProjectEdit(_project, SwiftlyPanel.this).show();
             }
         }));
+        _header.getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
 
         // Add the applet
         _applet = WidgetUtil.createApplet(
@@ -96,7 +101,7 @@ public class SwiftlyPanel extends VerticalPanel
     protected ConnectConfig _config;
     protected String _authtoken;
     protected HorizontalPanel _errorContainer;
-    protected HorizontalPanel _header;
+    protected FlexTable _header;
     protected Hyperlink _projectLink = new Hyperlink();
     protected Widget _applet;
 }

@@ -30,7 +30,7 @@ public class WorldClient extends Widget
         }
 
         // note that we need to hack our popups
-        Page.needPopupHack = true;
+        Page.displayingFlash = true;
 
         // create our client if necessary
         if (_client == null) {
@@ -54,7 +54,7 @@ public class WorldClient extends Widget
     public static void minimize ()
     {
         // note that we don't need to hack our popups
-        Page.needPopupHack = false;
+        Page.displayingFlash = false;
 
         if (_client != null) {
             RootPanel.get("content").setWidth("724px");

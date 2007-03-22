@@ -128,6 +128,14 @@ public class ProjectPanel extends JPanel
         // nada
     }
 
+    @Override // from JComponent
+    public Dimension getPreferredSize ()
+    {
+        Dimension d = super.getPreferredSize();
+        d.width = Math.min(250, d.width);
+        return d;
+    }
+
     protected Action createPlusButtonAction ()
     {
         // TODO need icon

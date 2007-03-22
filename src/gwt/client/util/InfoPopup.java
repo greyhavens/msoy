@@ -18,6 +18,7 @@ public class InfoPopup extends BorderedPopup
 
     public void showNear (Widget parent)
     {
+        _centerOnShow = false;
         setPopupPosition(parent.getAbsoluteLeft(),
                          parent.getAbsoluteTop() + parent.getOffsetHeight());
         show();
