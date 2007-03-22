@@ -27,10 +27,13 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.Name;
 
 import com.threerings.crowd.client.PlaceView;
+import com.threerings.crowd.client.LocationObserver;
+import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.chat.client.ChatContainer;
 
-public class TopPanel extends Canvas
+public class TopPanel extends Canvas 
+    implements LocationObserver
 {
     /**
      * Construct the top panel.
@@ -38,6 +41,7 @@ public class TopPanel extends Canvas
     public function TopPanel (ctx :WorldContext)
     {
         _ctx = ctx;
+        _ctx.getLocationDirector().addLocationObserver(this);
         percentWidth = 100;
         percentHeight = 100;
         verticalScrollPolicy = ScrollPolicy.OFF;
@@ -80,6 +84,26 @@ public class TopPanel extends Canvas
         layoutPanels();
 
         app.stage.addEventListener(Event.RESIZE, stageResized);
+    }
+
+    // from LocationObserver
+    public function locationMayChange (placeId :int) :Boolean
+    {
+        // currently there are no side panel types that should survive a place change
+        clearSidePanel(null);
+        return true;
+    }
+
+    // from LocationObserver
+    public function locationDidChange (place :PlaceObject) :void
+    {
+        // NOOP
+    }
+
+    // from LocationObserver
+    public function locationChangeFailed (placeId :int, reason :String) :void
+    {
+        // NOOP
     }
 
     /**

@@ -218,9 +218,6 @@ public class RoomController extends SceneController
         closeAllMusic();
 
         super.didLeavePlace(plobj);
-
-        // if we had a side panel, it was specific to this place - clear it out.
-        _mctx.getTopPanel().clearSidePanel(null);
     }
 
     /**

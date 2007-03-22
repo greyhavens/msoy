@@ -40,11 +40,6 @@ public class MsoyGameController extends EZGameController
 
         // shut down our occupant reporter
         _occReporter.didLeavePlace(plobj);
-
-        // if we have a side panel, it was specific to this place - clear it out
-        if (_pctx is WorldContext) {
-            (_pctx as WorldContext).getTopPanel().clearSidePanel(null);
-        }
     }
 
     /**
