@@ -24,4 +24,7 @@ public interface MsoyCodes extends InvocationCodes
 
     /** The translation message bundle for our group services. */
     public static final String GROUP_MSGS = "group";
+
+    /** The translation message bundle for our stats services. */
+    public static final String STATS_MSGS = "stats";
 }

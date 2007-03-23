@@ -5,16 +5,16 @@ package com.threerings.msoy.data;
 
 import java.util.Iterator;
 
-import com.google.gwt.user.client.rpc.core.java.lang.boolean_Array_CustomFieldSerializer;
 import com.samskivert.util.Predicate;
 
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
 
-import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
+
+import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.web.data.MemberName;
 
@@ -97,6 +97,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** How much lovely flow we've got jangling around on our person. */
     public int flow;
+
+    /** Statistics tracked for this player. */
+    public transient StatSet stats;
 
     /** Our current assessment of how likely to be human this member is, in [0, 255]. */
     public int humanity;

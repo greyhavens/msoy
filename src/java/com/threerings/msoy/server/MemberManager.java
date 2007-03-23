@@ -37,6 +37,7 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.whirled.server.SceneManager;
 
 import com.threerings.msoy.data.PopularPlace;
+import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -51,7 +52,6 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.FriendInviteObject;
-import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.server.ServletWaiter;
 
@@ -60,7 +60,6 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.WorldMemberInfo;
 import com.threerings.msoy.world.server.RoomManager;
 
-import com.threerings.msoy.person.server.persist.MailMessageRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MemberNameRecord;
@@ -83,13 +82,13 @@ public class MemberManager
     
     /**
      * This can be called from any thread to queue an update of the member's current flow if they
-     * are online.
+     * are online. If accFlow is positive, the cumulative flow stat is incremented.
      */
-    public static void queueFlowUpdated (final int memberId, final int flow)
+    public static void queueFlowUpdated (final int memberId, final int newFlow, final int accFlow)
     {
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.flowUpdated(memberId, flow);
+                MsoyServer.memberMan.flowUpdated(memberId, newFlow, accFlow);
             }
         });
     }
@@ -178,13 +177,16 @@ public class MemberManager
 
     /**
      * Called when a member's flow is updated. If they are online we update {@link
-     * MemberObject#flow}.
+     * MemberObject#flow} and optionally their accumulated flow stat, if accFlow > 0.
      */
-    public void flowUpdated (int memberId, int flow)
+    public void flowUpdated (int memberId, int newFlow, int accFlow)
     {
         MemberObject user = MsoyServer.lookupMember(memberId);
         if (user != null) {
-            user.setFlow(flow);
+            user.setFlow(newFlow);
+            if (accFlow > 0) {
+                user.stats.incrementStat(StatType.CUMULATIVE_FLOW, accFlow);
+            }
         }
     }
 
@@ -422,7 +424,7 @@ public class MemberManager
                     memberId, amount, grantAction.toString() + " " + details, true);
             }
             public void handleSuccess () {
-                flowUpdated(memberId, _flow);
+                flowUpdated(memberId, _flow, amount);
             }
             public void handleFailure (Exception pe) {
                 log.log(Level.WARNING, "Unable to grant flow [memberId=" + memberId +
@@ -447,7 +449,7 @@ public class MemberManager
                     memberId, amount, spendAction.toString() + " " + details, false);
             }
             public void handleSuccess () {
-                flowUpdated(memberId, _flow);
+                flowUpdated(memberId, _flow, amount);
             }
             public void handleFailure (Exception pe) {
                 log.log(Level.WARNING, "Unable to spend flow [memberId=" + memberId +
@@ -473,7 +475,7 @@ public class MemberManager
             }
             public void handleSuccess () {
                 if (_flow > 0) {
-                    flowUpdated(memberId, _flow);
+                    flowUpdated(memberId, _flow, action.getFlow());
                 }
             }
             public void handleFailure (Exception pe) {

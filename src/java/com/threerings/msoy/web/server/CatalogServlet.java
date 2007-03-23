@@ -26,7 +26,6 @@ import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -110,7 +109,6 @@ public class CatalogServlet extends MsoyServiceServlet
             final CatalogRecord<ItemRecord> listing = repo.loadListing(ident.itemId);
 
             if (mrec.flow < listing.flowCost) {
-                // only happens if client is buggy, hacked or lagged, or in a blue moon
                 throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
             }
 
@@ -131,7 +129,8 @@ public class CatalogServlet extends MsoyServiceServlet
                 int flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
                     mrec.memberId, listing.flowCost, UserAction.BOUGHT_ITEM + " " + ident.type +
                     " " + ident.itemId, false);
-                MemberManager.queueFlowUpdated(mrec.memberId, flow);
+                // update member's new flow
+                MemberManager.queueFlowUpdated(mrec.memberId, flow, 0);
 
                 // give 30% of it to the creator
                 // TODO: hold this in escrow
@@ -144,7 +143,8 @@ public class CatalogServlet extends MsoyServiceServlet
                     flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
                         listing.item.creatorId, creatorPortion, "CREATOR_PAYOUT " + ident.type +
                         " " + ident.itemId + " " + mrec.memberId, true);
-                    MemberManager.queueFlowUpdated(listing.item.creatorId, flow);
+                    // update creator's new flow, but do not accumulate
+                    MemberManager.queueFlowUpdated(listing.item.creatorId, flow, 0);
                 }
             }
 
@@ -193,7 +193,6 @@ public class CatalogServlet extends MsoyServiceServlet
                     }
                 }
                 if (mrec.flow < price) {
-                    // only happens if client is buggy, hacked or lagged, or in a blue moon
                     throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
                 }
 
@@ -226,7 +225,7 @@ public class CatalogServlet extends MsoyServiceServlet
                     int flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
                         mrec.memberId, price, UserAction.LISTED_ITEM + " " + ident.type +
                         " " + ident.itemId + " " + rarity, false);
-                    MemberManager.queueFlowUpdated(mrec.memberId, flow);
+                    MemberManager.queueFlowUpdated(mrec.memberId, flow, 0);
                 }
 
                 logUserAction(mrec, UserAction.LISTED_ITEM, ident.toString() + " " + rarity);
@@ -284,7 +283,8 @@ public class CatalogServlet extends MsoyServiceServlet
             int flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
                 mrec.memberId, flowRefund, UserAction.RETURNED_ITEM + " " + ident.type +
                 " " + ident.itemId + " " + refundDesc, true);
-            MemberManager.queueFlowUpdated(mrec.memberId, flow);
+            // do not count refunded flow for accumulated flow purposes
+            MemberManager.queueFlowUpdated(mrec.memberId, flow, 0);
 
             // now we have to take 30% of the refund away from the creator
             // TODO: when escrow works, this will blessedly go away
@@ -292,7 +292,7 @@ public class CatalogServlet extends MsoyServiceServlet
             flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
                 item.creatorId, creatorPortion, "CREATOR_PAYOUT " + ident.type +
                 " " + ident.itemId + " " + mrec.memberId, false);
-            MemberManager.queueFlowUpdated(item.creatorId, flow);
+            MemberManager.queueFlowUpdated(item.creatorId, flow, 0);
 
             logUserAction(mrec, UserAction.RETURNED_ITEM, ident.type + " " +
                           ident.itemId + " " + refundDesc + " " + flowRefund + " " + goldRefund);

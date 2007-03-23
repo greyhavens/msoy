@@ -10,6 +10,8 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
+import com.threerings.stats.data.Stat;
+import com.threerings.stats.data.StatSet;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
@@ -75,6 +77,10 @@ public class MsoyClientResolver extends CrowdClientResolver
         // member id
         userObj.setMemberName(new MemberName(member.name, member.memberId));
         userObj.setHomeSceneId(member.homeSceneId);
+
+        // load up this member's persistent stats
+        List<Stat> stats = MsoyServer.statrepo.loadStats(member.memberId);
+        userObj.stats = new StatSet(stats.iterator());
 
         // calculate flow evaporation since last logon
         int dT = (int) ((System.currentTimeMillis() - member.lastSession.getTime()) / 60000);

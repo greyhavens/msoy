@@ -9,6 +9,8 @@ import com.samskivert.util.Invoker;
 
 import com.threerings.presents.net.BootstrapData;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.stats.data.Stat;
+import com.threerings.stats.data.StatSet;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.CrowdObjectAccess;
@@ -88,12 +90,18 @@ public class MsoyClient extends WhirledClient
         }
 
         final MemberName name = _memobj.memberName;
+        final StatSet stats = _memobj.stats;
         _memobj = null;
 
         // update the member record in the database
         MsoyServer.invoker.postUnit(new Invoker.Unit("sessionDidEnd:" + name) {
             public boolean invoke () {
                 try {
+                    // write out any modified stats
+                    Stat[] statArr = new Stat[stats.size()];
+                    stats.toArray(statArr);
+                    MsoyServer.statrepo.writeModified(name.getMemberId(), statArr);
+
                     // use a naive session length for now, ignoring web activity
                     MsoyServer.memberRepo.noteSessionEnded(
                         name.getMemberId(), Math.round(_connectTime / 60f));

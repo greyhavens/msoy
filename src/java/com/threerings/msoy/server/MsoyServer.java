@@ -53,6 +53,7 @@ import com.threerings.whirled.spot.server.SpotDispatcher;
 import com.threerings.whirled.spot.server.SpotProvider;
 import com.threerings.whirled.util.SceneFactory;
 
+import com.threerings.stats.server.persist.StatRepository;
 import com.threerings.toybox.server.ToyBoxManager;
 
 import com.threerings.msoy.data.MemberObject;
@@ -117,6 +118,9 @@ public class MsoyServer extends WhirledServer
 
     /** Maintains "smart" digital item memories. */
     public static MemoryRepository memoryRepo;
+
+    /** Manages the persistent repository of stats. */
+    public static StatRepository statrepo;
 
     /** The Msoy item manager. */
     public static ItemManager itemMan = new ItemManager();
@@ -183,7 +187,7 @@ public class MsoyServer extends WhirledServer
     }
 
     /**
-     * Logs a message to the item audit log.
+     * Logs a message to the flow audit log.
      */
     public static void flowLog (String message)
     {
@@ -298,6 +302,7 @@ public class MsoyServer extends WhirledServer
         groupRepo = new GroupRepository(conProv);
         swiftlyRepo = new SwiftlyRepository(conProv);
         memoryRepo = new MemoryRepository(conProv);
+        statrepo = new StatRepository(conProv);
 
         // create and set up our configuration registry and admin service
         confReg = new DatabaseConfigRegistry(conProv, invoker);
