@@ -41,6 +41,7 @@ public class MsoyGameParser extends GameParser
                     ((MsoyMatchConfig)digester.peek()).unwatchable = true;
                 } 
             });
+
         } else if (("" + GameConfig.PARTY).equals(type)) {
             // TODO: only display seat settings for non-party games (in GameEditor), as those 
             // settings are ignored for party games anyway
@@ -48,6 +49,7 @@ public class MsoyGameParser extends GameParser
             config.minSeats = config.maxSeats = config.startSeats = 1;
             config.isPartyGame = true;
             digester.push(config);
+
         } else {
             throw new Exception("Unknown match type '" + type + "'.");
         }

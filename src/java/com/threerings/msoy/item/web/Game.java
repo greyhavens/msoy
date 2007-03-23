@@ -40,9 +40,9 @@ public class Game extends Item
      */
     public boolean isInWorld ()
     {
-        // TODO: parse configuration as XML
-        return config.trim().equals("avrg") ||
-            config.startsWith("Chiyogami");
+        // TODO: this will change
+        return config.contains("<toggle ident=\"avrg\" start=\"true\"/>") ||
+            config.contains("<toggle ident=\"chiyogami\" start=\"true\"/>");
     }
 
     /**

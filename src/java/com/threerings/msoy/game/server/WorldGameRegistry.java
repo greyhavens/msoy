@@ -5,6 +5,8 @@ package com.threerings.msoy.game.server;
 
 import java.util.HashMap;
 
+import java.util.logging.Level;
+
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntTuple;
 import com.samskivert.util.ResultListener;
@@ -119,8 +121,9 @@ public class WorldGameRegistry
             new ResultListener<Item>() {
             public void requestCompleted (Item item) {
                 try {
-                    Game game = (Game) item;
+                    final Game game = (Game) item;
                     TableMatchConfig match = (TableMatchConfig)(new GameRecord () {
+                        { definition = game.config; } // instance initializer
                         protected GameParser createParser () {
                             return new MsoyGameParser();
                         }
@@ -142,7 +145,7 @@ public class WorldGameRegistry
                     }
                     // TODO: fix Chiyogami stuff... game.config will never be non-xml anymore
                     if (game.config != null &&
-                            game.config.startsWith("Chiyogami")) {
+                            game.config.contains("<toggle ident=\"chiyogami\" start=\"true\"/>")) {
                         String prefix = "com.threerings.msoy.game.chiyogami.";
                         config.controller = prefix + "client.ChiyogamiController";
                         config.manager = prefix + "server.ChiyogamiManager";
@@ -150,6 +153,7 @@ public class WorldGameRegistry
 
                     MsoyServer.plreg.createPlace(config);
                 } catch (Exception e) {
+                    log.log(Level.WARNING, "Exception configuring world game", e);
                     requestFailed(e);
                 }
             }
