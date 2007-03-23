@@ -5,15 +5,20 @@ package client.editem;
 
 import com.google.gwt.core.client.GWT;
 
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
+
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.FileUpload;
+import com.google.gwt.user.client.ui.FormHandler;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormSubmitEvent;
+import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import org.gwtwidgets.client.ui.FileUploadField;
-import org.gwtwidgets.client.ui.FormPanel;
 
 import com.threerings.gwt.ui.SubmitField;
 
@@ -51,43 +56,58 @@ public class MediaUploader extends VerticalPanel
         _target.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
         _target.setStyleName(_thumbnail ? "Thumbnail" : "Preview");
 
-        _panel = new FormPanel(new HorizontalPanel());
-        _panel.setStyleName("Controls");
+        final FormPanel form = new FormPanel();
+        _panel = new HorizontalPanel();
+        form.setWidget(_panel);
+        form.setStyleName("Controls");
+
         if (GWT.isScript()) {
-            _panel.setAction("/uploadsvc");
+            form.setAction("/uploadsvc");
         } else {
-            _panel.setAction("http://localhost:8080/uploadsvc");
+            form.setAction("http://localhost:8080/uploadsvc");
         }
-        _panel.setTarget("upload");
-        _panel.setMethodAsPost();
-        _panel.setMultipartEncoding();
+        form.setEncoding(FormPanel.ENCODING_MULTIPART);
+        form.setMethod(FormPanel.METHOD_POST);
 
-// TODO: make this work, handle errors, check the status
-//        _panel.addFormHandler(new FormHandler() {
-//            public void onSubmit (FormSubmitEvent event) {
-//                // nada for now
-//            }
-//
-//            public void onSubmitComplete (FormSubmitCompleteEvent event) {
-//                // TODO: what is the format of the results?
-//                _out.setText(event.getResults());
-//            }
-//        });
+        final FileUpload upload = new FileUpload() {
+            public void onBrowserEvent (Event event) {
+                _status.setText(event.toString());
+            }
+        };
+        upload.setName(id);
+        _panel.add(upload);
 
-        _panel.addField(new FileUploadField(id), id);
+        form.addFormHandler(new FormHandler() {
+            public void onSubmit (FormSubmitEvent event) {
+                // don't let them submit until they plug in a file...
+                if (upload.getFilename().length() == 0) {
+                    event.setCancelled(true);
+                }
+            }
 
-        if (GWT.isScript()) {
-            _panel.addField(new SubmitField("submit", CEditem.emsgs.upload()), "submit");
-        } else {
+            public void onSubmitComplete (FormSubmitCompleteEvent event) {
+                String result = event.getResults();
+                if (result != null && result.length() > 0) {
+                    // TODO: This is fugly as all hell, but at least we're
+                    // now reporting *something* to the user
+                    _status.setText(result);
+                }
+            }
+        });
+        // TODO: needed?
+//        if (GWT.isScript()) {
+//            _panel.addField(new SubmitField("submit", CEditem.emsgs.upload()), "submit");
+//        } else {
             Button submit = new Button(CEditem.emsgs.upload());
+            submit.setStyleName("mediaUploader");
             submit.addClickListener(new ClickListener() {
                 public void onClick (Widget widget) {
-                    _panel.submit();
+                    form.submit();
                 }
             });
             _panel.add(submit);
-        }
-        add(_panel);
+//        }
+        add(form);
     }
 
     /**
@@ -121,7 +141,7 @@ public class MediaUploader extends VerticalPanel
     protected String _title;
     protected Label _status;
     protected HorizontalPanel _target;
-    protected FormPanel _panel;
+    protected HorizontalPanel _panel;
 
     protected boolean _thumbnail;
 }
