@@ -152,17 +152,11 @@ public class LobbyPanel extends VBox
     {
         _isSeated = isSeated;
         createBtn.enabled = !isSeated;
-
-        // wacky: I think I'd need to refresh the list or something
-        // but apparently everything gets re-rendered when any element
-        // changes, so I don't. If this turns out to be not true, then
-        // here we'll want to do _formingTables.refresh() or, if we save
-        // the list we can do list.updateList().
+        if (_isSeated) {
+            CommandEvent.dispatch(this, LobbyController.LEAVE_LOBBY);
+        }
     }
 
-    /**
-     * Are we seated at a table?
-     */
     public function isSeated () :Boolean
     {
         return _isSeated;

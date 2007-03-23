@@ -43,6 +43,9 @@ public class LobbyController extends Controller implements Subscriber
     /** A command to leave the lobby. */
     public static const LEAVE_LOBBY :String = "LeaveLobby";
 
+    /** A comman to rejoin the lobby - executed by FloatingTableDisplay. */
+    public static const JOIN_LOBBY :String = "JoinLobby";
+
     public function LobbyController (mctx :WorldContext, oid :int) 
     {
         _mctx = mctx;
@@ -53,6 +56,8 @@ public class LobbyController extends Controller implements Subscriber
         _panel = new LobbyPanel(_mctx, this);
         _panel.addEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
         setControlledPanel(_panel);
+        _panelIsVisible = true;
+        _mctx.getTopPanel().setSidePanel(_panel);
     }
 
     // from Subscriber
@@ -64,21 +69,20 @@ public class LobbyController extends Controller implements Subscriber
         _tableDir = new TableDirector(_mctx, LobbyObject.TABLES, _panel);
         _tableDir.setTableObject(obj);
         _tableDir.addSeatednessObserver(_panel);
-
-        _mctx.getTopPanel().setSidePanel(_panel);
     }
 
     /**
-     * Event handler for Event.REMOVED_FORM_STAGE
+     * Event handler for Event.REMOVED_FROM_STAGE
      */
     public function handleRemovedFromStage (evt :Event) :void
     {
-        _panel.removeEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
-        _subscriber.unsubscribe(_mctx.getDObjectManager());
+        _panelIsVisible = false;
         if (_tableDir.isSeated()) {
-            _tableDir.leaveTable(_tableDir.getSeatedTable().tableId);
+            var tableDisplay :FloatingTableDisplay = new FloatingTableDisplay(_mctx, _panel);
+            tableDisplay.open();
+        } else {
+            shutdown();
         }
-        _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId);
     }
 
     // from Subscriber
@@ -118,6 +122,9 @@ public class LobbyController extends Controller implements Subscriber
     public function handleLeave (tableId :int) :void
     {
         _tableDir.leaveTable(tableId);
+        if (!_panelIsVisible) {
+            shutdown();
+        }
     }
 
     /**
@@ -136,6 +143,25 @@ public class LobbyController extends Controller implements Subscriber
         _mctx.getTopPanel().clearSidePanel(_panel);
     }
 
+    /**
+     * Handles JOIN_LOBBY.
+     */
+    public function handleJoinLobby () :void
+    {
+        _panelIsVisible = true;
+        _mctx.getTopPanel().setSidePanel(_panel);
+    }
+
+    /**
+     * Clean up our references, and notify those that care that we're all done here.
+     */
+    protected function shutdown () :void
+    {
+        _panel.removeEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
+        _subscriber.unsubscribe(_mctx.getDObjectManager());
+        _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId);
+    }
+
     /** The provider of free cheese. */
     protected var _mctx :WorldContext;
 
@@ -149,5 +175,7 @@ public class LobbyController extends Controller implements Subscriber
     protected var _lobj :LobbyObject;
 
     protected var _subscriber :SafeSubscriber;
+
+    protected var _panelIsVisible :Boolean;
 }
 }
