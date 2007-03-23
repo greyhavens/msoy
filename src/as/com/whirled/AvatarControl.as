@@ -42,6 +42,8 @@ public class AvatarControl extends ActorControl
      * in the whirled, like laugh, play a sound, or do a quick animation.
      * Actions are different from states- states are persistent and do
      * not go away if you walk, talk, or play actions.
+     *
+     * Note: actions must be 64 characters or less.
      */
     public function registerActions (actionName :String, ... moreActions) :void
     {
@@ -125,11 +127,14 @@ public class AvatarControl extends ActorControl
     {
         var name :String = isAction ? "action" : "state";
         for (var ii :int = 0; ii < vals.length; ii++) {
-            if (!(vals[ii] is String)) {
-                throw new ArgumentError("All " + name + "s must be Strings.");
-            }
-            if (!isAction && String(vals[ii]).length > 64) {
-                throw new ArgumentError("States must be less than 64 characters.");
+            // null is a valid state/action, but otherwise must be a String less than 64 chars
+            if (vals[ii] != null) {
+                if (!(vals[ii] is String)) {
+                    throw new ArgumentError("All " + name + "s must be Strings.");
+                }
+                if (String(vals[ii]).length > 64) {
+                    throw new ArgumentError("All " + name + "s must be less than 64 characters.");
+                }
             }
             for (var jj :int = 0; jj < ii; jj++) {
                 if (vals[jj] === vals[ii]) {

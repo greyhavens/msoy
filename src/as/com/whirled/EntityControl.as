@@ -67,6 +67,9 @@ public class EntityControl extends WhirledControl
      * Triggers an action on this scene object. The action will be properly distributed to the object
      * running in every client in the scene, resulting in a ACTION_TRIGGERED
      * event.
+     *
+     * Note: the name must be a String and may be up to 64 characters.
+     * TODO: restriction on size of the argument. It will probably be 1k or something.
      */
     public function triggerAction (name :String, arg :Object = null) :void
     {
@@ -76,6 +79,9 @@ public class EntityControl extends WhirledControl
     /**
      * Send a message to other instances of this entity, resulting
      * in a MESSAGE_RECEIVED event.
+     *
+     * Note: the name must be a String and may be up to 64 characters.
+     * TODO: restriction on size of the argument. It will probably be 1k or something.
      */
     public function sendMessage (name :String, arg :Object = null) :void
     {
