@@ -39,7 +39,7 @@ public interface ProjectRoomService extends InvocationService
     function finishFileUpload (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface ProjectRoomService
-    function loadDocument (arg1 :Client, arg2 :PathElement) :void;
+    function loadDocument (arg1 :Client, arg2 :PathElement, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface ProjectRoomService
     function startFileUpload (arg1 :Client, arg2 :PathElement, arg3 :InvocationService_ConfirmListener) :void;

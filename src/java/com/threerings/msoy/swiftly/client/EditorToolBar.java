@@ -25,10 +25,6 @@ public class EditorToolBar extends JToolBar
 
     protected void setupToolbar ()
     {
-        // TODO: REMOVE when close tabs are working all the way
-        // add(_editor.createCloseCurrentTabAction());
-        // addSeparator();
-
         // TODO add mini icons for these + tooltips with keyboard shortcuts
         JButton build = new JButton(_ctrl.buildAction);
         build.setFont(build.getFont().deriveFont(Font.BOLD));

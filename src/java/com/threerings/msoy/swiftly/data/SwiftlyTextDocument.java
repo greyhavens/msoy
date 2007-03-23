@@ -12,6 +12,8 @@ import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
 
+import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
+
 /**
  * Represents a source file in a project and contains the text of the file.
  * Text is stored in the provided encoding, and each document retains an
@@ -72,7 +74,7 @@ public class SwiftlyTextDocument extends SwiftlyDocument
         _encoding = encoding;
     }
 
-    /** Commit the in memory data to the file backing. */
+    @Override // from SwiftlyDocument
     public void commit ()
         throws IOException
     {
@@ -100,7 +102,7 @@ public class SwiftlyTextDocument extends SwiftlyDocument
         _changed = true;
     }
 
-    /** Check to see if the document has changed */
+    @Override // from SwiftlyDocument
     public boolean isDirty ()
         throws IOException
     {
@@ -112,19 +114,25 @@ public class SwiftlyTextDocument extends SwiftlyDocument
         return false;
     }
 
+    @Override // from SwiftlyDocument
+    public void loadInEditor (SwiftlyDocumentEditor editor)
+    {
+        editor.editTextDocument(this);
+    }
+
     public String getTextEncoding ()
     {
         return _encoding;
     }
 
-    /** Returns an stream corresponding to the unmodified data. */
+    @Override // from SwiftlyDocument
     public InputStream getOriginalData ()
         throws IOException
     {
         return new FileInputStream(_backingStore);
     }
 
-    /** Returns an InputStream corresponding to the modified data. */
+    @Override // from SwiftlyDocument
     public InputStream getModifiedData ()
         throws IOException
     {
@@ -132,6 +140,7 @@ public class SwiftlyTextDocument extends SwiftlyDocument
     }
 
     /** Be sure to delete our backing store. */
+    @Override // from Object
     protected void finalize ()
         throws Throwable
     {

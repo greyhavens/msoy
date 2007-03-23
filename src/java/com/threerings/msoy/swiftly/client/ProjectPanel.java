@@ -94,7 +94,7 @@ public class ProjectPanel extends JPanel
 
         PathElement element = getSelectedPathElement();
         if (element.getType() == PathElement.Type.FILE) {
-            _editor.addEditorTab(element);
+            _editor.openPathElement(element);
         }
     }
 

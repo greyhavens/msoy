@@ -107,10 +107,12 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int LOAD_DOCUMENT = 8;
 
     // from interface ProjectRoomService
-    public void loadDocument (Client arg1, PathElement arg2)
+    public void loadDocument (Client arg1, PathElement arg2, InvocationService.ConfirmListener arg3)
     {
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, LOAD_DOCUMENT, new Object[] {
-            arg2
+            arg2, listener3
         });
     }
 

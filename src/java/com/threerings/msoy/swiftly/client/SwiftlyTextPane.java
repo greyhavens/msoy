@@ -48,7 +48,6 @@ public class SwiftlyTextPane extends JEditorPane
     {
         _ctx = ctx;
         _editor = editor;
-        _pathElement = pathElement;
 
         // TODO: this might not be required
         _kit = new SyntaxEditorKit();
@@ -101,11 +100,6 @@ public class SwiftlyTextPane extends JEditorPane
             event.getEditorOid() != _ctx.getClient().getClientOid()) {
             loadDocumentText();
         }
-    }
-
-    public PathElement getPathElement ()
-    {
-        return _pathElement;
     }
 
     public AbstractAction getUndoAction ()
@@ -338,7 +332,6 @@ public class SwiftlyTextPane extends JEditorPane
 
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
-    protected PathElement _pathElement;
     protected SwiftlyTextDocument _document;
     protected SyntaxDocument _syntaxDoc;
     protected boolean _dontPropagateThisChange;

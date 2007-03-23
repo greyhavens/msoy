@@ -112,10 +112,12 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static const LOAD_DOCUMENT :int = 8;
 
     // from interface ProjectRoomService
-    public function loadDocument (arg1 :Client, arg2 :PathElement) :void
+    public function loadDocument (arg1 :Client, arg2 :PathElement, arg3 :InvocationService_ConfirmListener) :void
     {
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, LOAD_DOCUMENT, [
-            arg2
+            arg2, listener3
         ]);
     }
 

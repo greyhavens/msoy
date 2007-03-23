@@ -90,7 +90,7 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
         case ProjectRoomMarshaller.LOAD_DOCUMENT:
             ((ProjectRoomProvider)provider).loadDocument(
                 source,
-                (PathElement)args[0]
+                (PathElement)args[0], (InvocationService.ConfirmListener)args[1]
             );
             return;
 

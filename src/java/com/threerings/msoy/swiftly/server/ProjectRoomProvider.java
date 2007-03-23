@@ -57,7 +57,8 @@ public interface ProjectRoomProvider extends InvocationProvider
     /**
      * Handles a {@link ProjectRoomService#loadDocument} request.
      */
-    public void loadDocument (ClientObject caller, PathElement arg1);
+    public void loadDocument (ClientObject caller, PathElement arg1, InvocationService.ConfirmListener arg2)
+        throws InvocationException;
 
     /**
      * Handles a {@link ProjectRoomService#startFileUpload} request.

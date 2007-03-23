@@ -15,6 +15,8 @@ import org.apache.commons.io.IOUtils;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.presents.dobj.DSet;
 
+import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
+
 /**
  * Represents a source file in a project and contains the text of the file.
  * Text is stored in the provided encoding, and each document retains an
@@ -33,8 +35,11 @@ public abstract class SwiftlyDocument
     /** Commit the in memory data to the file backing. */
     public abstract void commit () throws IOException;
 
-    /** Check to see if the document has changed */
+    /** Check to see if the document has changed. */
     public abstract boolean isDirty () throws IOException;
+
+    /** Tell the supplied editor to load this document. */
+    public abstract void loadInEditor (SwiftlyDocumentEditor editor);
 
     public Comparable getKey ()
     {

@@ -179,7 +179,8 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void loadDocument (ClientObject caller, final PathElement element)
+    public void loadDocument (ClientObject caller, final PathElement element,
+                              final ProjectRoomService.ConfirmListener listener)
     {
         // TODO: check access!
 
@@ -188,18 +189,24 @@ public class ProjectRoomManager extends PlaceManager
             public boolean invoke () {
                 try {
                     _doc = _storage.getDocument(element);
-                    return true;
+                    _succeeded = true;
                 } catch (ProjectStorageException pse) {
-                    // TODO: Handle this how?
-                    return false;
+                    _succeeded = false;
                 }
+                return true;
             }
 
             public void handleResult () {
-                _roomObj.addSwiftlyDocument(_doc);
+                if (_succeeded) {
+                    _roomObj.addSwiftlyDocument(_doc);
+                    listener.requestProcessed();
+                } else {
+                    listener.requestFailed("e.load_document_failed");
+                }
             }
 
             protected SwiftlyDocument _doc;
+            protected boolean _succeeded;
         });
     }
 

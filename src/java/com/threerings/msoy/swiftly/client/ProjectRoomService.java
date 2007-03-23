@@ -40,7 +40,7 @@ public interface ProjectRoomService extends InvocationService
     public void commitProject (Client client, String commitMsg, ConfirmListener listener);
 
     /** Requests a document be loaded. */
-    public void loadDocument (Client client, PathElement element);
+    public void loadDocument (Client client, PathElement element, ConfirmListener listener);
 
     /** Reqests that an upload file session be started */
     public void startFileUpload (Client client, PathElement parent, ConfirmListener listener);

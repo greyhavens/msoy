@@ -28,6 +28,7 @@ import com.samskivert.swing.util.SwingUtil;
 import com.samskivert.util.StringUtil;
 import com.threerings.util.MessageBundle;
 
+import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -53,8 +54,10 @@ import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
+import sdoc.Gutter;
+
 public class SwiftlyEditor extends PlacePanel
-    implements AttributeChangeListener, SetListener
+    implements SwiftlyDocumentEditor, AttributeChangeListener, SetListener
 {
     public SwiftlyEditor (ProjectRoomController ctrl, SwiftlyContext ctx)
     {
@@ -107,28 +110,52 @@ public class SwiftlyEditor extends PlacePanel
         consoleMessage(_msgs.get("m.welcome"));
     }
 
-    public void addEditorTab (PathElement pathElement)
+    public void openPathElement (final PathElement pathElement)
     {
-        SwiftlyTextPane pane = _editorTabs.addEditorTab(pathElement); 
+        boolean alreadyOpen = _editorTabs.selectTab(pathElement); 
         // If this is a new tab, add a documentupdate listener and ask the backend to load
         // the document contents or pull the already opened document from the dset
-        if (pane != null) {
-            _roomObj.addListener(pane);
-
+        if (!alreadyOpen) {
             // If the document is already in the dset, load that.
-            // TODO: Get rid of the expensive iteration (map of pathElement ->
-            // documents?)
-            for (SwiftlyDocument doc : _roomObj.documents) {
-                if (doc.getPathElement().elementId == pathElement.elementId &&
-                    doc instanceof SwiftlyTextDocument) {
-                    pane.setDocument((SwiftlyTextDocument)doc);
-                    return;
-                }
+            SwiftlyDocument doc = getDocumentFromPath(pathElement);
+            if (doc != null) {
+                doc.loadInEditor(this);
+                return;
             }
 
             // Otherwise load the document from the backend.
-            _roomObj.service.loadDocument(_ctx.getClient(), pathElement);
+            _roomObj.service.loadDocument(_ctx.getClient(), pathElement, new ConfirmListener () {
+                // from interface ConfirmListener
+                public void requestProcessed ()
+                {
+                    SwiftlyDocument doc = getDocumentFromPath(pathElement);
+                    doc.loadInEditor(SwiftlyEditor.this);
+                }
+                // from interface ConfirmListener
+                public void requestFailed (String reason)
+                {
+                    showErrorDialog(_msgs.xlate(reason));
+                }
+            });
         }
+    }
+
+    public void editTextDocument (SwiftlyTextDocument document)
+    {
+        PathElement pathElement = document.getPathElement();
+        SwiftlyTextPane textPane = new SwiftlyTextPane(_ctx, this, pathElement);
+        TabbedEditorScroller scroller = new TabbedEditorScroller(textPane, pathElement);
+        // add line numbers
+        scroller.setRowHeaderView(new Gutter(textPane, scroller));
+
+        // add the tab
+        _editorTabs.addEditorTab(scroller, pathElement);
+
+        // set the document into the text pane
+        textPane.setDocument(document);
+
+        // TODO: text pane will not be a listener
+        _roomObj.addListener(textPane);
     }
 
     public void updateTabTitleAt (PathElement pathElement)
@@ -141,14 +168,10 @@ public class SwiftlyEditor extends PlacePanel
         _editorTabs.setTabDocument(doc);
     }
 
-    public void updateCurrentTabTitle ()
-    {
-        _editorTabs.updateCurrentTabTitle();
-    }
-
     public void closeCurrentTab ()
     {
-        _roomObj.removeListener(_editorTabs.getCurrentTextPane());
+        // TODO: SwiftlyTextPane will no longer be a listener
+        // _roomObj.removeListener(_editorTabs.getSelectedComponent());
         _editorTabs.closeCurrentTab();
     }
 
@@ -267,11 +290,6 @@ public class SwiftlyEditor extends PlacePanel
 
             // Re-bind transient instance variables
             element.lazarus(_roomObj.pathElements);
-
-            // set the document if a tab is opened
-            if (element instanceof SwiftlyTextDocument) {
-                setTabDocument((SwiftlyTextDocument)element);
-            }
         }
     }
 
@@ -295,6 +313,20 @@ public class SwiftlyEditor extends PlacePanel
         if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
             final int elementId = (Integer)event.getKey();
         }
+    }
+
+    /** 
+      * Finds the SwiftlyDocument, if loaded, connected with the supplied PathElement.
+      * Returns null if the SwiftlyDocument was not found.
+      */
+    protected SwiftlyDocument getDocumentFromPath (PathElement pathElement)
+    {
+        for (SwiftlyDocument doc : _roomObj.documents) {
+            if (doc.getPathElement().elementId == pathElement.elementId) {
+                return doc;
+            }
+        }
+        return null;
     }
 
     /** Initialize the file types that can be created */
