@@ -14,6 +14,7 @@
 -injars ../dist/lib/vilya-micasa.jar(**/util/**,**/client/**)
 -injars ../dist/lib/vilya-parlor.jar(**/parlor/util/**,**/ezgame/data/EZGameConfig.class,
     **/parlor/game/data/GameConfig.class)
+-injars ../dist/lib/vilya-stats.jar(!META-INF/*,!**/tools/**,!**/persist/**)
 -injars ../dist/lib/threerings.jar(!META-INF/*,**/threerings/util/**)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/**)
 -injars ../dist/msoy-code.jar(

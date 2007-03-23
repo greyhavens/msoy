@@ -13,6 +13,7 @@
 -injars ../dist/lib/nenya-rsrc.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/nenya-media.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/vilya-parlor.jar(!META-INF/*,!**/tools/**,!**/server/**)
+-injars ../dist/lib/vilya-stats.jar(!META-INF/*,!**/tools/**,!**/persist/**)
 -injars ../dist/lib/vilya-whirled.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/toybox.jar(!META-INF/*,!**/tools/**,!**/server/**,!**/xml/**)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/**)
