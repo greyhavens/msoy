@@ -63,22 +63,12 @@ public class AvatarSprite extends ActorSprite
         return AVATAR_HOVER;
     }
 
-    override protected function createBackend () :EntityBackend
-    {
-        return new AvatarBackend();
-    }
-
     /**
      * Get a list of the names of special actions that this avatar supports.
      */
     public function getAvatarActions () :Array
     {
-        var arr :Array = (callUserCode("getActions_v1") as Array);
-        if (arr == null) {
-            arr = [];
-        }
-        // TODO: filter returned array to ensure it contains Strings?
-        return arr;
+        return validateActionsOrStates(callUserCode("getActions_v1") as Array);
     }
 
     /**
@@ -86,12 +76,7 @@ public class AvatarSprite extends ActorSprite
      */
     public function getAvatarStates () :Array
     {
-        var arr :Array = (callUserCode("getStates_v1") as Array);
-        if (arr == null) {
-            arr = [];
-        }
-        // TODO: filter the returned array, ensure strings, max 64 chars
-        return arr;
+        return validateActionsOrStates(callUserCode("getStates_v1") as Array);
     }
 
     override public function messageReceived (name :String, arg :Object, isAction :Boolean) :void
@@ -128,6 +113,38 @@ public class AvatarSprite extends ActorSprite
     override public function toString () :String
     {
         return "AvatarSprite[" + _occInfo.username + " (oid=" + _occInfo.bodyOid + ")]";
+    }
+
+    override protected function createBackend () :EntityBackend
+    {
+        return new AvatarBackend();
+    }
+
+    /**
+     * Verify that the actions or states received from usercode are not wacky.
+     *
+     * @return the cleaned Array, which may be empty things didn't check out.
+     */
+    protected function validateActionsOrStates (vals :Array) :Array
+    {
+        if (vals == null) {
+            return [];
+        }
+        // If there are duplicates, non-strings, or strings.length > 64, then the
+        // user has bypassed the checks in their Control and we just discard everything.
+        for (var ii :int = 0; ii < vals.length; ii++) {
+            if (!validateUserData(vals[ii], null)) {
+                return [];
+            }
+            // reject duplicates
+            for (var jj :int = 0; jj < ii; jj++) {
+                if (vals[jj] === vals[ii]) {
+                    return [];
+                }
+            }
+        }
+        // everything checks out...
+        return vals;
     }
 }
 }

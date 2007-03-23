@@ -317,7 +317,7 @@ public class ActorSprite extends MsoySprite
      */
     public function setState (state :String) :void
     {
-        if (_ident != null && parent is RoomView) {
+        if (_ident != null && (parent is RoomView) && validateUserData(state, null)) {
             (parent as RoomView).getRoomController().setActorState(
                 _ident, _occInfo.bodyOid, state);
         }

@@ -513,7 +513,7 @@ public class MsoySprite extends MediaContainer
      */
     internal function sendMessage (name :String, arg :Object, isAction :Boolean) :void
     {
-        if (_ident != null && parent is RoomView) {
+        if (_ident != null && (parent is RoomView) && validateUserData(name, arg)) {
             (parent as RoomView).getRoomController().sendSpriteMessage(_ident, name, arg, isAction);
         }
     }
@@ -576,6 +576,26 @@ public class MsoySprite extends MediaContainer
                 locationUpdated();
             }
         }
+    }
+
+    /**
+     * Validate that the user message is kosher prior to sending it.
+     * This method is used to validate all states/actions/messages.
+     *
+     * Note: name is taken as an Object, some methods accept an array from users and we verify
+     * Stringliness too.
+     *
+     * TODO: memory too? (keys and values)
+     */
+    protected function validateUserData (name :Object, arg :Object) :Boolean
+    {
+        if (name != null && (!(name is String) || String(name).length > 64)) {
+            return false;
+        }
+        // TODO: validate the size of the arg
+
+        // looks OK!
+        return true;
     }
 
     /**
