@@ -82,13 +82,13 @@ public class MemberManager
     
     /**
      * This can be called from any thread to queue an update of the member's current flow if they
-     * are online. If accFlow is positive, the cumulative flow stat is incremented.
+     * are online.
      */
-    public static void queueFlowUpdated (final int memberId, final int newFlow, final int accFlow)
+    public static void queueFlowUpdated (final int memberId, final int newFlow)
     {
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.flowUpdated(memberId, newFlow, accFlow);
+                MsoyServer.memberMan.flowUpdated(memberId, newFlow);
             }
         });
     }
@@ -177,16 +177,13 @@ public class MemberManager
 
     /**
      * Called when a member's flow is updated. If they are online we update {@link
-     * MemberObject#flow} and optionally their accumulated flow stat, if accFlow > 0.
+     * MemberObject#flow}.
      */
-    public void flowUpdated (int memberId, int newFlow, int accFlow)
+    public void flowUpdated (int memberId, int newFlow)
     {
         MemberObject user = MsoyServer.lookupMember(memberId);
         if (user != null) {
             user.setFlow(newFlow);
-            if (accFlow > 0) {
-                user.stats.incrementStat(StatType.CUMULATIVE_FLOW, accFlow);
-            }
         }
     }
 
@@ -424,7 +421,7 @@ public class MemberManager
                     memberId, amount, grantAction.toString() + " " + details, true);
             }
             public void handleSuccess () {
-                flowUpdated(memberId, _flow, amount);
+                flowUpdated(memberId, _flow);
             }
             public void handleFailure (Exception pe) {
                 log.log(Level.WARNING, "Unable to grant flow [memberId=" + memberId +
@@ -449,7 +446,7 @@ public class MemberManager
                     memberId, amount, spendAction.toString() + " " + details, false);
             }
             public void handleSuccess () {
-                flowUpdated(memberId, _flow, amount);
+                flowUpdated(memberId, _flow);
             }
             public void handleFailure (Exception pe) {
                 log.log(Level.WARNING, "Unable to spend flow [memberId=" + memberId +
@@ -475,7 +472,7 @@ public class MemberManager
             }
             public void handleSuccess () {
                 if (_flow > 0) {
-                    flowUpdated(memberId, _flow, action.getFlow());
+                    flowUpdated(memberId, _flow);
                 }
             }
             public void handleFailure (Exception pe) {

@@ -14,8 +14,7 @@ import com.threerings.util.MessageBundle;
  */
 public enum StatType implements Stat.Type
 {
-    // general statistics
-    CUMULATIVE_FLOW(new IntStat());
+    UNUSED(new IntStat());
 
     /** Returns the translation key used by this stat. */
     public String key ()
