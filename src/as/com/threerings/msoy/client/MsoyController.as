@@ -380,10 +380,17 @@ public class MsoyController extends Controller
         lsvc.identifyLobby(_ctx.getClient(), gameId,
             new ResultWrapper(function (cause :String) :void {
                 log.warning("fetching LobbyObject oid failed: " + cause);
+                _gameId = -1;
             },
             function (result :Object) :void {
+                _gameId = gameId;
                 // this will create a panel and add it to the side panel on the top level
-                new LobbyController(_ctx, int(result)); 
+                new LobbyController(_ctx, int(result));
+                // perform our bookmarkable URL magic
+                var scene :Scene = _ctx.getSceneDirector().getScene();
+                if (scene != null) {
+                    wentToScene(scene.getId());
+                }
             }));
     }
 
@@ -468,6 +475,12 @@ public class MsoyController extends Controller
      */
     public function goToPlace (params :Object) :void
     {
+        // check for gameLobby first, so that the handleInternalGo call resulting from moveTo
+        // adds the correct parameters to the external URL
+        if (null != params["gameLobby"]) {
+            handleJoinGameLobby(params["gameLobby"])
+        }
+
         // first, see if we should hit a specific scene
         if (null != params["memberHome"]) {
             handleGoMemberHome(int(params["memberHome"]), true);
@@ -483,7 +496,22 @@ public class MsoyController extends Controller
             _ctx.getTopPanel().setPlaceView(new NoPlaceView(_ctx));
 
         } else {
-            var starterSceneId :int = int(params["sceneId"]);
+            var sceneIdString :String = params["sceneId"];
+            if (sceneIdString != null && sceneIdString.indexOf("g") != -1) {
+                var idx :int = sceneIdString.indexOf("g");
+                var gameId :int = int(sceneIdString.substring(idx + 1));
+                sceneIdString = sceneIdString.substring(0, idx);
+                if (_gameId == -1 || _gameId != gameId) {
+                    handleJoinGameLobby(gameId);
+                }
+            } else if (sceneIdString == null && null != params["gameLobby"]) {
+                // we want to stay in our current room, if we're in one
+                var scene :Scene = _ctx.getSceneDirector().getScene();
+                if (scene != null) {
+                    sceneIdString = "" + scene.getId();
+                }
+            }
+            var starterSceneId :int = int(sceneIdString);
             if (starterSceneId == 0) {
                 starterSceneId = _ctx.getMemberObject().homeSceneId;
                 if (starterSceneId == 0) {
@@ -496,8 +524,6 @@ public class MsoyController extends Controller
         // see if we should join a world game
         if (null != params["worldGame"]) {
             handleJoinWorldGame(int(params["worldGame"]));
-        } else if (null != params["gameLobby"]) {
-            handleJoinGameLobby(int(params["gameLobby"]));
         }
     }
 
@@ -508,7 +534,7 @@ public class MsoyController extends Controller
     {
         // this will result in another request to move to the scene we're already in, but we'll
         // ignore it because we're already there
-        handleInternalGo("world", "s" + sceneId);
+        handleInternalGo("world", "s" + sceneId + (_gameId != -1 ? "g" + _gameId : ""));
     }
 
     // from ClientObserver
@@ -572,6 +598,21 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Called by LobbyController to indicate that there is no longer a game lobby visible
+     */
+    public function gameLobbyCleared (gameId :int) :void
+    {
+        if (gameId == _gameId) {
+            _gameId = -1;
+            // perform our bookmarkable URL magic
+            var scene :Scene = _ctx.getSceneDirector().getScene();
+            if (scene != null) {
+                wentToScene(scene.getId());
+            }
+        }
+    }
+
+    /**
      * Return true if we should attempt to load sections of metasoy by
      * visiting a new page.
      */
@@ -582,10 +623,10 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Moves to a new location (scene, game lobby, game room, etc.) by changing the URL of the
-     * browser so that our history mechanism is preserved. Returns true if we did so, false if we
-     * couldn't do so for whatever reason (are in the standalone client) and the caller should just
-     * go there directly.
+     * Moves to a new location (scene, game room, etc.) by changing the URL of the browser so that 
+     * our history mechanism is preserved. Returns true if we did so, false if we couldn't do so 
+     * for whatever reason (are in the standalone client) and the caller should just go there 
+     * directly.
      */
     protected function handleInternalGo (page :String, args :String) :Boolean
     {
@@ -654,5 +695,8 @@ public class MsoyController extends Controller
 
     /** A special logoff message to use when we disconnect. */
     protected var _logoffMessage :String;
+
+    /** The currently loaded game lobby, used for magic URL bookmarkable gamelobbies */
+    protected var _gameId :int = -1;
 }
 }

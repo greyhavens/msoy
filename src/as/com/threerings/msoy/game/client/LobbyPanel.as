@@ -68,17 +68,24 @@ public class LobbyPanel extends VBox
     /**
      * Create a new LobbyPanel.
      */
-    public function LobbyPanel (ctx :WorldContext, ctrl :LobbyController, lobbyObj :LobbyObject)
+    public function LobbyPanel (ctx :WorldContext, ctrl :LobbyController)
     {
         _ctx = ctx;
         controller = ctrl;
+
+        width = LOBBY_PANEL_WIDTH;
+         
+        // TODO display some kind of loading indicator
+    }
+
+    public function init (lobbyObj :LobbyObject) :void
+    {
         _lobbyObj = lobbyObj;
         // add all preexisting tables
         for each (var table :Table in _lobbyObj.tables.toArray()) {
             tableAdded(table);
         }
-
-        width = LOBBY_PANEL_WIDTH;
+        createUI();
     }
 
     /**
@@ -86,7 +93,7 @@ public class LobbyPanel extends VBox
      */
     public function getGame () :Game
     {
-        return _lobbyObj.game;
+        return _lobbyObj != null ? _lobbyObj.game : null;
     }
 
     // from TableObserver
@@ -161,7 +168,7 @@ public class LobbyPanel extends VBox
         return _isSeated;
     }
 
-    override protected function createChildren () :void
+    protected function createUI () :void
     {
         super.createChildren();
         styleName = "lobbyPanel";

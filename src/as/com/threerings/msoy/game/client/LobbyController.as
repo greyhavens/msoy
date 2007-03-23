@@ -49,15 +49,17 @@ public class LobbyController extends Controller implements Subscriber
 
         _subscriber = new SafeSubscriber(oid, this)
         _subscriber.subscribe(_mctx.getDObjectManager());
+
+        _panel = new LobbyPanel(_mctx, this);
+        _panel.addEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
+        setControlledPanel(_panel);
     }
 
     // from Subscriber
     public function objectAvailable (obj :DObject) :void 
     {
         _lobj = obj as LobbyObject;
-        _panel = new LobbyPanel(_mctx, this, _lobj);
-        _panel.addEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
-        setControlledPanel(_panel);
+        _panel.init(_lobj);
 
         _tableDir = new TableDirector(_mctx, LobbyObject.TABLES, _panel);
         _tableDir.setTableObject(obj);
@@ -76,6 +78,7 @@ public class LobbyController extends Controller implements Subscriber
         if (_tableDir.isSeated()) {
             _tableDir.leaveTable(_tableDir.getSeatedTable().tableId);
         }
+        _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId);
     }
 
     // from Subscriber

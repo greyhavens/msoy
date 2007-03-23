@@ -57,8 +57,9 @@ public class index extends Page
 
         try {
             if (token.startsWith("s")) {
-                // go to a specific scene
-                WorldClient.display("world", token, "sceneId=" + id(token, 1));
+                // go to a specific scene - don't parse out an int here, because a gameId may
+                // be encoded in the token
+                WorldClient.display("world", token, "sceneId=" + token.substring(1));
 
             } else if (token.startsWith("g")) {
                 // go to a specific group's scene group
