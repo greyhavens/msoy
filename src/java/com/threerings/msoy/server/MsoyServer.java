@@ -453,7 +453,12 @@ public class MsoyServer extends WhirledServer
             _codeModified = codeModifiedTime();
             new Interval() { // Note well: this interval does not run on the dobj thread
                 public void expired () {
-                    checkAutoRestart();
+                    // ...we simply post a LongRunnable to do the job
+                    omgr.postRunnable(new PresentsDObjectMgr.LongRunnable() {
+                        public void run () {
+                            checkAutoRestart();
+                        }
+                    });
                 }
                 public String toString () {
                     return "checkAutoRestart interval";
@@ -476,28 +481,11 @@ public class MsoyServer extends WhirledServer
 
     /**
      * Check to see if the server should be restarted.
-     * Note: This method is safe to call from any thread.
      */
     protected void checkAutoRestart ()
     {
-        // look up the last-modified time (takes a while)
-        final long lastModified = codeModifiedTime();
-
-        // then, ensure we do step 2 on the dobj thread
-        if (omgr.isDispatchThread()) {
-            checkAutoRestart2(lastModified);
-
-        } else {
-            omgr.postRunnable(new Runnable() {
-                public void run () {
-                    checkAutoRestart2(lastModified);
-                }
-            });
-        }
-    }
-
-    protected void checkAutoRestart2 (long lastModified)
-    {
+        // look up the last-modified time
+        long lastModified = codeModifiedTime();
         if (lastModified <= _codeModified || adminMan.statObj.serverRebootTime != 0L) {
             return;
         }
