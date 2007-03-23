@@ -23,12 +23,20 @@ public class FloatingTableDisplay extends FloatingPanel
         addButtons(BACK_TO_LOBBY_BUTTON);
     }
 
+    public function shutdown () :void
+    {
+        _hasBeenShutDown = true;
+        close();
+    }
+
     override public function open (modal :Boolean = false, parent :DisplayObject = null,
         avoid :DisplayObject = null) :void
     {
-        super.open(modal, parent, avoid);
-        x = 10;
-        y = 10;
+        if (!_hasBeenShutDown) {
+            super.open(modal, parent, avoid);
+            x = 10;
+            y = 10;
+        }
     }
 
     override protected function createButton (buttonId :int) :Button
@@ -60,5 +68,7 @@ public class FloatingTableDisplay extends FloatingPanel
     }
 
     protected var _panel :LobbyPanel;
+
+    protected var _hasBeenShutDown :Boolean = false;
 }
 }

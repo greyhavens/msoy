@@ -30,7 +30,11 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.client.LocationObserver;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.parlor.game.data.GameObject;
+
 import com.threerings.msoy.chat.client.ChatContainer;
+
+import com.threerings.msoy.game.client.FloatingTableDisplay;
 
 public class TopPanel extends Canvas 
     implements LocationObserver
@@ -97,7 +101,10 @@ public class TopPanel extends Canvas
     // from LocationObserver
     public function locationDidChange (place :PlaceObject) :void
     {
-        // NOOP
+        // if we just moved to a game lobby make sure the current floating table display is cleared
+        if (place is GameObject) {
+            clearTableDisplay();
+        }
     }
 
     // from LocationObserver
@@ -182,6 +189,29 @@ public class TopPanel extends Canvas
             removeChild(_sidePanel);
             _sidePanel = null;
             layoutPanels();
+        }
+    }
+
+    /**
+     * Sets the current table display
+     */
+    public function setTableDisplay (tableDisp :FloatingTableDisplay) :void
+    {
+        if (tableDisp != _tableDisp) {
+            clearTableDisplay();
+            _tableDisp = tableDisp;
+        }
+    }
+
+    /**
+     * Clears the current table display - should only be used if this table display should be
+     * destroyed (i.e. the game started, or the another table was joined)
+     */
+    public function clearTableDisplay () :void
+    {
+        if (_tableDisp != null) {
+            _tableDisp.shutdown();
+            _tableDisp = null;
         }
     }
 
@@ -346,6 +376,9 @@ public class TopPanel extends Canvas
 
     /** The list of our friends. */
     protected var _friendsList :FriendsList;
+
+    /** the currently active table display */
+    protected var _tableDisp :FloatingTableDisplay;
 
     public static const DECORATIVE_MARGIN_HEIGHT :int = 4;
 }

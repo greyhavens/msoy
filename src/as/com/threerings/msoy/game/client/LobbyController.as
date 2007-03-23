@@ -80,6 +80,7 @@ public class LobbyController extends Controller implements Subscriber
         if (_tableDir.isSeated() && !_tableDir.getSeatedTable().inPlay()) {
             var tableDisplay :FloatingTableDisplay = new FloatingTableDisplay(_mctx, _panel);
             tableDisplay.open();
+            _mctx.getTopPanel().setTableDisplay(tableDisplay);
         } else {
             shutdown();
         }
