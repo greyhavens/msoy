@@ -31,8 +31,6 @@ import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.crowd.chat.client.ChatCantStealFocus;
 
-import com.threerings.parlor.client.GameReadyObserver;
-
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneObject;
 
@@ -56,7 +54,7 @@ import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.world.client.RoomView;
 
 public class MsoyController extends Controller
-    implements ClientObserver, GameReadyObserver
+    implements ClientObserver
 {
     public static const log :Log = Log.getLog(MsoyController);
 
@@ -132,9 +130,6 @@ public class MsoyController extends Controller
         _ctx.getClient().addClientObserver(this);
         _topPanel = topPanel;
         setControlledPanel(ctx.getStage());
-
-        // handle gameReady so that we can enter games in a browser history friendly manner
-        _ctx.getParlorDirector().addGameReadyObserver(this);
     }
 
     /**
@@ -504,6 +499,7 @@ public class MsoyController extends Controller
                 if (_gameId == -1 || _gameId != gameId) {
                     handleJoinGameLobby(gameId);
                 }
+
             } else if (sceneIdString == null && null != params["gameLobby"]) {
                 // we want to stay in our current room, if we're in one
                 var scene :Scene = _ctx.getSceneDirector().getScene();
@@ -511,14 +507,15 @@ public class MsoyController extends Controller
                     sceneIdString = "" + scene.getId();
                 }
             }
-            var starterSceneId :int = int(sceneIdString);
-            if (starterSceneId == 0) {
-                starterSceneId = _ctx.getMemberObject().homeSceneId;
-                if (starterSceneId == 0) {
-                    starterSceneId = 1; // for "packwards combatability"
+
+            var sceneId :int = int(sceneIdString);
+            if (sceneId == 0) {
+                sceneId = _ctx.getMemberObject().homeSceneId;
+                if (sceneId == 0) {
+                    sceneId = 1; // for "packwards combatability"
                 }
             }
-            _ctx.getSceneDirector().moveTo(starterSceneId);
+            _ctx.getSceneDirector().moveTo(sceneId);
         }
 
         // see if we should join a world game
@@ -595,14 +592,6 @@ public class MsoyController extends Controller
     public function clientDidClear (event :ClientEvent) :void
     {
         // nada
-    }
-
-    // from GameReadyObserver
-    public function receivedGameReady (gameOid :int) :Boolean
-    {
-        log.info("Game read [oid=" + gameOid + "].");
-        handleGoLocation(gameOid);
-        return true;
     }
 
     /**

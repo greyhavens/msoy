@@ -14,6 +14,7 @@ import com.threerings.parlor.client.Invitation;
 import com.threerings.parlor.client.InvitationHandler;
 import com.threerings.parlor.client.InvitationResponseObserver;
 
+import com.threerings.parlor.client.GameReadyObserver;
 import com.threerings.parlor.game.client.GameController;
 import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.data.GameObject;
@@ -36,7 +37,8 @@ import com.threerings.msoy.game.data.WorldGameConfig;
 // you instead invite to the lobby... etc.
 // 
 public class GameDirector extends BasicDirector
-    implements InvitationHandler, InvitationResponseObserver, AttributeChangeListener, Subscriber
+    implements InvitationHandler, InvitationResponseObserver, AttributeChangeListener, Subscriber,
+               GameReadyObserver
 {
     public static const log :Log = Log.getLog(GameDirector);
 
@@ -46,6 +48,9 @@ public class GameDirector extends BasicDirector
         _mctx = ctx;
 
         ctx.getParlorDirector().setInvitationHandler(this);
+
+        // handle gameReady so that we can enter games in a browser history friendly manner
+        ctx.getParlorDirector().addGameReadyObserver(this);
     }
 
     /**
@@ -140,6 +145,15 @@ public class GameDirector extends BasicDirector
         log.warning("Failed to subscribe to world game object [oid=" + oid +
             ", cause=" + cause + "].");
         _worldGameOid = 0;
+    }
+
+    // from GameReadyObserver
+    public function receivedGameReady (gameOid :int) :Boolean
+    {
+        // let the scene director know that we're leaving our current scene
+        _mctx.getSceneDirector().didLeaveScene();
+        _mctx.getMsoyController().handleGoLocation(gameOid);
+        return true;
     }
 
     override protected function clientObjectUpdated (client :Client) :void
