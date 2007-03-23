@@ -66,6 +66,15 @@ public class WorldGameControllerDelegate extends GameControllerDelegate
     }
 
     /**
+     * Get a list of our own avatar states.
+     */
+    public function getMyStates () :Array
+    {
+        var room :RoomView = (_ctx.getTopPanel().getPlaceView() as RoomView);
+        return (room != null) ? room.getMyStates() : [];
+    }
+
+    /**
      *  A special helper method for setting the place view.
      */
     public function setPlaceView (view :PlaceView) :void

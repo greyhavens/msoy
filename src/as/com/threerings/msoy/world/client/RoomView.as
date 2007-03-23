@@ -253,6 +253,15 @@ public class RoomView extends AbstractRoomView
     }
 
     /**
+     * Get the states currently published by our own avatar.
+     */
+    public function getMyStates () :Array
+    {
+        var avatar :AvatarSprite = getMyAvatar();
+        return (avatar != null) ? avatar.getAvatarStates() : [];
+    }
+
+    /**
      * A convenience function to get our personal avatar.
      */
     public function getMyAvatar () :AvatarSprite
