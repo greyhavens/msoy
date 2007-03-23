@@ -70,7 +70,8 @@ public class @project@ extends Sprite
      */
     protected function handleUnload (event :Event) :void
     {
-        // stop any sounds, clean up any resources that need it
+        // stop any sounds, clean up any resources that need it.  This specifically includes 
+        // unregistering listeners to any events - especially Event.ENTER_FRAME
     }
 
     protected var _control :FurniControl;
