@@ -77,7 +77,7 @@ public class LobbyController extends Controller implements Subscriber
     public function handleRemovedFromStage (evt :Event) :void
     {
         _panelIsVisible = false;
-        if (_tableDir.isSeated()) {
+        if (_tableDir.isSeated() && !_tableDir.getSeatedTable().inPlay()) {
             var tableDisplay :FloatingTableDisplay = new FloatingTableDisplay(_mctx, _panel);
             tableDisplay.open();
         } else {
