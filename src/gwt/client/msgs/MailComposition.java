@@ -20,6 +20,7 @@ import com.threerings.msoy.web.data.MemberName;
 
 import client.util.AlertPopup;
 import client.util.BorderedDialog;
+import client.util.InfoPopup;
 
 /**
  * A mail composition popup.
@@ -162,6 +163,7 @@ public class MailComposition extends BorderedDialog
                     _payloadComposer.messageSent(_recipient);
                 }
                 hide();
+                new InfoPopup(CMsgs.mmsgs.messageSent()).show();
             }
             public void onFailure (Throwable caught) {
                 // for now, just show that something went wrong and return to the composer

@@ -120,6 +120,14 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   String giftGone();
 
   /**
+   * Translated "Message successfully delivered!".
+   * 
+   * @return translated "Message successfully delivered!"
+   * @gwt.key messageSent
+   */
+  String messageSent();
+
+  /**
    * Translated "Please choose the item to attach by clicking on its thumbnail.".
    * 
    * @return translated "Please choose the item to attach by clicking on its thumbnail."
