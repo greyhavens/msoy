@@ -24,6 +24,7 @@ import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
+import com.samskivert.util.ArrayUtil;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserAction;
@@ -237,10 +238,16 @@ public class FlowRepository extends DepotRepository
 
         String op = grant ? "+" : "-";
 
-        Key key = MemberFlowRecord.getKey(memberId);
+        String[] fields = new String[] { MemberRecord.FLOW, MemberRecord.FLOW + op + amount };
+        if (grant) {
+            // accumulate positive flow updates in its own field
+            fields = ArrayUtil.concatenate(fields, new String[] {
+                MemberRecord.ACC_FLOW, MemberRecord.ACC_FLOW + op + amount
+            });
+        }
 
-        int mods = updateLiteral(MemberRecord.class, key, key,
-                                 MemberRecord.FLOW, MemberRecord.FLOW + op + amount);
+        Key key = MemberFlowRecord.getKey(memberId);
+        int mods = updateLiteral(MemberRecord.class, key, key, fields);
         if (mods == 0) {
             throw new PersistenceException(
                 "Flow " + type + " modified zero rows " +

@@ -58,6 +58,13 @@ public class MemberRecord extends PersistentRecord
     public static final ColumnExp FLOW_C =
         new ColumnExp(MemberRecord.class, FLOW);
 
+    /** The column identifier for the {@link #accFlow} field. */
+    public static final String ACC_FLOW = "accFlow";
+
+    /** The qualified column identifier for the {@link #accFlow} field. */
+    public static final ColumnExp ACC_FLOW_C =
+        new ColumnExp(MemberRecord.class, ACC_FLOW);
+
     /** The column identifier for the {@link #homeSceneId} field. */
     public static final String HOME_SCENE_ID = "homeSceneId";
 
@@ -124,7 +131,7 @@ public class MemberRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 5;
+    public static final int SCHEMA_VERSION = 6;
 
     /** A flag denoting this user as having support privileges. */
     public static final int SUPPORT_FLAG = 1 << 0;
@@ -152,6 +159,9 @@ public class MemberRecord extends PersistentRecord
 
     /** The quantity of flow possessed by this member. */
     public int flow;
+    
+    /** The total amount of flow ever accumulated by this member. */
+    public int accFlow;
 
     /** The home scene for this member. */
     public int homeSceneId;
