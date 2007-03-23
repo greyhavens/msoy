@@ -31,6 +31,8 @@ import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.crowd.chat.client.ChatCantStealFocus;
 
+import com.threerings.parlor.client.GameReadyObserver;
+
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneObject;
 
@@ -54,7 +56,7 @@ import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.world.client.RoomView;
 
 public class MsoyController extends Controller
-    implements ClientObserver
+    implements ClientObserver, GameReadyObserver
 {
     public static const log :Log = Log.getLog(MsoyController);
 
@@ -130,6 +132,9 @@ public class MsoyController extends Controller
         _ctx.getClient().addClientObserver(this);
         _topPanel = topPanel;
         setControlledPanel(ctx.getStage());
+
+        // handle gameReady so that we can enter games in a browser history friendly manner
+        _ctx.getParlorDirector().addGameReadyObserver(this);
     }
 
     /**
@@ -592,6 +597,17 @@ public class MsoyController extends Controller
         // nada
     }
 
+    // from GameReadyObserver
+    public function receivedGameReady (gameOid :int) :Boolean
+    {
+        log.info("Game read [oid=" + gameOid + "].");
+        handleGoLocation(gameOid);
+        return true;
+    }
+
+    /**
+     * Called by the lobby controller when we've entered a game lobby.
+     */
     public function gameLobbyShown (gameId :int) :void
     {
         if (gameId != _gameId) {
