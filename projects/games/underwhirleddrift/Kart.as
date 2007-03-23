@@ -20,7 +20,7 @@ public class Kart extends KartSprite
         _camera = camera;
         ground.getScenery().registerKart(this);
 
-        addEventListener(Event.ENTER_FRAME, enterFrame);
+        UnderwhirledDrift.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
     }
 
     /**
@@ -101,18 +101,19 @@ public class Kart extends KartSprite
         var shield :Sprite = _shield;
         super.shieldsUp(up);
         if (up && shield != _shield) {
-            _shield.addEventListener(Event.ENTER_FRAME, function (startTime :int) :Function {
-                var frameListener :Function = function (evt :Event) :void {
-                    if (getTimer() - startTime > Bonus.SHIELD_DURATION) {
-                        evt.target.removeEventListener(Event.ENTER_FRAME, frameListener);
-                        // this shield may have been removed previous to this expiration
-                        if (evt.target == _shield) {
-                            dispatchEvent(new KartEvent(KartEvent.SHIELD, false));
+            UnderwhirledDrift.registerEventListener(_shield, Event.ENTER_FRAME, 
+                function (startTime :int) :Function {
+                    var frameListener :Function = function (evt :Event) :void {
+                        if (getTimer() - startTime > Bonus.SHIELD_DURATION) {
+                            evt.target.removeEventListener(Event.ENTER_FRAME, frameListener);
+                            // this shield may have been removed previous to this expiration
+                            if (evt.target == _shield) {
+                                dispatchEvent(new KartEvent(KartEvent.SHIELD, false));
+                            }
                         }
                     }
-                }
-                return frameListener;
-            }(getTimer()));
+                    return frameListener;
+                }(getTimer()));
         }
     }
 

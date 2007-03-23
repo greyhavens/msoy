@@ -23,7 +23,7 @@ public class KartObstacle extends KartSprite
         super(kartType, ground);
         _currentPosition = startingPosition;
 
-        addEventListener(Event.ENTER_FRAME, enterFrame);
+        UnderwhirledDrift.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
     }
 
     /**

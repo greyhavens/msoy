@@ -145,7 +145,7 @@ public class Scenery extends Sprite
                 ArrayUtil.removeFirst(_items, bonusObj);
             }
         };
-        fireball.addEventListener(Event.ENTER_FRAME, bonusObjListener);
+        UnderwhirledDrift.registerEventListener(fireball, Event.ENTER_FRAME, bonusObjListener);
         initializeObject(bonusObj, FIREBALL);
     }
 
@@ -178,7 +178,7 @@ public class Scenery extends Sprite
                     }
                 }
             }(getTimer(), bonus.sprite);
-            addEventListener(Event.ENTER_FRAME, regenListener);
+            UnderwhirledDrift.registerEventListener(this, Event.ENTER_FRAME, regenListener);
         } 
     }
 

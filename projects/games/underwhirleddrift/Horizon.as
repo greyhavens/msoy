@@ -21,7 +21,7 @@ public class Horizon extends Sprite
 
         _camera = camera;
 
-        addEventListener(Event.ENTER_FRAME, enterFrame);
+        UnderwhirledDrift.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
     }
 
     protected function enterFrame (evt :Event) :void 

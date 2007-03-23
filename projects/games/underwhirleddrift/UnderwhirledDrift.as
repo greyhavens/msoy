@@ -3,6 +3,8 @@ package {
 import flash.display.Sprite;
 import flash.display.Shape;
 
+import flash.events.IEventDispatcher;
+
 import flash.geom.Point;
 
 import flash.events.KeyboardEvent;
@@ -46,8 +48,22 @@ public class UnderwhirledDrift extends Sprite
 
     public static const KEY_EVENT :String = "keyEvent";
 
+    /**
+     * Adds the given event listener to the given dispatcher for the given event - this should
+     * be used for all listeners, as it remembers them locally, and unregisters them when the 
+     * game sprite is unloaded. 
+     */
+    public static function registerEventListener(dispatcher :IEventDispatcher, event :String, 
+        listener :Function) :void 
+    {
+        dispatcher.addEventListener(event, listener);
+        _eventHandlers.push({dispatcher: dispatcher, event: event, func: listener});
+    }
+
     public function UnderwhirledDrift ()
     {
+        registerEventListener(root.loaderInfo, Event.UNLOAD, handleUnload);
+
         _gameSprite = new Sprite();
         var masker :Shape = new Shape();
         masker.graphics.beginFill(0xFFFFFF);
@@ -75,8 +91,8 @@ public class UnderwhirledDrift extends Sprite
             _horizon.x += _horizon.width / 2;
 
             _control.registerListener(this);
-            _control.addEventListener(KeyboardEvent.KEY_DOWN, keyEventHandler);
-            _control.addEventListener(KeyboardEvent.KEY_UP, keyEventHandler);
+            registerEventListener(_control, KeyboardEvent.KEY_DOWN, keyEventHandler);
+            registerEventListener(_control, KeyboardEvent.KEY_UP, keyEventHandler);
     
             var chooser :KartChooser = new KartChooser(this, _gameSprite, _camera, _ground);
             chooser.chooseKart();
@@ -157,7 +173,7 @@ public class UnderwhirledDrift extends Sprite
                     }
                 }
             };
-            _lightBoard.addEventListener(Event.ENTER_FRAME, boardFrameListener);
+            registerEventListener(_lightBoard, Event.ENTER_FRAME, boardFrameListener);
             addChild(_lightBoard);
         } else if (event.name == "raceStarted") {
             _raceStarted = true;
@@ -290,13 +306,14 @@ public class UnderwhirledDrift extends Sprite
         _control.sendMessage("kartChosen", {playerId: _control.getMyId(),
             kartType: _kart.kartType});
         updateRaceStarted();
-        _kart.addEventListener(KartEvent.CROSSED_FINISH_LINE, function (event :KartEvent) :void {
-            if (_control.seating.getPlayerIds().length != 1) {
-                _control.sendMessage("crossedFinishLine", { playerId: _control.getMyId(), 
-                    direction: event.value });
-            }
-        });
-        _kart.addEventListener(KartEvent.BONUS, function (event :KartEvent) :void {
+        registerEventListener(_kart, KartEvent.CROSSED_FINISH_LINE, 
+            function (event :KartEvent) :void {
+                if (_control.seating.getPlayerIds().length != 1) {
+                    _control.sendMessage("crossedFinishLine", { playerId: _control.getMyId(), 
+                        direction: event.value });
+                }
+            });
+        registerEventListener(_kart, KartEvent.BONUS, function (event :KartEvent) :void {
             var bonus :Bonus = event.value.bonus as Bonus;
             if (bonus != _bonus) {
                 _bonus = event.value.bonus as Bonus;
@@ -306,16 +323,16 @@ public class UnderwhirledDrift extends Sprite
             }
             _control.sendMessage("bonusGone", { x: event.value.pos.x, y: event.value.pos.y });
         });
-        _kart.addEventListener(KartEvent.REMOVE_BONUS, function (event :KartEvent) :void {
+        registerEventListener(_kart, KartEvent.REMOVE_BONUS, function (event :KartEvent) :void {
             if (_bonus != null) {
                 removeChild(_bonus);
                 _bonus = null;
             }
         });
-        _kart.addEventListener(KartEvent.SHIELD, function (event :KartEvent) :void {
+        registerEventListener(_kart, KartEvent.SHIELD, function (event :KartEvent) :void {
             _control.sendMessage("shieldsUp", { playerId: _control.getMyId(), up: event.value });
         });
-        _kart.addEventListener(KartEvent.FIREBALL, function (event :KartEvent) :void {
+        registerEventListener(_kart, KartEvent.FIREBALL, function (event :KartEvent) :void {
             _control.sendMessage("fireball", { playerId: _control.getMyId(), x: 
                 _ground.getKartLocation().x, y: _ground.getKartLocation().y, 
                 angle: _camera.angle - Math.PI / 2 });
@@ -407,6 +424,13 @@ public class UnderwhirledDrift extends Sprite
         }
     }
 
+    protected function handleUnload (evt :Event) :void
+    {
+        for each (var handler :Object in _eventHandlers) {
+            handler.dispatcher.removeEventListener(handler.event, handler.func);
+        }
+    }
+
     protected static const SEND_THROTTLE :int = 150; // in ms
     
     [Embed(source='rsrc/light_board.swf#light_board')]
@@ -414,6 +438,10 @@ public class UnderwhirledDrift extends Sprite
 
     [Embed(source='rsrc/power_ups.swf#power_up_frame')]
     protected static const POWER_UP_FRAME :Class;
+
+    /** All event listeners register in UD - these need to be cleaned up when the game is 
+     * unloaded */
+    protected static var _eventHandlers :Array = [];
 
     /** the game control. */
     protected var _control :WhirledGameControl;

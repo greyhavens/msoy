@@ -80,7 +80,7 @@ public class KartChooser
         selection.addChild(titleText);
 
         selection.addChild(kart);
-        kart.addEventListener(MouseEvent.CLICK, selectedKart);
+        UnderwhirledDrift.registerEventListener(kart, MouseEvent.CLICK, selectedKart);
         kart.y = -HEIGHT + 230;
 
         var descText :TextField = new TextField();

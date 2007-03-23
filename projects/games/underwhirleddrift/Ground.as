@@ -27,7 +27,7 @@ public class Ground extends Sprite
         _stripData = new BitmapData(WIDTH, HEIGHT, true, 0);
         addChild(new Bitmap(_stripData));
 
-        addEventListener(Event.ENTER_FRAME, enterFrame);
+        UnderwhirledDrift.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
     }
 
     /**
