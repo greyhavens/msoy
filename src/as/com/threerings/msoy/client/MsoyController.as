@@ -383,14 +383,9 @@ public class MsoyController extends Controller
                 _gameId = -1;
             },
             function (result :Object) :void {
-                _gameId = gameId;
                 // this will create a panel and add it to the side panel on the top level
                 new LobbyController(_ctx, int(result));
-                // perform our bookmarkable URL magic
-                var scene :Scene = _ctx.getSceneDirector().getScene();
-                if (scene != null) {
-                    wentToScene(scene.getId());
-                }
+                gameLobbyShown(gameId);
             }));
     }
 
@@ -595,6 +590,18 @@ public class MsoyController extends Controller
     public function clientDidClear (event :ClientEvent) :void
     {
         // nada
+    }
+
+    public function gameLobbyShown (gameId :int) :void
+    {
+        if (gameId != _gameId) {
+            _gameId = gameId;
+            // perform our bookmarkable URL magic
+            var scene :Scene = _ctx.getSceneDirector().getScene();
+            if (scene != null) {
+                wentToScene(scene.getId());
+            }
+        }
     }
 
     /**

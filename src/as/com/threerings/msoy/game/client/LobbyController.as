@@ -81,6 +81,7 @@ public class LobbyController extends Controller implements Subscriber
             var tableDisplay :FloatingTableDisplay = new FloatingTableDisplay(_mctx, _panel);
             tableDisplay.open();
             _mctx.getTopPanel().setTableDisplay(tableDisplay);
+            _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId);
         } else {
             shutdown();
         }
@@ -151,6 +152,7 @@ public class LobbyController extends Controller implements Subscriber
     {
         _panelIsVisible = true;
         _mctx.getTopPanel().setSidePanel(_panel);
+        _mctx.getMsoyController().gameLobbyShown(_lobj.game.itemId);
     }
 
     /**
