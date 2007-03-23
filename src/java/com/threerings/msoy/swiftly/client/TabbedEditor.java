@@ -17,7 +17,7 @@ import javax.swing.event.ChangeListener;
 
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
-import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 import sdoc.Gutter;
@@ -91,7 +91,7 @@ public class TabbedEditor extends CloseAndMaxTabbedPane
     /**
      * Completely overwrite document contents when update is received from server.
      */
-    public void setTabDocument (SwiftlyDocument doc)
+    public void setTabDocument (SwiftlyTextDocument doc)
     {
         JScrollPane tab = _tabList.get(doc.getPathElement());
         if (tab != null) {

@@ -8,7 +8,7 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.msoy.swiftly.data.PathElement;
-import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 
 import org.apache.commons.io.FileUtils;
@@ -97,7 +97,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
     {
         ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
         PathElement path = PathElement.createFile("UnitTest.as", null, null);
-        SwiftlyDocument doc = storage.getDocument(path);
+        SwiftlyTextDocument doc = (SwiftlyTextDocument)storage.getDocument(path);
 
         // Ensure the document data was defrosted correctly
         assertTrue(doc.getText().startsWith("package {"));
@@ -108,17 +108,17 @@ public class ProjectSVNStorageUnitTest extends TestCase
     {
         ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
         PathElement path = PathElement.createFile("UnitTest.as", null, null);
-        SwiftlyDocument doc;
+        SwiftlyTextDocument doc;
         
         // Get an initial copy of the document
-        doc = storage.getDocument(path);
+        doc = (SwiftlyTextDocument)storage.getDocument(path);
 
         // Modify and commit the changes
         doc.setText("Modified");
         storage.putDocument(doc, "Testing");
 
         // Retrieve the document again
-        doc = storage.getDocument(path);
+        doc = (SwiftlyTextDocument)storage.getDocument(path);
         assertEquals("Modified", doc.getText());
     }
 

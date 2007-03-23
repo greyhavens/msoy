@@ -50,6 +50,7 @@ import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 public class SwiftlyEditor extends PlacePanel
@@ -118,8 +119,9 @@ public class SwiftlyEditor extends PlacePanel
             // TODO: Get rid of the expensive iteration (map of pathElement ->
             // documents?)
             for (SwiftlyDocument doc : _roomObj.documents) {
-                if (doc.getPathElement().elementId == pathElement.elementId) {
-                    pane.setDocument(doc);
+                if (doc.getPathElement().elementId == pathElement.elementId &&
+                    doc instanceof SwiftlyTextDocument) {
+                    pane.setDocument((SwiftlyTextDocument)doc);
                     return;
                 }
             }
@@ -134,7 +136,7 @@ public class SwiftlyEditor extends PlacePanel
         _editorTabs.updateTabTitleAt(pathElement);
     }
 
-    public void setTabDocument (SwiftlyDocument doc)
+    public void setTabDocument (SwiftlyTextDocument doc)
     {
         _editorTabs.setTabDocument(doc);
     }
@@ -267,7 +269,9 @@ public class SwiftlyEditor extends PlacePanel
             element.lazarus(_roomObj.pathElements);
 
             // set the document if a tab is opened
-            setTabDocument(element);
+            if (element instanceof SwiftlyTextDocument) {
+                setTabDocument((SwiftlyTextDocument)element);
+            }
         }
     }
 

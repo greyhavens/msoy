@@ -60,8 +60,10 @@ public class DocumentUpdatedEvent extends DEvent
         if (document == null) {
             log.warning("Requested to update unknown element! [elementId=" + _elementId + "].");
         } else {
-            // TODO: diffs!
-            document.setText(_text);
+            if (document instanceof SwiftlyTextDocument) {
+                // TODO: diffs!
+                ((SwiftlyTextDocument)document).setText(_text);
+            }
         }
         return true;
     }

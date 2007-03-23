@@ -34,6 +34,7 @@ import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
@@ -126,9 +127,9 @@ public class ProjectRoomManager extends PlaceManager
         // Re-bind transient instance variables
         element.lazarus(_roomObj.pathElements);
 
-        SwiftlyDocument doc = null;
+        SwiftlyTextDocument doc = null;
         try {
-            doc = new SwiftlyDocument(element, ProjectStorage.TEXT_ENCODING);
+            doc = new SwiftlyTextDocument(element, ProjectStorage.TEXT_ENCODING);
         } catch (IOException e) {
             listener.requestFailed("e.add_document_failed");
             return;
@@ -145,14 +146,6 @@ public class ProjectRoomManager extends PlaceManager
     public void updateDocument (ClientObject caller, int elementId, String text)
     {
         // TODO: check access!
-
-        // set the changed flag if needed
-        SwiftlyDocument doc = _roomObj.documents.get(elementId);
-        if (!doc.wasChanged()) {
-            doc.setChanged(true);
-            _roomObj.updateDocuments(doc);
-        }
-
         _roomObj.postEvent(
             new DocumentUpdatedEvent(_roomObj.getOid(), caller.getOid(), elementId, text));
     }
@@ -350,7 +343,6 @@ public class ProjectRoomManager extends PlaceManager
                     }
                 }
                 for (SwiftlyDocument doc : docs) {
-                    doc.setChanged(false);
                     doc.commit();
                     _roomObj.updateDocuments(doc);
                 }

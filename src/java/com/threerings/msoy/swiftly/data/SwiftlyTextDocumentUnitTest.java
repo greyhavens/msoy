@@ -11,9 +11,9 @@ import java.io.OutputStream;
 
 import junit.framework.TestCase;
 
-public class SwiftlyDocumentUnitTest extends TestCase
+public class SwiftlyTextDocumentUnitTest extends TestCase
 {
-    public SwiftlyDocumentUnitTest (String name)
+    public SwiftlyTextDocumentUnitTest (String name)
     {
         super(name);
     }
@@ -29,7 +29,7 @@ public class SwiftlyDocumentUnitTest extends TestCase
 
         InputStream input = new FileInputStream(inputFile);
     
-        _doc = new SwiftlyDocument(input, null, TEXT_ENCODING);
+        _doc = new SwiftlyTextDocument(input, null, TEXT_ENCODING);
     }
 
     public void testInstantiate ()
@@ -71,7 +71,7 @@ public class SwiftlyDocumentUnitTest extends TestCase
         assertTrue(!_doc.isDirty());
 
         // document hasn't actually changed from backing store so should be false
-        _doc.setChanged(true);
+        _doc.setText("Hello, World");
         assertTrue(!_doc.isDirty());
 
         // document has changed from backing store so should be true
@@ -81,5 +81,5 @@ public class SwiftlyDocumentUnitTest extends TestCase
 
     protected static final String TEXT_ENCODING = "utf8";
     
-    protected SwiftlyDocument _doc;
+    protected SwiftlyTextDocument _doc;
 }

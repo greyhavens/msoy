@@ -32,7 +32,7 @@ import com.threerings.msoy.swiftly.data.DocumentUpdateListener;
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
-import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 import sdoc.SyntaxDocument;
@@ -85,7 +85,7 @@ public class SwiftlyTextPane extends JEditorPane
         setEditable(false);
     }
 
-    public void setDocument (SwiftlyDocument document)
+    public void setDocument (SwiftlyTextDocument document)
     {
         _document = document;
         loadDocumentText();
@@ -339,7 +339,7 @@ public class SwiftlyTextPane extends JEditorPane
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
     protected PathElement _pathElement;
-    protected SwiftlyDocument _document;
+    protected SwiftlyTextDocument _document;
     protected SyntaxDocument _syntaxDoc;
     protected boolean _dontPropagateThisChange;
 

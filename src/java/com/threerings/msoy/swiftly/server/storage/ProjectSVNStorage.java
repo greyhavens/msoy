@@ -7,6 +7,7 @@ import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
@@ -263,7 +264,7 @@ public class ProjectSVNStorage
         SVNRepository svnRepo;
         OutputStream fileOutput;
         File tempFile;
-        SwiftlyDocument swiftlyDoc;
+        SwiftlyTextDocument swiftlyDoc;
 
         try {
             tempFile = File.createTempFile("swiftly-file", ".svnstorage");
@@ -284,7 +285,7 @@ public class ProjectSVNStorage
         }
 
         try {
-            swiftlyDoc = new SwiftlyDocument(new FileInputStream(tempFile), path, ProjectStorage.TEXT_ENCODING);
+            swiftlyDoc = new SwiftlyTextDocument(new FileInputStream(tempFile), path, ProjectStorage.TEXT_ENCODING);
         } catch (IOException ioe) {
             throw new ProjectStorageException.InternalError("Failure instantiating SwiftlyDocument: " +
                 ioe, ioe);            

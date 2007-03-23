@@ -20,7 +20,7 @@ import com.threerings.presents.dobj.DSet;
  * Text is stored in the provided encoding, and each document retains an
  * unmodified copy of its initial data to allow for delta generation.
  */
-public class SwiftlyDocument
+public abstract class SwiftlyDocument
     implements DSet.Entry
 {    
     /** Uniquely identifies this document element in the distributed state. */
@@ -30,101 +30,11 @@ public class SwiftlyDocument
     {
     }
 
-    /**
-     * Instantiate a new, blank SwiftlyDocument.
-     */
-    public SwiftlyDocument (PathElement path, String encoding)
-        throws IOException
-    {
-        this(null, path, encoding);
-    }
-
-    /**
-     * Instantiate a new SwiftlyDocument. Passing null for the InputStream data creates
-     * a new blank document.
-     */
-    public SwiftlyDocument (InputStream data, PathElement path, String encoding)
-        throws IOException
-    {
-        StringBuffer textBuffer;
-        FileOutputStream fileOutput;
-        byte[] buf = new byte[1024];
-        int len;
-
-        // Store the pathelement
-        _path = path;
-
-        // Load and save the base document data.
-        // TODO: Stack of deltas and a mmap()'d base document, such that we
-        // don't waste RAM storing the whole file in memory.
-        _backingStore = File.createTempFile("swiftlydocument", ".basefile");
-        _backingStore.deleteOnExit();
-
-        textBuffer = new StringBuffer();
-        fileOutput = new FileOutputStream(_backingStore);
-        
-        // text will remain blank if this is a new document
-        _text = "";
-        if (data != null) {
-            while ((len = data.read(buf)) > 0) {
-                // Write to our base file backing
-                fileOutput.write(buf, 0, len);
-
-                // Write to the memory buffer too, oh boy
-                textBuffer.append(new String(buf, 0, len, encoding));
-            }
-            _text = textBuffer.toString();
-        }
-
-        _encoding = encoding;
-    }
-
     /** Commit the in memory data to the file backing. */
-    public void commit ()
-        throws IOException
-    {
-        InputStream data = getModifiedData();
-        FileOutputStream fileOutput = new FileOutputStream(_backingStore);
-        byte[] buf = new byte[1024];
-        int len;
-
-        while ((len = data.read(buf)) > 0) {
-            // Write to our base file backing
-            fileOutput.write(buf, 0, len);
-        }
-    }
-
-    public String getText ()
-    {
-        return _text;
-    }
-
-    public void setText (String text)
-    {
-        _text = text;
-    }
-
-    public void setChanged (boolean changed)
-    {
-        _changed = changed;
-    }
-
-    public boolean wasChanged ()
-    {
-        return _changed;
-    }
+    public abstract void commit () throws IOException;
 
     /** Check to see if the document has changed */
-    public boolean isDirty ()
-        throws IOException
-    {
-        // first check to see if the document has received any user input
-        if (_changed) {
-            // if input was received, perform the expensive compare
-            return !IOUtils.contentEquals(getOriginalData(), getModifiedData());
-        }
-        return false;
-    }
+    public abstract boolean isDirty () throws IOException;
 
     public Comparable getKey ()
     {
@@ -136,24 +46,11 @@ public class SwiftlyDocument
         return _path;
     }
 
-    public String getTextEncoding ()
-    {
-        return _encoding;
-    }
-
     /** Returns an stream corresponding to the unmodified data. */
-    public InputStream getOriginalData ()
-        throws IOException
-    {
-        return new FileInputStream(_backingStore);
-    }
+    public abstract InputStream getOriginalData () throws IOException;
 
     /** Returns an InputStream corresponding to the modified data. */
-    public InputStream getModifiedData ()
-        throws IOException
-    {
-        return new ByteArrayInputStream(_text.getBytes(_encoding));
-    }
+    public abstract InputStream getModifiedData () throws IOException;
 
     /**
      * After serialization, call lazarus with the DSet of associated pathElements
@@ -187,31 +84,6 @@ public class SwiftlyDocument
     {
         return _path.getName();
     }
-
-    /** Be sure to delete our backing store. */
-    protected void finalize ()
-        throws Throwable
-    {
-        try {
-            if (_backingStore != null) {
-                _backingStore.delete();                
-            }
-        } finally {
-            super.finalize();
-        }
-    }
-
-    /** Document contents, ineffeciently stored entirely in memory. */
-    protected String _text;
-
-    /** If this document has received any input. */
-    protected boolean _changed = false;
-
-    /** Unmodified disk-backing of the document data. */
-    protected transient File _backingStore = null;
-
-    /** Text encoding. */
-    protected transient String _encoding;
 
     /** Reference to our associated path element. */
     protected transient PathElement _path = null;
