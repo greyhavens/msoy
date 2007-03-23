@@ -3,8 +3,10 @@
 
 package client.editem;
 
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -13,22 +15,14 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Decor;
 
+import client.util.FlashClients;
+
+
 /**
  * A class for creating and editing {@link Decor} digital items.
  */
 public class DecorEditor extends ItemEditor
 {
-    // @Override from ItemEditor
-    public void setItem (Item item)
-    {
-        super.setItem(item);
-        _decor = (Decor)item;
-        _width.setText("" + _decor.width);
-        _height.setText("" + _decor.height);
-        _depth.setText("" + _decor.depth);
-        _horizon.setText("" + _decor.horizon);
-    }
-
     // @Override from ItemEditor
     public Item createBlankItem ()
     {
@@ -49,8 +43,8 @@ public class DecorEditor extends ItemEditor
         FlexTable bits = new FlexTable();
         tabs.add(bits, CEditem.emsgs.gameConfigTab());
 
-        // TODO: it'd be nice to force-format this text field for integers, or something.
         int row = 0;
+
         bits.setText(row, 0, CEditem.emsgs.decorWidth());
         bits.setWidget(row++, 1, bind(_width = new TextBox(), new Binder() {
             public void textUpdated (String text) {
@@ -64,8 +58,6 @@ public class DecorEditor extends ItemEditor
                 _decor.height = asShort(text);
             }
         }));
-
-        _height.setEnabled(false); // Don't let users edit this value just yet...
 
         bits.setText(row, 0, CEditem.emsgs.decorDepth());
         bits.setWidget(row++, 1, bind(_depth = new TextBox(), new Binder() {
@@ -81,40 +73,81 @@ public class DecorEditor extends ItemEditor
             }
         }));
 
-        /*
-        // seated continuous games are disabled for now.  re-instate the commented code to
-        // re-enable them as an option.
-        bits.setText(row, 0, CEditem.emsgs.gameGameType());
-        bits.setWidget(row++, 1, bind(_gameType = new ListBox(), new Binder() {
-            public void valueChanged () {
-                _game.gameType = (byte) _gameType.getSelectedIndex();
-            }
-        }));
-        for (int ii = 0; ii < Game.GAME_TYPES; ii++) {
-            _gameType.addItem(CEditem.dmsgs.getString("gameType" + ii));
-        }
-        _gameType.addItem(CEditem.dmsgs.getString("gameType0"));
-        _gameType.addItem(CEditem.dmsgs.getString("gameType2"));
+        bits.setText(row, 0, CEditem.emsgs.decorPreview());
+        bits.setWidget(row++, 1, _viewer = FlashClients.createDecorViewer());
 
-        bits.setText(row, 0, CEditem.emsgs.gameWatchable());
-        _watchable = new CheckBox();
-        _watchable.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
-                if (_game != null) {
-                    DeferredCommand.add(new Command() {
-                        public void execute () {
-                            _game.unwatchable = !_watchable.isChecked();
-                            updateSubmittable();
-                        }
-                    });
-                }
-            }
-        });
-        bits.setWidget(row++, 1, _watchable);
-        */
+        configureCallbacks (this);
 
+        // don't let users edit these values in the browser
+        _height.setEnabled(false); 
+        _depth.setEnabled(false); 
+        _horizon.setEnabled(false);
     }
 
+    // @Override from ItemEditor
+    public void setItem (Item item)
+    {
+        super.setItem(item);
+        _decor = (Decor)item;
+        updateFields();
+        sendDecorUpdateToFlash();
+    }
+
+    /**
+     * When the decor item had changed, updates numeric values being displayed.
+     */
+    protected void updateFields ()
+    {
+        _width.setText("" + _decor.width);
+        _height.setText("" + _decor.height);
+        _depth.setText("" + _decor.depth);
+        _horizon.setText("" + _decor.horizon);
+    }
+    
+    /**
+     * Configures foreign interface that will be called by Flash.
+     */
+    protected static native void configureCallbacks (DecorEditor editor) /*-{
+        $wnd.updateDecorInit = function () {
+            editor.@client.editem.DecorEditor::sendDecorUpdateToFlash()();
+        };
+        $wnd.updateDecor = function (width, height, depth, horizon, type) {
+            editor.@client.editem.DecorEditor::updateDecorFromFlash(SSSFB)(width, height, depth, horizon, type);
+        };
+    }-*/;
+
+    /**
+     * Receives a number of values from DecorViewer, and updates the Decor item accordingly.
+     */
+    protected void updateDecorFromFlash (
+        short width, short height, short depth, float horizon, byte type)
+    {
+        _decor.width = width;
+        _decor.height = height;
+        _decor.depth = depth;
+        _decor.horizon = horizon;
+        _decor.type = type;
+        updateFields();
+    }
+
+    /**
+     * Populates DecorViewer fields.
+     */
+    protected void sendDecorUpdateToFlash ()
+    {
+        decorUpdateHelper(_decor.width, _decor.height, _decor.depth, _decor.horizon, _decor.type);
+    }
+
+    protected static native void decorUpdateHelper (
+        int width, int height, int depth, float horizon, byte type) /*-{
+        var viewer = $doc.getElementById("decorViewer");
+        if (viewer) {
+            viewer.updateParameters(width, height, depth, horizon, type);
+        }
+    }-*/;
+
+        
+        
     // mr. utility, stolen from game editor
     protected static short asShort (String s)
     {
@@ -138,5 +171,6 @@ public class DecorEditor extends ItemEditor
     protected Decor _decor;
     protected TextBox _width, _height, _depth, _horizon;
     protected ListBox _type;
+    protected HTML _viewer;
 
 }

@@ -72,6 +72,12 @@ public class FlashClients
             "video=" + URL.encodeComponent(videoPath));
     }
 
+    public static HTML createDecorViewer ()
+    {
+        return WidgetUtil.createFlashContainer(
+            "decorViewer", "/clients/decorviewer.swf", 300, 300, "");
+    }
+
     /**
      * Calls into the Flash client and gets the list of our friends.
      */

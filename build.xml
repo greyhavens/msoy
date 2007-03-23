@@ -446,6 +446,21 @@
     <copy file="${deploy.dir}/videoviewer.swf" todir="pages/clients"/>
   </target>
 
+  <!-- builds our awesome decor viewer -->
+  <target name="decorviewer" depends="asprepare,aslib">
+    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="etc/msoy-config.xml"/>
+      <arg value="-compiler.optimize"/>
+      <arg value="-compiler.source-path=${asrc.dir}/"/>
+      <arg value="-output"/>
+      <arg value="${deploy.dir}/decorviewer.swf"/>
+      <arg value="-file-specs"/>
+      <arg value="${asrc.dir}/DecorViewer.mxml"/>
+    </exec>
+    <copy file="${deploy.dir}/decorviewer.swf" todir="pages/clients"/>
+  </target>
+
   <!-- builds the ActionScript documention -->
   <target name="asdoc">
     <mkdir dir="${deploy.dir}/asdoc"/>
@@ -722,7 +737,7 @@
   </target>
 
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="avatarviewer,videoviewer">
+  <target name="flashapps" depends="avatarviewer,videoviewer,decorviewer">
     <antcall target="asclient"><param name="type" value="world"/></antcall>
   </target>
 

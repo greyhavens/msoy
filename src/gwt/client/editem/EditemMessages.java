@@ -24,9 +24,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameTableTab();
 
   /**
-   * Translated "Room horizon level, between 0 and 1".
+   * Translated "Horizon level".
    * 
-   * @return translated "Room horizon level, between 0 and 1"
+   * @return translated "Horizon level"
    * @gwt.key decorHorizon
    */
   String decorHorizon();
@@ -64,9 +64,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String errTableNotImage();
 
   /**
-   * Translated "Room width, in pixels".
+   * Translated "Width, in pixels".
    * 
-   * @return translated "Room width, in pixels"
+   * @return translated "Width, in pixels"
    * @gwt.key decorWidth
    */
   String decorWidth();
@@ -104,9 +104,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String errPetNotFlash();
 
   /**
-   * Translated "Room depth, in pixels".
+   * Translated "Depth, in pixels".
    * 
-   * @return translated "Room depth, in pixels"
+   * @return translated "Depth, in pixels"
    * @gwt.key decorDepth
    */
   String decorDepth();
@@ -176,9 +176,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String petMainTab();
 
   /**
-   * Translated "Room height, in pixels".
+   * Translated "Height, in pixels".
    * 
-   * @return translated "Room height, in pixels"
+   * @return translated "Height, in pixels"
    * @gwt.key decorHeight
    */
   String decorHeight();
@@ -262,6 +262,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key audioMainTab
    */
   String audioMainTab();
+
+  /**
+   * Translated "Preview".
+   * 
+   * @return translated "Preview"
+   * @gwt.key decorPreview
+   */
+  String decorPreview();
 
   /**
    * Translated "Head Shot Media".
