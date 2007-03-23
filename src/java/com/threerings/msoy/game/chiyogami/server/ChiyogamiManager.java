@@ -29,6 +29,7 @@ import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.web.Item;
@@ -57,11 +58,11 @@ public class ChiyogamiManager extends GameManager
         addDelegate(_worldDelegate = new WorldGameManagerDelegate(this));
     }
 
-    public void setActions (BodyObject player, String[] actions)
+    public void setStates (BodyObject player, String[] states)
     {
-        _playerActions.put(player.getOid(), actions);
+        _playerStates.put(player.getOid(), states);
 
-        updatePlayerAction(player);
+        updatePlayerState(player);
     }
 
     @Override
@@ -120,7 +121,7 @@ public class ChiyogamiManager extends GameManager
         super.gameWillStart();
 
         // all player actions must be re-populated
-        _playerActions.clear();
+        _playerStates.clear();
     }
 
     @Override
@@ -283,7 +284,7 @@ public class ChiyogamiManager extends GameManager
         double angle = Math.atan2(x - .5, z - .5);
         int degrees = (int) Math.round(angle * 180 / Math.PI);
         moveBody(body, x, z, degrees);
-        updatePlayerAction(body);
+        updatePlayerState(body);
     }
 
     protected void bossSpeak (String utterance)
@@ -291,25 +292,24 @@ public class ChiyogamiManager extends GameManager
         SpeakProvider.sendSpeak(_roomObj, _bossObj.username, null, utterance);
     }
 
-    // TODO: use states, not actions
-    protected void updatePlayerAction (BodyObject player)
+    protected void updatePlayerState (BodyObject player)
     {
-        String[] actions = _playerActions.get(player.getOid());
-        if (actions == null || actions.length == 0) {
+        String[] states = _playerStates.get(player.getOid());
+        if (states == null || states.length <= 1) {
             return;
         }
 
-        // trigger the first action, or the first one that starts with dance
+        // trigger the second state, or the first one that starts with dance
         // TODO: levels of dancing
-        String action = actions[0];
-        for (String act : actions) {
-            if (act.toLowerCase().startsWith("dance")) {
-                action = act;
+        String state = states[1];
+        for (String st : states) {
+            if (st.toLowerCase().startsWith("dance")) {
+                state = st;
                 break;
             }
         }
 
-        updateAction(player.getOid(), action);
+        updateState(player, state);
     }
 
     protected void updateBossAction ()
@@ -325,6 +325,14 @@ public class ChiyogamiManager extends GameManager
             action, null, true);
     }
 
+    /**
+     * Update the state of the specified player.
+     */
+    protected void updateState (BodyObject body, String state)
+    {
+        _roomMgr.setState((MsoyBodyObject) body, state);
+    }
+
     @Override
     protected void tick (long tickStamp)
     {
@@ -333,11 +341,13 @@ public class ChiyogamiManager extends GameManager
         if (!_gameObj.isInPlay()) {
             return;
         }
+
+        // TODO: maybe here is where we update their instantaneous performance
         int numPlayers = _gameObj.occupants.size();
         for (int ii = 0; ii < numPlayers; ii++) {
             BodyObject player = (BodyObject) MsoyServer.omgr.getObject(
                 _gameObj.occupants.get(ii));
-            updatePlayerAction(player);
+            updatePlayerState(player);
         }
         updateBossAction();
     }
@@ -418,8 +428,8 @@ public class ChiyogamiManager extends GameManager
     /** The boss object. */
     protected BossObject _bossObj;
 
-    /** A mapping of playerOid -> String[] of their actions. */
-    protected HashIntMap<String[]> _playerActions = new HashIntMap<String[]>();
+    /** A mapping of playerOid -> String[] of their states. */
+    protected HashIntMap<String[]> _playerStates = new HashIntMap<String[]>();
 
     protected String[] _bossActions = new String[] { "Stop", "Dance 1" };
 

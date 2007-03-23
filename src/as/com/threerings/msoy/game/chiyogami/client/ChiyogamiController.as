@@ -94,16 +94,17 @@ public class ChiyogamiController extends GameController
         _worldDelegate.setAvatarControl(!inPlay);
 
         if (inPlay) {
-            // scrape our actions out and send them off to the server
-            var myActions :Array = _worldDelegate.getMyActions();
+            // TODO: filter dance-worthy actions/states here, or always on the server???
 
-            // TODO: filter dance actions here???
-            // for now, we just send a message with our actions
+//            var myActions :Array = _worldDelegate.getMyActions();
+//            var actions :TypedArray = TypedArray.create(String);
+//            actions.addAll(myActions);
 
-            var actions :TypedArray = TypedArray.create(String);
-            actions.addAll(myActions);
+            var myStates :Array = _worldDelegate.getMyStates();
+            var states :TypedArray = TypedArray.create(String);
+            states.addAll(myStates);
 
-            _gameObj.manager.invoke("setActions", actions);
+            _gameObj.manager.invoke("setStates", states);
         }
     }
 

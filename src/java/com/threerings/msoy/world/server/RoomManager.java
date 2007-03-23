@@ -87,6 +87,37 @@ public class RoomManager extends SpotSceneManager
         }
     }
 
+    /**
+     * Forcibly change the state of an actor.
+     */
+    public void setState (MsoyBodyObject actor, String state)
+    {
+        // update the state in the body object
+        actor.avatarState = state;
+
+        // update the occupant info
+        OccupantInfo occInfo = getOccupantInfo(actor.getOid());
+        WorldOccupantInfo winfo = (WorldOccupantInfo) occInfo;
+        if (ObjectUtil.equals(winfo.getState(), state)) {
+            // no change, no event
+            return;
+        }
+
+        // TODO: consider, instead of updating the whole dang occInfo,
+        // of dispatching a custom event that will update the state
+        // and serve as the trigger event to usercode...
+        if (occInfo instanceof WorldMemberInfo) {
+            ((WorldMemberInfo) occInfo).state = state;
+
+        } else if (occInfo instanceof WorldActorInfo) {
+            ((WorldActorInfo) occInfo).state = state;
+
+        } else {
+            log.warning("Wtf kind of occupant info is this: " + occInfo);
+        }
+        updateOccupantInfo(occInfo);
+    }
+
     // documentation inherited from RoomProvider
     public void requestControl (ClientObject caller, ItemIdent item)
     {
@@ -156,30 +187,8 @@ public class RoomManager extends SpotSceneManager
             return;
         }
 
-        // update the state in the body object
-        actor.avatarState = state;
-
-        // update the occupant info
-        OccupantInfo occInfo = getOccupantInfo(actorOid);
-        WorldOccupantInfo winfo = (WorldOccupantInfo) occInfo;
-        if (ObjectUtil.equals(winfo.getState(), state)) {
-            // no change, no event
-            return;
-        }
-
-        // TODO: consider, instead of updating the whole dang occInfo,
-        // of dispatching a custom event that will update the state
-        // and serve as the trigger event to usercode...
-        if (occInfo instanceof WorldMemberInfo) {
-            ((WorldMemberInfo) occInfo).state = state;
-
-        } else if (occInfo instanceof WorldActorInfo) {
-            ((WorldActorInfo) occInfo).state = state;
-
-        } else {
-            log.warning("Wtf kind of occupant info is this: " + occInfo);
-        }
-        updateOccupantInfo(occInfo);
+        // call the public (non-invocation service) method to enact it
+        setState(actor, state);
     }
 
     // documentation inherited from RoomProvider
