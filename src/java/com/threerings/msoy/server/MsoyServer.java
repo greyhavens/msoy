@@ -120,7 +120,7 @@ public class MsoyServer extends WhirledServer
     public static MemoryRepository memoryRepo;
 
     /** Manages the persistent repository of stats. */
-    public static StatRepository statrepo;
+    public static StatRepository statRepo;
 
     /** The Msoy item manager. */
     public static ItemManager itemMan = new ItemManager();
@@ -302,7 +302,7 @@ public class MsoyServer extends WhirledServer
         groupRepo = new GroupRepository(conProv);
         swiftlyRepo = new SwiftlyRepository(conProv);
         memoryRepo = new MemoryRepository(conProv);
-        statrepo = new StatRepository(conProv);
+        statRepo = new StatRepository(conProv);
 
         // create and set up our configuration registry and admin service
         confReg = new DatabaseConfigRegistry(conProv, invoker);

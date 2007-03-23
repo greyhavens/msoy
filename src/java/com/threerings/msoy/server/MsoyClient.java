@@ -100,7 +100,7 @@ public class MsoyClient extends WhirledClient
                     // write out any modified stats
                     Stat[] statArr = new Stat[stats.size()];
                     stats.toArray(statArr);
-                    MsoyServer.statrepo.writeModified(name.getMemberId(), statArr);
+                    MsoyServer.statRepo.writeModified(name.getMemberId(), statArr);
 
                     // use a naive session length for now, ignoring web activity
                     MsoyServer.memberRepo.noteSessionEnded(

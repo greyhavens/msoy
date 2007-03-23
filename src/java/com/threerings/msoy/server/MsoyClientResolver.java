@@ -79,7 +79,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.setHomeSceneId(member.homeSceneId);
 
         // load up this member's persistent stats
-        List<Stat> stats = MsoyServer.statrepo.loadStats(member.memberId);
+        List<Stat> stats = MsoyServer.statRepo.loadStats(member.memberId);
         userObj.stats = new StatSet(stats.iterator());
 
         // calculate flow evaporation since last logon
