@@ -121,13 +121,12 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Loads up the member record associated with the specified account.  Returns null if no
-     * matching record could be found. The record will be fetched from the cache if possible and
-     * cached if not.
+     * matching record could be found.
      */
     public MemberRecord loadMember (String accountName)
         throws PersistenceException
     {
-        return load(MemberRecord.class, MemberRecord.ACCOUNT_NAME, accountName);
+        return load(MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME, accountName));
     }
 
     /**
