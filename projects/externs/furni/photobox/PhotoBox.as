@@ -6,7 +6,10 @@ package {
 import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.display.Shape;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
+
+import flash.filters.ColorMatrixFilter;
 
 import flash.text.TextField;
 import flash.text.TextFieldType;
@@ -100,14 +103,24 @@ public class PhotoBox extends Sprite
         logo.y = bar.y + ((BAR_HEIGHT - logo.height) / 2);
         addChild(logo);
 
-        var tagWidths :int = (_width - (PAD * 4) - logo.width) / 2;
+        var stop :DisplayObject = DisplayObject(new STOP());
+        var downStop :DisplayObject = DisplayObject(new STOP());
+        downStop.x = 1;
+        downStop.y = 1;
+
+        _stopButton = new SimpleButton(stop, stop, downStop, stop);
+        _stopButton.x = logo.width + (PAD * 2);
+        _stopButton.y = bar.y + ((BAR_HEIGHT - _stopButton.height) / 2);
+        _stopButton.addEventListener(MouseEvent.CLICK, handleStopPressed);
+        addChild(_stopButton);
+
+        var tagWidths :int = (_width - (PAD * 5) - logo.width - _stopButton.width) / 2;
 
         var format :TextFormat = new TextFormat();
         format.size = 16;
 
         _tagEntry = new TextField();
         _tagEntry.defaultTextFormat = format;
-        _tagEntry.type = TextFieldType.INPUT;
         _tagEntry.text = PROMPT;
         _tagEntry.height = _tagEntry.textHeight + 4;
         _tagEntry.x = _width - PAD - tagWidths;
@@ -118,7 +131,7 @@ public class PhotoBox extends Sprite
         _tagDisplay.defaultTextFormat = format;
         _tagDisplay.selectable = false;
         _tagDisplay.height = _tagEntry.height;
-        _tagDisplay.x = logo.width + (PAD * 2);
+        _tagDisplay.x = logo.width + _stopButton.width + (PAD * 3);
         _tagDisplay.y = logo.y;
         _tagDisplay.width = tagWidths;
 
@@ -154,6 +167,9 @@ public class PhotoBox extends Sprite
         _overlay = new Sprite();
         addChild(_overlay);
 
+        // configure our 'stopped' status
+        updateStopped();
+
         // request control, or pretend we're it
         if (_furni.isConnected()) {
             _furni.requestControl();
@@ -169,7 +185,7 @@ public class PhotoBox extends Sprite
      */
     protected function handleTagEntryFocus (event :FocusEvent) :void
     {
-        if (_readyForNewTags) {
+        if (_readyForNewTags && !_isStopped) {
             if (event.type == FocusEvent.FOCUS_IN) {
                 _tagEntry.text = "";
 
@@ -310,22 +326,79 @@ public class PhotoBox extends Sprite
     protected function showPhoto (photo :Array) :void
     {
         clearLoader();
-        var url :String = String(photo[0]);
-        var imgWidth :Number = Number(photo[1]);
-        var imgHeight :Number = Number(photo[2]);
-        _displayPageURL = String(photo[3]);
-        _tagDisplay.text = String(photo[4]);
+        _showingPhoto = photo;
+
+        // if it's our personal photo, clear it 
+        if ((_ourReadyPhoto != null) && (_showingPhoto[0] == _ourReadyPhoto[0])) {
+            _ourReadyPhoto = null;
+        }
+
+        if (!_isStopped) {
+            enactShowPhoto();
+        }
+    }
+
+    /**
+     * Actually show the _showingPhoto. This is like the opposite of clearLoader.
+     */
+    protected function enactShowPhoto () :void
+    {
+        if (_showingPhoto == null) {
+            return;
+        }
+
+        var url :String = String(_showingPhoto[0]);
+        var imgWidth :Number = Number(_showingPhoto[1]);
+        var imgHeight :Number = Number(_showingPhoto[2]);
+        // _showingPhoto[3] is the page url at flickr
+        _tagDisplay.text = String(_showingPhoto[4]);
 
         _loader.x = (_width - imgWidth) / 2;
         _loader.y = (_height - BAR_HEIGHT - imgHeight);
         _overlay.x = _loader.x;
         _overlay.y = _loader.y;
         _loader.load(new URLRequest(url));
+    }
 
-        // if it's our personal photo, clear it 
-        if ((_ourReadyPhoto != null) && (url == _ourReadyPhoto[0])) {
-            _ourReadyPhoto = null;
+    /**
+     * Clear any resources from the loader and prepare it to load
+     * another photo, or be unloaded.
+     */
+    protected function clearLoader () :void
+    {
+        try {
+            _loader.close();
+        } catch (e :Error) {
+            // nada
         }
+        _loader.unload();
+        _tagDisplay.text = "";
+        _showingPhoto = null;
+        handleMouseRoll(null);
+    }
+
+    /**
+     * Update the look of UI elements based on _stopped.
+     */
+    protected function updateStopped () :void
+    {
+        if (_isStopped) {
+            _stopButton.filters = null;
+            _tagEntry.text = "";
+            _tagEntry.type = TextFieldType.DYNAMIC;
+
+        } else {
+            _stopButton.filters = [ new ColorMatrixFilter([
+                1/3, 1/3, 1/3, 0, 0,
+                1/3, 1/3, 1/3, 0, 0,
+                1/3, 1/3, 1/3, 0, 0,
+                0, 0, 0, 1, 0])
+            ];
+            _tagEntry.type = TextFieldType.INPUT;
+        }
+
+        _tagEntry.type = _isStopped ? TextFieldType.DYNAMIC : TextFieldType.INPUT;
+        _tagEntry.selectable = !_isStopped;
     }
 
     /**
@@ -344,31 +417,32 @@ public class PhotoBox extends Sprite
     }
 
     /**
-     * Clear any resources from the loader and prepare it to load
-     * another photo, or be unloaded.
+     * Handle a press of the stop button.
      */
-    protected function clearLoader () :void
+    protected function handleStopPressed (event :MouseEvent) :void
     {
-        try {
-            _loader.close();
-        } catch (e :Error) {
-            // nada
+        _isStopped = !_isStopped;
+        updateStopped();
+
+        if (_isStopped) {
+            clearLoader();
+        } else {
+            enactShowPhoto();
         }
-        _loader.unload();
-        _displayPageURL = null;
-        handleMouseRoll(null);
+
+        event.updateAfterEvent();
     }
 
     /**
-     * Handle a click.
+     * Handle a click on the Loader.
      */
     protected function handleClick (event :MouseEvent) :void
     {
-        if (_displayPageURL == null) {
+        if (_showingPhoto == null) {
             return;
         }
         try {
-            flash.net.navigateToURL(new URLRequest(_displayPageURL));
+            flash.net.navigateToURL(new URLRequest(String(_showingPhoto[3])));
         } catch (err :Error) {
             trace("Oh my gosh: " + err);
         }
@@ -377,13 +451,13 @@ public class PhotoBox extends Sprite
     protected function handleMouseRoll (event :MouseEvent) :void
     {
         var draw :Boolean = (event == null || event.type == MouseEvent.ROLL_OVER) &&
-            (_displayPageURL != null);
+            (_showingPhoto != null);
 
         with (_overlay.graphics) {
             clear();
             if (draw) {
                 lineStyle(1, 0xFF4040);
-                drawRect(0, 0, _loader.width - 1, _loader.height - 1);
+                drawRect(0, 0, _loader.width, _loader.height);
             }
         }
     }
@@ -471,6 +545,12 @@ public class PhotoBox extends Sprite
     /** The interface through which we make flickr API requests. */
     protected var _flickr :FlickrService;
 
+    /** The little 'stop' button. */
+    protected var _stopButton :SimpleButton;
+
+    /** If true, we're stopped and shouldn't show photos. */
+    protected var _isStopped :Boolean;
+
     /** The text area to display tags. */
     protected var _tagDisplay :TextField;
 
@@ -500,8 +580,8 @@ public class PhotoBox extends Sprite
     /** The full data for the next photo we'd like to show. */
     protected var _ourReadyPhoto :Array;
 
-    /** The page url for the photo we're currently showing. */
-    protected var _displayPageURL :String;
+    /** The photo we're currently showing. */
+    protected var _showingPhoto :Array;
 
     /** Our actual width/height, determined at runtime. */
     protected var _width :int;
@@ -522,6 +602,9 @@ public class PhotoBox extends Sprite
 
     [Embed(source="skins.swf#background")]
     protected const BAR :Class;
+
+    [Embed(source="stop.png")]
+    protected const STOP :Class;
 
     [Embed(source="skins.swf#textbox")]
     protected const ENTRY_SKIN :Class;

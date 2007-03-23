@@ -14,6 +14,7 @@
     <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-use-network=true"/>
       <arg value="-compiler.source-path=."/>
       <arg value="-file-specs"/>
       <arg value="${app.name}.as"/>
@@ -28,7 +29,7 @@
   </target>
 
   <target name="dist" depends="compile">
-    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/25ba7eb66feca2d48472faa7051a8c611f7850aa.swf"/>
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/f9e16d9a948593ec7161e484bd9ea87dcdcfc087.swf"/>
   </target>
 
 </project>
