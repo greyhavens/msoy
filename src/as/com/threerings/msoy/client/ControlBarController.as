@@ -91,18 +91,19 @@ public class ControlBarController extends Controller
      */
     public function handleMoveBack (trigger :Button) :void
     {
-        // the first item on the back stack is the current location if we're traversing scenes
-        if (_backstack.length > 1) {
+        // if we're not in a scene, just go to the previous scene on the stack
+        if (_ctx.getSceneDirector().getScene() == null) {
+            if (_backstack.length > 0) {
+                CommandEvent.dispatch(trigger, MsoyController.GO_SCENE, _backstack.pop());
+            }
+
+        // otherwise the first item on the back stack is the current location
+        } else if (_backstack.length > 1) {
             // Pop the current location... 
             _backstack.pop();
-            // ...and pop the previous location as well. When we move to previous location,
-            // it will be pushed back on top, as a result of attributeChanged notification.
-            var previousId :Object = _backstack.pop();
-            CommandEvent.dispatch(trigger, MsoyController.GO_SCENE, previousId);
-
-        } else {
-            // we're in a game, move back to the lobby
-            _ctx.getLocationDirector().moveBack();
+            // ...and pop the previous location and move to it. When we arrive in the previous
+            // location, it will be pushed back onto the location stack.
+            CommandEvent.dispatch(trigger, MsoyController.GO_SCENE, _backstack.pop());
         }
     }
 
