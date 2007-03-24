@@ -293,8 +293,6 @@ public class ProjectRoomManager extends PlaceManager
                     if (uploadFile.didSucceed()) {
                         // only an exception in the following should set this to false
                         uploadFile.flush();
-                        // create the SwiftlyBinaryDocument and add it and the PathElement
-                        // to the dobj
                         _doc = new SwiftlyBinaryDocument(uploadFile.getFileData(), element);
                     }
                     // remove the temp file no matter what
@@ -307,8 +305,9 @@ public class ProjectRoomManager extends PlaceManager
 
             public void handleResult () {
                 if (_doc != null) {
-                    _roomObj.addSwiftlyDocument(_doc);
+                    // add the path element first to the dset so that lazarus will work
                     _roomObj.addPathElement(element);
+                    _roomObj.addSwiftlyDocument(_doc);
                     listener.requestProcessed();
                 } else {
                     if (_error != null) {
@@ -438,7 +437,7 @@ public class ProjectRoomManager extends PlaceManager
                 // commit each swiftly document in the project that has changed
                 for (SwiftlyDocument doc : _roomObj.documents) {
                     if (doc.isDirty()) {
-                        _storage.putDocument(doc, "Committing this file");
+                        _storage.putDocument(doc, "Automatic Swiftly Commit");
                         docs.add(doc);
                     }
                 }
