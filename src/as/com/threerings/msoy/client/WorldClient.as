@@ -5,6 +5,7 @@ package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
 import flash.display.Stage;
+import flash.display.StageQuality;
 import flash.events.ContextMenuEvent;
 import flash.external.ExternalInterface;
 import flash.geom.Point;
@@ -53,6 +54,13 @@ public class WorldClient extends BaseClient
     public function WorldClient (stage :Stage)
     {
         super(stage);
+
+        // TODO: allow users to choose? I think it's a decision that we should make for them.
+        // Jon speculates that maybe we can monitor the frame rate and automatically shift it,
+        // but noticable jiggles occur when it's switched and I wouldn't want the entire
+        // world to jiggle when someone starts walking, then jiggle again when they stop.
+        // So: for now we just peg it to MEDIUM.
+        stage.quality = StageQuality.MEDIUM;
 
         // set up a context menu that blocks funnybiz on the stage
         var menu :ContextMenu = new ContextMenu();
