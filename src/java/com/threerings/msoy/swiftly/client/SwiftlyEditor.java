@@ -8,9 +8,12 @@ import java.awt.GridLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -188,6 +191,20 @@ public class SwiftlyEditor extends PlacePanel
         return _editorTabs.createCloseCurrentTabAction();
     }
 
+    public Action getPreviewAction ()
+    {
+        if (_previewAction == null) {
+            _previewAction = new AbstractAction(_msgs.get("m.action.preview")) {
+                // from AbstractAction
+                public void actionPerformed (ActionEvent e) {
+                    showPreview();
+                }
+            };
+            _previewAction.setEnabled(false);
+        }
+        return _previewAction;
+    }
+
     public EditorToolBar getToolbar()
     {
         return _toolbar;
@@ -279,6 +296,7 @@ public class SwiftlyEditor extends PlacePanel
             consoleMessage(_msgs.xlate(_roomObj.console));
         } else if (event.getName().equals(ProjectRoomObject.RESULT)) {
             displayBuildResult();
+            _previewAction.setEnabled(true);
         }
     }
 
@@ -338,6 +356,16 @@ public class SwiftlyEditor extends PlacePanel
         _createableFileTypes.add(
             new FileTypes(_msgs.get("m.filetypes." + MediaDesc.TEXT_ACTIONSCRIPT),
                           MediaDesc.mimeTypeToString(MediaDesc.TEXT_ACTIONSCRIPT)));
+    }
+
+    protected void showPreview ()
+    {
+        try {
+            // TODO: show the actual build result URL
+            _ctx.getAppletContext().showDocument(new URL("http://first.whirled.com"), "_blank");
+        } catch (MalformedURLException e) {
+            // TODO: we sent ourselves a bad url? display an error dialog?
+        }
     }
 
     /** Displays the build result on the console */
@@ -450,4 +478,5 @@ public class SwiftlyEditor extends PlacePanel
     protected Console _console;
     protected EditorToolBar _toolbar;
     protected ProjectPanel _projectPanel;
+    protected Action _previewAction;
 }
