@@ -43,23 +43,26 @@ public class FriendsBlurb extends Blurb
 
         } else {
             for (int ii = 0, ll = friends.size(); ii < ll; ii++) {
+                int row = ii / FRIEND_COLUMNS;
+                int col = ii % FRIEND_COLUMNS;
                 FriendEntry friend = (FriendEntry)friends.get(ii);
                 canInvite = canInvite && !(friend.getMemberId() == CProfile.getMemberId());
                 Hyperlink link = Application.memberViewLink(
                     friend.name.toString(), friend.name.getMemberId());
-                _content.setWidget(ii, 0, link);
+                _content.setWidget(row, col, link);
             }
         }
 
         if (canInvite) {
-            Button inviteButton = new Button("Invite To Be Your Friend");
-            inviteButton.addClickListener(new ClickListener() {
+            Button inviteButton = new Button("Invite To Be Your Friend", new ClickListener() {
                 public void onClick (Widget sender) {
                     new MailComposition(_name, "Be my Friend", new FriendInvite.Composer(),
                                         "Let's be buddies!").show();
                 }
             });
-            _content.setWidget(_content.getRowCount(), 0, inviteButton);
+            int row = _content.getRowCount();
+            _content.getFlexCellFormatter().setColSpan(row, 0, FRIEND_COLUMNS);
+            _content.setWidget(row, 0, inviteButton);
         }
     }
 
@@ -76,4 +79,6 @@ public class FriendsBlurb extends Blurb
     }
 
     protected FlexTable _content;
+
+    protected static final int FRIEND_COLUMNS = 3;
 }
