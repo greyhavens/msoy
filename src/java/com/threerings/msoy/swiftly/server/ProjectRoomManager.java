@@ -4,12 +4,16 @@
 package com.threerings.msoy.swiftly.server;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.samskivert.util.Invoker;
 import com.samskivert.util.SerialExecutor;
+import com.samskivert.util.HashIntMap;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.data.ClientObject;
@@ -70,6 +74,8 @@ public class ProjectRoomManager extends PlaceManager
         // Setup the builder.
         _builder = new LocalProjectBuilder(
             project, _storage, flexSdk.getAbsoluteFile(), whirledSdk.getAbsoluteFile());
+
+        _currentUploads = new HashIntMap<UploadFile>();
 
         // Load the project tree from the storage provider
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
@@ -211,27 +217,48 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void startFileUpload (ClientObject caller, PathElement parent,
+    public void startFileUpload (ClientObject caller, PathElement element,
                                  ProjectRoomService.ConfirmListener listener)
     {
         // TODO: use caller.getOid() as the key into a hash where the new path element
         // and its handy buffer will live
-        listener.requestProcessed();
-        // listener.requestFailed("e.start_upload_failed");
+        try {
+            File tempFile =  File.createTempFile("swiftlyupload", ".uploadfile");
+            tempFile.deleteOnExit();
+            UploadFile uploadFile = new UploadFile(element, tempFile);
+            _currentUploads.put(caller.getOid(), uploadFile);
+            listener.requestProcessed();
+        } catch (IOException e) {
+            // TODO: log something as well
+            listener.requestFailed("e.start_upload_failed");
+        }
     }
 
     // from interface ProjectRoomProvider
     public void uploadFile (ClientObject caller, byte[] data)
     {
-        // TODO: append this to a buffer, hopefully on the file system. use caller.getOid()
+        UploadFile uploadFile = _currentUploads.get(caller.getOid());
+        // TODO: freak out if this is not true?
+        if (uploadFile != null) {
+            uploadFile.appendData(data);
+        }
     }
 
     // from interface ProjectRoomProvider
     public void finishFileUpload (ClientObject caller, ProjectRoomService.ConfirmListener listener)
     {
         // TODO: close the buffer. send a failure if anything in uploadFile failed as well
-        listener.requestProcessed();
-        // listener.requestFailed("e.finish_upload_failed");
+        UploadFile uploadFile = _currentUploads.get(caller.getOid());
+        try {
+            uploadFile.flush();
+            File tempFile = uploadFile.getTempFile();
+            tempFile.delete();
+            _currentUploads.remove(caller.getOid());
+            listener.requestProcessed();
+        } catch (IOException e) {
+            // TODO: log something as well
+            listener.requestFailed("e.finish_upload_failed");
+        }
     }
 
     // from interface SetListener
@@ -475,6 +502,49 @@ public class ProjectRoomManager extends PlaceManager
         protected BuildResult _result;
     }
 
+    /** Handles tracking a file upload for a user. */
+    protected class UploadFile
+    {
+        public UploadFile (PathElement element, File tempFile)
+            throws FileNotFoundException
+        {
+            _pathElement = element;
+            _tempFile = tempFile;
+            // true = append data
+            _fileOutput = new FileOutputStream(tempFile, true);
+        }
+
+        public PathElement getPathElement ()
+        {
+            return _pathElement;
+        }
+
+        public File getTempFile ()
+        {
+            return _tempFile;
+        }
+
+        public void appendData (byte[] data)
+        {
+            try {
+                _fileOutput.write(data);
+            } catch (Exception e) {
+                // TODO catch specific exceptions and set a flag in this class
+                // so that the finish upload method can check it.
+            }
+        }
+
+        public void flush ()
+            throws IOException
+        {
+            _fileOutput.flush();
+        }
+
+        protected PathElement _pathElement;
+        protected File _tempFile;
+        protected FileOutputStream _fileOutput;
+    }
+
     protected ProjectRoomObject _roomObj;
     protected ProjectStorage _storage;
     protected LocalProjectBuilder _builder;
@@ -488,4 +558,7 @@ public class ProjectRoomManager extends PlaceManager
 
     /** Server-root relative path to the server build directory. */
     protected static final String LOCAL_BUILD_DIRECTORY = "/data/swiftly/build";
+
+    /** A map from the client OID to the current file being uploaded. */
+    protected HashIntMap<UploadFile> _currentUploads;
 }

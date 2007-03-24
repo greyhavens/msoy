@@ -184,8 +184,10 @@ public class ProjectPanel extends JPanel
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     final File file = fc.getSelectedFile();
-                    PathElement element = getSelectedPathElement();
-                    _roomObj.service.startFileUpload(_ctx.getClient(), element,
+                    // TODO: get the file mime type
+                    PathElement uploadedFile = PathElement.createFile(
+                        file.getName(), getCurrentParent(), "/booched");
+                    _roomObj.service.startFileUpload(_ctx.getClient(), uploadedFile,
                         new ConfirmListener () {
                         // from interface ConfirmListener
                         public void requestProcessed ()
@@ -221,13 +223,7 @@ public class ProjectPanel extends JPanel
      */
     protected void addPathElement (PathElement.Type type)
     {
-        // the parent element is the directory or project the selected element is in, or if
-        // a project or directory is selected, that is the parent element
-        PathElement parentElement = getSelectedPathElement();
-
-        if (parentElement.getType() == PathElement.Type.FILE) {
-            parentElement = parentElement.getParent();
-        }
+        PathElement parentElement = getCurrentParent();
 
         PathElement element = null;
         if (type == PathElement.Type.DIRECTORY) {
@@ -278,6 +274,18 @@ public class ProjectPanel extends JPanel
             return;
         }
         _roomObj.service.deletePathElement(_ctx.getClient(), element.elementId);
+    }
+
+    protected PathElement getCurrentParent ()
+    {
+        // the parent element is the directory or project the selected element is in, or if
+        // a project or directory is selected, that is the parent element
+        PathElement parentElement = getSelectedPathElement();
+
+        if (parentElement.getType() == PathElement.Type.FILE) {
+            parentElement = parentElement.getParent();
+        }
+        return parentElement;
     }
 
     protected void setupToolbar ()
@@ -351,7 +359,7 @@ public class ProjectPanel extends JPanel
         public Object invoke()
             throws Exception
         {
-            // TODO: update a progress bar
+            // TODO: update a modal progress bar
             FileInputStream input = new FileInputStream(_file);
             int len;
             byte[] buf = new byte[262144]; // TODO: magic number

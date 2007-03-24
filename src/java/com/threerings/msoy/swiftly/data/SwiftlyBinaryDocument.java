@@ -15,33 +15,21 @@ import org.apache.commons.io.IOUtils;
 import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
 
 /**
- * Represents a source file in a project and contains the text of the file.
- * Text is stored in the provided encoding, and each document retains an
- * unmodified copy of its initial data to allow for delta generation.
+ * Represents a binary file in a project and contains the data of the file.
+ * Each document retains an unmodified copy of its initial data to allow for delta generation.
  */
-public class SwiftlyTextDocument extends SwiftlyDocument
+public class SwiftlyBinaryDocument extends SwiftlyDocument
 {    
-    public SwiftlyTextDocument ()
+    public SwiftlyBinaryDocument ()
     {
     }
 
     /**
-     * Instantiate a new, blank SwiftlyTextDocument.
+     * Instantiate a new SwiftlyBinaryDocument.
      */
-    public SwiftlyTextDocument (PathElement path, String encoding)
+    public SwiftlyBinaryDocument (InputStream data, PathElement path)
         throws IOException
     {
-        this(null, path, encoding);
-    }
-
-    /**
-     * Instantiate a new SwiftlyDocument. Passing null for the InputStream data creates
-     * a new blank document.
-     */
-    public SwiftlyTextDocument (InputStream data, PathElement path, String encoding)
-        throws IOException
-    {
-        StringBuffer textBuffer;
         FileOutputStream fileOutput;
         byte[] buf = new byte[1024];
         int len;
@@ -55,23 +43,14 @@ public class SwiftlyTextDocument extends SwiftlyDocument
         _backingStore = File.createTempFile("swiftlydocument", ".basefile");
         _backingStore.deleteOnExit();
 
-        textBuffer = new StringBuffer();
         fileOutput = new FileOutputStream(_backingStore);
         
-        // text will remain blank if this is a new document
-        _text = "";
         if (data != null) {
             while ((len = data.read(buf)) > 0) {
                 // Write to our base file backing
                 fileOutput.write(buf, 0, len);
-
-                // Write to the memory buffer too, oh boy
-                textBuffer.append(new String(buf, 0, len, encoding));
             }
-            _text = textBuffer.toString();
         }
-
-        _encoding = encoding;
     }
 
     @Override // from SwiftlyDocument
@@ -87,42 +66,20 @@ public class SwiftlyTextDocument extends SwiftlyDocument
             // Write to our base file backing
             fileOutput.write(buf, 0, len);
         }
-
-        _changed = false;
-    }
-
-    public String getText ()
-    {
-        return _text;
-    }
-
-    public void setText (String text)
-    {
-        _text = text;
-        _changed = true;
     }
 
     @Override // from SwiftlyDocument
     public boolean isDirty ()
         throws IOException
     {
-        // first check to see if the document has received any user input
-        if (_changed) {
-            // if input was received, perform the expensive compare
-            return !IOUtils.contentEquals(getOriginalData(), getModifiedData());
-        }
-        return false;
+        return !IOUtils.contentEquals(getOriginalData(), getModifiedData());
     }
 
     @Override // from SwiftlyDocument
     public void loadInEditor (SwiftlyDocumentEditor editor)
     {
-        editor.editTextDocument(this);
-    }
-
-    public String getTextEncoding ()
-    {
-        return _encoding;
+        // Cannot be displayed or edited
+        return;
     }
 
     @Override // from SwiftlyDocument
@@ -136,7 +93,8 @@ public class SwiftlyTextDocument extends SwiftlyDocument
     public InputStream getModifiedData ()
         throws IOException
     {
-        return new ByteArrayInputStream(_text.getBytes(_encoding));
+        // TODO
+        return new FileInputStream(_backingStore);
     }
 
     /** Be sure to delete our backing store. */
@@ -153,15 +111,6 @@ public class SwiftlyTextDocument extends SwiftlyDocument
         }
     }
 
-    /** Document contents, ineffeciently stored entirely in memory. */
-    protected String _text;
-
-    /** If this document has received any input. */
-    protected boolean _changed = false;
-
     /** Unmodified disk-backing of the document data. */
     protected transient File _backingStore = null;
-
-    /** Text encoding. */
-    protected transient String _encoding;
 }
