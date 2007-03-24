@@ -78,7 +78,7 @@ public class ItemTypePanel extends FlexTable
         _rightBit = null;
         addTab(Item.AVATAR);
         addTab(Item.FURNITURE);
-        addTab(Item.DECOR);
+        // addTab(Item.DECOR); //FIXME ROBERT: disable the tab until it's really ready :)
         addTab(Item.PET);
         addTab(Item.GAME);
         addTab(Item.PHOTO);
