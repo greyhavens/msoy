@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 import com.samskivert.util.Invoker;
 import com.samskivert.util.SerialExecutor;
@@ -197,29 +198,30 @@ public class ProjectRoomManager extends PlaceManager
             public boolean invoke () {
                 try {
                     _doc = _storage.getDocument(element);
-                    _succeeded = true;
                 } catch (ProjectStorageException pse) {
-                    _succeeded = false;
+                    _error = pse;
                 }
                 return true;
             }
 
             public void handleResult () {
-                if (_succeeded) {
+                if (_error == null) {
                     _roomObj.addSwiftlyDocument(_doc);
                     listener.requestProcessed();
                 } else {
+                    log.log(Level.WARNING, "Load document failed [pathElement=" +
+                        element + "].", _error);
                     listener.requestFailed("e.load_document_failed");
                 }
             }
 
             protected SwiftlyDocument _doc;
-            protected boolean _succeeded;
+            protected Exception _error;
         });
     }
 
     // from interface ProjectRoomProvider
-    public void startFileUpload (final ClientObject caller, PathElement element,
+    public void startFileUpload (final ClientObject caller, final PathElement element,
                                  final ConfirmListener listener)
     {
         final UploadFile uploadFile = new UploadFile(element);
@@ -228,24 +230,23 @@ public class ProjectRoomManager extends PlaceManager
             public boolean invoke () {
                 try {
                     uploadFile.initTempFile();
-                    _succeeded = true;
                 } catch (IOException e) {
-                    _succeeded = false;
+                    _error = e;
                 }
                 return true;
             }
 
             public void handleResult () {
-                if (_succeeded) {
+                if (_error == null) {
                     _currentUploads.put(caller.getOid(), uploadFile);
                     listener.requestProcessed();
                 } else {
-                    // TODO: log something as well
+                    log.log(Level.WARNING, "Start upload failed [file=" + element + "].", _error);
                     listener.requestFailed("e.start_upload_failed");
                 }
             }
 
-            protected boolean _succeeded;
+            protected Exception _error;
         });
     }
 
@@ -258,6 +259,7 @@ public class ProjectRoomManager extends PlaceManager
         if (uploadFile == null) {
             return;
         }
+
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 try {
@@ -265,6 +267,8 @@ public class ProjectRoomManager extends PlaceManager
                 } catch (IOException e) {
                     // flag the upload file object as failed
                     uploadFile.setFailed();
+                    log.warning("Append upload data failed [file=" +  uploadFile.getPathElement() +
+                         ", error=" + e + "].");
                 }
                 return true;
             }
@@ -281,41 +285,45 @@ public class ProjectRoomManager extends PlaceManager
             return;
         }
 
+        final PathElement element = uploadFile.getPathElement();
+
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 try {
                     if (uploadFile.didSucceed()) {
                         // only an exception in the following should set this to false
-                        _succeeded = true;
                         uploadFile.flush();
                         // create the SwiftlyBinaryDocument and add it and the PathElement
                         // to the dobj
-                        SwiftlyBinaryDocument doc = new SwiftlyBinaryDocument(
-                            uploadFile.getFileData(), uploadFile.getPathElement());
-                        _roomObj.addSwiftlyDocument(doc);
-                        _roomObj.addPathElement(uploadFile.getPathElement());
-                    } else {
-                        _succeeded = false;
+                        _doc = new SwiftlyBinaryDocument(uploadFile.getFileData(), element);
                     }
                     // remove the temp file no matter what
                     uploadFile.deleteTempFile();
                 } catch (IOException e) {
-                    _succeeded = false;
+                    _error = e;
                 }
                 return true;
             }
 
             public void handleResult () {
-                if (_succeeded) {
+                if (_doc != null) {
+                    _roomObj.addSwiftlyDocument(_doc);
+                    _roomObj.addPathElement(element);
                     listener.requestProcessed();
                 } else {
-                    // TODO: log something as well
+                    if (_error != null) {
+                        log.log(Level.WARNING, "Finish upload failed [file=" +
+                            element + "].", _error);
+                    } else {
+                        log.warning("Upload file failed before finishing [file=" + element + "].");
+                    }
                     listener.requestFailed("e.finish_upload_failed");
                 }
                 _currentUploads.remove(caller.getOid());
             }
 
-            protected boolean _succeeded;
+            protected Exception _error;
+            protected SwiftlyDocument _doc;
         });
     }
 
