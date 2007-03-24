@@ -3,11 +3,18 @@ package com.threerings.msoy.game.client {
 import flash.display.DisplayObject;
 
 import mx.controls.Button;
+import mx.controls.Label;
+
+import mx.containers.Grid;
+import mx.containers.GridItem;
+import mx.containers.GridRow;
 
 import com.threerings.msoy.client.Msgs
 import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.ui.FloatingPanel;
+
+import com.threerings.parlor.data.Table;
 
 import com.threerings.util.CommandEvent;
 
@@ -15,12 +22,11 @@ public class FloatingTableDisplay extends FloatingPanel
 {
     public static const BACK_TO_LOBBY_BUTTON :int = 100;
 
-    public function FloatingTableDisplay (ctx :WorldContext, panel :LobbyPanel)
+    public function FloatingTableDisplay (ctx :WorldContext, panel :LobbyPanel, table :Table)
     {
         super(ctx, Msgs.GAME.get("t.table_display"));
         _panel = panel;
-
-        addButtons(BACK_TO_LOBBY_BUTTON);
+        _table = table;
     }
 
     public function shutdown () :void
@@ -37,6 +43,33 @@ public class FloatingTableDisplay extends FloatingPanel
             x = 10;
             y = 10;
         }
+    }
+
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+
+        //var tableRender :TableRenderer = new TableRenderer();
+        //tableRender.ctx = _ctx;
+        //tableRender.panel = _panel;
+        //addChild(tableRender);
+
+        // this is a shameful hack.  I can't get this damn thing to show a VBox correctly -
+        // so I'm stuffing the VBox into a Grid for now
+        var grid :Grid = new Grid();
+        var row :GridRow = new GridRow();
+        var item :GridItem = new GridItem();
+        //item.addChild(tableRender);
+        var label :Label = new Label();
+        label.text = "Hello Whirled";
+        item.addChild(label);
+        row.addChild(item);
+        grid.addChild(row);
+        addChild(grid);
+
+        //tableRender.data = _table;
+
+        addButtons(BACK_TO_LOBBY_BUTTON);
     }
 
     override protected function createButton (buttonId :int) :Button
@@ -67,7 +100,11 @@ public class FloatingTableDisplay extends FloatingPanel
         }
     }
 
+    /** controlled panel to dispatch LobbyController events on */
     protected var _panel :LobbyPanel;
+
+    /** The table we're displaying */
+    protected var _table :Table;
 
     protected var _hasBeenShutDown :Boolean = false;
 }

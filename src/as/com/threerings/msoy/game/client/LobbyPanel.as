@@ -152,9 +152,9 @@ public class LobbyPanel extends VBox
     {
         _isSeated = isSeated;
         createBtn.enabled = !isSeated;
-        if (_isSeated) {
-            CommandEvent.dispatch(this, LobbyController.LEAVE_LOBBY);
-        }
+        //if (_isSeated) {
+            //CommandEvent.dispatch(this, LobbyController.LEAVE_LOBBY);
+        //}
     }
 
     public function isSeated () :Boolean
@@ -295,7 +295,7 @@ public class LobbyPanel extends VBox
         }
     }
 
-    protected static const LOBBY_PANEL_WIDTH :int = 724; // in px
+    protected static const LOBBY_PANEL_WIDTH :int = 400; // in px
 
     /** Buy one get one free. */
     protected var _ctx :WorldContext;

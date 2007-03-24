@@ -6,7 +6,9 @@ package com.threerings.msoy.game.client {
 import flash.events.Event;
 
 import com.threerings.parlor.client.TableDirector;
+
 import com.threerings.parlor.data.TableConfig;
+import com.threerings.parlor.data.Table;
 
 import com.threerings.parlor.game.data.GameConfig;
 
@@ -77,14 +79,16 @@ public class LobbyController extends Controller implements Subscriber
     public function handleRemovedFromStage (evt :Event) :void
     {
         _panelIsVisible = false;
-        if (_tableDir.isSeated() && !_tableDir.getSeatedTable().inPlay()) {
-            var tableDisplay :FloatingTableDisplay = new FloatingTableDisplay(_mctx, _panel);
-            tableDisplay.open();
-            _mctx.getTopPanel().setTableDisplay(tableDisplay);
-            _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId);
-        } else {
+        var seatedTable :Table = _tableDir.getSeatedTable();
+        //if (_tableDir.isSeated() && !seatedTable.inPlay()) {
+            //var tableDisplay :FloatingTableDisplay = new FloatingTableDisplay(_mctx, _panel, 
+                //seatedTable);
+            //tableDisplay.open();
+            //_mctx.getTopPanel().setTableDisplay(tableDisplay);
+            //_mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId);
+        //} else {
             shutdown();
-        }
+        //}
     }
 
     // from Subscriber
@@ -124,9 +128,9 @@ public class LobbyController extends Controller implements Subscriber
     public function handleLeave (tableId :int) :void
     {
         _tableDir.leaveTable(tableId);
-        if (!_panelIsVisible) {
+        //if (!_panelIsVisible) {
             shutdown();
-        }
+        //}
     }
 
     /**
@@ -142,6 +146,11 @@ public class LobbyController extends Controller implements Subscriber
      */
     public function handleLeaveLobby () :void
     {
+        // TODO TEMP
+        if (_tableDir.isSeated()) {
+            _tableDir.leaveTable(_tableDir.getSeatedTable().tableId);
+        }
+
         _mctx.getTopPanel().clearSidePanel(_panel);
     }
 
