@@ -379,6 +379,13 @@ ListBase
   verticalGap: 0;
 }
 
+.buttonBox {
+  horizontalAlign: right;
+  paddingRight: 5px;
+  paddingTop: 2px;
+  paddingBottom: 2px;
+}
+
 .lobbyLink {
   fontSize: 15;
   verticalAlign: middle;
