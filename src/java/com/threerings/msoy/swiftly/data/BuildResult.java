@@ -5,6 +5,9 @@ package com.threerings.msoy.swiftly.data;
 
 import java.io.File;
 
+import java.net.URL;
+import java.net.MalformedURLException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +32,15 @@ public class BuildResult
     public File getOutputFile ()
     {
         return _outputFile;
+    }
+
+    public void setBuildResultURL (String url) {
+        _buildResultURL = url;
+    }
+
+    public String getBuildResultURL ()
+    {
+        return _buildResultURL;
     }
 
     /** Return the build compiler's output, in the order it was received. */
@@ -59,4 +71,7 @@ public class BuildResult
 
     /** The build output file. */
     protected transient File _outputFile;
+
+    /** The URL of the built artifact. */
+    protected String _buildResultURL;
 }

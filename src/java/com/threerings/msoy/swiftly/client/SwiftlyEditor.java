@@ -361,8 +361,8 @@ public class SwiftlyEditor extends PlacePanel
     protected void showPreview ()
     {
         try {
-            // TODO: show the actual build result URL
-            _ctx.getAppletContext().showDocument(new URL("http://first.whirled.com"), "_blank");
+            _ctx.getAppletContext().showDocument(
+                new URL(_roomObj.result.getBuildResultURL()), "_blank");
         } catch (MalformedURLException e) {
             // TODO: we sent ourselves a bad url? display an error dialog?
         }

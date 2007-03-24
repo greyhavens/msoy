@@ -451,7 +451,7 @@ public class ProjectRoomManager extends PlaceManager
                     FileUtils.deleteDirectory(_buildDir);
                     String url = "http://" + ServerConfig.serverHost + ":" +
                         ServerConfig.getHttpPort() + "/buildresults/" + endResult.getName();
-                    _roomObj.setConsole(MessageBundle.taint(url));
+                    _result.setBuildResultURL(url);
                 } catch (IOException ioe) {
                     // XXX HACK HACK HACK
                 }
