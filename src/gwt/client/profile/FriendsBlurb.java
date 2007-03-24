@@ -26,7 +26,9 @@ public class FriendsBlurb extends Blurb
     // @Override // from Blurb
     protected Panel createContent ()
     {
-        return (_content = new FlexTable());
+        _content = new FlexTable();
+        _content.setWidth("100%");
+        return _content;
     }
 
     // @Override // from Blurb
