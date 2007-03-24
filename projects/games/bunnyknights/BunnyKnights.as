@@ -45,8 +45,8 @@ public class BunnyKnights extends Sprite
 
         mask = square;
 
-        _myIndex = _gameCtrl.getMyIndex();
-        _numPlayers = _gameCtrl.getPlayerCount();
+        _myIndex = _gameCtrl.seating.getMyPosition();
+        _numPlayers = _gameCtrl.seating.getPlayerIds().length;
 
         _world = new Sprite();
         _world.scaleX = 2;
