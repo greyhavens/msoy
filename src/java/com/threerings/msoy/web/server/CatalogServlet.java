@@ -107,14 +107,14 @@ public class CatalogServlet extends MsoyServiceServlet
 
         try {
             final CatalogRecord<ItemRecord> listing = repo.loadListing(ident.itemId);
+            final int flowCost = mrec.isAdmin() ? 0 : listing.flowCost;
 
-            if (mrec.flow < listing.flowCost) {
+            if (mrec.flow < flowCost) {
                 throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
             }
 
             // create the clone row in the database!
-            int cloneId = repo.insertClone(
-                ident.itemId, mrec.memberId, listing.flowCost, listing.goldCost);
+            int cloneId = repo.insertClone(ident.itemId, mrec.memberId, flowCost, listing.goldCost);
 
             // note the new purchase for the item
             repo.nudgeListing(ident.itemId, true);
@@ -124,10 +124,10 @@ public class CatalogServlet extends MsoyServiceServlet
             listing.item.parentId = listing.item.itemId;
             listing.item.itemId = cloneId;
 
-            if (listing.flowCost > 0) {
+            if (flowCost > 0) {
                 // take flow from purchaser
                 int flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
-                    mrec.memberId, listing.flowCost, UserAction.BOUGHT_ITEM + " " + ident.type +
+                    mrec.memberId, flowCost, UserAction.BOUGHT_ITEM + " " + ident.type +
                     " " + ident.itemId, false);
                 // update member's new flow
                 MemberManager.queueFlowUpdated(mrec.memberId, flow);
@@ -149,7 +149,7 @@ public class CatalogServlet extends MsoyServiceServlet
             }
 
             logUserAction(mrec, UserAction.BOUGHT_ITEM, ident.type + " " +
-                          ident.itemId + " " + listing.flowCost + " " + listing.goldCost);
+                          ident.itemId + " " + flowCost + " " + listing.goldCost);
 
             return listing.item.toItem();
             
