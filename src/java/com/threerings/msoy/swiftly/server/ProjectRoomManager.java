@@ -4,9 +4,10 @@
 package com.threerings.msoy.swiftly.server;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,8 @@ import com.samskivert.util.SerialExecutor;
 import com.samskivert.util.HashIntMap;
 import com.threerings.util.MessageBundle;
 
+import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -29,7 +32,6 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
-import com.threerings.msoy.swiftly.client.ProjectRoomService;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.PathElement;
@@ -38,6 +40,7 @@ import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.data.SwiftlyBinaryDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
@@ -126,7 +129,7 @@ public class ProjectRoomManager extends PlaceManager
 
     // from interface ProjectRoomProvider
     public void addDocument (ClientObject caller, PathElement element,
-                             final ProjectRoomService.InvocationListener listener)
+                             final InvocationListener listener)
     {
         // TODO: check access!
 
@@ -173,8 +176,7 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void commitProject (ClientObject caller, String commitMsg,
-                               ProjectRoomService.ConfirmListener listener)
+    public void commitProject (ClientObject caller, String commitMsg, ConfirmListener listener)
         throws InvocationException
     {
         // TODO: check access!
@@ -186,7 +188,7 @@ public class ProjectRoomManager extends PlaceManager
 
     // from interface ProjectRoomProvider
     public void loadDocument (ClientObject caller, final PathElement element,
-                              final ProjectRoomService.ConfirmListener listener)
+                              final ConfirmListener listener)
     {
         // TODO: check access!
 
@@ -217,50 +219,104 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void startFileUpload (ClientObject caller, PathElement element,
-                                 ProjectRoomService.ConfirmListener listener)
+    public void startFileUpload (final ClientObject caller, PathElement element,
+                                 final ConfirmListener listener)
     {
-        // TODO: use caller.getOid() as the key into a hash where the new path element
-        // and its handy buffer will live
-        try {
-            File tempFile =  File.createTempFile("swiftlyupload", ".uploadfile");
-            tempFile.deleteOnExit();
-            UploadFile uploadFile = new UploadFile(element, tempFile);
-            _currentUploads.put(caller.getOid(), uploadFile);
-            listener.requestProcessed();
-        } catch (IOException e) {
-            // TODO: log something as well
-            listener.requestFailed("e.start_upload_failed");
-        }
+        final UploadFile uploadFile = new UploadFile(element);
+
+        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
+            public boolean invoke () {
+                try {
+                    uploadFile.initTempFile();
+                    _succeeded = true;
+                } catch (IOException e) {
+                    _succeeded = false;
+                }
+                return true;
+            }
+
+            public void handleResult () {
+                if (_succeeded) {
+                    _currentUploads.put(caller.getOid(), uploadFile);
+                    listener.requestProcessed();
+                } else {
+                    // TODO: log something as well
+                    listener.requestFailed("e.start_upload_failed");
+                }
+            }
+
+            protected boolean _succeeded;
+        });
     }
 
     // from interface ProjectRoomProvider
-    public void uploadFile (ClientObject caller, byte[] data)
+    public void uploadFile (ClientObject caller, final byte[] data)
     {
-        UploadFile uploadFile = _currentUploads.get(caller.getOid());
+        final UploadFile uploadFile = _currentUploads.get(caller.getOid());
+
         // TODO: freak out if this is not true?
-        // TODO: clearly we do not want this running on the dobj thread. 
-        // add a file operations serial executor which should be used for all three upload methods
-        if (uploadFile != null) {
-            uploadFile.appendData(data);
+        if (uploadFile == null) {
+            return;
         }
+        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
+            public boolean invoke () {
+                try {
+                    uploadFile.appendData(data);
+                } catch (IOException e) {
+                    // flag the upload file object as failed
+                    uploadFile.setFailed();
+                }
+                return true;
+            }
+        });
     }
 
     // from interface ProjectRoomProvider
-    public void finishFileUpload (ClientObject caller, ProjectRoomService.ConfirmListener listener)
+    public void finishFileUpload (final ClientObject caller, final ConfirmListener listener)
     {
-        // TODO: close the buffer. send a failure if anything in uploadFile failed as well
-        UploadFile uploadFile = _currentUploads.get(caller.getOid());
-        try {
-            uploadFile.flush();
-            File tempFile = uploadFile.getTempFile();
-            tempFile.delete();
-            _currentUploads.remove(caller.getOid());
-            listener.requestProcessed();
-        } catch (IOException e) {
-            // TODO: log something as well
-            listener.requestFailed("e.finish_upload_failed");
+        final UploadFile uploadFile = _currentUploads.get(caller.getOid());
+
+        // TODO: freak out if this is not true?
+        if (uploadFile == null) {
+            return;
         }
+
+        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
+            public boolean invoke () {
+                try {
+                    if (uploadFile.didSucceed()) {
+                        // only an exception in the following should set this to false
+                        _succeeded = true;
+                        uploadFile.flush();
+                        // create the SwiftlyBinaryDocument and add it and the PathElement
+                        // to the dobj
+                        SwiftlyBinaryDocument doc = new SwiftlyBinaryDocument(
+                            uploadFile.getFileData(), uploadFile.getPathElement());
+                        _roomObj.addSwiftlyDocument(doc);
+                        _roomObj.addPathElement(uploadFile.getPathElement());
+                    } else {
+                        _succeeded = false;
+                    }
+                    // remove the temp file no matter what
+                    uploadFile.deleteTempFile();
+                } catch (IOException e) {
+                    _succeeded = false;
+                }
+                return true;
+            }
+
+            public void handleResult () {
+                if (_succeeded) {
+                    listener.requestProcessed();
+                } else {
+                    // TODO: log something as well
+                    listener.requestFailed("e.finish_upload_failed");
+                }
+                _currentUploads.remove(caller.getOid());
+            }
+
+            protected boolean _succeeded;
+        });
     }
 
     // from interface SetListener
@@ -507,13 +563,9 @@ public class ProjectRoomManager extends PlaceManager
     /** Handles tracking a file upload for a user. */
     protected class UploadFile
     {
-        public UploadFile (PathElement element, File tempFile)
-            throws FileNotFoundException
+        public UploadFile (PathElement element)
         {
             _pathElement = element;
-            _tempFile = tempFile;
-            // true = append data
-            _fileOutput = new FileOutputStream(tempFile, true);
         }
 
         public PathElement getPathElement ()
@@ -521,19 +573,41 @@ public class ProjectRoomManager extends PlaceManager
             return _pathElement;
         }
 
-        public File getTempFile ()
+        public void deleteTempFile ()
+            throws IOException
         {
-            return _tempFile;
+            _tempFile.delete();
+        }
+
+        public void setFailed ()
+        {
+            _succeeded = false;
+        }
+
+        public boolean didSucceed ()
+        {
+            return _succeeded;
+        }
+
+        public InputStream getFileData ()
+            throws IOException
+        {
+            return new FileInputStream(_tempFile);
+        }
+
+        public void initTempFile ()
+            throws IOException
+        {
+            File tempFile = File.createTempFile("swiftlyupload", ".uploadfile");
+            tempFile.deleteOnExit();
+            _fileOutput = new FileOutputStream(tempFile);
+            _tempFile = tempFile;
         }
 
         public void appendData (byte[] data)
+            throws IOException
         {
-            try {
-                _fileOutput.write(data);
-            } catch (Exception e) {
-                // TODO catch specific exceptions and set a flag in this class
-                // so that the finish upload method can check it.
-            }
+            _fileOutput.write(data);
         }
 
         public void flush ()
@@ -545,6 +619,8 @@ public class ProjectRoomManager extends PlaceManager
         protected PathElement _pathElement;
         protected File _tempFile;
         protected FileOutputStream _fileOutput;
+        /** flag to track if the upload failed at any point */
+        protected boolean _succeeded = true;
     }
 
     protected ProjectRoomObject _roomObj;
