@@ -121,7 +121,7 @@ public class StatusPanel extends FlexTable
         _levels.setVisible(false);
         _mailNotifier.setVisible(false);
 
-        if (DeploymentConfig.devDeployment) {
+//         if (DeploymentConfig.devDeployment) {
             setText(0, 0, "New to Whirled?");
             setHTML(0, 1, "&nbsp;");
             setWidget(0, 2, MsoyUI.createActionLabel("Create an account!", new ClickListener() {
@@ -129,9 +129,9 @@ public class StatusPanel extends FlexTable
                     new CreateAccountDialog(StatusPanel.this).show();
                 }
             }));
-        } else {
-            setText(0, 0, "Welcome to the First Whirled!");
-        }
+//         } else {
+//             setText(0, 0, "Welcome to the First Whirled!");
+//         }
     }
 
     protected void validateSession (String token)
