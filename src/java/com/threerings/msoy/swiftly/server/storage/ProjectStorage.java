@@ -23,6 +23,9 @@ public interface ProjectStorage
     /** Store the given document, creating it if it does not already exist. */
     public void putDocument (SwiftlyDocument document, String logMessage) throws ProjectStorageException;
 
+    /** Delete the given path. */
+    public void deleteDocument (PathElement pathElement, String logMessage) throws ProjectStorageException;
+
     /**
      * Exports the entire project repository to a given file system path. All project files
      * will be created relative to the provided path. */

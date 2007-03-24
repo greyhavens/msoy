@@ -407,6 +407,88 @@ public class ProjectSVNStorage
         }
     }
 
+
+    /** Delete a document from the repository. */
+    public void deleteDocument (PathElement pathElement, String logMessage)
+        throws ProjectStorageException
+    {
+        SVNRepository svnRepo;
+        ISVNEditor editor;
+        SVNCommitInfo commitInfo;
+        long latestRevision;
+        String entryName;
+        String entryPath;
+        String parentPath;
+
+        // Repository-relative paths.
+        entryPath = pathElement.getAbsolutePath();
+        entryName = pathElement.getName();
+        parentPath = new File(entryPath).getParent();
+
+        // Instantiate a reference to the repository, check if
+        // the path exists
+        try {
+            svnRepo = getSVNRepository();
+            latestRevision = svnRepo.getLatestRevision();
+
+            // Does the path exist?
+            SVNNodeKind nodeKind = svnRepo.checkPath(entryPath, latestRevision);
+            if (nodeKind == SVNNodeKind.NONE) {
+                throw new ProjectStorageException.ConsistencyError("Requested delete on a non-existent document path: " +
+                    pathElement);
+            }
+
+            // Fire up the commit editor.
+            editor = svnRepo.getCommitEditor(logMessage, null);
+        } catch (SVNException svne) {
+            throw new ProjectStorageException.InternalError(
+                "Failed to open the storage repository: " + svne, svne);
+        }
+
+        // Delete the file in the repository
+        try {
+            // Open the repository root.
+            editor.openRoot(-1);           
+
+            // Open the enclosing directory.
+            editor.openDir(parentPath, -1);
+
+            // Delete the file.
+            editor.deleteEntry(entryName, latestRevision);
+
+            // Close the directory.
+            editor.closeDir();
+
+            // Close the repository root.
+            editor.closeDir();
+
+            // Commit the whole lot.
+            commitInfo = editor.closeEdit();
+        } catch (SVNException e) {
+            try {
+                // We have to abort the open edit. It can also raise an SVNException!
+                editor.abortEdit();                
+            } catch (SVNException eabort) {
+                throw new ProjectStorageException.InternalError("Failure aborting subversion commit: "
+                    + eabort, eabort);                
+            }
+            
+            // Report failure.
+            throw new ProjectStorageException.InternalError("Failure deleting document: "
+                + e, e);
+        }
+
+        // Validate the commit.
+        if (commitInfo == null) {
+            throw new ProjectStorageException.InternalError("Subversion commit failed, null commit info returned");            
+        }
+
+        if (commitInfo.getNewRevision() == -1) {
+            throw new ProjectStorageException.TransientFailure("Subversion commit failed, file(s) out of date: " + commitInfo.getErrorMessage());
+        }
+    }
+
+
     // from interface ProjectStorage
     public void export (File exportPath)
         throws ProjectStorageException

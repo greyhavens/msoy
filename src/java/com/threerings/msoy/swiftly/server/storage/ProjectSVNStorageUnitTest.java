@@ -121,6 +121,32 @@ public class ProjectSVNStorageUnitTest extends TestCase
         doc = (SwiftlyTextDocument)storage.getDocument(path);
         assertEquals("Modified", doc.getText());
     }
+    
+    public void testDeleteDocument ()
+        throws Exception
+    {
+        ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
+        PathElement path = PathElement.createFile("UnitTest.as", null, null);
+        SwiftlyTextDocument doc;
+        
+        // Get an initial copy of the document
+        doc = (SwiftlyTextDocument)storage.getDocument(path);
+
+        // Modify and commit the changes
+        doc.setText("Modified");
+        storage.putDocument(doc, "Testing");
+
+        // Delete the document
+        storage.deleteDocument(path, "Deleting");
+
+        // Retrieve the document again
+        try {
+            doc = (SwiftlyTextDocument)storage.getDocument(path);
+            fail("The storage engine did not delete the document!");
+        } catch (ProjectStorageException pse) {
+            // It's supposed to fail!
+        }
+    }
 
     public void testGetVNURL ()
         throws Exception
