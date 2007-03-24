@@ -61,7 +61,7 @@ public abstract class ClickCallback
     {
         CShell.log("Callback failure [for=" + _trigger.getText() + "]", cause);
         _trigger.setEnabled(true);
-        new InfoPopup(CShell.serverError(cause)).showNear(_trigger);
+        new InfoPopup(CShell.serverError(cause)).show();
     }
 
     protected Button _trigger;
