@@ -243,13 +243,13 @@ ButtonBar {
 }
 
 .controlBarSpacer { 
-  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
+  backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
   backgroundSize: "100%";
   borderStyle: "none";
 }
 
 .controlBarLocationText {
-  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/location_tile.png");
+  backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/location_tile.png");
   backgroundSize: "100%";
   borderStyle: "none";
 }

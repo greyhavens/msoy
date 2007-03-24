@@ -150,7 +150,7 @@ public class ControlBar extends HBox
         footerLeft.styleName = "controlBarFooterLeft";
         addChild(footerLeft);
 
-        var blank :SkinnableCanvas = new SkinnableCanvas();
+        var blank :Canvas = new Canvas();
         blank.styleName = "controlBarSpacer";
         blank.height = this.height;
         blank.percentWidth = 100;
@@ -161,7 +161,7 @@ public class ControlBar extends HBox
         _goback.styleName = "controlBarButtonGoBack";
         addChild(_goback);
 
-        _loc = new SkinnableCanvasWithText(this.height - 4);
+        _loc = new CanvasWithText(this.height - 4);
         _loc.styleName = "controlBarLocationText";
         _loc.height = this.height;
         _loc.width = 200;
@@ -241,7 +241,7 @@ public class ControlBar extends HBox
     protected var _avatarControlWatcher :ChangeWatcher;
 
     /** Current location label. */
-    protected var _loc :SkinnableCanvasWithText;
+    protected var _loc :CanvasWithText;
 
     /** Bookend image at the other end of name label. */
     protected var _bookend :SkinnableImage;
@@ -297,29 +297,11 @@ internal class SkinnableImage extends Image
 /** Internal: helper class that extends ms.containers.Canvas
     with automatic background loading from the style sheet (e.g. via an
     external style sheet file). */
-[Style(name="backgroundSkin", type="Class", inherit="no")]
-internal class SkinnableCanvas extends Canvas
-{
-    public function SkinnableCanvas ()
-    {
-    }
-
-    override public function styleChanged (styleProp:String) :void
-    {
-        super.styleChanged(styleProp);
-        var cls :Class = getStyle("backgroundSkin");
-        setStyle("backgroundImage", cls);
-    }
-}
-
-/** Internal: helper class that extends ms.containers.Canvas
-    with automatic background loading from the style sheet (e.g. via an
-    external style sheet file). */
-internal class SkinnableCanvasWithText extends SkinnableCanvas
+internal class CanvasWithText extends Canvas
 {
     public var textfield :UITextField;
 
-    public function SkinnableCanvasWithText (height :int)
+    public function CanvasWithText (height :int)
     {
         this.height = height;
         horizontalScrollPolicy = verticalScrollPolicy = ScrollPolicy.OFF;
@@ -350,5 +332,3 @@ internal class SkinnableCanvasWithText extends SkinnableCanvas
         return textfield.text;
     }
 }
-
-
