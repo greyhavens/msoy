@@ -64,9 +64,8 @@ public class EntityControl extends WhirledControl
     }
 
     /**
-     * Triggers an action on this scene object. The action will be properly distributed to the object
-     * running in every client in the scene, resulting in a ACTION_TRIGGERED
-     * event.
+     * Triggers an action on this scene object. The action will be properly distributed to the
+     * object running in every client in the scene, resulting in a ACTION_TRIGGERED event.
      *
      * Note: the name must be a String and may be up to 64 characters.
      * TODO: restriction on size of the argument. It will probably be 1k or something.
@@ -77,8 +76,7 @@ public class EntityControl extends WhirledControl
     }
 
     /**
-     * Send a message to other instances of this entity, resulting
-     * in a MESSAGE_RECEIVED event.
+     * Send a message to other instances of this entity, resulting in a MESSAGE_RECEIVED event.
      *
      * Note: the name must be a String and may be up to 64 characters.
      * TODO: restriction on size of the argument. It will probably be 1k or something.
@@ -109,9 +107,8 @@ public class EntityControl extends WhirledControl
     }
 
     /**
-     * Request to have this instance of the object control all the instances
-     * in the room. The other instances are the same item, running on
-     * other browsers.
+     * Request to have this instance of the object control all the instances in the room. The other
+     * instances are the same item, running on other browsers.
      */
     public function requestControl () :void
     {
@@ -162,8 +159,8 @@ public class EntityControl extends WhirledControl
     }
 
     /**
-     * Set the layout "hotspot" for your item, specified as pixels relative
-     * to (0, 0) the top-left coordinate.
+     * Set the layout "hotspot" for your item, specified as pixels relative to (0, 0) the top-left
+     * coordinate.
      *
      * If unset, the default hotspot will be based off of the SWF dimensions,
      * with x = width / 2, y = height.
