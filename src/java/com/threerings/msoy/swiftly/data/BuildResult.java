@@ -5,9 +5,6 @@ package com.threerings.msoy.swiftly.data;
 
 import java.io.File;
 
-import java.net.URL;
-import java.net.MalformedURLException;
-
 import java.util.ArrayList;
 import java.util.List;
 
