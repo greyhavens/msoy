@@ -239,6 +239,8 @@ public class ProjectRoomManager extends PlaceManager
     {
         UploadFile uploadFile = _currentUploads.get(caller.getOid());
         // TODO: freak out if this is not true?
+        // TODO: clearly we do not want this running on the dobj thread. 
+        // add a file operations serial executor which should be used for all three upload methods
         if (uploadFile != null) {
             uploadFile.appendData(data);
         }

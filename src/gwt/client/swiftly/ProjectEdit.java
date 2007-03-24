@@ -242,7 +242,7 @@ public class ProjectEdit extends BorderedDialog
     }
 
     /**
-     * Get the menus for use by owners when perusing adding collaborators of their project.
+     * Get the menu for use by owners when adding collaborators of their project.
      */
     protected void updateCollabMenu ()
     {
