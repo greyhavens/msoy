@@ -19,15 +19,11 @@ import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
  * Each document retains an unmodified copy of its initial data to allow for delta generation.
  */
 public class SwiftlyBinaryDocument extends SwiftlyDocument
-{    
+{
     @Override // from SwiftlyDocument
     public void init (InputStream data, PathElement path, String encoding, boolean fromRepo)
         throws IOException
     {
-        FileOutputStream fileOutput;
-        byte[] buf = new byte[1024];
-        int len;
-
         // Keep track of important things
         _path = path;
         _fromRepo = fromRepo;
@@ -36,13 +32,12 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
         _backingStore = File.createTempFile("swiftlydocument", ".basefile");
         _backingStore.deleteOnExit();
 
-        fileOutput = new FileOutputStream(_backingStore);
-        
-        if (data != null) {
-            while ((len = data.read(buf)) > 0) {
-                // Write to our base file backing
-                fileOutput.write(buf, 0, len);
-            }
+        // Copy our data into a backing store file
+        FileOutputStream fileOutput = new FileOutputStream(_backingStore);
+        try {
+            IOUtils.copy(data, new FileOutputStream(_backingStore));
+        } finally {
+            fileOutput.close();
         }
     }
 
@@ -50,14 +45,12 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     public void commit ()
         throws IOException
     {
-        InputStream data = getModifiedData();
+        // copy our modified data over our pristine backing store data
         FileOutputStream fileOutput = new FileOutputStream(_backingStore);
-        byte[] buf = new byte[1024];
-        int len;
-
-        while ((len = data.read(buf)) > 0) {
-            // Write to our base file backing
-            fileOutput.write(buf, 0, len);
+        try {
+            IOUtils.copy(getModifiedData(), fileOutput);
+        } finally {
+            fileOutput.close();
         }
     }
 
@@ -105,7 +98,7 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     {
         try {
             if (_backingStore != null) {
-                _backingStore.delete();                
+                _backingStore.delete();
             }
         } finally {
             super.finalize();
