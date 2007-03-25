@@ -141,16 +141,14 @@ public class SwiftlyEditor extends PlacePanel
             }
 
             // Otherwise load the document from the backend.
-            _roomObj.service.loadDocument(_ctx.getClient(), pathElement, new ConfirmListener () {
+            _roomObj.service.loadDocument(_ctx.getClient(), pathElement, new ConfirmListener() {
                 // from interface ConfirmListener
-                public void requestProcessed ()
-                {
+                public void requestProcessed () {
                     SwiftlyDocument doc = getDocumentFromPath(pathElement);
                     doc.loadInEditor(SwiftlyEditor.this);
                 }
                 // from interface ConfirmListener
-                public void requestFailed (String reason)
-                {
+                public void requestFailed (String reason) {
                     showErrorDialog(_msgs.xlate(reason));
                 }
             });
@@ -331,6 +329,7 @@ public class SwiftlyEditor extends PlacePanel
         } else if (event.getName().equals(ProjectRoomObject.RESULT)) {
             displayBuildResult();
             _previewAction.setEnabled(_roomObj.result.getBuildResultURL() != null);
+
         } else if (event.getName().equals(ProjectRoomObject.BUILDING)) {
             _ctrl.buildAction.setEnabled(!_roomObj.building);
         }
