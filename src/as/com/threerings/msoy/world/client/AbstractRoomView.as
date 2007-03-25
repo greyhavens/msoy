@@ -410,8 +410,7 @@ public class AbstractRoomView extends Sprite
     public function updateBackground () :void
     {
         var data :DecorData = _scene.getDecorData();
-        if (_bg != null && data != null && data.itemId != 0)
-        {
+        if (_bg != null && data != null && data.itemId != 0) {
             _bg.update(data);
         }
     }
@@ -434,7 +433,6 @@ public class AbstractRoomView extends Sprite
     public function didLeavePlace (plobj :PlaceObject) :void
     {
         removeAll(_furni);
-
         _roomObj = null;
         _scene = null;
     }
