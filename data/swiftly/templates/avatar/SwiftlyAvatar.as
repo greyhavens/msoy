@@ -5,72 +5,196 @@
 
 package {
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.events.Event;
+import flash.events.TimerEvent;
+
+import flash.filters.GlowFilter;
+
+import flash.media.Sound;
+
+import flash.utils.getTimer; // function import
+import flash.utils.Timer;
 
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
 
-[SWF(width="50", height="50")]
+[SWF(width="333", height="432")]
 public class SwiftlyAvatar extends Sprite
 {
+    /** An action users can select on our avatar. */
+    public static const GLOW_AQUA :String = "Glow aqua";
+
+    /** An action users can select on our avatar. */
+    public static const GLOW_YELLOW :String = "Glow yellow";
+
+    /**
+     * Creates and initializes the avatar.
+     */
     public function SwiftlyAvatar ()
     {
-        // listen for an unload event
-        root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+        // create and add the image
+        _image = (new IMAGE() as DisplayObject);
 
+        // use the imageholder sprite to easily offset the image without
+        // having to worry about the image's offset ever again
+        var imageHolder :Sprite = new Sprite();
+        imageHolder.x = 10;
+        imageHolder.y = 10;
+        imageHolder.addChild(_image);
+        addChild(imageHolder);
+
+        // create the control for whirled communication
         _control = new AvatarControl(this);
+        // add a listener for appearance updates
+        _control.addEventListener(ControlEvent.APPEARANCE_CHANGED, handleAppearanceChanged);
+        // add a listener to hear about speak events
+        _control.addEventListener(ControlEvent.AVATAR_SPOKE, handleSpoke);
 
-        // Uncomment this to be notified when your avatar changes orientation
-        // _control.addEventListener(ControlEvent.APPEARANCE_CHANGED, appearanceChanged);
+        // add custom actions and listen for custom action events
+        _control.registerActions(GLOW_AQUA, GLOW_YELLOW);
+        _control.addEventListener(ControlEvent.ACTION_TRIGGERED, handleAction);
 
-        // Uncomment this to be notified when the player speaks
-        // _control.addEventListener(ControlEvent.AVATAR_SPOKE, avatarSpoke);
+        // When we do speak, we're going to glow purple for 200ms, then stop
+        _glowTimer = new Timer(200, 1);
+        _glowTimer.addEventListener(TimerEvent.TIMER, doneGlowing);
 
-        // Uncomment this to export custom avatar actions
-        // _control.addEventListener(ControlEvent.ACTION_TRIGGERED, handleAction);
-        // _control.setActions("Test action");
-
-        appearanceChanged();
+        // and kick things off by updating the appearance immediately
+        updateAppearance();
     }
 
     /**
-     * This is called when your avatar's orientation changes or when it transitions from not
-     * walking to walking and vice versa.
+     * Handles ControlEvent.APPEARANCE_CHANGED.
      */
-    protected function appearanceChanged (event :Object = null) :void
+    protected function handleAppearanceChanged (event :ControlEvent) :void
     {
-        var orient :Number = _control.getOrientation();
-        var walking :Boolean = _control.isMoving();
-
-        // Draw your avatar here using the appropriate orientation and accounting for whether it is
-        // walking
+        updateAppearance();
     }
 
     /**
-     * This is called when your avatar speaks.
+     * Update the appearance of this avatar.
      */
-    protected function avatarSpoke (event :Object = null) :void
+    protected function updateAppearance () :void
     {
+        var orientation :Number = _control.getOrientation();
+
+        // we assume that our image naturally faces left
+        if (orientation < 180) {
+            // we need to face right
+            _image.x = _image.width;
+            _image.scaleX = -1;
+
+        } else {
+            // normal facing
+            _image.x = 0;
+            _image.scaleX = 1;
+        }
+
+        // see if we need to update our bouncing
+        if (_bouncing != _control.isMoving()) {
+            _bouncing = _control.isMoving();
+            if (_bouncing) {
+                addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+                _bounceStamp = getTimer();
+
+            } else {
+                removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
+                _image.y = 0; // reset to unbouncing
+            }
+        }
     }
 
     /**
-     * This is called when the user selects a custom action exported on your avatar or when any
-     * other trigger event is received.
+     * We've just spoken. Glow purple for a bit.
+     */
+    protected function handleSpoke (event :ControlEvent) :void
+    {
+        startGlowing(0xFF00FF);
+    }
+
+    /**
+     * Glows our avatar with the specified color for a short time.
+     */
+    protected function startGlowing (color :uint) :void
+    {
+        // reset the timer, cancels any pending 'doneGlowing' call.
+        _glowTimer.reset();
+
+        // only set up the filter if we're not in the middle of glowing already
+        if (this.filters == null || this.filters.length == 0) {
+            this.filters = [ new GlowFilter(color, 1, 10, 10) ];
+        }
+
+        // start the timer
+        _glowTimer.start();
+    }
+
+    /**
+     * It's time to stop showing our glow.
+     */
+    protected function doneGlowing (event :TimerEvent) :void
+    {
+        this.filters = null;
+    }
+
+    /**
+     * Called just prior to every frame that is rendered to screen.
+     */
+    protected function handleEnterFrame (event :Event) :void
+    {
+        var now :Number = getTimer();
+        var elapsed :Number = getTimer() - _bounceStamp;
+
+        // compute our bounce
+        _image.y = Math.max(BOUNCE_AMPLITUDE *
+                            Math.sin(elapsed * (Math.PI * 2) / BOUNCE_PERIOD), 0);
+    }
+
+    /**
+     * Handle ACTION_TRIGGERED to play our custom actions.
      */
     protected function handleAction (event :ControlEvent) :void
     {
+        switch (event.name) {
+        case GLOW_AQUA:
+            startGlowing(0x00FFFF);
+            break;
+
+        case GLOW_YELLOW:
+            startGlowing(0xFFFF00);
+            break;
+
+        default:
+            trace("Unknown action: " + event.name);
+            break;
+        }
     }
 
-    /**
-     * This is called when your avatar is unloaded.
-     */
-    protected function handleUnload (event :Event) :void
-    {
-        // stop any sounds, clean up any resources that need it
-    }
+    /** The image we're displaying. */
+    protected var _image :DisplayObject;
 
+    /** The avatar control interface. */
     protected var _control :AvatarControl;
+
+    /** Controls the timing of our glowing. */
+    protected var _glowTimer :Timer;
+
+    /** Are we bouncing? */
+    protected var _bouncing :Boolean;
+
+    /** The timestamp at which we started bouncing. */
+    protected var _bounceStamp :Number;
+
+    /** The amplitude of our bounce, in pixels. */
+    protected static const BOUNCE_AMPLITUDE :int = 10;
+
+    /** The period of our bounce: we do one bounce every 500 milliseconds. */
+    protected static const BOUNCE_PERIOD :int = 500;
+
+    /** The embedded image class. */
+    [Embed(source="avatar.png")]
+    protected static const IMAGE :Class;
 }
 }
