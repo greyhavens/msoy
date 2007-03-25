@@ -72,6 +72,7 @@ public class SwiftlyTextPane extends JEditorPane
         support.addSupport(SyntaxSupport.JAVA_LEXER, this);
         support.setUseDefaultUndoManager(false);
         support.setPrintMarginWidth(PRINT_MARGIN_WIDTH);
+        support.highlightCurrent(false);
         getDocument().putProperty(SyntaxDocument.tabSizeAttribute, new Integer(4));
         // TODO: use the SyntaxSupport anti alias font business
         
