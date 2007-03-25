@@ -100,17 +100,27 @@ public class SwiftlyEditor extends PlacePanel
         _console = new Console(_ctx, this);
         _console.setMinimumSize(new Dimension(0, 0));
 
-        JSplitPane bottomPane =
-            new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chatPanel, _console);
+        JSplitPane bottomPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chatPanel, _console);
         bottomPane.setOneTouchExpandable(true);
         bottomPane.setDividerLocation(400);
 
-        JSplitPane contentPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topPane, bottomPane);
-        contentPane.setOneTouchExpandable(true);
-        add(contentPane);
+        _contentPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topPane, bottomPane);
+        _contentPane.setOneTouchExpandable(true);
+        add(_contentPane);
 
         initFileTypes();
         consoleMessage(_msgs.get("m.welcome"));
+    }
+
+    @Override // from Component
+    public void doLayout ()
+    {
+        super.doLayout();
+
+        // set up our divider location when we are first laid out
+        if (getHeight() != 0 && _contentPane.getLastDividerLocation() == 0) {
+            _contentPane.setDividerLocation(getHeight()-200);
+        }
     }
 
     public void openPathElement (final PathElement pathElement)
@@ -474,6 +484,7 @@ public class SwiftlyEditor extends PlacePanel
     protected ProjectRoomObject _roomObj;
     protected PathElement _project;
 
+    protected JSplitPane _contentPane;
     protected TabbedEditor _editorTabs;
     protected Console _console;
     protected EditorToolBar _toolbar;
