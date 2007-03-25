@@ -155,6 +155,11 @@ public class SwiftlyEditor extends PlacePanel
         }
     }
 
+    public void closePathElement (PathElement element)
+    {
+        _editorTabs.closePathElementTab(element);
+    }
+
     public void editTextDocument (SwiftlyTextDocument document)
     {
         PathElement pathElement = document.getPathElement();

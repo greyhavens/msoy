@@ -281,7 +281,7 @@ public class ProjectPanel extends JPanel
         // XXX we know the tab was selected in order for delete to work. This might be dangerous.
         // we also know the tab was open.. hmmm
         if (element.getType() == PathElement.Type.FILE) {
-            _editor.closeCurrentTab();
+            _editor.closePathElement(element);
         } else if (element.getType() == PathElement.Type.DIRECTORY) {
             // TODO oh god we have to remove all the tabs associated with this directory
             // soo.. every tab that has a common parent id() ?
