@@ -275,7 +275,7 @@ public class SwiftlyEditor extends PlacePanel
      */
     public void showErrorMessage (String message)
     {
-        _console.consoleMessage(message);
+        _console.errorMessage(message);
     }
 
     /**
