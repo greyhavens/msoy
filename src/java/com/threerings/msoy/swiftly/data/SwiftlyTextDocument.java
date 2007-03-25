@@ -21,24 +21,8 @@ import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
  */
 public class SwiftlyTextDocument extends SwiftlyDocument
 {    
-    public SwiftlyTextDocument ()
-    {
-    }
-
-    /**
-     * Instantiate a new, blank SwiftlyTextDocument.
-     */
-    public SwiftlyTextDocument (PathElement path, String encoding)
-        throws IOException
-    {
-        this(null, path, encoding);
-    }
-
-    /**
-     * Instantiate a new SwiftlyDocument. Passing null for the InputStream data creates
-     * a new blank document.
-     */
-    public SwiftlyTextDocument (InputStream data, PathElement path, String encoding)
+    @Override // from SwiftlyDocument
+    public void init (InputStream data, PathElement path, String encoding)
         throws IOException
     {
         StringBuffer textBuffer;
@@ -120,6 +104,17 @@ public class SwiftlyTextDocument extends SwiftlyDocument
         editor.editTextDocument(this);
     }
 
+    @Override // from SwiftlyDocument
+    public boolean handlesMimeType (String mimeType)
+    {
+        for (int ii = 0; ii < _mimeTypes.length; ii++) {
+            if (mimeType.contains(_mimeTypes[ii])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public String getTextEncoding ()
     {
         return _encoding;
@@ -164,4 +159,7 @@ public class SwiftlyTextDocument extends SwiftlyDocument
 
     /** Text encoding. */
     protected transient String _encoding;
+
+    /** Mime types supported by this document type. */
+    protected String[] _mimeTypes = {"text/"};
 }

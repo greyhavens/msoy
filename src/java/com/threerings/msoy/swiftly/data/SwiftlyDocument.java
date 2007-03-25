@@ -10,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 
+import java.util.Arrays;
+
 import org.apache.commons.io.IOUtils;
 
 import com.threerings.io.ObjectOutputStream;
@@ -23,14 +25,29 @@ import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
  * unmodified copy of its initial data to allow for delta generation.
  */
 public abstract class SwiftlyDocument
-    implements DSet.Entry
+    implements DSet.Entry, Cloneable
 {    
     /** Uniquely identifies this document element in the distributed state. */
     public int elementId;
 
-    public SwiftlyDocument ()
+    /**
+     * Returns a new SwiftlyDocument using the supplied mimeType;
+     */
+    public static SwiftlyDocument createFromMimeType (String mimeType)
     {
+        for (int ii = 0; ii < _documentTypes.length; ii++) {
+            SwiftlyDocument doc = _documentTypes[ii];
+            if (doc.handlesMimeType(mimeType)) {
+                return (SwiftlyDocument)doc.clone();
+            }
+        }
+        // BinaryDocument handles all mime types so this statement should never be reached
+        return null;
     }
+
+    /** Initializes the SwiftlyDocument. */
+    public abstract void init(InputStream data, PathElement path, String encoding)
+        throws IOException;
 
     /** Commit the in memory data to the file backing. */
     public abstract void commit () throws IOException;
@@ -40,6 +57,9 @@ public abstract class SwiftlyDocument
 
     /** Tell the supplied editor to load this document. */
     public abstract void loadInEditor (SwiftlyDocumentEditor editor);
+
+    /** Returns true if the supplied mime type is supported by this SwiftlyDocument type */
+    public abstract boolean handlesMimeType (String mimeType);
 
     public Comparable getKey ()
     {
@@ -90,10 +110,25 @@ public abstract class SwiftlyDocument
         return _path.getName();
     }
 
+    @Override // from Object
+    public Object clone ()
+    {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException cnse) {
+            throw new RuntimeException(cnse);
+        }
+    }
+
     /** Reference to our associated path element. */
     protected transient PathElement _path = null;
 
     /** Key for the associated PathElement, used to re-bind the transient _path instance variable
-     * post-serialization. */
-    private Comparable _pathKey = null;
+     *  post-serialization.
+     */
+    protected Comparable _pathKey = null;
+
+    /** Instances of all the SwiftlyDocument types. */
+    protected static SwiftlyDocument[] _documentTypes = { 
+        new SwiftlyTextDocument(), new SwiftlyBinaryDocument() };
 }

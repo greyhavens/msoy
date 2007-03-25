@@ -139,7 +139,8 @@ public class ProjectRoomManager extends PlaceManager
 
         SwiftlyTextDocument doc = null;
         try {
-            doc = new SwiftlyTextDocument(element, ProjectStorage.TEXT_ENCODING);
+            doc = new SwiftlyTextDocument();
+            doc.init(null, element, ProjectStorage.TEXT_ENCODING);
         } catch (IOException e) {
             listener.requestFailed("e.add_document_failed");
             return;
@@ -293,7 +294,8 @@ public class ProjectRoomManager extends PlaceManager
                     if (uploadFile.didSucceed()) {
                         // only an exception in the following should set this to false
                         uploadFile.flush();
-                        _doc = new SwiftlyBinaryDocument(uploadFile.getFileData(), element);
+                        _doc = new SwiftlyBinaryDocument();
+                        _doc.init(uploadFile.getFileData(), element, null);
                     }
                     // remove the temp file no matter what
                     uploadFile.deleteTempFile();

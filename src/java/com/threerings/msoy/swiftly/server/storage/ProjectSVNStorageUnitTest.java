@@ -96,7 +96,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
         throws Exception
     {
         ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
-        PathElement path = PathElement.createFile("UnitTest.as", null, null);
+        PathElement path = PathElement.createFile("UnitTest.as", null, "text/x-actionscript");
         SwiftlyTextDocument doc = (SwiftlyTextDocument)storage.getDocument(path);
 
         // Ensure the document data was defrosted correctly
@@ -107,7 +107,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
         throws Exception
     {
         ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
-        PathElement path = PathElement.createFile("UnitTest.as", null, null);
+        PathElement path = PathElement.createFile("UnitTest.as", null, "text/x-actionscript");
         SwiftlyTextDocument doc;
         
         // Get an initial copy of the document
@@ -126,7 +126,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
         throws Exception
     {
         ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
-        PathElement path = PathElement.createFile("UnitTest.as", null, null);
+        PathElement path = PathElement.createFile("UnitTest.as", null, "text/x-actionscript");
         SwiftlyTextDocument doc;
         
         // Get an initial copy of the document

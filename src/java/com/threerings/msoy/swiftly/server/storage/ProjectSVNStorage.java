@@ -8,6 +8,7 @@ import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
+import com.threerings.msoy.swiftly.data.SwiftlyBinaryDocument;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
@@ -264,7 +265,7 @@ public class ProjectSVNStorage
         SVNRepository svnRepo;
         OutputStream fileOutput;
         File tempFile;
-        SwiftlyTextDocument swiftlyDoc;
+        SwiftlyDocument swiftlyDoc;
 
         try {
             tempFile = File.createTempFile("swiftly-file", ".svnstorage");
@@ -285,10 +286,11 @@ public class ProjectSVNStorage
         }
 
         try {
-            swiftlyDoc = new SwiftlyTextDocument(new FileInputStream(tempFile), path, ProjectStorage.TEXT_ENCODING);
+            swiftlyDoc = SwiftlyDocument.createFromMimeType(path.getMimeType());
+            swiftlyDoc.init(new FileInputStream(tempFile), path, ProjectStorage.TEXT_ENCODING);
         } catch (IOException ioe) {
-            throw new ProjectStorageException.InternalError("Failure instantiating SwiftlyDocument: " +
-                ioe, ioe);            
+            throw new ProjectStorageException.InternalError(
+                "Failure instantiating SwiftlyDocument: " + ioe, ioe);            
         } finally {
             tempFile.delete();
         }
@@ -535,7 +537,6 @@ public class ProjectSVNStorage
         SVNURL url = SVNURL.parseURIDecoded(baseURI.toString());
         return url.appendPath(Integer.toString(_project.projectId), false);
     }
-
 
     /** 
      * Recursively retrieves the entire subversion directory structure.

@@ -20,14 +20,8 @@ import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
  */
 public class SwiftlyBinaryDocument extends SwiftlyDocument
 {    
-    public SwiftlyBinaryDocument ()
-    {
-    }
-
-    /**
-     * Instantiate a new SwiftlyBinaryDocument.
-     */
-    public SwiftlyBinaryDocument (InputStream data, PathElement path)
+    @Override // from SwiftlyDocument
+    public void init (InputStream data, PathElement path, String encoding)
         throws IOException
     {
         FileOutputStream fileOutput;
@@ -38,8 +32,6 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
         _path = path;
 
         // Load and save the base document data.
-        // TODO: Stack of deltas and a mmap()'d base document, such that we
-        // don't waste RAM storing the whole file in memory.
         _backingStore = File.createTempFile("swiftlydocument", ".basefile");
         _backingStore.deleteOnExit();
 
@@ -72,7 +64,8 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     public boolean isDirty ()
         throws IOException
     {
-        return !IOUtils.contentEquals(getOriginalData(), getModifiedData());
+        // TODO: what do we actually want to do here for binary documents
+        return true;
     }
 
     @Override // from SwiftlyDocument
@@ -80,6 +73,13 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     {
         // Cannot be displayed or edited
         return;
+    }
+
+    @Override // from SwiftlyDocument
+    public boolean handlesMimeType (String mimeType)
+    {
+        // this binary document type can handle any mimetype
+        return true;
     }
 
     @Override // from SwiftlyDocument
