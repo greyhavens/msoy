@@ -436,7 +436,7 @@ public class ProjectPanel extends JPanel
         // from interface ConfirmListener
         public void requestProcessed ()
         {
-            // nada
+            _editor.consoleMessage(_msgs.get("m.file_upload_complete"));
         }
 
         // from interface ConfirmListener
