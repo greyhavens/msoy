@@ -26,18 +26,8 @@ public class FlexCompilerOutput
      */
     public FlexCompilerOutput (String flexMessage)
     {
-        Matcher match;
-
-        // Ignore compiler boilerplate output
-        for (String boiler : COMPILER_BOILER) {
-            if (flexMessage.startsWith(boiler)) {
-                _level = Level.IGNORE;
-                return;
-            }
-        }
-
         // Match standard flex compiler messages.
-        match = _FLEX_MSG_PATTERN.matcher(flexMessage);
+        Matcher match = _FLEX_MSG_PATTERN.matcher(flexMessage);
         if (match.matches()) {
             String level;
 
@@ -53,6 +43,14 @@ public class FlexCompilerOutput
                 _level = CompilerOutput.Level.UNKNOWN;
             }
             return;
+        }
+
+        // Ignore compiler boilerplate output
+        for (Pattern boiler : COMPILER_BOILER) {
+            if (boiler.matcher(flexMessage).matches()) {
+                _level = Level.IGNORE;
+                return;
+            }
         }
 
         // Unknown message type
@@ -178,8 +176,9 @@ public class FlexCompilerOutput
         new HashMap<String,CompilerOutput.Level>();
 
     /** Boilerplate compiler output that we don't need to report. */
-    protected static final String[] COMPILER_BOILER =  {
-        "Loading configuration file"
+    protected static final Pattern[] COMPILER_BOILER =  {
+        Pattern.compile("Loading configuration file.*"),
+        Pattern.compile(".*data/swiftly/localbuilder.*"), // TODO: unhack?
     };
 
     // Initialize String -> Enum level mappings.
