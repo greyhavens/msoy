@@ -127,7 +127,8 @@ public class RoomManager extends SpotSceneManager
     }
 
     // documentation inherited from RoomProvider
-    public void sendSpriteMessage (ClientObject caller, ItemIdent item, String name, byte[] arg, boolean isAction)
+    public void sendSpriteMessage (ClientObject caller, ItemIdent item, String name, byte[] arg,
+                                   boolean isAction)
     {
         // make sure the caller is in the room
         MemberObject who = (MemberObject)caller;
@@ -140,6 +141,8 @@ public class RoomManager extends SpotSceneManager
         // if this client does not currently control this entity; ignore the request; if no one
         // controls it, this will assign this client as controller
         if (isAction && !checkAssignControl(who, item, "triggerAction")) {
+            log.info("Dropping sprite message for lack of control [who=" + who.who() +
+                     ", item=" + item + ", name=" + name + "].");
             return;
         }
 
@@ -184,6 +187,8 @@ public class RoomManager extends SpotSceneManager
         // if this client does not currently control this entity; ignore the request; if no one
         // controls it, this will assign this client as controller
         if (!checkAssignControl(who, item, "setState")) {
+            log.info("Dropping change state for lack of control [who=" + who.who() +
+                     ", item=" + item + ", state=" + state + "].");
             return;
         }
 

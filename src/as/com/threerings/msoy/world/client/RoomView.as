@@ -334,7 +334,7 @@ public class RoomView extends AbstractRoomView
         var name :String = event.getName();
 
         if (PlaceObject.OCCUPANT_INFO == name) {
-            updateBody(event.getEntry() as ActorInfo);
+            updateBody(event.getEntry() as ActorInfo, event.getOldEntry() as ActorInfo);
 
         } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
             moveBody((event.getEntry() as SceneLocation).bodyOid);
@@ -360,7 +360,8 @@ public class RoomView extends AbstractRoomView
         var args :Array = event.getArgs();
         switch (event.getName()) {
         case RoomCodes.SPRITE_MESSAGE:
-            dispatchSpriteMessage((args[0] as ItemIdent), (args[1] as String), (args[2] as ByteArray), (args[3] as Boolean));
+            dispatchSpriteMessage((args[0] as ItemIdent), (args[1] as String),
+                                  (args[2] as ByteArray), (args[3] as Boolean));
             break;
         }
     }
@@ -680,24 +681,32 @@ public class RoomView extends AbstractRoomView
         actor.moveTo(loc, _scene);
     }
 
-    protected function updateBody (occInfo :ActorInfo) :void
+    protected function updateBody (newInfo :ActorInfo, oldInfo :ActorInfo) :void
     {
-        var actor :ActorSprite = (_actors.get(occInfo.getBodyOid()) as ActorSprite);
+        var actor :ActorSprite = (_actors.get(newInfo.getBodyOid()) as ActorSprite);
         if (actor == null) {
-            Log.getLog(this).warning("No actor for updated occupant? [info=" + occInfo + "].");
+            log.warning("No actor for updated occupant? [info=" + newInfo + "].");
             return;
         }
-        actor.setActorInfo(occInfo);
+        actor.setActorInfo(newInfo);
+
+        // update the entities table
+        _entities.remove(oldInfo.getItemIdent());
+        _entities.put(newInfo.getItemIdent(), actor);
     }
 
     /**
      * Called when a sprite message arrives on the room object.
      */
-    protected function dispatchSpriteMessage (item :ItemIdent, name :String, arg :ByteArray, isAction :Boolean) :void
+    protected function dispatchSpriteMessage (item :ItemIdent, name :String,
+                                              arg :ByteArray, isAction :Boolean) :void
     {
         var sprite :MsoySprite = (_entities.get(item) as MsoySprite);
         if (sprite != null) {
             sprite.messageReceived(name, EZObjectMarshaller.decode(arg), isAction);
+        } else {
+            log.info("Received sprite message for unknown sprite [item=" + item +
+                     ", name=" + name + "].");
         }
     }
 
@@ -709,6 +718,9 @@ public class RoomView extends AbstractRoomView
         var sprite :MsoySprite = (_entities.get(entry.item) as MsoySprite);
         if (sprite != null) {
             sprite.memoryChanged(entry.key, EZObjectMarshaller.decode(entry.value));
+        } else {
+            log.info("Received memory update for unknown sprite [item=" + entry.item +
+                     ", key=" + entry.key + "].");
         }
     }
 
@@ -720,6 +732,8 @@ public class RoomView extends AbstractRoomView
         var sprite :MsoySprite = (_entities.get(ident) as MsoySprite);
         if (sprite != null) {
             sprite.gotControl();
+        } else {
+            log.info("Received got control for unknown sprite [item=" + ident + "].");
         }
     }
 
@@ -820,6 +834,9 @@ public class RoomView extends AbstractRoomView
 
     /** True if autoscroll should be supressed for the current frame. */
     protected var _suppressAutoScroll :Boolean = false;
+
+    /** Log this! */
+    private const log :Log = Log.getLog(RoomController);
 
     /** The maximum number of pixels to autoscroll per frame. */
     protected static const MAX_AUTO_SCROLL :int = 15;

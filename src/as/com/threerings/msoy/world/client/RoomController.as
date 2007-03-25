@@ -103,31 +103,36 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Handles a request by an item in our room to send an "action" (requires control) or
-     * a "message" (doesn't require control).
+     * Handles a request by an item in our room to send an "action" (requires control) or a
+     * "message" (doesn't require control).
      */
     public function sendSpriteMessage (
         ident :ItemIdent, name :String, arg :Object, isAction :Boolean) :void
     {
         if (isAction && !checkCanRequest(ident, "triggerAction")) {
+            log.info("Dropping message for lack of control [ident=" + ident +
+                     ", name=" + name + "].");
             return;
         }
 
         // send the request off to the server
+        log.info("Sending sprite message [ident=" + ident + ", name=" + name + "].");
         var data :ByteArray = (EZObjectMarshaller.encode(arg, false) as ByteArray);
         _roomObj.roomService.sendSpriteMessage(_mctx.getClient(), ident, name, data, isAction);
     }
 
     /**
-     * Handles a request by an actor item to change its persistent state.
-     * Requires control.
+     * Handles a request by an actor item to change its persistent state.  Requires control.
      */
     public function setActorState (ident :ItemIdent, actorOid :int, state :String) :void
     {
         if (!checkCanRequest(ident, "setState")) {
+            log.info("Dropping state change for lack of control [ident=" + ident +
+                     ", state=" + state + "].");
             return;
         }
 
+        log.info("Changing actor state [ident=" + ident + ", state=" + state + "].");
         _roomObj.roomService.setActorState(_mctx.getClient(), ident, actorOid, state);
     }
 
