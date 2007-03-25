@@ -134,6 +134,9 @@ public class SwiftlyManager
         for (ProjectRoomManager mgr : _managers.values()) {
             mgr.shutdown();
         }
+
+        // TODO: wait for our serial executors to finish, but timeout if they take more than 90
+        // seconds or so
     }
 
     /**
