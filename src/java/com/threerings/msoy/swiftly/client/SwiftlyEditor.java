@@ -134,7 +134,7 @@ public class SwiftlyEditor extends PlacePanel
         // the document contents or pull the already opened document from the dset
         if (!alreadyOpen) {
             // If the document is already in the dset, load that.
-            SwiftlyDocument doc = getDocumentFromPath(pathElement);
+            SwiftlyDocument doc = _roomObj.getDocument(pathElement);
             if (doc != null) {
                 doc.loadInEditor(this);
                 return;
@@ -144,7 +144,7 @@ public class SwiftlyEditor extends PlacePanel
             _roomObj.service.loadDocument(_ctx.getClient(), pathElement, new ConfirmListener() {
                 // from interface ConfirmListener
                 public void requestProcessed () {
-                    SwiftlyDocument doc = getDocumentFromPath(pathElement);
+                    SwiftlyDocument doc = _roomObj.getDocument(pathElement);
                     doc.loadInEditor(SwiftlyEditor.this);
                 }
                 // from interface ConfirmListener
@@ -370,20 +370,6 @@ public class SwiftlyEditor extends PlacePanel
         if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
             final int elementId = (Integer)event.getKey();
         }
-    }
-
-    /** 
-      * Finds the SwiftlyDocument, if loaded, connected with the supplied PathElement.
-      * Returns null if the SwiftlyDocument was not found.
-      */
-    protected SwiftlyDocument getDocumentFromPath (PathElement pathElement)
-    {
-        for (SwiftlyDocument doc : _roomObj.documents) {
-            if (doc.getPathElement().elementId == pathElement.elementId) {
-                return doc;
-            }
-        }
-        return null;
     }
 
     /** Initialize the file types that can be created */
