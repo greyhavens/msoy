@@ -22,7 +22,7 @@ import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
 public class SwiftlyTextDocument extends SwiftlyDocument
 {    
     @Override // from SwiftlyDocument
-    public void init (InputStream data, PathElement path, String encoding)
+    public void init (InputStream data, PathElement path, String encoding, boolean fromRepo)
         throws IOException
     {
         StringBuffer textBuffer;

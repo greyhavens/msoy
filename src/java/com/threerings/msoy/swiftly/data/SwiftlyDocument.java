@@ -26,7 +26,7 @@ import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
  */
 public abstract class SwiftlyDocument
     implements DSet.Entry, Cloneable
-{    
+{
     /** Uniquely identifies this document element in the distributed state. */
     public int elementId;
 
@@ -45,7 +45,8 @@ public abstract class SwiftlyDocument
     }
 
     /** Initializes the SwiftlyDocument. */
-    public abstract void init (InputStream data, PathElement path, String encoding)
+    public abstract void init (InputStream data, PathElement path, String encoding,
+                               boolean fromRepo)
         throws IOException;
 
     /** Commit the in memory data to the file backing. */
@@ -94,11 +95,11 @@ public abstract class SwiftlyDocument
      * the transient PathElement instance variable when lazarus() is called on the other side
      * of the wire, post-serialization.
      */
-    public void writeObject(ObjectOutputStream out)
+    public void writeObject (ObjectOutputStream out)
         throws IOException
     {
         if (_path != null) {
-            _pathKey = _path.getKey();            
+            _pathKey = _path.getKey();
         }
         out.defaultWriteObject();
     }
@@ -106,7 +107,7 @@ public abstract class SwiftlyDocument
     @Override // from Object
     public String toString ()
     {
-        return _path.getName();
+        return (_path == null) ? "<unknown>" : _path.getName();
     }
 
     @Override // from Object
@@ -123,11 +124,11 @@ public abstract class SwiftlyDocument
     protected transient PathElement _path = null;
 
     /** Key for the associated PathElement, used to re-bind the transient _path instance variable
-     *  post-serialization.
-     */
+     *  post-serialization. */
     protected Comparable _pathKey = null;
 
     /** Instances of all the SwiftlyDocument types. */
-    protected static SwiftlyDocument[] _documentTypes = { 
-        new SwiftlyTextDocument(), new SwiftlyBinaryDocument() };
+    protected static SwiftlyDocument[] _documentTypes = {
+        new SwiftlyTextDocument(), new SwiftlyBinaryDocument()
+    };
 }

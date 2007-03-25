@@ -21,17 +21,18 @@ import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
 public class SwiftlyBinaryDocument extends SwiftlyDocument
 {    
     @Override // from SwiftlyDocument
-    public void init (InputStream data, PathElement path, String encoding)
+    public void init (InputStream data, PathElement path, String encoding, boolean fromRepo)
         throws IOException
     {
         FileOutputStream fileOutput;
         byte[] buf = new byte[1024];
         int len;
 
-        // Store the pathelement
+        // Keep track of important things
         _path = path;
+        _fromRepo = fromRepo;
 
-        // Load and save the base document data.
+        // Load and save the base document data
         _backingStore = File.createTempFile("swiftlydocument", ".basefile");
         _backingStore.deleteOnExit();
 
@@ -64,8 +65,8 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     public boolean isDirty ()
         throws IOException
     {
-        // TODO: what do we actually want to do here for binary documents
-        return true;
+        // if we're not from the repo, we're dirty; TODO: allow modifications, store them somewhere
+        return !_fromRepo;
     }
 
     @Override // from SwiftlyDocument
@@ -113,4 +114,7 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
 
     /** Unmodified disk-backing of the document data. */
     protected transient File _backingStore = null;
+
+    /** Whether this document was created from the repository or is a brand nubian. */
+    protected transient boolean _fromRepo;
 }

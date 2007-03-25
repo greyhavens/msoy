@@ -131,7 +131,7 @@ public class ProjectRoomManager extends PlaceManager
                                    final ConfirmListener listener)
     {
         // TODO: check access!
-        final PathElement element = _roomObj.pathElements.get(elementId); 
+        final PathElement element = _roomObj.pathElements.get(elementId);
 
         // Delete the document from the storage provider
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
@@ -145,14 +145,19 @@ public class ProjectRoomManager extends PlaceManager
             }
 
             public void handleResult () {
-                if (_error == null) {
-                    _roomObj.removeFromPathElements(elementId);
-                    listener.requestProcessed();
-                } else {
+                if (_error != null) {
                     log.log(Level.WARNING, "Delete pathElement failed [pathElement=" +
                         element + "].", _error);
                     listener.requestFailed("e.delete_element_failed");
+                    return;
                 }
+                // remove it from path elements
+                _roomObj.removeFromPathElements(elementId);
+                // if it is resolved, remove it from documents as well
+                if (_roomObj.documents.containsKey(elementId)) {
+                    _roomObj.removeFromDocuments(elementId);
+                }
+                listener.requestProcessed();
             }
 
             protected Exception _error;
@@ -171,7 +176,7 @@ public class ProjectRoomManager extends PlaceManager
         SwiftlyTextDocument doc = null;
         try {
             doc = new SwiftlyTextDocument();
-            doc.init(null, element, ProjectStorage.TEXT_ENCODING);
+            doc.init(null, element, ProjectStorage.TEXT_ENCODING, false);
         } catch (IOException e) {
             listener.requestFailed("e.add_document_failed");
             return;
@@ -332,7 +337,8 @@ public class ProjectRoomManager extends PlaceManager
                             element.getName(), uploadFile.getTempFile());
                         element.setMimeType(mimeType);
                         _doc = SwiftlyDocument.createFromMimeType(element.getMimeType());
-                        _doc.init(uploadFile.getFileData(), element, ProjectStorage.TEXT_ENCODING);
+                        _doc.init(uploadFile.getFileData(), element,
+                                  ProjectStorage.TEXT_ENCODING, false);
                     }
                     // remove the temp file no matter what
                     uploadFile.deleteTempFile();
@@ -449,7 +455,7 @@ public class ProjectRoomManager extends PlaceManager
         /* Identify the mime type */
         FileInputStream stream = new FileInputStream(fileData);
         byte[] firstBytes = new byte[identifier.getMinArrayLength()];
-    
+
         // Read identifying bytes from the to-be-added file
         if (stream.read(firstBytes, 0, firstBytes.length) >= firstBytes.length) {
             // Required data was read, attempt magic identification
