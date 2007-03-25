@@ -129,32 +129,32 @@ public class SwiftlyEditor extends PlacePanel
 
     public void openPathElement (final PathElement pathElement)
     {
-        boolean alreadyOpen = _editorTabs.selectTab(pathElement); 
-        // If this is a new tab, add a documentupdate listener and ask the backend to load
-        // the document contents or pull the already opened document from the dset
-        if (!alreadyOpen) {
-            // If the document is already in the dset, load that.
-            SwiftlyDocument doc = _roomObj.getDocument(pathElement);
-            if (doc != null) {
-                doc.loadInEditor(this);
-                return;
-            }
-
-            // Otherwise load the document from the backend.
-            _roomObj.service.loadDocument(_ctx.getClient(), pathElement, new ConfirmListener() {
-                public void requestProcessed () {
-                    SwiftlyDocument doc = _roomObj.getDocument(pathElement);
-                    if (doc == null) {
-                        showErrorMessage(_msgs.get("e.load_document_failed"));
-                    } else {
-                        doc.loadInEditor(SwiftlyEditor.this);
-                    }
-                }
-                public void requestFailed (String reason) {
-                    showErrorMessage(_msgs.xlate(reason));
-                }
-            });
+        // If the tab already exists, then select it and be done.
+        if (_editorTabs.selectTab(pathElement)) {
+            return;
         }
+
+        // If the document is already in the dset, load that.
+        SwiftlyDocument doc = _roomObj.getDocument(pathElement);
+        if (doc != null) {
+            doc.loadInEditor(this);
+            return;
+        }
+
+        // Otherwise load the document from the backend.
+        _roomObj.service.loadDocument(_ctx.getClient(), pathElement, new ConfirmListener() {
+            public void requestProcessed () {
+                SwiftlyDocument doc = _roomObj.getDocument(pathElement);
+                if (doc == null) {
+                    showErrorMessage(_msgs.get("e.load_document_failed"));
+                } else {
+                    doc.loadInEditor(SwiftlyEditor.this);
+                }
+            }
+            public void requestFailed (String reason) {
+                showErrorMessage(_msgs.xlate(reason));
+            }
+        });
     }
 
     public void closePathElement (PathElement element)
