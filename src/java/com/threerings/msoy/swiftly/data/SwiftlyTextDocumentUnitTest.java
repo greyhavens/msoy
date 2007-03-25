@@ -39,7 +39,6 @@ public class SwiftlyTextDocumentUnitTest extends TestCase
         assertEquals("Hello, World", _doc.getText());
     }
 
-
     public void testGetOriginalData ()
         throws Exception
     {

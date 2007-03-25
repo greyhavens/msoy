@@ -34,7 +34,7 @@ public class SwiftlyTextDocument extends SwiftlyDocument
         _text = "";
         _encoding = encoding;
 
-        if (data == null) {
+        if (data != null) {
             StringBuffer textBuffer = new StringBuffer();
             FileOutputStream fileOutput = new FileOutputStream(_backingStore);
             byte[] buf = new byte[1024];
