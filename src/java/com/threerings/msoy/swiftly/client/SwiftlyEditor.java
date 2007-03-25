@@ -384,11 +384,11 @@ public class SwiftlyEditor extends PlacePanel
     protected void initFileTypes ()
     {
         _createableFileTypes = new ArrayList<FileTypes>();
-        _createableFileTypes.add(new FileTypes(_msgs.get("m.filetypes." + MediaDesc.TEXT_PLAIN),
-                                               MediaDesc.mimeTypeToString(MediaDesc.TEXT_PLAIN)));
         _createableFileTypes.add(
             new FileTypes(_msgs.get("m.filetypes." + MediaDesc.TEXT_ACTIONSCRIPT),
                           MediaDesc.mimeTypeToString(MediaDesc.TEXT_ACTIONSCRIPT)));
+        _createableFileTypes.add(new FileTypes(_msgs.get("m.filetypes." + MediaDesc.TEXT_PLAIN),
+                                               MediaDesc.mimeTypeToString(MediaDesc.TEXT_PLAIN)));
     }
 
     protected void showPreview ()
