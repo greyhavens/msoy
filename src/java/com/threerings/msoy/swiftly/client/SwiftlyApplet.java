@@ -5,11 +5,15 @@ package com.threerings.msoy.swiftly.client;
 
 import java.applet.AppletContext;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import java.util.logging.Level;
 import javax.swing.JApplet;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicBorders;
@@ -117,7 +121,7 @@ public class SwiftlyApplet extends JApplet
     }
 
     /**
-     * Saves a file element on the backend. Creates the element if it doesn't already exist. 
+     * Saves a file element on the backend. Creates the element if it doesn't already exist.
      * @param element the {@link PathElement} to save.
      */
     public void saveElement (PathElement element)
@@ -191,7 +195,16 @@ public class SwiftlyApplet extends JApplet
     // from interface ClientObserver
     public void clientDidLogoff (Client client)
     {
-        setContentPane(new JLabel(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.logged_off")));
+        JPanel panel = new JPanel();
+        panel.add(new JLabel(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.logged_off")));
+        JButton relogon = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.reconnect"));
+        relogon.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent event) {
+                _client.logon();
+            }
+        });
+        panel.add(relogon);
+        setContentPane(panel);
         SwingUtil.refresh(getRootPane());
     }
 
@@ -223,7 +236,7 @@ public class SwiftlyApplet extends JApplet
             if (RunAnywhere.isMacOS() || RunAnywhere.isWindows()) {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } else {
-                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());                
+                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             }
         } catch (Exception e) {
             // this should just fall back on a working theme
