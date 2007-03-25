@@ -53,8 +53,8 @@ public class FlexCompilerOutput
             }
         }
 
-        // Unknown message type
-        _message = flexMessage;
+        // Unknown message type; strip nasty pathses from it
+        _message = flexMessage.replaceAll("\\S*localbuilder[0-9]+/", "");
         _level = CompilerOutput.Level.UNKNOWN;
         _fileName = null;
         _lineNumber = -1;
@@ -178,7 +178,7 @@ public class FlexCompilerOutput
     /** Boilerplate compiler output that we don't need to report. */
     protected static final Pattern[] COMPILER_BOILER =  {
         Pattern.compile("Loading configuration file.*"),
-        Pattern.compile(".*data/swiftly/localbuilder.*"), // TODO: unhack?
+        Pattern.compile("\\S+.swf \\(\\d+ bytes\\)"),
     };
 
     // Initialize String -> Enum level mappings.
