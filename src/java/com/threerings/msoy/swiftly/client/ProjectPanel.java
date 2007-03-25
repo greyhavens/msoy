@@ -269,8 +269,7 @@ public class ProjectPanel extends JPanel
         final PathElement element = getSelectedPathElement();
 
         if (_roomObj.project.getTemplateSourceName().equals(element.getName())) {
-            _editor.showErrorDialog(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS,
-                "e.cannot_delete_template"));
+            _editor.showErrorDialog(_msgs.get("e.cannot_delete_template"));
             return;
         }
 
