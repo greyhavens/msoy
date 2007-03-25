@@ -108,6 +108,17 @@ public class SwiftlyApplet extends JApplet
     }
 
     @Override // from Applet
+    public void stop ()
+    {
+        super.stop();
+
+        // if we're logged on, log off
+        if (_client != null && _client.isLoggedOn()) {
+            _client.logoff(true);
+        }
+    }
+
+    @Override // from Applet
     public void destroy ()
     {
         super.destroy();
