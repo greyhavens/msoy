@@ -3,16 +3,6 @@
 
 package com.threerings.msoy.swiftly.server.storage;
 
-import com.threerings.msoy.item.web.MediaDesc;
-
-import com.threerings.msoy.swiftly.data.PathElement;
-import com.threerings.msoy.swiftly.data.SwiftlyDocument;
-import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
-import com.threerings.msoy.swiftly.data.SwiftlyBinaryDocument;
-import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
-
-import com.threerings.msoy.web.data.SwiftlyProject;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -57,6 +47,17 @@ import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 
 import org.tmatesoft.svn.core.wc.ISVNRepositoryPool;
 import org.tmatesoft.svn.core.wc.DefaultSVNRepositoryPool;
+
+import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.web.data.SwiftlyProject;
+
+import com.threerings.msoy.swiftly.data.PathElement;
+import com.threerings.msoy.swiftly.data.SwiftlyBinaryDocument;
+import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
+import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Handles the subversion-based project repository.
@@ -218,7 +219,6 @@ public class ProjectSVNStorage
         }
     }
 
-
     // from interface ProjectStorage
     // Recurse over the entirity of the subversion repository, building a list
     // of project path elements.
@@ -256,7 +256,6 @@ public class ProjectSVNStorage
             throw new ProjectStorageException.InternalError("A subversion failure occured while" +
                 " recursing over the directory tree: " + svne, svne);
         }
-
     }
 
     // from interface ProjectStorage
@@ -342,6 +341,8 @@ public class ProjectSVNStorage
             throw new ProjectStorageException.InternalError(
                 "Failed to open the storage repository: " + svne, svne);
         }
+
+        log.info("Writing document to repository [path=" + pathElement + ", new=" + newFile + "].");
 
         // Store the file in the repository
         try {

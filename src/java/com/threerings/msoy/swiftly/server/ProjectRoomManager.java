@@ -530,9 +530,11 @@ public class ProjectRoomManager extends PlaceManager
             try {
                 // commit each swiftly document in the project that has changed
                 for (SwiftlyDocument doc : _allDocs) {
-                    _storage.putDocument(doc, "Automatic Swiftly Commit");
-                    doc.commit();
-                    _modDocs.add(doc);
+                    if (doc.isDirty()) {
+                        _storage.putDocument(doc, "Automatic Swiftly Commit");
+                        doc.commit();
+                        _modDocs.add(doc);
+                    }
                 }
 
             } catch (Throwable error) {
