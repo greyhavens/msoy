@@ -335,12 +335,12 @@ public class SwiftlyTextPane extends JEditorPane
             // nada
         }
 
-        protected void updateInterval()
+        protected void updateInterval ()
         {
             if (_interval != null) {
                 _interval.cancel(); 
             } else {
-                _interval = new Interval (_ctx.getClient().getRunQueue()) {
+                _interval = new Interval(_ctx.getClient().getRunQueue()) {
                     @Override // from Interval
                     public void expired () {
                         updateDocument();
