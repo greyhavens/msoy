@@ -21,16 +21,18 @@ public interface ProjectStorage
     public SwiftlyDocument getDocument (PathElement path) throws ProjectStorageException;
 
     /** Store the given document, creating it if it does not already exist. */
-    public void putDocument (SwiftlyDocument document, String logMessage) throws ProjectStorageException;
+    public void putDocument (SwiftlyDocument document, String logMessage)
+        throws ProjectStorageException;
 
     /** Delete the given path. */
-    public void deleteDocument (PathElement pathElement, String logMessage) throws ProjectStorageException;
+    public void deleteDocument (PathElement pathElement, String logMessage)
+        throws ProjectStorageException;
 
     /**
      * Exports the entire project repository to a given file system path. All project files
      * will be created relative to the provided path. */
     public void export (File exportDirectory) throws ProjectStorageException;
 
-    /** The standard text encoding. Changing this WILL break existing projects. So don't change it. */
+    /** The standard text encoding. Changing this WILL break existing projects. So don't. */
     public static final String TEXT_ENCODING = "utf8";
 }
