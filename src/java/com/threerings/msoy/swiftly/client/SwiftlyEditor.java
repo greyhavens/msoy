@@ -4,12 +4,12 @@
 package com.threerings.msoy.swiftly.client;        
 
 import java.awt.Container;
-import java.awt.GridLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
@@ -24,6 +24,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+
+import sdoc.Gutter;
 
 import com.samskivert.swing.HGroupLayout;
 import com.samskivert.swing.VGroupLayout;
@@ -45,6 +47,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.micasa.client.ChatPanel;
 import com.threerings.micasa.client.OccupantList;
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
@@ -57,7 +60,7 @@ import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
-import sdoc.Gutter;
+import static com.threerings.msoy.Log.log;
 
 public class SwiftlyEditor extends PlacePanel
     implements SwiftlyDocumentEditor, AttributeChangeListener, SetListener
@@ -324,9 +327,10 @@ public class SwiftlyEditor extends PlacePanel
     {
         if (event.getName().equals(ProjectRoomObject.CONSOLE)) {
             consoleMessage(_msgs.xlate(_roomObj.console));
+
         } else if (event.getName().equals(ProjectRoomObject.RESULT)) {
             displayBuildResult();
-            _previewAction.setEnabled(true);
+            _previewAction.setEnabled(_roomObj.result.getBuildResultURL() != null);
         } else if (event.getName().equals(ProjectRoomObject.BUILDING)) {
             _ctrl.buildAction.setEnabled(!_roomObj.building);
         }
@@ -337,7 +341,6 @@ public class SwiftlyEditor extends PlacePanel
     {
         if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
             final SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
-
             // Re-bind transient instance variables
             element.lazarus(_roomObj.pathElements);
         }
@@ -349,7 +352,6 @@ public class SwiftlyEditor extends PlacePanel
         // TODO do we actually want to do anything here?
         if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
             final SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
-
             // Re-bind transient instance variables
             element.lazarus(_roomObj.pathElements);
         }
@@ -392,10 +394,15 @@ public class SwiftlyEditor extends PlacePanel
 
     protected void showPreview ()
     {
+        String resultUrl = _roomObj.result.getBuildResultURL();
         try {
-            _ctx.getAppletContext().showDocument(
-                new URL(_roomObj.result.getBuildResultURL()), "_blank");
-        } catch (MalformedURLException e) {
+            URL url = new URL(resultUrl);
+            if (_roomObj.project.projectType == Item.AVATAR) {
+                url = new URL(url, AVATAR_VIEWER_PATH + URLEncoder.encode(url.toString(), "UTF-8"));
+            }
+            _ctx.getAppletContext().showDocument(url, "_blank");
+        } catch (Exception e) {
+            log.warning("Failed to display results [url=" + resultUrl + ", error=" + e + "].");
             // TODO: we sent ourselves a bad url? display an error dialog?
         }
     }
@@ -513,4 +520,6 @@ public class SwiftlyEditor extends PlacePanel
     protected EditorToolBar _toolbar;
     protected ProjectPanel _projectPanel;
     protected Action _previewAction;
+
+    protected static final String AVATAR_VIEWER_PATH = "/clients/avatarviewer.swf?avatar=";
 }
