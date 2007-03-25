@@ -8,6 +8,8 @@ public interface CompilerOutput
 {
     /** Message severity levels. */
     public enum Level {
+        /** Mesage should be ignored. */
+        IGNORE,
         /** Informational message. */
         INFO,
         /** Warning message. */

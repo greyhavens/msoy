@@ -28,13 +28,20 @@ public class FlexCompilerOutput
     {
         Matcher match;
 
+        // Ignore compiler boilerplate output
+        for (String boiler : COMPILER_BOILER) {
+            if (flexMessage.startsWith(boiler)) {
+                _level = Level.IGNORE;
+                return;
+            }
+        }
+
         // Match standard flex compiler messages.
         match = _FLEX_MSG_PATTERN.matcher(flexMessage);
         if (match.matches()) {
             String level;
 
-            // If the regex matched, there's no way the integers can be
-            // invalid.
+            // If the regex matched, there's no way the integers can be invalid.
             _fileName = match.group(1);
             _lineNumber = Integer.parseInt(match.group(2));                
             _columnNumber = Integer.parseInt(match.group(3));
@@ -104,8 +111,12 @@ public class FlexCompilerOutput
      */
     public String toString ()
     {
-        return _fileName.substring(_fileName.lastIndexOf("/")+1) + ":" +
-            _lineNumber + ": " + _message;
+        if (_fileName == null) {
+            return _message;
+        } else {
+            return _fileName.substring(_fileName.lastIndexOf("/")+1) + ":" +
+                _lineNumber + ": " + _message;
+        }
     }
 
     @Override
@@ -160,11 +171,16 @@ public class FlexCompilerOutput
      * Ex: /srcpath/Mirror/Mirror.as(39): col: 50 Error: Something bad happened true
      */
     protected static final Pattern _FLEX_MSG_PATTERN =
-        Pattern.compile("(.*)\\(([0-9]+)\\): col: ([0-9]+) ([A-Za-z]+): (.*)");
+        Pattern.compile("(.*)\\(([0-9]+)\\): col: ([0-9]+):? ([A-Za-z]+): (.*)");
 
     /** Map flex compiler level strings to CompilerOutput.Level enums. */
     protected static final Map<String,CompilerOutput.Level> _messageLevels =
         new HashMap<String,CompilerOutput.Level>();
+
+    /** Boilerplate compiler output that we don't need to report. */
+    protected static final String[] COMPILER_BOILER =  {
+        "Loading configuration file"
+    };
 
     // Initialize String -> Enum level mappings.
     static {

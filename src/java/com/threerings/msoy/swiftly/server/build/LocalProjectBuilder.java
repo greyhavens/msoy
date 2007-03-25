@@ -93,23 +93,23 @@ public class LocalProjectBuilder
 
             while ((line = bufferedOutput.readLine()) != null) {
                 CompilerOutput output = new FlexCompilerOutput(line);
-
-                // Don't provide the user with unparsable output.
-                if (output.getLevel() == CompilerOutput.Level.UNKNOWN) {
-                    // TODO: Remove this logging once we know what output parsing we're missing.
-                    // landonf, Mar 7th, 2007
-                    log.warning("Unparsable swiftly flex compiler output. [line=" + line + "]");
+                switch (output.getLevel()) {
+                case IGNORE:
                     continue;
-                } else {
-                    result.appendOutput(output);
+                case UNKNOWN:
+                    log.warning("Unparsable swiftly flex compiler output. [line=" + line + "]");
+                    break;
                 }
+                result.appendOutput(output);
             }
 
             result.setOutputFile(new File(buildRoot, _project.getOutputFileName()));
 
             return result;
+
         } catch (IOException ioe) {
-            throw new ProjectBuilderException.InternalError("Failed to execute build process: " + ioe, ioe);
+            throw new ProjectBuilderException.InternalError(
+                "Failed to execute build process: " + ioe, ioe);
         }
     }
 
