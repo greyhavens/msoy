@@ -39,7 +39,7 @@ import static com.threerings.msoy.Log.log;
  * Handles the collection of Swiftly project information
  */
 public class SwiftlyManager
-    implements SwiftlyProvider
+    implements SwiftlyProvider, MsoyServer.Shutdowner
 {
     /** This is used to execute potentially long running project builds serially on a separate
      * thread so that they do not interfere with normal server operation. */
@@ -60,6 +60,9 @@ public class SwiftlyManager
         // create our executors
         buildExecutor = new SerialExecutor(MsoyServer.omgr);
         svnExecutor = new SerialExecutor(MsoyServer.omgr);
+
+        // register to be informed when the server shuts down
+        MsoyServer.registerShutdowner(this);
     }
 
     // from interface SwiftlyProvider
@@ -93,12 +96,14 @@ public class SwiftlyManager
         MsoyServer.invoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 try {
-                    SwiftlyProjectRecord projectRecord = MsoyServer.swiftlyRepo.loadProject(projectId);
+                    SwiftlyProjectRecord projectRecord =
+                        MsoyServer.swiftlyRepo.loadProject(projectId);
                     _project = projectRecord.toSwiftlyProject();
 
                     SwiftlySVNStorageRecord storageRecord =
                         MsoyServer.swiftlyRepo.loadStorageRecordForProject(projectId);
-                    _storage = new ProjectSVNStorage(projectRecord.toSwiftlyProject(), storageRecord);    
+                    _storage = new ProjectSVNStorage(
+                        projectRecord.toSwiftlyProject(), storageRecord);
                     return true;
 
                 } catch (ProjectStorageException pse) {
@@ -112,15 +117,23 @@ public class SwiftlyManager
                     return false;
                 }
             }
-            
+
             public void handleResult () {
                 mgr.init(_project, _storage);
             }
-            
+
             protected SwiftlyProject _project;
             protected ProjectStorage _storage;
         });
+    }
 
+    // from interface MsoyServer.Shutdowner
+    public void shutdown ()
+    {
+        // we need to shut down any active room managers to ensure they flush their bits
+        for (ProjectRoomManager mgr : _managers.values()) {
+            mgr.shutdown();
+        }
     }
 
     /**
