@@ -24,8 +24,8 @@ import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebCreds;
 
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
-import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord; 
-import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord; 
+import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
@@ -96,12 +96,12 @@ public class SwiftlyServlet extends MsoyServiceServlet
 
         // TODO Argument Validation
         /*
-        if(!isValidName(project.name)) {
+        if (!isValidName(project.name)) {
             throw new ServiceException("m.invalid_project_name");
         }
         */
-        
-        if(!SwiftlyProject.isValidProjectType(projectType)) {
+
+        if (!SwiftlyProject.isValidProjectType(projectType)) {
             throw new ServiceException("m.invalid_project_type");
         }
 
@@ -117,7 +117,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Creating new project storage record failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
-        
+
         // Create the project record.
         try {
             pRec = MsoyServer.swiftlyRepo.createProject(
@@ -131,7 +131,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Creating new project failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
-        
+
 
         // If the repository initialization fails, we do our best to roll back
         // any database modifications. Hopefully that works.
@@ -147,12 +147,12 @@ public class SwiftlyServlet extends MsoyServiceServlet
         } catch (ProjectStorageException pse) {
             log.log(Level.WARNING, "Initializing swiftly project storage failed.", pse);
             try {
-                MsoyServer.swiftlyRepo.deleteProject(pRec);                
+                MsoyServer.swiftlyRepo.deleteProject(pRec);
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "Deleting the partially-initialized swiftly project failed.", pe);                
+                log.log(Level.WARNING, "Deleting the partially-initialized swiftly project failed.", pe);
             }
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
-        }            
+        }
 
         return project;
     }
@@ -165,7 +165,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
 
         // TODO Argument Validation
         /*
-        if(!isValidName(project.name)) {
+        if (!isValidName(project.name)) {
             throw new ServiceException("m.invalid_project_name");
         }
         */
@@ -201,11 +201,12 @@ public class SwiftlyServlet extends MsoyServiceServlet
             if (pRec == null) {
                 throw new ServiceException(SwiftlyCodes.E_NO_SUCH_PROJECT);
             }
-            // verify the user has permissions on this project
-            if (!isCollaborator(pRec.projectId, memrec.memberId)) {
+            // verify the user has permission to view this project
+            if (!pRec.remixable && !isCollaborator(pRec.projectId, memrec.memberId)) {
                 throw new ServiceException(SwiftlyCodes.ACCESS_DENIED);
             }
             return pRec.toSwiftlyProject();
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Loading project failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
