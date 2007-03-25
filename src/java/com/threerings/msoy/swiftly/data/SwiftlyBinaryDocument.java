@@ -27,9 +27,29 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
         super.init(data, path, encoding);
 
         // Copy our data into a backing store file
-        FileOutputStream fileOutput = new FileOutputStream(_backingStore);
+        if (data != null) {
+            FileOutputStream fileOutput = new FileOutputStream(_backingStore);
+            try {
+                IOUtils.copy(data, new FileOutputStream(_backingStore));
+            } finally {
+                fileOutput.close();
+            }
+        }
+    }
+
+    @Override // from SwiftlyDocument
+    public void setData (InputStream data, String encoding)
+        throws IOException
+    {
+        // create our modified data file if necessary
+        if (_modifiedStore == null) {
+            _modifiedStore = File.createTempFile("swiftlydocument", ".modfile");
+            _modifiedStore.deleteOnExit();
+        }
+
+        FileOutputStream fileOutput = new FileOutputStream(_modifiedStore);
         try {
-            IOUtils.copy(data, new FileOutputStream(_backingStore));
+            IOUtils.copy(data, new FileOutputStream(_modifiedStore));
         } finally {
             fileOutput.close();
         }
@@ -39,8 +59,22 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     public boolean isDirty ()
         throws IOException
     {
-        // if we're not in the repo, we're dirty; TODO: allow modifications, store them somewhere
-        return !getPathElement().inRepo;
+        if (_modifiedStore != null) {
+            // if input was received, perform the expensive compare
+            return !IOUtils.contentEquals(getOriginalData(), getModifiedData());
+        }
+        return false;
+    }
+
+    @Override // from SwiftlyDocument
+    public void commit ()
+        throws IOException
+    {
+        super.commit();
+
+        // now that we're committed we can nix our modified store
+        _modifiedStore.delete();
+        _modifiedStore = null;
     }
 
     @Override // from SwiftlyDocument
@@ -61,21 +95,23 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     public InputStream getModifiedData ()
         throws IOException
     {
-        // TODO
-        return new FileInputStream(_backingStore);
+        return _modifiedStore == null ? null : new FileInputStream(_modifiedStore);
     }
 
-    /** Be sure to delete our backing store. */
     @Override // from Object
     protected void finalize ()
         throws Throwable
     {
+        // be sure to delete our modified store
         try {
-            if (_backingStore != null) {
-                _backingStore.delete();
+            if (_modifiedStore != null) {
+                _modifiedStore.delete();
             }
         } finally {
             super.finalize();
         }
     }
+
+    /** Modified disk-backing of the document data or null. */
+    protected transient File _modifiedStore;
 }

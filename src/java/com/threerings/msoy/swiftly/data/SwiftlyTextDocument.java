@@ -21,6 +21,17 @@ import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
  */
 public class SwiftlyTextDocument extends SwiftlyDocument
 {
+    public String getText ()
+    {
+        return _text;
+    }
+
+    public void setText (String text)
+    {
+        _text = text;
+        _changed = true;
+    }
+
     @Override // from SwiftlyDocument
     public void init (InputStream data, PathElement path, String encoding)
         throws IOException
@@ -51,24 +62,26 @@ public class SwiftlyTextDocument extends SwiftlyDocument
     }
 
     @Override // from SwiftlyDocument
+    public void setData (InputStream data, String encoding)
+        throws IOException
+    {
+        StringBuffer textBuffer = new StringBuffer();
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = data.read(buf)) > 0) {
+            // Write to the memory buffer too, oh boy
+            textBuffer.append(new String(buf, 0, len, encoding));
+        }
+        setText(textBuffer.toString());
+    }
+
+    @Override // from SwiftlyDocument
     public void commit ()
         throws IOException
     {
         super.commit();
-
         // note that we're no longer modified
         _changed = false;
-    }
-
-    public String getText ()
-    {
-        return _text;
-    }
-
-    public void setText (String text)
-    {
-        _text = text;
-        _changed = true;
     }
 
     @Override // from SwiftlyDocument

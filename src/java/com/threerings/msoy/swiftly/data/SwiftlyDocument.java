@@ -68,6 +68,9 @@ public abstract class SwiftlyDocument
         }
     }
 
+    /** Replaces the data for this document. */
+    public abstract void setData (InputStream data, String encoding) throws IOException;
+
     /** Check to see if the document has changed. */
     public abstract boolean isDirty () throws IOException;
 
@@ -98,12 +101,13 @@ public abstract class SwiftlyDocument
     public abstract InputStream getModifiedData () throws IOException;
 
     /**
-     * After serialization, call lazarus with the DSet of associated pathElements
-     * to correctly re-bind the any transient instance variables. This
-     * relies on PathElement nodes being added to the DSet prior to their associated
-     * SwiftlyDocuments, and an assert() below makes sure of that.
+     * After serialization, call lazarus with the DSet of associated pathElements to correctly
+     * re-bind the any transient instance variables. This relies on PathElement nodes being added
+     * to the DSet prior to their associated SwiftlyDocuments, and an assert() below makes sure of
+     * that.
      */
-    public void lazarus (DSet<PathElement> pathElements) {
+    public void lazarus (DSet<PathElement> pathElements)
+    {
         if (_pathKey != null) {
             _path = pathElements.get(_pathKey);
             assert(_path != null);
@@ -127,7 +131,7 @@ public abstract class SwiftlyDocument
     @Override // from Object
     public String toString ()
     {
-        return (_path == null) ? "<unknown>" : _path.getName();
+        return documentId + ":" + ((_path == null) ? "<unknown>" : _path.getName());
     }
 
     @Override // from Object
@@ -140,15 +144,29 @@ public abstract class SwiftlyDocument
         }
     }
 
+    @Override // from Object
+    protected void finalize ()
+        throws Throwable
+    {
+        // be sure to delete our backing store
+        try {
+            if (_backingStore != null) {
+                _backingStore.delete();
+            }
+        } finally {
+            super.finalize();
+        }
+    }
+
     /** Reference to our associated path element. */
-    protected transient PathElement _path = null;
+    protected transient PathElement _path;
 
     /** Unmodified disk-backing of the document data. */
-    protected transient File _backingStore = null;
+    protected transient File _backingStore;
 
     /** Key for the associated PathElement, used to re-bind the transient _path instance variable
      *  post-serialization. */
-    protected Comparable _pathKey = null;
+    protected Comparable _pathKey;
 
     /** Instances of all the SwiftlyDocument types. */
     protected static SwiftlyDocument[] _documentTypes = {

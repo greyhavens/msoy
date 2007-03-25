@@ -64,7 +64,7 @@ public class ProjectRoomObject extends PlaceObject
      */
     public void addPathElement (PathElement element)
     {
-        element.elementId = _nextElementId++;
+        element.elementId = ++_nextElementId;
         addToPathElements(element);
     }
 
@@ -74,8 +74,22 @@ public class ProjectRoomObject extends PlaceObject
      */
     public void addSwiftlyDocument (SwiftlyDocument doc)
     {
-        doc.documentId = _nextDocumentId++;
+        doc.documentId = ++_nextDocumentId;
         addToDocuments(doc);
+    }
+
+    /**
+     * Returns the resolved document for the supplied path element or null if the document is not
+     * yet resolved or the path element does not correspond to a document (is a directory).
+     */
+    public SwiftlyDocument getDocument (PathElement element)
+    {
+        for (SwiftlyDocument doc : documents) {
+            if (doc.getPathElement().elementId == element.elementId) {
+                return doc;
+            }
+        }
+        return null;
     }
 
     /**

@@ -129,18 +129,20 @@ public class ProjectRoomManager extends PlaceManager
     // from interface ProjectRoomProvider
     public void deletePathElement (ClientObject caller, final int elementId,
                                    final ConfirmListener listener)
+        throws InvocationException
     {
         // TODO: check access!
 
         final PathElement element = _roomObj.pathElements.get(elementId);
+        if (element == null) {
+            throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
+        }
 
         // if the document associated with this element is resolved, unload it (if the removal
         // fails, this will only be a minor inconvenience)
-        for (SwiftlyDocument doc : _roomObj.documents) {
-            if (doc.getPathElement().elementId == elementId) {
-                _roomObj.removeFromDocuments(doc.getKey());
-                break;
-            }
+        SwiftlyDocument doc = _roomObj.getDocument(element);
+        if (doc != null) {
+            _roomObj.removeFromDocuments(doc.getKey());
         }
 
         // if the path element was not committed to the repository, just remove it from the DSet
@@ -277,9 +279,18 @@ public class ProjectRoomManager extends PlaceManager
     // from interface ProjectRoomProvider
     public void startFileUpload (final ClientObject caller, final PathElement element,
                                  final ConfirmListener listener)
+        throws InvocationException
     {
-        final UploadFile uploadFile = new UploadFile(element);
+        // check to see if we're replacing a file
+        PathElement oldelem = null;
+        for (PathElement elem : _roomObj.pathElements) {
+            if (elem.equals(element)) {
+                oldelem = elem;
+                break;
+            }
+        }
 
+        final UploadFile uploadFile = new UploadFile(element, oldelem);
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 try {
@@ -308,10 +319,8 @@ public class ProjectRoomManager extends PlaceManager
     public void uploadFile (ClientObject caller, final byte[] data)
     {
         final UploadFile uploadFile = _currentUploads.get(caller.getOid());
-
-        // TODO: freak out if this is not true?
         if (uploadFile == null) {
-            return;
+            return; // no way to report failure here so we lump it
         }
 
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
@@ -322,7 +331,7 @@ public class ProjectRoomManager extends PlaceManager
                     // flag the upload file object as failed
                     uploadFile.setFailed();
                     log.warning("Append upload data failed [file=" +  uploadFile.getPathElement() +
-                         ", error=" + e + "].");
+                                ", error=" + e + "].");
                 }
                 return true;
             }
@@ -331,57 +340,84 @@ public class ProjectRoomManager extends PlaceManager
 
     // from interface ProjectRoomProvider
     public void finishFileUpload (final ClientObject caller, final ConfirmListener listener)
+        throws InvocationException
     {
         final UploadFile uploadFile = _currentUploads.get(caller.getOid());
-
-        // TODO: freak out if this is not true?
         if (uploadFile == null) {
-            return;
+            throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
         }
-
-        final PathElement element = uploadFile.getPathElement();
 
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 try {
-                    if (uploadFile.didSucceed()) {
-                        uploadFile.flush();
-                        // set the mime type in the path element
-                        String mimeType = determineMimeType(
-                            element.getName(), uploadFile.getTempFile());
-                        element.setMimeType(mimeType);
-                        _doc = SwiftlyDocument.createFromMimeType(element.getMimeType());
-                        _doc.init(uploadFile.getFileData(), element, ProjectStorage.TEXT_ENCODING);
+                    uploadFile.close();
+
+                    if (!uploadFile.didSucceed()) {
+                        _error = "e.finish_upload_failed";
+                        return true;
                     }
+
+                    String mimeType = determineMimeType(
+                        uploadFile.getPathElement().getName(), uploadFile.getTempFile());
+
+                    // if we're updating an existing document, handle that
+                    if ((_element = uploadFile.getOldElement()) != null) {
+                        _doc = _roomObj.getDocument(_element);
+                        // if the document is not yet resolved we must do so now
+                        if (_doc == null) {
+                            _doc = _storage.getDocument(_element);
+                        }
+
+                    } else {
+                        _element = uploadFile.getPathElement();
+                        _doc = SwiftlyDocument.createFromMimeType(mimeType);
+                        _doc.init(null, _element, ProjectStorage.TEXT_ENCODING);
+                    }
+
+                    // configure the document with its new data
+                    _doc.setData(uploadFile.getFileData(), ProjectStorage.TEXT_ENCODING);
+                    // set the mime type in the path element
+                    _element.setMimeType(mimeType);
+
+                } catch (Exception e) {
+                    log.log(Level.WARNING, "Finish upload failed [file=" + _element + "].", e);
+                    _error = "e.finish_upload_failed";
+
+                } finally {
                     // remove the temp file no matter what
                     uploadFile.deleteTempFile();
-                } catch (IOException e) {
-                    _error = e;
                 }
+
                 return true;
             }
 
             public void handleResult () {
                 _currentUploads.remove(caller.getOid());
 
-                if (_doc == null) {
-                    if (_error != null) {
-                        log.log(Level.WARNING, "Finish upload failed [file=" + element + "].",
-                                _error);
-                    } else {
-                        log.warning("Upload file failed before finishing [file=" + element + "].");
-                    }
-                    listener.requestFailed("e.finish_upload_failed");
+                // if we failed, stop here
+                if (_error != null) {
+                    listener.requestFailed(_error);
                     return;
                 }
 
-                // add the path element first to the dset so that lazarus will work
-                _roomObj.addPathElement(element);
-                _roomObj.addSwiftlyDocument(_doc);
+                // otherwise add or update our path element and document
+                if (_element.elementId == 0) {
+                    _roomObj.addPathElement(_element);
+                } else {
+                    _roomObj.updatePathElements(_element);
+                }
+                if (_doc.documentId == 0) {
+                    _roomObj.addSwiftlyDocument(_doc);
+                } else {
+                    _roomObj.updateDocuments(_doc);
+                }
+
+                // and let the caller know we finally made it
                 listener.requestProcessed();
             }
 
-            protected Exception _error;
+            protected String _error;
+            protected PathElement _element;
             protected SwiftlyDocument _doc;
         });
     }
@@ -674,14 +710,20 @@ public class ProjectRoomManager extends PlaceManager
     /** Handles tracking a file upload for a user. */
     protected class UploadFile
     {
-        public UploadFile (PathElement element)
+        public UploadFile (PathElement element, PathElement oldElement)
         {
             _pathElement = element;
+            _oldElement = oldElement;
         }
 
         public PathElement getPathElement ()
         {
             return _pathElement;
+        }
+
+        public PathElement getOldElement ()
+        {
+            return _oldElement;
         }
 
         public File getTempFile ()
@@ -690,7 +732,6 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         public void deleteTempFile ()
-            throws IOException
         {
             _tempFile.delete();
         }
@@ -726,15 +767,16 @@ public class ProjectRoomManager extends PlaceManager
             _fileOutput.write(data);
         }
 
-        public void flush ()
+        public void close ()
             throws IOException
         {
-            _fileOutput.flush();
+            _fileOutput.close();
         }
 
-        protected PathElement _pathElement;
+        protected PathElement _pathElement, _oldElement;
         protected File _tempFile;
         protected FileOutputStream _fileOutput;
+
         /** flag to track if the upload failed at any point */
         protected boolean _succeeded = true;
     }
