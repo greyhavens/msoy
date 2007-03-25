@@ -105,7 +105,17 @@ public abstract class Page
         displayingFlash = contentIsFlash;
         displayingJava = contentIsJava;
         RootPanel.get("content").clear();
+        // clear out any content height overrides
+        setContentStretchHeight(false);
+        // now set our content
         RootPanel.get("content").add(content);
+    }
+
+    protected void setContentStretchHeight (boolean stretch)
+    {
+        String height = stretch ? "99%" : ""; // fucking browsers
+        RootPanel.get("ctable").setHeight(height);
+        RootPanel.get("content").setHeight(height);
     }
 
     /**
