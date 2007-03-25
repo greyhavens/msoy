@@ -76,8 +76,10 @@ public class ProjectPanel extends JPanel
         _treeModel.addTreeModelListener(this);
 
         _tree = new JTree(_treeModel);
-        _tree.setDragEnabled(true);
-        _tree.setEditable(true);
+        // XXX disable dragging until the rest of the support can be wired up
+        // _tree.setDragEnabled(true);
+        // XXX temp disabled until working server side
+        // _tree.setEditable(true);
         _tree.setShowsRootHandles(true);
         _tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         _tree.addTreeSelectionListener(this);
@@ -330,7 +332,8 @@ public class ProjectPanel extends JPanel
     protected void setupPopup ()
     {
         _popup = new JPopupMenu();
-        _popup.add(createAddDirectoryAction());
+        // XXX temp disabled until working server side
+        // _popup.add(createAddDirectoryAction());
         _popup.add(createUploadFileAction());
         _popup.add(createAddFileAction());
         // in order for getHeight() to give a reasonable value the first time, we need to show
