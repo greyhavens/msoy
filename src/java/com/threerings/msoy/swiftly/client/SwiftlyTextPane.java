@@ -35,6 +35,8 @@ import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
+import com.samskivert.util.Interval;
+
 import sdoc.SyntaxDocument;
 import sdoc.SyntaxEditorKit;
 import sdoc.SyntaxSupport;
@@ -310,32 +312,55 @@ public class SwiftlyTextPane extends JEditorPane
     class DocumentElementListener implements DocumentListener
     {
         // from interface DocumentListener
-        public void insertUpdate(DocumentEvent e) {
+        public void insertUpdate(DocumentEvent e)
+        {
             // send out the update event only if we didn't get this update from the network
             if (!_dontPropagateThisChange) {
-                updateDocument();
+                updateInterval();
             }
         }
 
         // from interface DocumentListener
-        public void removeUpdate(DocumentEvent e) {
+        public void removeUpdate(DocumentEvent e)
+        {
             // send out the update event only if we didn't get this update from the network
             if (!_dontPropagateThisChange) {
-                updateDocument();
+                updateInterval();
             }
         }
 
         // from interface DocumentListener
-        public void changedUpdate(DocumentEvent e) {
+        public void changedUpdate(DocumentEvent e)
+        {
             // nada
         }
+
+        protected void updateInterval()
+        {
+            if (_interval != null) {
+                _interval.cancel(); 
+            } else {
+                _interval = new Interval (_ctx.getClient().getRunQueue()) {
+                    @Override // from Interval
+                    public void expired () {
+                        updateDocument();
+                        _interval = null;
+                    }
+                };
+            }
+            _interval.schedule(INTERVAL_DELAY);
+        }
     }
+
+    /** 5 seconds in miliseconds */
+    protected static final int INTERVAL_DELAY = 5000;
 
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
     protected SwiftlyTextDocument _document;
     protected SyntaxDocument _syntaxDoc;
     protected boolean _dontPropagateThisChange;
+    protected Interval _interval;
 
     protected SyntaxEditorKit _kit;
     protected JPopupMenu _popup;
