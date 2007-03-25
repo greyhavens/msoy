@@ -32,7 +32,9 @@ public class SwiftlyTextDocument extends SwiftlyDocument
 
         // text will remain blank if this is a new document
         _text = "";
-        if (data != null) {
+        _encoding = encoding;
+
+        if (data == null) {
             StringBuffer textBuffer = new StringBuffer();
             FileOutputStream fileOutput = new FileOutputStream(_backingStore);
             byte[] buf = new byte[1024];
@@ -46,8 +48,6 @@ public class SwiftlyTextDocument extends SwiftlyDocument
             _text = textBuffer.toString();
             fileOutput.close();
         }
-
-        _encoding = encoding;
     }
 
     @Override // from SwiftlyDocument

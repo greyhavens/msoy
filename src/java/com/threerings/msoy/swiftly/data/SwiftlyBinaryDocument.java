@@ -78,7 +78,4 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
             super.finalize();
         }
     }
-
-    /** Unmodified disk-backing of the document data. */
-    protected transient File _backingStore = null;
 }
