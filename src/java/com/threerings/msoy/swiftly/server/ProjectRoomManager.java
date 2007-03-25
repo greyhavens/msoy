@@ -154,8 +154,11 @@ public class ProjectRoomManager extends PlaceManager
                 // remove it from path elements
                 _roomObj.removeFromPathElements(elementId);
                 // if it is resolved, remove it from documents as well
-                if (_roomObj.documents.containsKey(elementId)) {
-                    _roomObj.removeFromDocuments(elementId);
+                for (SwiftlyDocument doc : _roomObj.documents) {
+                    if (doc.getPathElement().elementId == elementId) {
+                        _roomObj.removeFromDocuments(doc.getKey());
+                        break;
+                    }
                 }
                 listener.requestProcessed();
             }

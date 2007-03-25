@@ -28,7 +28,7 @@ public abstract class SwiftlyDocument
     implements DSet.Entry, Cloneable
 {
     /** Uniquely identifies this document element in the distributed state. */
-    public int elementId;
+    public int documentId;
 
     /**
      * Returns a new SwiftlyDocument using the supplied mimeType;
@@ -63,7 +63,7 @@ public abstract class SwiftlyDocument
 
     public Comparable getKey ()
     {
-        return elementId;
+        return documentId;
     }
 
     public PathElement getPathElement ()

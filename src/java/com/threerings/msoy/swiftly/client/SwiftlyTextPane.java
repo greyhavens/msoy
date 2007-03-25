@@ -97,7 +97,7 @@ public class SwiftlyTextPane extends JEditorPane
     public void documentUpdated (DocumentUpdatedEvent event) {
         // only apply the document changes if the event is for this textpane's document
         // and we were not the sender
-        if (event.getElementId() == _document.elementId && 
+        if (event.getDocumentId() == _document.documentId && 
             event.getEditorOid() != _ctx.getClient().getClientOid()) {
             loadDocumentText();
         }
@@ -211,7 +211,7 @@ public class SwiftlyTextPane extends JEditorPane
     protected void updateDocument ()
     {
         if (_document != null) {
-            _editor.updateDocument(_document.elementId, getText());
+            _editor.updateDocument(_document.documentId, getText());
         }
     }
 

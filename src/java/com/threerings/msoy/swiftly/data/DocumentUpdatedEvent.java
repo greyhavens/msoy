@@ -18,11 +18,11 @@ public class DocumentUpdatedEvent extends DEvent
     {
     }
 
-    public DocumentUpdatedEvent (int targetOid, int editorOid, int elementId, String text)
+    public DocumentUpdatedEvent (int targetOid, int editorOid, int documentId, String text)
     {
         super(targetOid);
         _editorOid = editorOid;
-        _elementId = elementId;
+        _documentId = documentId;
         _text = text;
     }
 
@@ -35,11 +35,11 @@ public class DocumentUpdatedEvent extends DEvent
     }
 
     /**
-     * Returns the elementId of the SwiftlyDocument associated with this event.
+     * Returns the documentId of the SwiftlyDocument associated with this event.
      */
-    public int getElementId ()
+    public int getDocumentId ()
     {
-        return _elementId;
+        return _documentId;
     }
 
     /**
@@ -56,9 +56,9 @@ public class DocumentUpdatedEvent extends DEvent
     {
         // we only operate on a known type of object
         ProjectRoomObject roomObj = (ProjectRoomObject)target;
-        SwiftlyDocument document = roomObj.documents.get(_elementId);
+        SwiftlyDocument document = roomObj.documents.get(_documentId);
         if (document == null) {
-            log.warning("Requested to update unknown element! [elementId=" + _elementId + "].");
+            log.warning("Requested to update unknown document! [documentId=" + _documentId + "].");
         } else {
             if (document instanceof SwiftlyTextDocument) {
                 // TODO: diffs!
@@ -76,7 +76,7 @@ public class DocumentUpdatedEvent extends DEvent
         }
     }
 
-    protected int _elementId;
+    protected int _documentId;
     protected int _editorOid;
     protected String _text;
 }

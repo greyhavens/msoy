@@ -74,7 +74,7 @@ public class ProjectRoomObject extends PlaceObject
      */
     public void addSwiftlyDocument (SwiftlyDocument doc)
     {
-        doc.elementId = _nextDocumentId++;
+        doc.documentId = _nextDocumentId++;
         addToDocuments(doc);
     }
 

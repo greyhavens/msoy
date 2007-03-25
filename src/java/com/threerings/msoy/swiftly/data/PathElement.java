@@ -155,8 +155,8 @@ public class PathElement
     public boolean equals (Object other)
     {
         if (other instanceof PathElement) {
-            // This isn't necessarily the best way to determine equality, but it will be correct within
-            // a given tree of path elements.
+            // This isn't necessarily the best way to determine equality, but it will be correct
+            // within a given tree of path elements.
             return getAbsolutePath().equals(((PathElement)other).getAbsolutePath());
         } else {
             return false;
