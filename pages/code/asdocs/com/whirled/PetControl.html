@@ -142,6 +142,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="ActorControl.html#getState()">getState</a>():String</div>
+<div class="summaryTableDescription">
+     Get the current state.</div>
+</td><td class="summaryTableOwnerCol"><a href="ActorControl.html">ActorControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#hasControl()">hasControl</a>():Boolean</div>
 <div class="summaryTableDescription">
      Is this instance in control?
@@ -179,8 +187,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#requestControl()">requestControl</a>():void</div>
 <div class="summaryTableDescription">
-     Request to have this instance of the object control all the instances
-     in the room.</div>
+     Request to have this instance of the object control all the instances in the room.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -188,8 +195,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#sendMessage()">sendMessage</a>(name:String, arg:Object = null):void</div>
 <div class="summaryTableDescription">
-     Send a message to other instances of this entity, resulting
-     in a MESSAGE_RECEIVED event.</div>
+     Send a message to other instances of this entity, resulting in a MESSAGE_RECEIVED event.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -197,8 +203,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#setHotSpot()">setHotSpot</a>(x:Number, y:Number):void</div>
 <div class="summaryTableDescription">
-     Set the layout "hotspot" for your item, specified as pixels relative
-     to (0, 0) the top-left coordinate.</div>
+     Set the layout "hotspot" for your item, specified as pixels relative to (0, 0) the top-left
+     coordinate.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -215,6 +221,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="ActorControl.html#setOrientation()">setOrientation</a>(orient:Number):void</div>
 <div class="summaryTableDescription">
      Requests that our orientation be updated.</div>
+</td><td class="summaryTableOwnerCol"><a href="ActorControl.html">ActorControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="ActorControl.html#setState()">setState</a>(state:String):void</div>
+<div class="summaryTableDescription">
+     Set the state of this actor.</div>
 </td><td class="summaryTableOwnerCol"><a href="ActorControl.html">ActorControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -294,6 +308,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedProtectedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="ActorControl.html#gotInitProperties()">gotInitProperties</a>(o:Object):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="ActorControl.html">ActorControl</a></td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#handleUnload()">handleUnload</a>(evt:Event):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
@@ -335,6 +356,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Check the status of the ticker, starting or stopping it as necessary.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="ActorControl.html#stateSet_v1()">stateSet_v1</a>(newState:String):void</div>
+<div class="summaryTableDescription">
+     Called when a new state is set.</div>
+</td><td class="summaryTableOwnerCol"><a href="ActorControl.html">ActorControl</a></td>
 </tr>
 <tr class="hideInheritedProtectedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -402,6 +431,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
  Dispatched when any instance sends a message to all instances.</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedEvent">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="ActorControl.html#event:stateChanged">stateChanged</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched as notification that the actor's state has changed.</td><td class="summaryTableOwnerCol"><a href="ActorControl.html">ActorControl</a></td>
 </tr>
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">

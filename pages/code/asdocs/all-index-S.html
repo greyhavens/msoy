@@ -79,8 +79,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 </tr>
 <tr>
 <td width="20"></td><td>
-     Send a message to other instances of this entity, resulting
-     in a MESSAGE_RECEIVED event.</td>
+     Send a message to other instances of this entity, resulting in a MESSAGE_RECEIVED event.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html#set()">set</a>(propName, value, index) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
@@ -88,13 +87,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <tr>
 <td width="20"></td><td>
      Set a property that will be distributed.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AvatarControl.html#setActions()">setActions</a>(actionName, ... rest) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AvatarControl.html">AvatarControl</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     Set named actions that can be used to animate this avatar.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html#setChatEnabled()">setChatEnabled</a>(enabled) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/WhirledGameControl.html">WhirledGameControl</a></td>
@@ -123,8 +115,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 </tr>
 <tr>
 <td width="20"></td><td>
-     Set the layout "hotspot" for your item, specified as pixels relative
-     to (0, 0) the top-left coordinate.</td>
+     Set the layout "hotspot" for your item, specified as pixels relative to (0, 0) the top-left
+     coordinate.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html#setImmediate()">setImmediate</a>(propName, value, index) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
@@ -149,6 +141,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
      Requests that our orientation be updated.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ActorControl.html#setState()">setState</a>(state) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ActorControl.html">ActorControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Set the state of this actor.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#setTickInterval()">setTickInterval</a>(interval) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
 </tr>
 <tr>
@@ -161,12 +160,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <tr>
 <td width="20"></td><td>
      Store persistent data that can later be retrieved by an instance of this game.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/HostCoordinator.html#_showDebug">_showDebug</a> &mdash; Property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/HostCoordinator.html">HostCoordinator</a></td>
-</tr>
-<tr>
-<td width="20"></td><td> Debug flag </td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html#startTicker()">startTicker</a>(tickerName, msOfDelay) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
@@ -187,6 +180,20 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
 <tr>
 <td width="20"></td><td>
      Handle a StateChangedEvent.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ActorControl.html#event:stateChanged">stateChanged</a> &mdash; Event in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ActorControl.html">ActorControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+ Dispatched as notification that the actor's state has changed.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ControlEvent.html#STATE_CHANGED">STATE_CHANGED</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ControlEvent.html">ControlEvent</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> An event type dispatched to actors to indicate that they should
+     be in the specified state.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/StateChangedEvent.html">StateChangedEvent</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/package-detail.html">com.threerings.ezgame</a></td>
@@ -210,30 +217,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("SÂ
  StateChangedEvents.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/HostCoordinator.html#status">status</a> &mdash; Property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/HostCoordinator.html">HostCoordinator</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AvatarControl.html#_states">_states</a> &mdash; Property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AvatarControl.html">AvatarControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> An array of state names.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ActorControl.html#stateSet_v1()">stateSet_v1</a>(newState) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ActorControl.html">ActorControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Retrieves current host coordination status, as one of the STATUS_constants.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/HostCoordinator.html#STATUS_HOST">STATUS_HOST</a> &mdash; Constant static property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/HostCoordinator.html">HostCoordinator</a></td>
-</tr>
-<tr>
-<td width="20"></td><td> Status constant, means that this client is the current host.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/HostCoordinator.html#STATUS_NOT_HOST">STATUS_NOT_HOST</a> &mdash; Constant static property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/HostCoordinator.html">HostCoordinator</a></td>
-</tr>
-<tr>
-<td width="20"></td><td> Status constant, means that some other client is the current host.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/HostCoordinator.html#STATUS_UNKNOWN">STATUS_UNKNOWN</a> &mdash; Constant static property in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/HostCoordinator.html">HostCoordinator</a></td>
-</tr>
-<tr>
-<td width="20"></td><td> Status constant, means that the current status is unknown, either because the data had not
-     yet arrived from the server, or because nobody claims to be host for this game.</td>
+     Called when a new state is set.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html#stopTicker()">stopTicker</a>(tickerName) &mdash; Method in class com.threerings.ezgame.<a onclick="javascript:loadClassListFrame('com/threerings/ezgame/class-list.html');" href="com/threerings/ezgame/EZGameControl.html">EZGameControl</a></td>

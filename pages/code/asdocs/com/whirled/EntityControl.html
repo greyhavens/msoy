@@ -147,8 +147,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#requestControl()">requestControl</a>():void</div>
 <div class="summaryTableDescription">
-     Request to have this instance of the object control all the instances
-     in the room.</div>
+     Request to have this instance of the object control all the instances in the room.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
@@ -156,8 +155,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#sendMessage()">sendMessage</a>(name:String, arg:Object = null):void</div>
 <div class="summaryTableDescription">
-     Send a message to other instances of this entity, resulting
-     in a MESSAGE_RECEIVED event.</div>
+     Send a message to other instances of this entity, resulting in a MESSAGE_RECEIVED event.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
@@ -165,8 +163,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#setHotSpot()">setHotSpot</a>(x:Number, y:Number):void</div>
 <div class="summaryTableDescription">
-     Set the layout "hotspot" for your item, specified as pixels relative
-     to (0, 0) the top-left coordinate.</div>
+     Set the layout "hotspot" for your item, specified as pixels relative to (0, 0) the top-left
+     coordinate.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
@@ -234,6 +232,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Called when this client has been assigned control of this object.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="WhirledControl.html#gotInitProperties()">gotInitProperties</a>(o:Object):void</div>
+<div class="summaryTableDescription">
+     Initialize/examine any properties sent from whirled after connecting.</div>
+</td><td class="summaryTableOwnerCol"><a href="WhirledControl.html">WhirledControl</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -568,9 +574,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function requestControl():void</code><p>
-     Request to have this instance of the object control all the instances
-     in the room. The other instances are the same item, running on
-     other browsers.
+     Request to have this instance of the object control all the instances in the room. The other
+     instances are the same item, running on other browsers.
      </p></div>
 <a name="sendMessage()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -580,8 +585,9 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function sendMessage(name:String, arg:Object = null):void</code><p>
-     Send a message to other instances of this entity, resulting
-     in a MESSAGE_RECEIVED event.
+     Send a message to other instances of this entity, resulting in a MESSAGE_RECEIVED event.
+          Note: the name must be a String and may be up to 64 characters.
+     TODO: restriction on size of the argument. It will probably be 1k or something.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -603,8 +609,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function setHotSpot(x:Number, y:Number):void</code><p>
-     Set the layout "hotspot" for your item, specified as pixels relative
-     to (0, 0) the top-left coordinate.
+     Set the layout "hotspot" for your item, specified as pixels relative to (0, 0) the top-left
+     coordinate.
           If unset, the default hotspot will be based off of the SWF dimensions,
      with x = width / 2, y = height.
      </p><span class="label">Parameters</span>
@@ -660,9 +666,10 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function triggerAction(name:String, arg:Object = null):void</code><p>
-     Triggers an action on this scene object. The action will be properly distributed to the object
-     running in every client in the scene, resulting in a ACTION_TRIGGERED
-     event.
+     Triggers an action on this scene object. The action will be properly distributed to the
+     object running in every client in the scene, resulting in a ACTION_TRIGGERED event.
+          Note: the name must be a String and may be up to 64 characters.
+     TODO: restriction on size of the argument. It will probably be 1k or something.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
