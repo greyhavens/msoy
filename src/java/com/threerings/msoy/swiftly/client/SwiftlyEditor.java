@@ -3,14 +3,18 @@
 
 package com.threerings.msoy.swiftly.client;        
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.logging.Level;
+
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -26,6 +30,8 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
 import sdoc.Gutter;
+
+import org.apache.commons.io.IOUtils;
 
 import com.samskivert.swing.HGroupLayout;
 import com.samskivert.swing.VGroupLayout;
@@ -223,6 +229,19 @@ public class SwiftlyEditor extends PlacePanel
         return _previewAction;
     }
 
+    public Action getExportAction ()
+    {
+        if (_exportAction == null) {
+            _exportAction = new AbstractAction(_msgs.get("m.action.export")) {
+                public void actionPerformed (ActionEvent e) {
+                    exportResult();
+                }
+            };
+            _exportAction.setEnabled(false);
+        }
+        return _exportAction;
+    }
+
     public EditorToolBar getToolbar()
     {
         return _toolbar;
@@ -336,9 +355,10 @@ public class SwiftlyEditor extends PlacePanel
 
         } else if (event.getName().equals(ProjectRoomObject.RESULT)) {
             displayBuildResult();
-            if (_roomObj.result.buildSuccessful()) {
-                _previewAction.setEnabled(_roomObj.result.getBuildResultURL() != null);
-            }
+            boolean haveResult = _roomObj.result.buildSuccessful() &&
+                (_roomObj.result.getBuildResultURL() != null);
+            _previewAction.setEnabled(haveResult);
+            _exportAction.setEnabled(haveResult);
 
         } else if (event.getName().equals(ProjectRoomObject.BUILDING)) {
             _ctrl.buildAction.setEnabled(!_roomObj.building);
@@ -396,9 +416,28 @@ public class SwiftlyEditor extends PlacePanel
                 url = new URL(url, AVATAR_VIEWER_PATH + URLEncoder.encode(url.toString(), "UTF-8"));
             }
             _ctx.getAppletContext().showDocument(url, "_blank");
+
         } catch (Exception e) {
             log.warning("Failed to display results [url=" + resultUrl + ", error=" + e + "].");
             // TODO: we sent ourselves a bad url? display an error dialog?
+        }
+    }
+
+    protected void exportResult ()
+    {
+        File out = null;
+        try {
+            URL url = new URL(_roomObj.result.getBuildResultURL());
+            out = new File(System.getProperty("user.home") + File.separator + "Desktop" +
+                           File.separator + _roomObj.project.getOutputFileName());
+            FileOutputStream ostream = new FileOutputStream(out);
+            IOUtils.copy(url.openStream(), ostream);
+            ostream.close();
+            consoleMessage(_msgs.get("m.result_exported", out.getPath()));
+
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to save build results [to=" + out + "].", e);
+            // TODO: report an error
         }
     }
 
@@ -512,14 +551,13 @@ public class SwiftlyEditor extends PlacePanel
     protected ProjectRoomController _ctrl;
     protected MessageBundle _msgs;
     protected ProjectRoomObject _roomObj;
-    protected PathElement _project;
 
     protected JSplitPane _contentPane;
     protected TabbedEditor _editorTabs;
     protected Console _console;
     protected EditorToolBar _toolbar;
     protected ProjectPanel _projectPanel;
-    protected Action _previewAction;
+    protected Action _previewAction, _exportAction;
 
     protected static final String AVATAR_VIEWER_PATH = "/clients/avatarviewer.swf?avatar=";
 }

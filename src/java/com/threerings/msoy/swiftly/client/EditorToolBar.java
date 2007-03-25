@@ -34,6 +34,10 @@ public class EditorToolBar extends JToolBar
         preview.setFont(preview.getFont().deriveFont(Font.BOLD));
         add(preview);
 
+        JButton export = new JButton(_editor.getExportAction());
+        export.setFont(export.getFont().deriveFont(Font.BOLD));
+        add(export);
+
         // undo/redo actions get set by updateEditorActions()
         addSeparator();
         _undoButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.undo"));
