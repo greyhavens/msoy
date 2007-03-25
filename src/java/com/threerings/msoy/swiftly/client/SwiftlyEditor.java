@@ -274,6 +274,17 @@ public class SwiftlyEditor extends PlacePanel
     }
 
     /**
+     * Shows a modal, internal frame dialog asking for user confirmation.
+     * Returns true if the user clicked Yes, false if they clicked No.
+     */
+    public boolean showConfirmDialog (String message)
+    {
+        int response = JOptionPane.showInternalConfirmDialog(
+            this, message, _msgs.get("m.dialog.confirm.title"), JOptionPane.YES_NO_OPTION);
+        return response == JOptionPane.YES_OPTION;
+    }
+
+    /**
      * Display a line in the console when the build starts.
      */
     public void buildStarted () 

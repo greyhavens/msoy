@@ -264,12 +264,16 @@ public class ProjectPanel extends JPanel
      */
     protected void deletePathElement ()
     {
-        // TODO throw up a Are you sure yes/no dialog
         PathElement element = getSelectedPathElement();
 
         if (_roomObj.project.getTemplateSourceName().equals(element.getName())) {
             _editor.showErrorDialog(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS,
                 "e.cannot_delete_template"));
+            return;
+        }
+
+        // Confirm the user actually wants to delete this PathElement
+        if (!_editor.showConfirmDialog(_msgs.get("m.dialog.confirm_delete", element.getName()))) {
             return;
         }
 
@@ -289,6 +293,7 @@ public class ProjectPanel extends JPanel
             // from interface ConfirmListener
             public void requestProcessed ()
             {
+                // nada TODO: should this just be an InvocationListener?
             }
             // from interface ConfirmListener
             public void requestFailed (String reason)
