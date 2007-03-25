@@ -33,6 +33,8 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.threerings.util.MessageBundle;
+
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.PathElementTreeNode;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
@@ -55,6 +57,8 @@ public class ProjectPanel extends JPanel
         super(new BorderLayout());
         _ctx = ctx;
         _editor = editor;
+        _msgs = _ctx.getMessageManager().getBundle(SwiftlyCodes.SWIFTLY_MSGS);
+
         add(_scrollPane, BorderLayout.CENTER);
         setupToolbar();
         setupPopup();
@@ -161,7 +165,7 @@ public class ProjectPanel extends JPanel
 
     protected Action createAddFileAction ()
     {
-        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.add_file")) {
+        return new AbstractAction(_msgs.get("m.action.add_file")) {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
                 addPathElement(PathElement.Type.FILE);
@@ -171,7 +175,7 @@ public class ProjectPanel extends JPanel
 
     protected Action createUploadFileAction ()
     {
-        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.upload_file")) {
+        return new AbstractAction(_msgs.get("m.action.upload_file")) {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
                 // TODO: implement filters based on supported MediaDesc mime types
@@ -179,11 +183,19 @@ public class ProjectPanel extends JPanel
                 // new FileNameExtensionFilter("JPG & GIF Images", "jpg", "gif");
                 // chooser.setFileFilter(filter);
                 JFileChooser fc = new JFileChooser();
-                fc.setApproveButtonText(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.upload"));
+                fc.setApproveButtonText(_msgs.get("m.action.upload"));
                 int returnVal = fc.showOpenDialog(_editor);
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     final File file = fc.getSelectedFile();
+
+                    // display an error to the user if the file being uploaded is too large
+                    if (file.length() > MAX_UPLOAD * ONE_MEG) {
+                        _editor.showErrorDialog(_msgs.get("e.upload_too_large",
+                            String.valueOf(MAX_UPLOAD)));
+                        return;
+                    }
+
                     // mime type will be determined on the server after the upload
                     PathElement uploadedFile = PathElement.createFile(
                         file.getName(), getCurrentParent(), null);
@@ -193,13 +205,12 @@ public class ProjectPanel extends JPanel
                         public void requestProcessed ()
                         {
                             UploadTask task = new UploadTask(file);
-                            // TODO: constant
-                            TaskMaster.invokeTask("upload file", task, new UploadTaskObserver());
+                            TaskMaster.invokeTask(UPLOAD_TASK, task, new UploadTaskObserver());
                         }
                         // from interface ConfirmListener
                         public void requestFailed (String reason)
                         {
-                            _editor.showErrorDialog(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, reason));
+                            _editor.showErrorDialog(_msgs.get(reason));
                         }
                     });
                 }
@@ -210,7 +221,7 @@ public class ProjectPanel extends JPanel
     protected Action createAddDirectoryAction ()
     {
         return new AbstractAction(
-            _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.add_directory")) {
+            _msgs.get("m.action.add_directory")) {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
                 addPathElement(PathElement.Type.DIRECTORY);
@@ -242,7 +253,7 @@ public class ProjectPanel extends JPanel
             _roomObj.service.addDocument(_ctx.getClient(), element, new InvocationListener () {
                 public void requestFailed (String reason)
                 {
-                    _editor.showErrorDialog(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, reason));
+                    _editor.showErrorDialog(_msgs.get(reason));
                 }
             });
         }
@@ -400,7 +411,7 @@ public class ProjectPanel extends JPanel
         // from interface TaskObserver
         public void taskFailed(String name, Throwable exception)
         {
-            _editor.showErrorDialog(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "e.upload_failed"));
+            _editor.showErrorDialog(_msgs.get("e.upload_failed"));
         }
 
         // from interface ConfirmListener
@@ -412,15 +423,25 @@ public class ProjectPanel extends JPanel
         // from interface ConfirmListener
         public void requestFailed (String reason)
         {
-            _editor.showErrorDialog(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, reason));
+            _editor.showErrorDialog(_msgs.get(reason));
         }
     }
 
     /** Upload block size is 256K to avoid Presents freakouts. */
     protected static final int UPLOAD_BLOCK_SIZE = 262144;
 
+    /** Maximum file upload size is 10 megs. */
+    protected static final int MAX_UPLOAD = 10;
+
+    /** 1 megabyte in bytes. */
+    protected static final int ONE_MEG = 1048576;
+
+    /** The name of the upload task */
+    protected static final String UPLOAD_TASK = "upload task";
+
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
+    protected MessageBundle _msgs;
     protected ProjectRoomObject _roomObj;
     protected ProjectTreeModel _treeModel;
     protected PathElementTreeNode _selectedNode;
