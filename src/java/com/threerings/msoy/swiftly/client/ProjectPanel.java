@@ -362,12 +362,19 @@ public class ProjectPanel extends JPanel
             // TODO: update a modal progress bar
             FileInputStream input = new FileInputStream(_file);
             int len;
-            byte[] buf = new byte[262144]; // TODO: magic number
+            byte[] buf = new byte[UPLOAD_BLOCK_SIZE];
             while ((len = input.read(buf)) > 0) {
-                _roomObj.service.uploadFile(_ctx.getClient(), buf);
+                if (len < UPLOAD_BLOCK_SIZE) {
+                    byte[] nbuf = new byte[len];
+                    System.arraycopy(buf, 0, nbuf, 0, len);
+                    _roomObj.service.uploadFile(_ctx.getClient(), nbuf);
+                } else {
+                    _roomObj.service.uploadFile(_ctx.getClient(), buf);
+                }
                 // wait a little to avoid sending too many messages to presents
                 Thread.sleep(200);
             }
+            input.close();
             return null; // TODO: meh
         }
 
@@ -408,6 +415,9 @@ public class ProjectPanel extends JPanel
             _editor.showErrorDialog(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, reason));
         }
     }
+
+    /** Upload block size is 256K to avoid Presents freakouts. */
+    protected static final int UPLOAD_BLOCK_SIZE = 262144;
 
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
