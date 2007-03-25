@@ -236,7 +236,8 @@ public class MemberRepository extends DepotRepository
             insert(nsess);
         } catch (DuplicateKeyException dke) {
             // if that fails with a duplicate key, reuse the old record but adjust its expiration
-            SessionRecord esess = load(SessionRecord.class, SessionRecord.MEMBER_ID, memberId);
+            SessionRecord esess = load(
+                SessionRecord.class, new Where(SessionRecord.MEMBER_ID, memberId));
             esess.expires = nsess.expires;
             update(esess, SessionRecord.EXPIRES);
 
