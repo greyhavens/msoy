@@ -295,6 +295,9 @@ public class ProjectPanel extends JPanel
             public void requestProcessed ()
             {
                 _editor.consoleMessage(_msgs.get("m.element_deleted", element.getName()));
+                // disable the toolbar and unset the selected node
+                disableToolbar();
+                _selectedNode = null;
             }
             // from interface ConfirmListener
             public void requestFailed (String reason)

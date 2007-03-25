@@ -147,6 +147,7 @@ public class ProjectRoomManager extends PlaceManager
         // and we're done
         if (!element.inRepo) {
             _roomObj.removeFromPathElements(elementId);
+            listener.requestProcessed();
             return;
         }
 
