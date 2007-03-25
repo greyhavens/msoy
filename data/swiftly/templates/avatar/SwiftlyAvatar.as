@@ -37,14 +37,7 @@ public class SwiftlyAvatar extends Sprite
     {
         // create and add the image
         _image = (new IMAGE() as DisplayObject);
-
-        // use the imageholder sprite to easily offset the image without
-        // having to worry about the image's offset ever again
-        var imageHolder :Sprite = new Sprite();
-        imageHolder.x = 10;
-        imageHolder.y = 10;
-        imageHolder.addChild(_image);
-        addChild(imageHolder);
+        addChild(_image);
 
         // create the control for whirled communication
         _control = new AvatarControl(this);
@@ -85,11 +78,15 @@ public class SwiftlyAvatar extends Sprite
             // we need to face right
             _image.x = _image.width;
             _image.scaleX = -1;
+            // Set our hotspot to where our "feet" are in the image
+            _control.setHotSpot(_image.width-140, 290);
 
         } else {
             // normal facing
             _image.x = 0;
             _image.scaleX = 1;
+            // Set our hotspot to where our "feet" are in the image
+            _control.setHotSpot(140, 290);
         }
 
         // see if we need to update our bouncing
@@ -148,8 +145,7 @@ public class SwiftlyAvatar extends Sprite
         var elapsed :Number = getTimer() - _bounceStamp;
 
         // compute our bounce
-        _image.y = Math.max(BOUNCE_AMPLITUDE *
-                            Math.sin(elapsed * (Math.PI * 2) / BOUNCE_PERIOD), 0);
+        _image.y = -Math.abs(BOUNCE_AMPLITUDE * Math.sin(elapsed * Math.PI / BOUNCE_PERIOD));
     }
 
     /**
@@ -190,11 +186,10 @@ public class SwiftlyAvatar extends Sprite
     /** The amplitude of our bounce, in pixels. */
     protected static const BOUNCE_AMPLITUDE :int = 10;
 
-    /** The period of our bounce: we do one bounce every 500 milliseconds. */
-    protected static const BOUNCE_PERIOD :int = 500;
+    /** The period of our bounce: we do one bounce every 300 milliseconds. */
+    protected static const BOUNCE_PERIOD :int = 300;
 
-    /** The embedded image class. */
+    /** Our avatar image. */
     [Embed(source="avatar.png")]
     protected static const IMAGE :Class;
-}
 }
