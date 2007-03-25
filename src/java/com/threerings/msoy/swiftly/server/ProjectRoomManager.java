@@ -43,6 +43,8 @@ import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyBinaryDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
+
+import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
@@ -50,6 +52,9 @@ import com.threerings.msoy.swiftly.server.build.LocalProjectBuilder;
 import com.threerings.msoy.swiftly.server.build.ProjectBuilderException;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
+
+import org.semanticdesktop.aperture.mime.identifier.MimeTypeIdentifier;
+import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifier;
 
 import org.apache.commons.io.FileUtils;
 
@@ -292,10 +297,13 @@ public class ProjectRoomManager extends PlaceManager
             public boolean invoke () {
                 try {
                     if (uploadFile.didSucceed()) {
-                        // only an exception in the following should set this to false
                         uploadFile.flush();
-                        _doc = new SwiftlyBinaryDocument();
-                        _doc.init(uploadFile.getFileData(), element, null);
+                        // set the mime type in the path element
+                        String mimeType = determineMimeType(
+                            element.getName(), uploadFile.getTempFile());
+                        element.setMimeType(mimeType);
+                        _doc = SwiftlyDocument.createFromMimeType(element.getMimeType());
+                        _doc.init(uploadFile.getFileData(), element, ProjectStorage.TEXT_ENCODING);
                     }
                     // remove the temp file no matter what
                     uploadFile.deleteTempFile();
@@ -400,6 +408,39 @@ public class ProjectRoomManager extends PlaceManager
         super.didShutdown();
         doCommit(false);
         MsoyServer.swiftlyMan.projectDidShutdown(this);
+    }
+
+    // TODO factor this out into a static method in PathElement? Where?
+    protected String determineMimeType (String fileName, File fileData)
+        throws IOException
+    {
+        MimeTypeIdentifier identifier = new MagicMimeTypeIdentifier();
+        String mimeType = null;
+
+        /* Identify the mime type */
+        FileInputStream stream = new FileInputStream(fileData);
+        byte[] firstBytes = new byte[identifier.getMinArrayLength()];
+    
+        // Read identifying bytes from the to-be-added file
+        if (stream.read(firstBytes, 0, firstBytes.length) >= firstBytes.length) {
+            // Required data was read, attempt magic identification
+            mimeType = identifier.identify(firstBytes, fileName, null);
+        }
+
+        // If that failed, try our internal path-based type detection.
+        if (mimeType == null) {
+            // Get the miserly byte mime-type
+            byte miserMimeType = MediaDesc.suffixToMimeType(fileName);
+
+            // If a valid type was returned, convert to a string.
+            // Otherwise, don't set a mime type.
+            // TODO: binary file detection
+            if (miserMimeType != -1) {
+                mimeType = MediaDesc.mimeTypeToString(miserMimeType);
+            }
+        }
+
+        return mimeType;
     }
 
     /**
@@ -580,6 +621,11 @@ public class ProjectRoomManager extends PlaceManager
         public PathElement getPathElement ()
         {
             return _pathElement;
+        }
+
+        public File getTempFile ()
+        {
+            return _tempFile;
         }
 
         public void deleteTempFile ()

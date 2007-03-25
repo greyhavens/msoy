@@ -184,9 +184,9 @@ public class ProjectPanel extends JPanel
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     final File file = fc.getSelectedFile();
-                    // TODO: get the file mime type
+                    // mime type will be determined on the server after the upload
                     PathElement uploadedFile = PathElement.createFile(
-                        file.getName(), getCurrentParent(), "/booched");
+                        file.getName(), getCurrentParent(), null);
                     _roomObj.service.startFileUpload(_ctx.getClient(), uploadedFile,
                         new ConfirmListener () {
                         // from interface ConfirmListener
