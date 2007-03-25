@@ -426,7 +426,7 @@ public class RoomView extends AbstractRoomView
     // from interface PlaceView
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
-        // set load-all to false, as we're going to 
+        // set load-all to false, as we're going to
         _loadAllMedia = false;
 
         super.willEnterPlace(plobj);
@@ -459,12 +459,14 @@ public class RoomView extends AbstractRoomView
             // decor item was not specified, but a legacy furni exists - let's load it
             addFurni(legacyBg).setLoadedCallback(backgroundFinishedLoading);
         } else {
-            // decor item was specified, or if it wasn't, neither was a legacy background.
-            // load the decor data we have, even if it's just default values.
-            setBackground(decordata);
-            _bg.setLoadedCallback(backgroundFinishedLoading);
+// TEMP: disable until decor is done
+//             // decor item was specified, or if it wasn't, neither was a legacy background.
+//             // load the decor data we have, even if it's just default values.
+//             setBackground(decordata);
+//             _bg.setLoadedCallback(backgroundFinishedLoading);
+            backgroundFinishedLoading();
         }
-        
+
         _chatOverlayWatcher = BindingUtils.bindSetter(recheckChatOverlay,
             _ctx.worldProps, "placeViewShowsChat");
     }
