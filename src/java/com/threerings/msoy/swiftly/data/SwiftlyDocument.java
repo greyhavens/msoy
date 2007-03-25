@@ -45,12 +45,28 @@ public abstract class SwiftlyDocument
     }
 
     /** Initializes the SwiftlyDocument. */
-    public abstract void init (InputStream data, PathElement path, String encoding,
-                               boolean fromRepo)
-        throws IOException;
+    public void init (InputStream data, PathElement path, String encoding)
+        throws IOException
+    {
+        _path = path;
+
+        // Create our backing store file
+        _backingStore = File.createTempFile("swiftlydocument", ".basefile");
+        _backingStore.deleteOnExit();
+    }
 
     /** Commit the in memory data to the file backing. */
-    public abstract void commit () throws IOException;
+    public void commit ()
+        throws IOException
+    {
+        // copy our modified data over our pristine backing store data
+        FileOutputStream fileOutput = new FileOutputStream(_backingStore);
+        try {
+            IOUtils.copy(getModifiedData(), fileOutput);
+        } finally {
+            fileOutput.close();
+        }
+    }
 
     /** Check to see if the document has changed. */
     public abstract boolean isDirty () throws IOException;
@@ -72,7 +88,11 @@ public abstract class SwiftlyDocument
     }
 
     /** Returns an stream corresponding to the unmodified data. */
-    public abstract InputStream getOriginalData () throws IOException;
+    public InputStream getOriginalData ()
+        throws IOException
+    {
+        return new FileInputStream(_backingStore);
+    }
 
     /** Returns an InputStream corresponding to the modified data. */
     public abstract InputStream getModifiedData () throws IOException;
@@ -122,6 +142,9 @@ public abstract class SwiftlyDocument
 
     /** Reference to our associated path element. */
     protected transient PathElement _path = null;
+
+    /** Unmodified disk-backing of the document data. */
+    protected transient File _backingStore = null;
 
     /** Key for the associated PathElement, used to re-bind the transient _path instance variable
      *  post-serialization. */

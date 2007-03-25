@@ -259,7 +259,6 @@ public class ProjectSVNStorage
 
     }
 
-
     // from interface ProjectStorage
     public SwiftlyDocument getDocument (PathElement path)
         throws ProjectStorageException
@@ -289,8 +288,7 @@ public class ProjectSVNStorage
 
         try {
             swiftlyDoc = SwiftlyDocument.createFromMimeType(path.getMimeType());
-            swiftlyDoc.init(new FileInputStream(tempFile), path,
-                            ProjectStorage.TEXT_ENCODING, true);
+            swiftlyDoc.init(new FileInputStream(tempFile), path, ProjectStorage.TEXT_ENCODING);
         } catch (IOException ioe) {
             throw new ProjectStorageException.InternalError(
                 "Failure instantiating SwiftlyDocument: " + ioe, ioe);
@@ -418,6 +416,9 @@ public class ProjectSVNStorage
             throw new ProjectStorageException.TransientFailure(
                 "Subversion commit failed, file(s) out of date: " + commitInfo.getErrorMessage());
         }
+
+        // if we made it this far, the element is now in the repository, mark it as such
+        pathElement.inRepo = true;
     }
 
     /** Delete a document from the repository. */
@@ -574,15 +575,14 @@ public class ProjectSVNStorage
                 node = PathElement.createDirectory(entry.getName(), parent);
                 // Recurse
                 recurseTree(svnRepo, node, result, revision);
+
             } else if (kind == SVNNodeKind.FILE) {
                 // Fetch the file properties.
                 properties = new HashMap<String,String>();
                 svnRepo.getFile(parent.getAbsolutePath() + "/" + entry.getName(), revision,
-                    properties, null);
-
+                                properties, null);
                 // Pull out the mime type.
                 mimeType = properties.get(SVNProperty.MIME_TYPE);
-
                 // Initialize a new PathElement node.
                 node = PathElement.createFile(entry.getName(), parent, mimeType);
 
@@ -591,6 +591,8 @@ public class ProjectSVNStorage
                     "Received an unhandled subversion node type: " + kind);
             }
 
+            // note that this element is in the repository
+            node.inRepo = true;
             result.add(node);
         }
 

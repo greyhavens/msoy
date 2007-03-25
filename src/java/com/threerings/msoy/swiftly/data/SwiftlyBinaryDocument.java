@@ -21,16 +21,10 @@ import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
 public class SwiftlyBinaryDocument extends SwiftlyDocument
 {
     @Override // from SwiftlyDocument
-    public void init (InputStream data, PathElement path, String encoding, boolean fromRepo)
+    public void init (InputStream data, PathElement path, String encoding)
         throws IOException
     {
-        // Keep track of important things
-        _path = path;
-        _fromRepo = fromRepo;
-
-        // Load and save the base document data
-        _backingStore = File.createTempFile("swiftlydocument", ".basefile");
-        _backingStore.deleteOnExit();
+        super.init(data, path, encoding);
 
         // Copy our data into a backing store file
         FileOutputStream fileOutput = new FileOutputStream(_backingStore);
@@ -42,24 +36,11 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     }
 
     @Override // from SwiftlyDocument
-    public void commit ()
-        throws IOException
-    {
-        // copy our modified data over our pristine backing store data
-        FileOutputStream fileOutput = new FileOutputStream(_backingStore);
-        try {
-            IOUtils.copy(getModifiedData(), fileOutput);
-        } finally {
-            fileOutput.close();
-        }
-    }
-
-    @Override // from SwiftlyDocument
     public boolean isDirty ()
         throws IOException
     {
-        // if we're not from the repo, we're dirty; TODO: allow modifications, store them somewhere
-        return !_fromRepo;
+        // if we're not in the repo, we're dirty; TODO: allow modifications, store them somewhere
+        return !getPathElement().inRepo;
     }
 
     @Override // from SwiftlyDocument
@@ -74,13 +55,6 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     {
         // this binary document type can handle any mimetype
         return true;
-    }
-
-    @Override // from SwiftlyDocument
-    public InputStream getOriginalData ()
-        throws IOException
-    {
-        return new FileInputStream(_backingStore);
     }
 
     @Override // from SwiftlyDocument
@@ -107,7 +81,4 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
 
     /** Unmodified disk-backing of the document data. */
     protected transient File _backingStore = null;
-
-    /** Whether this document was created from the repository or is a brand nubian. */
-    protected transient boolean _fromRepo;
 }

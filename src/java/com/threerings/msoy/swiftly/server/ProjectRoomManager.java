@@ -131,9 +131,26 @@ public class ProjectRoomManager extends PlaceManager
                                    final ConfirmListener listener)
     {
         // TODO: check access!
+
         final PathElement element = _roomObj.pathElements.get(elementId);
 
-        // Delete the document from the storage provider
+        // if the document associated with this element is resolved, unload it (if the removal
+        // fails, this will only be a minor inconvenience)
+        for (SwiftlyDocument doc : _roomObj.documents) {
+            if (doc.getPathElement().elementId == elementId) {
+                _roomObj.removeFromDocuments(doc.getKey());
+                break;
+            }
+        }
+
+        // if the path element was not committed to the repository, just remove it from the DSet
+        // and we're done
+        if (!element.inRepo) {
+            _roomObj.removeFromPathElements(elementId);
+            return;
+        }
+
+        // Otherwise we'll have to delete the document from the storage provider
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 try {
@@ -146,20 +163,13 @@ public class ProjectRoomManager extends PlaceManager
 
             public void handleResult () {
                 if (_error != null) {
-                    log.log(Level.WARNING, "Delete pathElement failed [pathElement=" +
-                        element + "].", _error);
+                    log.log(Level.WARNING, "Delete pathElement failed [element=" + element + "].",
+                            _error);
                     listener.requestFailed("e.delete_element_failed");
                     return;
                 }
                 // remove it from path elements
                 _roomObj.removeFromPathElements(elementId);
-                // if it is resolved, remove it from documents as well
-                for (SwiftlyDocument doc : _roomObj.documents) {
-                    if (doc.getPathElement().elementId == elementId) {
-                        _roomObj.removeFromDocuments(doc.getKey());
-                        break;
-                    }
-                }
                 listener.requestProcessed();
             }
 
@@ -179,7 +189,7 @@ public class ProjectRoomManager extends PlaceManager
         SwiftlyTextDocument doc = null;
         try {
             doc = new SwiftlyTextDocument();
-            doc.init(null, element, ProjectStorage.TEXT_ENCODING, false);
+            doc.init(null, element, ProjectStorage.TEXT_ENCODING);
         } catch (IOException e) {
             listener.requestFailed("e.add_document_failed");
             return;
@@ -340,8 +350,7 @@ public class ProjectRoomManager extends PlaceManager
                             element.getName(), uploadFile.getTempFile());
                         element.setMimeType(mimeType);
                         _doc = SwiftlyDocument.createFromMimeType(element.getMimeType());
-                        _doc.init(uploadFile.getFileData(), element,
-                                  ProjectStorage.TEXT_ENCODING, false);
+                        _doc.init(uploadFile.getFileData(), element, ProjectStorage.TEXT_ENCODING);
                     }
                     // remove the temp file no matter what
                     uploadFile.deleteTempFile();
@@ -352,21 +361,23 @@ public class ProjectRoomManager extends PlaceManager
             }
 
             public void handleResult () {
-                if (_doc != null) {
-                    // add the path element first to the dset so that lazarus will work
-                    _roomObj.addPathElement(element);
-                    _roomObj.addSwiftlyDocument(_doc);
-                    listener.requestProcessed();
-                } else {
+                _currentUploads.remove(caller.getOid());
+
+                if (_doc == null) {
                     if (_error != null) {
-                        log.log(Level.WARNING, "Finish upload failed [file=" +
-                            element + "].", _error);
+                        log.log(Level.WARNING, "Finish upload failed [file=" + element + "].",
+                                _error);
                     } else {
                         log.warning("Upload file failed before finishing [file=" + element + "].");
                     }
                     listener.requestFailed("e.finish_upload_failed");
+                    return;
                 }
-                _currentUploads.remove(caller.getOid());
+
+                // add the path element first to the dset so that lazarus will work
+                _roomObj.addPathElement(element);
+                _roomObj.addSwiftlyDocument(_doc);
+                listener.requestProcessed();
             }
 
             protected Exception _error;
@@ -497,6 +508,8 @@ public class ProjectRoomManager extends PlaceManager
         public CommitProjectTask (boolean shouldBuild) {
             _projectId = ((ProjectRoomConfig)_config).projectId;
             _shouldBuild = shouldBuild;
+            // take a snapshot of our documents while we're on the dobj thread
+            _allDocs = _roomObj.documents.toArray(new SwiftlyDocument[_roomObj.documents.size()]);
         }
 
         public boolean merge (SerialExecutor.ExecutorTask other) {
@@ -514,18 +527,13 @@ public class ProjectRoomManager extends PlaceManager
         // this is called on the executor thread and can go hog wild with the blocking
         public void executeTask () {
             try {
-                ArrayList<SwiftlyDocument> docs = new ArrayList<SwiftlyDocument>();
                 // commit each swiftly document in the project that has changed
-                for (SwiftlyDocument doc : _roomObj.documents) {
-                    if (doc.isDirty()) {
-                        _storage.putDocument(doc, "Automatic Swiftly Commit");
-                        docs.add(doc);
-                    }
-                }
-                for (SwiftlyDocument doc : docs) {
+                for (SwiftlyDocument doc : _allDocs) {
+                    _storage.putDocument(doc, "Automatic Swiftly Commit");
                     doc.commit();
-                    _roomObj.updateDocuments(doc);
+                    _modDocs.add(doc);
                 }
+
             } catch (Throwable error) {
                 // we'll report this on resultReceived()
                 _error = error;
@@ -541,12 +549,18 @@ public class ProjectRoomManager extends PlaceManager
                     _roomObj.setConsole(
                         MessageBundle.tcompose("m.commit_failed_unknown", _error.getMessage()));
                 }
+                return;
+            }
+
+            // update the documents that were committed
+            for (SwiftlyDocument doc : _modDocs) {
+                _roomObj.updateDocuments(doc);
+            }
+
+            // if the commit work, run the build if set
+            if (_shouldBuild) {
+                MsoyServer.swiftlyMan.buildExecutor.addTask(new BuildProjectTask());
             } else {
-                // if the commit work, run the build if set
-                if (_shouldBuild) {
-                    MsoyServer.swiftlyMan.buildExecutor.addTask(new BuildProjectTask());
-                    return;
-                }
                 _roomObj.setConsole("m.commit_complete");
             }
         }
@@ -556,8 +570,11 @@ public class ProjectRoomManager extends PlaceManager
             _roomObj.setConsole("m.commit_timed_out");
         }
 
+        protected SwiftlyDocument[] _allDocs;
+        protected ArrayList<SwiftlyDocument> _modDocs = new ArrayList<SwiftlyDocument>();
+
         protected int _projectId;
-        boolean _shouldBuild;
+        protected boolean _shouldBuild;
         protected Throwable _error;
     }
 

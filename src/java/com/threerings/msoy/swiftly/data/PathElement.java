@@ -26,6 +26,9 @@ public class PathElement
     /** Uniquely identifies this path element in the distributed state. */
     public int elementId;
 
+    /** Indicates whether this path element has been committed to the repository or not. */
+    public transient boolean inRepo;
+
     /**
      * Creates a project root element.
      */

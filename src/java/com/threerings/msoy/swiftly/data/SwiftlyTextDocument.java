@@ -20,39 +20,31 @@ import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
  * unmodified copy of its initial data to allow for delta generation.
  */
 public class SwiftlyTextDocument extends SwiftlyDocument
-{    
+{
     @Override // from SwiftlyDocument
-    public void init (InputStream data, PathElement path, String encoding, boolean fromRepo)
+    public void init (InputStream data, PathElement path, String encoding)
         throws IOException
     {
-        StringBuffer textBuffer;
-        FileOutputStream fileOutput;
-        byte[] buf = new byte[1024];
-        int len;
+        super.init(data, path, encoding);
 
-        // Store the pathelement
-        _path = path;
-
-        // Load and save the base document data.
         // TODO: Stack of deltas and a mmap()'d base document, such that we
         // don't waste RAM storing the whole file in memory.
-        _backingStore = File.createTempFile("swiftlydocument", ".basefile");
-        _backingStore.deleteOnExit();
 
-        textBuffer = new StringBuffer();
-        fileOutput = new FileOutputStream(_backingStore);
-        
         // text will remain blank if this is a new document
         _text = "";
         if (data != null) {
+            StringBuffer textBuffer = new StringBuffer();
+            FileOutputStream fileOutput = new FileOutputStream(_backingStore);
+            byte[] buf = new byte[1024];
+            int len;
             while ((len = data.read(buf)) > 0) {
                 // Write to our base file backing
                 fileOutput.write(buf, 0, len);
-
                 // Write to the memory buffer too, oh boy
                 textBuffer.append(new String(buf, 0, len, encoding));
             }
             _text = textBuffer.toString();
+            fileOutput.close();
         }
 
         _encoding = encoding;
@@ -62,16 +54,9 @@ public class SwiftlyTextDocument extends SwiftlyDocument
     public void commit ()
         throws IOException
     {
-        InputStream data = getModifiedData();
-        FileOutputStream fileOutput = new FileOutputStream(_backingStore);
-        byte[] buf = new byte[1024];
-        int len;
+        super.commit();
 
-        while ((len = data.read(buf)) > 0) {
-            // Write to our base file backing
-            fileOutput.write(buf, 0, len);
-        }
-
+        // note that we're no longer modified
         _changed = false;
     }
 
@@ -121,13 +106,6 @@ public class SwiftlyTextDocument extends SwiftlyDocument
     }
 
     @Override // from SwiftlyDocument
-    public InputStream getOriginalData ()
-        throws IOException
-    {
-        return new FileInputStream(_backingStore);
-    }
-
-    @Override // from SwiftlyDocument
     public InputStream getModifiedData ()
         throws IOException
     {
@@ -141,7 +119,7 @@ public class SwiftlyTextDocument extends SwiftlyDocument
     {
         try {
             if (_backingStore != null) {
-                _backingStore.delete();                
+                _backingStore.delete();
             }
         } finally {
             super.finalize();
@@ -153,9 +131,6 @@ public class SwiftlyTextDocument extends SwiftlyDocument
 
     /** If this document has received any input. */
     protected boolean _changed = false;
-
-    /** Unmodified disk-backing of the document data. */
-    protected transient File _backingStore = null;
 
     /** Text encoding. */
     protected transient String _encoding;
