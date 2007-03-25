@@ -35,8 +35,7 @@ public abstract class SwiftlyDocument
      */
     public static SwiftlyDocument createFromMimeType (String mimeType)
     {
-        for (int ii = 0; ii < _documentTypes.length; ii++) {
-            SwiftlyDocument doc = _documentTypes[ii];
+        for (SwiftlyDocument doc : _documentTypes) {
             if (doc.handlesMimeType(mimeType)) {
                 return (SwiftlyDocument)doc.clone();
             }
@@ -46,7 +45,7 @@ public abstract class SwiftlyDocument
     }
 
     /** Initializes the SwiftlyDocument. */
-    public abstract void init(InputStream data, PathElement path, String encoding)
+    public abstract void init (InputStream data, PathElement path, String encoding)
         throws IOException;
 
     /** Commit the in memory data to the file backing. */

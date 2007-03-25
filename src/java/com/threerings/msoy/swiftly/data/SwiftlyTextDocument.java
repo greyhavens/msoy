@@ -107,8 +107,8 @@ public class SwiftlyTextDocument extends SwiftlyDocument
     @Override // from SwiftlyDocument
     public boolean handlesMimeType (String mimeType)
     {
-        for (int ii = 0; ii < _mimeTypes.length; ii++) {
-            if (mimeType.contains(_mimeTypes[ii])) {
+        for (String type : _mimeTypes) {
+            if (mimeType.startsWith(type)) {
                 return true;
             }
         }
