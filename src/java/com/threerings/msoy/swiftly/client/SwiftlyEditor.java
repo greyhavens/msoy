@@ -145,6 +145,9 @@ public class SwiftlyEditor extends PlacePanel
                 // from interface ConfirmListener
                 public void requestProcessed () {
                     SwiftlyDocument doc = _roomObj.getDocument(pathElement);
+                    if (doc == null) {
+                        showErrorMessage(_msgs.get("e.load_document_failed"));
+                    }
                     doc.loadInEditor(SwiftlyEditor.this);
                 }
                 // from interface ConfirmListener
