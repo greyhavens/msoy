@@ -178,6 +178,9 @@ public class ProjectRoomManager extends PlaceManager
     {
         // TODO: check access!
 
+        // inform all the clients that a build is starting
+        _roomObj.setBuilding(true);
+
         // perform a commit first. if that works, it will run the build
         doCommit(true);
     }
@@ -597,6 +600,8 @@ public class ProjectRoomManager extends PlaceManager
 
             // Provide build output
             _roomObj.setResult(_result);
+            // Inform the clients that the build is finished
+            _roomObj.setBuilding(false);
         }
 
         // this is called back on the dobj thread and must only report failure

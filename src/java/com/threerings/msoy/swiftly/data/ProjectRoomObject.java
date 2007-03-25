@@ -27,6 +27,9 @@ public class ProjectRoomObject extends PlaceObject
     /** The field name of the <code>result</code> field. */
     public static final String RESULT = "result";
 
+    /** The field name of the <code>building</code> field. */
+    public static final String BUILDING = "building";
+
     /** The field name of the <code>service</code> field. */
     public static final String SERVICE = "service";
 
@@ -45,6 +48,9 @@ public class ProjectRoomObject extends PlaceObject
 
     /** The build result. */
     public BuildResult result;
+
+    /** True if a build is happening. */
+    public boolean building;
 
     /** Provides invocation services. */
     public ProjectRoomMarshaller service;
@@ -212,6 +218,22 @@ public class ProjectRoomObject extends PlaceObject
         requestAttributeChange(
             RESULT, value, ovalue);
         this.result = value;
+    }
+
+    /**
+     * Requests that the <code>building</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setBuilding (boolean value)
+    {
+        boolean ovalue = this.building;
+        requestAttributeChange(
+            BUILDING, Boolean.valueOf(value), Boolean.valueOf(ovalue));
+        this.building = value;
     }
 
     /**

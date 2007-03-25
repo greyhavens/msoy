@@ -60,7 +60,9 @@ public class ProjectRoomController extends PlaceController
     protected void buildProject ()
     {
         // report to the user that we're starting the build
-        _editor.consoleMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.build_started"));
+        _editor.buildStarted();
+        // disable the action on this client
+        buildAction.setEnabled(false);
         // the results of this request will be communicated via _roomObj.console
         _roomObj.service.buildProject(_ctx.getClient());
     }

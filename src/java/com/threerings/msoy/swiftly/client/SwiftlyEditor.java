@@ -66,6 +66,7 @@ public class SwiftlyEditor extends PlacePanel
     {
         super(ctrl);
         _ctx = ctx;
+        _ctrl = ctrl;
         _msgs = _ctx.getMessageManager().getBundle(SwiftlyCodes.SWIFTLY_MSGS);
 
         setLayout(new VGroupLayout(
@@ -272,6 +273,14 @@ public class SwiftlyEditor extends PlacePanel
             this, message, _msgs.get("m.dialog.error.title"), JOptionPane.ERROR_MESSAGE);
     }
 
+    /**
+     * Display a line in the console when the build starts.
+     */
+    public void buildStarted () 
+    {
+        consoleMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.build_started"));
+    }
+
     @Override // from PlacePanel
     public void willEnterPlace (PlaceObject plobj)
     {
@@ -307,6 +316,8 @@ public class SwiftlyEditor extends PlacePanel
         } else if (event.getName().equals(ProjectRoomObject.RESULT)) {
             displayBuildResult();
             _previewAction.setEnabled(true);
+        } else if (event.getName().equals(ProjectRoomObject.BUILDING)) {
+            _ctrl.buildAction.setEnabled(!_roomObj.building);
         }
     }
 
@@ -480,6 +491,7 @@ public class SwiftlyEditor extends PlacePanel
     protected ArrayList<FileTypes> _createableFileTypes;
 
     protected SwiftlyContext _ctx;
+    protected ProjectRoomController _ctrl;
     protected MessageBundle _msgs;
     protected ProjectRoomObject _roomObj;
     protected PathElement _project;
