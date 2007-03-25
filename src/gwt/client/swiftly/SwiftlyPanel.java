@@ -19,6 +19,7 @@ import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
 import client.shell.Application;
+import client.shell.WorldClient;
 import client.util.InfoPopup;
 
 /**
@@ -78,6 +79,9 @@ public class SwiftlyPanel extends FlexTable
         setWidget(1, 0, _applet);
         getFlexCellFormatter().setColSpan(1, 0, 3);
         getFlexCellFormatter().setHeight(1, 0, "100%");
+
+        // clear out any world client because swiftly currently kills it anyawy
+        WorldClient.clearClient();
     }
 
     protected void updateProjectLink ()
