@@ -332,7 +332,9 @@ public class SwiftlyEditor extends PlacePanel
 
         } else if (event.getName().equals(ProjectRoomObject.RESULT)) {
             displayBuildResult();
-            _previewAction.setEnabled(_roomObj.result.getBuildResultURL() != null);
+            if (_roomObj.result.buildSuccessful()) {
+                _previewAction.setEnabled(_roomObj.result.getBuildResultURL() != null);
+            }
 
         } else if (event.getName().equals(ProjectRoomObject.BUILDING)) {
             _ctrl.buildAction.setEnabled(!_roomObj.building);
@@ -413,9 +415,14 @@ public class SwiftlyEditor extends PlacePanel
     /** Displays the build result on the console */
     protected void displayBuildResult ()
     {
+        boolean didSucceed = _roomObj.result.buildSuccessful();
         for (CompilerOutput output : _roomObj.result.getOutput()) {
             FlexCompilerOutput flexOut = (FlexCompilerOutput)output;
-            consoleMessage(flexOut.toString());
+            if (didSucceed) {
+                consoleMessage(flexOut.toString());
+            } else {
+                showErrorMessage(flexOut.toString());
+            }
         }
     }
 
