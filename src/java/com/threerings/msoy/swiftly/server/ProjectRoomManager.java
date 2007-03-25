@@ -545,6 +545,12 @@ public class ProjectRoomManager extends PlaceManager
 
         // this is called back on the dobj thread and must only report results
         public void resultReceived () {
+            // update the documents that were committed (any that got added to this list got
+            // committed, even if we later failed)
+            for (SwiftlyDocument doc : _modDocs) {
+                _roomObj.updateDocuments(doc);
+            }
+
             if (_error != null) {
                 if (_error instanceof ProjectStorageException) {
                     _roomObj.setConsole("m.commit_failed");
@@ -553,11 +559,6 @@ public class ProjectRoomManager extends PlaceManager
                         MessageBundle.tcompose("m.commit_failed_unknown", _error.getMessage()));
                 }
                 return;
-            }
-
-            // update the documents that were committed
-            for (SwiftlyDocument doc : _modDocs) {
-                _roomObj.updateDocuments(doc);
             }
 
             // if the commit work, run the build if set
