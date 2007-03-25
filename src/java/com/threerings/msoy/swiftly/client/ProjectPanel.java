@@ -266,7 +266,7 @@ public class ProjectPanel extends JPanel
      */
     protected void deletePathElement ()
     {
-        PathElement element = getSelectedPathElement();
+        final PathElement element = getSelectedPathElement();
 
         if (_roomObj.project.getTemplateSourceName().equals(element.getName())) {
             _editor.showErrorDialog(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS,
@@ -295,7 +295,7 @@ public class ProjectPanel extends JPanel
             // from interface ConfirmListener
             public void requestProcessed ()
             {
-                // nada TODO: should this just be an InvocationListener?
+                _editor.consoleMessage(_msgs.get("m.element_deleted", element.getName()));
             }
             // from interface ConfirmListener
             public void requestFailed (String reason)

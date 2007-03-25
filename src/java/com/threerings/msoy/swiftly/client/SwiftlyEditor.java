@@ -290,7 +290,7 @@ public class SwiftlyEditor extends PlacePanel
      */
     public void buildStarted () 
     {
-        consoleMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.build_started"));
+        consoleMessage(_msgs.get("m.build_started"));
     }
 
     @Override // from PlacePanel
