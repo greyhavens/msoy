@@ -148,6 +148,41 @@ public class ProjectSVNStorageUnitTest extends TestCase
         }
     }
 
+    public void testRenameDocument ()
+        throws Exception
+    {
+        ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
+        PathElement path = PathElement.createFile("UnitTest.as", null, "text/x-actionscript");
+        SwiftlyTextDocument doc;
+        
+        // Get an initial copy of the document
+        doc = (SwiftlyTextDocument)storage.getDocument(path);
+
+        // Modify and commit the changes
+        doc.setText("Modified");
+        storage.putDocument(doc, "Testing");
+
+        // Delete the document
+        storage.renameDocument(path, "UnitTestMoved.as", "Renaming");
+
+        // Retrieve the new document
+        PathElement newPath = PathElement.createFile(
+            "UnitTestMoved.as", null, "text/x-actionscript");
+        try {
+            doc = (SwiftlyTextDocument)storage.getDocument(newPath);
+        } catch (ProjectStorageException pse) {
+            fail("The storage engine did not rename the document!");
+        }
+
+        // Retrieve the old document
+        try {
+            doc = (SwiftlyTextDocument)storage.getDocument(path);
+            fail("The storage engine did not delete the renamed document!");
+        } catch (ProjectStorageException pse) {
+            // It's supposed to fail!
+        }
+    }
+
     public void testGetVNURL ()
         throws Exception
     {
