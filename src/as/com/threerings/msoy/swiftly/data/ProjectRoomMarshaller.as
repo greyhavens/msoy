@@ -88,10 +88,12 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static const DELETE_PATH_ELEMENT :int = 6;
 
     // from interface ProjectRoomService
-    public function deletePathElement (arg1 :Client, arg2 :int) :void
+    public function deletePathElement (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
     {
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, DELETE_PATH_ELEMENT, [
-            Integer.valueOf(arg2)
+            Integer.valueOf(arg2), listener3
         ]);
     }
 

@@ -33,7 +33,7 @@ public interface ProjectRoomService extends InvocationService
     function deleteDocument (arg1 :Client, arg2 :int) :void;
 
     // from Java interface ProjectRoomService
-    function deletePathElement (arg1 :Client, arg2 :int) :void;
+    function deletePathElement (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface ProjectRoomService
     function finishFileUpload (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void;

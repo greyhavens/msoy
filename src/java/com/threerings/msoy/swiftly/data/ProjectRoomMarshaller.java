@@ -83,10 +83,12 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int DELETE_PATH_ELEMENT = 6;
 
     // from interface ProjectRoomService
-    public void deletePathElement (Client arg1, int arg2)
+    public void deletePathElement (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
     {
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, DELETE_PATH_ELEMENT, new Object[] {
-            Integer.valueOf(arg2)
+            Integer.valueOf(arg2), listener3
         });
     }
 

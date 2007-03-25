@@ -127,10 +127,36 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void deletePathElement (ClientObject caller, int elementId)
+    public void deletePathElement (ClientObject caller, final int elementId,
+                                   final ConfirmListener listener)
     {
         // TODO: check access!
-        _roomObj.removeFromPathElements(elementId);
+        final PathElement element = _roomObj.pathElements.get(elementId); 
+
+        // Delete the document from the storage provider
+        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
+            public boolean invoke () {
+                try {
+                    _storage.deleteDocument(element, "Automatic Swiftly Delete");
+                } catch (ProjectStorageException pse) {
+                    _error = pse;
+                }
+                return true;
+            }
+
+            public void handleResult () {
+                if (_error == null) {
+                    _roomObj.removeFromPathElements(elementId);
+                    listener.requestProcessed();
+                } else {
+                    log.log(Level.WARNING, "Delete pathElement failed [pathElement=" +
+                        element + "].", _error);
+                    listener.requestFailed("e.delete_element_failed");
+                }
+            }
+
+            protected Exception _error;
+        });
     }
 
     // from interface ProjectRoomProvider

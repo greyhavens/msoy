@@ -46,7 +46,8 @@ public interface ProjectRoomProvider extends InvocationProvider
     /**
      * Handles a {@link ProjectRoomService#deletePathElement} request.
      */
-    public void deletePathElement (ClientObject caller, int arg1);
+    public void deletePathElement (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
+        throws InvocationException;
 
     /**
      * Handles a {@link ProjectRoomService#finishFileUpload} request.

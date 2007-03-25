@@ -76,7 +76,7 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
         case ProjectRoomMarshaller.DELETE_PATH_ELEMENT:
             ((ProjectRoomProvider)provider).deletePathElement(
                 source,
-                ((Integer)args[0]).intValue()
+                ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
             );
             return;
 
