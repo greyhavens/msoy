@@ -33,8 +33,11 @@ public class ProjectRoomObject extends PlaceObject
     /** The field name of the <code>service</code> field. */
     public static final String SERVICE = "service";
 
-    /** The field name of the <code>console</code> field. */
-    public static final String CONSOLE = "console";
+    /** The field name of the <code>consoleOut</code> field. */
+    public static final String CONSOLE_OUT = "consoleOut";
+
+    /** The field name of the <code>consoleErr</code> field. */
+    public static final String CONSOLE_ERR = "consoleErr";
     // AUTO-GENERATED: FIELDS END
 
     /** The SwiftlyProject being edited. */
@@ -56,7 +59,10 @@ public class ProjectRoomObject extends PlaceObject
     public ProjectRoomMarshaller service;
 
     /** Used to broadcast console (compiler output, etc.) messages to all members of the room. */
-    public String console;
+    public String consoleOut;
+
+    /** Used to broadcast console error messages to all members of the room. */
+    public String consoleErr;
 
     /**
      * Adds a new path element to the project's distributed state, assigning a unique identifier to
@@ -267,19 +273,35 @@ public class ProjectRoomObject extends PlaceObject
     }
 
     /**
-     * Requests that the <code>console</code> field be set to the
+     * Requests that the <code>consoleOut</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
      * that the attribute did change. Proxied copies of this object (on
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setConsole (String value)
+    public void setConsoleOut (String value)
     {
-        String ovalue = this.console;
+        String ovalue = this.consoleOut;
         requestAttributeChange(
-            CONSOLE, value, ovalue);
-        this.console = value;
+            CONSOLE_OUT, value, ovalue);
+        this.consoleOut = value;
+    }
+
+    /**
+     * Requests that the <code>consoleErr</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setConsoleErr (String value)
+    {
+        String ovalue = this.consoleErr;
+        requestAttributeChange(
+            CONSOLE_ERR, value, ovalue);
+        this.consoleErr = value;
     }
     // AUTO-GENERATED: METHODS END
 

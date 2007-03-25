@@ -328,8 +328,11 @@ public class SwiftlyEditor extends PlacePanel
     // from interface AttributeChangeListener
     public void attributeChanged (AttributeChangedEvent event)
     {
-        if (event.getName().equals(ProjectRoomObject.CONSOLE)) {
-            consoleMessage(_msgs.xlate(_roomObj.console));
+        if (event.getName().equals(ProjectRoomObject.CONSOLE_OUT)) {
+            consoleMessage(_msgs.xlate(_roomObj.consoleOut));
+
+        } else if (event.getName().equals(ProjectRoomObject.CONSOLE_ERR)) {
+            showErrorMessage(_msgs.xlate(_roomObj.consoleErr));
 
         } else if (event.getName().equals(ProjectRoomObject.RESULT)) {
             displayBuildResult();

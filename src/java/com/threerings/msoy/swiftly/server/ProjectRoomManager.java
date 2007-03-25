@@ -589,9 +589,9 @@ public class ProjectRoomManager extends PlaceManager
 
             if (_error != null) {
                 if (_error instanceof ProjectStorageException) {
-                    _roomObj.setConsole("m.commit_failed");
+                    _roomObj.setConsoleErr("m.commit_failed");
                 } else {
-                    _roomObj.setConsole(
+                    _roomObj.setConsoleErr(
                         MessageBundle.tcompose("m.commit_failed_unknown", _error.getMessage()));
                 }
                 return;
@@ -601,13 +601,13 @@ public class ProjectRoomManager extends PlaceManager
             if (_shouldBuild) {
                 MsoyServer.swiftlyMan.buildExecutor.addTask(new BuildProjectTask());
             } else {
-                _roomObj.setConsole("m.commit_complete");
+                _roomObj.setConsoleOut("m.commit_complete");
             }
         }
 
         // this is called back on the dobj thread and must only report failure
         public void timedOut () {
-            _roomObj.setConsole("m.commit_timed_out");
+            _roomObj.setConsoleErr("m.commit_timed_out");
         }
 
         protected SwiftlyDocument[] _allDocs;
@@ -663,14 +663,14 @@ public class ProjectRoomManager extends PlaceManager
         // this is called back on the dobj thread and must only report results
         public void resultReceived () {
             if (_error != null) {
-                _roomObj.setConsole(
+                _roomObj.setConsoleErr(
                     MessageBundle.tcompose("m.build_failed_reason", _error.getMessage()));
                 return;
             }
 
             // Check for failure
             if (_result.buildSuccessful()) {
-                _roomObj.setConsole("m.build_complete");
+                _roomObj.setConsoleOut("m.build_complete");
 
                 // TODO: This is an awful last minute hack!
                 try {
@@ -687,7 +687,7 @@ public class ProjectRoomManager extends PlaceManager
                 }
 
             } else {
-                _roomObj.setConsole("m.build_failed");
+                _roomObj.setConsoleErr("m.build_failed");
             }
 
             // Provide build output
@@ -698,7 +698,7 @@ public class ProjectRoomManager extends PlaceManager
 
         // this is called back on the dobj thread and must only report failure
         public void timedOut () {
-            _roomObj.setConsole("m.build_timed_out");
+            _roomObj.setConsoleErr("m.build_timed_out");
         }
 
         protected File _buildDir;
