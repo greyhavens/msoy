@@ -325,7 +325,7 @@ public class MsoyController extends Controller
      */
     public function handleViewItem (ident :ItemIdent) :void
     {
-        showExternalURL("/item/index.html#" + ident.type + ";" + ident.itemId);
+        handleInternalGo("item", "" + ident.itemId);
     }
 
     /**
@@ -333,7 +333,7 @@ public class MsoyController extends Controller
      */
     public function handleViewMember (memberId :int) :void
     {
-        showExternalURL("/profile/index.html#" + memberId);
+        handleInternalGo("profile", "" + memberId);
     }
 
     /**
