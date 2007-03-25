@@ -149,7 +149,7 @@ public class SwiftlyEditor extends PlacePanel
                 }
                 // from interface ConfirmListener
                 public void requestFailed (String reason) {
-                    showErrorDialog(_msgs.xlate(reason));
+                    showErrorMessage(_msgs.xlate(reason));
                 }
             });
         }
@@ -271,12 +271,11 @@ public class SwiftlyEditor extends PlacePanel
     }
 
     /**
-     * Shows a modal, internal frame dialog reporting an error to the user.
+     * Shows an error message to the user using the console.
      */
-    public void showErrorDialog (String message)
+    public void showErrorMessage (String message)
     {
-        JOptionPane.showInternalMessageDialog(
-            this, message, _msgs.get("m.dialog.error.title"), JOptionPane.ERROR_MESSAGE);
+        _console.consoleMessage(message);
     }
 
     /**

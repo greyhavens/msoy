@@ -193,7 +193,7 @@ public class ProjectPanel extends JPanel
 
                     // display an error to the user if the file being uploaded is too large
                     if (file.length() > MAX_UPLOAD * ONE_MEG) {
-                        _editor.showErrorDialog(_msgs.get("e.upload_too_large",
+                        _editor.showErrorMessage(_msgs.get("e.upload_too_large",
                             String.valueOf(MAX_UPLOAD)));
                         return;
                     }
@@ -212,7 +212,7 @@ public class ProjectPanel extends JPanel
                         // from interface ConfirmListener
                         public void requestFailed (String reason)
                         {
-                            _editor.showErrorDialog(_msgs.get(reason));
+                            _editor.showErrorMessage(_msgs.get(reason));
                         }
                     });
                 }
@@ -255,7 +255,7 @@ public class ProjectPanel extends JPanel
             _roomObj.service.addDocument(_ctx.getClient(), element, new InvocationListener () {
                 public void requestFailed (String reason)
                 {
-                    _editor.showErrorDialog(_msgs.get(reason));
+                    _editor.showErrorMessage(_msgs.get(reason));
                 }
             });
         }
@@ -269,7 +269,7 @@ public class ProjectPanel extends JPanel
         final PathElement element = getSelectedPathElement();
 
         if (_roomObj.project.getTemplateSourceName().equals(element.getName())) {
-            _editor.showErrorDialog(_msgs.get("e.cannot_delete_template"));
+            _editor.showErrorMessage(_msgs.get("e.cannot_delete_template"));
             return;
         }
 
@@ -301,7 +301,7 @@ public class ProjectPanel extends JPanel
             // from interface ConfirmListener
             public void requestFailed (String reason)
             {
-                _editor.showErrorDialog(_msgs.get(reason));
+                _editor.showErrorMessage(_msgs.get(reason));
             }
         });
     }
@@ -431,7 +431,7 @@ public class ProjectPanel extends JPanel
         // from interface TaskObserver
         public void taskFailed(String name, Throwable exception)
         {
-            _editor.showErrorDialog(_msgs.get("e.upload_failed"));
+            _editor.showErrorMessage(_msgs.get("e.upload_failed"));
         }
 
         // from interface ConfirmListener
@@ -443,7 +443,7 @@ public class ProjectPanel extends JPanel
         // from interface ConfirmListener
         public void requestFailed (String reason)
         {
-            _editor.showErrorDialog(_msgs.get(reason));
+            _editor.showErrorMessage(_msgs.get(reason));
         }
     }
 
