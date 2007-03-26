@@ -59,6 +59,8 @@ public class ProjectPanel extends JPanel
         _editor = editor;
         _msgs = _ctx.getMessageManager().getBundle(SwiftlyCodes.SWIFTLY_MSGS);
 
+        _uploadFileAction = createUploadFileAction();
+
         add(_scrollPane, BorderLayout.CENTER);
         setupToolbar();
         setupPopup();
@@ -221,6 +223,7 @@ public class ProjectPanel extends JPanel
                     _roomObj.service.startFileUpload(_ctx.getClient(), uploadedFile,
                         new ConfirmListener () {
                         public void requestProcessed () {
+                            _uploadFileAction.setEnabled(false);
                             UploadTask task = new UploadTask(file);
                             TaskMaster.invokeTask(UPLOAD_TASK, task, new UploadTaskObserver());
                         }
@@ -342,7 +345,7 @@ public class ProjectPanel extends JPanel
         _popup = new JPopupMenu();
         // XXX temp disabled until working server side
         // _popup.add(createAddDirectoryAction());
-        _popup.add(createUploadFileAction());
+        _popup.add(_uploadFileAction);
         _popup.add(createAddFileAction());
         // in order for getHeight() to give a reasonable value the first time, we need to show
         // the popup at least once. pack() doesn't seem to do this.
@@ -444,11 +447,13 @@ public class ProjectPanel extends JPanel
         public void requestProcessed ()
         {
             _editor.consoleMessage(_msgs.get("m.file_upload_complete"));
+            _uploadFileAction.setEnabled(true);
         }
 
         public void requestFailed (String reason)
         {
             _editor.showErrorMessage(_msgs.get(reason));
+            _uploadFileAction.setEnabled(true);
         }
     }
 
@@ -475,6 +480,7 @@ public class ProjectPanel extends JPanel
     protected JToolBar _toolbar = new JToolBar();
     protected JButton _plusButton;
     protected JButton _minusButton;
+    protected Action _uploadFileAction;
     protected JScrollPane _scrollPane = new JScrollPane();
     protected JPopupMenu _popup;
 }
