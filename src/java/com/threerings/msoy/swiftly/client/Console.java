@@ -53,6 +53,7 @@ public class Console extends JScrollPane
     {
         try {
             _document.insertString(_document.getLength(), message, set);
+            _consoleText.setCaretPosition(_document.getLength());
         } catch (BadLocationException e) {
             // nada
         }
