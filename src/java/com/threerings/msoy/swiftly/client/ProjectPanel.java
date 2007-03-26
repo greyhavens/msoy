@@ -149,13 +149,11 @@ public class ProjectPanel extends JPanel
     {
         _roomObj.service.renamePathElement(_ctx.getClient(), element.elementId, newName,
             new ConfirmListener () {
-            public void requestProcessed ()
-            {
+            public void requestProcessed () {
                 // TODO: update the change on this client?
                 // _treeModel.updateNodeName(element, path);
             }
-            public void requestFailed (String reason)
-            {
+            public void requestFailed (String reason) {
                 _editor.showErrorMessage(_msgs.get(reason));
             }
         });
@@ -222,13 +220,11 @@ public class ProjectPanel extends JPanel
                         file.getName(), getCurrentParent(), null);
                     _roomObj.service.startFileUpload(_ctx.getClient(), uploadedFile,
                         new ConfirmListener () {
-                        public void requestProcessed ()
-                        {
+                        public void requestProcessed () {
                             UploadTask task = new UploadTask(file);
                             TaskMaster.invokeTask(UPLOAD_TASK, task, new UploadTaskObserver());
                         }
-                        public void requestFailed (String reason)
-                        {
+                        public void requestFailed (String reason) {
                             _editor.showErrorMessage(_msgs.get(reason));
                         }
                     });
@@ -239,8 +235,7 @@ public class ProjectPanel extends JPanel
 
     protected Action createAddDirectoryAction ()
     {
-        return new AbstractAction(
-            _msgs.get("m.action.add_directory")) {
+        return new AbstractAction(_msgs.get("m.action.add_directory")) {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
                 addPathElement(PathElement.Type.DIRECTORY);
@@ -264,6 +259,7 @@ public class ProjectPanel extends JPanel
             }
             element = PathElement.createDirectory(name, parentElement);
             _roomObj.service.addPathElement(_ctx.getClient(), element);
+
         } else if (type == PathElement.Type.FILE) {
             element = _editor.showCreateFileDialog(parentElement);
             if (element == null) {
@@ -284,7 +280,6 @@ public class ProjectPanel extends JPanel
     protected void deletePathElement ()
     {
         final PathElement element = getSelectedPathElement();
-
         if (_roomObj.project.getTemplateSourceName().equals(element.getName())) {
             _editor.showErrorMessage(_msgs.get("e.cannot_delete_template"));
             return;
@@ -307,15 +302,13 @@ public class ProjectPanel extends JPanel
         }
         _roomObj.service.deletePathElement(_ctx.getClient(), element.elementId, 
             new ConfirmListener () {
-            public void requestProcessed ()
-            {
+            public void requestProcessed () {
                 _editor.consoleMessage(_msgs.get("m.element_deleted", element.getName()));
                 // disable the toolbar and unset the selected node
                 disableToolbar();
                 _selectedNode = null;
             }
-            public void requestFailed (String reason)
-            {
+            public void requestFailed (String reason) {
                 _editor.showErrorMessage(_msgs.get(reason));
             }
         });
@@ -326,7 +319,6 @@ public class ProjectPanel extends JPanel
         // the parent element is the directory or project the selected element is in, or if
         // a project or directory is selected, that is the parent element
         PathElement parentElement = getSelectedPathElement();
-
         if (parentElement.getType() == PathElement.Type.FILE) {
             parentElement = parentElement.getParent();
         }
