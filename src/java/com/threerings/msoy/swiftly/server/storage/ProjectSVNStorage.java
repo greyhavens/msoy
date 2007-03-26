@@ -532,7 +532,7 @@ public class ProjectSVNStorage
             SVNNodeKind nodeKind = svnRepo.checkPath(entryPath, latestRevision);
             if (nodeKind == SVNNodeKind.NONE) {
                 throw new ProjectStorageException.ConsistencyError(
-                    "Requested delete on a non-existent document path: " + pathElement);
+                    "Requested rename on a non-existent document path: " + pathElement);
             }
 
             // Fire up the commit editor.
@@ -542,7 +542,7 @@ public class ProjectSVNStorage
                 "Failed to open the storage repository: " + svne, svne);
         }
 
-        // Delete the file in the repository
+        // Rename the file in the repository
         try {
             // Open the repository root.
             editor.openRoot(-1);
@@ -550,11 +550,11 @@ public class ProjectSVNStorage
             // Open the enclosing directory.
             editor.openDir(parentPath, -1);
 
-            // Delete the original file.
-            editor.deleteEntry(entryName, latestRevision);
-
             // Copy the original file to the new location.
             editor.addFile(newName, entryName, latestRevision);
+
+            // Delete the original file.
+            editor.deleteEntry(entryName, latestRevision);
 
             // Close the directory.
             editor.closeDir();

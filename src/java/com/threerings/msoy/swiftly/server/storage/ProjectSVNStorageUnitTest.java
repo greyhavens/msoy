@@ -183,7 +183,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
         }
     }
 
-    public void testGetVNURL ()
+    public void testGetSVNURL ()
         throws Exception
     {
         ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
