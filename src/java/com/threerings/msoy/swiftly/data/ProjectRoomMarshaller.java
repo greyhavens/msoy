@@ -118,8 +118,21 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #renamePathElement} requests. */
+    public static final int RENAME_PATH_ELEMENT = 9;
+
+    // from interface ProjectRoomService
+    public void renamePathElement (Client arg1, int arg2, String arg3, InvocationService.ConfirmListener arg4)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, RENAME_PATH_ELEMENT, new Object[] {
+            Integer.valueOf(arg2), arg3, listener4
+        });
+    }
+
     /** The method id used to dispatch {@link #startFileUpload} requests. */
-    public static final int START_FILE_UPLOAD = 9;
+    public static final int START_FILE_UPLOAD = 10;
 
     // from interface ProjectRoomService
     public void startFileUpload (Client arg1, PathElement arg2, InvocationService.ConfirmListener arg3)
@@ -132,7 +145,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateDocument} requests. */
-    public static final int UPDATE_DOCUMENT = 10;
+    public static final int UPDATE_DOCUMENT = 11;
 
     // from interface ProjectRoomService
     public void updateDocument (Client arg1, int arg2, String arg3)
@@ -143,7 +156,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updatePathElement} requests. */
-    public static final int UPDATE_PATH_ELEMENT = 11;
+    public static final int UPDATE_PATH_ELEMENT = 12;
 
     // from interface ProjectRoomService
     public void updatePathElement (Client arg1, PathElement arg2)
@@ -154,7 +167,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #uploadFile} requests. */
-    public static final int UPLOAD_FILE = 12;
+    public static final int UPLOAD_FILE = 13;
 
     // from interface ProjectRoomService
     public void uploadFile (Client arg1, byte[] arg2)

@@ -94,6 +94,13 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
             );
             return;
 
+        case ProjectRoomMarshaller.RENAME_PATH_ELEMENT:
+            ((ProjectRoomProvider)provider).renamePathElement(
+                source,
+                ((Integer)args[0]).intValue(), (String)args[1], (InvocationService.ConfirmListener)args[2]
+            );
+            return;
+
         case ProjectRoomMarshaller.START_FILE_UPLOAD:
             ((ProjectRoomProvider)provider).startFileUpload(
                 source,

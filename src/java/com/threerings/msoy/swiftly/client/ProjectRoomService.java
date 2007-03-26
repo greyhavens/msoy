@@ -23,6 +23,10 @@ public interface ProjectRoomService extends InvocationService
     /** Requests that the specified path element be removed from the project. */
     public void deletePathElement (Client client, int elementId, ConfirmListener listener);
 
+    /** Requests that the specified path element be renamed. */
+    public void renamePathElement (Client client, int elementId, String newName,
+                                   ConfirmListener listener);
+
     /** Requests to add a document to the project. element is the "parent" of the new document. */
     public void addDocument (Client client, PathElement element, InvocationListener listener);
 

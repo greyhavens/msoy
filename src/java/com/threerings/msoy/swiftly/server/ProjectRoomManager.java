@@ -181,6 +181,55 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
+    public void renamePathElement (ClientObject caller, int elementId, final String newName,
+                                   final ConfirmListener listener)
+        throws InvocationException
+    {
+        // TODO: check access!
+
+        final PathElement element = _roomObj.pathElements.get(elementId);
+        if (element == null) {
+            throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
+        }
+
+        // if the path element was not committed to the repository, just rename it in the DSet
+        // and we're done
+        if (!element.inRepo) {
+            element.setName(newName);
+            _roomObj.updatePathElements(element);
+            listener.requestProcessed();
+            return;
+        }
+
+        // Otherwise we'll have to rename the document from the storage provider
+        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
+            public boolean invoke () {
+                try {
+                    _storage.renameDocument(element, newName, "Automatic Swiftly Rename");
+                } catch (ProjectStorageException pse) {
+                    _error = pse;
+                }
+                return true;
+            }
+
+            public void handleResult () {
+                if (_error != null) {
+                    log.log(Level.WARNING, "Rename pathElement failed [element=" + element + "].",
+                            _error);
+                    listener.requestFailed("e.rename_element_failed");
+                    return;
+                }
+                // rename it in the dset
+                element.setName(newName);
+                _roomObj.updatePathElements(element);
+                listener.requestProcessed();
+            }
+
+            protected Exception _error;
+        });
+    }
+
+    // from interface ProjectRoomProvider
     public void addDocument (ClientObject caller, PathElement element,
                              final InvocationListener listener)
     {

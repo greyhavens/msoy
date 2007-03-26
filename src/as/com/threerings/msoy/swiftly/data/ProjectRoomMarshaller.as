@@ -123,8 +123,21 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch {@link #renamePathElement} requests. */
+    public static const RENAME_PATH_ELEMENT :int = 9;
+
+    // from interface ProjectRoomService
+    public function renamePathElement (arg1 :Client, arg2 :int, arg3 :String, arg4 :InvocationService_ConfirmListener) :void
+    {
+        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, RENAME_PATH_ELEMENT, [
+            Integer.valueOf(arg2), arg3, listener4
+        ]);
+    }
+
     /** The method id used to dispatch {@link #startFileUpload} requests. */
-    public static const START_FILE_UPLOAD :int = 9;
+    public static const START_FILE_UPLOAD :int = 10;
 
     // from interface ProjectRoomService
     public function startFileUpload (arg1 :Client, arg2 :PathElement, arg3 :InvocationService_ConfirmListener) :void
@@ -137,7 +150,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateDocument} requests. */
-    public static const UPDATE_DOCUMENT :int = 10;
+    public static const UPDATE_DOCUMENT :int = 11;
 
     // from interface ProjectRoomService
     public function updateDocument (arg1 :Client, arg2 :int, arg3 :String) :void
@@ -148,7 +161,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updatePathElement} requests. */
-    public static const UPDATE_PATH_ELEMENT :int = 11;
+    public static const UPDATE_PATH_ELEMENT :int = 12;
 
     // from interface ProjectRoomService
     public function updatePathElement (arg1 :Client, arg2 :PathElement) :void
@@ -159,7 +172,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #uploadFile} requests. */
-    public static const UPLOAD_FILE :int = 12;
+    public static const UPLOAD_FILE :int = 13;
 
     // from interface ProjectRoomService
     public function uploadFile (arg1 :Client, arg2 :ByteArray) :void

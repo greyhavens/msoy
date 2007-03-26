@@ -62,6 +62,12 @@ public interface ProjectRoomProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link ProjectRoomService#renamePathElement} request.
+     */
+    public void renamePathElement (ClientObject caller, int arg1, String arg2, InvocationService.ConfirmListener arg3)
+        throws InvocationException;
+
+    /**
      * Handles a {@link ProjectRoomService#startFileUpload} request.
      */
     public void startFileUpload (ClientObject caller, PathElement arg1, InvocationService.ConfirmListener arg2)

@@ -72,14 +72,13 @@ public class ProjectPanel extends JPanel
     public void setProject (ProjectRoomObject roomObj)
     {
         _roomObj = roomObj;
-        _treeModel = new ProjectTreeModel(roomObj);
+        _treeModel = new ProjectTreeModel(roomObj, this);
         _treeModel.addTreeModelListener(this);
 
         _tree = new JTree(_treeModel);
         // XXX disable dragging until the rest of the support can be wired up
         // _tree.setDragEnabled(true);
-        // XXX temp disabled until working server side
-        // _tree.setEditable(true);
+        _tree.setEditable(true);
         _tree.setShowsRootHandles(true);
         _tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         _tree.addTreeSelectionListener(this);
@@ -140,6 +139,26 @@ public class ProjectPanel extends JPanel
         Dimension d = super.getPreferredSize();
         d.width = Math.min(250, d.width);
         return d;
+    }
+
+    /**
+     * Renames a {@link PathElement} and broadcasts that fact to the server.
+     */
+    public void renamePathElement (final PathElement element, String newName,
+                                   final TreePath path)
+    {
+        _roomObj.service.renamePathElement(_ctx.getClient(), element.elementId, newName,
+            new ConfirmListener () {
+            public void requestProcessed ()
+            {
+                // TODO: update the change on this client?
+                // _treeModel.updateNodeName(element, path);
+            }
+            public void requestFailed (String reason)
+            {
+                _editor.showErrorMessage(_msgs.get(reason));
+            }
+        });
     }
 
     protected Action createPlusButtonAction ()
@@ -203,13 +222,11 @@ public class ProjectPanel extends JPanel
                         file.getName(), getCurrentParent(), null);
                     _roomObj.service.startFileUpload(_ctx.getClient(), uploadedFile,
                         new ConfirmListener () {
-                        // from interface ConfirmListener
                         public void requestProcessed ()
                         {
                             UploadTask task = new UploadTask(file);
                             TaskMaster.invokeTask(UPLOAD_TASK, task, new UploadTaskObserver());
                         }
-                        // from interface ConfirmListener
                         public void requestFailed (String reason)
                         {
                             _editor.showErrorMessage(_msgs.get(reason));
@@ -290,7 +307,6 @@ public class ProjectPanel extends JPanel
         }
         _roomObj.service.deletePathElement(_ctx.getClient(), element.elementId, 
             new ConfirmListener () {
-            // from interface ConfirmListener
             public void requestProcessed ()
             {
                 _editor.consoleMessage(_msgs.get("m.element_deleted", element.getName()));
@@ -298,7 +314,6 @@ public class ProjectPanel extends JPanel
                 disableToolbar();
                 _selectedNode = null;
             }
-            // from interface ConfirmListener
             public void requestFailed (String reason)
             {
                 _editor.showErrorMessage(_msgs.get(reason));
@@ -434,13 +449,11 @@ public class ProjectPanel extends JPanel
             _editor.showErrorMessage(_msgs.get("e.upload_failed"));
         }
 
-        // from interface ConfirmListener
         public void requestProcessed ()
         {
             _editor.consoleMessage(_msgs.get("m.file_upload_complete"));
         }
 
-        // from interface ConfirmListener
         public void requestFailed (String reason)
         {
             _editor.showErrorMessage(_msgs.get(reason));

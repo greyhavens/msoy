@@ -16,18 +16,21 @@ import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.msoy.swiftly.data.PathElement;
 
+import com.threerings.msoy.swiftly.client.ProjectPanel;
+
 /**
  * Present the contents of a Swiftly project as a tree model.
  */
 public class ProjectTreeModel extends DefaultTreeModel
     implements SetListener
 {
-    public ProjectTreeModel (ProjectRoomObject roomObj)
+    public ProjectTreeModel (ProjectRoomObject roomObj, ProjectPanel panel)
     {
         super(null);
 
         _roomObj = roomObj;
         _roomObj.addListener(this);
+        _projectPanel = panel;
 
         // Raise all path elements from the dead, re-binding transient
         // instance variables.
@@ -108,7 +111,13 @@ public class ProjectTreeModel extends DefaultTreeModel
     {
         PathElementTreeNode node = (PathElementTreeNode)path.getLastPathComponent();
         PathElement element = (PathElement)node.getUserObject();
-        element.setName((String)newValue);
+        String newName = (String)newValue;
+        _projectPanel.renamePathElement(element, newName, path);
+    }
+
+    // TODO: this might not need to stick around
+    public void updateNodeName (PathElement element, TreePath path)
+    {
         super.valueForPathChanged(path, element);
     }
 
@@ -143,4 +152,5 @@ public class ProjectTreeModel extends DefaultTreeModel
     }
 
     protected ProjectRoomObject _roomObj;
+    protected ProjectPanel _projectPanel;
 }

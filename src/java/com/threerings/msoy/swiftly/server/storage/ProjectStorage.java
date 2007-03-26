@@ -24,6 +24,10 @@ public interface ProjectStorage
     public void putDocument (SwiftlyDocument document, String logMessage)
         throws ProjectStorageException;
 
+    /** Rename the given path. */
+    public void renameDocument (PathElement pathElement, String newName, String logMessage)
+        throws ProjectStorageException;
+
     /** Delete the given path. */
     public void deleteDocument (PathElement pathElement, String logMessage)
         throws ProjectStorageException;
