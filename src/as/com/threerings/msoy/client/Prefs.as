@@ -138,23 +138,23 @@ public class Prefs
 //        return "mediaPos_" + id;
 //    }
 
-    /**
-     * A static initializer.
-     */
-    private static function staticInit () :void
-    {
-        var lastBuild :String = (config.getValue("lastBuild", null) as String);
-        if (lastBuild == null) {
-            // TEMP: added 2007-03-21, can be removed after a while.
-            // We need to ensure that all cached scenes are no more.
-            (new SharedObjectSceneRepository()).TEMPClearSceneCache();
-        }
+//     /**
+//      * A static initializer.
+//      */
+//     private static function staticInit () :void
+//     {
+//         var lastBuild :String = (config.getValue("lastBuild", null) as String);
+//         if (lastBuild == null) {
+//             // TEMP: added 2007-03-21, can be removed after a while.
+//             // We need to ensure that all cached scenes are no more.
+//             (new SharedObjectSceneRepository()).TEMPClearSceneCache();
+//         }
 
-        // update our stored last build time
-        if (lastBuild != DeploymentConfig.buildTime) {
-            config.setValue("lastBuild", DeploymentConfig.buildTime);
-        }
-    }
-    staticInit();
+//         // update our stored last build time
+//         if (lastBuild != DeploymentConfig.buildTime) {
+//             config.setValue("lastBuild", DeploymentConfig.buildTime);
+//         }
+//     }
+//     staticInit();
 }
 }
