@@ -88,18 +88,6 @@ public class TabbedEditor extends CloseAndMaxTabbedPane
     }
 
     /**
-     * Completely overwrite document contents when update is received from server.
-     */
-     // TODO: kill this off when we have the document listener
-    public void setTabDocument (SwiftlyTextDocument doc)
-    {
-        Component tab = _tabList.get(doc.getPathElement());
-        if (tab != null && tab instanceof SwiftlyTextPane) {
-            ((SwiftlyTextPane)tab).setDocument(doc);
-        }
-    }
-
-    /**
      * Closes the tab holding the provided PathElement.
      */
     public void closePathElementTab (PathElement element)

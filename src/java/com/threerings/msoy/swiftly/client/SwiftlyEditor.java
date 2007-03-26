@@ -191,11 +191,6 @@ public class SwiftlyEditor extends PlacePanel
         _editorTabs.updateTabTitleAt(pathElement);
     }
 
-    public void setTabDocument (SwiftlyTextDocument doc)
-    {
-        _editorTabs.setTabDocument(doc);
-    }
-
     public void closeCurrentTab ()
     {
         // TODO: SwiftlyTextPane will no longer be a listener
