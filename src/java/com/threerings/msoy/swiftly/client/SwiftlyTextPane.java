@@ -353,7 +353,7 @@ public class SwiftlyTextPane extends JEditorPane
     }
 
     /** 5 seconds in miliseconds */
-    protected static final int INTERVAL_DELAY = 5000;
+    protected static final long INTERVAL_DELAY = 5000L;
 
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
