@@ -77,6 +77,7 @@ public class ProjectSVNStorage
     /** SVN over HTTPS WebDAV Protocol String. */
     public static final String PROTOCOL_HTTPS = "https";
 
+
     /*
      * Static initialization of the SVNKit library
      */
@@ -92,6 +93,7 @@ public class ProjectSVNStorage
         // file:///
         FSRepositoryFactory.setup();
     }
+
 
     /**
      * Initialize project storage for a given project record. Any .svn directories in the given
@@ -195,6 +197,7 @@ public class ProjectSVNStorage
         return storage;
     }
 
+
     /**
      * Construct a new storage instance for the given project record.
      */
@@ -218,6 +221,7 @@ public class ProjectSVNStorage
                 "Invalid URL provided by SwiftlySVNStorageRecord: " + urie, urie);
         }
     }
+
 
     // from interface ProjectStorage
     // Recurse over the entirity of the subversion repository, building a list
@@ -258,6 +262,7 @@ public class ProjectSVNStorage
         }
     }
 
+
     // from interface ProjectStorage
     public SwiftlyDocument getDocument (PathElement path)
         throws ProjectStorageException
@@ -297,6 +302,7 @@ public class ProjectSVNStorage
 
         return swiftlyDoc;
     }
+
 
     /** Store a document in the repository. */
     public void putDocument (SwiftlyDocument document, String logMessage)
@@ -422,6 +428,7 @@ public class ProjectSVNStorage
         pathElement.inRepo = true;
     }
 
+
     /** Delete a document from the repository. */
     public void deleteDocument (PathElement pathElement, String logMessage)
         throws ProjectStorageException
@@ -504,6 +511,7 @@ public class ProjectSVNStorage
                 "Subversion commit failed, file(s) out of date: " + commitInfo.getErrorMessage());
         }
     }
+
 
     /** Rename a document in the repository. */
     public void renameDocument (PathElement pathElement, String newName, String logMessage)
@@ -591,6 +599,7 @@ public class ProjectSVNStorage
         }
     }
 
+
     // from interface ProjectStorage
     public void export (File exportPath)
         throws ProjectStorageException
@@ -625,6 +634,7 @@ public class ProjectSVNStorage
         }
     }
 
+
     /**
      * Given a URI and a project Id, return the project's subversion URL.
      * This is composed of the base server URL + the project ID.
@@ -636,6 +646,7 @@ public class ProjectSVNStorage
         SVNURL url = SVNURL.parseURIDecoded(baseURI.toString());
         return url.appendPath(Integer.toString(_project.projectId), false);
     }
+
 
     /**
      * Recursively retrieves the entire subversion directory structure.
@@ -685,6 +696,7 @@ public class ProjectSVNStorage
 
         return result;
     }
+
 
     /**
      * Recursively add a given local directory to a repository edit instance.
@@ -757,6 +769,7 @@ public class ProjectSVNStorage
         }
     }
 
+
     /**
      * Return a re-usable svn repository instance from the pool.
      */
@@ -765,6 +778,7 @@ public class ProjectSVNStorage
     {
         return _svnPool.createRepository(_svnURL, true);
     }
+
 
     /**
      * SVNKit export reporter. Describes the state of local items -- in the case of export, all
@@ -795,6 +809,7 @@ public class ProjectSVNStorage
         private long _exportRevision;
     }
 
+
     /**
      * SVNKit export editor. Responsible for writing provided files and directories to the file
      * system.
@@ -812,6 +827,7 @@ public class ProjectSVNStorage
             _deltaProcessor = new SVNDeltaProcessor();
         }
 
+
         /** Create a directory. */
         public void addDir (String relativeDirPath, String copyFromPath, long copyFromRevision)
             throws SVNException
@@ -824,6 +840,7 @@ public class ProjectSVNStorage
                 throw new SVNException(msg);
             }
         }
+
 
         /** Create a file. */
         public void addFile (String relativeFilePath, String copyFromPath, long copyFromRevision)
@@ -845,6 +862,7 @@ public class ProjectSVNStorage
             }
         }
 
+
         public void applyTextDelta(String relativeFilePath, String baseChecksum)
             throws SVNException
         {
@@ -854,6 +872,7 @@ public class ProjectSVNStorage
             _deltaProcessor.applyTextDelta(null, editFile, false);
         }
 
+
         public OutputStream textDeltaChunk(String path, SVNDiffWindow diffWindow)
             throws SVNException
         {
@@ -861,12 +880,14 @@ public class ProjectSVNStorage
             return _deltaProcessor.textDeltaChunk(diffWindow);
         }
 
+
         public void textDeltaEnd(String path)
             throws SVNException
         {
             // Finalize the delta, including computing the checksum (not enabled).
             _deltaProcessor.textDeltaEnd();
         }
+
 
         /** Close the edit, commit any remaining changes. */
         public SVNCommitInfo closeEdit ()
