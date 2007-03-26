@@ -193,3 +193,4 @@ public class SwiftlyAvatar extends Sprite
     [Embed(source="avatar.png")]
     protected static const IMAGE :Class;
 }
+}
