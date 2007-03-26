@@ -20,7 +20,7 @@ public class SwiftlyProject
     }
 
     /** The valid project types. */
-    public static byte[] PROJECT_TYPES = { Item.GAME, Item.AVATAR };
+    public static byte[] PROJECT_TYPES = { Item.GAME, Item.AVATAR, Item.FURNITURE };
 
     /** Returns true if the given project type is supported by Swiftly. */
     public static boolean isValidProjectType (byte projectType)
@@ -60,6 +60,8 @@ public class SwiftlyProject
             return "SwiftlyGame.as";
         } else if (projectType == Item.AVATAR) {
             return "SwiftlyAvatar.as";
+        } else if (projectType == Item.FURNITURE) {
+            return "SwiftlyFurni.as";
         } else {
             return null;
         }
@@ -76,6 +78,8 @@ public class SwiftlyProject
              return "SwiftlyGame.swf";
          } else if (projectType == Item.AVATAR) {
              return "SwiftlyAvatar.swf";
+         } else if (projectType == Item.FURNITURE) {
+             return "SwiftlyFurni.swf";
          } else {
              return null;
          }
