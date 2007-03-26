@@ -64,6 +64,10 @@
     margin: 3px 0px 0px 0px;
 }
 
+.groupView .gwt-Hyperlink {
+    display: inline;
+}
+
 /* GroupList specific formattting */
 .groupList {
     font-size: 11px;
