@@ -35,6 +35,8 @@ import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
+import com.threerings.util.MessageBundle;
+
 import com.samskivert.util.Interval;
 
 import sdoc.SyntaxDocument;
@@ -50,6 +52,7 @@ public class SwiftlyTextPane extends JEditorPane
     {
         _ctx = ctx;
         _editor = editor;
+        _msgs = _ctx.getMessageManager().getBundle(SwiftlyCodes.SWIFTLY_MSGS);
 
         // TODO: this might not be required
         _kit = new SyntaxEditorKit();
@@ -117,7 +120,7 @@ public class SwiftlyTextPane extends JEditorPane
 
     public Action createCutAction ()
     {
-        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.cut")) {
+        return new AbstractAction(_msgs.get("m.action.cut")) {
             public void actionPerformed (ActionEvent e) {
                 cut();
             }
@@ -126,7 +129,7 @@ public class SwiftlyTextPane extends JEditorPane
 
     public Action createCopyAction ()
     {
-        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.copy")) {
+        return new AbstractAction(_msgs.get("m.action.copy")) {
             public void actionPerformed (ActionEvent e) {
                 copy();
             }
@@ -135,7 +138,7 @@ public class SwiftlyTextPane extends JEditorPane
 
     public Action createPasteAction ()
     {
-        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.paste")) {
+        return new AbstractAction(_msgs.get("m.action.paste")) {
             public void actionPerformed (ActionEvent e) {
                 paste();
             }
@@ -144,7 +147,7 @@ public class SwiftlyTextPane extends JEditorPane
 
     public Action createSelectAllAction ()
     {
-        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.select_all")) {
+        return new AbstractAction(_msgs.get("m.action.select_all")) {
             public void actionPerformed (ActionEvent e) {
                 selectAll();
             }
@@ -253,7 +256,7 @@ public class SwiftlyTextPane extends JEditorPane
     protected class UndoAction extends AbstractAction
     {
         public UndoAction () {
-            super(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.undo"));
+            super(_msgs.get("m.action.undo"));
             setEnabled(false);
         }
 
@@ -283,7 +286,7 @@ public class SwiftlyTextPane extends JEditorPane
     {
         public RedoAction ()
         {
-            super(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.redo"));
+            super(_msgs.get("m.action.redo"));
             setEnabled(false);
         }
 
@@ -357,6 +360,7 @@ public class SwiftlyTextPane extends JEditorPane
 
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
+    protected MessageBundle _msgs;
     protected SwiftlyTextDocument _document;
     protected SyntaxDocument _syntaxDoc;
     protected boolean _dontPropagateThisChange;
