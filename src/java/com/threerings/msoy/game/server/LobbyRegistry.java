@@ -4,8 +4,10 @@
 package com.threerings.msoy.game.server;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntMap;
 import com.samskivert.util.ResultListener;
 
 import com.threerings.presents.client.InvocationService;
@@ -44,11 +46,11 @@ public class LobbyRegistry
                                InvocationService.ResultListener listener)
         throws InvocationException
     {
+        LobbyManager mgr = _lobbies.get(gameId);
         // see what we've got..
-        Integer lobbyOid = _lobbies.get(gameId);
-        if (lobbyOid != null) {
-            // if we know the lobby oid, return it straight away
-            listener.requestProcessed(lobbyOid);
+        if (mgr != null) {
+            // if we know the lobby, return its oid straight away
+            listener.requestProcessed(mgr.getLobbyObject().getOid());
             return;
         }
 
@@ -69,17 +71,12 @@ public class LobbyRegistry
             {
                 try {
                     LobbyManager lmgr = new LobbyManager((Game)item);
-                    int gameId = lmgr.getGameId();
-                    Integer lobbyOid = lmgr.getLobbyId();
-                    
                     // record the lobby oid for the game
-                    _lobbies.put(gameId, lobbyOid);
+                    _lobbies.put(gameId, lmgr);
 
                     // remove the list of listeners and notify each of them
-                    ArrayList<InvocationService.ResultListener> list =
-                        _loading.remove(gameId);
-                    for (InvocationService.ResultListener listener : list) {
-                        listener.requestProcessed(lobbyOid);
+                    for (InvocationService.ResultListener rList : _loading.remove(gameId)) {
+                        rList.requestProcessed(lmgr.getLobbyObject().getOid());
                     }
 
                 } catch (Exception e) {
@@ -89,10 +86,8 @@ public class LobbyRegistry
 
             public void requestFailed (Exception cause)
             {
-                ArrayList<InvocationService.ResultListener> list =
-                    _loading.remove(gameId);
-                for (InvocationService.ResultListener listener : list) {
-                    listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                for (InvocationService.ResultListener rList : _loading.remove(gameId)) {
+                    rList.requestFailed(InvocationCodes.INTERNAL_ERROR);
                 }
             }
         });
@@ -109,8 +104,18 @@ public class LobbyRegistry
         _loading.remove(gameId); // just in case
     }
 
+    /**
+     * Returns an enumeration of all of the registered lobby managers.
+     * This should only be accessed on the dobjmgr thread and shouldn't be
+     * kept around across event dispatches.
+     */
+    public Iterator<LobbyManager> enumerateLobbyManagers ()
+    {
+        return _lobbies.values().iterator();
+    }
+
     /** Maps game id -> lobby oid. */
-    protected HashIntMap<Integer> _lobbies = new HashIntMap<Integer>();
+    protected IntMap<LobbyManager> _lobbies = new HashIntMap<LobbyManager>();
 
     /** Maps game id -> listeners waiting for a lobby to load. */
     protected HashIntMap<ArrayList<InvocationService.ResultListener>> _loading =

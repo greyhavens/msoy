@@ -97,9 +97,9 @@ public class LobbyManager
     /**
      * Return the object ID of the LobbyObject
      */
-    public int getLobbyId ()
+    public LobbyObject getLobbyObject ()
     {
-        return _lobj.getOid();
+        return _lobj;
     }
     
     protected void didShutdown ()
