@@ -49,7 +49,7 @@ public class TableRenderer extends VBox
     {
         super.createChildren();
 
-        _background = new MediaContainer((_game = panel.getGame()).getTableMedia().getMediaPath());
+        _background = new MediaContainer((_game = panel.getGame()).getTableMedia().getMediaPath()); 
         _background.mouseEnabled = false;
         _background.mouseChildren = false;
         // TODO: goddammit, this should be behind!

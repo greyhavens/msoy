@@ -80,15 +80,15 @@ public class LobbyController extends Controller implements Subscriber
     {
         _panelIsVisible = false;
         var seatedTable :Table = _tableDir.getSeatedTable();
-        //if (_tableDir.isSeated() && !seatedTable.inPlay()) {
-            //var tableDisplay :FloatingTableDisplay = new FloatingTableDisplay(_mctx, _panel, 
-                //seatedTable);
-            //tableDisplay.open();
-            //_mctx.getTopPanel().setTableDisplay(tableDisplay);
-            //_mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId);
-        //} else {
+        if (_tableDir.isSeated() && !seatedTable.inPlay()) {
+            var tableDisplay :FloatingTableDisplay = new FloatingTableDisplay(_mctx, _panel, 
+                seatedTable);
+            tableDisplay.open();
+            _mctx.getTopPanel().setTableDisplay(tableDisplay);
+            _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId);
+        } else {
             shutdown();
-        //}
+        }
     }
 
     // from Subscriber
@@ -128,9 +128,9 @@ public class LobbyController extends Controller implements Subscriber
     public function handleLeave (tableId :int) :void
     {
         _tableDir.leaveTable(tableId);
-        //if (!_panelIsVisible) {
+        if (!_panelIsVisible) {
             shutdown();
-        //}
+        }
     }
 
     /**
@@ -146,11 +146,6 @@ public class LobbyController extends Controller implements Subscriber
      */
     public function handleLeaveLobby () :void
     {
-        // TODO TEMP
-        if (_tableDir.isSeated()) {
-            _tableDir.leaveTable(_tableDir.getSeatedTable().tableId);
-        }
-
         _mctx.getTopPanel().clearSidePanel(_panel);
     }
 
