@@ -2,21 +2,7 @@ package com.threerings.msoy.game.client {
 
 import flash.display.DisplayObject;
 
-import mx.collections.ArrayCollection;
-
 import mx.controls.Button;
-import mx.controls.Label;
-
-import mx.containers.VBox;
-import mx.containers.Grid;
-import mx.containers.GridItem;
-import mx.containers.GridRow;
-
-import mx.core.ClassFactory;
-
-import mx.managers.LayoutManager;
-
-import flash.events.MouseEvent;
 
 import com.threerings.msoy.client.Msgs
 import com.threerings.msoy.client.WorldContext;
@@ -26,8 +12,6 @@ import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.parlor.data.Table;
 
 import com.threerings.util.CommandEvent;
-
-import com.threerings.msoy.ui.MsoyList;
 
 public class FloatingTableDisplay extends FloatingPanel
 {
