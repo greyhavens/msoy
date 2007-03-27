@@ -32,6 +32,15 @@ public class DecorData extends FurniData
     /** Horizon position, in [0, 1]. */
     public float horizon;
 
+    /**
+     * Helper function: specifies that this decor data structure has already been
+     * populated from a Decor item object.
+     */
+    public boolean isInitialized ()
+    {
+        return itemId != 0;
+    }
+    
     // documentation inherited
     @Override
     public boolean equals (Object other)

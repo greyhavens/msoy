@@ -63,7 +63,6 @@ public class AbstractRoomView extends Sprite
     {
         _actualWidth = unscaledWidth;
         _actualHeight = unscaledHeight;
-
         relayout();
         updateDrawnRoom();
     }
@@ -399,7 +398,8 @@ public class AbstractRoomView extends Sprite
     public function setScene (scene :MsoyScene) :void
     {
         _scene = scene;
-        _metrics.update(scene);
+        _metrics.update(scene.getDecorData());
+        _backdrop.setRoom(scene.getDecorData());
         updateDrawnRoom();
         relayout();
     }
@@ -410,7 +410,7 @@ public class AbstractRoomView extends Sprite
     public function updateBackground () :void
     {
         var data :DecorData = _scene.getDecorData();
-        if (_bg != null && data != null && data.itemId != 0) {
+        if (_bg != null && data != null && data.isInitialized()) {
             _bg.update(data);
         }
     }
@@ -630,109 +630,30 @@ public class AbstractRoomView extends Sprite
 
     protected function updateDrawnRoom () :void
     {
-        var g :Graphics = this.graphics;
-        g.clear();
-
-        // fill all our screen area with transparent pixels, so that
-        // mousing anywhere in our bounds includes us in the
-        // event dispatch. This is primarily necessary to get the
-        // ContextMenu working properly.
-        if (!isNaN(_actualWidth) && !isNaN(_actualHeight)) {
-            var w :Number = _actualWidth / scaleX;
-            var h :Number = _actualHeight / scaleY;
-            g.beginFill(0, 0);
-            g.drawRect(0, 0, w, h);
-            g.endFill();
-        }
- 
-        var drawWalls :Boolean = (_scene.getSceneType() == Decor.DRAWN_ROOM);
-        var drawEdges :Boolean = drawWalls || _editing;
-        if (!drawEdges) {
-            return; // nothing to draw
-        }
-
-        var floorWidth :Number = (_metrics.sceneWidth * _metrics.minScale);
-        var floorInset :Number = (_metrics.sceneWidth - floorWidth) / 2;
-
-        // rename a few things for ease of use below...
-        var x1 :Number = floorInset;
-        var x2 :Number = _metrics.sceneWidth - floorInset;
-        var y1 :Number = _metrics.backWallTop;
-        var y2 :Number = _metrics.backWallBottom;
-
-        if (drawWalls) {
-            // fill in the floor
-            g.beginFill(0x333333);
-            g.moveTo(0, _metrics.sceneHeight);
-            g.lineTo(x1, y2);
-            g.lineTo(x2, y2);
-            g.lineTo(_metrics.sceneWidth, _metrics.sceneHeight);
-            g.lineTo(0, _metrics.sceneHeight);
-            g.endFill();
-
-            // fill in the three walls
-            g.beginFill(0x666666);
-            g.moveTo(0, 0);
-            g.lineTo(x1, y1);
-            g.lineTo(x2, y1);
-            g.lineTo(_metrics.sceneWidth, 0);
-            g.lineTo(_metrics.sceneWidth, _metrics.sceneHeight);
-            g.lineTo(x2, y2);
-            g.lineTo(x1, y2);
-            g.lineTo(0, _metrics.sceneHeight);
-            g.lineTo(0, 0);
-            g.endFill();
-
-            // fill in the ceiling
-            g.beginFill(0x999999);
-            g.moveTo(0, 0);
-            g.lineTo(x1, y1);
-            g.lineTo(x2, y1);
-            g.lineTo(_metrics.sceneWidth, 0);
-            g.lineTo(0, 0);
-            g.endFill();
-
-        } else {
-            g.beginFill(0xFFFFFF);
-            g.drawRect(0, 0, _metrics.sceneWidth, _metrics.sceneHeight);
-            g.endFill();
-        }
-
-        // draw the lines defining the walls
-        if (drawEdges) {
-            g.lineStyle(2);
-            g.moveTo(0, 0);
-            g.lineTo(x1, y1);
-            g.lineTo(x2, y1);
-
-            g.moveTo(_metrics.sceneWidth, 0);
-            g.lineTo(x2, y1);
-            g.lineTo(x2, y2);
-
-            g.moveTo(_metrics.sceneWidth, _metrics.sceneHeight);
-            g.lineTo(x2, y2);
-            g.lineTo(x1, y2);
-
-            g.moveTo(0, _metrics.sceneHeight);
-            g.lineTo(x1, y2);
-            g.lineTo(x1, y1);
-
-            g.lineStyle(0, 0, 0); // stop drawing lines
-        }
+        _backdrop.drawRoom (this, _actualWidth, _actualHeight, _editing);
     }
-
+    
     /** The msoy context. */
     protected var _ctx :WorldContext;
 
     /** The model of the current scene. */
     protected var _scene :MsoyScene;
 
-    /** The RoomMetrics for doing our layout. */
-    protected var _metrics :RoomMetrics = new RoomMetrics();
-
     /** The transitory properties of the current scene. */
     protected var _roomObj :RoomObject;
 
+    /** The actual screen width of this component. */
+    protected var _actualWidth :Number;
+
+    /** The actual screen height of this component. */
+    protected var _actualHeight :Number;
+
+    /** The RoomMetrics for doing our layout. */
+    protected var _metrics :RoomMetrics = new RoomMetrics();
+
+    /** Helper object that draws a room backdrop with four walls. */
+    protected var _backdrop :RoomBackdrop = new RoomBackdrop();
+    
     /** Our background sprite, if any. */
     protected var _bg :DecorSprite;
 
@@ -744,12 +665,6 @@ public class AbstractRoomView extends Sprite
 
     /** Are we editing the scene? */
     protected var _editing :Boolean = false;
-
-    /** The actual screen width of this component. */
-    protected var _actualWidth :Number;
-
-    /** The actual screen height of this component. */
-    protected var _actualHeight :Number;
 
     private static const MAX_SCALE :Number = 1;
     private static const MAX_COORD :Number = 1;

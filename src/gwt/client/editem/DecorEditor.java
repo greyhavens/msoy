@@ -29,7 +29,7 @@ public class DecorEditor extends ItemEditor
         Decor d = new Decor();
         d.type = Decor.IMAGE_OVERLAY;
         d.width = 800;
-        d.height = (short) Math.round(800 / ((1 + Math.sqrt(5)) / 2)); 
+        d.height = 494; // magic number: (short) Math.round(800 / ((1 + Math.sqrt(5)) / 2)); 
         d.depth = 400;
         d.horizon = 0.5f;
         return d;
@@ -49,6 +49,7 @@ public class DecorEditor extends ItemEditor
         bits.setWidget(row++, 1, bind(_width = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _decor.width = asShort(text);
+                sendDecorUpdateToFlash();
             }
         }));
 
@@ -56,6 +57,7 @@ public class DecorEditor extends ItemEditor
         bits.setWidget(row++, 1, bind(_height = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _decor.height = asShort(text);
+                sendDecorUpdateToFlash();
             }
         }));
 
@@ -63,6 +65,7 @@ public class DecorEditor extends ItemEditor
         bits.setWidget(row++, 1, bind(_depth = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _decor.depth = asShort(text);
+                sendDecorUpdateToFlash();
             }
         }));
 
@@ -70,18 +73,20 @@ public class DecorEditor extends ItemEditor
         bits.setWidget(row++, 1, bind(_horizon = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _decor.horizon = asFloat(text);
+                sendDecorUpdateToFlash();
             }
         }));
 
         bits.setText(row, 0, CEditem.emsgs.decorPreview());
         bits.setWidget(row++, 1, _viewer = FlashClients.createDecorViewer());
 
-        configureCallbacks (this);
-
-        // don't let users edit these values in the browser
+        // don't let users edit any values in the browser
+        _width.setEnabled(false); 
         _height.setEnabled(false); 
         _depth.setEnabled(false); 
         _horizon.setEnabled(false);
+
+        configureCallbacks(this);
     }
 
     // @Override from ItemEditor
@@ -89,14 +94,15 @@ public class DecorEditor extends ItemEditor
     {
         super.setItem(item);
         _decor = (Decor)item;
-        updateFields();
+
+        updateUIFromDecor();
         sendDecorUpdateToFlash();
     }
 
     /**
      * When the decor item had changed, updates numeric values being displayed.
      */
-    protected void updateFields ()
+    protected void updateUIFromDecor()
     {
         _width.setText("" + _decor.width);
         _height.setText("" + _decor.height);
@@ -127,7 +133,7 @@ public class DecorEditor extends ItemEditor
         _decor.depth = depth;
         _decor.horizon = horizon;
         _decor.type = type;
-        updateFields();
+        updateUIFromDecor();
     }
 
     /**
@@ -135,6 +141,7 @@ public class DecorEditor extends ItemEditor
      */
     protected void sendDecorUpdateToFlash ()
     {
+        mediaUpdateHelper(_decor.furniMedia.getMediaPath());
         decorUpdateHelper(_decor.width, _decor.height, _decor.depth, _decor.horizon, _decor.type);
     }
 
@@ -146,6 +153,12 @@ public class DecorEditor extends ItemEditor
         }
     }-*/;
 
+    protected static native void mediaUpdateHelper (String mediaPath) /*-{
+        var viewer = $doc.getElementById("decorViewer");
+        if (viewer) {
+            viewer.updateMedia(mediaPath);
+        }
+    }-*/;
         
         
     // mr. utility, stolen from game editor

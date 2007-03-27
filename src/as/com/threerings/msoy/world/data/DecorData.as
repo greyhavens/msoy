@@ -32,6 +32,15 @@ public class DecorData extends FurniData
     /** Horizon position, in [0, 1]. */
     public var horizon :Number;
 
+    /**
+     * Helper function: specifies that this decor data structure has already been
+     * populated from a Decor item object.
+     */
+    public function isInitialized () :Boolean
+    {
+        return itemId != 0;
+    }
+    
     // documentation inherited from superinterface Equalable
     override public function equals (other :Object) :Boolean
     {
@@ -67,7 +76,7 @@ public class DecorData extends FurniData
         return s;
     }
 
-    // documentation from FurniData
+    // documentation inherited from FurniData
     override protected function copyFrom (that :FurniData) :void
     {
         super.copyFrom(that);

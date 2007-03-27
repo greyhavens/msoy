@@ -171,7 +171,7 @@ public class EditorController extends Controller
                 !Util.equals(_entranceSprite.loc, origModel.entrance) ||
                 // this test supports a mix of legacy backgrounds and decor
                 // items, but will not be need once we're migrated over to decor.
-                (editModel.decorData.itemId != 0 &&
+                (editModel.decorData.isInitialized() &&
                  editModel.decorData.itemId != origModel.decorData.itemId))
             {
                 var attrUpdate :SceneAttrsUpdate = new SceneAttrsUpdate();
