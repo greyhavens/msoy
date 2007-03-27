@@ -118,6 +118,17 @@ public class ItemPanel extends VerticalPanel
         setStatus(CInventory.msgs.msgItemDeleted());
     }
 
+    /**
+     * Called by an active {@link ItemDetailPopup} to let us know that an item has been remixed.
+     * Since this is a relatively uncommon operation and completely replaces the item with a new
+     * one with a new id, we force a server roundtrip refresh.
+     */
+    protected void itemRemixed (Item oldItem, Item newItem)
+    {
+        setStatus(CInventory.msgs.msgItemRemixed());
+        onLoad();
+    }
+
     protected PagedGrid _contents;
     protected Button _create, _next, _prev;
     protected Label _status;

@@ -5,7 +5,6 @@ package client.inventory;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -56,9 +55,9 @@ public class ItemDetailPopup extends BaseItemDetailPopup
                     return true;
                 }
                 public boolean gotResult (Object result) {
-                    // TODO: update item panel
-                    _status.setText(CInventory.msgs.msgItemRemixed());
-                    return false; // don't reenable remix button
+                    _parent.itemRemixed (_item, (Item) result);
+                    hide();
+                    return false;
                 }
             };
         }
