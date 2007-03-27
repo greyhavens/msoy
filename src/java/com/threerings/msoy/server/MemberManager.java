@@ -26,18 +26,20 @@ import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.IntTuple;
 import com.samskivert.util.ResultListener;
 
+import com.threerings.parlor.data.Table;
+import com.threerings.parlor.game.server.GameManager;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.whirled.server.SceneManager;
 
 import com.threerings.msoy.data.PopularPlace;
-import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -46,8 +48,13 @@ import com.threerings.msoy.data.Neighborhood.NeighborEntity;
 import com.threerings.msoy.data.Neighborhood.NeighborGroup;
 import com.threerings.msoy.data.Neighborhood.NeighborMember;
 import com.threerings.msoy.data.PopularPlace.*;
+import com.threerings.msoy.data.PopularPlace.PopularPlaceOwner.OwnerType;
+import com.threerings.msoy.game.data.LobbyObject;
+import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.server.LobbyManager;
+import com.threerings.msoy.game.server.MsoyGameManager;
 import com.threerings.msoy.item.web.Avatar;
+import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.web.data.FriendEntry;
@@ -58,7 +65,6 @@ import com.threerings.msoy.web.server.ServletWaiter;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.WorldMemberInfo;
-import com.threerings.msoy.world.server.RoomManager;
 
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.GroupRepository;
@@ -240,16 +246,21 @@ public class MemberManager
         try {
             JSONArray friends = new JSONArray();
             JSONArray groups = new JSONArray();
+            JSONArray games = new JSONArray();
             for (PopularPlace place : _topPlaces) {
                 JSONObject obj = new JSONObject();
                 obj.put("name", place.getName());
                 obj.put("pop", place.population);
                 obj.put("id", place.getId());
-                obj.put("sceneId", ((PopularScenePlace) place).getSceneId());
-                if (place instanceof PopularMemberPlace) {
-                    friends.put(obj);
+                if (place instanceof PopularGamePlace) {
+                    games.put(obj);
                 } else {
-                    groups.put(obj);
+                    obj.put("sceneId", ((PopularScenePlace) place).getSceneId());
+                    if (place instanceof PopularMemberPlace) {
+                        friends.put(obj);
+                    } else {
+                        groups.put(obj);
+                    }
                 }
                 if (--n <= 0) {
                     break;
@@ -258,6 +269,7 @@ public class MemberManager
             JSONObject result = new JSONObject();
             result.put("friends", friends);
             result.put("groups", groups);
+            result.put("games", games);
             result.put("totpop", _totalPopulation);
             listener.requestCompleted(URLEncoder.encode(result.toString(), "UTF-8"));
         } catch (Exception e) {
@@ -491,8 +503,8 @@ public class MemberManager
     public void fillIn (NeighborGroup group)
     {
         updatePPCache();
-        fillIn(group, _scenesByOwner.get(
-            new IntTuple(MsoySceneModel.OWNER_TYPE_GROUP, group.group.groupId)));
+        fillIn(group, (PopularScenePlace) _placesByOwner.get(
+            new PopularPlaceOwner(OwnerType.GROUP, group.group.groupId)));
     }
 
     /**
@@ -503,8 +515,8 @@ public class MemberManager
     public void fillIn (NeighborMember member)
     {
         updatePPCache();
-        fillIn(member, _scenesByOwner.get(
-            new IntTuple(MsoySceneModel.OWNER_TYPE_MEMBER, member.member.getMemberId())));
+        fillIn(member, (PopularScenePlace) _placesByOwner.get(
+            new PopularPlaceOwner(OwnerType.MEMBER, member.member.getMemberId())));
     }
 
     /**
@@ -512,8 +524,13 @@ public class MemberManager
      * given the supplied, associated {@link PopularPlace}.
      * 
      * This must be called on the dobj thread.
+     * 
+     * TODO: If we're going to bother showing the names of people present, we have to
+     * do it properly: this only looks at a single Place, where the population count is
+     * taken from every Place with a given owner (person, group or game); thus we could
+     * have a plaque showing population 20 but only list three names. That's silly.
      */
-    protected void fillIn (NeighborEntity entity, PopularPlace place)
+    protected void fillIn (NeighborEntity entity, PopularScenePlace place)
     {
         if (place == null) {
             entity.popSet = null;
@@ -546,14 +563,16 @@ public class MemberManager
         if (System.currentTimeMillis() - _popularPlaceStamp <= POPULAR_PLACES_CACHE_LIFE) {
             return;
         }
-        _scenesByOwner = new HashMap<IntTuple, PopularPlace>();
+        _placesByOwner = new HashMap<PopularPlaceOwner, PopularPlace>();
         _topPlaces = new LinkedList<PopularPlace>();
         _totalPopulation = 0;
         Iterator<?> i = MsoyServer.plreg.enumeratePlaceManagers();
         while (i.hasNext()) {
             PlaceManager plMgr = (PlaceManager) i.next();
+            PlaceObject plObj = plMgr.getPlaceObject();
+
             int count = 0;
-            for (OccupantInfo info : plMgr.getPlaceObject().occupantInfo) {
+            for (OccupantInfo info : plObj.occupantInfo) {
                 if (info instanceof WorldMemberInfo) {
                     count ++;
                 }
@@ -562,30 +581,86 @@ public class MemberManager
             if (count == 0) {
                 continue;
             }
-            MsoyScene scene = (MsoyScene) ((RoomManager) plMgr).getScene();
-            MsoySceneModel model = (MsoySceneModel) scene.getSceneModel();
-            IntTuple owner = new IntTuple(model.ownerType, model.ownerId);
-            PopularScenePlace place = (PopularScenePlace) _scenesByOwner.get(owner);
-            if (place == null) {
+
+            if (plMgr instanceof SceneManager) {
+                SceneManager rMgr = ((SceneManager) plMgr);
+                MsoyScene scene = (MsoyScene) rMgr.getScene();
+                MsoySceneModel model = (MsoySceneModel) scene.getSceneModel();
+
+                boolean isGroup;
                 if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                    place = new PopularGroupPlace((RoomManager) plMgr);
+                    isGroup = true;
                 } else if (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                    place = new PopularMemberPlace((RoomManager) plMgr);
+                    isGroup = false;
                 } else {
-                    throw new IllegalArgumentException(
-                        "unknown owner type: " + model.ownerType);
+                    throw new IllegalArgumentException("unknown owner type: " + model.ownerType);
                 }
-                // update the main data structures
-                _scenesByOwner.put(owner, place);
+
+                PopularPlaceOwner owner = new PopularPlaceOwner(
+                    isGroup ? OwnerType.GROUP : OwnerType.MEMBER, model.ownerId);
+                PopularScenePlace place = (PopularScenePlace) _placesByOwner.get(owner);
+                if (place == null) {
+                    place = isGroup ? new PopularGroupPlace(rMgr) : new PopularMemberPlace(rMgr);
+                    // update the main data structures
+                    _placesByOwner.put(owner, place);
+                    _topPlaces.add(place);
+                }
+
+                if (place.plMgr == null ||
+                    count > place.plMgr.getPlaceObject().occupantInfo.size()) {
+                    place.plMgr = rMgr;
+                }
+                place.population += count;
+                _totalPopulation += count;
+
+            } else if (plMgr instanceof MsoyGameManager) {
+                MsoyGameConfig config = ((MsoyGameConfig) ((GameManager) plMgr).getGameConfig());
+                PopularPlaceOwner owner =
+                    new PopularPlaceOwner(OwnerType.GAME, config.persistentGameId);
+                PopularGamePlace place = (PopularGamePlace) _placesByOwner.get(owner);
+                if (place == null) {
+                    place = new PopularGamePlace(config.name, config.persistentGameId);
+                    _placesByOwner.put(owner, place);
+                    _topPlaces.add(place);
+                }
+                
+                place.population += count;
+                _totalPopulation += count;
+            }
+        }
+
+        // let's iterate over the lobbies too, which are no longer places
+        i = MsoyServer.lobbyReg.enumerateLobbyManagers();
+        while (i.hasNext()) {
+            LobbyObject lObj = ((LobbyManager) i.next()).getLobbyObject();
+            
+            // then add up the population count for each table being formed in this lobby
+            int count = 0;
+            for (Table table : lObj.tables) {
+                count += table.getOccupiedCount();
+            }
+            
+            // we skip empty lobbies, obviously
+            if (count == 0) {
+                continue;
+            }
+
+            // otherwise we're most likely dealing with a game that's already been registered
+            Game game = lObj.game;
+            PopularPlaceOwner owner = new PopularPlaceOwner(OwnerType.GAME, game.getPrototypeId());
+            PopularGamePlace place = (PopularGamePlace) _placesByOwner.get(owner);
+
+            if (place == null) {
+                // or sometimes, there's somebody in the lobby of a game that nobody is playing
+                place = new PopularGamePlace(game.name, game.getPrototypeId());
+                _placesByOwner.put(owner, place);
                 _topPlaces.add(place);
             }
-            if (place.plMgr == null ||
-                count > place.plMgr.getPlaceObject().occupantInfo.size()) {
-                place.plMgr = plMgr;
-            }
+            
             place.population += count;
-            _totalPopulation += count;
+            // we don't increase total population: these are people we've already counted once
         }
+
         /*
          * TODO: this is currently O(N log N) in the number of rooms; if that is unrealistic in
          * the long run, we can easily make it O(N) by just bubbling into the top 20 (whatever)
@@ -709,7 +784,7 @@ public class MemberManager
     }
 
     /** A mapping of ownerType/ownerId tuples to sets of scene ID's. Cached. */
-    protected Map<IntTuple, PopularPlace> _scenesByOwner;
+    protected Map<PopularPlaceOwner, PopularPlace> _placesByOwner;
     
     /** A list of every place (lobby or scene) in the world, sorted by population. */
     protected List<PopularPlace> _topPlaces;
