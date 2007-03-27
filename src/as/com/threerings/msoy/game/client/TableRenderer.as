@@ -37,14 +37,13 @@ public class TableRenderer extends VBox
     /** The panel we're rendering to. */
     public var panel :LobbyPanel;
 
-    /**
-     * @param layout whether to include this renderer in the layout or not.  When using with a List,
-     * it should not be included.
-     */
-    public function TableRenderer (layout :Boolean = false)
+    public function TableRenderer (popup :Boolean = false)
     {
         super();
-        includeInLayout = layout;
+        _popup = popup
+        if (!_popup) {
+            includeInLayout = false;
+        }
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
     }
@@ -154,6 +153,13 @@ public class TableRenderer extends VBox
             _buttonsBox.addChild(btn);
         }
 
+        // if we're in a popup, add a button to return to the lobby
+        if (_popup) {
+            btn = new CommandButton(LobbyController.JOIN_LOBBY);
+            btn.label = ctx.xlate("game", "b.back_to_lobby");
+            _buttonsBox.addChild(btn);
+        }
+
         // maybe add a button for entering the game
         if (table.gameOid != -1) {
             var key :String = null;
@@ -217,6 +223,8 @@ public class TableRenderer extends VBox
     protected var _buttonsBox :HBox;
 
     protected var _game :Game;
+
+    protected var _popup :Boolean; 
 }
 }
 

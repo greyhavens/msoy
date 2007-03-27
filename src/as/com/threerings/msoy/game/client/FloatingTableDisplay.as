@@ -15,13 +15,16 @@ import com.threerings.util.CommandEvent;
 
 public class FloatingTableDisplay extends FloatingPanel
 {
-    public static const BACK_TO_LOBBY_BUTTON :int = 100;
-
     public function FloatingTableDisplay (ctx :WorldContext, panel :LobbyPanel, table :Table)
     {
         super(ctx, Msgs.GAME.get("t.table_display"));
         _panel = panel;
         _table = table;
+    }
+
+    public function getRenderer () :TableRenderer
+    {
+        return _tableRender;
     }
 
     public function shutdown () :void
@@ -49,36 +52,6 @@ public class FloatingTableDisplay extends FloatingPanel
         _tableRender.panel = _panel;
         addChild(_tableRender);
         _tableRender.data = _table;
-
-        addButtons(BACK_TO_LOBBY_BUTTON);
-    }
-
-    override protected function createButton (buttonId :int) :Button
-    {
-        var btn :Button;
-        switch (buttonId) {
-        case BACK_TO_LOBBY_BUTTON:
-            btn = new Button();
-            btn.label = Msgs.GAME.get("b.back_to_lobby");
-            break;
-
-        default:
-            btn = super.createButton(buttonId);
-        }
-        return btn;
-    }
-
-    override protected function buttonClicked (buttonId :int) :void
-    {
-        switch(buttonId) {
-        case BACK_TO_LOBBY_BUTTON:
-            CommandEvent.dispatch(_panel, LobbyController.JOIN_LOBBY);
-            close();
-            break;
-
-        default:
-            super.buttonClicked(buttonId);
-        }
     }
 
     /** controlled panel to dispatch LobbyController events on */

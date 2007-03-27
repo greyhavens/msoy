@@ -84,6 +84,7 @@ public class LobbyController extends Controller implements Subscriber
             var tableDisplay :FloatingTableDisplay = new FloatingTableDisplay(_mctx, _panel, 
                 seatedTable);
             tableDisplay.open();
+            setControlledPanel(tableDisplay.getRenderer());
             _mctx.getTopPanel().setTableDisplay(tableDisplay);
             _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId);
         } else {
@@ -155,6 +156,8 @@ public class LobbyController extends Controller implements Subscriber
     public function handleJoinLobby () :void
     {
         _panelIsVisible = true;
+        setControlledPanel(_panel);
+        _mctx.getTopPanel().clearTableDisplay();
         _mctx.getTopPanel().setSidePanel(_panel);
         _mctx.getMsoyController().gameLobbyShown(_lobj.game.itemId);
     }
@@ -166,6 +169,7 @@ public class LobbyController extends Controller implements Subscriber
     {
         _panel.removeEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
         _subscriber.unsubscribe(_mctx.getDObjectManager());
+        _mctx.getTopPanel().clearTableDisplay();
         _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId);
     }
 
