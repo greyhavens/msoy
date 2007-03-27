@@ -14,6 +14,10 @@ import mx.containers.GridRow;
 
 import mx.core.ClassFactory;
 
+import mx.managers.LayoutManager;
+
+import flash.events.MouseEvent;
+
 import com.threerings.msoy.client.Msgs
 import com.threerings.msoy.client.WorldContext;
 
@@ -56,19 +60,11 @@ public class FloatingTableDisplay extends FloatingPanel
     {
         super.createChildren();
 
-        // This is a *hopefully* temporary hack to get the TitleWindow to correctly size and 
-        // layout its children (namely, this list and the Back to Lobby button).  TODO: go through
-        // the MsoyList/List code and figure out what in the hell is causing it to correctly 
-        // resize this title window, when nothing else seems to do it.
-        var list :MsoyList = new MsoyList(_ctx);
-        list.variableRowHeight = true;
-        list.height = 200;
-        var factory :ClassFactory = new ClassFactory(TableRenderer);
-        factory.properties = { ctx: _ctx, panel: _panel };
-        list.itemRenderer = factory;
-        list.dataProvider = new ArrayCollection();
-        (list.dataProvider as ArrayCollection).addItem(_table);
-        addChild(list);
+        _tableRender = new TableRenderer(true);
+        _tableRender.ctx = _ctx;
+        _tableRender.panel = _panel;
+        addChild(_tableRender);
+        _tableRender.data = _table;
 
         addButtons(BACK_TO_LOBBY_BUTTON);
     }
@@ -106,6 +102,8 @@ public class FloatingTableDisplay extends FloatingPanel
 
     /** The table we're displaying */
     protected var _table :Table;
+
+    protected var _tableRender :TableRenderer;
 
     protected var _hasBeenShutDown :Boolean = false;
 }

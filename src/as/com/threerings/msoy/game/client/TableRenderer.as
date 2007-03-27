@@ -37,10 +37,14 @@ public class TableRenderer extends VBox
     /** The panel we're rendering to. */
     public var panel :LobbyPanel;
 
-    public function TableRenderer ()
+    /**
+     * @param layout whether to include this renderer in the layout or not.  When using with a List,
+     * it should not be included.
+     */
+    public function TableRenderer (layout :Boolean = false)
     {
         super();
-        includeInLayout = false;
+        includeInLayout = layout;
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
     }
