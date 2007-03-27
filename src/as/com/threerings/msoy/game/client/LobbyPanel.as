@@ -213,29 +213,29 @@ public class LobbyPanel extends VBox
         padding.percentWidth = 100;
         padding.percentHeight = 100;
         tabsBox.addChild(padding);
+        
+        var about :Label = new Label();
+        about.text = Msgs.GAME.get("b.about");
+        about.styleName = "lobbyLink";
+        var thisLobbyPanel :LobbyPanel = this;
+        about.addEventListener(MouseEvent.CLICK, function () :void {
+            CommandEvent.dispatch(
+                thisLobbyPanel, MsoyController.VIEW_ITEM, getGame().getIdent());
+        });
+        tabsBox.addChild(about);
 
-         var about :Label = new Label();
-         about.text = Msgs.GAME.get("b.about");
-         about.styleName = "lobbyLink";
-         var thisLobbyPanel :LobbyPanel = this;
-         about.addEventListener(MouseEvent.CLICK, function () :void {
-             CommandEvent.dispatch(
-                 thisLobbyPanel, MsoyController.VIEW_ITEM, getGame().getIdent());
-         });
-         tabsBox.addChild(about);
-
-         // if ownerId = 0, we were pushed to the catalog's copy, so this is buyable
-         // TODO: make sure we can't get here with a game that's a gift in somebody's mailbox!
-         if (getGame().ownerId == 0) {
-             var buy :Label = new Label();
-             buy.text = Msgs.GAME.get("b.buy");
-             buy.styleName = "lobbyLink";
-             buy.addEventListener(MouseEvent.CLICK, function () :void {
-                 CommandEvent.dispatch(thisLobbyPanel, MsoyController.VIEW_ITEM, 
-                     getGame().getIdent());
-             });
-             tabsBox.addChild(buy);
-         }
+        // if ownerId = 0, we were pushed to the catalog's copy, so this is buyable
+        // TODO: make sure we can't get here with a game that's a gift in somebody's mailbox!
+        if (getGame().ownerId == 0) {
+            var buy :Label = new Label();
+            buy.text = Msgs.GAME.get("b.buy");
+            buy.styleName = "lobbyLink";
+            buy.addEventListener(MouseEvent.CLICK, function () :void {
+                CommandEvent.dispatch(thisLobbyPanel, MsoyController.VIEW_ITEM, 
+                    getGame().getIdent());
+            });
+            tabsBox.addChild(buy);
+        }
 
         var buttonBox :HBox = new HBox();
         buttonBox.styleName = "buttonBox";
