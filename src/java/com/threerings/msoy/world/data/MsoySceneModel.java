@@ -9,7 +9,9 @@ import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.ListUtil;
 
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.StaticMediaDesc;
 
 import com.threerings.whirled.data.SceneModel;
 
@@ -219,7 +221,7 @@ public class MsoySceneModel extends SceneModel
     public static DecorData createDefaultDecorData ()
     {
         DecorData decor = new DecorData();
-        decor.media = new MediaDesc("41e4e18fb88b036b2d15ae3c051bea085e60e4b5.png");
+        decor.media = new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.DECOR, Item.FURNI_MEDIA);
         decor.id = 0; // it's not an actual furni...
         decor.depth = 400;
         decor.width = 800;
