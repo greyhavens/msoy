@@ -68,8 +68,9 @@ public class LobbyController extends Controller implements Subscriber
         _lobj = obj as LobbyObject;
         _panel.init(_lobj);
 
-        _tableDir = new TableDirector(_mctx, LobbyObject.TABLES, _panel);
+        _tableDir = new TableDirector(_mctx, LobbyObject.TABLES);
         _tableDir.setTableObject(obj);
+        _tableDir.addTableObserver(_panel);
         _tableDir.addSeatednessObserver(_panel);
     }
 
@@ -82,7 +83,7 @@ public class LobbyController extends Controller implements Subscriber
         var seatedTable :Table = _tableDir.getSeatedTable();
         if (_tableDir.isSeated() && !seatedTable.inPlay()) {
             var tableDisplay :FloatingTableDisplay = new FloatingTableDisplay(_mctx, _panel, 
-                seatedTable);
+                _tableDir);
             tableDisplay.open();
             setControlledPanel(tableDisplay.getRenderer());
             _mctx.getTopPanel().setTableDisplay(tableDisplay);
@@ -171,6 +172,8 @@ public class LobbyController extends Controller implements Subscriber
         _subscriber.unsubscribe(_mctx.getDObjectManager());
         _mctx.getTopPanel().clearTableDisplay();
         _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId);
+        _tableDir.removeTableObserver(_panel);
+        _tableDir.removeSeatednessObserver(_panel);
     }
 
     /** The provider of free cheese. */

@@ -9,17 +9,24 @@ import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
+import com.threerings.parlor.client.TableDirector;
+import com.threerings.parlor.client.TableObserver;
+
 import com.threerings.parlor.data.Table;
 
 import com.threerings.util.CommandEvent;
 
-public class FloatingTableDisplay extends FloatingPanel
+public class FloatingTableDisplay extends FloatingPanel 
+    implements TableObserver
 {
-    public function FloatingTableDisplay (ctx :WorldContext, panel :LobbyPanel, table :Table)
+    public function FloatingTableDisplay (ctx :WorldContext, panel :LobbyPanel, 
+        tableDir :TableDirector)
     {
         super(ctx, Msgs.GAME.get("t.table_display"));
         _panel = panel;
-        _table = table;
+        _tableDir = tableDir;
+        _tableDir.addTableObserver(this);
+        _table = _tableDir.getSeatedTable();
     }
 
     public function getRenderer () :TableRenderer
@@ -31,6 +38,7 @@ public class FloatingTableDisplay extends FloatingPanel
     {
         _hasBeenShutDown = true;
         close();
+        _tableDir.removeTableObserver(this);
     }
 
     override public function open (modal :Boolean = false, parent :DisplayObject = null,
@@ -40,6 +48,29 @@ public class FloatingTableDisplay extends FloatingPanel
             super.open(modal, parent, avoid);
             x = 10;
             y = 10;
+        }
+    }
+
+    // from TableObserver
+    public function tableAdded (table :Table) :void
+    {
+        // NOOP
+    }
+
+    // from TableObserver
+    public function tableUpdated (table :Table) :void
+    {
+        if (table.tableId == _table.tableId) {
+            _table = table;
+            _tableRender.data = _table;
+        }
+    }
+
+    // from TableObserver
+    public function tableRemoved (tableId :int) :void
+    {
+        if (tableId == _table.tableId) {
+            shutdown();
         }
     }
 
@@ -61,6 +92,8 @@ public class FloatingTableDisplay extends FloatingPanel
     protected var _table :Table;
 
     protected var _tableRender :TableRenderer;
+
+    protected var _tableDir :TableDirector;
 
     protected var _hasBeenShutDown :Boolean = false;
 }
