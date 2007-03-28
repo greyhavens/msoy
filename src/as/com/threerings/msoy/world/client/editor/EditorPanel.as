@@ -26,12 +26,14 @@ import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Decor;
+import com.threerings.msoy.item.client.InventoryLoader;
 import com.threerings.msoy.item.client.InventoryPicker;
 import com.threerings.msoy.item.client.ItemList;
 
@@ -94,6 +96,7 @@ public class EditorPanel extends VBox
         _itemSort = new Sort();
         _itemSort.compareFunction = itemSortFn;
         itemList.setSort(_itemSort);
+
     }
 
     /**
@@ -279,18 +282,22 @@ public class EditorPanel extends VBox
 
         GridUtil.addRow(
             grid, MsoyUI.createLabel(Msgs.EDITING.get("l.background_image")),
-            _backgroundImage = new SingleItemSelector(_ctx, Item.DECOR));
-        _backgroundImage.selectionChanged = newBackgroundImageSelected;
+            _decorSelector = new SingleItemSelector(_ctx, Item.DECOR));
 
-/*
+        _decorSelector.selectionChanged = newBackgroundImageSelected;
+        
+        _decorItemLoader = new InventoryLoader(_ctx, Item.DECOR);
+        _decorItemLoader.addEventListener(InventoryLoader.SUCCESS, updateInitialDecorSelection);
+        _decorItemLoader.start();
+
+        /*
         GridUtil.addRow(grid,
             MsoyUI.createLabel(Msgs.EDITING.get("l.background_audio")),
             _backgroundAudio = new SingleItemSelector(_ctx, Item.AUDIO));
         _backgroundAudio.selectionChanged = newBackgroundAudioSelected;
         */
 
-        GridUtil.addRow(grid,
-            new RoomViewScrollBox(_roomView, 200, 100), [2, 1]);
+        GridUtil.addRow(grid, new RoomViewScrollBox(_roomView, 200, 100), [2, 1]);
 
         box.addChild(grid);
 
@@ -308,14 +315,34 @@ public class EditorPanel extends VBox
         _depth.text = String(_sceneModel.decorData.depth);
         _height.text = String(_sceneModel.decorData.height);
         _horizon.value = _sceneModel.decorData.horizon;
-
-        var bgImage :FurniData = SceneUtils.getBackgroundImage(_sceneModel);
-//        _backgroundImage.setSelectedItem(bgImage);
-
-        var bgAudio :FurniData = SceneUtils.getBackgroundAudio(_sceneModel);
-//        _backgroundAudio.setSelectedItem(bgAudio);
     }
 
+    /**
+     * Once decor finished loading, set the current displayed decor
+     * to whatever was stored in the model.
+     */
+    protected function updateInitialDecorSelection (event :Event) :void
+    {
+        var memObj :MemberObject = _ctx.getMemberObject();
+        if (memObj.isInventoryLoaded(Item.DECOR))
+        {
+            _decorItemLoader.removeEventListener(
+                InventoryLoader.SUCCESS, updateInitialDecorSelection);
+
+            if (_sceneModel.decorData != null &&
+                _sceneModel.decorData.isInitialized())
+            {
+                var decors :Array = memObj.getItems(Item.DECOR);  
+                for each (var decor :Decor in decors) {
+                    if (decor.itemId == _sceneModel.decorData.itemId) {
+                        _decorSelector.setSelectedItem(decor);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
     override protected function childrenCreated () :void
     {
         super.childrenCreated();
@@ -364,7 +391,7 @@ public class EditorPanel extends VBox
 
     protected function newBackgroundImageSelected () :void
     {
-        var bgItem :Item = _backgroundImage.getSelectedItem();
+        var bgItem :Item = _decorSelector.getSelectedItem();
 
         // default type, if no decor is selected
         _sceneModel.decorData.type =
@@ -479,8 +506,9 @@ public class EditorPanel extends VBox
     protected var _depth :TextInput;
     protected var _height :TextInput;
     protected var _horizon :HSlider;
-
-    protected var _backgroundImage :SingleItemSelector;
+    protected var _decorItemLoader :InventoryLoader;
+    
+    protected var _decorSelector :SingleItemSelector;
     protected var _backgroundAudio :SingleItemSelector;
 
     protected var _deleteBtn :CommandButton;

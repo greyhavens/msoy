@@ -71,7 +71,13 @@ public class SingleItemSelector extends VBox
         if (evt.target == _add) {
             // TODO: use the same inventory widget for all editing ops?
             var ips :ItemPopupSelector = new ItemPopupSelector(
-                _ctx, setSelectedItem, new InventoryPicker(_ctx, _soleType));
+                _ctx,
+                function (item :Item) :void {
+                    if (item != null) {
+                        setSelectedItem(item);
+                    }
+                },
+                new InventoryPicker(_ctx, _soleType));
             ips.open(true, this);
 
         } else if (evt.target == _clear) {
