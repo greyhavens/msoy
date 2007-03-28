@@ -164,15 +164,8 @@ public class EditorController extends Controller
             var origModel :MsoySceneModel =
                 (_ctx.getSceneDirector().getScene().getSceneModel() as MsoySceneModel);
             if (!Util.equals(editModel.name, origModel.name) ||
-                (editModel.decorData.type != origModel.decorData.type) || 
-                (editModel.decorData.depth != origModel.decorData.depth) || 
-                (editModel.decorData.width != origModel.decorData.width) || 
-                (editModel.decorData.horizon != origModel.decorData.horizon) || 
                 !Util.equals(_entranceSprite.loc, origModel.entrance) ||
-                // this test supports a mix of legacy backgrounds and decor
-                // items, but will not be need once we're migrated over to decor.
-                (editModel.decorData.isInitialized() &&
-                 editModel.decorData.itemId != origModel.decorData.itemId))
+                !editModel.decorData.equivalent(origModel.decorData))
             {
                 var attrUpdate :SceneAttrsUpdate = new SceneAttrsUpdate();
                 attrUpdate.init(sceneId, version++);

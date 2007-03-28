@@ -393,21 +393,13 @@ public class EditorPanel extends VBox
     {
         var bgItem :Item = _decorSelector.getSelectedItem();
 
-        // default type, if no decor is selected
-        _sceneModel.decorData.type =
-            (bgItem == null) ? Decor.DRAWN_ROOM : Decor.IMAGE_OVERLAY;
-
-        // for now, just clobber room dimensions with decor data dimensions
         var decor :Decor = bgItem as Decor;
-        if (decor != null) {
+        var dd :DecorData = _sceneModel.decorData;
 
-            var dd :DecorData = _sceneModel.decorData;
-            
+        if (decor != null) {
             // populate furni attributes
             dd.itemId = decor.itemId;
             dd.media = decor.furniMedia;
-            dd.actionType = FurniData.BACKGROUND;
-            dd.loc = new MsoyLocation(.5, 0, 0, 0); // center, up front
             
             // populate decor attributes
             dd.type = decor.type;
@@ -419,8 +411,16 @@ public class EditorPanel extends VBox
             _width.text = String(dd.width);
             _depth.text = String(dd.depth);
             _horizon.value = dd.horizon;
-            _ctrl.setBackground(dd);
+            
+        } else {
+            // user cleared the decor - replace the media with a default bitmap,
+            // but leave room dimensions intact.
+            dd.itemId = 0;
+            dd.type = Decor.IMAGE_OVERLAY;
+            dd.media = DecorData.defaultMedia;
         }
+
+        _ctrl.setBackground(dd);
     }
 
     protected function newBackgroundAudioSelected () :void
