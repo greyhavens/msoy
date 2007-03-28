@@ -221,7 +221,7 @@ public class MsoySceneModel extends SceneModel
     public static DecorData createDefaultDecorData ()
     {
         DecorData decor = new DecorData();
-        decor.media = new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.DECOR, Item.FURNI_MEDIA);
+        decor.media = DecorData.defaultMedia;
         decor.id = 0; // it's not an actual furni...
         decor.depth = 400;
         decor.width = 800;

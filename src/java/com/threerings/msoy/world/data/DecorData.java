@@ -11,12 +11,17 @@ import com.threerings.msoy.item.web.Decor;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.StaticMediaDesc;
 
 /**
  * Contains information on the location of furniture in a scene.
  */
 public class DecorData extends FurniData
 {
+    /** Default decor background. */
+    public static final MediaDesc defaultMedia =
+        new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.DECOR, Item.FURNI_MEDIA);
+    
     /** Room type. Controls how the background wallpaper image is handled. */
     public byte type;
     
