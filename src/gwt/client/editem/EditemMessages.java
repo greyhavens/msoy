@@ -16,6 +16,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String photoMainTitle();
 
   /**
+   * Translated "Standard".
+   * 
+   * @return translated "Standard"
+   * @gwt.key decorType_Standard
+   */
+  String decorType_Standard();
+
+  /**
    * Translated "Lobby Table".
    * 
    * @return translated "Lobby Table"
@@ -24,9 +32,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameTableTab();
 
   /**
-   * Translated "Horizon level".
+   * Translated "Horizon:".
    * 
-   * @return translated "Horizon level"
+   * @return translated "Horizon:"
    * @gwt.key decorHorizon
    */
   String decorHorizon();
@@ -64,14 +72,6 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String errTableNotImage();
 
   /**
-   * Translated "Width, in pixels".
-   * 
-   * @return translated "Width, in pixels"
-   * @gwt.key decorWidth
-   */
-  String decorWidth();
-
-  /**
    * Translated "Game Lobby Table background image".
    * 
    * @return translated "Game Lobby Table background image"
@@ -102,14 +102,6 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key errPetNotFlash
    */
   String errPetNotFlash();
-
-  /**
-   * Translated "Depth, in pixels".
-   * 
-   * @return translated "Depth, in pixels"
-   * @gwt.key decorDepth
-   */
-  String decorDepth();
 
   /**
    * Translated "Furniture must be an web-viewable image type.".
@@ -176,20 +168,20 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String petMainTab();
 
   /**
-   * Translated "Height, in pixels".
-   * 
-   * @return translated "Height, in pixels"
-   * @gwt.key decorHeight
-   */
-  String decorHeight();
-
-  /**
    * Translated "Enter a Description to be shown if you list your Item in the Catalog".
    * 
    * @return translated "Enter a Description to be shown if you list your Item in the Catalog"
    * @gwt.key editorDescripTitle
    */
   String editorDescripTitle();
+
+  /**
+   * Translated "Background type: ".
+   * 
+   * @return translated "Background type: "
+   * @gwt.key decorType
+   */
+  String decorType();
 
   /**
    * Translated "Configuration".
@@ -240,9 +232,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String errPhotoNotFlash();
 
   /**
-   * Translated "Configuration".
+   * Translated "Room Settings".
    * 
-   * @return translated "Configuration"
+   * @return translated "Room Settings"
    * @gwt.key decorConfigTab
    */
   String decorConfigTab();
@@ -262,14 +254,6 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key audioMainTab
    */
   String audioMainTab();
-
-  /**
-   * Translated "Preview".
-   * 
-   * @return translated "Preview"
-   * @gwt.key decorPreview
-   */
-  String decorPreview();
 
   /**
    * Translated "Head Shot Media".
@@ -318,6 +302,22 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key msgItemUpdated
    */
   String msgItemUpdated();
+
+  /**
+   * Translated "Dimensions:".
+   * 
+   * @return translated "Dimensions:"
+   * @gwt.key decorDimensions
+   */
+  String decorDimensions();
+
+  /**
+   * Translated "Fixed image".
+   * 
+   * @return translated "Fixed image"
+   * @gwt.key decorType_Fixed
+   */
+  String decorType_Fixed();
 
   /**
    * Translated "Edit an Item".
@@ -398,6 +398,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key petMainTitle
    */
   String petMainTitle();
+
+  /**
+   * Translated "None".
+   * 
+   * @return translated "None"
+   * @gwt.key decorType_None
+   */
+  String decorType_None();
 
   /**
    * Translated "Room Decor Media".

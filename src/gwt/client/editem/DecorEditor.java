@@ -4,12 +4,9 @@
 package client.editem;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.Item;
@@ -40,52 +37,12 @@ public class DecorEditor extends ItemEditor
     {
         super.createInterface(contents, tabs);
 
-        FlexTable bits = new FlexTable();
-        tabs.add(bits, CEditem.emsgs.gameConfigTab());
+        VerticalPanel bits = new VerticalPanel();
+        tabs.add(bits, CEditem.emsgs.decorConfigTab());
 
-        int row = 0;
-
-        bits.setText(row, 0, CEditem.emsgs.decorWidth());
-        bits.setWidget(row++, 1, bind(_width = new TextBox(), new Binder() {
-            public void textUpdated (String text) {
-                _decor.width = asShort(text);
-                sendDecorUpdateToFlash();
-            }
-        }));
-
-        bits.setText(row, 0, CEditem.emsgs.decorHeight());
-        bits.setWidget(row++, 1, bind(_height = new TextBox(), new Binder() {
-            public void textUpdated (String text) {
-                _decor.height = asShort(text);
-                sendDecorUpdateToFlash();
-            }
-        }));
-
-        bits.setText(row, 0, CEditem.emsgs.decorDepth());
-        bits.setWidget(row++, 1, bind(_depth = new TextBox(), new Binder() {
-            public void textUpdated (String text) {
-                _decor.depth = asShort(text);
-                sendDecorUpdateToFlash();
-            }
-        }));
-
-        bits.setText(row, 0, CEditem.emsgs.decorHorizon());
-        bits.setWidget(row++, 1, bind(_horizon = new TextBox(), new Binder() {
-            public void textUpdated (String text) {
-                _decor.horizon = asFloat(text);
-                sendDecorUpdateToFlash();
-            }
-        }));
-
-        bits.setText(row, 0, CEditem.emsgs.decorPreview());
-        bits.setWidget(row++, 1, _viewer = FlashClients.createDecorViewer());
-
-        // don't let users edit any values in the browser
-        _width.setEnabled(false); 
-        _height.setEnabled(false); 
-        _depth.setEnabled(false); 
-        _horizon.setEnabled(false);
-
+        bits.add(_viewer = FlashClients.createDecorViewer());
+        bits.add(_label = new HTML());
+        
         configureCallbacks(this);
     }
 
@@ -104,10 +61,21 @@ public class DecorEditor extends ItemEditor
      */
     protected void updateUIFromDecor()
     {
-        _width.setText("" + _decor.width);
-        _height.setText("" + _decor.height);
-        _depth.setText("" + _decor.depth);
-        _horizon.setText("" + _decor.horizon);
+        String typelabel = CEditem.emsgs.decorType_None();
+        switch (_decor.type) {
+        case Decor.IMAGE_OVERLAY: typelabel = CEditem.emsgs.decorType_Standard(); break;
+        case Decor.FIXED_IMAGE: typelabel = CEditem.emsgs.decorType_Fixed(); break;
+        }
+
+        // GWT doesn't emulate java.text.NumberFormat...
+        // so we "format" this float by hand to three decimal places. ugh. :(
+        String horizon = Float.toString(Math.round (_decor.horizon * 1000f) / 1000f);
+        
+        _label.setHTML(
+            CEditem.emsgs.decorDimensions() + " " + _decor.width + " x " +
+            _decor.height + " x " + _decor.depth + "<br/>" +
+            CEditem.emsgs.decorHorizon() + " " + horizon + "<br/>" +
+            CEditem.emsgs.decorType() + " " + typelabel);
     }
     
     /**
@@ -160,30 +128,8 @@ public class DecorEditor extends ItemEditor
         }
     }-*/;
         
-        
-    // mr. utility, stolen from game editor
-    protected static short asShort (String s)
-    {
-        try {
-            return (short) Integer.parseInt(s);
-        } catch (Exception e) {
-            return (short) 0;
-        }
-    }
-
-    // these utilities are silly
-    protected static float asFloat (String s)
-    {
-        try {
-            return (float) Float.parseFloat(s);
-        } catch (Exception e) {
-            return (float) 0;
-        }
-    }
-
     protected Decor _decor;
-    protected TextBox _width, _height, _depth, _horizon;
-    protected ListBox _type;
     protected HTML _viewer;
+    protected HTML _label;
 
 }

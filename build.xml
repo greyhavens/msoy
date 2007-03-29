@@ -453,6 +453,7 @@
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
+      <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/decorviewer.swf"/>
       <arg value="-file-specs"/>

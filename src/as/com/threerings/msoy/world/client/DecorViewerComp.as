@@ -5,21 +5,30 @@ package com.threerings.msoy.world.client {
 
 import flash.display.Graphics;
 import flash.external.ExternalInterface;
+import flash.events.Event;
 import flash.utils.ByteArray;
 
 import mx.containers.Canvas;
+import mx.controls.ComboBox;
+import mx.controls.Label;
 import mx.controls.HSlider;
 import mx.controls.VSlider;
-import mx.controls.Label;
 import mx.core.UIComponent;
-
 import mx.events.SliderEvent;
+import mx.resources.ResourceBundle;
 
+import com.threerings.msoy.item.web.Decor;
+import com.threerings.util.MessageManager;
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.world.data.DecorData;
 
 
+ 
 public class DecorViewerComp extends Canvas
 {
+    [ResourceBundle("global")]
+    [ResourceBundle("editing")]
+
     public static const log :Log = Log.getLog(DecorViewerComp);
 
     public function DecorViewerComp ()
@@ -41,7 +50,9 @@ public class DecorViewerComp extends Canvas
     override protected function createChildren () :void
     {
         super.createChildren();
-
+        
+        Msgs.init(new MessageManager());
+        
         _results = new Label();
         addChild(_results);
 
@@ -75,6 +86,19 @@ public class DecorViewerComp extends Canvas
         _widthSlider.width = PREVIEW_BOX_SIZE;
         addChild(_widthSlider);
 
+        var types :Array = [];
+        for (var ii :int = 0; ii < Decor.TYPE_COUNT; ii++) {
+            types.push({ label: Msgs.EDITING.get("m.scene_type_" + ii),
+                         data: ii });
+        }
+        _types = new ComboBox();
+        _types.dataProvider = types;
+        _types.addEventListener(Event.CHANGE, processChange);
+        _types.x = 50;
+        _types.y = 10;
+        _types.width = PREVIEW_BOX_SIZE;
+        addChild(_types);
+        
         // container for room display
         var preview :Canvas = new Canvas();
         preview.x = preview.y = 50;
@@ -117,11 +141,12 @@ public class DecorViewerComp extends Canvas
     /**
      * Called whenever any of the UI elements changes.
      */
-    protected function processChange (event :SliderEvent) :void
+    protected function processChange (event :Event) :void
     {
         _data.width = _widthSlider.value;
         _data.horizon = _horizonSlider.value;
         _data.depth = _depthSlider.value;
+        _data.type = _types.selectedIndex;
         refreshPreview();
         
         sendUpdateToJS();
@@ -144,6 +169,7 @@ public class DecorViewerComp extends Canvas
         _widthSlider.value = width;
         _horizonSlider.value = horizon;
         _depthSlider.value = depth;
+        _types.selectedIndex = type;
         refreshPreview();
     }
 
@@ -217,6 +243,7 @@ public class DecorViewerComp extends Canvas
     protected var _horizonSlider :VSlider;
     protected var _depthSlider :VSlider;
     protected var _widthSlider :HSlider;
+    protected var _types :ComboBox;
 
     protected var _mediaPath :String;
     protected var _media :DecorMediaContainer;
