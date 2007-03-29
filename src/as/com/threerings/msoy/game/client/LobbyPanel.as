@@ -74,8 +74,6 @@ public class LobbyPanel extends VBox
         controller = ctrl;
 
         width = LOBBY_PANEL_WIDTH;
-         
-        // TODO display some kind of loading indicator
     }
 
     public function init (lobbyObj :LobbyObject) :void
@@ -85,7 +83,30 @@ public class LobbyPanel extends VBox
         for each (var table :Table in _lobbyObj.tables.toArray()) {
             tableAdded(table);
         }
-        createUI();
+
+        // fill in the UI bits
+        var game :Game = getGame();
+        _title.text = game.name;
+        _about.text = Msgs.GAME.get("b.about");
+        var thisLobbyPanel :LobbyPanel = this;
+        _about.addEventListener(MouseEvent.CLICK, function () :void {
+            CommandEvent.dispatch(thisLobbyPanel, MsoyController.VIEW_ITEM, game.getIdent());
+        });
+        // if ownerId = 0, we were pushed to the catalog's copy, so this is buyable
+        if (game.ownerId == 0) {
+            _buy.text = Msgs.GAME.get("b.buy");
+            _buy.addEventListener(MouseEvent.CLICK, function () :void {
+                CommandEvent.dispatch(thisLobbyPanel, MsoyController.VIEW_ITEM, game.getIdent());
+            });
+        } else {
+            _buy.parent.removeChild(_buy);
+        }
+
+        _logo.addChild(new MediaWrapper(new MediaContainer(getGame().getThumbnailPath())));
+        _info.text = game.description;
+
+        _tablesBox.removeAllChildren();
+        createTablesDisplay();
     }
 
     /**
@@ -99,8 +120,12 @@ public class LobbyPanel extends VBox
     // from TableObserver
     public function tableAdded (table :Table) :void
     {
-        // TODO check if this is a single-player table - if so, add directly to running tables
-        _formingTables.addItem(table);
+        if (_runningTables != null && table.playerCount == 1 && 
+            getGame().getGameDefinition().gameType == GameConfig.SEATED_GAME) {
+            _runningTables.addItem(table);
+        } else {
+            _formingTables.addItem(table);
+        }
     }
 
     // from TableObserver
@@ -162,81 +187,57 @@ public class LobbyPanel extends VBox
         return _isSeated;
     }
 
-    protected function createUI () :void
+    override protected function createChildren () :void
     {
         super.createChildren();
         styleName = "lobbyPanel";
         percentHeight = 100;
+
+        var titleBox :HBox = new HBox();
+        titleBox.styleName = "titleBox";
+        titleBox.percentWidth = 100;
+        titleBox.height = 27;
+        addChild(titleBox);
+        _title = new Label();
+        _title.styleName = "lobbyGameName";
+        titleBox.addChild(_title);
+        var padding :HBox = new HBox();
+        padding.percentWidth = 100;
+        padding.percentHeight = 100;
+        titleBox.addChild(padding);
+        _about = new Label();
+        _about.styleName = "lobbyLink";
+        titleBox.addChild(_about);
+        _buy = new Label();
+        _buy.styleName = "lobbyLink";
+        titleBox.addChild(_buy);
 
         var descriptionBox :HBox = new HBox();
         descriptionBox.percentWidth = 100;
         descriptionBox.height = 120;
         descriptionBox.styleName = "descriptionBox";
         addChild(descriptionBox);
-        var logo :VBox = new VBox();
-        logo.styleName = "lobbyLogoBox";
-        logo.width = 160;
-        logo.height = 120;
-        logo.addChild(new MediaWrapper(new MediaContainer(getGame().getThumbnailPath())));
-        logo.setStyle("backgroundImage", "/media/static/game/logo_background.png");
-        descriptionBox.addChild(logo);
-        // TODO get new art from jon for this, and get it working in here
-        //descriptionBox.addChild(new MediaWrapper(new MediaContainer(
-            //"/media/static/game/info_top.png")));
-        var info :Text = new Text();
-        info.styleName = "lobbyInfo";
-        info.percentWidth = 100;
-        info.percentHeight = 100;
-        info.text = getGame().description;
-        descriptionBox.addChild(info);
+        _logo = new VBox();
+        _logo.styleName = "lobbyLogoBox";
+        _logo.width = 160;
+        _logo.height = 120;
+        descriptionBox.addChild(_logo);
+        _info = new Text();
+        _info.styleName = "lobbyInfo";
+        _info.percentWidth = 100;
+        _info.percentHeight = 100;
+        descriptionBox.addChild(_info);
 
-        var tablesBox :VBox = new VBox();
-        tablesBox.styleName = "tablesBox";
-        tablesBox.percentWidth = 100;
-        tablesBox.percentHeight = 100;
-        addChild(tablesBox);
-        var tabsBox :HBox = new HBox();
-        tabsBox.styleName = "tabsBox";
-        tabsBox.percentWidth = 100;
-        tabsBox.height = 27;
-        tablesBox.addChild(tabsBox);
-        tabsBox.setStyle("backgroundImage", "/media/static/game/box_tile.png");
-        tabsBox.setStyle("backgroundSize", "100%");
-        tabsBox.setStyle("verticalAlign", "middle");
-        var name :Label = new Label();
-        name.text = getGame().name;
-        name.styleName = "lobbyGameName";
-        tabsBox.addChild(name);
-        // must do this here so that tabs get dropped into the correct location, if they're needed
-        createTablesDisplay(tabsBox, tablesBox);
-        var padding :HBox = new HBox();
-        padding.percentWidth = 100;
-        padding.percentHeight = 100;
-        tabsBox.addChild(padding);
-        
-        var about :Label = new Label();
-        about.text = Msgs.GAME.get("b.about");
-        about.styleName = "lobbyLink";
-        var thisLobbyPanel :LobbyPanel = this;
-        about.addEventListener(MouseEvent.CLICK, function () :void {
-            CommandEvent.dispatch(
-                thisLobbyPanel, MsoyController.VIEW_ITEM, getGame().getIdent());
-        });
-        tabsBox.addChild(about);
+        _tablesBox = new VBox();
+        _tablesBox.styleName = "tablesBox";
+        _tablesBox.percentWidth = 100;
+        _tablesBox.percentHeight = 100;
+        addChild(_tablesBox);
+        var loadingLabel :Label = new Label();
+        loadingLabel.text = Msgs.GAME.get("l.gameLoading");
+        _tablesBox.addChild(loadingLabel);
 
-        // if ownerId = 0, we were pushed to the catalog's copy, so this is buyable
-        // TODO: make sure we can't get here with a game that's a gift in somebody's mailbox!
-        if (getGame().ownerId == 0) {
-            var buy :Label = new Label();
-            buy.text = Msgs.GAME.get("b.buy");
-            buy.styleName = "lobbyLink";
-            buy.addEventListener(MouseEvent.CLICK, function () :void {
-                CommandEvent.dispatch(thisLobbyPanel, MsoyController.VIEW_ITEM, 
-                    getGame().getIdent());
-            });
-            tabsBox.addChild(buy);
-        }
-
+        // TODO: Temporary!
         var buttonBox :HBox = new HBox();
         buttonBox.styleName = "buttonBox";
         buttonBox.percentWidth = 100;
@@ -251,8 +252,7 @@ public class LobbyPanel extends VBox
         addChild(buttonBox);
     }
 
-    protected function createTablesDisplay (tabsContainer :DisplayObjectContainer,
-        tablesContainer :DisplayObjectContainer) :void
+    protected function createTablesDisplay () :void
     {
         // our game table data
         var list :MsoyList = new MsoyList(_ctx);
@@ -266,15 +266,20 @@ public class LobbyPanel extends VBox
 
         // only display tabs for seated games
         if (getGame().getGameDefinition().gameType == GameConfig.SEATED_GAME) {
+            var tabsBox :HBox = new HBox();
+            tabsBox.styleName = "tabsBox";
+            tabsBox.percentWidth = 100;
+            tabsBox.height = 27;
+            _tablesBox.addChild(tabsBox);
             var tabBar :TabBar = new TabBar();
             tabBar.percentHeight = 100;
             tabBar.styleName = "lobbyTabs";
-            tabsContainer.addChild(tabBar);
+            tabsBox.addChild(tabBar);
 
             var tabViews :ViewStack = new ViewStack();
             tabViews.percentHeight = 100;
             tabViews.percentWidth = 100;
-            tablesContainer.addChild(tabViews);
+            _tablesBox.addChild(tabViews);
             tabBar.dataProvider = tabViews;
             var formingBox :VBox = new VBox();
             formingBox.percentHeight = 100;
@@ -298,7 +303,7 @@ public class LobbyPanel extends VBox
             runningBox.addChild(runningList);
             tabViews.addChild(runningBox);
         } else {
-            tablesContainer.addChild(list);
+            _tablesBox.addChild(list);
         }
     }
 
@@ -318,5 +323,13 @@ public class LobbyPanel extends VBox
 
     /** The currently running tables. */
     protected var _runningTables :ArrayCollection = new ArrayCollection();
+
+    // various UI bits that need filling in with data arrives
+    protected var _logo :VBox;
+    protected var _info :Text;
+    protected var _title :Label;
+    protected var _about :Label;
+    protected var _buy :Label;
+    protected var _tablesBox :VBox;
 }
 }

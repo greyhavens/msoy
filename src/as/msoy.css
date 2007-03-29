@@ -374,7 +374,11 @@ ListBase
   backgroundColor: #000000;
 }
 
-.lobbyPanel, .descriptionBox, .tablesBox, .tabsBox {
+.lobbyPanel {
+  paddingRight: 5px;
+}
+
+.lobbyPanel, .descriptionBox, .titleBox, .tablesBox, .tabsBox {
   horizontalGap: 0;
   verticalGap: 0;
 }
@@ -389,8 +393,18 @@ ListBase
 .lobbyLink {
   fontSize: 15;
   verticalAlign: middle;
-  color: #b4cbd7;
+  color: white;
   textDecoration: underline;
+}
+
+.titleBox, .descriptionBox, .tabsBox {
+  backgroundColor: #222222;
+}
+
+.titleBox {
+  verticalAlign: middle;
+  paddingLeft: 5px;
+  paddingRight: 5px;
 }
 
 .lobbyLogoBox {
@@ -402,12 +416,13 @@ ListBase
   fontSize: 12;
   paddingLeft: 7;
   paddingRight: 7;
+  color: white;
 }
 
 .lobbyGameName {
   fontSize: 15;
   fontWeight: bold;
-  color: #b4cbd7;
+  color: white;
 }
 
 .lobbyTabs {
