@@ -410,7 +410,7 @@ public class AbstractRoomView extends Sprite
     public function updateBackground () :void
     {
         var data :DecorData = _scene.getDecorData();
-        if (_bg != null && data != null && data.isInitialized()) {
+        if (_bg != null && data != null) {
             _bg.update(data);
         }
     }
