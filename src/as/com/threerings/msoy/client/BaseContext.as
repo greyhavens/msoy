@@ -35,7 +35,7 @@ public /*abstract*/ class BaseContext
         // initialize the message manager
         _msgMgr = new MessageManager();
         // and our convenience holder
-        Msgs.init(this);
+        Msgs.init(_msgMgr);
 
         _helper = new ContextHelper();
 

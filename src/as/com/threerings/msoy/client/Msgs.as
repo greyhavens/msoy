@@ -45,13 +45,12 @@ public class Msgs
     /**
      * Initialize the bundles.
      */
-    public static function init (ctx :BaseContext) :void
+    public static function init (msgMgr :MessageManager) :void
     {
         if (_general) {
             return;
         }
 
-        var msgMgr :MessageManager = ctx.getMessageManager();
         _general = msgMgr.getBundle("general");
         _editing = msgMgr.getBundle("editing");
         _game = msgMgr.getBundle("game");
