@@ -180,9 +180,112 @@ public class MsoySceneRepository extends SimpleRepository
                 JDBCUtil.close(deletestmt);
             }
         }
-
         // END: temp
 
+        // TEMP: decor migration. removable after all servers are past April 15 2007 (?)
+        {
+            /*
+            Statement getData = conn.createStatement();
+            Statement getMax = conn.createStatement();
+            
+            try {
+                // find the next acceptable primary key for decor records
+                ResultSet decorMax = getMax.executeQuery("select max(itemId) from DecorRecord");
+                int newDecorId = decorMax.first() ? decorMax.getInt(1) : 0;
+
+                // pull out all scenes that use a background furni, and no decor
+                ResultSet results = getData.executeQuery(
+                    "select * from SCENES left join FURNI on SCENES.SCENE_ID = FURNI.SCENE_ID " +
+                    "where FURNI.ACTION_TYPE = -1 AND DECOR_ID = 0");
+
+                int count = results.last() ? results.getRow() : 0;
+                if (count > 0) {
+                    log.info("\n*** DECOR MIGRATION");
+                    log.info("Found: " + count + " scenes with background furnis");
+                    
+                    results.first();
+                    do {
+
+                        // pull out all relevant scene info...
+                        int sceneId = results.getInt("SCENES.SCENE_ID");
+                        short furniId = results.getShort("FURNI_ID");
+                        int ownerId = results.getInt("OWNER_ID");
+                        String sceneName = results.getString("NAME");
+                        int width = results.getInt("WIDTH");
+                        int height = results.getInt("HEIGHT");
+                        int depth = results.getInt("DEPTH");
+                        float horizon = results.getFloat("HORIZON");
+                        
+                        // ...and furni info
+                        byte mediaType = results.getByte("MEDIA_TYPE");
+                        byte[] mediaHash = results.getBytes("MEDIA_HASH");
+                        MediaDesc media = createMediaDesc(mediaHash, mediaType);
+                        log.info("Scene: " + sceneId + " - " + sceneName + ", " +
+                                            width + "x" + height + "x" + depth + ":" + horizon);
+                        log.info("       background media: " + media);
+                        
+                        // create a new decor item (without going through the item repository;
+                        // we don't have access to that here)
+                        PreparedStatement ins = conn.prepareStatement(
+                            "insert into DecorRecord " +
+                            "(itemId, height, width, depth, horizon, creatorId, ownerId, name, " +
+                            " thumbMediaHash, thumbMimeType, thumbConstraint, " +
+                            " furniMediaHash, furniMimeType, furniConstraint, type) " +
+                            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        ins.setInt(1, ++newDecorId);
+                        ins.setShort(2, (short) height);
+                        ins.setShort(3, (short) width);
+                        ins.setShort(4, (short) depth);
+                        ins.setFloat(5, horizon);
+                        ins.setInt(6, ownerId);
+                        ins.setInt(7, ownerId);
+                        ins.setString(8, (sceneName != "" ? sceneName : "new") + " decor");
+                        ins.setBytes(9, mediaHash);
+                        ins.setByte(10, mediaType);
+                        ins.setByte(11, MediaDesc.HORIZONTALLY_CONSTRAINED); 
+                        ins.setBytes(12, mediaHash);
+                        ins.setByte(13, mediaType);
+                        ins.setByte(14, MediaDesc.HORIZONTALLY_CONSTRAINED);
+                        ins.setByte(15, Decor.IMAGE_OVERLAY);
+
+                        // update the scene to use this decor
+                        PreparedStatement scene = conn.prepareStatement(
+                            "update SCENES set DECOR_ID=?, DECOR_MEDIA_HASH=?, " +
+                            "DECOR_MEDIA_TYPE=? where SCENE_ID=" + sceneId);
+                        scene.setInt(1, newDecorId);
+                        scene.setBytes(2, mediaHash);
+                        scene.setByte(3, mediaType);
+
+                        // and remove the background furni from the scene
+                        PreparedStatement deleteFurni = conn.prepareStatement(
+                            "delete from FURNI where SCENE_ID = ? and FURNI_ID = ?");
+                        deleteFurni.setInt(1, sceneId);
+                        deleteFurni.setShort(2, furniId);
+
+                        // now run those queries!
+                        try {
+                            JDBCUtil.checkedUpdate(ins, 1);
+                            JDBCUtil.checkedUpdate(scene, 1);
+                            JDBCUtil.checkedUpdate(deleteFurni, 1);
+                            log.info("       moved to decor #" + newDecorId);
+                        } finally {
+                            JDBCUtil.close(ins);
+                            JDBCUtil.close(scene);
+                            JDBCUtil.close(deleteFurni);
+                        }
+                    } while (results.next());
+                    
+                    log.info("Decor migration done.\n");
+                }
+            } finally {
+                JDBCUtil.close(getMax);
+                JDBCUtil.close(getData);
+            }
+            
+            */
+        }
+        // END TEMP
+        
     }
 
     /**
