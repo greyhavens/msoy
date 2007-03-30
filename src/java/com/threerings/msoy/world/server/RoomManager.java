@@ -48,6 +48,7 @@ import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.world.client.RoomService;
+import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemoryEntry;
@@ -57,6 +58,7 @@ import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomMarshaller;
 import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.msoy.world.data.SceneAttrsUpdate;
 import com.threerings.msoy.world.data.WorldActorInfo;
 import com.threerings.msoy.world.data.WorldMemberInfo;
 import com.threerings.msoy.world.data.WorldOccupantInfo;
@@ -234,6 +236,25 @@ public class RoomManager extends SpotSceneManager
             // TODO: complicated verification of changes, including verifying that the user owns
             // the items they're adding (and that they don't add any props)
 
+            // if decor was modified, we should mark new decor as used, and clear the old one
+            if (update instanceof SceneAttrsUpdate) {
+                SceneAttrsUpdate up = (SceneAttrsUpdate) update;
+                DecorData sceneDecorData = ((MsoyScene) _scene).getDecorData();
+                if (sceneDecorData != null &&
+                    sceneDecorData.itemId != up.decorData.itemId) // modified?
+                {
+                    MsoyServer.itemMan.updateDecorItemUsage(
+                        user.getMemberId(), _scene.getId(),
+                        sceneDecorData.itemId, up.decorData.itemId,
+                        new ResultListener<Object>() {
+                            public void requestCompleted (Object result) {}
+                            public void requestFailed (Exception cause) {
+                                log.warning("Unable to update decor usage [e=" + cause + "].");
+                            }
+                        });
+                }
+            }
+            
             // furniture modification updates require us to mark item usage
             if (update instanceof ModifyFurniUpdate) {
                 ModifyFurniUpdate mfu = (ModifyFurniUpdate) update;
@@ -242,8 +263,7 @@ public class RoomManager extends SpotSceneManager
                     new ResultListener<Object>() {
                         public void requestCompleted (Object result) {}
                         public void requestFailed (Exception cause) {
-                            log.warning("Unable to update item usage " +
-                                "[e=" + cause + "].");
+                            log.warning("Unable to update item usage [e=" + cause + "].");
                         }
                     });
 

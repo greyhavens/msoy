@@ -319,6 +319,61 @@ public class ItemManager
     }
 
     /**
+     * Update usage of specific decor items. Old decor will be marked as unused,
+     * and new decor will be marked as used as decor.
+     */
+    public void updateDecorItemUsage (
+        final int memberId, final int sceneId,
+        final int oldDecorId, final int newDecorId, ResultListener<Object> listener)
+    {
+        if (oldDecorId == newDecorId) {  // nothing to see here, move along
+            listener.requestCompleted(null);
+            return;
+        }
+
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(Item.DECOR, listener);
+        if (repo == null) {
+            return; // getRepository already informed the listener about this problem
+        }
+
+        ResultListener<Object> rlo = listener;
+        final int[] oldDecorIds = new int[] { oldDecorId };
+        final int[] newDecorIds = new int[] { newDecorId };
+        
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Object>(rlo) {
+                public Object invokePersistResult () throws PersistenceException {
+                    if (oldDecorId != 0) {
+                        repo.markItemUsage(oldDecorIds, Item.UNUSED, 0);
+                    }
+                    if (newDecorId != 0) {
+                        repo.markItemUsage(newDecorIds, Item.USED_AS_DECOR, sceneId);
+                    }
+                    return null;
+                }
+                public void handleSuccess () {
+                    super.handleSuccess();
+                    if (oldDecorId != 0) {
+                        updateUserCache(memberId, Item.DECOR, oldDecorIds, new ItemUpdateOp() {
+                            public void update (Item item) {
+                                item.used = Item.UNUSED;
+                                item.location = 0;
+                            }
+                        }, true);
+                    }
+                    if (newDecorId != 0) {
+                        updateUserCache(memberId, Item.DECOR, newDecorIds, new ItemUpdateOp() {
+                            public void update (Item item) {
+                                item.used = Item.USED_AS_DECOR;
+                                item.location = sceneId;
+                            }
+                        }, true);
+                    }
+                }
+            });
+    }
+    
+    /**
      * Update usage of the specified items.
      *
      * The supplied listener will be notified of success with null.
