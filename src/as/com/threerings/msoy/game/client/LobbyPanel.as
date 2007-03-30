@@ -222,11 +222,16 @@ public class LobbyPanel extends VBox
         _logo.width = 160;
         _logo.height = 120;
         descriptionBox.addChild(_logo);
+        var infoBox :HBox = new HBox();
+        infoBox.styleName = "infoBox";
+        infoBox.percentWidth = 100;
+        infoBox.percentHeight = 100;
+        descriptionBox.addChild(infoBox);
         _info = new Text();
         _info.styleName = "lobbyInfo";
         _info.percentWidth = 100;
         _info.percentHeight = 100;
-        descriptionBox.addChild(_info);
+        infoBox.addChild(_info);
 
         _tablesBox = new VBox();
         _tablesBox.styleName = "tablesBox";
@@ -303,6 +308,12 @@ public class LobbyPanel extends VBox
             runningBox.addChild(runningList);
             tabViews.addChild(runningBox);
         } else {
+            var bar :HBox = new HBox();
+            // give  it the same style as the tabs bar, just shorter
+            bar.styleName = "tabsBox"; 
+            bar.percentWidth = 100;
+            bar.height = 5;
+            _tablesBox.addChild(bar);
             _tablesBox.addChild(list);
         }
     }

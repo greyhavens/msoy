@@ -378,7 +378,7 @@ ListBase
   paddingRight: 5px;
 }
 
-.lobbyPanel, .descriptionBox, .titleBox, .tablesBox, .tabsBox {
+.lobbyPanel, .descriptionBox, .titleBox, .infoBox, .tablesBox, .tabsBox {
   horizontalGap: 0;
   verticalGap: 0;
 }
@@ -412,11 +412,18 @@ ListBase
   horizontalAlign: center;
 }
 
+.infoBox {
+  backgroundColor: white;
+  borderColor: #222222;
+  borderSides: "left right";
+  borderThickness: 5px;
+  borderStyle: solid;
+}
+
 .lobbyInfo {
   fontSize: 12;
-  paddingLeft: 7;
-  paddingRight: 7;
-  color: white;
+  paddingLeft: 5;
+  paddingRight: 5;
 }
 
 .lobbyGameName {
