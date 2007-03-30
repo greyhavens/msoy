@@ -170,7 +170,11 @@ public class LobbyController extends Controller implements Subscriber
     {
         _panel.removeEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
         _subscriber.unsubscribe(_mctx.getDObjectManager());
-        _mctx.getTopPanel().clearTableDisplay();
+        var currentDisp :FloatingTableDisplay = _mctx.getTopPanel().getTableDisplay();
+        if (_lobj != null && currentDisp != null && currentDisp.getGameId() == _lobj.game.itemId) {
+            // only clear the display if its a display for this lobby
+            _mctx.getTopPanel().clearTableDisplay();
+        }
         _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId);
         _tableDir.removeTableObserver(_panel);
         _tableDir.removeSeatednessObserver(_panel);
