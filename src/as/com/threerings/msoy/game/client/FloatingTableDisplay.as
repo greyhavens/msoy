@@ -46,8 +46,8 @@ public class FloatingTableDisplay extends FloatingPanel
     {
         if (!_hasBeenShutDown) {
             super.open(modal, parent, avoid);
-            x = 10;
-            y = 10;
+            x = 0;
+            y = 5;
         }
     }
 

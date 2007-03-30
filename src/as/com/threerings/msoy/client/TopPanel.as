@@ -176,6 +176,10 @@ public class TopPanel extends Canvas
         _sidePanel.includeInLayout = false;
         _sidePanel.width = side.width;
 
+        if (_tableDisp != null) {
+            _tableDisp.x += _sidePanel.width;
+        }
+
         addChild(_sidePanel); // add to end
         layoutPanels();
     }
@@ -186,8 +190,13 @@ public class TopPanel extends Canvas
     public function clearSidePanel (side :UIComponent) :void
     {
         if ((_sidePanel != null) && (side == null || side == _sidePanel)) {
+            if (_tableDisp != null) {
+                _tableDisp.x -= _sidePanel.width;
+            }
+
             removeChild(_sidePanel);
             _sidePanel = null;
+
             layoutPanels();
         }
     }
