@@ -102,11 +102,12 @@ public class ActorControl extends EntityControl
     }
 
     /**
-     * Get the current state. If no state has been set, null will be returned.
+     * Get the current state. If no state has been set or the control
+     * is not connected to whirled, null will be returned.
      */
     public function getState () :String
     {
-        return (callHostCode("getState_v1") as String);
+        return isConnected() ? (callHostCode("getState_v1") as String) : null;
     }
 
     // from WhirledControl

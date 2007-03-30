@@ -78,17 +78,26 @@ public class AvatarControl extends ActorControl
         _states = moreStates;
     }
 
-//    // documentation in ActorControl
-//    override public function getState () :String
-//    {
-//        // if the state is null, call it by the name of the first registered state
-//        // TODO: ??? Should we do this?
-//        var state :String = super.getState();
-//        if (state == null && _states.length > 0) {
-//            state = String(_states[0]);
-//        }
-//        return state;
-//    }
+    // documentation in ActorControl
+    override public function setState (state :String) :void
+    {
+        // translate to null if setting to the default state
+        if (_states.length > 0 && state == _states[0]) {
+            state = null;
+        }
+        super.setState(state);
+    }
+
+    // documentation in ActorControl
+    override public function getState () :String
+    {
+        // if the state is null, call it by the name of the first registered state
+        var state :String = super.getState();
+        if (state == null && _states.length > 0) {
+            state = String(_states[0]);
+        }
+        return state;
+    }
 
     override protected function populateProperties (o :Object) :void
     {
