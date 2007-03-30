@@ -88,7 +88,7 @@ public class LobbyPanel extends VBox
         var game :Game = getGame();
         _title.text = game.name;
         _title.validateNow();
-        if ((_title.textWidth - 5) > 160) {
+        if ((_title.textWidth + 5) > 160) {
             // for some stupid reason, setting label.width = label.textWidth doesn't actually give
             // it enough room to display all the text, and you get the truncated version of the 
             // text - so we have to give the width a little extra room.
