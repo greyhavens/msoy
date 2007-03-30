@@ -192,6 +192,9 @@ public class TopPanel extends Canvas
         if ((_sidePanel != null) && (side == null || side == _sidePanel)) {
             if (_tableDisp != null) {
                 _tableDisp.x -= _sidePanel.width;
+                if (_tableDisp.x < 0) {
+                    _tableDisp.x = 0;
+                }
             }
 
             removeChild(_sidePanel);
