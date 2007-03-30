@@ -20,6 +20,7 @@ import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 import com.threerings.util.NetUtil;
 import com.threerings.util.StringUtil;
+import com.threerings.util.CommandEvent;
 
 import com.threerings.flex.CommandMenu;
 
@@ -51,6 +52,8 @@ import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.game.client.LobbyController;
 import com.threerings.msoy.game.client.LobbyService;
 import com.threerings.msoy.game.client.WorldGameService;
+import com.threerings.msoy.game.client.FloatingTableDisplay;
+
 import com.threerings.msoy.world.client.RoomView;
 
 public class MsoyController extends Controller
@@ -376,17 +379,24 @@ public class MsoyController extends Controller
      */
     public function handleJoinGameLobby (gameId :int) :void
     {
-        var lsvc :LobbyService = (_ctx.getClient().requireService(LobbyService) as LobbyService);
-        lsvc.identifyLobby(_ctx.getClient(), gameId,
-            new ResultWrapper(function (cause :String) :void {
-                log.warning("fetching LobbyObject oid failed: " + cause);
-                _gameId = -1;
-            },
-            function (result :Object) :void {
-                // this will create a panel and add it to the side panel on the top level
-                new LobbyController(_ctx, int(result));
-                gameLobbyShown(gameId);
-            }));
+        var disp :FloatingTableDisplay = _ctx.getTopPanel().getTableDisplay();
+        if (disp != null && disp.getGameId() == gameId) {
+            // if we're already in a table for this game id, just rejoin the current lobby
+            CommandEvent.dispatch(disp.getRenderer(), LobbyController.JOIN_LOBBY);
+        } else {
+            var lsvc :LobbyService = 
+                (_ctx.getClient().requireService(LobbyService) as LobbyService);
+            lsvc.identifyLobby(_ctx.getClient(), gameId,
+                new ResultWrapper(function (cause :String) :void {
+                    log.warning("fetching LobbyObject oid failed: " + cause);
+                    _gameId = -1;
+                },
+                function (result :Object) :void {
+                    // this will create a panel and add it to the side panel on the top level
+                    new LobbyController(_ctx, int(result));
+                    gameLobbyShown(gameId);
+                }));
+        }
     }
 
     /**

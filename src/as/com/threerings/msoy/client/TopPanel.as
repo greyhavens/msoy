@@ -216,6 +216,14 @@ public class TopPanel extends Canvas
     }
 
     /**
+     * Gets the current table display
+     */
+    public function getTableDisplay () :FloatingTableDisplay
+    {
+        return _tableDisp;
+    }
+
+    /**
      * Clears the current table display - should only be used if this table display should be
      * destroyed (i.e. the game started, or the another table was joined)
      */

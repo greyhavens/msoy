@@ -34,6 +34,11 @@ public class FloatingTableDisplay extends FloatingPanel
         return _tableRender;
     }
 
+    public function getGameId () :int
+    {
+        return _panel.getGame().itemId;
+    }
+
     public function shutdown () :void
     {
         _hasBeenShutDown = true;
