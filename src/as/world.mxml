@@ -6,7 +6,7 @@
     scriptTimeLimit="5"
     layout="absolute" styleName="plain"
     verticalScrollPolicy="off" horizontalScrollPolicy="off"
-    width="100%" height="100%"
+    width="100%" height="100%" frameRate="50"
     applicationComplete="new WorldClient(stage);">
 <mx:Style source="msoy.css"/>
 <mx:Script>
