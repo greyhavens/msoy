@@ -1,5 +1,5 @@
 <!-- build configuration -->
-<project name="reversi" default="compile" basedir=".">
+<project name="UnderwhirledDrift" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
   <property name="app.name"         value="UnderwhirledDrift"/>
@@ -11,7 +11,7 @@
     <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="${root.path}/etc/msoy-config.xml"/>
-      <arg value="-compiler.source-path=."/>
+      <arg value="-compiler.source-path=./src"/>
       <arg value="-file-specs"/>
       <arg value="${app.name}.as"/>
     </java>
@@ -25,7 +25,8 @@
   </target>
 
   <target name="dist" depends="compile">
-    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/83c48600cb07d166df57f2a2148a23ba48538894.swf"/>
+    <copy file="${app.name}.swf" 
+        tofile="/export/msoy/pages/media/83c48600cb07d166df57f2a2148a23ba48538894.swf"/>
   </target>
 
 </project>

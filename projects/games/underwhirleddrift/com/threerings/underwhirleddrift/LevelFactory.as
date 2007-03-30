@@ -1,4 +1,4 @@
-package {
+package com.threerings.underwhirleddrift {
 
 import com.threerings.util.HashMap;
 

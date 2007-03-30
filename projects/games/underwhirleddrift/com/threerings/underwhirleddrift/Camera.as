@@ -1,4 +1,4 @@
-package {
+package com.threerings.underwhirleddrift {
 import flash.geom.Point;
 
 public class Camera 

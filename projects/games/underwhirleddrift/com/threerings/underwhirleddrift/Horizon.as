@@ -1,4 +1,4 @@
-package {
+package com.threerings.underwhirleddrift {
 
 import flash.display.Sprite;
 import flash.display.DisplayObject;

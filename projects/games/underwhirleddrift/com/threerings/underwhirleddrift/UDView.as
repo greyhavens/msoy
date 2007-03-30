@@ -1,4 +1,4 @@
-package {
+package com.threerings.underwhirleddrift {
 public interface UDView
 {
     function setKart (kart :Kart) :void;
