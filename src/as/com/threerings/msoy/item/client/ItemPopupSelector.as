@@ -2,6 +2,7 @@ package com.threerings.msoy.item.client {
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.util.CommandEvent;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -29,9 +30,6 @@ public class ItemPopupSelector extends FloatingPanel
 
         addChild(_inv);
         addButtons(CANCEL_BUTTON, OK_BUTTON);
-
-        // and create a controller that just sorta floats, eh
-        new SelectorController(this, getButton(OK_BUTTON));
     }
 
     override protected function buttonClicked (buttonId :int) :void
@@ -47,6 +45,16 @@ public class ItemPopupSelector extends FloatingPanel
         super.buttonClicked(buttonId);
     }
 
+    override protected function handleCommand (event :CommandEvent) :void
+    {
+        var item :Item = event.arg as Item;
+        if (event.command == InventoryPicker.ITEM_SELECTED && item != null) {
+            getButton(OK_BUTTON).enabled = !item.isUsed();
+        }
+
+        super.handleCommand(event);
+    }
+
     /** The function we'll call with the picked item. */
     protected var _callback :Function;
 
@@ -54,28 +62,3 @@ public class ItemPopupSelector extends FloatingPanel
 }
 }
 
-import mx.controls.Button;
-
-import com.threerings.util.Controller;
-
-import com.threerings.msoy.item.client.ItemPopupSelector;
-import com.threerings.msoy.item.web.Item;
-
-class SelectorController extends Controller
-{
-    public function SelectorController (panel :ItemPopupSelector, but :Button)
-    {
-        setControlledPanel(panel);
-        _but = but;
-    }
-
-    /**
-     * Handle's the InventoryPicker's ITEM_SELECTED event.
-     */
-    public function handleInventoryItemSelected (item :Item) :void
-    {
-        _but.enabled = (item != null) && !item.isUsed();
-    }
-
-    protected var _but :Button;
-}
