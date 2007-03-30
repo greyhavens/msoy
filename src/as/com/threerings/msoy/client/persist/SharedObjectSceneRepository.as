@@ -4,6 +4,7 @@ import flash.net.SharedObject;
 
 import flash.utils.ByteArray;
 import flash.utils.Endian;
+import flash.utils.getTimer; // function import
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
@@ -95,8 +96,13 @@ public class SharedObjectSceneRepository
         // TODO: this is unbelievably slow
         // What we likely need to do is maintain a directory of stored scenes
         // as noted in the constructor's note
+        var tooLongStamp :Number = 4000 + getTimer(); // 4 seconds
         for (var ii :int = 0; ii < 500; ii++) {
             deleteSceneModel(ii);
+            if (getTimer() > tooLongStamp) {
+                trace("Cleaning old cache is taking too long, aborting...");
+                break;
+            }
         }
     }
 
