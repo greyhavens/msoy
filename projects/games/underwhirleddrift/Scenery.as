@@ -36,6 +36,13 @@ public class Scenery extends Sprite
      */
     public function updateItems (translateRotate :Matrix, camera :Camera, kartLocation :Point) :void
     {
+        // find the real location of the camera for the purpose of opponent kart viewing angles
+        // - see rant in Ground.enterFrame for more info
+        var findCamera :Matrix = translateRotate.clone();
+        findCamera.invert();
+        var realCameraPosition :Point = findCamera.transformPoint(
+            new Point(0, Camera.DISTANCE_FROM_KART));
+
         var thisTransform :Matrix = new Matrix();
         var minScale :Number = 1 / camera.height;
         var maxScale :Number = Ground.HEIGHT / camera.height;
@@ -71,7 +78,7 @@ public class Scenery extends Sprite
                     var kart :KartObstacle = _items[ii] as KartObstacle;
                     kart.sprite.y += UnderwhirledDrift.KART_OFFSET * 
                         (scaleFactor / maxScale);
-                    kart.updateAngleFrom(camera.position);
+                    kart.updateAngleFrom(realCameraPosition);
                 }
                 // set correct index - sometimes there are items that are not currently displayed
                 if (_items[ii].sprite.parent == this) {

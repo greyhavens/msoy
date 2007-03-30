@@ -431,7 +431,7 @@ public class UnderwhirledDrift extends Sprite
         }
     }
 
-    protected static const SEND_THROTTLE :int = 150; // in ms
+    protected static const SEND_THROTTLE :int = 500; // in ms
     
     [Embed(source='rsrc/light_board.swf#light_board')]
     protected static const LIGHT_BOARD :Class;
