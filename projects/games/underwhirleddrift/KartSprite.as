@@ -7,6 +7,8 @@ import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Matrix;
 
+import flash.utils.getTimer;
+
 import mx.core.MovieClipAsset;
 
 [Event(name="crossedFinishLine", type="KartEvent")]
@@ -59,10 +61,24 @@ public class KartSprite extends Sprite
     }
 
     /**
+     * returns the amount of time that has passed since the last time this function was called
+     */
+    protected function timeSinceUpdate () :Number
+    {
+        var time :Number = 0;
+        var now :uint = getTimer();
+        if (_lastUpdate != 0) {
+            time = (now - _lastUpdate) / 1000;
+        } 
+        _lastUpdate = now;
+        return time;
+    }
+
+    /**
      * This is really only used by the subclasses, but its needed by both.
      */
     protected function calculateNewPosition (position :Point, cameraAngle :Number, 
-        kartLocation :Point) :Point
+        kartLocation :Point, time :Number) :Point
     {
         // calculate the new speed
         var maxSpeed :Number = _movementConstants.maxSpeed;
@@ -83,24 +99,24 @@ public class KartSprite extends Sprite
                 // if we're going faster than the max, then we probably just went off road...
                 // force a slow-down, but do it gently
                 if (_currentSpeed > maxSpeed) {
-                    _currentSpeed = Math.max(maxSpeed, _currentSpeed - accelCoast);
+                    _currentSpeed = Math.max(maxSpeed, _currentSpeed - accelCoast * time);
                 } else {
-                    _currentSpeed = Math.min(maxSpeed, _currentSpeed + accelGas);
+                    _currentSpeed = Math.min(maxSpeed, _currentSpeed + accelGas * time);
                 }
             } else { 
-                _currentSpeed += accelBrake;
+                _currentSpeed += accelBrake * time;
             }
         } else if (_movement & MOVEMENT_BACKWARD) {
             if (_currentSpeed > 0) {
-                _currentSpeed = Math.max(0, _currentSpeed - accelBrake);
+                _currentSpeed = Math.max(0, _currentSpeed - accelBrake * time);
             } else {
-               _currentSpeed = Math.max(minSpeed, _currentSpeed - accelGas);
+               _currentSpeed = Math.max(minSpeed, _currentSpeed - accelGas * time);
             }
         } else {
             if (_currentSpeed > 0) {
-                _currentSpeed = Math.max(0, _currentSpeed - accelCoast);
+                _currentSpeed = Math.max(0, _currentSpeed - accelCoast * time);
             } else {
-                _currentSpeed = Math.min(0, _currentSpeed + accelCoast);
+                _currentSpeed = Math.min(0, _currentSpeed + accelCoast * time);
             }
         }
 
@@ -114,13 +130,13 @@ public class KartSprite extends Sprite
                 driftSpeed *= -1;
             }
             newPosition = position.add(rotation.transformPoint(new Point(
-                driftSpeed, 0)));
+                driftSpeed * time, 0)));
             driftSpeed = _currentSpeed * DRIFT_X_SPEED_FACTOR;
             newPosition = newPosition.add(rotation.transformPoint(new Point(
-                0, -driftSpeed)));
+                0, -driftSpeed * time)));
         } else {
             newPosition = position.add(rotation.transformPoint(new Point(0, 
-                -_currentSpeed)));
+                -_currentSpeed * time)));
         }
 
         var collides :Object = _ground.getScenery().getCollidingObject();
@@ -161,33 +177,33 @@ public class KartSprite extends Sprite
     [Embed(source='rsrc/lightkart.swf#kart')]
     protected static const LightKart :Class;
     protected static const LightKart_Movement :Object = {
-        maxSpeed: 12,
-        minSpeed: -0.5, 
-        accelGas: 0.4,
-        accelBrake: 1,
-        accelCoast: 0.25
+        maxSpeed: 12 * SPEED_FACTOR,
+        minSpeed: -0.5 * SPEED_FACTOR, 
+        accelGas: 0.4 * SPEED_FACTOR * SPEED_FACTOR,
+        accelBrake: 1 * SPEED_FACTOR * SPEED_FACTOR,
+        accelCoast: 0.25 * SPEED_FACTOR * SPEED_FACTOR
     };
 
     /** medium kart swf */
     [Embed(source='rsrc/mediumkart.swf#kart')]
     protected static const MediumKart :Class;
     protected static const MediumKart_Movement :Object = {
-        maxSpeed: 13,
-        minSpeed: -0.5,
-        accelGas: 0.3,
-        accelBrake: 0.8,
-        accelCoast: 0.3
+        maxSpeed: 13 * SPEED_FACTOR,
+        minSpeed: -0.5 * SPEED_FACTOR,
+        accelGas: 0.3 * SPEED_FACTOR * SPEED_FACTOR,
+        accelBrake: 0.8 * SPEED_FACTOR * SPEED_FACTOR,
+        accelCoast: 0.3 * SPEED_FACTOR * SPEED_FACTOR
     };
 
     /** heavy kart swf */
     [Embed(source='rsrc/heavykart.swf#kart')]
     protected static const HeavyKart :Class;
     protected static const HeavyKart_Movement :Object = {
-        maxSpeed: 15,
-        minSpeed: -0.5,
-        accelGas: 0.2,
-        accelBrake: 0.6,
-        accelCoast: 0.35
+        maxSpeed: 15 * SPEED_FACTOR,
+        minSpeed: -0.5 * SPEED_FACTOR,
+        accelGas: 0.2 * SPEED_FACTOR * SPEED_FACTOR,
+        accelBrake: 0.6 * SPEED_FACTOR * SPEED_FACTOR,
+        accelCoast: 0.35 * SPEED_FACTOR * SPEED_FACTOR
     };
 
     /** flags for the _movement bit flag variable */
@@ -199,7 +215,7 @@ public class KartSprite extends Sprite
 
     /** constants to control kart motion properties */
     protected static const MAX_TURN_ANGLE :Number = 0.0436; // 2.5 degrees 0.0524; // 3 degrees
-    protected static const TURN_ACCELERATION :Number = 0.008;
+    protected static const TURN_ACCELERATION :Number = 0.008 * SPEED_FACTOR;
 
     /** values to control drifting */
     protected static const DRIFT_X_SPEED_FACTOR :Number = 0.5;
@@ -207,6 +223,9 @@ public class KartSprite extends Sprite
 
     /** Factor to cut speed by when driving off-road */
     protected static const TERRAIN_SPEED_FACTOR :Number = 0.2;
+
+    /** The amount to multiply our speed values by to bring them into the time domain */
+    protected static const SPEED_FACTOR :int = 20;
 
     protected var _kart :MovieClipAsset;
      
@@ -226,5 +245,7 @@ public class KartSprite extends Sprite
     protected var _ground :Ground;
 
     protected var _shield :Sprite;
+
+    protected var _lastUpdate :uint = 0;
 }
 }
