@@ -74,19 +74,43 @@ public class KartSprite extends Sprite
         return time;
     }
 
+    /** 
+     * 
+
     /**
      * This is really only used by the subclasses, but its needed by both.
      */
-    protected function calculateNewPosition (position :Point, cameraAngle :Number, 
-        kartLocation :Point, time :Number) :Point
+    protected function calculateNewPosition (time :Number) :void
     {
+        // update current facing angle
+        if (_movement & (MOVEMENT_RIGHT | MOVEMENT_LEFT)) {
+            if (_movement & MOVEMENT_RIGHT) {
+                _currentTurnAngle = Math.min(MAX_TURN_ANGLE, _currentTurnAngle + 
+                    TURN_ACCELERATION * time);
+            } else {
+                _currentTurnAngle = Math.max(-MAX_TURN_ANGLE, _currentTurnAngle - 
+                    TURN_ACCELERATION * time);
+            }
+        } else {
+            if (_currentTurnAngle > 0) {
+                _currentTurnAngle = Math.max(0, _currentTurnAngle - TURN_ACCELERATION * time);
+            } else if (_currentTurnAngle < 0) {
+                _currentTurnAngle = Math.min(0, _currentTurnAngle + TURN_ACCELERATION * time);
+            }
+        }
+        if (_currentSpeed > 0) {
+            _currentAngle = (_currentAngle + _currentTurnAngle) % (Math.PI * 2);
+        } else if (_currentSpeed < 0) {
+            _currentAngle = (_currentAngle - _currentTurnAngle + Math.PI * 2) % (Math.PI * 2);
+        }
+
         // calculate the new speed
         var maxSpeed :Number = _movementConstants.maxSpeed;
         var minSpeed :Number = _movementConstants.minSpeed;
         var accelGas :Number = _movementConstants.accelGas;
         var accelBrake :Number = _movementConstants.accelBrake;
         var accelCoast :Number = _movementConstants.accelCoast;
-        if (!_ground.getLevel().isOnRoad(kartLocation)) {
+        if (!_ground.getLevel().isOnRoad(_currentPosition)) {
             // terrain doesn't affect min speed
             maxSpeed *= TERRAIN_SPEED_FACTOR;
             accelGas *= TERRAIN_SPEED_FACTOR;
@@ -120,29 +144,29 @@ public class KartSprite extends Sprite
             }
         }
 
-        // calculate the new position, based on the new speed
+        // calculate the new position, based on the new speed and new angle
         var newPosition :Point;
         var rotation :Matrix = new Matrix();
-        rotation.rotate(cameraAngle);
+        rotation.rotate(_currentAngle);
         if ((_movement & MOVEMENT_DRIFT) && _jumpFrameCount == 0) { 
             var driftSpeed :Number = _currentSpeed * DRIFT_Y_SPEED_FACTOR;
             if (_movement & MOVEMENT_RIGHT) {
                 driftSpeed *= -1;
             }
-            newPosition = position.add(rotation.transformPoint(new Point(
+            newPosition = _currentPosition.add(rotation.transformPoint(new Point(
                 driftSpeed * time, 0)));
             driftSpeed = _currentSpeed * DRIFT_X_SPEED_FACTOR;
             newPosition = newPosition.add(rotation.transformPoint(new Point(
                 0, -driftSpeed * time)));
         } else {
-            newPosition = position.add(rotation.transformPoint(new Point(0, 
+            newPosition = _currentPosition.add(rotation.transformPoint(new Point(0, 
                 -_currentSpeed * time)));
         }
 
         var collides :Object = _ground.getScenery().getCollidingObject();
         if ((collides != null && (collides.sceneryType == Scenery.OBSTACLE || 
             collides.sceneryType == Scenery.KART)) || _ground.getLevel().isOnWall(newPosition)) {
-            return bounce(position, newPosition);
+            newPosition = bounce(_currentPosition, newPosition);
         } else if (collides != null && collides.sceneryType == Scenery.FIREBALL) {
             if (this is Kart && !collides.isMyFireball) {
                 _ground.getScenery().removeFireball(collides);
@@ -155,10 +179,8 @@ public class KartSprite extends Sprite
                 // dunno why this isn't working
                 //_ground.getScenery().removeFireball(collides);
             }
-            return newPosition;
-        } else {
-            return newPosition;
         }
+        _currentPosition = newPosition;
     }
 
     /**
@@ -232,6 +254,11 @@ public class KartSprite extends Sprite
     protected var _kartType :String;
 
     protected var _currentSpeed :Number = 0;
+    protected var _currentAngle :Number;
+    protected var _currentPosition: Point;
+
+    /** The current amount we are adding or subtracting from the kart's turn angle */
+    protected var _currentTurnAngle :Number = 0;
 
     /** Bit flags to indicate which movement keys are pressed */
     protected var _movement :int = 0;

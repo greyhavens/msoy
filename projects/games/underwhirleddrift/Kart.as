@@ -120,8 +120,10 @@ public class Kart extends KartSprite
     protected function enterFrame (event :Event) :void
     {
         var time :Number = timeSinceUpdate();
+        _currentPosition = _camera.position;
+        _currentAngle = _camera.angle;
 
-        // update camera and kart angles
+        // update kart angle
         // we speed through the drift view angles much more quickly than the turn view angles
         var viewAcceleration :Number = Math.abs(_currentViewAngle) > TURN_VIEW_ANGLE ? 
             VIEW_ACCELERATION * 3 : VIEW_ACCELERATION;
@@ -129,32 +131,18 @@ public class Kart extends KartSprite
             var maxViewAngle :int = _movement & MOVEMENT_DRIFT ? DRIFT_VIEW_ANGLE : 
                 TURN_VIEW_ANGLE;
             if (_movement & MOVEMENT_RIGHT) {
-                _currentTurnAngle = Math.min(MAX_TURN_ANGLE, _currentTurnAngle + 
-                    TURN_ACCELERATION * time);
                 _currentViewAngle = Math.min(maxViewAngle, _currentViewAngle + 
                     viewAcceleration * time);
             } else {
-                _currentTurnAngle = Math.max(-MAX_TURN_ANGLE, _currentTurnAngle - 
-                    TURN_ACCELERATION * time);
                 _currentViewAngle = Math.max(-maxViewAngle, _currentViewAngle - 
                     viewAcceleration * time);
             }
         } else {
-            if (_currentTurnAngle > 0) {
-                _currentTurnAngle = Math.max(0, _currentTurnAngle - TURN_ACCELERATION * time);
-            } else if (_currentTurnAngle < 0) {
-                _currentTurnAngle = Math.min(0, _currentTurnAngle + TURN_ACCELERATION * time);
-            }
             if (_currentViewAngle > 0) {
                 _currentViewAngle = Math.max(0, _currentViewAngle - viewAcceleration * time);
             } else if (_currentViewAngle < 0) {
                 _currentViewAngle = Math.min(0, _currentViewAngle + viewAcceleration * time);
             }
-        }
-        if (_currentSpeed > 0) {
-            _camera.angle = (_camera.angle + _currentTurnAngle) % (Math.PI * 2);
-        } else if (_currentSpeed < 0) {
-            _camera.angle = (_camera.angle - _currentTurnAngle + Math.PI * 2) % (Math.PI * 2);
         }
 
         // update turn animation
@@ -168,10 +156,11 @@ public class Kart extends KartSprite
             _kart.gotoAndStop(frame);
         }
 
-        var oldPos :Point = _camera.position;
-        _camera.position = calculateNewPosition(_camera.position, _camera.angle,    
-            _ground.getKartLocation(), time);
-        var movedLine :Line = new Line(oldPos, _camera.position);
+        calculateNewPosition(time);
+        _camera.angle = _currentAngle;
+        var movedLine :Line = new Line(_camera.position, _currentPosition);
+        _camera.position = _currentPosition;
+
         var intersection :int = _ground.getLevel().getFinishLine().getIntersectionType(movedLine);
         if (intersection == Line.INTERSECTION_NORTH) {
             dispatchEvent(new KartEvent(KartEvent.CROSSED_FINISH_LINE, 1));
@@ -237,9 +226,6 @@ public class Kart extends KartSprite
    
     /** reference to the camera object */
     protected var _camera :Camera;
-
-    /** The current amount we are adding or subtracting from the kart's turn angle */
-    protected var _currentTurnAngle :Number = 0;
 
     /** The current angle we are viewing our own kart at */
     protected var _currentViewAngle :Number = 0;

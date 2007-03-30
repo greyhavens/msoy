@@ -71,13 +71,7 @@ public class KartObstacle extends KartSprite
 
     public function enterFrame (event :Event) :void
     {
-        var rotation :Matrix = new Matrix();
-        rotation.rotate(_currentAngle);
-        _currentPosition = calculateNewPosition(_currentPosition, _currentAngle, _currentPosition,
-            timeSinceUpdate());
+        calculateNewPosition(timeSinceUpdate());
     }
-    
-    protected var _currentPosition :Point;
-    protected var _currentAngle :Number;
 }
 }
