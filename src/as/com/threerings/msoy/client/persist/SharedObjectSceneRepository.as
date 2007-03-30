@@ -93,16 +93,21 @@ public class SharedObjectSceneRepository
     public function TEMPClearSceneCache () :void
     {
         trace("Cleaning old scene cache...");
-        // TODO: this is unbelievably slow
-        // What we likely need to do is maintain a directory of stored scenes
-        // as noted in the constructor's note
-        var tooLongStamp :Number = 4000 + getTimer(); // 4 seconds
-        for (var ii :int = 0; ii < 500; ii++) {
-            deleteSceneModel(ii);
-            if (getTimer() > tooLongStamp) {
-                trace("Cleaning old cache is taking too long, aborting...");
-                break;
+        try {
+            // TODO: this is unbelievably slow
+            // What we likely need to do is maintain a directory of stored scenes
+            // as noted in the constructor's note
+            var tooLongStamp :Number = 4000 + getTimer(); // 4 seconds
+            for (var ii :int = 0; ii < 500; ii++) {
+                deleteSceneModel(ii);
+                if (getTimer() > tooLongStamp) {
+                    trace("Cleaning old cache is taking too long, aborting...");
+                    break;
+                }
             }
+        } catch (e :Error) {
+            trace("Exception cleaning old scene cache:");
+            trace(e.getStackTrace());
         }
     }
 
