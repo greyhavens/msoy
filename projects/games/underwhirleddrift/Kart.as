@@ -122,7 +122,7 @@ public class Kart extends KartSprite
         var time :Number = timeSinceUpdate();
 
         // update camera and kart angles
-        // we speed through the drift view angles much more quickly than the trun view angles
+        // we speed through the drift view angles much more quickly than the turn view angles
         var viewAcceleration :Number = Math.abs(_currentViewAngle) > TURN_VIEW_ANGLE ? 
             VIEW_ACCELERATION * 3 : VIEW_ACCELERATION;
         if (_movement & (MOVEMENT_RIGHT | MOVEMENT_LEFT)) {
@@ -158,7 +158,7 @@ public class Kart extends KartSprite
         }
 
         // update turn animation
-        var frame :int = Math.abs(_currentViewAngle) as int;
+        var frame :int = Math.floor(Math.abs(_currentViewAngle)) as int;
         if (_currentViewAngle > 0) {
             frame = 360 - frame;
         } else if (_currentViewAngle == 0) {

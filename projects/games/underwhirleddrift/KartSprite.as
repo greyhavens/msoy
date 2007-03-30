@@ -225,7 +225,7 @@ public class KartSprite extends Sprite
     protected static const TERRAIN_SPEED_FACTOR :Number = 0.2;
 
     /** The amount to multiply our speed values by to bring them into the time domain */
-    protected static const SPEED_FACTOR :int = 20;
+    protected static const SPEED_FACTOR :int = 30;
 
     protected var _kart :MovieClipAsset;
      
