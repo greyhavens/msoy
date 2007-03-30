@@ -112,9 +112,6 @@ public class MsoyController extends Controller
     /** Command to select a different avatar. */
     public static const PICK_AVATAR :String = "PickAvatar";
     
-    /** Command to purchase a room. */
-    public static const PURCHASE_ROOM :String = "PurchaseRoom";
-
     /** Command to view an item, arg is [ itemTypeId, itemId ] */
     public static const VIEW_ITEM :String = "ViewItem";
 
@@ -447,14 +444,6 @@ public class MsoyController extends Controller
     public function handlePickAvatar () :void
     {
         new AvatarSelectionDialog(_ctx);
-    }
-
-    /**
-     * Handles PURCHASE_ROOM.
-     */
-    public function handlePurchaseRoom () :void
-    {
-        _ctx.getWorldDirector().purchaseRoom();
     }
 
     /**

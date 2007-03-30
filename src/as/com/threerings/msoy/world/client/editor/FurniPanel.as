@@ -19,11 +19,14 @@ import mx.controls.TextInput;
 import mx.core.UIComponent;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.MessageBundle;
 
+import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.data.SceneBookmarkEntry;
@@ -33,6 +36,8 @@ import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.data.MsoyScene;
 
 
 public class FurniPanel extends SpritePanel
@@ -91,6 +96,8 @@ public class FurniPanel extends SpritePanel
     {
         var vals :Array = furni.splitActionData();
         var targetSceneId :int = int(vals[0]);
+
+        updatePortalList();
 
 //        _destPortal.text = String(targetPortalId);
 
@@ -231,7 +238,28 @@ public class FurniPanel extends SpritePanel
             MsoyUI.createLabel(Msgs.EDITING.get("l.dest_scene")),
             _destScene = new ComboBox());
         _destScene.editable = true;
+        updatePortalList();
+        
+//        GridUtil.addRow(grid,
+//            MsoyUI.createLabel(Msgs.EDITING.get("l.dest_portal")),
+//            _destPortal = new TextInput());
 
+        var scene :MsoyScene = _ctx.getSceneDirector().getScene() as MsoyScene;
+        if (scene != null) {
+            var model :MsoySceneModel = (scene.getSceneModel() as MsoySceneModel);
+            var roomType :String = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) ?
+                "m.group" : "m.personal";
+            var room :CommandButton = new CommandButton(EditorController.PURCHASE_ROOM);
+            room.label = Msgs.EDITING.xlate(
+                MessageBundle.compose("b.purchase_room", roomType));
+            GridUtil.addRow(grid, room, [2, 1]);
+        }
+        
+        return grid;
+    }
+
+    protected function updatePortalList () :void
+    {
         // combine recent and owned scenes into one array
         var recent :Array = _ctx.getMemberObject().recentScenes.toArray();
         var owned :Array = _ctx.getMemberObject().ownedScenes.toArray();
@@ -242,14 +270,8 @@ public class FurniPanel extends SpritePanel
             }
         }
         _destScene.dataProvider = scenes;
-
-//        GridUtil.addRow(grid,
-//            MsoyUI.createLabel(Msgs.EDITING.get("l.dest_portal")),
-//            _destPortal = new TextInput());
-
-        return grid;
     }
-
+    
     override protected function bind () :void
     {
         super.bind();

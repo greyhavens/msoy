@@ -49,17 +49,6 @@ public class AboutDialog extends FloatingPanel
             lbl.text = "Secret support buttons:";
             vbox.addChild(lbl);
 
-            var scene :MsoyScene = _ctx.getSceneDirector().getScene() as MsoyScene;
-            if (scene != null && scene.canEdit(_ctx.getMemberObject())) {
-                var model :MsoySceneModel = (scene.getSceneModel() as MsoySceneModel);
-                var roomType :String = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) ?
-                    "m.group" : "m.personal";
-                var room :CommandButton = new CommandButton(MsoyController.PURCHASE_ROOM);
-                room.label = Msgs.GENERAL.xlate(
-                    MessageBundle.compose("b.purchase_room", roomType));
-                vbox.addChild(room);
-            }
-
             var pets :CommandButton = new CommandButton(MsoyController.SHOW_PETS);
             pets.label = "show pets dialog...";
             vbox.addChild(pets);

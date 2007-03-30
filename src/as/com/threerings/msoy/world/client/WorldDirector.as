@@ -5,6 +5,7 @@ package com.threerings.msoy.world.client {
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.msoy.chat.client.ReportingListener;
@@ -53,11 +54,15 @@ public class WorldDirector extends BasicDirector
 
     /**
      * Request to purchase a new room.
+     * @param listener An optional InvocationService_ConfirmListener that will process
+     *                 the request result.
      */
-    public function purchaseRoom () :void
+    public function purchaseRoom (listener :InvocationService_ConfirmListener = null) :void
     {
-        _msvc.purchaseRoom(
-            _mctx.getClient(), new ReportingListener(_mctx, null, null, "m.room_created"));
+        if (listener == null) {
+            listener = new ReportingListener(_mctx, null, null, "m.room_created");
+        }
+        _msvc.purchaseRoom(_mctx.getClient(), listener);
     }
 
     /**

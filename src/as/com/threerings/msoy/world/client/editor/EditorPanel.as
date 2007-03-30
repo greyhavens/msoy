@@ -15,6 +15,7 @@ import mx.containers.VBox;
 
 import mx.controls.Button;
 import mx.controls.ButtonBar;
+import mx.controls.CheckBox;
 import mx.controls.ComboBox;
 import mx.controls.HSlider;
 import mx.controls.TextInput;
@@ -244,44 +245,14 @@ public class EditorPanel extends VBox
         box.percentHeight = 100;
         box.label = Msgs.EDITING.get("t.room_props");
 
-        // add a grid of controls for the room
-        var grid :Grid = new Grid();
-
-        // edit scene type
-        GridUtil.addRow(grid,
-            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_type")),
-            _type = new ComboBox());
-        var types :Array = [];
-        for (var ii :int = 0; ii < Decor.TYPE_COUNT; ii++) {
-            types.push({ label: Msgs.EDITING.get("m.scene_type_" + ii),
-                         data: ii });
-        }
-        _type.dataProvider = types;
-
-        GridUtil.addRow(grid,
+        // name and other general info
+        var general :Grid = new Grid();
+        GridUtil.addRow(general,
             MsoyUI.createLabel(Msgs.EDITING.get("l.scene_name")),
             _name = new TextInput());
-        GridUtil.addRow(grid,
-            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_width")),
-            _width = new TextInput());
-        GridUtil.addRow(grid,
-            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_depth")),
-            _depth = new TextInput());
-
-        _height = new TextInput()
-// TODO: Room Height editing (and making it display correctly!)
-//        GridUtil.addRow(grid,
-//            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_height")),
-//            _height);
-        GridUtil.addRow(grid,
-            MsoyUI.createLabel(Msgs.EDITING.get("l.horizon")),
-            _horizon = new HSlider());
-        _horizon.minimum = 0;
-        _horizon.maximum = 1;
-        _horizon.liveDragging = true;
 
         GridUtil.addRow(
-            grid, MsoyUI.createLabel(Msgs.EDITING.get("l.background_image")),
+            general, MsoyUI.createLabel(Msgs.EDITING.get("l.background_image")),
             _decorSelector = new SingleItemSelector(_ctx, Item.DECOR));
 
         _decorSelector.selectionChanged = newBackgroundImageSelected;
@@ -297,9 +268,56 @@ public class EditorPanel extends VBox
         _backgroundAudio.selectionChanged = newBackgroundAudioSelected;
         */
 
-        GridUtil.addRow(grid, new RoomViewScrollBox(_roomView, 200, 100), [2, 1]);
+        GridUtil.addRow(
+            general, MsoyUI.createLabel(Msgs.EDITING.get("l.scene_scrollbar")),
+            new RoomViewScrollBox(_roomView, 150, 100));
 
-        box.addChild(grid);
+        _extras = new CheckBox();
+        _extras.addEventListener(
+            Event.CHANGE,
+            function (evt :Event) :void { _advanced.visible = _extras.selected; }
+            );
+        GridUtil.addRow(general, MsoyUI.createLabel(Msgs.EDITING.get("l.room_advanced")), _extras);
+        
+        box.addChild(general);
+
+        
+        // add a grid of controls for the room
+        _advanced = new Grid();
+
+        GridUtil.addRow(_advanced,
+            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_type")),
+            _type = new ComboBox());
+        var types :Array = [];
+        for (var ii :int = 0; ii < Decor.TYPE_COUNT; ii++) {
+            types.push({ label: Msgs.EDITING.get("m.scene_type_" + ii),
+                         data: ii });
+        }
+        _type.dataProvider = types;
+
+        GridUtil.addRow(_advanced,
+            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_width")),
+            _width = new TextInput());
+        GridUtil.addRow(_advanced,
+            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_depth")),
+            _depth = new TextInput());
+
+        _height = new TextInput()
+// TODO: Room Height editing (and making it display correctly!)
+//        GridUtil.addRow(_advanced,
+//            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_height")),
+//            _height);
+        GridUtil.addRow(_advanced,
+            MsoyUI.createLabel(Msgs.EDITING.get("l.horizon")),
+            _horizon = new HSlider());
+        _horizon.minimum = 0;
+        _horizon.maximum = 1;
+        _horizon.liveDragging = true;
+
+        box.addChild(_advanced);
+
+        // start out hidden
+        _advanced.visible = _extras.selected = false;
 
         return box;
     }
@@ -498,9 +516,9 @@ public class EditorPanel extends VBox
     protected var _type :ComboBox;
 
     protected var _inventoryBox :VBox;
-
+    protected var _advanced :Grid;
     protected var _itemSort :Sort;
-
+    protected var _extras :CheckBox;
     protected var _name :TextInput;
     protected var _width :TextInput;
     protected var _depth :TextInput;

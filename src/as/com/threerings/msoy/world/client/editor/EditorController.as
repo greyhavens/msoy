@@ -18,6 +18,7 @@ import mx.events.DragEvent;
 
 import mx.core.Container;
 
+import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Controller;
 import com.threerings.util.Iterator;
@@ -61,6 +62,9 @@ public class EditorController extends Controller
     /** Add an item (from the inventory). */
     public static const ADD_ITEM :String = "AddItem";
 
+    /** Purchase a new room. */
+    public static const PURCHASE_ROOM :String = "PurchaseRoom";
+    
     /** Dispatched when properties of a sprite were updated by the
      * SpriteEditorPanel. */
     public static const SPRITE_PROPS_UPDATED :String = "SpritePropsUpdated";
@@ -355,6 +359,27 @@ try {
         spriteUpdated(sprite);
         _panel.itemList.refresh();
     }
+
+    /**
+     * Handles PURCHASE_ROOM.
+     */
+    public function handlePurchaseRoom () :void
+    {
+        var listener :ConfirmAdapter =
+            new ConfirmAdapter (
+                function (cause :String) :void {  // failure handler
+                    Log.getLog(this).info("Room purchase failure: " + cause);
+                    _ctx.displayFeedback(null, cause);
+                },
+                function () :void {               // success handler
+                    Log.getLog(this).info("Room purchase success!");
+                    _ctx.displayFeedback("editing", "m.room_created_in_editor");
+                    _panel.spritePropertiesUpdated();
+                });
+        
+        _ctx.getWorldDirector().purchaseRoom(listener);
+    }
+
 
     /**
      * Handles SAVE_EDITS.
