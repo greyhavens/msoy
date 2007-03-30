@@ -14,23 +14,22 @@ import flash.text.TextFieldAutoSize;
 
 public class KartChooser 
 {
-    public function KartChooser (udInst :UnderwhirledDrift, blurObj :DisplayObject, 
+    public function KartChooser (control :UDControl, blurObj :DisplayObject, 
         camera :Camera, ground :Ground)
     {
-        _udInst = udInst;
+        _control = control;
         _blurObj = blurObj;
         _camera = camera;
         _ground = ground;
     }
 
-    public function chooseKart () :void
+    public function chooseKart () :Sprite
     {
         setBlur(true);
 
         _chooserSprite = new Sprite();
         _chooserSprite.x = (UnderwhirledDrift.DISPLAY_WIDTH - WIDTH) / 2;
         _chooserSprite.y = (UnderwhirledDrift.DISPLAY_HEIGHT - HEIGHT) / 2;
-        _udInst.addChild(_chooserSprite);
 
         var selectText :TextField = new TextField();
         selectText.text = "Select Your Kart";
@@ -63,6 +62,7 @@ public class KartChooser
             "acceleration is poor, their\n" + 
             "blazing top speed can leave\n" + 
             "all other racers in the dust."));
+        return _chooserSprite;
     }
 
     protected function createKartSelection (loc :int, kart :Sprite, title :String, 
@@ -113,8 +113,9 @@ public class KartChooser
 
     protected function selectedKart (event :MouseEvent) :void
     {
-        _udInst.removeChild(_chooserSprite);
-        _udInst.setKart(new Kart((event.currentTarget as KartSprite).kartType, _camera, _ground));
+        _chooserSprite.parent.removeChild(_chooserSprite);
+        _control.kartPicked(new Kart((event.currentTarget as KartSprite).kartType, _camera, 
+            _ground));
         setBlur(false);
         // prevent NPE on further click event handlers
         event.stopImmediatePropagation();
@@ -160,7 +161,7 @@ public class KartChooser
 
     protected static const TEXT_COLOR :int = 0xEAEFF1;
 
-    protected var _udInst :UnderwhirledDrift;
+    protected var _control :UDControl;
     protected var _blurObj :DisplayObject;
     protected var _camera :Camera;
     protected var _ground :Ground;
