@@ -87,6 +87,13 @@ public class LobbyPanel extends VBox
         // fill in the UI bits
         var game :Game = getGame();
         _title.text = game.name;
+        _title.validateNow();
+        if (_title.textWidth > 160) {
+            // for some stupid reason, setting label.width = label.textWidth doesn't actually give
+            // it enough room to display all the text, and you get the truncated version of the 
+            // text - so we have to give the width a little extra room.
+            _title.width = _title.textWidth + 5;
+        }
         _about.text = Msgs.GAME.get("b.about");
         var thisLobbyPanel :LobbyPanel = this;
         _about.addEventListener(MouseEvent.CLICK, function () :void {
@@ -200,6 +207,7 @@ public class LobbyPanel extends VBox
         addChild(titleBox);
         _title = new Label();
         _title.styleName = "lobbyGameName";
+        _title.width = 160;
         titleBox.addChild(_title);
         var padding :HBox = new HBox();
         padding.percentWidth = 100;

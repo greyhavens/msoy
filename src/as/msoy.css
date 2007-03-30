@@ -430,6 +430,7 @@ ListBase
   fontSize: 15;
   fontWeight: bold;
   color: white;
+  textAlign: center;
 }
 
 .lobbyTabs {
