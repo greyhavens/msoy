@@ -47,6 +47,7 @@ public class MsoyGameController extends EZGameController
      */
     public function getAvailableFlow_v1 () :int
     {
+        _panel.backend.validateConnected();
         if (_startStamp == 0) {
             return 0;
         }
@@ -61,6 +62,7 @@ public class MsoyGameController extends EZGameController
      */
     public function awardFlow_v1 (amount :int) :void
     {
+        _panel.backend.validateConnected();
         _flowAwarded += amount;
         (_gobj as MsoyGameObject).msoyGameService.awardFlow(_pctx.getClient() ,amount,
             new InvocationAdapter(function (cause :String) :void {
@@ -73,6 +75,7 @@ public class MsoyGameController extends EZGameController
      */
     public function setChatEnabled_v1 (enabled :Boolean) :void
     {
+        _panel.backend.validateConnected();
         (_view as MsoyGamePanel).setChatEnabled(enabled);
     }
 

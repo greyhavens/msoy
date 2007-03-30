@@ -137,6 +137,7 @@ public class AVRGameControlBackend extends WhirledGameControlBackend
     
     protected function lookupMemory_v1 (key :String) :Object
     {
+        validateConnected();
         var mkey :MemoryEntry = new MemoryEntry(_gameIdent, key),
             entry :MemoryEntry = _avrGameObj.memories.get(mkey) as MemoryEntry;
         return (entry == null) ? null : EZObjectMarshaller.decode(entry.value);
@@ -144,6 +145,7 @@ public class AVRGameControlBackend extends WhirledGameControlBackend
 
     protected function updateMemory_v1 (key :String, value: Object) :Boolean
     {
+        validateConnected();
         var data :ByteArray = (EZObjectMarshaller.encode(value, false) as ByteArray);
         var wgsvc :WorldGameService =
             (_ctx.getClient().requireService(WorldGameService) as WorldGameService);
@@ -153,11 +155,13 @@ public class AVRGameControlBackend extends WhirledGameControlBackend
     
     override public function getOccupants_v1 () :Array
     {
+        validateConnected();
         return (_roomObj == null ? null : getOccupantIds(_roomObj));
     }
 
     override public function getPlayers_v1 () :Array
     {
+        validateConnected();
         return getOccupantIds(_avrGameObj);
     }
     
@@ -174,6 +178,7 @@ public class AVRGameControlBackend extends WhirledGameControlBackend
     
     protected function getOccupantLocation_v1 (occupantId :int) :Array
     {
+        validateConnected();
         if (_roomObj != null) {
             var sloc :SceneLocation = (_roomObj.occupantLocs.get(occupantId) as SceneLocation);
             if (sloc != null) {
@@ -186,6 +191,7 @@ public class AVRGameControlBackend extends WhirledGameControlBackend
 
     override public function getOccupantName_v1 (occupantId :int) :String
     {
+        validateConnected();
         if (_roomObj != null) {
             var info :OccupantInfo = (_roomObj.occupantInfo.get(occupantId) as OccupantInfo);
             if (info != null) {
