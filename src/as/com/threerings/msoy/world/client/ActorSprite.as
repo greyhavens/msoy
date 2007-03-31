@@ -85,10 +85,8 @@ public class ActorSprite extends MsoySprite
     {
         var winfo :WorldOccupantInfo = (newInfo as WorldOccupantInfo);
         var newMedia :MediaDesc = winfo.getMedia();
-        var changed :Boolean = false;
         if (!newMedia.equals(_desc)) {
             setup(newMedia, winfo.getItemIdent());
-            changed = true;
         }
 
         if (_occInfo == null || (_occInfo.status != newInfo.status) ||
@@ -98,20 +96,18 @@ public class ActorSprite extends MsoySprite
             _label.y = -1 * (_label.textHeight + 4);
             _label.width = _label.textWidth + 5; // the magic number
             recheckLabel();
-            changed = true;
         }
 
-        // if nothing's changed but the state, we want to dispatch
-        // a state update
-        if (!changed) {
-            var oldWinfo :WorldOccupantInfo = (_occInfo as WorldOccupantInfo);
-            if (!Util.equals(oldWinfo.getState(), winfo.getState())) {
-                callUserCode("stateSet_v1", winfo.getState());
-            }
-        }
+        // note the old info...
+        var oldWinfo :WorldOccupantInfo = (_occInfo as WorldOccupantInfo);
 
         // assign the new one
         _occInfo = newInfo;
+
+        // finally, if the state has changed, dispatch an event
+        if (oldWinfo == null || !Util.equals(oldWinfo.getState(), winfo.getState())) {
+            callUserCode("stateSet_v1", winfo.getState());
+        }
     }
 
     /**
