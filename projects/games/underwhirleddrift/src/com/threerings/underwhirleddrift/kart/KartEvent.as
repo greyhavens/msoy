@@ -1,4 +1,4 @@
-package com.threerings.underwhirleddrift {
+package com.threerings.underwhirleddrift.kart {
 import flash.events.Event;
 
 public class KartEvent extends Event

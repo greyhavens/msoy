@@ -1,9 +1,12 @@
-package com.threerings.underwhirleddrift {
+package com.threerings.underwhirleddrift.scene {
 
 import flash.display.Sprite;
 import flash.display.DisplayObject;
 
 import flash.events.Event;
+
+import com.threerings.underwhirleddrift.Camera;
+import com.threerings.underwhirleddrift.UnderwhirledDrift;
 
 public class Horizon extends Sprite
 {

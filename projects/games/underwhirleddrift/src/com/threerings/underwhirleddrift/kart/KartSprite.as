@@ -1,4 +1,4 @@
-package com.threerings.underwhirleddrift {
+package com.threerings.underwhirleddrift.kart {
 
 import flash.display.Sprite;
 
@@ -10,6 +10,10 @@ import flash.geom.Matrix;
 import flash.utils.getTimer;
 
 import mx.core.MovieClipAsset;
+
+import com.threerings.underwhirleddrift.scene.Bonus;
+import com.threerings.underwhirleddrift.scene.Ground;
+import com.threerings.underwhirleddrift.scene.Scenery;
 
 [Event(name="crossedFinishLine", type="KartEvent")]
 [Event(name="bonus", type="KartEvent")]
@@ -196,7 +200,7 @@ public class KartSprite extends Sprite
     }
 
     /** light kart swf */
-    [Embed(source='../../../../rsrc/lightkart.swf#kart')]
+    [Embed(source='../../../../../rsrc/lightkart.swf#kart')]
     protected static const LightKart :Class;
     protected static const LightKart_Movement :Object = {
         maxSpeed: 12 * SPEED_FACTOR,
@@ -207,7 +211,7 @@ public class KartSprite extends Sprite
     };
 
     /** medium kart swf */
-    [Embed(source='../../../../rsrc/mediumkart.swf#kart')]
+    [Embed(source='../../../../../rsrc/mediumkart.swf#kart')]
     protected static const MediumKart :Class;
     protected static const MediumKart_Movement :Object = {
         maxSpeed: 13 * SPEED_FACTOR,
@@ -218,7 +222,7 @@ public class KartSprite extends Sprite
     };
 
     /** heavy kart swf */
-    [Embed(source='../../../../rsrc/heavykart.swf#kart')]
+    [Embed(source='../../../../../rsrc/heavykart.swf#kart')]
     protected static const HeavyKart :Class;
     protected static const HeavyKart_Movement :Object = {
         maxSpeed: 15 * SPEED_FACTOR,

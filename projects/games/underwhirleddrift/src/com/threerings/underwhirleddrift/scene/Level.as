@@ -1,4 +1,4 @@
-package com.threerings.underwhirleddrift {
+package com.threerings.underwhirleddrift.scene {
 
 import flash.display.Sprite;
 import flash.display.Shape;
@@ -13,6 +13,8 @@ import flash.geom.Rectangle;
 import flash.utils.describeType;
 
 import com.threerings.util.Line;
+
+import com.threerings.underwhirleddrift.kart.KartObstacle;
 
 public class Level extends Sprite
 {

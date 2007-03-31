@@ -1,4 +1,4 @@
-package com.threerings.underwhirleddrift {
+package com.threerings.underwhirleddrift.scene {
 
 import flash.display.Sprite;
 import flash.display.DisplayObject;
@@ -15,6 +15,11 @@ import flash.geom.Rectangle;
 import flash.utils.getTimer;
 
 import com.threerings.util.ArrayUtil;
+
+import com.threerings.underwhirleddrift.Camera;
+import com.threerings.underwhirleddrift.UnderwhirledDrift;
+import com.threerings.underwhirleddrift.kart.KartObstacle;
+import com.threerings.underwhirleddrift.kart.KartSprite;
 
 public class Scenery extends Sprite
 {

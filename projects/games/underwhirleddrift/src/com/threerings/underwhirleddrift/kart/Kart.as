@@ -1,4 +1,4 @@
-package com.threerings.underwhirleddrift {
+package com.threerings.underwhirleddrift.kart {
 import flash.display.Sprite;
 
 import flash.geom.Matrix;
@@ -11,6 +11,13 @@ import flash.utils.getTimer;
 import mx.core.MovieClipAsset;
 
 import com.threerings.util.Line;
+
+import com.threerings.underwhirleddrift.Camera;
+import com.threerings.underwhirleddrift.UnderwhirledDrift;
+import com.threerings.underwhirleddrift.scene.Bonus;
+import com.threerings.underwhirleddrift.scene.Ground;
+import com.threerings.underwhirleddrift.scene.LevelConfig;
+import com.threerings.underwhirleddrift.scene.Scenery;
 
 public class Kart extends KartSprite
 {

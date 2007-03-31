@@ -1,6 +1,9 @@
-package com.threerings.underwhirleddrift {
+package com.threerings.underwhirleddrift.scene {
 
 import flash.display.Sprite;
+
+import com.threerings.underwhirleddrift.kart.Kart;
+import com.threerings.underwhirleddrift.kart.KartEvent;
 
 public class Bonus extends Sprite
 {
@@ -63,17 +66,17 @@ public class Bonus extends Sprite
         kart.dispatchEvent(new KartEvent(KartEvent.SHIELD, true));
     }
 
-    [Embed('../../../../rsrc/power_ups.swf#blue_blazes_ui')]
+    [Embed('../../../../../rsrc/power_ups.swf#blue_blazes_ui')]
     protected static const BLUE_BLAZES_THUMB :Class;
 
-    [Embed('../../../../rsrc/power_ups.swf#fireball_game')]
+    [Embed('../../../../../rsrc/power_ups.swf#fireball_game')]
     protected static const FIREBALL_GAME :Class;
-    [Embed('../../../../rsrc/power_ups.swf#fireball_ui')]
+    [Embed('../../../../../rsrc/power_ups.swf#fireball_ui')]
     protected static const FIREBALL_THUMB :Class;
 
-    [Embed('../../../../rsrc/power_ups.swf#shield_game')]
+    [Embed('../../../../../rsrc/power_ups.swf#shield_game')]
     protected static const SHIELD_GAME :Class;
-    [Embed('../../../../rsrc/power_ups.swf#shield_ui')]
+    [Embed('../../../../../rsrc/power_ups.swf#shield_ui')]
     protected static const SHIELD_THUMB :Class;
 
     protected var _type :int;

@@ -16,7 +16,15 @@ import com.threerings.util.HashMap;
 
 import com.whirled.WhirledGameControl;
 
-public class UDControl 
+import com.threerings.underwhirleddrift.kart.Kart;
+import com.threerings.underwhirleddrift.kart.KartEvent;
+import com.threerings.underwhirleddrift.kart.KartObstacle;
+import com.threerings.underwhirleddrift.scene.Ground;
+import com.threerings.underwhirleddrift.scene.Level;
+import com.threerings.underwhirleddrift.scene.LevelFactory;
+import com.threerings.underwhirleddrift.scene.Bonus;
+
+public class UnderwhirledDriftController 
     implements StateChangedListener, MessageReceivedListener
 {
     // constants for player related messages
@@ -38,8 +46,8 @@ public class UDControl
     public static const FIREBALL :String = "fireball";
     public static const BONUS_GONE :String = "bonusGone";
 
-    public function UDControl (control :WhirledGameControl, camera :Camera, ground :Ground, 
-        view :UDView) 
+    public function UnderwhirledDriftController (control :WhirledGameControl, camera :Camera, 
+        ground :Ground, view :UnderwhirledDriftView) 
     {
         _camera = camera;
         _ground = ground;
@@ -407,7 +415,7 @@ public class UDControl
 
     protected var _camera :Camera;
     protected var _ground :Ground;
-    protected var _view :UDView;
+    protected var _view :UnderwhirledDriftView;
     protected var _level :Level;
 
     protected var _kart :Kart;

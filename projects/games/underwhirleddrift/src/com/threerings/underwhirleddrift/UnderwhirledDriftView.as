@@ -1,5 +1,10 @@
 package com.threerings.underwhirleddrift {
-public interface UDView
+
+import com.threerings.underwhirleddrift.kart.Kart;
+import com.threerings.underwhirleddrift.scene.Bonus;
+import com.threerings.underwhirleddrift.scene.Level;
+
+public interface UnderwhirledDriftView
 {
     function setKart (kart :Kart) :void;
     function setBonus (bonus :Bonus) :void;

@@ -1,4 +1,4 @@
-package com.threerings.underwhirleddrift {
+package com.threerings.underwhirleddrift.kart {
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -11,9 +11,14 @@ import flash.filters.BlurFilter;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
+import com.threerings.underwhirleddrift.Camera;
+import com.threerings.underwhirleddrift.UnderwhirledDrift;
+import com.threerings.underwhirleddrift.UnderwhirledDriftController;
+import com.threerings.underwhirleddrift.scene.Ground;
+
 public class KartChooser 
 {
-    public function KartChooser (control :UDControl, blurObj :DisplayObject, 
+    public function KartChooser (control :UnderwhirledDriftController, blurObj :DisplayObject, 
         camera :Camera, ground :Ground)
     {
         _control = control;
@@ -160,7 +165,7 @@ public class KartChooser
 
     protected static const TEXT_COLOR :int = 0xEAEFF1;
 
-    protected var _control :UDControl;
+    protected var _control :UnderwhirledDriftController;
     protected var _blurObj :DisplayObject;
     protected var _camera :Camera;
     protected var _ground :Ground;

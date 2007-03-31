@@ -1,4 +1,5 @@
-package com.threerings.underwhirleddrift {
+package com.threerings.underwhirleddrift.scene {
+
 import flash.display.Sprite;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
@@ -10,6 +11,9 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import flash.events.Event;
+
+import com.threerings.underwhirleddrift.Camera;
+import com.threerings.underwhirleddrift.UnderwhirledDrift;
 
 public class Ground extends Sprite
 {

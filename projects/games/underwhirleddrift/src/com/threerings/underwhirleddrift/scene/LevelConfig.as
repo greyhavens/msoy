@@ -1,4 +1,4 @@
-package com.threerings.underwhirleddrift {
+package com.threerings.underwhirleddrift.scene {
 
 import flash.display.DisplayObject;
 import flash.display.BitmapData;
@@ -36,7 +36,7 @@ public class LevelConfig
         trans.translate(layerImg.width / 2, layerImg.height / 2);
         layerBitmap.draw(layerImg, trans);
         var boostPoints :Array = [[], [], [], []];
-        var log :Log = Log.getLog(UnderwhirledDrift);
+        var log :Log = Log.getLog(this);
         for (var h :int = 0; h < layerImg.height; h++) {
             for (var w :int = 0; w < layerImg.width; w++) {
                 if ((layerBitmap.getPixel32(w, h) & 0xFF000000) != 0) {

@@ -1,4 +1,4 @@
-package com.threerings.underwhirleddrift {
+package com.threerings.underwhirleddrift.kart {
 
 import flash.display.Sprite;
 
@@ -6,6 +6,9 @@ import flash.geom.Point;
 import flash.geom.Matrix;
 
 import flash.events.Event;
+
+import com.threerings.underwhirleddrift.UnderwhirledDrift;
+import com.threerings.underwhirleddrift.scene.Ground;
 
 public class KartObstacle extends KartSprite
 {

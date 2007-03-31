@@ -27,9 +27,16 @@ import com.threerings.util.HashMap;
 
 import com.whirled.WhirledGameControl;
 
+import com.threerings.underwhirleddrift.kart.Kart;
+import com.threerings.underwhirleddrift.kart.KartChooser;
+import com.threerings.underwhirleddrift.scene.Bonus;
+import com.threerings.underwhirleddrift.scene.Ground;
+import com.threerings.underwhirleddrift.scene.Horizon;
+import com.threerings.underwhirleddrift.scene.Level;
+
 [SWF(width="711", height="400")]
 public class UnderwhirledDrift extends Sprite
-    implements UDView
+    implements UnderwhirledDriftView
 {
     /** width of the masked display */
     public static const DISPLAY_WIDTH :int = 711;
@@ -81,7 +88,7 @@ public class UnderwhirledDrift extends Sprite
             _ground.y = SKY_HEIGHT;
             _gameSprite.addChild(_ground);
 
-            _control = new UDControl(gameControl, _camera, _ground, this);
+            _control = new UnderwhirledDriftController(gameControl, _camera, _ground, this);
 
             addChild((new KartChooser(_control, _gameSprite, _camera, _ground)).chooseKart());
         } else {
@@ -89,7 +96,7 @@ public class UnderwhirledDrift extends Sprite
         }
     }
 
-    // from UDView
+    // from UnderwhirledDriftView
     public function setKart (kart :Kart) :void
     {
         _kart = kart;
@@ -105,7 +112,7 @@ public class UnderwhirledDrift extends Sprite
         addChild(powerUpFrame);
     }
 
-    // from UDView
+    // from UnderwhirledDriftView
     public function setBonus (bonus :Bonus) :void
     {
         if (bonus != _bonus) {
@@ -116,7 +123,7 @@ public class UnderwhirledDrift extends Sprite
         }
     }
 
-    // from UDView
+    // from UnderwhirledDriftView
     public function clearBonus () :void
     {
         if (_bonus != null) {
@@ -125,7 +132,7 @@ public class UnderwhirledDrift extends Sprite
         }
     }
 
-    // from UDView
+    // from UnderwhirledDriftView
     public function setLevel (level :Level) :void
     {
         _level = level;
@@ -140,7 +147,7 @@ public class UnderwhirledDrift extends Sprite
         }
     }
 
-    // from UDView
+    // from UnderwhirledDriftView
     public function startLightBoard () :void
     {
         _lightBoard = new LIGHT_BOARD();
@@ -200,6 +207,6 @@ public class UnderwhirledDrift extends Sprite
 
     protected var _bonus :Bonus;
 
-    protected var _control :UDControl;
+    protected var _control :UnderwhirledDriftController;
 }
 }
