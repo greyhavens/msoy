@@ -105,7 +105,10 @@ public class ActorSprite extends MsoySprite
         _occInfo = newInfo;
 
         // finally, if the state has changed, dispatch an event
-        if (oldWinfo == null || !Util.equals(oldWinfo.getState(), winfo.getState())) {
+        // (we don't dispatch if the old info was null, as getting our initial
+        // state isn't a "change") This is another argument for a special
+        // state-changed dobj event.
+        if (oldWinfo != null && !Util.equals(oldWinfo.getState(), winfo.getState())) {
             callUserCode("stateSet_v1", winfo.getState());
         }
     }
