@@ -27,73 +27,73 @@ public class LevelFactory
      * list a ton of class per level */
 
     /** Backgrounds */
-    [Embed(source='rsrc/level_0.swf#background')]
+    [Embed(source='../../../../rsrc/level_0.swf#background')]
     protected static const BACKGROUND_0 :Class;
-    [Embed(source='rsrc/level_1.swf#background')]
+    [Embed(source='../../../../rsrc/level_1.swf#background')]
     protected static const BACKGROUND_1 :Class;
-    [Embed(source='rsrc/level_2.swf#background')]
+    [Embed(source='../../../../rsrc/level_2.swf#background')]
     protected static const BACKGROUND_2 :Class;
 
     /** Roughs */
-    [Embed(source='rsrc/level_0.swf#rough')]
+    [Embed(source='../../../../rsrc/level_0.swf#rough')]
     protected static const ROUGH_0 :Class;
-    [Embed(source='rsrc/level_1.swf#rough')]
+    [Embed(source='../../../../rsrc/level_1.swf#rough')]
     protected static const ROUGH_1 :Class;
-    [Embed(source='rsrc/level_2.swf#rough')]
+    [Embed(source='../../../../rsrc/level_2.swf#rough')]
     protected static const ROUGH_2 :Class;
 
     /** Tracks */
-    [Embed(source='rsrc/level_0.swf#track')]
+    [Embed(source='../../../../rsrc/level_0.swf#track')]
     protected static const TRACK_0 :Class;
-    [Embed(source='rsrc/level_1.swf#track')]
+    [Embed(source='../../../../rsrc/level_1.swf#track')]
     protected static const TRACK_1 :Class;
-    [Embed(source='rsrc/level_2.swf#track')]
+    [Embed(source='../../../../rsrc/level_2.swf#track')]
     protected static const TRACK_2 :Class;
     
     /** Walls */
-    [Embed(source='rsrc/level_0.swf#wall')]
+    [Embed(source='../../../../rsrc/level_0.swf#wall')]
     protected static const WALL_0 :Class;
-    [Embed(source='rsrc/level_1.swf#wall')]
+    [Embed(source='../../../../rsrc/level_1.swf#wall')]
     protected static const WALL_1 :Class;
-    [Embed(source='rsrc/level_2.swf#wall')]
+    [Embed(source='../../../../rsrc/level_2.swf#wall')]
     protected static const WALL_2 :Class;
 
     /** Object Layers */
-    [Embed(source='rsrc/level_0.swf#objects')]
+    [Embed(source='../../../../rsrc/level_0.swf#objects')]
     protected static const OBJECTS_0 :Class;
-    [Embed(source='rsrc/level_1.swf#objects')]
+    [Embed(source='../../../../rsrc/level_1.swf#objects')]
     protected static const OBJECTS_1 :Class;
-    [Embed(source='rsrc/level_2.swf#objects')]
+    [Embed(source='../../../../rsrc/level_2.swf#objects')]
     protected static const OBJECTS_2 :Class;
 
     /** Horizon images */
-    [Embed(source='rsrc/level_0.swf#horizon')]
+    [Embed(source='../../../../rsrc/level_0.swf#horizon')]
     protected static const HORIZON_0 :Class;
-    [Embed(source='rsrc/level_1.swf#horizon')]
+    [Embed(source='../../../../rsrc/level_1.swf#horizon')]
     protected static const HORIZON_1 :Class;
-    [Embed(source='rsrc/level_2.swf#horizon')]
+    [Embed(source='../../../../rsrc/level_2.swf#horizon')]
     protected static const HORIZON_2 :Class;
 
     /****** Magic fun scenery props from the objects.swf ******/
 
     /** the bonuses */
-    [Embed(source='rsrc/objects.swf#dora_box')]
+    [Embed(source='../../../../rsrc/objects.swf#dora_box')]
     protected static const DORA_BOX :Class;
-    [Embed(source='rsrc/objects.swf#soul_well')]
+    [Embed(source='../../../../rsrc/objects.swf#soul_well')]
     protected static const SOUL_WELL :Class;
 
     /** the obstacles */
-    [Embed(source='rsrc/objects.swf#column')]
+    [Embed(source='../../../../rsrc/objects.swf#column')]
     protected static const COLUMN :Class;
-    [Embed(source='rsrc/objects.swf#column_broken')]
+    [Embed(source='../../../../rsrc/objects.swf#column_broken')]
     protected static const COLUMN_BROKEN :Class;
-    [Embed(source='rsrc/objects.swf#gold_tree')]
+    [Embed(source='../../../../rsrc/objects.swf#gold_tree')]
     protected static const GOLD_TREE :Class;
-    [Embed(source='rsrc/objects.swf#green_tree')]
+    [Embed(source='../../../../rsrc/objects.swf#green_tree')]
     protected static const GREEN_TREE :Class;
-    [Embed(source='rsrc/objects.swf#red_tree')]
+    [Embed(source='../../../../rsrc/objects.swf#red_tree')]
     protected static const RED_TREE :Class;
-    [Embed(source='rsrc/objects.swf#lava_stalagmite')]
+    [Embed(source='../../../../rsrc/objects.swf#lava_stalagmite')]
     protected static const LAVA_STALAGMITE :Class;
 
     // initialize the mapping of colors to objects

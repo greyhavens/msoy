@@ -12,8 +12,10 @@
       <arg value="-load-config"/>
       <arg value="${root.path}/etc/msoy-config.xml"/>
       <arg value="-compiler.source-path=./src"/>
+      <arg value="-output"/>
+      <arg value="${app.name}.swf"/>
       <arg value="-file-specs"/>
-      <arg value="${app.name}.as"/>
+      <arg value="src/com/threerings/underwhirleddrift/${app.name}.as"/>
     </java>
   </target>
 

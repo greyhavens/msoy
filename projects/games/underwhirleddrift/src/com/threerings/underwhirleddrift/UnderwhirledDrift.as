@@ -174,10 +174,10 @@ public class UnderwhirledDrift extends Sprite
         }
     }
 
-    [Embed(source='rsrc/light_board.swf#light_board')]
+    [Embed(source='../../../../rsrc/light_board.swf#light_board')]
     protected static const LIGHT_BOARD :Class;
 
-    [Embed(source='rsrc/power_ups.swf#power_up_frame')]
+    [Embed(source='../../../../rsrc/power_ups.swf#power_up_frame')]
     protected static const POWER_UP_FRAME :Class;
 
     /** All event listeners register in UD - these need to be cleaned up when the game is 
