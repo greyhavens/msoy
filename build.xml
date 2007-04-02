@@ -18,7 +18,7 @@
   <property name="flexsdk.dir"   value="projects/tools/extern/flex_sdk"/>
 
   <!-- define our subprojects and include the standard build system -->
-  <property name="projects" value="samskivert,narya,nenya,vilya,toybox,s3lib/java,threerings"/>
+  <property name="projects" value="samskivert,narya,nenya,vilya,toybox,s3lib,threerings"/>
   <import file="projects/tools/etc/build-support.xml"/>
   <fileset dir="." id="check.paths">
     <include name="projects/s3lib/java/src/java/**/*.java"/>
