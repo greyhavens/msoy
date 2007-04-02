@@ -5,7 +5,7 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
     layout="absolute" styleName="plain"
     verticalScrollPolicy="off" horizontalScrollPolicy="off"
-    width="400" height="550" frameRate="1000"
+    width="400" height="550" frameRate="24"
     applicationComplete="addChild(new AvatarViewerComp());">
 <mx:Style source="msoy.css"/>
 <mx:Script>
