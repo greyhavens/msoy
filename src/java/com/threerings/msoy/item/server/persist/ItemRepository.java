@@ -630,7 +630,7 @@ public abstract class ItemRepository<
             targetPopulation = U/1000; break;
         default:
             throw new PersistenceException(
-                "Uknown rarity [class=" + record.getClass() + ", itemId=" + record.itemId +
+                "Unknown rarity [class=" + record.getClass() + ", itemId=" + record.itemId +
                 ", rarity=" + record.rarity + "]");
         }
         targetPopulation = Math.max(targetPopulation, 1);
