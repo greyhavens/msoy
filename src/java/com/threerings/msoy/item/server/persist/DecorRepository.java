@@ -3,11 +3,14 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages the persistent store of {@link Decor} items.
@@ -31,6 +34,18 @@ public class DecorRepository extends ItemRepository<
     public DecorRepository (ConnectionProvider provider)
     {
         super(provider);
+        
+        // force the creation of appropriate db table. this will be used by MsoySceneRepository
+        // decor migration code.
+        //
+        // FIXME ROBERT: this can be removed at the same time as Decor migration code,
+        // after April 15 2007
+        try {
+            _ctx.getMarshaller(getItemClass());
+        } catch (PersistenceException e) {
+            // nada
+        }
+        // end fixme
     }
 
     @Override

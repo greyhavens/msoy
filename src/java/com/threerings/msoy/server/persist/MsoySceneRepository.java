@@ -181,14 +181,24 @@ public class MsoySceneRepository extends SimpleRepository
             }
         }
         // END: temp
+    }
 
+    /**
+     * Provides any additional initialization that needs to happen after runtime
+     * configuration had been loaded, and other services initialized.
+     */
+    public void finishInit ()
+    {
         // TEMP: decor migration. removable after all servers are past April 15 2007 (?)
-        {
-            /*
-            Statement getData = conn.createStatement();
-            Statement getMax = conn.createStatement();
+        // FIXME ROBERT
+        Statement getData = null, getMax = null;
+        
+        try {
+                Connection conn = _provider.getConnection(_dbident, false);
+
+                getData = conn.createStatement();
+                getMax = conn.createStatement();
             
-            try {
                 // find the next acceptable primary key for decor records
                 ResultSet decorMax = getMax.executeQuery("select max(itemId) from DecorRecord");
                 int newDecorId = decorMax.first() ? decorMax.getInt(1) : 0;
@@ -223,7 +233,7 @@ public class MsoySceneRepository extends SimpleRepository
                         byte[] mediaHash = results.getBytes("MEDIA_HASH");
                         MediaDesc media = createMediaDesc(mediaHash, mediaType);
                         log.info("Scene: " + sceneId + " - " + sceneName + ", " +
-                                            width + "x" + height + "x" + depth + ":" + horizon);
+                                 width + "x" + height + "x" + depth + ":" + horizon);
                         log.info("       background media: " + media);
                         
                         // create a new decor item (without going through the item repository;
@@ -268,7 +278,7 @@ public class MsoySceneRepository extends SimpleRepository
                         deleteFurni.setShort(2, furniId);
 
                         // and finally, if this furni was an Item, mark it as no longer used.
-                        PreparedStatement unused = conn.prepareStatement("");
+                        PreparedStatement unused = null;
                         if (itemId != 0 && itemType > 0 && itemType < Item.VIDEO) {
                             final String[] tables =
                                 new String[] { null, "Photo", "Document", "Furniture",
@@ -290,29 +300,39 @@ public class MsoySceneRepository extends SimpleRepository
                             JDBCUtil.checkedUpdate(ins, 1);
                             JDBCUtil.checkedUpdate(scene, 1);
                             JDBCUtil.checkedUpdate(deleteFurni, 1);
-                            int unusedcount = unused.executeUpdate();
+                            int unusedcount = (unused != null ? unused.executeUpdate() : 0);
                             log.info("moved to decor #" + newDecorId);
                             log.info("marked " + unusedcount + " item(s) as unused.");
                         } finally {
                             JDBCUtil.close(ins);
                             JDBCUtil.close(scene);
                             JDBCUtil.close(deleteFurni);
-                            JDBCUtil.close(unused);
+                            if (unused != null) {
+                                JDBCUtil.close(unused);
+                            }
                         }
                     } while (results.next());
                     
                     log.info("Decor migration done.\n");
                 }
-            } finally {
+                
                 JDBCUtil.close(getMax);
                 JDBCUtil.close(getData);
-            }
-            */
+                
+                // just for good measure, delete any new stale scene updates
+                Statement deletestmt = conn.createStatement();
+                try { 
+                    deletestmt.executeUpdate("delete from SCENE_UPDATES");
+                } finally {
+                    JDBCUtil.close(deletestmt);
+                }
+        } catch (Exception ex) {
+            log.warning("Failed finishInit(): " + ex.toString());
         }
-        // END TEMP
         
+        // END TEMP
     }
-
+        
     /**
      * Retrieve a list of all the scenes that the user directly owns.
      */

@@ -443,6 +443,8 @@ public class MsoyServer extends WhirledServer
         toyMan.init(omgr, invoker, invmgr, plreg, itemMan.getGameRepository());
         dictionary.init(new File(ServerConfig.serverRoot, "data/dictionary"));
 
+        sceneRepo.finishInit();
+        
         // create and start up our HTTP server
         httpServer = new MsoyHttpServer();
         httpServer.init();
