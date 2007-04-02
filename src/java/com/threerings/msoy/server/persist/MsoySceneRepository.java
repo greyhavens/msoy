@@ -200,8 +200,8 @@ public class MsoySceneRepository extends SimpleRepository
 
                 int count = results.last() ? results.getRow() : 0;
                 if (count > 0) {
-                    log.info("\n*** DECOR MIGRATION");
-                    log.info("Found: " + count + " scenes with background furnis");
+                    log.info("*** DECOR MIGRATION");
+                    log.info("Found: " + count + " scene(s) with background furnis");
                     
                     results.first();
                     do {
@@ -209,6 +209,8 @@ public class MsoySceneRepository extends SimpleRepository
                         // pull out all relevant scene info...
                         int sceneId = results.getInt("SCENES.SCENE_ID");
                         short furniId = results.getShort("FURNI_ID");
+                        int itemId = results.getInt("ITEM_ID");
+                        byte itemType = results.getByte("ITEM_TYPE");
                         int ownerId = results.getInt("OWNER_ID");
                         String sceneName = results.getString("NAME");
                         int width = results.getInt("WIDTH");
@@ -227,11 +229,12 @@ public class MsoySceneRepository extends SimpleRepository
                         // create a new decor item (without going through the item repository;
                         // we don't have access to that here)
                         PreparedStatement ins = conn.prepareStatement(
-                            "insert into DecorRecord " +
-                            "(itemId, height, width, depth, horizon, creatorId, ownerId, name, " +
-                            " thumbMediaHash, thumbMimeType, thumbConstraint, " +
-                            " furniMediaHash, furniMimeType, furniConstraint, type) " +
-                            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                            "insert into DecorRecord (itemId, height, width, depth, " +
+                            " horizon, creatorId, ownerId, used, " +
+                            " location, name, thumbMediaHash, thumbMimeType, " +
+                            " thumbConstraint, furniMediaHash, furniMimeType, furniConstraint, " +
+                            " type) " +
+                            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                         ins.setInt(1, ++newDecorId);
                         ins.setShort(2, (short) height);
                         ins.setShort(3, (short) width);
@@ -239,14 +242,16 @@ public class MsoySceneRepository extends SimpleRepository
                         ins.setFloat(5, horizon);
                         ins.setInt(6, ownerId);
                         ins.setInt(7, ownerId);
-                        ins.setString(8, (sceneName != "" ? sceneName : "new") + " decor");
-                        ins.setBytes(9, mediaHash);
-                        ins.setByte(10, mediaType);
-                        ins.setByte(11, MediaDesc.HORIZONTALLY_CONSTRAINED); 
-                        ins.setBytes(12, mediaHash);
-                        ins.setByte(13, mediaType);
-                        ins.setByte(14, MediaDesc.HORIZONTALLY_CONSTRAINED);
-                        ins.setByte(15, Decor.IMAGE_OVERLAY);
+                        ins.setByte(8, Item.USED_AS_DECOR);
+                        ins.setInt(9, sceneId);
+                        ins.setString(10, (sceneName != "" ? sceneName : "new") + " decor");
+                        ins.setBytes(11, mediaHash);
+                        ins.setByte(12, mediaType);
+                        ins.setByte(13, MediaDesc.HORIZONTALLY_CONSTRAINED); 
+                        ins.setBytes(14, mediaHash);
+                        ins.setByte(15, mediaType);
+                        ins.setByte(16, MediaDesc.HORIZONTALLY_CONSTRAINED);
+                        ins.setByte(17, Decor.IMAGE_OVERLAY);
 
                         // update the scene to use this decor
                         PreparedStatement scene = conn.prepareStatement(
@@ -256,22 +261,43 @@ public class MsoySceneRepository extends SimpleRepository
                         scene.setBytes(2, mediaHash);
                         scene.setByte(3, mediaType);
 
-                        // and remove the background furni from the scene
+                        // remove the background furni from the scene
                         PreparedStatement deleteFurni = conn.prepareStatement(
                             "delete from FURNI where SCENE_ID = ? and FURNI_ID = ?");
                         deleteFurni.setInt(1, sceneId);
                         deleteFurni.setShort(2, furniId);
 
+                        // and finally, if this furni was an Item, mark it as no longer used.
+                        PreparedStatement unused = conn.prepareStatement("");
+                        if (itemId != 0 && itemType > 0 && itemType < Item.VIDEO) {
+                            final String[] tables =
+                                new String[] { null, "Photo", "Document", "Furniture",
+                                               "Game", "Avatar", "Pet", "Audio" };
+                            String table = tables[itemType];
+                            if (table != null) {
+                                table += "Record";  // fix up the table name
+                                unused = conn.prepareStatement(
+                                    "update " + table +
+                                    " set USED = ?, LOCATION = ? where itemId = ?");
+                                unused.setByte(1, (byte) 0);
+                                unused.setInt(2, 0);
+                                unused.setInt(3, itemId);
+                            }                                
+                        }
+                        
                         // now run those queries!
                         try {
                             JDBCUtil.checkedUpdate(ins, 1);
                             JDBCUtil.checkedUpdate(scene, 1);
                             JDBCUtil.checkedUpdate(deleteFurni, 1);
-                            log.info("       moved to decor #" + newDecorId);
+                            int unusedcount = unused.executeUpdate();
+                            log.info("moved to decor #" + newDecorId);
+                            log.info("marked " + unusedcount + " item(s) as unused.");
                         } finally {
                             JDBCUtil.close(ins);
                             JDBCUtil.close(scene);
                             JDBCUtil.close(deleteFurni);
+                            JDBCUtil.close(unused);
                         }
                     } while (results.next());
                     
