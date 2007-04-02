@@ -38,6 +38,7 @@
   <filelist dir="." id="dist.libs">
     <file name="${extlib.dir}/ant.jar"/>
     <file name="${extlib.dir}/activation.jar"/>
+    <file name="${extlib.dir}/args4j-2.0.7.jar/>
     <file name="${extlib.dir}/commons-beanutils.jar"/>
     <file name="${extlib.dir}/commons-codec.jar"/>
     <file name="${extlib.dir}/commons-collections.jar"/>
