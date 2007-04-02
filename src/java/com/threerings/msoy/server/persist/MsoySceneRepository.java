@@ -184,7 +184,6 @@ public class MsoySceneRepository extends SimpleRepository
 
         // TEMP: decor migration. removable after all servers are past April 15 2007 (?)
         {
-            /*
             Statement getData = conn.createStatement();
             Statement getMax = conn.createStatement();
             
@@ -307,8 +306,6 @@ public class MsoySceneRepository extends SimpleRepository
                 JDBCUtil.close(getMax);
                 JDBCUtil.close(getData);
             }
-            
-            */
         }
         // END TEMP
         
