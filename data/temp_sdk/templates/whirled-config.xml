@@ -201,13 +201,7 @@
    </runtime-shared-libraries>
    -->
    <!-- Enables SWFs to access the network. -->
-   <use-network>true</use-network>
-   <!-- Metadata added to SWFs via the SWF Metadata tag. -->
-   <!--<metadata>
-      <title>MetaSOY</title>
-      <description>http://www.metasoy.com/</description>
-      <publisher>Three Rings, Inc.</publisher>
-      <creator>Three Rings, Inc.</creator>
-      <language>EN</language>
-   </metadata>-->
+   <use-network>false</use-network>
+   <!-- Configure the standard Whirled framerate -->
+   <default-frame-rate>30</default-frame-rate>
 </flex-config>
