@@ -2,6 +2,7 @@ package com.threerings.msoy.world.client {
 
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.Shape;
@@ -460,8 +461,17 @@ public class MsoySprite extends MediaContainer
     protected function scaleUpdated () :void
     {
         if (!(_media is Perspectivizer)) {
-            _media.scaleX = _locScale * getMediaScaleX() * _fxScaleX;
-            _media.scaleY = _locScale * getMediaScaleY() * _fxScaleY;
+            var scalex :Number = _locScale * getMediaScaleX() * _fxScaleX;
+            var scaley :Number = _locScale * getMediaScaleY() * _fxScaleY;
+
+            _media.scaleX = scalex;
+            _media.scaleY = scaley;
+
+            if (_media.mask != null &&
+                    (!(_media is DisplayObjectContainer) || !DisplayObjectContainer(_media).contains(_media.mask))) {
+                _media.mask.scaleX = scalex;
+                _media.mask.scaleY = scaley;
+            }
         }
 
         updateMediaPosition();
@@ -477,8 +487,8 @@ public class MsoySprite extends MediaContainer
         // the origin
         var xscale :Number = _locScale * getMediaScaleX() * _fxScaleX;
         var yscale :Number = _locScale * getMediaScaleY() * _fxScaleY;
-        _media.x = (xscale >= 0) ? 0 : Math.abs(_w * xscale);
-        _media.y = (yscale >= 0) ? 0 : Math.abs(_h * yscale);
+        _media.x = (xscale >= 0) ? 0 : Math.abs(Math.min(_w, getMaxContentWidth()) * xscale);
+        _media.y = (yscale >= 0) ? 0 : Math.abs(Math.min(_h, getMaxContentHeight()) * yscale);
 
         // we may need to be repositioned
         locationUpdated();
@@ -505,7 +515,7 @@ public class MsoySprite extends MediaContainer
 
         // update the hotspot
         if (_hotSpot == null) {
-            _hotSpot = new Point(_w / 2, _h);
+            _hotSpot = new Point(getContentWidth() / 2, getContentHeight());
         }
         // we'll want to call locationUpdated() now, but it's done for us
         // as a result of calling updateMediaPosition(), below.
