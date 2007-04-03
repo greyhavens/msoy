@@ -19,7 +19,7 @@ import com.threerings.underwhirleddrift.kart.KartObstacle;
 public class Level extends Sprite
 {
     public function Level (ground :Ground, background :Class, rough :Class, track :Class, 
-        wall :Class, horizon :Class, config :LevelConfig) :void
+        wall :Class, horizon :Class, flat :Class, config :LevelConfig) :void
     {
         _horizon = horizon;
         _ground = ground;
@@ -47,9 +47,9 @@ public class Level extends Sprite
             addChild(backgroundImage);
         }
 
-        addChild(new rough() as DisplayObject);
-        addChild(_track = (new track() as DisplayObject));
-        addChild(_wall = (new wall() as DisplayObject));
+        _track = new track() as DisplayObject;
+        _wall = new wall() as DisplayObject;
+        addChild(new flat() as DisplayObject);
 
         _ground.setLevel(this);
         _ground.setScenery(_scenery = new Scenery(config.getObstacles().concat(

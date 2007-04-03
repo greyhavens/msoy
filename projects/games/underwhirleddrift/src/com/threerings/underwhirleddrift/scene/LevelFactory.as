@@ -15,7 +15,8 @@ public class LevelFactory
             return new Level(ground, LevelFactory["BACKGROUND_" + level],
                 LevelFactory["ROUGH_" + level], LevelFactory["TRACK_" + level],
                 LevelFactory["WALL_" + level], LevelFactory["HORIZON_" + level],
-                new LevelConfig(LevelFactory["OBJECTS_" + level], OBJECT_MAPPING));
+                LevelFactory["FLAT_" + level], new LevelConfig(LevelFactory["OBJECTS_" + level], 
+                OBJECT_MAPPING));
         } catch (re :ReferenceError) {
             Log.getLog(LevelFactory).debug("Failed attempt to create level " + level);
         }
@@ -73,6 +74,10 @@ public class LevelFactory
     protected static const HORIZON_1 :Class;
     [Embed(source='../../../../../rsrc/level_2.swf#horizon')]
     protected static const HORIZON_2 :Class;
+
+    /** Flat layers for rendering */
+    [Embed(source='../../../../../rsrc/level_0.swf#flat')]
+    protected static const FLAT_0 :Class;
 
     /****** Magic fun scenery props from the objects.swf ******/
 
