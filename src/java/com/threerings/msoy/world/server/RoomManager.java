@@ -148,15 +148,6 @@ public class RoomManager extends SpotSceneManager
             return;
         }
 
-        // TODO: avatar access controls
-//         // if this is an avatar trigger, make sure it's dispatched by the avatar's owner
-//         if (item.type == Item.AVATAR && item.itemId != who.getOid()) {
-//             log.warning("Rejecting avatar trigger by non-owner [who=" + who.who() +
-//                         ", tgt=" + _roomObj.occupantInfo.get(item.itemId) +
-//                         " (" + item + ")].");
-//             return;
-//         }
-
         // dispatch this as a simple MessageEvent
         _roomObj.postMessage(RoomCodes.SPRITE_MESSAGE, item, name, arg, isAction);
     }
@@ -317,7 +308,7 @@ public class RoomManager extends SpotSceneManager
     }
 
     // from interface RoomProvider
-    public void changeLocation (ClientObject caller, ItemIdent item, Location newloc)
+    public void changeLocation (ClientObject caller, ItemIdent item, Location newLoc)
     {
         // if this client does not currently control this entity; ignore the request; if no one
         // controls it, this will assign this client as controller
@@ -326,11 +317,9 @@ public class RoomManager extends SpotSceneManager
             return;
         }
 
-        for (OccupantInfo info : _roomObj.occupantInfo) {
-            ActorInfo ainfo = (ActorInfo)info;
-            if (ainfo.getItemIdent().equals(item)) {
-                _roomObj.updateOccupantLocs(new SceneLocation(newloc, ainfo.getBodyOid()));
-            }
+        int oid = findActorOid(item);
+        if (oid != 0) {
+            _roomObj.updateOccupantLocs(new SceneLocation(newLoc, oid));
         }
     }
 
@@ -502,6 +491,30 @@ public class RoomManager extends SpotSceneManager
         for (SceneUpdate update : updates) {
             recordUpdate(update);
         }
+    }
+
+    /**
+     * Determine the actor oid that corresponds to the specified ItemIdent,
+     * or return 0 if none found.
+     */
+    protected int findActorOid (ItemIdent item)
+    {
+        // see if it's an avatar
+        Integer oid = _avatarIdents.get(item);
+        if (oid != null) {
+            return oid.intValue();
+        }
+
+        // otherwise, scan all occupant infos. Perhaps we should keep a mapping
+        // for non-avatar actors as well?
+        for (OccupantInfo info : _roomObj.occupantInfo) {
+            ActorInfo ainfo = (ActorInfo)info;
+            if (ainfo.getItemIdent().equals(item)) {
+                return ainfo.getBodyOid();
+            }
+        }
+
+        return 0; // never found it..
     }
 
     /**
