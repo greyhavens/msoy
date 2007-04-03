@@ -309,8 +309,11 @@ public class TopPanel extends Canvas
     {
         if (_sidePanel != null) {
             _sidePanel.setStyle("top", 0);
-            _sidePanel.setStyle("bottom", getBottomPanelHeight() + ControlBar.HEIGHT);
+            _sidePanel.setStyle("bottom", getBottomPanelHeight());
             _sidePanel.setStyle("left", 0);
+            _controlBar.setStyle("left", _sidePanel.width);
+        } else {
+            _controlBar.setStyle("left", 0);
         }
 
         updatePlaceViewSize();
