@@ -129,7 +129,7 @@ public class ChiyogamiManager extends GameManager
     {
         super.gameDidStart();
 
-        updateBossAction();
+        updateBossState();
     }
 
     /**
@@ -312,18 +312,18 @@ public class ChiyogamiManager extends GameManager
         updateState(player, state);
     }
 
-    protected void updateBossAction ()
+    protected void updateBossState ()
     {
-        updateAction(_bossObj.getOid(), _bossActions[1]);
+        updateState(_bossObj, _bossStates[RandomUtil.getInt(2) + 1]);
     }
 
-    protected void updateAction (int oid, String action)
-    {
-        WorldOccupantInfo winfo = (WorldOccupantInfo) _roomObj.occupantInfo.get(oid);
-
-        _roomObj.postMessage(RoomCodes.SPRITE_MESSAGE, winfo.getItemIdent(),
-            action, null, true);
-    }
+//    protected void updateAction (int oid, String action)
+//    {
+//        WorldOccupantInfo winfo = (WorldOccupantInfo) _roomObj.occupantInfo.get(oid);
+//
+//        _roomObj.postMessage(RoomCodes.SPRITE_MESSAGE, winfo.getItemIdent(),
+//            action, null, true);
+//    }
 
     /**
      * Update the state of the specified player.
@@ -349,7 +349,7 @@ public class ChiyogamiManager extends GameManager
                 _gameObj.occupants.get(ii));
             updatePlayerState(player);
         }
-        updateBossAction();
+        updateBossState();
     }
 
     /**
@@ -431,7 +431,7 @@ public class ChiyogamiManager extends GameManager
     /** A mapping of playerOid -> String[] of their states. */
     protected HashIntMap<String[]> _playerStates = new HashIntMap<String[]>();
 
-    protected String[] _bossActions = new String[] { "Stop", "Dance 1" };
+    protected String[] _bossStates = new String[] { null, "Dance 1", "Dance 2" };
 
     protected static final String[] MUSICS = {
         "18-Jay-R_MyOtherCarBeatle", "04-Jay-R_SriLankaHigh" };
