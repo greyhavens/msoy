@@ -220,11 +220,16 @@ public class LobbyPanel extends VBox
         _buy.styleName = "lobbyLink";
         titleBox.addChild(_buy);
 
+        var borderedBox :VBox = new VBox();
+        addChild(borderedBox);
+        borderedBox.styleName = "borderedBox";
+        borderedBox.percentWidth = 100;
+        borderedBox.percentHeight = 100;
         var descriptionBox :HBox = new HBox();
         descriptionBox.percentWidth = 100;
-        descriptionBox.height = 120;
+        descriptionBox.height = 124; // make room for padding at top
         descriptionBox.styleName = "descriptionBox";
-        addChild(descriptionBox);
+        borderedBox.addChild(descriptionBox);
         _logo = new VBox();
         _logo.styleName = "lobbyLogoBox";
         _logo.width = 160;
@@ -245,7 +250,7 @@ public class LobbyPanel extends VBox
         _tablesBox.styleName = "tablesBox";
         _tablesBox.percentWidth = 100;
         _tablesBox.percentHeight = 100;
-        addChild(_tablesBox);
+        borderedBox.addChild(_tablesBox);
         var loadingLabel :Label = new Label();
         loadingLabel.text = Msgs.GAME.get("l.gameLoading");
         _tablesBox.addChild(loadingLabel);
@@ -262,7 +267,7 @@ public class LobbyPanel extends VBox
         leaveBtn.height = 22;
         leaveBtn.label = Msgs.GAME.get("b.leave_lobby");
         buttonBox.addChild(leaveBtn);
-        addChild(buttonBox);
+        borderedBox.addChild(buttonBox);
     }
 
     protected function createTablesDisplay () :void
