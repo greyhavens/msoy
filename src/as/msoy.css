@@ -188,6 +188,7 @@ ButtonBar {
 }
 
 TitleWindow {
+  cornerRadius: 0;
   closeButtonDisabledSkin: Embed(source="../../pages/images/ui/close_button.png");
   closeButtonDownSkin: Embed(source="../../pages/images/ui/close_button.png");
   closeButtonOverSkin: Embed(source="../../pages/images/ui/close_button.png");
