@@ -188,17 +188,17 @@ ButtonBar {
 }
 
 TitleWindow {
-  closeButtonDisabledSkin: Embed(source="Assets.swf",symbol="CloseButtonDisabled");
-  closeButtonDownSkin: Embed(source="Assets.swf",symbol="CloseButtonDown");
-  closeButtonOverSkin: Embed(source="Assets.swf",symbol="CloseButtonOver");
-  closeButtonUpSkin: Embed(source="Assets.swf",symbol="CloseButtonUp");
+  closeButtonDisabledSkin: Embed(source="../../pages/images/ui/close_button.png");
+  closeButtonDownSkin: Embed(source="../../pages/images/ui/close_button.png");
+  closeButtonOverSkin: Embed(source="../../pages/images/ui/close_button.png");
+  closeButtonUpSkin: Embed(source="../../pages/images/ui/close_button.png");
 }
 
 Window {
-  closeButtonDisabledSkin: Embed(source="Assets.swf",symbol="CloseButtonDisabled");
-  closeButtonDownSkin: Embed(source="Assets.swf",symbol="CloseButtonDown");
-  closeButtonOverSkin: Embed(source="Assets.swf",symbol="CloseButtonOver");
-  closeButtonUpSkin: Embed(source="Assets.swf",symbol="CloseButtonUp");
+  closeButtonDisabledSkin: Embed(source="../../pages/images/ui/close_button.png");
+  closeButtonDownSkin: Embed(source="../../pages/images/ui/close_button.png");
+  closeButtonOverSkin: Embed(source="../../pages/images/ui/close_button.png");
+  closeButtonUpSkin: Embed(source="../../pages/images/ui/close_button.png");
 }
 
 .msoyButtonBar {
@@ -412,9 +412,8 @@ ListBase
 
 .buttonBox {
   horizontalAlign: right;
-  paddingRight: 5px;
-  paddingTop: 2px;
-  paddingBottom: 2px;
+  paddingRight: 4px;
+  paddingBottom: 4px;
 }
 
 .lobbyLink {
@@ -493,4 +492,17 @@ ListBase
 
 .lobbyTableList {
   borderThickness: 0;
+}
+
+.leaveLobbyButton {
+  height: 13px;
+  width: 13px;
+  overSkin: Embed(source="../../pages/images/ui/close_button.png");
+  disabledSkin: Embed(source="../../pages/images/ui/close_button.png");
+  downSkin: Embed(source="../../pages/images/ui/close_button.png");
+  upSkin: Embed(source="../../pages/images/ui/close_button.png");
+  selectedOverSkin: Embed(source="../../pages/images/ui/close_button.png");
+  selectedDisabledSkin: Embed(source="../../pages/images/ui/close_button.png");
+  selectedDownSkin: Embed(source="../../pages/images/ui/close_button.png");
+  selectedUpSkin: Embed(source="../../pages/images/ui/close_button.png");
 }

@@ -264,8 +264,7 @@ public class LobbyPanel extends VBox
         createBtn.label = Msgs.GAME.get("b.create");
         buttonBox.addChild(createBtn);
         var leaveBtn :CommandButton = new CommandButton(LobbyController.LEAVE_LOBBY);
-        leaveBtn.height = 22;
-        leaveBtn.label = Msgs.GAME.get("b.leave_lobby");
+        leaveBtn.styleName = "leaveLobbyButton";
         buttonBox.addChild(leaveBtn);
         borderedBox.addChild(buttonBox);
     }
