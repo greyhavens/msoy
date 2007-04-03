@@ -61,7 +61,7 @@ public class FlashClients
     public static HTML createAvatarViewer (String avatarPath)
     {
         return WidgetUtil.createFlashContainer(
-            "avatarViewer", "/clients/avatarviewer.swf", 400, 550,
+            "avatarViewer", "/clients/avatarviewer.swf", 600, 550,
             "avatar=" + URL.encodeComponent(avatarPath));
     }
             
