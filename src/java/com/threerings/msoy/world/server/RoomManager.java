@@ -243,7 +243,7 @@ public class RoomManager extends SpotSceneManager
                 if (sceneDecorData != null &&
                     sceneDecorData.itemId != up.decorData.itemId) // modified?
                 {
-                    MsoyServer.itemMan.updateDecorItemUsage(
+                    MsoyServer.itemMan.updateItemUsage(
                         user.getMemberId(), _scene.getId(),
                         sceneDecorData.itemId, up.decorData.itemId,
                         new ResultListener<Object>() {

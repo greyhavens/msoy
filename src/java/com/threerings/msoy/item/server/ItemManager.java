@@ -275,104 +275,84 @@ public class ItemManager
      * This method assumes that the specified avatars are both valid and owned by the user in
      * question. The supplied listener will be notified of success with null.
      */
-    public void updateItemUsage (final int memberId, final Avatar oldAvatar, final Avatar newAvatar,
-                                 final ResultListener<Object> listener)
+    public void updateItemUsage (
+        final int memberId, final Avatar oldAvatar, final Avatar newAvatar,
+        final ResultListener<Object> listener)
     {
-        if (ObjectUtil.equals(oldAvatar, newAvatar)) {
-            listener.requestCompleted(null); // mr. no-op
-            return;
-        }
-
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(Item.AVATAR, listener);
-        if (repo == null) {
-            return;
-        }
-        final int oldId = (oldAvatar == null) ? 0 : oldAvatar.itemId;
-        final int newId = (newAvatar == null) ? 0 : newAvatar.itemId;
-
-        ResultListener<Object> rlo = listener;
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Object>(rlo) {
-            public Object invokePersistResult () throws PersistenceException {
-                if (oldId != 0) {
-                    repo.markItemUsage(new int[] { oldId }, Item.UNUSED, 0);
-                }
-                if (newId != 0) {
-                    repo.markItemUsage(new int[] { newId }, Item.USED_AS_AVATAR, memberId);
-                }
-                return null;
-            }
-
-            public void handleSuccess () {
-                super.handleSuccess();
-                if (oldAvatar != null) {
-                    oldAvatar.used = Item.UNUSED;
-                    oldAvatar.location = 0;
-                    updateUserCache(oldAvatar);
-                }
-                if (newAvatar != null) {
-                    newAvatar.used = Item.USED_AS_AVATAR;
-                    newAvatar.location = memberId;
-                    updateUserCache(newAvatar);
-                }
-            }
-        });
+        updateItemUsage (Item.AVATAR, Item.USED_AS_AVATAR, memberId, memberId,
+                         oldAvatar != null ? oldAvatar.itemId : 0,
+                         newAvatar != null ? newAvatar.itemId : 0,
+                         listener);
     }
-
+        
     /**
      * Update usage of specific decor items. Old decor will be marked as unused,
      * and new decor will be marked as used as decor.
      */
-    public void updateDecorItemUsage (
+    public void updateItemUsage (
         final int memberId, final int sceneId,
         final int oldDecorId, final int newDecorId, ResultListener<Object> listener)
     {
-        if (oldDecorId == newDecorId) {  // nothing to see here, move along
-            listener.requestCompleted(null);
+        updateItemUsage (Item.DECOR, Item.USED_AS_DECOR, memberId, sceneId,
+                         oldDecorId, newDecorId, listener);
+    }
+
+    /**
+     * Update usage of any items. Old item will be marked as unused, and new item will be
+     * marked with the itemUseType id.
+     */
+    protected void updateItemUsage (
+        final byte itemType, final byte itemUseType, final int memberId, final int locationId,
+        final int oldItemId, final int newItemId, ResultListener<Object> listener)
+    {
+        if (oldItemId == newItemId) {
+            listener.requestCompleted(null); // mr. no-op
             return;
         }
 
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(Item.DECOR, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(itemType, listener);
         if (repo == null) {
             return; // getRepository already informed the listener about this problem
         }
 
         ResultListener<Object> rlo = listener;
-        final int[] oldDecorIds = new int[] { oldDecorId };
-        final int[] newDecorIds = new int[] { newDecorId };
-        
+        final int[] oldItemIds = new int[] { oldItemId };
+        final int[] newItemIds = new int[] { newItemId };
+
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<Object>(rlo) {
                 public Object invokePersistResult () throws PersistenceException {
-                    if (oldDecorId != 0) {
-                        repo.markItemUsage(oldDecorIds, Item.UNUSED, 0);
+                    if (oldItemId != 0) {
+                        repo.markItemUsage(oldItemIds, Item.UNUSED, 0);
                     }
-                    if (newDecorId != 0) {
-                        repo.markItemUsage(newDecorIds, Item.USED_AS_DECOR, sceneId);
+                    if (newItemId != 0) {
+                        repo.markItemUsage(newItemIds, itemUseType, memberId);
                     }
                     return null;
                 }
+
                 public void handleSuccess () {
                     super.handleSuccess();
-                    if (oldDecorId != 0) {
-                        updateUserCache(memberId, Item.DECOR, oldDecorIds, new ItemUpdateOp() {
+                    if (oldItemId != 0) {
+                        updateUserCache(memberId, itemType, oldItemIds, new ItemUpdateOp() {
                             public void update (Item item) {
                                 item.used = Item.UNUSED;
                                 item.location = 0;
                             }
                         }, true);
                     }
-                    if (newDecorId != 0) {
-                        updateUserCache(memberId, Item.DECOR, newDecorIds, new ItemUpdateOp() {
+                    if (newItemId != 0) {
+                        updateUserCache(memberId, itemType, newItemIds, new ItemUpdateOp() {
                             public void update (Item item) {
-                                item.used = Item.USED_AS_DECOR;
-                                item.location = sceneId;
+                                item.used = itemUseType;
+                                item.location = locationId;
                             }
                         }, true);
                     }
                 }
             });
     }
-    
+   
     /**
      * Update usage of the specified items.
      *
