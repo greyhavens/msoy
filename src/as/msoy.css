@@ -187,6 +187,20 @@ ButtonBar {
   buttonStyleName: "msoyButtonBar";
 }
 
+TitleWindow {
+  closeButtonDisabledSkin: Embed(source="Assets.swf",symbol="CloseButtonDisabled");
+  closeButtonDownSkin: Embed(source="Assets.swf",symbol="CloseButtonDown");
+  closeButtonOverSkin: Embed(source="Assets.swf",symbol="CloseButtonOver");
+  closeButtonUpSkin: Embed(source="Assets.swf",symbol="CloseButtonUp");
+}
+
+Window {
+  closeButtonDisabledSkin: Embed(source="Assets.swf",symbol="CloseButtonDisabled");
+  closeButtonDownSkin: Embed(source="Assets.swf",symbol="CloseButtonDown");
+  closeButtonOverSkin: Embed(source="Assets.swf",symbol="CloseButtonOver");
+  closeButtonUpSkin: Embed(source="Assets.swf",symbol="CloseButtonUp");
+}
+
 .msoyButtonBar {
   fillAlphas: 1, 1, 1, 1;
   fillColors: #d5dcdf, #9ba8b0, #9ba8b0, #d5dcdf;
