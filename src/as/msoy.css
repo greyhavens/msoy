@@ -429,8 +429,8 @@ ListBase
 
 .titleBox {
   verticalAlign: middle;
-  paddingLeft: 5px;
-  paddingRight: 5px;
+  paddingLeft: 4px;
+  paddingRight: 4px;
 }
 
 .lobbyLogoBox {
@@ -492,6 +492,11 @@ ListBase
 
 .lobbyTableList {
   borderThickness: 0;
+}
+
+.leaveBtnBox {
+  verticalAlign: top;
+  paddingLeft: 2px;
 }
 
 .leaveLobbyButton {

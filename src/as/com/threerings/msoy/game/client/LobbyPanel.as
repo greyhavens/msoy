@@ -219,6 +219,13 @@ public class LobbyPanel extends VBox
         _buy = new Label();
         _buy.styleName = "lobbyLink";
         titleBox.addChild(_buy);
+        var leaveBtnBox :VBox = new VBox();
+        leaveBtnBox.styleName = "leaveBtnBox";
+        leaveBtnBox.percentHeight = 100;
+        titleBox.addChild(leaveBtnBox);
+        var leaveBtn :CommandButton = new CommandButton(LobbyController.LEAVE_LOBBY);
+        leaveBtn.styleName = "leaveLobbyButton";
+        leaveBtnBox.addChild(leaveBtn);
 
         var borderedBox :VBox = new VBox();
         addChild(borderedBox);
@@ -263,9 +270,6 @@ public class LobbyPanel extends VBox
         createBtn.height = 22;
         createBtn.label = Msgs.GAME.get("b.create");
         buttonBox.addChild(createBtn);
-        var leaveBtn :CommandButton = new CommandButton(LobbyController.LEAVE_LOBBY);
-        leaveBtn.styleName = "leaveLobbyButton";
-        buttonBox.addChild(leaveBtn);
         borderedBox.addChild(buttonBox);
     }
 
