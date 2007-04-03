@@ -32,7 +32,7 @@ import com.threerings.msoy.world.data.WorldPetInfo;
 public class ActorSprite extends MsoySprite
 {
     /** The maximum width of an avatar sprite. */
-    public static const MAX_WIDTH :int = 400;
+    public static const MAX_WIDTH :int = 600;
 
     /** The maximum height of an avatar sprite. */
     public static const MAX_HEIGHT :int = 450;
