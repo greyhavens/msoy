@@ -141,7 +141,7 @@ public class ChiyogamiManager extends GameManager
         startGame();
         _roomObj.postMessage(RoomObject.PLAY_MUSIC, new Object[] { _music.getMediaPath() });
         bossSpeak("Ok... it's a dance off!");
-        moveBody(_bossObj, .5, .5, 0);
+        moveBody(_bossObj, .5, 0);
     }
 
     protected void didShutdown ()
@@ -233,7 +233,7 @@ public class ChiyogamiManager extends GameManager
             {
                 if (!_gameObj.isInPlay()) {
                     // move the boss randomly
-                    moveBody(_bossObj, Math.random(), Math.random(), 0);
+                    moveBody(_bossObj, Math.random(), Math.random());
 
                 } else {
                     cancel();
@@ -256,8 +256,8 @@ public class ChiyogamiManager extends GameManager
 
             // position players in a semicircle behind the boss
             double x = .5 + .5 * Math.cos(angle);
-            double z = .5 + .5 * Math.sin(angle);
-            moveBody(player, x, z, 0);
+            double z = 1 * Math.sin(angle);
+            moveBody(player, x, z);
 
             angle += angleIncrement;
         }
@@ -276,15 +276,13 @@ public class ChiyogamiManager extends GameManager
     }
 
     /**
-     * Move the specified body to the specified location, facing center.
+     * Move the specified body to the specified location, facing [ .5, 0, 0 ].
      */
     protected void moveBody (BodyObject body, double x, double z)
     {
-        // TODO checkmath
-        double angle = Math.atan2(x - .5, z - .5);
-        int degrees = (int) Math.round(angle * 180 / Math.PI);
+        double angle = Math.atan2(.5 - x, z - 0);
+        int degrees = (360 + (int) Math.round(angle * 180 / Math.PI)) % 360;
         moveBody(body, x, z, degrees);
-        updatePlayerState(body);
     }
 
     protected void bossSpeak (String utterance)
