@@ -397,7 +397,7 @@ ListBase
   textDecoration: underline;
 }
 
-.titleBox, .descriptionBox, .tabsBox {
+.titleBox, .tabsFillerBox {
   backgroundColor: #222222;
 }
 
@@ -412,18 +412,12 @@ ListBase
   horizontalAlign: center;
 }
 
-.infoBox {
-  backgroundColor: white;
-  borderColor: #222222;
-  borderSides: "left right";
-  borderThickness: 5px;
-  borderStyle: solid;
-}
-
 .lobbyInfo {
   fontSize: 12;
-  paddingLeft: 5;
-  paddingRight: 5;
+  paddingLeft: 7;
+  paddingRight: 7;
+  paddingTop: 7;
+  paddingBottom: 7;
 }
 
 .lobbyGameName {
@@ -433,9 +427,11 @@ ListBase
   textAlign: center;
 }
 
-.lobbyTabs {
-  paddingLeft: 5;
+.tabsBox {
   verticalAlign: bottom;
+}
+
+.lobbyTabs {
   tabStyleName: lobbyTabButton;
   selectedTabTextStyleName: lobbyTabSelectedText;
   tabHeight: 20;
@@ -460,4 +456,8 @@ ListBase
 
 .lobbyTabSelectedText { 
   color: black;
+}
+
+.lobbyTableList {
+  borderThickness: 0;
 }

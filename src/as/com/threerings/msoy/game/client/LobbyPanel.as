@@ -269,6 +269,7 @@ public class LobbyPanel extends VBox
     {
         // our game table data
         var list :MsoyList = new MsoyList(_ctx);
+        list.styleName = "lobbyTableList";
         list.variableRowHeight = true;
         list.percentHeight = 100;
         list.percentWidth = 100;
@@ -282,12 +283,17 @@ public class LobbyPanel extends VBox
             var tabsBox :HBox = new HBox();
             tabsBox.styleName = "tabsBox";
             tabsBox.percentWidth = 100;
-            tabsBox.height = 27;
+            tabsBox.height = 20;
             _tablesBox.addChild(tabsBox);
             var tabBar :TabBar = new TabBar();
             tabBar.percentHeight = 100;
             tabBar.styleName = "lobbyTabs";
             tabsBox.addChild(tabBar);
+            var tabFiller :HBox = new HBox();
+            tabFiller.styleName = "tabsFillerBox";
+            tabFiller.percentWidth = 100;
+            tabFiller.height = 9;
+            tabsBox.addChild(tabFiller);
 
             var tabViews :ViewStack = new ViewStack();
             tabViews.percentHeight = 100;
@@ -302,6 +308,7 @@ public class LobbyPanel extends VBox
             formingBox.addChild(list);
 
             var runningList :MsoyList = new MsoyList(_ctx);
+            runningList.styleName = "lobbyTableList";
             runningList.variableRowHeight = true;
             runningList.percentHeight = 100;
             runningList.percentWidth = 100;
@@ -317,10 +324,9 @@ public class LobbyPanel extends VBox
             tabViews.addChild(runningBox);
         } else {
             var bar :HBox = new HBox();
-            // give  it the same style as the tabs bar, just shorter
-            bar.styleName = "tabsBox"; 
+            bar.styleName = "tabsFillerBox"; 
             bar.percentWidth = 100;
-            bar.height = 5;
+            bar.height = 9;
             _tablesBox.addChild(bar);
             _tablesBox.addChild(list);
         }
