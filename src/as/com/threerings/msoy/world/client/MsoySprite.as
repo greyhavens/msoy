@@ -47,8 +47,10 @@ import com.threerings.ezgame.util.EZObjectMarshaller;
 
 import com.threerings.msoy.client.Prefs;
 
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.StaticMediaDesc;
 
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -244,6 +246,9 @@ public class MsoySprite extends MediaContainer
         throw new Error("Cannot set scale of abstract MsoySprite");
     }
 
+//    /**
+//     * Get the media descriptor.
+//     */
 //    public function getMediaDesc () :MediaDesc
 //    {
 //        return _desc;
@@ -380,6 +385,23 @@ public class MsoySprite extends MediaContainer
         _hotSpot = null;
     }
 
+    public function isBlockable () :Boolean
+    {
+        return !(_desc is StaticMediaDesc);
+    }
+
+    public function isBlocked () :Boolean
+    {
+        return Prefs.isMediaBlocked(_desc.getMediaId());
+    }
+
+    public function toggleBlocked () :void
+    {
+        var nowBlocked :Boolean = !isBlocked();
+        Prefs.setMediaBlocked(_desc.getMediaId(), nowBlocked);
+        setIsBlocked(nowBlocked);
+    }
+
     protected function setup (desc :MediaDesc, ident :ItemIdent) :void
     {
         if (Util.equals(desc, _desc)) {
@@ -389,6 +411,19 @@ public class MsoySprite extends MediaContainer
         _desc = desc;
         _ident = ident;
 
+        setIsBlocked(Prefs.isMediaBlocked(_desc.getMediaId()));
+//        scaleUpdated();
+//        configureMouseProperties();
+    }
+
+    protected function setIsBlocked (blocked :Boolean) :void
+    {
+        var desc :MediaDesc;
+        if (blocked) {
+            desc = new StaticMediaDesc(MediaDesc.IMAGE_JPEG, Item.FURNITURE, "blocked");
+        } else {
+            desc = _desc;
+        }
         setMedia(desc.getMediaPath());
         scaleUpdated();
         configureMouseProperties();

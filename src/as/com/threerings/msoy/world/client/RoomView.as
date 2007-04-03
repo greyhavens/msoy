@@ -214,9 +214,18 @@ public class RoomView extends AbstractRoomView
         }
         var ident :ItemIdent = sprite.getItemIdent();
         if (ident != null) {
+            var kind :String = Msgs.GENERAL.get(sprite.getDesc());
             menuItems.push(MenuUtil.createControllerMenuItem(
-                Msgs.GENERAL.get("b.view_item", Msgs.GENERAL.get(sprite.getDesc())),
+                Msgs.GENERAL.get("b.view_item", kind),
                 MsoyController.VIEW_ITEM, ident));
+
+            // TEMP: restrict blocking to members only, for now.
+            if (_ctx.getMemberObject().tokens.isSupport() && sprite.isBlockable()) {
+                var isBlocked :Boolean = sprite.isBlocked();
+                menuItems.push(MenuUtil.createControllerMenuItem(
+                    Msgs.GENERAL.get((isBlocked ? "b.unbleep_item" : "b.bleep_item"), kind),
+                    sprite.toggleBlocked));
+            }
         }
     }
 

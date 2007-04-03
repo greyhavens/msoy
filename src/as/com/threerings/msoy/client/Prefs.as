@@ -1,5 +1,7 @@
 package com.threerings.msoy.client {
 
+import flash.utils.Dictionary;
+
 import com.threerings.util.Config;
 
 import com.threerings.msoy.client.persist.SharedObjectSceneRepository;
@@ -18,6 +20,7 @@ public class Prefs
     public static const CHAT_FILTER :String = "chatFilter";
     public static const CHAT_HISTORY :String = "chatHistory";
     public static const LOG_TO_CHAT :String = "logToChat";
+    public static const BLOCKED_MEDIA :String = "blockedMedia";
 
     public static function getUsername () :String
     {
@@ -47,6 +50,26 @@ public class Prefs
     public static function setMachineIdent (ident :String) :void
     {
         config.setValue(MACHINE_IDENT, ident);
+    }
+
+    public static function setMediaBlocked (id :String, blocked :Boolean) :void
+    {
+        checkLoadBlockedMedia();
+        if (blocked) {
+            _blockedMedia[id] = true;
+
+        } else {
+            delete _blockedMedia[id];
+        }
+
+        // TODO: right now we don't persist this.
+        //config.setValue(BLOCKED_MEDIA, _blockedMedia, false);
+    }
+
+    public static function isMediaBlocked (id :String) :Boolean
+    {
+        checkLoadBlockedMedia();
+        return (id in _blockedMedia);
     }
 
 //    public static function getMediaPosition (id :String) :Number
@@ -138,23 +161,36 @@ public class Prefs
 //        return "mediaPos_" + id;
 //    }
 
-     /**
-      * A static initializer.
-      */
-     private static function staticInit () :void
-     {
-         var lastBuild :String = (config.getValue("lastBuild", null) as String);
-         if (lastBuild == null) {
-             // TEMP: added 2007-03-21, can be removed after a while.
-             // We need to ensure that all cached scenes are no more.
-             (new SharedObjectSceneRepository()).TEMPClearSceneCache();
-         }
+    protected static function checkLoadBlockedMedia () :void
+    {
+        if (_blockedMedia == null) {
+            _blockedMedia = config.getValue(BLOCKED_MEDIA, null) as Dictionary;
+            if (_blockedMedia == null) {
+                _blockedMedia = new Dictionary();
+            }
+        }
+    }
 
-         // update our stored last build time
-         if (lastBuild != DeploymentConfig.buildTime) {
-             config.setValue("lastBuild", DeploymentConfig.buildTime);
-         }
-     }
-     staticInit();
+    /** A set of media ids that are blocked (they keys of the dictionary). */
+    protected static var _blockedMedia :Dictionary;
+
+    /**
+    * A static initializer.
+    */
+    private static function staticInit () :void
+    {
+        var lastBuild :String = (config.getValue("lastBuild", null) as String);
+        if (lastBuild == null) {
+            // TEMP: added 2007-03-21, can be removed after a while.
+            // We need to ensure that all cached scenes are no more.
+            (new SharedObjectSceneRepository()).TEMPClearSceneCache();
+        }
+
+        // update our stored last build time
+        if (lastBuild != DeploymentConfig.buildTime) {
+            config.setValue("lastBuild", DeploymentConfig.buildTime);
+        }
+    }
+    staticInit();
 }
 }
