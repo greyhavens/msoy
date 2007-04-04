@@ -119,7 +119,7 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
 
         _wctx.getMsoyController().setEmbedded(
-            ExternalInterface.call("helloWhirled") ? false : true);
+            !Boolean(ExternalInterface.call("helloWhirled")));
     }
 
     /**
