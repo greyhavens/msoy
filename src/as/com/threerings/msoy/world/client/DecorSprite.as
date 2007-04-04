@@ -29,6 +29,11 @@ public class DecorSprite extends FurniSprite
         checkAlpha();
     }
 
+    override public function getDesc () :String
+    {
+        return "m.decor";
+    }
+
     override public function getToolTipText () :String
     {
         // no tooltip
