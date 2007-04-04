@@ -10,6 +10,8 @@ import flash.text.TextField;
 
 import flash.ui.Keyboard;
 
+import flash.utils.getTimer;
+
 import com.threerings.flash.ClearingTextField;
 
 [SWF(width="450", height="100")]
@@ -31,10 +33,10 @@ public class KeyJam extends Sprite
         _label = new ClearingTextField();
         _label.background = true;
         _label.selectable = false;
-        _label.width = 400;
+        _label.width = 450;
         _label.setText("Welcome to KeyJam", 5);
         _label.height = _label.textHeight + 4; // flash blows: really
-        _label.y = 200 - _label.height;
+        _label.y = 100 - _label.height;
         addChild(_label);
 
         _timingBar = new TimingBar(200, 20, 2000);
@@ -85,6 +87,9 @@ public class KeyJam extends Sprite
             addChild(keySprite);
         }
         _seqIndex = 0;
+
+        // grab the timestamp
+        _seqStartStamp = getTimer();
     }
 
     protected function classForKey (key :int) :Class
@@ -176,8 +181,11 @@ public class KeyJam extends Sprite
     protected function finishLevel () :void
     {
         var result :Number = _timingBar.checkNeedle();
-        trace("Result: " + result);
+        var time :Number = getTimer() - _seqStartStamp;
+        trace("Result: " + result + ", time: " + time + ", booches: " + _booches);
+        // TODO: come up with some sort of rating based on these completely uninteresting metrics
 
+        // some crappy feedback..
         var feedback :String;
         if (result == 1) {
             feedback = "PERFECT!";
@@ -219,6 +227,9 @@ public class KeyJam extends Sprite
 
     /** The position in the sequence we're waiting for. */
     protected var _seqIndex :int = 0;
+
+    /** The time at which the current sequence was started. */
+    protected var _seqStartStamp :Number;
 
     /** Which level is the user on? */
     protected var _level :int = 0;

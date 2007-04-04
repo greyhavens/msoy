@@ -11,8 +11,6 @@ public class KeySprite extends Sprite
     public static const WIDTH :int = 50;
     public static const HEIGHT :int = 50;
 
-    //public static const PAD :int = 9;
-
     public function KeySprite (key :int, clazz :Class)
     {
         _key = key;
