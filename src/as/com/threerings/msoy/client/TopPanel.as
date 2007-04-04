@@ -51,6 +51,13 @@ public class TopPanel extends Canvas
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
+        _headerBar = new HeaderBar(ctx);
+        _headerBar.includeInLayout = false;
+        _headerBar.setStyle("top", 0);
+        _headerBar.setStyle("left", 0);
+        _headerBar.setStyle("right", 0);
+        addChild(_headerBar);
+
         _placeBox = new Canvas();
         _placeBox.autoLayout = false;
         _placeBox.includeInLayout = false;
@@ -312,8 +319,10 @@ public class TopPanel extends Canvas
             _sidePanel.setStyle("bottom", getBottomPanelHeight());
             _sidePanel.setStyle("left", 0);
             _controlBar.setStyle("left", _sidePanel.width);
+            _headerBar.setStyle("left", _sidePanel.width);
         } else {
             _controlBar.setStyle("left", 0);
+            _headerBar.setStyle("left", 0);
         }
 
         updatePlaceViewSize();
@@ -323,8 +332,8 @@ public class TopPanel extends Canvas
     {
         var botHeight :int = getBottomPanelHeight();
         var w :int = stage.stageWidth - getSidePanelWidth();
-        var h :int = stage.stageHeight - ControlBar.HEIGHT - botHeight;
-        var top :int = 0;
+        var h :int = stage.stageHeight - ControlBar.HEIGHT - botHeight - HeaderBar.HEIGHT;
+        var top :int = HeaderBar.HEIGHT;
         var bottom :int = botHeight + ControlBar.HEIGHT;
 
         // actually, for place views, we want to insert decorative margins
@@ -390,6 +399,9 @@ public class TopPanel extends Canvas
 
     /** The current bottom panel component. */
     protected var _bottomComp :UIComponent;
+
+    /** Header bar at the top of the window. */
+    protected var _headerBar :HeaderBar;
 
     /** Control bar at the bottom of the window. */
     protected var _controlBar :ControlBar;

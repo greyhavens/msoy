@@ -207,7 +207,7 @@ Window {
   fillColors: #d5dcdf, #9ba8b0, #9ba8b0, #d5dcdf;
 }
 
-.controlBar { 
+.controlBar, .headerBar { 
   horizontalGap: 0;
   verticalGap: 0;
   borderStyle: "none";
@@ -310,6 +310,10 @@ Window {
 .chatControl {  
   paddingLeft: 4;
   paddingRight: 6;
+}
+
+.headerBar {
+  backgroundColor: #222222;
 }
 
 VScrollBar {
