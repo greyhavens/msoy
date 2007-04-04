@@ -623,14 +623,22 @@ public class MsoyController extends Controller
         }
     }
 
+    /** 
+     * Called by WorldClient when it finds out if we're embedded in a page or not.
+     */
+    public function setEmbedded (embedded :Boolean) :void
+    {
+        _embedded = embedded;
+    }
+
     /**
-     * Return true if we should attempt to load sections of metasoy by
+     * Return true if we should attempt to load sections of whirled by
      * visiting a new page.
      */
     protected function shouldLoadNewPages () :Boolean
     {
         var pt :String = Capabilities.playerType;
-        return (pt !== "StandAlone") && (pt !== "External")
+        return !_embedded && (pt !== "StandAlone") && (pt !== "External")
     }
 
     /**
@@ -709,5 +717,8 @@ public class MsoyController extends Controller
 
     /** The currently loaded game lobby, used for magic URL bookmarkable gamelobbies */
     protected var _gameId :int = -1;
+
+    /** whether or not we're embedded */
+    protected var _embedded :Boolean = true;
 }
 }

@@ -117,6 +117,9 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("clientLogon", externalClientLogon);
         ExternalInterface.addCallback("clientGo", externalClientGo);
         ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
+
+        _wctx.getMsoyController().setEmbedded(
+            ExternalInterface.call("helloWhirled") ? false : true);
     }
 
     /**

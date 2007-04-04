@@ -257,6 +257,9 @@ public class Application
            }
            return true;
        };
+       $wnd.helloWhirled = function () {
+            return true;
+       }
     }-*/;
 
     protected Page _page;
