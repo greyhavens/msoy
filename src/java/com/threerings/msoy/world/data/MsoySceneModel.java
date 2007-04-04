@@ -228,7 +228,6 @@ public class MsoySceneModel extends SceneModel
         decor.height = 494;
         decor.horizon = .5f;
         decor.loc = new MsoyLocation(.5, 0, 0, 0);
-        decor.actionType = FurniData.BACKGROUND;
         return decor;
     }
 
