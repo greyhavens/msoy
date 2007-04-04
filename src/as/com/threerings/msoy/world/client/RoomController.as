@@ -11,10 +11,14 @@ import flash.ui.ContextMenuItem;
 import flash.ui.Keyboard;
 import flash.utils.ByteArray;
 
+import mx.core.Application;
+import mx.core.IChildList;
 import mx.core.IToolTip;
 import mx.core.UIComponent;
 import mx.managers.ToolTipManager;
+import mx.managers.ISystemManager;
 
+import com.threerings.util.ClassUtil;
 import com.threerings.util.Integer;
 import com.threerings.util.NetUtil;
 
@@ -44,6 +48,7 @@ import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 
@@ -394,10 +399,33 @@ public class RoomController extends SceneController
     /**
      * Get the top-most sprite mouse-capturing sprite with a non-transparent
      * pixel at the specified location.
+     *
+     * @return undefined if the mouse isn't in our bounds, or null, or an MsoySprite.
      */
     public function getHitSprite (
-        stageX :Number, stageY :Number, all :Boolean = false) :MsoySprite
+        stageX :Number, stageY :Number, all :Boolean = false) :*
     {
+        var smgr :ISystemManager = Application.application.systemManager as ISystemManager;
+        var ii :int;
+        var disp :DisplayObject;
+        for (ii = smgr.numChildren - 1; ii >= 0; ii--) {
+            disp = smgr.getChildAt(ii)
+            if (disp is Application) {
+                continue;
+            }
+            if (disp.hitTestPoint(stageX, stageY)) {
+                return undefined;
+            }
+        }
+//        var popups :IChildList = smgr.popUpChildren;
+//        for (ii = popups.numChildren - 1; ii >= 0; ii--) {
+//            disp = popups.getChildAt(ii);
+//            trace("Checkingz: " + disp + " : " + ClassUtil.getClassName(disp));
+//            if (disp.hitTestPoint(stageX, stageY)) {
+//                return undefined;
+//            }
+//        }
+
         if (!_roomView.getGlobalBounds().contains(stageX, stageY)) {
             // no hits possible, mouse is out-of-bounds
             return null;
@@ -452,21 +480,25 @@ public class RoomController extends SceneController
         var sy :Number = _roomView.stage.mouseY;
         var showWalkTarget :Boolean = false;
 
-        var hitter :MsoySprite = getHitSprite(sx, sy);
-        if (hitter == null) {
-            var cloc :ClickLocation = _roomView.pointToLocation(sx, sy);
-            if (cloc.click == ClickLocation.FLOOR && _mctx.worldProps.userControlsAvatar) {
-                _walkTarget.x = _roomView.mouseX - _walkTarget.width/2;
-                _walkTarget.y = _roomView.mouseY - _walkTarget.height/2;
-                _walkTarget.scaleX = 1 / _roomView.scaleX;
-                _walkTarget.scaleY = 1 / _roomView.scaleY;
-                showWalkTarget = true;
-            }
+        // ensure we hit no pop-ups
+        var hit :* = getHitSprite(sx, sy);
+        var hitter :MsoySprite = (hit as MsoySprite);
+        if (hit !== undefined) {
+            if (hitter == null) {
+                var cloc :ClickLocation = _roomView.pointToLocation(sx, sy);
+                if (cloc.click == ClickLocation.FLOOR && _mctx.worldProps.userControlsAvatar) {
+                    _walkTarget.x = _roomView.mouseX - _walkTarget.width/2;
+                    _walkTarget.y = _roomView.mouseY - _walkTarget.height/2;
+                    _walkTarget.scaleX = 1 / _roomView.scaleX;
+                    _walkTarget.scaleY = 1 / _roomView.scaleY;
+                    showWalkTarget = true;
+                }
 
-        } else if (!hitter.hasAction()) {
-            // it may have captured the mouse, but it doesn't actually
-            // have any action, so we don't hover it.
-            hitter = null;
+            } else if (!hitter.hasAction()) {
+                // it may have captured the mouse, but it doesn't actually
+                // have any action, so we don't hover it.
+                hitter = null;
+            }
         }
 
         _walkTarget.visible = showWalkTarget;
@@ -511,8 +543,12 @@ public class RoomController extends SceneController
 
     protected function mouseClicked (event :MouseEvent) :void
     {
-        var hitter :MsoySprite = getHitSprite(event.stageX, event.stageY);
+        var hit :* = getHitSprite(event.stageX, event.stageY);
+        if (hit === undefined) {
+            return;
+        }
 
+        var hitter :MsoySprite = (hit as MsoySprite);
         if (hitter != null) {
             if (hitter.hasAction()) {
                 hitter.mouseClick(event);

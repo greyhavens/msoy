@@ -204,7 +204,11 @@ public class RoomView extends AbstractRoomView
     // from ContextMenuProvider
     public function populateContextMenu (menuItems :Array) :void
     {
-        var sprite :MsoySprite = _ctrl.getHitSprite(stage.mouseX, stage.mouseY, true);
+        var hit :* = _ctrl.getHitSprite(stage.mouseX, stage.mouseY, true);
+        if (hit === undefined) {
+            return;
+        }
+        var sprite :MsoySprite = (hit as MsoySprite);
         if (sprite == null) {
             if (_bg == null) {
                 return;
