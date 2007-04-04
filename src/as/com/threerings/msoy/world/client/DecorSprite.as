@@ -52,6 +52,12 @@ public class DecorSprite extends FurniSprite
         return false; // decor has no action
     }
 
+    // documentation inherited
+    override public function capturesMouse () :Boolean
+    {
+        return false; // decor does not capture mouse actions
+    }
+
     override public function toString () :String
     {
         var decor :DecorData = getDecorData();
