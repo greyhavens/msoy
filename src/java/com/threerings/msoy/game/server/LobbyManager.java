@@ -84,6 +84,9 @@ public class LobbyManager
 
         // make sure we don't have any shutdowner in the queue
         cancelShutdowner();
+
+        // finally, destroy the Lobby DObject
+        MsoyServer.omgr.destroyObject(_lobj.getOid());
     }
 
     /**

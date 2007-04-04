@@ -15,6 +15,8 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.ObjectAccessError;
+import com.threerings.presents.dobj.ObjectDeathListener;
+import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.util.SafeSubscriber;
 
 import com.threerings.msoy.client.WorldContext;
@@ -25,7 +27,7 @@ import com.threerings.msoy.game.data.LobbyObject;
 
 import com.threerings.util.Controller;
 
-public class LobbyController extends Controller implements Subscriber
+public class LobbyController extends Controller implements Subscriber, ObjectDeathListener
 {
     /** A command to create a new table. */
     public static const CREATE_TABLE :String = "CreateTable";
@@ -66,12 +68,23 @@ public class LobbyController extends Controller implements Subscriber
     public function objectAvailable (obj :DObject) :void 
     {
         _lobj = obj as LobbyObject;
+        _lobj.addListener(this);
         _panel.init(_lobj);
 
         _tableDir = new TableDirector(_mctx, LobbyObject.TABLES);
         _tableDir.setTableObject(obj);
         _tableDir.addTableObserver(_panel);
         _tableDir.addSeatednessObserver(_panel);
+    }
+
+    // from ObjectDeathListener
+    public function objectDestroyed (event :ObjectDestroyedEvent) :void
+    {
+        if (event.getTargetOid() == _lobj.getOid()) {
+            // the lobby was shut down (probably because it has been idle for too long)
+            // remove the panel, which will trigger a proper shutdown
+            _mctx.getTopPanel().clearSidePanel(_panel);
+        }
     }
 
     /**
