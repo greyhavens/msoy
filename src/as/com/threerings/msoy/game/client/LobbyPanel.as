@@ -293,11 +293,16 @@ public class LobbyPanel extends VBox
             tabsBox.percentWidth = 100;
             tabsBox.height = 20;
             _tablesBox.addChild(tabsBox);
+            var tabFiller :HBox = new HBox();
+            tabFiller.styleName = "tabsFillerBox";
+            tabFiller.width = 5;
+            tabFiller.height = 9;
+            tabsBox.addChild(tabFiller);
             var tabBar :TabBar = new TabBar();
             tabBar.percentHeight = 100;
             tabBar.styleName = "lobbyTabs";
             tabsBox.addChild(tabBar);
-            var tabFiller :HBox = new HBox();
+            tabFiller = new HBox();
             tabFiller.styleName = "tabsFillerBox";
             tabFiller.percentWidth = 100;
             tabFiller.height = 9;
