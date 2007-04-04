@@ -60,11 +60,24 @@ public class UnderwhirledDrift extends Sprite
      * be used for all listeners, as it remembers them locally, and unregisters them when the 
      * game sprite is unloaded. 
      */
-    public static function registerEventListener(dispatcher :IEventDispatcher, event :String, 
+    public static function registerEventListener (dispatcher :IEventDispatcher, event :String, 
         listener :Function) :void 
     {
         dispatcher.addEventListener(event, listener);
         _eventHandlers.push({dispatcher: dispatcher, event: event, func: listener});
+    }
+
+    public static function unregisterEventListener (dispatcher :IEventDispatcher, event :String,
+        listener :Function) :void
+    {
+        dispatcher.removeEventListener(event, listener);
+        for (var ii :int = 0; ii < _eventHandlers.length; ii++) {
+            if (dispatcher == _eventHandlers[ii].dispatcher && event == _eventHandlers[ii].event &&
+                listener == _eventHandlers[ii].listener) {
+                _eventHandlers.splice(ii, 1);
+                break;
+            }
+        }
     }
 
     public function UnderwhirledDrift ()
@@ -165,7 +178,7 @@ public class UnderwhirledDrift extends Sprite
                     if (_lightBoard.y > boardTravelStart - boardTravelHeight) {
                         _lightBoard.y -= 5;
                     } else {
-                        _lightBoard.removeEventListener(Event.ENTER_FRAME, boardFrameListener);
+                        unregisterEventListener(_lightBoard, Event.ENTER_FRAME, boardFrameListener);
                     } 
                 }
             }

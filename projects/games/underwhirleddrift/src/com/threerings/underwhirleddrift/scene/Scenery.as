@@ -150,7 +150,8 @@ public class Scenery extends Sprite
             bonusObj.origin = bonusObj.origin.add(Point.polar(Bonus.FIREBALL_VELOCITY, angle));
             if (Math.abs(bonusObj.origin.x) > 2000 || Math.abs(bonusObj.origin.y) > 2000) {
                 // don't let the damn thing float to infinity (and beyond!)
-                fireball.removeEventListener(Event.ENTER_FRAME, bonusObjListener);
+                UnderwhirledDrift.unregisterEventListener(fireball, Event.ENTER_FRAME, 
+                    bonusObjListener);
                 if (fireball.parent == scenery) {
                     fireball.parent.removeChild(fireball);
                 }
@@ -181,12 +182,14 @@ public class Scenery extends Sprite
         }
         if (bonus != null && bonus.sprite.parent == this) {
             removeChild(bonus.sprite);
+            var thisScenery :Scenery = this;
             var regenListener :Function; 
             regenListener = function (startTime :Number, sprite :Sprite) :Function {
                 return function (evt :Event) :void {
                     if (getTimer() - startTime > Bonus.BONUS_REGEN_DELAY) {
                         addChild(sprite);
-                        removeEventListener(Event.ENTER_FRAME, regenListener);
+                        UnderwhirledDrift.unregisterEventListener(thisScenery, Event.ENTER_FRAME, 
+                            regenListener);
                     }
                 }
             }(getTimer(), bonus.sprite);
