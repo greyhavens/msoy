@@ -382,6 +382,14 @@ body {
   height: 33px;
 }
 
+.borderedDialog .HeaderBackground .HeaderDrag {
+  width: 100%;
+  height: 33px;
+  position: absolute;
+  display: inline;
+  top: 0px;
+}
+
 .borderedDialog .HeaderBackground .HeaderLeft {
   background-image: url(/images/ui/popup/header_left.png);
   width: 75px;
@@ -429,6 +437,7 @@ body {
   position: absolute;
   right: 5px;
   top: 5px;
+  z-index: 100;
 }
 
 .borderedDialog .Controls {

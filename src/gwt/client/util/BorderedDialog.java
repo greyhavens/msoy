@@ -5,6 +5,7 @@ package client.util;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -49,7 +50,7 @@ public abstract class BorderedDialog extends BorderedPopup
         _main.setStyleName("borderedDialog");
         setWidget(_main);
 
-        Grid headerBackground = new Grid(1, 3);
+        FlexTable headerBackground = new FlexTable();
         headerBackground.setStyleName("HeaderBackground");
         headerBackground.setCellSpacing(0);
         headerBackground.setCellPadding(0);
@@ -58,6 +59,13 @@ public abstract class BorderedDialog extends BorderedPopup
         headerBackground.getCellFormatter().setHorizontalAlignment(0, 1, 
             HorizontalPanel.ALIGN_CENTER);
         headerBackground.getCellFormatter().setStyleName(0, 2, "HeaderRight");
+        ((FlexTable.FlexCellFormatter)headerBackground.getCellFormatter()).setColSpan(1, 0, 3);
+        headerBackground.getCellFormatter().setStyleName(1, 0, "HeaderDrag");
+        Label dragLabel = new Label();
+        dragLabel.setWidth("100%");
+        dragLabel.setHeight("100%");
+        dragLabel.addMouseListener(_dragListener);
+        headerBackground.setWidget(1, 0, dragLabel);
 
         Grid headerTitle = new Grid(1, 3);
         headerTitle.setStyleName("HeaderTitle");
@@ -97,7 +105,6 @@ public abstract class BorderedDialog extends BorderedPopup
         if (style != null) {
             label.setStyleName(style);
         }
-        label.addMouseListener(_dragListener);
         return label;
     }
 
