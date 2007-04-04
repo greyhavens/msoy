@@ -455,24 +455,9 @@ public class RoomView extends AbstractRoomView
         portalTraversed(getMyCurrentLocation(), true);
 
         // load the background image first
-        var legacyBg :FurniData = null;
-        var decordata :DecorData = _scene.getDecorData();
-
-        if (! decordata.isInitialized()) {
-            // this means there is no actual decor item attached - so let's see if we can find
-            // a legacy furni to load instead.
-            legacyBg = _scene.getBackgroundFurniture();
-        }
-
-        if (legacyBg != null) {
-            // decor item was not specified, but a legacy furni exists - let's load it
-            addFurni(legacyBg).setLoadedCallback(backgroundFinishedLoading);
-        } else {
-            // decor item was specified, or if it wasn't, neither was a legacy background.
-            // load the decor data we have, even if it's just default values.
-            setBackground(decordata);
-            _bg.setLoadedCallback(backgroundFinishedLoading);
-        }
+        setBackground(_scene.getDecorData());
+        // load the decor data we have, even if it's just default values.
+        _bg.setLoadedCallback(backgroundFinishedLoading);
 
         _chatOverlayWatcher = BindingUtils.bindSetter(recheckChatOverlay,
             _ctx.worldProps, "placeViewShowsChat");
@@ -495,16 +480,16 @@ public class RoomView extends AbstractRoomView
         _chatOverlayWatcher = null;
     }
 
-    // from AbstractRoomView
-    override public function updateAllFurni () :void
-    {
-        super.updateAllFurni();
-
-        var music :FurniData = _scene.getMusic();
-        if (music != null) {
-            _ctrl.setBackgroundMusic(music);
-        }
-    }
+//    // from AbstractRoomView
+//    override public function updateAllFurni () :void
+//    {
+//        super.updateAllFurni();
+//
+//        var music :FurniData = _scene.getMusic();
+//        if (music != null) {
+//            _ctrl.setBackgroundMusic(music);
+//        }
+//    }
 
     override public function locationUpdated (sprite :MsoySprite) :void
     {

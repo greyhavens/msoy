@@ -939,10 +939,14 @@ public class MsoySceneRepository extends SimpleRepository
         FurniData p2;
         FurniData furn;
 
+        DecorData decorData = model.decorData;
+        decorData.type = Decor.IMAGE_OVERLAY;
+
         if (sceneId == 1) {
             // crayon room
-            model.decorData.type = Decor.IMAGE_OVERLAY;
-            model.decorData.width = 1600;
+            decorData.width = 1600;
+            decorData.media = new MediaDesc( // crayon room
+                "b3084c929b49cce36a6708fb8f47a45c59e1d400.png");
 
             portal.loc = new MsoyLocation(0, 0, .3, 0);
             portal.actionData = "2:51";
@@ -1027,17 +1031,10 @@ public class MsoySceneRepository extends SimpleRepository
             furn.scaleY = 1.3f;
             model.addFurni(furn);
 
-            furn = new FurniData();
-            furn.id = 6;
-            furn.media = new MediaDesc( // crayon room
-                "b3084c929b49cce36a6708fb8f47a45c59e1d400.png");
-            furn.loc = new MsoyLocation(.5, 0, 0, 0);
-            furn.actionType = FurniData.BACKGROUND;
-            model.addFurni(furn);
-
         } else if (sceneId == 2) {
             // alley
-            model.decorData.type = Decor.IMAGE_OVERLAY; 
+            decorData.media = new MediaDesc( // alley
+                "13fd51be845d51b1571424cf459ce4fd78472ec2.png");
 
             portal.loc = new MsoyLocation(0, .1, .53, 180);
             portal.actionData = "1:-1";
@@ -1051,26 +1048,11 @@ public class MsoySceneRepository extends SimpleRepository
             furn.loc = new MsoyLocation(.46, 0, .15, 0);
             model.addFurni(furn);
 
-            furn = new FurniData();
-            furn.id = 1;
-            furn.media = new MediaDesc( // alley
-                "13fd51be845d51b1571424cf459ce4fd78472ec2.png");
-            furn.loc = new MsoyLocation(.5, 0, 0, 0);
-            furn.actionType = FurniData.BACKGROUND;
-            model.addFurni(furn);
-
-            furn = new FurniData();
-            furn.id = 2;
-            furn.media = new MediaDesc( // boll weevil
-                "71a3c968012324a387179f2e17ba8f1a5d2c685d.mp3");
-            furn.loc = new MsoyLocation(0, 0, 0, 0);
-            furn.actionType = FurniData.BACKGROUND;
-            model.addFurni(furn);
-
         } else if (sceneId == 3) {
             // cliff
-            model.decorData.type = Decor.IMAGE_OVERLAY; 
-            model.decorData.width = 800;
+            decorData.width = 800;
+            decorData.media = new MediaDesc( // cliff background
+                "974259e79d58c34beffe67fb781832183309fe57.swf");
 
             portal.loc = new MsoyLocation(.5, 0, .5, 0);
             portal.actionData = "6:52";
@@ -1091,18 +1073,11 @@ public class MsoySceneRepository extends SimpleRepository
             furn.loc = new MsoyLocation(.15, 0, .35, 0);
             model.addFurni(furn);
 
-            furn = new FurniData();
-            furn.id = 3;
-            furn.media = new MediaDesc( // cliff background
-                "974259e79d58c34beffe67fb781832183309fe57.swf");
-            furn.loc = new MsoyLocation(.5, 0, 0, 0);
-            furn.actionType = FurniData.BACKGROUND;
-            model.addFurni(furn);
-
         } else if (sceneId == 4) {
             // fans
-            model.decorData.type = Decor.IMAGE_OVERLAY;
-            model.decorData.width = 800;
+            decorData.width = 800;
+            decorData.media = new MediaDesc( // fancy room
+                "95101b275b607c5c02a8a411a09082ef2e9b98a7.png");
 
             portal.loc = new MsoyLocation(0, 0, .8, 0);
             portal.actionData = "1:53";
@@ -1156,36 +1131,22 @@ public class MsoySceneRepository extends SimpleRepository
             model.addFurni(furn);
             */
 
-            furn = new FurniData();
-            furn.id = 6;
-            furn.media = new MediaDesc( // fancy room
-                "95101b275b607c5c02a8a411a09082ef2e9b98a7.png");
-            furn.loc = new MsoyLocation(.5, 0, 0, 0);
-            furn.actionType = FurniData.BACKGROUND;
-            model.addFurni(furn);
-
         } else if (sceneId == 5) {
             // faucet
-            model.decorData.type = Decor.IMAGE_OVERLAY;
-            model.decorData.width = 1600;
+            decorData.width = 1600;
+            decorData.media = new MediaDesc( // faucet forest
+                "05164b5141659e18687bea9e7dbd781833cbf28c.png");
 
             portal.loc = new MsoyLocation(.3125, .71, 0, 0);
             portal.actionData = "1:54";
             portal.media = new MediaDesc( // pipe
                 "d63cfbf63645d168094119a784e2e5f780d4218d.png");
 
-            furn = new FurniData();
-            furn.id = 1;
-            furn.media = new MediaDesc( // faucet forest
-                "05164b5141659e18687bea9e7dbd781833cbf28c.png");
-            furn.loc = new MsoyLocation(.5, 0, 0, 0);
-            furn.actionType = FurniData.BACKGROUND;
-            model.addFurni(furn);
-
         } else if (sceneId == 6) {
             // comic
-            model.decorData.type = Decor.IMAGE_OVERLAY;
-            model.decorData.width = 1600;
+            decorData.width = 1600;
+            decorData.media = new MediaDesc( // comic room
+                "3b9a430a4d2fe6473b2ab71251162a2494843772.png");
 
             portal.loc = new MsoyLocation(0, 0, .5, 0);
             portal.actionData = "1:52";
@@ -1208,17 +1169,9 @@ public class MsoySceneRepository extends SimpleRepository
             furn.loc = new MsoyLocation(.5, 0, 0, 0);
             model.addFurni(furn);
 
-            furn = new FurniData();
-            furn.id = 2;
-            furn.media = new MediaDesc( // comic room
-                "3b9a430a4d2fe6473b2ab71251162a2494843772.png");
-            furn.loc = new MsoyLocation(.5, 0, 0, 0);
-            furn.actionType = FurniData.BACKGROUND;
-            model.addFurni(furn);
-
         } else if (sceneId == 7) {
             // game room background
-            model.decorData.width = 800;
+            decorData.width = 800;
 
             furn = new FurniData();
             furn.id = 1;

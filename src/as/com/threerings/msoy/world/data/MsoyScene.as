@@ -105,34 +105,6 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
-     * Legacy function: finds a furniture object whose background flag is set.
-     */
-    public function getBackgroundFurniture () :FurniData
-    {
-        for each (var furni :FurniData in getFurni()) {
-            if (furni.actionType == FurniData.BACKGROUND &&
-                furni.media.hasFlashVisual()) {
-                return furni;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Retrieve the first background furni data that specifies music.
-     */
-    public function getMusic () :FurniData
-    {
-        for each (var furni :FurniData in getFurni()) {
-            if (furni.actionType == FurniData.BACKGROUND &&
-                    furni.media.isAudio()) {
-                return furni;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Add a new piece of furniture to this scene.
      */
     public function addFurni (furn :FurniData) :void

@@ -23,15 +23,10 @@ public class DecorSprite extends FurniSprite
         return _furni as DecorData;
     }
 
-    override public function isBackground () :Boolean
-    {
-        return true;
-    }
-
     override public function update (furni :FurniData) :void
     {
         super.update(furni);
-        checkBackground();
+        checkAlpha();
     }
 
     override public function getToolTipText () :String
@@ -43,7 +38,7 @@ public class DecorSprite extends FurniSprite
     override public function setEditing (editing :Boolean) :void
     {
         super.setEditing(editing);
-        checkBackground();
+        checkAlpha();
     }
 
     // documentation inherited
@@ -64,10 +59,9 @@ public class DecorSprite extends FurniSprite
     }
 
     /**
-     * Configure any layout changes that may be different when we're
-     * 'background' or not.
+     * Configure our alpha differently depending on whether or not we're editing.
      */
-    override protected function checkBackground () :void
+    protected function checkAlpha () :void
     {
         alpha = _editing ? .65 : 1;
     }

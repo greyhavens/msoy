@@ -61,10 +61,6 @@ public class FurniPanel extends SpritePanel
             _captureMouse.selected = (furni.actionData == null);
             break;
 
-        case FurniData.BACKGROUND:
-            updateBackground(furni);
-            break;
-
         case FurniData.ACTION_PORTAL:
             updatePortal(furni);
             break;
@@ -84,9 +80,6 @@ public class FurniPanel extends SpritePanel
         for (var ii :int = 0; ii < data.length; ii++) {
             if (data[ii].data == furni.actionType) {
                 _actionType.selectedIndex = ii;
-                if (furni.actionType == FurniData.BACKGROUND) {
-                    _centering.selected = false;
-                }
                 return;
             }
         }
@@ -122,20 +115,6 @@ public class FurniPanel extends SpritePanel
         _destScene.selectedIndex = data.length;
     }
 
-    protected function updateBackground (furni :FurniData) :void
-    {
-        // TODO: I guess you can't use an audio item's furniture visualization
-        // as the background for a scene...
-
-        var isAudio :Boolean = furni.media.isAudio();
-        _volume.visible = isAudio;
-
-        if (isAudio) {
-            var v :Number = Number(furni.actionData);
-            _volume.value = isNaN(v) ? 1 : Math.min(1, Math.max(0, v));
-        }
-    }
-
     override protected function createChildren () :void
     {
         super.createChildren();
@@ -167,8 +146,6 @@ public class FurniPanel extends SpritePanel
               data: FurniData.ACTION_PORTAL },
             { label: Msgs.EDITING.get("l.action_url"),
               data: FurniData.ACTION_URL },
-            { label: Msgs.EDITING.get("l.background"),
-              data: FurniData.BACKGROUND },
             { label: Msgs.EDITING.get("l.action_lobby_game"),
               data: FurniData.ACTION_LOBBY_GAME },
             { label: Msgs.EDITING.get("l.action_world_game"),
@@ -180,7 +157,6 @@ public class FurniPanel extends SpritePanel
         _actionPanels.addChild(createMouseCaptureEditor()); // ACTION_NONE
         _actionPanels.addChild(createPortalEditor()); // ACTION_PORTAL
         _actionPanels.addChild(createURLEditor()); // ACTION_URL
-        _actionPanels.addChild(createBackgroundEditor()); // BACKGROUND
         _actionPanels.addChild(new VBox()); // ACTION_LOBBY_GAME (nothing to edit)
         _actionPanels.addChild(new VBox()); // ACTION_WORLD_GAME
         GridUtil.addRow(this, _actionPanels, [2, 1]);
@@ -207,18 +183,6 @@ public class FurniPanel extends SpritePanel
         GridUtil.addRow(grid,
             MsoyUI.createLabel(Msgs.EDITING.get("l.captureMouse")),
             _captureMouse = new CheckBox());
-        return grid;
-    }
-
-    protected function createBackgroundEditor () :UIComponent
-    {
-        var grid :Grid = new Grid();
-        GridUtil.addRow(grid,
-            MsoyUI.createLabel(Msgs.EDITING.get("l.volume")),
-            _volume = new HSlider());
-        _volume.liveDragging = true;
-        _volume.minimum = 0;
-        _volume.maximum = 1;
         return grid;
     }
 
@@ -294,9 +258,8 @@ public class FurniPanel extends SpritePanel
                 _captureMouse.selected = true;
             }
 
-            // force the sprite to recheck props, so that it re-reads
-            // whether it's a background
-            (_sprite as FurniSprite).update(furni);
+//            // force the sprite to recheck props
+//            (_sprite as FurniSprite).update(furni);
 
             spritePropsUpdated();
         }, _actionType, "text");
@@ -324,15 +287,6 @@ public class FurniPanel extends SpritePanel
             furni.actionData = url;
             spritePropsUpdated();
         }, _url, "text");
-
-        BindingUtils.bindSetter(function (val :Number) :void {
-            var furni :FurniData = (_sprite as FurniSprite).getFurniData();
-            if (furni.actionType != FurniData.BACKGROUND) {
-                return; // don't update if we shouldn't
-            }
-            furni.actionData = String(val);
-            spritePropsUpdated();
-        }, _volume, "value");
 
         BindingUtils.bindSetter(function (o :Object) :void {
             var furni :FurniData = (_sprite as FurniSprite).getFurniData();
@@ -391,8 +345,6 @@ public class FurniPanel extends SpritePanel
     protected var _perspective :CheckBox;
     protected var _captureMouse :CheckBox;
 //    protected var _destPortal :TextInput;
-
-    protected var _volume :HSlider;
 
     protected var _url :TextInput;
 }

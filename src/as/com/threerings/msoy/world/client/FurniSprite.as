@@ -45,7 +45,6 @@ public class FurniSprite extends MsoySprite
     {
         _furni = furni;
         super(furni.media, furni.getItemIdent());
-        checkBackground();
         checkPerspective();
     }
 
@@ -57,17 +56,9 @@ public class FurniSprite extends MsoySprite
         _loadedCallback = fn;
     }
 
-    override public function isIncludedInLayout () :Boolean
-    {
-        return !isBackground();
-    }
-
     override public function getDesc () :String
     {
         switch (_furni.actionType) {
-        case FurniData.BACKGROUND:
-            return "m.decor";
-
         case FurniData.ACTION_PORTAL:
             return "m.portal";
 
@@ -83,11 +74,6 @@ public class FurniSprite extends MsoySprite
     public function getFurniData () :FurniData
     {
         return _furni;
-    }
-
-    public function isBackground () :Boolean
-    {
-        return (_furni.actionType == FurniData.BACKGROUND);
     }
 
     public function isPerspectable () :Boolean
@@ -111,7 +97,6 @@ public class FurniSprite extends MsoySprite
     {
         _furni = furni;
         setup(furni.media, furni.getItemIdent());
-        checkBackground();
         checkPerspective();
         scaleUpdated();
         setLocation(furni.loc);
@@ -124,7 +109,6 @@ public class FurniSprite extends MsoySprite
 
         switch (_furni.actionType) {
         case FurniData.ACTION_NONE:
-        case FurniData.BACKGROUND:
             // no tooltip
             return null;
 
@@ -267,8 +251,6 @@ public class FurniSprite extends MsoySprite
         _furni = (_furni.clone() as FurniData);
 
         super.setEditing(editing);
-
-        checkBackground();
     }
 
     override public function getMediaScaleX () :Number
@@ -308,7 +290,6 @@ public class FurniSprite extends MsoySprite
     {
         switch (_furni.actionType) {
         case FurniData.ACTION_NONE:
-        case FurniData.BACKGROUND:
             return false;
 
         default:
@@ -365,15 +346,6 @@ public class FurniSprite extends MsoySprite
     override public function mouseClick (event :MouseEvent) :void
     {
         CommandEvent.dispatch(this, RoomController.FURNI_CLICKED, _furni);
-    }
-
-    /**
-     * Configure any layout changes that may be different when we're
-     * 'background' or not.
-     */
-    protected function checkBackground () :void
-    {
-        alpha = (_editing && isBackground()) ? .65 : 1;
     }
 
     override protected function startedLoading () :void

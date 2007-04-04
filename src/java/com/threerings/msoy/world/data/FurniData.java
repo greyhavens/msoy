@@ -17,11 +17,6 @@ import com.threerings.msoy.item.web.MediaDesc;
 public class FurniData extends SimpleStreamableObject
     implements Cloneable
 {
-    /** An actionType indicating that the furniture is 'background' and
-     * not interactive. A background image is shown over the entire
-     * scene. Background music auto-plays. */
-    public static final byte BACKGROUND = -1;
-
     /** An actionType indicating 'no action'.
      * actionData = null to capture mouse events, or "-" to pass through. */
     public static final byte ACTION_NONE = 0;
