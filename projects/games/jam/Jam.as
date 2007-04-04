@@ -12,10 +12,11 @@ public class Jam extends Sprite
     public function Jam ()
     {
         var fmt :SoundFormat = new SoundFormat();
-        var one :SineWaveGenerator = new SineWaveGenerator(fmt, 0.25);
-        var two :SineWaveGenerator = new SineWaveGenerator(fmt, 1);
+        var one :NoteGenerator = new NoteGenerator(fmt, 0.25, [60, 69, 67, 69]);
+        var two :NoteGenerator = new NoteGenerator(fmt, 0.5, [64, 65]);
         var mix :SummationFilter = new SummationFilter(fmt, one, two);
-        engine = new SoundEngine(mix);
+        var sm :SmoothingFilter = new SmoothingFilter(fmt, mix);
+        engine = new SoundEngine(sm);
         engine.addEventListener (SoundEngine.READY, engineReady, false, 0, true);
     }
     
