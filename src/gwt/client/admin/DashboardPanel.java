@@ -52,7 +52,7 @@ public class DashboardPanel extends FlexTable
                 new ReviewPopup().show();
             }
         }));
-        if (CAdmin.creds.isAdmin) {
+        if (CAdmin.creds.isSupport) {
             controls.add(new Button(CAdmin.msgs.invitePlayers(), new ClickListener() {
                 public void onClick (Widget sender) {
                     new InvitePlayersPopup().show();
