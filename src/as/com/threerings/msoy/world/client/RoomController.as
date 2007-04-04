@@ -48,6 +48,7 @@ import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.web.Audio;
 import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.world.client.editor.EditorController;
@@ -616,7 +617,7 @@ public class RoomController extends SceneController
         }
     }
 
-    public function setBackgroundMusic (music :FurniData) :void
+    public function setBackgroundMusic (music :Audio, volume :Number) :void
     {
         if (!_musicIsBackground) {
             if (_music.isPlaying()) {
@@ -632,7 +633,7 @@ public class RoomController extends SceneController
             }
         }
 
-        var path :String = music.media.getMediaPath();
+        var path :String = music.audioMedia.getMediaPath();
         // maybe shutdown old music
         // if _music is playing the right thing, let it keep on playing
         if (_music != null && _music.getURL() != path) {
@@ -652,7 +653,7 @@ public class RoomController extends SceneController
         }
         // set the volume, even if we're just re-setting it on
         // already-playing music
-        _music.setVolume(Number(music.actionData));
+        _music.setVolume(volume);
     }
 
     /**

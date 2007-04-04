@@ -480,17 +480,6 @@ public class RoomView extends AbstractRoomView
         _chatOverlayWatcher = null;
     }
 
-//    // from AbstractRoomView
-//    override public function updateAllFurni () :void
-//    {
-//        super.updateAllFurni();
-//
-//        var music :FurniData = _scene.getMusic();
-//        if (music != null) {
-//            _ctrl.setBackgroundMusic(music);
-//        }
-//    }
-
     override public function locationUpdated (sprite :MsoySprite) :void
     {
         super.locationUpdated(sprite);
