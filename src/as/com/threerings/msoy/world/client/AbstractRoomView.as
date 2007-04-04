@@ -494,18 +494,19 @@ public class AbstractRoomView extends Sprite
      */
     protected function positionAndScale (sprite :MsoySprite, loc :MsoyLocation) :void
     {
-        // the scale of the object is determined by the z coordinate
-        var scale :Number = _metrics.minScale + ((MAX_COORD - loc.z) / MAX_COORD) * _metrics.scaleRange;
-        sprite.setLocationScale(scale);
+        var info :Array = _metrics.getProjectedInfo(loc);
 
-        var p :Point = projectedLocation(scale, loc.x, loc.y);
+        var x :Number = Number(info[0]);
+        var y :Number = Number(info[1]);
+        sprite.setLocationScale(Number(info[2]));
+
         var hotSpot :Point = sprite.getLayoutHotSpot();
         if (sprite == _bg && _scene.getSceneType() == Decor.FIXED_IMAGE) {
             // adjust the background image
-            p.x += getScrollOffset();
+            x += getScrollOffset();
         }
-        sprite.x = p.x - hotSpot.x;
-        sprite.y = p.y - hotSpot.y;
+        sprite.x = x - hotSpot.x;
+        sprite.y = y - hotSpot.y;
     }
 
     /**
@@ -514,6 +515,8 @@ public class AbstractRoomView extends Sprite
      * @param x the logical x coordinate (0 - 1)
      * @param y the logical y coordinate (0 - 1)
      */
+    // TODO: deprecate, fix perspectivization, use the _metrics version
+    // of these methods
     protected function projectedLocation (scale :Number, x :Number, y :Number) :Point
     {
         // x position depends on logical x and the scale
@@ -630,7 +633,7 @@ public class AbstractRoomView extends Sprite
 
     protected function updateDrawnRoom () :void
     {
-        _backdrop.drawRoom (this, _actualWidth, _actualHeight, _editing);
+        _backdrop.drawRoom(this, _actualWidth, _actualHeight, _editing);
     }
     
     /** The msoy context. */

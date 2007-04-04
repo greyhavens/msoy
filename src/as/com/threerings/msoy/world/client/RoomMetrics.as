@@ -1,6 +1,9 @@
 package com.threerings.msoy.world.client {
 
+import flash.geom.Point;
+
 import com.threerings.msoy.world.data.DecorData;
+import com.threerings.msoy.world.data.MsoyLocation;
 
 /**
  * Much of this will change soon when I add heights.
@@ -55,6 +58,34 @@ public class RoomMetrics
         this.backWallBottom = backWallTop + backWallHeight;
 
         this.subHorizonHeight = sceneHeight - horizonY;
+    }
+
+    // TODO: Clean this up with the new formula
+    // Make nearly everything use this, or a version that returns
+    // point & scale
+    public function getProjectedPoint (x :Number, y :Number, z :Number) :Point
+    {
+        var scale :Number = minScale + (1 - z) * scaleRange;
+        var floorWidth :Number = (sceneWidth * scale);
+        var floorInset :Number = (sceneWidth - floorWidth) / 2;
+        return new Point(floorInset + (x * floorWidth),
+            horizonY + (subHorizonHeight - (y * sceneHeight)) * scale);
+    }
+
+    /**
+     * Return an array containing [ screenX, screenY, scale ].
+     */
+    // TODO: new formula
+    public function getProjectedInfo (loc :MsoyLocation) :Array
+    {
+        var scale :Number = minScale + (1 - loc.z) * scaleRange;
+        var floorWidth :Number = (sceneWidth * scale);
+        var floorInset :Number = (sceneWidth - floorWidth) / 2;
+        return [
+            floorInset + (loc.x * floorWidth),
+            horizonY + (subHorizonHeight - (loc.y * sceneHeight)) * scale,
+            scale
+        ];
     }
 
     /** The focal length of our perspective rendering. */

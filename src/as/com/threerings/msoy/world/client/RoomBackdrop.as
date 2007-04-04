@@ -6,6 +6,8 @@ package com.threerings.msoy.world.client {
 import flash.display.Graphics;
 import flash.display.Sprite;
 
+import flash.geom.Point;
+
 import com.threerings.msoy.item.web.Decor;
 import com.threerings.msoy.world.data.DecorData;
 
@@ -49,71 +51,75 @@ public class RoomBackdrop
             return; // nothing to draw
         }
 
-        var floorWidth :Number = (_metrics.sceneWidth * _metrics.minScale);
-        var floorInset :Number = (_metrics.sceneWidth - floorWidth) / 2;
+        // variable names: [l/r][l/u][f/b] - left/right, lower/upper, front/back
+        // Note: you can verify that a line connects two corners along an edge
+        // by checking that the two endpoints differ in only one letter.
+        var llf :Point = _metrics.getProjectedPoint(0, 0, 0);
+        var llb :Point = _metrics.getProjectedPoint(0, 0, 1);
+        var luf :Point = _metrics.getProjectedPoint(0, 1, 0);
+        var lub :Point = _metrics.getProjectedPoint(0, 1, 1);
 
-        // rename a few things for ease of use below...
-        var x1 :Number = floorInset;
-        var x2 :Number = _metrics.sceneWidth - floorInset;
-        var y1 :Number = _metrics.backWallTop;
-        var y2 :Number = _metrics.backWallBottom;
+        var rlf :Point = _metrics.getProjectedPoint(1, 0, 0);
+        var rlb :Point = _metrics.getProjectedPoint(1, 0, 1);
+        var ruf :Point = _metrics.getProjectedPoint(1, 1, 0);
+        var rub :Point = _metrics.getProjectedPoint(1, 1, 1);
 
         if (drawWalls) {
             // fill in the floor
             g.beginFill(0x333333);
-            g.moveTo(0, _metrics.sceneHeight);
-            g.lineTo(x1, y2);
-            g.lineTo(x2, y2);
-            g.lineTo(_metrics.sceneWidth, _metrics.sceneHeight);
-            g.lineTo(0, _metrics.sceneHeight);
+            g.moveTo(llf.x, llf.y);
+            g.lineTo(llb.x, llb.y);
+            g.lineTo(rlb.x, rlb.y);
+            g.lineTo(rlf.x, rlf.y);
+            g.lineTo(llf.x, llf.y);
             g.endFill();
 
             // fill in the three walls
             g.beginFill(0x666666);
-            g.moveTo(0, 0);
-            g.lineTo(x1, y1);
-            g.lineTo(x2, y1);
-            g.lineTo(_metrics.sceneWidth, 0);
-            g.lineTo(_metrics.sceneWidth, _metrics.sceneHeight);
-            g.lineTo(x2, y2);
-            g.lineTo(x1, y2);
-            g.lineTo(0, _metrics.sceneHeight);
-            g.lineTo(0, 0);
+            g.moveTo(luf.x, luf.y);
+            g.lineTo(lub.x, lub.y);
+            g.lineTo(rub.x, rub.y);
+            g.lineTo(ruf.x, ruf.y);
+            g.lineTo(rlf.x, rlf.y);
+            g.lineTo(rlb.x, rlb.y);
+            g.lineTo(llb.x, llb.y);
+            g.lineTo(llf.x, llf.y);
+            g.lineTo(luf.x, luf.y);
             g.endFill();
 
             // fill in the ceiling
             g.beginFill(0x999999);
-            g.moveTo(0, 0);
-            g.lineTo(x1, y1);
-            g.lineTo(x2, y1);
-            g.lineTo(_metrics.sceneWidth, 0);
-            g.lineTo(0, 0);
+            g.moveTo(luf.x, luf.y);
+            g.lineTo(lub.x, lub.y);
+            g.lineTo(rub.x, rub.y);
+            g.lineTo(ruf.x, ruf.y);
+            g.lineTo(luf.x, luf.y);
             g.endFill();
 
         } else {
             g.beginFill(0xFFFFFF);
-            g.drawRect(0, 0, _metrics.sceneWidth, _metrics.sceneHeight);
+            g.drawRect(luf.x, luf.y, rlf.x - luf.x, rlf.y - luf.y);
             g.endFill();
         }
 
         // draw the lines defining the walls
         if (drawEdges) {
             g.lineStyle(2);
-            g.moveTo(0, 0);
-            g.lineTo(x1, y1);
-            g.lineTo(x2, y1);
+            g.moveTo(luf.x, luf.y);
+            g.lineTo(lub.x, lub.y);
+            g.lineTo(rub.x, rub.y);
 
-            g.moveTo(_metrics.sceneWidth, 0);
-            g.lineTo(x2, y1);
-            g.lineTo(x2, y2);
+            g.moveTo(ruf.x, ruf.y);
+            g.lineTo(rub.x, rub.y);
+            g.lineTo(rlb.x, rlb.y);
 
-            g.moveTo(_metrics.sceneWidth, _metrics.sceneHeight);
-            g.lineTo(x2, y2);
-            g.lineTo(x1, y2);
+            g.moveTo(rlf.x, rlf.y);
+            g.lineTo(rlb.x, rlb.y);
+            g.lineTo(llb.x, llb.y);
 
-            g.moveTo(0, _metrics.sceneHeight);
-            g.lineTo(x1, y2);
-            g.lineTo(x1, y1);
+            g.moveTo(llf.x, llf.y);
+            g.lineTo(llb.x, llb.y);
+            g.lineTo(lub.x, lub.y);
 
             g.lineStyle(0, 0, 0); // stop drawing lines
         }
