@@ -1,0 +1,23 @@
+
+
+
+<!-- build configuration -->
+<project name="Fps" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name"         value="Fps"/>
+  <property name="root.path"        value="../../../.."/>
+  <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
+
+  <!-- builds our Flash avatar -->
+  <target name="compile">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=."/>
+      <arg value="-file-specs"/>
+      <arg value="${app.name}.as"/>
+    </java>
+  </target>
+
+</project>
