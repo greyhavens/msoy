@@ -117,6 +117,7 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("clientLogon", externalClientLogon);
         ExternalInterface.addCallback("clientGo", externalClientGo);
         ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
+        ExternalInterface.addCallback("setMinimized", externalSetMinimized);
 
         _wctx.getMsoyController().setEmbedded(
             !Boolean(ExternalInterface.call("helloWhirled")));
@@ -211,6 +212,15 @@ public class WorldClient extends BaseClient
         } else {
             logoff(false);
         }
+    }
+
+    /**
+     * Exposed to javascript so that it may let us know when we've been pushed out of the way.
+     */
+    protected function externalSetMinimized (mini :Boolean) :void   
+    {
+        log.info("Client was notified that its minimized status has changed: " + mini);
+        _wctx.getMsoyController().setMinimized(mini);
     }
 
     protected var _wctx :WorldContext;

@@ -42,8 +42,8 @@ public class WorldClient extends Widget
             RootPanel.get("client").add(_client = FlashClients.createWorldClient(flashArgs));
 
         } else {
-            // TODO: tell the client that it's not minimized
             clientGo(flashArgs);
+            clientMinimized(false);
         }
 
         // note our current page and history token
@@ -57,11 +57,11 @@ public class WorldClient extends Widget
         Page.displayingFlash = false;
 
         if (_client != null) {
+            clientMinimized(true);
             RootPanel.get("content").setWidth("724px");
             if (!_controls.isAttached()) {
                 RootPanel.get("client").add(_controls);
             }
-            // TODO: tell the client it's in minimized land
         } else {
             RootPanel.get("content").setWidth("100%");
         }
@@ -118,6 +118,16 @@ public class WorldClient extends Widget
         var client = $doc.getElementById("asclient");
         if (client) {
             client.onUnload();
+        }
+    }-*/;
+
+    /** 
+     * notifies the flash client that we're either minimized or not.
+     */
+    protected static native void clientMinimized (boolean mini) /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            client.setMinimized(mini);
         }
     }-*/;
 

@@ -615,10 +615,12 @@ public class MsoyController extends Controller
     {
         if (gameId == _gameId) {
             _gameId = -1;
-            // perform our bookmarkable URL magic
-            var scene :Scene = _ctx.getSceneDirector().getScene();
-            if (scene != null) {
-                wentToScene(scene.getId());
+            // perform our bookmarkable URL magic, if we're not minimized
+            if (!_minimized) {
+                var scene :Scene = _ctx.getSceneDirector().getScene();
+                if (scene != null) {
+                    wentToScene(scene.getId());
+                }
             }
         }
     }
@@ -629,6 +631,27 @@ public class MsoyController extends Controller
     public function setEmbedded (embedded :Boolean) :void
     {
         _embedded = embedded;
+    }
+
+    /**
+     * Lets us know that the Whirled client has either been minimized, or un-minimized
+     */
+    public function setMinimized (mini :Boolean) :void
+    {
+        _minimized = mini;
+        if (mini) {
+            _topPanel.clearSidePanel(null);
+        }
+    }
+
+    /**
+     * Find out if we're currently working in mini-land or not.  Other components should be able 
+     * to check this value after they detect that the flash player's size has changed, to discover
+     * our status in this regard.
+     */
+    public function getMinimized () :Boolean
+    {
+        return _minimized;
     }
 
     /**
@@ -720,5 +743,8 @@ public class MsoyController extends Controller
 
     /** whether or not we're embedded */
     protected var _embedded :Boolean = true;
+
+    /** Whether we're miniaturized or not */
+    protected var _minimized :Boolean = false;
 }
 }

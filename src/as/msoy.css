@@ -418,7 +418,7 @@ ListBase
 }
 
 .lobbyLink {
-  fontSize: 15;
+  fontSize: 14px;
   verticalAlign: middle;
   color: white;
   textDecoration: underline;
@@ -448,7 +448,7 @@ ListBase
 }
 
 .lobbyGameName {
-  fontSize: 15;
+  fontSize: 14px;
   fontWeight: bold;
   color: white;
   textAlign: center;
