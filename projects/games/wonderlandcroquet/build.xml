@@ -4,7 +4,7 @@
   <!-- define some basic project parameters -->
   <property name="app.name"         value="WonderlandCroquet"/>
   <property name="root.path"        value="../../.."/>
-  <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
+  <property name="flex.path"        value="${root.path}/tools/extern/flex_sdk"/>
   <property name="installed.name"   value="c5d79063e0153e50ca494ae7d8f072a74be6a37e"/>
 
   <!-- builds our Flash game -->

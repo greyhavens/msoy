@@ -1,13 +1,10 @@
-
-
-
 <!-- build configuration -->
 <project name="ImageFlipper" default="all" basedir=".">
 
   <!-- define some basic project parameters -->
   <property name="app.name"         value="ImageFlipper"/>
   <property name="root.path"        value="../../../.."/>
-  <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
+  <property name="flex.path"        value="${root.path}/tools/extern/flex_sdk"/>
 
   <target name="useAssets1">
     <copy file="RemixAssets1.as" tofile="RemixAssets.as" overwrite="true"/>

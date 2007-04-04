@@ -1,13 +1,10 @@
-
-
-
 <!-- build configuration -->
 <project name="photobox" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
   <property name="app.name"         value="PhotoBox"/>
   <property name="root.path"        value="../../../.."/>
-  <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
+  <property name="flex.path"        value="${root.path}/tools/extern/flex_sdk"/>
 
   <!-- builds our Flash game -->
   <target name="compile">
