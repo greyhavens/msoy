@@ -42,32 +42,23 @@ public class Match3 extends Sprite
         }
         addChild(bkg);
 
-        // the _board sprite contains pieces, the cursor as added afterwards
+        // the _board sprite contains pieces, so that all pieces are under the cursor
         addChild(_board);
-
-        // set up the board: create off-screen black blocks that will act
-        // as "stoppers" for falling blocks.
-        for (var yy :int = 0; yy < ROWS; yy++) {
-            var xx :int = (yy % 2 == 0) ? -1 : COLS;
-            var block :Block = new Block(0x000000, xx, yy, _blocks);
-            _board.addChild(block);
-        }
-
-//        for (var xx :int = 0; xx < COLS; xx++) {
-//            for (var yy :int = 0; yy < ROWS; yy++) {
-//                var pick :int = Math.floor(Math.random() * COLORS.length);
-//                var block :Block = new Block(uint(COLORS[pick]));
-//                block.x = xx * BLOCK_WIDTH;
-//                block.y = yy * BLOCK_HEIGHT;
-//                addChild(block);
-//            }
-//        }
 
         // create the cursor
         _cursor = new Cursor();
         _cursor.x = 0;
         _cursor.y = 0;
         addChild(_cursor);
+
+        // set up the board: create off-screen black blocks that will act
+        // as "stoppers" for falling blocks.
+        for (var yy :int = 0; yy < ROWS; yy++) {
+            var xx :int = (yy % 2 == 0) ? -1 : COLS;
+            var block :Block = new Block(0x000000, xx, yy, _blocks);
+            // Note: no need to add it to the display, it's just needed
+            // logically.
+        }
 
         // configure a mask so that blocks coming in from the edges don't
         // paint-out
@@ -82,13 +73,12 @@ public class Match3 extends Sprite
 
         addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
         addEventListener(MouseEvent.CLICK, handleMouseClick);
-
         addEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
 
     protected function handleEnterFrame (event :Event) :void
     {
-        //trace("-----------");
+        trace("-----------");
         var stamp :Number = getTimer();
         var yy :int;
         var xx :int;
@@ -106,19 +96,6 @@ public class Match3 extends Sprite
                 //trace("Adding block at " + (xx - dir) + ", " + yy);
                 block = new Block(pickBlockColor(), xx - dir, yy, _blocks);
                 _board.addChild(block);
-//
-//                other = _blocks.get(xx + dir, yy);
-//                if (other != null) {
-//                    var otherlimit :Number = other.lx * BLOCK_WIDTH;
-//                    if ((dir == 1) ? (otherlimit > other.x) : (otherlimit < other.x)) {
-//                        continue;
-//                    }
-//                }
-//                if (other == null) {
-//                    trace("Adding block at " + xx + ", " + yy);
-//                    block = new Block(pickBlockColor(), xx, yy, _blocks);
-//                    _board.addChild(block);
-//                }
             }
         }
 
@@ -128,22 +105,41 @@ public class Match3 extends Sprite
             // figure out the direction of falling on this row
             dir = (yy % 2 == 0) ? -1 : 1;
 
+            // preload the first 'other' block
+            block = _blocks.get((dir == 1) ? COLS : -1, yy);
             for (xx = (dir == 1) ? COLS - 1: 0; (dir == 1) ? (xx >= -1) : (xx <= COLS); xx -= dir) {
-                // TODO
-                // this is somewhat ineffecient- the previous 'other' is the block.
+
+                // the previous block becomes 'other'
+                other = block;
                 block = _blocks.get(xx, yy);
-                if (block != null && block.isStopped()) {
-                    other = _blocks.get(xx + dir, yy);
-                    if (other == null || other.isFalling()) {
-                        block.setFalling(dir, stamp);
-                    }
+                if (block != null && block.isStopped() &&
+                        ((other == null) || other.isFalling())) {
+                    block.setFalling(dir, stamp);
                 }
             }
         }
 
+        var allBlocks :Array = _blocks.getAll();
         // ok, then update each block
-        for each (block in _blocks.getAll()) {
-            block.update(stamp);
+        for each (block in allBlocks) {
+            if (block.isSwapping()) {
+                block.update(stamp);
+            }
+        }
+
+        for each (block in allBlocks) {
+            if (block.isFalling()) {
+                block.update(stamp);
+            }
+        }
+
+        // TEMP: look for lost blocks
+        allBlocks = _blocks.getAll();
+        for (var ii :int = _board.numChildren - 1; ii >= 0; ii--) {
+            block = (_board.getChildAt(ii) as Block);
+            if (allBlocks.indexOf(block) == -1) {
+                trace("Oh lordy! We have an orphan: " + block);
+            }
         }
     }
 
@@ -162,7 +158,30 @@ public class Match3 extends Sprite
 
     protected function handleMouseClick (event :MouseEvent) :void
     {
-        // first, ensure that the 
+        var lx :int = _cursor.x / BLOCK_WIDTH;
+        var ly :int = _cursor.y / BLOCK_HEIGHT;
+
+        var b1 :Block = _blocks.get(lx, ly);
+        var b2 :Block = _blocks.get(lx, ly + 1);
+        if (b1 == null && b2 == null) {
+            // nothing to do, move along
+            return;
+        }
+
+        var stamp :Number = getTimer();
+        for (var yy :int = 0; yy <= 1; yy++) {
+            var block :Block = (yy == 0) ? b1 : b2;
+            if (block == null) {
+                // add a placeholder swap block
+                block = new Block(Block.SWAPPER, lx, ly + yy, _blocks);
+
+            } else if (!block.isSwapping()) {
+                block.setSwapping((yy == 0) ? 1 : -1, stamp);
+                trace("Started swap: " + block);
+            }
+        }
+
+        event.updateAfterEvent();
     }
 
     protected function pickBlockColor () :uint
@@ -244,11 +263,7 @@ class BlockMap
 
     public function move (oldx :int, oldy :int, block :Block) :void
     {
-        // here we are extremely forgiving- the block may not be in the old loc
-        var oldKey :String = keyFor(oldx, oldy);
-        if (block === _map.get(oldKey)) {
-            _map.remove(oldKey);
-        }
+        removeTolerant(oldx, oldy, block);
         // and we are allowed to overwrite another block..
         _map.put(keyFor(block.lx, block.ly), block);
     }
@@ -260,14 +275,25 @@ class BlockMap
         }
     }
 
+    public function removeTolerant (oldx :int, oldy :int, block :Block) :void
+    {
+        // here we are extremely forgiving- the block may not be in the old loc
+        var oldKey :int = keyFor(oldx, oldy);
+        if (block === _map.get(oldKey)) {
+            _map.remove(oldKey);
+        }
+    }
+
     public function getAll () :Array
     {
         return _map.values();
     }
 
-    protected function keyFor (lx :int, ly :int) :String
+    protected function keyFor (lx :int, ly :int) :int
     {
-        return String(lx) + ":" + ly;
+        // we multiply by 1000 to spread things out, since our
+        // x coordinates can vary from -1 to ROWS + 1.
+        return ly * 1000 + lx;
     }
 
     protected var _map :HashMap = new HashMap();
@@ -283,6 +309,8 @@ class Block extends Sprite
 
     /** The block's logical Y. */
     public var ly :int;
+
+    public static const SWAPPER :uint = 0xdeadbe;
 
     /**
      * Create a block of the specified color.
@@ -300,13 +328,15 @@ class Block extends Sprite
         // try adding ourselves to the map
         map.add(this);
 
-        with (graphics) {
-            beginFill(color);
-            drawRect(0, 0, Match3.BLOCK_WIDTH, Match3.BLOCK_HEIGHT);
-            endFill();
+        if (color != SWAPPER) {
+            with (graphics) {
+                beginFill(color);
+                drawRect(0, 0, Match3.BLOCK_WIDTH, Match3.BLOCK_HEIGHT);
+                endFill();
 
-            lineStyle(1, 0);
-            drawRect(0, 0, Match3.BLOCK_WIDTH, Match3.BLOCK_HEIGHT);
+                lineStyle(1, 0);
+                drawRect(0, 0, Match3.BLOCK_WIDTH, Match3.BLOCK_HEIGHT);
+            }
         }
     }
 
@@ -334,6 +364,9 @@ class Block extends Sprite
 
     public function setSwapping (direction :Number, stamp :Number) :void
     {
+        // bump X to its precise value
+        x = lx * Match3.BLOCK_WIDTH;
+
         startMove(SWAP, direction, stamp);
     }
 
@@ -351,7 +384,7 @@ class Block extends Sprite
 
             // check to see if there's a hard limit to where we'll fall
             var other :Block = _map.get(lx + _dir, ly);
-            if (other != null && !other.isFalling()) {
+            if (other != null) {// && !other.isFalling()) {
                 var xlimit :Number = lx * Match3.BLOCK_WIDTH;
                 var doStop :Boolean = (_dir == 1) ? (newX >= xlimit) : (newX <= xlimit);
                 if (doStop) {
@@ -382,6 +415,29 @@ class Block extends Sprite
                 var oldlx :int = lx;
                 lx = newlx;
                 _map.move(oldlx, ly, this);
+            }
+
+        } else if (_movement == SWAP) {
+            var newY :Number = _orig + (_dir * SWAP_VELOCITY * elapsed);
+            trace("Swap newY: " + newY);
+            var ylimit :Number = _orig + (_dir * Match3.BLOCK_HEIGHT);
+            if ((_dir == 1) ? (newY >= ylimit) : (newY <= ylimit)) {
+                newY = ylimit;
+                _movement = NONE; // maybe falling next tick...
+            }
+
+            y = newY;
+
+            var newly :int = (newY + Match3.BLOCK_HEIGHT/2 + (_dir * .001)) / Match3.BLOCK_HEIGHT;
+            if (newly != ly) {
+                var oldly :int = ly;
+                ly = newly;
+                if (color == SWAPPER) {
+                    _map.removeTolerant(lx, oldly, this);
+                    // the swapper just goes away
+                } else {
+                    _map.move(lx, oldly, this);
+                }
             }
         }
     }
@@ -418,5 +474,7 @@ class Block extends Sprite
     /** The stamp at which we started moving. */
     protected var _moveStamp :Number;
 
-    protected static const GRAVITY :Number = .00098;
+    protected static const GRAVITY :Number = .0000098;
+
+    protected static const SWAP_VELOCITY :Number = Match3.BLOCK_HEIGHT / 200;
 }
