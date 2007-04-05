@@ -126,7 +126,7 @@ public class KartChooser
 
     public function chooseColor (color :int) :void
     {
-        var hues :Array = [[ 0, -70, 109 ], [ 0, 114, -119 ], [ 0, 25, -109 ]];
+        var hues :Array = [[ 0, 114, -119 ], [ 0, -70, 109 ], [ 0, 25, -109 ]];
         var kart :KartSprite;
         if (_activeScreen.getChildAt(0) is SCREEN_0) {
             kart = new KartSprite(KartSprite.KART_LIGHT, null, 160);
