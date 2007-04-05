@@ -15,6 +15,7 @@ import com.threerings.underwhirleddrift.Camera;
 import com.threerings.underwhirleddrift.UnderwhirledDrift;
 import com.threerings.underwhirleddrift.UnderwhirledDriftController;
 import com.threerings.underwhirleddrift.scene.Ground;
+import com.threerings.underwhirleddrift.util.HueFilter;
 
 public class KartChooser 
 {
@@ -73,21 +74,27 @@ public class KartChooser
         okButton.y = 160;
         _chooserSprite.addChild(okButton);
 
-        _color0 = new Sprite;
-        _color0.addChild(new Sprite());
-        _color0.x = 313;
-        _color0.y = -73;
-        _chooserSprite.addChild(_color0);
-        _color1 = new Sprite;
-        _color1.addChild(new Sprite());
-        _color1.x = 313;
-        _color1.y = -44;
-        _chooserSprite.addChild(_color1);
-        _color2 = new Sprite;
-        _color2.addChild(new Sprite());
-        _color2.x = 313;
-        _color2.y = -15;
-        _chooserSprite.addChild(_color2);
+        var colorYs :Array = [ -73, -44, -15 ];
+        for (var ii :int = 0; ii < 3; ii++) {
+            this["_color" + ii] = new Sprite();
+            this["_color" + ii].addChild(new Sprite());
+            this["_color" + ii].x = 313;
+            this["_color" + ii].y = colorYs[ii];
+            UnderwhirledDrift.registerEventListener(this["_color" + ii], MouseEvent.CLICK,
+                function (color :int) :Function {
+                    return function (evt :MouseEvent) :void {
+                        chooseColor(color);
+                    }
+                }(ii));
+            this["_color" + ii].buttonMode = true;
+            _chooserSprite.addChild(this["_color" + ii]);
+        }
+
+        _activeKart = new Sprite();
+        _activeKart.addChild(new Sprite());
+        _activeKart.x = 128;
+        _activeKart.y = 46;
+        _chooserSprite.addChild(_activeKart);
 
         // defaults to devilite
         showKartInfo(1);
@@ -105,10 +112,34 @@ public class KartChooser
                 this["_color" + ii].addChild(new KartChooser["KART_" + kartNumber + "_COLOR_" + 
                     ii]());
             }
+            _activeKart.removeChildAt(0);
+            switch(kartNumber) {
+            case 0: _activeKart.addChild(new KartSprite(KartSprite.KART_LIGHT, null, 160)); break;
+            case 1: _activeKart.addChild(new KartSprite(KartSprite.KART_MEDIUM, null, 160)); break;
+            case 2: _activeKart.addChild(new KartSprite(KartSprite.KART_HEAVY, null, 160)); break;
+            }
         } catch (re :ReferenceError) {
             Log.getLog(this).warning("Failed to show kart info for kart " + kartNumber + ": " +
                 re);
         }
+    }
+
+    public function chooseColor (color :int) :void
+    {
+        var hues :Array = [[ 0, -70, 109 ], [ 0, 114, -119 ], [ 0, 25, -109 ]];
+        var kart :KartSprite;
+        if (_activeScreen.getChildAt(0) is SCREEN_0) {
+            kart = new KartSprite(KartSprite.KART_LIGHT, null, 160);
+            kart.filters = [ HueFilter.getFilter(hues[0][color]) ];
+        } else if (_activeScreen.getChildAt(0) is SCREEN_1) {
+            kart = new KartSprite(KartSprite.KART_MEDIUM, null, 160);
+            kart.filters = [ HueFilter.getFilter(hues[1][color]) ];
+        } else if (_activeScreen.getChildAt(0) is SCREEN_2) {
+            kart = new KartSprite(KartSprite.KART_HEAVY, null, 160);
+            kart.filters = [ HueFilter.getFilter(hues[2][color]) ];
+        }
+        _activeKart.removeChildAt(0);
+        _activeKart.addChild(kart);
     }
 
     public function oldChooseKart () :Sprite
@@ -298,5 +329,6 @@ public class KartChooser
     protected var _color0 :Sprite;
     protected var _color1 :Sprite;
     protected var _color2 :Sprite;
+    protected var _activeKart :Sprite;
 }
 }
