@@ -392,20 +392,20 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String viewEdit();
 
   /**
-   * Translated "Est. ".
-   * 
-   * @return translated "Est. "
-   * @gwt.key viewEstablishedAbbreviated
-   */
-  String viewEstablishedAbbreviated();
-
-  /**
    * Translated "Are you sure you wish to promote {0}?".
    * 
    * @return translated "Are you sure you wish to promote {0}?"
    * @gwt.key viewPromotePrompt
    */
   String viewPromotePrompt(String arg0);
+
+  /**
+   * Translated "Est. ".
+   * 
+   * @return translated "Est. "
+   * @gwt.key viewEstablishedAbbreviated
+   */
+  String viewEstablishedAbbreviated();
 
   /**
    * Translated "Tags:".
@@ -422,6 +422,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key policyExclusive
    */
   String policyExclusive();
+
+  /**
+   * Translated "Groups".
+   * 
+   * @return translated "Groups"
+   * @gwt.key groupTitle
+   */
+  String groupTitle();
 
   /**
    * Translated "Create New Group".

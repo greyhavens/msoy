@@ -10,6 +10,8 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -108,6 +110,7 @@ public abstract class Page
         // clear out any content height overrides
         setContentStretchHeight(false);
         // now set our content
+        RootPanel.get("content").add(createPageHeader());
         RootPanel.get("content").add(content);
     }
 
@@ -116,6 +119,24 @@ public abstract class Page
         String height = stretch ? "99%" : ""; // fucking browsers
         RootPanel.get("ctable").setHeight(height);
         RootPanel.get("content").setHeight(height);
+    }
+
+    protected Widget createPageHeader () 
+    {
+        _pageHeader = new FlexTable();
+        _pageHeader.setCellPadding(0);
+        _pageHeader.setCellSpacing(0);
+        _pageHeader.setWidth("100%");
+        _pageHeader.getCellFormatter().setStyleName(0, 0, "pageHeaderTitle");
+        _pageHeader.getCellFormatter().setStyleName(0, 1, "pageHeaderContent");
+        _pageHeader.getCellFormatter().setStyleName(0, 2, "pageHeaderClose");
+        return _pageHeader;
+    }
+
+    protected void setPageTitle (String title)
+    {
+        // TODO we should probably change the HTML <title> here as well
+        _pageHeader.setWidget(0, 0, new Label(title));
     }
 
     /**
@@ -137,4 +158,6 @@ public abstract class Page
         WorldClient.didLogoff();
         onHistoryChanged(getPageArgs());
     }
+
+    protected FlexTable _pageHeader;
 }

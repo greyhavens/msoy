@@ -586,3 +586,24 @@ body {
     height: 25px;
     color: #EAEFF1;
 }
+
+.pageHeaderTitle {
+  background: #222222;
+  font-size: 14px;
+  font-weight: bold;
+  width: 124px;
+  height: 20px;
+  color: white;
+  text-align: center;
+}
+
+.pageHeaderContent {
+  background: #222222;
+  height: 20px;
+  width: 100%;
+}
+
+.pageHeaderClose {
+  background: #222222;
+  height: 20px;  
+}

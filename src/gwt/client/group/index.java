@@ -40,6 +40,8 @@ public class index extends MsgsEntryPoint
         } else {
             setContent(new GroupView(Integer.parseInt(token)));
         }
+
+        setPageTitle(CGroup.msgs.groupTitle());
     }
 
     // @Override // from Page
