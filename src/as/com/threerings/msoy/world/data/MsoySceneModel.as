@@ -38,6 +38,9 @@ public class MsoySceneModel extends SceneModel
 
     /** Decor data representation. */
     public var decorData :DecorData;
+
+    /** Audio data representation. */
+    public var audioData :AudioData;
     
     /**
      * Add a piece of furniture to this model.
@@ -179,7 +182,7 @@ public class MsoySceneModel extends SceneModel
         model.furnis = (furnis.clone() as TypedArray);
         model.entrance = (entrance.clone() as MsoyLocation);
         model.decorData = (decorData == null) ? null : (decorData.clone() as DecorData);
-
+        model.audioData = (audioData == null) ? null : (audioData.clone() as AudioData);
         return model;
     }
 
@@ -193,6 +196,7 @@ public class MsoySceneModel extends SceneModel
         out.writeObject(furnis);
         out.writeObject(entrance);
         out.writeObject(decorData);
+        out.writeObject(audioData);
     }
 
     // documentation inherited
@@ -205,13 +209,14 @@ public class MsoySceneModel extends SceneModel
         furnis = (ins.readObject() as TypedArray);
         entrance = (ins.readObject() as MsoyLocation);
         decorData = (ins.readObject() as DecorData);
+        audioData = (ins.readObject() as AudioData);
     }
 
     override public function toString () :String
     {
         return "MsoySceneModel[\"" + name + "\" (" + sceneId + ")" +
             ", version=" + version + ", sceneType=" + decorData.type +
-            ", decor=" + decorData.itemId + "]";
+            ", decor=" + decorData.itemId + ", audio=" + audioData.itemId + "]";
     }
 
     /** Cached portal info. Not streamed. */

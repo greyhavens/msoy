@@ -270,9 +270,12 @@ public class ItemManager
     }
 
     /**
-     * Update usage of the specified items.
+     * Helper function: updates usage of avatar items.
+     * @see #updateItemUsage(
+     *   final byte itemType, final byte itemUseType, final int memberId, final int locationId,
+     *   final int oldItemId, final int newItemId, ResultListener<Object> listener)
      *
-     * This method assumes that the specified avatars are both valid and owned by the user in
+     * This method assumes that the specified items are both valid and owned by the user in
      * question. The supplied listener will be notified of success with null.
      */
     public void updateItemUsage (
@@ -286,22 +289,13 @@ public class ItemManager
     }
         
     /**
-     * Update usage of specific decor items. Old decor will be marked as unused,
-     * and new decor will be marked as used as decor.
-     */
-    public void updateItemUsage (
-        final int memberId, final int sceneId,
-        final int oldDecorId, final int newDecorId, ResultListener<Object> listener)
-    {
-        updateItemUsage (Item.DECOR, Item.USED_AS_DECOR, memberId, sceneId,
-                         oldDecorId, newDecorId, listener);
-    }
-
-    /**
      * Update usage of any items. Old item will be marked as unused, and new item will be
      * marked with the itemUseType id.
+     *
+     * This method assumes that the specified items are both valid and owned by the user in
+     * question. The supplied listener will be notified of success with null.
      */
-    protected void updateItemUsage (
+    public void updateItemUsage (
         final byte itemType, final byte itemUseType, final int memberId, final int locationId,
         final int oldItemId, final int newItemId, ResultListener<Object> listener)
     {

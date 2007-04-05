@@ -48,6 +48,7 @@ import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.world.client.RoomService;
+import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
@@ -227,22 +228,31 @@ public class RoomManager extends SpotSceneManager
             // TODO: complicated verification of changes, including verifying that the user owns
             // the items they're adding (and that they don't add any props)
 
-            // if decor was modified, we should mark new decor as used, and clear the old one
             if (update instanceof SceneAttrsUpdate) {
                 SceneAttrsUpdate up = (SceneAttrsUpdate) update;
-                DecorData sceneDecorData = ((MsoyScene) _scene).getDecorData();
-                if (sceneDecorData != null &&
-                    sceneDecorData.itemId != up.decorData.itemId) // modified?
-                {
+                MsoyScene msoyScene = (MsoyScene) _scene;
+                ResultListener<Object> defaultListener =
+                    new ResultListener<Object>() {
+                    public void requestCompleted (Object result) {}
+                    public void requestFailed (Exception cause) {
+                        log.warning("Unable to update decor usage [e=" + cause + "].");
+                    }
+                };
+                                
+                // if decor was modified, we should mark new decor as used, and clear the old one
+                    DecorData decorData = msoyScene.getDecorData();
+                if (decorData != null && decorData.itemId != up.decorData.itemId) { // modified?
                     MsoyServer.itemMan.updateItemUsage(
-                        user.getMemberId(), _scene.getId(),
-                        sceneDecorData.itemId, up.decorData.itemId,
-                        new ResultListener<Object>() {
-                            public void requestCompleted (Object result) {}
-                            public void requestFailed (Exception cause) {
-                                log.warning("Unable to update decor usage [e=" + cause + "].");
-                            }
-                        });
+                        Item.DECOR, Item.USED_AS_DECOR, user.getMemberId(), _scene.getId(),
+                        decorData.itemId, up.decorData.itemId, defaultListener);
+                }
+
+                // same with background audio - mark new one as used, unmark old one
+                AudioData audioData = msoyScene.getAudioData();
+                if (audioData != null && audioData.itemId != up.audioData.itemId) { // modified?
+                    MsoyServer.itemMan.updateItemUsage(
+                        Item.AUDIO, Item.USED_AS_DECOR, user.getMemberId(), _scene.getId(),
+                        audioData.itemId, up.audioData.itemId, defaultListener);
                 }
             }
             

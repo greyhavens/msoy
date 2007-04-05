@@ -42,7 +42,10 @@ public class MsoySceneModel extends SceneModel
 
     /** Decor data representation. */
     public DecorData decorData = new DecorData();
-    
+
+    /** Audio data representation. */
+    public AudioData audioData = new AudioData();
+
     /**
      * Add a piece of furniture to this model.
      */
@@ -197,6 +200,7 @@ public class MsoySceneModel extends SceneModel
         model.furnis = furnis.clone();
         model.entrance = (MsoyLocation) entrance.clone();
         model.decorData = (decorData == null) ? null : (DecorData) decorData.clone();
+        model.audioData = (audioData == null) ? null : (AudioData) audioData.clone();
         model.invalidatePortalInfo();
         return model;
     }
@@ -208,6 +212,7 @@ public class MsoySceneModel extends SceneModel
     {
         MsoySceneModel model = new MsoySceneModel();
         model.decorData = createDefaultDecorData();
+        model.audioData = new AudioData();
         model.entrance = new MsoyLocation(.5, 0, .5, 180);
         populateBlankMsoySceneModel(model);
         return model;

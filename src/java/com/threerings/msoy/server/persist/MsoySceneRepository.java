@@ -39,6 +39,7 @@ import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.StaticMediaDesc;
 import com.threerings.msoy.item.server.persist.DecorRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -181,6 +182,24 @@ public class MsoySceneRepository extends SimpleRepository
             }
         }
         // END: temp
+
+        
+        // TEMP: background audio additions. removable after all servers are past April 30 2007
+        if (!JDBCUtil.tableContainsColumn(conn, "SCENES", "AUDIO_ID")) {
+            // add background audio columns
+            JDBCUtil.addColumn(conn, "SCENES", "AUDIO_VOLUME", "float not null", "HORIZON");
+            JDBCUtil.addColumn(conn, "SCENES", "AUDIO_MEDIA_TYPE", "tinyint not null", "HORIZON");
+            JDBCUtil.addColumn(conn, "SCENES", "AUDIO_MEDIA_HASH", "tinyblob not null", "HORIZON");
+            JDBCUtil.addColumn(conn, "SCENES", "AUDIO_ID", "int not null", "HORIZON");
+            // updates are stale - delete them
+            Statement deletestmt = conn.createStatement();
+            try { 
+                deletestmt.executeUpdate("delete from SCENE_UPDATES");
+            } finally {
+                JDBCUtil.close(deletestmt);
+            }
+        }
+        // END TEMP
     }
 
     /**
@@ -504,6 +523,7 @@ public class MsoySceneRepository extends SimpleRepository
                     // Load: basic scene data
                     ResultSet rs = stmt.executeQuery(
                         "select OWNER_TYPE, OWNER_ID, VERSION, NAME, " +
+                        "AUDIO_ID, AUDIO_MEDIA_HASH, AUDIO_MEDIA_TYPE, AUDIO_VOLUME, " +
                         "ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z, SCENE_TYPE, " +
                         "DEPTH, WIDTH, HEIGHT, HORIZON,  " +
                         "DECOR_ID, DECOR_MEDIA_HASH, DECOR_MEDIA_TYPE " +
@@ -513,19 +533,27 @@ public class MsoySceneRepository extends SimpleRepository
                         model.ownerId = rs.getInt(2);
                         model.version = rs.getInt(3);
                         model.name = rs.getString(4).intern();
+
+                        AudioData a = model.audioData;
+                        a.itemId = rs.getInt(5);
+                        if (a.itemId != 0) { // only clobber media if the audio item exists
+                            a.media = createMediaDesc(rs.getBytes(6), rs.getByte(7));
+                        }
+                        a.volume = rs.getFloat(8);
+                        
                         model.entrance = new MsoyLocation(
-                            rs.getFloat(5), rs.getFloat(6), rs.getFloat(7),
+                            rs.getFloat(9), rs.getFloat(10), rs.getFloat(11),
                             180);
 
                         DecorData d = model.decorData;
-                        d.type = rs.getByte(8);
-                        d.depth = rs.getShort(9);
-                        d.width = rs.getShort(10);
-                        d.height = rs.getShort(11); 
-                        d.horizon = rs.getFloat(12);
-                        d.itemId = rs.getInt(13);
+                        d.type = rs.getByte(12);
+                        d.depth = rs.getShort(13);
+                        d.width = rs.getShort(14);
+                        d.height = rs.getShort(15); 
+                        d.horizon = rs.getFloat(16);
+                        d.itemId = rs.getInt(17);
                         if (d.itemId != 0) { // only clobber media if the decor item exists
-                            d.media = createMediaDesc(rs.getBytes(14), rs.getByte(15));
+                            d.media = createMediaDesc(rs.getBytes(18), rs.getByte(19));
                         }
                     } else {
                         return Boolean.FALSE; // no scene found
@@ -609,7 +637,8 @@ public class MsoySceneRepository extends SimpleRepository
                 PreparedStatement stmt = conn.prepareStatement(
                     "update SCENES set NAME=?, SCENE_TYPE=?, DECOR_ID=?, DECOR_MEDIA_HASH=?, " +
                     "DECOR_MEDIA_TYPE=?, DEPTH=?, WIDTH=?, HEIGHT=?," +
-                    "HORIZON=?, ENTRANCE_X=?, ENTRANCE_Y=?, ENTRANCE_Z=? " +
+                    "HORIZON=?, AUDIO_ID=?, AUDIO_MEDIA_HASH=?, AUDIO_MEDIA_TYPE=?, " +
+                    "AUDIO_VOLUME=?, ENTRANCE_X=?, ENTRANCE_Y=?, ENTRANCE_Z=? " +
                     "where SCENE_ID=" + mmodel.sceneId);
                 try {
                     stmt.setString(1, update.name);
@@ -621,9 +650,13 @@ public class MsoySceneRepository extends SimpleRepository
                     stmt.setInt(7, update.decorData.width);
                     stmt.setInt(8, update.decorData.height);
                     stmt.setFloat(9, update.decorData.horizon);
-                    stmt.setFloat(10, update.entrance.x);
-                    stmt.setFloat(11, update.entrance.y);
-                    stmt.setFloat(12, update.entrance.z);
+                    stmt.setInt(10, update.audioData.itemId);
+                    stmt.setBytes(11, flattenMediaDesc(update.audioData.media));
+                    stmt.setByte(12, update.audioData.media.mimeType);
+                    stmt.setFloat(13, update.audioData.volume);
+                    stmt.setFloat(14, update.entrance.x);
+                    stmt.setFloat(15, update.entrance.y);
+                    stmt.setFloat(16, update.entrance.z);
 
                     JDBCUtil.checkedUpdate(stmt, 1);
                 } finally {
@@ -693,8 +726,9 @@ public class MsoySceneRepository extends SimpleRepository
             "(OWNER_TYPE, OWNER_ID, VERSION, NAME, " +
             "SCENE_TYPE, DECOR_ID, DECOR_MEDIA_HASH, DECOR_MEDIA_TYPE, " +
             "DEPTH, WIDTH, HEIGHT, HORIZON, " +
+            "AUDIO_ID, AUDIO_MEDIA_HASH, AUDIO_MEDIA_TYPE, AUDIO_VOLUME, " +
             "ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z) " +
-            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         try {
             stmt.setByte(1, model.ownerType);
             stmt.setInt(2, model.ownerId);
@@ -708,9 +742,13 @@ public class MsoySceneRepository extends SimpleRepository
             stmt.setShort(10, model.decorData.width);
             stmt.setShort(11, model.decorData.height);
             stmt.setFloat(12, model.decorData.horizon);
-            stmt.setFloat(13, model.entrance.x);
-            stmt.setFloat(14, model.entrance.y);
-            stmt.setFloat(15, model.entrance.z);
+            stmt.setInt(13, model.audioData.itemId);
+            stmt.setBytes(14, flattenMediaDesc(model.audioData.media));
+            stmt.setByte(15, model.audioData.media.mimeType);
+            stmt.setFloat(16, model.audioData.volume);
+            stmt.setFloat(17, model.entrance.x);
+            stmt.setFloat(18, model.entrance.y);
+            stmt.setFloat(19, model.entrance.z);
             JDBCUtil.checkedUpdate(stmt, 1);
             return liaison.lastInsertedId(conn);
         } finally {
@@ -889,6 +927,10 @@ public class MsoySceneRepository extends SimpleRepository
             "WIDTH integer not null",
             "HEIGHT integer not null",
             "HORIZON float not null",
+            "AUDIO_ID int not null",
+            "AUDIO_MEDIA_HASH tinyblob not null",
+            "AUDIO_MEDIA_TYPE tinyint not null",
+            "AUDIO_VOLUME float not null",
             "ENTRANCE_X float not null",
             "ENTRANCE_Y float not null",
             "ENTRANCE_Z float not null",

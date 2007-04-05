@@ -32,8 +32,6 @@ import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.item.client.InventoryPicker;
-import com.threerings.msoy.item.web.Audio;
-import com.threerings.msoy.item.web.Decor;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
@@ -46,6 +44,7 @@ import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomDragHandler;
 import com.threerings.msoy.world.client.RoomView;
 
+import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
@@ -168,6 +167,7 @@ public class EditorController extends Controller
             var origModel :MsoySceneModel =
                 (_ctx.getSceneDirector().getScene().getSceneModel() as MsoySceneModel);
             if (!Util.equals(editModel.name, origModel.name) ||
+                !Util.equals(editModel.audioData, origModel.audioData) ||
                 !Util.equals(_entranceSprite.loc, origModel.entrance) ||
                 !editModel.decorData.equivalent(origModel.decorData))
             {
@@ -179,7 +179,8 @@ public class EditorController extends Controller
                 // the server should validate this decor data entry, because otherwise
                 // rogue clients will be able to specify any decor items, even if the player
                 // doesn't own it. FIXME ROBERT
-                attrUpdate.decorData = (editModel.decorData.clone() as DecorData);
+                attrUpdate.decorData = editModel.decorData;
+                attrUpdate.audioData = editModel.audioData;
                 edits.push(attrUpdate);
             }
 
@@ -388,11 +389,20 @@ try {
     }
 
     /**
-     * Called by the panel, to specify a new background sprite for preview.
+     * Called by the panel to specify a new background sprite for preview.
      */
     public function setBackground (decordata :DecorData) :void
     {
         _roomView.setBackground(decordata);
+        sceneModelUpdated();
+    }
+
+    /**
+     * Called by the panel to preview a new background audio.
+     */
+    public function setBackgroundMusic (audiodata :AudioData) :void
+    {
+        _roomCtrl.setBackgroundMusic(audiodata);
         sceneModelUpdated();
     }
    

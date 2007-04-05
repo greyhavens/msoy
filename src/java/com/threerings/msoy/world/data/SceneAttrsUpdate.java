@@ -19,6 +19,9 @@ public class SceneAttrsUpdate extends SceneUpdate
 
     /** Full description of the new decor. */
     public DecorData decorData;
+
+    /** Background audio parameters. */
+    public AudioData audioData;
     
     /** The new entrance location. */
     public MsoyLocation entrance;
@@ -31,6 +34,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         MsoySceneModel mmodel = (MsoySceneModel) model;
         mmodel.name = name;
         mmodel.decorData = (DecorData) decorData.clone();
+        mmodel.audioData = (AudioData) audioData.clone();
         mmodel.entrance = entrance;
     }
 

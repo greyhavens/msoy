@@ -65,6 +65,7 @@ import com.threerings.msoy.chat.client.ChatInfoProvider;
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.ComicOverlay;
 
+import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
@@ -246,8 +247,7 @@ public class RoomView extends AbstractRoomView
         } else if (update is SceneAttrsUpdate) {
             rereadScene(); // re-read our scene
             updateBackground();
-            return;
-
+            updateBackgroundAudio();
         } else {
             throw new Error();
         }
@@ -463,6 +463,9 @@ public class RoomView extends AbstractRoomView
         // load the decor data we have, even if it's just default values.
         _bg.setLoadedCallback(backgroundFinishedLoading);
 
+        // start playing background audio
+        _ctrl.setBackgroundMusic(_scene.getAudioData());
+
         _chatOverlayWatcher = BindingUtils.bindSetter(recheckChatOverlay,
             _ctx.worldProps, "placeViewShowsChat");
     }
@@ -534,6 +537,17 @@ public class RoomView extends AbstractRoomView
     override protected function shouldLoadAll () :Boolean
     {
         return _loadAllMedia;
+    }
+
+    /**
+     * Restart playing the background audio.
+     */
+    protected function updateBackgroundAudio () :void
+    {
+        var audiodata :AudioData = _scene.getAudioData();
+        if (audiodata != null) {
+            _ctrl.setBackgroundMusic(audiodata);
+        }
     }
 
     /**

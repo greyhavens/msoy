@@ -8,6 +8,7 @@ import java.util.Iterator;
 import com.threerings.crowd.data.PlaceConfig;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneImpl;
@@ -99,7 +100,15 @@ public class MsoyScene extends SceneImpl
     {
         return _model.decorData;
     }
-    
+
+    /**
+     * Retrieve the scene background audio.
+     */
+    public AudioData getAudioData ()
+    {
+        return _model.audioData;
+    }
+
     /**
      * Add the specified furniture to the scene.
      */

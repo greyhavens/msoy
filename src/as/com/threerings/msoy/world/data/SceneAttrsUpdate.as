@@ -22,6 +22,9 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** Full description of the new decor. */
     public var decorData :DecorData;
     
+    /** Background audio parameters. */
+    public var audioData :AudioData;
+    
     /** The new entrance location. */
     public var entrance :MsoyLocation;
 
@@ -32,6 +35,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         var mmodel :MsoySceneModel = (model as MsoySceneModel);
         mmodel.name = name;
         mmodel.decorData = (decorData.clone() as DecorData);
+        mmodel.audioData = (audioData.clone() as AudioData);
         mmodel.entrance = entrance;
     }
 
@@ -41,6 +45,7 @@ public class SceneAttrsUpdate extends SceneUpdate
 
         out.writeField(name);
         out.writeObject(decorData);
+        out.writeObject(audioData);
         out.writeObject(entrance);
     }
 
@@ -50,6 +55,7 @@ public class SceneAttrsUpdate extends SceneUpdate
 
         name = (ins.readField(String) as String);
         decorData = (ins.readObject() as DecorData);
+        audioData = (ins.readObject() as AudioData);
         entrance = (ins.readObject() as MsoyLocation);
     }
 }

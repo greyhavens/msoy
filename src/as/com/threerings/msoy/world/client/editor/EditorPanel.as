@@ -1,6 +1,7 @@
 package com.threerings.msoy.world.client.editor {
 
 import flash.events.Event;
+import flash.utils.ByteArray;
 
 import mx.binding.utils.BindingUtils;
 
@@ -32,8 +33,10 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
 
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.Audio;
 import com.threerings.msoy.item.web.Decor;
+import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.client.InventoryLoader;
 import com.threerings.msoy.item.client.InventoryPicker;
 import com.threerings.msoy.item.client.ItemList;
@@ -42,6 +45,7 @@ import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomView;
 
+import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -261,12 +265,15 @@ public class EditorPanel extends VBox
         _decorItemLoader.addEventListener(InventoryLoader.SUCCESS, updateInitialDecorSelection);
         _decorItemLoader.start();
 
-        /*
-        GridUtil.addRow(grid,
-            MsoyUI.createLabel(Msgs.EDITING.get("l.background_audio")),
-            _backgroundAudio = new SingleItemSelector(_ctx, Item.AUDIO));
-        _backgroundAudio.selectionChanged = newBackgroundAudioSelected;
-        */
+        GridUtil.addRow(
+            general, MsoyUI.createLabel(Msgs.EDITING.get("l.background_audio")),
+            _audioSelector = new SingleItemSelector(_ctx, Item.AUDIO));
+
+        _audioSelector.selectionChanged = newBackgroundAudioSelected;
+
+        _audioItemLoader = new InventoryLoader(_ctx, Item.AUDIO);
+        _audioItemLoader.addEventListener(InventoryLoader.SUCCESS, updateInitialAudioSelection);
+        _audioItemLoader.start();
 
         GridUtil.addRow(
             general, MsoyUI.createLabel(Msgs.EDITING.get("l.scene_scrollbar")),
@@ -341,19 +348,33 @@ public class EditorPanel extends VBox
      */
     protected function updateInitialDecorSelection (event :Event) :void
     {
-        var memObj :MemberObject = _ctx.getMemberObject();
-        if (memObj.isInventoryLoaded(Item.DECOR))
-        {
-            _decorItemLoader.removeEventListener(
-                InventoryLoader.SUCCESS, updateInitialDecorSelection);
+        pickItemInSelector (
+            Item.DECOR, _sceneModel.decorData != null ? _sceneModel.decorData.itemId : 0,
+            updateInitialDecorSelection, _decorSelector);
+    }
 
-            if (_sceneModel.decorData != null &&
-                _sceneModel.decorData.isInitialized())
-            {
-                var decors :Array = memObj.getItems(Item.DECOR);  
-                for each (var decor :Decor in decors) {
-                    if (decor.itemId == _sceneModel.decorData.itemId) {
-                        _decorSelector.setSelectedItem(decor);
+    /**
+     * Once audio finished loading, display its info.
+     */
+    protected function updateInitialAudioSelection (event :Event) :void
+    {
+        pickItemInSelector (
+            Item.AUDIO, _sceneModel.audioData != null ? _sceneModel.audioData.itemId : 0,
+            updateInitialAudioSelection, _audioSelector);
+    }
+
+    /** Common functionality for selecting an item out based on its Id. */
+    protected function pickItemInSelector (
+        itemType :int, itemId :int, handlerFn :Function, selector :SingleItemSelector) :void
+    {
+        var memObj :MemberObject = _ctx.getMemberObject();
+        if (memObj.isInventoryLoaded(itemType)) {
+            _decorItemLoader.removeEventListener(InventoryLoader.SUCCESS, handlerFn);
+            if (itemId != 0) {
+                var items :Array = memObj.getItems(itemType);  
+                for each (var item :Item in items) {
+                    if (item.itemId == itemId) {
+                        selector.setSelectedItem(item);
                         break;
                     }
                 }
@@ -426,6 +447,7 @@ public class EditorPanel extends VBox
             dd.depth = decor.depth;
             dd.horizon = decor.horizon;
 
+            // refresh UI
             _width.text = String(dd.width);
             _depth.text = String(dd.depth);
             _horizon.value = dd.horizon;
@@ -443,6 +465,19 @@ public class EditorPanel extends VBox
 
     protected function newBackgroundAudioSelected () :void
     {
+        var audio :Audio = _audioSelector.getSelectedItem() as Audio;
+        var ad :AudioData = _sceneModel.audioData;
+        if (audio != null) {
+            ad.itemId = audio.itemId;
+            ad.media = audio.audioMedia;
+            ad.volume = 1.0; // FIXME ROBERT
+            
+        } else {
+            // user cleared the background audio - clear the media id
+            ad.itemId = 0;
+        }
+
+        _ctrl.setBackgroundMusic(ad);
     }
 
     /**
@@ -524,11 +559,13 @@ public class EditorPanel extends VBox
     protected var _depth :TextInput;
     protected var _height :TextInput;
     protected var _horizon :HSlider;
-    protected var _decorItemLoader :InventoryLoader;
-    
-    protected var _decorSelector :SingleItemSelector;
-    protected var _backgroundAudio :SingleItemSelector;
 
+    protected var _decorSelector :SingleItemSelector;
+    protected var _audioSelector :SingleItemSelector;
+
+    protected var _decorItemLoader :InventoryLoader;
+    protected var _audioItemLoader :InventoryLoader;
+    
     protected var _deleteBtn :CommandButton;
 
     protected var _spriteEditor :SpritePanel;

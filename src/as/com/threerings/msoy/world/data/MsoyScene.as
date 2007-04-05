@@ -105,6 +105,14 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
+     * Retrieve the scene background audio.
+     */
+    public function getAudioData () :AudioData
+    {
+        return _msoyModel.audioData;
+    }
+
+    /**
      * Add a new piece of furniture to this scene.
      */
     public function addFurni (furn :FurniData) :void
