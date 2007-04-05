@@ -18,6 +18,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DObjectManager;
 
 import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.web.client.DeploymentConfig;
 
 import com.threerings.msoy.admin.data.MsoyAdminCodes;
 import com.threerings.msoy.admin.util.AdminContext;
@@ -91,6 +92,7 @@ public class AdminApplet extends JApplet
         MsoyCredentials creds = new MsoyCredentials();
         creds.sessionToken = getParameter("authtoken");
         _client.setCredentials(creds);
+        _client.setVersion(String.valueOf(DeploymentConfig.version));
         _client.logon();
     }
 

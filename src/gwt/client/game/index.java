@@ -107,7 +107,7 @@ public class index extends Page
         case LaunchConfig.JAVA_LOBBIED:
             // TODO: need to nix the world client
             display = WidgetUtil.createApplet(
-                "game", "/clients/game-client.jar",
+                "game", "/clients/" + DeploymentConfig.version + "/game-client.jar",
                 "com.threerings.msoy.game.client.GameApplet", 800, 600,
                 new String[] { "game_id", "" + config.gameId,
                                "resource_url", config.resourceURL,

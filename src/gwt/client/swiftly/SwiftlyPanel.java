@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
@@ -69,7 +70,7 @@ public class SwiftlyPanel extends FlexTable
 
         // Add the applet
         _applet = WidgetUtil.createApplet(
-            "swiftly", "/clients/swiftly-client.jar",
+            "swiftly", "/clients/" + DeploymentConfig.version + "/swiftly-client.jar",
             "com.threerings.msoy.swiftly.client.SwiftlyApplet", "100%", "100%",
             new String[] {  "authtoken", _authtoken,
                             "projectId", String.valueOf(_project.projectId),

@@ -39,6 +39,8 @@ import com.threerings.crowd.client.OccupantDirector;
 import com.threerings.crowd.client.PlaceView;
 
 import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.web.client.DeploymentConfig;
+
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
@@ -90,6 +92,7 @@ public class SwiftlyApplet extends JApplet
             creds.ident = "C" + creds.ident;
         }
         _client.setCredentials(creds);
+        _client.setVersion(String.valueOf(DeploymentConfig.version));
         _client.logon();
 
         // Execute a job on the event-dispatching thread: creating this applet's GUI.

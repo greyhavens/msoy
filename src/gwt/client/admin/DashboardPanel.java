@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.ConnectConfig;
 
 import client.shell.Page;
@@ -80,7 +81,7 @@ public class DashboardPanel extends FlexTable
         int row = getRowCount();
         getFlexCellFormatter().setStyleName(row, 0, "Applet");
         setWidget(row, 0, WidgetUtil.createApplet(
-                      "admin", "/clients/admin-client.jar",
+                      "admin", "/clients/" + DeploymentConfig.version + "/admin-client.jar",
                       "com.threerings.msoy.admin.client.AdminApplet", 800, 400,
                       new String[] { "server", config.server,
                                      "port", "" + config.port,

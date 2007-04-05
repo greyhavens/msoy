@@ -11,6 +11,7 @@ import com.threerings.toybox.client.ToyBoxApplet;
 import com.threerings.toybox.client.ToyBoxClient;
 
 import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.web.client.DeploymentConfig;
 
 /**
  * Holds the main Java interface to lobbying and launching (Java) games.
@@ -35,6 +36,7 @@ public class GameApplet extends ToyBoxApplet
             creds.sessionToken = authtoken;
             Client client = _client.getContext().getClient();
             client.setCredentials(creds);
+            client.setVersion(String.valueOf(DeploymentConfig.version));
             client.logon();
         }
     }
