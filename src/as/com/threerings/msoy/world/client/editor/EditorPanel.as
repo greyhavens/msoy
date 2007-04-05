@@ -1,7 +1,6 @@
 package com.threerings.msoy.world.client.editor {
 
 import flash.events.Event;
-import flash.utils.ByteArray;
 
 import mx.binding.utils.BindingUtils;
 
@@ -275,6 +274,13 @@ public class EditorPanel extends VBox
         _audioItemLoader.addEventListener(InventoryLoader.SUCCESS, updateInitialAudioSelection);
         _audioItemLoader.start();
 
+        GridUtil.addRow(general, MsoyUI.createLabel(Msgs.EDITING.get("l.volume")),
+                        _volume = new HSlider());
+        _volume.minimum = 0;
+        _volume.maximum = 1;
+        _volume.percentWidth = 100;
+        _volume.liveDragging = true;
+            
         GridUtil.addRow(
             general, MsoyUI.createLabel(Msgs.EDITING.get("l.scene_scrollbar")),
             new RoomViewScrollBox(_roomView, 150, 100));
@@ -340,6 +346,8 @@ public class EditorPanel extends VBox
         _depth.text = String(_sceneModel.decorData.depth);
         _height.text = String(_sceneModel.decorData.height);
         _horizon.value = _sceneModel.decorData.horizon;
+
+        _volume.value = _sceneModel.audioData.volume; 
     }
 
     /**
@@ -425,7 +433,12 @@ public class EditorPanel extends VBox
             var val :Number = Number(o);
             _sceneModel.decorData.horizon = val;
             _ctrl.sceneModelUpdated();
-        }, _horizon, "value");
+            }, _horizon, "value");
+
+        BindingUtils.bindSetter(function (o :Object) :void {
+            _sceneModel.audioData.volume = Number(o);
+            _ctrl.setBackgroundMusic(_sceneModel.audioData);
+            }, _volume, "value");
     }
 
     protected function newBackgroundImageSelected () :void
@@ -470,7 +483,6 @@ public class EditorPanel extends VBox
         if (audio != null) {
             ad.itemId = audio.itemId;
             ad.media = audio.audioMedia;
-            ad.volume = 1.0; // FIXME ROBERT
             
         } else {
             // user cleared the background audio - clear the media id
@@ -562,6 +574,7 @@ public class EditorPanel extends VBox
 
     protected var _decorSelector :SingleItemSelector;
     protected var _audioSelector :SingleItemSelector;
+    protected var _volume :HSlider;
 
     protected var _decorItemLoader :InventoryLoader;
     protected var _audioItemLoader :InventoryLoader;

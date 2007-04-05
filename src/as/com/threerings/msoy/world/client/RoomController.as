@@ -460,8 +460,8 @@ public class RoomController extends SceneController
 
         if (_music != null) {
             if (_musicIsBackground) {
-                _music.stop();
-
+                // let's not stop the music; it makes the volume slider hard to use
+                // _music.stop();
             } else {
                 _music.close();
                 _music = null;

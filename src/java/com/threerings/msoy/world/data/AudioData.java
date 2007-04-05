@@ -41,8 +41,12 @@ public class AudioData extends SimpleStreamableObject
     @Override
     public boolean equals (Object other)
     {
-        // just compare whether they refer to the same audio item
-        return (other instanceof AudioData) && ((AudioData) other).itemId == this.itemId;
+        // compare audio item and volume
+        if (other instanceof AudioData) {
+            AudioData data = (AudioData) other;
+            return data.itemId == this.itemId && data.volume == this.volume;
+        }
+        return false;
     }
 
     // documentation inherited

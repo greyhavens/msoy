@@ -40,13 +40,17 @@ public class AudioData
     // documentation inherited from superinterface Equalable
     public function equals (other :Object) :Boolean
     {
-        // just compare whether they refer to the same audio item
-        return (other is AudioData) && (other as AudioData).itemId == this.itemId;
+        // compare audio item and volume
+        if (other is AudioData) {
+            var data :AudioData = other as AudioData;
+            return data.itemId == this.itemId && data.volume == this.volume;
+        }
+        return false;
     }
 
     public function toString () :String
     {
-        return "Audio[itemId=" + itemId + ", media=" + media + "]";
+        return "Audio[itemId=" + itemId + ", media=" + media + ", volume=" + volume + "]";
     }
 
     // documentation inherited from interface Cloneable
