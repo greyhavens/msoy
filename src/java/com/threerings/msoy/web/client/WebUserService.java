@@ -20,7 +20,7 @@ public interface WebUserService extends RemoteService
      * @return a set of credentials including a session cookie that should be provided to
      * subsequent remote service calls that require authentication.
      */
-    public WebCreds login (String email, String password, int expireDays)
+    public WebCreds login (long clientVersion, String email, String password, int expireDays)
         throws ServiceException;
 
     /**
@@ -30,14 +30,15 @@ public interface WebUserService extends RemoteService
      * @return a set of credentials including a session cookie that should be provided to
      * subsequent remote service calls that require authentication.
      */
-    public WebCreds register (String email, String password, String displayName, int expireDays)
+    public WebCreds register (long clientVersion, String email, String password, String displayName,
+                              int expireDays)
         throws ServiceException;
 
     /**
      * Validates that the supplied session token is still active and refreshes its expiration time
      * if so.
      */
-    public WebCreds validateSession (String authtok, int expireDays)
+    public WebCreds validateSession (long clientVersion, String authtok, int expireDays)
         throws ServiceException;
 
     /**

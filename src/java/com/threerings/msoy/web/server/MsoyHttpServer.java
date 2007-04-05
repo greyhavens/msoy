@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.server;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Enumeration;
 
 import java.util.logging.Level;
@@ -11,6 +12,9 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import org.mortbay.http.HttpContext;
+import org.mortbay.http.HttpException;
+import org.mortbay.http.HttpRequest;
+import org.mortbay.http.HttpResponse;
 import org.mortbay.http.HttpServer;
 import org.mortbay.http.handler.ResourceHandler;
 import org.mortbay.jetty.servlet.ServletHandler;
@@ -18,9 +22,10 @@ import org.mortbay.jetty.servlet.ServletHolder;
 
 import com.threerings.msoy.server.ServerConfig;
 
+import com.threerings.msoy.web.client.DeploymentConfig;
+
 /**
- * Handles HTTP requests made of the Msoy server by the AJAX client and other
- * entities.
+ * Handles HTTP requests made of the Msoy server by the AJAX client and other entities.
  */
 public class MsoyHttpServer extends HttpServer
 {
@@ -34,9 +39,7 @@ public class MsoyHttpServer extends HttpServer
         HttpContext context = getContext("/");
         context.setWelcomeFiles(new String[] { "index.html" });
         context.setResourceBase(new File(ServerConfig.serverRoot, "pages").getPath());
-        ResourceHandler rsrc = new ResourceHandler();
-        rsrc.setDirAllowed(false);
-        context.addHandler(rsrc);
+        context.addHandler(new MsoyResourceHandler());
 
         // wire up our GWT servlets
         ServletHandler handler = new ServletHandler();
@@ -71,6 +74,26 @@ public class MsoyHttpServer extends HttpServer
         // listen for connections on our preferred port
         addListener(":" + ServerConfig.getHttpPort());
         start();
+    }
+
+    /** Handles redirecting to our magic version numbered client for embedding and does other
+     * fiddling we want. */
+    protected static class MsoyResourceHandler extends ResourceHandler
+    {
+        public MsoyResourceHandler () {
+            setDirAllowed(false);
+        }
+
+        public void handle (String path, String params, HttpRequest req, HttpResponse rsp)
+            throws HttpException, IOException {
+            // TODO: handle this for more than just world-client.swf?
+            if (path.equals("/clients/world-client.swf")) {
+                rsp.setContentLength(0);
+                rsp.sendRedirect("/clients/" + DeploymentConfig.version + "/world-client.swf");
+            } else {
+                super.handle(path, params, req, rsp);
+            }
+        }
     }
 
     /** GWT Servlets */

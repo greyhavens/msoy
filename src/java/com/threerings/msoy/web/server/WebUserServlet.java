@@ -14,6 +14,7 @@ import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
@@ -28,9 +29,10 @@ public class WebUserServlet extends MsoyServiceServlet
     implements WebUserService
 {
     // from interface WebUserService
-    public WebCreds login (String username, String password, int expireDays)
+    public WebCreds login (long clientVersion, String username, String password, int expireDays)
         throws ServiceException
     {
+        checkClientVersion(clientVersion, username);
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
         MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
@@ -38,9 +40,11 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public WebCreds register (String username, String password, String displayName, int expireDays)
+    public WebCreds register (long clientVersion, String username, String password,
+                              String displayName, int expireDays)
         throws ServiceException
     {
+        checkClientVersion(clientVersion, username);
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
         MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
@@ -48,9 +52,11 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public WebCreds validateSession (String authtok, int expireDays)
+    public WebCreds validateSession (long clientVersion, String authtok, int expireDays)
         throws ServiceException
     {
+        checkClientVersion(clientVersion, authtok);
+
         // refresh the token associated with their authentication session
         try {
             MemberRecord mrec = MsoyServer.memberRepo.refreshSession(authtok, expireDays);
@@ -132,6 +138,16 @@ public class WebUserServlet extends MsoyServiceServlet
         // let the authenticator know that we updated our permaname
         MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
         auth.updateAccount(mrec.accountName, null, permaName, null);
+    }
+
+    protected void checkClientVersion (long clientVersion, String who)
+        throws ServiceException
+    {
+        if (clientVersion != DeploymentConfig.version) {
+            log.info("Refusing wrong version [who=" + who + ", cvers=" + clientVersion +
+                     ", svers=" + DeploymentConfig.version + "].");
+            throw new ServiceException(MsoyAuthCodes.VERSION_MISMATCH);
+        }
     }
 
     protected WebCreds startSession (MemberRecord mrec, int expireDays)

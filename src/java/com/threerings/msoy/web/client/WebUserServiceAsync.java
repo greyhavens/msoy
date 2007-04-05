@@ -15,18 +15,20 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#login}.
      */
-    public void login (String username, String password, int expireDays, AsyncCallback callback);
+    public void login (long clientVersion, String username, String password, int expireDays,
+                       AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link WebUserService#register}.
      */
-    public void register (String username, String password, String displayName, int expireDays,
-                          AsyncCallback callback);
+    public void register (long clientVersion, String username, String password, String displayName,
+                          int expireDays, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link WebUserService#validateSession}.
      */
-    public void validateSession (String authtok, int expireDays, AsyncCallback callback);
+    public void validateSession (long clientVersion, String authtok, int expireDays,
+                                 AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link WebUserService#updateEmail}.

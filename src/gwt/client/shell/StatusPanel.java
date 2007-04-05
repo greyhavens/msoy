@@ -138,7 +138,7 @@ public class StatusPanel extends FlexTable
     {
         if (token != null) {
             // validate our session before considering ourselves logged on
-            CShell.usersvc.validateSession(token, 1, new AsyncCallback() {
+            CShell.usersvc.validateSession(DeploymentConfig.version, token, 1, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     if (result == null) {
                         logoff();
@@ -244,7 +244,8 @@ public class StatusPanel extends FlexTable
             String account = _email.getText(), password = _password.getText();
             if (account.length() > 0 && password.length() > 0) {
                 _status.setText(CShell.cmsgs.loggingOn());
-                CShell.usersvc.login(account, md5hex(password), 1, new AsyncCallback() {
+                CShell.usersvc.login(
+                    DeploymentConfig.version, account, md5hex(password), 1, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         hide();
                         didLogon((WebCreds)result);

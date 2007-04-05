@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.util.BorderedDialog;
@@ -136,7 +137,8 @@ public class CreateAccountDialog extends BorderedDialog
         String email = _email.getText().trim(), name = _name.getText().trim();
         String password = _password.getText().trim();
         _status.setText(CShell.cmsgs.creatingAccount());
-        CShell.usersvc.register(email, md5hex(password), name, 1, new AsyncCallback() {
+        CShell.usersvc.register(
+            DeploymentConfig.version, email, md5hex(password), name, 1, new AsyncCallback() {
             public void onSuccess (Object result) {
                 hide();
                 // TODO: display some sort of welcome to whirled business
