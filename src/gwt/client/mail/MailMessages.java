@@ -32,6 +32,14 @@ public interface MailMessages extends com.google.gwt.i18n.client.Messages {
   String appBtnReply();
 
   /**
+   * Translated "Mail".
+   * 
+   * @return translated "Mail"
+   * @gwt.key mailTitle
+   */
+  String mailTitle();
+
+  /**
    * Translated "Prev".
    * 
    * @return translated "Prev"

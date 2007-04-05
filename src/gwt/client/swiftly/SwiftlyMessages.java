@@ -120,6 +120,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String cancel();
 
   /**
+   * Translated "Projects".
+   * 
+   * @return translated "Projects"
+   * @gwt.key projectsTitle
+   */
+  String projectsTitle();
+
+  /**
    * Translated "Please enter a name for your new project.".
    * 
    * @return translated "Please enter a name for your new project."

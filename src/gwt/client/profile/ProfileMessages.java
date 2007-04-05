@@ -40,20 +40,20 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String homepage();
 
   /**
-   * Translated "You're not a member of any groups. Boo hoo.".
-   * 
-   * @return translated "You're not a member of any groups. Boo hoo."
-   * @gwt.key notInGroupsSelf
-   */
-  String notInGroupsSelf();
-
-  /**
    * Translated "Sorry parder. You don't have invite privileges for any groups.".
    * 
    * @return translated "Sorry parder. You don't have invite privileges for any groups."
    * @gwt.key haveNoGroups
    */
   String haveNoGroups();
+
+  /**
+   * Translated "You're not a member of any groups. Boo hoo.".
+   * 
+   * @return translated "You're not a member of any groups. Boo hoo."
+   * @gwt.key notInGroupsSelf
+   */
+  String notInGroupsSelf();
 
   /**
    * Translated "Invite to Join Group".
@@ -86,6 +86,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key errorTitle
    */
   String errorTitle();
+
+  /**
+   * Translated "Profile".
+   * 
+   * @return translated "Profile"
+   * @gwt.key profileTitle
+   */
+  String profileTitle();
 
   /**
    * Translated "Log in to view your profile.".

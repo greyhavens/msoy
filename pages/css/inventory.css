@@ -9,19 +9,6 @@
   font-size: 12px;
 }
 
-.inventoryPanel .Title {
-  background: #222222;
-  font-size: 14px;
-  font-weight: bold;
-  width: 118px;
-  color: white;
-  text-align: center;
-}
-
-.inventoryPanel .Tabs {
-  background: #222222;
-}
-
 .inventoryContents {
   padding: 10px;
   margin-bottom: 10px;

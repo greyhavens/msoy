@@ -52,6 +52,7 @@ public class index extends EditemEntryPoint
 
     protected void updateInterface (String args)
     {
+        setPageTitle(CInventory.msgs.inventoryTitle());
         if (CInventory.creds == null) {
             // if we have no creds, just display a message saying login
             setContent(MsoyUI.createLabel(CInventory.msgs.logon(), "infoLabel"));
@@ -60,6 +61,7 @@ public class index extends EditemEntryPoint
         } else {
             if (_inventory == null) {
                 setContent(_inventory = new InventoryPanel());
+                setPageTabs(_inventory.getTabs());
             }
             byte type = Item.AVATAR;
             try {

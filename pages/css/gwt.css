@@ -591,19 +591,21 @@ body {
   background: #222222;
   font-size: 14px;
   font-weight: bold;
-  width: 124px;
+  width: 118px;
   height: 20px;
   color: white;
   text-align: center;
+  white-space: nowrap;
 }
 
 .pageHeaderContent {
   background: #222222;
   height: 20px;
-  width: 100%;
+  text-align: left;
 }
 
 .pageHeaderClose {
   background: #222222;
   height: 20px;  
+  text-align: right;
 }

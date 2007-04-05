@@ -31,8 +31,6 @@ public class DashboardPanel extends FlexTable
         setCellPadding(0);
 
         int row = 0;
-        getFlexCellFormatter().setStyleName(row, 0, "Title");
-        setText(row++, 0, CAdmin.msgs.title());
 
         // add various controls
         HorizontalPanel controls = new HorizontalPanel();

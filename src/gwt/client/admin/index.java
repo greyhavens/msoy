@@ -64,6 +64,7 @@ public class index extends EditemEntryPoint
     protected void displayDashboard ()
     {
         if (CAdmin.creds.isSupport) {
+            setPageTitle(CAdmin.msgs.title());
             setContent(new DashboardPanel());
         } else {
             setContent(MsoyUI.createLabel(CAdmin.msgs.lackPrivileges(), "infoLabel"));

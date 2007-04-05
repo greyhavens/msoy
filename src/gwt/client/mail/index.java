@@ -41,6 +41,7 @@ public class index extends MsgsEntryPoint
         }
         // make sure we're displaying the application
         if (!_mainView.isAttached()) {
+            setPageTitle(CMail.msgs.mailTitle());
             setContent(_mainView);
         }
 

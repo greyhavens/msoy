@@ -127,6 +127,14 @@ public class index extends Page
         }
 
         if (display != null) {
+            // TODO get the game name in here
+            String title = "Game";
+            if (contentIsFlash) {
+                title = "Single-player Flash " + title;
+            } else if (contentIsJava) {
+                title = "Single-player Java " + title;
+            }
+            setPageTitle(title);
             setContent(display, contentIsFlash, contentIsJava);
         }
     }

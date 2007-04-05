@@ -110,8 +110,16 @@ public abstract class Page
         // clear out any content height overrides
         setContentStretchHeight(false);
         // now set our content
-        RootPanel.get("content").add(createPageHeader());
-        RootPanel.get("content").add(content);
+        if (_content == null) {
+            createContentContainer();
+        }
+        _content.setWidget(1, 0, content);
+        RootPanel.get("content").add(_content);
+        // if there isn't anything in the tabs area, the name ends up centering over the whole
+        // display.
+        if (_content.getWidget(0, 1) == null) {
+            setPageTabs(new HTML("&nbsp;"));
+        }
     }
 
     protected void setContentStretchHeight (boolean stretch)
@@ -121,22 +129,33 @@ public abstract class Page
         RootPanel.get("content").setHeight(height);
     }
 
-    protected Widget createPageHeader () 
+    protected void createContentContainer () 
     {
-        _pageHeader = new FlexTable();
-        _pageHeader.setCellPadding(0);
-        _pageHeader.setCellSpacing(0);
-        _pageHeader.setWidth("100%");
-        _pageHeader.getCellFormatter().setStyleName(0, 0, "pageHeaderTitle");
-        _pageHeader.getCellFormatter().setStyleName(0, 1, "pageHeaderContent");
-        _pageHeader.getCellFormatter().setStyleName(0, 2, "pageHeaderClose");
-        return _pageHeader;
+        _content = new FlexTable();
+        _content.setCellPadding(0);
+        _content.setCellSpacing(0);
+        _content.setWidth("100%");
+        _content.getFlexCellFormatter().setStyleName(0, 0, "pageHeaderTitle");
+        _content.getFlexCellFormatter().setStyleName(0, 1, "pageHeaderContent");
+        _content.getFlexCellFormatter().setStyleName(0, 2, "pageHeaderClose");
+        _content.getFlexCellFormatter().setColSpan(1, 0, 3);
     }
 
     protected void setPageTitle (String title)
     {
+        if (_content == null) {
+            createContentContainer();
+        }
         // TODO we should probably change the HTML <title> here as well
-        _pageHeader.setWidget(0, 0, new Label(title));
+        _content.setWidget(0, 0, new Label(title));
+    }
+
+    protected void setPageTabs (Widget tabs) 
+    {
+        if (_content == null) {
+            createContentContainer();
+        }
+        _content.setWidget(0, 1, tabs);
     }
 
     /**
@@ -159,5 +178,5 @@ public abstract class Page
         onHistoryChanged(getPageArgs());
     }
 
-    protected FlexTable _pageHeader;
+    protected FlexTable _content;
 }

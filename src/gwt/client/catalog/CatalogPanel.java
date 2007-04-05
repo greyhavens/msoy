@@ -45,13 +45,9 @@ public class CatalogPanel extends FlexTable
         setCellSpacing(0);
         setWidth("100%");
 
+        _typeTabs = new ItemTypePanel("catalog", this);
+
         int row = 0;
-        setWidget(row, 0, new Label(CCatalog.msgs.catalogTitle()));
-        getFlexCellFormatter().setStyleName(row, 0, "Title");
-
-        setWidget(row, 1, _typeTabs = new ItemTypePanel("catalog", this));
-        getFlexCellFormatter().setStyleName(row++, 1, "Tabs");
-
         _items = new PagedGrid(ROWS, COLUMNS) {
             protected Widget createWidget (Object item) {
                 return new ItemContainer((CatalogListing)item, CatalogPanel.this);
@@ -94,6 +90,11 @@ public class CatalogPanel extends FlexTable
 
         setWidget(row, 0, _status = new Label(""));
         getFlexCellFormatter().setColSpan(row++, 0, 2);
+    }
+
+    public Widget getTabs() 
+    {
+        return _typeTabs;
     }
 
     public void selectType (byte itemType)

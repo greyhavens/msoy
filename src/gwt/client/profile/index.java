@@ -82,6 +82,7 @@ public class index extends MsgsEntryPoint
                 ArrayList data = (ArrayList)result;
                 ProfileLayout layout = (ProfileLayout)data.remove(0);
                 MemberName name = (MemberName)data.remove(0);
+                setPageTitle(CProfile.msgs.profileTitle());
                 switch (layout.layout) {
                 default:
                 case ProfileLayout.ONE_COLUMN_LAYOUT:

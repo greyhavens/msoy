@@ -58,7 +58,9 @@ public class index extends ItemEntryPoint
         }
 
         if (_catalog == null) {
+            setPageTitle(CCatalog.msgs.catalogTitle());
             setContent(_catalog = new CatalogPanel());
+            setPageTabs(_catalog.getTabs());
         }
 
         byte type = Item.AVATAR;

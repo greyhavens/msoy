@@ -188,6 +188,7 @@ public class index extends Page
         if (hood == null) {
             setContent(new Label(CWorld.msgs.noSuchMember()));
         } else {
+            setPageTitle(CWorld.msgs.neighborhoodTitle());
             setContent(FlashClients.createNeighborhood(hood), true, false);
         }
     }

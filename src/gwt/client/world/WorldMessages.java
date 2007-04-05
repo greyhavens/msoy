@@ -16,6 +16,14 @@ public interface WorldMessages extends com.google.gwt.i18n.client.Messages {
   String noSuchMember();
 
   /**
+   * Translated "Neighborhood".
+   * 
+   * @return translated "Neighborhood"
+   * @gwt.key neighborhoodTitle
+   */
+  String neighborhoodTitle();
+
+  /**
    * Translated "temp".
    * 
    * @return translated "temp"
