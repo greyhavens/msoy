@@ -183,7 +183,7 @@ public class ChiyogamiManager extends GameManager
         _bossObj = MsoyServer.omgr.registerObject(new BossObject());
         _bossObj.init(new StaticMediaDesc(
             MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.AVATAR, "chiyogami/" + boss));
-        _bossObj.setUsername(new Name("Boss B Boy"));
+        _bossObj.setUsername(new Name("Downrock"));
 
         // add the boss to the room
         MsoyServer.screg.sceneprov.moveTo(_bossObj, _sceneId, -1, new SceneMoveListener() {
