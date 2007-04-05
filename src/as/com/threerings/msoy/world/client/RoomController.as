@@ -687,12 +687,7 @@ public class RoomController extends SceneController
         if (_music == null && isPathValid) {
             _music = new SoundPlayer(path);
             // TODO: we probably need to wait for COMPLETE
-            _music.play();
-            //var pos :Number = Prefs.getMediaPosition(music.getMediaId());
-            //_music.loop(pos);
-            // NOTE: the position argument has been disabled because
-            // it causes the flash player to crash, and also seems to booch
-            // proper looping.
+            _music.loop();
         }
         // set the volume, even if we're just re-setting it on
         // already-playing music
