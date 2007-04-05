@@ -1,5 +1,8 @@
 package com.threerings.msoy.client {
 
+import flash.media.SoundMixer;
+import flash.media.SoundTransform;
+
 import flash.utils.Dictionary;
 
 import com.threerings.util.Config;
@@ -90,6 +93,7 @@ public class Prefs
     public static function setSoundVolume (vol :Number) :void
     {
         config.setValue(VOLUME, vol);
+        useSoundVolume();
     }
 
     /**
@@ -171,6 +175,15 @@ public class Prefs
         }
     }
 
+    /**
+     * Effect the global sound volume.
+     */
+    protected static function useSoundVolume () :void
+    {
+        // set up the global sound transform
+        SoundMixer.soundTransform = new SoundTransform(getSoundVolume());
+    }
+
     /** A set of media ids that are blocked (they keys of the dictionary). */
     protected static var _blockedMedia :Dictionary;
 
@@ -190,7 +203,11 @@ public class Prefs
         if (lastBuild != DeploymentConfig.buildTime) {
             config.setValue("lastBuild", DeploymentConfig.buildTime);
         }
+
+        // STARTUP prefs: things that need setting when we initialize
+        useSoundVolume();
     }
+
     staticInit();
 }
 }

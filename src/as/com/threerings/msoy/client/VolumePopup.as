@@ -7,8 +7,6 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;    
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
-import flash.media.SoundMixer;
-import flash.media.SoundTransform;
 
 import mx.binding.utils.BindingUtils;
 import mx.containers.Canvas;
@@ -34,7 +32,7 @@ public class VolumePopup extends Canvas
     /** Constructor. */
     public function VolumePopup (trigger : DisplayObject)
     {
-        owner = DisplayObjectContainer (Application.application);
+        owner = DisplayObjectContainer(Application.application);
 
         styleName = "volumeControl";
 
@@ -47,7 +45,7 @@ public class VolumePopup extends Canvas
         verticalScrollPolicy = horizontalScrollPolicy = ScrollPolicy.OFF;
         
         // Initialize slider
-        _slider = new VSlider ();
+        _slider = new VSlider();
         _slider.x = 4;
         _slider.y = 10;
         _slider.height = 80;
@@ -55,16 +53,8 @@ public class VolumePopup extends Canvas
         _slider.maximum = 1;
         _slider.liveDragging = true;
 
-        SoundMixer.soundTransform = new SoundTransform (Prefs.getSoundVolume());
-        _slider.value = SoundMixer.soundTransform.volume;
-
-        BindingUtils.bindSetter(
-            function (val :Number) :void
-            {
-                SoundMixer.soundTransform = new SoundTransform (val);
-                Prefs.setSoundVolume(val);
-            },
-            _slider, "value");
+        _slider.value = Prefs.getSoundVolume();
+        BindingUtils.bindSetter(Prefs.setSoundVolume, _slider, "value");
 
         addChild (_slider);
     }
@@ -123,8 +113,7 @@ public class VolumePopup extends Canvas
     /** Watch for the mouse leaving the area. */
     private function mouseOutHandler (event : MouseEvent) : void
     {
-        if (event.relatedObject != null)
-        {
+        if (event.relatedObject != null) {
             // We rolled out into room view, or other element - close up,
             // but don't delete the object, in case there are still events
             // queued up for it.
