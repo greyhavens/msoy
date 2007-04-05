@@ -4,6 +4,7 @@
 package com.threerings.msoy.admin.client;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -31,6 +32,7 @@ public class AdminPanel extends JPanel
         _ctx = ctx;
         _ctx.getClient().addClientObserver(_clobs);
 
+        setBackground(Color.white);
         setLayout(new BorderLayout(5, 5));
         add(_status = new JLabel(""), BorderLayout.SOUTH);
         setStatus("m.logging_on");
@@ -65,6 +67,7 @@ public class AdminPanel extends JPanel
         }
         public void clientDidLogon (Client client) {
             add(_config = new ConfigEditorPanel(_ctx));
+            _config.setOpaque(false);
             setStatus("m.logged_on");
         }
         public void clientDidLogoff (Client client) {
