@@ -7,7 +7,7 @@ import com.threerings.util.HashMap;
  */
 public class LevelFactory 
 {
-    public static const TOTAL_LEVELS :int = 3;
+    public static const TOTAL_LEVELS :int = 4;
 
     public static function createLevel (level :int, ground :Ground) :Level
     {
@@ -34,6 +34,8 @@ public class LevelFactory
     protected static const BACKGROUND_1 :Class;
     [Embed(source='../../../../../rsrc/level_2.swf#background')]
     protected static const BACKGROUND_2 :Class;
+    [Embed(source='../../../../../rsrc/level_3.swf#background')]
+    protected static const BACKGROUND_3 :Class;
 
     /** Roughs */
     [Embed(source='../../../../../rsrc/level_0.swf#rough')]
@@ -42,6 +44,8 @@ public class LevelFactory
     protected static const ROUGH_1 :Class;
     [Embed(source='../../../../../rsrc/level_2.swf#rough')]
     protected static const ROUGH_2 :Class;
+    [Embed(source='../../../../../rsrc/level_3.swf#rough')]
+    protected static const ROUGH_3 :Class;
 
     /** Tracks */
     [Embed(source='../../../../../rsrc/level_0.swf#track')]
@@ -50,6 +54,8 @@ public class LevelFactory
     protected static const TRACK_1 :Class;
     [Embed(source='../../../../../rsrc/level_2.swf#track')]
     protected static const TRACK_2 :Class;
+    [Embed(source='../../../../../rsrc/level_3.swf#track')]
+    protected static const TRACK_3 :Class;
     
     /** Walls */
     [Embed(source='../../../../../rsrc/level_0.swf#wall')]
@@ -58,6 +64,8 @@ public class LevelFactory
     protected static const WALL_1 :Class;
     [Embed(source='../../../../../rsrc/level_2.swf#wall')]
     protected static const WALL_2 :Class;
+    [Embed(source='../../../../../rsrc/level_3.swf#wall')]
+    protected static const WALL_3 :Class;
 
     /** Object Layers */
     [Embed(source='../../../../../rsrc/level_0.swf#objects')]
@@ -66,6 +74,8 @@ public class LevelFactory
     protected static const OBJECTS_1 :Class;
     [Embed(source='../../../../../rsrc/level_2.swf#objects')]
     protected static const OBJECTS_2 :Class;
+    [Embed(source='../../../../../rsrc/level_3.swf#objects')]
+    protected static const OBJECTS_3 :Class;
 
     /** Horizon images */
     [Embed(source='../../../../../rsrc/level_0.swf#horizon')]
@@ -74,10 +84,18 @@ public class LevelFactory
     protected static const HORIZON_1 :Class;
     [Embed(source='../../../../../rsrc/level_2.swf#horizon')]
     protected static const HORIZON_2 :Class;
+    [Embed(source='../../../../../rsrc/level_3.swf#horizon')]
+    protected static const HORIZON_3 :Class;
 
     /** Flat layers for rendering */
     [Embed(source='../../../../../rsrc/level_0.swf#flat')]
     protected static const FLAT_0 :Class;
+    [Embed(source='../../../../../rsrc/level_1.swf#flat')]
+    protected static const FLAT_1 :Class;
+    [Embed(source='../../../../../rsrc/level_2.swf#flat')]
+    protected static const FLAT_2 :Class;
+    [Embed(source='../../../../../rsrc/level_3.swf#flat')]
+    protected static const FLAT_3 :Class;
 
     /****** Magic fun scenery props from the objects.swf ******/
 
@@ -100,6 +118,12 @@ public class LevelFactory
     protected static const RED_TREE :Class;
     [Embed(source='../../../../../rsrc/objects.swf#lava_stalagmite')]
     protected static const LAVA_STALAGMITE :Class;
+    [Embed(source='../../../../../rsrc/objects.swf#stone_tiki')]
+    protected static const STONE_TIKI :Class;
+    [Embed(source='../../../../../rsrc/objects.swf#stone_tiki_short')]
+    protected static const STONE_TIKI_SHORT :Class;
+    [Embed(source='../../../../../rsrc/objects.swf#stone_tiki_single')]
+    protected static const STONE_TIKI_SINGLE :Class;
 
     // initialize the mapping of colors to objects
     protected static var OBJECT_MAPPING :HashMap;
@@ -123,6 +147,9 @@ public class LevelFactory
         OBJECT_MAPPING.put(0x00ADEF, { cls: GREEN_TREE, type: LevelConfig.OBJECT_OBSTACLE });
         OBJECT_MAPPING.put(0xA36109, { cls: RED_TREE, type: LevelConfig.OBJECT_OBSTACLE });
         OBJECT_MAPPING.put(0x005e20, { cls: LAVA_STALAGMITE, type: LevelConfig.OBJECT_OBSTACLE });
+        OBJECT_MAPPING.put(0x362F2D, { cls: STONE_TIKI, type: LevelConfig.OBJECT_OBSTACLE });
+        OBJECT_MAPPING.put(0x736257, { cls: STONE_TIKI_SHORT, type: LevelConfig.OBJECT_OBSTACLE });
+        OBJECT_MAPPING.put(0xC7B299, { cls: STONE_TIKI_SINGLE, type: LevelConfig.OBJECT_OBSTACLE });
     }
     staticInit();
 }

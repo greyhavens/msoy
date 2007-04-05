@@ -56,7 +56,8 @@ public class UnderwhirledDriftController
         if (_control.isConnected()) {
             var config :Object = _control.getConfig();
             _numLaps = config["number of laps"] != null ? config["number of laps"] : 4;
-            _numRounds = config["number of rounds"] != null ? config["number of rounds"] : 3;
+            _numRounds = config["number of rounds"] != null ? config["number of rounds"] : 
+                LevelFactory.TOTAL_LEVELS;
 
             _view.setLevel(_level = LevelFactory.createLevel(_currentLevel = 0, _ground));
 
