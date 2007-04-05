@@ -1,6 +1,9 @@
 package com.threerings.msoy.game.client {
 
-import flash.display.Sprite;
+import flash.display.Loader;
+import flash.net.URLRequest;
+import flash.system.ApplicationDomain;
+import flash.system.LoaderContext;
 import flash.utils.Dictionary;
 
 import com.threerings.flash.MediaContainer;
@@ -34,21 +37,23 @@ public class WhirledGameControlBackend extends GameControlBackend
         o["getHeadShot_v1"] = getHeadShot_v1;
     }
 
-    protected function getHeadShot_v1 (occupant :int) :Sprite
+    protected function getHeadShot_v1 (occupant :int) :Loader
     {
         validateConnected();
         var info :GameMemberInfo = _ezObj.occupantInfo.get(occupant) as GameMemberInfo;
         if (info != null) {
-            var sprite :Sprite = _sprites[occupant];
-            if (sprite == null) {
-                _sprites[occupant] = sprite = new MediaContainer(info.headShot.getMediaPath());
+            var loader :Loader = _headshots[occupant];
+            if (loader == null) {
+                _headshots[occupant] = loader = new Loader();
+                loader.load(new URLRequest(info.headShot.getMediaPath()),
+                            new LoaderContext(false, new ApplicationDomain(null)));
             }
-            return sprite;
+            return loader;
         }
-        return null;
+        throw new Error("Failed to find occupant: " + occupant);
     }
 
     /** A cache of loaded avatar headshots, indexed by occupant id. */
-    protected var _sprites :Dictionary = new Dictionary();
+    protected var _headshots :Dictionary = new Dictionary();
 }
 }

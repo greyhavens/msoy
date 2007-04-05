@@ -6,7 +6,7 @@
 package com.whirled {
 
 import flash.display.DisplayObject;
-import flash.display.Sprite;
+import flash.display.Loader;
 
 import com.threerings.ezgame.EZGameControl;
 
@@ -50,13 +50,14 @@ public class WhirledGameControl extends EZGameControl
     }
 
     /**
-     * Load the headshot sprite for the given occupant. The headshots are cached in the
-     * client backend so the user should not worry too much about multiple requests for
-     * the same occupant.
+     * Return the headshot image for the given occupant in the form of a Loader object.
+     *
+     * The loaders are cached in the client backend so the user should not worry too much
+     * about multiple requests for the same occupant.
      */
-    public function getHeadShot (occupant :int) :Sprite
+    public function getHeadShot (occupant :int) :Loader
     {
-        return callEZCode("getHeadShot_v1", occupant) as Sprite;
+        return callEZCode("getHeadShot_v1", occupant) as Loader;
     }
 }
 }
