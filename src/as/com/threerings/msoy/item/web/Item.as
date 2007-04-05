@@ -53,9 +53,9 @@ public /*abstract*/ class Item
     /** A 'used' constant value to indicate that the item is used as a pet let out in a room. */
     public static const USED_AS_PET :int = 3;
 
-    /** A 'used' constant value to indivate that the item is used as a decor. The 'location'
-     *  field will contain the sceneId. */
-    public static const USED_AS_DECOR :int = 4;
+    /** A 'used' constant value to indicate that the item is used in a scene as background
+     *  bitmap or music (as appropriate). The 'location' field will contain the sceneId. */
+    public static const USED_AS_BACKGROUND :int = 4;
 
     /** Identifies our thumbnail media. */
     public static const THUMB_MEDIA :String = "thumb";

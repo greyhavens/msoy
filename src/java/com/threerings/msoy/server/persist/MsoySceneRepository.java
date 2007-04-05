@@ -271,7 +271,7 @@ public class MsoySceneRepository extends SimpleRepository
                         ins.setFloat(5, horizon);
                         ins.setInt(6, ownerId);
                         ins.setInt(7, ownerId);
-                        ins.setByte(8, Item.USED_AS_DECOR);
+                        ins.setByte(8, Item.USED_AS_BACKGROUND);
                         ins.setInt(9, sceneId);
                         ins.setString(10, (sceneName != "" ? sceneName : "new") + " decor");
                         ins.setBytes(11, mediaHash);

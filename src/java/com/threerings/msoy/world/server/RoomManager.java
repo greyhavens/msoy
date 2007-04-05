@@ -243,7 +243,7 @@ public class RoomManager extends SpotSceneManager
                     DecorData decorData = msoyScene.getDecorData();
                 if (decorData != null && decorData.itemId != up.decorData.itemId) { // modified?
                     MsoyServer.itemMan.updateItemUsage(
-                        Item.DECOR, Item.USED_AS_DECOR, user.getMemberId(), _scene.getId(),
+                        Item.DECOR, Item.USED_AS_BACKGROUND, user.getMemberId(), _scene.getId(),
                         decorData.itemId, up.decorData.itemId, defaultListener);
                 }
 
@@ -251,7 +251,7 @@ public class RoomManager extends SpotSceneManager
                 AudioData audioData = msoyScene.getAudioData();
                 if (audioData != null && audioData.itemId != up.audioData.itemId) { // modified?
                     MsoyServer.itemMan.updateItemUsage(
-                        Item.AUDIO, Item.USED_AS_DECOR, user.getMemberId(), _scene.getId(),
+                        Item.AUDIO, Item.USED_AS_BACKGROUND, user.getMemberId(), _scene.getId(),
                         audioData.itemId, up.audioData.itemId, defaultListener);
                 }
             }

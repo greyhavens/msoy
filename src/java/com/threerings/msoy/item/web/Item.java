@@ -49,9 +49,9 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
     /** A 'used' constant value to indicate that the item is used as a pet let out in a room. */
     public static final byte USED_AS_PET = (byte) 3;
 
-    /** A 'used' constant value to indivate that the item is used as a decor. The 'location'
-     *  field will contain the sceneId. */
-    public static final byte USED_AS_DECOR = (byte) 4;
+    /** A 'used' constant value to indicate that the item is used in a scene as background
+     *  bitmap or music (as appropriate). The 'location' field will contain the sceneId. */
+    public static final byte USED_AS_BACKGROUND = (byte) 4;
 
     /** An identifier used to coordinate with the server when uploading media. */
     public static final String FURNI_MEDIA = "furni";
