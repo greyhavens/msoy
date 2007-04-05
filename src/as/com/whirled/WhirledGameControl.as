@@ -6,6 +6,7 @@
 package com.whirled {
 
 import flash.display.DisplayObject;
+import flash.display.Sprite;
 
 import com.threerings.ezgame.EZGameControl;
 
@@ -46,6 +47,16 @@ public class WhirledGameControl extends EZGameControl
     public function setChatEnabled (enabled :Boolean) :void
     {
         callEZCode("setChatEnabled_v1", enabled);
+    }
+
+    /**
+     * Load the headshot sprite for the given occupant. The headshots are cached in the
+     * client backend so the user should not worry too much about multiple requests for
+     * the same occupant.
+     */
+    public function getHeadShot (occupant :int) :Sprite
+    {
+        return callEZCode("getHeadShot_v1", occupant) as Sprite;
     }
 }
 }

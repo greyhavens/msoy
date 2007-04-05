@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import com.samskivert.util.Predicate;
 
+import com.threerings.parlor.game.data.GameObject;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
 
@@ -29,6 +30,7 @@ import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.GroupName;
 
+import com.threerings.msoy.game.data.GameMemberInfo;
 import com.threerings.msoy.game.data.WorldGameConfig;
 
 /**
@@ -181,9 +183,9 @@ public class MemberObject extends MsoyBodyObject
         if (plobj instanceof RoomObject) {
             return new WorldMemberInfo(this);
 
-//        } else if (plobj instanceof GameObject) {
-//            return new GameMemberInfo(this);
-//
+        } else if (plobj instanceof GameObject) {
+            return new GameMemberInfo(this);
+
         } else {
             return new MemberInfo(this);
         }
