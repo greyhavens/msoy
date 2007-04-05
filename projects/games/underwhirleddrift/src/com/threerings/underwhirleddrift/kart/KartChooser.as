@@ -43,18 +43,54 @@ public class KartChooser
         var portrait :Sprite = new PORTRAIT_0();
         portrait.x = -286;
         portrait.y = -131;
+        UnderwhirledDrift.registerEventListener(portrait, MouseEvent.CLICK, 
+            function (evt :MouseEvent) :void {
+                showKartInfo(0);
+            });
+        portrait.buttonMode = true;
         _chooserSprite.addChild(portrait);
         portrait = new PORTRAIT_1();
         portrait.x = -286;
         portrait.y = 0;
+        UnderwhirledDrift.registerEventListener(portrait, MouseEvent.CLICK, 
+            function (evt :MouseEvent) :void {
+                showKartInfo(1);
+            });
+        portrait.buttonMode = true;
         _chooserSprite.addChild(portrait);
         portrait = new PORTRAIT_2();
         portrait.x = -286;
         portrait.y = 131;
+        UnderwhirledDrift.registerEventListener(portrait, MouseEvent.CLICK, 
+            function (evt :MouseEvent) :void {
+                showKartInfo(2);
+            });
+        portrait.buttonMode = true;
         _chooserSprite.addChild(portrait);
 
+        var okButton :Sprite = new OK_BUTTON();
+        okButton.x = 293;
+        okButton.y = 160;
+        _chooserSprite.addChild(okButton);
+
+        _color0 = new Sprite;
+        _color0.addChild(new Sprite());
+        _color0.x = 313;
+        _color0.y = -73;
+        _chooserSprite.addChild(_color0);
+        _color1 = new Sprite;
+        _color1.addChild(new Sprite());
+        _color1.x = 313;
+        _color1.y = -44;
+        _chooserSprite.addChild(_color1);
+        _color2 = new Sprite;
+        _color2.addChild(new Sprite());
+        _color2.x = 313;
+        _color2.y = -15;
+        _chooserSprite.addChild(_color2);
+
         // defaults to devilite
-        showKartInfo(2);
+        showKartInfo(1);
 
         return _chooserSprite;
     }
@@ -64,6 +100,11 @@ public class KartChooser
         try {
             _activeScreen.removeChildAt(0);
             _activeScreen.addChild(new KartChooser["SCREEN_" + kartNumber]());
+            for (var ii :int = 0; ii < 3; ii++) {
+                this["_color" + ii].removeChildAt(0);
+                this["_color" + ii].addChild(new KartChooser["KART_" + kartNumber + "_COLOR_" + 
+                    ii]());
+            }
         } catch (re :ReferenceError) {
             Log.getLog(this).warning("Failed to show kart info for kart " + kartNumber + ": " +
                 re);
@@ -254,5 +295,8 @@ public class KartChooser
     protected var _chooserSprite :Sprite;
 
     protected var _activeScreen :Sprite;
+    protected var _color0 :Sprite;
+    protected var _color1 :Sprite;
+    protected var _color2 :Sprite;
 }
 }
