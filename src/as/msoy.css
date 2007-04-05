@@ -316,6 +316,14 @@ Window {
   backgroundColor: #222222;
 }
 
+.locationName {
+  fontSize: 14px;
+  fontWeight: bold;
+  color: white;
+  textAlign: center;
+}
+
+
 VScrollBar {
   cornerRadius: 4;
   borderColor: #cccccc;
@@ -449,13 +457,6 @@ ListBase
   paddingRight: 7;
   paddingTop: 7;
   paddingBottom: 7;
-}
-
-.lobbyGameName {
-  fontSize: 14px;
-  fontWeight: bold;
-  color: white;
-  textAlign: center;
 }
 
 .tabsBox {

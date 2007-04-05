@@ -156,7 +156,8 @@ public class ControlBar extends HBox
         blank.percentWidth = 100;
         addChild(blank);
 
-        _goback = new CommandButton();
+        // don't do navigation down here for now...
+        /*_goback = new CommandButton();
         _goback.setCommand(ControlBarController.MOVE_BACK, _goback);
         _goback.styleName = "controlBarButtonGoBack";
         addChild(_goback);
@@ -169,7 +170,7 @@ public class ControlBar extends HBox
 
         _bookend = new SkinnableImage();
         _bookend.styleName = "controlBarBookend";
-        addChild(_bookend);
+        addChild(_bookend);*/
 
         var footerRight :SkinnableImage = new SkinnableImage();
         footerRight.styleName = "controlBarFooterRight";
@@ -196,7 +197,8 @@ public class ControlBar extends HBox
     public function updateNavigationWidgets (
         visible :Boolean, name :String, backEnabled :Boolean) :void
     {
-        const maxLen :int = 25;
+        // don't do navigation here for now...
+        /*const maxLen :int = 25;
         _loc.includeInLayout = _goback.includeInLayout = _bookend.includeInLayout =
             _loc.visible = _goback.visible = _bookend.visible = visible;
         _goback.enabled = backEnabled;
@@ -205,7 +207,7 @@ public class ControlBar extends HBox
             _loc.text = name.length < maxLen ? name : (name.substr(0, maxLen) + "...");
         } else {
             _loc.text = "";
-        }
+        }*/
     }
 
     /** Receives notification whether scene editing is possible for this scene. */

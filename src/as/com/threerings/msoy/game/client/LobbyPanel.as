@@ -206,7 +206,7 @@ public class LobbyPanel extends VBox
         titleBox.height = 20;
         addChild(titleBox);
         _title = new Label();
-        _title.styleName = "lobbyGameName";
+        _title.styleName = "locationName";
         _title.width = 160;
         titleBox.addChild(_title);
         var padding :HBox = new HBox();
