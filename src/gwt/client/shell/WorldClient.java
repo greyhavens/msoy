@@ -20,15 +20,12 @@ import client.util.FlashClients;
  */
 public class WorldClient extends Widget
 {
-    public static void display (String page, String token, String flashArgs)
+    public static void display (String flashArgs)
     {
         // clear out our content and the expand/close controls
         RootPanel.get("content").clear();
         RootPanel.get("content").setWidth("0px");
-        if (_controls.isAttached()) {
-            RootPanel.get("client").remove(_controls);
-        }
-
+        
         // note that we need to hack our popups
         Page.displayingFlash = true;
 
@@ -45,10 +42,6 @@ public class WorldClient extends Widget
             clientGo(flashArgs);
             clientMinimized(false);
         }
-
-        // note our current page and history token
-        _curPage = page;
-        _curToken = token;
     }
 
     public static void minimize ()
@@ -59,9 +52,6 @@ public class WorldClient extends Widget
         if (_client != null) {
             clientMinimized(true);
             RootPanel.get("content").setWidth("724px");
-            if (!_controls.isAttached()) {
-                RootPanel.get("client").add(_controls);
-            }
         } else {
             RootPanel.get("content").setWidth("100%");
         }
@@ -131,23 +121,5 @@ public class WorldClient extends Widget
         }
     }-*/;
 
-    protected static class ControlPanel extends HorizontalPanel
-    {
-        public ControlPanel () {
-            setSpacing(5);
-            add(new Button("<<<", new ClickListener() {
-                public void onClick (Widget sender) {
-                    clearControls();
-                    History.newItem(Application.createLinkToken(_curPage, _curToken));
-                }
-            }));
-        }
-
-        protected void clearControls () {
-        }
-    }
-
     protected static Widget _client;
-    protected static ControlPanel _controls = new ControlPanel();
-    protected static String _curPage, _curToken;
 }

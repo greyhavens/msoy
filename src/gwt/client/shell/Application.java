@@ -226,6 +226,7 @@ public class Application
     protected void clearClient() 
     {
         WorldClient.clearClient();
+        _page.clearCloseButton();
     }
 
     protected void createMappings ()

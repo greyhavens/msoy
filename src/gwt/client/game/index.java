@@ -92,11 +92,13 @@ public class index extends Page
 
         switch (config.type) {
         case LaunchConfig.FLASH_IN_WORLD:
-            WorldClient.display("game", getPageArgs(), "worldGame=" + config.gameId);
+            WorldClient.display("worldGame=" + config.gameId);
+            setCloseButton("game", getPageArgs());
             break;
 
         case LaunchConfig.FLASH_LOBBIED:
-            WorldClient.display("game", getPageArgs(), "gameLobby=" + config.gameId);
+            WorldClient.display("gameLobby=" + config.gameId);
+            setCloseButton("game", getPageArgs());
             break;
 
         case LaunchConfig.FLASH_SOLO:

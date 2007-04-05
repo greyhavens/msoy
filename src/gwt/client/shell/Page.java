@@ -12,8 +12,11 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ClickListener;
 
 import com.threerings.msoy.web.data.WebCreds;
+
+import client.util.MsoyUI;
 
 /**
  * Handles some standard services for a top-level MetaSOY page.
@@ -78,6 +81,22 @@ public abstract class Page
     }
 
     /**
+     * Used to remove the close button, either because we've been removed from view, or beacuse the
+     * flash client has been removed.
+     */
+    public void clearCloseButton ()
+    {
+        if (_content != null) {
+            _closeButtonPage = null;
+            _closeButtonToken = null;
+            Widget btn = _content.getWidget(0, 2);
+            if (btn != null) {
+                _content.remove(btn);
+            }
+        }
+    }
+
+    /**
      * Called during initialization to give our entry point and derived classes a chance to
      * initialize their respective context classes.
      */
@@ -139,6 +158,16 @@ public abstract class Page
         _content.getFlexCellFormatter().setStyleName(0, 1, "pageHeaderContent");
         _content.getFlexCellFormatter().setStyleName(0, 2, "pageHeaderClose");
         _content.getFlexCellFormatter().setColSpan(1, 0, 3);
+
+        if (_closeButtonPage != null && _closeButtonToken != null) {
+            _content.setWidget(0, 2, MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
+                public void onClick (Widget sender) {
+                    History.newItem(Application.createLinkToken(_closeButtonPage, 
+                        _closeButtonToken));
+                    clearCloseButton();
+                }
+            }));
+        }
     }
 
     protected void setPageTitle (String title)
@@ -156,6 +185,15 @@ public abstract class Page
             createContentContainer();
         }
         _content.setWidget(0, 1, tabs);
+    }
+
+    /** 
+     * sets what the close button will display when pressed.
+     */
+    protected void setCloseButton (String page, String token)
+    {
+        _closeButtonPage = page;
+        _closeButtonToken = token;
     }
 
     /**
@@ -177,6 +215,9 @@ public abstract class Page
         WorldClient.didLogoff();
         onHistoryChanged(getPageArgs());
     }
+
+    protected static String _closeButtonPage;
+    protected static String _closeButtonToken;
 
     protected FlexTable _content;
 }

@@ -59,19 +59,23 @@ public class index extends Page
             if (token.startsWith("s")) {
                 // go to a specific scene - don't parse out an int here, because a gameId may
                 // be encoded in the token
-                WorldClient.display("world", token, "sceneId=" + token.substring(1));
+                WorldClient.display("sceneId=" + token.substring(1));
+                setCloseButton("world", token);
 
             } else if (token.startsWith("g")) {
                 // go to a specific group's scene group
-                WorldClient.display("world", token, "groupHome=" + id(token, 1));
+                WorldClient.display("groupHome=" + id(token, 1));
+                setCloseButton("world", token);
 
             } else if (token.startsWith("m")) {
                 // go to a specific member's home
-                WorldClient.display("world", token, "memberHome=" + id(token, 1));
+                WorldClient.display("memberHome=" + id(token, 1));
+                setCloseButton("world", token);
 
             } else if (token.startsWith("l")) {
                 // go to a specific member's home
-                WorldClient.display("world", token, "location=" + id(token, 1));
+                WorldClient.display("location=" + id(token, 1));
+                setCloseButton("world", token);
 
             } else if (token.startsWith("ng")) {
                 // go to the neighborhood around the specified group
@@ -87,7 +91,8 @@ public class index extends Page
 
             } else if (CWorld.creds != null) {
                 // we're logged in, go to our home
-                WorldClient.display("world", token, null);
+                WorldClient.display(null);
+                setCloseButton("world", token);
 
             } else {
                 // we're not logged in, show popular places

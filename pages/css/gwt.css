@@ -608,4 +608,11 @@ body {
   background: #222222;
   height: 20px;  
   text-align: right;
+  vertical-align: top;
+}
+
+.pageHeaderClose .CloseBox {
+  background-image: url(/images/ui/close_button.png);
+  width: 13px;
+  height: 13px;
 }
