@@ -53,7 +53,6 @@ public class KartSprite extends Sprite
         if (up) {
             if (_shield == null) {
                 _shield = Bonus.getGameSprite(Bonus.SHIELD);
-                //_shield.y -= _shield.height / 2;
                 addChild(_shield);
             }
         } else {
