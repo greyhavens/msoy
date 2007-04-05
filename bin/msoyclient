@@ -3,6 +3,9 @@
 # $Id$
 #
 # Command line launcher for the Msoy standalone client
+#
+# Usage:
+#   msoyclient [-nodebug] [parameters for world client] [build version]
 
 BINDIR=`dirname $0`
 HOST=`egrep ^server_host $BINDIR/../server.properties | awk '{print $3}'`
@@ -12,4 +15,11 @@ if [ "$1" = "-nodebug" ]; then
     PLAYER="flashplayer"
     shift
 fi
-$BINDIR/`uname`/$PLAYER http://$HOST:8080/clients/world-client.swf?$1
+
+PARAMETERS=$1
+BUILD_VERSION=$2
+if [ "$BUILD_VERSION" = "" ]; then
+    BUILD_VERSION="0"
+fi
+
+$BINDIR/`uname`/$PLAYER http://$HOST:8080/clients/$BUILD_VERSION/world-client.swf?$PARAMETERS
