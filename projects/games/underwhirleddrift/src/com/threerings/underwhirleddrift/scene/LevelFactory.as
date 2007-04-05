@@ -18,7 +18,7 @@ public class LevelFactory
                 LevelFactory["FLAT_" + level], new LevelConfig(LevelFactory["OBJECTS_" + level], 
                 OBJECT_MAPPING));
         } catch (re :ReferenceError) {
-            Log.getLog(LevelFactory).debug("Failed attempt to create level " + level);
+            Log.getLog(LevelFactory).warning("Failed attempt to create level " + level);
         }
         return null;
     }

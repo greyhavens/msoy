@@ -27,7 +27,50 @@ public class KartChooser
         _ground = ground;
     }
 
-    public function chooseKart () :Sprite
+    public function chooseKart () :Sprite 
+    {
+        //return oldChooseKart();
+
+        _chooserSprite = new Sprite();
+        _chooserSprite.x = UnderwhirledDrift.DISPLAY_WIDTH / 2;
+        _chooserSprite.y = UnderwhirledDrift.DISPLAY_HEIGHT / 2;
+
+        // sprites like this one start with nothing but an empty sprite inside them so that
+        // they're in a known state for showKartInfo() to fill in
+        _chooserSprite.addChild(_activeScreen = new Sprite());
+        _activeScreen.addChild(new Sprite());
+
+        var portrait :Sprite = new PORTRAIT_0();
+        portrait.x = -286;
+        portrait.y = -131;
+        _chooserSprite.addChild(portrait);
+        portrait = new PORTRAIT_1();
+        portrait.x = -286;
+        portrait.y = 0;
+        _chooserSprite.addChild(portrait);
+        portrait = new PORTRAIT_2();
+        portrait.x = -286;
+        portrait.y = 131;
+        _chooserSprite.addChild(portrait);
+
+        // defaults to devilite
+        showKartInfo(2);
+
+        return _chooserSprite;
+    }
+
+    public function showKartInfo (kartNumber :int) :void
+    {
+        try {
+            _activeScreen.removeChildAt(0);
+            _activeScreen.addChild(new KartChooser["SCREEN_" + kartNumber]());
+        } catch (re :ReferenceError) {
+            Log.getLog(this).warning("Failed to show kart info for kart " + kartNumber + ": " +
+                re);
+        }
+    }
+
+    public function oldChooseKart () :Sprite
     {
         setBlur(true);
 
@@ -165,10 +208,51 @@ public class KartChooser
 
     protected static const TEXT_COLOR :int = 0xEAEFF1;
 
+    /** OK button to press when you've finished with selection */
+    [Embed(source="../../../../../rsrc/kart_selection.swf#ok_button")]
+    protected static const OK_BUTTON :Class;
+
+    /** portraits and selection screens for each kart */
+    [Embed(source="../../../../../rsrc/kart_selection.swf#soul_jelly_portrait")]
+    protected static const PORTRAIT_0 :Class;
+    [Embed(source="../../../../../rsrc/kart_selection.swf#devilite_portrait")]
+    protected static const PORTRAIT_1 :Class;
+    [Embed(source="../../../../../rsrc/kart_selection.swf#pit_brute_portrait")]
+    protected static const PORTRAIT_2 :Class;
+
+    [Embed(source="../../../../../rsrc/kart_selection.swf#soul_jelly_screen")]
+    protected static const SCREEN_0 :Class;
+    [Embed(source="../../../../../rsrc/kart_selection.swf#devilite_screen")]
+    protected static const SCREEN_1 :Class;
+    [Embed(source="../../../../../rsrc/kart_selection.swf#pit_brute_screen")]
+    protected static const SCREEN_2 :Class;
+
+    /** Color dots for kart hue */
+    [Embed(source="../../../../../rsrc/kart_selection.swf#soul_jelly_color_1")]
+    protected static const KART_0_COLOR_0 :Class;
+    [Embed(source="../../../../../rsrc/kart_selection.swf#soul_jelly_color_2")]
+    protected static const KART_0_COLOR_1 :Class;
+    [Embed(source="../../../../../rsrc/kart_selection.swf#soul_jelly_color_3")]
+    protected static const KART_0_COLOR_2 :Class;
+    [Embed(source="../../../../../rsrc/kart_selection.swf#devilite_color_1")]
+    protected static const KART_1_COLOR_0 :Class;
+    [Embed(source="../../../../../rsrc/kart_selection.swf#devilite_color_2")]
+    protected static const KART_1_COLOR_1 :Class;
+    [Embed(source="../../../../../rsrc/kart_selection.swf#devilite_color_3")]
+    protected static const KART_1_COLOR_2 :Class;
+    [Embed(source="../../../../../rsrc/kart_selection.swf#pit_brute_color_1")]
+    protected static const KART_2_COLOR_0 :Class;
+    [Embed(source="../../../../../rsrc/kart_selection.swf#pit_brute_color_2")]
+    protected static const KART_2_COLOR_1 :Class;
+    [Embed(source="../../../../../rsrc/kart_selection.swf#pit_brute_color_3")]
+    protected static const KART_2_COLOR_2 :Class;
+
     protected var _control :UnderwhirledDriftController;
     protected var _blurObj :DisplayObject;
     protected var _camera :Camera;
     protected var _ground :Ground;
     protected var _chooserSprite :Sprite;
+
+    protected var _activeScreen :Sprite;
 }
 }
