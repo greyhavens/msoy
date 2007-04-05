@@ -460,6 +460,7 @@ public class MsoyController extends Controller
             }
             log.info("Logging on [creds=" + creds + "].");
             client.setCredentials(creds);
+            client.setVersion(DeploymentConfig.version);
             client.logon();
         });
     }

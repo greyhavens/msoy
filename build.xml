@@ -18,6 +18,9 @@
   <property name="flexsdk.dir"   value="tools/extern/flex_sdk"/>
   <property name="extlibs.dir"   value="extlibs/java"/>
 
+  <!-- defines the build version (normally zero unless we're doing a package build) -->
+  <property name="build_version" value="0"/>
+
   <!-- define our subprojects and include the standard build system -->
   <property name="projects" value="samskivert,narya,nenya,vilya,toybox,s3lib,threerings"/>
   <import file="build/etc/build-support.xml"/>
@@ -216,6 +219,7 @@
           tofile="${src.dir}/com/threerings/msoy/web/client/DeploymentConfig.java" overwrite="true">
       <filterset>
         <filter token="build_time" value="${build_time}"/>
+        <filter token="build_version" value="${build_version}"/>
         <filter token="media_url" value="${media_url}"/>
         <filter token="static_media_url" value="${static_media_url}"/>
         <filter token="dev_deployment" value="${dev_deployment}"/>
@@ -226,13 +230,6 @@
   <!-- builds our GWT web client -->
   <property name="pages" value="msoy"/>
   <target name="gclient" depends="jprepare">
-    <!-- TODO: TEMP: remove this (added 2007/03/20) -->
-    <!-- delete old crap -->
-    <for list="mail,world,admin,group,inventory,profile,swiftly,editem,game,catalog" param="page"><sequential>
-      <delete dir="pages/@{page}"/>
-    </sequential></for>
-    <!-- END: TEMP -->
-
     <for list="${pages}" param="page"><sequential>
       <echo>Compiling @{page} module...</echo>
       <delete dir="pages/@{page}"/>
@@ -291,7 +288,7 @@
 
   <!-- prepares to build our Flash client -->
   <target name="asprepare" depends="prepare">
-    <mkdir dir="pages/clients"/>
+    <mkdir dir="pages/clients/${build_version}"/>
     <tstamp>
       <format property="build_time" pattern="yyyy-MM-dd HH:mm:ss"/>
     </tstamp>
@@ -303,6 +300,7 @@
           overwrite="true">
       <filterset>
         <filter token="build_time" value="${build_time}"/>
+        <filter token="build_version" value="${build_version}"/>
         <filter token="server_host" value="${server_host}"/>
         <filter token="server_ports" value="${server_ports}"/>
         <filter token="media_url" value="${media_url}"/>
@@ -312,6 +310,7 @@
     </copy>
   </target>
 
+  <!-- checks whether our Flash library needs building -->
   <target name="checkaslib">
     <uptodate property="aslib_is_up_to_date" targetfile="${deploy.dir}/ooo.swc">
       <srcfiles dir="projects/narya/src/as" includes="**/*.as"/>
@@ -343,6 +342,7 @@
     </java>
   </target>
 
+  <!-- checks whether our export Flash library needs building -->
   <target name="checkexportlib">
     <uptodate property="exportlib_is_up_to_date" targetfile="${deploy.dir}/whirled.swc">
       <srcfiles dir="projects/vilya/src/as/com/threerings/ezgame" includes="**/*.as"/>
@@ -350,7 +350,7 @@
     </uptodate>
   </target>
 
-  <!-- builds our Flash library -->
+  <!-- builds our export Flash library -->
   <target name="exportlib" unless="exportlib_is_up_to_date" depends="checkexportlib">
     <java jar="${flexsdk.dir}/lib/compc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
@@ -388,7 +388,7 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/${type}.${extension}"/>
     </exec>
-    <copy file="${deploy.dir}/${type}-client.swf" todir="pages/clients"/>
+    <copy file="${deploy.dir}/${type}-client.swf" todir="pages/clients/${build_version}"/>
   </target>
 
   <!-- builds our Flash client -->
@@ -417,7 +417,7 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/${type}.${extension}"/>
     </exec>
-    <copy file="${deploy.dir}/${type}-client.swf" todir="pages/clients"/>
+    <copy file="${deploy.dir}/${type}-client.swf" todir="pages/clients/${build_version}"/>
   </target>
 
   <!-- builds our avatar viewer thingy -->
@@ -433,7 +433,7 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/AvatarViewer.mxml"/>
     </exec>
-    <copy file="${deploy.dir}/avatarviewer.swf" todir="pages/clients"/>
+    <copy file="${deploy.dir}/avatarviewer.swf" todir="pages/clients/${build_version}"/>
   </target>
 
   <!-- builds our video viewer thingy -->
@@ -448,7 +448,7 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/VideoViewer.as"/>
     </exec>
-    <copy file="${deploy.dir}/videoviewer.swf" todir="pages/clients"/>
+    <copy file="${deploy.dir}/videoviewer.swf" todir="pages/clients/${build_version}"/>
   </target>
 
   <!-- builds our awesome decor viewer -->
@@ -464,7 +464,7 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/DecorViewer.mxml"/>
     </exec>
-    <copy file="${deploy.dir}/decorviewer.swf" todir="pages/clients"/>
+    <copy file="${deploy.dir}/decorviewer.swf" todir="pages/clients/${build_version}"/>
   </target>
 
   <!-- builds the ActionScript documention -->
@@ -548,7 +548,7 @@
              alias="${sign.alias}">
       <fileset dir="${deploy.dir}" includes="${ident}-client.jar"/>
     </signjar>
-    <copy file="${deploy.dir}/${ident}-client.jar" todir="pages/clients"/>
+    <copy file="${deploy.dir}/${ident}-client.jar" todir="pages/clients/${build_version}"/>
   </target>
 
   <!-- builds our Java clients -->
@@ -754,8 +754,17 @@
     </antcall>
   </target>
 
+  <!-- assigns a version number to this build -->
+  <target name="assignversion">
+    <var name="build_version" unset="true"/>
+    <exec executable="${basedir}/build/bin/buildstamp" outputproperty="build_version"
+          failonerror="true">
+    </exec>
+    <echo>Assigned build version ${build_version}</echo>
+  </target>
+
   <!-- rebuilds everything and extra bits for packaging -->
-  <target name="distpkg" depends="distall,javadoc"/>
+  <target name="distpkg" depends="assignversion,distall,javadoc"/>
 
   <!-- cleans out the compiled code -->
   <target name="clean">

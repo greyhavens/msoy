@@ -6,6 +6,7 @@ package com.threerings.msoy.server;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 
 import com.threerings.presents.net.AuthRequest;
@@ -21,6 +22,7 @@ import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 
@@ -138,21 +140,21 @@ public class MsoyAuthenticator extends Authenticator
         MsoyCredentials creds = null;
 
         try {
-//             // make sure they've got the correct version
-//             long cvers = 0L;
-//             long svers = DeploymentConfig.getVersion();
-//             try {
-//                 cvers = Long.parseLong(req.getVersion());
-//             } catch (Exception e) {
-//                 // ignore it and fail below
-//             }
-//             if (svers != cvers) {
-//                 log.info("Refusing wrong version " +
-//                          "[creds=" + req.getCredentials() +
-//                          ", cvers=" + cvers + ", svers=" + svers + "].");
-//                 throw new ServiceException((cvers > svers) ? NEWER_VERSION
-//                    : MessageBundle.tcompose(VERSION_MISMATCH, svers));
-//             }
+            // make sure they've got the correct version
+            long cvers = 0L;
+            long svers = DeploymentConfig.version;
+            try {
+                cvers = Long.parseLong(req.getVersion());
+            } catch (Exception e) {
+                // ignore it and fail below
+            }
+            if (svers != cvers) {
+                log.info("Refusing wrong version [creds=" + req.getCredentials() +
+                         ", cvers=" + cvers + ", svers=" + svers + "].");
+                throw new ServiceException(
+                    (cvers > svers) ? MsoyAuthCodes.NEWER_VERSION :
+                    MessageBundle.tcompose(MsoyAuthCodes.VERSION_MISMATCH, svers));
+            }
 
             // make sure they've sent valid credentials
             try {

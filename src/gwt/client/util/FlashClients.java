@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.HTML;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.MemberName;
 
@@ -23,20 +24,15 @@ public class FlashClients
     public static HTML createWorldClient (String flashVars)
     {
         return WidgetUtil.createFlashContainer(
-            "asclient", "/clients/world-client.swf", "100%", getClientHeight(), flashVars);
-    }
-
-    public static HTML createHeaderClient (String token)
-    {
-        return WidgetUtil.createFlashContainer(
-            "asclient", "/clients/header-client.swf", "5", "5", "token=" + token);
+            "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
+            "100%", getClientHeight(), flashVars);
     }
 
     public static HTML createLobbyClient (int gameId, String token)
     {
         return WidgetUtil.createFlashContainer(
-            "asclient", "/clients/world-client.swf", "100%", getClientHeight(),
-            "gameLobby=" + gameId + "&token=" + token);
+            "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
+            "100%", getClientHeight(), "gameLobby=" + gameId + "&token=" + token);
     }
 
     public static HTML createNeighborhood (String hoodData)
@@ -61,21 +57,22 @@ public class FlashClients
     public static HTML createAvatarViewer (String avatarPath)
     {
         return WidgetUtil.createFlashContainer(
-            "avatarViewer", "/clients/avatarviewer.swf", 600, 550,
-            "avatar=" + URL.encodeComponent(avatarPath));
+            "avatarViewer", "/clients/" + DeploymentConfig.version + "/avatarviewer.swf",
+            600, 550, "avatar=" + URL.encodeComponent(avatarPath));
     }
             
     public static HTML createVideoViewer (String videoPath)
     {
         return WidgetUtil.createFlashContainer(
-            "videoViewer", "/clients/videoviewer.swf", 320, 240,
-            "video=" + URL.encodeComponent(videoPath));
+            "videoViewer", "/clients/" + DeploymentConfig.version + "/videoviewer.swf",
+            320, 240, "video=" + URL.encodeComponent(videoPath));
     }
 
     public static HTML createDecorViewer ()
     {
         return WidgetUtil.createFlashContainer(
-            "decorViewer", "/clients/decorviewer.swf", 300, 300, "");
+            "decorViewer", "/clients/" + DeploymentConfig.version + "/decorviewer.swf",
+            300, 300, "");
     }
 
     /**
