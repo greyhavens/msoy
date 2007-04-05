@@ -204,22 +204,19 @@ public class FlowRepository extends DepotRepository
     }
 
     /**
-     * Expire a member's flow given that dT minute passed since last we did so.  The flow field of
-     * the supplied MemberRecord is modified by this method: the expired flow is subtracted from
+     * Expire a member's flow given that dMin minute passed since last we did so.  The flow field
+     * of the supplied MemberRecord is modified by this method: the expired flow is subtracted from
      * it.
-     * 
-     * @return the amount of flow that was expired on the backend
      */
-    public int expireFlow (MemberRecord record, int dT)
+    public void expireFlow (MemberRecord record, float dMin)
         throws PersistenceException
     {
-        float dailyExpiration = RuntimeConfig.server.dailyFlowEvaporation;
-        int toExpire = (int) (record.flow * Math.pow(dailyExpiration, DAY_MINS/dT));
-        if (toExpire > 0) {
-            record.flow -= toExpire;
+        float dailyFactor = (1 - RuntimeConfig.server.dailyFlowEvaporation);
+        int newFlow = (int) (record.flow * Math.pow(dailyFactor, dMin/DAY_MINS));
+        if (newFlow != record.flow) {
+            record.flow = newFlow;
             update(record);
         }
-        return toExpire;
     }
 
     /**
