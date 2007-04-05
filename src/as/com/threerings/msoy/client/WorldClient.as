@@ -104,6 +104,20 @@ public class WorldClient extends BaseClient
         var rb :ResourceBundle;
     }
 
+    /**
+     * Notifies our JavaScript shell that the flash client should be cleared out.
+     */
+    public function closeClient () :void
+    {
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.call("clearClient");
+            }
+        } catch (err :Error) {
+            log.warning("ExternalInterface.call('clearClient') failed: " + err);
+        }
+    }
+
     // from BaseClient
     override protected function createContext () :BaseContext
     {

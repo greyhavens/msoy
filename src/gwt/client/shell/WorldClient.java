@@ -141,11 +141,6 @@ public class WorldClient extends Widget
                     History.newItem(Application.createLinkToken(_curPage, _curToken));
                 }
             }));
-            add(new Button(">>>", new ClickListener() {
-                public void onClick (Widget sender) {
-                    clearClient();
-                }
-            }));
         }
 
         protected void clearControls () {

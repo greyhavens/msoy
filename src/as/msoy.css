@@ -500,12 +500,12 @@ ListBase
   borderThickness: 0;
 }
 
-.leaveBtnBox {
+.closeButtonBox {
   verticalAlign: top;
   paddingLeft: 2px;
 }
 
-.leaveLobbyButton {
+.closeButton {
   height: 13px;
   width: 13px;
   overSkin: Embed(source="../../pages/images/ui/close_button.png");

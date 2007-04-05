@@ -223,6 +223,11 @@ public class Application
         _status.refreshMailNotification();
     }
 
+    protected void clearClient() 
+    {
+        WorldClient.clearClient();
+    }
+
     protected void createMappings ()
     {
         _creators.put("admin", client.admin.index.getCreator());
@@ -259,6 +264,9 @@ public class Application
        };
        $wnd.helloWhirled = function () {
             return true;
+       }
+       $wnd.clearClient = function () {
+            app.@client.shell.Application::clearClient()();
        }
     }-*/;
 

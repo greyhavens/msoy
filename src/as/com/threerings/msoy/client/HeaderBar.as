@@ -3,8 +3,11 @@ package com.threerings.msoy.client {
 import mx.core.ScrollPolicy;
 
 import mx.containers.HBox;
+import mx.containers.VBox;
 
 import mx.controls.Label;
+
+import com.threerings.flex.CommandButton;
 
 public class HeaderBar extends HBox
 {
@@ -32,6 +35,11 @@ public class HeaderBar extends HBox
         _loc.width = (_loc.textWidth + 5) > 124 ? _loc.textWidth + 5 : 124;
     }
 
+    public function setCloseButtonVisible (visible :Boolean) :void
+    {
+        _closeBtn.includeInLayout = _closeBtn.visible = visible;
+    }
+
     override protected function createChildren () :void
     {
         super.createChildren();
@@ -40,6 +48,19 @@ public class HeaderBar extends HBox
         _loc.styleName = "locationName";
         _loc.width = 124;
         addChild(_loc);
+
+        var padding :HBox = new HBox();
+        padding.percentWidth = 100;
+        addChild(padding);
+
+        var closeButtonBox :VBox = new VBox();
+        closeButtonBox.styleName = "closeButtonBox";
+        closeButtonBox.percentHeight = 100;
+        addChild(closeButtonBox);
+        _closeBtn = new CommandButton(HeaderBarController.CLOSE_CLIENT);
+        _closeBtn.styleName = "closeButton";
+        closeButtonBox.addChild(_closeBtn);
+        setCloseButtonVisible(false);
     }
 
     protected var _ctx :WorldContext;
@@ -47,5 +68,6 @@ public class HeaderBar extends HBox
     protected var _controller :HeaderBarController;
 
     protected var _loc :Label;
+    protected var _closeBtn :CommandButton;
 }
 }

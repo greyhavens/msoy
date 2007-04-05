@@ -1,5 +1,9 @@
 package com.threerings.msoy.client {
 
+import flash.events.Event;
+
+import mx.core.Application;
+
 import com.threerings.util.Controller;
 
 import com.threerings.crowd.client.LocationAdapter;
@@ -12,6 +16,9 @@ import com.threerings.msoy.game.data.MsoyGameConfig;
 
 public class HeaderBarController extends Controller
 {
+    /** Command to close out the minimized flash client */
+    public static const CLOSE_CLIENT :String = "CloseClient";
+
     public function HeaderBarController (ctx :WorldContext, headerBar :HeaderBar)
     {
         _ctx = ctx;
@@ -21,6 +28,15 @@ public class HeaderBarController extends Controller
         
         _ctx.getLocationDirector().addLocationObserver(new LocationAdapter(null, 
             this.locationChanged, null));
+
+        Application.application.stage.addEventListener(Event.RESIZE, function (evt :Event) :void {
+            _headerBar.setCloseButtonVisible(_ctx.getMsoyController().getMinimized());
+        });
+    }
+
+    public function handleCloseClient () :void
+    {
+        (_ctx.getClient() as WorldClient).closeClient();
     }
 
     protected function locationChanged (place :PlaceObject) :void
