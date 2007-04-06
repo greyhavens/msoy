@@ -68,60 +68,60 @@ import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
 import com.threerings.flash.ImageUtil;
+import com.threerings.flash.MediaContainer;
 
-class Headshot
+class Headshot extends MediaContainer
 {
-    public var content :DisplayObject;
+    public static const STATE_LOADING :int = 0;
+    public static const STATE_COMPLETE :int = 1;
+    public static const STATE_ERROR :int = 2;
+
     public var callbacks :Array = [ ];
-    public var success :Boolean;
+    public var state :int;
 
     function Headshot (url :String)
     {
         callbacks = [ ];
 
-        var loader :Loader = new Loader();
-        loader.load(new URLRequest(url), new LoaderContext(false, new ApplicationDomain(null)));
-
-        var info :LoaderInfo = loader.contentLoaderInfo;
-        info.addEventListener(Event.COMPLETE, loadingComplete);
-        info.addEventListener(IOErrorEvent.IO_ERROR, loadError);
+        state = STATE_LOADING;
+        setMedia(url);
     }
 
     public function newRequest (callback :Function) :void
     {
-        if (content != null) {
+        if (state != STATE_LOADING) {
             respondTo(callback);
         } else {
             callbacks.push(callback);
         }
     }
 
+    override protected function loadingComplete (event :Event) :void
+    {
+        super.loadingComplete(event);
+
+        state = STATE_COMPLETE;
+
+        for (var ii :int = 0; ii < callbacks.length; ii ++) {
+            respondTo(callbacks[ii]);
+        }
+        callbacks = null;
+    }
+
+    override protected function loadError (event :IOErrorEvent) :void
+    {
+        super.loadError(event);
+
+        state = STATE_ERROR;
+
+        for (var ii :int = 0; ii < callbacks.length; ii ++) {
+            respondTo(callbacks[ii]);
+        }
+        callbacks = null;
+    }
+
     protected function respondTo (callback :Function) :void
     {
-        callback(content, success);
-    }
-
-    protected function loadingComplete (event :Event) :void
-    {
-        var info :LoaderInfo = (event.target as LoaderInfo);
-        info.removeEventListener(Event.COMPLETE, loadingComplete);
-        info.removeEventListener(IOErrorEvent.IO_ERROR, loadError);
-
-        success = true;
-        content = info.loader.content;
-        for (var ii :int = 0; ii < callbacks.length; ii ++) {
-            respondTo(callbacks[ii]);
-        }
-        callbacks = null;
-    }
-
-    protected function loadError (event :IOErrorEvent) :void
-    {
-        success = false;
-        content = ImageUtil.createErrorImage(100, 100);
-        for (var ii :int = 0; ii < callbacks.length; ii ++) {
-            respondTo(callbacks[ii]);
-        }
-        callbacks = null;
+        callback(this, state == STATE_COMPLETE);
     }
 }
