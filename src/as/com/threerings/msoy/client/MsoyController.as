@@ -470,6 +470,8 @@ public class MsoyController extends Controller
      */
     public function goToPlace (params :Object) :void
     {
+        _sceneIdString = params["sceneId"];
+        
         // check for gameLobby first, so that the handleInternalGo call resulting from moveTo
         // adds the correct parameters to the external URL
         if (null != params["gameLobby"]) {
@@ -664,6 +666,14 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Get a scene ID string that should show the current scene in an embedded flash client.
+     */
+    public function getSceneIdString () :String
+    {
+        return _sceneIdString;
+    }
+
+    /**
      * Return true if we should attempt to load sections of whirled by
      * visiting a new page.
      */
@@ -755,5 +765,8 @@ public class MsoyController extends Controller
 
     /** Whether we're miniaturized or not */
     protected var _minimized :Boolean = false;
+
+    /** A string to give up for embedding your local scene. */
+    protected var _sceneIdString :String;
 }
 }

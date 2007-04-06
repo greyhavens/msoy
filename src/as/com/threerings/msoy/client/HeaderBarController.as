@@ -6,6 +6,8 @@ import flash.events.MouseEvent;
 import mx.containers.TitleWindow;
 
 import mx.controls.Button;
+import mx.controls.Text;
+import mx.controls.TextArea;
 
 import mx.core.Application;
 
@@ -53,8 +55,23 @@ public class HeaderBarController extends Controller
     {
         var window :TitleWindow = new TitleWindow();
         window.title = Msgs.GENERAL.get("t.embed_link_window");
-        PopUpManager.addPopUp(window, _ctx.getTopPanel(), true);
-        PopUpManager.centerPopUp(window);
+        window.setStyle("horizontalAlign", "center");
+        var instruction :Text = new Text();
+        instruction.width = 300;
+        instruction.text = Msgs.GENERAL.get("l.embed_instruction");
+        instruction.selectable = false;
+        window.addChild(instruction);
+        var html :TextArea = new TextArea();
+        html.width = 300;
+        html.editable = false;
+        var url :String = _headerBar.root.loaderInfo.loaderURL;
+        url = url.replace(/(http:\/\/[^\/]*).*/, "$1/clients/world-client.swf");
+        html.text = "<embed width='100%' height='550' flashvars='sceneId=" + 
+            _ctx.getMsoyController().getSceneIdString() + "' \n" +
+            "src='" + url + "' \n" +
+            "wmode='opaque' pluginspace='http://www.macromedia.com/go/getflashplayer' \n" +
+            "type='application/x-shockwave-flash' />";
+        window.addChild(html);
         var closeButton :Button = new Button();
         closeButton.label = Msgs.GENERAL.get("b.done_embed_link");
         closeButton.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
@@ -62,6 +79,8 @@ public class HeaderBarController extends Controller
         });
         closeButton.buttonMode = true;
         window.addChild(closeButton);
+        PopUpManager.addPopUp(window, _ctx.getTopPanel(), true);
+        PopUpManager.centerPopUp(window);
     }
 
     protected function locationChanged (place :PlaceObject) :void
@@ -69,15 +88,20 @@ public class HeaderBarController extends Controller
         var scene :Scene = _ctx.getSceneDirector().getScene();
         if (scene != null) {
             _headerBar.setLocationText(scene.getName());
+            // we know the MsoyController is initialized at this point, so it is safe to check
+            // whether we are embedded or not.  
+            _headerBar.setEmbedLinkButtonVisible(!_ctx.getMsoyController().isEmbedded());
         } else {
+            // For now we can embed scenes with game lobbies attached, but not game instances - 
+            // when we have a unique URL for game instance locations, then we can embed those 
+            // locations as well, and have the embedded page bring the game lobby attached to the 
+            // default game room.
+            _headerBar.setEmbedLinkButtonVisible(false);
             var ctrl :PlaceController = _ctx.getLocationDirector().getPlaceController();
             if (ctrl != null && ctrl.getPlaceConfig() is MsoyGameConfig) {
                 _headerBar.setLocationText((ctrl.getPlaceConfig() as MsoyGameConfig).name);
             }
         }
-        // we know the MsoyController is initialized at this point, so it is safe to check
-        // whether we are embedded or not.
-        _headerBar.setEmbedLinkButtonVisible(!_ctx.getMsoyController().isEmbedded());
     }
 
     protected var _ctx :WorldContext;
