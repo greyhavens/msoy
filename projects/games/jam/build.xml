@@ -17,6 +17,19 @@
     </java>
   </target>
 
+  <!-- builds our Flash game with debug info -->
+  <target name="debug">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.debug"/>
+      <arg value="-compiler.verbose-stacktraces=true"/>
+      <arg value="-compiler.source-path=."/>
+      <arg value="-file-specs"/>
+      <arg value="${app.name}.as"/>
+    </java>
+  </target>
+
   <!-- cleans out the compiled code -->
   <target name="clean">
     <delete>
