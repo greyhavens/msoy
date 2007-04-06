@@ -219,6 +219,8 @@ public class TopPanel extends Canvas
         if (tableDisp != _tableDisp) {
             clearTableDisplay();
             _tableDisp = tableDisp;
+            _tableDisp.x = 0;
+            _tableDisp.y = DECORATIVE_MARGIN_HEIGHT + HeaderBar.HEIGHT;
         }
     }
 

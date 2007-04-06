@@ -50,9 +50,8 @@ public class FloatingTableDisplay extends FloatingPanel
         avoid :DisplayObject = null) :void
     {
         if (!_hasBeenShutDown) {
+            width = 450;
             super.open(modal, parent, avoid);
-            x = 0;
-            y = 5;
         }
     }
 

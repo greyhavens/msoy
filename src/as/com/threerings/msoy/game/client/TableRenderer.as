@@ -29,7 +29,7 @@ import com.threerings.msoy.item.web.Game;
 
 import com.threerings.msoy.game.data.MsoyTable;
 
-public class TableRenderer extends VBox
+public class TableRenderer extends HBox
 {
     /** The context, initialized by our ClassFactory. */
     public var ctx :WorldContext;
@@ -56,9 +56,20 @@ public class TableRenderer extends VBox
         _game = panel.getGame();
 
         // then add three boxes to contain further content
-        addChild(_labelsBox = new HBox());
-        addChild(_seatsBox = new HBox());
-        addChild(_buttonsBox = new HBox());
+        addChild(_labelsBox = new VBox());
+        _labelsBox.percentWidth = 100;
+        var padding :VBox = new VBox();
+        padding.setStyle("backgroundColor", 0xF1F4F7);
+        padding.width = 2;
+        padding.percentHeight = 100;
+        addChild(padding);
+        var rightSide :VBox = new VBox();
+        rightSide.width = 300;
+        rightSide.addChild(_seatsGrid = new HBox());
+        _seatsGrid.width = 300;
+        rightSide.addChild(_buttonsBox = new HBox());
+        _buttonsBox.percentWidth = 100;
+        addChild(rightSide);
 
         _watcherCount = new Label();
         _config = new Text();
@@ -97,18 +108,18 @@ public class TableRenderer extends VBox
         var length :int = table.occupants.length;
         for (var ii :int = 0; ii < length; ii++) {
             var seat :SeatRenderer;
-            if (_seatsBox.numChildren <= ii) {
+            if (_seatsGrid.numChildren <= ii) {
                 seat = new SeatRenderer();
-                _seatsBox.addChild(seat);
+                _seatsGrid.addChild(seat);
             } else {
-                seat = (_seatsBox.getChildAt(ii) as SeatRenderer);
+                seat = (_seatsGrid.getChildAt(ii) as SeatRenderer);
             }
             seat.update(ctx, table, ii, panel.isSeated());
         }
 
         // remove any extra seats, should there be any
-        while (_seatsBox.numChildren > length) {
-            _seatsBox.removeChildAt(length);
+        while (_seatsGrid.numChildren > length) {
+            _seatsGrid.removeChildAt(length);
         }
     }
 
@@ -197,8 +208,8 @@ public class TableRenderer extends VBox
 
     protected var _config :Text;
 
-    protected var _labelsBox :HBox;
-    protected var _seatsBox :HBox;
+    protected var _labelsBox :VBox;
+    protected var _seatsGrid :HBox;
     protected var _buttonsBox :HBox;
 
     protected var _game :Game;
@@ -207,7 +218,7 @@ public class TableRenderer extends VBox
 }
 }
 
-import mx.containers.VBox;
+import mx.containers.HBox;
 
 import mx.core.UIComponent;
 
@@ -224,7 +235,7 @@ import com.threerings.msoy.game.client.HeadShotSprite;
 import com.threerings.msoy.game.client.LobbyController;
 import com.threerings.msoy.game.data.MsoyTable;
 
-class SeatRenderer extends VBox
+class SeatRenderer extends HBox
 {
     public function update (ctx :WorldContext, table :MsoyTable, index :int, 
         weAreSeated :Boolean) :void
