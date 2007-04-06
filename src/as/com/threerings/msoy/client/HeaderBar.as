@@ -58,8 +58,7 @@ public class HeaderBar extends HBox
         padding.percentWidth = 100;
         addChild(padding);
 
-        _embedLinkButton = new CommandButton(
-            HeaderBarController.SHOW_EMBED_HTML);
+        _embedLinkButton = new CommandButton(HeaderBarController.SHOW_EMBED_HTML);
         // this is not i18n'd because jon is going to make a nice, pretty, small button 
         _embedLinkButton.label = "Blog this!";
         addChild(_embedLinkButton);

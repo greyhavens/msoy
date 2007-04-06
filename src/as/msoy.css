@@ -506,6 +506,7 @@ ListBase
 }
 
 .headerCloseBox {
+  paddingLeft: 3px;
   paddingTop: 4px;
   paddingRight: 3px;
 }
