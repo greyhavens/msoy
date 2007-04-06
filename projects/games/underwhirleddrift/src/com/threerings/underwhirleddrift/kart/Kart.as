@@ -22,9 +22,9 @@ import com.threerings.underwhirleddrift.scene.Scenery;
 
 public class Kart extends KartSprite
 {
-    public function Kart (kartType :String, camera :Camera, ground :Ground) 
+    public function Kart (kartType :String, color :int, camera :Camera, ground :Ground) 
     {
-        super(kartType, ground);
+        super(kartType, color, ground);
         _camera = camera;
         ground.getScenery().registerKart(this);
 

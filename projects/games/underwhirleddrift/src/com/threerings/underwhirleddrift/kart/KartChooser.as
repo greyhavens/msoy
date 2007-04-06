@@ -72,8 +72,9 @@ public class KartChooser
         UnderwhirledDrift.registerEventListener(okButton, MouseEvent.CLICK,
             function (evt :MouseEvent) :void {
                 _chooserSprite.parent.removeChild(_chooserSprite);
-                _control.kartPicked(new Kart((_activeKart.getChildAt(0) as KartSprite).kartType, 
-                    _camera, _ground));
+                var kartSprite :KartSprite = _activeKart.getChildAt(0) as KartSprite;
+                _control.kartPicked(new Kart(kartSprite.kartType, kartSprite.color, _camera, 
+                    _ground));
                 evt.stopImmediatePropagation();
             });
         okButton.buttonMode = true;
@@ -119,9 +120,15 @@ public class KartChooser
             }
             _activeKart.removeChildAt(0);
             switch(kartNumber) {
-            case 0: _activeKart.addChild(new KartSprite(KartSprite.KART_LIGHT, null, 160)); break;
-            case 1: _activeKart.addChild(new KartSprite(KartSprite.KART_MEDIUM, null, 160)); break;
-            case 2: _activeKart.addChild(new KartSprite(KartSprite.KART_HEAVY, null, 160)); break;
+            case 0: 
+                _activeKart.addChild(new KartSprite(KartSprite.KART_LIGHT, 0, null, 160)); 
+                break;
+            case 1: 
+                _activeKart.addChild(new KartSprite(KartSprite.KART_MEDIUM, 0, null, 160)); 
+                break;
+            case 2: 
+                _activeKart.addChild(new KartSprite(KartSprite.KART_HEAVY, 0, null, 160)); 
+                break;
             }
         } catch (re :ReferenceError) {
             Log.getLog(this).warning("Failed to show kart info for kart " + kartNumber + ": " +
@@ -131,20 +138,14 @@ public class KartChooser
 
     public function chooseColor (color :int) :void
     {
-        var hues :Array = [[ 0, 114, -119 ], [ 0, -70, 109 ], [ 0, 25, -109 ]];
-        var kart :KartSprite;
-        if (_activeScreen.getChildAt(0) is SCREEN_0) {
-            kart = new KartSprite(KartSprite.KART_LIGHT, null, 160);
-            kart.filters = [ HueFilter.getFilter(hues[0][color]) ];
-        } else if (_activeScreen.getChildAt(0) is SCREEN_1) {
-            kart = new KartSprite(KartSprite.KART_MEDIUM, null, 160);
-            kart.filters = [ HueFilter.getFilter(hues[1][color]) ];
-        } else if (_activeScreen.getChildAt(0) is SCREEN_2) {
-            kart = new KartSprite(KartSprite.KART_HEAVY, null, 160);
-            kart.filters = [ HueFilter.getFilter(hues[2][color]) ];
-        }
         _activeKart.removeChildAt(0);
-        _activeKart.addChild(kart);
+        if (_activeScreen.getChildAt(0) is SCREEN_0) {
+            _activeKart.addChild(new KartSprite(KartSprite.KART_LIGHT, color, null, 160));
+        } else if (_activeScreen.getChildAt(0) is SCREEN_1) {
+            _activeKart.addChild(new KartSprite(KartSprite.KART_MEDIUM, color, null, 160));
+        } else if (_activeScreen.getChildAt(0) is SCREEN_2) {
+            _activeKart.addChild(new KartSprite(KartSprite.KART_HEAVY, color, null, 160));
+        }
     }
 
     /** OK button to press when you've finished with selection */

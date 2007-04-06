@@ -14,6 +14,7 @@ import mx.core.MovieClipAsset;
 import com.threerings.underwhirleddrift.scene.Bonus;
 import com.threerings.underwhirleddrift.scene.Ground;
 import com.threerings.underwhirleddrift.scene.Scenery;
+import com.threerings.underwhirleddrift.util.HueFilter;
 
 [Event(name="crossedFinishLine", type="KartEvent")]
 [Event(name="bonus", type="KartEvent")]
@@ -27,10 +28,18 @@ public class KartSprite extends Sprite
     public static const KART_MEDIUM :String = "MediumKart";
     public static const KART_HEAVY :String = "HeavyKart";
 
-    public function KartSprite(kartType :String, ground :Ground = null, stopFrame :int = 1)
+    public function KartSprite(kartType :String, color :int, ground :Ground = null, 
+        stopFrame :int = 1)
     {
+        var hue :int = 0;
+        switch (kartType) {
+        case KART_LIGHT: hue = HUES[0][color]; break;
+        case KART_MEDIUM: hue = HUES[1][color]; break;
+        case KART_HEAVY: hue = HUES[2][color]; break;
+        }
         try {
             _kart = new KartSprite[kartType]();
+            _kart.filters = [ HueFilter.getFilter(hue) ];
             _movementConstants = KartSprite[kartType + "_Movement"];
         } catch (re :ReferenceError) {
             throw new ArgumentError(kartType + " is not a recognized Kart Type");
@@ -40,12 +49,18 @@ public class KartSprite extends Sprite
         }
         addChild(_kart);
         _kartType = kartType;
+        _color = color;
         _ground = ground;
     }
 
     public function get kartType () :String
     {
         return _kartType;
+    }
+
+    public function get color () :int
+    {
+        return _color;
     }
 
     public function shieldsUp (up :Boolean) :void 
@@ -252,9 +267,12 @@ public class KartSprite extends Sprite
     /** The amount to multiply our speed values by to bring them into the time domain */
     protected static const SPEED_FACTOR :int = 20;
 
+    protected static const HUES :Array = [[ 0, 114, -119 ], [ 0, -70, 109 ], [ 0, 25, -109 ]];
+
     protected var _kart :MovieClipAsset;
      
     protected var _kartType :String;
+    protected var _color :int;
 
     protected var _currentSpeed :Number = 0;
     protected var _currentAngle :Number;

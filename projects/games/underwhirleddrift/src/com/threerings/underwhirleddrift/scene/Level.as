@@ -90,10 +90,10 @@ public class Level extends Sprite
     /**
      * Adds an opponent's kart to the fray. 
      */
-    public function addOpponentKart (position :int, kartType :String) :KartObstacle
+    public function addOpponentKart (position :int, kartType :String, color :int) :KartObstacle
     {
         var kart :KartObstacle = new KartObstacle(_config.getStartingPoint(position), kartType, 
-            _ground);
+            color, _ground);
         _scenery.addKart(kart);
         return kart;
     }

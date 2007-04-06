@@ -19,10 +19,10 @@ public class KartObstacle extends KartSprite
     public var transformedOrigin: Point; 
     public var radius :Number;
 
-    public function KartObstacle (startingPosition :Point, kartType :String, ground :Ground) 
+    public function KartObstacle (startingPosition :Point, kartType :String, color :int, 
+        ground :Ground) 
     {
-        // medium kart is all we have for now
-        super(kartType, ground);
+        super(kartType, color, ground);
         _currentPosition = startingPosition;
 
         UnderwhirledDrift.registerEventListener(this, Event.ENTER_FRAME, enterFrame);

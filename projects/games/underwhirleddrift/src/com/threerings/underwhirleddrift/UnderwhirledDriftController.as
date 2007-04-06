@@ -256,12 +256,13 @@ public class UnderwhirledDriftController
             playerId = value.playerId;
             if (playerId != _control.getMyId()) {
                 var kartType :String = value.kartType;
+                var color :int = value.color;
                 var positionObj :Object = _opponentKarts.get(playerId);
                 if (positionObj != null) {
                     _opponentKarts.put(playerId, _level.addOpponentKart(positionObj as int,  
-                        kartType));
+                        kartType, color));
                 } else {
-                    _opponentKarts.put(playerId, kartType);
+                    _opponentKarts.put(playerId, { kartType: kartType, color: color });
                 }
                 if (_kart != null) {
                     updateRaceStarted();
@@ -330,9 +331,11 @@ public class UnderwhirledDriftController
                 } else {
                     var playerId :int = playerPositions[ii].id;
                     var position :int = playerPositions[ii].position;
-                    var kartType :String = _opponentKarts.get(playerId);
+                    var kartType :String = _opponentKarts.get(playerId).kartType;
+                    var color :int = _opponentKarts.get(playerId).color;
                     if (kartType != null) {
-                        _opponentKarts.put(playerId, _level.addOpponentKart(position, kartType));
+                        _opponentKarts.put(playerId, _level.addOpponentKart(position, kartType, 
+                            color));
                     } else {
                         _opponentKarts.put(playerId, position);
                     }
@@ -367,7 +370,8 @@ public class UnderwhirledDriftController
             _playersFinished = [];
             // forget old starting positions
             for each (var key :int in _opponentKarts.keys()) {
-                _opponentKarts.put(key, _opponentKarts.get(key).kartType);
+                _opponentKarts.put(key, { kartType: _opponentKarts.get(key).kartType, 
+                    color: _opponentKarts.get(key).color });
             }
             if (_control.amInControl()) {
                 // TODO - this is done twice, break out a function for it
