@@ -121,7 +121,7 @@ public class UnderwhirledDriftController
         _kart = kart;
         _view.setKart(_kart);
         _control.sendMessage(KART_CHOSEN, {playerId: _control.getMyId(),
-            kartType: _kart.kartType});
+            kartType: _kart.kartType, color: _kart.color});
         updateRaceStarted();
         UnderwhirledDrift.registerEventListener(_kart, KartEvent.CROSSED_FINISH_LINE, 
             function (event :KartEvent) :void {
@@ -331,11 +331,10 @@ public class UnderwhirledDriftController
                 } else {
                     var playerId :int = playerPositions[ii].id;
                     var position :int = playerPositions[ii].position;
-                    var kartType :String = _opponentKarts.get(playerId).kartType;
-                    var color :int = _opponentKarts.get(playerId).color;
-                    if (kartType != null) {
-                        _opponentKarts.put(playerId, _level.addOpponentKart(position, kartType, 
-                            color));
+                    var kartParams :Object = _opponentKarts.get(playerId);
+                    if (kartParams != null) {
+                        _opponentKarts.put(playerId, _level.addOpponentKart(position, 
+                            kartParams.kartType, kartParams.color));
                     } else {
                         _opponentKarts.put(playerId, position);
                     }
