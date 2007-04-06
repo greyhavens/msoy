@@ -202,13 +202,13 @@ public class HoodViz extends Sprite
             obj.y = -tip.height/2 - obj.height/2;
             tip.addChild(obj);
             addChild(tip);
-            tip.x = SWF_WIDTH;
+            tip.x = SWF_WIDTH - tip.width/2 - 10;
             tip.y = SWF_HEIGHT - 10;
         }
 
         // figure a canvas scale that'll safely display all that was actually drawn
-        var scale :Number = Math.min(SWF_WIDTH / (160 + _bound.width),
-                                     SWF_HEIGHT / (120 + _bound.height));
+        var scale :Number = Math.min(SWF_WIDTH / (160 + _bounds.width),
+                                     SWF_HEIGHT / (120 + _bounds.height));
         _canvas.scaleX = _canvas.scaleY = scale;
 
         // constants to encode any visual bias inside each tile, i.e. our house road
@@ -217,8 +217,8 @@ public class HoodViz extends Sprite
         const xBiasInTiles :Number = 0;
         const yBiasInTiles :Number = -50;
         // and center the canvas in the SWF, tweaked by any imbalance in tile placement
-        _canvas.x = (SWF_WIDTH -scale*(xBiasInTiles + _bound.right + _bound.left))/2;
-        _canvas.y = (SWF_HEIGHT -scale*(yBiasInTiles + _bound.top + _bound.bottom))/2;
+        _canvas.x = (SWF_WIDTH -scale*(xBiasInTiles + _bounds.right + _bounds.left))/2;
+        _canvas.y = (SWF_HEIGHT -scale*(yBiasInTiles + _bounds.top + _bounds.bottom))/2;
     }
 
 
@@ -300,7 +300,7 @@ public class HoodViz extends Sprite
         }
 
         if (update) {
-            _bound = _bound.union(bitHolder.getBounds(_canvas));
+            _bounds = _bounds.union(bitHolder.getBounds(_canvas));
         }
     }
 
@@ -553,7 +553,7 @@ public class HoodViz extends Sprite
 
     protected var _canvas :Sprite;
 
-    protected var _bound :Rectangle = new Rectangle();
+    protected var _bounds :Rectangle = new Rectangle();
 
     protected var _labels :Array;
 
