@@ -50,7 +50,6 @@ public class DisconnectedPanel extends VBox
 
         if (p != null) {
             _ctx.getClient().addClientObserver(_clientObs);
-
         } else {
             _ctx.getClient().removeClientObserver(_clientObs);
         }
@@ -61,8 +60,7 @@ public class DisconnectedPanel extends VBox
      */
     public function setMessage (msg :String) :void
     {
-        _message.text = (msg == null)
-            ? Msgs.GENERAL.get("m.disconnected") : msg;
+        _message.text = (msg == null) ? Msgs.GENERAL.get("m.disconnected") : msg;
     }
 
     // from PlaceView
@@ -86,9 +84,7 @@ public class DisconnectedPanel extends VBox
 
         if (event.type == ClientEvent.CLIENT_FAILED_TO_LOGON) {
             msg = decodeLogonError(event.getCause());
-
             // TODO: more special cases for error message will live here
-
             msg = MessageBundle.compose("m.logon_failed", msg);
         }
 
@@ -114,9 +110,7 @@ public class DisconnectedPanel extends VBox
     }
 
     protected var _ctx :WorldContext;
-
     protected var _clientObs :ClientAdapter;
-
     protected var _message :Label;
 }
 }
