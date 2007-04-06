@@ -29,7 +29,7 @@ public class Ground extends Sprite
         _camera = camera;
 
         _stripData = new BitmapData(WIDTH, HEIGHT, true, 0);
-        addChild(new Bitmap(_stripData));
+        addChildAt(new Bitmap(_stripData), 0);
 
         UnderwhirledDrift.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
     }
@@ -40,6 +40,10 @@ public class Ground extends Sprite
     public function setLevel (level :Level) :void
     {
         _level = level;
+        // clean out the strip data, so we don't get any lingering bits from the previous level
+        removeChildAt(0);
+        _stripData = new BitmapData(WIDTH, HEIGHT, true, 0);
+        addChildAt(new Bitmap(_stripData), 0);
     }
 
     public function getLevel () :Level 
