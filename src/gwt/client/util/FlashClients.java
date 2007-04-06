@@ -25,19 +25,19 @@ public class FlashClients
     {
         return WidgetUtil.createFlashContainer(
             "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
-            "100%", getClientHeight(), flashVars);
+            "100%", getClientHeight(false), flashVars);
     }
 
     public static HTML createLobbyClient (int gameId, String token)
     {
         return WidgetUtil.createFlashContainer(
             "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
-            "100%", getClientHeight(), "gameLobby=" + gameId + "&token=" + token);
+            "100%", getClientHeight(false), "gameLobby=" + gameId + "&token=" + token);
     }
 
     public static HTML createNeighborhood (String hoodData)
     {
-        return createNeighborhood(hoodData, "100%", getClientHeight());
+        return createNeighborhood(hoodData, "100%", getClientHeight(true));
     }
 
     public static HTML createNeighborhood (String hoodData, String width, String height)
@@ -50,7 +50,7 @@ public class FlashClients
     public static HTML createPopularPlaces (String hotspotData)
     {
         return WidgetUtil.createFlashContainer(
-            "hotspots","/media/static/HoodViz.swf", "100%", getClientHeight(),
+            "hotspots","/media/static/HoodViz.swf", "100%", getClientHeight(true),
             "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hotspotData);
     }
 
@@ -119,9 +119,13 @@ public class FlashClients
      * height and the vertical room available minus the header and an annoying "we don't know how
      * to implement scrollbars" bullshit browser factor.
      */
-    protected static String getClientHeight ()
+    protected static String getClientHeight (boolean subtractBlackBarHeight)
     {
-        return String.valueOf(Math.min(Window.getClientHeight()-HEADER_HEIGHT-10, CLIENT_HEIGHT));
+        int height = Math.min(Window.getClientHeight()-HEADER_HEIGHT-1, CLIENT_HEIGHT);
+        if (subtractBlackBarHeight) {
+            height -= BLACKBAR_HEIGHT;
+        }
+        return String.valueOf(height);
     }
 
     /**
@@ -185,5 +189,6 @@ public class FlashClients
 
     // TODO: put this in Application?
     protected static final int HEADER_HEIGHT = 50;
+    protected static final int BLACKBAR_HEIGHT = 20;
     protected static final int CLIENT_HEIGHT = 550;
 }

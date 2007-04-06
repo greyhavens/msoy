@@ -24,6 +24,14 @@ public interface WorldMessages extends com.google.gwt.i18n.client.Messages {
   String neighborhoodTitle();
 
   /**
+   * Translated "Popular Spots".
+   * 
+   * @return translated "Popular Spots"
+   * @gwt.key hotSpotsTitle
+   */
+  String hotSpotsTitle();
+
+  /**
    * Translated "temp".
    * 
    * @return translated "temp"

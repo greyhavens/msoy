@@ -200,6 +200,7 @@ public class index extends Page
 
     protected void hotSpots (String hotSpots)
     {
+        setPageTitle(CWorld.msgs.hotSpotsTitle());
         setContent(FlashClients.createPopularPlaces(hotSpots), true, false);
     }
 
