@@ -44,6 +44,9 @@ public class ControlBar extends HBox
         _ctx = ctx;
         styleName = "controlBar";
 
+        var cls :Class = getStyle("backgroundSkin");
+        setStyle("backgroundImage", cls);
+
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
@@ -63,21 +66,6 @@ public class ControlBar extends HBox
         checkControls();
     }
 
-    protected function handleAddRemove (event :Event) :void
-    {
-        var added :Boolean = (event.type == Event.ADDED_TO_STAGE);
-        _controller.registerForSessionObservations(added);
-
-        if (added) {
-            _avatarControlWatcher = BindingUtils.bindSetter(
-                recheckAvatarControl, _ctx.worldProps, "userControlsAvatar");
-
-        } else {
-            _avatarControlWatcher.unwatch();
-            _avatarControlWatcher = null;
-        }
-    }
-
     /**
      * Enables or disables our chat input.
      */
@@ -89,13 +77,21 @@ public class ControlBar extends HBox
     }
 
     /**
+     * Called when we learn whether or not we're in embedded mode (on someone else's page).
+     */
+    public function setEmbedded (embedded :Boolean) :void
+    {
+        // no logon panel if we're not in embedded mode
+        if (!embedded && _logonPanel != null) {
+            removeChild(_logonPanel);
+        }
+    }
+
+    /**
      * Check to see which controls the client should see.
      */
     protected function checkControls () :void
     {
-        var cls :Class = getStyle("backgroundSkin");
-        setStyle("backgroundImage", cls);
-
         var user :MemberObject = _ctx.getMemberObject();
         var isMember :Boolean = (user != null) && !user.isGuest();
         if (numChildren > 0 && (isMember == _isMember)) {
@@ -136,8 +132,9 @@ public class ControlBar extends HBox
             addChild(_editBtn);
 
         } else {
-//             var logonPanel :LogonPanel = new LogonPanel(_ctx, this.height - 4);
-//             addChild(logonPanel);
+            if (_ctx.getMsoyController() == null || _ctx.getMsoyController().isEmbedded()) {
+                addChild(_logonPanel = new LogonPanel(_ctx, this.height - 4));
+            }
 
             volBtn = new CommandButton();
             volBtn.setCommand(ControlBarController.POP_VOLUME, volBtn);
@@ -180,6 +177,21 @@ public class ControlBar extends HBox
         _isMember = isMember;
 
         recheckAvatarControl();
+    }
+
+    protected function handleAddRemove (event :Event) :void
+    {
+        var added :Boolean = (event.type == Event.ADDED_TO_STAGE);
+        _controller.registerForSessionObservations(added);
+
+        if (added) {
+            _avatarControlWatcher = BindingUtils.bindSetter(
+                recheckAvatarControl, _ctx.worldProps, "userControlsAvatar");
+
+        } else {
+            _avatarControlWatcher.unwatch();
+            _avatarControlWatcher = null;
+        }
     }
 
     protected function recheckAvatarControl (... ignored) :void
@@ -232,6 +244,9 @@ public class ControlBar extends HBox
 
     /** Our chat control. */
     protected var _chatControl :ChatControl;
+
+    /** Our logon panel (if shown). */
+    protected var _logonPanel :LogonPanel;
 
     /** Button for changing your avatar. */
     protected var _avatarBtn :CommandButton;

@@ -634,6 +634,7 @@ public class MsoyController extends Controller
     public function setEmbedded (embedded :Boolean) :void
     {
         _embedded = embedded;
+        _ctx.getTopPanel().getControlBar().setEmbedded(embedded);
     }
 
     /**
