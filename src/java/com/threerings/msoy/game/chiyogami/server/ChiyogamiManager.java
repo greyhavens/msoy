@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.chiyogami.server;
 
+import java.util.ArrayList;
+
 import com.samskivert.util.Interval;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.RandomUtil;
@@ -58,11 +60,57 @@ public class ChiyogamiManager extends GameManager
         addDelegate(_worldDelegate = new WorldGameManagerDelegate(this));
     }
 
+    /**
+     * Invoked by clients to report their avatar states.
+     */
     public void setStates (BodyObject player, String[] states)
     {
+        // possibly filter down to just dance actions (and the default state)
+        ArrayList<String> list = new ArrayList<String>(states.length);
+        for (String state : states) {
+            if (state == null || state.toLowerCase().startsWith("dance")) {
+                list.add(state);
+            }
+        }
+        int size = list.size();
+        // if a non-empty (and non-identical) subset of the states
+        // are dancing states, select out just those
+        if (size != 0 && size != states.length) {
+            states = new String[size];
+            list.toArray(states);
+        }
+
+        // stash the states
         _playerStates.put(player.getOid(), states);
 
+        // update the player's state, just in case
         updatePlayerState(player);
+    }
+
+    /**
+     * Invoked by clients to report their performance at their minigame.
+     */
+    public void reportPerf (BodyObject player, float score, float style)
+    {
+//        System.err.println(player.who() + " reported [score=" + score + ", " +
+//            "style=" + style + "].");
+
+        PlayerPerfRecord perf = _playerPerfs.get(player.getOid());
+        if (perf == null) {
+            log.warning("Received performance report from non-player [who=" + player.who() + "].");
+            return;
+        }
+
+        long now = System.currentTimeMillis();
+        perf.recordPerformance(now, score, style);
+
+        // and go ahead and set the player's instant dancing to this
+        // last score, for now
+        updatePlayerState(player, score);
+
+        // and we want to report this performance instantly to clients
+        // so that they can react?
+        // TODO
     }
 
     @Override
@@ -122,6 +170,12 @@ public class ChiyogamiManager extends GameManager
 
         // all player actions must be re-populated
         _playerStates.clear();
+
+        // create blank perf records for every player
+        _playerPerfs.clear();
+        for (int ii = _gameObj.occupants.size() - 1; ii >= 0; ii--) {
+            _playerPerfs.put(_gameObj.occupants.get(ii), new PlayerPerfRecord());
+        }
     }
 
     @Override
@@ -137,11 +191,12 @@ public class ChiyogamiManager extends GameManager
      */
     protected void startRound ()
     {
-        repositionAllPlayers();
         startGame();
         _roomObj.postMessage(RoomObject.PLAY_MUSIC, new Object[] { _music.getMediaPath() });
         bossSpeak("Ok... it's a dance off!");
-        moveBody(_bossObj, .5, 0);
+
+        moveBody(_bossObj, .5, .5);
+        repositionAllPlayers(System.currentTimeMillis());
     }
 
     protected void didShutdown ()
@@ -242,25 +297,54 @@ public class ChiyogamiManager extends GameManager
         }.schedule(3000, 2000);
     }
 
-    protected void repositionAllPlayers ()
+    protected void repositionAllPlayers (long now)
     {
-        // TODO: position based on performance?
-
-        // find all the players and arrange them in a semicircle around the boss
         int numPlayers = _gameObj.occupants.size();
-        double angleIncrement = Math.PI / (numPlayers - 1);
-        double angle = 0;
+
+        // TODO: reconsider?
+        //
+        // arrange all the players in a circular area around the boss depending
+        // on their performance. Alternate placing players on the left or right
+        // sides
+
         for (int ii = 0; ii < numPlayers; ii++) {
-            BodyObject player = (BodyObject) MsoyServer.omgr.getObject(
-                _gameObj.occupants.get(ii));
+            int oid = _gameObj.occupants.get(ii);
+            BodyObject player = (BodyObject) MsoyServer.omgr.getObject(oid);
+            PlayerPerfRecord perf = _playerPerfs.get(oid);
+            float score = perf.getScore(now);
+
+            // score will range from 0 -> 1, arrange them that-a-way
+            double angle;
+            if (ii % 2 == 0) {
+                // arrange them on the left
+                angle = Math.PI * score + Math.PI/2;
+
+            } else {
+                // arrange them on the right
+                angle = Math.PI * (1 - score) - Math.PI/2;
+            }
 
             // position players in a semicircle behind the boss
             double x = .5 + .5 * Math.cos(angle);
-            double z = 1 * Math.sin(angle);
+            double z = .5 + .5 * Math.sin(angle);
+//            System.err.println("Score: " + score + ", position=" +
+//                x + ", " + z);
             moveBody(player, x, z);
-
-            angle += angleIncrement;
         }
+
+//        double angleIncrement = Math.PI / (numPlayers - 1);
+//        double angle = 0;
+//        for (int ii = 0; ii < numPlayers; ii++) {
+//            BodyObject player = (BodyObject) MsoyServer.omgr.getObject(
+//                _gameObj.occupants.get(ii));
+//
+//            // position players in a semicircle behind the boss
+//            double x = .5 + .5 * Math.cos(angle);
+//            double z = 1 * Math.sin(angle);
+//            moveBody(player, x, z);
+//
+//            angle += angleIncrement;
+//        }
     }
 
     /**
@@ -280,7 +364,7 @@ public class ChiyogamiManager extends GameManager
      */
     protected void moveBody (BodyObject body, double x, double z)
     {
-        double angle = Math.atan2(.5 - x, z - 0);
+        double angle = Math.atan2(.5 - x, z - .5);
         int degrees = (360 + (int) Math.round(angle * 180 / Math.PI)) % 360;
         moveBody(body, x, z, degrees);
     }
@@ -292,19 +376,32 @@ public class ChiyogamiManager extends GameManager
 
     protected void updatePlayerState (BodyObject player)
     {
+        updatePlayerState(player, System.currentTimeMillis());
+    }
+
+    protected void updatePlayerState (BodyObject player, long now)
+    {
+        PlayerPerfRecord perf = _playerPerfs.get(player.getOid());
+        updatePlayerState(player, perf.getScore(now));
+    }
+
+    protected void updatePlayerState (BodyObject player, float score)
+    {
         String[] states = _playerStates.get(player.getOid());
-        if (states == null || states.length <= 1) {
+        if (states == null || states.length == 0) {
+            // nothing to do
             return;
         }
 
-        // trigger the second state, or the first one that starts with dance
-        // TODO: levels of dancing
-        String state = states[1];
-        for (String st : states) {
-            if (st.toLowerCase().startsWith("dance")) {
-                state = st;
-                break;
-            }
+        int danceStates = states.length - 1;
+        String state;
+        if (score == 0 || danceStates == 0) {
+            // only if they have a completely-zero score do they not dance
+            state = states[0];
+
+        } else {
+            // pick a state corresponding to their performance
+            state = states[1 + Math.min(danceStates - 1, (int) Math.floor(score * danceStates))];
         }
 
         updateState(player, state);
@@ -340,15 +437,97 @@ public class ChiyogamiManager extends GameManager
             return;
         }
 
-        // TODO: maybe here is where we update their instantaneous performance
-        int numPlayers = _gameObj.occupants.size();
-        for (int ii = 0; ii < numPlayers; ii++) {
-            BodyObject player = (BodyObject) MsoyServer.omgr.getObject(
-                _gameObj.occupants.get(ii));
-            updatePlayerState(player);
+        _gameObj.startTransaction();
+        try {
+            _roomObj.startTransaction();
+            try {
+                long now = System.currentTimeMillis();
+                int numPlayers = _gameObj.occupants.size();
+                for (int ii = 0; ii < numPlayers; ii++) {
+                    BodyObject player = (BodyObject) MsoyServer.omgr.getObject(
+                        _gameObj.occupants.get(ii));
+                    updatePlayerState(player, now);
+                }
+                updateBossState();
+
+                repositionAllPlayers(now);
+
+            } finally {
+                _roomObj.commitTransaction();
+            }
+        } finally {
+            _gameObj.commitTransaction();
         }
-        updateBossState();
     }
+
+    /**
+     * Tracks performance for each player.
+     */
+    protected static class PlayerPerfRecord
+    {
+        public void recordPerformance (long now, float score, float style)
+        {
+            int index = _count % BUCKETS;
+            _scores[index] = score;
+            _styles[index] = style;
+            _stamps[index] = now;
+
+            // increase the count of scores that we've recorded..
+            _count++;
+        }
+
+        public float getScore (long now)
+        {
+            return getAccumulated(now, _scores);
+        }
+
+        public float getStyle (long now)
+        {
+            return getAccumulated(now, _styles);
+        }
+
+        /**
+         * Get the decaying score/style value for this player, disregarding
+         * scores that are too old.
+         */
+        protected float getAccumulated (long now, float[] values)
+        {
+            float accum = 0;
+            float total = 0;
+            long oldest = now - MAX_TIME;
+            for (int ii = 1; ii <= BUCKETS; ii++) {
+                int index = _count - ii;
+                if (index < 0) {
+                    break;
+                }
+                index = index % BUCKETS;
+                if (_stamps[index] < oldest) {
+                    break;
+                }
+
+                // the most recent score has a weight of 1, the one before
+                // a weight of .5, the one before of .25...
+                float frac = 1f / ii;
+                accum += values[index] * frac;
+                total += frac;
+            }
+
+            return (total > 0) ? (accum / total) : accum;
+        }
+
+        /** The number of scores recorded. */
+        protected int _count;
+
+        // number of previous scores to count
+        protected static final int BUCKETS = 10;
+        // the maximum time a score will last
+        protected static final int MAX_TIME = 30000;
+
+        protected float[] _scores = new float[BUCKETS];
+        protected float[] _styles = new float[BUCKETS];
+        protected long[] _stamps = new long[BUCKETS];
+
+    } // End: static class PlayerPerfReccord
 
     /**
      * Listens for changes to the RoomObject in which we're hosted.
@@ -362,10 +541,10 @@ public class ChiyogamiManager extends GameManager
             if (_bossObj != null && _bossObj.getOid() == event.getOid()) {
                 bossAddedToRoom();
 
-            } else {
-                if (_gameObj.isInPlay()) {
-                    repositionAllPlayers();
-                }
+//            } else {
+//                if (_gameObj.isInPlay()) {
+//                    repositionAllPlayers();
+//                }
             }
         }
 
@@ -428,6 +607,9 @@ public class ChiyogamiManager extends GameManager
 
     /** A mapping of playerOid -> String[] of their states. */
     protected HashIntMap<String[]> _playerStates = new HashIntMap<String[]>();
+
+    /** A mapping of playerOid -> PlayerPerfRecord. */
+    protected HashIntMap<PlayerPerfRecord> _playerPerfs = new HashIntMap<PlayerPerfRecord>();
 
     protected String[] _bossStates = new String[] { null, "Dance 1", "Dance 2" };
 

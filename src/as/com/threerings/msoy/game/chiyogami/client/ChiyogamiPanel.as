@@ -36,6 +36,8 @@ public class ChiyogamiPanel extends Canvas
 {
     public function ChiyogamiPanel (ctx :WorldContext, ctrl :ChiyogamiController)
     {
+        _ctrl = ctrl;
+
         rawChildren.addChild(new SPLASH() as DisplayObject);
         // TODO: Splash screen
     }
@@ -62,7 +64,7 @@ public class ChiyogamiPanel extends Canvas
         _minigame = new MiniGameContainer();
         _minigame.setup(game);
 
-        _minigame.performanceCallback = miniGameReportedPerformance;
+        _minigame.performanceCallback = _ctrl.miniGameReportedPerformance;
 
         rawChildren.addChild(_minigame);
 
@@ -82,23 +84,17 @@ public class ChiyogamiPanel extends Canvas
         rawChildren.removeChild(_minigame);
     }
 
-    /**
-     * Routed from usercode- the score and style will be reported at
-     * the discretion of the minigame.
-     */
-    protected function miniGameReportedPerformance (score :Number, style :Number) :void
-    {
-        trace("Got performance from minigame! [score=" + score + ", style=" + style + "]");
-    }
+    /** Our controller. */
+    protected var _ctrl :ChiyogamiController;
 
     protected var _minigame :MiniGameContainer;
 
     /** The hardcoded games we currently use. */
     protected static const GAMES :Array = [
+//        new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH,
+//            Item.GAME, "chiyogami/Match3") ,
         new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH,
-            Item.GAME, "chiyogami/KeyJam"),
-        new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH,
-            Item.GAME, "chiyogami/Match3")
+            Item.GAME, "chiyogami/KeyJam")
     ];
 
     [Embed(source="splash.png")]

@@ -1,6 +1,7 @@
 package com.threerings.msoy.game.chiyogami.client {
 
 import com.threerings.io.TypedArray;
+import com.threerings.util.Float;
 
 import com.threerings.presents.dobj.AttributeChangedEvent;
 
@@ -46,6 +47,15 @@ public class ChiyogamiController extends GameController
         super.didLeavePlace(plobj);
 
         _gameObj = null;
+    }
+
+    /**
+     * Routed from usercode- the score and style will be reported at
+     * the discretion of the minigame.
+     */
+    public function miniGameReportedPerformance (score :Number, style :Number) :void
+    {
+        _gameObj.manager.invoke("reportPerf", Float.valueOf(score), Float.valueOf(style));
     }
 
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
