@@ -582,10 +582,10 @@ body {
 }
 
 .promptPopup .Header {
-    padding: 4px;
-    background-image: url(/images/ui/popup/header_text_tile.png);
-    height: 25px;
-    color: #EAEFF1;
+  padding: 4px;
+  background-image: url(/images/ui/popup/header_text_tile.png);
+  height: 25px;
+  color: #EAEFF1;
 }
 
 .pageHeaderTitle {
@@ -607,6 +607,7 @@ body {
 
 .pageHeaderClose {
   background: #222222;
+  width: 20px;
   height: 20px;  
   text-align: right;
   vertical-align: top;
@@ -614,6 +615,8 @@ body {
 
 .pageHeaderClose .CloseBox {
   background-image: url(/images/ui/close_button.png);
+  margin-left: 4px;
+  margin-top: 3px;
   width: 13px;
   height: 13px;
 }
