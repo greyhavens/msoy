@@ -40,6 +40,11 @@ public class HeaderBar extends HBox
         _closeBtn.includeInLayout = _closeBtn.visible = visible;
     }
 
+    public function setEmbedLinkButtonVisible (visible :Boolean) :void
+    {
+        _embedLinkButton.includeInLayout = _embedLinkButton.visible = visible;
+    }
+
     override protected function createChildren () :void
     {
         super.createChildren();
@@ -52,6 +57,14 @@ public class HeaderBar extends HBox
         var padding :HBox = new HBox();
         padding.percentWidth = 100;
         addChild(padding);
+
+        _embedLinkButton = new CommandButton(
+            HeaderBarController.SHOW_EMBED_HTML);
+        // this is not i18n'd because jon is going to make a nice, pretty, small button 
+        _embedLinkButton.label = "Blog this!";
+        addChild(_embedLinkButton);
+        // assume that its not visible to begin with
+        setEmbedLinkButtonVisible(false);
 
         var closeButtonBox :VBox = new VBox();
         closeButtonBox.styleName = "closeButtonBox";
@@ -69,5 +82,6 @@ public class HeaderBar extends HBox
 
     protected var _loc :Label;
     protected var _closeBtn :CommandButton;
+    protected var _embedLinkButton :CommandButton;
 }
 }

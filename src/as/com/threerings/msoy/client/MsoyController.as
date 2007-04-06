@@ -635,6 +635,14 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Find out whether this client is embedded in a non-whirled page.
+     */
+    public function isEmbedded () :Boolean
+    {
+        return _embedded;
+    }
+
+    /**
      * Lets us know that the Whirled client has either been minimized, or un-minimized
      */
     public function setMinimized (mini :Boolean) :void
