@@ -20,9 +20,6 @@ public class Game extends Item
     /** The primary game media. */
     public MediaDesc gameMedia;
 
-    /** The game's table background. */
-    public MediaDesc tableMedia;
-
     // @Override from Item
     public byte getType ()
     {
@@ -43,16 +40,6 @@ public class Game extends Item
         // TODO: this will change
         return (0 <= config.indexOf("<toggle ident=\"avrg\" start=\"true\"/>")) ||
             (0 <= config.indexOf("<toggle ident=\"chiyogami\" start=\"true\"/>"));
-    }
-
-    /**
-     * Returns a media descriptor for the media to be used
-     * as a table background image.
-     */
-    public MediaDesc getTableMedia ()
-    {
-        return (tableMedia != null) ? tableMedia :
-            new StaticMediaDesc(MediaDesc.IMAGE_PNG, GAME, TABLE_MEDIA);
     }
 
     // @Override

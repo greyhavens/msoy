@@ -21,9 +21,6 @@ public class Game extends Item
     /** The game media. */
     public var gameMedia :MediaDesc;
 
-    /** The game's table background. */
-    public var tableMedia :MediaDesc;
-
     override public function getType () :int
     {
         return GAME;
@@ -37,17 +34,7 @@ public class Game extends Item
         return (StringUtil.trim(config) == "avrg") ||
             (0 == config.indexOf("Chiyogami"));
     }
-    
-    /**
-     * Returns a media descriptor for the media to be used
-     * as a table background image.
-     */
-    public function getTableMedia () :MediaDesc
-    {
-        return (tableMedia != null) ? tableMedia :
-            new StaticMediaDesc(MediaDesc.IMAGE_PNG, GAME, TABLE_MEDIA);
-    }
-    
+
     public function getGameDefinition() :GameDefinition 
     {
         return _gameDef;
@@ -59,7 +46,6 @@ public class Game extends Item
 
         out.writeField(config);
         out.writeObject(gameMedia);
-        out.writeObject(tableMedia);
     }
 
     override public function readObject (ins :ObjectInputStream) :void
@@ -68,7 +54,6 @@ public class Game extends Item
 
         config = (ins.readField(String) as String);
         gameMedia = (ins.readObject() as MediaDesc);
-        tableMedia = (ins.readObject() as MediaDesc);
 
         _gameDef = new GameDefinition(config);
     }

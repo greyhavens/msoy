@@ -128,8 +128,6 @@ public class GameEditor extends ItemEditor
         }
 
         _game.config = _configXML.toString();
-
-        _tableUploader.setMedia(_game.getTableMedia());
     }
 
     // @Override from ItemEditor
@@ -151,17 +149,6 @@ public class GameEditor extends ItemEditor
                 return null;
             }
         }), CEditem.emsgs.gameMainTab());
-
-        String title = CEditem.emsgs.gameTableTitle();
-        tabs.add(_tableUploader = createUploader(TABLE_ID, title, false, new MediaUpdater() {
-            public String updateMedia (MediaDesc desc, int width, int height) {
-                if (!desc.isImage()) {
-                    return CEditem.emsgs.errTableNotImage();
-                }
-                _game.tableMedia = desc;
-                return null;
-            }
-        }), CEditem.emsgs.gameTableTab());
 
         FlexTable bits = new FlexTable();
         tabs.add(bits, CEditem.emsgs.gameConfigTab());
@@ -248,17 +235,7 @@ public class GameEditor extends ItemEditor
 
         super.createInterface(contents, tabs);
     }
-
-    // @Override from ItemEditor
-    protected MediaUploader getUploader (String id)
-    {
-        if (TABLE_ID.equals(id)) {
-            return _tableUploader;
-        } else {
-            return super.getUploader(id);
-        }
-    }
-
+    
     // mr. utility
     protected static short asShort (String s)
     {
@@ -290,8 +267,4 @@ public class GameEditor extends ItemEditor
     protected Element _minPlayersXML;
     protected Element _maxPlayersXML;
     protected Element _unwatchableXML;
-
-    protected MediaUploader _tableUploader;
-
-    protected static final String TABLE_ID = "table";
 }
