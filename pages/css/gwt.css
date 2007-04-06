@@ -607,16 +607,28 @@ body {
 
 .pageHeaderClose {
   background: #222222;
-  width: 20px;
+  width: 16px;
   height: 20px;  
-  text-align: right;
   vertical-align: top;
 }
 
 .pageHeaderClose .CloseBox {
   background-image: url(/images/ui/close_button.png);
-  margin-left: 4px;
-  margin-top: 3px;
+  margin-top: 4px;
   width: 13px;
   height: 13px;
+}
+
+.pageHeaderSep {
+  width: 1px;
+  height: 20px;
+  background: black;
+}
+
+.pageHeaderSep .Separator {
+  position: relative;
+  background: black;
+  top: -20px;
+  width: 1px;
+  height: 20px;
 }

@@ -220,7 +220,7 @@ public class LobbyPanel extends VBox
         _buy.styleName = "lobbyLink";
         titleBox.addChild(_buy);
         var leaveBtnBox :VBox = new VBox();
-        leaveBtnBox.styleName = "closeButtonBox";
+        leaveBtnBox.styleName = "lobbyCloseBox";
         leaveBtnBox.percentHeight = 100;
         titleBox.addChild(leaveBtnBox);
         var leaveBtn :CommandButton = new CommandButton(LobbyController.LEAVE_LOBBY);

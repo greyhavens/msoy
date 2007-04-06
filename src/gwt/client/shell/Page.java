@@ -9,12 +9,14 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -136,10 +138,8 @@ public abstract class Page
         if (_content != null) {
             _closeButtonPage = null;
             _closeButtonToken = null;
-            Widget btn = _content.getWidget(0, 2);
-            if (btn != null) {
-                _content.remove(btn);
-            }
+            _content.setText(0, 2, "");
+            _content.setText(0, 3, "");
         }
     }
 
@@ -184,7 +184,7 @@ public abstract class Page
         // if there isn't anything in the tabs area, the name ends up centering over the whole
         // display.
         if (_content.getWidget(0, 1) == null) {
-            setPageTabs(new HTML("&nbsp;"));
+            _content.setHTML(0, 1, "&nbsp;");
         }
     }
 
@@ -204,16 +204,18 @@ public abstract class Page
         _content.getFlexCellFormatter().setStyleName(0, 0, "pageHeaderTitle");
         _content.getFlexCellFormatter().setStyleName(0, 1, "pageHeaderContent");
         _content.getFlexCellFormatter().setStyleName(0, 2, "pageHeaderClose");
-        _content.getFlexCellFormatter().setColSpan(1, 0, 3);
+        _content.getFlexCellFormatter().setStyleName(0, 3, "pageHeaderSep");
+        _content.getFlexCellFormatter().setColSpan(1, 0, 4);
 
         if (_closeButtonPage != null && _closeButtonToken != null) {
             _content.setWidget(0, 2, MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
                 public void onClick (Widget sender) {
-                    History.newItem(Application.createLinkToken(_closeButtonPage, 
-                        _closeButtonToken));
+                    History.newItem(
+                        Application.createLinkToken(_closeButtonPage, _closeButtonToken));
                     clearCloseButton();
                 }
             }));
+            _content.setWidget(0, 3, MsoyUI.createLabel("", "Separator"));
         }
     }
 

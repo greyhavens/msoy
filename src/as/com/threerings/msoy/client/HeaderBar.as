@@ -67,7 +67,7 @@ public class HeaderBar extends HBox
         setEmbedLinkButtonVisible(false);
 
         var closeButtonBox :VBox = new VBox();
-        closeButtonBox.styleName = "closeButtonBox";
+        closeButtonBox.styleName = "headerCloseBox";
         closeButtonBox.percentHeight = 100;
         addChild(closeButtonBox);
         _closeBtn = new CommandButton(HeaderBarController.CLOSE_CLIENT);

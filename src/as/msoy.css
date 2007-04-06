@@ -500,9 +500,14 @@ ListBase
   borderThickness: 0;
 }
 
-.closeButtonBox {
+.lobbyCloseBox {
   verticalAlign: top;
   paddingLeft: 2px;
+}
+
+.headerCloseBox {
+  paddingTop: 4px;
+  paddingRight: 3px;
 }
 
 .closeButton {
