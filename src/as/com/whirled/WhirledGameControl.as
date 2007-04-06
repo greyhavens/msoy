@@ -55,9 +55,9 @@ public class WhirledGameControl extends EZGameControl
      * The loaders are cached in the client backend so the user should not worry too much
      * about multiple requests for the same occupant.
      */
-    public function getHeadShot (occupant :int) :Loader
+    public function getHeadShot (occupant :int, callback :Function) :void
     {
-        return callEZCode("getHeadShot_v1", occupant) as Loader;
+        callEZCode("getHeadShot_v1", occupant, callback);
     }
 }
 }

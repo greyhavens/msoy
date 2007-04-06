@@ -6,8 +6,6 @@ import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.utils.Dictionary;
 
-import com.threerings.flash.MediaContainer;
-
 import com.threerings.ezgame.client.GameControlBackend;
 
 import com.threerings.msoy.client.WorldContext;
@@ -37,18 +35,17 @@ public class WhirledGameControlBackend extends GameControlBackend
         o["getHeadShot_v1"] = getHeadShot_v1;
     }
 
-    protected function getHeadShot_v1 (occupant :int) :Loader
+    protected function getHeadShot_v1 (occupant :int, callback :Function) :void
     {
         validateConnected();
         var info :GameMemberInfo = _ezObj.occupantInfo.get(occupant) as GameMemberInfo;
         if (info != null) {
-            var loader :Loader = _headshots[occupant];
-            if (loader == null) {
-                _headshots[occupant] = loader = new Loader();
-                loader.load(new URLRequest(info.headShot.getMediaPath()),
-                            new LoaderContext(false, new ApplicationDomain(null)));
+            var headshot :Headshot = _headshots[occupant];
+            if (headshot == null) {
+                _headshots[occupant] = headshot = new Headshot(info.headShot.getMediaPath());
             }
-            return loader;
+            headshot.newRequest(callback);
+            return;
         }
         throw new Error("Failed to find occupant: " + occupant);
     }
@@ -56,4 +53,75 @@ public class WhirledGameControlBackend extends GameControlBackend
     /** A cache of loaded avatar headshots, indexed by occupant id. */
     protected var _headshots :Dictionary = new Dictionary();
 }
+}
+
+import flash.events.Event;
+import flash.events.IOErrorEvent;
+
+import flash.display.Loader;
+import flash.display.LoaderInfo;
+import flash.display.DisplayObject;
+
+import flash.net.URLRequest;
+
+import flash.system.ApplicationDomain;
+import flash.system.LoaderContext;
+
+import com.threerings.flash.ImageUtil;
+
+class Headshot
+{
+    public var content :DisplayObject;
+    public var callbacks :Array = [ ];
+    public var success :Boolean;
+
+    function Headshot (url :String)
+    {
+        callbacks = [ ];
+
+        var loader :Loader = new Loader();
+        loader.load(new URLRequest(url), new LoaderContext(false, new ApplicationDomain(null)));
+
+        var info :LoaderInfo = loader.contentLoaderInfo;
+        info.addEventListener(Event.COMPLETE, loadingComplete);
+        info.addEventListener(IOErrorEvent.IO_ERROR, loadError);
+    }
+
+    public function newRequest (callback :Function) :void
+    {
+        if (content != null) {
+            respondTo(callback);
+        } else {
+            callbacks.push(callback);
+        }
+    }
+
+    protected function respondTo (callback :Function) :void
+    {
+        callback(content, success);
+    }
+
+    protected function loadingComplete (event :Event) :void
+    {
+        var info :LoaderInfo = (event.target as LoaderInfo);
+        info.removeEventListener(Event.COMPLETE, loadingComplete);
+        info.removeEventListener(IOErrorEvent.IO_ERROR, loadError);
+
+        success = true;
+        content = info.loader.content;
+        for (var ii :int = 0; ii < callbacks.length; ii ++) {
+            respondTo(callbacks[ii]);
+        }
+        callbacks = null;
+    }
+
+    protected function loadError (event :IOErrorEvent) :void
+    {
+        success = false;
+        content = ImageUtil.createErrorImage(100, 100);
+        for (var ii :int = 0; ii < callbacks.length; ii ++) {
+            respondTo(callbacks[ii]);
+        }
+        callbacks = null;
+    }
 }
