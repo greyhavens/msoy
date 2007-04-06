@@ -24,6 +24,7 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import client.util.BorderedDialog;
+import client.util.InfoPopup;
 import client.util.MsoyUI;
 
 /**
@@ -409,13 +410,13 @@ public abstract class ItemEditor extends BorderedDialog
     {
         AsyncCallback cb = new AsyncCallback() {
             public void onSuccess (Object result) {
-                _parent.setStatus(_item.itemId == 0 ?
-                                  CEditem.emsgs.msgItemCreated() : CEditem.emsgs.msgItemUpdated());
+                new InfoPopup(_item.itemId == 0 ? CEditem.emsgs.msgItemCreated() :
+                              CEditem.emsgs.msgItemUpdated()).show();
                 _updatedItem = _item; // this will be passed to our parent in onClosed()
                 hide();
             }
             public void onFailure (Throwable caught) {
-                _parent.setStatus(CEditem.serverError(caught));
+                new InfoPopup(CEditem.serverError(caught)).show();
             }
         };
         if (_item.itemId == 0) {

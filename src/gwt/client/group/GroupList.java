@@ -154,7 +154,7 @@ public class GroupList extends VerticalPanel
     {
         AsyncCallback groupsListCallback = new AsyncCallback() {
             public void onSuccess (Object result) {
-                _groupListContainer.setModel(new SimpleDataModel((List)result));
+                _groupListContainer.setModel(new SimpleDataModel((List)result), 0);
                 _currentTagContainer.clear();
                 if (tag != null) {
                     InlineLabel tagLabel = new InlineLabel(CGroup.msgs.listCurrentTag() + " " + 
@@ -186,7 +186,7 @@ public class GroupList extends VerticalPanel
     {
         CGroup.groupsvc.searchGroups(CGroup.creds, searchString, new AsyncCallback() {
             public void onSuccess (Object result) {
-                _groupListContainer.setModel(new SimpleDataModel((List)result));
+                _groupListContainer.setModel(new SimpleDataModel((List)result), 0);
             }
             public void onFailure (Throwable caught) {
                 CGroup.log("searchGroups(" + searchString + ") failed", caught);

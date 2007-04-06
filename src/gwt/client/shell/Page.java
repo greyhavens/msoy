@@ -3,6 +3,8 @@
 
 package client.shell;
 
+import java.util.ArrayList;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 
@@ -44,6 +46,51 @@ public abstract class Page
         String token = History.getToken();
         int semidx = token.indexOf("-");
         return (semidx == -1) ? "" : token.substring(semidx+1);
+    }
+
+    /**
+     * Splits arguments composed by a call to {@link #composeArgs}. Any invalid integers will be
+     * converted to -1.
+     */
+    public static int[] splitArgs (String args)
+    {
+        ArrayList alist = new ArrayList();
+        do {
+            int didx = args.indexOf("-");
+            if (didx == -1) {
+                alist.add(args);
+                args = null;
+            } else {
+                alist.add(args.substring(0, didx));
+                args = args.substring(didx+1);
+            }
+        } while (args != null && args.length() > 0);
+
+        int[] values = new int[alist.size()];
+        for (int ii = 0; ii < values.length; ii++) {
+            try {
+                values[ii] = Integer.parseInt((String)alist.get(ii));
+            } catch (Exception e) {
+                values[ii] = -1;
+            }
+        }
+        return values;
+    }
+
+    /**
+     * Composes multiple integers into a single string argument that can be split up again with a
+     * call to {@link #splitArgs}.
+     */
+    public static String composeArgs (int[] args)
+    {
+        StringBuffer builder = new StringBuffer();
+        for (int ii = 0; ii < args.length; ii++) {
+            if (ii > 0) {
+                builder.append("-");
+            }
+            builder.append(args[ii]);
+        }
+        return builder.toString();
     }
 
     /**

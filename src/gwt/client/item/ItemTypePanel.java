@@ -41,6 +41,10 @@ public class ItemTypePanel extends FlexTable
      */
     public boolean selectTab (byte itemType)
     {
+        if (_selectedType == itemType) {
+            return false;
+        }
+
         Iterator i = _listeners.iterator();
         while (i.hasNext()) {
             TabListener listener = ((TabListener) i.next());

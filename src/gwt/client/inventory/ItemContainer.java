@@ -56,7 +56,7 @@ public class ItemContainer extends FlexTable
 
     protected ClickListener _clicker = new ClickListener() {
         public void onClick (Widget sender) {
-            new ItemDetailPopup(_item, _panel).show();
+            _panel.requestShowDetail(_item.itemId);
         }
     };
 

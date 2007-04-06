@@ -104,23 +104,22 @@
 }
 
 .itemDetailPanel { 
-  width: 550px;
 }
 
-.itemDetailName {
+.itemDetailPanel .Name {
   font-size: 24px;
   font-weight: bold;
 }
 
-.itemDetailCreator {
+.itemDetailPanel .Creator {
   font-size: 14px;
 }
 
-.itemDetailContent {
+.itemDetailPanel .Content {
   padding: 10px;
 }
 
-.itemDetailPreview {
+.itemDetailPanel .Preview {
   border: 4px solid #FFFFFF;
   background-image: url(/images/item/detail_preview_bg.png);
   text-align: center;
@@ -129,17 +128,13 @@
   padding: 10px;
 }
 
-.itemDetailSide {
-  padding: 10px;
-}
-
-.itemDetailDetails td {
+.itemDetailPanel .Details td {
   padding: 5px;
   font-size: 14px;
   width: 200px;
 }
 
-.itemDetailControls td {
+.itemDetailPanel .Controls td {
   padding: 5px;
 }
 

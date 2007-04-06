@@ -154,7 +154,8 @@ public class CatalogPanel extends FlexTable
             model = new DataModel() {
                 public void doFetchRows (int start, int count, final AsyncCallback callback) {
                     setStatus("Loading...");
-                    CCatalog.catalogsvc.loadCatalog(CCatalog.getMemberId(), _type, _sortBy, _search, _tag, start, count, new AsyncCallback() {
+                    CCatalog.catalogsvc.loadCatalog(CCatalog.getMemberId(), _type, _sortBy, _search,
+                                                    _tag, start, count, new AsyncCallback() {
                         public void onSuccess (Object result) {
                             setStatus("");
                             callback.onSuccess(result);
@@ -170,7 +171,7 @@ public class CatalogPanel extends FlexTable
                 }
             };
         }
-        _items.setModel(model);
+        _items.setModel(model, 0);
     }
 
     protected TagCloud getTagCloud (boolean ignoreCache)

@@ -10,29 +10,30 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemDetail;
 
 import client.editem.ItemEditor;
-import client.item.BaseItemDetailPopup;
+import client.item.BaseItemDetailPanel;
 import client.util.ClickCallback;
 import client.util.ItemUtil;
 
 /**
  * Displays a popup detail view of an item from the user's inventory.
  */
-public class ItemDetailPopup extends BaseItemDetailPopup
+public class ItemDetailPanel extends BaseItemDetailPanel
 {
-    public ItemDetailPopup (Item item, ItemPanel parent)
+    public ItemDetailPanel (ItemDetail detail, ItemPanel parent)
     {
-        super(item);
+        super(detail);
         _parent = parent;
     }
 
-    // @Override // BaseItemDetailPopup
+    // @Override // BaseItemDetailPanel
     protected void createInterface (VerticalPanel details, VerticalPanel controls)
     {
         super.createInterface(details, controls);
 
-        ItemUtil.addItemSpecificControls(_item, controls, this);
+        ItemUtil.addItemSpecificControls(_item, controls);
 
         // we'll need this now so that we can pass it to our click callbacks
         _status = new Label("");
@@ -43,7 +44,6 @@ public class ItemDetailPopup extends BaseItemDetailPopup
             button = new Button(CInventory.msgs.detailList(), new ClickListener() {
                 public void onClick (Widget sender) {
                     new DoListItemPopup(_item).show();
-                    hide();
                 }
             });
 
@@ -56,7 +56,6 @@ public class ItemDetailPopup extends BaseItemDetailPopup
                 }
                 public boolean gotResult (Object result) {
                     _parent.itemRemixed (_item, (Item) result);
-                    hide();
                     return false;
                 }
             };
@@ -71,7 +70,6 @@ public class ItemDetailPopup extends BaseItemDetailPopup
             }
             public boolean gotResult (Object result) {
                 _parent.itemDeleted(_item);
-                hide();
                 return false;
             }
         };
@@ -84,13 +82,18 @@ public class ItemDetailPopup extends BaseItemDetailPopup
                     ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _parent);
                     editor.setItem(_item);
                     editor.show();
-                    hide();
                 }
             });
             controls.add(button);
         }
 
         controls.add(_status);
+    }
+
+    // @Override // BaseItemDetailPanel
+    protected void returnToList ()
+    {
+        _parent.requestClearDetail();
     }
 
     protected ItemPanel _parent;
