@@ -1,7 +1,7 @@
 package com.threerings.msoy.hood {
 
 /**
- * Represents a single game in a neighborhood: its name and id and logo.
+ * Represents a building that can hold a logo.
  */
 public interface LogoHolder
 {
