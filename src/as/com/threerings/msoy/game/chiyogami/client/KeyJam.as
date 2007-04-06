@@ -14,11 +14,15 @@ import flash.utils.getTimer;
 
 import com.threerings.flash.ClearingTextField;
 
+import com.whirled.MiniGameControl;
+
 [SWF(width="450", height="100")]
 public class KeyJam extends Sprite
 {
-    public function KeyJam (millisPerBeat :Number = 1000)
+    public function KeyJam (millisPerBeat :Number = 500)
     {
+        _gameCtrl = new MiniGameControl(this);
+
         var bkg :DisplayObject = new BOOMBOX() as DisplayObject;
         addChild(bkg);
 
@@ -212,16 +216,26 @@ public class KeyJam extends Sprite
             feedback = "piss-poor";
         }
 
+        // Figure out the score to report to whirled...
+        // From the time it took the user, subtract half a second and
+        // bound into the 0 - 2sec range
+        var normalizedTime :Number = Math.min(2000, Math.max(0, time - 500));
+        var timeScore :Number = (2000 - normalizedTime) / 2000;
+        var accScore :Number = result / (_booches + 1);
+        var score :Number = timeScore * accScore;
+        _gameCtrl.reportPerformance(score);
+
         // issue feedback, fade out the timer
         _label.setText(feedback, 5);
-
-        // TODO: Scoring
 
         // move to the next level
         _booches = 0;
         _level++;
         setNewSequence();
     }
+
+    /** The control for reporting performance back to whirled. */
+    protected var _gameCtrl :MiniGameControl;
 
     protected var _keySprites :Array = [];
 

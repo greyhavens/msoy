@@ -25,7 +25,11 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.client.WorldContext;
 
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.StaticMediaDesc;
+
+import com.threerings.msoy.game.client.MiniGameContainer;
 
 public class ChiyogamiPanel extends Canvas
     implements PlaceView
@@ -51,7 +55,15 @@ public class ChiyogamiPanel extends Canvas
      */
     public function gameDidStart () :void
     {
-        _minigame  = new KeyJam(500);
+        // pick a game!
+        var game :MediaDesc = MediaDesc(GAMES[
+            int(Math.floor(Math.random() * GAMES.length))]);
+
+        _minigame = new MiniGameContainer();
+        _minigame.setup(game);
+
+        _minigame.performanceCallback = miniGameReportedPerformance;
+
         rawChildren.addChild(_minigame);
 
         var mask :Shape = new Shape();
@@ -70,7 +82,24 @@ public class ChiyogamiPanel extends Canvas
         rawChildren.removeChild(_minigame);
     }
 
-    protected var _minigame :DisplayObject;
+    /**
+     * Routed from usercode- the score and style will be reported at
+     * the discretion of the minigame.
+     */
+    protected function miniGameReportedPerformance (score :Number, style :Number) :void
+    {
+        trace("Got performance from minigame! [score=" + score + ", style=" + style + "]");
+    }
+
+    protected var _minigame :MiniGameContainer;
+
+    /** The hardcoded games we currently use. */
+    protected static const GAMES :Array = [
+        new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH,
+            Item.GAME, "chiyogami/KeyJam"),
+        new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH,
+            Item.GAME, "chiyogami/Match3")
+    ];
 
     [Embed(source="splash.png")]
     protected static const SPLASH :Class;
