@@ -55,17 +55,6 @@ public class TableRenderer extends VBox
 
         _game = panel.getGame();
 
-        // ignore background for now
-        /*_background = new MediaContainer((_game = panel.getGame()).getTableMedia().   
-            getMediaPath()); 
-        _background.mouseEnabled = false;
-        _background.mouseChildren = false;
-        // TODO: goddammit, this should be behind!
-        _background.alpha = .5; // TODO
-        rawChildren.addChildAt(_background, 0);
-        _background.addEventListener(
-            MediaContainer.SIZE_KNOWN, handleBkgSizeKnown, false, 0, true);*/
-
         // then add three boxes to contain further content
         addChild(_labelsBox = new HBox());
         addChild(_seatsBox = new HBox());
@@ -76,21 +65,6 @@ public class TableRenderer extends VBox
         _labelsBox.addChild(_watcherCount);
         _labelsBox.addChild(_config);
     }
-
-    /*override protected function measure () :void
-    {
-        super.measure();
-        measuredWidth = Math.max(
-            _background.getContentWidth(), measuredWidth);
-        measuredHeight = Math.max(
-            _background.getContentHeight(), measuredHeight);
-    }*/
-
-    /*protected function handleBkgSizeKnown (event :Event) :void
-    {
-        invalidateSize();
-    }*/
-
     override public function set data (newData :Object) :void
     {
         super.data = newData;
