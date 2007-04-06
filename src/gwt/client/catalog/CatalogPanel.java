@@ -6,12 +6,13 @@ package client.catalog;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
@@ -20,16 +21,20 @@ import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemDetail;
 
 import client.item.ItemSearchSortPanel;
 import client.item.ItemTypePanel;
-import client.item.TagCloud;
 import client.item.TagCloud.TagCloudListener;
+import client.item.TagCloud;
+import client.util.InfoPopup;
+import client.shell.Application;
+import client.shell.Page;
 
 /**
  * Displays a tabbed panel containing the catalog.
  */
-public class CatalogPanel extends FlexTable
+public class CatalogPanel extends VerticalPanel
     implements TabListener, ItemSearchSortPanel.Listener
 {
     /** The number of columns of items to display. */
@@ -41,14 +46,17 @@ public class CatalogPanel extends FlexTable
     public CatalogPanel ()
     {
         setStyleName("catalogPanel");
-        setCellPadding(0);
-        setCellSpacing(0);
         setWidth("100%");
 
         _typeTabs = new ItemTypePanel("catalog", this);
 
         int row = 0;
         _items = new PagedGrid(ROWS, COLUMNS) {
+            protected void displayPageFromClick (int page) {
+                // route our page navigation through the URL
+                String args = Page.composeArgs(new int[] { _type, page });
+                History.newItem(Application.createLinkToken("catalog", args));
+            }
             protected Widget createWidget (Object item) {
                 return new ItemContainer((CatalogListing)item, CatalogPanel.this);
             }
@@ -64,8 +72,6 @@ public class CatalogPanel extends FlexTable
             }
         };
         _items.setStyleName("catalogContents");
-        setWidget(row, 0, _items);
-        getFlexCellFormatter().setColSpan(row++, 0, 2);
 
         _searchSortPanel = new ItemSearchSortPanel(
             this,
@@ -85,11 +91,7 @@ public class CatalogPanel extends FlexTable
         _items.addToHeader(WidgetUtil.makeShim(15, 1));
         _items.addToHeader(_searchSortPanel);
 
-        setWidget(row, 0, _tagCloudContainer = new SimplePanel());
-        getFlexCellFormatter().setColSpan(row++, 0, 2);
-
-        setWidget(row, 0, _status = new Label(""));
-        getFlexCellFormatter().setColSpan(row++, 0, 2);
+        _tagCloudContainer = new SimplePanel();
     }
 
     public Widget getTabs() 
@@ -97,9 +99,46 @@ public class CatalogPanel extends FlexTable
         return _typeTabs;
     }
 
-    public void selectType (byte itemType)
+    public void display (byte itemType, int pageNo, int itemId)
     {
-        _typeTabs.selectTab(itemType);
+// TODO: sort out displaying items via the URL
+//         if (itemId == -1) {
+            _page = pageNo;
+            if (!_typeTabs.selectTab(itemType)) {
+                // we're already on this tab, so refresh our items in order to trigger the
+                // appropriate page selection
+                refreshItems(false);
+            }
+            showCatalog();
+
+//         } else {
+//             _typeTabs.selectTab(itemType);
+//             showListing(new ItemIdent(itemType, itemId));
+//         }
+    }
+
+    public void showListing (final CatalogListing listing)
+    {
+        // load up the item details
+        CCatalog.itemsvc.loadItemDetail(
+            CCatalog.creds, listing.item.getIdent(), new AsyncCallback() {
+            public void onSuccess (Object result) {
+                clear();
+                add(new ListingDetailPanel((ItemDetail)result, listing, CatalogPanel.this));
+            }
+            public void onFailure (Throwable caught) {
+                new InfoPopup(CCatalog.serverError(caught)).show();
+            }
+        });
+    }
+
+    public void showCatalog ()
+    {
+        if (!_items.isAttached()) {
+            clear();
+            add(_items);
+            add(_tagCloudContainer);
+        }
     }
 
     // from TabListener
@@ -141,11 +180,6 @@ public class CatalogPanel extends FlexTable
         _items.removeItem(listing);
     }
 
-    protected void setStatus (String status)
-    {
-        _status.setText(status);
-    }
-
     protected void refreshItems (boolean ignoreCache)
     {
         Byte tabKey = new Byte(_type);
@@ -153,16 +187,14 @@ public class CatalogPanel extends FlexTable
         if (model == null) {
             model = new DataModel() {
                 public void doFetchRows (int start, int count, final AsyncCallback callback) {
-                    setStatus("Loading...");
                     CCatalog.catalogsvc.loadCatalog(CCatalog.getMemberId(), _type, _sortBy, _search,
                                                     _tag, start, count, new AsyncCallback() {
                         public void onSuccess (Object result) {
-                            setStatus("");
                             callback.onSuccess(result);
                         }
                         public void onFailure (Throwable caught) {
                             CCatalog.log("loadCatalog failed", caught);
-                            setStatus(CCatalog.serverError(caught));
+                            new InfoPopup(CCatalog.serverError(caught)).show();
                         }
                     });
                 }
@@ -171,7 +203,7 @@ public class CatalogPanel extends FlexTable
                 }
             };
         }
-        _items.setModel(model, 0);
+        _items.setModel(model, _page);
     }
 
     protected TagCloud getTagCloud (boolean ignoreCache)
@@ -199,6 +231,7 @@ public class CatalogPanel extends FlexTable
 
     protected byte _sortBy,  _type;
     protected String _search, _tag;
+    protected int _page;
     protected Map _models = new HashMap();
     protected Map _clouds = new HashMap();
 
@@ -206,5 +239,4 @@ public class CatalogPanel extends FlexTable
     protected ItemSearchSortPanel _searchSortPanel;
     protected SimplePanel _tagCloudContainer;
     protected PagedGrid _items;
-    protected Label _status;
 }

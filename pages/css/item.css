@@ -129,13 +129,7 @@
 }
 
 .itemDetailPanel .Details td {
-  padding: 5px;
   font-size: 14px;
-  width: 200px;
-}
-
-.itemDetailPanel .Controls td {
-  padding: 5px;
 }
 
 .tagDetailPanel {

@@ -9,23 +9,24 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
-import com.threerings.msoy.item.web.CatalogListing;
-import com.threerings.msoy.item.web.ItemDetail;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
-import client.item.BaseItemDetailPopup;
+import com.threerings.msoy.item.web.CatalogListing;
+import com.threerings.msoy.item.web.ItemDetail;
+
+import client.item.BaseItemDetailPanel;
 import client.util.ClickCallback;
 import client.util.ItemUtil;
 
 /**
  * Displays a popup detail view of an item from the catalog.
  */
-public class ListingDetailPopup extends BaseItemDetailPopup
+public class ListingDetailPanel extends BaseItemDetailPanel
 {
-    public ListingDetailPopup (CatalogListing listing, CatalogPanel panel)
+    public ListingDetailPanel (ItemDetail detail, CatalogListing listing, CatalogPanel panel)
     {
-        super(listing.item);
+        super(detail);
         _listing = listing;
         _panel = panel;
 
@@ -41,42 +42,6 @@ public class ListingDetailPopup extends BaseItemDetailPopup
         formatter.setStyleName(0, 2, "Icon");
         _price.setWidget(0, 2, new Image("/images/header/symbol_flow.png"));
         _price.setText(0, 3, String.valueOf(_listing.flowCost));
-    }
-
-    // @Override // BaseItemDetailPopup
-    protected void createInterface (VerticalPanel details, VerticalPanel controls)
-    {
-        super.createInterface(details, controls);
-
-        // we need to create this here so we can pass it to our click callback
-        _status = new Label("");
-
-        ItemUtil.addItemSpecificControls(_item, controls, this);
-
-        details.add(_listed = new Label());
-        details.add(_price = new FlexTable());
-
-        // TODO: enable/disable purchase button depending on member's gold/flow wealth?
-        controls.add(_purchase = new Button(CCatalog.msgs.listingBuy()));
-        new ClickCallback(_purchase) {
-            public boolean callService () {
-                CCatalog.catalogsvc.purchaseItem(CCatalog.creds, _item.getIdent(), this);
-                return true;
-            }
-            public boolean gotResult (Object result) {
-                _status.setText(CCatalog.msgs.msgListingBought());
-                return false; // don't reenable purchase
-            }
-        };
-        _purchase.setEnabled(CCatalog.getMemberId() > 0);
-
-        controls.add(_status);
-    }
-
-    // @Override // from BaseItemDetailPopup
-    protected void gotDetail (ItemDetail detail)
-    {
-        super.gotDetail(detail);
 
         // if we are the creator (lister) of this item, allow us to delist it
         if (_listing.creator.getMemberId() == CCatalog.getMemberId()) {
@@ -100,6 +65,42 @@ public class ListingDetailPopup extends BaseItemDetailPopup
             };
             _controls.insert(delist, _controls.getWidgetCount()-1);
         }
+    }
+
+    // @Override // BaseItemDetailPanel
+    protected void createInterface (VerticalPanel details, VerticalPanel controls)
+    {
+        super.createInterface(details, controls);
+
+        // we need to create this here so we can pass it to our click callback
+        _status = new Label("");
+
+        ItemUtil.addItemSpecificControls(_item, controls);
+
+        details.add(_listed = new Label());
+        details.add(_price = new FlexTable());
+
+        // TODO: enable/disable purchase button depending on member's gold/flow wealth?
+        controls.add(_purchase = new Button(CCatalog.msgs.listingBuy()));
+        new ClickCallback(_purchase) {
+            public boolean callService () {
+                CCatalog.catalogsvc.purchaseItem(CCatalog.creds, _item.getIdent(), this);
+                return true;
+            }
+            public boolean gotResult (Object result) {
+                _status.setText(CCatalog.msgs.msgListingBought());
+                return false; // don't reenable purchase
+            }
+        };
+        _purchase.setEnabled(CCatalog.getMemberId() > 0);
+
+        controls.add(_status);
+    }
+
+    // @Override // BaseItemDetailPanel
+    protected void returnToList ()
+    {
+        _panel.showCatalog();
     }
 
     protected CatalogListing _listing;

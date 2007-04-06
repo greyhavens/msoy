@@ -30,7 +30,7 @@ public class ItemContainer extends FlexTable
 
         ClickListener clicker = new ClickListener() {
             public void onClick (Widget sender) {
-                new ListingDetailPopup(listing, panel).show();
+                panel.showListing(listing);
             }
         };
 

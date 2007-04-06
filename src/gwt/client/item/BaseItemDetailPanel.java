@@ -63,11 +63,13 @@ public abstract class BaseItemDetailPanel extends FlexTable
         setWidget(row, 1, _details = new VerticalPanel());
         getFlexCellFormatter().setVerticalAlignment(row++, 1, VerticalPanel.ALIGN_TOP);
         _details.setStyleName("Details");
+        _details.setSpacing(5);
 
         // a place for controls
         setWidget(row, 0, _controls = new VerticalPanel());
         getFlexCellFormatter().setVerticalAlignment(row++, 0, VerticalPanel.ALIGN_BOTTOM);
         _controls.setStyleName("Controls");
+        _controls.setSpacing(5);
 
         // allow derived classes to add their own nefarious bits
         createInterface(_details, _controls);
