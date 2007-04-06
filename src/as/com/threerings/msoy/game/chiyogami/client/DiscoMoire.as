@@ -1,4 +1,4 @@
-package com.threerings.msoy.game.chiyogami.client {
+package {
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
@@ -11,18 +11,24 @@ import flash.events.Event;
 [SWF(width="500", height="500")]
 public class DiscoMoire extends Sprite
 {
-    public function DiscoMoire (width :Number = 500, height :Number = 500)
-    {
-        var w :Number = width + JIGGLE*2;
-        var h :Number = height + JIGGLE*2;
+    public static const WIDTH :int = 500;
+    public static const HEIGHT :int = 500;
 
-        _bursts.push(makeBurst(w, h, 3));
+    public function DiscoMoire ()
+    {
+        root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+
+        var dim :Number = Math.max(WIDTH, HEIGHT);
+
+        dim += JIGGLE*2;
+
+        _bursts.push(makeBurst(dim, dim, 3));
         _radians.push(Math.random() * 2 * Math.PI);
         _increments.push(5 * Math.PI/180);
-        _bursts.push(makeBurst(w, h, 2));
+        _bursts.push(makeBurst(dim, dim, 2));
         _radians.push(Math.random() * 2 * Math.PI);
         _increments.push(7 * Math.PI/180);
-        _bursts.push(makeBurst(w, h, 1));
+        _bursts.push(makeBurst(dim, dim, 1));
         _radians.push(Math.random() * 2 * Math.PI);
         _increments.push(3 * Math.PI/180);
 
@@ -34,13 +40,18 @@ public class DiscoMoire extends Sprite
         var mask :Shape = new Shape();
         with (mask.graphics) {
             beginFill(0xFFFFFF);
-            drawRect(0, 0, width, height);
+            drawRect(0, 0, WIDTH, HEIGHT);
             endFill();
         }
         this.mask = mask;
         addChild(mask); // Fuck you very much, flash.
 
         addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+    }
+
+    protected function handleUnload (event :Event) :void
+    {
+        removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
 
     protected function handleEnterFrame (event :Event) :void
@@ -54,8 +65,8 @@ public class DiscoMoire extends Sprite
             _radians[ii] = radians;
 
             var burst :DisplayObject = DisplayObject(_bursts[ii]);
-            burst.x = -JIGGLE + Math.sin(radians) * JIGGLE;
-            burst.y = -JIGGLE + Math.cos(radians) * JIGGLE;
+            burst.x = (WIDTH - burst.width)/2 + Math.sin(radians) * JIGGLE;
+            burst.y = (HEIGHT - burst.height)/2 + Math.cos(radians) * JIGGLE;
         }
     }
 
