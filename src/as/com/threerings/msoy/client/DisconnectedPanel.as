@@ -63,10 +63,8 @@ public class DisconnectedPanel extends VBox
     public function setMessage (msg :String, isHtml :Boolean = false) :void
     {
         if (isHtml) {
-            trace("HTML " + msg);
             _message.htmlText = Msgs.GENERAL.xlate(msg);
         } else {
-            trace("TEXT " + msg);
             _message.text = Msgs.GENERAL.xlate(msg);
         }
     }
