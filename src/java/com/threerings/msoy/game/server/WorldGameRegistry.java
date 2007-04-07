@@ -180,25 +180,22 @@ public class WorldGameRegistry
         if (member.worldGameOid == 0) {
             return;
         }
-        
-        // get the game object
-        GameObject gobj = getGameObject(member, member.worldGameOid);
-        member.startTransaction();
-        try {
-            member.setWorldGameOid(0);
-            member.setWorldGameCfg(null);
-        } finally {
-            member.commitTransaction();
-        }
+
+        int gameOid = member.worldGameOid;
+
+        clearWorldGame(member);
         
         // remove them from the occupant list
-        int memberOid = member.getOid();
-        gobj.startTransaction();
-        try {
-            gobj.removeFromOccupantInfo(memberOid);
-            gobj.removeFromOccupants(memberOid);
-        } finally {
-            gobj.commitTransaction();
+        GameObject gobj = getGameObject(member, gameOid);
+        if (gobj != null && gobj.isActive()) {
+            int memberOid = member.getOid();
+            gobj.startTransaction();
+            try {
+                gobj.removeFromOccupantInfo(memberOid);
+                gobj.removeFromOccupants(memberOid);
+            } finally {
+                gobj.commitTransaction();
+            }
         }
     }
 
@@ -255,6 +252,15 @@ public class WorldGameRegistry
      */
     public void gameShutdown (GameManager manager, int gameOid)
     {
+        // try removing all players left in the game
+        GameObject game = (GameObject) manager.getPlaceObject();
+        for (int ii = game.occupants.size() - 1; ii >= 0; ii--) {
+            MemberObject member = (MemberObject) MsoyServer.omgr.getObject(game.occupants.get(ii));
+            if (member != null) {
+                clearWorldGame(member);
+            }
+        }
+
         WorldGameConfig config = (WorldGameConfig) manager.getConfig();
 
         // destroy our record of that game
@@ -303,6 +309,20 @@ public class WorldGameRegistry
             member.setWorldGameCfg(wgcfg);
             member.setWorldGameOid(gameOid);
 
+        } finally {
+            member.commitTransaction();
+        }
+    }
+
+    /**
+     * Remove this member from any world games.
+     */
+    protected void clearWorldGame (MemberObject member)
+    {
+        member.startTransaction();
+        try {
+            member.setWorldGameOid(0);
+            member.setWorldGameCfg(null);
         } finally {
             member.commitTransaction();
         }
