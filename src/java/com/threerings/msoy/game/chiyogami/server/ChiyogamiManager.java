@@ -208,6 +208,15 @@ public class ChiyogamiManager extends GameManager
         updateBossState();
     }
 
+    @Override
+    protected void gameDidEnd ()
+    {
+        super.gameDidEnd();
+
+        // TEMP
+        shutdown();
+    }
+
     /**
      * Start the round!
      */
