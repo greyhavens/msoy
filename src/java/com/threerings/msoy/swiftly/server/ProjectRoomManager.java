@@ -637,12 +637,8 @@ public class ProjectRoomManager extends PlaceManager
             }
 
             if (_error != null) {
-                if (_error instanceof ProjectStorageException) {
-                    _roomObj.setConsoleErr("m.commit_failed");
-                } else {
-                    _roomObj.setConsoleErr(
-                        MessageBundle.tcompose("m.commit_failed_unknown", _error.getMessage()));
-                }
+                log.warning("Project storage commit failed: " + _error.getMessage());
+                _roomObj.setConsoleErr("m.commit_failed");
                 return;
             }
 
