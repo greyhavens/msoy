@@ -16,6 +16,9 @@ import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.item.web.MediaDesc;
 
+import com.threerings.msoy.world.client.ActorSprite;
+import com.threerings.msoy.world.client.RoomView;
+
 import com.threerings.msoy.game.client.WorldGameControllerDelegate;
 
 import com.threerings.msoy.game.chiyogami.data.ChiyogamiObject;
@@ -40,6 +43,16 @@ public class ChiyogamiController extends GameController
         recheckAvatarControl();
 
         super.willEnterPlace(plobj);
+
+        // this is a pile of crap- continue trying to set up the boss's
+        // health bar until we succeed. It appears we are instantiated even prior
+        // to the roomview becoming active. Wow!
+        var fn :Function = function () :void {
+            if (!updateBossHealth()) {
+                _mctx.getClient().callLater(fn);
+            }
+        };
+        fn();
     }
 
     override public function didLeavePlace (plobj :PlaceObject) :void
@@ -47,6 +60,17 @@ public class ChiyogamiController extends GameController
         super.didLeavePlace(plobj);
 
         _gameObj = null;
+    }
+
+    override public function attributeChanged (ace :AttributeChangedEvent) :void
+    {
+        var name :String = ace.getName();
+        if (name == ChiyogamiObject.BOSS_OID || name == ChiyogamiObject.BOSS_HEALTH) {
+            updateBossHealth()
+
+        } else {
+            super.attributeChanged(ace);
+        }
     }
 
     /**
@@ -95,6 +119,36 @@ public class ChiyogamiController extends GameController
     }
 
     /**
+     * Update the boss's health.
+     * @return false if we were unable to do so because things seem
+     *               to still be initializing.
+     */
+    protected function updateBossHealth () :Boolean
+    {
+        if (_gameObj.bossOid == 0) {
+            _bossHealth = null;
+            return true;
+
+        } else if (_bossHealth == null) {
+            // find the actor of the boss and add the health meter
+            var roomView :RoomView = (_mctx.getTopPanel().getPlaceView() as RoomView);
+            if (roomView == null) {
+                return false;
+            }
+            var boss :ActorSprite = roomView.getActor(_gameObj.bossOid);
+            if (boss == null) {
+                return false;
+            }
+
+            _bossHealth = new HealthMeter();
+            boss.addDecoration(_bossHealth);
+        }
+
+        _bossHealth.setHealth(_gameObj.bossHealth);
+        return true;
+    }
+
+    /**
      * Check the status of the user being able to control their avatar.
      */
     protected function recheckAvatarControl () :void
@@ -129,5 +183,8 @@ public class ChiyogamiController extends GameController
 
     /** Our panel. */
     protected var _panel :ChiyogamiPanel;
+
+    /** The boss's health meter. */
+    protected var _bossHealth :HealthMeter;
 }
 }

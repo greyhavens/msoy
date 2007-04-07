@@ -13,11 +13,8 @@ import com.threerings.msoy.item.web.MediaDesc;
 public class ChiyogamiObject extends GameObject
 {
     // AUTO-GENERATED: FIELDS START
-    /** The field name of the <code>boss</code> field. */
-    public static final String BOSS = "boss";
-
-    /** The field name of the <code>music</code> field. */
-    public static final String MUSIC = "music";
+    /** The field name of the <code>bossOid</code> field. */
+    public static final String BOSS_OID = "bossOid";
 
     /** The field name of the <code>beatsPerMinute</code> field. */
     public static final String BEATS_PER_MINUTE = "beatsPerMinute";
@@ -26,12 +23,8 @@ public class ChiyogamiObject extends GameObject
     public static final String BOSS_HEALTH = "bossHealth";
     // AUTO-GENERATED: FIELDS END
 
-    /** The media descriptor for the current 'boss' that everyone's
-     * fighting. */
-    public MediaDesc boss;
-
-    /** The music. */
-    public MediaDesc music;
+    /** The oid of the entity in the room that is the boss. */
+    public int bossOid;
 
     /** The beats-per-minute of the music. */
     public float beatsPerMinute;
@@ -41,35 +34,19 @@ public class ChiyogamiObject extends GameObject
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Requests that the <code>boss</code> field be set to the
+     * Requests that the <code>bossOid</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
      * that the attribute did change. Proxied copies of this object (on
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setBoss (MediaDesc value)
+    public void setBossOid (int value)
     {
-        MediaDesc ovalue = this.boss;
+        int ovalue = this.bossOid;
         requestAttributeChange(
-            BOSS, value, ovalue);
-        this.boss = value;
-    }
-
-    /**
-     * Requests that the <code>music</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setMusic (MediaDesc value)
-    {
-        MediaDesc ovalue = this.music;
-        requestAttributeChange(
-            MUSIC, value, ovalue);
-        this.music = value;
+            BOSS_OID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.bossOid = value;
     }
 
     /**

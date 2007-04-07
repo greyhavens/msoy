@@ -15,11 +15,8 @@ import com.threerings.msoy.item.web.MediaDesc;
 public class ChiyogamiObject extends GameObject
 {
     // AUTO-GENERATED: FIELDS START
-    /** The field name of the <code>boss</code> field. */
-    public static const BOSS :String = "boss";
-
-    /** The field name of the <code>music</code> field. */
-    public static const MUSIC :String = "music";
+    /** The field name of the <code>bossOid</code> field. */
+    public static const BOSS_OID :String = "bossOid";
 
     /** The field name of the <code>BPM</code> field. */
     public static const BEATS_PER_MINUTE :String = "beatsPerMinute";
@@ -28,12 +25,8 @@ public class ChiyogamiObject extends GameObject
     public static const BOSS_HEALTH :String = "bossHealth";
     // AUTO-GENERATED: FIELDS END
 
-    /** The media descriptor for the current 'boss' that everyone's
-     * fighting. */
-    public var host :MediaDesc;
-
-    /** The music. */
-    public var music :MediaDesc;
+    /** The oid of the entity in the room that is the boss. */
+    public var bossOid :int;
 
     /** The beats-per-minute of the music. */
     public var beatsPerMinute :Number;
@@ -45,8 +38,7 @@ public class ChiyogamiObject extends GameObject
     {
         super.readObject(ins);
 
-        host = (ins.readObject() as MediaDesc);
-        music = (ins.readObject() as MediaDesc);
+        bossOid = ins.readInt();
         beatsPerMinute = ins.readFloat();
         bossHealth = ins.readFloat();
     }

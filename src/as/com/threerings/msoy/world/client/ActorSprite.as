@@ -3,11 +3,15 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.display.DisplayObject;
+
+import flash.geom.Rectangle;
+
+import flash.filters.GlowFilter;
+
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
-
-import flash.filters.GlowFilter;
 
 import com.threerings.util.Util;
 
@@ -61,6 +65,56 @@ public class ActorSprite extends MsoySprite
         }
     }
 
+    /**
+     * Add some sort of nonstandard decoration to the sprite.
+     * The decoration should already be painting its full size.
+     */
+    public function addDecoration (dec :DisplayObject) :void
+    {
+        if (_decorations == null) {
+            _decorations = [];
+        }
+        _decorations.push(dec);
+
+        addChild(dec);
+        arrangeDecorations();
+    }
+
+    /**
+     * Remove a piece of nonstandard decoration.
+     */
+    public function removeDecoration (dec :DisplayObject) :void
+    {
+        if (_decorations != null) {
+            var dex :int = _decorations.indexOf(dec);
+            if (dex != -1) {
+                _decorations.splice(dex, 1);
+                removeChild(dec);
+                if (_decorations.length == 0) {
+                    _decorations = null;
+
+                } else {
+                    arrangeDecorations();
+                }
+            }
+        }
+    }
+
+    /**
+     * Remove all decorations.
+     */
+    public function removeAllDecorations () :void
+    {
+        if (_decorations == null) {
+            return;
+        }
+        var dec :DisplayObject;
+        while (null != (dec = _decorations.shift())) {
+            removeChild(dec);
+        }
+        _decorations = null;
+    }
+
     override public function getDesc () :String
     {
         if (_occInfo is WorldPetInfo) {
@@ -93,9 +147,11 @@ public class ActorSprite extends MsoySprite
                 !_occInfo.username.equals(newInfo.username)) {
             _label.textColor = getStatusColor(newInfo.status);
             _label.text = newInfo.username.toString();
-            _label.y = -1 * (_label.textHeight + 4);
             _label.width = _label.textWidth + 5; // the magic number
+            _label.height = _label.textHeight + 4;
+            _label.y = -1 * _label.height;
             recheckLabel();
+            arrangeDecorations();
         }
 
         // note the old info...
@@ -208,12 +264,14 @@ public class ActorSprite extends MsoySprite
     {
         super.scaleUpdated();
         recheckLabel();
+        arrangeDecorations();
     }
 
     override protected function contentDimensionsUpdated () :void
     {
         super.contentDimensionsUpdated();
         recheckLabel();
+        arrangeDecorations();
     }
 
     override public function shutdown (completely :Boolean = true) :void
@@ -266,7 +324,28 @@ public class ActorSprite extends MsoySprite
     protected function recheckLabel () :void
     {
         // note: may overflow the media area..
-        _label.x = (getActualWidth() - _label.textWidth) / 2;
+        _label.x = (getActualWidth() - _label.width) / 2;
+    }
+
+    /**
+     * Arrange any external decorations above our name label.
+     */
+    protected function arrangeDecorations () :void
+    {
+        if (_decorations == null) {
+            return;
+        }
+
+        // place the decorations over the name label, with our best
+        // guess as to their size
+        var ybase :Number = _label.y;
+        for (var ii :int = 0; ii < _decorations.length; ii++) {
+            var dec :DisplayObject = DisplayObject(_decorations[ii]);
+            var rect :Rectangle = dec.getRect(dec);
+            ybase -= (rect.height + DECORATION_PAD);
+            dec.x = (getActualWidth() - rect.width) / 2 - rect.x
+            dec.y = ybase - rect.y;
+        }
     }
 
     protected function getStatusColor (status :int) :uint
@@ -342,5 +421,11 @@ public class ActorSprite extends MsoySprite
     protected var _label :TextField;
     protected var _occInfo :ActorInfo;
     protected var _walk :Animation;
+
+    /** Display objects to be shown above the name for this actor,
+     * configured by external callers. */
+    protected var _decorations :Array;
+
+    protected static const DECORATION_PAD :int = 5;
 }
 }

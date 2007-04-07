@@ -111,6 +111,28 @@ public class ChiyogamiManager extends GameManager
         // and we want to report this performance instantly to clients
         // so that they can react?
         // TODO
+
+        // affect the health of the boss
+        float health = _gameObj.bossHealth;
+        // but only if the boss is not already dead!
+        if (health > 0) {
+            // TODO: scoring stuff
+            //
+            health = Math.max(0, health - (score / 10f));
+            _gameObj.setBossHealth(health);
+            if (health == 0) {
+                // the boss is dead!
+                bossSpeak("Oh! My liver! My spleen!");
+                updateState(_bossObj, null);
+
+                // then wait 2 seconds and end the round.
+                new ChiInterval() {
+                    public void safeExpired () {
+                        endRound();
+                    }
+                }.schedule(2000);
+            }
+        }
     }
 
     @Override
@@ -199,11 +221,17 @@ public class ChiyogamiManager extends GameManager
         repositionAllPlayers(System.currentTimeMillis());
     }
 
+    protected void endRound ()
+    {
+        bossSpeak("I think I sprained my pinky, I've got to go...");
+
+        shutdownBoss();
+        endGame();
+    }
+
     protected void didShutdown ()
     {
         super.didShutdown();
-
-        shutdownBoss();
 
         _roomObj.removeListener(_roomListener);
         _roomObj.postMessage(RoomObject.PLAY_MUSIC); // no arg stops music
@@ -216,6 +244,15 @@ public class ChiyogamiManager extends GameManager
             MsoyServer.screg.sceneprov.leaveOccupiedScene(_bossObj);
             MsoyServer.omgr.destroyObject(_bossObj.getOid());
             _bossObj = null;
+        }
+
+        // set the health to NaN to indicate that it's irrelevant
+        _gameObj.startTransaction();
+        try {
+            _gameObj.setBossOid(0);
+            _gameObj.setBossHealth(Float.NaN);
+        } finally {
+            _gameObj.commitTransaction();
         }
     }
 
@@ -233,6 +270,7 @@ public class ChiyogamiManager extends GameManager
     protected void pickNewBoss ()
     {
         shutdownBoss();
+
         String boss = RandomUtil.pickRandom(BOSSES);
 
         _bossObj = MsoyServer.omgr.registerObject(new BossObject());
@@ -259,14 +297,6 @@ public class ChiyogamiManager extends GameManager
                 // TODO: shutdown? freakout? call the Elite Beat Agents?
             }
         });
-
-//        _gameObj.startTransaction();
-//        try {
-//            _gameObj.setBossHealth(1f);
-//            _gameObj.setBoss(
-//        } finally {
-//            _gameObj.commitTransaction();
-//        }
     }
 
     /**
@@ -275,6 +305,16 @@ public class ChiyogamiManager extends GameManager
     protected void bossAddedToRoom ()
     {
         bossSpeak("I'm all up in your room, screwing with your furni");
+
+        // set the new boss' health to 1
+        _gameObj.startTransaction();
+        try {
+            _gameObj.setBossOid(_bossObj.getOid());
+            _gameObj.setBossHealth(1f);
+
+        } finally {
+            _gameObj.commitTransaction();
+        }
 
         new ChiInterval() {
             public void safeExpired ()
@@ -448,7 +488,9 @@ public class ChiyogamiManager extends GameManager
                         _gameObj.occupants.get(ii));
                     updatePlayerState(player, now);
                 }
-                updateBossState();
+                if (_gameObj.bossHealth > 0) {
+                    updateBossState();
+                }
 
                 repositionAllPlayers(now);
 
@@ -472,8 +514,10 @@ public class ChiyogamiManager extends GameManager
             _styles[index] = style;
             _stamps[index] = now;
 
-            // increase the count of scores that we've recorded..
+            // track totals
             _count++;
+            _totalScore += score;
+            _totalStyle += style;
         }
 
         public float getScore (long now)
@@ -517,6 +561,9 @@ public class ChiyogamiManager extends GameManager
 
         /** The number of scores recorded. */
         protected int _count;
+
+        protected float _totalScore;
+        protected float _totalStyle;
 
         // number of previous scores to count
         protected static final int BUCKETS = 10;
