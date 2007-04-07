@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
@@ -24,6 +27,7 @@ import mx.controls.scrollClasses.ScrollBar;
 import mx.events.ResizeEvent;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 
 import com.threerings.crowd.client.PlaceView;
@@ -95,6 +99,45 @@ public class TopPanel extends Canvas
         layoutPanels();
 
         app.stage.addEventListener(Event.RESIZE, stageResized);
+    }
+
+    /**
+     * Ensures that we are running a sufficiently new version of Flash, returning true if so. If
+     * not, it displays a message to the user indicating that they need to upgrade their Flash
+     * player and returns false.
+     */
+    public function verifyFlashVersion () :Boolean
+    {
+        // the version looks like "LNX 9,0,31,0"
+        try {
+            var bits :Array = Capabilities.version.split(" ");
+            if (bits.length < 2) {
+                throw new Error("Failed to split on space");
+            }
+            bits = (bits[1] as String).split(",");
+            if (bits.length < 3) {
+                throw new Error("Failed to split on comma");
+            }
+
+            // check the major and minor version numbers
+            if (bits[0] >= MIN_FLASH_VERSION && bits[2] >= MIN_FLASH_REVISION) {
+                return true;
+            }
+
+            // display an error and fail
+            var panel :DisconnectedPanel = new DisconnectedPanel(_ctx);
+            panel.setMessage(MessageBundle.tcompose(
+                                 "m.min_flash_version", bits[0], bits[2],
+                                 MIN_FLASH_VERSION, MIN_FLASH_REVISION), true);
+            setPlaceView(panel);
+            return false;
+
+        } catch (error :Error) {
+            trace("Choked checking version [version=" + Capabilities.version +
+                  ", error=" + error + ".");
+            // ah well, whatever, let 'em in and hope for the best
+        }
+        return true;
     }
 
     // from LocationObserver
@@ -417,6 +460,9 @@ public class TopPanel extends Canvas
     /** the currently active table display */
     protected var _tableDisp :FloatingTableDisplay;
 
-    public static const DECORATIVE_MARGIN_HEIGHT :int = 4;
+    protected static const DECORATIVE_MARGIN_HEIGHT :int = 4;
+
+    protected static const MIN_FLASH_VERSION :int = 9;
+    protected static const MIN_FLASH_REVISION :int = 28;
 }
 }

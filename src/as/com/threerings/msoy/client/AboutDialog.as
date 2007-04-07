@@ -39,7 +39,7 @@ public class AboutDialog extends FloatingPanel
         addChild(textArea);
 
         // for now, let's add in our secret admin/support options to this panel.
-        if (_ctx.getMemberObject().tokens.isSupport()) {
+        if (_ctx.getMemberObject() != null && _ctx.getMemberObject().tokens.isSupport()) {
             var vbox :VBox = new VBox();
             vbox.setStyle("borderStyle", "inset");
             vbox.setStyle("paddingRight", 20);

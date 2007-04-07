@@ -281,6 +281,10 @@ Window {
   backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/location_bookend.png");
 }
 
+.logonPanel {
+  paddingRight: 2;
+}
+
 .volumeControl {
   backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/volume_background.png",
           scaleGridTop="1", scaleGridBottom="23",

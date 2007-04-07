@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObjectContainer;
@@ -34,16 +37,15 @@ public class LogonPanel extends HBox
     public function LogonPanel (ctx :WorldContext, height :int)
     {
         _ctx = ctx;
-        _clientObs = new ClientAdapter(
-            recheckGuest, recheckGuest, recheckGuest, recheckGuest,
-            recheckGuest, recheckGuest, recheckGuest);
-
+        _clientObs = new ClientAdapter(recheckGuest, recheckGuest, recheckGuest, recheckGuest,
+                                       recheckGuest, recheckGuest, recheckGuest);
         this.height = height;
     }
 
     override protected function createChildren () :void
     {
         super.createChildren();
+        styleName = "logonPanel";
 
         var label :UITextField = new UITextField();
         label.styleName = "controlBarText";
@@ -79,8 +81,7 @@ public class LogonPanel extends HBox
         addChild(_guestBtn);
 
         _password.addEventListener(FlexEvent.ENTER, doLogon, false, 0, true);
-        _logonBtn.addEventListener(
-            FlexEvent.BUTTON_DOWN, doLogon, false, 0, true);
+        _logonBtn.addEventListener(FlexEvent.BUTTON_DOWN, doLogon, false, 0, true);
 
         _email.addEventListener(Event.CHANGE, checkTexts, false, 0, true);
         _password.addEventListener(Event.CHANGE, checkTexts, false, 0, true);
@@ -106,20 +107,17 @@ public class LogonPanel extends HBox
     public function recheckGuest (event :ClientEvent) :void
     {
         if (_guestBtn != null) {
-            // we only get the option here to log in as a guest if
-            // we aren't even logged in
+            // we only get the option here to log in as a guest if we aren't even logged in
             _guestBtn.visible = (_ctx.getMemberObject() == null);
         }
     }
 
     /**
-     * Are the username/password fields non-blank such that we can attempt
-     * logon?
+     * Are the username/password fields non-blank such that we can attempt logon?
      */
     protected function canTryLogon () :Boolean
     {
-        return (!StringUtil.isBlank(_email.text) &&
-            !StringUtil.isBlank(_password.text));
+        return (!StringUtil.isBlank(_email.text) && !StringUtil.isBlank(_password.text));
     }
 
     /**
@@ -131,22 +129,18 @@ public class LogonPanel extends HBox
     }
 
     /**
-     * Handles FlexEvent.ENTER or FlexEvent.BUTTON_DOWN events
-     * generated to process a logon. 
+     * Handles FlexEvent.ENTER or FlexEvent.BUTTON_DOWN events generated to process a logon.
      */
     protected function doLogon (event :FlexEvent) :void
     {
         if (!canTryLogon()) {
-            // we disable the button, but they could still try pressing
-            // return in the password field, and I don't want to mess
-            // with adding/removing the listener in checkTexts
+            // we disable the button, but they could still try pressing return in the password
+            // field, and I don't want to mess with adding/removing the listener in checkTexts
             return;
         }
 
         var creds :MsoyCredentials = new MsoyCredentials(
-            new Name(_email.text),
-            MD5.hash(_password.text));
-
+            new Name(_email.text), MD5.hash(_password.text));
         CommandEvent.dispatch(this, MsoyController.LOGON, creds);
     }
 

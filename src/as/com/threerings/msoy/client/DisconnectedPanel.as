@@ -8,8 +8,9 @@ import flash.text.TextField;
 
 import mx.containers.VBox;
 
-import mx.controls.Label;
+import mx.controls.Text;
 
+import com.threerings.util.ClassUtil;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.ClientAdapter;
@@ -32,16 +33,17 @@ public class DisconnectedPanel extends VBox
             clientObserver, clientObserver, clientObserver, clientObserver,
             clientObserver, clientObserver, clientObserver);
 
-        _message = new Label();
+        setStyle("horizontalAlign", "center");
+        setStyle("verticalAlign", "middle");
+
+        _message = new Text();
         _message.setStyle("fontSize", 12);
         _message.setStyle("fontWeight", "bold");
-
-        // stretch it!
-        _message.setStyle("left", 0);
-        _message.setStyle("right", 0);
         addChild(_message);
 
-        setMessage(msg);
+        if (msg != null) {
+            setMessage(msg);
+        }
     }
 
     override public function parentChanged (p :DisplayObjectContainer) :void
@@ -58,9 +60,15 @@ public class DisconnectedPanel extends VBox
     /**
      * Set the message displayed on the panel.
      */
-    public function setMessage (msg :String) :void
+    public function setMessage (msg :String, isHtml :Boolean = false) :void
     {
-        _message.text = (msg == null) ? Msgs.GENERAL.get("m.disconnected") : msg;
+        if (isHtml) {
+            trace("HTML " + msg);
+            _message.htmlText = Msgs.GENERAL.xlate(msg);
+        } else {
+            trace("TEXT " + msg);
+            _message.text = Msgs.GENERAL.xlate(msg);
+        }
     }
 
     // from PlaceView
@@ -89,7 +97,7 @@ public class DisconnectedPanel extends VBox
         }
 
         if (msg != null) {
-            setMessage(Msgs.GENERAL.get(msg));
+            setMessage(msg);
         }
     }
 
@@ -100,9 +108,8 @@ public class DisconnectedPanel extends VBox
     protected static function decodeLogonError (cause :Error) :String
     {
         var msg :String;
-        if (cause is LogonError) {
+        if (cause is LogonError || cause.message.match("^[em]\\.")) {
             msg = cause.message;
-
         } else {
             msg = "m.network_error";
         }
@@ -111,6 +118,6 @@ public class DisconnectedPanel extends VBox
 
     protected var _ctx :WorldContext;
     protected var _clientObs :ClientAdapter;
-    protected var _message :Label;
+    protected var _message :Text;
 }
 }

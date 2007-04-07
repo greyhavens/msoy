@@ -68,8 +68,10 @@ public class WorldClient extends BaseClient
         Application.application.contextMenu = menu;
         menu.addEventListener(ContextMenuEvent.MENU_SELECT, contextMenuWillPopUp);
 
-        // now logon
-        logon();
+        // make sure we're running a sufficiently new version of Flash
+        if (_wctx.getTopPanel().verifyFlashVersion()) {
+            logon(); // now logon
+        }
     }
 
     // from BaseClient
