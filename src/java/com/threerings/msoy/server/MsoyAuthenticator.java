@@ -161,8 +161,7 @@ public class MsoyAuthenticator extends Authenticator
                 creds = (MsoyCredentials) req.getCredentials();
 
             } catch (ClassCastException cce) {
-                log.log(Level.WARNING,
-                        "Invalid creds " + req.getCredentials() + ".", cce);
+                log.log(Level.WARNING, "Invalid creds " + req.getCredentials() + ".", cce);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
 
