@@ -116,8 +116,7 @@ public class ProjectSVNStorage
             try {
                 SVNRepositoryFactory.createLocalRepository(repoDir, true, false);
             } catch (SVNException e) {
-                throw new ProjectStorageException.InternalError(
-                    "Failure creating local project repository: " + e, e);
+                throw new ProjectStorageException.InternalError("Failure creating local project repository: " + e, e);
             }
         }
 
@@ -129,20 +128,17 @@ public class ProjectSVNStorage
             svnRepo = storage.getSVNRepository();
             latestRevision = svnRepo.getLatestRevision();
             if (latestRevision != 0) {
-                throw new ProjectStorageException.ConsistencyError(
-                    "Invalid request to initialize a previously initialized storage repository");
+                throw new ProjectStorageException.ConsistencyError("Invalid request to initialize a previously initialized storage repository");
             }
         } catch (SVNException e) {
-            throw new ProjectStorageException.InternalError("Failure retrieving project " +
-                "revision: " + e, e);
+            throw new ProjectStorageException.InternalError("Failure retrieving project revision: " + e, e);
         }
 
         // New project, set up our commit editor
         try {
             editor = svnRepo.getCommitEditor("Swiftly Project Initialization", null);
         } catch (SVNException e) {
-            throw new ProjectStorageException.InternalError(
-                "Failure initializing commit editor: " + e, e);
+            throw new ProjectStorageException.InternalError("Failure initializing commit editor: " + e, e);
         }
 
         // "svn add" the template.
@@ -214,11 +210,9 @@ public class ProjectSVNStorage
             _svnPool = new DefaultSVNRepositoryPool(
                 null, null, true, DefaultSVNRepositoryPool.INSTANCE_POOL);
         } catch (SVNException svne) {
-            throw new ProjectStorageException.InternalError(
-                "Could not parse subversion URL: " + svne, svne);
+            throw new ProjectStorageException.InternalError("Could not parse subversion URL: " + svne, svne);
         } catch (URISyntaxException urie) {
-            throw new ProjectStorageException.InternalError(
-                "Invalid URL provided by SwiftlySVNStorageRecord: " + urie, urie);
+            throw new ProjectStorageException.InternalError("Invalid URL provided by SwiftlySVNStorageRecord: " + urie, urie);
         }
     }
 
@@ -257,8 +251,7 @@ public class ProjectSVNStorage
             elements.add(root);
             return elements;
         } catch (SVNException svne) {
-            throw new ProjectStorageException.InternalError("A subversion failure occured while" +
-                " recursing over the directory tree: " + svne, svne);
+            throw new ProjectStorageException.InternalError("A subversion failure occured while recursing over the directory tree: " + svne, svne);
         }
     }
 
@@ -277,25 +270,22 @@ public class ProjectSVNStorage
             tempFile.deleteOnExit();
             fileOutput = new FileOutputStream(tempFile);
         } catch (IOException ioe) {
-            throw new ProjectStorageException.InternalError("Failed to create temporary data file" +
-                ioe, ioe);
+            throw new ProjectStorageException.InternalError("Failed to create temporary data file" + ioe, ioe);
         }
 
         try {
             svnRepo = getSVNRepository();
             svnRepo.getFile(path.getAbsolutePath(), -1, null, fileOutput);
         } catch (SVNException svne) {
-            throw new ProjectStorageException.InternalError("A subversion failure occured while" +
-                " fetching the requested document '" + path.getAbsolutePath() + "' : " +
-                svne, svne);
+            throw new ProjectStorageException.InternalError("A subversion failure occured while fetching the requested document '" +
+                path.getAbsolutePath() + "' : " + svne, svne);
         }
 
         try {
             swiftlyDoc = SwiftlyDocument.createFromMimeType(path.getMimeType());
             swiftlyDoc.init(new FileInputStream(tempFile), path, ProjectStorage.TEXT_ENCODING);
         } catch (IOException ioe) {
-            throw new ProjectStorageException.InternalError(
-                "Failure instantiating SwiftlyDocument: " + ioe, ioe);
+            throw new ProjectStorageException.InternalError("Failure instantiating SwiftlyDocument: " + ioe, ioe);
         } finally {
             tempFile.delete();
         }
@@ -336,16 +326,14 @@ public class ProjectSVNStorage
             if (nodeKind == SVNNodeKind.NONE) {
                 newFile = true;
             } else if (nodeKind != SVNNodeKind.FILE) {
-                throw new ProjectStorageException.InternalError(
-                    "The subversion root path is not a file");
+                throw new ProjectStorageException.InternalError("The subversion root path is not a file");
             }
 
             // Fire up the commit editor.
             editor = svnRepo.getCommitEditor(logMessage, null);
 
         } catch (SVNException svne) {
-            throw new ProjectStorageException.InternalError(
-                "Failed to open the storage repository: " + svne, svne);
+            throw new ProjectStorageException.InternalError("Failed to open the storage repository: " + svne, svne);
         }
 
         log.info("Writing document to repository [path=" + pathElement + ", new=" + newFile + "].");
@@ -373,11 +361,10 @@ public class ProjectSVNStorage
             deltaGenerator = new SVNDeltaGenerator();
 
             if (newFile) {
-                checksum = deltaGenerator.sendDelta(fileName, document.getModifiedData(),
-                                                    editor, true);
+                checksum = deltaGenerator.sendDelta(fileName, document.getModifiedData(), editor, true);
             } else {
                 checksum = deltaGenerator.sendDelta(fileName, document.getOriginalData(), 0,
-                                                    document.getModifiedData(), editor, true);
+                    document.getModifiedData(), editor, true);
             }
 
             // (Re)set the mime-type.
@@ -400,28 +387,23 @@ public class ProjectSVNStorage
                 // We have to abort the open edit. It can also raise an SVNException!
                 editor.abortEdit();
             } catch (SVNException eabort) {
-                throw new ProjectStorageException.InternalError(
-                    "Failure aborting subversion commit: " + eabort, eabort);
+                throw new ProjectStorageException.InternalError("Failure aborting subversion commit: " + eabort, eabort);
             }
 
             // Report failure.
-            throw new ProjectStorageException.InternalError(
-                "Failure committing project template: " + e, e);
+            throw new ProjectStorageException.InternalError("Failure committing project template: " + e, e);
 
         } catch (IOException ioe) {
-            throw new ProjectStorageException.InternalError(
-                "Could not add/modify file, failure reading input:" + ioe, ioe);
+            throw new ProjectStorageException.InternalError("Could not add/modify file, failure reading input:" + ioe, ioe);
         }
 
         // Validate the commit.
         if (commitInfo == null) {
-            throw new ProjectStorageException.InternalError(
-                "Subversion commit failed, null commit info returned");
+            throw new ProjectStorageException.InternalError("Subversion commit failed, null commit info returned");
         }
 
         if (commitInfo.getNewRevision() == -1) {
-            throw new ProjectStorageException.TransientFailure(
-                "Subversion commit failed, file(s) out of date: " + commitInfo.getErrorMessage());
+            throw new ProjectStorageException.TransientFailure("Subversion commit failed, file(s) out of date: " + commitInfo.getErrorMessage());
         }
 
         // if we made it this far, the element is now in the repository, mark it as such
@@ -455,15 +437,13 @@ public class ProjectSVNStorage
             // Does the path exist?
             SVNNodeKind nodeKind = svnRepo.checkPath(entryPath, latestRevision);
             if (nodeKind == SVNNodeKind.NONE) {
-                throw new ProjectStorageException.ConsistencyError(
-                    "Requested delete on a non-existent document path: " + pathElement);
+                throw new ProjectStorageException.ConsistencyError("Requested delete on a non-existent document path: " + pathElement);
             }
 
             // Fire up the commit editor.
             editor = svnRepo.getCommitEditor(logMessage, null);
         } catch (SVNException svne) {
-            throw new ProjectStorageException.InternalError(
-                "Failed to open the storage repository: " + svne, svne);
+            throw new ProjectStorageException.InternalError("Failed to open the storage repository: " + svne, svne);
         }
 
         // Delete the file in the repository
@@ -491,24 +471,20 @@ public class ProjectSVNStorage
                 // We have to abort the open edit. It can also raise an SVNException!
                 editor.abortEdit();
             } catch (SVNException eabort) {
-                throw new ProjectStorageException.InternalError(
-                    "Failure aborting subversion commit: " + eabort, eabort);
+                throw new ProjectStorageException.InternalError("Failure aborting subversion commit: " + eabort, eabort);
             }
 
             // Report failure.
-            throw new ProjectStorageException.InternalError(
-                "Failure deleting document: " + e, e);
+            throw new ProjectStorageException.InternalError("Failure deleting document: " + e, e);
         }
 
         // Validate the commit.
         if (commitInfo == null) {
-            throw new ProjectStorageException.InternalError(
-                "Subversion commit failed, null commit info returned");
+            throw new ProjectStorageException.InternalError("Subversion commit failed, null commit info returned");
         }
 
         if (commitInfo.getNewRevision() == -1) {
-            throw new ProjectStorageException.TransientFailure(
-                "Subversion commit failed, file(s) out of date: " + commitInfo.getErrorMessage());
+            throw new ProjectStorageException.TransientFailure("Subversion commit failed, file(s) out of date: " + commitInfo.getErrorMessage());
         }
     }
 
@@ -539,15 +515,13 @@ public class ProjectSVNStorage
             // Does the path exist?
             SVNNodeKind nodeKind = svnRepo.checkPath(entryPath, latestRevision);
             if (nodeKind == SVNNodeKind.NONE) {
-                throw new ProjectStorageException.ConsistencyError(
-                    "Requested rename on a non-existent document path: " + pathElement);
+                throw new ProjectStorageException.ConsistencyError("Requested rename on a non-existent document path: " + pathElement);
             }
 
             // Fire up the commit editor.
             editor = svnRepo.getCommitEditor(logMessage, null);
         } catch (SVNException svne) {
-            throw new ProjectStorageException.InternalError(
-                "Failed to open the storage repository: " + svne, svne);
+            throw new ProjectStorageException.InternalError("Failed to open the storage repository: " + svne, svne);
         }
 
         // Rename the file in the repository
@@ -578,24 +552,20 @@ public class ProjectSVNStorage
                 // We have to abort the open edit. It can also raise an SVNException!
                 editor.abortEdit();
             } catch (SVNException eabort) {
-                throw new ProjectStorageException.InternalError(
-                    "Failure aborting subversion commit: " + eabort, eabort);
+                throw new ProjectStorageException.InternalError("Failure aborting subversion commit: " + eabort, eabort);
             }
 
             // Report failure.
-            throw new ProjectStorageException.InternalError(
-                "Failure renaming document: " + e, e);
+            throw new ProjectStorageException.InternalError("Failure renaming document: " + e, e);
         }
 
         // Validate the commit.
         if (commitInfo == null) {
-            throw new ProjectStorageException.InternalError(
-                "Subversion commit failed, null commit info returned");
+            throw new ProjectStorageException.InternalError("Subversion commit failed, null commit info returned");
         }
 
         if (commitInfo.getNewRevision() == -1) {
-            throw new ProjectStorageException.TransientFailure(
-                "Subversion commit failed, file(s) out of date: " + commitInfo.getErrorMessage());
+            throw new ProjectStorageException.TransientFailure("Subversion commit failed, file(s) out of date: " + commitInfo.getErrorMessage());
         }
     }
 
@@ -620,8 +590,7 @@ public class ProjectSVNStorage
             nodeKind = svnRepo.checkPath("", latestRevision);
             if (nodeKind != SVNNodeKind.DIR) {
                 // This really shouldn't happen!
-                throw new ProjectStorageException.ConsistencyError(
-                    "Project subversion URL does not refer to a directory.");
+                throw new ProjectStorageException.ConsistencyError("Project subversion URL does not refer to a directory.");
             }
 
             // Do the actual export
@@ -660,8 +629,9 @@ public class ProjectSVNStorage
         }
 
         @SuppressWarnings("unchecked")
-        Collection<SVNDirEntry> entries = (Collection<SVNDirEntry>)
-            svnRepo.getDir(parent.getAbsolutePath(), revision, null, (Collection)null);
+        Collection<SVNDirEntry> entries = (Collection<SVNDirEntry>) svnRepo.getDir(parent.getAbsolutePath(),
+            revision, null, (Collection)null);
+
         for (SVNDirEntry entry : entries) {
             PathElement node;
             SVNNodeKind kind;
@@ -670,6 +640,7 @@ public class ProjectSVNStorage
 
             kind = entry.getKind();
             if (kind == SVNNodeKind.DIR) {
+
                 node = PathElement.createDirectory(entry.getName(), parent);
                 // Recurse
                 recurseTree(svnRepo, node, result, revision);
@@ -677,16 +648,16 @@ public class ProjectSVNStorage
             } else if (kind == SVNNodeKind.FILE) {
                 // Fetch the file properties.
                 properties = new HashMap<String,String>();
-                svnRepo.getFile(parent.getAbsolutePath() + "/" + entry.getName(), revision,
-                                properties, null);
+                svnRepo.getFile(parent.getAbsolutePath() + "/" + entry.getName(), revision, properties, null);
+
                 // Pull out the mime type.
                 mimeType = properties.get(SVNProperty.MIME_TYPE);
+
                 // Initialize a new PathElement node.
                 node = PathElement.createFile(entry.getName(), parent, mimeType);
 
             } else {
-                throw new ProjectStorageException.InternalError(
-                    "Received an unhandled subversion node type: " + kind);
+                throw new ProjectStorageException.InternalError("Received an unhandled subversion node type: " + kind);
             }
 
             // note that this element is in the repository
@@ -755,8 +726,7 @@ public class ProjectSVNStorage
                 // Add the file, generating the delta and checksum.
                 editor.addFile(subPath, null, -1);
                 editor.applyTextDelta(subPath, null);
-                checksum = deltaGenerator.sendDelta(
-                    subPath, new FileInputStream(targetFile), editor, true);
+                checksum = deltaGenerator.sendDelta(subPath, new FileInputStream(targetFile), editor, true);
 
                 // Set the mimetype, if any
                 if (mimeType != null) {
@@ -835,8 +805,7 @@ public class ProjectSVNStorage
             File newDir = new File(_rootPath, relativeDirPath);
 
             if (!newDir.isDirectory() && !newDir.mkdirs()) {
-                SVNErrorMessage msg = SVNErrorMessage.create(
-                    SVNErrorCode.IO_ERROR, "Failed to add the directory ''{0}''", newDir);
+                SVNErrorMessage msg = SVNErrorMessage.create(SVNErrorCode.IO_ERROR, "Failed to add the directory ''{0}''", newDir);
                 throw new SVNException(msg);
             }
         }
@@ -848,16 +817,14 @@ public class ProjectSVNStorage
         {
             File newFile = new File(_rootPath, relativeFilePath);
             if (newFile.exists()) {
-                SVNErrorMessage msg = SVNErrorMessage.create(
-                    SVNErrorCode.IO_ERROR, "File ''{0}'' already exists", newFile);
+                SVNErrorMessage msg = SVNErrorMessage.create(SVNErrorCode.IO_ERROR, "File ''{0}'' already exists", newFile);
                 throw new SVNException(msg);
             }
 
             try {
                 newFile.createNewFile();
             } catch (IOException ioe) {
-                SVNErrorMessage msg = SVNErrorMessage.create(
-                    SVNErrorCode.IO_ERROR, "Could not create file ''{0}''", newFile);
+                SVNErrorMessage msg = SVNErrorMessage.create(SVNErrorCode.IO_ERROR, "Could not create file ''{0}''", newFile);
                 throw new SVNException(msg);
             }
         }
