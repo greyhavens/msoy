@@ -120,7 +120,7 @@ public class TopPanel extends Canvas
             }
 
             // check the major and minor version numbers
-            if (bits[0] >= MIN_FLASH_VERSION && bits[2] >= MIN_FLASH_REVISION) {
+            if (int(bits[0]) >= MIN_FLASH_VERSION && int(bits[2]) >= MIN_FLASH_REVISION) {
                 return true;
             }
 
