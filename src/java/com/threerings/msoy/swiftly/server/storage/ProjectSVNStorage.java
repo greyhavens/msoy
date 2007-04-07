@@ -61,6 +61,7 @@ import static com.threerings.msoy.Log.log;
 
 /**
  * Handles the subversion-based project repository.
+ * @todo: Factor out re-usable SVNEditor functionality to a seperate class.
  */
 public class ProjectSVNStorage
     implements ProjectStorage
@@ -107,7 +108,7 @@ public class ProjectSVNStorage
         ProjectSVNStorage storage;
         SVNRepository svnRepo;
         ISVNEditor editor;
-        SVNCommitInfo commitInfo;
+        SVNCommitInfo commitInfo = null;
         long latestRevision;
 
         // If this is a local repository, we'll attempt to create it now.
@@ -156,32 +157,26 @@ public class ProjectSVNStorage
             commitInfo = editor.closeEdit();
 
         } catch (SVNException e) {
-            try {
-                // We have to abort the open edit. It can also raise an SVNException!
-                editor.abortEdit();
-            } catch (SVNException eabort) {
-                throw new ProjectStorageException.InternalError(
-                    "Failure aborting subversion commit: " + eabort, eabort);
-            }
-
-            // Report failure.
-            throw new ProjectStorageException.InternalError(
-                "Failure committing project template: " + e, e);
+            throw new ProjectStorageException.InternalError("Failure committing project template: " + e, e);
 
         } catch (FileNotFoundException fnfe) {
             // Either someone handed us a bad template directory, or someone removed things from it
             // while we were running.
-            throw new ProjectStorageException.ConsistencyError(
-                "Could not load template: " + fnfe, fnfe);
+            throw new ProjectStorageException.ConsistencyError("Could not load template: " + fnfe, fnfe);
+
         } catch (IOException ioe) {
-            throw new ProjectStorageException.InternalError(
-                "Could not load template, failure reading input file:" + ioe, ioe);
+            throw new ProjectStorageException.InternalError("Could not load template, failure reading input file:" + ioe, ioe);
+
+        } finally {
+            // Commit did not succeed, abort it.
+            if (commitInfo == null) {
+                svnAbortCommit(editor);
+            }
         }
 
         // Validate the commit.
         if (commitInfo == null) {
-            throw new ProjectStorageException.InternalError(
-                "Subversion commit failed, null commit info returned");
+            throw new ProjectStorageException.InternalError("Subversion commit failed, null commit info returned");
         }
 
         if (commitInfo.getNewRevision() != latestRevision + 1) {
@@ -300,7 +295,7 @@ public class ProjectSVNStorage
     {
         SVNRepository svnRepo;
         ISVNEditor editor;
-        SVNCommitInfo commitInfo;
+        SVNCommitInfo commitInfo = null;
         long latestRevision;
         PathElement pathElement;
         String filePath;
@@ -383,18 +378,17 @@ public class ProjectSVNStorage
             commitInfo = editor.closeEdit();
 
         } catch (SVNException e) {
-            try {
-                // We have to abort the open edit. It can also raise an SVNException!
-                editor.abortEdit();
-            } catch (SVNException eabort) {
-                throw new ProjectStorageException.InternalError("Failure aborting subversion commit: " + eabort, eabort);
-            }
-
             // Report failure.
             throw new ProjectStorageException.InternalError("Failure committing project template: " + e, e);
 
         } catch (IOException ioe) {
             throw new ProjectStorageException.InternalError("Could not add/modify file, failure reading input:" + ioe, ioe);
+
+        } finally {
+            // Commit did not succeed, abort it.
+            if (commitInfo == null) {
+                svnAbortCommit(editor);
+            }
         }
 
         // Validate the commit.
@@ -417,7 +411,7 @@ public class ProjectSVNStorage
     {
         SVNRepository svnRepo;
         ISVNEditor editor;
-        SVNCommitInfo commitInfo;
+        SVNCommitInfo commitInfo = null;
         long latestRevision;
         String entryName;
         String entryPath;
@@ -467,15 +461,13 @@ public class ProjectSVNStorage
             commitInfo = editor.closeEdit();
 
         } catch (SVNException e) {
-            try {
-                // We have to abort the open edit. It can also raise an SVNException!
-                editor.abortEdit();
-            } catch (SVNException eabort) {
-                throw new ProjectStorageException.InternalError("Failure aborting subversion commit: " + eabort, eabort);
-            }
-
             // Report failure.
             throw new ProjectStorageException.InternalError("Failure deleting document: " + e, e);
+        } finally {
+            // Commit did not succeed, abort it.
+            if (commitInfo == null) {
+                svnAbortCommit(editor);
+            }
         }
 
         // Validate the commit.
@@ -495,7 +487,7 @@ public class ProjectSVNStorage
     {
         SVNRepository svnRepo;
         ISVNEditor editor;
-        SVNCommitInfo commitInfo;
+        SVNCommitInfo commitInfo = null;
         long latestRevision;
         String entryName;
         String entryPath;
@@ -548,15 +540,13 @@ public class ProjectSVNStorage
             commitInfo = editor.closeEdit();
 
         } catch (SVNException e) {
-            try {
-                // We have to abort the open edit. It can also raise an SVNException!
-                editor.abortEdit();
-            } catch (SVNException eabort) {
-                throw new ProjectStorageException.InternalError("Failure aborting subversion commit: " + eabort, eabort);
-            }
-
             // Report failure.
             throw new ProjectStorageException.InternalError("Failure renaming document: " + e, e);
+        } finally {
+            // Commit did not succeed, abort it.
+            if (commitInfo == null) {
+                svnAbortCommit(editor);
+            }
         }
 
         // Validate the commit.
@@ -739,6 +729,20 @@ public class ProjectSVNStorage
         }
     }
 
+
+    /**
+     * Safely abort a subversion commit.
+     */
+    private static void svnAbortCommit (ISVNEditor editor)
+        throws ProjectStorageException
+    {
+        try {
+            // We have to abort the open edit. It can also raise an SVNException!
+            editor.abortEdit();
+        } catch (SVNException eabort) {
+            throw new ProjectStorageException.InternalError("Failure aborting subversion commit: " + eabort, eabort);
+        }
+    }
 
     /**
      * Return a re-usable svn repository instance from the pool.
