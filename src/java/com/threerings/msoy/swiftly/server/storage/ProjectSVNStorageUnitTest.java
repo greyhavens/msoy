@@ -7,7 +7,10 @@ import com.threerings.msoy.item.web.Item;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
 
+import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
+
 import com.threerings.msoy.swiftly.data.PathElement;
+import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 
@@ -16,6 +19,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.IOException;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -121,7 +125,34 @@ public class ProjectSVNStorageUnitTest extends TestCase
         doc = (SwiftlyTextDocument)storage.getDocument(path);
         assertEquals("Modified", doc.getText());
     }
-    
+
+    /** If a non-svnkit exception was thrown in the middle of a commit operation,
+     *  the transaction would not be safely aborted. Test that the transaction is
+     *  aborted safely and the svnkit repository instance is left in a consistent
+     *  state. */ 
+    public void testPutDocumentReentrancy ()
+        throws Exception
+    {
+        ProjectSVNStorage storage = new ProjectSVNStorage(_project, _storageRecord);
+        PathElement path = PathElement.createFile("UnitTest.as", null, "text/x-actionscript");
+
+        // Create and initialize broken document
+        SwiftlyDocument brokenDoc = new SwiftlyIOExceptionDocument();
+        brokenDoc.init(null, path, "utf8");
+
+        // Commit the IOException-raising document
+        try {
+            storage.putDocument(brokenDoc, "Testing");
+            fail("Did not throw an IOException");
+        } catch (ProjectStorageException e) {
+            // Supposed to fail
+        }
+
+        // Attempt to refetch the document. If the commit was not aborted safely,
+        // svnkit will throw a re-entrancy exception.
+        brokenDoc = (SwiftlyDocument)storage.getDocument(path);
+    }
+
     public void testDeleteDocument ()
         throws Exception
     {
@@ -247,6 +278,38 @@ public class ProjectSVNStorageUnitTest extends TestCase
 
         contents = new String(data, 0, len, ProjectStorage.TEXT_ENCODING);
         assertTrue("Unexpected file data: " + contents, contents.startsWith("package {"));
+    }
+
+
+    /**
+     * Always throws an IOException when getModifiedData() is called.
+     * Used to test for commit operation re-entrancy.
+     */
+    protected static class SwiftlyIOExceptionDocument
+        extends SwiftlyDocument
+    {
+        public InputStream getModifiedData ()
+            throws IOException
+        {
+            InputStream dead = new FileInputStream("/file does not ever exist");
+            return dead;
+        }
+        
+        public boolean handlesMimeType (String mimeType) {
+            return true;
+        }
+        
+        public void loadInEditor (SwiftlyDocumentEditor editor) {
+            return;
+        }
+        
+        public boolean isDirty () {
+            return true;
+        }
+
+        public void setData (InputStream input, String encoding) {
+            return;
+        }
     }
 
     /** Temporary test directory. */
