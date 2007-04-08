@@ -231,6 +231,12 @@ Window {
   downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_avatar_down.png");
 }
 
+.controlBarButtonPet {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_pet.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_pet_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_pet_down.png");
+}
+
 .controlBarButtonChat {
   upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_chat.png");
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_chat_over.png");

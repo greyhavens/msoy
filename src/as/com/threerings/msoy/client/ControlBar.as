@@ -124,6 +124,12 @@ public class ControlBar extends HBox
             _avatarBtn.styleName = "controlBarButtonAvatar";
             addChild(_avatarBtn);
 
+            _petBtn = new CommandButton();
+            _petBtn.toolTip = Msgs.GENERAL.get("i.pet");
+            _petBtn.setCommand(MsoyController.SHOW_PETS);
+            _petBtn.styleName = "controlBarButtonPet";
+            addChild(_petBtn);
+
             _editBtn = new CommandButton();
             _editBtn.toolTip = Msgs.GENERAL.get("i.editScene");
             _editBtn.setCommand(ControlBarController.EDIT_SCENE);
@@ -250,6 +256,9 @@ public class ControlBar extends HBox
 
     /** Button for changing your avatar. */
     protected var _avatarBtn :CommandButton;
+
+    /** Button for managing pets. */
+    protected var _petBtn :CommandButton;
 
     /** Button for editing the current scene. */
     protected var _editBtn :CommandButton;
