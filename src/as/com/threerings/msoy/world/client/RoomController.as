@@ -424,12 +424,12 @@ public class RoomController extends SceneController
 
         // TODO: check for pet ownership, etc.
         menuItems.push(
-        { label: Msgs.GENERAL.get("b.order_pet_stay"),
-          command: ORDER_PET, arg: [ petId, Pet.ORDER_STAY ] },
-        { label: Msgs.GENERAL.get("b.order_pet_follow"),
-          command: ORDER_PET, arg: [ petId, Pet.ORDER_FOLLOW ] },
-        { label: Msgs.GENERAL.get("b.order_pet_go_home"),
-          command: ORDER_PET, arg: [ petId, Pet.ORDER_GO_HOME ] },
+//         { label: Msgs.GENERAL.get("b.order_pet_stay"),
+//           command: ORDER_PET, arg: [ petId, Pet.ORDER_STAY ] },
+//         { label: Msgs.GENERAL.get("b.order_pet_follow"),
+//           command: ORDER_PET, arg: [ petId, Pet.ORDER_FOLLOW ] },
+//         { label: Msgs.GENERAL.get("b.order_pet_go_home"),
+//           command: ORDER_PET, arg: [ petId, Pet.ORDER_GO_HOME ] },
         { label: Msgs.GENERAL.get("b.order_pet_sleep"),
           command: ORDER_PET, arg: [ petId, Pet.ORDER_SLEEP ] }
         );
@@ -451,7 +451,7 @@ public class RoomController extends SceneController
         var command :int = int(args[1]);
         var svc :PetService = (_mctx.getClient().requireService(PetService) as PetService);
         svc.orderPet(_mctx.getClient(), petId, command,
-                     new ReportingListener(_mctx, "general", null, "m.pet_ordered"));
+                     new ReportingListener(_mctx, "general", null, "m.pet_ordered" + command));
     }
 
     /**

@@ -180,7 +180,16 @@ public class PetHandler
     public void orderPet (MemberObject orderer, int order)
         throws InvocationException
     {
-        throw new InvocationException(PetCodes.E_INTERNAL_ERROR); // TODO
+        // TODO: validate that this person has privileges to order us
+
+        switch (order) {
+        case Pet.ORDER_SLEEP:
+            shutdown(false);
+            break;
+
+        default:
+            throw new InvocationException(PetCodes.E_INTERNAL_ERROR); // TODO
+        }
     }
 
     protected PetManager _petmgr;
