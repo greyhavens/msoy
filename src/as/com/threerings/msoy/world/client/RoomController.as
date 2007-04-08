@@ -54,6 +54,7 @@ import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.Pet;
 import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.world.client.editor.EditorController;
@@ -67,6 +68,7 @@ import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.WorldMemberInfo;
 import com.threerings.msoy.world.data.WorldOccupantInfo;
+import com.threerings.msoy.world.data.WorldPetInfo;
 
 import com.threerings.msoy.chat.client.ReportingListener;
 
@@ -78,6 +80,9 @@ public class RoomController extends SceneController
 
     public static const FURNI_CLICKED :String = "FurniClicked";
     public static const AVATAR_CLICKED :String = "AvatarClicked";
+    public static const PET_CLICKED :String = "PetClicked";
+
+    public static const ORDER_PET :String = "OrderPet";
 
     /**
      * Get the instanceId of all the entity instances in the room.
@@ -397,8 +402,56 @@ public class RoomController extends SceneController
 
         // pop up the menu where the mouse is
         if (menuItems.length > 0) {
-            CommandMenu.createMenu(menuItems).show();
+            var menu :CommandMenu = CommandMenu.createMenu(menuItems);
+            menu.setDispatcher(_roomView);
+            menu.show();
         }
+    }
+
+    /**
+     * Handles PET_CLICKED.
+     */
+    public function handlePetClicked (pet :ActorSprite) :void
+    {
+        var occInfo :WorldPetInfo = (pet.getActorInfo() as WorldPetInfo);
+        if (occInfo == null) {
+            log.warning("Pet has unexpected ActorInfo [info=" + pet.getActorInfo() + "].");
+            return;
+        }
+
+        var petId :int = occInfo.getItemIdent().itemId;
+        var menuItems :Array = [];
+
+        // TODO: check for pet ownership, etc.
+        menuItems.push(
+        { label: Msgs.GENERAL.get("b.order_pet_stay"),
+          command: ORDER_PET, arg: [ petId, Pet.ORDER_STAY ] },
+        { label: Msgs.GENERAL.get("b.order_pet_follow"),
+          command: ORDER_PET, arg: [ petId, Pet.ORDER_FOLLOW ] },
+        { label: Msgs.GENERAL.get("b.order_pet_go_home"),
+          command: ORDER_PET, arg: [ petId, Pet.ORDER_GO_HOME ] },
+        { label: Msgs.GENERAL.get("b.order_pet_sleep"),
+          command: ORDER_PET, arg: [ petId, Pet.ORDER_SLEEP ] }
+        );
+
+        // pop up the menu where the mouse is
+        if (menuItems.length > 0) {
+            var menu :CommandMenu = CommandMenu.createMenu(menuItems);
+            menu.setDispatcher(_roomView);
+            menu.show();
+        }
+    }
+
+    /**
+     * Handles ORDER_PET.
+     */
+    public function handleOrderPet (args :Array) :void
+    {
+        var petId :int = int(args[0]);
+        var command :int = int(args[1]);
+        var svc :PetService = (_mctx.getClient().requireService(PetService) as PetService);
+        svc.orderPet(_mctx.getClient(), petId, command,
+                     new ReportingListener(_mctx, "general", null, "m.pet_ordered"));
     }
 
     /**

@@ -15,6 +15,7 @@ import com.threerings.msoy.world.client.AvatarSprite;
 import com.threerings.msoy.world.client.DecorSprite;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
+import com.threerings.msoy.world.client.PetSprite;
 import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.WorldActorInfo;
@@ -44,7 +45,7 @@ public class MediaDirector extends BasicDirector
 
         var sprite :ActorSprite;
         if (occInfo is WorldPetInfo) {
-            sprite = new ActorSprite(occInfo);
+            sprite = new PetSprite(occInfo);
 
         } else if (occInfo is WorldMemberInfo || occInfo is WorldActorInfo) {
             sprite = new AvatarSprite(occInfo);

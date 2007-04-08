@@ -680,6 +680,7 @@ public class MsoySprite extends MediaContainer
 
     /** Hover colors. */
     protected static const AVATAR_HOVER :uint = 0x99BFFF;// light blue
+    protected static const PET_HOVER :uint = 0x999999;// light gray
     protected static const PORTAL_HOVER :uint = 0xe04040; // reddish
     protected static const GAME_HOVER :uint = 0xFFFFFF;  // white
     protected static const OTHER_HOVER :uint = 0x000000; // black
