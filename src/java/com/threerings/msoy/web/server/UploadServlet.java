@@ -59,7 +59,8 @@ public class UploadServlet extends HttpServlet
             rsp.sendError(HttpServletResponse.SC_LENGTH_REQUIRED);
             return;
         }
-        if (length > MAX_UPLOAD_SIZE) {
+        // check against our largest size immediately
+        if (length > LARGE_MEDIA_MAX_SIZE) {
             rsp.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
             return;
         }
@@ -80,12 +81,20 @@ public class UploadServlet extends HttpServlet
                     log.info("Receiving file [type: " + item.getContentType() +
                              ", size=" + item.getSize() + ", id=" + item.getFieldName() + "].");
                     mediaId = item.getFieldName();
-                    info = handleFileItem(item, mediaId);
+                    info = handleFileItem(item, mediaId, length);
                 }
             }
 
-        } catch (FileUploadException e) {
-            log.info("File upload choked: " + e + ".");
+        } catch (ServletFileUpload.SizeLimitExceededException slee) {
+            log.info("File upload too big: " + slee + ".");
+            // TODO: use slee.getActualSize(), slee.getPermittedSize()?
+            // getActualSize is probably a little off, as we build the exception
+            // with the total request length
+            rsp.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
+            return;
+
+        } catch (FileUploadException fue) {
+            log.info("File upload choked: " + fue + ".");
             // TODO: send JavaScript that communicates a friendly error
             rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
@@ -122,9 +131,22 @@ public class UploadServlet extends HttpServlet
      * Computes and returns the SHA hash and mime type of the supplied item and puts it in the
      * proper place in the media upload directory.
      */
-    protected MediaInfo[] handleFileItem (FileItem item, String mediaId)
-        throws IOException
+    protected MediaInfo[] handleFileItem (FileItem item, String mediaId, int uploadLength)
+        throws IOException, FileUploadException
     {
+        MediaInfo info = new MediaInfo(), tinfo = null;
+
+        // look up the mime type
+        info.mimeType = MediaDesc.stringToMimeType(item.getContentType());
+        // if that failed, try inferring the type from the path
+        if (info.mimeType == -1) {
+            info.mimeType = MediaDesc.suffixToMimeType(item.getName());
+        }
+        if (info.mimeType != -1) {
+            // if we now know the mimetype, check the length
+            validateFileLength(info.mimeType, uploadLength);
+        }
+
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("SHA");
@@ -158,16 +180,7 @@ public class UploadServlet extends HttpServlet
         }
 
         // compute the file hash
-        MediaInfo info = new MediaInfo(), tinfo = null;
         info.hash = StringUtil.hexlate(digest.digest());
-
-        // look up the mime type
-        info.mimeType = MediaDesc.stringToMimeType(item.getContentType());
-
-        // if that failed, try inferring the type from the path
-        if (info.mimeType == -1) {
-            info.mimeType = MediaDesc.suffixToMimeType(item.getName());
-        }
 
         // if we could not discern from the file path, try determining the mime type
         // from the file data itself.
@@ -192,16 +205,24 @@ public class UploadServlet extends HttpServlet
                 }
             }
 
+            // finally, check the file size now that we know mimetype,
+            // or freak out if we still don't know the mimetype.
             if (info.mimeType != -1) {
-          
-            }
-        }
+                // now we can validate the file size
+                try {
+                    validateFileLength(info.mimeType, uploadLength);
 
-        if (info.mimeType == -1) {
-            log.warning("Received upload of unknown mime type [type=" + item.getContentType() +
-                        ", name=" + item.getName() + "].");
-            output.delete();
-            return null;
+                } catch (FileUploadException fue) {
+                    output.delete();
+                    throw fue;
+                }
+
+            } else {
+                log.warning("Received upload of unknown mime type [type=" + item.getContentType() +
+                    ", name=" + item.getName() + "].");
+                output.delete();
+                return null;
+            }
         }
 
         // if this is an image, determine its constraints and generate a thumbnail
@@ -234,6 +255,34 @@ public class UploadServlet extends HttpServlet
         }
 
         return new MediaInfo[] { info, tinfo };
+    }
+
+    /**
+     * Validate that the upload size is acceptable for the specified mimetype.
+     */
+    protected void validateFileLength (byte mimeType, int length)
+        throws FileUploadException
+    {
+        int limit;
+        switch (mimeType) {
+        case MediaDesc.AUDIO_MPEG:
+        case MediaDesc.VIDEO_FLASH:
+        case MediaDesc.VIDEO_MPEG:
+        case MediaDesc.VIDEO_QUICKTIME:
+        case MediaDesc.VIDEO_MSVIDEO:
+            limit = LARGE_MEDIA_MAX_SIZE;
+            break;
+
+        default:
+            limit = SMALL_MEDIA_MAX_SIZE;
+            break;
+        }
+
+        // do the actual check
+        if (length > limit) {
+            throw new ServletFileUpload.SizeLimitExceededException(
+                "File size is too big for specified mimeType", length, limit);
+        }
     }
 
     /**
@@ -357,7 +406,9 @@ public class UploadServlet extends HttpServlet
     protected final MimeTypeIdentifier _mimeMagic = new MagicMimeTypeIdentifier();
 
     /** Prevent Captain Insano from showing up to fill our drives. */
-    protected static final int MAX_UPLOAD_SIZE = 10 * 1024 * 1024;
+    protected static final int MEGABYTE = 1024 * 1024;
+    protected static final int SMALL_MEDIA_MAX_SIZE = 4 * MEGABYTE;
+    protected static final int LARGE_MEDIA_MAX_SIZE = 100 * MEGABYTE;
 
     /** Le chunk! */
     protected static final int UPLOAD_BUFFER_SIZE = 4096;
