@@ -78,6 +78,7 @@ public /*abstract*/ class BaseClient extends Client
     public function BaseClient (stage :Stage)
     {
         super(createStartupCreds(stage), stage);
+        setVersion(DeploymentConfig.version);
 
         _ctx = createContext();
         LoggingTargets.configureLogging(_ctx);
@@ -261,10 +262,9 @@ public /*abstract*/ class BaseClient extends Client
     {
         var params :Object = stage.loaderInfo.parameters;
         var creds :MsoyCredentials;
-        if (/*DeploymentConfig.devDeployment &&*/ (params["pass"] != null) && (params["user"] != null)) {
+        if ((params["pass"] != null) && (params["user"] != null)) {
             creds = new MsoyCredentials(new Name(String(params["user"])),
-                MD5.hash(String(params["pass"])));
-
+                                        MD5.hash(String(params["pass"])));
         } else {
             creds = new MsoyCredentials(null, null);
         }
