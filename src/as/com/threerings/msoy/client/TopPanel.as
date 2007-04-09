@@ -303,17 +303,6 @@ public class TopPanel extends Canvas
         _bottomPanel.setStyle("left", 0);
         _bottomPanel.setStyle("right", 0);
 
-        // if the bottom is more than 100 pixels tall, we'll include
-        // a chatbox to the left of it.
-        if (bottom.height >= 100) {
-            var chatBox :ChatContainer = new ChatContainer(_ctx);
-            // TODO: get this value in a cleaner way
-            chatBox.width = 278; // align end of send-button area.
-            chatBox.percentHeight = 100;
-            _bottomPanel.addChild(chatBox);
-            _ctx.worldProps.placeViewShowsChat = false;
-        }
-
         _bottomComp = bottom;
         _bottomComp.percentWidth = 100;
         _bottomPanel.addChild(bottom);
@@ -330,7 +319,6 @@ public class TopPanel extends Canvas
             removeChild(_bottomPanel);
             _bottomPanel = null;
             _bottomComp = null;
-            _ctx.worldProps.placeViewShowsChat = true;
             layoutPanels();
         }
     }

@@ -446,7 +446,8 @@ public class RoomView extends AbstractRoomView
 
         _roomObj.addListener(this);
 
-        recheckChatOverlay();
+        chatOverlay.newPlaceEntered(this);
+        chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
 
         addAllOccupants();
 
@@ -465,9 +466,6 @@ public class RoomView extends AbstractRoomView
 
         // start playing background audio
         _ctrl.setBackgroundMusic(_scene.getAudioData());
-
-        _chatOverlayWatcher = BindingUtils.bindSetter(recheckChatOverlay,
-            _ctx.worldProps, "placeViewShowsChat");
     }
 
     // from interface PlaceView
@@ -482,9 +480,7 @@ public class RoomView extends AbstractRoomView
 
         super.didLeavePlace(plobj);
 
-        recheckChatOverlay();
-        _chatOverlayWatcher.unwatch();
-        _chatOverlayWatcher = null;
+        chatOverlay.setTarget(null);
     }
 
     override public function locationUpdated (sprite :MsoySprite) :void
@@ -547,28 +543,6 @@ public class RoomView extends AbstractRoomView
         var audiodata :AudioData = _scene.getAudioData();
         if (audiodata != null) {
             _ctrl.setBackgroundMusic(audiodata);
-        }
-    }
-
-    /**
-     * Check the status of the chat overlay.
-     * @param args nothing- makes BindingUtils happy.
-     */
-    protected function recheckChatOverlay (... args) :void
-    {
-        var shouldBeEnabled :Boolean = _ctx.worldProps.placeViewShowsChat && (_roomObj != null);
-
-        if (chatOverlay.isActive() == shouldBeEnabled) {
-            // all is well
-            return;
-        }
-
-        if (shouldBeEnabled) {
-            chatOverlay.newPlaceEntered(this);
-            chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
-
-        } else {
-            chatOverlay.setTarget(null);
         }
     }
 
@@ -811,9 +785,6 @@ public class RoomView extends AbstractRoomView
 
     /** When we first enter the room, we only load the background (if any). */
     protected var _loadAllMedia :Boolean = false;
-
-    /** Watches WorldProperties.placeViewShowsChat. */
-    protected var _chatOverlayWatcher :ChangeWatcher;
 
     /** The spinner to show when we're loading room data. */
     protected var _loadingSpinner :DisplayObject;
