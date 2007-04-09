@@ -69,6 +69,7 @@ public class TableRenderer extends HBox
         _seatsGrid.percentWidth = 100;
         _seatsGrid.verticalScrollPolicy = ScrollPolicy.OFF;
         _seatsGrid.horizontalScrollPolicy = ScrollPolicy.OFF;
+        _seatsGrid.styleName = "seatsGrid";
         rightSide.addChild(_buttonsBox = new HBox());
         _buttonsBox.percentWidth = 100;
         addChild(rightSide);
@@ -143,7 +144,7 @@ public class TableRenderer extends HBox
 
         _seatsGrid.validateNow();
         _maxUsableWidth = _seatsGrid.measuredMinWidth * _seatsGrid.numChildren + CONFIG_WIDTH +
-            PADDING_WIDTH + 50 * _seatsGrid.numChildren; // this won't be needed in the end
+            PADDING_WIDTH;
     }
 
     protected function updateButtons (table :MsoyTable) :void
@@ -285,7 +286,6 @@ class SeatRenderer extends HBox
         } else {
             prepareJoinButton();
         }
-
     }
 
     protected function prepareOccupant () :void
@@ -294,7 +294,7 @@ class SeatRenderer extends HBox
             while (numChildren > 0) {
                 removeChild(getChildAt(0));
             }
-            addChild(new MediaWrapper(_headShot = new ScalingMediaContainer(40, 40)));
+            addChild(new MediaWrapper(_headShot = new ScalingMediaContainer(40, 40), 40, 40));
             addChild(_name = new Label());
             addChild(_leaveBtn = new CommandButton(LobbyController.LEAVE_TABLE));
             _leaveBtn.styleName = "closeButton";
