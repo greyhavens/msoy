@@ -66,7 +66,7 @@ public class MediaWrapper extends Container
         if (h > maxHeight) {
             heightScale = maxHeight / w;
         }
-        // returns 1 is max dimensions haven't been messed with
+        // returns 1 if max dimensions haven't been messed with
         return widthScale < heightScale ? widthScale : heightScale;
     }
 
