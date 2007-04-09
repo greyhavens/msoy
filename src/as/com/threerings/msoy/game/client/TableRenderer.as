@@ -4,6 +4,7 @@ import flash.events.Event;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
+import mx.containers.Tile;
 
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
@@ -65,7 +66,7 @@ public class TableRenderer extends HBox
         addChild(padding);
         var rightSide :VBox = new VBox();
         rightSide.width = 300;
-        rightSide.addChild(_seatsGrid = new HBox());
+        rightSide.addChild(_seatsGrid = new Tile());
         _seatsGrid.width = 300;
         rightSide.addChild(_buttonsBox = new HBox());
         _buttonsBox.percentWidth = 100;
@@ -209,7 +210,7 @@ public class TableRenderer extends HBox
     protected var _config :Text;
 
     protected var _labelsBox :VBox;
-    protected var _seatsGrid :HBox;
+    protected var _seatsGrid :Tile;
     protected var _buttonsBox :HBox;
 
     protected var _game :Game;
