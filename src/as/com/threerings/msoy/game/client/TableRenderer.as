@@ -300,8 +300,8 @@ class SeatRenderer extends HBox
             }
             _headShot = new MediaContainer();
             var wrapper :MediaWrapper = new MediaWrapper(_headShot);
-            wrapper.width = 40;
-            wrapper.height = 40;
+            wrapper.maxWidth = 40;
+            wrapper.maxHeight = 40;
             addChild(wrapper);
             _name = new Label();
             addChild(_name);
