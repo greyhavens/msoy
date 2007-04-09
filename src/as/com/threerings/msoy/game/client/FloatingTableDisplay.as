@@ -2,6 +2,8 @@ package com.threerings.msoy.game.client {
 
 import flash.display.DisplayObject;
 
+import mx.core.ScrollPolicy;
+
 import mx.controls.Button;
 
 import com.threerings.msoy.client.Msgs
@@ -27,6 +29,9 @@ public class FloatingTableDisplay extends FloatingPanel
         _tableDir = tableDir;
         _tableDir.addTableObserver(this);
         _table = _tableDir.getSeatedTable();
+
+        verticalScrollPolicy = ScrollPolicy.OFF;
+        horizontalScrollPolicy = ScrollPolicy.OFF;
     }
 
     public function getRenderer () :TableRenderer
@@ -50,7 +55,7 @@ public class FloatingTableDisplay extends FloatingPanel
         avoid :DisplayObject = null) :void
     {
         if (!_hasBeenShutDown) {
-            width = 450;
+            width = 700;
             super.open(modal, parent, avoid);
         }
     }
@@ -87,6 +92,11 @@ public class FloatingTableDisplay extends FloatingPanel
         _tableRender.panel = _panel;
         addChild(_tableRender);
         _tableRender.data = _table;
+        
+        // make sure the seat grid in TableRenderer takes as much horizontal space as it can
+        width = _tableRender.maxUsableWidth > parent.width ? parent.width : 
+            _tableRender.maxUsableWidth;
+        _tableRender.width = width;
     }
 
     /** controlled panel to dispatch LobbyController events on */

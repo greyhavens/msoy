@@ -39,10 +39,10 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
     public static const START_TABLE :String = "StartTable";
 
     /** A command to sit in a place in a table. */
-    public static const SIT :String = "Sit";
+    public static const JOIN_TABLE :String = "JoinTable";
 
     /** A command to leave a table. */
-    public static const LEAVE :String = "Leave";
+    public static const LEAVE_TABLE :String = "LeaveTable";
 
     /** A command to leave the lobby. */
     public static const LEAVE_LOBBY :String = "LeaveLobby";
@@ -130,17 +130,17 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
     }
 
     /**
-     * Handles SIT.
+     * Handles JOIN_TABLE.
      */
-    public function handleSit (args :Array) :void
+    public function handleJoinTable (args :Array) :void
     {
         _tableDir.joinTable(args[0] as int /*tableId*/, args[1] as int /*pos*/);
     }
 
     /**
-     * Handles LEAVE.
+     * Handles LEAVE_TABLE.
      */
-    public function handleLeave (tableId :int) :void
+    public function handleLeaveTable (tableId :int) :void
     {
         _tableDir.leaveTable(tableId);
         if (!_panelIsVisible) {

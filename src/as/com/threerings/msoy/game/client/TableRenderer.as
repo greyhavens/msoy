@@ -56,18 +56,19 @@ public class TableRenderer extends HBox
 
         _game = panel.getGame();
 
-        // then add three boxes to contain further content
         addChild(_labelsBox = new VBox());
-        _labelsBox.percentWidth = 100;
+        _labelsBox.width = CONFIG_WIDTH;
         var padding :VBox = new VBox();
         padding.setStyle("backgroundColor", 0xF1F4F7);
-        padding.width = 2;
+        padding.width = PADDING_WIDTH;
         padding.percentHeight = 100;
         addChild(padding);
         var rightSide :VBox = new VBox();
-        rightSide.width = 300;
+        rightSide.percentWidth = 100;
         rightSide.addChild(_seatsGrid = new Tile());
-        _seatsGrid.width = 300;
+        _seatsGrid.percentWidth = 100;
+        _seatsGrid.verticalScrollPolicy = ScrollPolicy.OFF;
+        _seatsGrid.horizontalScrollPolicy = ScrollPolicy.OFF;
         rightSide.addChild(_buttonsBox = new HBox());
         _buttonsBox.percentWidth = 100;
         addChild(rightSide);
@@ -77,11 +78,28 @@ public class TableRenderer extends HBox
         _labelsBox.addChild(_watcherCount);
         _labelsBox.addChild(_config);
     }
+
     override public function set data (newData :Object) :void
     {
         super.data = newData;
 
         recheckTable();
+    }
+
+    override public function set width (width :Number) :void
+    {
+        super.width = width;
+        if (_seatsGrid != null) {
+            _seatsGrid.width = width - CONFIG_WIDTH - PADDING_WIDTH;
+        }
+    }
+
+    /** 
+     * Get the amount of width we could use if we had the room.
+     */
+    public function get maxUsableWidth () :int
+    {
+        return _maxUsableWidth;
     }
 
     protected function recheckTable () :void
@@ -110,18 +128,22 @@ public class TableRenderer extends HBox
         for (var ii :int = 0; ii < length; ii++) {
             var seat :SeatRenderer;
             if (_seatsGrid.numChildren <= ii) {
-                seat = new SeatRenderer();
+                seat = new SeatRenderer(ctx, table, ii);
                 _seatsGrid.addChild(seat);
             } else {
                 seat = (_seatsGrid.getChildAt(ii) as SeatRenderer);
             }
-            seat.update(ctx, table, ii, panel.isSeated());
+            seat.update();
         }
 
         // remove any extra seats, should there be any
         while (_seatsGrid.numChildren > length) {
             _seatsGrid.removeChildAt(length);
         }
+
+        _seatsGrid.validateNow();
+        _maxUsableWidth = _seatsGrid.measuredMinWidth * _seatsGrid.numChildren + CONFIG_WIDTH +
+            PADDING_WIDTH;
     }
 
     protected function updateButtons (table :MsoyTable) :void
@@ -202,6 +224,9 @@ public class TableRenderer extends HBox
         _config.text = config;
     }
 
+    protected static const CONFIG_WIDTH :int = 100;
+    protected static const PADDING_WIDTH :int = 2;
+
     /** Holds our game's branding background. */
     protected var _background :MediaContainer;
 
@@ -216,14 +241,20 @@ public class TableRenderer extends HBox
     protected var _game :Game;
 
     protected var _popup :Boolean; 
+
+    protected var _maxUsableWidth :int;
 }
 }
 
 import mx.containers.HBox;
 
+import mx.controls.Label;
+
 import mx.core.UIComponent;
 
 import com.threerings.util.Name;
+
+import com.threerings.flash.MediaContainer;
 
 import com.threerings.flex.CommandButton;
 
@@ -232,64 +263,72 @@ import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.item.web.MediaDesc;
 
-import com.threerings.msoy.game.client.HeadShotSprite;
 import com.threerings.msoy.game.client.LobbyController;
 import com.threerings.msoy.game.data.MsoyTable;
 
 class SeatRenderer extends HBox
 {
-    public function update (ctx :WorldContext, table :MsoyTable, index :int, 
-        weAreSeated :Boolean) :void
+    public function SeatRenderer (ctx :WorldContext, table :MsoyTable, index :int) 
     {
-        var occupant :Name = (table.occupants[index] as Name);
-        var comp :UIComponent = (numChildren > 0)
-            ? (getChildAt(0) as UIComponent) : null;
+        _ctx = ctx;
+        _table = table;
+        _index = index;
+    }
 
-        if ((occupant == null) ||
-                (weAreSeated && occupant.equals(ctx.getMemberObject().getVisibleName()))) {
-            // we want to show a button
-            var btn :CommandButton;
-            if (comp is CommandButton) {
-                btn = (comp as CommandButton);
+    public function update () :void
+    {
+        var occupant :Name = (_table.occupants[_index] as Name);
 
-            } else {
-                if (comp != null) {
-                    removeChildAt(0);
-                }
-                btn = new CommandButton();
-                addChildAt(btn, 0);
-            }
-            if (table.inPlay()) {
-                btn.visible = false;
-
-            } else if (occupant == null) {
-                btn.visible = true;
-                btn.setCommand(LobbyController.SIT, [ table.tableId , index ]);
-                btn.label = ctx.xlate("game", "b.sit");
-                btn.enabled = !weAreSeated;
-
-            } else {
-                btn.visible = true;
-                btn.setCommand(LobbyController.LEAVE, table.tableId);
-                btn.label = ctx.xlate("game", "b.leave");
-                btn.enabled = true;
-            }
-
+        if (occupant != null) {
+            prepareForOccupant();
+            _headShot.setMedia((_table.headShots[_index] as MediaDesc).getMediaPath());
+            _name.text = occupant.toString();
         } else {
-            // we want to show the headshot sprite
-            var lbl :HeadShotSprite;
-            if (comp is MediaWrapper) {
-                lbl = (MediaWrapper(comp).getMediaContainer() as HeadShotSprite);
+            prepareJoinButton();
+        }
 
-            } else {
-                if (comp != null) {
-                    removeChildAt(0);
-                }
-                lbl = new HeadShotSprite();
-                var wrap :MediaWrapper = new MediaWrapper(lbl);
-                addChildAt(wrap, 0);
+    }
+
+    protected function prepareForOccupant () :void
+    {
+        if (_name == null || _name.parent != this) {
+            while (numChildren > 0) {
+                removeChild(getChildAt(0));
             }
-            lbl.setUser(occupant, table.headShots[index] as MediaDesc);
+            _headShot = new MediaContainer();
+            var wrapper :MediaWrapper = new MediaWrapper(_headShot);
+            wrapper.width = 40;
+            wrapper.height = 40;
+            addChild(wrapper);
+            _name = new Label();
+            addChild(_name);
+            _leaveBtn = new CommandButton(LobbyController.LEAVE_TABLE);
+            _leaveBtn.styleName = "closeButton";
+            addChild(_leaveBtn);
+        } 
+    }
+
+    protected function prepareJoinButton () :void
+    {
+        if (_joinBtn == null || _joinBtn.parent != this) {
+            while (numChildren > 0) {
+                removeChild(getChildAt(0));
+            }
+            if (_joinBtn == null) {
+                _joinBtn = new CommandButton(LobbyController.JOIN_TABLE, 
+                    [ _table.tableId, _index ]);
+                _joinBtn.label = _ctx.xlate("game", "b.join");
+            }
+            addChild(_joinBtn);
         }
     }
+
+    protected var _ctx :WorldContext;
+    protected var _table :MsoyTable;
+    protected var _index :int;
+
+    protected var _joinBtn :CommandButton;
+    protected var _headShot :MediaContainer;
+    protected var _name :Label;
+    protected var _leaveBtn :CommandButton;
 }
