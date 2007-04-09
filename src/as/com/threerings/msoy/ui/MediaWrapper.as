@@ -44,30 +44,14 @@ public class MediaWrapper extends Container
 
     override public function get measuredWidth () :Number
     {
-        _cont.scaleX = getMaxDimensionScale();
-        return (_cont.getContentWidth() == 0) ? _altWidth : _cont.width;
+        var w :Number = _cont.getContentWidth();
+        return (w == 0) ? _altWidth : w;
     }
 
     override public function get measuredHeight () :Number
     {
-        _cont.scaleY = getMaxDimensionScale();
-        return (_cont.getContentHeight() == 0) ? _altHeight : _cont.height;
-    }
-
-    protected function getMaxDimensionScale () :Number
-    {
-        var w :Number = _cont.getContentWidth();
         var h :Number = _cont.getContentHeight();
-        var widthScale :Number = 1;
-        var heightScale :Number = 1;
-        if (w > maxWidth) {
-            widthScale = maxWidth / w;
-        }
-        if (h > maxHeight) {
-            heightScale = maxHeight / w;
-        }
-        // returns 1 if max dimensions haven't been messed with
-        return widthScale < heightScale ? widthScale : heightScale;
+        return (h == 0) ? _altHeight : h;
     }
 
     /**

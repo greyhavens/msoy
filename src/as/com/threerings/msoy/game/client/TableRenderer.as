@@ -14,8 +14,6 @@ import mx.controls.Text;
 
 import com.threerings.util.Name;
 
-import com.threerings.flash.MediaContainer;
-
 import com.threerings.flex.CommandButton;
 
 import com.threerings.parlor.game.data.GameConfig;
@@ -230,9 +228,6 @@ public class TableRenderer extends HBox
     protected static const CONFIG_WIDTH :int = 100;
     protected static const PADDING_WIDTH :int = 2;
 
-    /** Holds our game's branding background. */
-    protected var _background :MediaContainer;
-
     protected var _watcherCount :Label; // TODO
 
     protected var _config :Text;
@@ -257,12 +252,11 @@ import mx.core.UIComponent;
 
 import com.threerings.util.Name;
 
-import com.threerings.flash.MediaContainer;
-
 import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.item.web.MediaDesc;
 
@@ -298,11 +292,8 @@ class SeatRenderer extends HBox
             while (numChildren > 0) {
                 removeChild(getChildAt(0));
             }
-            _headShot = new MediaContainer();
-            var wrapper :MediaWrapper = new MediaWrapper(_headShot);
-            wrapper.maxWidth = 40;
-            wrapper.maxHeight = 40;
-            addChild(wrapper);
+            _headShot = new ScalingMediaContainer(40, 40);
+            addChild(new MediaWrapper(_headShot));
             _name = new Label();
             addChild(_name);
             _leaveBtn = new CommandButton(LobbyController.LEAVE_TABLE);
@@ -331,7 +322,7 @@ class SeatRenderer extends HBox
     protected var _index :int;
 
     protected var _joinBtn :CommandButton;
-    protected var _headShot :MediaContainer;
+    protected var _headShot :ScalingMediaContainer;
     protected var _name :Label;
     protected var _leaveBtn :CommandButton;
 }
