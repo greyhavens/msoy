@@ -280,10 +280,10 @@ public class EditorPanel extends VBox
         _volume.maximum = 1;
         _volume.percentWidth = 100;
         _volume.liveDragging = true;
-            
+
         GridUtil.addRow(
             general, MsoyUI.createLabel(Msgs.EDITING.get("l.scene_scrollbar")),
-            new RoomViewScrollBox(_roomView, 150, 100));
+            _scrollBox = new RoomViewScrollBox(_roomView, 150, 100));
 
         _extras = new CheckBox();
         _extras.addEventListener(
@@ -474,6 +474,7 @@ public class EditorPanel extends VBox
         }
 
         _ctrl.setBackground(dd);
+        _scrollBox.setBackground(dd);
     }
 
     protected function newBackgroundAudioSelected () :void
@@ -571,7 +572,7 @@ public class EditorPanel extends VBox
     protected var _depth :TextInput;
     protected var _height :TextInput;
     protected var _horizon :HSlider;
-
+    protected var _scrollBox :RoomViewScrollBox;
     protected var _decorSelector :SingleItemSelector;
     protected var _audioSelector :SingleItemSelector;
     protected var _volume :HSlider;

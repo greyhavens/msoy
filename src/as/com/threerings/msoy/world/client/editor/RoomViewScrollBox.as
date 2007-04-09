@@ -3,11 +3,14 @@
 
 package com.threerings.msoy.world.client.editor {
 
+import flash.display.Sprite;
 import flash.geom.Rectangle;
 
+import com.threerings.flash.MediaContainer;
 import com.threerings.flex.ScrollBox;
 
 import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.data.DecorData;
 
 /**
  * A scrollbox specifically hacked to work with the RoomView.
@@ -28,5 +31,42 @@ public class RoomViewScrollBox extends ScrollBox
     {
         return RoomView(_target).getScrollBounds();
     }
+
+    override protected function recheckBounds () :void
+    {
+        super.recheckBounds();
+        rescaleBackgroundSprite();
+    }
+
+    protected function rescaleBackgroundSprite () :void
+    {
+        if (_bg != null) {
+            _bg.scaleX = _bg.scaleY = _scale;
+            _bg.x = (width - _bg.width)  / 2;
+            _bg.y = height - _bg.height;
+        }
+    }        
+        
+    public function setBackground (decorData :DecorData) :void
+    {
+        if (_bg != null) {
+            rawChildren.removeChild(_bg);
+            _bg = null;
+        }
+
+        if (decorData != null) {
+            _bg = new MediaContainer(decorData.media.getMediaPath());
+            _bg.mask = _mask;
+            rawChildren.addChildAt(_bg, 0);
+            rescaleBackgroundSprite();
+        }
+    }
+
+    public function getBackground () :Sprite
+    {
+        return _bg;
+    }
+
+    protected var _bg :Sprite;
 }
 }
