@@ -223,10 +223,18 @@ public class Application
         _status.refreshMailNotification();
     }
 
-    protected void clearClient() 
+    protected void clearClient (boolean deferred)
     {
-        WorldClient.clearClient();
-        _page.clearCloseButton();
+        if (deferred) {
+            DeferredCommand.add(new Command() {
+                public void execute () {
+                    clearClient(false);
+                }
+            });
+        } else {
+            WorldClient.clearClient();
+            _page.clearCloseButton();
+        }
     }
 
     protected void createMappings ()
@@ -267,7 +275,7 @@ public class Application
             return true;
        }
        $wnd.clearClient = function () {
-            app.@client.shell.Application::clearClient()();
+            app.@client.shell.Application::clearClient(Z)(true);
        }
     }-*/;
 
