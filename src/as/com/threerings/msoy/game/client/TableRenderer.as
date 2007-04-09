@@ -56,6 +56,9 @@ public class TableRenderer extends HBox
 
         _game = panel.getGame();
 
+        setStyle("horizontalGap", 0);
+        setStyle("verticalGap", 0);
+
         addChild(_labelsBox = new VBox());
         _labelsBox.width = CONFIG_WIDTH;
         var padding :VBox = new VBox();
@@ -143,7 +146,7 @@ public class TableRenderer extends HBox
 
         _seatsGrid.validateNow();
         _maxUsableWidth = _seatsGrid.measuredMinWidth * _seatsGrid.numChildren + CONFIG_WIDTH +
-            PADDING_WIDTH;
+            PADDING_WIDTH + 10 * _seatsGrid.numChildren; // this won't be needed in the end
     }
 
     protected function updateButtons (table :MsoyTable) :void
