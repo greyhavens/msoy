@@ -533,3 +533,12 @@ ListBase
   selectedDownSkin: Embed(source="../../pages/images/ui/close_button.png");
   selectedUpSkin: Embed(source="../../pages/images/ui/close_button.png");
 }
+
+.tableRenderer {
+  horizontalGap: 0;
+  verticalGap: 0;
+}
+
+.seatRenderer {
+  verticalAlign: middle;
+}

@@ -54,8 +54,7 @@ public class TableRenderer extends HBox
 
         _game = panel.getGame();
 
-        setStyle("horizontalGap", 0);
-        setStyle("verticalGap", 0);
+        styleName = "tableRenderer";
 
         addChild(_labelsBox = new VBox());
         _labelsBox.width = CONFIG_WIDTH;
@@ -144,7 +143,7 @@ public class TableRenderer extends HBox
 
         _seatsGrid.validateNow();
         _maxUsableWidth = _seatsGrid.measuredMinWidth * _seatsGrid.numChildren + CONFIG_WIDTH +
-            PADDING_WIDTH + 10 * _seatsGrid.numChildren; // this won't be needed in the end
+            PADDING_WIDTH + 50 * _seatsGrid.numChildren; // this won't be needed in the end
     }
 
     protected function updateButtons (table :MsoyTable) :void
@@ -270,6 +269,9 @@ class SeatRenderer extends HBox
         _ctx = ctx;
         _table = table;
         _index = index;
+        styleName = "seatRenderer";
+        percentWidth = 100;
+        percentHeight = 100;
     }
 
     public function update () :void
@@ -277,7 +279,7 @@ class SeatRenderer extends HBox
         var occupant :Name = (_table.occupants[_index] as Name);
 
         if (occupant != null) {
-            prepareForOccupant();
+            prepareOccupant();
             _headShot.setMedia((_table.headShots[_index] as MediaDesc).getMediaPath());
             _name.text = occupant.toString();
         } else {
@@ -286,20 +288,18 @@ class SeatRenderer extends HBox
 
     }
 
-    protected function prepareForOccupant () :void
+    protected function prepareOccupant () :void
     {
         if (_name == null || _name.parent != this) {
             while (numChildren > 0) {
                 removeChild(getChildAt(0));
             }
-            _headShot = new ScalingMediaContainer(40, 40);
-            addChild(new MediaWrapper(_headShot));
-            _name = new Label();
-            addChild(_name);
-            _leaveBtn = new CommandButton(LobbyController.LEAVE_TABLE);
+            addChild(new MediaWrapper(_headShot = new ScalingMediaContainer(40, 40)));
+            addChild(_name = new Label());
+            addChild(_leaveBtn = new CommandButton(LobbyController.LEAVE_TABLE));
             _leaveBtn.styleName = "closeButton";
-            addChild(_leaveBtn);
         } 
+        setStyle("horizontalAlign", "left");
     }
 
     protected function prepareJoinButton () :void
@@ -315,6 +315,7 @@ class SeatRenderer extends HBox
             }
             addChild(_joinBtn);
         }
+        setStyle("horizontalAlign", "center");
     }
 
     protected var _ctx :WorldContext;
