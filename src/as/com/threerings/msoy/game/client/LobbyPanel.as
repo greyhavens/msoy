@@ -14,7 +14,7 @@ import mx.collections.ArrayCollection;
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.containers.ViewStack;
-import mx.controls.ButtonBar;
+import mx.controls.Button;
 import mx.controls.Label;
 import mx.controls.Alert;
 import mx.controls.Text;
@@ -64,7 +64,7 @@ public class LobbyPanel extends VBox
     public var controller :LobbyController;
 
     /** The create-a-table button. */
-    public var createBtn :CommandButton;
+    public var createBtn :Button;
 
     /**
      * Create a new LobbyPanel.

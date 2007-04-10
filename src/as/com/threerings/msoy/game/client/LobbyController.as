@@ -31,9 +31,6 @@ import com.threerings.util.CommandEvent;
 
 public class LobbyController extends Controller implements Subscriber, ObjectDeathListener
 {
-    /** A command to create a new table. */
-    public static const CREATE_TABLE :String = "CreateTable";
-
     /** A command to submit a configured table configuration for creation. */
     public static const SUBMIT_TABLE :String = "SubmitTable";
 
@@ -112,15 +109,6 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
     public function requestFailed (oid :int, cause :ObjectAccessError) :void 
     {
         Log.getLog(this).warning("request for the LobbyObject failed: ", cause);
-    }
-
-    /**
-     * Handles CREATE_TABLE.
-     */
-    public function handleCreateTable () :void
-    {
-        _panel.createBtn.enabled = false;
-        new TableCreationPanel(_mctx, _lobj.game, _panel);
     }
 
     /**
