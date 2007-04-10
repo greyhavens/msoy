@@ -251,8 +251,6 @@ import mx.controls.Label;
 
 import mx.core.UIComponent;
 
-import com.threerings.util.Name;
-
 import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.WorldContext;
@@ -263,6 +261,8 @@ import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.game.client.LobbyController;
 import com.threerings.msoy.game.data.MsoyTable;
+
+import com.threerings.msoy.web.data.MemberName;
 
 class SeatRenderer extends HBox
 {
@@ -278,12 +278,20 @@ class SeatRenderer extends HBox
 
     public function update () :void
     {
-        var occupant :Name = (_table.occupants[_index] as Name);
+        var occupant :MemberName = _table.occupants[_index] as MemberName;
 
         if (occupant != null) {
             prepareOccupant();
             _headShot.setMedia((_table.headShots[_index] as MediaDesc).getMediaPath());
             _name.text = occupant.toString();
+            if (occupant.equals(_ctx.getMemberObject().memberName)) {
+                _leaveBtn.setCommand(LobbyController.LEAVE_TABLE, _table.tableId);
+                _leaveBtn.visible = _leaveBtn.includeInLayout = true;
+            } else {
+                _leaveBtn.visible = _leaveBtn.includeInLayout = false;
+            }
+            // TODO: add support for booting players from tables to the TableService, make it 
+            // optional on TableManager creation, and support it here in the form of the closebox
         } else {
             prepareJoinButton();
         }
@@ -298,7 +306,7 @@ class SeatRenderer extends HBox
             addChild(new MediaWrapper(_headShot = new ScalingMediaContainer(40, 40), 40, 40));
             addChild(_name = new Label());
             _name.styleName = "nameLabel";
-            addChild(_leaveBtn = new CommandButton(LobbyController.LEAVE_TABLE, _table.tableId));
+            addChild(_leaveBtn = new CommandButton());
             _leaveBtn.styleName = "closeButton";
         } 
         setStyle("horizontalAlign", "left");
