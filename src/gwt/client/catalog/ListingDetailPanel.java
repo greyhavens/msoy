@@ -52,7 +52,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _price.setText(0, 3, String.valueOf(_listing.flowCost));
 
         // if we are the creator (lister) of this item, allow us to delist it
-        if (_listing.creator.getMemberId() == CCatalog.getMemberId()) {
+        if (_listing.creator.getMemberId() == CCatalog.getMemberId() || CCatalog.isAdmin()) {
             _details.add(WidgetUtil.makeShim(1, 10));
             _details.add(new Label(CCatalog.msgs.listingDelistTip()));
             Button delist = new Button(CCatalog.msgs.listingDelist());

@@ -17,6 +17,7 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.ConnectConfig;
 
 import client.shell.Page;
+import client.shell.WorldClient;
 import client.util.MsoyUI;
 
 /**
@@ -38,7 +39,7 @@ public class DashboardPanel extends FlexTable
         setWidget(row++, 0, controls);
 
         controls.add(new Label(CAdmin.msgs.controls()));
-        if (CAdmin.creds.isAdmin) {
+        if (CAdmin.isAdmin()) {
             controls.add(new Button(CAdmin.msgs.displayDashboard(), new ClickListener() {
                 public void onClick (Widget sender) {
                     ((Button)sender).setEnabled(false);
@@ -76,6 +77,8 @@ public class DashboardPanel extends FlexTable
     protected void finishDisplayDashboard (ConnectConfig config)
     {
         Page.displayingJava = true;
+        WorldClient.clearClient();
+
         int row = getRowCount();
         getFlexCellFormatter().setStyleName(row, 0, "Applet");
         setWidget(row, 0, WidgetUtil.createApplet(

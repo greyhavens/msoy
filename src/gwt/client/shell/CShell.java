@@ -45,6 +45,22 @@ public class CShell
     }
 
     /**
+     * Returns true if we're logged in and have support privileges.
+     */
+    public static boolean isSupport ()
+    {
+        return (creds != null) ? creds.isSupport : false;
+    }
+
+    /**
+     * Returns true if we're logged in and have admin privileges.
+     */
+    public static boolean isAdmin ()
+    {
+        return (creds != null) ? creds.isAdmin : false;
+    }
+
+    /**
      * Looks up the appropriate response message for the supplied server-generated error.
      */
     public static String serverError (Throwable error)
