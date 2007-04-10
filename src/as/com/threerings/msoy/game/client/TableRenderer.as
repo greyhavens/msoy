@@ -79,14 +79,12 @@ public class TableRenderer extends HBox
         }
         var rightSide :VBox = new VBox();
         rightSide.percentWidth = 100;
+        addChild(rightSide);
         rightSide.addChild(_seatsGrid = new Tile());
         _seatsGrid.percentWidth = 100;
         _seatsGrid.verticalScrollPolicy = ScrollPolicy.OFF;
         _seatsGrid.horizontalScrollPolicy = ScrollPolicy.OFF;
         _seatsGrid.styleName = "seatsGrid";
-        rightSide.addChild(_buttonsBox = new HBox());
-        _buttonsBox.percentWidth = 100;
-        addChild(rightSide);
     }
 
     override public function set data (newData :Object) :void
@@ -153,29 +151,23 @@ public class TableRenderer extends HBox
             if (_seatsGrid.numChildren <= ii) {
                 seat = new SeatRenderer();
                 _seatsGrid.addChild(seat);
+            } else if (!(_seatsGrid.getChildAt(ii) is SeatRenderer)) {
+                seat = new SeatRenderer();
+                _seatsGrid.addChildAt(seat, ii);
             } else {
                 seat = (_seatsGrid.getChildAt(ii) as SeatRenderer);
             }
             seat.update(ctx, table, ii, panel.isSeated());
         }
 
-        // remove any extra seats, should there be any
+        // remove any extra seats/buttons, should there be any
         while (_seatsGrid.numChildren > length) {
             _seatsGrid.removeChildAt(length);
         }
-
-        _seatsGrid.validateNow();
-        _maxUsableWidth = (_seatsGrid.measuredMinWidth + HORZ_GAP) * _seatsGrid.numChildren +
-            /* the mystery pixels strike again :/ */ 10;
     }
 
     protected function updateButtons (table :MsoyTable) :void
     {
-        // remove all, then re-add
-        for (var ii :int = _buttonsBox.numChildren - 1; ii >= 0; ii--) {
-            _buttonsBox.removeChildAt(ii);
-        }
-
         var btn :CommandButton;
 
         // if we are the creator, add a button for starting the game now
@@ -183,37 +175,49 @@ public class TableRenderer extends HBox
                 ctx.getMemberObject().getVisibleName().equals(table.occupants[0]) &&
                 (table.tconfig.desiredPlayerCount > table.tconfig.minimumPlayerCount)) {
 
+            var box :VBox = new VBox();
+            box.setStyle("verticalAlign", "middle");
+            box.setStyle("horizontalAlign", "center");
+            box.percentWidth = 100;
+            box.percentHeight = 100;
             btn = new CommandButton(LobbyController.START_TABLE, table.tableId);
             btn.label = ctx.xlate("game", "b.start_now");
             btn.enabled = table.mayBeStarted();
-            _buttonsBox.addChild(btn);
+            box.addChild(btn);
+            _seatsGrid.addChild(box);
         }
 
         // maybe add a button for entering the game
         if (table.gameOid != -1) {
             var key :String = null;
             switch (table.config.getGameType()) {
+            case GameConfig.PARTY:
+                key = "b.join";
+                break;
+
             default:
                 if (!_game.getGameDefinition().unwatchable) {
                     key = "b.watch";
                 }
                 break;
-
-            case GameConfig.SEATED_CONTINUOUS:
-                key = "b.enter";
-                break;
-
-            case GameConfig.PARTY:
-                key = "b.join";
-                break;
             }
 
             if (key != null) {
+                box = new VBox();
+                box.setStyle("verticalAlign", "middle");
+                box.setStyle("horizontalAlign", "center");
+                box.percentWidth = 100;
+                box.percentHeight = 100;
                 btn = new CommandButton(MsoyController.GO_LOCATION, table.gameOid);
                 btn.label = ctx.xlate("game", key);
-                _buttonsBox.addChild(btn);
+                box.addChild(btn);
+                _seatsGrid.addChild(box);
             }
         }
+
+        _seatsGrid.validateNow();
+        _maxUsableWidth = (_seatsGrid.measuredMinWidth + HORZ_GAP) * _seatsGrid.numChildren +
+            /* the mystery pixels strike again :/ */ 10;
     }
 
     /**
@@ -249,7 +253,6 @@ public class TableRenderer extends HBox
     protected var _config :Text;
 
     protected var _seatsGrid :Tile;
-    protected var _buttonsBox :HBox;
 
     protected var _game :Game;
 
