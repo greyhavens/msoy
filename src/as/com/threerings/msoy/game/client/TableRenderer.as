@@ -134,7 +134,7 @@ public class TableRenderer extends HBox
             } else {
                 seat = (_seatsGrid.getChildAt(ii) as SeatRenderer);
             }
-            seat.update(ctx, table, ii);
+            seat.update(ctx, table, ii, panel.isSeated());
         }
 
         // remove any extra seats, should there be any
@@ -273,7 +273,8 @@ class SeatRenderer extends HBox
         percentHeight = 100;
     }
 
-    public function update (ctx :WorldContext, table :MsoyTable, index :int) :void
+    public function update (ctx :WorldContext, table :MsoyTable, index :int, 
+        weAreSeated :Boolean) :void
     {
         _ctx = ctx;
         _table = table;
@@ -294,6 +295,7 @@ class SeatRenderer extends HBox
             // optional on TableManager creation, and support it here in the form of the closebox
         } else {
             prepareJoinButton();
+            _joinBtn.enabled = !weAreSeated;
         }
     }
 
