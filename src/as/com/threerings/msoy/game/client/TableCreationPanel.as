@@ -75,6 +75,7 @@ public class TableCreationPanel extends VBox
                 [ tconfigger.getTableConfig(), gconfigger.getGameConfig() ]);
         });
         _createBtn.label = Msgs.GAME.get("b.create");
+        _createBtn.buttonMode = true;
         addChild(_createBtn);
     }
 

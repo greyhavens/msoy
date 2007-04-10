@@ -106,6 +106,7 @@ public class FloatingTableDisplay extends FloatingPanel
             CommandEvent.dispatch(_tableRender, LobbyController.JOIN_LOBBY);
         });
         joinLobbyBtn.styleName = "backToLobbyBtn";
+        joinLobbyBtn.buttonMode = true;
         btnBox.addChild(joinLobbyBtn);
         _tableRender = new TableRenderer(true);
         _tableRender.ctx = _ctx;
