@@ -64,6 +64,7 @@ public class HeaderBar extends HBox
         addChild(embedButtonBox);
         _embedLinkButton = new CommandButton(HeaderBarController.SHOW_EMBED_HTML);
         _embedLinkButton.styleName = "embedButton";
+        _embedLinkButton.toolTip = Msgs.GENERAL.get("b.embed");
         embedButtonBox.addChild(_embedLinkButton);
         setEmbedLinkButtonVisible(false);
 
