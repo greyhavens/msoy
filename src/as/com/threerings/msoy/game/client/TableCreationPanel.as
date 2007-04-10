@@ -1,11 +1,8 @@
 package com.threerings.msoy.game.client {
 
-import flash.events.MouseEvent;
-
 import mx.containers.VBox;
 
-import mx.controls.Button;
-
+import com.threerings.flex.CommandButton;
 import com.threerings.util.CommandEvent;
 
 import com.threerings.parlor.data.TableConfig;
@@ -36,7 +33,7 @@ public class TableCreationPanel extends VBox
         _panel = panel;
     }
 
-    public function getCreateButton () :Button
+    public function getCreateButton () :CommandButton
     {
         return _createBtn;
     }
@@ -69,13 +66,12 @@ public class TableCreationPanel extends VBox
 
         addChild(gconf.getContainer());
 
-        _createBtn = new Button();
-        _createBtn.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
+        _createBtn = new CommandButton();
+        _createBtn.setFunction(function () :void {
             CommandEvent.dispatch(_panel, LobbyController.SUBMIT_TABLE,
                 [ tconfigger.getTableConfig(), gconfigger.getGameConfig() ]);
         });
         _createBtn.label = Msgs.GAME.get("b.create");
-        _createBtn.buttonMode = true;
         addChild(_createBtn);
     }
 
@@ -87,6 +83,6 @@ public class TableCreationPanel extends VBox
     /** The lobby panel we're in. */
     protected var _panel :LobbyPanel;
 
-    protected var _createBtn :Button;
+    protected var _createBtn :CommandButton;
 }
 }

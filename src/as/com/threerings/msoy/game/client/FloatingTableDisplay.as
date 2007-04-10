@@ -2,14 +2,10 @@ package com.threerings.msoy.game.client {
 
 import flash.display.DisplayObject;
 
-import flash.events.MouseEvent;
-
 import mx.core.ScrollPolicy;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
-
-import mx.controls.Button;
 
 import com.threerings.msoy.client.Msgs
 import com.threerings.msoy.client.WorldContext;
@@ -21,6 +17,7 @@ import com.threerings.parlor.client.TableObserver;
 
 import com.threerings.parlor.data.Table;
 
+import com.threerings.flex.CommandButton;
 import com.threerings.util.CommandEvent;
 
 public class FloatingTableDisplay extends FloatingPanel 
@@ -101,12 +98,11 @@ public class FloatingTableDisplay extends FloatingPanel
         var btnBox :VBox = new VBox();
         btnBox.styleName = "backToLobbyBtnBox";
         row.addChild(btnBox);
-        var joinLobbyBtn :Button = new Button();
-        joinLobbyBtn.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
+        var joinLobbyBtn :CommandButton = new CommandButton();
+        joinLobbyBtn.setFunction(function () :void {
             CommandEvent.dispatch(_tableRender, LobbyController.JOIN_LOBBY);
         });
         joinLobbyBtn.styleName = "backToLobbyBtn";
-        joinLobbyBtn.buttonMode = true;
         btnBox.addChild(joinLobbyBtn);
         _tableRender = new TableRenderer(true);
         _tableRender.ctx = _ctx;
