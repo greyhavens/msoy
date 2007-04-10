@@ -109,7 +109,9 @@ public class DecorEditor extends ItemEditor
      */
     protected void sendDecorUpdateToFlash ()
     {
-        mediaUpdateHelper(_decor.furniMedia.getMediaPath());
+        if (_decor.furniMedia != null) {
+            mediaUpdateHelper(_decor.furniMedia.getMediaPath());
+        }
         decorUpdateHelper(_decor.width, _decor.height, _decor.depth, _decor.horizon, _decor.type);
     }
 
