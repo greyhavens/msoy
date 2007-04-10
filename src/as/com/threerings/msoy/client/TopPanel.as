@@ -219,6 +219,14 @@ public class TopPanel extends Canvas
         return _controlBar;
     }
 
+    /**
+     * Returns a referenc eto our HeaderBar component
+     */
+    public function getHeaderBar () :HeaderBar
+    {
+        return _headerBar;
+    }
+
     public function setSidePanel (side :UIComponent) :void
     {
         clearSidePanel(null);

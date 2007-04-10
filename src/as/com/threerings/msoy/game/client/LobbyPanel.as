@@ -41,6 +41,7 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.client.HeaderBarController;
 
 import com.threerings.msoy.chat.client.ChatContainer;
 
@@ -219,6 +220,16 @@ public class LobbyPanel extends VBox
         _buy = new Label();
         _buy.styleName = "lobbyLink";
         titleBox.addChild(_buy);
+        /****** TEMP - shows the same Embed button as the TopPanel for more usable usability ***/
+        var embedBtnBox :VBox = new VBox();
+        embedBtnBox.styleName = "headerEmbedBox";
+        embedBtnBox.percentHeight = 100;
+        titleBox.addChild(embedBtnBox);
+        var embedBtn :CommandButton = new CommandButton(HeaderBarController.SHOW_EMBED_HTML);
+        embedBtn.styleName = "embedButton";
+        embedBtn.toolTip = Msgs.GENERAL.get("b.embed");
+        embedBtnBox.addChild(embedBtn);
+        /****** END TEMP ***/
         var leaveBtnBox :VBox = new VBox();
         leaveBtnBox.styleName = "lobbyCloseBox";
         leaveBtnBox.percentHeight = 100;

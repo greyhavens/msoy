@@ -20,12 +20,14 @@ import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.util.SafeSubscriber;
 
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.client.HeaderBarController;
 
 import com.threerings.msoy.item.web.Game;
 
 import com.threerings.msoy.game.data.LobbyObject;
 
 import com.threerings.util.Controller;
+import com.threerings.util.CommandEvent;
 
 public class LobbyController extends Controller implements Subscriber, ObjectDeathListener
 {
@@ -174,6 +176,15 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
         _mctx.getTopPanel().clearTableDisplay();
         _mctx.getTopPanel().setSidePanel(_panel);
         _mctx.getMsoyController().gameLobbyShown(_lobj.game.itemId);
+    }
+
+    /**
+     * TEMP: Forwards on HeaderBarController.SHOW_EMBED_HTML
+     */
+    public function handleShowEmbedHtml () :void
+    {
+        CommandEvent.dispatch(_mctx.getTopPanel().getHeaderBar(), 
+            HeaderBarController.SHOW_EMBED_HTML);
     }
 
     /**
