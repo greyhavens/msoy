@@ -62,6 +62,7 @@ public class HeaderBarController extends Controller
         instruction.selectable = false;
         window.addChild(instruction);
         var html :TextArea = new TextArea();
+        html.minHeight = 100;
         html.width = 300;
         html.editable = false;
         var url :String = _headerBar.root.loaderInfo.loaderURL;
