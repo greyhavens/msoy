@@ -432,7 +432,7 @@ body {
 }
 
 .borderedDialog .CloseBox {
-  background-image: url(/images/ui/close_button.png);
+  background-image: url(/images/ui/close.png);
   width: 13px;
   height: 13px;
   position: absolute;
