@@ -534,6 +534,25 @@ ListBase
   selectedUpSkin: Embed(source="../../pages/images/ui/close_button.png");
 }
 
+.headerEmbedBox {
+  paddingLeft: 3px;
+  paddingTop: 4px;
+  paddingRight: 3px;
+}
+
+.embedButton {
+  height: 13px;
+  width: 13px;
+  overSkin: Embed(source="../../rsrc/media/skins/button/embed_over.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/embed.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/embed_down.png");
+  upSkin: Embed(source="../../rsrc/media/skins/button/embed.png");
+  selectedOverSkin: Embed(source="../../rsrc/media/skins/button/embed_over.png");
+  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/embed.png");
+  selectedDownSkin: Embed(source="../../rsrc/media/skins/button/embed_down.png");
+  selectedUpSkin: Embed(source="../../rsrc/media/skins/button/embed.png");
+}
+
 .tableRenderer, .seatsGrid {
   horizontalGap: 0;
   verticalGap: 0;

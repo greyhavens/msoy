@@ -58,11 +58,13 @@ public class HeaderBar extends HBox
         padding.percentWidth = 100;
         addChild(padding);
 
+        var embedButtonBox :VBox = new VBox();
+        embedButtonBox.styleName = "headerEmbedBox";
+        embedButtonBox.percentHeight = 100;
+        addChild(embedButtonBox);
         _embedLinkButton = new CommandButton(HeaderBarController.SHOW_EMBED_HTML);
-        // this is not i18n'd because jon is going to make a nice, pretty, small button 
-        _embedLinkButton.label = "Blog this!";
-        addChild(_embedLinkButton);
-        // assume that its not visible to begin with
+        _embedLinkButton.styleName = "embedButton";
+        embedButtonBox.addChild(_embedLinkButton);
         setEmbedLinkButtonVisible(false);
 
         var closeButtonBox :VBox = new VBox();
