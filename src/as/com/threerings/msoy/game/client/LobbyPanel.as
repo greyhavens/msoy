@@ -281,6 +281,7 @@ public class LobbyPanel extends VBox
         list.variableRowHeight = true;
         list.percentHeight = 100;
         list.percentWidth = 100;
+        list.selectable = false;
         var factory :ClassFactory = new ClassFactory(TableRenderer);
         factory.properties = { ctx: _ctx, panel: this };
         list.itemRenderer = factory;
@@ -325,6 +326,7 @@ public class LobbyPanel extends VBox
             runningList.variableRowHeight = true;
             runningList.percentHeight = 100;
             runningList.percentWidth = 100;
+            runningList.selectable = false;
             var runningFactory :ClassFactory = new ClassFactory(TableRenderer);
             runningFactory.properties = { ctx: _ctx, panel: this };
             runningList.itemRenderer = runningFactory;
