@@ -189,13 +189,6 @@ public class TableRenderer extends HBox
             _buttonsBox.addChild(btn);
         }
 
-        // if we're in a popup, add a button to return to the lobby
-        if (_popup) {
-            btn = new CommandButton(LobbyController.JOIN_LOBBY);
-            btn.label = ctx.xlate("game", "b.back_to_lobby");
-            _buttonsBox.addChild(btn);
-        }
-
         // maybe add a button for entering the game
         if (table.gameOid != -1) {
             var key :String = null;

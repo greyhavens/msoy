@@ -2,7 +2,12 @@ package com.threerings.msoy.game.client {
 
 import flash.display.DisplayObject;
 
+import flash.events.MouseEvent;
+
 import mx.core.ScrollPolicy;
+
+import mx.containers.HBox;
+import mx.containers.VBox;
 
 import mx.controls.Button;
 
@@ -88,15 +93,31 @@ public class FloatingTableDisplay extends FloatingPanel
 
         styleName = "floatingTableDisplay";
 
+        var row :HBox = new HBox();
+        row.styleName = "floatingTableRow";
+        row.percentWidth = 100;
+        row.percentHeight = 100;
+        addChild(row);
+        var btnBox :VBox = new VBox();
+        btnBox.styleName = "backToLobbyBtnBox";
+        row.addChild(btnBox);
+        var joinLobbyBtn :Button = new Button();
+        joinLobbyBtn.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
+            CommandEvent.dispatch(_tableRender, LobbyController.JOIN_LOBBY);
+        });
+        joinLobbyBtn.styleName = "backToLobbyBtn";
+        btnBox.addChild(joinLobbyBtn);
         _tableRender = new TableRenderer(true);
         _tableRender.ctx = _ctx;
         _tableRender.panel = _panel;
-        addChild(_tableRender);
+        row.addChild(_tableRender);
         _tableRender.data = _table;
         
         // make sure the seat grid in TableRenderer takes as much horizontal space as it can
-        _tableRender.width = width = _tableRender.maxUsableWidth > parent.width ? parent.width : 
-            _tableRender.maxUsableWidth;
+        var buttonSpace :int = 15;
+        _tableRender.width = _tableRender.maxUsableWidth > (parent.width - buttonSpace) ? 
+            parent.width - buttonSpace : _tableRender.maxUsableWidth;
+        width = _tableRender.width + buttonSpace;
     }
 
     /** controlled panel to dispatch LobbyController events on */

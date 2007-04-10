@@ -567,6 +567,29 @@ ListBase
   borderThicknessRight: 4px;
 }
 
+.floatingTableRow {
+  horizontalGap: 0;
+  verticalGap: 0;
+}
+
+.backToLobbyBtnBox {
+  paddingLeft: 3px;
+  paddingTop: 4px;
+  paddingRight: 3px;
+  verticalAlign: top;
+}
+
+.backToLobbyBtn {
+  overSkin: Embed(source="../../rsrc/media/skins/button/backtolobby_over.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/backtolobby.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/backtolobby_down.png");
+  upSkin: Embed(source="../../rsrc/media/skins/button/backtolobby.png");
+  selectedOverSkin: Embed(source="../../rsrc/media/skins/button/backtolobby_over.png");
+  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/backtolobby.png");
+  selectedDownSkin: Embed(source="../../rsrc/media/skins/button/backtolobby_down.png");
+  selectedUpSkin: Embed(source="../../rsrc/media/skins/button/backtolobby.png");
+}
+
 .seatsGrid {
   horizontalGap: 4;
   verticalGap: 4;
