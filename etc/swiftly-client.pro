@@ -22,7 +22,8 @@
     **/msoy/web/data/**,**/msoy/world/data/WorldMemberInfo.class,**/msoy/item/web/**,
     **/msoy/swiftly/data/**,**/msoy/swiftly/client/**,**/msoy/swiftly/util/**,
     !**/msoy/game/data/MsoyMatchConfig.class,**/msoy/game/data/*Config.class,
-    **/infosys/closeandmaxtabbedpane/**,**/msoy/world/data/WorldOccupantInfo.class)
+    **/infosys/closeandmaxtabbedpane/**,**/msoy/game/data/GameMemberInfo.class,
+    **/msoy/world/data/WorldOccupantInfo.class)
 -injars ../dist/lib/sdoc-0.5.0-beta-ooo.jar(!META-INF/*)
 
 -dontskipnonpubliclibraryclasses
