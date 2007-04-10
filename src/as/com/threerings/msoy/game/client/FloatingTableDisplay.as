@@ -55,7 +55,6 @@ public class FloatingTableDisplay extends FloatingPanel
         avoid :DisplayObject = null) :void
     {
         if (!_hasBeenShutDown) {
-            width = 700;
             super.open(modal, parent, avoid);
         }
     }
@@ -86,6 +85,8 @@ public class FloatingTableDisplay extends FloatingPanel
     override protected function createChildren () :void
     {
         super.createChildren();
+
+        styleName = "floatingTableDisplay";
 
         _tableRender = new TableRenderer(true);
         _tableRender.ctx = _ctx;

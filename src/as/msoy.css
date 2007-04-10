@@ -553,8 +553,20 @@ ListBase
   selectedUpSkin: Embed(source="../../rsrc/media/skins/button/embed.png");
 }
 
+.floatingTableDisplay {
+  paddingTop: 0px;
+  paddingBottom: 0px;
+  paddingLeft: 0px;
+  paddingRight: 0px;
+}
+
 .seatsGrid {
-  horizontalGap: 0;
+  horizontalGap: 4;
+  verticalGap: 4;
+}
+
+.tableRenderer {
+  horizontalGap: 4;
   verticalGap: 0;
 }
 

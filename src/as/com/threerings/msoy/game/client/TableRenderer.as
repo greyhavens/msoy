@@ -144,7 +144,7 @@ public class TableRenderer extends HBox
 
         _seatsGrid.validateNow();
         _maxUsableWidth = _seatsGrid.measuredMinWidth * _seatsGrid.numChildren + CONFIG_WIDTH +
-            PADDING_WIDTH;
+            PADDING_WIDTH + HORZ_GAP * (4 + _seatsGrid.numChildren);
     }
 
     protected function updateButtons (table :MsoyTable) :void
@@ -227,6 +227,7 @@ public class TableRenderer extends HBox
 
     protected static const CONFIG_WIDTH :int = 100;
     protected static const PADDING_WIDTH :int = 2;
+    protected static const HORZ_GAP :int = 4;
 
     protected var _watcherCount :Label; // TODO
 
