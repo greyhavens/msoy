@@ -34,7 +34,7 @@ public class InventoryPanel extends SimplePanel
 
     public void display (byte itemType, int pageNo, int itemId)
     {
-        if (itemId == -1) {
+        if (itemId == 0) {
             getItemPanel(itemType).setPage(pageNo);
         } else {
             getItemPanel(itemType).showDetail(new ItemIdent(itemType, itemId));

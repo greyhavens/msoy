@@ -5,6 +5,7 @@ package client.catalog;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -12,11 +13,14 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
+import com.threerings.gwt.ui.WidgetUtil;
+
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.ItemDetail;
 
 import client.item.BaseItemDetailPanel;
 import client.util.ClickCallback;
+import client.util.InfoPopup;
 import client.util.ItemUtil;
 
 /**
@@ -32,19 +36,25 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         _listed.setText(CCatalog.msgs.listingListed(_lfmt.format(listing.listedDate)));
 
+        _extras.add(_price = new FlexTable());
+        _price.setCellPadding(0);
+        _price.setCellSpacing(0);
         FlexCellFormatter formatter = _price.getFlexCellFormatter();
-        formatter.setWidth(0, 0, "25px"); // gap!
+        formatter.setWidth(0, 0, "15px"); // gap!
         formatter.setStyleName(0, 0, "Icon");
         _price.setWidget(0, 0, new Image("/images/header/symbol_gold.png"));
+        formatter.setWidth(0, 1, "25px"); // gap!
         _price.setText(0, 1, String.valueOf(_listing.goldCost));
 
-        formatter.setWidth(0, 2, "25px"); // gap!
+        formatter.setWidth(0, 2, "15px"); // gap!
         formatter.setStyleName(0, 2, "Icon");
         _price.setWidget(0, 2, new Image("/images/header/symbol_flow.png"));
         _price.setText(0, 3, String.valueOf(_listing.flowCost));
 
         // if we are the creator (lister) of this item, allow us to delist it
         if (_listing.creator.getMemberId() == CCatalog.getMemberId()) {
+            _details.add(WidgetUtil.makeShim(1, 10));
+            _details.add(new Label(CCatalog.msgs.listingDelistTip()));
             Button delist = new Button(CCatalog.msgs.listingDelist());
             new ClickCallback(delist) {
                 public boolean callService () {
@@ -54,47 +64,42 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 }
                 public boolean gotResult (Object result) {
                     if (result != null) {
-                        _status.setText(CCatalog.msgs.msgListingDelisted());
+                        new InfoPopup(CCatalog.msgs.msgListingDelisted()).show();
                         _panel.itemDelisted(_listing);
                         return false; // don't reenable delist
                     } else {
-                        _status.setText(CCatalog.msgs.errListingNotFound());
+                        new InfoPopup(CCatalog.msgs.errListingNotFound()).show();
                         return true;
                     }
                 }
             };
-            _controls.insert(delist, _controls.getWidgetCount()-1);
+            _details.add(delist);
         }
     }
 
     // @Override // BaseItemDetailPanel
-    protected void createInterface (VerticalPanel details, VerticalPanel controls)
+    protected void createInterface (VerticalPanel details)
     {
-        super.createInterface(details, controls);
+        super.createInterface(details);
 
-        // we need to create this here so we can pass it to our click callback
-        _status = new Label("");
-
-        ItemUtil.addItemSpecificControls(_item, controls);
-
-        details.add(_listed = new Label());
-        details.add(_price = new FlexTable());
+        ItemUtil.addItemSpecificButtons(_item, _buttons);
 
         // TODO: enable/disable purchase button depending on member's gold/flow wealth?
-        controls.add(_purchase = new Button(CCatalog.msgs.listingBuy()));
+        _buttons.add(_purchase = new Button(CCatalog.msgs.listingBuy()));
         new ClickCallback(_purchase) {
             public boolean callService () {
                 CCatalog.catalogsvc.purchaseItem(CCatalog.creds, _item.getIdent(), this);
                 return true;
             }
             public boolean gotResult (Object result) {
-                _status.setText(CCatalog.msgs.msgListingBought());
+                new InfoPopup(CCatalog.msgs.msgListingBought()).show();
                 return false; // don't reenable purchase
             }
         };
         _purchase.setEnabled(CCatalog.getMemberId() > 0);
 
-        controls.add(_status);
+        details.add(WidgetUtil.makeShim(1, 10));
+        details.add(_listed = new Label());
     }
 
     // @Override // BaseItemDetailPanel
@@ -108,7 +113,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
     protected FlexTable _price;
     protected Button _purchase;
-    protected Label _listed, _status;
+    protected Label _listed;
 
     protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
 }

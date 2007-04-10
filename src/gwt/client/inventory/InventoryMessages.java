@@ -16,6 +16,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String doListRarityCommon();
 
   /**
+   * Translated "List...".
+   * 
+   * @return translated "List..."
+   * @gwt.key detailList
+   */
+  String detailList();
+
+  /**
    * Translated "Please configure the name of this item. Click Edit above to do so.".
    * 
    * @return translated "Please configure the name of this item. Click Edit above to do so."
@@ -24,12 +32,12 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String errItemMissingName();
 
   /**
-   * Translated "List in Catalog...".
+   * Translated "You can remix this item.".
    * 
-   * @return translated "List in Catalog..."
-   * @gwt.key detailList
+   * @return translated "You can remix this item."
+   * @gwt.key detailRemixTip
    */
-  String detailList();
+  String detailRemixTip();
 
   /**
    * Translated "Item Description".
@@ -120,6 +128,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String doListRarityBlurb();
 
   /**
+   * Translated "You can list this item in the catalog.".
+   * 
+   * @return translated "You can list this item in the catalog."
+   * @gwt.key detailListTip
+   */
+  String detailListTip();
+
+  /**
    * Translated "Inventory".
    * 
    * @return translated "Inventory"
@@ -168,20 +184,20 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String msgItemRemixed();
 
   /**
-   * Translated "Item listed.".
-   * 
-   * @return translated "Item listed."
-   * @gwt.key msgItemListed
-   */
-  String msgItemListed();
-
-  /**
    * Translated "Rare".
    * 
    * @return translated "Rare"
    * @gwt.key doListRarityRare
    */
   String doListRarityRare();
+
+  /**
+   * Translated "Item listed.".
+   * 
+   * @return translated "Item listed."
+   * @gwt.key msgItemListed
+   */
+  String msgItemListed();
 
   /**
    * Translated "Remix...".

@@ -58,9 +58,9 @@ public class FlashClients
     {
         return WidgetUtil.createFlashContainer(
             "avatarViewer", "/clients/" + DeploymentConfig.version + "/avatarviewer.swf",
-            600, 550, "avatar=" + URL.encodeComponent(avatarPath));
+            360, 450, "avatar=" + URL.encodeComponent(avatarPath));
     }
-            
+
     public static HTML createVideoViewer (String videoPath)
     {
         return WidgetUtil.createFlashContainer(

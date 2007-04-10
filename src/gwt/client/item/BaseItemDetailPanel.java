@@ -15,6 +15,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.WidgetUtil;
+
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
@@ -37,46 +39,51 @@ public abstract class BaseItemDetailPanel extends FlexTable
     protected BaseItemDetailPanel (ItemDetail detail)
     {
         setStyleName("itemDetailPanel");
+        setCellPadding(0);
+        setCellSpacing(5);
 
         _detail = detail;
         _item = detail.item;
 
-        // create our header
-        int row = 0;
-        getFlexCellFormatter().setColSpan(row, 0, 2);
-        setWidget(row++, 0, _header = new HorizontalPanel());
         Image back = new Image("/images/item/inventory_up.png");
         back.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 returnToList();
             }
         });
-        _header.add(back);
-        _header.add(MsoyUI.createLabel(_item.name, "Name"));
+        getFlexCellFormatter().setStyleName(0, 0, "Back");
+        getFlexCellFormatter().setRowSpan(0, 0, 2);
+        setWidget(0, 0, back);
 
-        // configure our item preview
-        getFlexCellFormatter().setStyleName(row, 0, "Preview");
-        getFlexCellFormatter().setRowSpan(row, 0, 2);
-        setWidget(row, 0, createPreview(_item));
+        FlexTable box = new FlexTable();
+        box.setStyleName("Box");
+        box.setCellPadding(0);
+        box.setCellSpacing(0);
+        box.getFlexCellFormatter().setColSpan(0, 0, 2);
+        box.getFlexCellFormatter().setStyleName(0, 0, "Name");
+        box.setText(0, 0, _item.name);
+        box.getFlexCellFormatter().setColSpan(1, 0, 2);
+        box.getFlexCellFormatter().setStyleName(1, 0, "Preview");
+        box.setWidget(1, 0, createPreview(_item));
+        box.getFlexCellFormatter().setStyleName(2, 0, "Extras");
+        box.setWidget(2, 0, _extras = new HorizontalPanel());
+        box.getFlexCellFormatter().setStyleName(2, 1, "Buttons");
+        box.setWidget(2, 1, _buttons = new HorizontalPanel());
+        getFlexCellFormatter().setRowSpan(0, 1, 2);
+        setWidget(0, 1, box);
 
         // a place for details
-        setWidget(row, 1, _details = new VerticalPanel());
-        getFlexCellFormatter().setVerticalAlignment(row++, 1, VerticalPanel.ALIGN_TOP);
+        setWidget(0, 2, _details = new VerticalPanel());
+        getFlexCellFormatter().setVerticalAlignment(0, 2, VerticalPanel.ALIGN_TOP);
         _details.setStyleName("Details");
         _details.setSpacing(5);
 
-        // a place for controls
-        setWidget(row, 0, _controls = new VerticalPanel());
-        getFlexCellFormatter().setVerticalAlignment(row++, 0, VerticalPanel.ALIGN_BOTTOM);
-        _controls.setStyleName("Controls");
-        _controls.setSpacing(5);
-
         // allow derived classes to add their own nefarious bits
-        createInterface(_details, _controls);
+        createInterface(_details);
 
         // add our tag business at the bottom
-        getFlexCellFormatter().setColSpan(row, 0, 2);
-        setWidget(row++, 0, _footer = new HorizontalPanel());
+        setWidget(1, 0, _footer = new HorizontalPanel());
+        getFlexCellFormatter().setHeight(1, 0, "10px");
         _footer.add(new TagDetailPanel(new TagDetailPanel.TagService() {
             public void tag (String tag, AsyncCallback callback) {
                 CItem.itemsvc.tagItem(CItem.creds, _item.getIdent(), tag, true, callback);
@@ -128,14 +135,15 @@ public abstract class BaseItemDetailPanel extends FlexTable
         }
     }
 
-    protected void createInterface (VerticalPanel details, VerticalPanel controls)
+    protected void createInterface (VerticalPanel details)
     {
+        if (_item.isRatable()) {
+            details.add(new ItemRating(_detail.item, _detail.memberRating));
+            details.add(WidgetUtil.makeShim(1, 5));
+        }
         details.add(_creator = new CreatorLabel());
         _creator.setMember(_detail.creator);
         details.add(_description = new Label(ItemUtil.getDescription(_item)));
-        if (_item.isRatable()) {
-            details.add(new ItemRating(_detail.item, _detail.memberRating));
-        }
     }
 
     /**
@@ -148,7 +156,9 @@ public abstract class BaseItemDetailPanel extends FlexTable
     protected ItemDetail _detail;
 
     protected HorizontalPanel _header, _footer;
-    protected VerticalPanel _details, _controls;
+    protected HorizontalPanel _extras, _buttons;
+    protected VerticalPanel _details;
+
     protected Label _description;
     protected CreatorLabel _creator;
 }

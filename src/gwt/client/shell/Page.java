@@ -52,13 +52,13 @@ public abstract class Page
 
     /**
      * Splits arguments composed by a call to {@link #composeArgs}. Any invalid integers will be
-     * converted to -1.
+     * converted to 0.
      */
     public static int[] splitArgs (String args)
     {
         ArrayList alist = new ArrayList();
         do {
-            int didx = args.indexOf("-");
+            int didx = args.indexOf(ARG_SEP);
             if (didx == -1) {
                 alist.add(args);
                 args = null;
@@ -73,7 +73,7 @@ public abstract class Page
             try {
                 values[ii] = Integer.parseInt((String)alist.get(ii));
             } catch (Exception e) {
-                values[ii] = -1;
+                values[ii] = 0;
             }
         }
         return values;
@@ -88,7 +88,7 @@ public abstract class Page
         StringBuffer builder = new StringBuffer();
         for (int ii = 0; ii < args.length; ii++) {
             if (ii > 0) {
-                builder.append("-");
+                builder.append(ARG_SEP);
             }
             builder.append(args[ii]);
         }
@@ -269,4 +269,6 @@ public abstract class Page
     protected static String _closeButtonToken;
 
     protected FlexTable _content;
+
+    protected static final String ARG_SEP = "_";
 }

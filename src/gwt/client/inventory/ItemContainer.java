@@ -56,6 +56,7 @@ public class ItemContainer extends FlexTable
 
     protected ClickListener _clicker = new ClickListener() {
         public void onClick (Widget sender) {
+            CInventory.log("Getting info on " + _item.itemId);
             _panel.requestShowDetail(_item.itemId);
         }
     };

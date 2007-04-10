@@ -102,7 +102,7 @@ public class CatalogPanel extends VerticalPanel
     public void display (byte itemType, int pageNo, int itemId)
     {
 // TODO: sort out displaying items via the URL
-//         if (itemId == -1) {
+//         if (itemId == 0) {
             _page = pageNo;
             if (!_typeTabs.selectTab(itemType)) {
                 // we're already on this tab, so refresh our items in order to trigger the

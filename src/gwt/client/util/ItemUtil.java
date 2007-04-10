@@ -3,10 +3,11 @@
 
 package client.util;
 
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
@@ -52,15 +53,18 @@ public class ItemUtil
     }
 
     /**
-     * Adds item specific controls to be shown in the item detail in a member's inventory or in the
+     * Adds item specific buttons to be shown in the item detail in a member's inventory or in the
      * catalog.
      */
-    public static void addItemSpecificControls (Item item, Panel panel)
+    public static void addItemSpecificButtons (Item item, HorizontalPanel panel)
     {
         if (item instanceof Game) {
-            HTML link = new HTML(Application.createLinkHtml(CShell.cmsgs.detailPlay(), "game",
-                "" + item.getPrototypeId()));
-            panel.add(link);
+            final String token = Application.createLinkToken("game", "" + item.getPrototypeId());
+            panel.add(new Button(CShell.cmsgs.detailPlay(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    History.newItem(token);
+                }
+            }));
         }
     }
 }

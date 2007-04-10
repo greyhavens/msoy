@@ -64,6 +64,14 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   String listingBuy();
 
   /**
+   * Translated "You can remove this catalog listing.".
+   * 
+   * @return translated "You can remove this catalog listing."
+   * @gwt.key listingDelistTip
+   */
+  String listingDelistTip();
+
+  /**
    * Translated "There are no {0} items listed.".
    * 
    * @return translated "There are no {0} items listed."

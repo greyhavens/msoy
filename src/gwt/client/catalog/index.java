@@ -64,9 +64,9 @@ public class index extends ItemEntryPoint
         }
 
         int[] avals = Page.splitArgs(args);
-        byte type = (avals[0] == -1) ? Item.AVATAR : (byte)avals[0];
+        byte type = (avals[0] == 0) ? Item.AVATAR : (byte)avals[0];
         int pageNo = (avals.length > 1) ? avals[1] : 0;
-        int itemId = (avals.length > 2) ? avals[2] : -1;
+        int itemId = (avals.length > 2) ? avals[2] : 0;
         _catalog.display(type, pageNo, itemId);
     }
 

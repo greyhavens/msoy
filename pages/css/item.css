@@ -106,26 +106,46 @@
 .itemDetailPanel { 
 }
 
+.itemDetailPanel .Back { 
+  vertical-align: top;
+}
+
+.itemDetailPanel .Box {
+  width: 320px;
+}
+
 .itemDetailPanel .Name {
-  font-size: 24px;
+  text-align: center;
+  font-size: 18px;
   font-weight: bold;
-}
-
-.itemDetailPanel .Creator {
-  font-size: 14px;
-}
-
-.itemDetailPanel .Content {
-  padding: 10px;
+  color: #FFFFFF;
+  background: #82898e;
+  padding: 2px;
 }
 
 .itemDetailPanel .Preview {
-  border: 4px solid #FFFFFF;
   background-image: url(/images/item/detail_preview_bg.png);
   text-align: center;
-  width: 240px;
+  width: 320px;
   height: 240px;
   padding: 10px;
+}
+
+.itemDetailPanel .Extras {
+  color: #FFFFFF;
+  background: #82898e;
+  text-align: left;
+  padding-left: 10px;
+}
+
+.itemDetailPanel .Buttons {
+  background: #82898e;
+  text-align: right;
+  width: 1px;
+}
+
+.itemDetailPanel .Details {
+  padding-top: 20px;
 }
 
 .itemDetailPanel .Details td {

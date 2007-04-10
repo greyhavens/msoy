@@ -13,7 +13,8 @@ import flash.text.TextField;
 import mx.binding.utils.BindingUtils;
 
 import mx.containers.Canvas;
-import mx.containers.Grid;
+import mx.containers.HBox;
+import mx.containers.VBox;
 
 import mx.controls.Button;
 import mx.controls.CheckBox;
@@ -23,12 +24,11 @@ import mx.controls.Label;
 
 import mx.events.FlexEvent;
 
+import com.threerings.flash.FPSDisplay;
+import com.threerings.flex.CommandMenu;
 import com.threerings.util.ParameterUtil;
 
-import com.threerings.flash.FPSDisplay;
-
-import com.threerings.flex.CommandMenu;
-import com.threerings.flex.GridUtil;
+import com.threerings.msoy.ui.MsoyUI;
 
 public class AvatarViewerComp extends Canvas
 {
@@ -40,6 +40,15 @@ public class AvatarViewerComp extends Canvas
     {
         super.createChildren();
 
+        var contents :VBox = new VBox();
+
+        var controls: HBox = new HBox();
+        controls.setStyle("verticalAlign", "middle");
+        controls.addChild(MsoyUI.createLabel("Walking:"));
+        var walking :CheckBox = new CheckBox();
+        controls.addChild(walking);
+
+        controls.addChild(MsoyUI.createLabel("Facing angle:"));
         // TODO: replace slider with custom control
         var rotation :HSlider = new HSlider();
         rotation.minimum = -180;
@@ -48,23 +57,19 @@ public class AvatarViewerComp extends Canvas
         rotation.snapInterval = 1;
         rotation.liveDragging = true;
         rotation.value = 0;
+        rotation.maxWidth = 100;
+        controls.addChild(rotation);
 
-        var walking :CheckBox = new CheckBox();
+        var talk :Button = new Button();
+        talk.label = "Talk!";
+        controls.addChild(talk);
+        contents.addChild(controls);
 
-        var talking :Button = new Button();
-        talking.label = "Talk!";
-
-        var grid :Grid = new Grid();
-        GridUtil.addRow(grid, "Walking:", walking);
-        GridUtil.addRow(grid, "Facing angle:", rotation);
-        GridUtil.addRow(grid, talking);
-
-        _holder = new Canvas();
-        GridUtil.addRow(grid, _holder, [2, 1]);
-        addChild(grid);
+        contents.addChild(_holder = new Canvas());
+        addChild(contents);
 
         // bind actions to the user interface elements
-        talking.addEventListener(FlexEvent.BUTTON_DOWN, speak);
+        talk.addEventListener(FlexEvent.BUTTON_DOWN, speak);
         BindingUtils.bindSetter(setOrient, rotation, "value");
         BindingUtils.bindSetter(setMoving, walking, "selected");
 

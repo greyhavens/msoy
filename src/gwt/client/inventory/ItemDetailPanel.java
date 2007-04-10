@@ -5,9 +5,13 @@ package client.inventory;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
@@ -29,25 +33,50 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     }
 
     // @Override // BaseItemDetailPanel
-    protected void createInterface (VerticalPanel details, VerticalPanel controls)
+    protected void createInterface (VerticalPanel details)
     {
-        super.createInterface(details, controls);
+        super.createInterface(details);
 
-        ItemUtil.addItemSpecificControls(_item, controls);
+        ItemUtil.addItemSpecificButtons(_item, _buttons);
 
-        // we'll need this now so that we can pass it to our click callbacks
-        _status = new Label("");
-        _status.setStyleName("Status");
+        Button button = new Button(CInventory.msgs.detailDelete());
+        new ClickCallback(button) {
+            public boolean callService () {
+                CInventory.itemsvc.deleteItem(CInventory.creds, _item.getIdent(), this);
+                return true;
+            }
+            public boolean gotResult (Object result) {
+                _parent.itemDeleted(_item);
+                return false;
+            }
+        };
+        _buttons.add(button);
 
-        Button button;
         if (_item.parentId == 0) {
+            button = new Button(CInventory.msgs.detailEdit());
+            button.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _parent);
+                    editor.setItem(_item);
+                    editor.show();
+                }
+            });
+            _buttons.add(button);
+        }
+
+        if (_item.parentId == 0) {
+            _details.add(WidgetUtil.makeShim(1, 10));
+            _details.add(new Label(CInventory.msgs.detailListTip()));
             button = new Button(CInventory.msgs.detailList(), new ClickListener() {
                 public void onClick (Widget sender) {
                     new DoListItemPopup(_item).show();
                 }
             });
+            _details.add(button);
 
-        } else {
+        } else /* TODO: if (remixable) */ {
+            _details.add(WidgetUtil.makeShim(1, 10));
+            _details.add(new Label(CInventory.msgs.detailRemixTip()));
             button = new Button(CInventory.msgs.detailRemix());
             new ClickCallback(button) {
                 public boolean callService () {
@@ -59,35 +88,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                     return false;
                 }
             };
+            _details.add(button);
         }
-        controls.add(button);
-
-        button = new Button(CInventory.msgs.detailDelete());
-        new ClickCallback(button) {
-            public boolean callService () {
-                CInventory.itemsvc.deleteItem(CInventory.creds, _item.getIdent(), this);
-                return true;
-            }
-            public boolean gotResult (Object result) {
-                _parent.itemDeleted(_item);
-                return false;
-            }
-        };
-        controls.add(button);
-
-        if (_item.parentId == 0) {
-            button = new Button(CInventory.msgs.detailEdit());
-            button.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _parent);
-                    editor.setItem(_item);
-                    editor.show();
-                }
-            });
-            controls.add(button);
-        }
-
-        controls.add(_status);
     }
 
     // @Override // BaseItemDetailPanel
@@ -97,5 +99,4 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     }
 
     protected ItemPanel _parent;
-    protected Label _status;
 }

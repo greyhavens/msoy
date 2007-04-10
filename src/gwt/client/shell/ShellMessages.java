@@ -32,9 +32,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String createDisplayName();
 
   /**
-   * Translated "Don''t ever tell anyone your password, not even us! Only enter your password into the box used to login, nowhere else.".
+   * Translated "Don''t ever tell anyone your password, not even us! Only enter your password into the box used to logon, nowhere else.".
    * 
-   * @return translated "Don''t ever tell anyone your password, not even us! Only enter your password into the box used to login, nowhere else."
+   * @return translated "Don''t ever tell anyone your password, not even us! Only enter your password into the box used to logon, nowhere else."
    * @gwt.key createPasswordTip
    */
   String createPasswordTip();
@@ -376,9 +376,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editPasswordHeader();
 
   /**
-   * Translated "You''ll use your email address to login.".
+   * Translated "You''ll use your email address to logon.".
    * 
-   * @return translated "You''ll use your email address to login."
+   * @return translated "You''ll use your email address to logon."
    * @gwt.key createEmailTip
    */
   String createEmailTip();
@@ -472,9 +472,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editConfirm();
 
   /**
-   * Translated "Login".
+   * Translated "Logon".
    * 
-   * @return translated "Login"
+   * @return translated "Logon"
    * @gwt.key menuLogon
    */
   String menuLogon();
