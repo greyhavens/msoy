@@ -105,7 +105,7 @@ public class FloatingTableDisplay extends FloatingPanel
         joinLobbyBtn.styleName = "backToLobbyBtn";
         btnBox.addChild(joinLobbyBtn);
         var padding :VBox = new VBox();
-        padding.setStyle("backgroundColor", 0xF1F4F7);
+        padding.setStyle("backgroundColor", 0xE0E7EE);
         padding.width = 2;
         padding.percentHeight = 100;
         row.addChild(padding);

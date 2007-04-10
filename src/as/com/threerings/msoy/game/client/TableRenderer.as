@@ -65,7 +65,7 @@ public class TableRenderer extends HBox
             addChild(labelsBox);
             labelsBox.width = CONFIG_WIDTH;
             var padding :VBox = new VBox();
-            padding.setStyle("backgroundColor", 0xF1F4F7);
+            padding.setStyle("backgroundColor", 0xE0E7EE);
             padding.width = PADDING_WIDTH;
             padding.percentHeight = 100;
             addChild(padding);
