@@ -118,7 +118,6 @@ public class TableRenderer extends HBox
                 _createBtn.height = 22;
                 _createBtn.label = ctx.xlate("game", "b.create");
                 addChild(_createBtn);
-                Log.getLog(this).debug("adding new create button");
                 panel.createBtn = _createBtn;
             } else if (_createBtn.parent != this) {
                 addChild(_createBtn);

@@ -183,7 +183,6 @@ public class LobbyPanel extends VBox
     // from SeatednessObserver
     public function seatednessDidChange (isSeated :Boolean) :void
     {
-        Log.getLog(this).debug("seatednessDidChange: " + isSeated);
         _isSeated = isSeated;
         createBtn.enabled = !isSeated;
         if (_isSeated) {
