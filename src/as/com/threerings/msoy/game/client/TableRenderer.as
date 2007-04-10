@@ -129,12 +129,12 @@ public class TableRenderer extends HBox
         for (var ii :int = 0; ii < length; ii++) {
             var seat :SeatRenderer;
             if (_seatsGrid.numChildren <= ii) {
-                seat = new SeatRenderer(ctx, table, ii);
+                seat = new SeatRenderer();
                 _seatsGrid.addChild(seat);
             } else {
                 seat = (_seatsGrid.getChildAt(ii) as SeatRenderer);
             }
-            seat.update();
+            seat.update(ctx, table, ii);
         }
 
         // remove any extra seats, should there be any
@@ -266,18 +266,18 @@ import com.threerings.msoy.web.data.MemberName;
 
 class SeatRenderer extends HBox
 {
-    public function SeatRenderer (ctx :WorldContext, table :MsoyTable, index :int) 
+    public function SeatRenderer () :void
     {
-        _ctx = ctx;
-        _table = table;
-        _index = index;
         styleName = "seatRenderer";
         percentWidth = 100;
         percentHeight = 100;
     }
 
-    public function update () :void
+    public function update (ctx :WorldContext, table :MsoyTable, index :int) :void
     {
+        _ctx = ctx;
+        _table = table;
+        _index = index;
         var occupant :MemberName = _table.occupants[_index] as MemberName;
 
         if (occupant != null) {
