@@ -555,9 +555,11 @@ ListBase
 
 .floatingTableDisplay {
   paddingTop: 0px;
-  paddingBottom: 0px;
+  paddingBottom: 4px;
   paddingLeft: 0px;
   paddingRight: 0px;
+  borderThicknessLeft: 4px;
+  borderThicknessRight: 4px;
 }
 
 .seatsGrid {
