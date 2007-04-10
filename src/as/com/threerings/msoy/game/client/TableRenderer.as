@@ -112,7 +112,22 @@ public class TableRenderer extends HBox
     {
         var table :MsoyTable = (data as MsoyTable);
         if (table == null) {
+            if (_createBtn == null) {
+                // assume we're showing a create table interface in this case
+                _createBtn = new CommandButton(LobbyController.CREATE_TABLE);
+                _createBtn.height = 22;
+                _createBtn.label = ctx.xlate("game", "b.create");
+                addChild(_createBtn);
+                Log.getLog(this).debug("adding new create button");
+                panel.createBtn = _createBtn;
+            } else if (_createBtn.parent != this) {
+                addChild(_createBtn);
+            }
             return;
+        } else {
+            if (_createBtn != null && _createBtn.parent == this) {
+                removeChild(_createBtn);
+            }
         }
 
         if (!_popup) {
@@ -248,6 +263,8 @@ public class TableRenderer extends HBox
     protected var _popup :Boolean; 
 
     protected var _maxUsableWidth :int;
+
+    protected var _createBtn :CommandButton;
 }
 }
 

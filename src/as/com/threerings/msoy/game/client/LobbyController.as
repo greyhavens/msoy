@@ -147,7 +147,7 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
         _tableDir.leaveTable(tableId);
         if (!_panelIsVisible) {
             shutdown();
-        }
+        } 
     }
 
     /**

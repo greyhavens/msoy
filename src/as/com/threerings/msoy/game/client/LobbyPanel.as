@@ -171,7 +171,7 @@ public class LobbyPanel extends VBox
         }
         for (ii = 0; ii < _formingTables.length; ii++) {
             table = (_formingTables.getItemAt(ii) as Table);
-            if (table.tableId == tableId) {
+            if (table != null && table.tableId == tableId) {
                 _formingTables.removeItemAt(ii);
                 return;
             }
@@ -183,6 +183,7 @@ public class LobbyPanel extends VBox
     // from SeatednessObserver
     public function seatednessDidChange (isSeated :Boolean) :void
     {
+        Log.getLog(this).debug("seatednessDidChange: " + isSeated);
         _isSeated = isSeated;
         createBtn.enabled = !isSeated;
         if (_isSeated) {
@@ -272,16 +273,6 @@ public class LobbyPanel extends VBox
         var loadingLabel :Label = new Label();
         loadingLabel.text = Msgs.GAME.get("l.gameLoading");
         _tablesBox.addChild(loadingLabel);
-
-        // TODO: Temporary!
-        var buttonBox :HBox = new HBox();
-        buttonBox.styleName = "buttonBox";
-        buttonBox.percentWidth = 100;
-        createBtn = new CommandButton(LobbyController.CREATE_TABLE);
-        createBtn.height = 22;
-        createBtn.label = Msgs.GAME.get("b.create");
-        buttonBox.addChild(createBtn);
-        borderedBox.addChild(buttonBox);
     }
 
     protected function createTablesDisplay () :void
@@ -355,6 +346,11 @@ public class LobbyPanel extends VBox
             bar.height = 9;
             _tablesBox.addChild(bar);
             _tablesBox.addChild(list);
+        }
+        if (_formingTables.source.length > 0) {
+            _formingTables.setItemAt(null, 0);
+        } else {
+            _formingTables.addItem(null);
         }
     }
 
