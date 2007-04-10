@@ -613,7 +613,7 @@ body {
 }
 
 .pageHeaderClose .CloseBox {
-  background-image: url(/images/ui/close_button.png);
+  background-image: url(/images/ui/close.png);
   margin-top: 4px;
   width: 13px;
   height: 13px;
