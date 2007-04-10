@@ -82,6 +82,8 @@ public class ChiyogamiPanel extends Canvas
     public function gameDidEnd () :void
     {
         rawChildren.removeChild(_minigame);
+
+        _minigame.performanceCallback = null;
     }
 
     /** Our controller. */
@@ -91,8 +93,8 @@ public class ChiyogamiPanel extends Canvas
 
     /** The hardcoded games we currently use. */
     protected static const GAMES :Array = [
-//        new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH,
-//            Item.GAME, "chiyogami/Match3") ,
+        new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH,
+            Item.GAME, "chiyogami/Match3") ,
         new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH,
             Item.GAME, "chiyogami/KeyJam")
     ];
