@@ -46,7 +46,7 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
     /** A command to leave the lobby. */
     public static const LEAVE_LOBBY :String = "LeaveLobby";
 
-    /** A comman to rejoin the lobby - executed by FloatingTableDisplay. */
+    /** A command to rejoin the lobby - executed by FloatingTableDisplay. */
     public static const JOIN_LOBBY :String = "JoinLobby";
 
     public function LobbyController (mctx :WorldContext, oid :int) 

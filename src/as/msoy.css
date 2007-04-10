@@ -590,6 +590,6 @@ ListBase
   horizontalGap: 2;
 }
 
-.nameLabel {
+.nameLabel, .lobbyLabel {
   fontWeight: bold;
 }

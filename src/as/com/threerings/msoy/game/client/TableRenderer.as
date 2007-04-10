@@ -71,7 +71,11 @@ public class TableRenderer extends HBox
             addChild(padding);
 
             labelsBox.addChild(_watcherCount = new Label());
+            labelsBox.verticalScrollPolicy = ScrollPolicy.OFF;
+            labelsBox.horizontalScrollPolicy = ScrollPolicy.OFF;
+            _watcherCount.styleName = "lobbyLabel";
             labelsBox.addChild(_config = new Text());
+            _config.styleName = "lobbyLabel";
         }
         var rightSide :VBox = new VBox();
         rightSide.percentWidth = 100;

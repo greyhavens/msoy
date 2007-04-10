@@ -54,7 +54,7 @@ public class TableCreationPanel extends VBox
         } else if (gameDef.gameType == GameConfig.SEATED_GAME)  {
             // using min_seats for start_seats until we put start_seats in the configuration
             tconfigger = new DefaultFlexTableConfigurator(gameDef.minSeats, gameDef.minSeats,
-                gameDef.maxSeats, true);
+                gameDef.maxSeats, true, Msgs.GAME.get("l.players"), Msgs.GAME.get("l.private"));
         } else { 
             Log.getLog(this).warning("<match type='" + gameDef.gameType + "'> is not a valid type");
             return;
