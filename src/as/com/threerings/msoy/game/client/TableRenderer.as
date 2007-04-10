@@ -54,7 +54,11 @@ public class TableRenderer extends HBox
 
         _game = panel.getGame();
 
-        styleName = "tableRenderer";
+        if (_popup) {
+            styleName = "floatingTableRenderer";
+        } else {
+            styleName = "listTableRenderer";
+        }
 
         if (!_popup) {
             var labelsBox :VBox = new VBox();

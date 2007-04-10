@@ -508,6 +508,10 @@ ListBase
 
 .lobbyTableList {
   borderThickness: 0;
+  paddingTop: 0;
+  paddingBottom: 0;
+  paddingLeft: 0;
+  paddingRight: 0;
 }
 
 .lobbyCloseBox {
@@ -567,9 +571,15 @@ ListBase
   verticalGap: 4;
 }
 
-.tableRenderer {
+.floatingTableRenderer, .listTableRenderer {
   horizontalGap: 4;
   verticalGap: 0;
+}
+
+.listTableRenderer {
+  borderThickness: 2;
+  borderStyle: "solid";
+  borderColor: #F1F4F7;
 }
 
 .seatRenderer {
