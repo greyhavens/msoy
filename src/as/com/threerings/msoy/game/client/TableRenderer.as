@@ -296,6 +296,7 @@ class SeatRenderer extends HBox
             }
             addChild(new MediaWrapper(_headShot = new ScalingMediaContainer(40, 40), 40, 40));
             addChild(_name = new Label());
+            _name.styleName = "nameLabel";
             addChild(_leaveBtn = new CommandButton(LobbyController.LEAVE_TABLE));
             _leaveBtn.styleName = "closeButton";
         } 

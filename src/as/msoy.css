@@ -553,11 +553,18 @@ ListBase
   selectedUpSkin: Embed(source="../../rsrc/media/skins/button/embed.png");
 }
 
-.tableRenderer, .seatsGrid {
+.seatsGrid {
   horizontalGap: 0;
   verticalGap: 0;
 }
 
 .seatRenderer {
   verticalAlign: middle;
+  borderThickness: 0;
+  borderStyle: "none";
+  horizontalGap: 2;
+}
+
+.nameLabel {
+  fontWeight: bold;
 }
