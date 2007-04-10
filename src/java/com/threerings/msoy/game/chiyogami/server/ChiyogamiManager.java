@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.QuickSort;
 import com.samskivert.util.RandomUtil;
 
 import com.threerings.util.Name;
@@ -95,7 +96,7 @@ public class ChiyogamiManager extends GameManager
 //        System.err.println(player.who() + " reported [score=" + score + ", " +
 //            "style=" + style + "].");
 
-        PlayerPerfRecord perf = _playerPerfs.get(player.getOid());
+        PlayerRec perf = _playerPerfs.get(player.getOid());
         if (perf == null) {
             log.warning("Received performance report from non-player [who=" + player.who() + "].");
             return;
@@ -193,10 +194,11 @@ public class ChiyogamiManager extends GameManager
         // all player actions must be re-populated
         _playerStates.clear();
 
-        // create blank perf records for every player
+        // create blank perf records for every player, and randomly assign them a side (L|R)
         _playerPerfs.clear();
         for (int ii = _gameObj.occupants.size() - 1; ii >= 0; ii--) {
-            _playerPerfs.put(_gameObj.occupants.get(ii), new PlayerPerfRecord());
+            int oid = _gameObj.occupants.get(ii);
+            _playerPerfs.put(oid, new PlayerRec(oid));
         }
     }
 
@@ -348,52 +350,94 @@ public class ChiyogamiManager extends GameManager
 
     protected void repositionAllPlayers (long now)
     {
-        int numPlayers = _gameObj.occupants.size();
-
-        // TODO: reconsider?
-        //
-        // arrange all the players in a circular area around the boss depending
-        // on their performance. Alternate placing players on the left or right
-        // sides
-
-        for (int ii = 0; ii < numPlayers; ii++) {
-            int oid = _gameObj.occupants.get(ii);
-            BodyObject player = (BodyObject) MsoyServer.omgr.getObject(oid);
-            PlayerPerfRecord perf = _playerPerfs.get(oid);
-            float score = perf.getScore(now);
-
-            // score will range from 0 -> 1, arrange them that-a-way
-            double angle;
-            if (ii % 2 == 0) {
-                // arrange them on the left
-                angle = Math.PI * score + Math.PI/2;
-
-            } else {
-                // arrange them on the right
-                angle = Math.PI * (1 - score) - Math.PI/2;
+        // create a list containing only the present players
+        ArrayList<PlayerRec> list = new ArrayList<PlayerRec>(_playerPerfs.size());
+        for (PlayerRec rec : _playerPerfs.values()) {
+            if (_gameObj.occupants.contains(rec.oid)) {
+                list.add(rec);
             }
-
-            // position players in a semicircle behind the boss
-            double x = .5 + .5 * Math.cos(angle);
-            double z = .5 + .5 * Math.sin(angle);
-//            System.err.println("Score: " + score + ", position=" +
-//                x + ", " + z);
-            moveBody(player, x, z);
         }
 
-//        double angleIncrement = Math.PI / (numPlayers - 1);
-//        double angle = 0;
-//        for (int ii = 0; ii < numPlayers; ii++) {
-//            BodyObject player = (BodyObject) MsoyServer.omgr.getObject(
-//                _gameObj.occupants.get(ii));
-//
-//            // position players in a semicircle behind the boss
-//            double x = .5 + .5 * Math.cos(angle);
-//            double z = 1 * Math.sin(angle);
-//            moveBody(player, x, z);
-//
-//            angle += angleIncrement;
-//        }
+        // sort the list completely
+        QuickSort.sort(list);
+
+        @SuppressWarnings("unchecked")
+        ArrayList<PlayerRec>[] sides = (ArrayList<PlayerRec>[]) new ArrayList[2];
+        sides[0] = new ArrayList<PlayerRec>(list.size());
+        sides[1] = new ArrayList<PlayerRec>(list.size());
+
+        // as long as there are two folks left in the big list...
+        while (list.size() >= 2) {
+            PlayerRec first = list.remove(0);
+            PlayerRec second = list.remove(0);
+
+            if (first.lastSide == second.lastSide) { // both may also be -1
+                // they're the same, so just assign and only one will have to
+                // to change sides
+                first.lastSide = 0;
+                second.lastSide = 1;
+
+            } else if (first.lastSide == -1) {
+                first.lastSide = 1 - second.lastSide;
+
+            } else if (second.lastSide == -1) {
+                second.lastSide = 1 - first.lastSide;
+            }
+
+            // add them to their respective sides
+            sides[first.lastSide].add(first);
+            sides[second.lastSide].add(second);
+        }
+
+        // if there's one more...
+        if (!list.isEmpty()) {
+            PlayerRec rec = list.remove(0);
+
+            if (rec.lastSide == -1) {
+                // if there are no others, just put it in 0
+                if (sides[0].isEmpty()) {
+                    rec.lastSide = 0;
+
+                } else {
+                    // it's the lowest scoring guy, so assign him to the side with
+                    // the higher bottom score
+                    rec.lastSide = (sides[0].get(sides[0].size() - 1).calcScore >
+                        sides[1].get(sides[1].size() - 1).calcScore) ? 0 : 1;
+                }
+            }
+
+            // add it to its side
+            sides[rec.lastSide].add(rec);
+        }
+
+        // ok, now simply lay everyone out on their respective sides such that performance
+        // is relative
+        for (int side = 0; side < 2; side++) {
+            int count = sides[side].size();
+            // we're going to spread them out evenly in the range
+
+            // figure out this user's backness as a rating between 0 - 1
+            float portion = 1f / (count + 1);
+            float perc = 0;
+
+            for (PlayerRec rec : sides[side]) {
+                perc += portion;
+                double angle;
+                if (side == 0) {
+                    angle = (1 - perc) * Math.PI + Math.PI/2; 
+
+                } else {
+                    angle = Math.PI * perc - Math.PI/2;
+                }
+                // position players in a semicircle behind the boss
+                double x = .5 + .5 * Math.cos(angle);
+                double z = .5 + .5 * Math.sin(angle);
+                System.err.println("On the " + ((side == 0) ? "left" : "right") +
+                    " someone's at " + perc + " from the front: " + x + ", " + z);
+                BodyObject player = (BodyObject) MsoyServer.omgr.getObject(rec.oid);
+                moveBody(player, x, z);
+            }
+        }
     }
 
     /**
@@ -430,8 +474,8 @@ public class ChiyogamiManager extends GameManager
 
     protected void updatePlayerState (BodyObject player, long now)
     {
-        PlayerPerfRecord perf = _playerPerfs.get(player.getOid());
-        updatePlayerState(player, perf.getScore(now));
+        PlayerRec perf = _playerPerfs.get(player.getOid());
+        updatePlayerState(player, perf.calculateScore(now));
     }
 
     protected void updatePlayerState (BodyObject player, float score)
@@ -514,8 +558,26 @@ public class ChiyogamiManager extends GameManager
     /**
      * Tracks performance for each player.
      */
-    protected static class PlayerPerfRecord
+    protected static class PlayerRec
+        implements Comparable<PlayerRec>
     {
+        /** The player's oid. */
+        public int oid;
+
+        /** The player's last-used side, or -1 if not yet assigned. */
+        public int lastSide = -1;
+
+        /** The last calculated cumulative score. */
+        public float calcScore;
+
+        /** The last calculated cumulative style. */
+        public float calcStyle;
+
+        public PlayerRec (int oid)
+        {
+            this.oid = oid;
+        }
+
         public void recordPerformance (long now, float score, float style)
         {
             int index = _count % BUCKETS;
@@ -529,14 +591,27 @@ public class ChiyogamiManager extends GameManager
             _totalStyle += style;
         }
 
-        public float getScore (long now)
+        public float calculateScore (long now)
         {
-            return getAccumulated(now, _scores);
+            return (calcScore = getAccumulated(now, _scores));
         }
 
-        public float getStyle (long now)
+        public float calculateStyle (long now)
         {
-            return getAccumulated(now, _styles);
+            return (calcStyle = getAccumulated(now, _styles));
+        }
+
+        // from Comparable
+        public int compareTo (PlayerRec that)
+        {
+            if (this.calcScore > that.calcScore) {
+                return -1;
+
+            } else if (this.calcScore < that.calcScore) {
+                return 1;
+
+            }
+            return 0;
         }
 
         /**
@@ -574,6 +649,9 @@ public class ChiyogamiManager extends GameManager
         protected float _totalScore;
         protected float _totalStyle;
 
+        protected float _calcScore;
+        protected float _calcStyle;
+
         // number of previous scores to count
         protected static final int BUCKETS = 10;
         // the maximum time a score will last
@@ -583,7 +661,7 @@ public class ChiyogamiManager extends GameManager
         protected float[] _styles = new float[BUCKETS];
         protected long[] _stamps = new long[BUCKETS];
 
-    } // End: static class PlayerPerfReccord
+    } // End: static class PlayerRec
 
     /**
      * Listens for changes to the RoomObject in which we're hosted.
@@ -664,8 +742,8 @@ public class ChiyogamiManager extends GameManager
     /** A mapping of playerOid -> String[] of their states. */
     protected HashIntMap<String[]> _playerStates = new HashIntMap<String[]>();
 
-    /** A mapping of playerOid -> PlayerPerfRecord. */
-    protected HashIntMap<PlayerPerfRecord> _playerPerfs = new HashIntMap<PlayerPerfRecord>();
+    /** A mapping of playerOid -> PlayerRec. */
+    protected HashIntMap<PlayerRec> _playerPerfs = new HashIntMap<PlayerRec>();
 
     protected String[] _bossStates = new String[] { null, "Dance 1", "Dance 2" };
 
