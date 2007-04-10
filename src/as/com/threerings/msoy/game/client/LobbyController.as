@@ -96,7 +96,7 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
         var seatedTable :Table = _tableDir.getSeatedTable();
         if (_tableDir.isSeated() && !seatedTable.inPlay()) {
             var tableDisplay :FloatingTableDisplay = new FloatingTableDisplay(_mctx, _panel, 
-                _tableDir);
+                _tableDir, _panel.getGame().name);
             tableDisplay.open();
             setControlledPanel(tableDisplay.getRenderer());
             _mctx.getTopPanel().setTableDisplay(tableDisplay);

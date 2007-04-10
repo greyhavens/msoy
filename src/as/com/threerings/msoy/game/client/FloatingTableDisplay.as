@@ -22,9 +22,9 @@ public class FloatingTableDisplay extends FloatingPanel
     implements TableObserver
 {
     public function FloatingTableDisplay (ctx :WorldContext, panel :LobbyPanel, 
-        tableDir :TableDirector)
+        tableDir :TableDirector, gameName :String)
     {
-        super(ctx, Msgs.GAME.get("t.table_display"));
+        super(ctx, Msgs.GAME.get("t.table_display") + gameName);
         _panel = panel;
         _tableDir = tableDir;
         _tableDir.addTableObserver(this);
@@ -95,9 +95,8 @@ public class FloatingTableDisplay extends FloatingPanel
         _tableRender.data = _table;
         
         // make sure the seat grid in TableRenderer takes as much horizontal space as it can
-        width = _tableRender.maxUsableWidth > parent.width ? parent.width : 
+        _tableRender.width = width = _tableRender.maxUsableWidth > parent.width ? parent.width : 
             _tableRender.maxUsableWidth;
-        _tableRender.width = width;
     }
 
     /** controlled panel to dispatch LobbyController events on */

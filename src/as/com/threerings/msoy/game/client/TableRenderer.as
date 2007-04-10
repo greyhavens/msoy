@@ -56,13 +56,19 @@ public class TableRenderer extends HBox
 
         styleName = "tableRenderer";
 
-        addChild(_labelsBox = new VBox());
-        _labelsBox.width = CONFIG_WIDTH;
-        var padding :VBox = new VBox();
-        padding.setStyle("backgroundColor", 0xF1F4F7);
-        padding.width = PADDING_WIDTH;
-        padding.percentHeight = 100;
-        addChild(padding);
+        if (!_popup) {
+            var labelsBox :VBox = new VBox();
+            addChild(labelsBox);
+            labelsBox.width = CONFIG_WIDTH;
+            var padding :VBox = new VBox();
+            padding.setStyle("backgroundColor", 0xF1F4F7);
+            padding.width = PADDING_WIDTH;
+            padding.percentHeight = 100;
+            addChild(padding);
+
+            labelsBox.addChild(_watcherCount = new Label());
+            labelsBox.addChild(_config = new Text());
+        }
         var rightSide :VBox = new VBox();
         rightSide.percentWidth = 100;
         rightSide.addChild(_seatsGrid = new Tile());
@@ -73,11 +79,6 @@ public class TableRenderer extends HBox
         rightSide.addChild(_buttonsBox = new HBox());
         _buttonsBox.percentWidth = 100;
         addChild(rightSide);
-
-        _watcherCount = new Label();
-        _config = new Text();
-        _labelsBox.addChild(_watcherCount);
-        _labelsBox.addChild(_config);
     }
 
     override public function set data (newData :Object) :void
@@ -91,7 +92,7 @@ public class TableRenderer extends HBox
     {
         super.width = width;
         if (_seatsGrid != null) {
-            _seatsGrid.width = width - CONFIG_WIDTH - PADDING_WIDTH;
+            _seatsGrid.width = width;
         }
     }
 
@@ -110,8 +111,9 @@ public class TableRenderer extends HBox
             return;
         }
 
-        // TODO
-        _watcherCount.text = "Watchers: " + table.watcherCount;
+        if (!_popup) {
+            _watcherCount.text = "Watchers: " + table.watcherCount;
+        }
 
         // update the seats
         if (table.occupants != null) {
@@ -119,8 +121,9 @@ public class TableRenderer extends HBox
         }
 
         updateButtons(table);
-
-        updateConfig(table);
+        if (!_popup) {
+            updateConfig(table);
+        }
     }
 
     protected function updateSeats (table :MsoyTable) :void
@@ -143,8 +146,8 @@ public class TableRenderer extends HBox
         }
 
         _seatsGrid.validateNow();
-        _maxUsableWidth = _seatsGrid.measuredMinWidth * _seatsGrid.numChildren + CONFIG_WIDTH +
-            PADDING_WIDTH + HORZ_GAP * (8 + _seatsGrid.numChildren);
+        _maxUsableWidth = (_seatsGrid.measuredMinWidth + HORZ_GAP) * _seatsGrid.numChildren +
+            /* the mystery pixels strike again :/ */ 10;
     }
 
     protected function updateButtons (table :MsoyTable) :void
@@ -233,7 +236,6 @@ public class TableRenderer extends HBox
 
     protected var _config :Text;
 
-    protected var _labelsBox :VBox;
     protected var _seatsGrid :Tile;
     protected var _buttonsBox :HBox;
 
