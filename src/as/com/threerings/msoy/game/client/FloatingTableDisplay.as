@@ -104,6 +104,11 @@ public class FloatingTableDisplay extends FloatingPanel
         });
         joinLobbyBtn.styleName = "backToLobbyBtn";
         btnBox.addChild(joinLobbyBtn);
+        var padding :VBox = new VBox();
+        padding.setStyle("backgroundColor", 0xF1F4F7);
+        padding.width = 2;
+        padding.percentHeight = 100;
+        row.addChild(padding);
         _tableRender = new TableRenderer(true);
         _tableRender.ctx = _ctx;
         _tableRender.panel = _panel;
@@ -111,10 +116,10 @@ public class FloatingTableDisplay extends FloatingPanel
         _tableRender.data = _table;
         
         // make sure the seat grid in TableRenderer takes as much horizontal space as it can
-        var buttonSpace :int = 15;
-        _tableRender.width = _tableRender.maxUsableWidth > (parent.width - buttonSpace) ? 
-            parent.width - buttonSpace : _tableRender.maxUsableWidth;
-        width = _tableRender.width + buttonSpace;
+        var extraSpace :int = 20;
+        _tableRender.width = _tableRender.maxUsableWidth > (parent.width - extraSpace) ? 
+            parent.width - extraSpace : _tableRender.maxUsableWidth;
+        width = _tableRender.width + extraSpace;
     }
 
     /** controlled panel to dispatch LobbyController events on */

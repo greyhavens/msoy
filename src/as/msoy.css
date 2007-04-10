@@ -559,23 +559,21 @@ ListBase
 }
 
 .floatingTableDisplay {
-  paddingTop: 0px;
+  paddingTop: 6px;
   paddingBottom: 4px;
-  paddingLeft: 0px;
-  paddingRight: 0px;
+  paddingLeft: 6px;
+  paddingRight: 6px;
   borderThicknessLeft: 4px;
   borderThicknessRight: 4px;
 }
 
 .floatingTableRow {
-  horizontalGap: 0;
+  horizontalGap: 4;
   verticalGap: 0;
 }
 
 .backToLobbyBtnBox {
-  paddingLeft: 3px;
   paddingTop: 4px;
-  paddingRight: 3px;
   verticalAlign: top;
 }
 
