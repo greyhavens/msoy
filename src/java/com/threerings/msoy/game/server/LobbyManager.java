@@ -5,6 +5,7 @@ package com.threerings.msoy.game.server;
 
 import com.samskivert.util.Interval;
 
+import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.SetAdapter;
 
@@ -126,7 +127,7 @@ public class LobbyManager
                 };
                 _shutdownInterval.schedule(IDLE_UNLOAD_PERIOD);
             }
-        }
+        } 
     }
 
     protected void cancelShutdowner ()
@@ -152,13 +153,18 @@ public class LobbyManager
     /** Used to listen for updates to our game item if necessary. */
     protected ItemManager.ItemUpdateListener _uplist;
 
-    /** Listens for table removal and considers destroying the room. */
+    /** Listens for table removal/addition and considers destroying the room. */
     protected SetAdapter _tableWatcher = new SetAdapter() {
+        public void entryAdded (EntryAddedEvent event) {
+            if (event.getName().equals(LobbyObject.TABLES)) {
+                cancelShutdowner();
+            }
+        }
         public void entryRemoved (EntryRemovedEvent event) {
             if (event.getName().equals(LobbyObject.TABLES)) {
                 checkShutdownInterval();
             }
-        }
+        } 
     };
 
     /** interval to let us delay lobby shutdown for awhile, in case a new table is created 
