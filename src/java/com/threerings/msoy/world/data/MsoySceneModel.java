@@ -41,11 +41,18 @@ public class MsoySceneModel extends SceneModel
     public MsoyLocation entrance;
 
     /** Decor data representation. */
-    public DecorData decorData = new DecorData();
+    public DecorData decorData;
 
     /** Audio data representation. */
-    public AudioData audioData = new AudioData();
+    public AudioData audioData;
 
+    /** Constructor. */
+    public MsoySceneModel ()
+    {
+        decorData = new DecorData();
+        audioData = new AudioData();
+    }
+    
     /**
      * Add a piece of furniture to this model.
      */
@@ -211,29 +218,9 @@ public class MsoySceneModel extends SceneModel
     public static MsoySceneModel blankMsoySceneModel ()
     {
         MsoySceneModel model = new MsoySceneModel();
-        model.decorData = createDefaultDecorData();
-        model.audioData = new AudioData();
         model.entrance = new MsoyLocation(.5, 0, .5, 180);
         populateBlankMsoySceneModel(model);
         return model;
-    }
-
-    /**
-     * Creates a blank decor data room descriptor. The decor doesn't refer to any
-     * decor item in storage; instead it specifies default room dimensions and
-     * a default background.
-     */
-    public static DecorData createDefaultDecorData ()
-    {
-        DecorData decor = new DecorData();
-        decor.media = DecorData.defaultMedia;
-        decor.id = 0; // it's not an actual furni...
-        decor.depth = 400;
-        decor.width = 800;
-        decor.height = 494;
-        decor.horizon = .5f;
-        decor.loc = new MsoyLocation(.5, 0, 0, 0);
-        return decor;
     }
 
     protected static void populateBlankMsoySceneModel (MsoySceneModel model)

@@ -1,5 +1,7 @@
 package com.threerings.msoy.world.data {
 
+import flash.utils.ByteArray;
+
 import com.threerings.util.Cloneable;
 import com.threerings.util.Equalable;
 
@@ -19,6 +21,10 @@ import com.threerings.msoy.item.web.StaticMediaDesc;
 public class AudioData
     implements Cloneable, Streamable, Equalable
 {
+    /** Default background audio media. */
+    public static const defaultMedia :MediaDesc =
+        new StaticMediaDesc(MediaDesc.AUDIO_MPEG, Item.AUDIO, Item.MAIN_MEDIA);
+        
     /** Identifies the id of the item that was used to create this. */
     public var itemId :int;
 
@@ -27,7 +33,17 @@ public class AudioData
 
     /** Audio volume. */
     public var volume :Number;
-    
+
+    /**
+     * Constructor, populates the audio data object with default values.
+     */
+    public function AudioData ()
+    {
+        itemId = 0;
+        volume = 1.0;
+        media = defaultMedia;
+    }
+
     /**
      * Helper function: specifies that this decor data structure has already been
      * populated from a Decor item object.

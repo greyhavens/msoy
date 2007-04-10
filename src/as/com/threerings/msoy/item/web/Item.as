@@ -63,6 +63,9 @@ public /*abstract*/ class Item
     /** Identifies our furniture media. */
     public static const FURNI_MEDIA :String = "furni";
 
+    /** Identifies other types of media. */
+    public static const MAIN_MEDIA :String = "main";
+
     // == Instance variables follow =========================================
 
     /** This item's unique identifier. <em>Note:</em> this identifier is not

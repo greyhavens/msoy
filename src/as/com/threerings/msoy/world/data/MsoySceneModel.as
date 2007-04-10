@@ -41,7 +41,14 @@ public class MsoySceneModel extends SceneModel
 
     /** Audio data representation. */
     public var audioData :AudioData;
-    
+
+    /** Constructor. */
+    public function MsoySceneModel ()
+    {
+        decorData = new DecorData();
+        audioData = new AudioData();
+    }
+
     /**
      * Add a piece of furniture to this model.
      */

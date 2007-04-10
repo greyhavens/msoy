@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 import com.samskivert.io.PersistenceException;
@@ -191,6 +192,13 @@ public class MsoySceneRepository extends SimpleRepository
             JDBCUtil.addColumn(conn, "SCENES", "AUDIO_MEDIA_TYPE", "tinyint not null", "HORIZON");
             JDBCUtil.addColumn(conn, "SCENES", "AUDIO_MEDIA_HASH", "tinyblob not null", "HORIZON");
             JDBCUtil.addColumn(conn, "SCENES", "AUDIO_ID", "int not null", "HORIZON");
+            // insert default volume values
+            Statement stmt = conn.createStatement();
+            try { 
+                stmt.executeUpdate("update SCENES set AUDIO_VOLUME=1");
+            } finally {
+                JDBCUtil.close(stmt);
+            }
             // updates are stale - delete them
             Statement deletestmt = conn.createStatement();
             try { 
@@ -508,10 +516,6 @@ public class MsoySceneRepository extends SimpleRepository
         throws PersistenceException, NoSuchSceneException
     {
         final MsoySceneModel model = new MsoySceneModel();
-        // TEMP compatibility mode: since we have some scenes with decor and some without,
-        // just create a default decor for every scene, and clobber the defaults with
-        // what we get from the database.
-        model.decorData = MsoySceneModel.createDefaultDecorData();
         model.sceneId = sceneId;
 
         Boolean success = execute(new Operation<Boolean>() {
@@ -873,33 +877,54 @@ public class MsoySceneRepository extends SimpleRepository
      */
     protected MediaDesc createMediaDesc (byte[] mediaHash, byte mimeType)
     {
-        if (mediaHash.length == 4) {
+        switch (mediaHash.length) {
+        case 4:
+        {
+            // legacy mode: retrieve item type, assume furni media
             byte itemType = (byte)ByteBuffer.wrap(mediaHash).asIntBuffer().get();
             return Item.getDefaultFurniMediaFor(itemType);
-        } else {
+        }
+        case 8:
+        {
+            // retrieve both item and media type
+            IntBuffer buffer = ByteBuffer.wrap(mediaHash).asIntBuffer();
+            byte itemType = (byte)buffer.get();
+            byte mediaTypeId = (byte)buffer.get();
+            String mediaType = Item.ALL_MEDIA_TYPES[mediaTypeId];
+            return new StaticMediaDesc(mimeType, itemType, mediaType);
+        }
+        default:
             return new MediaDesc(mediaHash, mimeType);
         }
     }
 
     /**
-     * Flattens the supplied {@link MediaDesc} into bytes that can later be
-     * decoded by {@link #createMediaDesc} into the appropriate type of
-     * descriptor.
+     * Flattens the supplied {@link MediaDesc} into bytes that can later be decoded by
+     * {@link #createMediaDesc} into the appropriate type of descriptor.
      */
     protected byte[] flattenMediaDesc (MediaDesc desc)
     {
         if (desc instanceof StaticMediaDesc) {
             StaticMediaDesc sdesc = (StaticMediaDesc)desc;
 
-            // sanity check; if we later need to flatten other static types than furni, we can have
-            // the type constant map to an integer and stuff that into the byte array as well
-            if (!sdesc.getMediaType().equals(Item.FURNI_MEDIA)) {
-                throw new IllegalArgumentException(
-                    "Cannot flatten non-furni static media " + desc + ".");
+            String mediaType = sdesc.getMediaType();
+            int mediaTypeCount = Item.ALL_MEDIA_TYPES.length;
+            byte mediaTypeId = (byte)mediaTypeCount; 
+            for (int i = 0; i < mediaTypeCount; i++) { // mmm, linear search...
+                if (Item.ALL_MEDIA_TYPES[i].equals(mediaType)) {
+                    mediaTypeId = (byte) i;
+                }
             }
 
-            ByteBuffer data = ByteBuffer.allocate(4);
+            // sanity check: make sure we only flatten one of the valid media types
+            if (mediaTypeId == (byte)mediaTypeCount) {
+                throw new IllegalArgumentException(
+                    "Cannot flatten invalid static media type " + mediaType);
+            }
+
+            ByteBuffer data = ByteBuffer.allocate(8);
             data.asIntBuffer().put(sdesc.getItemType());
+            data.asIntBuffer().put(mediaTypeId);
             return data.array();
 
         } else {

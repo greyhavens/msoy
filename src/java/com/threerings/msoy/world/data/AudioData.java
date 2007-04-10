@@ -19,6 +19,10 @@ import com.threerings.msoy.item.web.StaticMediaDesc;
 public class AudioData extends SimpleStreamableObject
     implements Cloneable
 {
+    /** Default background audio media. */
+    public static final MediaDesc defaultMedia =
+        new StaticMediaDesc(MediaDesc.AUDIO_MPEG, Item.AUDIO, Item.MAIN_MEDIA);
+    
     /** Identifies the id of the item that was used to create this. */
     public int itemId;
 
@@ -27,6 +31,16 @@ public class AudioData extends SimpleStreamableObject
 
     /** Audio volume. */
     public float volume;
+
+    /**
+     * Constructor, populates the audio data object with default values.
+     */
+    public AudioData ()
+    {
+        itemId = 0;
+        volume = 1.0f;
+        media = defaultMedia;
+    }
     
     /**
      * Helper function: specifies that this decor data structure has already been

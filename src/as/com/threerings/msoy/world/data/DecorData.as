@@ -14,6 +14,7 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.StaticMediaDesc;
+import com.threerings.msoy.world.data.MsoyLocation;
 
 public class DecorData extends FurniData
     implements Cloneable, Hashable, Streamable
@@ -21,6 +22,9 @@ public class DecorData extends FurniData
     /** Default decor background. */
     public static const defaultMedia :MediaDesc =
         new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.DECOR, Item.FURNI_MEDIA);
+    
+    /** Default decor location. */
+    public static const defaultLocation :MsoyLocation = new MsoyLocation (0.5, 0, 0, 0);
     
     /** Room type. Controls how the background wallpaper image is handled. */
     public var type :int;
@@ -37,6 +41,21 @@ public class DecorData extends FurniData
     /** Horizon position, in [0, 1]. */
     public var horizon :Number;
 
+    /**
+     * Constructor, creates a data object with default values.
+     */
+    public function DecorData ()
+    {
+        itemId = 0; // doesn't correspond to an object
+        id = 0;     // it's not an actual furni
+        media = defaultMedia;
+        depth = 400;
+        width = 800;
+        height = 494;
+        horizon = .5;
+        loc = defaultLocation;
+    }
+    
     /**
      * Helper function: specifies that this decor data structure has already been
      * populated from a Decor item object.
