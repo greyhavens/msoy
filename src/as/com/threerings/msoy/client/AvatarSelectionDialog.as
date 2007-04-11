@@ -109,16 +109,17 @@ public class AvatarSelectionDialog extends FloatingPanel
         
         // Initializes a grid 
         _avatars = new Grid();
+        addChild(_avatars);
 
         // fix the size so that it doesn't look bad when it gets expanded after popup
-        var visibleWidth :Number = ItemRenderer.ITEM_SIZE * ITEMS_PER_ROW + ScrollBar.THICKNESS;
-        var visibleHeight :Number = ItemRenderer.ITEM_SIZE * MAX_ROWS + ScrollBar.THICKNESS;
+        var visibleWidth :Number = ItemRenderer.ITEM_SIZE * ITEMS_PER_ROW + ScrollBar.THICKNESS +
+            Number(_avatars.getStyle("horizontalGap")) * (ITEMS_PER_ROW - 1);
+        var visibleHeight :Number = ItemRenderer.ITEM_SIZE * MAX_ROWS + ScrollBar.THICKNESS +
+            Number(_avatars.getStyle("verticalGap")) * (MAX_ROWS - 1);
         _avatars.minWidth = visibleWidth;
         _avatars.minHeight = visibleHeight;
         _avatars.maxWidth = visibleWidth;
         _avatars.maxHeight = visibleHeight;
-
-        addChild(_avatars);
 
         if (inventoryReady()) {
             fillWithAvatars(); 

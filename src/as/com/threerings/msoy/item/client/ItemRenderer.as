@@ -85,7 +85,7 @@ public class ItemRenderer extends Box
         addChild(wrapper);
 
         addChild(_label = new Label());
-        _label.maxWidth = 200;
+        _label.maxWidth = 100;
 
         if (data != null) {
             data = data; // re-set
