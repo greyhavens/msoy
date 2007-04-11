@@ -266,6 +266,7 @@ public class TableRenderer extends HBox
         var row :HBox = new HBox();
         row.setStyle("horizontalGap", 2);
         row.percentWidth = 100;
+        row.height = 12;
         var lbl :Label = new Label();
         lbl.text = name + ":";
         lbl.styleName = "lobbyLabel";
