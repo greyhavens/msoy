@@ -469,8 +469,8 @@ public class MsoySprite extends MediaContainer
 
             if (_media.mask != null &&
                     (!(_media is DisplayObjectContainer) || !DisplayObjectContainer(_media).contains(_media.mask))) {
-                _media.mask.scaleX = scalex;
-                _media.mask.scaleY = scaley;
+                _media.mask.scaleX = Math.abs(scalex);
+                _media.mask.scaleY = Math.abs(scaley);
             }
         }
 
