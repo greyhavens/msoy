@@ -510,7 +510,9 @@ ListBase
 }
 
 .lobbyTableList {
-  borderThickness: 0;
+  borderThickness: 1px;
+  borderStyle: "solid";
+  borderColor: #E0E7EE;
   paddingTop: 0;
   paddingBottom: 0;
   paddingLeft: 0;
@@ -602,7 +604,7 @@ ListBase
 }
 
 .listTableRenderer {
-  borderThickness: 2;
+  borderThickness: 1;
   borderStyle: "solid";
   borderColor: #E0E7EE;
 }

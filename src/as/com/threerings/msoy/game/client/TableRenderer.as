@@ -244,7 +244,7 @@ public class TableRenderer extends HBox
         _config.text = config;
     }
 
-    protected static const CONFIG_WIDTH :int = 100;
+    protected static const CONFIG_WIDTH :int = 105;
     protected static const PADDING_WIDTH :int = 2;
     protected static const HORZ_GAP :int = 4;
 
