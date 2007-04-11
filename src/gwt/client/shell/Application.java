@@ -286,7 +286,11 @@ public class Application
        $wnd.onunload = function (event) {
            var client = $doc.getElementById("asclient");
            if (client) {
-               client.onUnload();
+               try {
+                   client.onUnload();
+               } catch (e) {
+                   // nada
+               }
            }
            return true;
        };

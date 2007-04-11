@@ -85,8 +85,12 @@ public class WorldClient extends Widget
     protected static native boolean clientGo (String where) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.clientGo(where);
-            return true;
+            try {
+                client.clientGo(where);
+                return true;
+            } catch (e) {
+                // nada
+            }
         }
         return false;
     }-*/;
@@ -97,7 +101,11 @@ public class WorldClient extends Widget
     protected static native void clientLogon (int memberId, String token) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.clientLogon(memberId, token);
+            try {
+                client.clientLogon(memberId, token);
+            } catch (e) {
+                // nada
+            }
         }
     }-*/;
 
@@ -107,7 +115,11 @@ public class WorldClient extends Widget
     protected static native void clientUnload () /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.onUnload();
+            try {
+                client.onUnload();
+            } catch (e) {
+                // nada
+            }
         }
     }-*/;
 
@@ -117,7 +129,11 @@ public class WorldClient extends Widget
     protected static native void clientMinimized (boolean mini) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.setMinimized(mini);
+            try {
+                client.setMinimized(mini);
+            } catch (e) {
+                // nada
+            }
         }
     }-*/;
 
