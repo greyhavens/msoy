@@ -99,9 +99,7 @@ public class FloatingTableDisplay extends FloatingPanel
         btnBox.styleName = "backToLobbyBtnBox";
         row.addChild(btnBox);
         var joinLobbyBtn :CommandButton = new CommandButton();
-        joinLobbyBtn.setFunction(function () :void {
-            CommandEvent.dispatch(_tableRender, LobbyController.JOIN_LOBBY);
-        });
+        joinLobbyBtn.setFunction(_panel.controller.handleJoinLobby);
         joinLobbyBtn.styleName = "backToLobbyBtn";
         btnBox.addChild(joinLobbyBtn);
         var padding :VBox = new VBox();
