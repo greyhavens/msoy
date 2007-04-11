@@ -77,7 +77,8 @@ public class RoomController extends SceneController
     private const log :Log = Log.getLog(RoomController);
 
     public static const EDIT_SCENE :String = "EditScene";
-
+    public static const EDIT_FURNI :String = "EditFurni";
+    
     public static const FURNI_CLICKED :String = "FurniClicked";
     public static const AVATAR_CLICKED :String = "AvatarClicked";
     public static const PET_CLICKED :String = "PetClicked";
@@ -306,6 +307,23 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Handles EDIT_FURNI.
+     */
+    public function handleEditFurni (furniSprite :FurniSprite) :void
+    {
+        if (_furniEditor.mode == FurniEditController.EDIT_OFF) {
+            _roomObj.roomService.editRoom(
+                _mctx.getClient(), new ResultWrapper(
+                    function (cause :String) :void {
+                        _mctx.displayFeedback("general", cause);
+                    },
+                    function (result :Object) :void {
+                        beginEditingFurni(furniSprite, result as Array);
+                    }));
+        }
+    }
+
+    /**
      * Handles FURNI_CLICKED.
      */
     public function handleFurniClicked (furni :FurniData) :void
@@ -502,6 +520,34 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Begin editing a piece of furni.
+     */
+    protected function beginEditingFurni (furni :FurniSprite, allItems :Array) :void
+    {
+        _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
+        _roomView.dimAvatars(true);
+        // maybe disable/dim other furnis?
+        _walkTarget.visible = false;
+
+        // this function will be called once furni editing had ended
+        var callback :Function = function () :void {
+            _roomView.dimAvatars(false);
+            _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
+            _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
+        }
+
+        _furniEditor.start (furni, _roomView, callback);
+    }
+
+    /**
+     * Finish editing a piece of furni.
+     */
+    protected function endEditingFurni () :void
+    {
+    }
+
+    /**
      * Begin editing the scene.
      */
     protected function startEditing (items :Array) :void
@@ -525,6 +571,8 @@ public class RoomController extends SceneController
         _editor = new EditorController(_mctx, this, _roomView, _scene, items);
     }
 
+    
+    
     /**
      * Handle ENTER_FRAME and see if the mouse is now over anything.
      * Normally the flash player will dispatch mouseOver/mouseLeft
@@ -917,9 +965,13 @@ public class RoomController extends SceneController
     protected var _walkTarget :DisplayObject = (new WALKTARGET() as DisplayObject);
 
     /** Are we editing the current scene? */
-    protected var _editor :EditorController;
+    protected var _editor :EditorController; 
 
+    /** Controller for editing a particular piece of furni. */
+    protected var _furniEditor :FurniEditController = new FurniEditController();
+    
     /** The number of pixels we scroll the room on a keypress. */
     protected static const ROOM_SCROLL_INCREMENT :int = 20;
 }
 }
+
