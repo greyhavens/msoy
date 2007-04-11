@@ -28,6 +28,8 @@ import com.threerings.msoy.item.web.Game;
 
 import com.threerings.msoy.game.data.MsoyTable;
 
+import com.threerings.util.StringUtil;
+
 public class TableRenderer extends HBox
 {
     /** The context, initialized by our ClassFactory. */
@@ -82,21 +84,18 @@ public class TableRenderer extends HBox
         }
 
         if (!_popup) {
-            var labelsBox :VBox = new VBox();
-            addChild(labelsBox);
-            labelsBox.width = CONFIG_WIDTH;
+            _labelsBox = new VBox();
+            _labelsBox.width = CONFIG_WIDTH;
+            _labelsBox.setStyle("verticalGap", 0);
+            _labelsBox.setStyle("paddingLeft", 4);
+            _labelsBox.verticalScrollPolicy = ScrollPolicy.OFF;
+            _labelsBox.horizontalScrollPolicy = ScrollPolicy.OFF;
+            addChild(_labelsBox);
             var padding :VBox = new VBox();
             padding.setStyle("backgroundColor", 0xE0E7EE);
             padding.width = PADDING_WIDTH;
             padding.percentHeight = 100;
             addChild(padding);
-
-            labelsBox.addChild(_watcherCount = new Label());
-            labelsBox.verticalScrollPolicy = ScrollPolicy.OFF;
-            labelsBox.horizontalScrollPolicy = ScrollPolicy.OFF;
-            _watcherCount.styleName = "lobbyLabel";
-            labelsBox.addChild(_config = new Text());
-            _config.styleName = "lobbyLabel";
         }
         var rightSide :VBox = new VBox();
         rightSide.percentWidth = 100;
@@ -132,7 +131,7 @@ public class TableRenderer extends HBox
         }
 
         if (!_popup) {
-            _watcherCount.text = "Watchers: " + table.watcherCount;
+            _watcherCount = table.watcherCount;
         }
 
         // update the seats
@@ -231,32 +230,67 @@ public class TableRenderer extends HBox
      */
     protected function updateConfig (table :MsoyTable) :void
     {
+        while (_labelsBox.numChildren > 0) {
+            _labelsBox.removeChild(_labelsBox.getChildAt(0));
+        }
+        _labelsBox.addChild(getConfigRow(ctx.xlate("game", "l.watchers"), String(_watcherCount)));
+
+        var configXML :XML = panel.getGame().getGameDefinition().config;
         var customConfig :Object = null;
         if (table.config is EZGameConfig) {
             customConfig = (table.config as EZGameConfig).customConfig;
         }
 
-        // TODO: Ray: re-parse XML and show the options in the
-        // right order, with the right names, and the tooltips
-        var config :String = "";
         if (customConfig != null) {
-            for (var s :String in customConfig) {
-                if (config != "") {
-                    config += "\n";
+            for each (var param :XML in configXML..params.children()) {
+                if (StringUtil.isBlank(param.@ident)) {
+                    continue;
                 }
-                config += s + ": " + customConfig[s];
+                var ident :String = String(param.@ident);
+                var name :String = String(param.@name);
+                var tip :String = String(param.@tip);
+                if (StringUtil.isBlank(name)) {
+                    name = ident;
+                }
+
+                var value :String = String(customConfig[name]);
+                _labelsBox.addChild(getConfigRow(name, value, tip == "" ? name : tip, 
+                    value.length > 5 ? value : ""));
             }
         }
-        _config.text = config;
+    }
+
+    protected function getConfigRow (name :String, value :String, nameTip :String = "", 
+        valueTip :String = "") :UIComponent
+    {
+        var row :HBox = new HBox();
+        row.setStyle("horizontalGap", 2);
+        row.percentWidth = 100;
+        var lbl :Label = new Label();
+        lbl.text = name + ":";
+        lbl.styleName = "lobbyLabel";
+        if (nameTip != "") {
+            lbl.toolTip = nameTip;
+        }
+        lbl.width = 70;
+        row.addChild(lbl);
+        lbl = new Label();
+        lbl.text = value;
+        lbl.styleName = "lobbyLabel";
+        if (valueTip != "") {
+            lbl.toolTip = valueTip;
+        }
+        lbl.percentWidth = 100;
+        row.addChild(lbl);
+        return row;
     }
 
     protected static const CONFIG_WIDTH :int = 105;
     protected static const PADDING_WIDTH :int = 2;
     protected static const HORZ_GAP :int = 4;
 
-    protected var _watcherCount :Label; // TODO
-
-    protected var _config :Text;
+    protected var _watcherCount :int;
+    protected var _labelsBox :VBox;
 
     protected var _seatsGrid :Tile;
 
