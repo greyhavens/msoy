@@ -130,10 +130,12 @@ public class AbstractRoomView extends Sprite
 
     /**
      * Turn the screen coordinate into a MsoyLocation, with the orient field set to 0.
+     * @param yOffset (optional) a raw pixel y adjustment. NOTE: It's only
+     *                used when the click wall is FLOOR.
      *
      * @return a ClickLocation object.
      */
-    public function pointToLocation (globalX :Number, globalY :Number) :ClickLocation
+    public function pointToLocation (globalX :Number, globalY :Number, yOffset :Number = 0) :ClickLocation
     {
         var p :Point = globalToLocal(new Point(globalX, globalY));
         var x :Number = p.x;
@@ -207,6 +209,16 @@ public class AbstractRoomView extends Sprite
             case ClickLocation.CEILING:
             case ClickLocation.FLOOR:
                 yy = (clickWall == ClickLocation.CEILING) ? MAX_COORD : 0;
+                // if on the floor, we want take into account the yOffset
+                if (clickWall == ClickLocation.FLOOR) {
+                    yy = -yOffset / (scale * _metrics.sceneHeight);
+                    if (yy < 0 || yy > MAX_COORD) {
+                        //yy = Math.min(MAX_COORD, Math.max(0, yy));
+                        clickWall = ClickLocation.NONSENSE;
+                    }
+                } else {
+                    yy = 0;
+                }
                 zz = MAX_COORD * (1 - ((scale - _metrics.minScale) / _metrics.scaleRange));
                 break;
 

@@ -538,14 +538,21 @@ public class RoomController extends SceneController
         var sy :Number = _roomView.stage.mouseY;
         var showWalkTarget :Boolean = false;
 
-        // ensure we hit no pop-ups
-        var hit :* = getHitSprite(sx, sy);
+        // if shift is being held down, we're looking for locations only, so
+        // skip looking for hitSprites.
+        var hit :* = (_shiftPressed == null) ? getHitSprite(sx, sy) : null
         var hitter :MsoySprite = (hit as MsoySprite);
+        // ensure we hit no pop-ups
         if (hit !== undefined) {
             if (hitter == null) {
-                var cloc :ClickLocation = _roomView.pointToLocation(sx, sy);
+                var cloc :ClickLocation = adjustedPointToLocation(sx, sy);
                 if (cloc.click == ClickLocation.FLOOR && _mctx.worldProps.userControlsAvatar) {
-                    _walkTarget.x = _roomView.mouseX - _walkTarget.width/2;
+                    if (_shiftPressed != null) {
+                        var p :Point = _roomView.globalToLocal(_shiftPressed);
+                        _walkTarget.x = p.x - _walkTarget.width/2;
+                    } else {
+                        _walkTarget.x = _roomView.mouseX - _walkTarget.width/2;
+                    }
                     _walkTarget.y = _roomView.mouseY - _walkTarget.height/2;
                     _walkTarget.scaleX = 1 / _roomView.scaleX;
                     _walkTarget.scaleY = 1 / _roomView.scaleY;
@@ -601,7 +608,9 @@ public class RoomController extends SceneController
 
     protected function mouseClicked (event :MouseEvent) :void
     {
-        var hit :* = getHitSprite(event.stageX, event.stageY);
+        // if shift is being held down, we're looking for locations only, so
+        // skip looking for hitSprites.
+        var hit :* = (_shiftPressed == null) ? getHitSprite(event.stageX, event.stageY) : null;
         if (hit === undefined) {
             return;
         }
@@ -620,8 +629,7 @@ public class RoomController extends SceneController
             }
 
             // calculate where the location is
-            var cloc :ClickLocation = _roomView.pointToLocation(
-                event.stageX, event.stageY);
+            var cloc :ClickLocation = adjustedPointToLocation(event.stageX, event.stageY);
             if (cloc.click == ClickLocation.FLOOR) {
                 // orient the location as appropriate
                 var newLoc :MsoyLocation = cloc.loc;
@@ -632,6 +640,22 @@ public class RoomController extends SceneController
                 _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
             }
         }
+    }
+
+    /**
+     * Calls _roomView.pointToLocation(), but makes any necessary adjustments
+     * based on shift being pressed down (to fly).
+     */
+    protected function adjustedPointToLocation (stageX :Number, stageY :Number) :ClickLocation
+    {
+        var yOffset :Number = 0;
+        if (_shiftPressed != null) {
+            yOffset = (stageY - _shiftPressed.y) / _roomView.scaleY;
+            stageX = _shiftPressed.x;
+            stageY = _shiftPressed.y;
+        }
+
+        return _roomView.pointToLocation(stageX, stageY, yOffset);
     }
 
     protected function keyEvent (event :KeyboardEvent) :void
@@ -650,6 +674,15 @@ public class RoomController extends SceneController
             case Keyboard.F6:
                 _roomView.chatOverlay.setClickableGlyphs(keyDown);
                 return;
+
+            case Keyboard.SHIFT:
+                if (keyDown && _walkTarget.visible) {
+                    // record the y position at this
+                    _shiftPressed = new Point(_roomView.stage.mouseX, _roomView.stage.mouseY);
+
+                } else {
+                    _shiftPressed = null;
+                }
             }
 
             if (keyDown) {
@@ -858,6 +891,9 @@ public class RoomController extends SceneController
     protected var _hoverSprite :MsoySprite;
 
     protected var _hoverTip :IToolTip;
+
+    /** If shift is being held down, the coordinates at which it was pressed. */
+    protected var _shiftPressed :Point;
 
     /** The music currently playing in the scene, which may or may not be
      * background music. */
