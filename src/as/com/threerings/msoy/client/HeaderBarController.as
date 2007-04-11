@@ -69,11 +69,13 @@ public class HeaderBarController extends Controller
         html.editable = false;
         var url :String = _headerBar.root.loaderInfo.loaderURL;
         url = url.replace(/(http:\/\/[^\/]*).*/, "$1/clients/world-client.swf");
-        html.text = "<embed width='100%' height='550' flashvars='sceneId=" + 
-            _ctx.getMsoyController().getSceneIdString() + "' \n" +
-            "src='" + url + "' \n" +
-            "wmode='opaque' pluginspace='http://www.macromedia.com/go/getflashplayer' \n" +
-            "type='application/x-shockwave-flash' />";
+        if (_ctx.getMemberObject().tokens.isSupport()) {
+            html.text = Msgs.GENERAL.get("m.embed",
+                _ctx.getMsoyController().getSceneIdString(), url);
+
+        } else {
+            html.text = Msgs.GENERAL.get("m.embed_disabled");
+        }
         window.addChild(html);
         window.addButtons(FloatingPanel.OK_BUTTON);
 
