@@ -81,7 +81,6 @@ public class TableRenderer extends HBox
         rightSide.percentWidth = 100;
         addChild(rightSide);
         rightSide.addChild(_seatsGrid = new Tile());
-        _seatsGrid.percentWidth = 100;
         _seatsGrid.verticalScrollPolicy = ScrollPolicy.OFF;
         _seatsGrid.horizontalScrollPolicy = ScrollPolicy.OFF;
         _seatsGrid.styleName = "seatsGrid";
@@ -140,6 +139,9 @@ public class TableRenderer extends HBox
         updateButtons(table);
         if (!_popup) {
             updateConfig(table);
+            // mx.containers.Tile seems to have trouble always understanding its dimensions 
+            // correctly when its in a list
+            _seatsGrid.width = width - CONFIG_WIDTH - PADDING_WIDTH - 10; 
         }
     }
 
