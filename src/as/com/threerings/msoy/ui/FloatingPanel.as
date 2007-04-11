@@ -89,7 +89,7 @@ public class FloatingPanel extends TitleWindow
      * TODO: consider instead creating a content area and a button area in createChildren() and
      * letting subclasses just populate those.
      */
-    protected function addButtons (... buttonIds) :void
+    public function addButtons (... buttonIds) :void
     {
         buttonIds.sort(Array.NUMERIC);
 
@@ -142,6 +142,7 @@ public class FloatingPanel extends TitleWindow
     protected function createButton (buttonId :int) :Button
     {
         var btn :Button = new Button();
+        btn.buttonMode = true;
         switch (buttonId) {
         case CANCEL_BUTTON:
             btn.label = Msgs.GENERAL.get("b.cancel");
