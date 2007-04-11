@@ -593,7 +593,7 @@ public class RoomController extends SceneController
         // ensure we hit no pop-ups
         if (hit !== undefined) {
             if (hitter == null) {
-                var cloc :ClickLocation = adjustedPointToLocation(sx, sy);
+                var cloc :ClickLocation = _roomView.pointToLocation(sx, sy, _shiftPressed);
                 if (cloc.click == ClickLocation.FLOOR && _mctx.worldProps.userControlsAvatar) {
                     if (_shiftPressed != null) {
                         var p :Point = _roomView.globalToLocal(_shiftPressed);
@@ -677,7 +677,7 @@ public class RoomController extends SceneController
             }
 
             // calculate where the location is
-            var cloc :ClickLocation = adjustedPointToLocation(event.stageX, event.stageY);
+            var cloc :ClickLocation = _roomView.pointToLocation(event.stageX, event.stageY, _shiftPressed);
             if (cloc.click == ClickLocation.FLOOR) {
                 // orient the location as appropriate
                 var newLoc :MsoyLocation = cloc.loc;
@@ -688,22 +688,6 @@ public class RoomController extends SceneController
                 _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
             }
         }
-    }
-
-    /**
-     * Calls _roomView.pointToLocation(), but makes any necessary adjustments
-     * based on shift being pressed down (to fly).
-     */
-    protected function adjustedPointToLocation (stageX :Number, stageY :Number) :ClickLocation
-    {
-        var yOffset :Number = 0;
-        if (_shiftPressed != null) {
-            yOffset = (stageY - _shiftPressed.y) / _roomView.scaleY;
-            stageX = _shiftPressed.x;
-            stageY = _shiftPressed.y;
-        }
-
-        return _roomView.pointToLocation(stageX, stageY, yOffset);
     }
 
     protected function keyEvent (event :KeyboardEvent) :void

@@ -135,9 +135,19 @@ public class AbstractRoomView extends Sprite
      *
      * @return a ClickLocation object.
      */
-    public function pointToLocation (globalX :Number, globalY :Number, yOffset :Number = 0) :ClickLocation
+    public function pointToLocation (globalX :Number, globalY :Number, shiftPoint :Point = null) :ClickLocation
     {
-        var p :Point = globalToLocal(new Point(globalX, globalY));
+        var yOffset :Number = 0;
+        var p :Point;
+        if (shiftPoint == null) {
+            p = new Point(globalX, globalY);
+
+        } else {
+            yOffset = (globalY - shiftPoint.y) / this.scaleY;
+            p = shiftPoint;
+        }
+
+        p = globalToLocal(p);
         var x :Number = p.x;
         var y :Number = p.y;
 
