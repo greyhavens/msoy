@@ -632,3 +632,11 @@ body {
   width: 1px;
   height: 20px;
 }
+
+.SeparatorFromFlash {
+  position: absolute;
+  background: black;
+  width: 1px;
+  height: 20px;
+  top: 30px;
+}

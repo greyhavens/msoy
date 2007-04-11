@@ -411,13 +411,16 @@ ListBase
   backgroundColor: #000000;
 }
 
-.lobbyPanel {
-  paddingRight: 5px;
-}
-
 .lobbyPanel, .borderedBox, .descriptionBox, .titleBox, .infoBox, .tablesBox, .tabsBox {
   horizontalGap: 0;
   verticalGap: 0;
+}
+
+.titleBox {
+  borderStyle: "solid";
+  borderThickness: 1px;
+  borderSides: "right";
+  borderColor: #000000;
 }
 
 .borderedBox {

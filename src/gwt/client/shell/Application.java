@@ -10,6 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
@@ -237,6 +238,24 @@ public class Application
         }
     }
 
+    protected void setSeparator (int x) 
+    {
+        clearSeparator();
+        Label div = new Label();
+        div.setStyleName("SeparatorFromFlash");
+        DOM.setAttribute(div.getElement(), "id", "separatorFromFlash");
+        DOM.setStyleAttribute(div.getElement(), "left", x + "px");
+        RootPanel.get("navigation").add(div);
+    }
+
+    protected void clearSeparator ()
+    {
+        Element div = DOM.getElementById("separatorFromFlash");
+        if (div != null) {
+            DOM.removeChild(DOM.getParent(div), div);
+        }
+    }
+
     protected void createMappings ()
     {
         _creators.put("admin", client.admin.index.getCreator());
@@ -276,6 +295,12 @@ public class Application
        }
        $wnd.clearClient = function () {
             app.@client.shell.Application::clearClient(Z)(true);
+       }
+       $wnd.setSeparator = function (x) {
+            app.@client.shell.Application::setSeparator(I)(x);
+       }
+       $wnd.clearSeparator = function () {
+            app.@client.shell.Application::clearSeparator()();
        }
     }-*/;
 

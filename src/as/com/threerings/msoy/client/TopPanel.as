@@ -220,7 +220,7 @@ public class TopPanel extends Canvas
     }
 
     /**
-     * Returns a referenc eto our HeaderBar component
+     * Returns a reference to our HeaderBar component
      */
     public function getHeaderBar () :HeaderBar
     {
@@ -238,6 +238,7 @@ public class TopPanel extends Canvas
             _tableDisp.x += _sidePanel.width;
         }
 
+        (_ctx.getClient() as WorldClient).setSeparator(side.width - 1);
         addChild(_sidePanel); // add to end
         layoutPanels();
     }
@@ -255,6 +256,7 @@ public class TopPanel extends Canvas
                 }
             }
 
+            (_ctx.getClient() as WorldClient).clearSeparator();
             removeChild(_sidePanel);
             _sidePanel = null;
 

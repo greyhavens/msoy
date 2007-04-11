@@ -120,6 +120,34 @@ public class WorldClient extends BaseClient
         }
     }
 
+    /**
+     * Notifies javascript that we need it to create a little black divider at the given position.
+     */
+    public function setSeparator (x :int) :void
+    {
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.call("setSeparator", x);
+            }
+        } catch (err :Error) {
+            log.warning("ExternalInteface.call('setSeparator') failed: " + err);
+        }
+    }
+
+    /**
+     * Notifies javascript that we no longer need the little black divider.
+     */
+    public function clearSeparator () :void
+    {
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.call("clearSeparator");
+            }
+        } catch (err :Error) {
+            log.warning("ExternalInterface.call('clearSeparator') failed: " + err);
+        }
+    }
+
     // from BaseClient
     override protected function createContext () :BaseContext
     {
