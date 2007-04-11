@@ -1,5 +1,6 @@
 package com.threerings.msoy.game.client {
 
+import mx.containers.HBox;
 import mx.containers.VBox;
 
 import com.threerings.flex.CommandButton;
@@ -24,7 +25,7 @@ import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.GameDefinition;
 
-public class TableCreationPanel extends VBox
+public class TableCreationPanel extends HBox
 {
     public function TableCreationPanel (ctx :WorldContext, panel :LobbyPanel)
     {
@@ -40,6 +41,25 @@ public class TableCreationPanel extends VBox
 
     override protected function createChildren () :void
     {
+        var btnBox :VBox = new VBox();
+        btnBox.width = 101;
+        btnBox.percentHeight = 100;
+        btnBox.styleName = "createBtnBox";
+        addChild(btnBox);
+        _createBtn = new CommandButton();
+        _createBtn.setFunction(function () :void {
+            CommandEvent.dispatch(_panel, LobbyController.SUBMIT_TABLE,
+                [ tconfigger.getTableConfig(), gconfigger.getGameConfig() ]);
+        });
+        _createBtn.label = Msgs.GAME.get("b.create");
+        btnBox.addChild(_createBtn);
+
+        var padding :VBox = new VBox();
+        padding.setStyle("backgroundColor", 0xE0E7EE);
+        padding.width = 2;
+        padding.percentHeight = 100;
+        addChild(padding);
+
         var gconf :EZGameConfigurator = new EZGameConfigurator();
         var gconfigger :GameConfigurator = gconf;
         gconfigger.init(_ctx);
@@ -65,14 +85,6 @@ public class TableCreationPanel extends VBox
         gconf.setGameConfig(config);
 
         addChild(gconf.getContainer());
-
-        _createBtn = new CommandButton();
-        _createBtn.setFunction(function () :void {
-            CommandEvent.dispatch(_panel, LobbyController.SUBMIT_TABLE,
-                [ tconfigger.getTableConfig(), gconfigger.getGameConfig() ]);
-        });
-        _createBtn.label = Msgs.GAME.get("b.create");
-        addChild(_createBtn);
     }
 
     protected var _ctx :WorldContext;

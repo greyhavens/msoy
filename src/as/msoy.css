@@ -626,3 +626,10 @@ ListBase
 .nameLabel, .lobbyLabel {
   fontWeight: bold;
 }
+
+.createBtnBox {
+  verticalAlign: middle;
+  horizontalAlign: center;
+  paddingRight: 0px;
+  paddingLeft: 6px;
+}
