@@ -21,6 +21,8 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.whirled.data.Scene;
 
+import com.threerings.msoy.ui.FloatingPanel;
+
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
 public class HeaderBarController extends Controller
@@ -53,8 +55,8 @@ public class HeaderBarController extends Controller
 
     public function handleShowEmbedHtml () :void
     {
-        var window :TitleWindow = new TitleWindow();
-        window.title = Msgs.GENERAL.get("t.embed_link_window");
+        var window :FloatingPanel = new FloatingPanel(
+            _ctx, Msgs.GENERAL.get("t.embed_link_window"));
         window.setStyle("horizontalAlign", "center");
         var instruction :Text = new Text();
         instruction.width = 300;
@@ -73,15 +75,9 @@ public class HeaderBarController extends Controller
             "wmode='opaque' pluginspace='http://www.macromedia.com/go/getflashplayer' \n" +
             "type='application/x-shockwave-flash' />";
         window.addChild(html);
-        var closeButton :Button = new Button();
-        closeButton.label = Msgs.GENERAL.get("b.done_embed_link");
-        closeButton.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
-            PopUpManager.removePopUp(window);
-        });
-        closeButton.buttonMode = true;
-        window.addChild(closeButton);
-        PopUpManager.addPopUp(window, _ctx.getTopPanel(), true);
-        PopUpManager.centerPopUp(window);
+        window.addButtons(FloatingPanel.OK_BUTTON);
+
+        window.open(true, _ctx.getTopPanel());
     }
 
     protected function locationChanged (place :PlaceObject) :void
