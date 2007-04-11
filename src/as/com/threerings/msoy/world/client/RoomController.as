@@ -593,7 +593,7 @@ public class RoomController extends SceneController
         // ensure we hit no pop-ups
         if (hit !== undefined) {
             if (hitter == null) {
-                var cloc :ClickLocation = _roomView.pointToLocation(sx, sy, _shiftPressed);
+                var cloc :ClickLocation = _roomView.pointToLocation(sx, sy, _shiftPressed, getAvatarYOffset());
                 if (cloc.click == ClickLocation.FLOOR && _mctx.worldProps.userControlsAvatar) {
                     // project the click location back into screen coords
                     var p :Point = _roomView.getProjectedPoint(cloc.loc);
@@ -674,7 +674,7 @@ public class RoomController extends SceneController
             }
 
             // calculate where the location is
-            var cloc :ClickLocation = _roomView.pointToLocation(event.stageX, event.stageY, _shiftPressed);
+            var cloc :ClickLocation = _roomView.pointToLocation(event.stageX, event.stageY, _shiftPressed, getAvatarYOffset());
             if (cloc.click == ClickLocation.FLOOR) {
                 // orient the location as appropriate
                 var newLoc :MsoyLocation = cloc.loc;
@@ -729,6 +729,20 @@ public class RoomController extends SceneController
         } finally {
             event.updateAfterEvent();
         }
+    }
+
+    /**
+     * Return the avatar's preferred y offset for normal mouse positioning,
+     * unless shift is being held down, in which case use 0 so that the user
+     * can select their height precisely.
+     */
+    protected function getAvatarYOffset () :int
+    {
+        if (_shiftPressed != null) {
+            return 0;
+        }
+        var av :AvatarSprite = _roomView.getMyAvatar();
+        return (av == null) ? 0 : -av.preferredY;
     }
 
     /**

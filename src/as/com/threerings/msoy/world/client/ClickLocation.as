@@ -16,10 +16,6 @@ public class ClickLocation
     public static const LEFT_WALL :int = 3;
     public static const RIGHT_WALL :int = 4;
 
-    // used with yOffset to indicate that the FLOOR value has a y location
-    // outside of 0 -> 1.
-    public static const NONSENSE :int = 5;
-
     /** Where the click actually landed. */
     public var click :int;
 

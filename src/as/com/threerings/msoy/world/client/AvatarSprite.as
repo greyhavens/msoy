@@ -29,6 +29,10 @@ import com.threerings.msoy.world.data.WorldMemberInfo;
  */
 public class AvatarSprite extends ActorSprite
 {
+    /** The preferred Y value of the avatar, used when the user clicks
+     * to move somewhere. */
+    public var preferredY :int = 0;
+
     /**
      * Creates an avatar sprite for the supplied occupant.
      */
@@ -117,6 +121,7 @@ public class AvatarSprite extends ActorSprite
 
     override protected function createBackend () :EntityBackend
     {
+        preferredY = 0;
         return new AvatarBackend();
     }
 

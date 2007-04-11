@@ -808,7 +808,7 @@ public class RoomView extends AbstractRoomView
     protected var _suppressAutoScroll :Boolean = false;
 
     /** Log this! */
-    private const log :Log = Log.getLog(RoomController);
+    private const log :Log = Log.getLog(RoomView);
 
     /** The maximum number of pixels to autoscroll per frame. */
     protected static const MAX_AUTO_SCROLL :int = 15;
