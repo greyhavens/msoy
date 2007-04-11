@@ -97,8 +97,8 @@ public class TableRenderer extends HBox
     override public function set width (width :Number) :void
     {
         super.width = width;
-        if (_seatsGrid != null) {
-            _seatsGrid.width = width - (_popup ? 0 : CONFIG_WIDTH + PADDING_WIDTH);
+        if (_seatsGrid != null && _popup) {
+            _seatsGrid.width = width;
         }
     }
 
