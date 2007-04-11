@@ -129,6 +129,14 @@ public class AbstractRoomView extends Sprite
     }
 
     /**
+     * Turn a MsoyLocation into a screen point.
+     */
+    public function getProjectedPoint (loc :MsoyLocation) :Point
+    {
+        return _metrics.getProjectedPoint(loc.x, loc.y, loc.z);
+    }
+
+    /**
      * Turn the screen coordinate into a MsoyLocation, with the orient field set to 0.
      * @param yOffset (optional) a raw pixel y adjustment. NOTE: It's only
      *                used when the click wall is FLOOR.

@@ -595,13 +595,10 @@ public class RoomController extends SceneController
             if (hitter == null) {
                 var cloc :ClickLocation = _roomView.pointToLocation(sx, sy, _shiftPressed);
                 if (cloc.click == ClickLocation.FLOOR && _mctx.worldProps.userControlsAvatar) {
-                    if (_shiftPressed != null) {
-                        var p :Point = _roomView.globalToLocal(_shiftPressed);
-                        _walkTarget.x = p.x - _walkTarget.width/2;
-                    } else {
-                        _walkTarget.x = _roomView.mouseX - _walkTarget.width/2;
-                    }
-                    _walkTarget.y = _roomView.mouseY - _walkTarget.height/2;
+                    // project the click location back into screen coords
+                    var p :Point = _roomView.getProjectedPoint(cloc.loc);
+                    _walkTarget.x = p.x - _walkTarget.width/2;
+                    _walkTarget.y = p.y - _walkTarget.height/2;
                     _walkTarget.scaleX = 1 / _roomView.scaleX;
                     _walkTarget.scaleY = 1 / _roomView.scaleY;
                     showWalkTarget = true;
