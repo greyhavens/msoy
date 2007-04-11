@@ -3,6 +3,7 @@ package com.threerings.msoy.world.client {
 import flash.events.EventDispatcher;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 import flash.ui.Keyboard;
 
 
@@ -35,11 +36,12 @@ public class FurniEditController
         _furni = furni;
         _roomView = roomView;
         _endCallback = endCallback;
+        _positionAtShift = null;
 
-        _roomView.addEventListener(KeyboardEvent.KEY_DOWN, keyboardHandler);
-        _roomView.addEventListener(KeyboardEvent.KEY_UP, keyboardHandler);
-        _roomView.addEventListener(MouseEvent.MOUSE_MOVE, furniEditMoveHandler);
-        _roomView.addEventListener(MouseEvent.CLICK, furniEditClickHandler);
+        _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyboardHandler);
+        _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyboardHandler);
+        _roomView.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMoveInPositionMode);
+        _roomView.addEventListener(MouseEvent.CLICK, handleMouseClickInPositionMode);
 
         _mode = EDIT_POSITION;
     }
@@ -55,14 +57,25 @@ public class FurniEditController
     }
 
     /**
+     * Cancel whatever editing we've been doing.
+     * This will restore last known sprite data, and shut down the editor
+     * (calling the endCallback function).
+     */
+    public function cancel () :void
+    {
+        // cancel stuff here
+        deinit();
+    }
+
+    /**
      * Shut down any furni editing data, and call the endCallback function.
      */
     protected function deinit () :void
     {
-        _roomView.removeEventListener(KeyboardEvent.KEY_DOWN, keyboardHandler);
-        _roomView.removeEventListener(KeyboardEvent.KEY_UP, keyboardHandler);
-        _roomView.removeEventListener(MouseEvent.MOUSE_MOVE, furniEditMoveHandler);
-        _roomView.removeEventListener(MouseEvent.CLICK, furniEditClickHandler);
+        _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyboardHandler);
+        _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyboardHandler);
+        _roomView.removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMoveInPositionMode);
+        _roomView.removeEventListener(MouseEvent.CLICK, handleMouseClickInPositionMode);
 
         _endCallback();
 
@@ -73,22 +86,26 @@ public class FurniEditController
     }
 
     /**
-     * Handles mouse movement during furni editing.
+     * Handles mouse during furni movement.
      */
-    protected function furniEditMoveHandler (event :MouseEvent) :void
+    protected function handleMouseMoveInPositionMode (event :MouseEvent) :void
     {
-        var cloc :ClickLocation = _roomView.pointToLocation(event.stageX, event.stageY);
+        var cloc :ClickLocation =
+            _roomView.pointToLocation(event.stageX, event.stageY, _positionAtShift);
+        
         if (cloc.click == ClickLocation.FLOOR) {
             _furni.setLocation(cloc.loc);            
         }
     }
 
     /**
-     * Handles mouse clicks during furni editing.
+     * Handles clicks during furni movement.
      */
-    protected function furniEditClickHandler (event :MouseEvent) :void
+    protected function handleMouseClickInPositionMode (event :MouseEvent) :void
     {
-        var cloc :ClickLocation = _roomView.pointToLocation(event.stageX, event.stageY);
+        var cloc :ClickLocation =
+            _roomView.pointToLocation(event.stageX, event.stageY, _positionAtShift);
+        
         if (cloc.click == ClickLocation.FLOOR) {
             commit();
         }
@@ -99,11 +116,12 @@ public class FurniEditController
      */
     protected function keyboardHandler (event :KeyboardEvent) :void
     {
-        if (event.type == KeyboardEvent.KEY_DOWN) {
-            _shift = (event.keyCode == Keyboard.SHIFT);
-            // change points here
-        } else {
-            _shift = false;
+        if (event.keyCode == Keyboard.SHIFT) {
+            if (event.type == KeyboardEvent.KEY_DOWN) {
+                _positionAtShift = new Point(_roomView.stage.mouseX, _roomView.stage.mouseY);
+            } else {
+                _positionAtShift = null;
+            }
         }
 
         event.updateAfterEvent();
@@ -123,8 +141,9 @@ public class FurniEditController
     /** Current editing mode, as one of the EDIT_* constant values. */
     protected var _mode :int = EDIT_OFF;
 
-    /** Is the mode modifier applied (e.g. by pressing Shift key)? */
-    protected var _shift :Boolean;
+    /** The last mouse position (in stage coordinates!) before the user hit "shift"
+     *  to switch to vertical positioning. */
+    protected var _positionAtShift :Point;
 
     
 }
