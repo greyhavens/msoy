@@ -100,7 +100,7 @@ public class CatalogServlet extends MsoyServiceServlet
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser(creds);
-        
+
         // locate the appropriate repository
         ItemRepository<ItemRecord, ?, ?, ?> repo =
             MsoyServer.itemMan.getRepository(ident.type);
@@ -151,8 +151,17 @@ public class CatalogServlet extends MsoyServiceServlet
             logUserAction(mrec, UserAction.BOUGHT_ITEM, ident.type + " " +
                           ident.itemId + " " + flowCost + " " + listing.goldCost);
 
-            return listing.item.toItem();
-            
+            final Item item = listing.item.toItem();
+
+            // update their runtime inventory as appropriate
+            MsoyServer.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    MsoyServer.itemMan.itemPurchased(item);
+                }
+            });
+
+            return item;
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Purchase failed [item=" + ident + "].", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
@@ -298,7 +307,7 @@ public class CatalogServlet extends MsoyServiceServlet
                           ident.itemId + " " + refundDesc + " " + flowRefund + " " + goldRefund);
 
             return new int[] { flowRefund, goldRefund };
-            
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Purchase failed [item=" + ident + "].", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);

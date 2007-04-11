@@ -473,14 +473,23 @@ public class ItemManager
             public void handleSuccess () {
                 super.handleSuccess();
                 // add the item to the user's cached inventory
-                updateUserCache(record);
+                updateUserCache(record, null);
             }
         });
     }
 
     /**
-     * Updates the supplied item. The item should have previously been checked for
-     * validity. Success or failure will be communicated to the supplied result listener.
+     * Called when the user has purchased an item from the catalog, updates their runtime inventory
+     * if they are online.
+     */
+    public void itemPurchased (Item item)
+    {
+        updateUserCache(null, item);
+    }
+
+    /**
+     * Updates the supplied item. The item should have previously been checked for validity.
+     * Success or failure will be communicated to the supplied result listener.
      */
     public void updateItem (final Item item, ResultListener<Item> listener)
     {
@@ -503,7 +512,7 @@ public class ItemManager
             public void handleSuccess () {
                 super.handleSuccess();
                 // add the item to the user's cached inventory
-                updateUserCache(record);
+                updateUserCache(record, null);
                 // notify any item update listeners
                 notifyItemUpdated(record);
             }
@@ -618,7 +627,7 @@ public class ItemManager
 
             public void handleSuccess () {
                 super.handleSuccess();
-                updateUserCache(_result);
+                updateUserCache(null, _result);
             }
         });
     }
@@ -652,6 +661,16 @@ public class ItemManager
                 }
                 repo.deleteItem(ident.itemId);
                 return null;
+            }
+            public void handleSuccess () {
+                // remove the item from their inventory
+                MemberObject memObj = MsoyServer.lookupMember(memberId);
+                if (memObj != null) {
+                    if (memObj.inventory.containsKey(ident)) {
+                        memObj.removeFromInventory(ident);
+                    }
+                }
+                super.handleSuccess();
             }
         });
     }
@@ -927,24 +946,6 @@ public class ItemManager
                 user.setResolvingInventory(user.resolvingInventory & ~(1 << type));
             }
         });
-    }
-
-    /**
-     * Called when an item is updated or created and we should ensure that the user's MemberObject
-     * cache of their inventory is up-to-date.
-     */
-    protected void updateUserCache (ItemRecord rec)
-    {
-        updateUserCache(rec, null);
-    }
-
-    /**
-     * Called when an item is updated or created and we should ensure that the user's MemberObject
-     * cache of their inventory is up-to-date.
-     */
-    protected void updateUserCache (Item item)
-    {
-        updateUserCache(null, item);
     }
 
     /**
