@@ -48,10 +48,31 @@ public class TableRenderer extends HBox
         horizontalScrollPolicy = ScrollPolicy.OFF;
     }
 
+    override public function set data (newData :Object) :void
+    {
+        super.data = newData;
+
+        recheckTable();
+    }
+
+    override public function set width (width :Number) :void
+    {
+        super.width = width;
+        if (_seatsGrid != null && _popup) {
+            _seatsGrid.width = width;
+        }
+    }
+
+    /** 
+     * Get the amount of width we could use if we had the room.
+     */
+    public function get maxUsableWidth () :int
+    {
+        return _maxUsableWidth;
+    }
+
     override protected function createChildren () :void
     {
-        super.createChildren();
-
         _game = panel.getGame();
 
         if (_popup) {
@@ -86,27 +107,11 @@ public class TableRenderer extends HBox
         _seatsGrid.styleName = "seatsGrid";
     }
 
-    override public function set data (newData :Object) :void
+    protected function removeChildren () :void
     {
-        super.data = newData;
-
-        recheckTable();
-    }
-
-    override public function set width (width :Number) :void
-    {
-        super.width = width;
-        if (_seatsGrid != null && _popup) {
-            _seatsGrid.width = width;
+        while (numChildren > 0) {
+            removeChild(getChildAt(0));
         }
-    }
-
-    /** 
-     * Get the amount of width we could use if we had the room.
-     */
-    public function get maxUsableWidth () :int
-    {
-        return _maxUsableWidth;
     }
 
     protected function recheckTable () :void
@@ -115,16 +120,15 @@ public class TableRenderer extends HBox
         if (table == null) {
             if (_creationPanel == null) {
                 _creationPanel = new TableCreationPanel(ctx, panel);
-                _seatsGrid.addChild(_creationPanel);
-                panel.createBtn = _creationPanel.getCreateButton();
-            } else if (_creationPanel.parent != _seatsGrid) {
-                _seatsGrid.addChild(_creationPanel);
-            }
+            } 
+            removeChildren();
+            addChild(_creationPanel);
+            panel.createBtn = _creationPanel.getCreateButton();
             return;
-        } else {
-            if (_creationPanel != null && _creationPanel.parent == _seatsGrid) {
-                _seatsGrid.removeChild(_creationPanel);
-            }
+        } else if (getChildAt(0) is TableCreationPanel) {
+            _creationPanel = null;
+            removeChildren();
+            createChildren();
         }
 
         if (!_popup) {
