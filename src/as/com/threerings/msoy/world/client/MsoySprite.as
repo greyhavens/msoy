@@ -515,7 +515,7 @@ public class MsoySprite extends MediaContainer
 
         // update the hotspot
         if (_hotSpot == null) {
-            _hotSpot = new Point(getContentWidth() / 2, getContentHeight());
+            _hotSpot = new Point(_w / 2, _h);
         }
         // we'll want to call locationUpdated() now, but it's done for us
         // as a result of calling updateMediaPosition(), below.
