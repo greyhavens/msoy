@@ -12,7 +12,11 @@ import mx.containers.Grid;
 import mx.containers.GridItem;
 import mx.containers.GridRow;
 import mx.containers.BoxDirection;
+
 import mx.controls.Label;
+import mx.controls.scrollClasses.ScrollBar;
+
+import mx.core.ScrollPolicy;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.item.client.ItemRenderer;
@@ -31,14 +35,17 @@ public class AvatarSelectionDialog extends FloatingPanel
     implements AttributeChangeListener
 {
     /** How many avatars per grid row? */
-    public static const ITEMS_PER_ROW :Number = 5;
+    public static const ITEMS_PER_ROW :Number = 4;
 
     /** How many rows should we have on screen at a time? */
-    public static const MAX_ROWS :Number = 3; 
+    public static const MAX_ROWS :Number = 2; 
     
     public function AvatarSelectionDialog (ctx :WorldContext)
     {
         super(ctx, Msgs.GENERAL.get("t.avatar_select"));
+
+        horizontalScrollPolicy = ScrollPolicy.OFF;
+        verticalScrollPolicy = ScrollPolicy.OFF;
 
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
         addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
@@ -49,8 +56,7 @@ public class AvatarSelectionDialog extends FloatingPanel
     public function attributeChanged (evt :AttributeChangedEvent) :void
     {
         if (evt.getName() == MemberObject.LOADED_INVENTORY &&
-            _memberObj.isInventoryLoaded(Item.AVATAR))
-        {
+                _memberObj.isInventoryLoaded(Item.AVATAR)) {
             fillWithAvatars();
             unwatchPlayer();
         }
@@ -103,12 +109,19 @@ public class AvatarSelectionDialog extends FloatingPanel
         
         // Initializes a grid 
         _avatars = new Grid();
-        _avatars.percentWidth = 100;
-        _avatars.maxHeight = ItemRenderer.ITEM_SIZE * MAX_ROWS;
+
+        // fix the size so that it doesn't look bad when it gets expanded after popup
+        var visibleWidth :Number = ItemRenderer.ITEM_SIZE * ITEMS_PER_ROW + ScrollBar.THICKNESS;
+        var visibleHeight :Number = ItemRenderer.ITEM_SIZE * MAX_ROWS + ScrollBar.THICKNESS;
+        _avatars.minWidth = visibleWidth;
+        _avatars.minHeight = visibleHeight;
+        _avatars.maxWidth = visibleWidth;
+        _avatars.maxHeight = visibleHeight;
+
         addChild(_avatars);
 
         if (inventoryReady()) {
-            fillWithAvatars (); 
+            fillWithAvatars(); 
         } else {
             // Add a single "loading..." label
             var row :GridRow = new GridRow();
@@ -160,7 +173,7 @@ public class AvatarSelectionDialog extends FloatingPanel
                 var render :ItemRenderer = new ItemRenderer(BoxDirection.VERTICAL);
                 render.data = items[i];
                 cell.addChild(render);
-                cell.addEventListener (MouseEvent.CLICK, clickHandler, false, 0, true);
+                cell.addEventListener(MouseEvent.CLICK, clickHandler, false, 0, true);
                 row.addChild(cell);
 
                 // Should this item be marked as selected?
