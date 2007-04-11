@@ -510,9 +510,10 @@ ListBase
 }
 
 .lobbyTableList {
-  borderThickness: 1px;
+  borderThickness: 2px;
   borderStyle: "solid";
   borderColor: #E0E7EE;
+  borderSides: "top";
   paddingTop: 0;
   paddingBottom: 0;
   paddingLeft: 0;
@@ -564,8 +565,8 @@ ListBase
 }
 
 .floatingTableDisplay {
-  paddingTop: 6px;
-  paddingBottom: 4px;
+  paddingTop: 0px;
+  paddingBottom: 0px;
   paddingLeft: 6px;
   paddingRight: 6px;
   borderThicknessLeft: 4px;
@@ -578,7 +579,8 @@ ListBase
 }
 
 .backToLobbyBtnBox {
-  paddingTop: 4px;
+  paddingTop: 7px;
+  paddingRight: 5px;
   verticalAlign: top;
 }
 
@@ -604,9 +606,10 @@ ListBase
 }
 
 .listTableRenderer {
-  borderThickness: 1;
+  borderThickness: 2;
   borderStyle: "solid";
   borderColor: #E0E7EE;
+  borderSides: "left right bottom";
 }
 
 .seatRenderer {
@@ -614,6 +617,10 @@ ListBase
   borderThickness: 0;
   borderStyle: "none";
   horizontalGap: 2;
+  paddingTop: 5px;
+  paddingLeft: 2px;
+  paddingRight: 2px;
+  paddingBottom: 5px;
 }
 
 .nameLabel, .lobbyLabel {

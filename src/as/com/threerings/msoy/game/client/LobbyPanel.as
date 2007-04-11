@@ -127,8 +127,7 @@ public class LobbyPanel extends VBox
     // from TableObserver
     public function tableAdded (table :Table) :void
     {
-        if (_runningTables != null && table.playerCount == 1 && 
-            getGame().getGameDefinition().gameType == GameConfig.SEATED_GAME) {
+        if (_runningTables != null && table.occupants.length == 1) {
             _runningTables.addItem(table);
         } else {
             _formingTables.addItem(table);

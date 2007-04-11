@@ -98,7 +98,7 @@ public class TableRenderer extends HBox
     {
         super.width = width;
         if (_seatsGrid != null) {
-            _seatsGrid.width = width;
+            _seatsGrid.width = width - (_popup ? 0 : CONFIG_WIDTH + PADDING_WIDTH);
         }
     }
 
@@ -217,7 +217,7 @@ public class TableRenderer extends HBox
 
         _seatsGrid.validateNow();
         _maxUsableWidth = (_seatsGrid.measuredMinWidth + HORZ_GAP) * _seatsGrid.numChildren +
-            /* the mystery pixels strike again :/ */ 10;
+            /* the mystery pixels strike again :/ */ 15;
     }
 
     /**
