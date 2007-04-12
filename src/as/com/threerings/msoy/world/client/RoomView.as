@@ -617,7 +617,7 @@ public class RoomView extends AbstractRoomView
         if (actor == null) {
             actor = _ctx.getMediaDirector().getActor(occInfo);
             _actors.put(bodyOid, actor);
-            addChild(actor);
+            addChildAt(actor, 1);
             actor.setEntering(loc);
 
             // if we ever add ourselves, we follow it

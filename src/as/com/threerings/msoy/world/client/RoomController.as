@@ -604,21 +604,25 @@ public class RoomController extends SceneController
                 if (cloc.click == ClickLocation.FLOOR && _mctx.worldProps.userControlsAvatar) {
                     // project the click location back into screen coords
                     var p :Point = _roomView.getProjectedPoint(cloc.loc);
-                    _walkTarget.x = p.x - _walkTarget.width/2;
-                    _walkTarget.y = p.y - _walkTarget.height/2;
+                    _walkTarget.x = p.x;
+                    _walkTarget.y = p.y;
                     _walkTarget.scaleX = 1 / _roomView.scaleX;
                     _walkTarget.scaleY = 1 / _roomView.scaleY;
+                    _walkTarget.setZ(cloc.loc.z);
                     showWalkTarget = true;
+                    _roomView.adjustZOrder(_walkTarget);
 
                     if (cloc.loc.y != 0) {
                         // show the shadow
                         cloc.loc.y = 0;
                         var p2 :Point = _roomView.getProjectedPoint(cloc.loc);
                         if (p.x != p2.x || p.y != p2.y) {
-                            _walkShadow.x = p2.x - _walkShadow.width/2;
-                            _walkShadow.y = p2.y - _walkShadow.height/2;
+                            _walkShadow.x = p2.x;
+                            _walkShadow.y = p2.y;
                             _walkShadow.scaleX = 1 / _roomView.scaleX;
                             _walkShadow.scaleY = 1 / _roomView.scaleY;
+                            _walkShadow.setZ(cloc.loc.z);
+                            _roomView.adjustZOrder(_walkShadow);
                             showWalkShadow = true;
                         }
                     }
@@ -974,13 +978,10 @@ public class RoomController extends SceneController
     /** The current scene we're viewing. */
     protected var _scene :MsoyScene;
 
-    [Embed(source="../../../../../../../rsrc/media/walkable.swf")]
-    protected static const WALKTARGET :Class;
-
     /** The "cursor" used to display that a location is walkable. */
-    protected var _walkTarget :DisplayObject = (new WALKTARGET() as DisplayObject);
+    protected var _walkTarget :WalkTarget = new WalkTarget();
 
-    protected var _walkShadow :DisplayObject = (new WALKTARGET() as DisplayObject);
+    protected var _walkShadow :WalkTarget = new WalkTarget(true);
 
     /** Are we editing the current scene? */
     protected var _editor :EditorController; 
@@ -993,3 +994,39 @@ public class RoomController extends SceneController
 }
 }
 
+import flash.display.DisplayObject;
+import flash.display.Sprite;
+
+import com.threerings.msoy.world.client.ZOrderable;
+
+class WalkTarget extends Sprite
+    implements ZOrderable
+{
+    public function WalkTarget (shadow :Boolean = false)
+    {
+        if (shadow) {
+            alpha = .5;
+        }
+
+        var targ :DisplayObject = (new WALKTARGET() as DisplayObject);
+        targ.x = -targ.width/2;
+        targ.y = -targ.height/2;
+        addChild(targ);
+    }
+
+    public function setZ (z :Number) :void
+    {
+        _z = z;
+    }
+
+    // from ZOrderable
+    public function getZ () :Number
+    {
+        return _z;
+    }
+
+    protected var _z :Number;
+
+    [Embed(source="../../../../../../../rsrc/media/walkable.swf")]
+    protected static const WALKTARGET :Class;
+}

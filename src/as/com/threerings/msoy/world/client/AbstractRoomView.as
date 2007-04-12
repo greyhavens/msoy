@@ -100,12 +100,11 @@ public class AbstractRoomView extends Sprite
     public function locationUpdated (sprite :MsoySprite) :void
     {
         // first update the position and scale
-        var loc :MsoyLocation = sprite.loc;
-        positionAndScale(sprite, loc);
+        positionAndScale(sprite);
 
         // then, possibly move the child up or down, depending on z order
         if (sprite.isIncludedInLayout()) {
-            adjustZOrder(sprite, loc);
+            adjustZOrder(sprite);
         }
     }
 
@@ -317,7 +316,7 @@ public class AbstractRoomView extends Sprite
     public function addOtherSprite (sprite :MsoySprite) :void
     {
         _otherSprites.push(sprite);
-        addChild(sprite);
+        addChildAt(sprite, 1);
         sprite.setLocation(sprite.loc);
     }
 
@@ -342,8 +341,7 @@ public class AbstractRoomView extends Sprite
         }
         if (decordata != null) {
             _bg = _ctx.getMediaDirector().getDecor(decordata);
-            addChild(_bg);
-            setChildIndex(_bg, 0);
+            addChildAt(_bg, 0);
             _bg.setLocation(new MsoyLocation(.5, 0, 0)); // center, up front
             _bg.setEditing(_editing);
         }
@@ -522,9 +520,9 @@ public class AbstractRoomView extends Sprite
      * Calculate the scale and x/y position of the specified media according to its logical
      * coordinates.
      */
-    protected function positionAndScale (sprite :MsoySprite, loc :MsoyLocation) :void
+    protected function positionAndScale (sprite :MsoySprite) :void
     {
-        var info :Array = _metrics.getProjectedInfo(loc);
+        var info :Array = _metrics.getProjectedInfo(sprite.loc);
 
         var x :Number = Number(info[0]);
         var y :Number = Number(info[1]);
@@ -561,21 +559,24 @@ public class AbstractRoomView extends Sprite
      * Adjust the z order of the specified sprite so that it is drawn according to its logical Z
      * coordinate relative to other sprites.
      */
-    protected function adjustZOrder (sprite :MsoySprite, loc :MsoyLocation) :void
+    public function adjustZOrder (sprite :DisplayObject) :void
     {
-        if (!contains(sprite)) {
+        var dex :int;
+        try {
+            dex = getChildIndex(sprite);
+        } catch (er :Error) {
             // this can happen if we're resized during editing as we
             // try to reposition a sprite that's still in our data structures
             // but that has been removed as a child.
             return;
         }
 
-        var dex :int = getChildIndex(sprite);
         var newdex :int = dex;
+        var ourZ :Number = getZOfChildAt(dex);
         var z :Number;
         while (newdex > 0) {
             z = getZOfChildAt(newdex - 1);
-            if (isNaN(z) || z >= loc.z) {
+            if (isNaN(z) || z >= ourZ) {
                 break;
             }
             newdex--;
@@ -583,7 +584,8 @@ public class AbstractRoomView extends Sprite
 
         if (newdex == dex) {
             while (newdex < numChildren - 1) {
-                if (getZOfChildAt(newdex + 1) <= loc.z) {
+                z = getZOfChildAt(newdex + 1);
+                if (isNaN(z) || z <= ourZ) {
                     break;
                 }
                 newdex++;
@@ -603,12 +605,16 @@ public class AbstractRoomView extends Sprite
         var disp :DisplayObject = getChildAt(index);
         if (disp is MsoySprite) {
             var spr :MsoySprite = (disp as MsoySprite);
-            if (!spr.isIncludedInLayout()) {
-                return NaN;
+            if (spr.isIncludedInLayout()) {
+                return spr.loc.z;
             }
-            return spr.loc.z;
+
+        } else if (disp is ZOrderable) {
+            return (disp as ZOrderable).getZ();
         }
-        return Number.MAX_VALUE;
+
+        // if all else fails..
+        return NaN;
     }
 
     /**
@@ -636,7 +642,7 @@ public class AbstractRoomView extends Sprite
     protected function addFurni (furni :FurniData) :FurniSprite
     {
         var sprite :FurniSprite = _ctx.getMediaDirector().getFurni(furni);
-        addChild(sprite);
+        addChildAt(sprite, 1);
         sprite.setLocation(furni.loc);
         _furni.put(furni.id, sprite);
         return sprite;
