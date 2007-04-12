@@ -135,6 +135,9 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
         _tableDir.leaveTable(tableId);
         if (!_panelIsVisible) {
             shutdown();
+            // in case shutdown happens before the leave table event is propagated, we need to make
+            // sure the panel hears about it
+            _panel.seatednessDidChange(false);
         } 
     }
 

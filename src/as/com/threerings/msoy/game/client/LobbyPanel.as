@@ -5,6 +5,7 @@ package com.threerings.msoy.game.client {
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
+import flash.display.Sprite;
 
 import flash.events.MouseEvent;
 import flash.events.TextEvent;
@@ -46,9 +47,12 @@ import com.threerings.msoy.chat.client.ChatContainer;
 
 import com.threerings.msoy.ui.MsoyList;
 import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.item.web.Game;
+
+import com.threerings.msoy.world.client.RoomView;
 
 /**
  * A panel that displays pending table games.
@@ -111,6 +115,8 @@ public class LobbyPanel extends VBox
 
         _logo.addChild(new MediaWrapper(new MediaContainer(getGame().getThumbnailPath())));
         _info.text = game.description;
+        _gameAvatarIcon = new ScalingMediaContainer(30, 30);
+        _gameAvatarIcon.setMedia(getGame().getThumbnailPath());
 
         _tablesBox.removeAllChildren();
         createTablesDisplay();
@@ -181,10 +187,16 @@ public class LobbyPanel extends VBox
     // from SeatednessObserver
     public function seatednessDidChange (isSeated :Boolean) :void
     {
+        Log.getLog(this).debug("isSeated:" + isSeated);
         _isSeated = isSeated;
         createBtn.enabled = !isSeated;
         if (_isSeated) {
+            (_ctx.getTopPanel().getPlaceView() as RoomView).getMyAvatar().   
+                addDecoration(_gameAvatarIcon);
             CommandEvent.dispatch(this, LobbyController.LEAVE_LOBBY);
+        } else {
+            (_ctx.getTopPanel().getPlaceView() as RoomView).getMyAvatar().
+                removeDecoration(_gameAvatarIcon);
         }
     }
 
@@ -375,5 +387,7 @@ public class LobbyPanel extends VBox
     protected var _about :Label;
     protected var _buy :Label;
     protected var _tablesBox :VBox;
+
+    protected var _gameAvatarIcon :ScalingMediaContainer;
 }
 }
