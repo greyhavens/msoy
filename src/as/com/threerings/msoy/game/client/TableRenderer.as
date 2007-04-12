@@ -138,12 +138,13 @@ public class TableRenderer extends HBox
         if (table.occupants != null) {
             updateSeats(table);
         }
-
         updateButtons(table);
+
         if (!_popup) {
             updateConfig(table);
             // mx.containers.Tile seems to have trouble always understanding its dimensions 
             // correctly when its in a list
+            validateNow();
             _seatsGrid.width = width - CONFIG_WIDTH - PADDING_WIDTH - 10; 
         }
     }

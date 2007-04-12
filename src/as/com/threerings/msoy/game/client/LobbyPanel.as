@@ -79,10 +79,6 @@ public class LobbyPanel extends VBox
     public function init (lobbyObj :LobbyObject) :void
     {
         _lobbyObj = lobbyObj;
-        // add all preexisting tables
-        for each (var table :Table in _lobbyObj.tables.toArray()) {
-            tableAdded(table);
-        }
 
         // fill in the UI bits
         var game :Game = getGame();
@@ -114,6 +110,10 @@ public class LobbyPanel extends VBox
 
         _tablesBox.removeAllChildren();
         createTablesDisplay();
+        // add all preexisting tables
+        for each (var table :Table in _lobbyObj.tables.toArray()) {
+            tableAdded(table);
+        }
     }
 
     /**
@@ -284,6 +284,7 @@ public class LobbyPanel extends VBox
         var factory :ClassFactory = new ClassFactory(TableRenderer);
         factory.properties = { ctx: _ctx, panel: this };
         list.itemRenderer = factory;
+        _formingTables = new ArrayCollection();
         list.dataProvider = _formingTables;
 
         // only display tabs for seated games
@@ -329,6 +330,7 @@ public class LobbyPanel extends VBox
             var runningFactory :ClassFactory = new ClassFactory(TableRenderer);
             runningFactory.properties = { ctx: _ctx, panel: this };
             runningList.itemRenderer = runningFactory;
+            _runningTables = new ArrayCollection();
             runningList.dataProvider = _runningTables;
             var runningBox :VBox = new VBox();
             runningBox.percentHeight = 100;
@@ -363,10 +365,10 @@ public class LobbyPanel extends VBox
     protected var _isSeated :Boolean;
 
     /** The currently forming tables. */
-    protected var _formingTables :ArrayCollection = new ArrayCollection();
+    protected var _formingTables :ArrayCollection;
 
     /** The currently running tables. */
-    protected var _runningTables :ArrayCollection = new ArrayCollection();
+    protected var _runningTables :ArrayCollection;
 
     // various UI bits that need filling in with data arrives
     protected var _logo :VBox;
