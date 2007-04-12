@@ -38,8 +38,8 @@ public class RoomLayout {
     {
         var metrics :RoomMetrics = view.getRoomMetrics();
         
-        var scale :Number = metrics.minScale +
-            ((MAX_COORD - z) / MAX_COORD) * (MAX_SCALE - metrics.minScale);
+        var scale :Number = metrics.farScale +
+            ((MAX_COORD - z) / MAX_COORD) * (MAX_SCALE - metrics.farScale);
         var sheight :Number = metrics.sceneHeight * scale;
         return (pixels / sheight);
     }
@@ -82,18 +82,18 @@ public class RoomLayout {
         // do some partitioning depending on where the y lies
         if (y < metrics.backWallTop) {
             clickWall = ClickLocation.CEILING;
-            scale = metrics.minScale +
-                (metrics.backWallTop - y) / metrics.backWallTop * (MAX_SCALE - metrics.minScale);
+            scale = metrics.farScale +
+                (metrics.backWallTop - y) / metrics.backWallTop * (MAX_SCALE - metrics.farScale);
 
         } else if (y < metrics.backWallBottom) {
             clickWall = ClickLocation.BACK_WALL;
-            scale = metrics.minScale;
+            scale = metrics.farScale;
 
         } else {
             clickWall = ClickLocation.FLOOR;
-            scale = metrics.minScale +
+            scale = metrics.farScale +
                 (y - metrics.backWallBottom) / (metrics.sceneHeight - metrics.backWallBottom) *
-                (MAX_SCALE - metrics.minScale);
+                (MAX_SCALE - metrics.farScale);
         }
 
         // see how wide the floor is at that scale
@@ -111,19 +111,19 @@ public class RoomLayout {
             }
 
             // recalculate floorWidth at the minimum scale
-            if (scale != metrics.minScale) {
-                floorWidth = (metrics.sceneWidth * metrics.minScale);
+            if (scale != metrics.farScale) {
+                floorWidth = (metrics.sceneWidth * metrics.farScale);
                 floorInset = (metrics.sceneWidth - floorWidth) / 2;
             }
 
             switch (clickWall) {
             case ClickLocation.LEFT_WALL:
-                scale = metrics.minScale + (x / floorInset) * (MAX_SCALE - metrics.minScale);
+                scale = metrics.farScale + (x / floorInset) * (MAX_SCALE - metrics.farScale);
                 break;
 
             case ClickLocation.RIGHT_WALL:
-                scale = metrics.minScale +
-                    ((metrics.sceneWidth - x) / floorInset) * (MAX_SCALE - metrics.minScale);
+                scale = metrics.farScale +
+                    ((metrics.sceneWidth - x) / floorInset) * (MAX_SCALE - metrics.farScale);
                 break;
 
             default:
@@ -134,7 +134,7 @@ public class RoomLayout {
             var wallHeight :Number = (metrics.sceneHeight * scale);
             var wallInset :Number = (metrics.sceneHeight - wallHeight) / 2;
             yy = MAX_COORD * (1 - ((y - wallInset) / wallHeight));
-            zz = MAX_COORD * ((scale - metrics.minScale) / (MAX_SCALE - metrics.minScale));
+            zz = MAX_COORD * ((scale - metrics.farScale) / (MAX_SCALE - metrics.farScale));
 
         } else {
             // normal case: the x coordinate is within the floor width
@@ -155,7 +155,7 @@ public class RoomLayout {
                 } else {
                     yy = 0;
                 }
-                zz = MAX_COORD * (1 - ((scale - metrics.minScale) / metrics.scaleRange));
+                zz = MAX_COORD * (1 - ((scale - metrics.farScale) / metrics.scaleRange));
                 break;
 
             case ClickLocation.BACK_WALL:

@@ -20,10 +20,10 @@ public class RoomMetrics
     public var sceneDepth :int;
 
     /** The scale of media items at z = 1.0 (far wall). */
-    public var minScale :Number;
+    public var farScale :Number;
 
     /** The scale of media items at z = 0.0 (near wall). */
-    public const maxScale :Number = 1.0;
+    public const nearScale :Number = 1.0;
 
     /** Difference between the scale of nearest and farthest objects. */
     public var scaleRange :Number;
@@ -55,9 +55,9 @@ public class RoomMetrics
         var horizon :Number = 1 - data.horizon;
 
         // I'm using 'this' to make clear which assignments are for public props
-        this.minScale = (sceneDepth == 0) ? 0 : (FOCAL / (FOCAL + sceneDepth));
-        this.scaleRange = maxScale - minScale;
-        this.backWallHeight = sceneHeight * minScale;
+        this.farScale = (sceneDepth == 0) ? 0 : (FOCAL / (FOCAL + sceneDepth));
+        this.scaleRange = nearScale - farScale;
+        this.backWallHeight = sceneHeight * farScale;
 
         this.horizonY = sceneHeight * horizon;
         this.backWallTop = horizonY - (backWallHeight * horizon);
@@ -87,8 +87,8 @@ public class RoomMetrics
      */
     public function roomToScreenScale (z :Number) :Number
     {
-        // z goes from 0 at near wall to 1 at far wall, so we interpolate between those two.
-        return z * minScale + (1 - z) * maxScale;
+        // z goes from 1 at far wall to 0 at near wall, so we interpolate between those two.
+        return z * farScale + (1 - z) * nearScale;
     }
 
     /** The focal length of our perspective rendering. */
