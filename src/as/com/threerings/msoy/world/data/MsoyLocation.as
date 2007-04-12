@@ -9,6 +9,7 @@ import com.threerings.util.Equalable;
 import com.threerings.whirled.spot.data.Location;
 
 /**
+ * Body location and orientation (left hand coordinates, with origin at left, bottom, near walls).
  * This class is equivalent to its Java class except that the Java superclass
  * has been incorporated.
  */
@@ -18,10 +19,10 @@ public class MsoyLocation
     /** The body's x position (interpreted by the display system). */
     public var x :Number;
 
-    /** The body's x position (interpreted by the display system). */
+    /** The body's y position (interpreted by the display system). */
     public var y :Number;
 
-    /** The body's x position (interpreted by the display system). */
+    /** The body's z position (interpreted by the display system). */
     public var z :Number;
 
     /** The body's orientation (interpreted by the display system). */

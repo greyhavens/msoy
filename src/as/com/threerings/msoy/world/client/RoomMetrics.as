@@ -10,19 +10,22 @@ import com.threerings.msoy.world.data.MsoyLocation;
  */
 public class RoomMetrics
 {
+    /** Scene width, in pixels. */
     public var sceneWidth :int
 
+    /** Scene height, in pixels. */
     public var sceneHeight :int;
 
+    /** Scene depth, in "pixels" (where 0 means 'infinite'). */
     public var sceneDepth :int;
 
-    /**
-     * The scale of media items at z=1.0.
-     */
+    /** The scale of media items at z = 1.0 (far wall). */
     public var minScale :Number;
 
+    /** The scale of media items at z = 0.0 (near wall). */
     public const maxScale :Number = 1.0;
 
+    /** Difference between the scale of nearest and farthest objects. */
     public var scaleRange :Number;
 
     /**
@@ -41,6 +44,9 @@ public class RoomMetrics
 
     public var subHorizonHeight :Number;
 
+    /** Camera location, in room coordinates. It always points along the positive Z axis. */
+    public var camera :MsoyLocation;
+
     public function update (data :DecorData) :void
     {
         this.sceneDepth = data.depth;
@@ -58,14 +64,17 @@ public class RoomMetrics
         this.backWallBottom = backWallTop + backWallHeight;
 
         this.subHorizonHeight = sceneHeight - horizonY;
+
+        this.camera = new MsoyLocation (0.5, 0.5, - FOCAL / sceneDepth, 0);
     }
 
+    /**
+     * Returns a point in screen coordinates corresponding to <x, y, z> point in room coordinates.
+     */
     // TODO: Clean this up with the new formula
-    // Make nearly everything use this, or a version that returns
-    // point & scale
-    public function getProjectedPoint (x :Number, y :Number, z :Number) :Point
+    public function roomToScreen (x :Number, y :Number, z :Number) :Point
     {
-        var scale :Number = minScale + (1 - z) * scaleRange;
+        var scale :Number = roomToScreenScale(z);
         var floorWidth :Number = (sceneWidth * scale);
         var floorInset :Number = (sceneWidth - floorWidth) / 2;
         return new Point(floorInset + (x * floorWidth),
@@ -73,19 +82,13 @@ public class RoomMetrics
     }
 
     /**
-     * Return an array containing [ screenX, screenY, scale ].
+     * Given z position in room coordinates, it returns a scaling factor for
+     * how much a media item needs to be scaled to look correct at that distance.
      */
-    // TODO: new formula
-    public function getProjectedInfo (loc :MsoyLocation) :Array
+    public function roomToScreenScale (z :Number) :Number
     {
-        var scale :Number = minScale + (1 - loc.z) * scaleRange;
-        var floorWidth :Number = (sceneWidth * scale);
-        var floorInset :Number = (sceneWidth - floorWidth) / 2;
-        return [
-            floorInset + (loc.x * floorWidth),
-            horizonY + (subHorizonHeight - (loc.y * sceneHeight)) * scale,
-            scale
-        ];
+        // z goes from 0 at near wall to 1 at far wall, so we interpolate between those two.
+        return z * minScale + (1 - z) * maxScale;
     }
 
     /** The focal length of our perspective rendering. */

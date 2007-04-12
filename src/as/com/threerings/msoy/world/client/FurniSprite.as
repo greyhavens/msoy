@@ -154,6 +154,10 @@ public class FurniSprite extends MsoySprite
 
     protected function checkPerspective () :void 
     {
+        // PERSPECTIVIZATION DISABLED DURING ROOM LAYOUT REVAMP (ROBERT)
+        return; // <- will abort any perspective updates
+
+        
         if (_media == null) {
             return;
         }
@@ -181,12 +185,16 @@ public class FurniSprite extends MsoySprite
 //            }
 
             newMedia = new Perspectivizer(m);
+            
+            // PERSPECTIVIZATION DISABLED DURING ROOM LAYOUT REVAMP (ROBERT)
 
+            /*
             if (parent is AbstractRoomView) {
                 Perspectivizer(newMedia).updatePerspInfo(
-                    AbstractRoomView(parent).getPerspInfo(this, _w, _h, loc),
+                    RoomLayout.getPerspInfo(AbstractRoomView(parent), this, _w, _h, loc),
                     getMediaScaleX(), getMediaScaleY());
             }
+            */
         }
 
         _media = newMedia;
@@ -222,11 +230,15 @@ public class FurniSprite extends MsoySprite
             return;
         }
 
+        // PERSPECTIVIZATION DISABLED DURING ROOM LAYOUT REVAMP (ROBERT)
+        
+        /*
         var info :PerspInfo =
-            AbstractRoomView(parent).getPerspInfo(this, _w, _h, loc);
+            RoomLayout.getPerspInfo(AbstractRoomView(parent), this, _w, _h, loc);
         Perspectivizer(_media).updatePerspInfo(
             info, getMediaScaleX(), getMediaScaleY());
-
+        */
+            
 //        if (true) {
 //            // draw the hotspot
 //            graphics.clear();

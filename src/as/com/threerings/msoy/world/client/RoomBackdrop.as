@@ -54,15 +54,15 @@ public class RoomBackdrop
         // variable names: [l/r][l/u][f/b] - left/right, lower/upper, front/back
         // Note: you can verify that a line connects two corners along an edge
         // by checking that the two endpoints differ in only one letter.
-        var llf :Point = _metrics.getProjectedPoint(0, 0, 0);
-        var llb :Point = _metrics.getProjectedPoint(0, 0, 1);
-        var luf :Point = _metrics.getProjectedPoint(0, 1, 0);
-        var lub :Point = _metrics.getProjectedPoint(0, 1, 1);
+        var llf :Point = _metrics.roomToScreen(0, 0, 0);
+        var llb :Point = _metrics.roomToScreen(0, 0, 1);
+        var luf :Point = _metrics.roomToScreen(0, 1, 0);
+        var lub :Point = _metrics.roomToScreen(0, 1, 1);
 
-        var rlf :Point = _metrics.getProjectedPoint(1, 0, 0);
-        var rlb :Point = _metrics.getProjectedPoint(1, 0, 1);
-        var ruf :Point = _metrics.getProjectedPoint(1, 1, 0);
-        var rub :Point = _metrics.getProjectedPoint(1, 1, 1);
+        var rlf :Point = _metrics.roomToScreen(1, 0, 0);
+        var rlb :Point = _metrics.roomToScreen(1, 0, 1);
+        var ruf :Point = _metrics.roomToScreen(1, 1, 0);
+        var rub :Point = _metrics.roomToScreen(1, 1, 1);
 
         if (drawWalls) {
             // fill in the floor

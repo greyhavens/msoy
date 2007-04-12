@@ -91,7 +91,8 @@ public class FurniEditController
     protected function handleMouseMoveInPositionMode (event :MouseEvent) :void
     {
         var cloc :ClickLocation =
-            _roomView.pointToLocation(event.stageX, event.stageY, _positionAtShift);
+            RoomLayout.pointToLocation(
+                _roomView, event.stageX, event.stageY, _positionAtShift);
         
         if (cloc.click == ClickLocation.FLOOR) {
             _furni.setLocation(cloc.loc);            
@@ -104,7 +105,8 @@ public class FurniEditController
     protected function handleMouseClickInPositionMode (event :MouseEvent) :void
     {
         var cloc :ClickLocation =
-            _roomView.pointToLocation(event.stageX, event.stageY, _positionAtShift);
+            RoomLayout.pointToLocation(
+                _roomView, event.stageX, event.stageY, _positionAtShift);
         
         if (cloc.click == ClickLocation.FLOOR) {
             commit();

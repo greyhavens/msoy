@@ -46,11 +46,6 @@ import com.threerings.msoy.world.data.RoomObject;
 public class AbstractRoomView extends Sprite
     implements MsoyPlaceView
 {
-    public static const FLOOR :int = 0;
-    public static const BACK_WALL :int = 1;
-    public static const CEILING :int = 2;
-    public static const LEFT_WALL :int = 3;
-    public static const RIGHT_WALL :int = 4;
 
     public function AbstractRoomView (ctx :WorldContext)
     {
@@ -100,12 +95,12 @@ public class AbstractRoomView extends Sprite
     public function locationUpdated (sprite :MsoySprite) :void
     {
         // first update the position and scale
-        positionAndScale(sprite);
+        RoomLayout.positionAndScale(this, sprite);
+        if (sprite == _bg && _scene.getSceneType() == Decor.FIXED_IMAGE) {
+            sprite.x += getScrollOffset();
+        }        
 
         // then, possibly move the child up or down, depending on z order
-        if (sprite.isIncludedInLayout()) {
-            adjustZOrder(sprite);
-        }
     }
 
     /**
@@ -127,142 +122,15 @@ public class AbstractRoomView extends Sprite
         }
     }
 
-    /**
-     * Turn a MsoyLocation into a screen point.
+    /*
+     * Get room metrics for this room.
+     * FIXME ROBERT: added to support RoomLayout.
      */
-    public function getProjectedPoint (loc :MsoyLocation) :Point
+    public function getRoomMetrics () :RoomMetrics
     {
-        return _metrics.getProjectedPoint(loc.x, loc.y, loc.z);
+        return _metrics;
     }
-
-    /**
-     * Turn the screen coordinate into a MsoyLocation, with the orient field set to 0.
-     * @param shiftPoint (optional) another global coordinate at which shift
-     *                   was held down, to offset the y coordinate of the result.
-     *
-     * @return a ClickLocation object.
-     */
-    public function pointToLocation (globalX :Number, globalY :Number, shiftPoint :Point = null, yOffset :Number = 0) :ClickLocation
-    {
-        var p :Point;
-        var shiftOffset :Number = 0;
-        if (shiftPoint == null) {
-            p = new Point(globalX, globalY);
-
-        } else {
-            shiftOffset = shiftPoint.y - globalY;
-            p = shiftPoint;
-        }
-
-        p = globalToLocal(p);
-        var x :Number = p.x;
-        var y :Number = p.y;
-
-        var floorWidth :Number, floorInset :Number;
-        var xx :Number, yy :Number, zz :Number;
-        var scale :Number;
-        var clickWall :int;
-
-        // do some partitioning depending on where the y lies
-        if (y < _metrics.backWallTop) {
-            clickWall = ClickLocation.CEILING;
-            scale = _metrics.minScale + (_metrics.backWallTop - y) / _metrics.backWallTop * (MAX_SCALE - _metrics.minScale);
-
-        } else if (y < _metrics.backWallBottom) {
-            clickWall = ClickLocation.BACK_WALL;
-            scale = _metrics.minScale;
-
-        } else {
-            clickWall = ClickLocation.FLOOR;
-            scale = _metrics.minScale + (y - _metrics.backWallBottom) / (_metrics.sceneHeight - _metrics.backWallBottom) *
-                (MAX_SCALE - _metrics.minScale);
-        }
-
-        // see how wide the floor is at that scale
-        floorWidth = (_metrics.sceneWidth * scale);
-        floorInset = (_metrics.sceneWidth - floorWidth) / 2;
-
-        if (x < floorInset || x - floorInset > floorWidth) {
-            if (x < floorInset) {
-                clickWall = ClickLocation.LEFT_WALL;
-                xx = 0;
-
-            } else {
-                clickWall = ClickLocation.RIGHT_WALL;
-                xx = MAX_COORD;
-            }
-
-            // recalculate floorWidth at the minimum scale
-            if (scale != _metrics.minScale) {
-                floorWidth = (_metrics.sceneWidth * _metrics.minScale);
-                floorInset = (_metrics.sceneWidth - floorWidth) / 2;
-            }
-
-            switch (clickWall) {
-            case ClickLocation.LEFT_WALL:
-                scale = _metrics.minScale + (x / floorInset) * (MAX_SCALE - _metrics.minScale);
-                break;
-
-            case ClickLocation.RIGHT_WALL:
-                scale = _metrics.minScale + ((_metrics.sceneWidth - x) / floorInset) * (MAX_SCALE - _metrics.minScale);
-                break;
-
-            default:
-                throw new Error(clickWall);
-            }
-
-            // TODO: factor in horizon here
-            var wallHeight :Number = (_metrics.sceneHeight * scale);
-            var wallInset :Number = (_metrics.sceneHeight - wallHeight) / 2;
-            yy = MAX_COORD * (1 - ((y - wallInset) / wallHeight));
-            zz = MAX_COORD * ((scale - _metrics.minScale) / (MAX_SCALE - _metrics.minScale));
-
-        } else {
-            // normal case: the x coordinate is within the floor width
-            // at that scale, so we're definitely not clicking on a side wall
-            xx = ((x - floorInset) / floorWidth) * MAX_COORD;
-
-            switch (clickWall) {
-            case ClickLocation.CEILING:
-            case ClickLocation.FLOOR:
-                yy = (clickWall == ClickLocation.CEILING) ? MAX_COORD : 0;
-                // if on the floor, we want take into account the yOffset
-                if (clickWall == ClickLocation.FLOOR) {
-                    yy = (yOffset / _metrics.sceneHeight) +
-                        (shiftOffset / (scale * _metrics.sceneHeight * scaleY));
-                    if (yy < 0 || yy > MAX_COORD) {
-                        yy = Math.min(MAX_COORD, Math.max(0, yy));
-                    }
-                } else {
-                    yy = 0;
-                }
-                zz = MAX_COORD * (1 - ((scale - _metrics.minScale) / _metrics.scaleRange));
-                break;
-
-            case ClickLocation.BACK_WALL:
-                // y is simply how high they clicked on the wall
-                yy = (_metrics.backWallBottom - y) / _metrics.backWallHeight;
-                zz = 1;
-                break;
-
-            default:
-                throw new Error(clickWall);
-            }
-        }
-
-        return new ClickLocation(clickWall, new MsoyLocation(xx, yy, zz, 0));
-    }
-
-    /**
-     * Get the y distance represented by the specified number of pixels for the given z coordinate.
-     */
-    public function getYDistance (z :Number, pixels :int) :Number
-    {
-        var scale :Number = _metrics.minScale + ((MAX_COORD - z) / MAX_COORD) * (MAX_SCALE - _metrics.minScale);
-        var sheight :Number = _metrics.sceneHeight * scale;
-        return (pixels / sheight);
-    }
-
+    
     /**
      * Scroll the view by the specified number of pixels.
      *
@@ -355,53 +223,6 @@ public class AbstractRoomView extends Sprite
         return _bg;
     }
     
-    /**
-     * Calculate the info needed to perspectivize a piece of furni.
-     */
-    public function getPerspInfo (sprite :MsoySprite, contentWidth :int, contentHeight :int,
-                                  loc :MsoyLocation) :PerspInfo
-    {
-        var hotSpot :Point = sprite.getMediaHotSpot();
-        var mediaScaleX :Number = Math.abs(sprite.getMediaScaleX());
-        var mediaScaleY :Number = Math.abs(sprite.getMediaScaleY());
-
-        // below, 0 refers to the right side of the source sprite
-        // N refers to the left side, and H refers to the location
-        // of the hotspot
-
-        // the scale of the object is determined by the z coordinate
-        var distH :Number = RoomMetrics.FOCAL + (_scene.getDepth() * loc.z);
-        var dist0 :Number = (hotSpot.x * mediaScaleX);
-        var distN :Number = (contentWidth - hotSpot.x) * mediaScaleX;
-        if (loc.x < .5) {
-            dist0 *= -1;
-        } else {
-            distN *= -1;
-        }
-
-        var scale0 :Number = RoomMetrics.FOCAL / (distH + dist0);
-        var scaleH :Number = RoomMetrics.FOCAL / distH;
-        var scaleN :Number = RoomMetrics.FOCAL / (distH + distN);
-
-        var logicalY :Number = loc.y + ((contentHeight * mediaScaleY) / _metrics.sceneHeight);
-
-        var p0 :Point = projectedLocation(scale0, loc.x, logicalY);
-        var pH :Point = projectedLocation(scaleH, loc.x, loc.y);
-        var pN :Point = projectedLocation(scaleN, loc.x, logicalY);
-
-        var height0 :Number = contentHeight * scale0 * mediaScaleY;
-        var heightN :Number = contentHeight * scaleN * mediaScaleY;
-
-        // min/max don't account for the hotspot location
-        var minX :Number = Math.min(p0.x, pN.x);
-        var minY :Number = Math.min(p0.y, pN.y);
-        p0.offset(-minX, -minY);
-        pN.offset(-minX, -minY);
-        pH.offset(-minX, -minY);
-
-        return new PerspInfo(p0, height0, pN, heightN, pH);
-    }
-
     // documentation inherited from interface PlaceView
     public function willEnterPlace (plobj :PlaceObject) :void
     {
@@ -517,107 +338,6 @@ public class AbstractRoomView extends Sprite
     }
 
     /**
-     * Calculate the scale and x/y position of the specified media according to its logical
-     * coordinates.
-     */
-    protected function positionAndScale (sprite :MsoySprite) :void
-    {
-        var info :Array = _metrics.getProjectedInfo(sprite.loc);
-
-        var x :Number = Number(info[0]);
-        var y :Number = Number(info[1]);
-        sprite.setLocationScale(Number(info[2]));
-
-        var hotSpot :Point = sprite.getLayoutHotSpot();
-        if (sprite == _bg && _scene.getSceneType() == Decor.FIXED_IMAGE) {
-            // adjust the background image
-            x += getScrollOffset();
-        }
-        sprite.x = x - hotSpot.x;
-        sprite.y = y - hotSpot.y;
-    }
-
-    /**
-     * Determine the location of the projected coordinate.
-     *
-     * @param x the logical x coordinate (0 - 1)
-     * @param y the logical y coordinate (0 - 1)
-     */
-    // TODO: deprecate, fix perspectivization, use the _metrics version
-    // of these methods
-    protected function projectedLocation (scale :Number, x :Number, y :Number) :Point
-    {
-        // x position depends on logical x and the scale
-        var floorWidth :Number = (_metrics.sceneWidth * scale);
-        var floorInset :Number = (_metrics.sceneWidth - floorWidth) / 2;
-
-        return new Point(floorInset + (x * floorWidth),
-            _metrics.horizonY + (_metrics.subHorizonHeight - (y * _metrics.sceneHeight)) * scale);
-    }
-
-    /**
-     * Adjust the z order of the specified sprite so that it is drawn according to its logical Z
-     * coordinate relative to other sprites.
-     */
-    public function adjustZOrder (sprite :DisplayObject) :void
-    {
-        var dex :int;
-        try {
-            dex = getChildIndex(sprite);
-        } catch (er :Error) {
-            // this can happen if we're resized during editing as we
-            // try to reposition a sprite that's still in our data structures
-            // but that has been removed as a child.
-            return;
-        }
-
-        var newdex :int = dex;
-        var ourZ :Number = getZOfChildAt(dex);
-        var z :Number;
-        while (newdex > 0) {
-            z = getZOfChildAt(newdex - 1);
-            if (isNaN(z) || z >= ourZ) {
-                break;
-            }
-            newdex--;
-        }
-
-        if (newdex == dex) {
-            while (newdex < numChildren - 1) {
-                z = getZOfChildAt(newdex + 1);
-                if (isNaN(z) || z <= ourZ) {
-                    break;
-                }
-                newdex++;
-            }
-        }
-
-        if (newdex != dex) {
-            setChildIndex(sprite, newdex);
-        }
-    }
-
-    /**
-     * Convenience method to get the logical z coordinate of the child at the specified index.
-     */
-    protected function getZOfChildAt (index :int) :Number
-    {
-        var disp :DisplayObject = getChildAt(index);
-        if (disp is MsoySprite) {
-            var spr :MsoySprite = (disp as MsoySprite);
-            if (spr.isIncludedInLayout()) {
-                return spr.loc.z;
-            }
-
-        } else if (disp is ZOrderable) {
-            return (disp as ZOrderable).getZ();
-        }
-
-        // if all else fails..
-        return NaN;
-    }
-
-    /**
      */
     protected function setActive (map :HashMap, active :Boolean) :void
     {
@@ -705,7 +425,5 @@ public class AbstractRoomView extends Sprite
     /** Are we editing the scene? */
     protected var _editing :Boolean = false;
 
-    private static const MAX_SCALE :Number = 1;
-    private static const MAX_COORD :Number = 1;
 }
 }

@@ -224,6 +224,15 @@ public class RoomView extends AbstractRoomView
                 Msgs.GENERAL.get("b.view_item", kind),
                 MsoyController.VIEW_ITEM, ident));
 
+            /*
+            // furni sprites can be moved around. except when they're the background.
+            if (sprite is FurniSprite && sprite != _bg) {
+                menuItems.push(MenuUtil.createControllerMenuItem(
+                    "TEMP EDIT MENU", // FIXME ROBERT
+                    RoomController.EDIT_FURNI, sprite as FurniSprite));
+            }
+            */
+            
             // TEMP: restrict blocking to members only, for now.
             if (_ctx.getMemberObject().tokens.isSupport() && sprite.isBlockable()) {
                 var isBlocked :Boolean = sprite.isBlocked();

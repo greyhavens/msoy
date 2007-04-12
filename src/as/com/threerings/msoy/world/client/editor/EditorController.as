@@ -42,6 +42,7 @@ import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomDragHandler;
+import com.threerings.msoy.world.client.RoomLayout;
 import com.threerings.msoy.world.client.RoomView;
 
 import com.threerings.msoy.world.data.AudioData;
@@ -479,7 +480,10 @@ try {
         }
 
         var item :Item = InventoryPicker.dragItem(event);
-        var cloc :ClickLocation = _roomView.pointToLocation(event.stageX, event.stageY);
+        var cloc :ClickLocation =
+            RoomLayout.pointToLocation(
+                _roomView,
+                event.stageX, event.stageY);
 
         // let's go ahead and create furni
         addFurni(item, cloc.loc);
@@ -637,11 +641,14 @@ try {
             // figure the distance from the anchor
             var ypixels :Number = _anchor.y - event.stageY;
             var loc :MsoyLocation = _editSprite.loc;
-            loc.y = _anchorY + _roomView.getYDistance(loc.z, ypixels);
+            loc.y = _anchorY + RoomLayout.getYDistance(_roomView, loc.z, ypixels);
             _editSprite.setLocation(loc);
 
         } else {
-            var cloc :ClickLocation = _roomView.pointToLocation(event.stageX, event.stageY);
+            var cloc :ClickLocation =
+                RoomLayout.pointToLocation(
+                    _roomView,
+                    event.stageX, event.stageY);
             if (cloc.click == ClickLocation.FLOOR) {
                 cloc.loc.y = _editSprite.loc.y;
             }

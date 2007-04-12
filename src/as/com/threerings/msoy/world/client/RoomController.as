@@ -600,31 +600,18 @@ public class RoomController extends SceneController
         // ensure we hit no pop-ups
         if (hit !== undefined) {
             if (hitter == null) {
-                var cloc :ClickLocation = _roomView.pointToLocation(sx, sy, _shiftPressed, getAvatarYOffset());
+                var cloc :ClickLocation =
+                    RoomLayout.pointToLocation(
+                        _roomView, sx, sy, _shiftPressed, getAvatarYOffset());
                 if (cloc.click == ClickLocation.FLOOR && _mctx.worldProps.userControlsAvatar) {
-                    // project the click location back into screen coords
-                    var p :Point = _roomView.getProjectedPoint(cloc.loc);
-                    _walkTarget.x = p.x;
-                    _walkTarget.y = p.y;
-                    _walkTarget.scaleX = 1 / _roomView.scaleX;
-                    _walkTarget.scaleY = 1 / _roomView.scaleY;
-                    _walkTarget.setZ(cloc.loc.z);
+                    RoomLayout.roomToScreenLocation(_roomView, cloc.loc, _walkTarget);
                     showWalkTarget = true;
-                    _roomView.adjustZOrder(_walkTarget);
 
                     if (cloc.loc.y != 0) {
                         // show the shadow
                         cloc.loc.y = 0;
-                        var p2 :Point = _roomView.getProjectedPoint(cloc.loc);
-                        if (p.x != p2.x || p.y != p2.y) {
-                            _walkShadow.x = p2.x;
-                            _walkShadow.y = p2.y;
-                            _walkShadow.scaleX = 1 / _roomView.scaleX;
-                            _walkShadow.scaleY = 1 / _roomView.scaleY;
-                            _walkShadow.setZ(cloc.loc.z);
-                            _roomView.adjustZOrder(_walkShadow);
-                            showWalkShadow = true;
-                        }
+                        RoomLayout.roomToScreenLocation(_roomView, cloc.loc, _walkShadow);
+                        showWalkShadow = true;
                     }
                 }
 
@@ -699,7 +686,9 @@ public class RoomController extends SceneController
             }
 
             // calculate where the location is
-            var cloc :ClickLocation = _roomView.pointToLocation(event.stageX, event.stageY, _shiftPressed, getAvatarYOffset());
+            var cloc :ClickLocation =
+                RoomLayout.pointToLocation(
+                    _roomView, event.stageX, event.stageY, _shiftPressed, getAvatarYOffset());
             if (cloc.click == ClickLocation.FLOOR) {
                 // orient the location as appropriate
                 var newLoc :MsoyLocation = cloc.loc;
