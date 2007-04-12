@@ -117,6 +117,10 @@ public class LobbyPanel extends VBox
         _info.text = game.description;
         _gameAvatarIcon = new ScalingMediaContainer(30, 30);
         _gameAvatarIcon.setMedia(getGame().getThumbnailPath());
+        _gameAvatarIcon.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
+            Log.getLog(this).debug("clicked icon!");
+            evt.stopImmediatePropagation();
+        });
 
         _tablesBox.removeAllChildren();
         createTablesDisplay();
@@ -187,7 +191,6 @@ public class LobbyPanel extends VBox
     // from SeatednessObserver
     public function seatednessDidChange (isSeated :Boolean) :void
     {
-        Log.getLog(this).debug("isSeated:" + isSeated);
         _isSeated = isSeated;
         createBtn.enabled = !isSeated;
         if (_isSeated) {
