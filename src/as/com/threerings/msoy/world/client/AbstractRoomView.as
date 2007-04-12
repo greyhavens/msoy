@@ -146,14 +146,14 @@ public class AbstractRoomView extends Sprite
     public function pointToLocation (globalX :Number, globalY :Number, shiftPoint :Point = null, yOffset :Number = 0) :ClickLocation
     {
         var p :Point;
+        var shiftOffset :Number = 0;
         if (shiftPoint == null) {
             p = new Point(globalX, globalY);
 
         } else {
-            yOffset += (globalY - shiftPoint.y);
+            shiftOffset = shiftPoint.y - globalY;
             p = shiftPoint;
         }
-        yOffset /= this.scaleY;
 
         p = globalToLocal(p);
         var x :Number = p.x;
@@ -229,7 +229,8 @@ public class AbstractRoomView extends Sprite
                 yy = (clickWall == ClickLocation.CEILING) ? MAX_COORD : 0;
                 // if on the floor, we want take into account the yOffset
                 if (clickWall == ClickLocation.FLOOR) {
-                    yy = -yOffset / (scale * _metrics.sceneHeight);
+                    yy = (yOffset / _metrics.sceneHeight) +
+                        (shiftOffset / (scale * _metrics.sceneHeight * scaleY));
                     if (yy < 0 || yy > MAX_COORD) {
                         yy = Math.min(MAX_COORD, Math.max(0, yy));
                     }
