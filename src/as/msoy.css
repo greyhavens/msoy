@@ -603,6 +603,7 @@ ListBase
 .floatingTableRenderer, .listTableRenderer {
   horizontalGap: 4;
   verticalGap: 0;
+  verticalAlign: middle;
 }
 
 .listTableRenderer {
@@ -610,10 +611,10 @@ ListBase
   borderStyle: "solid";
   borderColor: #E0E7EE;
   borderSides: "left right bottom";
+  verticalAlign: middle;
 }
 
 .seatRenderer {
-  verticalAlign: middle;
   borderThickness: 0;
   borderStyle: "none";
   horizontalGap: 2;
@@ -632,4 +633,6 @@ ListBase
   horizontalAlign: center;
   paddingRight: 0px;
   paddingLeft: 6px;
+  paddingTop: 5px;
+  paddingBottom: 5px;
 }

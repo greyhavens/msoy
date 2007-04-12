@@ -84,7 +84,12 @@ public class TableCreationPanel extends HBox
         config.gameType = gameDef.gameType;
         gconf.setGameConfig(config);
 
-        addChild(gconf.getContainer());
+        var alignBox :VBox = new VBox();
+        alignBox.percentWidth = 100;
+        alignBox.percentHeight = 100;
+        alignBox.setStyle("verticalAlign", "middle");
+        alignBox.addChild(gconf.getContainer());
+        addChild(alignBox);
     }
 
     protected var _ctx :WorldContext;
