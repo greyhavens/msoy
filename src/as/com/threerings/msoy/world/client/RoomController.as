@@ -209,7 +209,10 @@ public class RoomController extends SceneController
         _scene = (_mctx.getSceneDirector().getScene() as MsoyScene);
 
         _walkTarget.visible = false;
-        _roomView.addChild(_walkTarget);
+        _walkShadow.visible = false;
+        _walkShadow.alpha = .5;
+        _roomView.addChildAt(_walkShadow, _roomView.numChildren);
+        _roomView.addChildAt(_walkTarget, _roomView.numChildren);
 
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
@@ -226,6 +229,7 @@ public class RoomController extends SceneController
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
 
         _roomView.removeChild(_walkTarget);
+        _roomView.removeChild(_walkShadow);
         setHoverSprite(null);
 
         _roomObj.removeListener(_roomListener);
@@ -529,6 +533,7 @@ public class RoomController extends SceneController
         _roomView.dimAvatars(true);
         // maybe disable/dim other furnis?
         _walkTarget.visible = false;
+        _walkShadow.visible = false;
 
         // this function will be called once furni editing had ended
         var callback :Function = function () :void {
@@ -556,6 +561,7 @@ public class RoomController extends SceneController
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
         _walkTarget.visible = false;
+        _walkShadow.visible = false;
 
         if (_music != null) {
             if (_musicIsBackground) {
@@ -585,6 +591,7 @@ public class RoomController extends SceneController
         var sx :Number = _roomView.stage.mouseX;
         var sy :Number = _roomView.stage.mouseY;
         var showWalkTarget :Boolean = false;
+        var showWalkShadow :Boolean = false;
 
         // if shift is being held down, we're looking for locations only, so
         // skip looking for hitSprites.
@@ -602,6 +609,19 @@ public class RoomController extends SceneController
                     _walkTarget.scaleX = 1 / _roomView.scaleX;
                     _walkTarget.scaleY = 1 / _roomView.scaleY;
                     showWalkTarget = true;
+
+                    if (cloc.loc.y != 0) {
+                        // show the shadow
+                        cloc.loc.y = 0;
+                        var p2 :Point = _roomView.getProjectedPoint(cloc.loc);
+                        if (p.x != p2.x || p.y != p2.y) {
+                            _walkShadow.x = p2.x - _walkShadow.width/2;
+                            _walkShadow.y = p2.y - _walkShadow.height/2;
+                            _walkShadow.scaleX = 1 / _roomView.scaleX;
+                            _walkShadow.scaleY = 1 / _roomView.scaleY;
+                            showWalkShadow = true;
+                        }
+                    }
                 }
 
             } else if (!hitter.hasAction()) {
@@ -612,6 +632,7 @@ public class RoomController extends SceneController
         }
 
         _walkTarget.visible = showWalkTarget;
+        _walkShadow.visible = showWalkShadow;
 
         setHoverSprite(hitter, sx, sy);
     }
@@ -958,6 +979,8 @@ public class RoomController extends SceneController
 
     /** The "cursor" used to display that a location is walkable. */
     protected var _walkTarget :DisplayObject = (new WALKTARGET() as DisplayObject);
+
+    protected var _walkShadow :DisplayObject = (new WALKTARGET() as DisplayObject);
 
     /** Are we editing the current scene? */
     protected var _editor :EditorController; 
