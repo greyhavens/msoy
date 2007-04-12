@@ -8,6 +8,8 @@ import flash.display.Sprite;
 
 import flash.events.MouseEvent;
 
+import com.threerings.flash.SimpleTextButton;
+
 /**
  * Displays our drawing controls.
  */
@@ -15,13 +17,13 @@ public class ControlPanel extends Sprite
 {
     public function ControlPanel (canvas :Canvas, doneFunc :Function)
     {
-        var done :Button = new Button("Done");
+        var done :SimpleTextButton = new SimpleTextButton("Done");
         done.addEventListener(MouseEvent.CLICK, function (event: MouseEvent) :void {
             doneFunc(true);
         });
         addChild(done);
 
-        var cancel :Button = new Button("Cancel");
+        var cancel :SimpleTextButton = new SimpleTextButton("Cancel");
         cancel.addEventListener(MouseEvent.CLICK, function (event: MouseEvent) :void {
             doneFunc(false);
         });
