@@ -306,13 +306,11 @@ public class RoomLayout {
     }
 
 
-    // RZ: called internally (roomToScreenLocation) and AbstractRoomView.locationUpdated():107
-
     /**
      * Adjust the z order of the specified sprite so that it is drawn according to its logical Z
      * coordinate relative to other sprites.
      */
-    public function adjustZOrder (sprite :DisplayObject) :void
+    protected function adjustZOrder (sprite :DisplayObject) :void
     {
         var dex :int;
         try {
@@ -350,26 +348,14 @@ public class RoomLayout {
         }
     }
 
-    // RZ: only called internally
-    
     /**
      * Convenience method to get the logical z coordinate of the child at the specified index.
+     * Returns the z ordering, or NaN if the object is not part of the scene layout.
      */
     protected function getZOfChildAt (index :int) :Number
     {
         var disp :DisplayObject = _parentView.getChildAt(index);
-        if (disp is MsoySprite) {
-            var spr :MsoySprite = (disp as MsoySprite);
-            if (spr.isIncludedInLayout()) {
-                return spr.loc.z;
-            }
-
-        } else if (disp is ZOrderable) {
-            return (disp as ZOrderable).getZ();
-        }
-
-        // if all else fails..
-        return NaN;
+        return (disp is ZOrderable) ? (disp as ZOrderable).getZ() : NaN;
     }
 
     
