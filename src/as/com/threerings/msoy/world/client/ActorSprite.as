@@ -162,6 +162,10 @@ public class ActorSprite extends MsoySprite
                     _currentGameIcon = new ScalingMediaContainer(30, 30);
                     var sizeKnownHandler :Function;
                     sizeKnownHandler = function (evt :Event) :void {
+                        // if _currentGameIcon changes while this media is loading, we don't want
+                        // to display the new media prematurely, so this handler checks to make 
+                        // sure it was called on the media instance that we actually want to 
+                        // display before displaying it
                         if (evt.target == _currentGameIcon) {
                             addDecoration(_currentGameIcon);
                         }
