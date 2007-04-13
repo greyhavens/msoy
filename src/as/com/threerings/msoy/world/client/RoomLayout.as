@@ -44,26 +44,6 @@ public class RoomLayout {
     }
     
 
-    //
-    //
-    // FROM ABSTRACT ROOM VIEW
-
-   
-    // RZ: Only used in EditorController.spritePositioning():644
-    
-    /**
-     * Get the y distance represented by the specified number of pixels for the given z coordinate.
-     */
-    public function getYDistance (z :Number, pixels :int) :Number
-    {
-        var scale :Number = _metrics.farScale +
-            ((MAX_COORD - z) / MAX_COORD) * (MAX_SCALE - _metrics.farScale);
-        var sheight :Number = _metrics.sceneHeight * scale;
-        return (pixels / sheight);
-    }
-    
-
-
     /**
      * Turn the screen coordinate into a MsoyLocation, with the orient field set to 0.
      * @param shiftPoint (optional) another global coordinate at which shift
@@ -262,7 +242,8 @@ public class RoomLayout {
         var floorInset :Number = (_metrics.sceneWidth - floorWidth) / 2;
 
         return new Point(floorInset + (x * floorWidth),
-            _metrics.horizonY + (_metrics.subHorizonHeight - (y * _metrics.sceneHeight)) * scale);
+            _metrics.horizonY + ((_metrics.sceneHeight - _metrics.horizonY) -
+                                 (y * _metrics.sceneHeight)) * scale);
     }
     */
     
@@ -282,7 +263,7 @@ public class RoomLayout {
         loc :MsoyLocation, target :DisplayObject, offset :Point = null) :void
     {
         var screen :Point = _metrics.roomToScreen(loc.x, loc.y, loc.z);
-        var scale :Number = _metrics.roomToScreenScale(loc.z);
+        var scale :Number = _metrics.scaleAtDepth(loc.z);
         offset = (offset != null ? offset : NO_OFFSET);
 
         if (target is MsoySprite) {

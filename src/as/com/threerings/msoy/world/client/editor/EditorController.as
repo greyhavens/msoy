@@ -643,7 +643,7 @@ try {
             // figure the distance from the anchor
             var ypixels :Number = _anchor.y - event.stageY;
             var loc :MsoyLocation = _editSprite.loc;
-            loc.y = _anchorY + _roomView.layout.getYDistance(loc.z, ypixels);
+            loc.y = _anchorY + _roomView.layout.metrics.pixelHeightToRoomHeight(ypixels, loc.z);
             _editSprite.setLocation(loc);
 
         } else {
