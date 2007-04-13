@@ -76,10 +76,7 @@ public class AudioData
         // perform a shallow copy of value attributes
         data.itemId = itemId;   
         data.volume = volume;
-        // now do a deep copy of the media object
-        if (media != null) {
-            data.media = new MediaDesc(media.hash, media.mimeType, media.constraint);
-        }
+        data.media = media;
         return data;
     }
 

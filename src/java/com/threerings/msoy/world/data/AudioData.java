@@ -76,10 +76,6 @@ public class AudioData extends SimpleStreamableObject
         try {
             // perform a shallow copy of value attributes
             AudioData data = (AudioData) super.clone();
-            // now do a copy of the media object (too bad MediaDesc can't be Cloneable...)
-            if (media != null) {
-                data.media = new MediaDesc(media.hash, media.mimeType, media.constraint);
-            }
             return data;
         } catch (CloneNotSupportedException cnse) {
             throw new RuntimeException(cnse);           // not going to happen
