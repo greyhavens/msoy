@@ -14,7 +14,6 @@ import mx.containers.HBox;
 
 import mx.core.Application;
 
-import mx.controls.Button;
 import mx.controls.TextInput;
 
 import mx.events.FlexEvent;
@@ -22,6 +21,7 @@ import mx.events.FlexEvent;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.StringUtil;
 
+import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandMenu;
 
 import com.threerings.crowd.client.LocationAdapter;
@@ -58,14 +58,14 @@ public class ChatControl extends HBox
         _txt.height = height;
         _txt.width = 200;
         
-        _but = new Button();
+        _but = new CommandButton();
         _but.label = Msgs.GENERAL.get("b.send");
         _but.height = height;
+        _but.setFunction(sendChat);
         addChild(_but);
 
 //        _txt.addEventListener(KeyboardEvent.KEY_UP, keyEvent, false, 0, true);
         _txt.addEventListener(FlexEvent.ENTER, sendChat, false, 0, true);
-        _but.addEventListener(FlexEvent.BUTTON_DOWN, sendChat, false, 0, true);
 
 //        updateTarget();
     }
@@ -142,9 +142,9 @@ public class ChatControl extends HBox
     }
 
     /**
-     * Handles FlexEvent.ENTER and FlexEvent.BUTTON_DOWN to send chat.
+     * Handles FlexEvent.ENTER and the action from the send button.
      */
-    protected function sendChat (event :FlexEvent) :void
+    protected function sendChat (... ignored) :void
     {
         var message :String = StringUtil.trim(_txt.text);
         if ("" == message) {
@@ -249,7 +249,7 @@ public class ChatControl extends HBox
     protected var _txt :ChatInput;
 
     /** The button for sending chat. */
-    protected var _but :Button;
+    protected var _but :CommandButton;
 
     /** An array of the currently shown-controls. */
     protected static var _controls :Array = [];
