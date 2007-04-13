@@ -601,17 +601,24 @@ public class RoomController extends SceneController
         if (hit !== undefined) {
             if (hitter == null) {
                 var cloc :ClickLocation =
-                    RoomLayout.pointToLocation(
-                        _roomView, sx, sy, _shiftPressed, getAvatarYOffset());
+                    _roomView.layout.pointToLocation(sx, sy, _shiftPressed, getAvatarYOffset());
+
                 if (cloc.click == ClickLocation.FLOOR && _mctx.worldProps.userControlsAvatar) {
-                    RoomLayout.roomToScreenLocation(_roomView, cloc.loc, _walkTarget);
+                    _roomView.layout.roomToScreenLocation(cloc.loc, _walkTarget);
                     showWalkTarget = true;
+
+                    // don't let the target shrink too much - 0.25 of original size at most
+                    var clampedScale :Number =
+                        Math.max(0.25, Math.min(_walkTarget.scaleX, _walkTarget.scaleY));
+                    _walkTarget.scaleX = _walkTarget.scaleY = clampedScale;
 
                     if (cloc.loc.y != 0) {
                         // show the shadow
                         cloc.loc.y = 0;
-                        RoomLayout.roomToScreenLocation(_roomView, cloc.loc, _walkShadow);
+                        _roomView.layout.roomToScreenLocation(cloc.loc, _walkShadow);
                         showWalkShadow = true;
+
+                        _walkShadow.scaleX = _walkShadow.scaleY = clampedScale;
                     }
                 }
 
@@ -687,8 +694,8 @@ public class RoomController extends SceneController
 
             // calculate where the location is
             var cloc :ClickLocation =
-                RoomLayout.pointToLocation(
-                    _roomView, event.stageX, event.stageY, _shiftPressed, getAvatarYOffset());
+                _roomView.layout.pointToLocation(
+                    event.stageX, event.stageY, _shiftPressed, getAvatarYOffset());
             if (cloc.click == ClickLocation.FLOOR) {
                 // orient the location as appropriate
                 var newLoc :MsoyLocation = cloc.loc;

@@ -44,7 +44,8 @@ public class RoomMetrics
 
     public var subHorizonHeight :Number;
 
-    /** Camera location, in room coordinates. It always points along the positive Z axis. */
+    /** Camera location, in room coordinates.
+     *  The camera always looks in the direction of [ 0, 0, 1 ], the positive z axis. */
     public var camera :MsoyLocation;
 
     public function update (data :DecorData) :void
@@ -65,7 +66,7 @@ public class RoomMetrics
 
         this.subHorizonHeight = sceneHeight - horizonY;
 
-        this.camera = new MsoyLocation (0.5, 0.5, - FOCAL / sceneDepth, 0);
+        this.camera = new MsoyLocation (0.5, horizon, - FOCAL / sceneDepth, 0);
     }
 
     /**

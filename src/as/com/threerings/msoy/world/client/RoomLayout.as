@@ -13,6 +13,7 @@ import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 
@@ -23,6 +24,25 @@ import com.threerings.msoy.world.data.MsoyScene;
  */
 public class RoomLayout {
 
+    /** Constructor. */
+    public function RoomLayout (view :AbstractRoomView)
+    {
+        _parentView = view;
+        _metrics = new RoomMetrics();
+    }
+
+    /** Updates the room layout object (and its room metrics storage) with fresh data. */
+    public function update (data :DecorData) :void
+    {
+        _metrics.update(data);
+    }
+
+    /** Get the room metrics used in the layout. */
+    public function get metrics () :RoomMetrics
+    {
+        return _metrics;
+    }
+    
 
     //
     //
@@ -34,13 +54,11 @@ public class RoomLayout {
     /**
      * Get the y distance represented by the specified number of pixels for the given z coordinate.
      */
-    public static function getYDistance (view :AbstractRoomView, z :Number, pixels :int) :Number
+    public function getYDistance (z :Number, pixels :int) :Number
     {
-        var metrics :RoomMetrics = view.getRoomMetrics();
-        
-        var scale :Number = metrics.farScale +
-            ((MAX_COORD - z) / MAX_COORD) * (MAX_SCALE - metrics.farScale);
-        var sheight :Number = metrics.sceneHeight * scale;
+        var scale :Number = _metrics.farScale +
+            ((MAX_COORD - z) / MAX_COORD) * (MAX_SCALE - _metrics.farScale);
+        var sheight :Number = _metrics.sceneHeight * scale;
         return (pixels / sheight);
     }
     
@@ -53,13 +71,10 @@ public class RoomLayout {
      *
      * @return a ClickLocation object.
      */
-    public static function pointToLocation (
-        view :AbstractRoomView,
+    public function pointToLocation (
         globalX :Number, globalY :Number, shiftPoint :Point = null, yOffset :Number = 0)
         :ClickLocation
     {
-        var metrics :RoomMetrics = view.getRoomMetrics();
-        
         var p :Point;
         var shiftOffset :Number = 0;
         if (shiftPoint == null) {
@@ -70,7 +85,7 @@ public class RoomLayout {
             p = shiftPoint;
         }
 
-        p = view.globalToLocal(p);
+        p = _parentView.globalToLocal(p);
         var x :Number = p.x;
         var y :Number = p.y;
 
@@ -80,25 +95,25 @@ public class RoomLayout {
         var clickWall :int;
 
         // do some partitioning depending on where the y lies
-        if (y < metrics.backWallTop) {
+        if (y < _metrics.backWallTop) {
             clickWall = ClickLocation.CEILING;
-            scale = metrics.farScale +
-                (metrics.backWallTop - y) / metrics.backWallTop * (MAX_SCALE - metrics.farScale);
+            scale = _metrics.farScale +
+                (_metrics.backWallTop - y) / _metrics.backWallTop * (MAX_SCALE - _metrics.farScale);
 
-        } else if (y < metrics.backWallBottom) {
+        } else if (y < _metrics.backWallBottom) {
             clickWall = ClickLocation.BACK_WALL;
-            scale = metrics.farScale;
+            scale = _metrics.farScale;
 
         } else {
             clickWall = ClickLocation.FLOOR;
-            scale = metrics.farScale +
-                (y - metrics.backWallBottom) / (metrics.sceneHeight - metrics.backWallBottom) *
-                (MAX_SCALE - metrics.farScale);
+            scale = _metrics.farScale +
+                (y - _metrics.backWallBottom) / (_metrics.sceneHeight - _metrics.backWallBottom) *
+                (MAX_SCALE - _metrics.farScale);
         }
 
         // see how wide the floor is at that scale
-        floorWidth = (metrics.sceneWidth * scale);
-        floorInset = (metrics.sceneWidth - floorWidth) / 2;
+        floorWidth = (_metrics.sceneWidth * scale);
+        floorInset = (_metrics.sceneWidth - floorWidth) / 2;
 
         if (x < floorInset || x - floorInset > floorWidth) {
             if (x < floorInset) {
@@ -111,19 +126,19 @@ public class RoomLayout {
             }
 
             // recalculate floorWidth at the minimum scale
-            if (scale != metrics.farScale) {
-                floorWidth = (metrics.sceneWidth * metrics.farScale);
-                floorInset = (metrics.sceneWidth - floorWidth) / 2;
+            if (scale != _metrics.farScale) {
+                floorWidth = (_metrics.sceneWidth * _metrics.farScale);
+                floorInset = (_metrics.sceneWidth - floorWidth) / 2;
             }
 
             switch (clickWall) {
             case ClickLocation.LEFT_WALL:
-                scale = metrics.farScale + (x / floorInset) * (MAX_SCALE - metrics.farScale);
+                scale = _metrics.farScale + (x / floorInset) * (MAX_SCALE - _metrics.farScale);
                 break;
 
             case ClickLocation.RIGHT_WALL:
-                scale = metrics.farScale +
-                    ((metrics.sceneWidth - x) / floorInset) * (MAX_SCALE - metrics.farScale);
+                scale = _metrics.farScale +
+                    ((_metrics.sceneWidth - x) / floorInset) * (MAX_SCALE - _metrics.farScale);
                 break;
 
             default:
@@ -131,10 +146,10 @@ public class RoomLayout {
             }
 
             // TODO: factor in horizon here
-            var wallHeight :Number = (metrics.sceneHeight * scale);
-            var wallInset :Number = (metrics.sceneHeight - wallHeight) / 2;
+            var wallHeight :Number = (_metrics.sceneHeight * scale);
+            var wallInset :Number = (_metrics.sceneHeight - wallHeight) / 2;
             yy = MAX_COORD * (1 - ((y - wallInset) / wallHeight));
-            zz = MAX_COORD * ((scale - metrics.farScale) / (MAX_SCALE - metrics.farScale));
+            zz = MAX_COORD * ((scale - _metrics.farScale) / (MAX_SCALE - _metrics.farScale));
 
         } else {
             // normal case: the x coordinate is within the floor width
@@ -147,20 +162,20 @@ public class RoomLayout {
                 yy = (clickWall == ClickLocation.CEILING) ? MAX_COORD : 0;
                 // if on the floor, we want take into account the yOffset
                 if (clickWall == ClickLocation.FLOOR) {
-                    yy = (yOffset / metrics.sceneHeight) +
-                        (shiftOffset / (scale * metrics.sceneHeight * view.scaleY));
+                    yy = (yOffset / _metrics.sceneHeight) +
+                        (shiftOffset / (scale * _metrics.sceneHeight * _parentView.scaleY));
                     if (yy < 0 || yy > MAX_COORD) {
                         yy = Math.min(MAX_COORD, Math.max(0, yy));
                     }
                 } else {
                     yy = 0;
                 }
-                zz = MAX_COORD * (1 - ((scale - metrics.farScale) / metrics.scaleRange));
+                zz = MAX_COORD * (1 - ((scale - _metrics.farScale) / _metrics.scaleRange));
                 break;
 
             case ClickLocation.BACK_WALL:
                 // y is simply how high they clicked on the wall
-                yy = (metrics.backWallBottom - y) / metrics.backWallHeight;
+                yy = (_metrics.backWallBottom - y) / _metrics.backWallHeight;
                 zz = 1;
                 break;
 
@@ -183,13 +198,10 @@ public class RoomLayout {
      */
 
     /*
-    public static function getPerspInfo (
-        view :AbstractRoomView,
+    public function getPerspInfo (
         sprite :MsoySprite, contentWidth :int, contentHeight :int,
         loc :MsoyLocation) :PerspInfo
     {
-        var metrics :RoomMetrics = view.getRoomMetrics();
-        
         var hotSpot :Point = sprite.getMediaHotSpot();
         var mediaScaleX :Number = Math.abs(sprite.getMediaScaleX());
         var mediaScaleY :Number = Math.abs(sprite.getMediaScaleY());
@@ -199,7 +211,7 @@ public class RoomLayout {
         // of the hotspot
 
         // the scale of the object is determined by the z coordinate
-        var distH :Number = RoomMetrics.FOCAL + (view.getScene().getDepth() * loc.z);
+        var distH :Number = RoomMetrics.FOCAL + (_metrics.sceneDepth * loc.z);
         var dist0 :Number = (hotSpot.x * mediaScaleX);
         var distN :Number = (contentWidth - hotSpot.x) * mediaScaleX;
         if (loc.x < .5) {
@@ -212,11 +224,11 @@ public class RoomLayout {
         var scaleH :Number = RoomMetrics.FOCAL / distH;
         var scaleN :Number = RoomMetrics.FOCAL / (distH + distN);
 
-        var logicalY :Number = loc.y + ((contentHeight * mediaScaleY) / metrics.sceneHeight);
+        var logicalY :Number = loc.y + ((contentHeight * mediaScaleY) / _metrics.sceneHeight);
 
-        var p0 :Point = projectedLocation(metrics, scale0, loc.x, logicalY);
-        var pH :Point = projectedLocation(metrics, scaleH, loc.x, loc.y);
-        var pN :Point = projectedLocation(metrics, scaleN, loc.x, logicalY);
+        var p0 :Point = projectedLocation(scale0, loc.x, logicalY);
+        var pH :Point = projectedLocation(scaleH, loc.x, loc.y);
+        var pN :Point = projectedLocation(scaleN, loc.x, logicalY);
 
         var height0 :Number = contentHeight * scale0 * mediaScaleY;
         var heightN :Number = contentHeight * scaleN * mediaScaleY;
@@ -242,16 +254,15 @@ public class RoomLayout {
     // TODO: deprecate, fix perspectivization, use the _metrics version
     // of these methods
     /*
-    protected static function projectedLocation (
-        metrics :RoomMetrics,
+    protected function projectedLocation (
         scale :Number, x :Number, y :Number) :Point
     {
         // x position depends on logical x and the scale
-        var floorWidth :Number = (metrics.sceneWidth * scale);
-        var floorInset :Number = (metrics.sceneWidth - floorWidth) / 2;
+        var floorWidth :Number = (_metrics.sceneWidth * scale);
+        var floorInset :Number = (_metrics.sceneWidth - floorWidth) / 2;
 
         return new Point(floorInset + (x * floorWidth),
-            metrics.horizonY + (metrics.subHorizonHeight - (y * metrics.sceneHeight)) * scale);
+            _metrics.horizonY + (_metrics.subHorizonHeight - (y * _metrics.sceneHeight)) * scale);
     }
     */
     
@@ -263,11 +274,11 @@ public class RoomLayout {
      * Adjust the z order of the specified sprite so that it is drawn according to its logical Z
      * coordinate relative to other sprites.
      */
-    public static function adjustZOrder (view :AbstractRoomView, sprite :DisplayObject) :void
+    public function adjustZOrder (sprite :DisplayObject) :void
     {
         var dex :int;
         try {
-            dex = view.getChildIndex(sprite);
+            dex = _parentView.getChildIndex(sprite);
         } catch (er :Error) {
             // this can happen if we're resized during editing as we
             // try to reposition a sprite that's still in our data structures
@@ -276,10 +287,10 @@ public class RoomLayout {
         }
 
         var newdex :int = dex;
-        var ourZ :Number = getZOfChildAt(view, dex);
+        var ourZ :Number = getZOfChildAt(dex);
         var z :Number;
         while (newdex > 0) {
-            z = getZOfChildAt(view, newdex - 1);
+            z = getZOfChildAt(newdex - 1);
             if (isNaN(z) || z >= ourZ) {
                 break;
             }
@@ -287,8 +298,8 @@ public class RoomLayout {
         }
 
         if (newdex == dex) {
-            while (newdex < view.numChildren - 1) {
-                z = getZOfChildAt(view, newdex + 1);
+            while (newdex < _parentView.numChildren - 1) {
+                z = getZOfChildAt(newdex + 1);
                 if (isNaN(z) || z <= ourZ) {
                     break;
                 }
@@ -297,7 +308,7 @@ public class RoomLayout {
         }
 
         if (newdex != dex) {
-            view.setChildIndex(sprite, newdex);
+            _parentView.setChildIndex(sprite, newdex);
         }
     }
 
@@ -306,11 +317,9 @@ public class RoomLayout {
     /**
      * Convenience method to get the logical z coordinate of the child at the specified index.
      */
-    protected static function getZOfChildAt (
-        view :AbstractRoomView,
-        index :int) :Number
+    protected function getZOfChildAt (index :int) :Number
     {
-        var disp :DisplayObject = view.getChildAt(index);
+        var disp :DisplayObject = _parentView.getChildAt(index);
         if (disp is MsoySprite) {
             var spr :MsoySprite = (disp as MsoySprite);
             if (spr.isIncludedInLayout()) {
@@ -339,12 +348,10 @@ public class RoomLayout {
      * Calculate the scale and x/y position of the specified media according to its logical
      * coordinates.
      */
-    public static function positionAndScale (view :AbstractRoomView, sprite :MsoySprite) :void
+    public function positionAndScale (sprite :MsoySprite) :void
     {
-        var metrics :RoomMetrics = view.getRoomMetrics();
-        
-        var screen :Point = metrics.roomToScreen(sprite.loc.x, sprite.loc.y, sprite.loc.z);
-        var scale :Number = metrics.roomToScreenScale(sprite.loc.z);
+        var screen :Point = _metrics.roomToScreen(sprite.loc.x, sprite.loc.y, sprite.loc.z);
+        var scale :Number = _metrics.roomToScreenScale(sprite.loc.z);
         
         sprite.setLocationScale(scale);
 
@@ -354,7 +361,7 @@ public class RoomLayout {
         sprite.y = screen.y - hotSpot.y;
 
         if (sprite.isIncludedInLayout()) {
-            adjustZOrder(view, sprite);
+            adjustZOrder(sprite);
         }
 
     }
@@ -368,13 +375,10 @@ public class RoomLayout {
      * Project room location into screen coordinates.
      * @param target sprite whose data needs to be updated with the projected location.
      */
-    public static function roomToScreenLocation (
-        view :AbstractRoomView, loc :MsoyLocation, target :DisplayObject) :void
+    public function roomToScreenLocation (loc :MsoyLocation, target :DisplayObject) :void
     {
-        var metrics :RoomMetrics = view.getRoomMetrics();
-        
-        var screen :Point = metrics.roomToScreen(loc.x, loc.y, loc.z);
-        var scale :Number = metrics.roomToScreenScale(loc.z);
+        var screen :Point = _metrics.roomToScreen(loc.x, loc.y, loc.z);
+        var scale :Number = _metrics.roomToScreenScale(loc.z);
         
         target.x = screen.x;
         target.y = screen.y;
@@ -383,11 +387,16 @@ public class RoomLayout {
 
         if (target is ZOrderable) {
             (target as ZOrderable).setZ(loc.z);
-            adjustZOrder(view, target);
+            adjustZOrder(target);
         }
     }
 
-   
+
+    /** Room metrics storage. */
+    protected var _metrics :RoomMetrics;
+
+    /** AbstractRoomView object that contains this instance. */
+    protected var _parentView :AbstractRoomView;
 }
 }
     

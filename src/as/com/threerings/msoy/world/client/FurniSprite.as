@@ -191,7 +191,7 @@ public class FurniSprite extends MsoySprite
             /*
             if (parent is AbstractRoomView) {
                 Perspectivizer(newMedia).updatePerspInfo(
-                    RoomLayout.getPerspInfo(AbstractRoomView(parent), this, _w, _h, loc),
+                    AbstractRoomView(parent).layout.getPerspInfo(this, _w, _h, loc),
                     getMediaScaleX(), getMediaScaleY());
             }
             */
@@ -234,7 +234,7 @@ public class FurniSprite extends MsoySprite
         
         /*
         var info :PerspInfo =
-            RoomLayout.getPerspInfo(AbstractRoomView(parent), this, _w, _h, loc);
+            AbstractRoomView(parent).layout.getPerspInfo(this, _w, _h, loc);
         Perspectivizer(_media).updatePerspInfo(
             info, getMediaScaleX(), getMediaScaleY());
         */

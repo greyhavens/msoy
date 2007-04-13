@@ -50,6 +50,15 @@ public class AbstractRoomView extends Sprite
     public function AbstractRoomView (ctx :WorldContext)
     {
         _ctx = ctx;
+        _layout = new RoomLayout(this);
+    }
+
+    /**
+     * Returns the layout object responsible for room layout.
+     */
+    public function get layout () :RoomLayout
+    {
+        return _layout;
     }
 
     // from MsoyPlaceView
@@ -95,7 +104,7 @@ public class AbstractRoomView extends Sprite
     public function locationUpdated (sprite :MsoySprite) :void
     {
         // first update the position and scale
-        RoomLayout.positionAndScale(this, sprite);
+        _layout.positionAndScale(sprite);
         if (sprite == _bg && _scene.getSceneType() == Decor.FIXED_IMAGE) {
             sprite.x += getScrollOffset();
         }        
@@ -122,15 +131,6 @@ public class AbstractRoomView extends Sprite
         }
     }
 
-    /*
-     * Get room metrics for this room.
-     * FIXME ROBERT: added to support RoomLayout.
-     */
-    public function getRoomMetrics () :RoomMetrics
-    {
-        return _metrics;
-    }
-    
     /**
      * Scroll the view by the specified number of pixels.
      *
@@ -247,7 +247,7 @@ public class AbstractRoomView extends Sprite
     public function setScene (scene :MsoyScene) :void
     {
         _scene = scene;
-        _metrics.update(scene.getDecorData());
+        _layout.update(scene.getDecorData());
         _backdrop.setRoom(scene.getDecorData());
         updateDrawnRoom();
         relayout();
@@ -291,7 +291,7 @@ public class AbstractRoomView extends Sprite
      */
     protected function relayout () :void
     {
-        var scale :Number = (_actualHeight / _metrics.sceneHeight);
+        var scale :Number = (_actualHeight / _layout.metrics.sceneHeight);
         scaleX = scale;
         scaleY = scale;
 
@@ -407,8 +407,8 @@ public class AbstractRoomView extends Sprite
     /** The actual screen height of this component. */
     protected var _actualHeight :Number;
 
-    /** The RoomMetrics for doing our layout. */
-    protected var _metrics :RoomMetrics = new RoomMetrics();
+    /** Object responsible for our spatial layout. */
+    protected var _layout :RoomLayout;
 
     /** Helper object that draws a room backdrop with four walls. */
     protected var _backdrop :RoomBackdrop = new RoomBackdrop();

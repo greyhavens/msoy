@@ -114,8 +114,8 @@ public class RoomView extends AbstractRoomView
         super.setScene(scene);
 
         // set the top of the history to the back wall/floor corner
-        chatOverlay.setSubtitlePercentage(
-            (_metrics.sceneHeight - _metrics.backWallBottom) / _metrics.sceneHeight);
+        var m :RoomMetrics = _layout.metrics;
+        chatOverlay.setSubtitlePercentage((m.sceneHeight - m.backWallBottom) / m.sceneHeight);
     }
 
     // from LoadingWatcher

@@ -480,10 +480,7 @@ try {
         }
 
         var item :Item = InventoryPicker.dragItem(event);
-        var cloc :ClickLocation =
-            RoomLayout.pointToLocation(
-                _roomView,
-                event.stageX, event.stageY);
+        var cloc :ClickLocation = _roomView.layout.pointToLocation(event.stageX, event.stageY);
 
         // let's go ahead and create furni
         addFurni(item, cloc.loc);
@@ -641,14 +638,11 @@ try {
             // figure the distance from the anchor
             var ypixels :Number = _anchor.y - event.stageY;
             var loc :MsoyLocation = _editSprite.loc;
-            loc.y = _anchorY + RoomLayout.getYDistance(_roomView, loc.z, ypixels);
+            loc.y = _anchorY + _roomView.layout.getYDistance(loc.z, ypixels);
             _editSprite.setLocation(loc);
 
         } else {
-            var cloc :ClickLocation =
-                RoomLayout.pointToLocation(
-                    _roomView,
-                    event.stageX, event.stageY);
+            var cloc :ClickLocation = _roomView.layout.pointToLocation(event.stageX, event.stageY);
             if (cloc.click == ClickLocation.FLOOR) {
                 cloc.loc.y = _editSprite.loc.y;
             }
