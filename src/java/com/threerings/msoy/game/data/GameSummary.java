@@ -5,7 +5,9 @@ package com.threerings.msoy.game.data;
 
 import com.threerings.io.SimpleStreamableObject;
 
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.StaticMediaDesc;
 
 public class GameSummary extends SimpleStreamableObject
     implements Cloneable
@@ -14,10 +16,16 @@ public class GameSummary extends SimpleStreamableObject
     public int gameId;
 
     /** The thumbnail of the game - used as a game icon */
-    public String thumbMediaPath;
+    public MediaDesc thumbMedia;
 
     /** The name of the game - used as a tooltip */
     public String name;
+
+    public MediaDesc getThumbMedia ()
+    {
+        return thumbMedia != null ? thumbMedia : new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.GAME,
+            Item.THUMB_MEDIA);
+    }
 
     // documentation inherited
     @Override
@@ -36,6 +44,10 @@ public class GameSummary extends SimpleStreamableObject
     {
         try {
             GameSummary data = (GameSummary) super.clone();
+            if (thumbMedia != null) {
+                data.thumbMedia = new MediaDesc(thumbMedia.hash, thumbMedia.mimeType, 
+                    thumbMedia.constraint);
+            }
             return data;
         } catch (CloneNotSupportedException cnse) {
             throw new RuntimeException(cnse); // not going to happen

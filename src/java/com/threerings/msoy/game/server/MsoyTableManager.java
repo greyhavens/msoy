@@ -52,7 +52,7 @@ public class MsoyTableManager extends TableManager
             GameSummary sum = new GameSummary();
             sum.name = _lobj.game.name;
             sum.gameId = _lobj.game.itemId;
-            sum.thumbMediaPath = _lobj.game.getThumbnailPath();
+            sum.thumbMedia = _lobj.game.thumbMedia;
             member.currentGame = sum;
             MsoyServer.memberMan.updateOccupantInfo(member);
         }

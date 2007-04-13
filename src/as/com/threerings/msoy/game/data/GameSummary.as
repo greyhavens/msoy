@@ -7,7 +7,9 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
 
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.StaticMediaDesc;
 
 public class GameSummary 
     implements Cloneable, Streamable, Equalable
@@ -16,10 +18,16 @@ public class GameSummary
     public var gameId :int
 
     /** The thumbnail of the game - used as a game icon. */
-    public var thumbMediaPath :String;
+    public var thumbMedia :MediaDesc;
 
     /** The name of the game - used as a tooltip */
     public var name :String;
+
+    public function getThumbMedia () :MediaDesc
+    {
+        return thumbMedia != null ? thumbMedia : new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.GAME,
+            Item.THUMB_MEDIA);
+    }
 
     // documentation from Equalable
     public function equals (other :Object) :Boolean 
@@ -37,7 +45,10 @@ public class GameSummary
         var data :GameSummary = new GameSummary();
         data.gameId = this.gameId;
         data.name = this.name;
-        data.thumbMediaPath = this.thumbMediaPath;
+        if (thumbMedia != null) {
+            data.thumbMedia = new MediaDesc(thumbMedia.hash, thumbMedia.mimeType, 
+                thumbMedia.constraint);
+        }
         return data;
     }
 
@@ -45,7 +56,7 @@ public class GameSummary
     public function readObject (ins :ObjectInputStream) :void
     {
         gameId = ins.readInt();
-        thumbMediaPath = ins.readField(String) as String
+        thumbMedia = ins.readObject() as MediaDesc;
         name = ins.readField(String) as String;
     }
 
@@ -53,7 +64,7 @@ public class GameSummary
     public function writeObject (out :ObjectOutputStream) :void
     {
         out.writeInt(gameId);
-        out.writeField(thumbMediaPath);
+        out.writeObject(thumbMedia);
         out.writeField(name);
     }
 }
