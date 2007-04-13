@@ -9,10 +9,6 @@ import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.SetAdapter;
 
-import com.threerings.parlor.data.Table;
-import com.threerings.parlor.game.data.GameConfig;
-import com.threerings.parlor.server.TableManager;
-
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.server.ItemManager;
@@ -21,8 +17,6 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.web.Game;
 
 import com.threerings.msoy.game.data.LobbyObject;
-import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.msoy.game.data.MsoyTable;
 
 import static com.threerings.msoy.Log.log;
 
@@ -55,21 +49,7 @@ public class LobbyManager
             MsoyServer.itemMan.registerItemUpdateListener(GameRecord.class, _uplist);
         }
 
-        _tableMgr = new TableManager(_lobj) {
-            protected GameConfig createConfig (Table table) {
-                MsoyGameConfig config = (MsoyGameConfig)super.createConfig(table);
-                // fill in our game id and name
-                Game game = _lobj.game;
-                config.persistentGameId = game.getPrototypeId();
-                config.name = game.name;
-                return config;
-            }
-            protected void purgeTable (Table table) {
-                super.purgeTable(table);
-                checkShutdownInterval();
-            }
-        };
-        _tableMgr.setTableClass(MsoyTable.class);
+        _tableMgr = new MsoyTableManager(_lobj);
         _lobj.addListener(_tableWatcher);
 
         // since we start empty, we need to immediately assume shutdown
@@ -148,7 +128,7 @@ public class LobbyManager
     protected Game _game;
 
     /** Manages the actual tables. */
-    protected TableManager _tableMgr;
+    protected MsoyTableManager _tableMgr;
 
     /** Used to listen for updates to our game item if necessary. */
     protected ItemManager.ItemUpdateListener _uplist;
