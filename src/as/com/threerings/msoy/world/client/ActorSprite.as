@@ -5,6 +5,8 @@ package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
 
+import flash.events.Event;
+
 import flash.geom.Rectangle;
 
 import flash.filters.GlowFilter;
@@ -158,11 +160,14 @@ public class ActorSprite extends MsoySprite
                     }
                     _currentGameSummary = minfo.currentGame;
                     _currentGameIcon = new ScalingMediaContainer(30, 30);
-                    _currentGameIcon.addEventListener(MediaContainer.SIZE_KNOWN, 
-                        function () :void {
-                            // don't add this as a decoration until its drawing at the right size
+                    var sizeKnownHandler :Function;
+                    sizeKnownHandler = function (evt :Event) :void {
+                        if (evt.target == _currentGameIcon) {
                             addDecoration(_currentGameIcon);
-                        }, false, 0, true);
+                        }
+                        evt.target.removeEventListener(MediaContainer.SIZE_KNOWN, sizeKnownHandler);
+                    };
+                    _currentGameIcon.addEventListener(MediaContainer.SIZE_KNOWN, sizeKnownHandler);
                     _currentGameIcon.setMedia(_currentGameSummary.getThumbMedia().getMediaPath());
                 }
             } else if (_currentGameIcon != null) {
