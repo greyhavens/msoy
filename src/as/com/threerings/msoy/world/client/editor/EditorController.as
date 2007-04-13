@@ -446,17 +446,22 @@ try {
     {
         var sprite :MsoySprite = (value as MsoySprite);
         sprite.setEditing(true);
-        addEditingListeners(sprite);
+
+        if (! (sprite is DecorSprite)) {
+            addEditingListeners(sprite);
+        }
     }
 
     protected function disableEditingVisitor (key :Object, value :Object) :void
     {
         var sprite :MsoySprite = (value as MsoySprite);
 
-        sprite.removeEventListener(MouseEvent.MOUSE_DOWN, spriteSelected);
-        sprite.removeEventListener(MouseEvent.MOUSE_OVER, spriteRollOver);
-        sprite.removeEventListener(MouseEvent.MOUSE_OUT, spriteRollOut);
-
+        if (! (sprite is DecorSprite)) {
+            sprite.removeEventListener(MouseEvent.MOUSE_DOWN, spriteSelected);
+            sprite.removeEventListener(MouseEvent.MOUSE_OVER, spriteRollOver);
+            sprite.removeEventListener(MouseEvent.MOUSE_OUT, spriteRollOut);
+        }
+        
         sprite.setEditing(false);
     }
 
