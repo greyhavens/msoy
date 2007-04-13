@@ -25,8 +25,7 @@ public class GameSummary
 
     public function getThumbMedia () :MediaDesc
     {
-        return thumbMedia != null ? thumbMedia : new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.GAME,
-            Item.THUMB_MEDIA);
+        return thumbMedia != null ? thumbMedia : Item.getDefaultThumbnailMediaFor(Item.GAME);
     }
 
     // documentation from Equalable
@@ -45,10 +44,7 @@ public class GameSummary
         var data :GameSummary = new GameSummary();
         data.gameId = this.gameId;
         data.name = this.name;
-        if (thumbMedia != null) {
-            data.thumbMedia = new MediaDesc(thumbMedia.hash, thumbMedia.mimeType, 
-                thumbMedia.constraint);
-        }
+        data.thumbMedia = this.thumbMedia;
         return data;
     }
 

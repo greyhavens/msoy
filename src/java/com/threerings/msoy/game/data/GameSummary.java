@@ -23,8 +23,7 @@ public class GameSummary extends SimpleStreamableObject
 
     public MediaDesc getThumbMedia ()
     {
-        return thumbMedia != null ? thumbMedia : new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.GAME,
-            Item.THUMB_MEDIA);
+        return thumbMedia != null ? thumbMedia : Item.getDefaultThumbnailFor(Item.GAME);
     }
 
     // documentation inherited
@@ -44,10 +43,7 @@ public class GameSummary extends SimpleStreamableObject
     {
         try {
             GameSummary data = (GameSummary) super.clone();
-            if (thumbMedia != null) {
-                data.thumbMedia = new MediaDesc(thumbMedia.hash, thumbMedia.mimeType, 
-                    thumbMedia.constraint);
-            }
+
             return data;
         } catch (CloneNotSupportedException cnse) {
             throw new RuntimeException(cnse); // not going to happen
