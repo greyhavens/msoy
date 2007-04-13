@@ -1,5 +1,7 @@
 package com.threerings.msoy.game.client {
 
+import mx.core.ScrollPolicy;
+
 import mx.containers.HBox;
 import mx.containers.VBox;
 
@@ -45,6 +47,8 @@ public class TableCreationPanel extends HBox
         btnBox.width = 101;
         btnBox.percentHeight = 100;
         btnBox.styleName = "createBtnBox";
+        btnBox.horizontalScrollPolicy = ScrollPolicy.OFF;
+        btnBox.verticalScrollPolicy = ScrollPolicy.OFF;
         addChild(btnBox);
         _createBtn = new CommandButton();
         _createBtn.setFunction(function () :void {
