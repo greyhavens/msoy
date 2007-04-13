@@ -47,13 +47,15 @@ public class MsoyTableManager extends TableManager
         super.notePlayerAdded(table, playerOid);
 
         // attach a new GameSummary to our MemberObject, and update our occupant info 
-        GameSummary sum = new GameSummary();
-        sum.name = _lobj.game.name;
-        sum.gameId = _lobj.game.itemId;
-        sum.thumbMedia = _lobj.game.thumbMedia;
         MemberObject member = (MemberObject)MsoyServer.omgr.getObject(playerOid);
-        member.currentGame = sum;
-        MsoyServer.memberMan.updateOccupantInfo(member);
+        if (member != null) {
+            GameSummary sum = new GameSummary();
+            sum.name = _lobj.game.name;
+            sum.gameId = _lobj.game.itemId;
+            sum.thumbMediaPath = _lobj.game.getThumbnailPath();
+            member.currentGame = sum;
+            MsoyServer.memberMan.updateOccupantInfo(member);
+        }
     }
 
     @Override 
@@ -61,8 +63,10 @@ public class MsoyTableManager extends TableManager
     {
         // remove the GameSummary from our MemberObject, and update our occupant info
         MemberObject member = (MemberObject)MsoyServer.omgr.getObject(playerOid);
-        member.currentGame = null;
-        MsoyServer.memberMan.updateOccupantInfo(member);
+        if (member != null) {
+            member.currentGame = null;
+            MsoyServer.memberMan.updateOccupantInfo(member);
+        }
         
         return super.notePlayerRemoved(table, playerOid);
     }

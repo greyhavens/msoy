@@ -16,7 +16,7 @@ public class GameSummary
     public var gameId :int
 
     /** The thumbnail of the game - used as a game icon. */
-    public var thumbMedia :MediaDesc;
+    public var thumbMediaPath :String;
 
     /** The name of the game - used as a tooltip */
     public var name :String;
@@ -37,10 +37,7 @@ public class GameSummary
         var data :GameSummary = new GameSummary();
         data.gameId = this.gameId;
         data.name = this.name;
-        if (thumbMedia != null) {
-            data.thumbMedia = new MediaDesc(thumbMedia.hash, thumbMedia.mimeType, 
-                thumbMedia.constraint);
-        }
+        data.thumbMediaPath = this.thumbMediaPath;
         return data;
     }
 
@@ -48,7 +45,7 @@ public class GameSummary
     public function readObject (ins :ObjectInputStream) :void
     {
         gameId = ins.readInt();
-        thumbMedia = ins.readObject() as MediaDesc;
+        thumbMediaPath = ins.readField(String) as String
         name = ins.readField(String) as String;
     }
 
@@ -56,7 +53,7 @@ public class GameSummary
     public function writeObject (out :ObjectOutputStream) :void
     {
         out.writeInt(gameId);
-        out.writeObject(thumbMedia);
+        out.writeField(thumbMediaPath);
         out.writeField(name);
     }
 }

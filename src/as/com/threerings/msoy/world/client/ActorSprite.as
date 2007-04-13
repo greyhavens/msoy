@@ -156,14 +156,13 @@ public class ActorSprite extends MsoySprite
                 }
                 _currentGameSummary = minfo.currentGame;
                 _currentGameIcon = new ScalingMediaContainer(30, 30);
-                _currentGameIcon.setMedia(_currentGameSummary.thumbMedia.getMediaPath());
+                _currentGameIcon.setMedia(_currentGameSummary.thumbMediaPath);
                 addDecoration(_currentGameIcon);
             } else if (_currentGameIcon) {
                 removeDecoration(_currentGameIcon);
                 _currentGameIcon = null;
                 _currentGameSummary = null;
             }
-
         }
 
         if (_occInfo == null || (_occInfo.status != newInfo.status) ||

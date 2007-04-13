@@ -14,7 +14,7 @@ public class GameSummary extends SimpleStreamableObject
     public int gameId;
 
     /** The thumbnail of the game - used as a game icon */
-    public MediaDesc thumbMedia;
+    public String thumbMediaPath;
 
     /** The name of the game - used as a tooltip */
     public String name;
@@ -36,10 +36,6 @@ public class GameSummary extends SimpleStreamableObject
     {
         try {
             GameSummary data = (GameSummary) super.clone();
-            if (thumbMedia != null) {
-                data.thumbMedia = new MediaDesc(thumbMedia.hash, thumbMedia.mimeType, 
-                    thumbMedia.constraint);
-            }
             return data;
         } catch (CloneNotSupportedException cnse) {
             throw new RuntimeException(cnse); // not going to happen
