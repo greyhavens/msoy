@@ -5,6 +5,7 @@ package com.threerings.msoy.game.server;
 
 import com.samskivert.util.Interval;
 
+import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.SetAdapter;
@@ -17,6 +18,7 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.web.Game;
 
 import com.threerings.msoy.game.data.LobbyObject;
+import com.threerings.msoy.game.data.SubscriberListener;
 
 import static com.threerings.msoy.Log.log;
 
@@ -24,6 +26,7 @@ import static com.threerings.msoy.Log.log;
  * Manages a lobby room.
  */
 public class LobbyManager 
+    implements SubscriberListener
 {
     /**
      * Create a new LobbyManager.
@@ -34,6 +37,7 @@ public class LobbyManager
     {
         _game = game;
         _lobj = MsoyServer.omgr.registerObject(new LobbyObject());
+        _lobj.subscriberListener = this;
         _lobj.setGame(_game);
 
         // if our game object is mutable, listen for updates from the ItemManager
@@ -53,12 +57,19 @@ public class LobbyManager
         _lobj.addListener(_tableWatcher);
 
         // since we start empty, we need to immediately assume shutdown
-        checkShutdownInterval();
+        recheckShutdownInterval();
     }
 
     public void shutdown ()
     {
+        _lobj.subscriberListener = null;
         _lobj.removeListener(_tableWatcher);
+
+        // if our game is mutable, clear our update listener
+        if (_uplist != null) {
+            MsoyServer.itemMan.removeItemUpdateListener(GameRecord.class, _uplist);
+        }
+
         MsoyServer.lobbyReg.lobbyShutdown(getGameId());
 
         _tableMgr.shutdown();
@@ -85,18 +96,22 @@ public class LobbyManager
     {
         return _lobj;
     }
-    
-    protected void didShutdown ()
-    {
-        // if our game is mutable, clear our update listener
-        if (_uplist != null) {
-            MsoyServer.itemMan.removeItemUpdateListener(GameRecord.class, _uplist);
-        }
-    }
 
-    protected void checkShutdownInterval ()
+    // from SubscriberListener
+    public void subscriberCountChanged (DObject target)
     {
-        if (_lobj.tables.size() == 0) {
+        recheckShutdownInterval();
+    }
+    
+    /**
+     * Check the current status of the lobby and maybe schedule or maybe cancel the shutdown
+     * interval, as appropriate.
+     */
+    protected void recheckShutdownInterval ()
+    {
+        //System.err.println("Checking lobby: subscribers=" + _lobj.getSubscriberCount() +
+        //        ", tables=" + _lobj.tables.size());
+        if (_lobj.getSubscriberCount() == 0 && _lobj.tables.size() == 0) {
             // queue up a shutdown interval, unless we've already got one.
             if (_shutdownInterval == null) {
                 _shutdownInterval = new Interval(MsoyServer.omgr) {
@@ -107,9 +122,15 @@ public class LobbyManager
                 };
                 _shutdownInterval.schedule(IDLE_UNLOAD_PERIOD);
             }
-        } 
+
+        } else { 
+            cancelShutdowner();
+        }
     }
 
+    /**
+     * Unconditionally cancel the shutdown interval.
+     */
     protected void cancelShutdowner ()
     {
         if (_shutdownInterval != null) {
@@ -117,9 +138,6 @@ public class LobbyManager
             _shutdownInterval = null;
         }
     }
-
-    /** idle time before shutting down the manager. */
-    protected static final long IDLE_UNLOAD_PERIOD = 60 * 1000L; // in ms
 
     /** The Lobby object we're using. */
     protected LobbyObject _lobj;
@@ -142,7 +160,7 @@ public class LobbyManager
         }
         public void entryRemoved (EntryRemovedEvent event) {
             if (event.getName().equals(LobbyObject.TABLES)) {
-                checkShutdownInterval();
+                recheckShutdownInterval();
             }
         } 
     };
@@ -150,4 +168,7 @@ public class LobbyManager
     /** interval to let us delay lobby shutdown for awhile, in case a new table is created 
      * immediately */
     protected Interval _shutdownInterval;
+
+    /** idle time before shutting down the manager. */
+    protected static final long IDLE_UNLOAD_PERIOD = 60 * 1000L; // in ms
 }

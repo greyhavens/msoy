@@ -5,6 +5,7 @@ package com.threerings.msoy.game.data;
 
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.DObject;
+import com.threerings.presents.dobj.Subscriber;
 
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableLobbyObject;
@@ -38,6 +39,9 @@ public class LobbyObject extends DObject implements TableLobbyObject
     /** Used to communicate to the table manager. */
     public TableMarshaller tableService;
 
+    /** If set on the server, will be called with subscriber updates. */
+    public transient SubscriberListener subscriberListener;
+
     // from TableLobbyObject
     public DSet getTables ()
     {
@@ -48,6 +52,32 @@ public class LobbyObject extends DObject implements TableLobbyObject
     public TableMarshaller getTableService ()
     {
         return tableService;
+    }
+
+    /**
+     * Expose our subscriber count, for our lobby.
+     */
+    public int getSubscriberCount ()
+    {
+        return _scount;
+    }
+
+    @Override
+    public void removeSubscriber (Subscriber sub)
+    {
+        super.removeSubscriber(sub);
+        if (subscriberListener != null) {
+            subscriberListener.subscriberCountChanged(this);
+        }
+    }
+
+    @Override
+    public void addSubscriber (Subscriber sub)
+    {
+        super.addSubscriber(sub);
+        if (subscriberListener != null) {
+            subscriberListener.subscriberCountChanged(this);
+        }
     }
 
     // AUTO-GENERATED: METHODS START
