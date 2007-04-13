@@ -267,6 +267,44 @@ public class RoomLayout {
     */
     
 
+    /**
+     * Given a position in room space, this function finds its projection in screen space, and
+     * updates the DisplayObject's position and scale appropriately. If the display object
+     * participates in screen layout (and most of them do, with the notable exception of decor),
+     * it will also ask the room view to recalculate the object's z-ordering.
+     *
+     * @param loc new object location, in room coordinates
+     * @param target object to be updated
+     * @param offset optional Point argument that, if not null, will be used to shift
+     *        the object left and up by the specified x and y amounts.
+     */
+    public function updateScreenLocation (
+        loc :MsoyLocation, target :DisplayObject, offset :Point = null) :void
+    {
+        var screen :Point = _metrics.roomToScreen(loc.x, loc.y, loc.z);
+        var scale :Number = _metrics.roomToScreenScale(loc.z);
+        offset = (offset != null ? offset : NO_OFFSET);
+
+        if (target is MsoySprite) {
+            // msoy sprites do scaling in their own way
+            (target as MsoySprite).setLocationScale(scale);
+        } else {
+            // everyone else just uses display object scaling
+            target.scaleX = scale;
+            target.scaleY = scale;
+        }
+
+        // move to the right place 
+        target.x = screen.x - offset.x;
+        target.y = screen.y - offset.y;
+
+        // maybe call the room view, and tell it to find a new z ordering for this target
+        if (target is ZOrderable && (target as ZOrderable).isIncludedInLayout()) {
+            adjustZOrder(target);
+        }
+        
+    }
+
 
     // RZ: called internally (roomToScreenLocation) and AbstractRoomView.locationUpdated():107
 
@@ -341,62 +379,14 @@ public class RoomLayout {
 
 
 
-
-    // RZ: Only used in AbstractRoomView.locationUpdated():104
-    
-    /**
-     * Calculate the scale and x/y position of the specified media according to its logical
-     * coordinates.
-     */
-    public function positionAndScale (sprite :MsoySprite) :void
-    {
-        var screen :Point = _metrics.roomToScreen(sprite.loc.x, sprite.loc.y, sprite.loc.z);
-        var scale :Number = _metrics.roomToScreenScale(sprite.loc.z);
-        
-        sprite.setLocationScale(scale);
-
-        var hotSpot :Point = sprite.getLayoutHotSpot();
-
-        sprite.x = screen.x - hotSpot.x;
-        sprite.y = screen.y - hotSpot.y;
-
-        if (sprite.isIncludedInLayout()) {
-            adjustZOrder(sprite);
-        }
-
-    }
-
-
-    // FROM ROOM CONTROLLER
-
-    // RZ: only used in RoomController.checkMouse():608,614
-    
-    /**
-     * Project room location into screen coordinates.
-     * @param target sprite whose data needs to be updated with the projected location.
-     */
-    public function roomToScreenLocation (loc :MsoyLocation, target :DisplayObject) :void
-    {
-        var screen :Point = _metrics.roomToScreen(loc.x, loc.y, loc.z);
-        var scale :Number = _metrics.roomToScreenScale(loc.z);
-        
-        target.x = screen.x;
-        target.y = screen.y;
-        target.scaleX = scale;
-        target.scaleY = scale;
-
-        if (target is ZOrderable) {
-            (target as ZOrderable).setZ(loc.z);
-            adjustZOrder(target);
-        }
-    }
-
-
     /** Room metrics storage. */
     protected var _metrics :RoomMetrics;
 
     /** AbstractRoomView object that contains this instance. */
     protected var _parentView :AbstractRoomView;
+
+    /** Point (0, 0) expressed as a constant. */
+    protected static const NO_OFFSET :Point = new Point (0, 0);
 }
 }
     

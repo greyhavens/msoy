@@ -103,13 +103,11 @@ public class AbstractRoomView extends Sprite
      */
     public function locationUpdated (sprite :MsoySprite) :void
     {
-        // first update the position and scale
-        _layout.positionAndScale(sprite);
+        _layout.updateScreenLocation(sprite.loc, sprite, sprite.getLayoutHotSpot());
+        
         if (sprite == _bg && _scene.getSceneType() == Decor.FIXED_IMAGE) {
             sprite.x += getScrollOffset();
         }        
-
-        // then, possibly move the child up or down, depending on z order
     }
 
     /**

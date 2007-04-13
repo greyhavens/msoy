@@ -604,7 +604,8 @@ public class RoomController extends SceneController
                     _roomView.layout.pointToLocation(sx, sy, _shiftPressed, getAvatarYOffset());
 
                 if (cloc.click == ClickLocation.FLOOR && _mctx.worldProps.userControlsAvatar) {
-                    _roomView.layout.roomToScreenLocation(cloc.loc, _walkTarget);
+                    _walkTarget.setZ(cloc.loc.z);
+                    _roomView.layout.updateScreenLocation(cloc.loc, _walkTarget);
                     showWalkTarget = true;
 
                     // don't let the target shrink too much - 0.25 of original size at most
@@ -615,7 +616,8 @@ public class RoomController extends SceneController
                     if (cloc.loc.y != 0) {
                         // show the shadow
                         cloc.loc.y = 0;
-                        _roomView.layout.roomToScreenLocation(cloc.loc, _walkShadow);
+                        _walkShadow.setZ(cloc.loc.z);
+                        _roomView.layout.updateScreenLocation(cloc.loc, _walkShadow);
                         showWalkShadow = true;
 
                         _walkShadow.scaleX = _walkShadow.scaleY = clampedScale;
@@ -1019,6 +1021,12 @@ class WalkTarget extends Sprite
     public function getZ () :Number
     {
         return _z;
+    }
+
+    // from ZOrderable
+    public function isIncludedInLayout () :Boolean
+    {
+        return true;
     }
 
     protected var _z :Number;

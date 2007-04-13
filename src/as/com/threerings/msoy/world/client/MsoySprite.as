@@ -63,6 +63,7 @@ import com.threerings.msoy.world.data.RoomObject;
  * loading and communication with the loaded media content.
  */
 public class MsoySprite extends MediaContainer
+    implements ZOrderable
 {
     /** The current logical coordinate of this media. */
     public const loc :MsoyLocation = new MsoyLocation();
@@ -76,9 +77,13 @@ public class MsoySprite extends MediaContainer
         setup(desc, ident);
     }
 
-    /**
-     * Is this sprite included in standard layout in the RoomView?
-     */
+    //documentation inherited from interface ZOrderable
+    public function getZ () :Number
+    {
+        return isIncludedInLayout() ? loc.z : NaN;
+    }
+
+    //documentation inherited from interface ZOrderable
     public function isIncludedInLayout () :Boolean
     {
         return true;
