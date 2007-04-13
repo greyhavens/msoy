@@ -32,6 +32,7 @@ import com.threerings.msoy.web.data.GroupName;
 
 import com.threerings.msoy.game.data.GameMemberInfo;
 import com.threerings.msoy.game.data.WorldGameConfig;
+import com.threerings.msoy.game.data.GameSummary;
 
 /**
  * Represents a connected msoy user.
@@ -140,6 +141,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** A flag that's true if this member has unread mail. */
     public boolean hasNewMail;
+
+    /** The game summary for the forming game table that this user is sitting at. */
+    public transient GameSummary currentGame;
     
     /**
      * Returns this member's unique id.

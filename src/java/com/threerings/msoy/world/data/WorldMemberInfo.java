@@ -9,6 +9,8 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.MediaDesc;
 
+import com.threerings.msoy.game.data.GameSummary;
+
 /**
  * Extends MemberInfo with world-specific information.
  */
@@ -17,6 +19,9 @@ public class WorldMemberInfo extends MemberInfo
 {
     /** The state of the member's avatar. */
     public String state;
+
+    /** The game summary info for which to display a game icon on this member's avatar */
+    public GameSummary currentGame;
 
 //    /** The style of chat bubble to use. */
 //    public short chatStyle;
@@ -48,6 +53,8 @@ public class WorldMemberInfo extends MemberInfo
         }
 
         state = user.avatarState;
+
+        currentGame = user.currentGame;
     }
 
     // from interface WorldOccupantInfo

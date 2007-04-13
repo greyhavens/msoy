@@ -28,7 +28,12 @@ import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.WorldOccupantInfo;
+import com.threerings.msoy.world.data.WorldMemberInfo;
 import com.threerings.msoy.world.data.WorldPetInfo;
+
+import com.threerings.msoy.game.data.GameSummary;
+
+import com.threerings.msoy.ui.ScalingMediaContainer;
 
 /**
  * Handles sprites for actors (things in a scene that move around).
@@ -141,6 +146,24 @@ public class ActorSprite extends MsoySprite
         var newMedia :MediaDesc = winfo.getMedia();
         if (!newMedia.equals(_desc)) {
             setup(newMedia, winfo.getItemIdent());
+        }
+
+        if (winfo is WorldMemberInfo) {
+            var minfo :WorldMemberInfo = winfo as WorldMemberInfo;
+            if (minfo.currentGame != null) {
+                if (_currentGameIcon != null && !_currentGameSummary.equals(minfo.currentGame)) {
+                    removeDecoration(_currentGameIcon);
+                }
+                _currentGameSummary = minfo.currentGame;
+                _currentGameIcon = new ScalingMediaContainer(30, 30);
+                _currentGameIcon.setMedia(_currentGameSummary.thumbMedia.getMediaPath());
+                addDecoration(_currentGameIcon);
+            } else if (_currentGameIcon) {
+                removeDecoration(_currentGameIcon);
+                _currentGameIcon = null;
+                _currentGameSummary = null;
+            }
+
         }
 
         if (_occInfo == null || (_occInfo.status != newInfo.status) ||
@@ -421,6 +444,9 @@ public class ActorSprite extends MsoySprite
     protected var _label :TextField;
     protected var _occInfo :ActorInfo;
     protected var _walk :Animation;
+
+    protected var _currentGameIcon :ScalingMediaContainer;
+    protected var _currentGameSummary :GameSummary;
 
     /** Display objects to be shown above the name for this actor,
      * configured by external callers. */
