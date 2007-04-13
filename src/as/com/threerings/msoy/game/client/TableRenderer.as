@@ -199,10 +199,8 @@ public class TableRenderer extends HBox
         // maybe add a button for entering the game
         if (table.gameOid != -1) {
             var key :String = null;
-            Log.getLog(this).debug("type: " + table.config.getGameType());
             switch (table.config.getGameType()) {
             case GameConfig.PARTY:
-                Log.getLog(this).debug("key = b.join");
                 key = "b.join";
                 break;
 
@@ -222,7 +220,6 @@ public class TableRenderer extends HBox
                 btn = new CommandButton(MsoyController.GO_LOCATION, table.gameOid);
                 btn.label = ctx.xlate("game", key);
                 box.addChild(btn);
-                Log.getLog(this).debug("adding button for key");
                 _seatsGrid.addChild(box);
             }
         }
