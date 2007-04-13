@@ -23,7 +23,7 @@ public class GameSummary extends SimpleStreamableObject
 
     public MediaDesc getThumbMedia ()
     {
-        return thumbMedia != null ? thumbMedia : Item.getDefaultThumbnailFor(Item.GAME);
+        return thumbMedia != null ? thumbMedia : Item.getDefaultThumbnailMediaFor(Item.GAME);
     }
 
     // documentation inherited
