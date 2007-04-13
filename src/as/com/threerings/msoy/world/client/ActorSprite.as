@@ -16,6 +16,7 @@ import flash.text.TextFormat;
 import com.threerings.util.Util;
 
 import com.threerings.flash.Animation;
+import com.threerings.flash.MediaContainer;
 
 import com.threerings.crowd.data.OccupantInfo;
 
@@ -157,8 +158,12 @@ public class ActorSprite extends MsoySprite
                     }
                     _currentGameSummary = minfo.currentGame;
                     _currentGameIcon = new ScalingMediaContainer(30, 30);
+                    _currentGameIcon.addEventListener(MediaContainer.SIZE_KNOWN, 
+                        function () :void {
+                            // don't add this as a decoration until its drawing at the right size
+                            addDecoration(_currentGameIcon);
+                        }, false, 0, true);
                     _currentGameIcon.setMedia(_currentGameSummary.getThumbMedia().getMediaPath());
-                    addDecoration(_currentGameIcon);
                 }
             } else if (_currentGameIcon != null) {
                 removeDecoration(_currentGameIcon);
