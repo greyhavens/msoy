@@ -260,30 +260,23 @@ public class RoomLayout {
      *        the object left and up by the specified x and y amounts.
      */
     public function updateScreenLocation (
-        loc :MsoyLocation, target :DisplayObject, offset :Point = null) :void
+        loc :MsoyLocation, target :RoomElement, offset :Point = null) :void
     {
-        var screen :Point = _metrics.roomToScreen(loc.x, loc.y, loc.z);
-        var scale :Number = _metrics.scaleAtDepth(loc.z);
-        offset = (offset != null ? offset : NO_OFFSET);
-
-        if (target is MsoySprite) {
-            // msoy sprites do scaling in their own way
-            (target as MsoySprite).setLocationScale(scale);
+        if (target is DisplayObject) {
+            var screen :Point = _metrics.roomToScreen(loc.x, loc.y, loc.z);
+            var scale :Number = _metrics.scaleAtDepth(loc.z);
+            offset = (offset != null ? offset : NO_OFFSET);
+            
+            target.setScreenLocation(screen.x - offset.x, screen.y - offset.y);
+            target.setScreenScale(scale);
+            
+            // maybe call the room view, and tell it to find a new z ordering for this target
+            if (target.isIncludedInLayout()) {
+                adjustZOrder(target as DisplayObject);
+            }
         } else {
-            // everyone else just uses display object scaling
-            target.scaleX = scale;
-            target.scaleY = scale;
+            throw new Error ("Invalid target passed to updateScreenLocation: " + target);
         }
-
-        // move to the right place 
-        target.x = screen.x - offset.x;
-        target.y = screen.y - offset.y;
-
-        // maybe call the room view, and tell it to find a new z ordering for this target
-        if (target is ZOrderable && (target as ZOrderable).isIncludedInLayout()) {
-            adjustZOrder(target);
-        }
-        
     }
 
 
@@ -336,7 +329,7 @@ public class RoomLayout {
     protected function getZOfChildAt (index :int) :Number
     {
         var disp :DisplayObject = _parentView.getChildAt(index);
-        return (disp is ZOrderable) ? (disp as ZOrderable).getZ() : NaN;
+        return (disp is RoomElement) ? (disp as RoomElement).getZ() : NaN;
     }
 
     

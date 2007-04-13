@@ -63,7 +63,7 @@ import com.threerings.msoy.world.data.RoomObject;
  * loading and communication with the loaded media content.
  */
 public class MsoySprite extends MediaContainer
-    implements ZOrderable
+    implements RoomElement
 {
     /** The current logical coordinate of this media. */
     public const loc :MsoyLocation = new MsoyLocation();
@@ -77,27 +77,32 @@ public class MsoySprite extends MediaContainer
         setup(desc, ident);
     }
 
-    //documentation inherited from interface ZOrderable
+    // from RoomElement
     public function getZ () :Number
     {
         return isIncludedInLayout() ? loc.z : NaN;
     }
 
-    //documentation inherited from interface ZOrderable
+    // from RoomElement
     public function isIncludedInLayout () :Boolean
     {
         return true;
     }
 
-    /**
-     * Set the scale of the media as affected by our location in the room.
-     */ 
-    public function setLocationScale (scale :Number) :void
+    // from RoomElement
+    public function setScreenScale (scale :Number) :void
     {
         if (scale != _locScale) {
             _locScale = scale;
             scaleUpdated();
         }
+    }
+
+    // from RoomElement
+    public function setScreenLocation (x :Number, y :Number) :void
+    {
+        this.x = x
+        this.y = y
     }
 
     public function setEffectScales (xscale :Number, yscale :Number) :void

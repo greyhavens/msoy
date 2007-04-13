@@ -608,19 +608,12 @@ public class RoomController extends SceneController
                     _roomView.layout.updateScreenLocation(cloc.loc, _walkTarget);
                     showWalkTarget = true;
 
-                    // don't let the target shrink too much - 0.25 of original size at most
-                    var clampedScale :Number =
-                        Math.max(0.25, Math.min(_walkTarget.scaleX, _walkTarget.scaleY));
-                    _walkTarget.scaleX = _walkTarget.scaleY = clampedScale;
-
                     if (cloc.loc.y != 0) {
                         // show the shadow
                         cloc.loc.y = 0;
                         _walkShadow.setZ(cloc.loc.z);
                         _roomView.layout.updateScreenLocation(cloc.loc, _walkShadow);
                         showWalkShadow = true;
-
-                        _walkShadow.scaleX = _walkShadow.scaleY = clampedScale;
                     }
                 }
 
@@ -995,10 +988,10 @@ public class RoomController extends SceneController
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
-import com.threerings.msoy.world.client.ZOrderable;
+import com.threerings.msoy.world.client.RoomElement;
 
 class WalkTarget extends Sprite
-    implements ZOrderable
+    implements RoomElement
 {
     public function WalkTarget (shadow :Boolean = false)
     {
@@ -1017,17 +1010,35 @@ class WalkTarget extends Sprite
         _z = z;
     }
 
-    // from ZOrderable
+    // from RoomElement
     public function getZ () :Number
     {
         return _z;
     }
 
-    // from ZOrderable
+    // from RoomElement
     public function isIncludedInLayout () :Boolean
     {
         return true;
     }
+
+    // from RoomElement
+    public function setScreenScale (scale :Number) :void
+    {
+        // don't let the target shrink too much - 0.25 of original size at most
+        var clampedScale :Number = Math.max(0.25, scale);
+
+        scaleX = clampedScale;
+        scaleY = clampedScale;
+    }
+
+    // from RoomElement
+    public function setScreenLocation (x :Number, y :Number) :void
+    {
+        this.x = x
+        this.y = y
+    }
+
 
     protected var _z :Number;
 
