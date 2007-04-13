@@ -160,7 +160,7 @@ public class LobbyPanel extends VBox
     public function tableRemoved (tableId :int) :void
     {
         var table :Table;
-        for (var ii :int = 0; ii < _runningTables.length; ii++) {
+        for (var ii :int = 0; _runningTables != null && ii < _runningTables.length; ii++) {
             table = (_runningTables.getItemAt(ii) as Table);
             if (table.tableId == tableId) {
                 _runningTables.removeItemAt(ii);

@@ -135,23 +135,32 @@ public class TableRenderer extends HBox
         }
 
         // update the seats
-        if (table.occupants != null) {
-            updateSeats(table);
+        var length :int = table.occupants == null ? 0 : table.occupants.length;
+        if (length != 0) {
+            updateSeats(table, length);
+        }
+        // remove any extra seats/buttons, should there be any
+        while (_seatsGrid.numChildren > length) {
+            _seatsGrid.removeChildAt(length);
         }
         updateButtons(table);
+        _seatsGrid.validateNow();
+        _maxUsableWidth = (_seatsGrid.measuredMinWidth + HORZ_GAP) * _seatsGrid.numChildren +
+            /* the mystery pixels strike again :/ */ 15;
 
         if (!_popup) {
             updateConfig(table);
             // mx.containers.Tile seems to have trouble always understanding its dimensions 
             // correctly when its in a list
             validateNow();
-            _seatsGrid.width = width - CONFIG_WIDTH - PADDING_WIDTH - 10; 
+            if (_seatsGrid.numChildren > 1) {
+                _seatsGrid.width = width - CONFIG_WIDTH - PADDING_WIDTH - 10; 
+            }
         }
     }
 
-    protected function updateSeats (table :MsoyTable) :void
+    protected function updateSeats (table :MsoyTable, length :int) :void
     {
-        var length :int = table.occupants.length;
         for (var ii :int = 0; ii < length; ii++) {
             var seat :SeatRenderer;
             if (_seatsGrid.numChildren <= ii) {
@@ -165,11 +174,6 @@ public class TableRenderer extends HBox
             }
             seat.update(ctx, table, ii, panel.isSeated());
         }
-
-        // remove any extra seats/buttons, should there be any
-        while (_seatsGrid.numChildren > length) {
-            _seatsGrid.removeChildAt(length);
-        }
     }
 
     protected function updateButtons (table :MsoyTable) :void
@@ -180,9 +184,8 @@ public class TableRenderer extends HBox
         if (table.occupants != null && table.occupants.length > 0 &&
                 ctx.getMemberObject().getVisibleName().equals(table.occupants[0]) &&
                 (table.tconfig.desiredPlayerCount > table.tconfig.minimumPlayerCount)) {
-
-            var box :VBox = new VBox();
-            box.setStyle("verticalAlign", "middle");
+            var box :HBox = new HBox();
+            box.styleName = "seatRenderer";
             box.setStyle("horizontalAlign", "center");
             box.percentWidth = 100;
             box.percentHeight = 100;
@@ -196,8 +199,10 @@ public class TableRenderer extends HBox
         // maybe add a button for entering the game
         if (table.gameOid != -1) {
             var key :String = null;
+            Log.getLog(this).debug("type: " + table.config.getGameType());
             switch (table.config.getGameType()) {
             case GameConfig.PARTY:
+                Log.getLog(this).debug("key = b.join");
                 key = "b.join";
                 break;
 
@@ -209,21 +214,18 @@ public class TableRenderer extends HBox
             }
 
             if (key != null) {
-                box = new VBox();
-                box.setStyle("verticalAlign", "middle");
+                box = new HBox();
+                box.styleName = "seatRenderer";
                 box.setStyle("horizontalAlign", "center");
                 box.percentWidth = 100;
                 box.percentHeight = 100;
                 btn = new CommandButton(MsoyController.GO_LOCATION, table.gameOid);
                 btn.label = ctx.xlate("game", key);
                 box.addChild(btn);
+                Log.getLog(this).debug("adding button for key");
                 _seatsGrid.addChild(box);
             }
         }
-
-        _seatsGrid.validateNow();
-        _maxUsableWidth = (_seatsGrid.measuredMinWidth + HORZ_GAP) * _seatsGrid.numChildren +
-            /* the mystery pixels strike again :/ */ 15;
     }
 
     /**
