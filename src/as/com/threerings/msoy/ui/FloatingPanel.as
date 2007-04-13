@@ -126,7 +126,7 @@ public class FloatingPanel extends TitleWindow
     {
         but.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
             evt.stopImmediatePropagation();
-                buttonClicked(buttonId);
+            buttonClicked(buttonId);
         });
 
         // if we're showing a standard cancel button, also add the close "X"
@@ -141,8 +141,9 @@ public class FloatingPanel extends TitleWindow
      */
     protected function createButton (buttonId :int) :Button
     {
-        var btn :Button = new Button();
-        btn.buttonMode = true;
+        var btn :CommandButton = new CommandButton();
+        btn.setFunction(buttonClicked, buttonId);
+
         switch (buttonId) {
         case CANCEL_BUTTON:
             btn.label = Msgs.GENERAL.get("b.cancel");
