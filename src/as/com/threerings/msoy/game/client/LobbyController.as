@@ -60,7 +60,7 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
         _panel.addEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
         setControlledPanel(_panel);
         _panelIsVisible = true;
-        _mctx.getTopPanel().setSidePanel(_panel);
+        _mctx.getTopPanel().setLeftPanel(_panel);
     }
 
     // from Subscriber
@@ -82,7 +82,7 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
         if (event.getTargetOid() == _lobj.getOid()) {
             // the lobby was shut down (probably because it has been idle for too long)
             // remove the panel, which will trigger a proper shutdown
-            _mctx.getTopPanel().clearSidePanel(_panel);
+            _mctx.getTopPanel().clearLeftPanel(_panel);
         }
     }
 
@@ -154,7 +154,7 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
      */
     public function handleLeaveLobby () :void
     {
-        _mctx.getTopPanel().clearSidePanel(_panel);
+        _mctx.getTopPanel().clearLeftPanel(_panel);
     }
 
     /**
@@ -165,7 +165,7 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
         _panelIsVisible = true;
         setControlledPanel(_panel);
         _mctx.getTopPanel().clearTableDisplay();
-        _mctx.getTopPanel().setSidePanel(_panel);
+        _mctx.getTopPanel().setLeftPanel(_panel);
         _mctx.getMsoyController().gameLobbyShown(_lobj.game.itemId);
     }
 

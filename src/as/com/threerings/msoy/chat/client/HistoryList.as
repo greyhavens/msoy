@@ -5,11 +5,9 @@ package com.threerings.msoy.chat.client {
 
 import com.threerings.util.ObserverList;
 
-import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.data.ChatMessage;
 
 public class HistoryList
-    implements ChatDisplay
 {
     /**
      * @return the current size of the history.
@@ -28,8 +26,7 @@ public class HistoryList
     }
 
     /**
-     * Add a chat overlay to the list of those interested in hearing
-     * about history changes.
+     * Add a chat overlay to the list of those interested in hearing about history changes.
      */
     public function addChatOverlay (overlay :ChatOverlay) :void
     {
@@ -37,25 +34,18 @@ public class HistoryList
     }
 
     /**
-     * Add a chat overlay to the list of those interested in hearing
-     * about history changes.
+     * Add a chat overlay to the list of those interested in hearing about history changes.
      */
     public function removeChatOverlay (overlay :ChatOverlay) :void
     {
         _obs.remove(overlay);
     }
 
-    // from ChatDisplay
-    public function clear () :void
-    {
-        var adjusted :int = _history.length;
-        _history.length = 0; // array truncation
-        notify(adjusted);
-    }
-
-    // from ChatDisplay
-    public function displayMessage (
-        msg :ChatMessage, alreadyDisp :Boolean) :Boolean
+    /**
+     * Records the supplied chat message to this history list. Bumps off the oldest message if the
+     * history list is at its maximum size. Notifies any chat overlay observers.
+     */
+    public function addMessage (msg :ChatMessage) :void
     {
         var adjusted :int;
         if (_history.length == MAX_HISTORY) {
@@ -68,12 +58,18 @@ public class HistoryList
 
         _history.push(msg);
         notify(adjusted);
-        return true;
     }
 
+//     // from ChatDisplay
+//     public function clear () :void
+//     {
+//         var adjusted :int = _history.length;
+//         _history.length = 0; // array truncation
+//         notify(adjusted);
+//     }
+
     /**
-     * Notifies interested ChatOverlays that there has been a change
-     * to the history.
+     * Notifies interested ChatOverlays that there has been a change to the history.
      */
     protected function notify (adjustment :int) :void
     {

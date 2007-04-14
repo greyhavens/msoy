@@ -144,7 +144,7 @@ public class TopPanel extends Canvas
     public function locationMayChange (placeId :int) :Boolean
     {
         // currently there are no side panel types that should survive a place change
-        clearSidePanel(null);
+        clearLeftPanel(null);
         return true;
     }
 
@@ -164,9 +164,8 @@ public class TopPanel extends Canvas
     }
 
     /**
-     * Get the flex container that is holding the PlaceView. This is useful
-     * if you want to overlay things over the placeview or register to
-     * receive flex-specific events.
+     * Get the flex container that is holding the PlaceView. This is useful if you want to overlay
+     * things over the placeview or register to receive flex-specific events.
      */
     public function getPlaceContainer () :Container
     {
@@ -227,39 +226,67 @@ public class TopPanel extends Canvas
         return _headerBar;
     }
 
-    public function setSidePanel (side :UIComponent) :void
+    /**
+     * Configures our left side panel. Any previous left side panel will be cleared.
+     */
+    public function setLeftPanel (side :UIComponent) :void
     {
-        clearSidePanel(null);
-        _sidePanel = side;
-        _sidePanel.includeInLayout = false;
-        _sidePanel.width = side.width;
+        clearLeftPanel(null);
+        _leftPanel = side;
+        _leftPanel.includeInLayout = false;
+        _leftPanel.width = side.width;
 
         if (_tableDisp != null) {
-            _tableDisp.x += _sidePanel.width;
+            _tableDisp.x += _leftPanel.width;
         }
 
         (_ctx.getClient() as WorldClient).setSeparator(side.width - 1);
-        addChild(_sidePanel); // add to end
+        addChild(_leftPanel); // add to end
         layoutPanels();
     }
 
     /**
-     * Clear the specified side panel, or null to clear any.
+     * Clear the specified left side panel, or null to clear any.
      */
-    public function clearSidePanel (side :UIComponent) :void
+    public function clearLeftPanel (side :UIComponent) :void
     {
-        if ((_sidePanel != null) && (side == null || side == _sidePanel)) {
+        if ((_leftPanel != null) && (side == null || side == _leftPanel)) {
             if (_tableDisp != null) {
-                _tableDisp.x -= _sidePanel.width;
+                _tableDisp.x -= _leftPanel.width;
                 if (_tableDisp.x < 0) {
                     _tableDisp.x = 0;
                 }
             }
 
             (_ctx.getClient() as WorldClient).clearSeparator();
-            removeChild(_sidePanel);
-            _sidePanel = null;
+            removeChild(_leftPanel);
+            _leftPanel = null;
 
+            layoutPanels();
+        }
+    }
+
+    /**
+     * Configures our riht side panel. Any previous right side panel will be cleared.
+     */
+    public function setRightPanel (side :UIComponent) :void
+    {
+        clearRightPanel(null);
+        _rightPanel = side;
+        _rightPanel.includeInLayout = false;
+        _rightPanel.width = side.width;
+        addChild(_rightPanel);
+        layoutPanels();
+    }
+
+    /**
+     * Clear the specified side panel, or null to clear any.
+     */
+    public function clearRightPanel (side :UIComponent) :void
+    {
+        if ((_rightPanel != null) && (side == null || side == _rightPanel)) {
+            removeChild(_rightPanel);
+            _rightPanel = null;
             layoutPanels();
         }
     }
@@ -298,10 +325,9 @@ public class TopPanel extends Canvas
     }
 
     /**
-     * Set the panel that should be shown along the bottom. The panel
-     * should have an explicit height. If the height is 100 pixels
-     * or larger, a chat box will be placed to the left of it and
-     * removed from the room overlay.
+     * Set the panel that should be shown along the bottom. The panel should have an explicit
+     * height. If the height is 100 pixels or larger, a chat box will be placed to the left of it
+     * and removed from the room overlay.
      */
     public function setBottomPanel (bottom :UIComponent) :void
     {
@@ -357,15 +383,25 @@ public class TopPanel extends Canvas
 
     protected function layoutPanels () :void
     {
-        if (_sidePanel != null) {
-            _sidePanel.setStyle("top", 0);
-            _sidePanel.setStyle("bottom", getBottomPanelHeight());
-            _sidePanel.setStyle("left", 0);
-            _controlBar.setStyle("left", _sidePanel.width);
-            _headerBar.setStyle("left", _sidePanel.width);
+        if (_leftPanel != null) {
+            _leftPanel.setStyle("top", 0);
+            _leftPanel.setStyle("bottom", getBottomPanelHeight());
+            _leftPanel.setStyle("left", 0);
+            _controlBar.setStyle("left", _leftPanel.width);
+            _headerBar.setStyle("left", _leftPanel.width);
         } else {
             _controlBar.setStyle("left", 0);
             _headerBar.setStyle("left", 0);
+        }
+
+        if (_rightPanel != null) {
+            _rightPanel.setStyle("top", 0);
+            _rightPanel.setStyle("right", 0);
+            _rightPanel.setStyle(
+                "bottom", getBottomPanelHeight() + ControlBar.HEIGHT + DECORATIVE_MARGIN_HEIGHT);
+            _headerBar.setStyle("right", _rightPanel.width);
+        } else {
+            _headerBar.setStyle("right", 0);
         }
 
         updatePlaceViewSize();
@@ -374,13 +410,13 @@ public class TopPanel extends Canvas
     protected function updatePlaceViewSize () :void
     {
         var botHeight :int = getBottomPanelHeight();
-        var w :int = stage.stageWidth - getSidePanelWidth();
+        var w :int = stage.stageWidth - getLeftPanelWidth() - getRightPanelWidth();
         var h :int = stage.stageHeight - ControlBar.HEIGHT - botHeight - HeaderBar.HEIGHT;
         var top :int = HeaderBar.HEIGHT;
         var bottom :int = botHeight + ControlBar.HEIGHT;
 
-        // actually, for place views, we want to insert decorative margins
-        // above and below the view - so let's tweak the sizes
+        // actually, for place views, we want to insert decorative margins above and below the
+        // view, so let's tweak the sizes
         if (_placeView is MsoyPlaceView) {
             top += DECORATIVE_MARGIN_HEIGHT;
             bottom += DECORATIVE_MARGIN_HEIGHT;
@@ -389,8 +425,8 @@ public class TopPanel extends Canvas
 
         _placeBox.setStyle("top", top);
         _placeBox.setStyle("bottom", bottom);
-        _placeBox.setStyle("left", getSidePanelWidth());
-        _placeBox.setStyle("right", 0);
+        _placeBox.setStyle("left", getLeftPanelWidth());
+        _placeBox.setStyle("right", getRightPanelWidth());
 
         _placeMask.graphics.clear();
         _placeMask.graphics.beginFill(0xFFFFFF);
@@ -400,20 +436,22 @@ public class TopPanel extends Canvas
         if (_placeView != null) {
             if (_placeView is UIComponent) {
                 UIComponent(_placeView).setActualSize(w, h);
-
             } else if (_placeView is MsoyPlaceView) {
                 MsoyPlaceView(_placeView).setPlaceSize(w, h);
-
             } else {
-                Log.getLog(this).warning(
-                    "PlaceView is not a MsoyPlaceView or an UIComponent.");
+                Log.getLog(this).warning("PlaceView is not a MsoyPlaceView or an UIComponent.");
             }
         }
     }
 
-    protected function getSidePanelWidth () :int
+    protected function getLeftPanelWidth () :int
     {
-        return (_sidePanel == null ? 0 : _sidePanel.width);
+        return (_leftPanel == null ? 0 : _leftPanel.width);
+    }
+
+    protected function getRightPanelWidth () :int
+    {
+        return (_rightPanel == null ? 0 : _rightPanel.width);
     }
 
     protected function getBottomPanelHeight () :int
@@ -434,8 +472,11 @@ public class TopPanel extends Canvas
      * our other components. */
     protected var _placeMask :Shape;
 
-    /** The current side panel component. */
-    protected var _sidePanel :UIComponent;
+    /** The current left panel component. */
+    protected var _leftPanel :UIComponent;
+
+    /** The current right panel component. */
+    protected var _rightPanel :UIComponent;
 
     /** The thing what holds the bottom panel. */
     protected var _bottomPanel :HBox;

@@ -32,6 +32,11 @@ public class MsoyGamePanel extends EZGamePanel
      */
     public function setChatEnabled (enabled :Boolean) :void
     {
+        if (enabled) {
+            _ctx.getChatDirector().addChatDisplay(_chatOverlay);
+        } else {
+            _ctx.getChatDirector().removeChatDisplay(_chatOverlay);
+        }
         _chatOverlay.setTarget(enabled ? this : null);
         (_ctx as WorldContext).getTopPanel().getControlBar().setChatEnabled(enabled);
     }
@@ -53,12 +58,12 @@ public class MsoyGamePanel extends EZGamePanel
         _gameView.getMediaContainer().removeEventListener(
             MediaContainer.SIZE_KNOWN, handleMediaContainerResize);
         _gameView.removeEventListener(ResizeEvent.RESIZE, handleGameContainerResize);
+        _ctx.getChatDirector().removeChatDisplay(_chatOverlay);
         _chatOverlay.setTarget(null);
 
         super.didLeavePlace(plobj);
 
         // reenable chat
-        _chatOverlay.setTarget(null);
         (_ctx as WorldContext).getTopPanel().getControlBar().setChatEnabled(true);
     }
 

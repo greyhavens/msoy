@@ -15,6 +15,7 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.Client;
 
+import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.client.PlaceView;
 
 import com.threerings.parlor.client.ParlorDirector;
@@ -24,9 +25,8 @@ import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.spot.client.SpotSceneDirector;
 import com.threerings.whirled.util.WhirledContext;
 
+import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.client.persist.RuntimeSceneRepository;
-
-import com.threerings.msoy.chat.client.ChatOverlay;
 
 import com.threerings.msoy.game.client.GameDirector;
 import com.threerings.msoy.item.client.ItemDirector;
@@ -58,9 +58,6 @@ public class WorldContext extends BaseContext
         // set up the top panel
         _topPanel = new TopPanel(this);
         _controller = new MsoyController(this, _topPanel);
-
-        // ensure that the chat history is on..
-        ChatOverlay.ensureHistoryListening(this);
     }
 
     // from WhirledContext
@@ -138,6 +135,11 @@ public class WorldContext extends BaseContext
     public function getTopPanel () :TopPanel
     {
         return _topPanel;
+    }
+
+    override protected function createChatDirector () :ChatDirector
+    {
+        return new MsoyChatDirector(this);
     }
 
     protected var _topPanel :TopPanel;

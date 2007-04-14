@@ -34,6 +34,7 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
@@ -430,10 +431,9 @@ public class RoomView extends AbstractRoomView
     }
 
     // from ChatDisplay
-    public function displayMessage (
-        msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
+    public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
     {
-        if (msg is UserMessage) {
+        if (msg.localtype == ChatCodes.PLACE_CHAT_TYPE && msg is UserMessage) {
             var umsg :UserMessage = (msg as UserMessage);
             var avatar :AvatarSprite =
                 (getActorByName(umsg.getSpeakerDisplayName()) as AvatarSprite);
@@ -455,13 +455,13 @@ public class RoomView extends AbstractRoomView
 
         _roomObj.addListener(this);
 
+        _ctx.getChatDirector().addChatDisplay(chatOverlay);
         chatOverlay.newPlaceEntered(this);
         chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
 
         addAllOccupants();
 
-        // we add ourselves as a chat display so that we can trigger
-        // speak actions on avatars
+        // we add ourselves as a chat display so that we can trigger speak actions on avatars
         _ctx.getChatDirector().addChatDisplay(this);
 
         // and animate ourselves entering the room (everyone already in the (room will also have
@@ -489,6 +489,7 @@ public class RoomView extends AbstractRoomView
 
         super.didLeavePlace(plobj);
 
+        _ctx.getChatDirector().removeChatDisplay(chatOverlay);
         chatOverlay.setTarget(null);
     }
 

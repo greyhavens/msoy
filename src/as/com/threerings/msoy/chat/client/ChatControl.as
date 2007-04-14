@@ -50,14 +50,13 @@ public class ChatControl extends HBox
 
         this.height = height;
         styleName = "chatControl";
-        
+
         _locObs = new LocationAdapter(null, locationDidChange);
 
         addChild(_txt = new ChatInput());
-        _txt.styleName = "chatInput";
-        _txt.height = height;
         _txt.width = 200;
-        
+        _txt.height = height;
+
         _but = new CommandButton();
         _but.label = Msgs.GENERAL.get("b.send");
         _but.height = height;

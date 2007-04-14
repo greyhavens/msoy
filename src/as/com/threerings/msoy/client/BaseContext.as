@@ -41,7 +41,7 @@ public /*abstract*/ class BaseContext
 
         _locDir = new LocationDirector(this);
         _occDir = new OccupantDirector(this);
-        _chatDir = new ChatDirector(this, _msgMgr, "general");
+        _chatDir = createChatDirector();
         _chatDir.setChatterValidator(_helper);
         _chatDir.addChatFilter(new CurseFilter(this));
         _memberDir = new MemberDirector(this);
@@ -159,6 +159,11 @@ public /*abstract*/ class BaseContext
         }
         var mb :MessageBundle = _msgMgr.getBundle(bundle);
         return mb.get.apply(mb, args);
+    }
+
+    protected function createChatDirector () :ChatDirector
+    {
+        return new ChatDirector(this, _msgMgr, "general");
     }
 
     protected var _client :Client;

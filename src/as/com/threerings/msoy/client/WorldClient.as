@@ -51,6 +51,8 @@ import com.threerings.msoy.game.chiyogami.client.ChiyogamiController;
  */
 public class WorldClient extends BaseClient
 {
+    public static const log :Log = Log.getLog(BaseClient);
+
     public function WorldClient (stage :Stage)
     {
         super(stage);

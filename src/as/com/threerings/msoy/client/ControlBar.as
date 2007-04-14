@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
@@ -5,6 +8,7 @@ import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
+import mx.core.Container;
 import mx.core.ScrollPolicy;
 
 import mx.binding.utils.BindingUtils;
@@ -88,6 +92,24 @@ public class ControlBar extends HBox
     }
 
     /**
+     * Called by the ChannelChatPanel when it needs to stuff a chat input field into the control
+     * bar while it's open. Setting it to null removes it.
+     */
+    public function setChannelChatInput (input :Container) :void
+    {
+        if (_channelInput != null) {
+            removeChild(_channelInput);
+        }
+        if (input != null) {
+            // insert it to the left of the channel button
+            var chidx :int = getChildIndex(_channelBtn);
+            if (chidx >= 0) {
+                addChildAt(_channelInput = input, chidx);
+            }
+        }
+    }
+
+    /**
      * Check to see which controls the client should see.
      */
     protected function checkControls () :void
@@ -102,6 +124,7 @@ public class ControlBar extends HBox
         _chatControl = null;
         _avatarBtn = null;
         _editBtn = null;
+        _channelBtn = null;
 
         if (isMember) {
             addChild(_chatControl = new ChatControl(_ctx, this.height - 4));
@@ -178,6 +201,14 @@ public class ControlBar extends HBox
         var footerRight :SkinnableImage = new SkinnableImage();
         footerRight.styleName = "controlBarFooterRight";
         addChild(footerRight);
+
+        if (isMember && user.tokens.isSupport()) {
+            _channelBtn = new CommandButton();
+            _channelBtn.toolTip = Msgs.GENERAL.get("i.channel");
+            _channelBtn.setCommand(MsoyController.POP_FRIENDS_MENU, _channelBtn);
+            _channelBtn.styleName = "controlBarButtonAvatar";
+            addChild(_channelBtn);
+        }
 
         // and remember how things are set for now
         _isMember = isMember;
@@ -263,6 +294,12 @@ public class ControlBar extends HBox
     /** Button for editing the current scene. */
     protected var _editBtn :CommandButton;
 
+    /** Button for selecting/creating chat channels. */
+    protected var _channelBtn :CommandButton;
+
+    /** Our channel chat input. */
+    protected var _channelInput :Container;
+
     /** Notifies us of changes to the userControlsAvatar property. */
     protected var _avatarControlWatcher :ChangeWatcher;
 
@@ -283,9 +320,8 @@ import mx.core.IFlexDisplayObject;
 import mx.core.ScrollPolicy;
 import mx.core.UITextField;
 
-/** Internal: helper function that extends ms.control.Image functionality
-    with automatic image loading from the style sheet (e.g. via an
-    external style sheet file). */
+/** Internal: helper function that extends ms.control.Image functionality with automatic image
+ * loading from the style sheet (e.g. via an external style sheet file). */
 [Style(name="backgroundSkin", type="Class", inherit="no")]
 internal class SkinnableImage extends Image
 {

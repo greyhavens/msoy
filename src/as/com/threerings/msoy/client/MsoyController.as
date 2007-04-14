@@ -45,6 +45,7 @@ import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.chat.client.ChatControl;
+import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.chat.client.ReportingListener;
 
 import com.threerings.msoy.item.web.ItemIdent;
@@ -111,7 +112,7 @@ public class MsoyController extends Controller
 
     /** Command to select a different avatar. */
     public static const PICK_AVATAR :String = "PickAvatar";
-    
+
     /** Command to view an item, arg is [ itemTypeId, itemId ] */
     public static const VIEW_ITEM :String = "ViewItem";
 
@@ -145,7 +146,7 @@ public class MsoyController extends Controller
      */
     public function handleTell (user :MemberName) :void
     {
-        ChatControl.initiateTell(user);
+        (_ctx.getChatDirector() as MsoyChatDirector).openFriendChannel(user);
     }
 
     /**
@@ -154,41 +155,34 @@ public class MsoyController extends Controller
     public function handlePopFriendsMenu (trigger :Button) :void
     {
         var friends :Array = _ctx.getMemberObject().getSortedEstablishedFriends();
-        friends = friends.map(
-            function (fe :FriendEntry, index :int, array :Array) :Object {
-                return {
-                    label: fe.name.toString(),
-                    command: TELL,
-                    arg: fe.name
-                };
-            });
-
+        friends = friends.map(function (fe :FriendEntry, index :int, array :Array) :Object {
+            return {
+                label: fe.name.toString(),
+                command: TELL,
+                arg: fe.name
+            };
+        });
         if (friends.length == 0) {
             friends.push({ label: Msgs.GENERAL.get("m.no_friends") });
         }
 
-        var chatters :Array = _ctx.getChatDirector().getChatters();
-        chatters = chatters.map(
-            function (name :MemberName, index :int, array :Array) :Object {
-                return {
-                    label: name.toString(),
-                    command: TELL,
-                    arg: name
-                };
-            });
+//         var chatters :Array = _ctx.getChatDirector().getChatters();
+//         chatters = chatters.map(function (name :MemberName, index :int, array :Array) :Object {
+//             return {
+//                 label: name.toString(),
+//                 command: TELL,
+//                 arg: name
+//             };
+//         });
+//         if (chatters.length == 0) {
+//             chatters.push({ label: Msgs.GENERAL.get("m.no_chatters") });
+//         }
 
-        if (chatters.length == 0) {
-            chatters.push({ label: Msgs.GENERAL.get("m.no_chatters") });
-        }
-
-        var menuData :Array = [
-            { label: Msgs.GENERAL.get("l.recent_chatters"),
-              children: chatters },
-            { label: Msgs.GENERAL.get("l.friends"),
-              children: friends }
-        ];
-
-        CommandMenu.createMenu(menuData).popUp(trigger, true);
+        var menuData :Array = [];
+        menuData = menuData.concat(friends);
+//         menuData.push({ type: "separator" });
+//         menuData = menuData.concat(chatters);
+        CommandMenu.createMenu(menuData).popUp(trigger, true, true);
     }
 
     /**
@@ -240,17 +234,14 @@ public class MsoyController extends Controller
 
         // add the friends if present
         if (friends.length > 0) {
-            menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"),
-                children: friends });
+            menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"), children: friends });
         }
         // add owned scenes, if any
         if (owned.length > 0) {
-            menuData.push({ label: Msgs.GENERAL.get("l.owned_scenes"),
-                children: owned});
+            menuData.push({ label: Msgs.GENERAL.get("l.owned_scenes"), children: owned});
         }
         // always add recent scenes
-        menuData.push({ label: Msgs.GENERAL.get("l.recent_scenes"),
-            children: recent });
+        menuData.push({ label: Msgs.GENERAL.get("l.recent_scenes"), children: recent });
 
         if (!memberObj.isGuest()) {
             menuData.push(
@@ -381,7 +372,7 @@ public class MsoyController extends Controller
             // if we're already in a table for this game id, just rejoin the current lobby
             CommandEvent.dispatch(disp.getRenderer(), LobbyController.JOIN_LOBBY);
         } else {
-            var lsvc :LobbyService = 
+            var lsvc :LobbyService =
                 (_ctx.getClient().requireService(LobbyService) as LobbyService);
             lsvc.identifyLobby(_ctx.getClient(), gameId,
                 new ResultWrapper(function (cause :String) :void {
@@ -470,7 +461,7 @@ public class MsoyController extends Controller
     public function goToPlace (params :Object) :void
     {
         _sceneIdString = params["sceneId"];
-        
+
         // check for gameLobby first, so that the handleInternalGo call resulting from moveTo
         // adds the correct parameters to the external URL
         if (null != params["gameLobby"]) {
@@ -566,7 +557,7 @@ public class MsoyController extends Controller
     // from ClientObserver
     public function clientDidLogoff (event :ClientEvent) :void
     {
-        _topPanel.clearSidePanel(null);
+        _topPanel.clearLeftPanel(null);
         _topPanel.setPlaceView(new DisconnectedPanel(_ctx, _logoffMessage));
         _logoffMessage = null;
     }
@@ -627,7 +618,7 @@ public class MsoyController extends Controller
         }
     }
 
-    /** 
+    /**
      * Called by WorldClient when it finds out if we're embedded in a page or not.
      */
     public function setEmbedded (embedded :Boolean) :void
@@ -651,12 +642,12 @@ public class MsoyController extends Controller
     {
         _minimized = mini;
         if (mini) {
-            _topPanel.clearSidePanel(null);
+            _topPanel.clearLeftPanel(null);
         }
     }
 
     /**
-     * Find out if we're currently working in mini-land or not.  Other components should be able 
+     * Find out if we're currently working in mini-land or not.  Other components should be able
      * to check this value after they detect that the flash player's size has changed, to discover
      * our status in this regard.
      */
@@ -684,9 +675,9 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Moves to a new location (scene, game room, etc.) by changing the URL of the browser so that 
-     * our history mechanism is preserved. Returns true if we did so, false if we couldn't do so 
-     * for whatever reason (are in the standalone client) and the caller should just go there 
+     * Moves to a new location (scene, game room, etc.) by changing the URL of the browser so that
+     * our history mechanism is preserved. Returns true if we did so, false if we couldn't do so
+     * for whatever reason (are in the standalone client) and the caller should just go there
      * directly.
      */
     protected function handleInternalGo (page :String, args :String) :Boolean

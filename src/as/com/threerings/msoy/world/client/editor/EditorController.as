@@ -112,7 +112,7 @@ public class EditorController extends Controller
         _roomView.addEventListener(MouseEvent.MOUSE_DOWN, roomPressed);
 
         // add the panel to the sidepane
-        _ctx.getTopPanel().setSidePanel(_panel);
+        _ctx.getTopPanel().setLeftPanel(_panel);
     }
 
     /**
@@ -153,7 +153,7 @@ public class EditorController extends Controller
 
         if (!alreadyRemoved) {
             _panel.removeEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
-            _ctx.getTopPanel().clearSidePanel(_panel);
+            _ctx.getTopPanel().clearLeftPanel(_panel);
         }
 
         var edits :TypedArray = null;

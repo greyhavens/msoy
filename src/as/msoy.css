@@ -303,6 +303,11 @@ Window {
   backgroundColor: #54a9da;
 }
 
+.chatControl {  
+  paddingLeft: 4;
+  paddingRight: 4;
+}
+
 .chatInput {
     color: #000000;
     themeColor: #54a9da;
@@ -315,11 +320,6 @@ Window {
     fontWeight: "bold";
     fillAlphas: 1, 1;
     fillColors: #E6EEEE, #FFFFFF;
-}
-
-.chatControl {  
-  paddingLeft: 4;
-  paddingRight: 6;
 }
 
 .headerBar {
