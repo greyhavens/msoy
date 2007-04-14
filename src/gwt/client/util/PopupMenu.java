@@ -16,10 +16,23 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public abstract class PopupMenu extends PopupPanel
 {
+    public PopupMenu ()
+    {
+        super(true);
+    }
+
     public PopupMenu (Label trigger)
     {
         super(true);
 
+        setTrigger(trigger);
+    }
+
+    /** 
+     * Set the label that will trigger the popping up of this menu
+     */
+    public void setTrigger (Label trigger)
+    {
         trigger.addStyleName("LabelLink");
         trigger.addMouseListener(new MouseListenerAdapter() {
             public void onMouseDown (Widget sender, int x, int y) { 

@@ -23,7 +23,7 @@ public interface CatalogService extends RemoteService
      * Loads all catalogue items of the specified type. If memberId == 0, it's a guest request.
      */
     public List loadCatalog (int memberId, byte type, byte sortBy, String search, String tag,
-                             int offset, int rows)
+                             int creator, int offset, int rows)
         throws ServiceException;
 
     /**

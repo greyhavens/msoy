@@ -3,6 +3,8 @@
 
 package client.catalog;
 
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -19,9 +21,11 @@ import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.ItemDetail;
 
 import client.item.BaseItemDetailPanel;
+import client.shell.Application;
 import client.util.ClickCallback;
 import client.util.InfoPopup;
 import client.util.ItemUtil;
+import client.util.PopupMenu;
 
 /**
  * Displays a popup detail view of an item from the catalog.
@@ -100,6 +104,22 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         details.add(WidgetUtil.makeShim(1, 10));
         details.add(_listed = new Label());
+
+        _creator.setMember(_detail.creator, new PopupMenu() {
+            protected void addMenuItems () {
+                this.addMenuItem("Visit Profile", new Command() {
+                    public void execute () {
+                        History.newItem(Application.createLinkToken("profile", 
+                            "" + _detail.creator.getMemberId()));
+                    }
+                });
+                this.addMenuItem("Browse Catalog Entries", new Command() {
+                    public void execute () {
+                        // TODO
+                    }
+                });
+            }
+        });
     }
 
     // @Override // BaseItemDetailPanel

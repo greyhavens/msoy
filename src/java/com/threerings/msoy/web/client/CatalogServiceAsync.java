@@ -17,7 +17,7 @@ public interface CatalogServiceAsync
      * The asynchronous version of {@link CatalogService#loadCatalog}.
      */
     public void loadCatalog (int memberId, byte type, byte sortBy, String search, String tag,
-                             int offset, int rows, AsyncCallback callback);
+                             int creator, int offset, int rows, AsyncCallback callback);
     
     /**
      *  The asynchronous version of {@link CatalogService#purchaseItem}

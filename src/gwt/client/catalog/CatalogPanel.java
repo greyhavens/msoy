@@ -161,6 +161,7 @@ public class CatalogPanel extends VerticalPanel
     {
         _search = panel.search;
         _tag = null;
+        _creator = -1;
         getTagCloud(false).setCurrentTag(null);
         refreshItems(true);
     }
@@ -173,7 +174,20 @@ public class CatalogPanel extends VerticalPanel
     }
 
     /**
-     * Called by the {@link ListingDetailPopup} if the owner requests to delist an item.
+     * Called by the {@link ListingDetailPanel} if the there is a request to browse this creator's
+     * items.
+     */
+    public void browseByCreator (int creatorId) 
+    {
+        _search = "";
+        _searchSortPanel.clearSearchBox();
+        _tag = null;
+        _creator = -1;
+        refreshItems(true);
+    }
+
+    /**
+     * Called by the {@link ListingDetailPanel} if the owner requests to delist an item.
      */
     public void itemDelisted (CatalogListing listing)
     {
@@ -188,7 +202,8 @@ public class CatalogPanel extends VerticalPanel
             model = new DataModel() {
                 public void doFetchRows (int start, int count, final AsyncCallback callback) {
                     CCatalog.catalogsvc.loadCatalog(CCatalog.getMemberId(), _type, _sortBy, _search,
-                                                    _tag, start, count, new AsyncCallback() {
+                                                    _tag, _creator, start, count, 
+                                                    new AsyncCallback() {
                         public void onSuccess (Object result) {
                             callback.onSuccess(result);
                         }
@@ -216,6 +231,7 @@ public class CatalogPanel extends VerticalPanel
                 public void tagClicked (String tag) {
                     _search = "";
                     _searchSortPanel.clearSearchBox();
+                    _creator = -1;
                     _tag = tag;
                     newCloud.setCurrentTag(tag);
                     refreshItems(true);
@@ -231,6 +247,7 @@ public class CatalogPanel extends VerticalPanel
 
     protected byte _sortBy,  _type;
     protected String _search, _tag;
+    protected int _creator = -1;
     protected int _page;
     protected Map _models = new HashMap();
     protected Map _clouds = new HashMap();

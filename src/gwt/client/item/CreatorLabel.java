@@ -3,41 +3,39 @@
 
 package client.item;
 
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.msoy.web.data.MemberName;
 
+import com.threerings.gwt.ui.InlineLabel;
+
 import client.shell.Application;
-import client.shell.Page;
+
+import client.util.PopupMenu;
 
 /**
  * Displays a creator's name with "by Foozle" where Foozle is a link to the creator's profile page.
  */
-public class CreatorLabel extends Widget
+public class CreatorLabel extends FlowPanel
 {
-    public CreatorLabel ()
-    {
-        Element parent = DOM.createDiv();
-        setElement(parent);
-        Element by = DOM.createSpan();
-        DOM.setInnerText(by, CItem.imsgs.creatorBy() + " ");
-        DOM.appendChild(parent, by);
-        _text = DOM.createSpan();
-        DOM.setAttribute(_text, "className", "actionLabel");
-        DOM.appendChild(parent, _text);
-        sinkEvents(Event.ONCLICK | Event.MOUSEEVENTS);
-    }
-
     public void setMember (MemberName name)
     {
-        _name = name;
-        DOM.setInnerHTML(_text, Application.createLinkHtml(
-                             _name.toString(), "profile", ""+ _name.getMemberId()));
+        setMember(name, null);
     }
 
-    protected MemberName _name;
-    protected Element _text;
+    public void setMember (MemberName name, PopupMenu menu) 
+    {
+        while (getWidgetCount() > 0) {
+            remove(0);
+        }
+
+        add(new InlineLabel(CItem.imsgs.creatorBy() + " "));
+        if (menu == null) {
+            add(Application.memberViewLink(name.toString(), name.getMemberId()));
+        } else {
+            InlineLabel text = new InlineLabel(name.toString());
+            menu.setTrigger(text);
+            add(text);
+        }
+    }
 }

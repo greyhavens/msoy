@@ -48,7 +48,7 @@ public class CatalogServlet extends MsoyServiceServlet
 {
     // from interface CatalogService
     public List loadCatalog (int memberId, byte type, byte sortBy, String search, String tag,
-                             int offset, int rows)
+                             int creator, int offset, int rows)
         throws ServiceException
     {
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
