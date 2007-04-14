@@ -555,7 +555,9 @@ class TableIcon extends ScalingMediaContainer
 
     override public function shutdown (completely :Boolean = true) :void
     {
-        _host.removeDecoration(this);
+        if (parent != null) {
+            _host.removeDecoration(this);
+        }
         super.shutdown(completely);
     }
 
