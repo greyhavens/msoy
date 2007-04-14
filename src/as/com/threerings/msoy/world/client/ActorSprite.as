@@ -18,6 +18,7 @@ import flash.text.TextFormat;
 import com.threerings.util.Util;
 
 import com.threerings.flash.Animation;
+import com.threerings.flash.FilterUtil;
 import com.threerings.flash.MediaContainer;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -296,6 +297,24 @@ public class ActorSprite extends MsoySprite
     override public function getMaxContentHeight () :int
     {
         return MAX_HEIGHT;
+    }
+
+    override public function setHovered (hovered :Boolean, stageX :int = 0, stageY :int = 0) :void
+    {
+        super.setHovered(hovered, stageX, stageY);
+    }
+
+    override protected function setGlow (glow :Boolean) :void
+    {
+        if (!glow) {
+            FilterUtil.removeFilter(_label, _glow);
+        }
+
+        super.setGlow(glow);
+
+        if (glow) {
+            FilterUtil.addFilter(_label, _glow);
+        }
     }
 
     override protected function scaleUpdated () :void

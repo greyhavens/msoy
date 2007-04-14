@@ -636,30 +636,41 @@ public class RoomController extends SceneController
     protected function setHoverSprite (
         sprite :MsoySprite, stageX :Number = 0, stageY :Number = 0) :void
     {
-        if (_hoverSprite != sprite) {
+        // if the same sprite is glowing, we don't have to change as much..
+        if (_hoverSprite == sprite) {
             if (_hoverSprite != null) {
-                _hoverSprite.setGlow(false);
-                _hoverSprite = null;
-                if (_hoverTip != null) {
-                    ToolTipManager.destroyToolTip(_hoverTip);
-                    _hoverTip = null;
-                }
+                // but we do want to tell it about it, in case it wants
+                // to glow differently depending on the location...
+                _hoverSprite.setHovered(true, stageX, stageY);
             }
+            return;
+        }
 
-            if (sprite != null) {
-                sprite.setGlow(true);
-                _hoverSprite = sprite;
-                var tipText :String = sprite.getToolTipText();
-                if (tipText != null) {
-                    _hoverTip = ToolTipManager.createToolTip(tipText,
-                        stageX, stageY);
-                    var tipComp :UIComponent = UIComponent(_hoverTip);
-                    tipComp.styleName = "roomToolTip";
-                    var hoverColor :uint = sprite.getHoverColor();
-                    tipComp.setStyle("color", hoverColor);
-                    if (hoverColor == 0) {
-                        tipComp.setStyle("backgroundColor", 0xFFFFFF);
-                    }
+        // otherwise, unglow the old sprite (and remove any tooltip)
+        if (_hoverSprite != null) {
+            _hoverSprite.setHovered(false);
+            if (_hoverTip != null) {
+                ToolTipManager.destroyToolTip(_hoverTip);
+                _hoverTip = null;
+            }
+        }
+
+        // assign the new hoversprite
+        _hoverSprite = sprite;
+
+        // and glow the new hoversprite
+        if (_hoverSprite != null) {
+            sprite.setHovered(true, stageX, stageY);
+            var tipText :String = sprite.getToolTipText();
+            if (tipText != null) {
+                _hoverTip = ToolTipManager.createToolTip(tipText,
+                    stageX, stageY);
+                var tipComp :UIComponent = UIComponent(_hoverTip);
+                tipComp.styleName = "roomToolTip";
+                var hoverColor :uint = sprite.getHoverColor();
+                tipComp.setStyle("color", hoverColor);
+                if (hoverColor == 0) {
+                    tipComp.setStyle("backgroundColor", 0xFFFFFF);
                 }
             }
         }

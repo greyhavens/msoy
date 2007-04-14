@@ -41,6 +41,7 @@ import flash.net.URLRequest;
 
 import com.threerings.util.Util;
 
+import com.threerings.flash.FilterUtil;
 import com.threerings.flash.MediaContainer;
 import com.threerings.flash.VideoDisplayer;
 
@@ -268,43 +269,22 @@ public class MsoySprite extends MediaContainer
     /**
      * Turn on or off the glow surrounding this sprite.
      */
-    public function setGlow (doGlow :Boolean) :void
+    public function setHovered (hovered :Boolean, stageX :int = 0, stageY :int = 0) :void
     {
-        var glowIndex :int = -1;
-        var ourFilters :Array = filters;
-        if (ourFilters != null) {
-            for (var ii :int = 0; ii < ourFilters.length; ii++) {
-                if (ourFilters[ii] is GlowFilter) {
-                    glowIndex = ii;
-                    break;
-                }
-            }
+        if (hovered == (_glow == null)) {
+            setGlow(hovered);
         }
+    }
 
-        // if things are already in the proper state, do nothing
-        if (doGlow == (glowIndex != -1)) {
-            return;
-        }
-
-        // otherwise, enable or disable the glow
-        if (doGlow) {
-            if (ourFilters == null) {
-                ourFilters = [];
-            }
-            // TODO: we used to use a flex GlowEffect to make the glow
-            // "grow-in" by adjusting the blur from 0 to 200 over the
-            // course of 200ms. We could easily write our own,
-            // but mostly I'm trying to de-flex this class, so maybe
-            // we could just have the roomview take care of applying
-            // and removing the glow filter...
-            var glow :GlowFilter = new GlowFilter(
-                getHoverColor(), 1, 32, 32);
-            ourFilters.push(glow);
-            filters = ourFilters;
+    protected function setGlow (glow :Boolean) :void
+    {
+        if (glow) {
+            _glow = new GlowFilter(getHoverColor(), 1, 32, 32);
+            FilterUtil.addFilter(_media, _glow);
 
         } else {
-            ourFilters.splice(glowIndex, 1);
-            filters = ourFilters;
+            FilterUtil.removeFilter(_media, _glow);
+            _glow = null;
         }
     }
 
@@ -671,6 +651,8 @@ public class MsoySprite extends MediaContainer
     /** Identifies the item we are visualizing. All furniture will have an ident, but only our
      * avatar sprite will know its ident (and only we can update our avatar's memory, etc.).  */
     protected var _ident :ItemIdent;
+
+    protected var _glow :GlowFilter;
 
     /** The media hotspot, which should be used to position it. */
     protected var _hotSpot :Point = null;
