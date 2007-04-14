@@ -6,7 +6,6 @@ import flash.display.DisplayObject;
 import flash.display.Loader;
 
 import flash.events.EventDispatcher;
-import flash.events.MouseEvent;
 import flash.events.TextEvent;
 
 import flash.filters.DisplacementMapFilter;
@@ -354,10 +353,11 @@ public class FurniSprite extends MsoySprite
         }
     }
 
-    // documentation inherited
-    override public function mouseClick (event :MouseEvent) :void
+    override protected function postClickAction () :void
     {
-        CommandEvent.dispatch(this, RoomController.FURNI_CLICKED, _furni);
+        if (hasAction()) {
+            CommandEvent.dispatch(this, RoomController.FURNI_CLICKED, _furni);
+        }
     }
 
     override protected function startedLoading () :void

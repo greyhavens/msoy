@@ -6,6 +6,7 @@ package com.threerings.msoy.world.client {
 import flash.display.DisplayObject;
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 
 import flash.geom.Rectangle;
 
@@ -36,8 +37,6 @@ import com.threerings.msoy.world.data.WorldMemberInfo;
 import com.threerings.msoy.world.data.WorldPetInfo;
 
 import com.threerings.msoy.game.data.GameSummary;
-
-import com.threerings.msoy.ui.ScalingMediaContainer;
 
 /**
  * Handles sprites for actors (things in a scene that move around).
@@ -152,33 +151,16 @@ public class ActorSprite extends MsoySprite
             setup(newMedia, winfo.getItemIdent());
         }
 
+        // take care of setting up or changing our TableIcon
         if (winfo is WorldMemberInfo) {
             var minfo :WorldMemberInfo = winfo as WorldMemberInfo;
-            if (minfo.currentGame != null) {
-                if (!minfo.currentGame.equals(_currentGameSummary)) {
-                    if (_currentGameIcon != null) {
-                        removeDecoration(_currentGameIcon);
-                    }
-                    _currentGameSummary = minfo.currentGame;
-                    _currentGameIcon = new ScalingMediaContainer(30, 30);
-                    var sizeKnownHandler :Function;
-                    sizeKnownHandler = function (evt :Event) :void {
-                        // if _currentGameIcon changes while this media is loading, we don't want
-                        // to display the new media prematurely, so this handler checks to make 
-                        // sure it was called on the media instance that we actually want to 
-                        // display before displaying it
-                        if (evt.target == _currentGameIcon) {
-                            addDecoration(_currentGameIcon);
-                        }
-                        evt.target.removeEventListener(MediaContainer.SIZE_KNOWN, sizeKnownHandler);
-                    };
-                    _currentGameIcon.addEventListener(MediaContainer.SIZE_KNOWN, sizeKnownHandler);
-                    _currentGameIcon.setMedia(_currentGameSummary.getThumbMedia().getMediaPath());
-                }
-            } else if (_currentGameIcon != null) {
-                removeDecoration(_currentGameIcon);
-                _currentGameIcon = null;
-                _currentGameSummary = null;
+
+            if (_tableIcon != null && !_tableIcon.getGameSummary().equals(minfo.currentGame)) {
+                _tableIcon.shutdown();
+                _tableIcon = null;
+            }
+            if (_tableIcon == null && minfo.currentGame != null) {
+                _tableIcon = new TableIcon(this, minfo.currentGame);
             }
         }
 
@@ -299,9 +281,36 @@ public class ActorSprite extends MsoySprite
         return MAX_HEIGHT;
     }
 
+    override public function mouseClick (event :MouseEvent) :void
+    {
+        // see if it actually landed on a decoration
+        var dec :DisplayObject = getDecorationAt(event.stageX, event.stageY);
+        if (dec != null) {
+            // deliver it there
+            dec.dispatchEvent(event);
+
+        } else {
+            // otherwise, do the standard thing
+            super.mouseClick(event);
+        }
+    }
+
     override public function setHovered (hovered :Boolean, stageX :int = 0, stageY :int = 0) :void
     {
-        super.setHovered(hovered, stageX, stageY);
+        // see if we're hovering over a new decoration..
+        var hoverDec :DisplayObject = hovered ? getDecorationAt(stageX, stageY) : null;
+        if (hoverDec != _hoverDecoration) {
+            if (_hoverDecoration != null) {
+                _hoverDecoration.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OUT));
+            }
+            _hoverDecoration = hoverDec;
+            if (_hoverDecoration != null) {
+                _hoverDecoration.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OVER));
+            }
+        }
+
+        // always call super, but hover is only true if we hit no decorations
+        super.setHovered((_hoverDecoration == null) && hovered);
     }
 
     override protected function setGlow (glow :Boolean) :void
@@ -405,6 +414,21 @@ public class ActorSprite extends MsoySprite
         }
     }
 
+    /**
+     * Return the decoration under the specified stage coordinates.
+     */
+    protected function getDecorationAt (stageX :int, stageY :int) :DisplayObject
+    {
+        if (_decorations != null) {
+            for each (var disp :DisplayObject in _decorations) {
+                if (disp.hitTestPoint(stageX, stageY, true)) {
+                    return disp;
+                }
+            }
+        }
+        return null;
+    }
+
     protected function getStatusColor (status :int) :uint
     {
         switch (status) {
@@ -479,13 +503,86 @@ public class ActorSprite extends MsoySprite
     protected var _occInfo :ActorInfo;
     protected var _walk :Animation;
 
-    protected var _currentGameIcon :ScalingMediaContainer;
-    protected var _currentGameSummary :GameSummary;
+    /** A decoration used when we're in a table in a lobby. */
+    protected var _tableIcon :TableIcon;
 
     /** Display objects to be shown above the name for this actor,
      * configured by external callers. */
     protected var _decorations :Array;
 
+    /** The current decoration being hovered over, if any. */
+    protected var _hoverDecoration :DisplayObject;
+
     protected static const DECORATION_PAD :int = 5;
 }
+}
+
+import flash.events.MouseEvent;
+
+import flash.filters.GlowFilter;
+
+import com.threerings.msoy.game.data.GameSummary;
+
+import com.threerings.msoy.world.client.ActorSprite;
+
+import com.threerings.msoy.ui.ScalingMediaContainer;
+
+/**
+ * A decoration used when this actor is at a table in a lobby.
+ */
+class TableIcon extends ScalingMediaContainer
+{
+    public function TableIcon (host :ActorSprite, gameSummary :GameSummary)
+    {
+        super(30, 30);
+        _host = host;
+        _gameSummary = gameSummary;
+        setMedia(gameSummary.getThumbMedia().getMediaPath());
+
+        addEventListener(MouseEvent.MOUSE_OVER, handleMouseIn);
+        addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
+        addEventListener(MouseEvent.CLICK, handleMouseClick);
+    }
+
+    public function getGameSummary () :GameSummary
+    {
+        return _gameSummary;
+    }
+
+    override public function shutdown (completely :Boolean = true) :void
+    {
+        _host.removeDecoration(this);
+        super.shutdown(completely);
+    }
+
+    override protected function contentDimensionsUpdated () :void
+    {
+        super.contentDimensionsUpdated();
+
+        // we wait until our size is known prior to adding ourselves
+        if (parent == null) {
+            _host.addDecoration(this);
+        }
+    }
+
+    protected function handleMouseIn (... ignored) :void
+    {
+        // TODO
+        this.filters = [ new GlowFilter(0x00ff00, 32, 32, 1) ];
+    }
+
+    protected function handleMouseOut (... ignored) :void
+    {
+        this.filters = null;
+    }
+
+    protected function handleMouseClick (... ignored) :void
+    {
+        // TODO
+        trace("CLICK!");
+    }
+
+    protected var _gameSummary :GameSummary;
+
+    protected var _host :ActorSprite;
 }

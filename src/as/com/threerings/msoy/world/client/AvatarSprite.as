@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.world.client {
 
-import flash.events.MouseEvent;
-
 import com.threerings.util.CommandEvent;
 
 import com.threerings.flash.MenuUtil;
@@ -108,15 +106,14 @@ public class AvatarSprite extends ActorSprite
         return true;
     }
 
-    override public function mouseClick (event :MouseEvent) :void
-    {
-        // let's just post a command to our controller
-        CommandEvent.dispatch(this, RoomController.AVATAR_CLICKED, this);
-    }
-
     override public function toString () :String
     {
         return "AvatarSprite[" + _occInfo.username + " (oid=" + _occInfo.bodyOid + ")]";
+    }
+
+    override protected function postClickAction () :void
+    {
+        CommandEvent.dispatch(this, RoomController.AVATAR_CLICKED, this);
     }
 
     override protected function createBackend () :EntityBackend

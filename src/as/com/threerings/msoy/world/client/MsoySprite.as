@@ -293,7 +293,8 @@ public class MsoySprite extends MediaContainer
      */
     public function mouseClick (event :MouseEvent) :void
     {
-        // nada
+        // by default, we post some CommandEvent
+        postClickAction();
     }
 
     /**
@@ -427,6 +428,14 @@ public class MsoySprite extends MediaContainer
         _backend = createBackend();
         _backend.init(Loader(_media));
         _backend.setSprite(this);
+    }
+
+    /**
+     * Post a command event when we're clicked.
+     */
+    protected function postClickAction () :void
+    {
+        // nada
     }
 
     protected function configureMouseProperties () :void

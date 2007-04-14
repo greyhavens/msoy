@@ -687,10 +687,8 @@ public class RoomController extends SceneController
 
         var hitter :MsoySprite = (hit as MsoySprite);
         if (hitter != null) {
-            if (hitter.hasAction()) {
-                hitter.mouseClick(event);
-            }
-            // otherwise: the sprite simply captures and discards the event
+            // let the sprite decide what to do with it
+            hitter.mouseClick(event);
 
         } else if (_mctx.worldProps.userControlsAvatar) {
             var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();
