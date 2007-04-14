@@ -60,8 +60,12 @@ public class TableRenderer extends HBox
     override public function set width (width :Number) :void
     {
         super.width = width;
-        if (_seatsGrid != null && _popup) {
-            _seatsGrid.width = width;
+        if (_seatsGrid != null) {
+            if (_popup) {
+                _seatsGrid.width = width;
+            } else if (_seatsGrid.numChildren > 2) {
+                _seatsGrid.width = width - CONFIG_WIDTH - PADDING_WIDTH - 10; 
+            }
         }
     }
 
