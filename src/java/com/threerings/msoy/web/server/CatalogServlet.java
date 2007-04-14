@@ -69,7 +69,7 @@ public class CatalogServlet extends MsoyServiceServlet
             // fetch catalog records and loop over them
             IntSet members = new ArrayIntSet();
             for (CatalogRecord record : repo.loadCatalog(
-                sortBy, mature, search, tagId, offset, rows)) {
+                sortBy, mature, search, tagId, creator, offset, rows)) {
                 // convert them to listings
                 list.add(record.toListing());
                 // and keep track of which member names we need to look up

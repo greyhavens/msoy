@@ -182,7 +182,7 @@ public class CatalogPanel extends VerticalPanel
         _search = "";
         _searchSortPanel.clearSearchBox();
         _tag = null;
-        _creator = -1;
+        _creator = creatorId;
         refreshItems(true);
     }
 

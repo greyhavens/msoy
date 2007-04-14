@@ -260,7 +260,7 @@ public abstract class ItemRepository<
      *       the Item vs Catalog class hierarchies). 
      */
     public Collection<CAT> loadCatalog (byte sortBy, boolean mature, String search, int tag,
-                                        int offset, int rows)
+                                        int creator, int offset, int rows)
         throws PersistenceException
     {
         OrderBy sortExp;
@@ -305,7 +305,7 @@ public abstract class ItemRepository<
 
         if (search != null && search.length() > 0) {
             whereBits = ArrayUtil.append(whereBits, new Like(ItemRecord.NAME, "%" + search + "%"));
-        };
+        }
 
         if (tag > 0) {
             // join against TagRecord
@@ -315,6 +315,10 @@ public abstract class ItemRepository<
                          getTagRepository().getTagClass(), TagRecord.TARGET_ID));
             // and add a condition
             whereBits = ArrayUtil.append(whereBits, new Equals(TagRecord.TAG_ID, tag));
+        }
+        
+        if (creator > 0) {
+            whereBits = ArrayUtil.append(whereBits, new Equals(ItemRecord.CREATOR_ID, creator));
         }
 
         if (!mature) {
