@@ -582,7 +582,7 @@ class TableIcon extends ScalingMediaContainer
 
     protected function handleMouseClick (... ignored) :void
     {
-        CommandEvent.dispatch(stage, MsoyController.JOIN_GAME_LOBBY, _gameSummary.gameId);
+        CommandEvent.dispatch(this, MsoyController.JOIN_GAME_LOBBY, _gameSummary.gameId);
     }
 
     protected var _gameSummary :GameSummary;

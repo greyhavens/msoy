@@ -43,26 +43,9 @@ public class TableCreationPanel extends HBox
 
     override protected function createChildren () :void
     {
-        var btnBox :VBox = new VBox();
-        btnBox.width = 101;
-        btnBox.percentHeight = 100;
-        btnBox.styleName = "createBtnBox";
-        btnBox.horizontalScrollPolicy = ScrollPolicy.OFF;
-        btnBox.verticalScrollPolicy = ScrollPolicy.OFF;
-        addChild(btnBox);
-        _createBtn = new CommandButton();
-        _createBtn.setFunction(function () :void {
-            CommandEvent.dispatch(_panel, LobbyController.SUBMIT_TABLE,
-                [ tconfigger.getTableConfig(), gconfigger.getGameConfig() ]);
-        });
-        _createBtn.label = Msgs.GAME.get("b.create");
-        btnBox.addChild(_createBtn);
-
-        var padding :VBox = new VBox();
-        padding.setStyle("backgroundColor", 0xE0E7EE);
-        padding.width = 2;
-        padding.percentHeight = 100;
-        addChild(padding);
+        styleName = "tableCreationPanel";
+        percentWidth = 100;
+        percentHeight = 100;
 
         var gconf :EZGameConfigurator = new EZGameConfigurator();
         var gconfigger :GameConfigurator = gconf;
@@ -88,12 +71,15 @@ public class TableCreationPanel extends HBox
         config.gameType = gameDef.gameType;
         gconf.setGameConfig(config);
 
-        var alignBox :VBox = new VBox();
-        alignBox.percentWidth = 100;
-        alignBox.percentHeight = 100;
-        alignBox.setStyle("verticalAlign", "middle");
-        alignBox.addChild(gconf.getContainer());
-        addChild(alignBox);
+        _createBtn = new CommandButton();
+        _createBtn.setFunction(function () :void {
+            CommandEvent.dispatch(_panel, LobbyController.SUBMIT_TABLE,
+                [ tconfigger.getTableConfig(), gconfigger.getGameConfig() ]);
+        });
+        _createBtn.label = Msgs.GAME.get("b.create");
+        gconf.getContainer().addChild(_createBtn);
+
+        addChild(gconf.getContainer());
     }
 
     protected var _ctx :WorldContext;

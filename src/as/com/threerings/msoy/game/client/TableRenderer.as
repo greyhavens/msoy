@@ -104,6 +104,7 @@ public class TableRenderer extends HBox
         _seatsGrid.verticalScrollPolicy = ScrollPolicy.OFF;
         _seatsGrid.horizontalScrollPolicy = ScrollPolicy.OFF;
         _seatsGrid.styleName = "seatsGrid";
+        _seatsGrid.percentWidth = 100;
     }
 
     protected function removeChildren () :void
@@ -140,7 +141,6 @@ public class TableRenderer extends HBox
             updateSeats(table, length);
         }
         // remove any extra seats/buttons, should there be any
-            ", length: " + length);
         while (_seatsGrid.numChildren > length) {
             _seatsGrid.removeChildAt(length);
         }

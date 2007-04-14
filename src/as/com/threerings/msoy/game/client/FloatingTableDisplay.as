@@ -114,7 +114,7 @@ public class FloatingTableDisplay extends FloatingPanel
         _tableRender.data = _table;
         
         // make sure the seat grid in TableRenderer takes as much horizontal space as it can
-        var extraSpace :int = 20;
+        var extraSpace :int = 25;
         _tableRender.width = _tableRender.maxUsableWidth > (parent.width - extraSpace) ? 
             parent.width - extraSpace : _tableRender.maxUsableWidth;
         width = _tableRender.width + extraSpace;
