@@ -77,7 +77,13 @@ public class TableCreationPanel extends HBox
                 [ tconfigger.getTableConfig(), gconfigger.getGameConfig() ]);
         });
         _createBtn.label = Msgs.GAME.get("b.create");
-        gconf.getContainer().addChild(_createBtn);
+        var btnBox :HBox = new HBox();
+        btnBox.percentWidth = 100;
+        btnBox.percentHeight = 100;
+        btnBox.setStyle("verticalAlign", "middle");
+        btnBox.setStyle("horizontalAlign", "center");
+        btnBox.addChild(_createBtn);
+        gconf.getContainer().addChild(btnBox);
 
         addChild(gconf.getContainer());
     }
