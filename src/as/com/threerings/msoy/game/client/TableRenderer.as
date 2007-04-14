@@ -140,6 +140,7 @@ public class TableRenderer extends HBox
             updateSeats(table, length);
         }
         // remove any extra seats/buttons, should there be any
+            ", length: " + length);
         while (_seatsGrid.numChildren > length) {
             _seatsGrid.removeChildAt(length);
         }
@@ -150,12 +151,6 @@ public class TableRenderer extends HBox
 
         if (!_popup) {
             updateConfig(table);
-            // mx.containers.Tile seems to have trouble always understanding its dimensions 
-            // correctly when its in a list
-            validateNow();
-            if (_seatsGrid.numChildren > 1) {
-                _seatsGrid.width = width - CONFIG_WIDTH - PADDING_WIDTH - 10; 
-            }
         }
     }
 
