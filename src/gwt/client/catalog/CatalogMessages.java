@@ -24,12 +24,28 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   String sortByPriceDesc();
 
   /**
+   * Translated "Browsing by Creator: ".
+   * 
+   * @return translated "Browsing by Creator: "
+   * @gwt.key creatorDisplay
+   */
+  String creatorDisplay();
+
+  /**
    * Translated "Rating".
    * 
    * @return translated "Rating"
    * @gwt.key sortByRating
    */
   String sortByRating();
+
+  /**
+   * Translated "(clear)".
+   * 
+   * @return translated "(clear)"
+   * @gwt.key clearCurrentCreator
+   */
+  String clearCurrentCreator();
 
   /**
    * Translated "List Date".
@@ -48,6 +64,14 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   String catalogNoTag(String arg0,  String arg1);
 
   /**
+   * Translated "You can remove this catalog listing.".
+   * 
+   * @return translated "You can remove this catalog listing."
+   * @gwt.key listingDelistTip
+   */
+  String listingDelistTip();
+
+  /**
    * Translated "Catalog".
    * 
    * @return translated "Catalog"
@@ -64,14 +88,6 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   String listingBuy();
 
   /**
-   * Translated "You can remove this catalog listing.".
-   * 
-   * @return translated "You can remove this catalog listing."
-   * @gwt.key listingDelistTip
-   */
-  String listingDelistTip();
-
-  /**
    * Translated "There are no {0} items listed.".
    * 
    * @return translated "There are no {0} items listed."
@@ -80,20 +96,20 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   String catalogNoList(String arg0);
 
   /**
-   * Translated "Listed on: {0}".
-   * 
-   * @return translated "Listed on: {0}"
-   * @gwt.key listingListed
-   */
-  String listingListed(String arg0);
-
-  /**
    * Translated "Delist Item".
    * 
    * @return translated "Delist Item"
    * @gwt.key listingDelist
    */
   String listingDelist();
+
+  /**
+   * Translated "Listed on: {0}".
+   * 
+   * @return translated "Listed on: {0}"
+   * @gwt.key listingListed
+   */
+  String listingListed(String arg0);
 
   /**
    * Translated "by {0}".

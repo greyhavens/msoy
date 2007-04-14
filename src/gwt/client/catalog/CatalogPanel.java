@@ -14,9 +14,12 @@ import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.item.web.CatalogListing;
@@ -177,13 +180,28 @@ public class CatalogPanel extends VerticalPanel
      * Called by the {@link ListingDetailPanel} if the there is a request to browse this creator's
      * items.
      */
-    public void browseByCreator (int creatorId) 
+    public void browseByCreator (int creatorId, String creatorName) 
     {
         _search = "";
         _searchSortPanel.clearSearchBox();
         _tag = null;
         _creator = creatorId;
         refreshItems(true);
+
+        FlowPanel creatorDisplay = new FlowPanel();
+        creatorDisplay.add(new InlineLabel(CCatalog.msgs.creatorDisplay() + creatorName + " "));
+        InlineLabel clearCreator = new InlineLabel(CCatalog.msgs.clearCurrentCreator());
+        clearCreator.addClickListener(new ClickListener() {
+            public void onClick(Widget sender) {
+                _creator = -1;
+                refreshItems(true);
+                // reloads the tag cloud into _tagCloudContainer
+                getTagCloud(false);
+            }
+        });
+        creatorDisplay.add(clearCreator);
+        creatorDisplay.setStyleName("creatorContents");
+        _tagCloudContainer.setWidget(creatorDisplay);
     }
 
     /**
@@ -241,7 +259,10 @@ public class CatalogPanel extends VerticalPanel
             _clouds.put(tabKey, newCloud);
             cloud = newCloud;
         }
-        _tagCloudContainer.setWidget(cloud);
+        // if _creator != -1, we are currently displaying a creator in the _tagCloudContainer.
+        if (_creator == -1) {
+            _tagCloudContainer.setWidget(cloud);
+        }
         return cloud;
     }
 
