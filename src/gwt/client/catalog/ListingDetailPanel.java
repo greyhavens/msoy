@@ -107,13 +107,13 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         _creator.setMember(_detail.creator, new PopupMenu() {
             protected void addMenuItems () {
-                this.addMenuItem("Visit Profile", new Command() {
+                this.addMenuItem(CCatalog.imsgs.viewProfile(), new Command() {
                     public void execute () {
                         History.newItem(Application.createLinkToken("profile", 
                             "" + _detail.creator.getMemberId()));
                     }
                 });
-                this.addMenuItem("Browse Catalog Entries", new Command() {
+                this.addMenuItem(CCatalog.imsgs.browseCatalogFor(), new Command() {
                     public void execute () {
                         // TODO
                     }

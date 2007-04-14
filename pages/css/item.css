@@ -152,6 +152,16 @@
   font-size: 14px;
 }
 
+.itemDetailPanel .gwt-Hyperlink {
+  display: inline;
+}
+
+.itemDetailPanel .LabelLink {
+    cursor: pointer;
+    text-decoration: underline;
+    color: black;
+}
+
 .tagDetailPanel {
   font-size: 12px;
 }

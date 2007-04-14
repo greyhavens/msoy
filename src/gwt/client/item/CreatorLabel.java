@@ -34,6 +34,7 @@ public class CreatorLabel extends FlowPanel
             add(Application.memberViewLink(name.toString(), name.getMemberId()));
         } else {
             InlineLabel text = new InlineLabel(name.toString());
+            text.addStyleName("LabelLink");
             menu.setTrigger(text);
             add(text);
         }

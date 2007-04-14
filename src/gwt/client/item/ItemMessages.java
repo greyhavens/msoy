@@ -16,6 +16,14 @@ public interface ItemMessages extends com.google.gwt.i18n.client.Messages {
   String searchSearch();
 
   /**
+   * Translated "View Profile".
+   * 
+   * @return translated "View Profile"
+   * @gwt.key viewProfile
+   */
+  String viewProfile();
+
+  /**
    * Translated "(clear)".
    * 
    * @return translated "(clear)"
@@ -46,6 +54,14 @@ public interface ItemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key cloudCommonTags
    */
   String cloudCommonTags();
+
+  /**
+   * Translated "Browse Catalog".
+   * 
+   * @return translated "Browse Catalog"
+   * @gwt.key browseCatalogFor
+   */
+  String browseCatalogFor();
 
   /**
    * Translated "by".

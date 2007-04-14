@@ -3,6 +3,8 @@
 
 package client.inventory;
 
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -18,8 +20,10 @@ import com.threerings.msoy.item.web.ItemDetail;
 
 import client.editem.ItemEditor;
 import client.item.BaseItemDetailPanel;
+import client.shell.Application;
 import client.util.ClickCallback;
 import client.util.ItemUtil;
+import client.util.PopupMenu;
 
 /**
  * Displays a popup detail view of an item from the user's inventory.
@@ -90,6 +94,22 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             };
             _details.add(button);
         }
+
+        _creator.setMember(_detail.creator, new PopupMenu() {
+            protected void addMenuItems () {
+                this.addMenuItem(CInventory.imsgs.viewProfile(), new Command() {
+                    public void execute () {
+                        History.newItem(Application.createLinkToken("profile",
+                            "" + _detail.creator.getMemberId()));
+                    }
+                });
+                this.addMenuItem(CInventory.imsgs.browseCatalogFor(), new Command() {
+                    public void execute () {
+                        // TODO
+                    }
+                });
+            }
+        });
     }
 
     // @Override // BaseItemDetailPanel
