@@ -95,7 +95,9 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(button);
         }
 
-        _creator.setMember(_detail.creator, new PopupMenu() {
+        // TODO: When catalog browsing is fully URL-friendly, browsing catalog by creator from here
+        // will be straightforward
+        /*_creator.setMember(_detail.creator, new PopupMenu() {
             protected void addMenuItems () {
                 this.addMenuItem(CInventory.imsgs.viewProfile(), new Command() {
                     public void execute () {
@@ -109,7 +111,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                     }
                 });
             }
-        });
+        });*/
     }
 
     // @Override // BaseItemDetailPanel

@@ -115,7 +115,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 });
                 this.addMenuItem(CCatalog.imsgs.browseCatalogFor(), new Command() {
                     public void execute () {
-                        // TODO
+                        _panel.browseByCreator(_detail.creator.getMemberId());
                     }
                 });
             }
