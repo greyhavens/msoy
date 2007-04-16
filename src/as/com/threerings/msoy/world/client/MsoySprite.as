@@ -372,6 +372,8 @@ public class MsoySprite extends MediaContainer
             _backend = null;
         }
 
+        setHovered(false);
+
         super.shutdown(completely);
 
         _hotSpot = null;
