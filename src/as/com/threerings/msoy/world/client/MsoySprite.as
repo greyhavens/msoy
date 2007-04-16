@@ -269,11 +269,12 @@ public class MsoySprite extends MediaContainer
     /**
      * Turn on or off the glow surrounding this sprite.
      */
-    public function setHovered (hovered :Boolean, stageX :int = 0, stageY :int = 0) :void
+    public function setHovered (hovered :Boolean, stageX :int = 0, stageY :int = 0) :String
     {
         if (hovered == (_glow == null)) {
             setGlow(hovered);
         }
+        return hovered ? getToolTipText() : null;
     }
 
     protected function setGlow (glow :Boolean) :void

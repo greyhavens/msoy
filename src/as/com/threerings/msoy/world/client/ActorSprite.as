@@ -76,13 +76,18 @@ public class ActorSprite extends MsoySprite
     /**
      * Add some sort of nonstandard decoration to the sprite.
      * The decoration should already be painting its full size.
+     *
+     * @param constraints an object containing properties that will
+     *        control layout and other bits.
+     *        Supported properties:
+     *        toolTip <String> any tool tip text.
      */
-    public function addDecoration (dec :DisplayObject) :void
+    public function addDecoration (dec :DisplayObject, constraints :Object = null) :void
     {
         if (_decorations == null) {
             _decorations = [];
         }
-        _decorations.push(dec);
+        _decorations.push(dec, constraints);
 
         addChild(dec);
         arrangeDecorations();
@@ -96,7 +101,7 @@ public class ActorSprite extends MsoySprite
         if (_decorations != null) {
             var dex :int = _decorations.indexOf(dec);
             if (dex != -1) {
-                _decorations.splice(dex, 1);
+                _decorations.splice(dex, 2);
                 removeChild(dec);
                 if (_decorations.length == 0) {
                     _decorations = null;
@@ -116,9 +121,8 @@ public class ActorSprite extends MsoySprite
         if (_decorations == null) {
             return;
         }
-        var dec :DisplayObject;
-        while (null != (dec = _decorations.shift())) {
-            removeChild(dec);
+        for (var ii :int = 0; ii < _decorations.length; ii += 2) {
+            removeChild(_decorations[ii] as DisplayObject);
         }
         _decorations = null;
     }
@@ -295,9 +299,10 @@ public class ActorSprite extends MsoySprite
         }
     }
 
-    override public function setHovered (hovered :Boolean, stageX :int = 0, stageY :int = 0) :void
+    override public function setHovered (hovered :Boolean, stageX :int = 0, stageY :int = 0) :String
     {
         // see if we're hovering over a new decoration..
+        var decorTip :String = null;
         var hoverDec :DisplayObject = hovered ? getDecorationAt(stageX, stageY) : null;
         if (hoverDec != _hoverDecoration) {
             if (_hoverDecoration != null) {
@@ -308,9 +313,13 @@ public class ActorSprite extends MsoySprite
                 _hoverDecoration.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OVER));
             }
         }
+        if (hoverDec != null) {
+            decorTip = getDecorationConstraint(hoverDec)["toolTip"];
+        }
 
         // always call super, but hover is only true if we hit no decorations
-        super.setHovered((_hoverDecoration == null) && hovered);
+        var superTip :String = super.setHovered((_hoverDecoration == null) && hovered);
+        return (_hoverDecoration == null) ? superTip : decorTip;
     }
 
     override protected function setGlow (glow :Boolean) :void
@@ -405,7 +414,7 @@ public class ActorSprite extends MsoySprite
         // place the decorations over the name label, with our best
         // guess as to their size
         var ybase :Number = _label.y;
-        for (var ii :int = 0; ii < _decorations.length; ii++) {
+        for (var ii :int = 0; ii < _decorations.length; ii += 2) {
             var dec :DisplayObject = DisplayObject(_decorations[ii]);
             var rect :Rectangle = dec.getRect(dec);
             ybase -= (rect.height + DECORATION_PAD);
@@ -420,13 +429,32 @@ public class ActorSprite extends MsoySprite
     protected function getDecorationAt (stageX :int, stageY :int) :DisplayObject
     {
         if (_decorations != null) {
-            for each (var disp :DisplayObject in _decorations) {
+            for (var ii :int = 0; ii < _decorations.length; ii += 2) {
+                var disp :DisplayObject = (_decorations[ii] as DisplayObject);
                 if (disp.hitTestPoint(stageX, stageY, true)) {
                     return disp;
                 }
             }
         }
         return null;
+    }
+
+    /**
+     * Get the associated constraint object for the specified decoration.
+     * Always returns non-null.
+     */
+    protected function getDecorationConstraint (decoration :DisplayObject) :Object
+    {
+        var cons :Object = null;
+        if (_decorations != null) {
+            for (var ii :int = 0; ii < _decorations.length; ii += 2) {
+                if (_decorations[ii] == decoration) {
+                    cons = _decorations[ii + 1];
+                    break;
+                }
+            }
+        }
+        return (cons != null) ? cons : {};
     }
 
     protected function getStatusColor (status :int) :uint
@@ -567,14 +595,14 @@ class TableIcon extends ScalingMediaContainer
 
         // we wait until our size is known prior to adding ourselves
         if (parent == null) {
-            _host.addDecoration(this);
+            _host.addDecoration(this, { toolTip: _gameSummary.name });
         }
     }
 
     protected function handleMouseIn (... ignored) :void
     {
-        // TODO
-        this.filters = [ new GlowFilter(0x00ff00, 32, 32, 1) ];
+        // TODO?
+        this.filters = [ new GlowFilter(0x00ff00, 1, 32, 32, 2) ];
     }
 
     protected function handleMouseOut (... ignored) :void

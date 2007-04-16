@@ -638,6 +638,7 @@ public class RoomController extends SceneController
     {
         // if the same sprite is glowing, we don't have to change as much..
         if (_hoverSprite == sprite) {
+            updateHovered(stageX, stageY);
             if (_hoverSprite != null) {
                 // but we do want to tell it about it, in case it wants
                 // to glow differently depending on the location...
@@ -659,19 +660,32 @@ public class RoomController extends SceneController
         _hoverSprite = sprite;
 
         // and glow the new hoversprite
-        if (_hoverSprite != null) {
-            sprite.setHovered(true, stageX, stageY);
-            var tipText :String = sprite.getToolTipText();
-            if (tipText != null) {
-                _hoverTip = ToolTipManager.createToolTip(tipText,
-                    stageX, stageY);
-                var tipComp :UIComponent = UIComponent(_hoverTip);
-                tipComp.styleName = "roomToolTip";
-                var hoverColor :uint = sprite.getHoverColor();
-                tipComp.setStyle("color", hoverColor);
-                if (hoverColor == 0) {
-                    tipComp.setStyle("backgroundColor", 0xFFFFFF);
-                }
+        updateHovered(stageX, stageY);
+    }
+
+    /**
+     * Update the hovered status of the current _hoverSprite.
+     */
+    protected function updateHovered (stageX :Number, stageY :Number) :void
+    {
+        if (_hoverSprite == null) {
+            return;
+        }
+
+        var text :String = _hoverSprite.setHovered(true, stageX, stageY);
+        if (_hoverTip != null && _hoverTip.text != text) {
+            ToolTipManager.destroyToolTip(_hoverTip);
+            _hoverTip = null;
+        }
+        if (_hoverTip == null && text != null) {
+            _hoverTip = ToolTipManager.createToolTip(text,
+                stageX, stageY);
+            var tipComp :UIComponent = UIComponent(_hoverTip);
+            tipComp.styleName = "roomToolTip";
+            var hoverColor :uint = _hoverSprite.getHoverColor();
+            tipComp.setStyle("color", hoverColor);
+            if (hoverColor == 0) {
+                tipComp.setStyle("backgroundColor", 0xFFFFFF);
             }
         }
     }
