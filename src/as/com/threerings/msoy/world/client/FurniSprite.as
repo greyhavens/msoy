@@ -135,8 +135,10 @@ public class FurniSprite extends MsoySprite
      */
     public function wasTraversed (entering :Boolean) :void
     {
-        // TODO: figure out which messages we want to send to doors
-        callUserCode("action_v1", entering ? "bodyEntered" : "bodyLeft");
+        // TODO: pass body as arg? Pass dimensions of body as arg?
+        // TODO: receive a path or some other descriptor of an animation
+        //       for the body???
+        messageReceived(entering ? "bodyEntered" : "bodyLeft", null, true);
     }
 
     override protected function createBackend () :EntityBackend

@@ -171,6 +171,9 @@ public class RoomView extends AbstractRoomView
 //    public function whirlDone (sprite :ActorSprite) :void
 //    {
         if (null != _pendingRemovals.remove(sprite.getOid())) {
+            // trigger a portal traversal
+            portalTraversed(sprite.loc, false);
+            // and remove the sprite
             removeSprite(sprite);
         }
     }
@@ -745,12 +748,8 @@ public class RoomView extends AbstractRoomView
         super.removeSprite(sprite);
 
         if (sprite is ActorSprite) {
-            // TODO: ack! This is getting triggered even when we remove
-            // actors for other reasons than them leaving...
-            var actor :ActorSprite = (sprite as ActorSprite);
-            portalTraversed(actor.loc, false);
             // remove the sprite from the entities table
-            _entities.remove(actor.getActorInfo().getItemIdent());
+            _entities.remove((sprite as ActorSprite).getActorInfo().getItemIdent());
         }
         if (sprite == _centerSprite) {
             _centerSprite = null;
