@@ -41,7 +41,6 @@
          <path-element>../lib</path-element>
          <path-element>../tools/extern/flex_sdk/frameworks/libs</path-element>
          <path-element>../tools/extern/flex_sdk/frameworks/locale/{locale}</path-element>
-         <path-element>../projects/nenya/lib</path-element>
       </library-path>
       <namespaces>
          <!-- Specify a URI to associate with a manifest of components for use as MXML -->
