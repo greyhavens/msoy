@@ -101,8 +101,14 @@ public class ControlBar extends HBox
             removeChild(_channelInput);
         }
         if (input != null) {
-            // insert it to the left of the channel button
-            var chidx :int = getChildIndex(_channelBtn);
+            var chidx :int = -1;
+            // TEMP: non-admins have no channel button for now
+            if (_channelBtn == null) {
+                chidx = numChildren;
+            } else {
+                // insert it to the left of the channel button
+                chidx = getChildIndex(_channelBtn);
+            }
             if (chidx >= 0) {
                 addChildAt(_channelInput = input, chidx);
             }
