@@ -38,6 +38,29 @@ public class MsoyLocation
     }
 
     /**
+     * Set this location to the specified object's value.
+     * @param newLoc may be an array or another MsoyLocation.
+     */
+    public function set (newLoc :Object) :void
+    {
+        if (newLoc is MsoyLocation) {
+            var mloc :MsoyLocation = (newLoc as MsoyLocation);
+            this.x = mloc.x;
+            this.y = mloc.y;
+            this.z = mloc.z;
+
+        } else if (newLoc is Array) {
+            var aloc :Array = (newLoc as Array);
+            this.x = aloc[0];
+            this.y = aloc[1];
+            this.z = aloc[2];
+
+        } else {
+            throw new ArgumentError("Location may be an MsoyLocation or an Array");
+        }
+    }
+
+    /**
      * Get the distance between this location and the other.
      */
     public function distance (that :MsoyLocation) :Number

@@ -66,9 +66,6 @@ import com.threerings.msoy.world.data.RoomObject;
 public class MsoySprite extends MediaContainer
     implements RoomElement
 {
-    /** The current logical coordinate of this media. */
-    public const loc :MsoyLocation = new MsoyLocation();
-
     /**
      * Constructor.
      */
@@ -79,31 +76,33 @@ public class MsoySprite extends MediaContainer
     }
 
     // from RoomElement
-    public function getZ () :Number
-    {
-        return isIncludedInLayout() ? loc.z : NaN;
-    }
-
-    // from RoomElement
     public function isIncludedInLayout () :Boolean
     {
         return true;
     }
 
     // from RoomElement
-    public function setScreenScale (scale :Number) :void
+    public function setLocation (newLoc :Object) :void
     {
+        _loc.set(newLoc);
+        locationUpdated();
+    }
+
+    // from RoomElement
+    public function getLocation () :MsoyLocation
+    {
+        return _loc;
+    }
+
+    // from RoomElement
+    public function setScreenLocation (x :Number, y :Number, scale :Number) :void
+    {
+        this.x = x
+        this.y = y
         if (scale != _locScale) {
             _locScale = scale;
             scaleUpdated();
         }
-    }
-
-    // from RoomElement
-    public function setScreenLocation (x :Number, y :Number) :void
-    {
-        this.x = x
-        this.y = y
     }
 
     public function setEffectScales (xscale :Number, yscale :Number) :void
@@ -204,29 +203,6 @@ public class MsoySprite extends MediaContainer
         return new Point(
             Math.abs(p.x * getMediaScaleX() * _locScale * _fxScaleX),
             Math.abs(p.y * getMediaScaleY() * _locScale * _fxScaleY));
-    }
-
-    /**
-     * Update the location (but not the orientation).
-     *
-     * @param newLoc may be an MsoyLocation or an Array
-     */
-    public function setLocation (newLoc :Object) :void
-    {
-        if (newLoc is MsoyLocation) {
-            var mloc :MsoyLocation = (newLoc as MsoyLocation);
-            loc.x = mloc.x;
-            loc.y = mloc.y;
-            loc.z = mloc.z;
-
-        } else {
-            var aloc :Array = (newLoc as Array);
-            loc.x = aloc[0];
-            loc.y = aloc[1];
-            loc.z = aloc[2];
-        }
-
-        locationUpdated();
     }
 
     public function setActive (active :Boolean) :void
@@ -656,6 +632,9 @@ public class MsoySprite extends MediaContainer
         }
         return undefined;
     }
+
+    /** The current logical coordinate of this media. */
+    public const _loc :MsoyLocation = new MsoyLocation();
 
     /** Our Media descriptor. */
     protected var _desc :MediaDesc;

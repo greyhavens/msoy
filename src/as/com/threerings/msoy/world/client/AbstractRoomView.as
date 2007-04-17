@@ -103,7 +103,7 @@ public class AbstractRoomView extends Sprite
      */
     public function locationUpdated (sprite :MsoySprite) :void
     {
-        _layout.updateScreenLocation(sprite.loc, sprite, sprite.getLayoutHotSpot());
+        _layout.updateScreenLocation(sprite, sprite.getLayoutHotSpot());
         
         if (sprite == _bg && _scene.getSceneType() == Decor.FIXED_IMAGE) {
             sprite.x += getScrollOffset();
@@ -183,7 +183,7 @@ public class AbstractRoomView extends Sprite
     {
         _otherSprites.push(sprite);
         addChildAt(sprite, 1);
-        sprite.setLocation(sprite.loc);
+        locationUpdated(sprite);
     }
 
     /**

@@ -172,7 +172,7 @@ public class RoomView extends AbstractRoomView
 //    {
         if (null != _pendingRemovals.remove(sprite.getOid())) {
             // trigger a portal traversal
-            portalTraversed(sprite.loc, false);
+            portalTraversed(sprite.getLocation(), false);
             // and remove the sprite
             removeSprite(sprite);
         }
@@ -325,7 +325,7 @@ public class RoomView extends AbstractRoomView
     {
         var avatar :AvatarSprite = getMyAvatar();
         if (avatar != null) {
-            return avatar.loc;
+            return avatar.getLocation();
         } else {
             return new MsoyLocation(-1, -1, -1);
         }

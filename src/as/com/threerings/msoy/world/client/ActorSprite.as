@@ -215,7 +215,7 @@ public class ActorSprite extends MsoySprite
      */
     public function setOrientation (orient :int, report :Boolean = true) :void
     {
-        loc.orient = orient;
+        _loc.orient = orient;
 
         // unless instructed otherwise, report that our appearance changed
         if (report) {
@@ -237,7 +237,7 @@ public class ActorSprite extends MsoySprite
         // set the orientation towards the new location
         setOrientation(destLoc.orient, false);
 
-        _walk = new WalkAnimation(this, scene, this.loc, destLoc);
+        _walk = new WalkAnimation(this, scene, _loc, destLoc);
         _walk.start();
         appearanceChanged();
     }
@@ -524,7 +524,7 @@ public class ActorSprite extends MsoySprite
      */
     protected function appearanceChanged () :void
     {
-        callUserCode("appearanceChanged_v1", [ loc.x, loc.y, loc.z ], loc.orient, isMoving());
+        callUserCode("appearanceChanged_v1", [ _loc.x, _loc.y, _loc.z ], _loc.orient, isMoving());
     }
 
     protected var _label :TextField;

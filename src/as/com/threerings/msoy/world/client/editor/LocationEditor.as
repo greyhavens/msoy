@@ -14,6 +14,7 @@ import com.threerings.util.CommandEvent;
 import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.world.client.MsoySprite;
+import com.threerings.msoy.world.data.MsoyLocation;
 
 public class LocationEditor extends Canvas
 {
@@ -30,21 +31,22 @@ public class LocationEditor extends Canvas
     {
         _sprite = sprite;
 
-        _x.value = sprite.loc.x;
-        _y.value = sprite.loc.y;
-        _z.value = sprite.loc.z;
+        var loc :MsoyLocation = sprite.getLocation();
+        _x.value = loc.x;
+        _y.value = loc.y;
+        _z.value = loc.z;
 
         if (!_didBind) {
             BindingUtils.bindSetter(function (val :Number) :void {
-                _sprite.setLocation([ val, _sprite.loc.y, _sprite.loc.z ]);
+                _sprite.setLocation([ val, loc.y, loc.z ]);
                 wasEdited();
             }, _x, "value");
             BindingUtils.bindSetter(function (val :Number) :void {
-                _sprite.setLocation([ _sprite.loc.x, val, _sprite.loc.z ]);
+                _sprite.setLocation([ loc.x, val, loc.z ]);
                 wasEdited();
             }, _y, "value");
             BindingUtils.bindSetter(function (val :Number) :void {
-                _sprite.setLocation([ _sprite.loc.x, _sprite.loc.y, val ]);
+                _sprite.setLocation([ loc.x, loc.y, val ]);
                 wasEdited();
             }, _z, "value");
 

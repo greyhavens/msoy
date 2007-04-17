@@ -169,14 +169,14 @@ public class EditorController extends Controller
                 (_ctx.getSceneDirector().getScene().getSceneModel() as MsoySceneModel);
             if (!Util.equals(editModel.name, origModel.name) ||
                 !Util.equals(editModel.audioData, origModel.audioData) ||
-                !Util.equals(_entranceSprite.loc, origModel.entrance) ||
+                !Util.equals(_entranceSprite.getLocation(), origModel.entrance) ||
                 !editModel.decorData.equivalent(origModel.decorData))
             {
                 var attrUpdate :SceneAttrsUpdate = new SceneAttrsUpdate();
                 attrUpdate.init(sceneId, version++);
 
                 attrUpdate.name = editModel.name;
-                attrUpdate.entrance = _entranceSprite.loc;
+                attrUpdate.entrance = _entranceSprite.getLocation();
                 // the server should validate this decor data entry, because otherwise
                 // rogue clients will be able to specify any decor items, even if the player
                 // doesn't own it. FIXME ROBERT
@@ -468,7 +468,7 @@ try {
     protected function recordMouseAnchor () :void
     {
         _anchor = new Point(_roomView.stage.mouseX, _roomView.stage.mouseY);
-        _anchorY = _editSprite.loc.y;
+        _anchorY = _editSprite.getLocation().y;
     }
 
     protected function addEditingListeners (sprite :MsoySprite) :void
@@ -642,14 +642,14 @@ try {
         if (event.shiftKey) {
             // figure the distance from the anchor
             var ypixels :Number = _anchor.y - event.stageY;
-            var loc :MsoyLocation = _editSprite.loc;
+            var loc :MsoyLocation = _editSprite.getLocation();
             loc.y = _anchorY + _roomView.layout.metrics.pixelHeightToRoomHeight(ypixels, loc.z);
             _editSprite.setLocation(loc);
 
         } else {
             var cloc :ClickLocation = _roomView.layout.pointToLocation(event.stageX, event.stageY);
             if (cloc.click == ClickLocation.FLOOR) {
-                cloc.loc.y = _editSprite.loc.y;
+                cloc.loc.y = _editSprite.getLocation().y;
             }
             _editSprite.setLocation(cloc.loc);
         }
@@ -757,7 +757,7 @@ try {
         if (sprite is FurniSprite) {
             var furni :FurniData = (sprite as FurniSprite).getFurniData();
             // copy the edited location back into the descriptor
-            furni.loc = (sprite.loc.clone() as MsoyLocation);
+            furni.loc = (sprite.getLocation().clone() as MsoyLocation);
 
             // first remove any instances from our removed/added
             ArrayUtil.removeAll(_removedFurni, furni);

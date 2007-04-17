@@ -254,28 +254,26 @@ public class RoomLayout {
      * participates in screen layout (and most of them do, with the notable exception of decor),
      * it will also ask the room view to recalculate the object's z-ordering.
      *
-     * @param loc new object location, in room coordinates
      * @param target object to be updated
      * @param offset optional Point argument that, if not null, will be used to shift
      *        the object left and up by the specified x and y amounts.
      */
-    public function updateScreenLocation (
-        loc :MsoyLocation, target :RoomElement, offset :Point = null) :void
+    public function updateScreenLocation (target :RoomElement, offset :Point = null) :void
     {
-        if (target is DisplayObject) {
-            var screen :Point = _metrics.roomToScreen(loc.x, loc.y, loc.z);
-            var scale :Number = _metrics.scaleAtDepth(loc.z);
-            offset = (offset != null ? offset : NO_OFFSET);
-            
-            target.setScreenLocation(screen.x - offset.x, screen.y - offset.y);
-            target.setScreenScale(scale);
-            
-            // maybe call the room view, and tell it to find a new z ordering for this target
-            if (target.isIncludedInLayout()) {
-                adjustZOrder(target as DisplayObject);
-            }
-        } else {
-            throw new Error ("Invalid target passed to updateScreenLocation: " + target);
+        if (!(target is DisplayObject)) {
+            throw new ArgumentError("Invalid target passed to updateScreenLocation: " + target);
+        }
+
+        var loc :MsoyLocation = target.getLocation();
+        var screen :Point = _metrics.roomToScreen(loc.x, loc.y, loc.z);
+        var scale :Number = _metrics.scaleAtDepth(loc.z);
+        offset = (offset != null ? offset : NO_OFFSET);
+        
+        target.setScreenLocation(screen.x - offset.x, screen.y - offset.y, scale);
+        
+        // maybe call the room view, and tell it to find a new z ordering for this target
+        if (target.isIncludedInLayout()) {
+            adjustZOrder(target as DisplayObject);
         }
     }
 
@@ -329,14 +327,18 @@ public class RoomLayout {
     protected function getZOfChildAt (index :int) :Number
     {
         var disp :DisplayObject = _parentView.getChildAt(index);
-        return (disp is RoomElement) ? (disp as RoomElement).getZ() : NaN;
+        if (disp is RoomElement) {
+            var re :RoomElement = (disp as RoomElement);
+            if (re.isIncludedInLayout()) {
+                return re.getLocation().z;
+            }
+        }
+        return NaN; // either not a RoomElement, or not included in layout
     }
 
-    
 
     private static const MAX_SCALE :Number = 1;
     private static const MAX_COORD :Number = 1;
-
 
 
     /** Room metrics storage. */

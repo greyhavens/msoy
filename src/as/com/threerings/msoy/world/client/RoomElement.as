@@ -1,5 +1,6 @@
 package com.threerings.msoy.world.client {
 
+import com.threerings.msoy.world.data.MsoyLocation;
 
 /**
  * Interface for all objects that exist in a scene, and have both scene location in room
@@ -14,18 +15,19 @@ public interface RoomElement
     function isIncludedInLayout () :Boolean;
 
     /**
-     * Return the Z value of this object, in room coordinates.
+     * Set the logical location of the element. The orientation is not updated.
+     * @param newLoc may be an MsoyLocation or an Array.
      */
-    function getZ () :Number;
+    function setLocation (newLoc :Object) :void
+
+    /**
+     * Get the logical location of this object.
+     */
+    function getLocation () :MsoyLocation;
 
     /**
      * Set the screen location of the object, based on its location in the scene.
      */
-    function setScreenLocation (x :Number, y :Number) :void;
-    
-    /**
-     * Set the screen scale of the object, based on its location in the room.
-     */
-    function setScreenScale (scale :Number) :void; 
+    function setScreenLocation (x :Number, y :Number, scale :Number) :void;
 }
 }

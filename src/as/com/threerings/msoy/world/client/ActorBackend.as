@@ -1,5 +1,7 @@
 package com.threerings.msoy.world.client {
 
+import com.threerings.msoy.world.data.MsoyLocation;
+
 public class ActorBackend extends EntityBackend
 {
     override protected function populateControlProperties (o :Object) :void
@@ -17,8 +19,9 @@ public class ActorBackend extends EntityBackend
         super.populateControlInitProperties(o);
 
         var sprite :ActorSprite = (_sprite as ActorSprite);
-        o["location"] = [ sprite.loc.x, sprite.loc.y, sprite.loc.z ];
-        o["orient"] = sprite.loc.orient;
+        var loc :MsoyLocation = sprite.getLocation();
+        o["location"] = [ loc.x, loc.y, loc.z ];
+        o["orient"] = loc.orient;
         o["isMoving"] = sprite.isMoving();
     }
 

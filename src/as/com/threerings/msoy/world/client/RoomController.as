@@ -604,11 +604,11 @@ public class RoomController extends SceneController
 
                 if (cloc.click == ClickLocation.FLOOR && _mctx.worldProps.userControlsAvatar) {
                     if (cloc.loc.y != 0) {
-                        _flyTarget.setZ(cloc.loc.z);
-                        _roomView.layout.updateScreenLocation(cloc.loc, _flyTarget);
+                        _flyTarget.setLocation(cloc.loc);
+                        _roomView.layout.updateScreenLocation(_flyTarget);
                         showFlyTarget = true;
 
-                        // then set the y to zero for the walkTarget
+                        // Set the Y to 0 and use it for the walkTarget
                         cloc.loc.y = 0;
                         _walkTarget.alpha = .5;
 
@@ -617,8 +617,8 @@ public class RoomController extends SceneController
                     }
 
                     showWalkTarget = true;
-                    _walkTarget.setZ(cloc.loc.z);
-                    _roomView.layout.updateScreenLocation(cloc.loc, _walkTarget);
+                    _walkTarget.setLocation(cloc.loc);
+                    _roomView.layout.updateScreenLocation(_walkTarget);
                 }
 
             } else if (!hitter.hasAction()) {
@@ -1016,6 +1016,7 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import com.threerings.msoy.world.client.RoomElement;
+import com.threerings.msoy.world.data.MsoyLocation;
 
 class WalkTarget extends Sprite
     implements RoomElement
@@ -1028,15 +1029,16 @@ class WalkTarget extends Sprite
         addChild(targ);
     }
 
-    public function setZ (z :Number) :void
+    // from RoomElement
+    public function setLocation (newLoc :Object) :void
     {
-        _z = z;
+        _loc.set(newLoc);
     }
 
     // from RoomElement
-    public function getZ () :Number
+    public function getLocation () :MsoyLocation
     {
-        return _z;
+        return _loc;
     }
 
     // from RoomElement
@@ -1046,23 +1048,19 @@ class WalkTarget extends Sprite
     }
 
     // from RoomElement
-    public function setScreenScale (scale :Number) :void
-    {
-        // don't let the target shrink too much - 0.25 of original size at most
-        var clampedScale :Number = Math.max(0.25, scale);
-
-        scaleX = clampedScale;
-        scaleY = clampedScale;
-    }
-
-    // from RoomElement
-    public function setScreenLocation (x :Number, y :Number) :void
+    public function setScreenLocation (x :Number, y :Number, scale :Number) :void
     {
         this.x = x
         this.y = y
+
+        // don't let the target shrink too much - 0.25 of original size at most
+        var clampedScale :Number = Math.max(0.25, scale);
+        this.scaleX = clampedScale;
+        this.scaleY = clampedScale;
     }
 
-    protected var _z :Number;
+    /** Our logical location. */
+    protected const _loc :MsoyLocation = new MsoyLocation();
 
     [Embed(source="../../../../../../../rsrc/media/walkable.swf")]
     protected static const WALKTARGET :Class;
