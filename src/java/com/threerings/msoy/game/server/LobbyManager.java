@@ -47,6 +47,7 @@ public class LobbyManager
                     if (item.itemId == getGameId()) {
                         // update the game in the lobby object, everything else is groovy
                         _lobj.setGame((Game)item.toItem());
+                        _tableMgr.gameUpdated();
                     }
                 }
             };
