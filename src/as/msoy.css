@@ -68,6 +68,7 @@ Accordion {
   dropShadowEnabled: true;
   shadowDirection: center;
   borderStyle: solid;
+  borderThickness: 5;
   backgroundAlpha: 0.41;
   highlightAlphas: 0, 0;
   fillAlphas: 1, 1, 1, 1;
