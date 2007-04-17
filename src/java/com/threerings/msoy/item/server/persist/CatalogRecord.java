@@ -16,8 +16,8 @@ import com.samskivert.jdbc.depot.annotation.Transient;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.io.Streamable;
-import com.threerings.msoy.item.web.CatalogListing;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.item.data.all.CatalogListing;
+import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Represents a catalog listing of an item.

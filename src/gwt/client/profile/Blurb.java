@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 
 import com.threerings.msoy.web.data.BlurbData;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Contains a chunk of content that a user would want to display on their

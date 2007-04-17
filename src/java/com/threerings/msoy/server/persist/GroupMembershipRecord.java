@@ -15,9 +15,9 @@ import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.web.data.GroupMembership;
-import com.threerings.msoy.web.data.MemberName;
-import com.threerings.msoy.web.data.GroupName;
+import com.threerings.msoy.data.all.GroupMembership;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.GroupName;
 
 /**
  * Contains the details of person's membership in a group.

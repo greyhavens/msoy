@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.Application;
 

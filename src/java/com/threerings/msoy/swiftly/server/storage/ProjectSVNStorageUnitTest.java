@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.swiftly.server.storage;
 
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
 

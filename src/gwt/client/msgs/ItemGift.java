@@ -21,11 +21,11 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.data.ItemGiftObject;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 
 public abstract class ItemGift
 {

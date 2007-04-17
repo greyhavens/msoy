@@ -14,7 +14,7 @@ import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * A msoy-specific table.

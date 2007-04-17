@@ -14,8 +14,8 @@ import com.threerings.msoy.ui.MsoyList;
 
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.msoy.web.data.FriendEntry;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
 
 public class FriendsList extends MsoyList
     implements SetListener

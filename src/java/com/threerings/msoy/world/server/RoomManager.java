@@ -43,8 +43,8 @@ import com.threerings.whirled.spot.server.SpotSceneManager;
 import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.world.client.RoomService;

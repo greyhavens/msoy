@@ -17,13 +17,13 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.TokenRing;
 
-import com.threerings.msoy.web.data.FriendEntry;
-import com.threerings.msoy.web.data.GroupMembership;
-import com.threerings.msoy.web.data.GroupName;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.GroupMembership;
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.item.web.Avatar;
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.WorldGameConfig;

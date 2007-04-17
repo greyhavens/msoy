@@ -10,7 +10,7 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.client.WorldContext;
 
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;

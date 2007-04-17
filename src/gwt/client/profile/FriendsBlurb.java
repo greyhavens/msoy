@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.data.FriendEntry;
+import com.threerings.msoy.data.all.FriendEntry;
 
 import client.msgs.FriendInvite;
 import client.msgs.MailComposition;

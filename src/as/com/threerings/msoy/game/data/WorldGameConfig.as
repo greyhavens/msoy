@@ -7,7 +7,7 @@ import com.threerings.io.ObjectInputStream;
 
 import com.threerings.crowd.client.PlaceController;
 
-import com.threerings.msoy.item.web.Game;
+import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.client.AVRGameController;
 

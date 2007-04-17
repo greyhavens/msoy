@@ -22,7 +22,7 @@ import com.threerings.ezgame.client.EZGameConfigurator;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 
-import com.threerings.msoy.item.web.Game;
+import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.GameDefinition;

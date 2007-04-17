@@ -16,7 +16,7 @@ import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotScene;
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 public class MsoyScene extends SceneImpl
     implements SpotScene, Cloneable

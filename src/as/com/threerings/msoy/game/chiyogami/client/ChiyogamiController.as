@@ -14,7 +14,7 @@ import com.threerings.parlor.game.client.GameController;
 
 import com.threerings.msoy.client.WorldContext;
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.world.client.ActorSprite;
 import com.threerings.msoy.world.client.RoomView;

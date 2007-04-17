@@ -6,7 +6,7 @@ package com.threerings.msoy.client {
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.ClientEvent;
 
-import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.data.ActorInfo;
 

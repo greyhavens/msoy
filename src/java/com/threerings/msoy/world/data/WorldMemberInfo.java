@@ -6,8 +6,8 @@ package com.threerings.msoy.world.data;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.msoy.item.web.Avatar;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.game.data.GameSummary;
 

@@ -9,8 +9,8 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.Decor;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Decor;
 
 import client.util.FlashClients;
 

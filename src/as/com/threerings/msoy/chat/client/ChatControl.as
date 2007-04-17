@@ -36,8 +36,8 @@ import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.msoy.web.data.FriendEntry;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
 
 /**
  * The chat control widget.

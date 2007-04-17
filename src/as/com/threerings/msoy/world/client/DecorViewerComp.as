@@ -17,7 +17,7 @@ import mx.core.UIComponent;
 import mx.events.SliderEvent;
 import mx.resources.ResourceBundle;
 
-import com.threerings.msoy.item.web.Decor;
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.util.MessageManager;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.world.data.DecorData;

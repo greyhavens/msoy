@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.data {
 
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Extends the default actor occupant info and provides member related functionality.

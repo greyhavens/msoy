@@ -7,11 +7,11 @@ import com.samskivert.util.ObjectUtil;
 
 import com.threerings.io.SimpleStreamableObject;
 
-import com.threerings.msoy.item.web.Audio;
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemIdent;
-import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.item.web.StaticMediaDesc;
+import com.threerings.msoy.item.data.all.Audio;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 /**
  * Contains information on background audio in a scene.

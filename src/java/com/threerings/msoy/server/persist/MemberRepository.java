@@ -47,8 +47,8 @@ import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.web.data.FriendEntry;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
 
 import static com.threerings.msoy.Log.log;
 

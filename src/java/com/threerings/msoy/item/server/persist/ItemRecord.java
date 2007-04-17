@@ -18,17 +18,17 @@ import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.util.StringUtil;
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.item.web.Audio;
-import com.threerings.msoy.item.web.Avatar;
-import com.threerings.msoy.item.web.Document;
-import com.threerings.msoy.item.web.Furniture;
-import com.threerings.msoy.item.web.Game;
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.item.web.Pet;
-import com.threerings.msoy.item.web.Photo;
-import com.threerings.msoy.item.web.Video;
-import com.threerings.msoy.item.web.Decor;
+import com.threerings.msoy.item.data.all.Audio;
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Document;
+import com.threerings.msoy.item.data.all.Furniture;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.Pet;
+import com.threerings.msoy.item.data.all.Photo;
+import com.threerings.msoy.item.data.all.Video;
+import com.threerings.msoy.item.data.all.Decor;
 
 /**
  * The base class for all digital items in the MSOY system.

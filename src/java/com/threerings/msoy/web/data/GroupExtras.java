@@ -6,7 +6,7 @@ package com.threerings.msoy.web.data;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Contains extra information about a group, such as the background images used on the GroupView

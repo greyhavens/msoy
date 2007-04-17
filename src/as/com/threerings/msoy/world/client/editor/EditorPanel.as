@@ -32,10 +32,10 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
 
-import com.threerings.msoy.item.web.Audio;
-import com.threerings.msoy.item.web.Decor;
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.Audio;
+import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.client.InventoryLoader;
 import com.threerings.msoy.item.client.InventoryPicker;
 import com.threerings.msoy.item.client.ItemList;

@@ -18,7 +18,7 @@ import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyTable;
 import com.threerings.msoy.game.data.GameSummary;
 
-import com.threerings.msoy.item.web.Game;
+import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.server.MsoyServer;
 

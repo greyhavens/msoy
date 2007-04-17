@@ -20,11 +20,11 @@ import mx.core.ScrollPolicy;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.item.client.ItemRenderer;
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
-import com.threerings.msoy.item.web.Avatar;
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.ui.FloatingPanel;
 
 

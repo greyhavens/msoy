@@ -19,8 +19,8 @@ import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PetObject;
-import com.threerings.msoy.item.web.ItemIdent;
-import com.threerings.msoy.item.web.Pet;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.world.data.MemoryEntry;

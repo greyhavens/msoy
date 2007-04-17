@@ -19,9 +19,9 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.InlineLabel;
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemDetail;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemDetail;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.editem.EditorHost;
 import client.util.BorderedDialog;

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.threerings.msoy.web.data.BlurbData;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ProfileLayout;
 
 /**

@@ -8,10 +8,10 @@ import java.util.Set;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.Group;
-import com.threerings.msoy.web.data.GroupName;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Represents all the data returned for a neighborhood query: an array of {@link NeighborGroup}

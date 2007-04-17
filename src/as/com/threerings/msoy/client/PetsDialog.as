@@ -11,7 +11,7 @@ import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
 
 import com.threerings.msoy.item.client.InventoryPicker;
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.world.client.PetService;
 import com.threerings.msoy.world.client.RoomDragHandler;

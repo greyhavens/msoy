@@ -23,8 +23,8 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.NeighborFriendRecord;
 
 import com.threerings.msoy.web.client.MemberService;
-import com.threerings.msoy.web.data.GroupName;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -32,8 +32,8 @@ import com.threerings.msoy.data.Neighborhood;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.Neighborhood.NeighborGroup;
 import com.threerings.msoy.data.Neighborhood.NeighborMember;
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.presents.data.InvocationCodes;
 

@@ -5,7 +5,7 @@ package client.item;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.gwt.ui.InlineLabel;
 

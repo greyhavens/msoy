@@ -3,8 +3,8 @@
 
 package client.editem;
 
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.Furniture;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Furniture;
 
 /**
  * A class for creating and editing {@link Furniture} digital items.

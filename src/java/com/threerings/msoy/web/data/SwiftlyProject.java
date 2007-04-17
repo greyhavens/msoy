@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Item;
 
 /**
  * Contains information on a Swiftly Project

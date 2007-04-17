@@ -9,11 +9,11 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.item.web.Decor;
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemIdent;
-import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.item.web.StaticMediaDesc;
+import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.StaticMediaDesc;
 import com.threerings.msoy.world.data.MsoyLocation;
 
 public class DecorData extends FurniData

@@ -13,8 +13,8 @@ import com.samskivert.util.ResultListener;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.GroupExtras;
-import com.threerings.msoy.web.data.GroupMembership;
-import com.threerings.msoy.web.data.GroupName;
+import com.threerings.msoy.data.all.GroupMembership;
+import com.threerings.msoy.data.all.GroupName;
 
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;

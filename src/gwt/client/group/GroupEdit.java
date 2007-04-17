@@ -31,11 +31,11 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.Photo;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Photo;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.Group;
-import com.threerings.msoy.web.data.GroupName;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.web.data.GroupExtras;
 
 import com.threerings.gwt.ui.InlineLabel;

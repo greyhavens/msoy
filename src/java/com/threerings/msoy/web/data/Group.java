@@ -9,9 +9,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.item.web.StaticMediaDesc;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 /**
  * Contains the basic data of a group.

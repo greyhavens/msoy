@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
-import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 import client.item.ItemTypePanel;
 

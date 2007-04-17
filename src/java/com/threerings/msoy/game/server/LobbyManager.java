@@ -15,7 +15,7 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
-import com.threerings.msoy.item.web.Game;
+import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.SubscriberListener;

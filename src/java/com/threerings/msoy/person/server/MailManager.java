@@ -17,7 +17,7 @@ import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailHeaders;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.server.JSONMarshaller;
 import com.threerings.msoy.server.MsoyServer;

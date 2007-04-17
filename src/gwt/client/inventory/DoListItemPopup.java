@@ -22,8 +22,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.item.web.CatalogListing;
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.CatalogListing;
+import com.threerings.msoy.item.data.all.Item;
 
 import client.util.BorderedDialog;
 import client.util.ClickCallback;

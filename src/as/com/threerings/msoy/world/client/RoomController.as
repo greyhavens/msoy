@@ -52,10 +52,10 @@ import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.msoy.item.web.ItemIdent;
-import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.item.web.Pet;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.Pet;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.world.client.editor.EditorController;
 

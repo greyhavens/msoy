@@ -14,7 +14,7 @@ import com.threerings.flash.MediaContainer;
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Item;
 
 public class ItemTreeRenderer extends TreeItemRenderer
 {

@@ -4,9 +4,9 @@
 package client.editem;
 
 import com.google.gwt.user.client.ui.TabPanel;
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.Pet;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Pet;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * A class for creating and editing {@link Pet} digital items.

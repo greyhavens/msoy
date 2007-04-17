@@ -7,7 +7,7 @@ import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.msoy.item.web.Pet;
+import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.world.data.WorldPetInfo;
 
 /**

@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.game.data;
 
-import com.threerings.msoy.item.web.Game;
+import com.threerings.msoy.item.data.all.Game;
 
 /**
  * A game config for an in-world game.

@@ -5,7 +5,8 @@ package com.threerings.msoy.web.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Contains for a particular member the id, display name, profile photo and anything else that we

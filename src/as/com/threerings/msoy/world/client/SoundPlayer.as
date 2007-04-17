@@ -13,7 +13,7 @@ import flash.media.SoundTransform;
 
 import flash.net.URLRequest;
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 public class SoundPlayer extends EventDispatcher
 {

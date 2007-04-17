@@ -20,18 +20,18 @@ import com.threerings.msoy.data.SceneBookmarkEntry;
 import com.threerings.msoy.person.server.persist.MailRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.web.data.FriendEntry;
+import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.web.data.MailFolder;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.item.web.Avatar;
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 
-import com.threerings.msoy.web.data.GroupMembership;
+import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 import static com.threerings.msoy.Log.log;

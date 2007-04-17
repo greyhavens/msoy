@@ -14,7 +14,7 @@ import com.threerings.whirled.data.SceneModel;
 
 import com.threerings.whirled.spot.data.Portal;
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 public class MsoySceneModel extends SceneModel
 {

@@ -15,7 +15,7 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 
 import com.threerings.msoy.game.xml.MsoyGameParser;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Manages the persistent store of {@link Game} items.

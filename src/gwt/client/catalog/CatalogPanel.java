@@ -22,9 +22,9 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.util.DataModel;
 
-import com.threerings.msoy.item.web.CatalogListing;
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemDetail;
+import com.threerings.msoy.item.data.all.CatalogListing;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemDetail;
 
 import client.item.ItemSearchSortPanel;
 import client.item.ItemTypePanel;

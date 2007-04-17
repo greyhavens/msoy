@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.world.data;
 
-import com.threerings.msoy.item.web.ItemIdent;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.data.MsoyBodyObject;

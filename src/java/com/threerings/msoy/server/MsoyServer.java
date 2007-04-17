@@ -57,7 +57,7 @@ import com.threerings.stats.server.persist.StatRepository;
 import com.threerings.toybox.server.ToyBoxManager;
 
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.admin.server.RuntimeConfig;

@@ -21,9 +21,9 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.item.web.Game;
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 import static com.threerings.msoy.Log.log;
 

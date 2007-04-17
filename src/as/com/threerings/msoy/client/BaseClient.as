@@ -38,7 +38,7 @@ import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.SceneBookmarkEntry;
 
-import com.threerings.msoy.web.data.FriendEntry;
+import com.threerings.msoy.data.all.FriendEntry;
 
 /**
  * A client shared by both our virtual world and header incarnations.

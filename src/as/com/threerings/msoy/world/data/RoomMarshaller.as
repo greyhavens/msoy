@@ -6,7 +6,7 @@ package com.threerings.msoy.world.data {
 import flash.utils.ByteArray;
 import com.threerings.util.*; // for Float, Integer, etc.
 
-import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;

@@ -22,7 +22,7 @@ import com.threerings.presents.util.SafeSubscriber;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.HeaderBarController;
 
-import com.threerings.msoy.item.web.Game;
+import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.LobbyObject;
 

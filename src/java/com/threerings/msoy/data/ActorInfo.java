@@ -5,7 +5,7 @@ package com.threerings.msoy.data;
 
 import com.threerings.crowd.data.OccupantInfo;
 
-import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * Contains information on an occupant of a room (member, pet, monster, who knows?).

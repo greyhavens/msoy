@@ -5,7 +5,7 @@ package com.threerings.msoy.world.data {
 
 import com.threerings.io.ObjectInputStream;
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.data.ActorInfo;
 

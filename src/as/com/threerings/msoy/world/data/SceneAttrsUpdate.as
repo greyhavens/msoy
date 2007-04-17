@@ -6,7 +6,7 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Encodes a scene update that updates the attributes in the MsoySceneModel.

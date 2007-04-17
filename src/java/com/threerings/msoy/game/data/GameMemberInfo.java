@@ -6,7 +6,7 @@ package com.threerings.msoy.game.data;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Extends MemberInfo with game-specific information.

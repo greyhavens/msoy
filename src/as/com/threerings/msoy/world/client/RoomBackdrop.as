@@ -8,7 +8,7 @@ import flash.display.Sprite;
 
 import flash.geom.Point;
 
-import com.threerings.msoy.item.web.Decor;
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.world.data.DecorData;
 
 /**

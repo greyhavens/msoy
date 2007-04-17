@@ -8,8 +8,8 @@ import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
-import com.threerings.msoy.item.web.Decor;
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.item.data.all.Item;
 
 /**
  * Represents a piece of decor (any prop really) that a user can place into

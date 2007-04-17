@@ -16,8 +16,8 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.web.data.FriendEntry;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.util.FlashClients;

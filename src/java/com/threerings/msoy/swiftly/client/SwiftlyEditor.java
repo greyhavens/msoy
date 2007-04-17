@@ -53,8 +53,8 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.micasa.client.ChatPanel;
 import com.threerings.micasa.client.OccupantList;
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.CompilerOutput;

@@ -9,8 +9,8 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.item.web.Game;
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.Application;
 import client.shell.CShell;

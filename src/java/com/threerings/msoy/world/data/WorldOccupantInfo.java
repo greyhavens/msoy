@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.world.data;
 
-import com.threerings.msoy.item.web.ItemIdent;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Provides access to information shared by {@link WorldActorInfo} and {@link WorldMemberInfo}.

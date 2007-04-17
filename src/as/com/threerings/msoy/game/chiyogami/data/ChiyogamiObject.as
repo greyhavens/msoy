@@ -7,7 +7,7 @@ import com.threerings.io.ObjectInputStream;
 
 import com.threerings.parlor.game.data.GameObject;
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 /** 
  * The distributed game object for a chiyogami game.

@@ -7,7 +7,7 @@ import mx.controls.listClasses.IListItemRenderer;
 
 import mx.utils.ColorUtil;
 
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Item;
 
 /**
  * A custom tree that renders "used" items in a slightly used color.

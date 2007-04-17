@@ -51,9 +51,9 @@ import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.threerings.ezgame.util.EZObjectMarshaller;
 
-import com.threerings.msoy.item.web.ItemIdent;
-import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.item.web.Decor;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.Decor;
 
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;

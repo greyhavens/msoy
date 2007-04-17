@@ -21,8 +21,8 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.server.persist.PetRecord;
-import com.threerings.msoy.item.web.ItemIdent;
-import com.threerings.msoy.item.web.Pet;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.Pet;
 
 import com.threerings.msoy.world.client.PetService;
 import com.threerings.msoy.world.data.MemoryEntry;

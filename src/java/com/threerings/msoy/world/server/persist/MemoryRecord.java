@@ -9,7 +9,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 
-import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.data.MemoryEntry;
 
 /**

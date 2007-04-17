@@ -17,8 +17,8 @@ import com.threerings.presents.dobj.SetListener;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.msoy.web.data.FriendEntry;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.chat.client.ReportingListener;
 

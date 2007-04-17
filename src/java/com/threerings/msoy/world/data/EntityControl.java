@@ -6,7 +6,7 @@ package com.threerings.msoy.world.data;
 import com.threerings.io.SimpleStreamableObject;
 import com.threerings.presents.dobj.DSet;
 
-import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * Used to coordinate the "control" of a particular scene entity. The client that is in control of

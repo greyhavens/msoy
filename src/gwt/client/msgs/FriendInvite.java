@@ -18,7 +18,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.web.data.FriendInviteObject;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 
 public abstract class FriendInvite
 {

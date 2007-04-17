@@ -31,10 +31,10 @@ import com.threerings.toybox.data.ToyBoxMarshaller;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.data.ItemMarshaller;
-import com.threerings.msoy.item.web.Document;
-import com.threerings.msoy.item.web.Furniture;
-import com.threerings.msoy.item.web.Game;
-import com.threerings.msoy.item.web.Photo;
+import com.threerings.msoy.item.data.all.Document;
+import com.threerings.msoy.item.data.all.Furniture;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Photo;
 
 import com.threerings.msoy.world.data.PetMarshaller;
 import com.threerings.msoy.world.data.RoomConfig;

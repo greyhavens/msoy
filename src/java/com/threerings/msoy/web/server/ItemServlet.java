@@ -24,13 +24,13 @@ import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemDetail;
-import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemDetail;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.data.MailFolder;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.TagHistory;

@@ -19,16 +19,16 @@ import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.person.server.persist.ProfilePhotoRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.BlurbData;
-import com.threerings.msoy.web.data.FriendEntry;
-import com.threerings.msoy.web.data.GroupMembership;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.ProfileLayout;
 import com.threerings.msoy.web.data.ServiceException;

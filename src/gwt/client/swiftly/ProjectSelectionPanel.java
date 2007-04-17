@@ -26,7 +26,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.Application;
 import client.util.ClickCallback;

@@ -16,7 +16,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.WebUserService;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 

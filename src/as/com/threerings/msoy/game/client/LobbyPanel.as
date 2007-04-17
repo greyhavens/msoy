@@ -53,7 +53,7 @@ import com.threerings.msoy.ui.MsoyList;
 import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.game.data.LobbyObject;
-import com.threerings.msoy.item.web.Game;
+import com.threerings.msoy.item.data.all.Game;
 
 /**
  * A panel that displays pending table games.

@@ -24,9 +24,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
-import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.item.web.Photo;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.Photo;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.Profile;
 
 import client.msgs.MailComposition;

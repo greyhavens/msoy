@@ -20,7 +20,7 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.util.StringUtil;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.GroupExtras;
 

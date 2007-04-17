@@ -5,7 +5,7 @@ package client.catalog;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.WebCreds;
 

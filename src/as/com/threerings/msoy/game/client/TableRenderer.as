@@ -23,8 +23,8 @@ import com.threerings.ezgame.data.EZGameConfig;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
 
-import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.item.web.Game;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.MsoyTable;
 
@@ -320,12 +320,12 @@ import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.game.client.LobbyController;
 import com.threerings.msoy.game.data.MsoyTable;
 
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 
 class SeatRenderer extends HBox
 {

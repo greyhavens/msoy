@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**

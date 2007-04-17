@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
 
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.data.TagHistory;
 
 /**

@@ -7,8 +7,8 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 
-import com.threerings.msoy.item.web.Pet;
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Pet;
+import com.threerings.msoy.item.data.all.Item;
 
 /**
  * Represents a pet that a user can place into a virtual world scene and potentially interact with.

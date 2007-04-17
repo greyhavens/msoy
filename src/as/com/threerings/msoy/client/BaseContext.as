@@ -190,7 +190,7 @@ import com.threerings.util.Name;
 
 import com.threerings.crowd.chat.client.ChatterValidator;
 
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 
 /**
  * A helper class that implements common helper interfaces that we would not like to see exposed on

@@ -41,14 +41,14 @@ import com.threerings.msoy.data.SceneBookmarkEntry;
 
 import com.threerings.msoy.chat.client.ChatControl;
 
-import com.threerings.msoy.web.data.FriendEntry;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.chat.client.ChatControl;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.chat.client.ReportingListener;
 
-import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.game.client.LobbyController;
 import com.threerings.msoy.game.client.LobbyService;

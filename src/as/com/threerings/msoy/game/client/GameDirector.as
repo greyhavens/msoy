@@ -23,7 +23,7 @@ import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.game.data.GameCodes;
 import com.threerings.msoy.game.data.WorldGameConfig;

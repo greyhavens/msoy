@@ -23,9 +23,9 @@ import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.DOMException;
 import com.google.gwt.xml.client.Element;
 
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.Game;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * A class for creating and editing {@link Game} digital items.

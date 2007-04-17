@@ -3,7 +3,7 @@
 
 package client.editem;
 
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Item;
 
 /**
  * Implemented by objects that wish to host an {@link ItemEditor}.

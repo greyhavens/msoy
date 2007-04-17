@@ -6,7 +6,7 @@ import com.threerings.util.CommandEvent;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Item;
 
 public class ItemPopupSelector extends FloatingPanel
 {

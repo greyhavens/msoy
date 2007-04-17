@@ -9,10 +9,10 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.data.MsoyBodyObject;
 
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.Avatar;
-import com.threerings.msoy.item.web.ItemIdent;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.world.data.WorldActorInfo;
 

@@ -6,7 +6,7 @@ package com.threerings.msoy.item.server.persist;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 
-import com.threerings.msoy.item.web.CatalogListing;
+import com.threerings.msoy.item.data.all.CatalogListing;
 
 /** Catalog Records for Avatars. */
 @Entity

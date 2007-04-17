@@ -21,7 +21,7 @@ import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Item;
 
 /**
  * A special Collection that represents the items in the user's inventory

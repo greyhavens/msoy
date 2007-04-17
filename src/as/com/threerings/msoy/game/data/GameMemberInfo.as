@@ -7,7 +7,7 @@ import com.threerings.io.ObjectInputStream;
 
 import com.threerings.msoy.data.MemberInfo;
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 public class GameMemberInfo extends MemberInfo
 {

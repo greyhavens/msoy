@@ -25,8 +25,8 @@ import com.threerings.flash.MediaContainer;
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.data.ActorInfo;
-import com.threerings.msoy.item.web.ItemIdent;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.client.WorldContext;
 

@@ -13,7 +13,7 @@ import com.threerings.util.Util;
 
 import com.threerings.presents.dobj.DSet_Entry;
 
-import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * Contains a single memory datum for a "smart" item in a scene.

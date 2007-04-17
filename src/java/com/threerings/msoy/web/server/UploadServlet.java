@@ -40,8 +40,8 @@ import com.threerings.s3.client.S3FileObject;
 import com.threerings.s3.client.S3Exception;
 import com.threerings.s3.client.S3ServerException;
 
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.server.ServerConfig;
 
 import static com.threerings.msoy.Log.log;

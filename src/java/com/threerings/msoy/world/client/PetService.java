@@ -6,7 +6,7 @@ package com.threerings.msoy.world.client;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
-import com.threerings.msoy.item.web.Pet;
+import com.threerings.msoy.item.data.all.Pet;
 
 /**
  * Defines services provided for Pets in the virtual world.

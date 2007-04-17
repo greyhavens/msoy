@@ -20,7 +20,7 @@ import com.threerings.whirled.server.WhirledClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyTokenRing;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 
 import static com.threerings.msoy.Log.log;
 

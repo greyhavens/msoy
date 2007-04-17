@@ -16,9 +16,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemDetail;
-import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemDetail;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 import client.editem.EditorHost;
 import client.editem.ItemEditor;

@@ -17,18 +17,18 @@ import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.stats.data.StatSet;
 
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.item.web.Avatar;
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.WorldMemberInfo;
 
-import com.threerings.msoy.web.data.FriendEntry;
-import com.threerings.msoy.web.data.GroupMembership;
-import com.threerings.msoy.web.data.GroupName;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.GroupMembership;
+import com.threerings.msoy.data.all.GroupName;
 
 import com.threerings.msoy.game.data.GameMemberInfo;
 import com.threerings.msoy.game.data.WorldGameConfig;
@@ -537,10 +537,10 @@ public class MemberObject extends MsoyBodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setInventory (DSet<com.threerings.msoy.item.web.Item> value)
+    public void setInventory (DSet<com.threerings.msoy.item.data.all.Item> value)
     {
         requestAttributeChange(INVENTORY, value, this.inventory);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.item.web.Item> clone =
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.item.data.all.Item> clone =
             (value == null) ? null : value.typedClone();
         this.inventory = clone;
     }
@@ -665,10 +665,10 @@ public class MemberObject extends MsoyBodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setFriends (DSet<com.threerings.msoy.web.data.FriendEntry> value)
+    public void setFriends (DSet<com.threerings.msoy.data.all.FriendEntry> value)
     {
         requestAttributeChange(FRIENDS, value, this.friends);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.web.data.FriendEntry> clone =
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.FriendEntry> clone =
             (value == null) ? null : value.typedClone();
         this.friends = clone;
     }
@@ -713,10 +713,10 @@ public class MemberObject extends MsoyBodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setGroups (DSet<com.threerings.msoy.web.data.GroupMembership> value)
+    public void setGroups (DSet<com.threerings.msoy.data.all.GroupMembership> value)
     {
         requestAttributeChange(GROUPS, value, this.groups);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.web.data.GroupMembership> clone =
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.GroupMembership> clone =
             (value == null) ? null : value.typedClone();
         this.groups = clone;
     }

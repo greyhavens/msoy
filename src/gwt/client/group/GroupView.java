@@ -33,12 +33,12 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.InlineLabel;
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.GroupExtras;
 import com.threerings.msoy.web.data.GroupDetail;
-import com.threerings.msoy.web.data.GroupMembership;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.GroupMembership;
+import com.threerings.msoy.data.all.MemberName;
 
 import client.shell.Application;
 import client.util.MediaUtil;

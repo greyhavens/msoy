@@ -1,6 +1,6 @@
 package com.threerings.msoy.game.chiyogami.client {
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.world.client.AvatarSprite;
 import com.threerings.msoy.world.client.EntityBackend;

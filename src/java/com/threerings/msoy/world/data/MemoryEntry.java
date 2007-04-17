@@ -5,7 +5,7 @@ package com.threerings.msoy.world.data;
 
 import com.threerings.presents.dobj.DSet;
 
-import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * Contains a single memory datum for a scene entity.

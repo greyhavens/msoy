@@ -11,7 +11,7 @@ import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.ui.MsoyList;
 
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.Item;
 
 /**
  * A basic list that can show items in-world.

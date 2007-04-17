@@ -14,7 +14,7 @@ import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableLobbyObject;
 import com.threerings.parlor.data.TableMarshaller;
 
-import com.threerings.msoy.item.web.Game;
+import com.threerings.msoy.item.data.all.Game;
 
 /**
  * Represents a lobby for a particular game.

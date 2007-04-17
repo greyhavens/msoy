@@ -45,8 +45,8 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
-import com.threerings.msoy.item.web.CatalogListing;
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.all.CatalogListing;
+import com.threerings.msoy.item.data.all.Item;
 
 import static com.threerings.msoy.Log.log;
 

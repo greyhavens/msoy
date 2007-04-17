@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.web.data;
 
-import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * This object contains a reference to an item that's included as a gift in a mail message.

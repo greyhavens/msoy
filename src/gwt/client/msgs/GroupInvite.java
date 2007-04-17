@@ -22,11 +22,11 @@ import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupInviteObject;
-import com.threerings.msoy.web.data.GroupMembership;
-import com.threerings.msoy.web.data.GroupName;
+import com.threerings.msoy.data.all.GroupMembership;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
-import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.data.all.MemberName;
 
 public abstract class GroupInvite
 {
