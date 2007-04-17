@@ -1,1 +1,0 @@
-../../../../../projects/narya/src/java/com/threerings/io/Streamable.java

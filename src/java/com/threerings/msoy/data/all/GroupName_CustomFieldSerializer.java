@@ -1,21 +1,22 @@
 //
 // $Id$
 
-package com.threerings.msoy.data.gwt;
+package com.threerings.msoy.data.all;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.SerializationStreamReader;
 import com.google.gwt.user.client.rpc.SerializationStreamWriter;
-
-import com.threerings.msoy.data.all.GroupName;
 
 /**
  * Custom field serializer for {@link GroupName}.
  */
 public final class GroupName_CustomFieldSerializer
 {
-    public static void deserialize (SerializationStreamReader streamReader, GroupName instance)
+    public static void serialize (SerializationStreamWriter streamWriter, GroupName name)
+        throws SerializationException
     {
+        streamWriter.writeString(name.toString());
+        streamWriter.writeInt(name.getGroupId());
     }
 
     public static GroupName instantiate (SerializationStreamReader streamReader)
@@ -24,10 +25,7 @@ public final class GroupName_CustomFieldSerializer
         return new GroupName(streamReader.readString(), streamReader.readInt());
     }
 
-    public static void serialize (SerializationStreamWriter streamWriter, GroupName name)
-        throws SerializationException
+    public static void deserialize (SerializationStreamReader streamReader, GroupName instance)
     {
-        streamWriter.writeString(name.toString());
-        streamWriter.writeInt(name.getGroupId());
     }
 }

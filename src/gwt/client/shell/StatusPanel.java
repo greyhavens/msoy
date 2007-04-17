@@ -251,6 +251,7 @@ public class StatusPanel extends FlexTable
                         didLogon((WebCreds)result);
                     }
                     public void onFailure (Throwable caught) {
+                        CShell.log("Logon failed [account=" + _email.getText() + "]", caught);
                         _status.setText(CShell.serverError(caught));
                     }
                 });
