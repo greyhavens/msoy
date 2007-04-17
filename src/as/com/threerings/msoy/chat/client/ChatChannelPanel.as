@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.chat.client {
 
+import mx.core.mx_internal;
+
 import mx.containers.HBox;
 import mx.containers.VBox;
 
@@ -39,6 +41,11 @@ public class ChatChannelPanel extends VBox
         _tabnav.percentWidth = 100;
         _tabnav.percentHeight = 100;
         _tabnav.addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE, tabRemoved);
+
+// if this simply worked, I could perhaps have spent the last three hours of my life working on
+// something that made people happy; but it doesn't (nor do a dozen other attempts to accomplish
+// the same goal); I still don't know how we're going to get the TabBar to draw a black background
+//         _tabnav.mx_internal::getTabBar().setStyle("backgroundColor", "#000000");
 
         // create a UI for sending chat which we'll show when we're active
         _inputBox = new HBox();
@@ -150,6 +157,7 @@ class ChatTab extends Container
 
     public function ChatTab (ctx :WorldContext, channel :ChatChannel, host :ChatChannelPanel)
     {
+        styleName = "channelChatTab";
         this.channel = channel;
         _host = host;
         _overlay = new ChatOverlay(ctx);

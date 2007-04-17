@@ -638,10 +638,11 @@ public class MsoyController extends Controller
     /**
      * Lets us know that the Whirled client has either been minimized, or un-minimized
      */
-    public function setMinimized (mini :Boolean) :void
+    public function setMinimized (minimized :Boolean) :void
     {
-        _minimized = mini;
-        if (mini) {
+        _minimized = minimized;
+        _ctx.getTopPanel().getControlBar().setMinimized(minimized);
+        if (minimized) {
             _topPanel.clearLeftPanel(null);
         }
     }

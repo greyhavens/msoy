@@ -32,38 +32,35 @@ Panel {
   color: #FFFFFF;
 }
 
-
 TabNavigator {
+  backgroundColor: #FFFFFF;
+  borderStyle: none;
+  borderThickness: 0;
   tabHeight: 20;
-  tabWidth: 71;
-  cornerRadius: 3;
-  horizontalGap: 0;
-  horizontalAlign: left;
-  paddingLeft: 3;
-  paddingRight: 0;
-  textAlign: left;
-  textIndent: 0;
-  backgroundAlpha: 1;
-  backgroundColor: #b7c1c7;
-  borderStyle: outset;
-  borderThickness: 1;
-  color: #000000;
-  dropShadowEnabled: true;
-  shadowDistance: 0;
-  dropShadowColor: #000000;
-  tabStyleName: "msoyTabs";
+  tabStyleName: "msoyTab";
+  selectedTabTextStyleName: "selectedMsoyTab";
 }
 
-.msoyTabs {
-  cornerRadius: 5;
-  highlightAlphas: 0.53, 0;
+.msoyTab {
+  highlightAlphas: 0, 0;
   fillAlphas: 1, 1;
-  fillColors: #dadfe3, #9eabb2;
-  backgroundAlpha: 1;
-  borderColor: #8d8f91;
+  fillColors: #666666, #333333;
+  backgroundColor: #FFFFFF;
+  borderColor: #333333;
+  color: #ffffff;
+  textRollOverColor: #ffffff;
+  themeColor: #999999;
+  fontFamily: Arial;
+}
+
+.selectedMsoyTab {
   color: #000000;
-  textRollOverColor: #ff009f;
-  themeColor: #ff009f;
+  textRollOverColor: #000000;
+}
+
+.channelChatTab {
+  borderStyle: none;
+  borderThickness: 0;
 }
 
 Accordion {
@@ -71,7 +68,6 @@ Accordion {
   dropShadowEnabled: true;
   shadowDirection: center;
   borderStyle: solid;
-  borderThickness: 5;
   backgroundAlpha: 0.41;
   highlightAlphas: 0, 0;
   fillAlphas: 1, 1, 1, 1;

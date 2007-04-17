@@ -3,13 +3,12 @@
 
 package com.threerings.msoy.client {
 
-import flash.display.DisplayObject;
-
 import flash.events.Event;
 import flash.events.MouseEvent;
 
 import mx.core.Container;
 import mx.core.ScrollPolicy;
+import mx.core.UIComponent;
 
 import mx.binding.utils.BindingUtils;
 import mx.binding.utils.ChangeWatcher;
@@ -92,6 +91,17 @@ public class ControlBar extends HBox
     }
 
     /**
+     * Called when the client is minimized.
+     */
+    public function setMinimized (minimized :Boolean) :void
+    {
+        for each (var child :UIComponent in _hiders) {
+            child.visible = !minimized;
+            child.includeInLayout = !minimized;
+        }
+    }
+
+    /**
      * Called by the ChannelChatPanel when it needs to stuff a chat input field into the control
      * bar while it's open. Setting it to null removes it.
      */
@@ -128,60 +138,61 @@ public class ControlBar extends HBox
         }
 
         removeAllChildren();
+        _hiders.length = 0;
         _chatControl = null;
         _avatarBtn = null;
         _editBtn = null;
         _channelBtn = null;
 
         if (isMember) {
-            addChild(_chatControl = new ChatControl(_ctx, this.height - 4));
+            addHideableChild(_chatControl = new ChatControl(_ctx, this.height - 4));
 
             var chatBtn :CommandButton = new CommandButton();
             chatBtn.toolTip = Msgs.GENERAL.get("i.chatPrefs");
             chatBtn.setCommand(MsoyController.CHAT_PREFS);
             chatBtn.styleName = "controlBarButtonChat";
-            addChild(chatBtn);
+            addHideableChild(chatBtn);
 
             var volBtn :CommandButton = new CommandButton();
             volBtn.toolTip = Msgs.GENERAL.get("i.volume");
             volBtn.setCommand(ControlBarController.POP_VOLUME, volBtn);
             volBtn.styleName = "controlBarButtonVolume";
-            addChild(volBtn);
+            addHideableChild(volBtn);
 
             _avatarBtn = new CommandButton();
             _avatarBtn.toolTip = Msgs.GENERAL.get("i.avatar");
             _avatarBtn.setCommand(MsoyController.PICK_AVATAR);
             _avatarBtn.styleName = "controlBarButtonAvatar";
-            addChild(_avatarBtn);
+            addHideableChild(_avatarBtn);
 
             _petBtn = new CommandButton();
             _petBtn.toolTip = Msgs.GENERAL.get("i.pet");
             _petBtn.setCommand(MsoyController.SHOW_PETS);
             _petBtn.styleName = "controlBarButtonPet";
-            addChild(_petBtn);
+            addHideableChild(_petBtn);
 
             _editBtn = new CommandButton();
             _editBtn.toolTip = Msgs.GENERAL.get("i.editScene");
             _editBtn.setCommand(ControlBarController.EDIT_SCENE);
             _editBtn.styleName = "controlBarButtonEdit";
             _editBtn.enabled = false;
-            addChild(_editBtn);
+            addHideableChild(_editBtn);
 
         } else {
             if (_ctx.getMsoyController() == null || _ctx.getMsoyController().isEmbedded()) {
-                addChild(_logonPanel = new LogonPanel(_ctx, this.height - 4));
+                addHideableChild(_logonPanel = new LogonPanel(_ctx, this.height - 4));
             }
 
             volBtn = new CommandButton();
             volBtn.setCommand(ControlBarController.POP_VOLUME, volBtn);
             volBtn.styleName = "controlBarButtonVolume";
-            addChild(volBtn);
+            addHideableChild(volBtn);
         }
 
         // some elements that are common to guest and logged in users
         var footerLeft :SkinnableImage = new SkinnableImage();
         footerLeft.styleName = "controlBarFooterLeft";
-        addChild(footerLeft);
+        addHideableChild(footerLeft);
 
         var blank :Canvas = new Canvas();
         blank.styleName = "controlBarSpacer";
@@ -193,21 +204,21 @@ public class ControlBar extends HBox
         /*_goback = new CommandButton();
         _goback.setCommand(ControlBarController.MOVE_BACK, _goback);
         _goback.styleName = "controlBarButtonGoBack";
-        addChild(_goback);
+        addHideableChild(_goback);
 
         _loc = new CanvasWithText(this.height - 4);
         _loc.styleName = "controlBarLocationText";
         _loc.height = this.height;
         _loc.width = 200;
-        addChild(_loc);
+        addHideableChild(_loc);
 
         _bookend = new SkinnableImage();
         _bookend.styleName = "controlBarBookend";
-        addChild(_bookend);*/
+        addHideableChild(_bookend);*/
 
         var footerRight :SkinnableImage = new SkinnableImage();
         footerRight.styleName = "controlBarFooterRight";
-        addChild(footerRight);
+        addHideableChild(footerRight);
 
         if (isMember && user.tokens.isSupport()) {
             _channelBtn = new CommandButton();
@@ -221,6 +232,12 @@ public class ControlBar extends HBox
         _isMember = isMember;
 
         recheckAvatarControl();
+    }
+
+    protected function addHideableChild (child :UIComponent) :void
+    {
+        addChild(child);
+        _hiders.push(child);
     }
 
     protected function handleAddRemove (event :Event) :void
@@ -285,6 +302,9 @@ public class ControlBar extends HBox
 
     /** The back-movement button. */
     protected var _goback :CommandButton;
+
+    /** A list of children that can be hidden when we are minimized. */
+    protected var _hiders :Array = new Array();
 
     /** Our chat control. */
     protected var _chatControl :ChatControl;
