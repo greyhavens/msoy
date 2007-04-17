@@ -143,6 +143,12 @@ public class ChiyogamiManager extends GameManager
     }
 
     @Override
+    protected boolean shouldCreateSpeakService ()
+    {
+        return false;
+    }
+
+    @Override
     protected void didStartup ()
     {
         _gameObj = (ChiyogamiObject) _plobj;
@@ -244,6 +250,7 @@ public class ChiyogamiManager extends GameManager
     {
         super.didShutdown();
 
+        shutdownBoss();
         _roomObj.removeListener(_roomListener);
         _roomObj.postMessage(RoomObject.PLAY_MUSIC); // no arg stops music
     }
@@ -258,12 +265,14 @@ public class ChiyogamiManager extends GameManager
         }
 
         // set the health to NaN to indicate that it's irrelevant
-        _gameObj.startTransaction();
-        try {
-            _gameObj.setBossOid(0);
-            _gameObj.setBossHealth(Float.NaN);
-        } finally {
-            _gameObj.commitTransaction();
+        if (_gameObj.isActive()) {
+            _gameObj.startTransaction();
+            try {
+                _gameObj.setBossOid(0);
+                _gameObj.setBossHealth(Float.NaN);
+            } finally {
+                _gameObj.commitTransaction();
+            }
         }
     }
 
@@ -432,8 +441,8 @@ public class ChiyogamiManager extends GameManager
                 // position players in a semicircle behind the boss
                 double x = .5 + .5 * Math.cos(angle);
                 double z = .5 + .5 * Math.sin(angle);
-                System.err.println("On the " + ((side == 0) ? "left" : "right") +
-                    " someone's at " + perc + " from the front: " + x + ", " + z);
+                //System.err.println("On the " + ((side == 0) ? "left" : "right") +
+                //    " someone's at " + perc + " from the front: " + x + ", " + z);
                 BodyObject player = (BodyObject) MsoyServer.omgr.getObject(rec.oid);
                 moveBody(player, x, z);
             }
