@@ -13,10 +13,10 @@ import com.threerings.util.Hashable;
 public class GroupName
     implements Streamable, Comparable, Hashable
 {
-    /** the group's name. */
+    /** The group's name. */
     public var groupName :String;
 
-    /** the group's id. */
+    /** The group's id. */
     public var groupId :int;
 
     // from Streamable
