@@ -5,25 +5,19 @@ package com.threerings.msoy.web.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.io.Streamable;
+import com.threerings.util.Name;
 
 /**
- * Contains a group name and group ID in one handy object.
+ * Contains a group name and group id in one handy object.
  */
-public class GroupName
-    implements Streamable, IsSerializable, Comparable
+public class GroupName extends Name
+    implements IsSerializable, Comparable
 {
     /** The maximum length of a group name */
     public static final int LENGTH_MAX = 24;
 
     /** The minimum length of a group name */
     public static final int LENGTH_MIN = 3;
-
-    /** The group's name. */
-    public String groupName;
-
-    /** The group's id. */
-    public int groupId;
 
     /**
      * Creates a group name that can be used as a key for a DSet lookup or whereever else one might
@@ -44,25 +38,36 @@ public class GroupName
      */
     public GroupName (String groupName, int groupId)
     {
-        this.groupName = groupName;
-        this.groupId = groupId;
+        super(groupName);
+        _groupId = groupId;
+    }
+
+    /**
+     * Returns the group's numeric identifier.
+     */
+    public int getGroupId ()
+    {
+        return _groupId;
     }
 
     // @Override // from Object
     public int hashCode ()
     {
-        return groupId;
+        return _groupId;
     }
 
     // @Override // from Object
     public boolean equals (Object other)
     {
-        return (other instanceof GroupName) && groupId == ((GroupName)other).groupId;
+        return (other instanceof GroupName) && _groupId == ((GroupName)other)._groupId;
     }
 
     // from Comparable
     public int compareTo (Object o) 
     {
-        return groupId - ((GroupName) o).groupId;
+        return _groupId - ((GroupName) o)._groupId;
     }
+
+    /** The group's id. */
+    protected int _groupId;
 }

@@ -42,8 +42,8 @@ public class GroupsBlurb extends Blurb
         } else {
             for (int ii = 0, ll = blurbGroups.size(); ii < ll; ii++) {
                 GroupMembership group = (GroupMembership)blurbGroups.get(ii);
-                _content.setWidget(
-                    ii, 0, Application.groupViewLink(group.group.groupName, group.group.groupId));
+                _content.setWidget(ii, 0, Application.groupViewLink(
+                                       group.group.toString(), group.group.getGroupId()));
             }
         }
 

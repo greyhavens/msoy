@@ -141,7 +141,7 @@ public class MemberServlet extends MsoyServiceServlet
         });
         return waiter.waitForResult();
     }
-    
+
     // from MemberService
     public String serializePopularPlaces (WebCreds creds, int n)
         throws ServiceException
@@ -182,7 +182,7 @@ public class MemberServlet extends MsoyServiceServlet
                 }
             }
         });
-        
+
         return waiter.waitForResult();
     }
 
@@ -262,7 +262,7 @@ public class MemberServlet extends MsoyServiceServlet
         NeighborGroup nGroup = new NeighborGroup();
         nGroup.group = new GroupName(gRec.name, gRec.groupId);
         nGroup.homeSceneId = gRec.homeSceneId;
-        if (gRec.logoMediaHash != null) { 
+        if (gRec.logoMediaHash != null) {
             nGroup.logo = new MediaDesc(gRec.logoMediaHash, gRec.logoMimeType);
         }
         nGroup.members = MsoyServer.groupRepo.countMembers(gRec.groupId);
@@ -297,8 +297,10 @@ public class MemberServlet extends MsoyServiceServlet
         return nFriend;
     }
 
-    // Figure out the population of the various rooms associated with a neighborhood;
-    // a group's and a member's home scenes. This must be called on the dobj thread.
+    /**
+     * Figures out the population of the various rooms associated with a neighborhood; a group's
+     * and a member's home scenes. This must be called on the dobj thread.
+     */
     protected void finalizeNeighborhood (Neighborhood hood)
     {
         if (hood.member != null) {
@@ -315,13 +317,13 @@ public class MemberServlet extends MsoyServiceServlet
         }
     }
 
-    // set the population of a neighbour group
+    /** Sets the population of a neighbour group. */
     protected void finalizeEntity (NeighborGroup group)
     {
         MsoyServer.memberMan.fillIn(group);
     }
 
-    // set the population of a neighbour friend and figure out if it's online
+    /** Sets the population of a neighbour friend and figure out if it's online. */
     protected void finalizeEntity (NeighborMember friend)
     {
         int memberId = friend.member.getMemberId();
@@ -329,8 +331,7 @@ public class MemberServlet extends MsoyServiceServlet
         friend.isOnline = MsoyServer.lookupMember(memberId) != null;
     }
 
-    
-    // handcrafted JSON serialization, to minimize the overhead
+    /** Performs handcrafted JSON serialization, to minimize the overhead. */
     protected JSONObject toJSON (Neighborhood hood)
         throws JSONException
     {
@@ -376,8 +377,8 @@ public class MemberServlet extends MsoyServiceServlet
         throws JSONException
     {
         JSONObject obj = new JSONObject();
-        obj.put("name", group.group.groupName);
-        obj.put("id", group.group.groupId);
+        obj.put("name", group.group.toString());
+        obj.put("id", group.group.getGroupId());
         obj.put("members", group.members);
         obj.put("pop", group.popCount);
         if (group.popSet != null) {

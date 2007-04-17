@@ -217,10 +217,8 @@ public class MemberObject extends MsoyBodyObject
     public function getGroupRank (groupId :int) :int
     {
         if (groups != null) {
-            var group :GroupName = new GroupName();
-            group.groupId = groupId;
             var membInfo :GroupMembership =
-                (groups.get(group) as GroupMembership);
+                (groups.get(GroupName.makeKey(groupId)) as GroupMembership);
             if (membInfo != null) {
                 return membInfo.rank;
             }

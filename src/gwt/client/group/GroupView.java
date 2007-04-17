@@ -351,8 +351,8 @@ public class GroupView extends VerticalPanel
                         CGroup.groupsvc.tagGroup(CGroup.creds, _group.groupId, tag, true, callback);
                     }
                     public void untag (String tag, AsyncCallback callback) {
-                        CGroup.groupsvc.tagGroup(CGroup.creds, _group.groupId, tag, false, 
-                            callback);
+                        CGroup.groupsvc.tagGroup(
+                            CGroup.creds, _group.groupId, tag, false, callback);
                     }
                     public void getRecentTags (AsyncCallback callback) {
                         CGroup.groupsvc.getRecentTags(CGroup.creds, callback);

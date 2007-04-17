@@ -504,7 +504,7 @@ public class MemberManager
     {
         updatePPCache();
         fillIn(group, (PopularScenePlace) _placesByOwner.get(
-            new PopularPlaceOwner(OwnerType.GROUP, group.group.groupId)));
+            new PopularPlaceOwner(OwnerType.GROUP, group.group.getGroupId())));
     }
 
     /**

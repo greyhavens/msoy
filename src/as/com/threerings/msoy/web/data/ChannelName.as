@@ -12,67 +12,67 @@ import com.threerings.util.Hashable;
 import com.threerings.util.Name;
 
 /**
- * Contains a group name and group id in one handy object.
+ * Contains a channel name and channel id in one handy object.
  */
-public class GroupName extends Name
+public class ChannelName extends Name
 {
-    /**
-     * Creates a group name that can be used as a key for a DSet lookup or whereever else one might
-     * need to use a {@link GroupName} instance as a key but do not have the (unneeded) group name.
-     */
-    public static function makeKey (groupId :int) :GroupName
-    {
-        return new GroupName(null, groupId);
-    }
-
-    public function GroupName (name :String = null, groupId :int = 0)
+    public function ChannelName (name :String = null, creatorId :int = 0)
     {
         super(name);
-        _groupId = groupId;
+        _creatorId = creatorId;
     }
 
     /**
-     * Returns the id of this group.
+     * Returns the member id of the creator of this chat channel.
      */
-    public function getGroupId () :int
+    public function getCreatorId () :int
     {
-        return _groupId;
+        return _creatorId;
     }
 
     // from Streamable (by way of Name)
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        _groupId = ins.readInt();
+        _creatorId = ins.readInt();
     }
 
     // from Streamable (by way of Name)
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-        out.writeInt(_groupId);
+        out.writeInt(_creatorId);
     }
 
     // from Comparable (by way of Name)
     override public function compareTo (other :Object) :int
     {
-        var that :GroupName = (other as GroupName);
-        return this._groupId - that._groupId;
+        var oc :ChannelName = (other as ChannelName);
+        if (_creatorId == oc._creatorId) {
+            return super.compareTo(oc);
+        } else {
+            return _creatorId - oc._creatorId;
+        }
     }
 
     // from Hashable (by way of Name)
     override public function hashCode () :int
     {
-        return _groupId;
+        return super.hashCode() ^ _creatorId;
     }
 
     // from Equalable (by way of Hashable by way of Name)
     override public function equals (other :Object) :Boolean
     {
-        return (other is GroupName) && ((other as GroupName)._groupId == _groupId);
+        if (other is ChannelName) {
+            var oc :ChannelName = (other as ChannelName);
+            return oc._creatorId == _creatorId && oc._name.equals(_name);
+        } else {
+            return false;
+        }
     }
 
-    /** The group's id. */
-    protected var _groupId :int;
+    /** The channel's id. */
+    protected var _creatorId :int;
 }
 }

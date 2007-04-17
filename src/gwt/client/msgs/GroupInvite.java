@@ -83,10 +83,10 @@ public abstract class GroupInvite
                 _groupBox.setSelectedIndex(0);
                 for (int ii = 0; ii < _groups.size(); ii ++) {
                     GroupName group = ((GroupMembership) _groups.get(ii)).group;
-                    _groupBox.addItem(group.groupName);
+                    _groupBox.addItem(group.toString());
                     if (ii == 0) {
                         // let the first group be the default
-                        _selectedGroupId = group.groupId;
+                        _selectedGroupId = group.getGroupId();
                     }
                 }
                 _groupBox.addChangeListener(new ChangeListener() {
@@ -95,7 +95,7 @@ public abstract class GroupInvite
                         if (ix == -1) {
                             return;
                         }
-                        _selectedGroupId = ((GroupMembership)_groups.get(ix)).group.groupId;
+                        _selectedGroupId = ((GroupMembership)_groups.get(ix)).group.getGroupId();
                     }
                 });
                 grid.setText(0, 0, CMsgs.mmsgs.groupInviteTo());

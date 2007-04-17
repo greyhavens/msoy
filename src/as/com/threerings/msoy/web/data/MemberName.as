@@ -83,14 +83,12 @@ public class MemberName extends Name
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-
         out.writeInt(_memberId);
     }
 
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-
         _memberId = ins.readInt();
     }
 
