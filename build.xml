@@ -38,6 +38,11 @@
   <!-- declare the files from bin needed in the package -->
   <property name="bin.list" value="msoy,msoyrespawn,msoyserver,msoyjava,runmsoy,mysql"/>
 
+  <!-- declare the files that will be deployed to the maven repository -->
+  <filelist dir="." id="deploy.filelist">
+    <file name="${deploy.dir}/msoy-code.jar"/>
+  </filelist>
+
   <!-- declare the libraries needed by the MSOY runtime -->
   <filelist dir="." id="dist.libs">
     <file name="${extlibs.dir}/ant.jar"/>
