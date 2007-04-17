@@ -151,6 +151,7 @@ public class GameDirector extends BasicDirector
     public function receivedGameReady (gameOid :int) :Boolean
     {
         // let the scene director know that we're leaving our current scene
+        _mctx.getTopPanel().clearTableDisplay();
         _mctx.getSceneDirector().didLeaveScene();
         _mctx.getMsoyController().handleGoLocation(gameOid);
         return true;

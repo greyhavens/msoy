@@ -71,8 +71,13 @@ public class FloatingTableDisplay extends FloatingPanel
     public function tableUpdated (table :Table) :void
     {
         if (table.tableId == _table.tableId) {
-            _table = table;
-            _tableRender.data = _table;
+            if (table.gameOid != 0) {
+                shutdown();
+
+            } else {
+                _table = table;
+                _tableRender.data = _table;
+            }
         }
     }
 

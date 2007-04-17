@@ -143,7 +143,9 @@ public class LobbyPanel extends VBox
     {
         if (event.getName() == MemberObject.PENDING_GAME) {
             updateCreateButton();
-            _formingTables.refresh();
+            if (_formingTables != null) {
+                _formingTables.refresh();
+            }
         }
     }
 
