@@ -209,9 +209,8 @@ public class RoomController extends SceneController
         _scene = (_mctx.getSceneDirector().getScene() as MsoyScene);
 
         _walkTarget.visible = false;
-        _walkShadow.visible = false;
-        _walkShadow.alpha = .5;
-        _roomView.addChildAt(_walkShadow, _roomView.numChildren);
+        _flyTarget.visible = false;
+        _roomView.addChildAt(_flyTarget, _roomView.numChildren);
         _roomView.addChildAt(_walkTarget, _roomView.numChildren);
 
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
@@ -229,7 +228,7 @@ public class RoomController extends SceneController
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
 
         _roomView.removeChild(_walkTarget);
-        _roomView.removeChild(_walkShadow);
+        _roomView.removeChild(_flyTarget);
         setHoverSprite(null);
 
         _roomObj.removeListener(_roomListener);
@@ -533,7 +532,7 @@ public class RoomController extends SceneController
         _roomView.dimAvatars(true);
         // maybe disable/dim other furnis?
         _walkTarget.visible = false;
-        _walkShadow.visible = false;
+        _flyTarget.visible = false;
 
         // this function will be called once furni editing had ended
         var callback :Function = function () :void {
@@ -561,7 +560,7 @@ public class RoomController extends SceneController
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
         _walkTarget.visible = false;
-        _walkShadow.visible = false;
+        _flyTarget.visible = false;
 
         if (_music != null) {
             if (_musicIsBackground) {
@@ -591,7 +590,7 @@ public class RoomController extends SceneController
         var sx :Number = _roomView.stage.mouseX;
         var sy :Number = _roomView.stage.mouseY;
         var showWalkTarget :Boolean = false;
-        var showWalkShadow :Boolean = false;
+        var showFlyTarget :Boolean = false;
 
         // if shift is being held down, we're looking for locations only, so
         // skip looking for hitSprites.
@@ -604,17 +603,22 @@ public class RoomController extends SceneController
                     _roomView.layout.pointToLocation(sx, sy, _shiftPressed, getAvatarYOffset());
 
                 if (cloc.click == ClickLocation.FLOOR && _mctx.worldProps.userControlsAvatar) {
+                    if (cloc.loc.y != 0) {
+                        _flyTarget.setZ(cloc.loc.z);
+                        _roomView.layout.updateScreenLocation(cloc.loc, _flyTarget);
+                        showFlyTarget = true;
+
+                        // then set the y to zero for the walkTarget
+                        cloc.loc.y = 0;
+                        _walkTarget.alpha = .5;
+
+                    } else {
+                        _walkTarget.alpha = 1;
+                    }
+
+                    showWalkTarget = true;
                     _walkTarget.setZ(cloc.loc.z);
                     _roomView.layout.updateScreenLocation(cloc.loc, _walkTarget);
-                    showWalkTarget = true;
-
-                    if (cloc.loc.y != 0) {
-                        // show the shadow
-                        cloc.loc.y = 0;
-                        _walkShadow.setZ(cloc.loc.z);
-                        _roomView.layout.updateScreenLocation(cloc.loc, _walkShadow);
-                        showWalkShadow = true;
-                    }
                 }
 
             } else if (!hitter.hasAction()) {
@@ -625,7 +629,7 @@ public class RoomController extends SceneController
         }
 
         _walkTarget.visible = showWalkTarget;
-        _walkShadow.visible = showWalkShadow;
+        _flyTarget.visible = showFlyTarget;
 
         setHoverSprite(hitter, sx, sy);
     }
@@ -995,7 +999,7 @@ public class RoomController extends SceneController
     /** The "cursor" used to display that a location is walkable. */
     protected var _walkTarget :WalkTarget = new WalkTarget();
 
-    protected var _walkShadow :WalkTarget = new WalkTarget(true);
+    protected var _flyTarget :WalkTarget = new WalkTarget(true);
 
     /** Are we editing the current scene? */
     protected var _editor :EditorController; 
@@ -1016,13 +1020,9 @@ import com.threerings.msoy.world.client.RoomElement;
 class WalkTarget extends Sprite
     implements RoomElement
 {
-    public function WalkTarget (shadow :Boolean = false)
+    public function WalkTarget (fly :Boolean = false)
     {
-        if (shadow) {
-            alpha = .5;
-        }
-
-        var targ :DisplayObject = (new WALKTARGET() as DisplayObject);
+        var targ :DisplayObject = (fly ? new FLYTARGET() : new WALKTARGET() as DisplayObject);
         targ.x = -targ.width/2;
         targ.y = -targ.height/2;
         addChild(targ);
@@ -1062,9 +1062,11 @@ class WalkTarget extends Sprite
         this.y = y
     }
 
-
     protected var _z :Number;
 
     [Embed(source="../../../../../../../rsrc/media/walkable.swf")]
     protected static const WALKTARGET :Class;
+
+    [Embed(source="../../../../../../../rsrc/media/flyable.swf")]
+    protected static const FLYTARGET :Class;
 }
