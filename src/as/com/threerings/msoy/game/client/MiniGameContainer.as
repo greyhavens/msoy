@@ -23,6 +23,22 @@ public class MiniGameContainer extends MediaContainer
     public function MiniGameContainer ()
     {
         super(null);
+
+        _feedbacker = new PerfFeedbacker();
+        _feedbacker.x = 450 + 10/*padding*/;
+        addChild(_feedbacker);
+    }
+
+    /**
+     * Called by the backend to record performance.
+     */
+    public function recordPerformance (score :Number, style :Number) :void
+    {
+        _feedbacker.recordPerformance(score, style);
+
+        if (performanceCallback != null) {
+            performanceCallback(score, style);
+        }
     }
 
     public function setup (desc :MediaDesc) :void
@@ -50,5 +66,7 @@ public class MiniGameContainer extends MediaContainer
     }
 
     protected var _backend :MiniGameBackend;
+
+    protected var _feedbacker :PerfFeedbacker;
 }
 }

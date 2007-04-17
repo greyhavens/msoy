@@ -31,8 +31,8 @@ public class MiniGameBackend extends ControlBackend
      */
     protected function reportPerformance_v1 (score :Number, style :Number) :void
     {
-        if (_container != null && _container.performanceCallback != null) {
-            _container.performanceCallback(score, style);
+        if (_container != null) {
+            _container.recordPerformance(score, style);
         }
     }
 

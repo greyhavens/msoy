@@ -46,6 +46,8 @@ import com.threerings.msoy.world.data.WorldOccupantInfo;
 import com.threerings.msoy.world.server.RoomManager;
 
 import com.threerings.msoy.game.data.WorldGameConfig;
+import com.threerings.msoy.game.data.PerfRecord;
+
 import com.threerings.msoy.game.server.WorldGameManagerDelegate;
 import com.threerings.msoy.game.chiyogami.data.ChiyogamiObject;
 
@@ -567,108 +569,18 @@ public class ChiyogamiManager extends GameManager
     /**
      * Tracks performance for each player.
      */
-    protected static class PlayerRec
-        implements Comparable<PlayerRec>
+    protected static class PlayerRec extends PerfRecord
     {
-        /** The player's oid. */
+        /** The oid of the player. */
         public int oid;
 
         /** The player's last-used side, or -1 if not yet assigned. */
         public int lastSide = -1;
 
-        /** The last calculated cumulative score. */
-        public float calcScore;
-
-        /** The last calculated cumulative style. */
-        public float calcStyle;
-
         public PlayerRec (int oid)
         {
             this.oid = oid;
         }
-
-        public void recordPerformance (long now, float score, float style)
-        {
-            int index = _count % BUCKETS;
-            _scores[index] = score;
-            _styles[index] = style;
-            _stamps[index] = now;
-
-            // track totals
-            _count++;
-            _totalScore += score;
-            _totalStyle += style;
-        }
-
-        public float calculateScore (long now)
-        {
-            return (calcScore = getAccumulated(now, _scores));
-        }
-
-        public float calculateStyle (long now)
-        {
-            return (calcStyle = getAccumulated(now, _styles));
-        }
-
-        // from Comparable
-        public int compareTo (PlayerRec that)
-        {
-            if (this.calcScore > that.calcScore) {
-                return -1;
-
-            } else if (this.calcScore < that.calcScore) {
-                return 1;
-
-            }
-            return 0;
-        }
-
-        /**
-         * Get the decaying score/style value for this player, disregarding
-         * scores that are too old.
-         */
-        protected float getAccumulated (long now, float[] values)
-        {
-            float accum = 0;
-            float total = 0;
-            long oldest = now - MAX_TIME;
-            for (int ii = 1; ii <= BUCKETS; ii++) {
-                int index = _count - ii;
-                if (index < 0) {
-                    break;
-                }
-                index = index % BUCKETS;
-                if (_stamps[index] < oldest) {
-                    break;
-                }
-
-                // the most recent score has a weight of 1, the one before
-                // a weight of .5, the one before of .25...
-                float frac = 1f / ii;
-                accum += values[index] * frac;
-                total += frac;
-            }
-
-            return (total > 0) ? (accum / total) : accum;
-        }
-
-        /** The number of scores recorded. */
-        protected int _count;
-
-        protected float _totalScore;
-        protected float _totalStyle;
-
-        protected float _calcScore;
-        protected float _calcStyle;
-
-        // number of previous scores to count
-        protected static final int BUCKETS = 10;
-        // the maximum time a score will last
-        protected static final int MAX_TIME = 30000;
-
-        protected float[] _scores = new float[BUCKETS];
-        protected float[] _styles = new float[BUCKETS];
-        protected long[] _stamps = new long[BUCKETS];
 
     } // End: static class PlayerRec
 
