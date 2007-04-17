@@ -99,6 +99,7 @@ public class ControlBar extends HBox
     {
         if (_channelInput != null) {
             removeChild(_channelInput);
+            _channelInput = null;
         }
         if (input != null) {
             var chidx :int = -1;

@@ -44,14 +44,10 @@ public class ChatChannel
     {
         var ochannel :ChatChannel = (other as ChatChannel);
         if (ochannel.type != type) {
-            trace(ochannel.type + " != " + type);
             return false;
         }
         switch (type) {
         case FRIEND_CHANNEL:
-            if (!(ident as Name).equals(ochannel.ident as Name)) {
-                trace(ochannel.ident + " != " + ident);
-            }
             return (ident as Name).equals(ochannel.ident as Name);
         case GROUP_CHANNEL:
             return false; // TODO
