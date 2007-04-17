@@ -56,7 +56,7 @@ public class AdminServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(creds);
-        if (!memrec.isAdmin()) {
+        if (!memrec.isSupport()) {
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
 
