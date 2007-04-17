@@ -19,7 +19,7 @@
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/**)
 -injars ../dist/msoy-code.jar(
     !**/*UnitTest.class,rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
-    **/msoy/world/data/WorldMemberInfo.class,**/msoy/item/data/**,
+    **/msoy/world/data/WorldMemberInfo.class,**/msoy/item/data/all/**,
     **/msoy/swiftly/data/**,**/msoy/swiftly/client/**,**/msoy/swiftly/util/**,
     !**/msoy/game/data/MsoyMatchConfig.class,**/msoy/game/data/*Config.class,
     **/infosys/closeandmaxtabbedpane/**,**/msoy/game/data/GameMemberInfo.class,

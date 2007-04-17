@@ -18,7 +18,7 @@
 -injars ../dist/lib/toybox.jar(!META-INF/*,!**/tools/**,!**/server/**,!**/xml/**)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/**)
 -injars ../dist/msoy-code.jar(
-    rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,**/msoy/item/data/**,
+    rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,**/msoy/item/data/all/**,
     **/msoy/world/data/WorldMemberInfo.class,**/msoy/world/data/WorldOccupantInfo.class,
     **/msoy/game/data/**,**/msoy/game/client/**)
 
