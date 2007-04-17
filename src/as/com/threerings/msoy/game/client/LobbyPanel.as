@@ -6,6 +6,7 @@ package com.threerings.msoy.game.client {
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.TextEvent;
 
@@ -25,6 +26,9 @@ import mx.core.ClassFactory;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
 
+import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.AttributeChangeListener;
+
 import com.threerings.flash.MediaContainer;
 
 import com.threerings.flex.CommandButton;
@@ -41,6 +45,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.HeaderBarController;
+import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.chat.client.ChatContainer;
 
@@ -54,16 +59,13 @@ import com.threerings.msoy.item.web.Game;
  * A panel that displays pending table games.
  */
 public class LobbyPanel extends VBox 
-    implements TableObserver, SeatednessObserver
+    implements TableObserver, SeatednessObserver, AttributeChangeListener
 {
     /** Our log. */
     private const log :Log = Log.getLog(LobbyPanel);
 
     /** The lobby controller. */
     public var controller :LobbyController;
-
-    /** The create-a-table button. */
-    public var createBtn :CommandButton;
 
     /**
      * Create a new LobbyPanel.
@@ -74,6 +76,9 @@ public class LobbyPanel extends VBox
         controller = ctrl;
 
         width = LOBBY_PANEL_WIDTH;
+
+        addEventListener(Event.ADDED_TO_STAGE, handleAdded);
+        addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
     }
 
     public function init (lobbyObj :LobbyObject) :void
@@ -122,6 +127,24 @@ public class LobbyPanel extends VBox
     public function getGame () :Game
     {
         return _lobbyObj != null ? _lobbyObj.game : null;
+    }
+
+    /**
+     * Called to set the creation button.
+     */
+    public function setCreateButton (btn :CommandButton) :void
+    {
+        _createBtn = btn;
+        updateCreateButton();
+    }
+
+    // from AttributeChangeListener
+    public function attributeChanged (event :AttributeChangedEvent) :void
+    {
+        if (event.getName() == MemberObject.PENDING_GAME) {
+            updateCreateButton();
+            _formingTables.refresh();
+        }
     }
 
     // from TableObserver
@@ -179,18 +202,47 @@ public class LobbyPanel extends VBox
     }
 
     // from SeatednessObserver
-    public function seatednessDidChange (isSeated :Boolean) :void
+    public function seatednessDidChange (nowSeated :Boolean) :void
     {
-        _isSeated = isSeated;
-        createBtn.enabled = !isSeated;
+        _isSeated = nowSeated;
+        updateCreateButton();
         if (_isSeated) {
             CommandEvent.dispatch(this, LobbyController.LEAVE_LOBBY);
         }
     }
 
+    /**
+     * Returns true if we're seated at ANY table, even in another lobby.
+     */
     public function isSeated () :Boolean
     {
-        return _isSeated;
+        return _isSeated || (_ctx.getMemberObject().pendingGame != null);
+    }
+
+    /**
+     * Update the state of the create button.
+     */
+    protected function updateCreateButton () :void
+    {
+        if (_createBtn != null) {
+            _createBtn.enabled = !isSeated();
+        }
+    }
+
+    /**
+     * Handle Event.ADDED_TO_STAGE.
+     */
+    protected function handleAdded (... ignored) :void
+    {
+        _ctx.getMemberObject().addListener(this);
+    }
+
+    /**
+     * Handle Event.REMOVED_FROM_STAGE.
+     */
+    protected function handleRemoved (... ignored) :void
+    {
+        _ctx.getMemberObject().removeListener(this);
     }
 
     override protected function createChildren () :void
@@ -363,6 +415,9 @@ public class LobbyPanel extends VBox
 
     /** Are we seated? */
     protected var _isSeated :Boolean;
+
+    /** The create-a-table button. */
+    protected var _createBtn :CommandButton;
 
     /** The currently forming tables. */
     protected var _formingTables :ArrayCollection;

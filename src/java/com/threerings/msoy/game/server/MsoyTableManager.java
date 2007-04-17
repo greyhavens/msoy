@@ -65,7 +65,7 @@ public class MsoyTableManager extends TableManager
 
         // attach the GameSummary to our MemberObject, and update our occupant info 
         MemberObject member = (MemberObject) body;
-        member.currentGame = _summary;
+        member.setPendingGame(_summary);
         MsoyServer.memberMan.updateOccupantInfo(member);
     }
 
@@ -75,7 +75,7 @@ public class MsoyTableManager extends TableManager
         // remove the GameSummary from our MemberObject, and update our occupant info
         if (body != null) {
             MemberObject member = (MemberObject) body;
-            member.currentGame = null;
+            member.setPendingGame(null);
             MsoyServer.memberMan.updateOccupantInfo(member);
         }
         

@@ -20,8 +20,8 @@ public class WorldMemberInfo extends MemberInfo
     /** The state of the member's avatar. */
     public String state;
 
-    /** The game summary info for which to display a game icon on this member's avatar */
-    public GameSummary currentGame;
+    /** The game summary for the user's currently pending game. */
+    public GameSummary pendingGame;
 
 //    /** The style of chat bubble to use. */
 //    public short chatStyle;
@@ -53,8 +53,7 @@ public class WorldMemberInfo extends MemberInfo
         }
 
         state = user.avatarState;
-
-        currentGame = user.currentGame;
+        pendingGame = user.pendingGame;
     }
 
     // from interface WorldOccupantInfo

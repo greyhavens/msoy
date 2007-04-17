@@ -22,8 +22,8 @@ public class WorldMemberInfo extends MemberInfo
     /** The current state of the member's avatar. */
     public var state :String;
 
-    /** The game summary info for which to display a game icon on this member's avatar */
-    public var currentGame :GameSummary;
+    /** The game summary for the user's currently pending game. */
+    public var pendingGame :GameSummary;
 
 //    /** The style of chat bubble to use. */
 //    public var chatStyle :int;
@@ -50,7 +50,7 @@ public class WorldMemberInfo extends MemberInfo
 //        chatStyle = ins.readShort();
 //        chatPopStyle = ins.readShort();
         state = (ins.readField(String) as String);
-        currentGame = (ins.readObject() as GameSummary);
+        pendingGame = (ins.readObject() as GameSummary);
         _media = (ins.readObject() as MediaDesc);
     }
 

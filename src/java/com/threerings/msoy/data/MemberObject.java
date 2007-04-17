@@ -87,6 +87,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>hasNewMail</code> field. */
     public static final String HAS_NEW_MAIL = "hasNewMail";
+
+    /** The field name of the <code>pendingGame</code> field. */
+    public static final String PENDING_GAME = "pendingGame";
     // AUTO-GENERATED: FIELDS END
 
     /** The name and id information for this user. */
@@ -143,7 +146,7 @@ public class MemberObject extends MsoyBodyObject
     public boolean hasNewMail;
 
     /** The game summary for the forming game table that this user is sitting at. */
-    public transient GameSummary currentGame;
+    public GameSummary pendingGame;
     
     /**
      * Returns this member's unique id.
@@ -732,6 +735,22 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             HAS_NEW_MAIL, Boolean.valueOf(value), Boolean.valueOf(ovalue));
         this.hasNewMail = value;
+    }
+
+    /**
+     * Requests that the <code>pendingGame</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setPendingGame (GameSummary value)
+    {
+        GameSummary ovalue = this.pendingGame;
+        requestAttributeChange(
+            PENDING_GAME, value, ovalue);
+        this.pendingGame = value;
     }
     // AUTO-GENERATED: METHODS END
 

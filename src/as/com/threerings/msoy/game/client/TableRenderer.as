@@ -126,8 +126,9 @@ public class TableRenderer extends HBox
             } 
             removeChildren();
             addChild(_creationPanel);
-            panel.createBtn = _creationPanel.getCreateButton();
+            panel.setCreateButton(_creationPanel.getCreateButton());
             return;
+
         } else if (getChildAt(0) is TableCreationPanel) {
             _creationPanel = null;
             removeChildren();

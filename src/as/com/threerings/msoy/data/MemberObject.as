@@ -25,6 +25,7 @@ import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
 
+import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.WorldGameConfig;
 
 /**
@@ -80,6 +81,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>hasNewMail</code> field. */
     public static const HAS_NEW_MAIL :String = "hasNewMail";
+
+    /** The field name of the <code>pendingGame</code> field. */
+    public static const PENDING_GAME :String = "pendingGame";
     // AUTO-GENERATED: FIELDS END
 
     /** The member name and id for this user. */
@@ -129,6 +133,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** A flag that's true if this member has unread mail. */
     public var hasNewMail :Boolean;
+
+    /* The game summary for the forming game table that this user is sitting at. */
+    public var pendingGame :GameSummary;
 
     /**
      * Return this member's unique id.
@@ -364,6 +371,7 @@ public class MemberObject extends MsoyBodyObject
         friends = (ins.readObject() as DSet);
         groups = (ins.readObject() as DSet);
         hasNewMail = ins.readBoolean();
+        pendingGame = (ins.readObject() as GameSummary);
     }
 }
 }

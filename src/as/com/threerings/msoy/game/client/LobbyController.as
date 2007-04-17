@@ -93,13 +93,14 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
     {
         _panelIsVisible = false;
         var seatedTable :Table = _tableDir.getSeatedTable();
-        if (_tableDir.isSeated() && !seatedTable.inPlay()) {
+        if ((seatedTable != null) && !seatedTable.inPlay()) {
             var tableDisplay :FloatingTableDisplay = new FloatingTableDisplay(_mctx, _panel, 
                 _tableDir, _panel.getGame().name);
             tableDisplay.open();
             setControlledPanel(tableDisplay.getRenderer());
             _mctx.getTopPanel().setTableDisplay(tableDisplay);
             _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId);
+
         } else {
             shutdown();
         }
@@ -191,6 +192,7 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
             _mctx.getTopPanel().clearTableDisplay();
         }
         _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId);
+        _tableDir.clearTableObject();
         _tableDir.removeTableObserver(_panel);
         _tableDir.removeSeatednessObserver(_panel);
     }
