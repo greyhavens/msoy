@@ -16,14 +16,14 @@ import com.threerings.presents.dobj.DSet_Entry;
 public class GroupMembership
     implements Streamable, DSet_Entry
 {
-    /** Not ever stored in a GroupMembership record, but useful for methods
-     * that return a user's rank as a byte. */
+    /** Unused rank code. This is not ever stored in a GroupMembership record, but is useful for
+     * methods that return a user's rank as a byte. */
     public static const RANK_NON_MEMBER :int = 0;
 
-    /** Membership ranks. */
+    /** Rank code for a member. */
     public static const RANK_MEMBER :int = 1;
 
-    /** Membership ranks. */
+    /** Rank code for a manager. */
     public static const RANK_MANAGER :int = 2;
 
     /** The name and id of the member of the group. <em>Note:</em> this will be null in the records
