@@ -22,6 +22,11 @@ public interface WorldOccupantInfo
     function getMedia () :MediaDesc;
 
     /**
+     * Return the scale that should be used for the media.
+     */
+    function getScale () :Number;
+
+    /**
      * Return the current state of the occupant, which may be null.
      */
     function getState () :String;

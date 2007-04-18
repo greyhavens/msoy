@@ -25,6 +25,12 @@ public class WorldActorInfo extends ActorInfo
     }
 
     // from interface WorldOccupantInfo
+    public function getScale () :Number
+    {
+        return 1;
+    }
+
+    // from interface WorldOccupantInfo
     public function getState () :String
     {
         return state;

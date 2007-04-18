@@ -38,6 +38,12 @@ public class WorldMemberInfo extends MemberInfo
     }
 
     // from interface WorldOccupantInfo
+    public function getScale () :Number
+    {
+        return _scale;
+    }
+
+    // from interface WorldOccupantInfo
     public function getState () :String
     {
         return state;
@@ -52,9 +58,13 @@ public class WorldMemberInfo extends MemberInfo
         state = (ins.readField(String) as String);
         pendingGame = (ins.readObject() as GameSummary);
         _media = (ins.readObject() as MediaDesc);
+        _scale = ins.readFloat();
     }
 
     /** The media that represents this occupant. */
     protected var _media :MediaDesc;
+
+    /** The scaling factor of the media. */
+    protected var _scale :Number;
 }
 }

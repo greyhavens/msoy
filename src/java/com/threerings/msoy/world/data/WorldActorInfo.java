@@ -41,6 +41,12 @@ public class WorldActorInfo extends ActorInfo
     }
 
     // from interface WorldOccupantInfo
+    public float getScale ()
+    {
+        return 1;
+    }
+
+    // from interface WorldOccupantInfo
     public String getState ()
     {
         return state;

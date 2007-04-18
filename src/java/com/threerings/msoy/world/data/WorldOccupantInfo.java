@@ -22,6 +22,11 @@ public interface WorldOccupantInfo
     public MediaDesc getMedia ();
 
     /**
+     * Return the scale that should be used for the media.
+     */
+    public float getScale ();
+
+    /**
      * Return the current state of the occupant, which may be null.
      */
     public String getState ();

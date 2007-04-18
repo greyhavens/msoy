@@ -54,6 +54,19 @@ public class WorldMemberInfo extends MemberInfo
 
         state = user.avatarState;
         pendingGame = user.pendingGame;
+
+        // TODO
+        _scale = 1f;
+//        float val = (float) Math.random();
+//        if (val < .333333) {
+//            _scale = (float) Math.random();
+//
+//        } else if (val < .6666666) {
+//            _scale = 1f;
+//
+//        } else {
+//            _scale = 1f + (float) (30 * Math.random());
+//        }
     }
 
     // from interface WorldOccupantInfo
@@ -63,10 +76,20 @@ public class WorldMemberInfo extends MemberInfo
     }
 
     // from interface WorldOccupantInfo
+    public float getScale ()
+    {
+        return _scale;
+    }
+
+    // from interface WorldOccupantInfo
     public String getState ()
     {
         return state;
     }
 
+    /** The media that represents this occupant. */
     protected MediaDesc _media;
+
+    /** The scaling factor of the media. */
+    protected float _scale;
 }

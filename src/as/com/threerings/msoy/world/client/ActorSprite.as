@@ -150,9 +150,14 @@ public class ActorSprite extends MsoySprite
     public function setActorInfo (newInfo :ActorInfo) :void
     {
         var winfo :WorldOccupantInfo = (newInfo as WorldOccupantInfo);
+        var oldScale :Number = _scale;
+        _scale = winfo.getScale();
         var newMedia :MediaDesc = winfo.getMedia();
         if (!newMedia.equals(_desc)) {
             setup(newMedia, winfo.getItemIdent());
+
+        } else if (oldScale != _scale) {
+            scaleUpdated();
         }
 
         // take care of setting up or changing our TableIcon
@@ -519,6 +524,16 @@ public class ActorSprite extends MsoySprite
         return (_occInfo as WorldOccupantInfo).getState();
     }
 
+    override public function getMediaScaleX () :Number
+    {
+        return _scale;
+    }
+
+    override public function getMediaScaleY () :Number
+    {
+        return _scale;
+    }
+
     /**
      * Called when the actor changes orientation or transitions between poses.
      */
@@ -530,6 +545,9 @@ public class ActorSprite extends MsoySprite
     protected var _label :TextField;
     protected var _occInfo :ActorInfo;
     protected var _walk :Animation;
+
+    /** The media scale we should use. */
+    protected var _scale :Number = 1;
 
     /** A decoration used when we're in a table in a lobby. */
     protected var _tableIcon :TableIcon;
