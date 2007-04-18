@@ -13,14 +13,12 @@ import com.threerings.io.ObjectOutputStream;
  */
 public class MemberName extends Name
 {
-    /** A sort function for sorting Names by their display portion,
-     * case insensitively.  */
-    public static const BY_DISPLAY_NAME :Function =
-        function (n1 :Name, n2 :Name) :int {
-            var s1 :String = n1.toString().toLowerCase();
-            var s2 :String = n2.toString().toLowerCase();
-            return s1.localeCompare(s2);
-        };
+    /** A sort function for sorting Names by their display portion, case insensitively.  */
+    public static const BY_DISPLAY_NAME :Function = function (n1 :Name, n2 :Name) :int {
+        var s1 :String = n1.toString().toLowerCase();
+        var s2 :String = n2.toString().toLowerCase();
+        return s1.localeCompare(s2);
+    };
 
     /** The "member id" used for guests. */
     public static const GUEST_ID :int = 0;
@@ -28,8 +26,7 @@ public class MemberName extends Name
     /**
      * Create a new MemberName.
      */
-    public function MemberName (
-        displayName :String = "", memberId :int = GUEST_ID)
+    public function MemberName (displayName :String = "", memberId :int = GUEST_ID)
     {
         super(displayName);
         _memberId = memberId;
@@ -45,8 +42,8 @@ public class MemberName extends Name
 
     override public function hashCode () :int
     {
-        // we return a different hash for guests so that they
-        // don't end up all in the same bucket in a Map.
+        // we return a different hash for guests so that they don't end up all in the same bucket
+        // in a Map.
         return (_memberId != GUEST_ID) ? _memberId : super.hashCode();
     }
 
@@ -54,8 +51,7 @@ public class MemberName extends Name
     {
         if (other is MemberName) {
             var otherId :int = (other as MemberName).getMemberId();
-            return (otherId == _memberId) &&
-                ((_memberId != GUEST_ID) || super.equals(other));
+            return (otherId == _memberId) && ((_memberId != GUEST_ID) || super.equals(other));
         }
         return false;
     }
@@ -69,9 +65,8 @@ public class MemberName extends Name
             return diff;
         }
 
-        // return 0 if diff is the same (they have the same memberId)
-        // UNLESS the member is 0, in which case they're a guest and
-        // we compare by name
+        // return 0 if diff is the same (they have the same memberId) UNLESS the member is 0, in
+        // which case they're a guest and we compare by name
        return (_memberId != GUEST_ID) ? 0 : BY_DISPLAY_NAME(this, that);
     }
 
