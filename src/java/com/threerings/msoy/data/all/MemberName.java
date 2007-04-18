@@ -56,7 +56,7 @@ public class MemberName extends Name
         return _memberId;
     }
 
-    // @Override
+    // @Override // from Name
     public int hashCode ()
     {
         // we return a different hash for guests so that they don't end up all in the same bucket
@@ -64,7 +64,7 @@ public class MemberName extends Name
         return (_memberId != GUEST_ID) ? _memberId : super.hashCode();
     }
 
-    // @Override
+    // @Override // from Name
     public boolean equals (Object other)
     {
         if (other instanceof MemberName) {
@@ -77,7 +77,7 @@ public class MemberName extends Name
         }
     }
 
-    // @Override
+    // @Override // from Name
     public int compareTo (Object o)
     {
         MemberName that = (MemberName) o;
@@ -92,7 +92,7 @@ public class MemberName extends Name
         return (_memberId != GUEST_ID) ? 0 : compare(this, that);
     }
 
-    // @Override
+    // @Override // from Name
     protected String normalize (String name)
     {
         return name; // do not adjust
