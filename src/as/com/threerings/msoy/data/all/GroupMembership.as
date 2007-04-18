@@ -6,6 +6,7 @@ package com.threerings.msoy.data.all {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
+import com.threerings.util.Long;
 
 import com.threerings.presents.dobj.DSet_Entry;
 
@@ -21,17 +22,44 @@ public class GroupMembership
 
     /** Membership ranks. */
     public static const RANK_MEMBER :int = 1;
+
+    /** Membership ranks. */
     public static const RANK_MANAGER :int = 2;
-    
+
     /** The name and id of the member of the group. <em>Note:</em> this will be null in the records
      * maintained in a member's MemberObject. */
     public var member :MemberName;
 
-    /** The group's identity. */
+    /** The group's identity. <em>Note:</em> this will be null in the records contained in a
+     * GroupDetail.members list.*/
     public var group :GroupName;
 
     /** The member's rank in the group. */
-    public var rank :int; 
+    public var rank :int;
+
+    /** The date this member's rank was assigned, as represented by java.util.Date.getTime() */
+    public var rankAssignedDate :Long;
+
+    /**
+     * Returns true if the supplied rank is a valid rank (not {@link #RANK_NON_MEMBER} or an
+     * otherwise invalid number.
+     */
+    public static function isValidRank (rank :int) :Boolean
+    {
+        return rank >= RANK_MEMBER && rank <= RANK_MANAGER;
+    }
+
+    public function GroupMembership ()
+    {
+    }
+
+    /**
+     * Get the date this member's rank was assigned on as a Date object.
+     */
+    public function getRankAssignedDate () :Date
+    {
+        throw new Error("Not implemented");
+    }
 
     // from DSet_Entry
     public function getKey () :Object
@@ -45,19 +73,17 @@ public class GroupMembership
         member = (ins.readObject() as MemberName);
         group = (ins.readObject() as GroupName);
         rank = ins.readByte();
-        // TODO: this hackery to discard the (long) rankAssigned field from the Java side should
-        // become something more meaningful.
-        ins.readInt();
-        ins.readInt();
+        rankAssignedDate = new Long(ins.readInt(), ins.readInt());
     }
 
     // from Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
-        throw new Error("abstract");
-//        out.writeObject(member);
-//        out.writeObject(group);
-//        out.writeByte(rank);
+        out.writeObject(member);
+        out.writeObject(group);
+        out.writeByte(rank);
+        out.writeInt(rankAssignedDate == null ? 0 : rankAssignedDate.low);
+        out.writeInt(rankAssignedDate == null ? 0 : rankAssignedDate.high);
     }
 }
 }
