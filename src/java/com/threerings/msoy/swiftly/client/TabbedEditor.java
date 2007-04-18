@@ -149,15 +149,12 @@ public class TabbedEditor extends CloseAndMaxTabbedPane
         }
     }
 
+    // TODO: if this remains unneeded, remove
     protected class TabChangedListener implements ChangeListener
     {
         // from interface ChangeListener
         public void stateChanged(ChangeEvent evt) {
             Component tab = getSelectedComponent();
-            // TODO: ugly, figure out a better way
-            if (tab != null && tab instanceof SwiftlyTextPane) {
-                _editor.getToolbar().updateEditorActions((SwiftlyTextPane)tab);
-            }
         }
     }
 

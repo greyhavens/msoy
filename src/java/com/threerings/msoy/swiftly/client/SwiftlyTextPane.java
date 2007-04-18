@@ -108,16 +108,6 @@ public class SwiftlyTextPane extends JEditorPane
         }
     }
 
-    public AbstractAction getUndoAction ()
-    {
-        return _undoAction;
-    }
-
-    public AbstractAction getRedoAction ()
-    {
-        return _redoAction;
-    }
-
     public Action createCutAction ()
     {
         return new AbstractAction(_msgs.get("m.action.cut")) {

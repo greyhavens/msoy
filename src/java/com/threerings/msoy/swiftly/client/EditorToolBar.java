@@ -17,12 +17,6 @@ public class EditorToolBar extends JToolBar
         setupToolbar();
     }
 
-    public void updateEditorActions(SwiftlyTextPane textPane)
-    {
-        _undoButton.setAction(textPane.getUndoAction());
-        _redoButton.setAction(textPane.getRedoAction());
-    }
-
     protected void setupToolbar ()
     {
         // TODO add mini icons for these + tooltips with keyboard shortcuts
@@ -38,13 +32,6 @@ public class EditorToolBar extends JToolBar
         export.setFont(export.getFont().deriveFont(Font.BOLD));
         add(export);
 
-        // undo/redo actions get set by updateEditorActions()
-        addSeparator();
-        _undoButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.undo"));
-        add(_undoButton);
-        _redoButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.redo"));
-        add(_redoButton);
-
         setFloatable(false);
     }
 
@@ -53,6 +40,4 @@ public class EditorToolBar extends JToolBar
     protected SwiftlyEditor _editor;
 
     protected JButton _saveButton;
-    protected JButton _undoButton;
-    protected JButton _redoButton;
 }
