@@ -19,8 +19,8 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemDetail;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.shell.Page;
 import client.util.BorderedDialog;

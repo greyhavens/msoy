@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemDetail;
+import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.editem.ItemEditor;
 import client.item.BaseItemDetailPanel;

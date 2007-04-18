@@ -17,8 +17,8 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.item.data.all.CatalogListing;
-import com.threerings.msoy.item.data.all.ItemDetail;
+import com.threerings.msoy.item.data.gwt.CatalogListing;
+import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.item.BaseItemDetailPanel;
 import client.shell.Application;

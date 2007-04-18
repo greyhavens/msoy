@@ -17,8 +17,8 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemDetail;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.editem.EditorHost;
 import client.editem.ItemEditor;

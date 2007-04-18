@@ -18,10 +18,12 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.gwt.ui.InlineLabel;
+
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemDetail;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.editem.EditorHost;
 import client.util.BorderedDialog;

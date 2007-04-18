@@ -11,8 +11,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
-import com.threerings.msoy.item.data.all.CatalogListing;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.gwt.CatalogListing;
 
 import client.util.ItemUtil;
 import client.util.MediaUtil;

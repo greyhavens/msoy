@@ -8,9 +8,10 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
-import com.threerings.msoy.item.data.all.CatalogListing;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.gwt.CatalogListing;
+
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 

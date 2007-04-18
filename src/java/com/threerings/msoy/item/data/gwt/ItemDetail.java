@@ -1,12 +1,14 @@
 //
 // $Id$
 
-package com.threerings.msoy.item.data.all;
+package com.threerings.msoy.item.data.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
+
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.Item;
 
 /**
  * This class supplies detailed information for an item, some of which is

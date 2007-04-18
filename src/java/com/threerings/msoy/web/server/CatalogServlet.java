@@ -15,28 +15,30 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
 
+import com.threerings.presents.data.InvocationCodes;
+
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
-import com.threerings.msoy.web.client.CatalogService;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
-
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.persist.TagPopularityRecord;
+
 import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
-import com.threerings.msoy.item.data.all.CatalogListing;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.server.persist.TagPopularityRecord;
-import com.threerings.presents.data.InvocationCodes;
+
+import com.threerings.msoy.web.client.CatalogService;
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.WebCreds;
 
 import static com.threerings.msoy.Log.log;
 

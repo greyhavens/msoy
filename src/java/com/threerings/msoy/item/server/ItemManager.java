@@ -39,8 +39,8 @@ import com.threerings.msoy.world.data.FurniData;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemDetail;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import com.threerings.msoy.item.data.ItemCodes;
 
