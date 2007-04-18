@@ -63,6 +63,7 @@ public class FriendEntry
             (getMemberId() == (other as FriendEntry).getMemberId());
     }
 
+    //
     public function toString () :String
     {
         return "FriendEntry[" + name + "]";
