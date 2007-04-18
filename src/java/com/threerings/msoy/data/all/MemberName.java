@@ -5,6 +5,7 @@ package com.threerings.msoy.data.all;
 
 import java.util.Comparator;
 
+import com.threerings.util.ActionScript;
 import com.threerings.util.Name;
 
 /**
@@ -13,6 +14,7 @@ import com.threerings.util.Name;
 public class MemberName extends Name
 {
     /** A comparator for sorting Names by their display portion, case insensitively. */
+    @ActionScript(omit=true)
     public static final Comparator BY_DISPLAY_NAME = new Comparator() {
         public int compare (Object o1, Object o2) {
             return compare((MemberName)o1, (MemberName)o2);
@@ -99,6 +101,7 @@ public class MemberName extends Name
     /**
      * Compares two member name records case insensitively.
      */
+    @ActionScript(omit=true)
     protected static int compare (MemberName m1, MemberName m2)
     {
         return m1.toString().toLowerCase().compareTo(m2.toString().toLowerCase());

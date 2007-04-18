@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 import com.threerings.presents.dobj.DSet;
+import com.threerings.util.ActionScript;
 
 /**
  * Summarizes a person's membership in a group.
@@ -50,6 +51,7 @@ public class GroupMembership
     /** 
      * Get the date this member's rank was assigned on as a Date object.
      */
+    @ActionScript(omit=true)
     public Date getRankAssignedDate () 
     {
         return new Date(rankAssignedDate);
