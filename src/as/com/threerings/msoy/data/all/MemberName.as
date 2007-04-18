@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.data.all {
 
+import com.threerings.util.Hashable;
 import com.threerings.util.Name;
 
 import com.threerings.io.ObjectInputStream;
@@ -12,13 +13,22 @@ import com.threerings.io.ObjectOutputStream;
  * Extends Name with persistent member information.
  */
 public class MemberName extends Name
+    implements Hashable
 {
     /** A sort function for sorting Names by their display portion, case insensitively.  */
     public static const BY_DISPLAY_NAME :Function = function (n1 :Name, n2 :Name) :int {
-        var s1 :String = n1.toString().toLowerCase();
-        var s2 :String = n2.toString().toLowerCase();
-        return s1.localeCompare(s2);
+        return compare(n1, n2);
     };
+
+    /** Used to reprepsent a member that has been deleted but is still referenced as an item
+     * creator or mail message sender, etc. */
+    public static const DELETED_MEMBER :MemberName = new MemberName("", -1);
+
+    /** The minimum allowable length of a permaname. */
+    public static const MINIMUM_PERMANAME_LENGTH :int = 4;
+
+    /** The maximum allowable length of a permaname. */
+    public static const MAXIMUM_PERMANAME_LENGTH :int = 12;
 
     /** The "member id" used for guests. */
     public static const GUEST_ID :int = 0;
@@ -40,6 +50,7 @@ public class MemberName extends Name
         return _memberId;
     }
 
+    // from Name
     override public function hashCode () :int
     {
         // we return a different hash for guests so that they don't end up all in the same bucket
@@ -47,15 +58,7 @@ public class MemberName extends Name
         return (_memberId != GUEST_ID) ? _memberId : super.hashCode();
     }
 
-    override public function equals (other :Object) :Boolean
-    {
-        if (other is MemberName) {
-            var otherId :int = (other as MemberName).getMemberId();
-            return (otherId == _memberId) && ((_memberId != GUEST_ID) || super.equals(other));
-        }
-        return false;
-    }
-
+    // from Name
     override public function compareTo (o :Object) :int
     {
         var that :MemberName = MemberName(o);
@@ -70,21 +73,42 @@ public class MemberName extends Name
        return (_memberId != GUEST_ID) ? 0 : BY_DISPLAY_NAME(this, that);
     }
 
-    override protected function normalize (name :String) :String
+    // from Name
+    override public function equals (other :Object) :Boolean
     {
-        return name; // do not adjust
+        if (other is MemberName) {
+            var otherId :int = (other as MemberName).getMemberId();
+            return (otherId == _memberId) && ((_memberId != GUEST_ID) || super.equals(other));
+        }
+        return false;
     }
 
+    // from interface Streamable
+    override public function readObject (ins :ObjectInputStream) :void
+    {
+        super.readObject(ins);
+        _memberId = ins.readInt();
+    }
+
+    // from interface Streamable
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
         out.writeInt(_memberId);
     }
 
-    override public function readObject (ins :ObjectInputStream) :void
+    // from Name
+    override protected function normalize (name :String) :String
     {
-        super.readObject(ins);
-        _memberId = ins.readInt();
+        return name; // do not adjust
+    }
+
+    /**
+     * Compares two member name records case insensitively.
+     */
+    protected static function compare (n1 :Name, n2 :Name) :int
+    {
+        return n1.toString().toLowerCase().localeCompare(n2.toString().toLowerCase());
     }
 
     /** The member id of the member we represent. */
