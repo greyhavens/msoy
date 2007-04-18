@@ -100,17 +100,15 @@ NumericStepper {
   highlightAlphas: 0, 0;
   fillAlphas: 1, 1, 1, 1;
   fillColors: #dadfe3, #9eabb2, #dadfe3, #9eabb2;
-  themeColor: #ff0099;
 }
 
 ComboBox {
   highlightAlphas: 0.26, 0;
   fillAlphas: 1, 1, 1, 1;
   fillColors: #dadfe3, #9eabb2, #9eabb2, #dadfe3;
-  selectionColor: #ff0099;
+  selectionColor: #54a9da;
   useRollOver: true;
   rollOverColor: #c8d0d3;
-  themeColor: #ff0099;
 }
 
 CheckBox {
@@ -118,7 +116,6 @@ CheckBox {
   highlightAlphas: 0, 0;
   fillAlphas: 0, 0, 0.75, 0.65;
   fillColors: #403424, #403424, #ffffff, #eeeeee;
-  themeColor: #ff0099;
 }
 
 RadioButton {
@@ -126,7 +123,6 @@ RadioButton {
   highlightAlphas: 0, 0;
   fillAlphas: 0, 0, 0.75, 0.65;
   fillColors: #403424, #403424, #ffffff, #eeeeee;
-  themeColor: #ff0099;
 }
 
 HSlider {
@@ -137,7 +133,6 @@ HSlider {
   tickOffset: -3;
   tickThickness: 1;
   showTrackHighlight: false;
-  themeColor: #ff0099;
   fillAlphas: 1, 1, 1, 1;
   fillColors: #d5dcdf, #9eabb2, #9eabb2, #d5dcdf;
 }
@@ -146,7 +141,6 @@ Button {
   paddingBottom: 3;
   fillAlphas: 1, 1, 1, 1;
   fillColors: #d5dcdf, #9ba8b0, #9ba8b0, #d5dcdf;
-  themeColor: #ff0099;
   disabledSkin: Embed(source="../../rsrc/media/skins/button/disabled.png",
           scaleGridTop="1", scaleGridBottom="19",
           scaleGridLeft="2", scaleGridRight="19");
@@ -176,11 +170,9 @@ Button {
 PopUpButton {
   fillAlphas: 1, 1, 1, 1;
   fillColors: #d5dcdf, #9ba8b0, #9ba8b0, #d5dcdf;
-  themeColor: #ff0099;
 }
 
 ButtonBar {
-  themeColor: #ff0099;
   buttonStyleName: "msoyButtonBar";
 }
 
@@ -375,7 +367,7 @@ MenuBar {
   fillAlphas: 1, 1;
   fillColors: #d2d8dc, #9ba8b0;
   rollOverColor: #c8d0d3;
-  selectionColor: #ff0099;
+  selectionColor: #54a9da;
   themeColor: #999999;
 }
 
@@ -387,17 +379,20 @@ HRule {
 
 LinkButton {
   rollOverColor: #d2d8dc;
-  selectionColor: #ff0099;
+  selectionColor: #54a9da;
 }
 
 ProgressBar {
-  barColor: #ff0099;
+  barColor: #54a9da;
 }
 
-ListBase
-{
+ListBase {
   rollOverColor: #c8d0d3;
   selectionColor: #54a9da;
+}
+
+Tree {
+  openDuration: 0;
 }
 
 .roomToolTip {
