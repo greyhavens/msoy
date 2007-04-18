@@ -72,7 +72,10 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
         new ColumnExp(CloneRecord.class, LOCATION);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 3;
+    public static final int BASE_SCHEMA_VERSION = 3;
+    public static final int BASE_MULTIPLIER = 1000;
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
+
 
     /** This clone's ID, unique relative all items of the same type. */
     @Id

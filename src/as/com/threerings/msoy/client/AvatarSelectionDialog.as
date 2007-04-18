@@ -4,6 +4,7 @@
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
+import flash.display.Sprite;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -123,6 +124,7 @@ public class AvatarSelectionDialog extends FloatingPanel
 
         if (inventoryReady()) {
             fillWithAvatars(); 
+
         } else {
             // Add a single "loading..." label
             var row :GridRow = new GridRow();
@@ -140,59 +142,78 @@ public class AvatarSelectionDialog extends FloatingPanel
     /** As the name says, fills the grid. */
     protected function fillWithAvatars () :void
     {
-        if (inventoryReady()) {
-            _avatars.removeAllChildren();
-            
-            // Get avatars from player's inventory
-            var items :Array = _memberObj.getItems(Item.AVATAR);
+        if (!inventoryReady()) {
+            return;
+        }
 
-            // hide any 'used' avatars for now
-            for (var ii :int = items.length - 1; ii >= 0; ii--) {
-                if ((items[ii] as Item).isUsed()) {
-                    items.splice(ii, 1);
-                }
+        _avatars.removeAllChildren();
+        
+        // Get avatars from player's inventory
+        var items :Array = _memberObj.getItems(Item.AVATAR);
+
+        // hide any 'used' avatars, unless we're wearing them
+        for (var ii :int = items.length - 1; ii >= 0; ii--) {
+            var item :Item = (items[ii] as Item);
+            if (item.isUsed() && !item.equals(_memberObj.avatar)) {
+                items.splice(ii, 1);
+            }
+        }
+
+        // Add a default avatar
+        var defaultAvatar :Avatar = new Avatar();
+        defaultAvatar.name = Msgs.GENERAL.get("m.default_avatar");
+        defaultAvatar.avatarMedia = defaultAvatar.thumbMedia =
+            Avatar.getDefaultMemberAvatarMedia();
+        items.push(defaultAvatar); 
+
+        // Fill the grid
+        var row :GridRow = null;
+        for (var i :int = 0; i < items.length; i++) {
+            // Add a new row if necessary
+            if (i % ITEMS_PER_ROW == 0) {
+                row = new GridRow();
+                _avatars.addChild(row);
             }
 
-            // Add a default avatar
-            var defaultAvatar :Avatar = new Avatar();
-            defaultAvatar.name = Msgs.GENERAL.get("m.default_avatar");
-            defaultAvatar.avatarMedia = defaultAvatar.thumbMedia =
-                Avatar.getDefaultMemberAvatarMedia();
-            items.push(defaultAvatar); 
+            // Add item
+            var cell :GridItem = new GridItem();
+            var render :ItemRenderer = new ItemRenderer(BoxDirection.VERTICAL);
+            render.data = items[i];
+            cell.addChild(render);
+            cell.addEventListener(MouseEvent.CLICK, clickHandler, false, 0, true);
+            row.addChild(cell);
 
-            // Fill the grid
-            var row :GridRow = null;
-            for (var i :int = 0; i < items.length; i++) {
-                // Add a new row if necessary
-                if (i % ITEMS_PER_ROW == 0) {
-                    row = new GridRow();
-                    _avatars.addChild(row);
+            var resize :DisplayObject = (new RESIZE() as DisplayObject);
+            var spr :Sprite = new Sprite();
+            resize.x = -resize.width;
+            resize.y = -resize.height;
+            spr.addChild(resize);
+            spr.addEventListener(MouseEvent.CLICK, resizeClickHandler);
+            spr.x = ItemRenderer.ITEM_SIZE;
+            spr.y = ItemRenderer.ITEM_SIZE;
+            cell.rawChildren.addChild(spr);
+
+            // Should this item be marked as selected?
+            if (_memberObj.avatar == null) {
+                if (items[i] == defaultAvatar) {
+                    cell.styleName = "avatarCellSelected"; 
                 }
-
-                // Add item
-                var cell :GridItem = new GridItem();
-                var render :ItemRenderer = new ItemRenderer(BoxDirection.VERTICAL);
-                render.data = items[i];
-                cell.addChild(render);
-                cell.addEventListener(MouseEvent.CLICK, clickHandler, false, 0, true);
-                row.addChild(cell);
-
-                // Should this item be marked as selected?
-                if (_memberObj.avatar == null) {
-                    if (items[i] == defaultAvatar) {
-                        cell.styleName = "avatarCellSelected"; 
-                    }
-                } else if (_memberObj.avatar.itemId == items[i].itemId) {
-                    cell.styleName = "avatarCellSelected";     
-                }
+            } else if (_memberObj.avatar.itemId == items[i].itemId) {
+                cell.styleName = "avatarCellSelected";     
             }
         }
     }
     
     /** Handle user's avatar selection. */
-    protected function clickHandler (event :MouseEvent) :void
+    protected function clickHandler (event :MouseEvent, doResize :Boolean = false) :void
     {
-        var t :GridItem = event.currentTarget as GridItem;
+        var t :GridItem;
+        if (event.currentTarget is GridItem) {
+            t = (event.currentTarget as GridItem);
+
+        } else {
+            t = ((event.currentTarget as DisplayObject).parent as GridItem);
+        }
 
         // Get the first child of this grid item - it should be an ItemRenderer
         if (t != null && t.rawChildren.numChildren > 0) {
@@ -201,7 +222,12 @@ public class AvatarSelectionDialog extends FloatingPanel
                 // Pull out the avatar, and set it!
                 var item :Item = render.data as Item;
                 if (item != null) {
-                    _ctx.getWorldDirector().setAvatar(item.itemId);
+                    if (doResize) {
+                        _ctx.getWorldDirector().setAvatar(item.itemId, .5);
+
+                    } else {
+                        _ctx.getWorldDirector().setAvatar(item.itemId, 1);
+                    }
                     close();
                 }
             }
@@ -209,10 +235,22 @@ public class AvatarSelectionDialog extends FloatingPanel
             
     }
 
+    /**
+     * Handles clicks on the little resize icon.
+     */
+    protected function resizeClickHandler (event :MouseEvent) :void
+    {
+        clickHandler(event, true);
+        event.stopImmediatePropagation();
+    }
+
     /** Client's object. */
     protected var _memberObj :MemberObject;
 
     /** Grid that will be filled with avatars. */
     protected var _avatars :Grid;
+
+    [Embed(source="../../../../../../rsrc/media/avatar_resize.png")]
+    protected static const RESIZE :Class;
 }
 }

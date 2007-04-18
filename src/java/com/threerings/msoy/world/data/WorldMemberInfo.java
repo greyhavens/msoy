@@ -46,27 +46,19 @@ public class WorldMemberInfo extends MemberInfo
 
         if (user.avatar != null) {
             _media = user.avatar.avatarMedia;
+            _scale = user.avatar.scale;
+
         } else if (user.isGuest()) {
             _media = Avatar.getDefaultGuestAvatarMedia();
+            _scale = 1f;
+
         } else {
             _media = Avatar.getDefaultMemberAvatarMedia();
+            _scale = 1f;
         }
 
         state = user.avatarState;
         pendingGame = user.pendingGame;
-
-        // TODO
-        _scale = 1f;
-//        float val = (float) Math.random();
-//        if (val < .333333) {
-//            _scale = (float) Math.random();
-//
-//        } else if (val < .6666666) {
-//            _scale = 1f;
-//
-//        } else {
-//            _scale = 1f + (float) (30 * Math.random());
-//        }
     }
 
     // from interface WorldOccupantInfo

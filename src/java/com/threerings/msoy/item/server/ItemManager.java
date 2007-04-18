@@ -95,7 +95,7 @@ public class ItemManager
         // create our various repositories
         repo = new AudioRepository(conProv);
         _repos.put(Item.AUDIO, repo);
-        repo = new AvatarRepository(conProv);
+        repo = (_avatarRepo = new AvatarRepository(conProv));
         _repos.put(Item.AVATAR, repo);
         repo = new DocumentRepository(conProv);
         _repos.put(Item.DOCUMENT, repo);
@@ -131,6 +131,14 @@ public class ItemManager
     public PetRepository getPetRepository ()
     {
         return _petRepo;
+    }
+
+    /**
+     * Provides a reference to the {@link AvatarRepository} which is used to load pets into rooms.
+     */
+    public AvatarRepository getAvatarRepository ()
+    {
+        return _avatarRepo;
     }
 
     /**
@@ -279,13 +287,11 @@ public class ItemManager
      * question. The supplied listener will be notified of success with null.
      */
     public void updateItemUsage (
-        final int memberId, final Avatar oldAvatar, final Avatar newAvatar,
-        final ResultListener<Object> listener)
+        int memberId, Avatar oldAvatar, Avatar newAvatar, ResultListener<Object> listener)
     {
-        updateItemUsage (Item.AVATAR, Item.USED_AS_AVATAR, memberId, memberId,
-                         oldAvatar != null ? oldAvatar.itemId : 0,
-                         newAvatar != null ? newAvatar.itemId : 0,
-                         listener);
+        updateItemUsage(Item.AVATAR, Item.USED_AS_AVATAR, memberId, memberId,
+            (oldAvatar != null) ? oldAvatar.itemId : 0, (newAvatar != null) ? newAvatar.itemId : 0,
+            listener);
     }
         
     /**
@@ -1176,6 +1182,9 @@ public class ItemManager
 
     /** Contains a reference to our pet repository. See {@link #_gameRepository} for complaint. */
     protected PetRepository _petRepo;
+
+    /** Contains a reference to our avatar repository. See {@link #_gameRepository} for complaint. */
+    protected AvatarRepository _avatarRepo;
 
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord, ?, ?, ?>> _repos =

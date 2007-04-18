@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
@@ -34,9 +35,16 @@ public class AvatarRecord extends ItemRecord
     /** The qualified column identifier for the {@link #avatarMimeType} field. */
     public static final ColumnExp AVATAR_MIME_TYPE_C =
         new ColumnExp(AvatarRecord.class, AVATAR_MIME_TYPE);
+
+    /** The column identifier for the {@link #scale} field. */
+    public static final String SCALE = "scale";
+
+    /** The qualified column identifier for the {@link #scale} field. */
+    public static final ColumnExp SCALE_C =
+        new ColumnExp(AvatarRecord.class, SCALE);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1 +
+    public static final int SCHEMA_VERSION = 2 +
         BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     /** A hash code identifying the avatar media. */
@@ -44,6 +52,10 @@ public class AvatarRecord extends ItemRecord
 
     /** The MIME type of the {@link #avatarMediaHash} media. */
     public byte avatarMimeType;
+
+    /** The scaling to apply to the avatar. */
+    @Column(defaultValue="1")
+    public float scale;
 
     public AvatarRecord ()
     {
@@ -58,6 +70,7 @@ public class AvatarRecord extends ItemRecord
             avatarMediaHash = avatar.avatarMedia.hash;
             avatarMimeType = avatar.avatarMedia.mimeType;
         }
+        scale = avatar.scale;
     }
 
     @Override // from ItemRecord
@@ -66,12 +79,21 @@ public class AvatarRecord extends ItemRecord
         return Item.AVATAR;
     }
 
+    @Override // from ItemRecord
+    public void initFromClone (CloneRecord clone)
+    {
+        super.initFromClone(clone);
+
+        this.scale = ((AvatarCloneRecord) clone).scale;
+    }
+
     @Override
     protected Item createItem ()
     {
         Avatar object = new Avatar();
         object.avatarMedia = avatarMediaHash == null ? null :
             new MediaDesc(avatarMediaHash, avatarMimeType);
+        object.scale = scale;
         return object;
     }
 }

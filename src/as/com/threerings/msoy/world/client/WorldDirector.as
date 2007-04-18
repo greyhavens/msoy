@@ -46,10 +46,12 @@ public class WorldDirector extends BasicDirector
 
     /**
      * Request a change to our avatar.
+     *
+     * @param newScale a new scale to use, or 0 to retain the avatar's last scale.
      */
-    public function setAvatar (avatarId :int) :void
+    public function setAvatar (avatarId :int, newScale :Number = 0) :void
     {
-        _msvc.setAvatar(_mctx.getClient(), avatarId, new ReportingListener(_mctx));
+        _msvc.setAvatar(_mctx.getClient(), avatarId, newScale, new ReportingListener(_mctx));
     }
 
     /**

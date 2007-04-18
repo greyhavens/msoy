@@ -320,7 +320,8 @@ public class MemberManager
 
     // from interface MemberProvider
     public void setAvatar (
-        ClientObject caller, int avatarItemId, final InvocationService.InvocationListener listener)
+        ClientObject caller, int avatarItemId, final float newScale,
+        final InvocationService.InvocationListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
@@ -328,7 +329,7 @@ public class MemberManager
 
         if (avatarItemId == 0) {
             // a request to return to the default avatar
-            finishSetAvatar(user, null, listener);
+            finishSetAvatar(user, null, newScale, listener);
             return;
         }
 
@@ -342,7 +343,7 @@ public class MemberManager
                     requestFailed(new Exception("An avatar that the user " +
                         "does not own was specified!"));
                 } else {
-                    finishSetAvatar(user, avatar, listener);
+                    finishSetAvatar(user, avatar, newScale, listener);
                 }
             }
             public void requestFailed (Exception cause) {
@@ -753,16 +754,22 @@ public class MemberManager
      * @param avatar may be null to revert to the default member avatar.
      */
     protected void finishSetAvatar (
-        final MemberObject user, final Avatar avatar,
+        final MemberObject user, final Avatar avatar, final float newScale,
         final InvocationService.InvocationListener listener)
     {
         MsoyServer.invoker.postUnit(new RepositoryUnit("setAvatarPt2") {
             public void invokePersist () throws PersistenceException {
                 _memberRepo.configureAvatarId(user.getMemberId(),
                     (avatar == null) ? 0 : avatar.itemId);
+                if (newScale != 0 && avatar != null && avatar.scale != newScale) {
+                    MsoyServer.itemMan.getAvatarRepository().updateScale(avatar.itemId, newScale);
+                }
             }
 
             public void handleSuccess () {
+                if (newScale != 0 && avatar != null) {
+                    avatar.scale = newScale;
+                }
                 MsoyServer.itemMan.updateItemUsage(
                     user.getMemberId(), user.avatar, avatar, new ResultListener.NOOP<Object>() {
                     public void requestFailed (Exception cause) {
@@ -777,6 +784,7 @@ public class MemberManager
             public void handleFailure (Exception pe) {
                 log.warning("Unable to set avatar [user=" + user.which() +
                             ", avatar='" + avatar + "', " + "error=" + pe + "].");
+                log.log(Level.WARNING, "", pe);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });

@@ -131,11 +131,7 @@ public abstract class ItemRepository<
                 "Clone's original does not exist [cloneId=" + cloneId +
                 ", originalItemId=" + cloneRecord.originalItemId + "]");
         }
-        clone.parentId = clone.itemId;
-        clone.itemId = cloneRecord.itemId;
-        clone.ownerId = cloneRecord.ownerId;
-        clone.used = cloneRecord.used;
-        clone.location = cloneRecord.location;
+        clone.initFromClone(cloneRecord);
         return clone;
     }
 

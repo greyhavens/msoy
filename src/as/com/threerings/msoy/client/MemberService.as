@@ -28,7 +28,7 @@ public interface MemberService extends InvocationService
     function purchaseRoom (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
-    function setAvatar (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
+    function setAvatar (arg1 :Client, arg2 :int, arg3 :Number, arg4 :InvocationService_InvocationListener) :void;
 
     // from Java interface MemberService
     function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void;

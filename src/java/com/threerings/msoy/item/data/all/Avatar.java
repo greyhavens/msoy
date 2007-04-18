@@ -11,6 +11,9 @@ public class Avatar extends Item
     /** The avatar media. */
     public MediaDesc avatarMedia;
 
+    /** The scaling to apply to the avatar media. */
+    public float scale;
+
     /**
      * Returns a {@link MediaDesc} configured to display the default non-guest avatar.
      */

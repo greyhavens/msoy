@@ -14,6 +14,9 @@ public class Avatar extends Item
     /** The avatar media. */
     public var avatarMedia :MediaDesc;
 
+    /** The scale to apply to the avatar media. */
+    public var scale :Number;
+
     /**
      * Returns a {@link MediaDesc} configured to display the default non-guest avatar.
      */
@@ -57,6 +60,7 @@ public class Avatar extends Item
     {
         super.readObject(ins);
         avatarMedia = (ins.readObject() as MediaDesc);
+        scale = ins.readFloat();
     }
 
     // from interface Streamable
@@ -64,6 +68,7 @@ public class Avatar extends Item
     {
         super.writeObject(out);
         out.writeObject(avatarMedia);
+        out.writeFloat(scale);
     }
 
     // from Item

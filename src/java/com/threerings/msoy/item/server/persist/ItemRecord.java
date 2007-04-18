@@ -318,6 +318,20 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     }
 
     /**
+     * Initialize this record so that it actually represents the specified clone.
+     */
+    public void initFromClone (CloneRecord clone)
+    {
+        // copy our itemId to parent, and take the clone's itemId
+        this.parentId = this.itemId;
+        this.itemId = clone.itemId;
+
+        this.ownerId = clone.ownerId;
+        this.used = clone.used;
+        this.location = clone.location;
+    }
+
+    /**
      * Build a POJO version of this Record, for use outside the persistence system.
      */
     public Item toItem ()

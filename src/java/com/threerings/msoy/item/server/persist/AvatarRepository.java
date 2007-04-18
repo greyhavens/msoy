@@ -3,11 +3,15 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import com.samskivert.io.PersistenceException;
+
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages the persistent store of {@link AvatarRecord} items.
@@ -31,6 +35,19 @@ public class AvatarRepository extends ItemRepository<
     public AvatarRepository (ConnectionProvider provider)
     {
         super(provider);
+    }
+
+    /**
+     * Update the scale of the specified avatar.
+     */
+    public void updateScale (int avatarId, float newScale)
+        throws PersistenceException
+    {
+        int result = updatePartial((avatarId > 0) ? getItemClass() : getCloneClass(),
+            avatarId, (avatarId > 0) ? AvatarRecord.SCALE : AvatarCloneRecord.SCALE, newScale);
+        if (0 == result) {
+            log.warning("Unable to find avatar to update scale [avatarId=" + avatarId + "].");
+        }
     }
 
     @Override
