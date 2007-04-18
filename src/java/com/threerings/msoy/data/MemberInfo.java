@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data;
 
+import com.threerings.util.ActionScript;
+
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -21,6 +23,7 @@ public class MemberInfo extends ActorInfo
     /**
      * Creates a member info for the supplied user.
      */
+    @ActionScript(omit=true)
     public MemberInfo (MemberObject user)
     {
         super(user, (user.avatar != null) ? user.avatar.getIdent() :

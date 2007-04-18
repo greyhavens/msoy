@@ -1,22 +1,27 @@
+//
+// $Id$
+
 package com.threerings.msoy.data;
 
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
+import com.threerings.util.ActionScript;
 
 /**
- * Represent an action taken by a user; used in logs for humanity assessment and
- * conversion analysis purposes.
+ * Represent an action taken by a user; used in logs for humanity assessment and conversion
+ * analysis purposes.
  */
+@ActionScript(omit=true)
 public enum UserAction
 {
     CREATED_PROFILE(1, 500),
     UPDATED_PROFILE(2, 50),
-    
+
     SENT_FRIEND_INVITE(10, 300),
     ACCEPTED_FRIEND_INVITE(11, 200),
-    
+
     PLAYED_GAME(20, 300),
-    
+
     CREATED_ITEM(30, 200),
     BOUGHT_ITEM(31, 0),
     LISTED_ITEM(32, 0),
@@ -53,6 +58,9 @@ public enum UserAction
         _flow = flow;
     }
 
+    protected int _num;
+    protected int _flow;
+
     protected static IntMap<UserAction> _reverse;
     static {
         _reverse = new HashIntMap<UserAction>();
@@ -60,7 +68,4 @@ public enum UserAction
             _reverse.put(type.getNumber(), type);
         }
     }
-
-    protected int _num;
-    protected int _flow;
 }

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data;
 
+import com.threerings.util.ActionScript;
+
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -20,6 +22,7 @@ public class ActorInfo extends OccupantInfo
     /**
      * Creates an info record for the specified actor.
      */
+    @ActionScript(omit=true)
     public ActorInfo (MsoyBodyObject body, ItemIdent ident)
     {
         super(body);

@@ -4,14 +4,16 @@
 package com.threerings.msoy.data;
 
 import com.samskivert.util.StringUtil;
+import com.threerings.util.ActionScript;
+import com.threerings.util.MessageBundle;
 
 import com.threerings.stats.data.IntStat;
 import com.threerings.stats.data.Stat;
-import com.threerings.util.MessageBundle;
 
 /**
  * Enumerates the various stats used in Whirled.
  */
+@ActionScript(omit=true)
 public enum StatType implements Stat.Type
 {
     UNUSED(new IntStat());

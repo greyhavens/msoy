@@ -4,14 +4,19 @@
 package com.threerings.msoy.data;
 
 import com.samskivert.util.IntTuple;
+
 import com.threerings.io.SimpleStreamableObject;
+import com.threerings.util.ActionScript;
+
+import com.threerings.whirled.server.SceneManager;
+
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.world.data.MsoySceneModel;
-import com.threerings.whirled.server.SceneManager;
 
 /**
  * Represent a single place in the top list of populated places.
  */
+@ActionScript(omit=true)
 public abstract class PopularPlace extends SimpleStreamableObject
 {
     public static class PopularPlaceOwner extends IntTuple

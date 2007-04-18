@@ -5,8 +5,10 @@ package com.threerings.msoy.data;
 
 import com.samskivert.servlet.user.Password;
 
-import com.threerings.presents.net.UsernamePasswordCreds;
+import com.threerings.util.ActionScript;
 import com.threerings.util.Name;
+
+import com.threerings.presents.net.UsernamePasswordCreds;
 
 /**
  * Contains extra information used during authentication with the game server.
@@ -38,6 +40,7 @@ public class MsoyCredentials extends UsernamePasswordCreds
     }
 
     @Override // documentation inherited
+    @ActionScript(name="toStringBuf")
     protected void toString (StringBuilder buf)
     {
         super.toString(buf);
