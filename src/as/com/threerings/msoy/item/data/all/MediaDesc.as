@@ -372,7 +372,7 @@ public class MediaDesc
     // documentation inherited from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        hash = (ins.readObject() as ByteArray);
+        hash = (ins.readField() as ByteArray);
         mimeType = ins.readByte();
         constraint = ins.readByte();
     }
@@ -380,7 +380,7 @@ public class MediaDesc
     // documentation inherited from interface Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
-        out.writeObject(hash);
+        out.writeField(hash);
         out.writeByte(mimeType);
         out.writeByte(constraint);
     }
