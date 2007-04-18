@@ -201,6 +201,7 @@ public abstract class Page
         _content.setCellPadding(0);
         _content.setCellSpacing(0);
         _content.setWidth("100%");
+        _content.setHeight("100%");
         _content.getFlexCellFormatter().setStyleName(0, 0, "pageHeaderTitle");
         _content.getFlexCellFormatter().setStyleName(0, 1, "pageHeaderContent");
         _content.getFlexCellFormatter().setStyleName(0, 2, "pageHeaderClose");
