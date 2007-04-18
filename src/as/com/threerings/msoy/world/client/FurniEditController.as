@@ -13,6 +13,7 @@ import com.threerings.io.TypedArray;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 
 
@@ -34,9 +35,10 @@ public class FurniEditController
         // when we enter the state, and removed when we leave the state.
         _listeners = {
             EditOff:      [ ], // no special listeners
-            EditShowMenu: [ ], // not here, either - all activity is handled by the buttons
+            EditShowMenu: [ ], // not here, either - all activity is handled by buttons
             EditMove:     [ [ MouseEvent.MOUSE_MOVE, handleMouseInMoveMode ],
-                            [ MouseEvent.CLICK, handleClickInMoveMode ] ]
+                            [ MouseEvent.CLICK, handleClickInMoveMode ],
+                            [ KeyboardEvent.KEY_DOWN, handleKeyboardInMoveMode ] ]
             };
 
         // create a collection of button definitions. handlers are closures on this instance.
@@ -97,8 +99,8 @@ public class FurniEditController
         var oldMode :String = _mode;
         _mode = newMode;
 
-        removeListenersForMode (oldMode);
-        addListenersForMode (newMode);
+        addOrRemoveListeners (oldMode, false);
+        addOrRemoveListeners (newMode, true);
 
         if (newMode == EDIT_SHOWMENU) {
             _buttonPanel.visible = true;
@@ -134,7 +136,7 @@ public class FurniEditController
         setMode(EDIT_SHOWMENU);
 
         // make a copy of furni data, so we can modify it in peas
-        _furniData = furni.getFurniData().clone() as FurniData;
+        _originalFurniData = furni.getFurniData().clone() as FurniData;
     }
 
     /**
@@ -144,15 +146,17 @@ public class FurniEditController
     protected function commit () :void
     {
         // tell the server
-        if (! _furniData.equivalent(_furni.getFurniData())) {
+        if (! _originalFurniData.equivalent(_furni.getFurniData())) {
             var edits :TypedArray = TypedArray.create(SceneUpdate);
+            var oldFurni :TypedArray = TypedArray.create(FurniData);
             var changedFurni :TypedArray = TypedArray.create(FurniData);
             var sceneId :int = _scene.getId();
             var version :int = _scene.getVersion();
             var furniUpdate :ModifyFurniUpdate = new ModifyFurniUpdate();
 
+            oldFurni.push(_originalFurniData);
             changedFurni.push(_furni.getFurniData());
-            furniUpdate.initialize(sceneId, version++, null, changedFurni);
+            furniUpdate.initialize(sceneId, version++, oldFurni, changedFurni);
             edits.push(furniUpdate);
         }
         deinit(edits);
@@ -163,10 +167,10 @@ public class FurniEditController
      * This will restore last known sprite data, and shut down the editor
      * (calling the endCallback function).
      */
-    protected function cancel () :void
+    public function cancel () :void
     {
         // restore old furni data
-        _furni.update(_furniData);
+        _furni.update(_originalFurniData);
         deinit(null);
     }
 
@@ -194,7 +198,7 @@ public class FurniEditController
         
         _endCallback(edits);
 
-        _furniData = null;
+        _originalFurniData = null;
         _positionAtShift = null;
         _endCallback = null;
         _scene = null;
@@ -202,30 +206,31 @@ public class FurniEditController
         _furni = null;
     }
     
-    /** Adds the appropriate set of listeners for this mode. */
-    protected function addListenersForMode (mode :String) :void
-    {
-        modifyListeners(mode, _roomView.addEventListener);
-    }
-
-    /** Removes whatever listeners were added for this mode by addListenersForMode. */
-    protected function removeListenersForMode (mode :String) :void
-    {
-        modifyListeners(mode, _roomView.removeEventListener);
-    }
-
     /**
      * Given a mode name, looks up listener information in the _listeners collection,
-     * and calls the specified listenerRegistrationFn function on each entry.
+     * and either adds or removes the appropriate listeners (based on the addListener variable).
      */
-    protected function modifyListeners (mode :String, listenerRegistrationFn :Function) :void
+    protected function addOrRemoveListeners (mode :String, addListener :Boolean) :void
     {
         var listeners :Array = _listeners[mode];        // get listener entries for this mode
         if (listeners != null) {
-            for each (var pair :Array in listeners) {   // iterate over all entries and...
-                var type :String = pair[0] as String;
-                var listener :Function = pair[1] as Function;
-                listenerRegistrationFn(type, listener); // ... call the function on each entry
+            for each (var pair :Array in listeners)           // iterate over all entries
+            {
+                var type :String = pair[0] as String;         // get event type
+                var listener :Function = pair[1] as Function; // get event handler
+                
+                // first, figure out which entity we're working with (keyboard events want
+                // subscription on the stage object, everyone else on the room view).
+                var target :DisplayObject =
+                    (type == KeyboardEvent.KEY_DOWN || KeyboardEvent.KEY_UP)
+                    ? _roomView.stage : _roomView;
+                
+                // second, are we adding or removing?
+                var listenerSubscriptionFn :Function =
+                    addListener ? target.addEventListener : target.removeEventListener;
+
+                // now add or remove!
+                listenerSubscriptionFn(type, listener);
             }
         } else {
             Log.getLog(this).warning(
@@ -233,6 +238,17 @@ public class FurniEditController
         }
     }
 
+
+    
+    // FURNI MOVEMENT 
+
+    protected function moveFurni (loc :MsoyLocation, updateFurniData :Boolean = false) :void
+    {
+        _furni.setLocation(loc);
+        if (updateFurniData) {
+            _furni.getFurniData().loc = loc;
+        }
+    }
     
     /** Handles mouse movement during furni movement. */
     protected function handleMouseInMoveMode (event :MouseEvent) :void
@@ -241,7 +257,7 @@ public class FurniEditController
             _roomView.layout.pointToLocation(event.stageX, event.stageY, _positionAtShift);
         
         if (cloc.click == ClickLocation.FLOOR) {
-            _furni.setLocation(cloc.loc);            
+            moveFurni(cloc.loc, false);
         }
     }
 
@@ -252,9 +268,28 @@ public class FurniEditController
             _roomView.layout.pointToLocation(event.stageX, event.stageY, _positionAtShift);
         
         if (cloc.click == ClickLocation.FLOOR) {
+            moveFurni(cloc.loc, true);
             setMode(EDIT_SHOWMENU);
         }
     }
+
+    /** Handles key presses during furni movement  */
+    protected function handleKeyboardInMoveMode (event :KeyboardEvent) :void
+    {
+        if (event.keyCode == Keyboard.ESCAPE) {
+            moveFurni(_furni.getFurniData().loc, false); // revert to the last stored value
+            setMode(EDIT_SHOWMENU);
+        }
+
+        event.updateAfterEvent();
+    }
+
+
+    
+    // FURNI RESIZE
+
+
+    // GENERAL EVENT HANDLERS
 
     /**
      * Keeps track of the different keys used to modify edit settings.
@@ -273,11 +308,12 @@ public class FurniEditController
     }
 
     
+    
     /** Sprite being edited. */
     protected var _furni :FurniSprite;
 
     /** Backup copy of the original furni data, before we started editing it. */
-    protected var _furniData :FurniData;
+    protected var _originalFurniData :FurniData;
     
     /** Room view in which the editing happens. */
     protected var _roomView :RoomView;
