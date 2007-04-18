@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.data.all {
 
+import com.threerings.util.Comparable;
 import com.threerings.util.Hashable;
 
 import com.threerings.io.ObjectInputStream;
@@ -13,7 +14,7 @@ import com.threerings.io.Streamable;
  * A fully qualified item identifier (type and integer id).
  */
 public class ItemIdent
-    implements Hashable, Streamable
+    implements Comparable, Streamable, Hashable
 {
     /** The item type identifier. */
     public var type :int;
@@ -31,6 +32,38 @@ public class ItemIdent
     }
 
     // from Equalable
+    public function hashCode () :int
+    {
+        return (type * 37) | itemId;
+    }
+
+    // from Comparable
+    public function compareTo (other :Object) :int
+    {
+        var that :ItemIdent = (other as ItemIdent);
+
+        // first, compare by type.
+        if (this.type < that.type) {
+            return 1;
+
+        } else if (this.type > that.type) {
+            return -1;
+
+        } else {
+            // if type is equal, compare by item id
+            if (this.itemId < that.itemId) {
+                return 1;
+
+            } else if (this.itemId > that.itemId) {
+                return -1;
+
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    // from Equalable
     public function equals (other :Object) :Boolean
     {
         if (other is ItemIdent) {
@@ -38,12 +71,6 @@ public class ItemIdent
             return (this.type == that.type) && (this.itemId == that.itemId);
         }
         return false;
-    }
-
-    // from Equalable
-    public function hashCode () :int
-    {
-        return (type * 37) | itemId;
     }
 
     /**

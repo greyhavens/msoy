@@ -22,29 +22,54 @@ public class Avatar extends Item
         return new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "member");
     }
 
+    /**
+     * Returns a {@link MediaDesc} configured to display the default guest avatar.
+     */
+    public static function getDefaultGuestAvatarMedia () :MediaDesc
+    {
+        return new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "guest");
+    }
+
+    public function Avatar ()
+    {
+    }
+
+    // from Item
+    override public function isConsistent () :Boolean
+    {
+        return super.isConsistent() && (avatarMedia != null);
+    }
+
+    // from Item
+    override public function getPreviewMedia () :MediaDesc
+    {
+        return avatarMedia;
+    }
+
     // from Item
     override public function getType () :int
     {
         return AVATAR;
     }
 
-    override protected function getDefaultFurniMedia () :MediaDesc
-    {
-        return avatarMedia;
-    }
-
-    override public function writeObject (out :ObjectOutputStream) :void
-    {
-        super.writeObject(out);
-
-        out.writeObject(avatarMedia);
-    }
-
+    // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-
         avatarMedia = (ins.readObject() as MediaDesc);
+    }
+
+    // from interface Streamable
+    override public function writeObject (out :ObjectOutputStream) :void
+    {
+        super.writeObject(out);
+        out.writeObject(avatarMedia);
+    }
+
+    // from Item
+    override protected function getDefaultFurniMedia () :MediaDesc
+    {
+        return avatarMedia;
     }
 }
 }

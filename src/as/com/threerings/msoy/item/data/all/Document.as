@@ -14,23 +14,39 @@ public class Document extends Item
     /** The document media. */
     public var docMedia :MediaDesc;
 
+    public function Document ()
+    {
+    }
+
+    override public function isConsistent () :Boolean
+    {
+        return super.isConsistent() && (docMedia != null) && nonBlank(name);
+    }
+
+    // from Item
+    override public function getPreviewMedia () :MediaDesc
+    {
+        return getThumbnailMedia();
+    }
+
+    // from Item
     override public function getType () :int
     {
         return DOCUMENT;
     }
 
-    override public function writeObject (out :ObjectOutputStream) :void
-    {
-        super.writeObject(out);
-
-        out.writeObject(docMedia);
-    }
-
+    // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-
         docMedia = (ins.readObject() as MediaDesc);
+    }
+
+    // from interface Streamable
+    override public function writeObject (out :ObjectOutputStream) :void
+    {
+        super.writeObject(out);
+        out.writeObject(docMedia);
     }
 }
 }

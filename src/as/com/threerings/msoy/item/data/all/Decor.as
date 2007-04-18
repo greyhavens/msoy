@@ -20,7 +20,7 @@ public class Decor extends Item
      * that the background image IS the scene to the viewer. */
     public static const IMAGE_OVERLAY :int = 1;
 
-    /** A type constant indicating a background image that does not scroll. */
+    /** A type constant indicating a image that does not scroll. */
     public static const FIXED_IMAGE :int = 2;
 
     /** The number of type constants. */
@@ -28,10 +28,10 @@ public class Decor extends Item
 
     /** Room type. Controls how the background wallpaper image is handled. */
     public var type :int;
-    
+
     /** Room height, in pixels. */
     public var height :int;
-    
+
     /** Room width, in pixels. */
     public var width :int;
 
@@ -41,12 +41,52 @@ public class Decor extends Item
     /** Horizon position, in [0, 1]. */
     public var horizon :Number;
 
+    public function Decor ()
+    {
+    }
+
+    override public function isConsistent () :Boolean
+    {
+        return super.isConsistent() &&
+            type < TYPE_COUNT && width > 0 && height > 0 && depth > 0 &&
+            horizon <= 1 && horizon >= 0;
+    }
+
+    // from Item
+    override public function getPreviewMedia () :MediaDesc
+    {
+        return getFurniMedia();
+    }
+
     // from Item
     override public function getType () :int
     {
         return DECOR;
     }
 
+    // from interface Streamable
+    override public function readObject (ins :ObjectInputStream) :void
+    {
+        super.readObject(ins);
+        type = ins.readByte();
+        height = ins.readShort();
+        width = ins.readShort();
+        depth = ins.readShort();
+        horizon = ins.readFloat();
+    }
+
+    // from interface Streamable
+    override public function writeObject (out :ObjectOutputStream) :void
+    {
+        super.writeObject(out);
+        out.writeByte(type);
+        out.writeShort(height);
+        out.writeShort(width);
+        out.writeShort(depth);
+        out.writeFloat(horizon);
+    }
+
+    // from Item
     override protected function getDefaultThumbnailMedia () :MediaDesc
     {
         if (furniMedia != null && furniMedia.isImage()) {
@@ -55,31 +95,10 @@ public class Decor extends Item
         return super.getDefaultThumbnailMedia();
     }
 
+    // from Item
     override protected function getDefaultFurniMedia () :MediaDesc
     {
         return null; // there is no default
-    }
-
-    override public function writeObject (out :ObjectOutputStream) :void
-    {
-        super.writeObject(out);
-
-        out.writeByte(type);
-        out.writeShort(height);
-        out.writeShort(width);
-        out.writeShort(depth);
-        out.writeFloat(horizon);
-    }
-
-    override public function readObject (ins :ObjectInputStream) :void
-    {
-        super.readObject(ins);
-
-        type = ins.readByte();
-        height = ins.readShort();
-        width = ins.readShort();
-        depth = ins.readShort();
-        horizon = ins.readFloat();
     }
 }
 }

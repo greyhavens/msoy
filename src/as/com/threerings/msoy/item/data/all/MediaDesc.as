@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.item.data.all {
 
 import flash.geom.Point;
@@ -18,7 +21,7 @@ import com.threerings.msoy.client.DeploymentConfig;
  * A class containing metadata about a media object.
  */
 public class MediaDesc
-    implements Hashable, Streamable
+    implements Streamable, Hashable
 {
     /** The MIME type for plain UTF-8 text. */
     public static const TEXT_PLAIN :int = 0;
@@ -39,7 +42,7 @@ public class MediaDesc
     public static const AUDIO_MPEG :int = 20;
 
 //    /** The MIME type for WAV audio data. */
-//    public static const AUDIO_WAV :int = 21;
+//    public static final byte AUDIO_WAV = 21;
 
     /** The MIME type for FLV video data. */
     public static const VIDEO_FLASH :int = 30;
@@ -59,25 +62,48 @@ public class MediaDesc
     /** The MIME type for Java JAR files. */
     public static const APPLICATION_JAVA_ARCHIVE :int = 41;
 
-    /** A constant used to indicate that an image does not exceed our
-     * target size in either dimension. */
+    /** Identifies that a "half thumbnail" sized image is desired. */
+    public static const HALF_THUMBNAIL_SIZE :int = 0;
+
+    /** Identifies that a thumbnail sized image is desired. */
+    public static const THUMBNAIL_SIZE :int = 1;
+
+    /** Identifies that a preview sized image is desired. */
+    public static const PREVIEW_SIZE :int = 2;
+
+    /** The thumbnail image width.  */
+    public static const THUMBNAIL_WIDTH :int = 160;
+
+    /** The thumbnail image height.  */
+    public static const THUMBNAIL_HEIGHT :int = 120;
+
+    /** A constant used to indicate that an image does not exceed half thumbnail size in either
+     * dimension. */
     public static const NOT_CONSTRAINED :int = 0;
 
-    /** A constant used to indicate that an image exceeds our
-     * target size proportionally more in the horizontal dimension. */
+    /** A constant used to indicate that an image exceeds thumbnail size proportionally more in the
+     * horizontal dimension. */
     public static const HORIZONTALLY_CONSTRAINED :int = 1;
-    
-    /** A constant used to indicate that an image exceeds our
-     * target size proportionally more in the vertical dimension. */
+
+    /** A constant used to indicate that an image exceeds thumbnail size proportionally more in the
+     * vertical dimension. */
     public static const VERTICALLY_CONSTRAINED :int = 2;
 
-    /** A hash code identifying this media. */
+    /** A constant used to indicate that an image exceeds half thumbnail size proportionally more
+     * in the horizontal dimension but does not exceed thumbnail size in either dimension. */
+    public static const HALF_HORIZONTALLY_CONSTRAINED :int = 3;
+
+    /** A constant used to indicate that an image exceeds half thumbnail size proportionally more
+     * in the vertical dimension but does not exceed thumbnail size in either dimension. */
+    public static const HALF_VERTICALLY_CONSTRAINED :int = 4;
+
+    /** The SHA-1 hash of this media's data. */
     public var hash :ByteArray;
 
-    /** The MIME type of this media. */
+    /** The MIME type of the media associated with this item. */
     public var mimeType :int;
 
-    /** The size constraint on this media, if any. */
+    /** The size constraint on this media, if any. See {@link #computeConstraint}. */
     public var constraint :int;
 
     /**
@@ -86,6 +112,14 @@ public class MediaDesc
     public static function hashToString (hash :ByteArray) :String
     {
         return StringUtil.hexlate(hash);
+    }
+
+    /**
+     * Convert the specified String back into a media hash.
+     */
+    public static function stringToHash (arg1 :String) :ByteArray
+    {
+        throw new Error("Unimplemented");
     }
 
     /**
@@ -188,17 +222,39 @@ public class MediaDesc
         }
     }
 
-//    /**
-//     * A temporary(?) way to create a MediaDesc out of a filename.
-//     */
-//    public static function createTEMP (filename :String) :MediaDesc
-//    {
-//        var hash :ByteArray =
-//            stringToHash(filename.substring(0, filename.indexOf(".")));
-//        var mimeType :int = suffixToMimeType(filename);
-//
-//        return new MediaDesc(hash, mimeType);
-//    }
+    /**
+     * Maps the supplied integer representation of a mime type to the standard string
+     * representation. Returns "application/octet-stream".
+     */
+    public static function mimeTypeToString (mimeType :int) :String
+    {
+        throw new Error("Unimplemented");
+    }
+
+    /**
+     * Is this media merely an image type?
+     */
+    public static function isImage (mimeType :int) :Boolean
+    {
+        switch (mimeType) {
+        case IMAGE_PNG:
+        case IMAGE_JPEG:
+        case IMAGE_GIF:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * Computes the constraining dimension for an image (if any) based on the supplied target and
+     * actual dimensions.
+     */
+    public static function computeConstraint (size :int, actualWidth :int, actualHeight :int) :int
+    {
+        throw new Error("Unimplemented");
+    }
 
     /**
      * Creates either a configured or blank media descriptor.
@@ -212,6 +268,21 @@ public class MediaDesc
     }
 
     /**
+     * Is this media purely audio?
+     */
+    public function isAudio () :Boolean
+    {
+        switch (mimeType) {
+        case AUDIO_MPEG:
+//        case AUDIO_WAV:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    /**
      * Returns the URL that references this media.
      */
     public function getMediaPath () :String
@@ -220,12 +291,19 @@ public class MediaDesc
     }
 
     /**
-     * Get some identifier that can be used to refer to this media across
-     * sessions (used as a key in prefs).
+     * Is this media merely an image type?
      */
-    public function getMediaId () :String
+    public function isImage () :Boolean
     {
-        return hashToString(hash);
+        switch (mimeType) {
+        case IMAGE_PNG:
+        case IMAGE_JPEG:
+        case IMAGE_GIF:
+            return true;
+
+        default:
+            return false;
+        }
     }
 
     /**
@@ -248,44 +326,15 @@ public class MediaDesc
     }
 
     /**
-     * Is this media merely an image type?
+     * Is this media video?
      */
-    public function isImage () :Boolean
+    public function isVideo () :Boolean
     {
         switch (mimeType) {
-        case IMAGE_PNG:
-        case IMAGE_JPEG:
-        case IMAGE_GIF:
-            return true;
-
-        default:
-            return false;
-        }
-    }
-
-    /**
-     * Is this media purely audio?
-     */
-    public function isAudio () :Boolean
-    {
-        switch (mimeType) {
-        case AUDIO_MPEG:
-//        case AUDIO_WAV:
-            return true;
-
-        default:
-            return false;
-        }
-    }
-
-    /**
-     * @return true if the media is clickable.
-     */
-    public function isInteractive () :Boolean
-    {
-        // TODO: this may need to be more complicated in the future
-        switch (mimeType) {
-        case APPLICATION_SHOCKWAVE_FLASH:
+        case VIDEO_FLASH:
+        case VIDEO_MPEG:
+        case VIDEO_QUICKTIME:
+        case VIDEO_MSVIDEO:
             return true;
 
         default:
@@ -314,20 +363,61 @@ public class MediaDesc
         return false;
     }
 
-    // documentation inherited from interface Streamable
-    public function writeObject (out :ObjectOutputStream) :void
+    // from Object
+    public function toString () :String
     {
-        out.writeField(hash);
-        out.writeByte(mimeType);
-        out.writeByte(constraint);
+        return hashToString(hash) + ":" + mimeType + ":" + constraint;
     }
 
     // documentation inherited from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        hash = (ins.readField(ByteArray) as ByteArray);
+        hash = (ins.readObject() as ByteArray);
         mimeType = ins.readByte();
         constraint = ins.readByte();
     }
+
+    // documentation inherited from interface Streamable
+    public function writeObject (out :ObjectOutputStream) :void
+    {
+        out.writeObject(hash);
+        out.writeByte(mimeType);
+        out.writeByte(constraint);
+    }
+
+    /**
+     * Get some identifier that can be used to refer to this media across
+     * sessions (used as a key in prefs).
+     */
+    public function getMediaId () :String
+    {
+        return hashToString(hash);
+    }
+
+    /**
+     * @return true if the media is clickable.
+     */
+    public function isInteractive () :Boolean
+    {
+        // TODO: this may need to be more complicated in the future
+        switch (mimeType) {
+        case APPLICATION_SHOCKWAVE_FLASH:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * Helper function for {@link #equals} because we must work in JavaScript land.
+     */
+    protected static function arraysEqual (a1 :ByteArray, a2 :ByteArray) :Boolean
+    {
+        throw new Error("Unimplemented");
+    }
+
+    /** Hexidecimal digits. */
+    protected static const HEX :String = "0123456789abcdef";
 }
 }

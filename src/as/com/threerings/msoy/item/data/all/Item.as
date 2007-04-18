@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.item.data.all {
 
-import com.threerings.util.Hashable;
 import com.threerings.util.HashMap;
+import com.threerings.util.Hashable;
 import com.threerings.util.MethodQueue;
 import com.threerings.util.StringUtil;
 
@@ -35,7 +35,7 @@ public /*abstract*/ class Item
     public static const AVATAR :int = 5; //registerItemType(Avatar, 5);
     public static const PET :int = 6; //registerItemType(Pet, 6);
     public static const AUDIO :int = 7; //registerItemType(Audio, 7);
-    // missing: public static const VIDEO :int = 8; // registerItemType(Video, 8);
+    public static const VIDEO :int = 8; // registerItemType(Video, 8);
     public static const DECOR :int = 9; //registerItemType(Decor, 9);
     // Note: registery of Item types is done at the bottom of this class
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
@@ -232,11 +232,29 @@ public /*abstract*/ class Item
     }
 
     /**
+     * Returns the media that should be shown when previewing this item.
+     */
+    public function getPreviewMedia () :MediaDesc
+    {
+        throw new Error("abstract");
+    }
+
+    /**
      * Returns the path to a thumbnail image for this item.
      */
     public function getThumbnailPath () :String
     {
         return getThumbnailMedia().getMediaPath();
+    }
+
+    /**
+     * Verifise that all the required fields in this particular Item subclass are filled in, make
+     * sense, and are consistent with each other. This is used to verify the data being edited by a
+     * user during item creation, and also that the final uploaded item isn't hacked.
+     */
+    public function isConsistent () :Boolean
+    {
+        return true;
     }
 
     // from DSet_Entry
@@ -315,12 +333,20 @@ public /*abstract*/ class Item
         return getDefaultFurniMediaFor(getType());
     }
 
+    /**
+     * A handy method that makes sure that the specified text is not null or all-whitespace.
+     * Usually used by isConsistent().
+     */
+    protected static function nonBlank (text :String) :Boolean
+    {
+        return (text != null) && (StringUtil.trim(text).length > 0);
+    }
+
     private static function registerItemType (iclass :Class, itype :int) :int
     {
         if (_mapping == null) {
             _mapping = new HashMap();
         }
-
         _mapping.put(itype, iclass);
         return itype;
     }
@@ -328,18 +354,15 @@ public /*abstract*/ class Item
     private static var _mapping :HashMap;
 
     /**
-     * Behold the twisted backbends to get this to work.
-     * If I do it like I do in Java, it starts to initialize the
-     * Item class when it sees the first use of a subclass, which is
-     * usually Avatar (in your MemberObject). It starts to set up the static
-     * variables in Item and then has to resolve the Photo class, and while
-     * it's doing that it sees that Photo extends Item so it tries to
-     * resolve the still-unresolved Item and discovers the circular
-     * dependancy and freaks out.
+     * Behold the twisted backbends to get this to work.  If I do it like I do in Java, it starts
+     * to initialize the Item class when it sees the first use of a subclass, which is usually
+     * Avatar (in your MemberObject). It starts to set up the static variables in Item and then has
+     * to resolve the Photo class, and while it's doing that it sees that Photo extends Item so it
+     * tries to resolve the still-unresolved Item and discovers the circular dependancy and freaks
+     * out.
      *
-     * So we need to make sure to not reference our subclasses until
-     * this class is fully initialized.
-     * There may be a better way.
+     * So we need to make sure to not reference our subclasses until this class is fully
+     * initialized.  There may be a better way.
      */
     private static function registerAll () :void
     {

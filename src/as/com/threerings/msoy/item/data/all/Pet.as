@@ -29,23 +29,25 @@ public class Pet extends Item
      * issue this order on any pet that is bound to that room. */
     public static const ORDER_SLEEP :int = 4;
 
+    public function Pet ()
+    {
+    }
+
+    override public function isConsistent () :Boolean
+    {
+        return super.isConsistent() && (furniMedia != null) && nonBlank(name);
+    }
+
+    // from Item
+    override public function getPreviewMedia () :MediaDesc
+    {
+        return getFurniMedia();
+    }
+
     // from Item
     override public function getType () :int
     {
         return PET;
-    }
-
-    override protected function getDefaultThumbnailMedia () :MediaDesc
-    {
-        if (furniMedia != null && furniMedia.isImage()) {
-            return furniMedia;
-        }
-        return super.getDefaultThumbnailMedia();
-    }
-
-    override protected function getDefaultFurniMedia () :MediaDesc
-    {
-        return null; // there is no default
     }
 
     override public function writeObject (out :ObjectOutputStream) :void
@@ -60,6 +62,21 @@ public class Pet extends Item
         super.readObject(ins);
 
         // nada for now
+    }
+
+    // from Item
+    override protected function getDefaultThumbnailMedia () :MediaDesc
+    {
+        if (furniMedia != null && furniMedia.isImage()) {
+            return furniMedia;
+        }
+        return super.getDefaultThumbnailMedia();
+    }
+
+    // from Item
+    override protected function getDefaultFurniMedia () :MediaDesc
+    {
+        return null; // there is no default
     }
 }
 }

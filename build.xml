@@ -623,11 +623,14 @@
     <!-- now generate the associated files -->
     <genscript header="lib/SOURCE_HEADER" asroot="${asrc.dir}">
       <fileset dir="${src.dir}">
+        <include name="**/msoy/data/*.java"/>
         <include name="**/msoy/data/all/*.java"/>
         <exclude name="**/*CustomFieldSerializer.java"/> <!-- fucking GWT -->
         <exclude name="**/MemberName.java"/> <!-- alas, too fiddly -->
+        <include name="**/msoy/item/data/all/*.java"/>
+        <exclude name="**/Item.java"/> <!-- alas, too fiddly -->
+        <exclude name="**/MediaDesc.java"/> <!-- alas, too fiddly -->
       </fileset>
-      <fileset dir="${src.dir}" includes="**/msoy/data/*.java"/>
     </genscript>
   </target>
 

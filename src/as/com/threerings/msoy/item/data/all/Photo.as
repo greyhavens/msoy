@@ -21,12 +21,47 @@ public class Photo extends Item
     /** The height (in pixels) of the photo media. */
     public var photoHeight :int;
 
+    public function Photo ()
+    {
+    }
+
+    // from Item
+    override public function isConsistent () :Boolean
+    {
+        return super.isConsistent() && (photoMedia != null);
+    }
+
+    // from Item
+    override public function getPreviewMedia () :MediaDesc
+    {
+        return photoMedia;
+    }
+
     // from Item
     override public function getType () :int
     {
         return PHOTO;
     }
 
+    // from interface Streamable
+    override public function readObject (ins :ObjectInputStream) :void
+    {
+        super.readObject(ins);
+        photoMedia = (ins.readObject() as MediaDesc);
+        photoWidth = ins.readInt();
+        photoHeight = ins.readInt();
+    }
+
+    // from interface Streamable
+    override public function writeObject (out :ObjectOutputStream) :void
+    {
+        super.writeObject(out);
+        out.writeObject(photoMedia);
+        out.writeInt(photoWidth);
+        out.writeInt(photoHeight);
+    }
+
+    // from Item
     override protected function getDefaultThumbnailMedia () :MediaDesc
     {
         if (photoMedia != null && photoMedia.isImage()) {
@@ -35,27 +70,10 @@ public class Photo extends Item
         return super.getDefaultThumbnailMedia();
     }
 
+    // from Item
     override protected function getDefaultFurniMedia () :MediaDesc
     {
         return photoMedia;
-    }
-
-    override public function writeObject (out :ObjectOutputStream) :void
-    {
-        super.writeObject(out);
-
-        out.writeObject(photoMedia);
-        out.writeInt(photoWidth);
-        out.writeInt(photoHeight);
-    }
-
-    override public function readObject (ins :ObjectInputStream) :void
-    {
-        super.readObject(ins);
-
-        photoMedia = (ins.readObject() as MediaDesc);
-        photoWidth = ins.readInt();
-        photoHeight = ins.readInt();
     }
 }
 }

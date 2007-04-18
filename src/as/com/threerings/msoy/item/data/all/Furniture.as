@@ -17,12 +17,42 @@ public class Furniture extends Item
      * characters). */
     public var action :String = "";
 
+    public function Furniture ()
+    {
+    }
+
+    override public function isConsistent () :Boolean
+    {
+        return super.isConsistent() && (furniMedia != null);
+    }
+
+    // from Item
+    override public function getPreviewMedia () :MediaDesc
+    {
+        return getFurniMedia();
+    }
+
     // from Item
     override public function getType () :int
     {
         return FURNITURE;
     }
 
+    // from interface Streamable
+    override public function readObject (ins :ObjectInputStream) :void
+    {
+        super.readObject(ins);
+        action = (ins.readField(String) as String);
+    }
+
+    // from interface Streamable
+    override public function writeObject (out :ObjectOutputStream) :void
+    {
+        super.writeObject(out);
+        out.writeField(action);
+    }
+
+    // from Item
     override protected function getDefaultThumbnailMedia () :MediaDesc
     {
         if (furniMedia != null && furniMedia.isImage()) {
@@ -31,23 +61,10 @@ public class Furniture extends Item
         return super.getDefaultThumbnailMedia();
     }
 
+    // from Item
     override protected function getDefaultFurniMedia () :MediaDesc
     {
         return null; // there is no default
-    }
-
-    override public function writeObject (out :ObjectOutputStream) :void
-    {
-        super.writeObject(out);
-
-        out.writeField(action);
-    }
-
-    override public function readObject (ins :ObjectInputStream) :void
-    {
-        super.readObject(ins);
-
-        action = (ins.readField(String) as String);
     }
 }
 }
