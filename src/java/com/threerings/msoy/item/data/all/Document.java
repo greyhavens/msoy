@@ -11,13 +11,13 @@ public class Document extends Item
     /** The document media. */
     public MediaDesc docMedia;
 
-    // @Override from Item
+    // @Override // from Item
     public byte getType ()
     {
         return DOCUMENT;
     }
 
-    // @Override
+    // @Override // from Item
     public boolean isConsistent ()
     {
         return super.isConsistent() && (docMedia != null) && nonBlank(name);
