@@ -262,37 +262,6 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Returns true if this scene is currently being edited.
-     */
-    public function get isCurrentlyEditing () :Boolean
-    {
-        return (_editor != null);
-    }
-
-    /**
-     * Exit editing mode.
-     */
-    public function endEditing (edits :TypedArray) :void
-    {
-        _editor = null;
-
-        // turn editing off
-        _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
-
-        // possibly save the edits
-        if (edits != null) {
-            _roomObj.roomService.updateRoom(_mctx.getClient(), edits,
-                new ReportingListener(_mctx));
-        }
-
-        // re-start any music
-        if (_music != null) {
-            _music.play();
-        }
-    }
-
-    /**
      * Handles EDIT_SCENE.
      */
     public function handleEditScene () :void
@@ -314,7 +283,7 @@ public class RoomController extends SceneController
      */
     public function handleEditFurni (furniSprite :FurniSprite) :void
     {
-        if (_furniEditor.mode == FurniEditController.EDIT_OFF) {
+        if (_furniEditor.getMode() == FurniEditController.EDIT_OFF) {
             _roomObj.roomService.editRoom(
                 _mctx.getClient(), new ResultWrapper(
                     function (cause :String) :void {
@@ -523,32 +492,34 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Begin editing a piece of furni.
+     * Begin editing a piece of furni. 
      */
     protected function beginEditingFurni (furni :FurniSprite, allItems :Array) :void
     {
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
         _roomView.dimAvatars(true);
+        setHoverSprite(null);
         // maybe disable/dim other furnis?
         _walkTarget.visible = false;
         _flyTarget.visible = false;
 
-        // this function will be called once furni editing had ended
-        var callback :Function = function () :void {
-            _roomView.dimAvatars(false);
-            _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
-            _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
-        }
-
-        _furniEditor.start (furni, _roomView, callback);
+        _furniEditor.start (furni, _roomView, _scene, endEditingFurni);
     }
 
     /**
-     * Finish editing a piece of furni.
+     * End editing a piece of furni.
      */
-    protected function endEditingFurni () :void
+    public function endEditingFurni (edits :TypedArray) :void
     {
+        if (edits != null) {
+            _roomObj.roomService.updateRoom(
+                _mctx.getClient(), edits, new ReportingListener(_mctx));
+        }
+
+        _roomView.dimAvatars(false);
+        _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
     }
 
     /**
@@ -576,7 +547,38 @@ public class RoomController extends SceneController
         _editor = new EditorController(_mctx, this, _roomView, _scene, items);
     }
 
-    
+    /**
+     * Returns true if this scene is currently being edited.
+     */
+    public function get isCurrentlyEditing () :Boolean
+    {
+        return (_editor != null);
+    }
+
+    /**
+     * Exit editing mode.
+     */
+    public function endEditing (edits :TypedArray) :void
+    {
+        _editor = null;
+
+        // turn editing off
+        _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
+
+        // possibly save the edits
+        if (edits != null) {
+            _roomObj.roomService.updateRoom(_mctx.getClient(), edits,
+                new ReportingListener(_mctx));
+        }
+
+        // re-start any music
+        if (_music != null) {
+            _music.play();
+        }
+    }
+
+
     
     /**
      * Handle ENTER_FRAME and see if the mouse is now over anything.
