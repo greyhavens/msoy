@@ -34,7 +34,7 @@ public class FurniEditController
         // when we enter the state, and removed when we leave the state.
         _listeners = {
             EditOff:      [ ], // no special listeners
-            EditShowMenu: [ [ MouseEvent.CLICK, handleClickOnMenu ] ],
+            EditShowMenu: [ ], // not here, either - all activity is handled by the buttons
             EditMove:     [ [ MouseEvent.MOUSE_MOVE, handleMouseInMoveMode ],
                             [ MouseEvent.CLICK, handleClickInMoveMode ] ]
             };
@@ -50,22 +50,37 @@ public class FurniEditController
         _buttonPanel = new Sprite();
         var y :int = 0;
         for each (var def :Object in _menuButtons) {
-            var button :SimpleButton = new SimpleButton();
-            for (var prop :String in def.media) {
-                button[prop] = new (def.media[prop] as Class)() as DisplayObject;
-            }
-
-            button.useHandCursor = true;
+                
+            var button :Sprite = new Sprite();
+            button.addChild(new (def.media.upState as Class)() as DisplayObject);
             button.y = y;
-
-            def.button = button;
+            button.buttonMode = true;
+            if (def.handler != null) {
+                addButtonListener(button, def.handler);
+            }
+            
+            def.button = button;  // store a pointer inside the _menuButtons collection
             _buttonPanel.addChild(button);
             y += button.height;
         }
-
-       
     }
     
+    /** Wrapper around the event handler function generator */
+    protected function addButtonListener (button :DisplayObject, thunk :Function) :void
+    {
+        // this silly wrapper is necessary because anonymous functions in AS are not
+        // properly scoped, and they access variables from the parent stack frame.
+        // so we need to manually create a fresh stack frame for each new function declaration,
+        // by calling it through this wrapper.
+        button.addEventListener(
+            MouseEvent.CLICK,
+            function (event :MouseEvent) :void
+            {
+                thunk();
+                event.stopPropagation();
+            });
+    }
+
     /**
      * Returns info about the current editing mode, as one of the EDIT_* constants.
      */
@@ -152,7 +167,6 @@ public class FurniEditController
     {
         // restore old furni data
         _furni.update(_furniData);
-        
         deinit(null);
     }
 
@@ -187,8 +201,6 @@ public class FurniEditController
         _roomView = null;
         _furni = null;
     }
-
-
     
     /** Adds the appropriate set of listeners for this mode. */
     protected function addListenersForMode (mode :String) :void
@@ -242,31 +254,6 @@ public class FurniEditController
         if (cloc.click == ClickLocation.FLOOR) {
             setMode(EDIT_SHOWMENU);
         }
-    }
-
-    /**
-     * Handles mouse clicks in waiting mode.
-     */
-    protected function handleClickOnMenu (event :MouseEvent) :void
-    {
-        // Find the button that was clicked on. Yes, I'm searching for the button manually here,
-        // and it sucks, but for some reason mouse events only get sent to the _roomView object,
-        // but not its children. But why? 
-
-        for each (var def :Object in _menuButtons) {
-            var button :DisplayObject = def.button as DisplayObject;
-            if (event.localX >= button.x &&
-                event.localY >= button.y &&
-                event.localX < button.x + button.width &&
-                event.localY < button.y + button.height)
-            {
-                // button found, call the handler
-                if (def.handler != null) {
-                    (def.handler as Function)();
-                }
-            }
-        }
-        event.updateAfterEvent();
     }
 
     /**
