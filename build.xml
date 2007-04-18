@@ -625,6 +625,7 @@
       <fileset dir="${src.dir}">
         <include name="**/msoy/data/all/*.java"/>
         <exclude name="**/*CustomFieldSerializer.java"/> <!-- fucking GWT -->
+        <exclude name="**/MemberName.java"/> <!-- alas, too fiddly -->
       </fileset>
       <fileset dir="${src.dir}" includes="**/msoy/data/*.java"/>
     </genscript>
