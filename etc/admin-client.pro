@@ -21,7 +21,8 @@
     **/msoy/world/data/WorldMemberInfo.class,**/msoy/item/data/all/**,
     **/msoy/admin/data/**,**/msoy/admin/client/**,**/msoy/admin/util/**,
     !**/msoy/game/data/MsoyMatchConfig.class,**/msoy/game/data/*Config.class,
-    **/msoy/game/data/GameMemberInfo.class,**/msoy/world/data/WorldOccupantInfo.class)
+    **/msoy/game/data/GameMemberInfo.class,**/msoy/game/data/GameSummary.class,
+    **/msoy/world/data/WorldOccupantInfo.class)
 
 -dontskipnonpubliclibraryclasses
 -dontobfuscate
