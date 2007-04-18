@@ -278,6 +278,15 @@ public class ItemManager
     }
 
     /**
+     * Update an item in its owner's cache, if the item was modified persistently
+     * by an entity outside of this manager.
+     */
+    public void updateUserCache (Item item)
+    {
+        updateUserCache(null, item);
+    }
+
+    /**
      * Helper function: updates usage of avatar items.
      * @see #updateItemUsage(
      *   final byte itemType, final byte itemUseType, final int memberId, final int locationId,

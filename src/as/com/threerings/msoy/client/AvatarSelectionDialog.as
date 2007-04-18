@@ -183,15 +183,18 @@ public class AvatarSelectionDialog extends FloatingPanel
             cell.addEventListener(MouseEvent.CLICK, clickHandler, false, 0, true);
             row.addChild(cell);
 
-            var resize :DisplayObject = (new RESIZE() as DisplayObject);
-            var spr :Sprite = new Sprite();
-            resize.x = -resize.width;
-            resize.y = -resize.height;
-            spr.addChild(resize);
-            spr.addEventListener(MouseEvent.CLICK, resizeClickHandler);
-            spr.x = ItemRenderer.ITEM_SIZE;
-            spr.y = ItemRenderer.ITEM_SIZE;
-            cell.rawChildren.addChild(spr);
+            // currently you may not resize the default avatar
+            if (items[i] != defaultAvatar) {
+                var resize :DisplayObject = (new RESIZE() as DisplayObject);
+                var spr :Sprite = new Sprite();
+                resize.x = -resize.width;
+                resize.y = -resize.height;
+                spr.addChild(resize);
+                spr.addEventListener(MouseEvent.CLICK, resizeClickHandler);
+                spr.x = ItemRenderer.ITEM_SIZE;
+                spr.y = ItemRenderer.ITEM_SIZE;
+                cell.rawChildren.addChild(spr);
+            }
 
             // Should this item be marked as selected?
             if (_memberObj.avatar == null) {
@@ -222,13 +225,14 @@ public class AvatarSelectionDialog extends FloatingPanel
                 // Pull out the avatar, and set it!
                 var item :Item = render.data as Item;
                 if (item != null) {
+                    close();
                     if (doResize) {
-                        _ctx.getWorldDirector().setAvatar(item.itemId, .5);
+                        new AvatarScalingDialog(_ctx, item as Avatar);
 
                     } else {
-                        _ctx.getWorldDirector().setAvatar(item.itemId, 1);
+                        // else, use the previously selected size
+                        _ctx.getWorldDirector().setAvatar(item.itemId);
                     }
-                    close();
                 }
             }
         }

@@ -769,6 +769,7 @@ public class MemberManager
             public void handleSuccess () {
                 if (newScale != 0 && avatar != null) {
                     avatar.scale = newScale;
+                    MsoyServer.itemMan.updateUserCache(avatar);
                 }
                 MsoyServer.itemMan.updateItemUsage(
                     user.getMemberId(), user.avatar, avatar, new ResultListener.NOOP<Object>() {

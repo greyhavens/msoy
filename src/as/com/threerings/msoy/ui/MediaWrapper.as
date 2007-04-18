@@ -16,14 +16,17 @@ public class MediaWrapper extends Container
      */
     public function MediaWrapper (
         cont :MediaContainer,
-        altReportedWidth :Number = 0, altReportedHeight :Number = 0)
+        altReportedWidth :Number = 0, altReportedHeight :Number = 0, alwaysUseAlt :Boolean = false)
     {
         _cont = cont;
         _altWidth = altReportedWidth;
         _altHeight = altReportedHeight;
+        _alwaysUseAlt = alwaysUseAlt;
         rawChildren.addChild(cont);
-        cont.addEventListener(MediaContainer.SIZE_KNOWN, handleMediaSizeChanged,
-            false, 0, true);
+        if (!alwaysUseAlt) {
+            cont.addEventListener(MediaContainer.SIZE_KNOWN, handleMediaSizeChanged,
+                false, 0, true);
+        }
     }
 
     public function getMediaContainer () :MediaContainer
@@ -45,13 +48,13 @@ public class MediaWrapper extends Container
     override public function get measuredWidth () :Number
     {
         var w :Number = _cont.getContentWidth();
-        return (w == 0) ? _altWidth : w;
+        return (w == 0 || _alwaysUseAlt) ? _altWidth : w;
     }
 
     override public function get measuredHeight () :Number
     {
         var h :Number = _cont.getContentHeight();
-        return (h == 0) ? _altHeight : h;
+        return (h == 0 || _alwaysUseAlt) ? _altHeight : h;
     }
 
     /**
@@ -66,5 +69,7 @@ public class MediaWrapper extends Container
 
     protected var _altWidth :Number;
     protected var _altHeight :Number;
+
+    protected var _alwaysUseAlt :Boolean;
 }
 }
