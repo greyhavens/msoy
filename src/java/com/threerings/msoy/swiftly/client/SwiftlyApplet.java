@@ -134,33 +134,6 @@ public class SwiftlyApplet extends JApplet
         return _editor;
     }
 
-    /**
-     * Saves a file element on the backend. Creates the element if it doesn't already exist.
-     * @param element the {@link PathElement} to save.
-     */
-    public void saveElement (PathElement element)
-    {
-        // TODO save the file element on the backend
-    }
-
-    /**
-     * Deletes a file element on the backend.
-     * @param element the {@link PathElement} to delete.
-     */
-    public void deleteElement (PathElement element)
-    {
-        // TODO delete the file element on the backend
-    }
-
-    /**
-     * Renames a file element on the backend.
-     * @param element the {@link PathElement} to rename.
-     */
-    public void renameElement (PathElement element, String newName)
-    {
-        // TODO rename the element on the backend
-    }
-
     // from interface RunQueue
     public void postRunnable (Runnable r)
     {
