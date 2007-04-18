@@ -10,10 +10,13 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.presents.dobj.DSet_Entry;
 
+/**
+ * Represents a friend connection.
+ */
 public class FriendEntry
-    implements Comparable, DSet_Entry
+    implements Comparable, DSet_Entry, Hashable
 {
-    /** The display name of this friend. */
+    /** The display name of the friend. */
     public var name :MemberName;
 
     /** Is the friend online? */
@@ -27,13 +30,16 @@ public class FriendEntry
         this.online = online;
     }
 
+    /**
+     * Get the member id of this friend.
+     */
     public function getMemberId () :int
     {
         return name.getMemberId();
     }
 
-    // from interface DSet_Entry
-    public function getKey () :Object
+    // from Hashable
+    public function hashCode () :int
     {
         return getMemberId();
     }
@@ -51,23 +57,21 @@ public class FriendEntry
     }
 
     // from Hashable
-    public function hashCode () :int
-    {
-        return getMemberId();
-    }
-
-    // from Hashable
     public function equals (other :Object) :Boolean
     {
         return (other is FriendEntry) &&
             (getMemberId() == (other as FriendEntry).getMemberId());
     }
 
-    // from interface Streamable
-    public function writeObject (out :ObjectOutputStream) :void
+    public function toString () :String
     {
-        out.writeObject(name);
-        out.writeBoolean(online);
+        return "FriendEntry[" + name + "]";
+    }
+
+    // from interface DSet_Entry
+    public function getKey () :Object
+    {
+        return getMemberId();
     }
 
     // from interface Streamable
@@ -77,9 +81,11 @@ public class FriendEntry
         online = ins.readBoolean();
     }
 
-    public function toString () :String
+    // from interface Streamable
+    public function writeObject (out :ObjectOutputStream) :void
     {
-        return "FriendEntry[" + name + "]";
+        out.writeObject(name);
+        out.writeBoolean(online);
     }
 }
 }

@@ -15,7 +15,14 @@ import com.threerings.util.Name;
  * Contains a channel name and channel id in one handy object.
  */
 public class ChannelName extends Name
+    implements Comparable, Hashable
 {
+    /** The maximum length of a channel name */
+    public static const LENGTH_MAX :int = 24;
+
+    /** The minimum length of a channel name */
+    public static const LENGTH_MIN :int = 3;
+
     public function ChannelName (name :String = null, creatorId :int = 0)
     {
         super(name);
@@ -28,6 +35,34 @@ public class ChannelName extends Name
     public function getCreatorId () :int
     {
         return _creatorId;
+    }
+
+    // from Hashable (by way of Name)
+    override public function hashCode () :int
+    {
+        return super.hashCode() ^ _creatorId;
+    }
+
+    // from Comparable (by way of Name)
+    override public function compareTo (other :Object) :int
+    {
+        var oc :ChannelName = (other as ChannelName);
+        if (_creatorId == oc._creatorId) {
+            return super.compareTo(oc);
+        } else {
+            return _creatorId - oc._creatorId;
+        }
+    }
+
+    // from Equalable (by way of Hashable by way of Name)
+    override public function equals (other :Object) :Boolean
+    {
+        if (other is ChannelName) {
+            var oc :ChannelName = (other as ChannelName);
+            return oc._creatorId == _creatorId && oc._name.equals(_name);
+        } else {
+            return false;
+        }
     }
 
     // from Streamable (by way of Name)
@@ -44,35 +79,7 @@ public class ChannelName extends Name
         out.writeInt(_creatorId);
     }
 
-    // from Comparable (by way of Name)
-    override public function compareTo (other :Object) :int
-    {
-        var oc :ChannelName = (other as ChannelName);
-        if (_creatorId == oc._creatorId) {
-            return super.compareTo(oc);
-        } else {
-            return _creatorId - oc._creatorId;
-        }
-    }
-
-    // from Hashable (by way of Name)
-    override public function hashCode () :int
-    {
-        return super.hashCode() ^ _creatorId;
-    }
-
-    // from Equalable (by way of Hashable by way of Name)
-    override public function equals (other :Object) :Boolean
-    {
-        if (other is ChannelName) {
-            var oc :ChannelName = (other as ChannelName);
-            return oc._creatorId == _creatorId && oc._name.equals(_name);
-        } else {
-            return false;
-        }
-    }
-
-    /** The channel's id. */
+    /** The member id of this channel's creator. */
     protected var _creatorId :int;
 }
 }
