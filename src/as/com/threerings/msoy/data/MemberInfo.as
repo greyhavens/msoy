@@ -10,6 +10,11 @@ import com.threerings.msoy.data.all.MemberName;
  */
 public class MemberInfo extends ActorInfo
 {
+    /** Suitable for unserialization. */
+    public function MemberInfo ()
+    {
+    }
+
     /**
      * Get the member id for this user, or 0 if they're a guest.
      */

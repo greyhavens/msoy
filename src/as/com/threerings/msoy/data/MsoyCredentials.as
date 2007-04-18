@@ -33,22 +33,23 @@ public class MsoyCredentials extends UsernamePasswordCreds
         super(username, password);
     }
 
-    override public function writeObject (out :ObjectOutputStream) :void
-    {
-        super.writeObject(out);
-
-        out.writeField(sessionToken);
-        out.writeField(ident);
-    }
-
+    // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-
         sessionToken = (ins.readField(String) as String);
         ident = (ins.readField(String) as String);
     }
 
+    // from interface Streamable
+    override public function writeObject (out :ObjectOutputStream) :void
+    {
+        super.writeObject(out);
+        out.writeField(sessionToken);
+        out.writeField(ident);
+    }
+
+    // documentation inherited
     override protected function toStringBuf (buf :StringBuilder) :void
     {
         super.toStringBuf(buf);
