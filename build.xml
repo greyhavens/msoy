@@ -617,7 +617,7 @@
   </target>
 
   <!-- generates ActionScript versions of our Streamable classes -->
-  <target name="genascript">
+  <target name="genascript" depends="dist">
     <taskdef name="genscript" classpathref="classpath"
              classname="com.threerings.presents.tools.GenActionScriptTask"/>
     <!-- now generate the associated files -->
