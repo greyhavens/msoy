@@ -17,7 +17,7 @@ public class MemberName extends Name
 {
     /** A sort function for sorting Names by their display portion, case insensitively.  */
     public static const BY_DISPLAY_NAME :Function = function (n1 :Name, n2 :Name) :int {
-        return compare(n1, n2);
+        return n1.toString().toLowerCase().localeCompare(n2.toString().toLowerCase());
     };
 
     /** Used to reprepsent a member that has been deleted but is still referenced as an item
@@ -101,14 +101,6 @@ public class MemberName extends Name
     override protected function normalize (name :String) :String
     {
         return name; // do not adjust
-    }
-
-    /**
-     * Compares two member name records case insensitively.
-     */
-    protected static function compare (n1 :Name, n2 :Name) :int
-    {
-        return n1.toString().toLowerCase().localeCompare(n2.toString().toLowerCase());
     }
 
     /** The member id of the member we represent. */
