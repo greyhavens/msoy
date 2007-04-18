@@ -7,7 +7,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.JTabbedPane;
@@ -18,6 +17,8 @@ import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
+
+import com.samskivert.util.HashIntMap;
 
 import com.infosys.closeandmaxtabbedpane.CloseAndMaxTabbedPane;
 import com.infosys.closeandmaxtabbedpane.CloseListener;
@@ -55,7 +56,7 @@ public class TabbedEditor extends CloseAndMaxTabbedPane
         assignTabKeys();
 
         // add the component to the tabList
-        _tabList.put(pathElement, tab);
+        _tabList.put(pathElement.elementId, tab);
 
         // set the title
         updateTabTitleAt(pathElement);
@@ -68,8 +69,8 @@ public class TabbedEditor extends CloseAndMaxTabbedPane
      */
     public boolean selectTab (PathElement pathElement)
     {
-        if (_tabList.containsKey(pathElement)) {
-            setSelectedComponent(_tabList.get(pathElement));
+        if (_tabList.containsKey(pathElement.elementId)) {
+            setSelectedComponent(_tabList.get(pathElement.elementId));
             return true;
         }
         return false;
@@ -81,7 +82,7 @@ public class TabbedEditor extends CloseAndMaxTabbedPane
      */
     public void updateTabTitleAt (PathElement pathElement)
     {
-        Component tab = _tabList.get(pathElement);
+        Component tab = _tabList.get(pathElement.elementId);
         if (tab != null) {
             setTitleAt(indexOfComponent(tab), pathElement.getName());
         }
@@ -90,9 +91,9 @@ public class TabbedEditor extends CloseAndMaxTabbedPane
     /**
      * Closes the tab holding the provided PathElement.
      */
-    public void closePathElementTab (PathElement element)
+    public void closePathElementTab (PathElement pathElement)
     {
-        Component tab = _tabList.get(element);
+        Component tab = _tabList.get(pathElement.elementId);
         if (tab == null) {
             return;
         }
@@ -121,8 +122,8 @@ public class TabbedEditor extends CloseAndMaxTabbedPane
 
         TabbedEditorComponent tab = (TabbedEditorComponent)getComponentAt(tabIndex);
         PathElement pathElement = tab.getPathElement();
-        remove(_tabList.get(pathElement));
-        _tabList.remove(pathElement);
+        remove(_tabList.get(pathElement.elementId));
+        _tabList.remove(pathElement.elementId);
         assignTabKeys();
     }
 
@@ -161,7 +162,6 @@ public class TabbedEditor extends CloseAndMaxTabbedPane
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
 
-    // maps the pathelement to the component editing/viewing that pathelement
-    protected HashMap<PathElement,Component> _tabList =
-        new HashMap<PathElement,Component>();
+    // maps the pathelement elementId to the component editing/viewing that pathelement
+    protected HashIntMap<Component> _tabList = new HashIntMap<Component>();
 }
