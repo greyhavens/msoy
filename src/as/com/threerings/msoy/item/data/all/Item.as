@@ -373,6 +373,7 @@ public /*abstract*/ class Item
         registerItemType(Photo, PHOTO);
         registerItemType(Pet, PET);
         registerItemType(Audio, AUDIO);
+        registerItemType(Video, VIDEO);
         registerItemType(Decor, DECOR);
     }
     private static function staticInit () :void
