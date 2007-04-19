@@ -38,7 +38,10 @@ public class FurniEditController
             EditShowMenu: [ ], // not here, either - all activity is handled by buttons
             EditMove:     [ [ MouseEvent.MOUSE_MOVE, handleMouseInMoveMode ],
                             [ MouseEvent.CLICK, handleClickInMoveMode ],
-                            [ KeyboardEvent.KEY_DOWN, handleKeyboardInMoveMode ] ]
+                            [ KeyboardEvent.KEY_DOWN, handleKeyboardInMoveMode] ],
+            EditResize:   [ [ MouseEvent.MOUSE_MOVE, handleMouseInResizeMode ],
+                            [ MouseEvent.CLICK, handleClickInResizeMode ],
+                            [ KeyboardEvent.KEY_DOWN, handleKeyboardInResizeMode ] ]
             };
 
         // create a collection of button definitions. handlers are closures on this instance.
@@ -181,8 +184,7 @@ public class FurniEditController
     
     /** Start resizing the sprite. */
     protected function resize () :void {
-        // setMode(EDIT_RESIZE); - not hooked up yet
-        setMode(EDIT_SHOWMENU);
+        setMode(EDIT_RESIZE);
     }
 
     /**
@@ -288,6 +290,63 @@ public class FurniEditController
     
     // FURNI RESIZE
 
+    protected function scaleFurni (scale :Point) :void
+    {
+        _furni.setMediaScaleX(scale.x);
+        _furni.setMediaScaleY(scale.y);
+    }
+
+    /** Given some width, height values in screen coordinates, finds x and y scaling factors
+     *  that would resize the current furni to those coordinates. */
+    protected function computeScale (width :Number, height :Number) :Point
+    {
+        var oldwidth :Number = _furni.getActualWidth();
+        var oldheight :Number = _furni.getActualHeight();
+        oldwidth = (oldwidth == 0) ? 1 : oldwidth;
+        oldheight = (oldheight == 0) ? 1 : oldheight;
+        var scaleX :Number = _furni.getMediaScaleX() / oldwidth;
+        var scaleY :Number = _furni.getMediaScaleY() / oldheight;
+        
+        var newScaleX :Number = Math.abs(width * scaleX);
+        var newScaleY :Number = Math.abs(height * scaleY);
+        
+        return new Point(newScaleX, newScaleY);
+    }
+
+    /** Finds x and y scaling factors that will resize the current furni based on mouse position. */
+    protected function findScale (event :MouseEvent) :Point
+    {
+        var hotspot :Point = _furni.localToGlobal(_furni.getLayoutHotSpot());
+        var dx :Number = event.stageX - hotspot.x; // positive to the right of hotspot
+        var dy :Number = hotspot.y - event.stageY; // positive above hotspot
+        return computeScale(dx * 2, dy * 2);
+    }
+    
+    /** Handles mouse movement during furni resize. */
+    protected function handleMouseInResizeMode (event :MouseEvent) :void
+    {
+        scaleFurni(findScale(event));
+    }
+
+    /** Handles mouse clicks during furni resize. */
+    protected function handleClickInResizeMode (event :MouseEvent) :void
+    {
+        scaleFurni(findScale(event));
+        setMode(EDIT_SHOWMENU);
+    }
+
+    /** Handles key presses during furni resize.  */
+    protected function handleKeyboardInResizeMode (event :KeyboardEvent) :void
+    {
+        if (event.keyCode == Keyboard.ESCAPE) {
+            scaleFurni(new Point(_originalFurniData.scaleX, _originalFurniData.scaleY)); 
+            setMode(EDIT_SHOWMENU);
+        }
+
+        event.updateAfterEvent();
+    }
+
+    
 
     // GENERAL EVENT HANDLERS
 

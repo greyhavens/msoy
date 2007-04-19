@@ -31,6 +31,9 @@ public class RoomMetrics
     /** Actual pixel height of the back wall. */
     public var backWallHeight :Number;
 
+    /** Actual pixel width of the back wall. */
+    public var backWallWidth :Number;
+
     /** Y pixel of the top of the back wall. */
     public var backWallTop :Number;
 
@@ -55,6 +58,7 @@ public class RoomMetrics
         this.farScale = (sceneDepth == 0) ? 0 : (FOCAL / (FOCAL + sceneDepth));
         this.scaleRange = nearScale - farScale;
         this.backWallHeight = data.height * farScale;
+        this.backWallWidth = data.width * farScale;
 
         this.horizonY = sceneHeight * sky;
         this.backWallTop = horizonY - (backWallHeight * sky);
@@ -68,37 +72,39 @@ public class RoomMetrics
      */
     public function roomToScreen (x :Number, y :Number, z :Number) :Point
     {
-        var scale :Number = scaleAtDepth(z);
-        var floorWidth :Number = (sceneWidth * scale);
-        var floorInset :Number = (sceneWidth - floorWidth) / 2;
-        var xPosition :Number = floorInset + x * floorWidth;
+        // raw x, y distances in screen coordinates at z
+        var position :Point = roomDistanceToPixelDistance (new Point(x, y), z);
 
-        // pixel offset, from the bottom of the screen, of something sitting on the ground at z
+        // pixel offset from the left edge of the stage, of an object at z
+        var leftOffset :Number = interpolate(0, (sceneWidth - backWallWidth) / 2, z);
+        // pixel offset from the bottom of the screen, of something sitting on the ground at z
         var groundOffset :Number = interpolate(0, sceneHeight - backWallBottom, z);
-        var yHeight :Number = roomHeightToPixelHeight(y, z);
-        var yPosition :Number = sceneHeight - (groundOffset + yHeight);
 
-        return new Point(floorInset + (x * floorWidth), yPosition);
+        var xPosition :Number = leftOffset + position.x;
+        var yPosition :Number = sceneHeight - (groundOffset + position.y);
+
+        return new Point(xPosition, yPosition);
     }
 
     /**
-     * Given a height and a z position in room coordinates, convert to pixel height.
+     * Given dx and dy values (as a point) and z value, in room coordinates,
+     * converts them to pixel dx and dy.
      */
-    public function roomHeightToPixelHeight (height :Number, z :Number) :Number
+    public function roomDistanceToPixelDistance (delta :Point, z :Number) :Point
     {
-        return height * scaleAtDepth(z) * sceneHeight;
+        var scale :Number = scaleAtDepth(z);
+        return new Point(delta.x * scale * sceneWidth, delta.y * scale * sceneHeight);
     }
 
     /**
-     * Get the y distance represented by the specified number of pixels for the given z coordinate.
+     * Given dx and dy values (as a point) and a z value, in screen coordinates,
+     * converts them to room dx and dy.
      */
-    public function pixelHeightToRoomHeight (height :int, z :Number) :Number
+    public function pixelDistanceToRoomDistance (delta :Point, z :Number) :Point
     {
-        // total room height at the given depth
         var roomHeightAtDepth :Number = interpolate(sceneHeight, backWallHeight, z);
-
-        return height / roomHeightAtDepth;
-
+        var roomWidthAtDepth :Number = interpolate(sceneWidth, backWallWidth, z);
+        return new Point(delta.x / roomWidthAtDepth, delta.y / roomHeightAtDepth);
     }
 
     /**
