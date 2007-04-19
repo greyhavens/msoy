@@ -300,15 +300,19 @@ public class FurniEditController
      *  that would resize the current furni to those coordinates. */
     protected function computeScale (width :Number, height :Number) :Point
     {
+        // get current size info in pixels
         var oldwidth :Number = _furni.getActualWidth();
         var oldheight :Number = _furni.getActualHeight();
         oldwidth = (oldwidth == 0) ? 1 : oldwidth;
         oldheight = (oldheight == 0) ? 1 : oldheight;
-        var scaleX :Number = _furni.getMediaScaleX() / oldwidth;
-        var scaleY :Number = _furni.getMediaScaleY() / oldheight;
-        
-        var newScaleX :Number = Math.abs(width * scaleX);
-        var newScaleY :Number = Math.abs(height * scaleY);
+
+        // figure out the proportion of pixels per scaling unit that produced old width and height
+        var xProportions :Number = oldwidth / _furni.getMediaScaleX();
+        var yProportions :Number = oldheight / _furni.getMediaScaleY();
+
+        // find new scaling ratios for the desired width and height
+        var newScaleX :Number = Math.abs(width / xProportions);
+        var newScaleY :Number = Math.abs(height / yProportions);
         
         return new Point(newScaleX, newScaleY);
     }
@@ -316,10 +320,19 @@ public class FurniEditController
     /** Finds x and y scaling factors that will resize the current furni based on mouse position. */
     protected function findScale (event :MouseEvent) :Point
     {
-        var hotspot :Point = _furni.localToGlobal(_furni.getLayoutHotSpot());
-        var dx :Number = event.stageX - hotspot.x; // positive to the right of hotspot
-        var dy :Number = hotspot.y - event.stageY; // positive above hotspot
-        return computeScale(dx * 2, dy * 2);
+        // find hotspot position in terms of sprite width and height
+        var hotspot :Point = _furni.getLayoutHotSpot();
+        var px :Number = hotspot.x / _furni.getActualWidth();  
+        var py :Number = hotspot.y / _furni.getActualHeight(); 
+
+        // find pixel distance from hotspot to mouse pointer
+        var pivot :Point = _furni.localToGlobal(hotspot);      
+        var dx :Number = event.stageX - pivot.x; // positive to the right of hotspot
+        var dy :Number = pivot.y - event.stageY; // positive above hotspot
+
+        // convert pixel position to how wide and tall the furni would have to be in order
+        // to reach that position - and pass it into the scaling function.
+        return computeScale(dx / px, dy / py); 
     }
     
     /** Handles mouse movement during furni resize. */
