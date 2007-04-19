@@ -49,6 +49,12 @@ public class ActorSprite extends MsoySprite
     /** The maximum height of an avatar sprite. */
     public static const MAX_HEIGHT :int = 450;
 
+    /** The default walk speed, in pixels per millisecond. */
+    public static const DEFAULT_WALK_SPEED :Number = .5;
+
+    /** The minimum walk speed, in pixels per millisecond. */
+    public static const MIN_WALK_SPEED :Number = .05;
+
     /**
      * Creates an actor sprite for the supplied occupant.
      */
@@ -125,6 +131,15 @@ public class ActorSprite extends MsoySprite
             removeChild(_decorations[ii] as DisplayObject);
         }
         _decorations = null;
+    }
+
+    /**
+     * Return the walk speed of this actor, in pixels / millisecond.
+     */
+    public function getWalkSpeed () :Number
+    {
+        // TODO: configurable
+        return Math.max(MIN_WALK_SPEED, DEFAULT_WALK_SPEED * _scale);
     }
 
     override public function getDesc () :String

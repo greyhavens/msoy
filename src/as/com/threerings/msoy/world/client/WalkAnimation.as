@@ -25,12 +25,12 @@ public class WalkAnimation extends Animation
         _source = [ src.x, src.y, src.z, src.orient ];
         _dest = [ dest.x, dest.y, dest.z, dest.orient ];
 
-        // TODO move/define magic numbers?
-        // TODO: perhaps actors define their own duration and easing function?
         var dx :Number = scene.getWidth() * (dest.x - src.x);
-        var dy :Number = 400 * (dest.y - src.y);
+        var dy :Number = scene.getHeight() * (dest.y - src.y);
         var dz :Number = scene.getDepth() * (dest.z - src.z);
-        _duration = int(2 * Math.sqrt(dx * dx + dy * dy + dz * dz));
+
+        // calculate the duration- walk speed is specified in pixels/ms.
+        _duration = int(Math.sqrt((dx * dx) + (dy * dy) + (dz * dz)) / spr.getWalkSpeed());
     }
 
     /**
