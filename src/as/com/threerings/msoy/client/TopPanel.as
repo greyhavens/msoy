@@ -3,13 +3,7 @@
 
 package com.threerings.msoy.client {
 
-import flash.display.DisplayObject;
-import flash.display.Shape;
-
 import flash.events.Event;
-
-import flash.geom.Rectangle;
-
 import flash.system.Capabilities;
 
 import mx.core.Application;
@@ -62,15 +56,10 @@ public class TopPanel extends Canvas
         _headerBar.setStyle("right", 0);
         addChild(_headerBar);
 
-        _placeBox = new Canvas();
+        _placeBox = new PlaceBox();
         _placeBox.autoLayout = false;
         _placeBox.includeInLayout = false;
         addChild(_placeBox);
-
-        // set up a mask on the placebox
-        _placeMask = new Shape();
-        _placeBox.mask = _placeMask;
-        _placeBox.rawChildren.addChild(_placeMask);
 
         // set up the control bar
         _controlBar = new ControlBar(ctx, this);
@@ -167,30 +156,25 @@ public class TopPanel extends Canvas
      * Get the flex container that is holding the PlaceView. This is useful if you want to overlay
      * things over the placeview or register to receive flex-specific events.
      */
-    public function getPlaceContainer () :Container
+    public function getPlaceContainer () :PlaceBox
     {
         return _placeBox;
     }
 
+    /**
+     * Returns the currently configured place view.
+     */
     public function getPlaceView () :PlaceView
     {
-        return _placeView;
+        return _placeBox.getPlaceView();
     }
 
+    /**
+     * Sets the specified view as the current place view.
+     */
     public function setPlaceView (view :PlaceView) :void
     {
-        // throw an exception now if it's not a display object
-        var disp :DisplayObject = DisplayObject(view);
-
-        clearPlaceView(null);
-        _placeView = view;
-
-        if (disp is UIComponent) {
-            _placeBox.addChildAt(disp, 0);
-        } else {
-            _placeBox.rawChildren.addChildAt(disp, 0);
-        }
-
+        _placeBox.setPlaceView(view);
         updatePlaceViewSize();
     }
 
@@ -199,15 +183,7 @@ public class TopPanel extends Canvas
      */
     public function clearPlaceView (view :PlaceView) :void
     {
-        if ((_placeView != null) && (view == null || view == _placeView)) {
-            var disp :DisplayObject = DisplayObject(_placeView);
-            if (disp is UIComponent) {
-                _placeBox.removeChild(disp);
-            } else {
-                _placeBox.rawChildren.removeChild(disp);
-            }
-            _placeView = null;
-        }
+        _placeBox.clearPlaceView(view);
     }
 
     /**
@@ -417,7 +393,7 @@ public class TopPanel extends Canvas
 
         // actually, for place views, we want to insert decorative margins above and below the
         // view, so let's tweak the sizes
-        if (_placeView is MsoyPlaceView) {
+        if (_placeBox.getPlaceView() is MsoyPlaceView) {
             top += DECORATIVE_MARGIN_HEIGHT;
             bottom += DECORATIVE_MARGIN_HEIGHT;
             h -= DECORATIVE_MARGIN_HEIGHT * 2;
@@ -427,21 +403,7 @@ public class TopPanel extends Canvas
         _placeBox.setStyle("bottom", bottom);
         _placeBox.setStyle("left", getLeftPanelWidth());
         _placeBox.setStyle("right", getRightPanelWidth());
-
-        _placeMask.graphics.clear();
-        _placeMask.graphics.beginFill(0xFFFFFF);
-        _placeMask.graphics.drawRect(0, 0, w, h);
-        _placeMask.graphics.endFill();
-
-        if (_placeView != null) {
-            if (_placeView is UIComponent) {
-                UIComponent(_placeView).setActualSize(w, h);
-            } else if (_placeView is MsoyPlaceView) {
-                MsoyPlaceView(_placeView).setPlaceSize(w, h);
-            } else {
-                Log.getLog(this).warning("PlaceView is not a MsoyPlaceView or an UIComponent.");
-            }
-        }
+        _placeBox.wasResized(w, h);
     }
 
     protected function getLeftPanelWidth () :int
@@ -462,15 +424,8 @@ public class TopPanel extends Canvas
     /** The giver of life. */
     protected var _ctx :WorldContext;
 
-    /** The current place view. */
-    protected var _placeView :PlaceView;
-
     /** The box that will hold the placeview. */
-    protected var _placeBox :Canvas;
-
-    /** The mask configured on the placeview so that it doesn't overlap
-     * our other components. */
-    protected var _placeMask :Shape;
+    protected var _placeBox :PlaceBox;
 
     /** The current left panel component. */
     protected var _leftPanel :UIComponent;
