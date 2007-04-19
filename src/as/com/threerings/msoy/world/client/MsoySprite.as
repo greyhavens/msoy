@@ -194,7 +194,7 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Get the hotspot to use for layout purposes. This point is 
+     * Get the hotspot to use for layout purposes. This point is
      * adjusted for scale and any perspectivization.
      */
     public function getLayoutHotSpot () :Point
@@ -425,9 +425,8 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * An internal convenience method to recompute our screen
-     * position when our size, location, or anything like that has
-     * been updated.
+     * An internal convenience method to recompute our screen position when our size, location, or
+     * anything like that has been updated.
      */
     protected function locationUpdated () :void
     {
@@ -445,8 +444,8 @@ public class MsoySprite extends MediaContainer
             _media.scaleX = scalex;
             _media.scaleY = scaley;
 
-            if (_media.mask != null &&
-                    (!(_media is DisplayObjectContainer) || !DisplayObjectContainer(_media).contains(_media.mask))) {
+            if (_media.mask != null && (!(_media is DisplayObjectContainer) ||
+                                        !DisplayObjectContainer(_media).contains(_media.mask))) {
                 _media.mask.scaleX = Math.abs(scalex);
                 _media.mask.scaleY = Math.abs(scaley);
             }
@@ -456,8 +455,8 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Should be called when the media scale or size changes to ensure
-     * that the media is positioned correctly.
+     * Should be called when the media scale or size changes to ensure that the media is positioned
+     * correctly.
      */
     protected function updateMediaPosition () :void
     {
@@ -473,13 +472,12 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * A callback called when there is a status event from using
-     * the local connection.
+     * A callback called when there is a status event from using the local connection.
      */
     protected static function onLocalConnStatus (event :StatusEvent) :void
     {
-        // This method exists because if we don't eat status-error messages
-        // then they end up bubbling up somewhere else.
+        // This method exists because if we don't eat status-error messages then they end up
+        // bubbling up somewhere else.
 
         if (event.level != "status") {
 //            Log.getLog(MsoySprite).debug("Unable to communicate with media " +
@@ -495,11 +493,12 @@ public class MsoySprite extends MediaContainer
         if (_hotSpot == null) {
             _hotSpot = new Point(_w / 2, _h);
         }
-        // we'll want to call locationUpdated() now, but it's done for us
-        // as a result of calling updateMediaPosition(), below.
 
-        // even if we don't have strange (negative) scaling, we should do this
-        // because it ends up calling locationUpdated().
+        // we'll want to call locationUpdated() now, but it's done for us as a result of calling
+        // updateMediaPosition(), below.
+
+        // even if we don't have strange (negative) scaling, we should do this because it ends up
+        // calling locationUpdated().
         updateMediaPosition();
     }
 
@@ -509,8 +508,8 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Create the 'back end' that will be used to proxy communication
-     * with any usercode we're hosting.
+     * Create the 'back end' that will be used to proxy communication with any usercode we're
+     * hosting.
      */
     protected function createBackend () :EntityBackend
     {
@@ -518,10 +517,9 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Request control of this entity.
-     * Called by our backend in response to a request from usercode.
-     * If this succeeds, a <code>gotControl</code> notification will be
-     * dispatched when we hear back from the server.
+     * Request control of this entity. Called by our backend in response to a request from
+     * usercode.  If this succeeds, a <code>gotControl</code> notification will be dispatched when
+     * we hear back from the server.
      */
     internal function requestControl () :void
     {
@@ -531,8 +529,8 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * This sprite is sending a message to all clients.
-     * Called by our backend in response to a request from usercode.
+     * This sprite is sending a message to all clients. Called by our backend in response to a
+     * request from usercode.
      */
     internal function sendMessage (name :String, arg :Object, isAction :Boolean) :void
     {
@@ -542,8 +540,8 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Retrieve the instanceId for this item.
-     * Called by our backend in response to a request from usercode.
+     * Retrieve the instanceId for this item. Called by our backend in response to a request from
+     * usercode.
      */
     internal function getInstanceId () :int
     {
@@ -554,8 +552,8 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Locate the value bound to a particular key in the item's memory.
-     * Called by our backend in response to a request from usercode.
+     * Locate the value bound to a particular key in the item's memory. Called by our backend in
+     * response to a request from usercode.
      */
     internal function lookupMemory (key :String) :Object
     {
@@ -571,8 +569,7 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Update a memory datum.
-     * Called by our backend in response to a request from usercode.
+     * Update a memory datum. Called by our backend in response to a request from usercode.
      */
     internal function updateMemory (key :String, value: Object) :Boolean
     {
@@ -584,20 +581,25 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Update the sprite's hotspot.
-     * Called by our backend in response to a request from usercode.
+     * Update the sprite's hotspot. Called by our backend in response to a request from usercode.
      */
-    internal function setHotSpot (x :Number, y :Number) :void
+    internal function setHotSpot (x :Number, y :Number, height :Number) :void
     {
-        if (isNaN(x) || isNaN(y)) {
-            return;
-        }
-
-        if (_hotSpot == null || x != _hotSpot.x || y != _hotSpot.y) {
+        var updated :Boolean = false;
+        if (!isNaN(x) && !isNaN(y) && (_hotSpot == null || x != _hotSpot.x || y != _hotSpot.y)) {
             _hotSpot = new Point(x, y);
             if (!_editing) {
-                locationUpdated();
+                updated = true;
             }
+        }
+
+        if (!isNaN(height)) {
+            _height = height;
+            updated = true;
+        }
+
+        if (updated) {
+            locationUpdated();
         }
     }
 
@@ -647,6 +649,10 @@ public class MsoySprite extends MediaContainer
 
     /** The media hotspot, which should be used to position it. */
     protected var _hotSpot :Point = null;
+
+    /** The natural "height" of our visualization. If NaN then the height of the bounding box is
+     * assumed, but an Entity can configure its height when configuring its hotspot. */
+    protected var _height :Number = NaN;
 
     protected var _fxScaleX :Number = 1;
     protected var _fxScaleY :Number = 1;

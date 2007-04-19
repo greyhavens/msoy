@@ -59,9 +59,9 @@ public class EntityBackend extends ControlBackend
         return _sprite.updateMemory(key, value);
     }
 
-    protected function setHotSpot_v1 (x :Number, y :Number) :void
+    protected function setHotSpot_v1 (x :Number, y :Number, height :Number = NaN) :void
     {
-        _sprite.setHotSpot(x, y);
+        _sprite.setHotSpot(x, y, height);
     }
 
     protected function sendMessage_v1 (name :String, arg :Object, isAction :Boolean) :void

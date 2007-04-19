@@ -194,7 +194,6 @@ public class ActorSprite extends MsoySprite
             _label.text = newInfo.username.toString();
             _label.width = _label.textWidth + 5; // the magic number
             _label.height = _label.textHeight + 4;
-            _label.y = -1 * _label.height;
             recheckLabel();
             arrangeDecorations();
         }
@@ -205,10 +204,9 @@ public class ActorSprite extends MsoySprite
         // assign the new one
         _occInfo = newInfo;
 
-        // finally, if the state has changed, dispatch an event
-        // (we don't dispatch if the old info was null, as getting our initial
-        // state isn't a "change") This is another argument for a special
-        // state-changed dobj event.
+        // finally, if the state has changed, dispatch an event (we don't dispatch if the old info
+        // was null, as getting our initial state isn't a "change") This is another argument for a
+        // special state-changed dobj event.
         if (oldWinfo != null && !Util.equals(oldWinfo.getState(), winfo.getState())) {
             callUserCode("stateSet_v1", winfo.getState());
         }
@@ -355,16 +353,9 @@ public class ActorSprite extends MsoySprite
         }
     }
 
-    override protected function scaleUpdated () :void
+    override protected function locationUpdated () :void
     {
-        super.scaleUpdated();
-        recheckLabel();
-        arrangeDecorations();
-    }
-
-    override protected function contentDimensionsUpdated () :void
-    {
-        super.contentDimensionsUpdated();
+        super.locationUpdated();
         recheckLabel();
         arrangeDecorations();
     }
@@ -395,8 +386,7 @@ public class ActorSprite extends MsoySprite
         return "ActorSprite[" + _occInfo.username + " (oid=" + _occInfo.bodyOid + ")]";
     }
 
-    override protected function updateLoadingProgress (
-            soFar :Number, total :Number) :void
+    override protected function updateLoadingProgress (soFar :Number, total :Number) :void
     {
         var prog :Number = (total == 0) ? 0 : (soFar / total);
 
@@ -420,6 +410,12 @@ public class ActorSprite extends MsoySprite
     {
         // note: may overflow the media area..
         _label.x = (getActualWidth() - _label.width) / 2;
+        // if we have a configured _height use that in relation to the hot spot y position,
+        // otherwise assume our label goes above our bounding box
+        var baseY :Number = isNaN(_height) ? 0 :
+            (getMediaScaleY() * _locScale * _fxScaleY * (_hotSpot.y - _height));
+        _label.y = baseY - _label.height;
+        trace("Setting label at " + _label.y + " (" + _height + ").");
     }
 
     /**
@@ -431,8 +427,7 @@ public class ActorSprite extends MsoySprite
             return;
         }
 
-        // place the decorations over the name label, with our best
-        // guess as to their size
+        // place the decorations over the name label, with our best guess as to their size
         var ybase :Number = _label.y;
         for (var ii :int = 0; ii < _decorations.length; ii += 2) {
             var dec :DisplayObject = DisplayObject(_decorations[ii]);
