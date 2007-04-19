@@ -1081,7 +1081,7 @@ public class ChatOverlay
     {
         var w :int = _target.width;
         if (_historyBar != null) {
-            w -= _historyBar.width;
+            w -= ScrollBar.THICKNESS;
         }
         // there is PAD between the text and the edges of the bubble, and another PAD between the
         // bubble and the container edges, on each side for a total of 4 pads.
