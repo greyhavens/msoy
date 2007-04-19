@@ -300,20 +300,26 @@ public class FurniEditController
      *  that would resize the current furni to those coordinates. */
     protected function computeScale (width :Number, height :Number) :Point
     {
+        const e :Number = 0.1; // zero scale will get bumped up to this value
+        
         // get current size info in pixels
-        var oldwidth :Number = _furni.getActualWidth();
-        var oldheight :Number = _furni.getActualHeight();
-        oldwidth = (oldwidth == 0) ? 1 : oldwidth;
-        oldheight = (oldheight == 0) ? 1 : oldheight;
+        var oldwidth :Number = Math.max(_furni.getActualWidth(), 1);
+        var oldheight :Number = Math.max(_furni.getActualHeight(), 1);
 
         // figure out the proportion of pixels per scaling unit that produced old width and height
-        var xProportions :Number = oldwidth / _furni.getMediaScaleX();
-        var yProportions :Number = oldheight / _furni.getMediaScaleY();
+        var xProportions :Number = Math.max(Math.abs(oldwidth / _furni.getMediaScaleX()), 1);
+        var yProportions :Number = Math.max(Math.abs(oldheight / _furni.getMediaScaleY()), 1);
 
         // find new scaling ratios for the desired width and height
-        var newScaleX :Number = Math.abs(width / xProportions);
-        var newScaleY :Number = Math.abs(height / yProportions);
+        var newScaleX :Number = width / xProportions;
+        var newScaleY :Number = height / yProportions;
+        newScaleX = (newScaleX != 0 ? newScaleX : e);
+        newScaleY = (newScaleY != 0 ? newScaleY : e);
         
+        trace("COMPUTE SCALE: " + width + ", " + height);
+        trace("PROPORTIONS:   " + xProportions + ", " + yProportions);
+        trace("NEW SCALE:     " + newScaleX + ", " + newScaleY);
+
         return new Point(newScaleX, newScaleY);
     }
 
