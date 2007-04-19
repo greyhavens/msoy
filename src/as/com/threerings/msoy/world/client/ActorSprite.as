@@ -352,9 +352,9 @@ public class ActorSprite extends MsoySprite
         }
     }
 
-    override protected function locationUpdated () :void
+    override protected function scaleUpdated () :void
     {
-        super.locationUpdated();
+        super.scaleUpdated();
         recheckLabel();
         arrangeDecorations();
     }
@@ -383,6 +383,12 @@ public class ActorSprite extends MsoySprite
     override public function toString () :String
     {
         return "ActorSprite[" + _occInfo.username + " (oid=" + _occInfo.bodyOid + ")]";
+    }
+
+    override public function setHotSpot (x :Number, y :Number, height :Number) :void
+    {
+        super.setHotSpot(x, y, height);
+        recheckLabel();
     }
 
     override protected function updateLoadingProgress (soFar :Number, total :Number) :void
@@ -414,7 +420,6 @@ public class ActorSprite extends MsoySprite
         var baseY :Number = isNaN(_height) ? 0 :
             (getMediaScaleY() * _locScale * _fxScaleY * (_hotSpot.y - _height));
         _label.y = baseY - _label.height;
-        trace("Setting label at " + _label.y + " (" + _height + ").");
     }
 
     /**

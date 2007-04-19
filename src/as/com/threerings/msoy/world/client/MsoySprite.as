@@ -582,23 +582,22 @@ public class MsoySprite extends MediaContainer
 
     /**
      * Update the sprite's hotspot. Called by our backend in response to a request from usercode.
+     * Should be *internal* but needs to be overridable. Fucking flash!
      */
-    internal function setHotSpot (x :Number, y :Number, height :Number) :void
+    public function setHotSpot (x :Number, y :Number, height :Number) :void
     {
         var updated :Boolean = false;
         if (!isNaN(x) && !isNaN(y) && (_hotSpot == null || x != _hotSpot.x || y != _hotSpot.y)) {
             _hotSpot = new Point(x, y);
-            if (!_editing) {
-                updated = true;
-            }
+            updated = true;
         }
 
-        if (!isNaN(height)) {
+        if (height != _height) {
             _height = height;
             updated = true;
         }
 
-        if (updated) {
+        if (updated && !_editing) {
             locationUpdated();
         }
     }
