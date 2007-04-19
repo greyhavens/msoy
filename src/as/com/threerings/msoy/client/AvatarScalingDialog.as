@@ -38,11 +38,11 @@ public class AvatarScalingDialog extends FloatingPanel
     {
         super.createChildren();
 
-        var container :MediaContainer = new MediaContainer();
-        container.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
-        container.setMedia(_avatar.avatarMedia.getMediaPath());
+        _container = new MediaContainer();
+        _container.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
+        _container.setMedia(_avatar.avatarMedia.getMediaPath());
 
-        var wrapper :MediaWrapper = new MediaWrapper(container,
+        var wrapper :MediaWrapper = new MediaWrapper(_container,
             ActorSprite.MAX_WIDTH, ActorSprite.MAX_HEIGHT, true);
         addChild(wrapper);
 
@@ -60,11 +60,7 @@ public class AvatarScalingDialog extends FloatingPanel
         _slider.maximum = int.MAX_VALUE;
         _slider.enabled = false;
         _slider.tickValues = [ 1 ];
-        BindingUtils.bindSetter(function (newScale :Number) :void {
-            container.scaleX = newScale;
-            container.scaleY = newScale;
-            _reset.enabled = (newScale != 1);
-        }, _slider, "value");
+        BindingUtils.bindSetter(sliderUpdated, _slider, "value");
         _slider.value = _avatar.scale;
         hbox.addChild(_slider);
         _reset.enabled = false;
@@ -88,7 +84,7 @@ public class AvatarScalingDialog extends FloatingPanel
 
         // the minimum scale makes things 10 pixels in a dimension
         var minScale :Number = Math.max(10 / width, 10 / height);
-        // the maximum bumps us up against
+        // the maximum bumps us up against the overall maximums
         var maxScale :Number = Math.min(ActorSprite.MAX_WIDTH / width,
             ActorSprite.MAX_HEIGHT / height);
 
@@ -98,8 +94,23 @@ public class AvatarScalingDialog extends FloatingPanel
 
         // enable everything
         _slider.enabled = true;
-        _reset.enabled = (_slider.value != 1);
         _buttons[OK_BUTTON].enabled = true;
+        sliderUpdated();
+    }
+
+    protected function sliderUpdated (... ignored) :void
+    {
+        var val :Number = _slider.value;
+        _container.scaleX = val;
+        _container.scaleY = val;
+        _reset.enabled = (val != 1);
+
+        // and position the media..
+        var w :Number = _container.getContentWidth() * val;
+        var h :Number = _container.getContentHeight() * val;
+
+        _container.x = (ActorSprite.MAX_WIDTH - w) / 2;
+        _container.y = (ActorSprite.MAX_HEIGHT - h);
     }
 
     override protected function buttonClicked (buttonId :int) :void
@@ -113,6 +124,8 @@ public class AvatarScalingDialog extends FloatingPanel
 
     /** The avatar we're scaling. */
     protected var _avatar :Avatar;
+
+    protected var _container :MediaContainer;
 
     protected var _reset :CommandButton;
 
