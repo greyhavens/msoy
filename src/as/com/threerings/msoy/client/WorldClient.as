@@ -67,10 +67,18 @@ import com.threerings.msoy.game.chiyogami.client.ChiyogamiController;
  */
 public class WorldClient extends BaseClient
 {
-    /** An event dispatched when the client is minimized or unminimized. */
+    /**
+     * An event dispatched when the client is minimized or unminimized.
+     *
+     * @eventType minimizationChanged
+     */
     public static const MINIZATION_CHANGED :String = "minimizationChanged";
 
-    /** An event dispatched when we learn whether or not the client is embedded. */
+    /**
+     * An event dispatched when we learn whether or not the client is embedded.
+     *
+     * @eventType clientEmbedded
+     */
     public static const EMBEDDED_STATE_KNOWN :String = "clientEmbedded";
 
     public static const log :Log = Log.getLog(BaseClient);
