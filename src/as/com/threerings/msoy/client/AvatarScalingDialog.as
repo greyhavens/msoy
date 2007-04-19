@@ -49,7 +49,6 @@ public class AvatarScalingDialog extends FloatingPanel
         var hbox :HBox = new HBox();
 
         _reset = new CommandButton();
-        _reset.enabled = false;
         _reset.label = Msgs.GENERAL.get("b.reset_scale");
         _reset.setFunction(function () :void {
             _slider.value = 1;
@@ -68,6 +67,7 @@ public class AvatarScalingDialog extends FloatingPanel
         }, _slider, "value");
         _slider.value = _avatar.scale;
         hbox.addChild(_slider);
+        _reset.enabled = false;
 
         hbox.addChild(_reset);
 
@@ -98,7 +98,7 @@ public class AvatarScalingDialog extends FloatingPanel
 
         // enable everything
         _slider.enabled = true;
-        _reset.enabled = true;
+        _reset.enabled = (_slider.value != 1);
         _buttons[OK_BUTTON].enabled = true;
     }
 
