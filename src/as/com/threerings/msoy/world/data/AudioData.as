@@ -21,10 +21,6 @@ import com.threerings.msoy.item.data.all.StaticMediaDesc;
 public class AudioData
     implements Cloneable, Streamable, Equalable
 {
-    /** Default background audio media. */
-    public static const defaultMedia :MediaDesc =
-        new StaticMediaDesc(MediaDesc.AUDIO_MPEG, Item.AUDIO, Item.MAIN_MEDIA);
-        
     /** Identifies the id of the item that was used to create this. */
     public var itemId :int;
 
@@ -41,7 +37,7 @@ public class AudioData
     {
         itemId = 0;
         volume = 1.0;
-        media = defaultMedia;
+        media = invalidMedia;
     }
 
     /**
@@ -95,5 +91,10 @@ public class AudioData
         media = ins.readObject() as MediaDesc;
         volume = ins.readFloat();
     }
+
+    /** Media descriptor that represents invalid background audio (temporary). */
+    protected static const invalidMedia :MediaDesc =
+        new StaticMediaDesc(MediaDesc.AUDIO_MPEG, Item.AUDIO, Item.FURNI_MEDIA);
+
 }
 }

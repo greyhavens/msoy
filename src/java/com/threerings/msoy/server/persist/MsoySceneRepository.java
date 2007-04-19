@@ -877,23 +877,12 @@ public class MsoySceneRepository extends SimpleRepository
      */
     protected MediaDesc createMediaDesc (byte[] mediaHash, byte mimeType)
     {
-        switch (mediaHash.length) {
-        case 4:
-        {
-            // legacy mode: retrieve item type, assume furni media
+        if (mediaHash.length == 4 || mediaHash.length == 8) {
+            // note: 8-byte descriptors are no longer supported
+            // only the itemType int is used, and the media type is always assumed to be Furni
             byte itemType = (byte)ByteBuffer.wrap(mediaHash).asIntBuffer().get();
             return Item.getDefaultFurniMediaFor(itemType);
-        }
-        case 8:
-        {
-            // retrieve both item and media type
-            IntBuffer buffer = ByteBuffer.wrap(mediaHash).asIntBuffer();
-            byte itemType = (byte)buffer.get();
-            byte mediaTypeId = (byte)buffer.get();
-            String mediaType = Item.ALL_MEDIA_TYPES[mediaTypeId];
-            return new StaticMediaDesc(mimeType, itemType, mediaType);
-        }
-        default:
+        } else {
             return new MediaDesc(mediaHash, mimeType);
         }
     }
@@ -907,24 +896,15 @@ public class MsoySceneRepository extends SimpleRepository
         if (desc instanceof StaticMediaDesc) {
             StaticMediaDesc sdesc = (StaticMediaDesc)desc;
 
-            String mediaType = sdesc.getMediaType();
-            int mediaTypeCount = Item.ALL_MEDIA_TYPES.length;
-            byte mediaTypeId = (byte)mediaTypeCount; 
-            for (int i = 0; i < mediaTypeCount; i++) { // mmm, linear search...
-                if (Item.ALL_MEDIA_TYPES[i].equals(mediaType)) {
-                    mediaTypeId = (byte) i;
-                }
-            }
-
-            // sanity check: make sure we only flatten one of the valid media types
-            if (mediaTypeId == (byte)mediaTypeCount) {
+            // sanity check; if we later need to flatten other static types than furni, we can have
+            // the type constant map to an integer and stuff that into the byte array as well
+            if (!sdesc.getMediaType().equals(Item.FURNI_MEDIA)) {
                 throw new IllegalArgumentException(
-                    "Cannot flatten invalid static media type " + mediaType);
+                    "Cannot flatten non-furni static media " + desc + ".");
             }
 
-            ByteBuffer data = ByteBuffer.allocate(8);
+            ByteBuffer data = ByteBuffer.allocate(4);
             data.asIntBuffer().put(sdesc.getItemType());
-            data.asIntBuffer().put(mediaTypeId);
             return data.array();
 
         } else {

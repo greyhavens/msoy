@@ -19,10 +19,6 @@ import com.threerings.msoy.item.data.all.StaticMediaDesc;
 public class AudioData extends SimpleStreamableObject
     implements Cloneable
 {
-    /** Default background audio media. */
-    public static final MediaDesc defaultMedia =
-        new StaticMediaDesc(MediaDesc.AUDIO_MPEG, Item.AUDIO, Item.MAIN_MEDIA);
-    
     /** Identifies the id of the item that was used to create this. */
     public int itemId;
 
@@ -39,7 +35,7 @@ public class AudioData extends SimpleStreamableObject
     {
         itemId = 0;
         volume = 1.0f;
-        media = defaultMedia;
+        media = invalidMedia;
     }
     
     /**
@@ -81,5 +77,11 @@ public class AudioData extends SimpleStreamableObject
             throw new RuntimeException(cnse);           // not going to happen
         }
     }
+
+    /** Media descriptor that represents invalid background audio (temporary). */
+    protected static final MediaDesc invalidMedia =
+        new StaticMediaDesc(MediaDesc.AUDIO_MPEG, Item.AUDIO, Item.FURNI_MEDIA);
+    
+
 
 }
