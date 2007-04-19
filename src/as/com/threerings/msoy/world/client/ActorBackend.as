@@ -8,6 +8,7 @@ public class ActorBackend extends EntityBackend
     {
         super.populateControlProperties(o);
 
+        o["setWalkSpeed_v1"] = setWalkSpeed_v1;
         o["setLocation_v1"] = setLocation_v1;
         o["setOrientation_v1"] = setOrientation_v1;
         o["setState_v1"] = setState_v1;
@@ -23,6 +24,14 @@ public class ActorBackend extends EntityBackend
         o["location"] = [ loc.x, loc.y, loc.z ];
         o["orient"] = loc.orient;
         o["isMoving"] = sprite.isMoving();
+    }
+
+    /**
+     * Called by user code to configure the default walking speed for this actor.
+     */
+    protected function setWalkSpeed_v1 (speed :Number) :void
+    {
+        (_sprite as ActorSprite).setWalkSpeedFromUser(speed);
     }
 
     /**

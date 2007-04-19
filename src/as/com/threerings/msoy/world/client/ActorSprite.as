@@ -138,8 +138,7 @@ public class ActorSprite extends MsoySprite
      */
     public function getWalkSpeed () :Number
     {
-        // TODO: configurable
-        return Math.max(MIN_WALK_SPEED, DEFAULT_WALK_SPEED * _scale);
+        return Math.max(MIN_WALK_SPEED, _walkSpeed * _scale);
     }
 
     override public function getDesc () :String
@@ -513,6 +512,12 @@ public class ActorSprite extends MsoySprite
         Log.getLog(this).debug("user-set orientation is currently TODO.");
     }
 
+    internal function setWalkSpeedFromUser (speed :Number) :void
+    {
+        _walkSpeed = speed;
+        // don't worry, it'll be bounded by the minimum at the appropriate place
+    }
+
     /**
      * Update the actor's state.
      * Called by user code when it wants to change the actor's state.
@@ -558,6 +563,9 @@ public class ActorSprite extends MsoySprite
 
     /** The media scale we should use. */
     protected var _scale :Number = 1;
+
+    /** The walk speed, in pixels per millisecond. */
+    protected var _walkSpeed :Number = DEFAULT_WALK_SPEED;
 
     /** A decoration used when we're in a table in a lobby. */
     protected var _tableIcon :TableIcon;
