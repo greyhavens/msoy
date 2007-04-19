@@ -35,7 +35,7 @@ public class FurniEditController
         // when we enter the state, and removed when we leave the state.
         _listeners = {
             EditOff:      [ ], // no special listeners
-            EditShowMenu: [ ], // not here, either - all activity is handled by buttons
+            EditShowMenu: [ [ KeyboardEvent.KEY_DOWN, handleKeyboardInMenuMode ] ],
             EditMove:     [ [ MouseEvent.MOUSE_MOVE, handleMouseInMoveMode ],
                             [ MouseEvent.CLICK, handleClickInMoveMode ],
                             [ KeyboardEvent.KEY_DOWN, handleKeyboardInMoveMode] ],
@@ -346,8 +346,18 @@ public class FurniEditController
         event.updateAfterEvent();
     }
 
-    
 
+    // MENU MODE
+    
+    /** Handles key presses during furni resize.  */
+    protected function handleKeyboardInMenuMode (event :KeyboardEvent) :void
+    {
+        if (event.keyCode == Keyboard.ESCAPE) {
+            cancel()
+        }
+    }
+
+    
     // GENERAL EVENT HANDLERS
 
     /**
