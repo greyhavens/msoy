@@ -312,10 +312,10 @@ public class WorldClient extends BaseClient
     /**
      * Exposed to javascript so that it may let us know when we've been pushed out of the way.
      */
-    protected function externalSetMinimized (mini :Boolean) :void   
+    protected function externalSetMinimized (minimized :Boolean) :void   
     {
-        log.info("Client was notified that its minimized status has changed: " + mini);
-        dispatchEvent(new ValueEvent(MINIZATION_CHANGED, _minimized = mini));
+        log.info("Client was notified that its minimized status has changed: " + minimized);
+        dispatchEvent(new ValueEvent(MINIZATION_CHANGED, _minimized = minimized));
     }
 
     protected var _wctx :WorldContext;
