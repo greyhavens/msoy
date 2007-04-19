@@ -15,7 +15,7 @@ public class AvatarBackend extends ActorBackend
      */
     protected function setPreferredY_v1 (pixels :int) :void
     {
-        (_sprite as AvatarSprite).preferredY = pixels;
+        (_sprite as AvatarSprite).setPreferredYFromUser(pixels);
     }
 }
 }

@@ -27,10 +27,6 @@ import com.threerings.msoy.world.data.WorldMemberInfo;
  */
 public class AvatarSprite extends ActorSprite
 {
-    /** The preferred Y value of the avatar, used when the user clicks
-     * to move somewhere. */
-    public var preferredY :int = 0;
-
     /**
      * Creates an avatar sprite for the supplied occupant.
      */
@@ -81,6 +77,14 @@ public class AvatarSprite extends ActorSprite
         return validateActionsOrStates(callUserCode("getStates_v1") as Array);
     }
 
+    /**
+     * Get our preferred y value for positioning.
+     */
+    public function getPreferredY () :int
+    {
+        return int(Math.round(_scale * _preferredY));
+    }
+
     override public function messageReceived (name :String, arg :Object, isAction :Boolean) :void
     {
         super.messageReceived(name, arg, isAction);
@@ -118,7 +122,7 @@ public class AvatarSprite extends ActorSprite
 
     override protected function createBackend () :EntityBackend
     {
-        preferredY = 0;
+        _preferredY = 0;
         return new AvatarBackend();
     }
 
@@ -148,5 +152,16 @@ public class AvatarSprite extends ActorSprite
         // everything checks out...
         return vals;
     }
+
+    /**
+     * Routed from usercode by our backend.
+     */
+    internal function setPreferredYFromUser (prefY :int) :void
+    {
+        _preferredY = prefY;
+    }
+
+    /** The preferred y value, in pixels, when a user selects a location. */
+    protected var _preferredY :int
 }
 }

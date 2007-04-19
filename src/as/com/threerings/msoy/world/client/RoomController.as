@@ -787,7 +787,7 @@ public class RoomController extends SceneController
             return 0;
         }
         var av :AvatarSprite = _roomView.getMyAvatar();
-        return (av == null) ? 0 : av.preferredY;
+        return (av == null) ? 0 : av.getPreferredY();
     }
 
     /**
