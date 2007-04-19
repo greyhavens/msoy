@@ -44,13 +44,13 @@ public class HeaderBarController extends Controller
             this.locationChanged, null));
 
         Application.application.stage.addEventListener(Event.RESIZE, function (evt :Event) :void {
-            _headerBar.setCloseButtonVisible(_ctx.getMsoyController().getMinimized());
+            _headerBar.setCloseButtonVisible(_ctx.getWorldClient().isMinimized());
         });
     }
 
     public function handleCloseClient () :void
     {
-        (_ctx.getClient() as WorldClient).closeClient();
+        _ctx.getWorldClient().closeClient();
     }
 
     public function handleShowEmbedHtml () :void
@@ -87,13 +87,14 @@ public class HeaderBarController extends Controller
         var scene :Scene = _ctx.getSceneDirector().getScene();
         if (scene != null) {
             _headerBar.setLocationText(scene.getName());
-            // we know the MsoyController is initialized at this point, so it is safe to check
-            // whether we are embedded or not.  
-            _headerBar.setEmbedLinkButtonVisible(!_ctx.getMsoyController().isEmbedded());
+            // we know the WorldClient is initialized at this point, so it is safe to check whether
+            // we are embedded or not.
+            _headerBar.setEmbedLinkButtonVisible(!_ctx.getWorldClient().isEmbedded());
+
         } else {
-            // For now we can embed scenes with game lobbies attached, but not game instances - 
-            // when we have a unique URL for game instance locations, then we can embed those 
-            // locations as well, and have the embedded page bring the game lobby attached to the 
+            // For now we can embed scenes with game lobbies attached, but not game instances -
+            // when we have a unique URL for game instance locations, then we can embed those
+            // locations as well, and have the embedded page bring the game lobby attached to the
             // default game room.
             _headerBar.setEmbedLinkButtonVisible(false);
             var ctrl :PlaceController = _ctx.getLocationDirector().getPlaceController();

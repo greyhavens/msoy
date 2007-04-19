@@ -609,52 +609,13 @@ public class MsoyController extends Controller
         if (gameId == _gameId) {
             _gameId = -1;
             // perform our bookmarkable URL magic, if we're not minimized
-            if (!_minimized) {
+            if (!_ctx.getWorldClient().isMinimized()) {
                 var scene :Scene = _ctx.getSceneDirector().getScene();
                 if (scene != null) {
                     wentToScene(scene.getId());
                 }
             }
         }
-    }
-
-    /**
-     * Called by WorldClient when it finds out if we're embedded in a page or not.
-     */
-    public function setEmbedded (embedded :Boolean) :void
-    {
-        _embedded = embedded;
-        _ctx.getTopPanel().getControlBar().setEmbedded(embedded);
-    }
-
-    /**
-     * Find out whether this client is embedded in a non-whirled page.
-     */
-    public function isEmbedded () :Boolean
-    {
-        return _embedded;
-    }
-
-    /**
-     * Lets us know that the Whirled client has either been minimized, or un-minimized
-     */
-    public function setMinimized (minimized :Boolean) :void
-    {
-        _minimized = minimized;
-        _ctx.getTopPanel().getControlBar().setMinimized(minimized);
-        if (minimized) {
-            _topPanel.clearLeftPanel(null);
-        }
-    }
-
-    /**
-     * Find out if we're currently working in mini-land or not.  Other components should be able
-     * to check this value after they detect that the flash player's size has changed, to discover
-     * our status in this regard.
-     */
-    public function getMinimized () :Boolean
-    {
-        return _minimized;
     }
 
     /**
@@ -666,13 +627,12 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Return true if we should attempt to load sections of whirled by
-     * visiting a new page.
+     * Return true if we should attempt to load sections of whirled by visiting a new page.
      */
     protected function shouldLoadNewPages () :Boolean
     {
         var pt :String = Capabilities.playerType;
-        return !_embedded && (pt !== "StandAlone") && (pt !== "External")
+        return !_ctx.getWorldClient().isEmbedded() && (pt !== "StandAlone") && (pt !== "External")
     }
 
     /**
@@ -751,12 +711,6 @@ public class MsoyController extends Controller
 
     /** The currently loaded game lobby, used for magic URL bookmarkable gamelobbies */
     protected var _gameId :int = -1;
-
-    /** whether or not we're embedded */
-    protected var _embedded :Boolean = true;
-
-    /** Whether we're miniaturized or not */
-    protected var _minimized :Boolean = false;
 
     /** A string to give up for embedding your local scene. */
     protected var _sceneIdString :String;

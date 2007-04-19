@@ -18,6 +18,7 @@ import mx.resources.ResourceBundle;
 import com.threerings.util.Name;
 import com.threerings.util.ResultAdapter;
 import com.threerings.util.StringUtil;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.MenuUtil;
 
@@ -47,10 +48,31 @@ import com.threerings.msoy.game.data.WorldGameMarshaller;
 import com.threerings.msoy.game.chiyogami.client.ChiyogamiController;
 
 /**
+ * Dispatched when the client is minimized or unminimized.
+ * 
+ * @eventType com.threerings.msoy.client.WorldClient.MINIMIZATION_CHANGED
+ */
+[Event(name="minimizationChanged", type="com.threerings.util.ValueEvent")]
+
+/**
+ * Dispatched when the client is known to be either embedded or not. This happens shortly after the
+ * client is initialized.
+ * 
+ * @eventType com.threerings.msoy.client.WorldClient.EMBEDDED_STATE_KNOWN
+ */
+[Event(name="embeddedStateKnown", type="com.threerings.util.ValueEvent")]
+
+/**
  * Handles the main services for the world and game clients.
  */
 public class WorldClient extends BaseClient
 {
+    /** An event dispatched when the client is minimized or unminimized. */
+    public static const MINIZATION_CHANGED :String = "minimizationChanged";
+
+    /** An event dispatched when we learn whether or not the client is embedded. */
+    public static const EMBEDDED_STATE_KNOWN :String = "clientEmbedded";
+
     public static const log :Log = Log.getLog(BaseClient);
 
     public function WorldClient (stage :Stage)
@@ -109,6 +131,24 @@ public class WorldClient extends BaseClient
     }
 
     /**
+     * Find out whether this client is embedded in a non-whirled page.
+     */
+    public function isEmbedded () :Boolean
+    {
+        return _embedded;
+    }
+
+    /**
+     * Find out if we're currently working in mini-land or not.  Other components should be able to
+     * check this value after they detect that the flash player's size has changed, to discover our
+     * status in this regard.
+     */
+    public function isMinimized () :Boolean
+    {
+        return _minimized;
+    }
+
+    /**
      * Notifies our JavaScript shell that the flash client should be cleared out.
      */
     public function closeClient () :void
@@ -160,13 +200,14 @@ public class WorldClient extends BaseClient
     override protected function configureExternalFunctions () :void
     {
         super.configureExternalFunctions();
+
         ExternalInterface.addCallback("clientLogon", externalClientLogon);
         ExternalInterface.addCallback("clientGo", externalClientGo);
         ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
         ExternalInterface.addCallback("setMinimized", externalSetMinimized);
 
-        _wctx.getMsoyController().setEmbedded(
-            !Boolean(ExternalInterface.call("helloWhirled")));
+        _embedded = !Boolean(ExternalInterface.call("helloWhirled"));
+        dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
     }
 
     /**
@@ -266,9 +307,11 @@ public class WorldClient extends BaseClient
     protected function externalSetMinimized (mini :Boolean) :void   
     {
         log.info("Client was notified that its minimized status has changed: " + mini);
-        _wctx.getMsoyController().setMinimized(mini);
+        dispatchEvent(new ValueEvent(MINIZATION_CHANGED, _minimized = mini));
     }
 
     protected var _wctx :WorldContext;
+    protected var _embedded :Boolean;
+    protected var _minimized :Boolean;
 }
 }

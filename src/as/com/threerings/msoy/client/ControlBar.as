@@ -21,6 +21,7 @@ import mx.controls.Spacer;
 import mx.events.FlexEvent;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientEvent;
@@ -66,6 +67,9 @@ public class ControlBar extends HBox
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
         addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
 
+        _ctx.getClient().addEventListener(WorldClient.MINIZATION_CHANGED, minimizationChanged);
+        _ctx.getClient().addEventListener(WorldClient.EMBEDDED_STATE_KNOWN, embeddedStateKnown);
+
         checkControls();
     }
 
@@ -76,28 +80,6 @@ public class ControlBar extends HBox
     {
         if (_chatControl != null) {
             _chatControl.setEnabled(enabled);
-        }
-    }
-
-    /**
-     * Called when we learn whether or not we're in embedded mode (on someone else's page).
-     */
-    public function setEmbedded (embedded :Boolean) :void
-    {
-        // no logon panel if we're not in embedded mode
-        if (!embedded && _logonPanel != null) {
-            removeChild(_logonPanel);
-        }
-    }
-
-    /**
-     * Called when the client is minimized.
-     */
-    public function setMinimized (minimized :Boolean) :void
-    {
-        for each (var child :UIComponent in _hiders) {
-            child.visible = !minimized;
-            child.includeInLayout = !minimized;
         }
     }
 
@@ -179,7 +161,7 @@ public class ControlBar extends HBox
             addHideableChild(_editBtn);
 
         } else {
-            if (_ctx.getMsoyController() == null || _ctx.getMsoyController().isEmbedded()) {
+            if (_ctx.getWorldClient().isEmbedded()) {
                 addHideableChild(_logonPanel = new LogonPanel(_ctx, this.height - 4));
             }
 
@@ -238,6 +220,24 @@ public class ControlBar extends HBox
     {
         addChild(child);
         _hiders.push(child);
+    }
+
+    protected function embeddedStateKnown (event :ValueEvent) :void
+    {
+        var embedded :Boolean = (event.value as Boolean);
+        // no logon panel if we're not in embedded mode
+        if (!embedded && _logonPanel != null) {
+            removeChild(_logonPanel);
+        }
+    }
+
+    protected function minimizationChanged (event :ValueEvent) :void
+    {
+        var minimized :Boolean = (event.value as Boolean);
+        for each (var child :UIComponent in _hiders) {
+            child.visible = !minimized;
+            child.includeInLayout = !minimized;
+        }
     }
 
     protected function handleAddRemove (event :Event) :void

@@ -23,6 +23,7 @@ import mx.events.ResizeEvent;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.client.LocationObserver;
@@ -88,6 +89,8 @@ public class TopPanel extends Canvas
         layoutPanels();
 
         app.stage.addEventListener(Event.RESIZE, stageResized);
+
+        _ctx.getClient().addEventListener(WorldClient.MINIZATION_CHANGED, minimizationChanged);
     }
 
     /**
@@ -162,6 +165,34 @@ public class TopPanel extends Canvas
     }
 
     /**
+     * Instructs the TopPanel to remove the PlaceView container from its UI hierarchy and return it
+     * to the caller so that they can place it into some temporary special location in the UI. If
+     * the place container has already been taken, the method returns null.
+     */
+    public function takePlaceContainer () :PlaceBox
+    {
+        if (_placeBox.parent != this) {
+            return null;
+        }
+        removeChild(_placeBox);
+        return _placeBox;
+    }
+
+    /**
+     * Informs the TopPanel that the place container can be readded to its UI hierarchy as the
+     * caller has finished with it. The caller must have removed the PlaceBox from their UI
+     * hierarchy before calling this method.
+     */
+    public function restorePlaceContainer () :void
+    {
+        if (_placeBox.parent != null) {
+            Log.getLog(this).warning("Requested to restore PlaceBox but it's still added.");
+            _placeBox.parent.removeChild(_placeBox);
+        }
+        addChild(_placeBox);
+    }
+
+    /**
      * Returns the currently configured place view.
      */
     public function getPlaceView () :PlaceView
@@ -216,7 +247,7 @@ public class TopPanel extends Canvas
             _tableDisp.x += _leftPanel.width;
         }
 
-        (_ctx.getClient() as WorldClient).setSeparator(side.width - 1);
+        _ctx.getWorldClient().setSeparator(side.width - 1);
         addChild(_leftPanel); // add to end
         layoutPanels();
     }
@@ -234,7 +265,7 @@ public class TopPanel extends Canvas
                 }
             }
 
-            (_ctx.getClient() as WorldClient).clearSeparator();
+            _ctx.getWorldClient().clearSeparator();
             removeChild(_leftPanel);
             _leftPanel = null;
 
@@ -355,6 +386,14 @@ public class TopPanel extends Canvas
     protected function stageResized (event :Event) :void
     {
         layoutPanels();
+    }
+
+    protected function minimizationChanged (event :ValueEvent) :void
+    {
+        // clear out our left panel if we were just minimized
+        if (event.value as Boolean) {
+            clearLeftPanel(null);
+        }
     }
 
     protected function layoutPanels () :void

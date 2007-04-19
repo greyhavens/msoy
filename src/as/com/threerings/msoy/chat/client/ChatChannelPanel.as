@@ -18,12 +18,14 @@ import flexlib.controls.tabBarClasses.SuperTab;
 import com.threerings.flex.CommandButton;
 import com.threerings.util.HashMap;
 import com.threerings.util.Name;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.chat.client.ChatDisplay;
 
 import com.threerings.msoy.chat.client.ChatChannel;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.WorldClient;
 import com.threerings.msoy.client.WorldContext;
 
 /**
@@ -59,6 +61,15 @@ public class ChatChannelPanel extends VBox
         send.setFunction(sendChat);
         send.height = ControlBar.HEIGHT-4;
         _inputBox.addChild(send);
+
+        _ctx.getClient().addEventListener(WorldClient.MINIZATION_CHANGED, minimizationChanged);
+    }
+
+    /**
+     * Called when the client is minimized.
+     */
+    public function setMinimized (minimized :Boolean) :void
+    {
     }
 
     /**
@@ -109,6 +120,12 @@ public class ChatChannelPanel extends VBox
                 _ctx.getTopPanel().getControlBar().setChannelChatInput(null);
             }
         }
+    }
+
+    protected function minimizationChanged (event :ValueEvent) :void
+    {
+        var minimized :Boolean = (event.value as Boolean);
+        // TODO: hijack the PlaceBox, stuff it into a tab, more bits
     }
 
     /**
