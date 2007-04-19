@@ -48,6 +48,7 @@ public class FurniEditController
         _menuButtons = [
             { button: null, media: BUTTON_MOVE, handler: move },
             { button: null, media: BUTTON_RESIZE, handler: resize },
+            { button: null, media: BUTTON_HFLIP, handler: hflip },
             { button: null, media: BUTTON_CANCEL, handler: cancel },
             { button: null, media: BUTTON_COMMIT, handler: commit } ];
 
@@ -172,8 +173,8 @@ public class FurniEditController
      */
     public function cancel () :void
     {
-        // restore old furni data
-        _furni.update(_originalFurniData);
+        moveFurni(_originalFurniData.loc, true);
+        scaleFurni(new Point(_originalFurniData.scaleX, _originalFurniData.scaleY));
         deinit(null);
     }
 
@@ -185,6 +186,11 @@ public class FurniEditController
     /** Start resizing the sprite. */
     protected function resize () :void {
         setMode(EDIT_RESIZE);
+    }
+
+    /** Just invert the horizontal scaling factor. */
+    protected function hflip () :void {
+        scaleFurni(new Point(- _furni.getMediaScaleX(), _furni.getMediaScaleY()));
     }
 
     /**
@@ -443,11 +449,15 @@ public class FurniEditController
     protected static const BUTTON_COMMIT_UP :Class;
     [Embed(source="../../../../../../../rsrc/media/skins/button/furniture_edit_cancel_up.png")]
     protected static const BUTTON_CANCEL_UP :Class;
+    [Embed(source="../../../../../../../rsrc/media/skins/button/furniture_edit_hflip_up.png")]
+    protected static const BUTTON_HFLIP_UP :Class;
+    
 
     protected static const BUTTON_MOVE :Object = { upState: BUTTON_MOVE_UP };
     protected static const BUTTON_RESIZE :Object = { upState: BUTTON_RESIZE_UP };
     protected static const BUTTON_COMMIT :Object = { upState: BUTTON_COMMIT_UP };
     protected static const BUTTON_CANCEL :Object = { upState: BUTTON_CANCEL_UP };
+    protected static const BUTTON_HFLIP :Object = { upState: BUTTON_HFLIP_UP };
 
 }
 }
