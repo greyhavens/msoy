@@ -87,7 +87,7 @@ public class ProjectRoomManager extends PlaceManager
         _currentUploads = new HashIntMap<UploadFile>();
 
         // Load the project tree from the storage provider
-        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
+        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("loadProject") {
             public boolean invoke () {
                 try {
                     // Okay, so it's not really a tree, but hey ...
@@ -154,7 +154,7 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         // Otherwise we'll have to delete the document from the storage provider
-        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
+        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("deletePathElement") {
             public boolean invoke () {
                 try {
                     _storage.deleteDocument(element, "Automatic Swiftly Delete");
@@ -202,7 +202,7 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         // Otherwise we'll have to rename the document from the storage provider
-        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
+        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("renamePathElement") {
             public boolean invoke () {
                 try {
                     _storage.renameDocument(element, newName, "Automatic Swiftly Rename");
@@ -299,7 +299,7 @@ public class ProjectRoomManager extends PlaceManager
         // TODO: check access!
 
         // Load the document from the storage provider
-        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
+        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("loadDocument") {
             public boolean invoke () {
                 try {
                     _doc = _storage.getDocument(element);
@@ -340,7 +340,7 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         final UploadFile uploadFile = new UploadFile(element, oldelem);
-        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
+        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("startFileUpload") {
             public boolean invoke () {
                 try {
                     uploadFile.initTempFile();
@@ -372,7 +372,7 @@ public class ProjectRoomManager extends PlaceManager
             return; // no way to report failure here so we lump it
         }
 
-        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
+        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("uploadFile") {
             public boolean invoke () {
                 try {
                     uploadFile.appendData(data);
@@ -388,87 +388,17 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void finishFileUpload (final ClientObject caller, final ConfirmListener listener)
+    public void finishFileUpload (ClientObject caller, ConfirmListener listener)
         throws InvocationException
     {
-        final UploadFile uploadFile = _currentUploads.get(caller.getOid());
+        UploadFile uploadFile = _currentUploads.get(caller.getOid());
         if (uploadFile == null) {
             throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
         }
 
-        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
-            public boolean invoke () {
-                try {
-                    uploadFile.close();
-
-                    if (!uploadFile.didSucceed()) {
-                        _error = "e.finish_upload_failed";
-                        return true;
-                    }
-
-                    String mimeType = determineMimeType(
-                        uploadFile.getPathElement().getName(), uploadFile.getTempFile());
-
-                    // if we're updating an existing document, handle that
-                    if ((_element = uploadFile.getOldElement()) != null) {
-                        _doc = _roomObj.getDocument(_element);
-                        // if the document is not yet resolved we must do so now
-                        if (_doc == null) {
-                            _doc = _storage.getDocument(_element);
-                        }
-
-                    } else {
-                        _element = uploadFile.getPathElement();
-                        _doc = SwiftlyDocument.createFromMimeType(mimeType);
-                        _doc.init(null, _element, ProjectStorage.TEXT_ENCODING);
-                    }
-
-                    // configure the document with its new data
-                    _doc.setData(uploadFile.getFileData(), ProjectStorage.TEXT_ENCODING);
-                    // set the mime type in the path element
-                    _element.setMimeType(mimeType);
-
-                } catch (Exception e) {
-                    log.log(Level.WARNING, "Finish upload failed [file=" + _element + "].", e);
-                    _error = "e.finish_upload_failed";
-
-                } finally {
-                    // remove the temp file no matter what
-                    uploadFile.deleteTempFile();
-                }
-
-                return true;
-            }
-
-            public void handleResult () {
-                _currentUploads.remove(caller.getOid());
-
-                // if we failed, stop here
-                if (_error != null) {
-                    listener.requestFailed(_error);
-                    return;
-                }
-
-                // otherwise add or update our path element and document
-                if (_element.elementId == 0) {
-                    _roomObj.addPathElement(_element);
-                } else {
-                    _roomObj.updatePathElements(_element);
-                }
-                if (_doc.documentId == 0) {
-                    _roomObj.addSwiftlyDocument(_doc);
-                } else {
-                    _roomObj.updateDocuments(_doc);
-                }
-
-                // and let the caller know we finally made it
-                listener.requestProcessed();
-            }
-
-            protected String _error;
-            protected PathElement _element;
-            protected SwiftlyDocument _doc;
-        });
+        // run this task on the serial executor as the svn actions can take a while
+        MsoyServer.swiftlyMan.svnExecutor.addTask(
+            new FinishFileUploadTask(uploadFile, caller, listener));
     }
 
     // from interface SetListener
@@ -750,6 +680,112 @@ public class ProjectRoomManager extends PlaceManager
         protected int _projectId;
         protected Throwable _error;
         protected BuildResult _result;
+    }
+
+    /** Handles a request to finalize an uploaded file. */
+    protected class FinishFileUploadTask implements SerialExecutor.ExecutorTask
+    {
+        public FinishFileUploadTask (UploadFile uploadFile, ClientObject caller,
+                                     ConfirmListener listener) {
+            _uploadFile = uploadFile;
+            _caller = caller;
+            _listener = listener;
+        }
+
+        public boolean merge (SerialExecutor.ExecutorTask other) {
+            return false;
+        }
+
+        public long getTimeout () {
+            return 60 * 1000L; // 60 seconds is all you get kid
+        }
+
+        // this is called on the executor thread and can go hog wild with the blocking
+        public void executeTask () {
+            try {
+                // close the FileOutputStream
+                _uploadFile.close();
+
+                // if we failed somewhere inside of uploadFile, throw an exception to let the catch
+                // and finally do the right thing.
+                if (!_uploadFile.didSucceed()) {
+                    throw new Exception("File upload failed during uploadFile.");
+                }
+
+                String mimeType = determineMimeType(
+                    _uploadFile.getPathElement().getName(), _uploadFile.getTempFile());
+
+                // if we're updating an existing document, handle that
+                if ((_element = _uploadFile.getOldElement()) != null) {
+                    _doc = _roomObj.getDocument(_element);
+                    // if the document is not yet resolved we must do so now
+                    if (_doc == null) {
+                        _doc = _storage.getDocument(_element);
+                    }
+
+                } else {
+                    _element = _uploadFile.getPathElement();
+                    _doc = SwiftlyDocument.createFromMimeType(mimeType);
+                    _doc.init(null, _element, ProjectStorage.TEXT_ENCODING);
+                }
+
+                // configure the document with its new data
+                _doc.setData(_uploadFile.getFileData(), ProjectStorage.TEXT_ENCODING);
+
+                // set the mime type in the path element
+                _element.setMimeType(mimeType);
+
+                // save the document to the repository
+                _storage.putDocument(_doc, "Automatic Swiftly Commit");
+                _doc.commit();
+            } catch (Throwable error) {
+                // we'll report this on resultReceived()
+                _error = error;
+            } finally {
+                // remove the temp file no matter what
+                _uploadFile.deleteTempFile();
+            }
+        }
+
+        // this is called back on the dobj thread and must only report results
+        public void resultReceived () {
+            // if we failed, stop here
+            if (_error != null) {
+                log.log(Level.WARNING, "Finish upload failed [file=" + _element + "].", _error);
+                _listener.requestFailed("e.finish_upload_failed");
+                return;
+            }
+
+            // the upload worked, so remove it from the list
+            _currentUploads.remove(_caller.getOid());
+
+            // otherwise add or update our path element and document
+            if (_element.elementId == 0) {
+                _roomObj.addPathElement(_element);
+            } else {
+                _roomObj.updatePathElements(_element);
+            }
+            if (_doc.documentId == 0) {
+                _roomObj.addSwiftlyDocument(_doc);
+            } else {
+                _roomObj.updateDocuments(_doc);
+            }
+
+            // and let the caller know we finally made it
+            _listener.requestProcessed();
+        }
+
+        // this is called back on the dobj thread and must only report failure
+        public void timedOut () {
+            _listener.requestFailed("e.finish_upload_failed");
+        }
+
+        protected UploadFile _uploadFile;
+        protected ClientObject _caller;
+        protected ConfirmListener _listener;
+        protected Throwable _error;
+        protected PathElement _element;
+        protected SwiftlyDocument _doc;
     }
 
     /** Handles tracking a file upload for a user. */

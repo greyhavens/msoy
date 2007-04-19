@@ -93,7 +93,7 @@ public class SwiftlyManager
         }
 
         // Load the project storage on the invoker thread, initialize the ProjectRoomManager
-        MsoyServer.invoker.postUnit(new Invoker.Unit() {
+        MsoyServer.invoker.postUnit(new Invoker.Unit("loadProjectStorage") {
             public boolean invoke () {
                 try {
                     SwiftlyProjectRecord projectRecord =
