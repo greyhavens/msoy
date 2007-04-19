@@ -316,10 +316,6 @@ public class FurniEditController
         newScaleX = (newScaleX != 0 ? newScaleX : e);
         newScaleY = (newScaleY != 0 ? newScaleY : e);
         
-        trace("COMPUTE SCALE: " + width + ", " + height);
-        trace("PROPORTIONS:   " + xProportions + ", " + yProportions);
-        trace("NEW SCALE:     " + newScaleX + ", " + newScaleY);
-
         return new Point(newScaleX, newScaleY);
     }
 
