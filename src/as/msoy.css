@@ -322,6 +322,12 @@ Window {
   textAlign: center;
 }
 
+.furniEditButton {
+  paddingLeft: 0;
+  paddingRight: 0;
+  paddingTop: 0;
+  paddingBottom: 0;
+}
 
 VScrollBar {
   cornerRadius: 4;
@@ -637,3 +643,4 @@ Tree {
   paddingRight: 5px;
   paddingBottom: 5px;
 }
+

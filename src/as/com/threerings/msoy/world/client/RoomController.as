@@ -504,7 +504,7 @@ public class RoomController extends SceneController
         _walkTarget.visible = false;
         _flyTarget.visible = false;
 
-        _furniEditor.start (furni, _roomView, _scene, endEditingFurni);
+        _furniEditor.start(furni, _roomView, _scene, _mctx, endEditingFurni);
     }
 
     /**

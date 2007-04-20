@@ -9,6 +9,13 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.ui.Keyboard;
 
+import mx.containers.Canvas;
+import mx.containers.HBox;
+import mx.controls.Button;
+import mx.core.Container;
+
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.WorldContext;
 import com.threerings.io.TypedArray;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
@@ -46,28 +53,35 @@ public class FurniEditController
 
         // create a collection of button definitions. handlers are closures on this instance.
         _menuButtons = [
-            { button: null, media: BUTTON_MOVE, handler: move },
-            { button: null, media: BUTTON_RESIZE, handler: resize },
-            { button: null, media: BUTTON_HFLIP, handler: hflip },
-            { button: null, media: BUTTON_CANCEL, handler: cancel },
-            { button: null, media: BUTTON_COMMIT, handler: commit } ];
+            { button: null, icon: MOVE_ICON, text: null, handler: move },
+            { button: null, icon: RESIZE_ICON, text: null, handler: resize },
+            { button: null, icon: HFLIP_ICON, text: null, handler: hflip },
+            { button: null, icon: CANCEL_ICON, text: null, handler: cancel },
+            { button: null, icon: null, text: "b.edit_furni_ok", handler: commit } ];
 
         // now create button display objects for each definition
-        _buttonPanel = new Sprite();
-        var y :int = 0;
+        _buttonPanel = new HBox();
+        _buttonPanel.visible = false;
+        _buttonPanel.setStyle("horizontalGap", 0);
+        _buttonPanel.width = 200;   // flex won't display anything unless these
+        _buttonPanel.height = 200;  // parameters are set manually to pixel values. 
         for each (var def :Object in _menuButtons) {
-                
-            var button :Sprite = new Sprite();
-            button.addChild(new (def.media.upState as Class)() as DisplayObject);
-            button.y = y;
-            button.buttonMode = true;
-            if (def.handler != null) {
-                addButtonListener(button, def.handler);
-            }
-            
-            def.button = button;  // store a pointer inside the _menuButtons collection
-            _buttonPanel.addChild(button);
-            y += button.height;
+                var button :Button = new Button();
+                button.styleName = "furniEditButton";    
+                button.height = 20;
+                if (def.icon != null) {
+                    button.setStyle("icon", def.icon as Class);
+                    button.width = 20;
+                }
+                if (def.text != null) {
+                    button.label = Msgs.GENERAL.get(def.text);
+                }
+                if (def.handler != null) {
+                    addButtonListener(button, def.handler);
+                }
+                def.button = button; // store this instance back in the button definition
+
+                _buttonPanel.addChild(button);
         }
     }
     
@@ -107,12 +121,20 @@ public class FurniEditController
         addOrRemoveListeners (newMode, true);
 
         if (newMode == EDIT_SHOWMENU) {
+            updatePanelPosition();
             _buttonPanel.visible = true;
-            _buttonPanel.x = _furni.x;
-            _buttonPanel.y = _furni.y;
         } else {
             _buttonPanel.visible = false;
         }
+    }
+
+    /** Moves the button panel to somewhere near the furni being edited. */
+    protected function updatePanelPosition () :void
+    {
+        var p :Point = _furni.localToGlobal(new Point(0, 0)); // upper left
+        _buttonPanel.x = p.x;  // todo: take care of panel appearing out of view,
+        _buttonPanel.y = p.y;  //   or getting dropped in z-ordering
+        _container.setChildIndex(_buttonPanel, _container.numChildren - 1);
     }
     
     /**
@@ -124,18 +146,20 @@ public class FurniEditController
      *        that will be called once the editing has ended (whether it was committed
      *        or cancelled).
      */
-    public function start (
-        furni :FurniSprite, roomView :RoomView, scene :MsoyScene, endCallback :Function) :void
+    public function start (furni :FurniSprite, roomView :RoomView, scene :MsoyScene,
+                           ctx :WorldContext, endCallback :Function) :void
     {
         _furni = furni;
         _roomView = roomView;
         _scene = scene;
         _endCallback = endCallback;
         _positionAtShift = null;
-
-        _roomView.addChild(_buttonPanel);
+        _container = ctx.getTopPanel().getPlaceContainer();
+        
+        _container.addChild(_buttonPanel);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyboardHandler);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyboardHandler);
+        _roomView.stage.addEventListener(Event.RESIZE, resizeHandler);
 
         setMode(EDIT_SHOWMENU);
 
@@ -202,11 +226,13 @@ public class FurniEditController
 
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyboardHandler);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyboardHandler);
-        _roomView.removeChild(_buttonPanel);
+        _roomView.stage.removeEventListener(Event.RESIZE, resizeHandler);
+        _container.removeChild(_buttonPanel);
         
         _endCallback(edits);
 
         _originalFurniData = null;
+        _container = null;
         _positionAtShift = null;
         _endCallback = null;
         _scene = null;
@@ -397,7 +423,19 @@ public class FurniEditController
         event.updateAfterEvent();
     }
 
-    
+    /**
+     * When the window resizes, update the Flex UI manually.
+     */
+    protected function resizeHandler (event :Event) :void
+    {
+        if (_buttonPanel.visible = true) {
+            updatePanelPosition();
+        }
+    }
+
+
+    /** Flex container for the scene. */       
+    protected var _container :Container;
     
     /** Sprite being edited. */
     protected var _furni :FurniSprite;
@@ -430,8 +468,8 @@ public class FurniEditController
      */
     protected var _menuButtons :Array; 
 
-    /** Sprite that contains editing buttons. */
-    protected var _buttonPanel :Sprite;
+    /** Canvas that contains editing buttons. */
+    protected var _buttonPanel :Container;
     
     /**
      * Collection of event listeners for each editing state. This collection maps from state
@@ -441,24 +479,16 @@ public class FurniEditController
     protected var _listeners :Object;
 
     // Button media. Right now we only have 'up' skins, but we also anticipate 'down' and 'over'
-    [Embed(source="../../../../../../../rsrc/media/skins/button/furniture_edit_move_up.png")]
-    protected static const BUTTON_MOVE_UP :Class;
-    [Embed(source="../../../../../../../rsrc/media/skins/button/furniture_edit_resize_up.png")]
-    protected static const BUTTON_RESIZE_UP :Class;
-    [Embed(source="../../../../../../../rsrc/media/skins/button/furniture_edit_commit_up.png")]
-    protected static const BUTTON_COMMIT_UP :Class;
-    [Embed(source="../../../../../../../rsrc/media/skins/button/furniture_edit_cancel_up.png")]
-    protected static const BUTTON_CANCEL_UP :Class;
-    [Embed(source="../../../../../../../rsrc/media/skins/button/furniture_edit_hflip_up.png")]
-    protected static const BUTTON_HFLIP_UP :Class;
-    
-
-    protected static const BUTTON_MOVE :Object = { upState: BUTTON_MOVE_UP };
-    protected static const BUTTON_RESIZE :Object = { upState: BUTTON_RESIZE_UP };
-    protected static const BUTTON_COMMIT :Object = { upState: BUTTON_COMMIT_UP };
-    protected static const BUTTON_CANCEL :Object = { upState: BUTTON_CANCEL_UP };
-    protected static const BUTTON_HFLIP :Object = { upState: BUTTON_HFLIP_UP };
-
+    [Embed(source="../../../../../../../rsrc/media/skins/button/furniedit/move_root.png")]
+    protected static const MOVE_ICON :Class;
+    [Embed(source="../../../../../../../rsrc/media/skins/button/furniedit/resize_root.png")]
+    protected static const RESIZE_ICON :Class;
+    [Embed(source="../../../../../../../rsrc/media/skins/button/furniedit/flip_root.png")]
+    protected static const HFLIP_ICON :Class;
+    [Embed(source="../../../../../../../rsrc/media/skins/button/backtolobby.png")] // TEMP
+    protected static const CANCEL_ICON :Class;
 }
 }
     
+
+
