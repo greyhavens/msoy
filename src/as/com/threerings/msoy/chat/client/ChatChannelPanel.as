@@ -127,7 +127,8 @@ public class ChatChannelPanel extends VBox
 
     protected function minimizationChanged (event :ValueEvent) :void
     {
-        if (event.value as Boolean && _wtab == null) {
+        var minimized :Boolean = (event.value as Boolean);
+        if (minimized && _wtab == null) {
             var select :Boolean = (_tabnav.numChildren == 0);
             _wtab = new WorldChatTab(_ctx);
             _wtab.label = Msgs.GENERAL.xlate("m.world_channel");
@@ -145,7 +146,7 @@ public class ChatChannelPanel extends VBox
                 _ctx.getTopPanel().getControlBar().setChannelChatInput(_inputBox);
             }
 
-        } else if (_wtab != null) {
+        } else if (!minimized && _wtab != null) {
             _tabnav.removeChild(_wtab);
             _wtab.shutdown();
             _wtab = null;
