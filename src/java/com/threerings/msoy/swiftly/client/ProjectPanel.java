@@ -259,6 +259,7 @@ public class ProjectPanel extends JPanel
                 return; // if the user hit cancel do no more
             }
             element = PathElement.createDirectory(name, parentElement);
+            // TODO: this is clearly broken. no directory is actually being created on the server
             _roomObj.service.addPathElement(_ctx.getClient(), element);
 
         } else if (type == PathElement.Type.FILE) {
@@ -266,6 +267,13 @@ public class ProjectPanel extends JPanel
             if (element == null) {
                 return; // if the user hit cancel do no more
             }
+
+            // report an error if this path already exists
+            if (_roomObj.pathElementExists(element.getName(), parentElement)) {
+                _editor.showErrorMessage(_msgs.get("e.document_already_exists"));
+                return;
+            }
+
             _roomObj.service.addDocument(_ctx.getClient(), element, new InvocationListener () {
                 public void requestFailed (String reason)
                 {

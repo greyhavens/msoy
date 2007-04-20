@@ -118,7 +118,7 @@ public class ProjectRoomObject extends PlaceObject
      * Given a name and a parent, search the existing path elements for that element.
      * Return true if found, false otherwise
      */
-    public boolean doesPathElementExist (String name, PathElement parent)
+    public boolean pathElementExists (String name, PathElement parent)
     {
         return findPathElement(name, parent) != null;
     }

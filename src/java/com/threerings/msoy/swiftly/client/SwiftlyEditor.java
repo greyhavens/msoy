@@ -282,6 +282,7 @@ public class SwiftlyEditor extends PlacePanel
         if (dialog.wasCancelled() || StringUtil.isBlank(dialog.getName())) {
             return null;
         }
+        // TODO: clean this up. I should not be returning a PathElement just for convenience
         return PathElement.createFile(dialog.getName(), parentElement, dialog.getMimeType());
     }
 
