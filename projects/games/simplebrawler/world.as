@@ -3,6 +3,7 @@
 	import flash.events.*;
 	import flash.geom.*;
 	import flash.ui.Mouse;
+	import flash.net.*;
 	import 	flash.utils.Timer;
 	
 	import com.threerings.ezgame.*; //-W-
@@ -15,6 +16,12 @@
 	{
 		public var local_player:MovieClip;
 		
+		public var loadscreen:MovieClip;
+		public var endscreen:MovieClip;
+		
+		public var game :MovieClip;
+		public var preload :MovieClip;
+		
 		public var goal:MovieClip;
 		public var hud:MovieClip;
 		public var camera:MovieClip;
@@ -26,6 +33,7 @@
 		public var bg:MovieClip;
 		
 		public var room_num:Number = 1;
+		public var wave_num:Number = 1;
 		
 		//public var pc :Array;
 		public var pc_count:Number = 0;
@@ -43,6 +51,7 @@
 		
 		public var time_speed:Number = 1.0;
 		public var fps:Number = 20;
+		public var current_mps:Number = 0;
 		
 		//Keyboard inputs
 		public var punch_hit: Boolean;
@@ -71,63 +80,239 @@
 		public var local_limiter: Boolean = false;
 		public var local_score: Number = 0;
 		
-		public var world_clock: Timer = new Timer(100);
+		public var world_clock: Timer = new Timer(33);
 		public var clock: Number = 0;
+		public var clock_nextupdate :Number = 0;
 		public var zone_delay: Number = 0;
+		public var allclear: Boolean = false;
+		public var gameover: Boolean = false;
+		public var boss_killed: Boolean = false;
 		public var gotonextroom: Boolean = false;
 		public var npc_pos_clock: Number = 0;
 		
+		public var death_clock: Number = 0;
+		
 		public var health_tick: Number = 0;
 		
+		public var itemcount: int = 0;
 		
+		public var last_attack: Number = 0;
+		public var current_attack: Number = 0;
+		
+		public var p1_status: String = "empty";
+		public var p2_status: String = "empty";
+		public var p3_status: String = "empty";
+		public var p4_status: String = "empty";
+		public var p5_status: String = "empty";
+		public var p6_status: String = "empty";
+		
+		public var k1_status: String = "empty";
+		public var k2_status: String = "empty";
+		public var k3_status: String = "empty";
+		
+		public var pk_status: String = "off";
+		
+		public var MSGBOX: MovieClip;
 		
 		/** Game control. */
     	protected var _control :WhirledGameControl; //-W-
 		public var playerIds :Array;
 		
 		public function world(){
+
 			_control = new WhirledGameControl(this); //-W-
         	_control.registerListener(this); //-W-
-			
-			//stage.frameRate = fps*time_speed
-			//stage.scaleMode = flash.display.StageScaleMode.EXACT_FIT;
 			_control.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
 			_control.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+			
+			preload = new _PRELOADER();
+			root.addChild(preload);
+			
+			root.loaderInfo.addEventListener(Event.COMPLETE, world_Loaded);
+            root.loaderInfo.addEventListener(ProgressEvent.PROGRESS, world_Loading);
         	root.loaderInfo.addEventListener(Event.UNLOAD, world_Unload);
-			world_Load ();
 		}
 		
-		//-------------------------------------TIMER---------------------------------------------
-		private function onTimerEvent( e: Event):void{
-			hud.fps_output.text = "FPS: "+current_fps;//+" : "+stage.frameRate;
-			current_fps=0;
+				
+		//-------------------------------------LOAD----------------------------------------------
+		protected function world_Loaded (e:Event) :void
+		{
+			game = new _GAME();
+			root.addChildAt(game, 1);
+			root.setChildIndex(preload,2);
 			
+			preload.fade.play();
+			world_Load();
+		}
+		
+		protected function world_Loading (e:ProgressEvent) :void
+		{
+			var amountLoaded:Number = e.bytesLoaded/e.bytesTotal;
+            var amountLoadedStr:String = Math.round(amountLoaded * 100) + "%";
+            preload.progress.text = amountLoadedStr;
+            preload.bar.width = amountLoaded * pbWidth;
+		}
+
+    	protected function world_Load () :void
+		{
+			
+			MSGBOX = new MovieClip();
+			root.addChild(MSGBOX);
+			
+			if (_control.isConnected() && _control.amInControl()){
+						var element :String = "enemyDamage";
+						var table :Number = _control.get(element);
+						if (table == 0) {
+							table = 0;
+							_control.set(element, table);
+						}
+						element = "playerDamage";
+						table  = _control.get(element);
+						if (table == 0) {
+							table = 0;
+							_control.set(element, table);
+						}
+						element = "koCount";
+						table  = _control.get(element);
+						if (table == 0) {
+							table = 0;
+							_control.set(element, table);
+						}
+						element = "cleartime";
+						table  = _control.get(element);
+						if (table == 0) {
+							table = 0;
+							_control.set(element, table);
+						}
+			}
+			
+			hud = game.hud;
+			
+			timer.addEventListener( TimerEvent.TIMER, onTimerEvent);
+			timer.start();
+			current_fps = 0;
+			
+			world_clock.addEventListener( TimerEvent.TIMER, world_tick);
+			world_clock.start();
+			
+			poke_timer.addEventListener( TimerEvent.TIMER, player_poke);
+			poke_timer.start();
+			
+			bg = game.camera._zoom.bg;
+			ground = game.camera._zoom.bg.ground;
+			ground.doubleClickEnabled = true;
+			ground.addEventListener(MouseEvent.CLICK, floorCLICK_handler);
+			
+			
+			goal = new destination();
+			bg.cursor_zone.addChild(goal);
+			
+			ground_cursor = new cursor();
+			bg.cursor_zone.addChild(ground_cursor);
+			
+			if (_control.isConnected()) {
+				playerIds = _control.getOccupants();
+				var local_name: String = _control.getOccupantName(_control.getMyId());
+				local_player = create_player(local_name, "PC", 0,0, 100, 250, 0,0,0,0,0,0, _control.getMyId(), 0);
+			}else{
+				local_player = create_player("OFFLINE", "PC", 0,0, 100, 250 ,0,0,0,0,0,0, 0, 0);
+			}
+			
+			if(local_player.pName == "Jessica"){
+				local_exp = 300;
+			}
+			
+			hud.zone.text = hud.levelname.text+" - ZONE "+room_num;
+			load_npcs(room_num,wave_num);
+			
+			bg.door_next.x = ground.width;
+			bg.door_next.height = ground.height;
+			
+			hud.addEventListener("enterFrame", hud_enterFrame);
+    	}
+		
+		//-------------------------------------UNLOAD--------------------------------------------
+    	protected function world_Unload (event :Event) :void
+    	{
+			//Despawn Monsters, Props, and Players.
 			//************************************
 			//                -W-
-				if (_control.isConnected() && _control.amInControl()) {
+				if (_control.isConnected()) {
 					var msg :Object = new Object;
 					msg[0] = room_num;
 					msg[1] = _control.getMyId();
-					msg[2] = clock
-					_control.sendMessage (CLOCK_UPDATE, msg);
+					_control.sendMessage (p_quit, msg);
+					current_mps+=1;
+					msg[0] = room_num;
+					msg[1] = _control.getMyId();
+					msg[2] = String(local_player.pName+" left the game.");
+					_control.sendMessage (p_msg, msg);
+					current_mps+=1;
 				}
 			//                -W-
 			//************************************
-		}
+			_control.unregisterListener(this); //-W-
+    	}
 		
 		//-------------------------------------TIMER---------------------------------------------
-		private function world_tick( e: Event):void{
-			clock += 100;
+		private function onTimerEvent( e: Event):void{
+			hud.fps_output.text = "FPS: "+current_fps;
+			if(current_fps < 20){
+				hud.fps_output.textColor = 0xFF0000;
+			}else{
+				hud.fps_output.textColor = 0xFFFFFF;
+			}
+			current_fps=0;
 			
-			if (local_player.energy < 100 && local_player.sprinting == false){
-				if (local_limiter){
-					local_player.energy += 2.5;
-				}else{
-					local_player.energy += 5;
+			hud.mps_output.text = "MPS: "+current_mps;
+			if(current_mps >= 10){
+				hud.mps_output.textColor = 0xFF0000;
+			}else{
+				hud.mps_output.textColor = 0xFFFFFF;
+			}
+			current_mps=0;
+		}
+
+		private function world_tick( e: Event):void{
+			clock += 33;
+			
+			if (local_player.hp > 0){
+				death_clock = clock+10000;
+				hud.hp_warning.alpha = 1;
+				hud.energy_warning.alpha = 1;
+				hud.dc.text = "";
+			}else{
+				hud.respawn.gotoAndStop("on");
+				var dc_time :String = Math.round((death_clock-clock)/1000);
+				if (dc_time < 10){
+					dc_time = "0"+dc_time;
+				}
+				hud.dc.text = dc_time;
+				hud.hp_warning.alpha = 0;
+				hud.energy_warning.alpha = 0;
+				disable_mouse();
+				disable_keys();
+				if(clock >= death_clock){
+					hud.respawn.gotoAndStop("off");
+					player_respawn_local();
 				}
 			}
 			
-			if (local_player && clock >= health_tick){
+			if (local_player.energy <= 100 && local_player.hp > 0){
+				if (local_player.sprinting){
+						local_player.energy -= 3.333;
+				}else if(local_player.animation == "block"){
+						local_player.energy -= 0.667;
+				}else{
+					if (local_limiter){
+						local_player.energy += 1.667;
+					}else{
+						local_player.energy += 3.333;
+					}
+				}
+			}
+			
+			if (local_player && clock >= health_tick && local_player.hp > 0){
 				health_tick = clock+3000;
 				if (local_player.hp < local_player.maxhp){
 					local_player.hp +=  local_player.maxhp/20;
@@ -146,139 +331,88 @@
 			
 			//************************************
 			//                -W-
-				if (_control.isConnected() && _control.amInControl()) {
-					if (npc_pos_clock+3000 <= clock){
+				if (_control.isConnected()) {
+					if (npc_pos_clock+1000 <= clock){
 						npc_pos_clock = clock;
-						//report_npcs();
+						report_npcs();
+					}
+				}
+			//                -W-
+			//************************************
+			
+			//************************************
+			//                -W-
+				if (_control.isConnected() && _control.amInControl()) {
+					if (clock_nextupdate+20000 <= clock){
+						clock_nextupdate = clock;
+						var msg :Object = new Object;
+						msg[0] = room_num;
+						msg[1] = _control.getMyId();
+						msg[2] = clock
+						_control.sendMessage (CLOCK_UPDATE, msg);
+						current_mps+=1;
 					}
 				}
 			//                -W-
 			//************************************
 		}
-		
-		//-------------------------------------LOAD----------------------------------------------
-    	protected function world_Load () :void
-		{
-			timer.addEventListener( TimerEvent.TIMER, onTimerEvent);
-			timer.start();
-			current_fps = 0;
-			
-			world_clock.addEventListener( TimerEvent.TIMER, world_tick);
-			world_clock.start();
-			
-			poke_timer.addEventListener( TimerEvent.TIMER, player_poke);
-			poke_timer.start();
-			
-			bg = root.camera._zoom.bg;
-			ground = root.camera._zoom.bg.ground;
-			ground.doubleClickEnabled = true;
-			ground.addEventListener(MouseEvent.CLICK, floorCLICK_handler);
-			
-			
-			goal = new destination();
-			bg.cursor_zone.addChild(goal);
-			
-			ground_cursor = new cursor();
-			bg.cursor_zone.addChild(ground_cursor);
-			
-			if (_control.isConnected()) {
-				playerIds = _control.getOccupants();
-				var local_name: String = _control.getOccupantName(_control.getMyId());
-				local_player = create_player(local_name, "PC", 0,0, 100, 12, _control.getMyId());
-			}else{
-				local_player = create_player("OFFLINE", "PC", 0,0, 100, 12, 0);
-			}
-			
-			if(local_player.pName == "Jessica"){
-				local_exp = 300;
-			}
-			
-			load_npcs();
-			
-			bg.door_next.x = ground.width;
-			bg.door_next.height = ground.height;
-			
-			this.hud.addEventListener("enterFrame", hud_enterFrame);
-			bg.fader.addEventListener("enterFrame", fader_enterFrame);
-    	}
-		
-		//-------------------------------------UNLOAD--------------------------------------------
-    	protected function world_Unload (event :Event) :void
-    	{
-			//Despawn Monsters, Props, and Players.
-			//************************************
-			//                -W-
-				if (_control.isConnected()) {
-					var msg :Object = new Object;
-					msg[0] = room_num;
-					msg[1] = _control.getMyId();
-					_control.sendMessage (p_quit, msg);
-					msg[0] = room_num;
-					msg[1] = _control.getMyId();
-					msg[2] = String(local_player.pName+" left the game.");
-					_control.sendMessage (p_msg, msg);
-				}
-			//                -W-
-			//************************************
-			_control.unregisterListener(this); //-W-
-    	}
-		
-		//-------------------------------------UPDATE FADER--------------------------------------
-		private function fader_enterFrame(e:Event){
-			var ca:Number = e.target.alpha*100;
-			var ga:Number = (darkness*100-ca)*0.25;
-			if (ga < 0){
-				ga = ga*-1;
-			}
-			e.target.alpha = ga/100;
-		}
 	
 		
 		//-------------------------------------ENTER ZONE----------------------------------------
 		private function next_zone():void{
-			player_move(local_player, 100,(ground.y-ground.height/2));
-			//************************************
-			//                -W-
-				if (_control.isConnected()) {
-					var msg :Object = new Object;
-					msg[0] = room_num;
-					msg[1] = _control.getMyId();
-					msg[2] = 100; //X
-					msg[3] = (ground.y-ground.height/2); //Y
-					msg[4] = local_player.sprinting;
-					msg[5] = local_player.hp;
-					msg[6] = local_player.energy;
-					_control.sendMessage (p_move, msg);
+			if (gameover){
+				endgame();
+			}else{
+				allclear = false;
+				player_move(local_player, -150,(ground.y-ground.height/2), false);
+				//************************************
+				//                -W-
+					if (_control.isConnected()) {
+						var msg :Object = new Object;
+						msg[0] = room_num;
+						msg[1] = _control.getMyId();
+						msg[2] = 100; //X
+						msg[3] = (ground.y-ground.height/2); //Y
+						msg[4] = local_player.sprinting;
+						msg[5] = local_player.hp;
+						msg[6] = local_player.energy;
+						msg[7] = false;
+						_control.sendMessage (p_move, msg);
+						current_mps+=1;
+				}
+				//                -W-
+				//************************************
+				room_num += 1;
+				
+				hud.zone.text = hud.levelname.text+" - ZONE "+room_num;
+				
+				bg.bg_1.gotoAndStop(room_num);
+				bg.bg_2.gotoAndStop(room_num);
+				bg.bg_3.gotoAndStop(room_num);
+				bg.bg_4.gotoAndStop(room_num);
+				bg.bg_5.gotoAndStop(room_num);
+				ground.gotoAndStop(room_num);
+				
+				bg.door_next.x = ground.width;
+				bg.door_next.height = ground.height;
+	
+				load_npcs(room_num,wave_num);
+				
+				ground = game.camera._zoom.bg.ground;
+				ground.doubleClickEnabled = true;
+				ground.addEventListener(MouseEvent.CLICK, floorCLICK_handler);
+	
+				hud.fader.gotoAndPlay("in");
+				enable_ai();
+				enable_mouse();
+				enable_keys();
+				plot_goal(local_player, 100,(ground.y-ground.height/2), clock);
 			}
-			//                -W-
-			//************************************
-			room_num += 1;
-			
-			bg.bg_1.gotoAndStop(room_num);
-			bg.bg_2.gotoAndStop(room_num);
-			bg.bg_3.gotoAndStop(room_num);
-			bg.bg_4.gotoAndStop(room_num);
-			bg.bg_5.gotoAndStop(room_num);
-			ground.gotoAndStop(room_num);
-			
-			bg.door_next.x = ground.width;
-			bg.door_next.height = ground.height;
-
-			load_npcs();
-			
-			ground = root.camera._zoom.bg.ground;
-			ground.doubleClickEnabled = true;
-			ground.addEventListener(MouseEvent.CLICK, floorCLICK_handler);
-
-			hud.fader.gotoAndPlay("in");
-			enable_ai();
-			enable_mouse();
-			enable_keys();
 		}
 		
 		//-------------------------------------EXIT ZONE-----------------------------------------
 		private function exit_zone() :void{
-			plot_goal(local_player, ground.width+500, (ground.y-ground.height/2));
+			plot_goal(local_player, ground.width+500, (ground.y-ground.height/2), clock);
 			//************************************
 			//                -W-
 				if (_control.isConnected()) {
@@ -290,7 +424,10 @@
 					msg[4] = local_player.sprinting;
 					msg[5] = local_player.hp;
 					msg[6] = local_player.energy;
+					msg[7] = local_player.character.scaleX;
+					msg[8] = clock;
 					_control.sendMessage (p_goal, msg);
+					current_mps+=1;
 			}
 			//                -W-
 			//************************************
@@ -302,22 +439,91 @@
 			disable_keys();
 			
 			zone_delay = clock+2000;
-			
-			//************************************
-			// 
-			if (_control.isConnected()) {
-				var flow :Number = _control.getAvailableFlow()-1;
-				_control.awardFlow(flow);
-       			_control.localChat("Awarded: " + flow + " flow!");
-				var msgg :Object = new Object;
-				msgg[0] = room_num;
-				msgg[1] = _control.getMyId();
-				msgg[2] = String(local_player.pName+" advanced to zone "+(room_num+1)+"!");
-				_control.sendMessage (p_msg, msgg);
-			}
-			//
-			//************************************ 
 		}
+		
+		
+		//-------------------------------------END GAME------------------------------------------
+		private function endgame() :void{
+				//var url:String = hud.escapePlanDelta.text;
+				//var request:URLRequest = new URLRequest(url);
+				//navigateToURL(request, "_self")
+				
+				_control.removeEventListener(KeyboardEvent.KEY_UP, keyReleased);
+				_control.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+				hud.removeEventListener("enterFrame", hud_enterFrame);
+				timer.removeEventListener( TimerEvent.TIMER, onTimerEvent);
+				world_clock.removeEventListener( TimerEvent.TIMER, world_tick);
+				poke_timer.removeEventListener( TimerEvent.TIMER, player_poke);
+				ground.removeEventListener(MouseEvent.CLICK, floorCLICK_handler);
+				hud.alpha = 0;
+				
+				endscreen = new _ENDSCREEN();
+				root.addChild(endscreen);
+				
+				var checkout :String = "koCount";
+				var book :Number = _control.get(checkout);
+				var KO :Number = Number(book);
+				var KO_b:Number = 5000-(1000*(KO));
+				if (KO_b < 0){
+					KO_b = 0;
+				}
+				endscreen.stats.pko.playerkos.text = KO+" (+"+KO_b+")";
+				
+				
+				checkout = "playerDamage";
+				book = _control.get(checkout);
+				var PD :Number = Math.round(Number(book));
+				
+				checkout = "enemyDamage";
+				book = _control.get(checkout);
+				var ED :Number = Math.round(Number(book));
+				var D_b:Number = Math.round(ED-(PD*2));
+				if(D_b < 0){
+					D_b = 0;
+				}
+				
+				endscreen.stats.dmg.enemydamage.text = "+"+D_b;
+
+				endscreen.stats.ct.cleartime.text = hud.time.text;
+				endscreen.stats.sb.bonusscore.text = "+"+Math.round(local_score);
+				
+				checkout = "totalMobHP";
+				book = _control.get(checkout);
+				var totalscore :Number = D_b+KO_b+Math.round(local_score);
+				var missionpar :Number = ED+5000;
+				var grade :Number = (totalscore/missionpar)*100;
+				
+				var rank :String;
+				if(grade > 100){
+					rank = "S";
+				}else if(grade > 90){
+					rank = "A";
+				}else if(grade > 80){
+					rank = "B";
+				}else if(grade > 70){
+					rank = "C";
+				}else if(grade > 60){
+					rank = "D";
+				}else{
+					rank = "F";
+				}
+				
+				endscreen.stats.r.rank.text = rank+" ("+Math.round(grade)+"%)";
+				
+				
+				if (_control.isConnected()) {
+					if(grade > 99){
+						grade = 99;
+					}
+					var flow :Number = Math.round(_control.getAvailableFlow()*(grade/100));
+					endscreen.stats.f.flow.text = flow;
+					_control.awardFlow(flow);
+				}
+				
+				root.removeChild(game);
+		}
+		//---------------------------------------------------------------------------------------
+		
 		
 		//-------------------------------------KEY UP--------------------------------------------
 		private function keyReleased(evt:KeyboardEvent):void{
@@ -370,6 +576,13 @@
 			//---------------------
 			current_fps++;
 			
+			var clock_seconds :Number = Math.round(clock/1000);
+			var minutes :Number = Math.floor(clock_seconds/60);
+			var seconds :String = (clock_seconds-(minutes*60));
+			if((clock_seconds-(minutes*60)) < 10){
+				seconds = "0"+(clock_seconds-(minutes*60));
+			}
+			hud.time.text = minutes+"'"+seconds+"''";
 			
 			//---STAT BAR---
 			hud.stats.hpnum.text = Math.round(local_player.hp);
@@ -443,10 +656,6 @@
 				}
 			}
 			
-			if (local_player.hp <= 0){
-				hud.hp_warning.gotoAndStop("off");
-				hud.energy_warning.gotoAndStop("off");
-			}
 			
 			var engper :int = Math.round(local_player.energy/100*100)+1;
 			
@@ -459,10 +668,33 @@
 			hud.stats.energy.num.text = String(engper-1)+"%";
 			//--------------
 			
+			var pos:Point = new Point(local_player.x, local_player.y);
+			pos = localToGlobal(pos);
+			var cam_x:Number = game.camera.x;
+			var cam_goal: Number = (pos.x-world_width/2)*-1;
+			
+			cam_x = (cam_x-cam_goal)*0.333;
+
+			game.camera.x -= cam_x;
+			
+			//Edge of World Checks
+			var bg1_w:Number = bg.bg_1.width-world_width;
+			if (game.camera.x < bg1_w*(-1)){game.camera.x = bg1_w*(-1);}
+			if (game.camera.x > 0){game.camera.x = 0;}
+			
+			if (local_player.hp <= 0){
+				hud.hp_warning.gotoAndStop("off");
+				hud.energy_warning.gotoAndStop("off");
+			}
+			
+			update_attackbar();
+			update_bg();
+			update_cursor();
 			
 			//Check For the player to enter the next zone.
-			if (bg.door_next.hitTestObject(local_player.boundbox) && npc_killcount == npc_count){
+			if (bg.door_next.hitTestObject(local_player.boundbox) && allclear){//npc_killcount == npc_count){
 				bg.door_next.height = 0.01;
+				
 				//************************************
 				// 
 				if (_control.isConnected()) {
@@ -470,45 +702,147 @@
 					msg[0] = room_num;
 					msg[1] = _control.getMyId();
 					_control.sendMessage (GTNR, msg);
+					current_mps+=1;
 				}
 				//
 				//************************************ 
 			}
-			if (gotonextroom){
-				gotonextroom = false;
-				exit_zone();
+			
+			
+			if (npc_killcount >= npc_count && allclear != true){
+				npc_killcount = 0;
+				wave_num ++;
+				load_npcs(room_num,wave_num);
 			}
 			
-			if (npc_killcount == npc_count){
+			if (allclear){
 				hud.go.alpha = 1;
+				wave_num = 1;
 			}else{
 				hud.go.alpha = 0;
 			}
 			
-			var pos:Point = new Point(local_player.x, local_player.y);
-			pos = localToGlobal(pos);
-			var cam_x:Number = root.camera.x;
-			var cam_goal: Number = (pos.x-world_width/2)*-1;
+			if (boss_killed){
+				allclear = true;
+				clear_npcs();
+			}
 			
-			cam_x = (cam_x-cam_goal)*0.1;
-
-			root.camera.x -= cam_x;
-			
-			//Edge of World Checks
-			var bg1_w:Number = bg.bg_1.width-world_width;
-			if (root.camera.x < bg1_w*(-1)){root.camera.x = bg1_w*(-1);}
-			if (root.camera.x > 0){root.camera.x = 0;}
-			
-			update_bg();
-			update_cursor();
-			
+			if (gotonextroom){
+				gotonextroom = false;
+				if(boss_killed){
+					gameover = true;
+				}
+				exit_zone();
+			}
 			
 			
 		}
 		
+		//-------------------------------------UPDATE ATTACK BAR---------------------------------
+		private function update_attackbar() :void{
+			if(local_exp > 299){
+				pk_status = "on";
+			}else{
+				pk_status = "off";
+			}
+			
+			if(last_attack+2000 <= clock){
+				current_attack = 0;
+			}
+			
+			if(current_attack > 6){
+				current_attack = 0;
+			}
+			
+			p1_status = "off";
+			p2_status = "off";
+			p3_status = "off";
+			p4_status = "off";
+			p5_status = "off";
+			p6_status = "off";
+			k1_status = "off";
+			k2_status = "off";
+			k3_status = "off";
+			
+			switch (current_attack) {
+					case 0:
+						p1_status = "next";
+					break;
+					
+					case 1:
+						p1_status = "on";
+						p2_status = "next";
+						k1_status = "next";
+					break;
+					
+					case 2:
+						p1_status = "on";
+						p2_status = "on";
+						p3_status = "next";
+						k1_status = "next";
+					break;
+					
+					case 3:
+						p1_status = "on";
+						p2_status = "on";
+						p3_status = "on";
+						p4_status = "next";
+						k1_status = "on";
+						k2_status = "next";
+					break;
+					
+					case 4:
+						p1_status = "on";
+						p2_status = "on";
+						p3_status = "on";
+						p4_status = "on";
+						p5_status = "next";
+						k1_status = "on";
+						k2_status = "next";
+					break;
+					
+					case 5:
+						p1_status = "on";
+						p2_status = "on";
+						p3_status = "on";
+						p4_status = "on";
+						p5_status = "on";
+						p6_status = "next";
+						k1_status = "on";
+						k2_status = "on";
+						k3_status = "next";
+					break;
+					
+					case 6:
+						p1_status = "on";
+						p2_status = "on";
+						p3_status = "on";
+						p4_status = "on";
+						p5_status = "on";
+						p6_status = "on";
+						k1_status = "on";
+						k2_status = "on";
+						k3_status = "next";
+					break;
+			}
+			
+			hud.attacks.p1.gotoAndStop(p1_status);
+			hud.attacks.p2.gotoAndStop(p2_status);
+			hud.attacks.p3.gotoAndStop(p3_status);
+			hud.attacks.p4.gotoAndStop(p4_status);
+			hud.attacks.p5.gotoAndStop(p5_status);
+			hud.attacks.p6.gotoAndStop(p6_status);
+			
+			hud.attacks.k1.gotoAndStop(k1_status);
+			hud.attacks.k2.gotoAndStop(k2_status);
+			hud.attacks.k3.gotoAndStop(k3_status);
+			
+			hud.attacks.pk.gotoAndPlay(pk_status);
+		}
+		
 		//-------------------------------------UPDATE BG-----------------------------------------
 		private function update_bg() :void{
-			var cam: MovieClip = root.camera;
+			var cam: MovieClip = game.camera;
 			var bg1: MovieClip = bg.bg_1;
 			var bg2: MovieClip = bg.bg_2;
 			var bg3: MovieClip = bg.bg_3;
@@ -542,6 +876,25 @@
 			
 		}
 		
+		//-------------------------------------ADD SCORE-------------------------------------
+		private function increase_score(n:Number) :void{
+			local_score += n;
+			hud.score_add.temp_score += n;
+			hud.score_add.score_add.score_add.text = "+"+Math.round(hud.score_add.temp_score);
+			if(hud.score_add.currentFrame < 30){
+				hud.score_add.gotoAndPlay(5);
+			}else{
+				hud.score_add.gotoAndPlay("go");
+			}
+		}
+		 
+		//-------------------------------------ADD HIT-------------------------------------
+		private function increase_hit(n:int = 1) :void{
+			hud.hitcounter.temp_count += n;
+			hud.hitcounter.num.hits.text = hud.hitcounter.temp_count;
+			hud.hitcounter.gotoAndPlay("go");
+		}
+		
 		//-------------------------------------UPDATE CURSOR-------------------------------------
 		private function update_cursor() :void{
 			var mpos: Point = new Point( root.mouseX,root.mouseY);
@@ -567,7 +920,9 @@
 		
 		//-------------------------------------NEW PLAYER----------------------------------------
 		protected function create_player(n: String ="Unknown", t: String ="NPC", sX: Number =0, sY: Number =0,
-										 hp: Number =100, spd: Number=1, id: Number=0) :MovieClip
+										 hp: Number =100, spd: Number=1, rng: Number=100, fst: Number=2000, 
+										 min: Number=1, max: Number=10, kb: Number = 0, stn: Number=0,
+										 id: Number=0, wave: Number=1) :MovieClip
     	{
 			var mc: player = new player();
 			mc.pName = n;
@@ -584,7 +939,19 @@
 				mc.name_plate.name_plate.textColor = 0xCC0000;
 				mc.name = "npc_"+npc_count;
 				mc.id = npc_count;
-				npc_count += 1;
+				mc.wave = wave;
+				npc_count ++;
+				
+				mc.ai_min = min;
+				mc.ai_max = max;
+				mc.ai_knockback = kb;
+				mc.ai_stun = stn;
+				
+				if (n == "BOSS" && mc.flag == "NPC"){
+					mc.removeChild(mc.character);
+					mc.character = new kosmos();
+					mc.addChild(mc.character);
+				}
 			}
 			
 			if (sX == 0&& sY == 0){
@@ -592,14 +959,25 @@
 				sY = (ground.y-ground.height/2);
 			}
 			
+			if (mc.flag == "PC"){
+				mc.blip = new blip_pc();
+			}else{
+				mc.blip = new blip_npc();
+			}
+			hud.radar.view.addChild(mc.blip);
+			mc.blip.x = (mc.x/ground.width)*200;
+			mc.blip.y = 0;//(mc.y/505)*200;
+			
 			mc.spawn_x = sX;
 			mc.spawn_y = sY;
 			
+			mc.ai = 1;
+			mc.ai2 = 1;
 			mc.ai_mode = "idle";
-			mc.ai_chase = 900;
-			mc.ai_range = 900;
-			mc.ai_attrng = 100;
-			mc.ai_cooldown = 2500;
+			mc.ai_chase = 1500;
+			mc.ai_range = 1500;
+			mc.ai_attrng = rng;
+			mc.ai_cooldown = fst;
 			mc.ai_tick = clock+mc.ai_cooldown;
 			mc.ai_report = clock;
 			
@@ -641,6 +1019,9 @@
 			
 			bg.actors.addChild(mc);
 			
+			mc.animation = "spawn";
+			mc.character.gotoAndPlay("spawn");
+			
 			return mc
     	}
 		
@@ -652,16 +1033,13 @@
 					msgg[0] = room_num;
 					msgg[1] = e.target.name;
 					_control.sendMessage (p_quit, msgg);
+					current_mps+=1;
 				}
-			}
-			
-			if (e.target.hp <= 0){
-				e.target.effects.gotoAndStop("normal");
 			}
 			
 			if (e.target.flag == "NPC"){
 				if (_control.isConnected()){
-					var element :String = "r"+String(room_num) + "_m"+String(e.target.id);
+					var element :String = "r"+String(room_num) + "_m"+String(e.target.id) + "_w"+String(e.target.wave);
 					var table :Number = _control.get(element);
 					if (table == 0){
 						table = e.target.maxhp;
@@ -669,6 +1047,46 @@
 					e.target.hp = Number(table);
 					
 					//e.target.name_plate.name_plate.text = "HP: "+Math.round(e.target.hp);
+				}
+			}
+			
+			if (e.target.hp <= 0){
+				e.target.ai2 = e.target.ai2*(-1);
+				if (e.target.ai2 == 1){
+					e.target.ai = e.target.ai*(-1);
+					if (e.target.ai == 1){
+						e.target.character.alpha = 0;
+					}else{
+						e.target.character.alpha = 1;
+					}
+				}
+				if(e.target.ai_tick <= clock){
+					e.target.character.alpha = 0;
+					if(e.target.flag == "NPC"){
+						var temptargeth :MovieClip = bg.actors.getChildByName(e.target.ai_target);
+						if(temptargeth == local_player && Math.random()*100 > 90){
+							//************************************
+							//                -W-
+							if (_control.isConnected()) {
+								var msgh :Object = new Object;
+								msgh[0] = room_num;
+								msgh[1] = _control.getMyId();
+								msgh[2] = e.target.x;
+								msgh[3] = e.target.y;
+								msgh[4] = "health";
+								msgh[5] = 1;
+								msgh[6] = (Math.random()*30)+(-15);
+								msgh[7] = (Math.random()*5)+(-2.5);
+								itemcount += 1;
+								msgh[8] = itemcount;
+								_control.sendMessage (s_item, msgh);
+								current_mps+=1;
+							}
+							//                -W-
+							//************************************
+						}
+						delete_npc(e.target);
+					}
 				}
 			}
 			
@@ -688,23 +1106,19 @@
 				var lp_distance: Number = Point.distance(lp_current,lp_goal);
 				
 				if (e.target.moving){
-					if (e.target.sprinting && e.target.energy > 0){
-						if (lp_distance > e.target.spd*2){
-							e.target.energy -= 5;
-							e.target.move_time = e.target.move_time+(e.target.spd*2)*e.target.scaleX;
-							lp_current = Point.interpolate(lp_goal,lp_start,e.target.move_time/e.target.move_distance);
-						} else {
-							e.target.moving = false;
+					if(e.target.sprinting){
+						e.target.move_O = e.target.move_A + 1000*(e.target.move_distance/((e.target.spd*e.target.scaleX)*2));
+					}else{
+						e.target.move_O = e.target.move_A + 1000*(e.target.move_distance/(e.target.spd*e.target.scaleX));
+					}
+					if (e.target.move_O > clock){
+						e.target.move_time = (clock-e.target.move_A)/(e.target.move_O-e.target.move_A);
+						lp_current = Point.interpolate(lp_goal,lp_start,e.target.move_time);
+					} else {
+						e.target.moving = false;
+						if(e.target.sprinting){
 							e.target.sprinting = false;
 							e.target.sliding = true;
-						}
-					}else{
-						e.target.sprinting = false;
-						if (lp_distance > e.target.spd){
-							e.target.move_time = e.target.move_time+e.target.spd*e.target.scaleX;
-							lp_current = Point.interpolate(lp_goal,lp_start,e.target.move_time/e.target.move_distance);
-						} else {
-							e.target.moving = false;
 						}
 					}
 					e.target.x = lp_current.x;
@@ -714,6 +1128,8 @@
 					e.target.move_distance = 0;
 					e.target.start_x = e.target.goal_x;
 					e.target.start_y = e.target.goal_y;
+					e.target.move_A = 0;
+					e.target.move_O = 0;
 					if (e.target.sliding){
 						e.target.goal_x = e.target.x;
 						e.target.goal_y = e.target.y;
@@ -787,9 +1203,12 @@
 				
 				//----------------------
 				//---NPC AI Detection
-				if (e.target.flag == "NPC" && ai_active){
-					player_ai(e.target);
+				if (e.target.ai == 1){
+					if (e.target.flag == "NPC" && ai_active){
+						player_ai(e.target);
+					}
 				}
+				e.target.ai = e.target.ai*(-1);
 				//----------------------
 				
 				
@@ -808,16 +1227,8 @@
 				
 				//----------------------
 				//---Direction Detection
-				if (e.target.moving && e.target.flag != "NPC"){
-					if (e.target.x > e.target.last_x){
-						e.target.character.scaleX = 1; //Face Right
-						e.target.dmgbox.scaleX = 1;
-					}else{
-						e.target.character.scaleX = -1; //face Left
-						e.target.dmgbox.scaleX = -1;
-					}
-				}else{
-					if(e.target.ai_target != "" && bg.actors.getChildByName(e.target.ai_target)){
+				if(e.target.flag == "NPC" && e.target.ai_target){
+					if(bg.actors.getChildByName(e.target.ai_target)){
 						var temptarget :MovieClip = bg.actors.getChildByName(e.target.ai_target);
 						if (e.target.x < temptarget.x){
 							e.target.character.scaleX = 1; //Face Right
@@ -826,16 +1237,18 @@
 							e.target.character.scaleX = -1; //face Left
 							e.target.dmgbox.scaleX = -1;
 						}
-					}else if(e.target.moving){
-						if (e.target.x > e.target.last_x){
-							e.target.character.scaleX = 1; //Face Right
-							e.target.dmgbox.scaleX = 1;
-						}else{
-							e.target.character.scaleX = -1; //face Left
-							e.target.dmgbox.scaleX = -1;
-						}
+					}
+				} else if (e.target.moving){
+					if (lp_start.x < lp_goal.x){
+						e.target.character.scaleX = 1; //Face Right
+						e.target.dmgbox.scaleX = 1;
+					}else{
+						e.target.character.scaleX = -1; //Face Left
+						e.target.dmgbox.scaleX = -1;
 					}
 				}
+				
+				
 				e.target.last_x = e.target.x;
 				
 				if (e.target == local_player){
@@ -852,6 +1265,20 @@
 				//----------------------
 				
 				
+				
+				
+				
+				
+				//----------------------
+				//---RADAR
+				e.target.blip.x = (e.target.x/ground.width)*200;
+				e.target.blip.y = 0;//(e.target.y/505)*25;
+				//----------------------
+				
+				
+				
+				
+				
 				//----------------------
 				//---Animation Detection
 				if (e.target.knockback){
@@ -866,6 +1293,7 @@
 				}
 				
 				if (e.target.animation == "hurt"){
+				}else if (e.target.animation == "spawn"){
 				}else if (e.target.animation == "knockback"){
 				}else if (e.target.animation == "stun"){
 				}else if (e.target.animation == "punch"){
@@ -937,7 +1365,10 @@
 														msg[3] = dmg;
 														msg[4] = xslide;
 														msg[5] = 0;
+														msg[6] = wave_num;
+														msg[7] = 0;
 														_control.sendMessage (p_hurt, msg);
+														current_mps+=1;
 													}
 													//                -W-
 													//************************************
@@ -977,9 +1408,16 @@
 												if (e.target.sliding == true){
 													knock_amount += xslide*2;
 												}
-												local_exp += (dmg/5)/(local_level*0.5);
-												local_score += dmg*local_level;
-												player_hurt(bg.actors.getChildByName("npc_"+n),dmg, String(e.target.name), knock_amount, stun_amount);
+												//local_exp += (dmg/5)/(local_level*0.5);
+												var coinrnd :Number = Math.random()*100
+												if(coinrnd > 75){
+															coinrnd = 1;
+												}else{
+															coinrnd = 0;
+												}
+												increase_hit();
+												increase_score(((dmg/10)*local_level)*hud.hitcounter.temp_count);
+												player_hurt(bg.actors.getChildByName("npc_"+n),dmg, String(e.target.name), knock_amount, stun_amount, coinrnd);
 												if (e.target == local_player){
 													//************************************
 													//                -W-
@@ -990,7 +1428,10 @@
 														msg[3] = dmg;
 														msg[4] = knock_amount;
 														msg[5] = stun_amount;
+														msg[6] = wave_num;
+														msg[7] = coinrnd;
 														_control.sendMessage (p_hurt, msg);
+														current_mps+=1;
 													}
 													//                -W-
 													//************************************
@@ -1007,18 +1448,19 @@
 							if (local_player.hp > 0){
 								if (e.target.dmgbox.hitTestObject(local_player.boundbox)){
 									if (local_player.animation != "hurt"){
-										dmg = (Math.random()*10)+10;
-										player_hurt(local_player, dmg, String(e.target.name), 0, 0);
+										dmg = e.target.ai_min+Math.random()*(e.target.ai_max-e.target.ai_min);
+										player_hurt(local_player, dmg, String(e.target.name), e.target.ai_knockback, e.target.ai_stun);
 										//************************************
 										//                -W-
 										if (_control.isConnected()) {
 											msg[0] = room_num;
-											msg[1] = e.target.name;
+											msg[1] = _control.getMyId();
 											msg[2] = "X";
 											msg[3] = dmg;
 											msg[4] = 0;
 											msg[5] = 0;
 											_control.sendMessage (n_hurt, msg);
+											current_mps+=1;
 										}
 										//                -W-
 										//************************************
@@ -1034,7 +1476,24 @@
 					e.target.character.gotoAndPlay(e.target.animation);
 					if(e.target.flag != "PC"){
 						npc_killcount += 1;
+						if(e.target.pName == "BOSS"){
+							boss_killed = true;
+						}
+						
+					}else if(e.target.flag == "PC"){
+						if(e.target == local_player){
+							var elementt :String = "koCount";
+							var tablee :Number = _control.get(elementt);
+								if (tablee == 0) {
+									tablee = 1;
+									_control.set(elementt, tablee);
+								}else{
+									table += 1;
+									_control.set(elementt, tablee);
+								}
+						}
 					}
+					e.target.ai_tick = clock+750;
 				}
 			
 				e.target.animation_old = e.target.animation;
@@ -1051,7 +1510,7 @@
 		//-------------------------------------NPlayer AI---------------------------------------
 		private function player_ai(mc:MovieClip){
 			var msg :Object = new Object;
-			
+
 			if (mc.knockback || mc.stun || mc.animation == "hurt" || mc.animation == "dead"){
 			}else{
 				if (_control.isConnected()) {
@@ -1098,7 +1557,7 @@
 						case "flee":
 							dist = Point.distance(mypos,glpos);
 							if (dist > mc.spd){
-								plot_goal(mc, mc.spawn_x, mc.spawn_y);
+								plot_goal(mc, mc.spawn_x, mc.spawn_y, clock);
 							}else{
 								mc.ai_mode = "idle";
 								mc.ai_target = "";
@@ -1117,27 +1576,7 @@
 							if (mc.ai_target != ""){
 								if (bg.actors.getChildByName(mc.ai_target)){ //If target exsists...
 									player_target = bg.actors.getChildByName(mc.ai_target);
-										if(player_target == local_player && mc.ai_report+1000 <= clock){
-											mc.ai_report = clock;
-											//************************************
-											//                -W-
-											if (_control.isConnected()) {
-													msg[0] = room_num;
-													msg[1] = _control.getMyId();
-													if (mc.moving){
-														msg[2] = mc.goal_x;
-														msg[3] = mc.goal_y;
-													}else{
-														msg[2] = mc.x;
-														msg[3] = mc.y;
-													}
-													msg[4] = mc.name;
-													msg[5] = mc.ai_target;
-													_control.sendMessage (n_goal, msg);
-											}
-											//                -W-
-											//************************************
-										}
+										
 									if (player_target.hp <= 0){ //Target dead, Breaking off.
 										mc.ai_mode = "flee";
 										mc.ai_target = "";
@@ -1156,17 +1595,19 @@
 												//---ATTACK MODE---
 												if( mc.x > player_target.x){
 														if(player_target == local_player){
-															plot_goal(mc, player_target.x+mc.ai_attrng, player_target.y);
+															plot_goal(mc, player_target.x+mc.ai_attrng*mc.scaleX-mc.spd, player_target.y, clock);
 														}
 												}else{
 														if(player_target == local_player){
-															plot_goal(mc, player_target.x-mc.ai_attrng, player_target.y);
+															plot_goal(mc, player_target.x-mc.ai_attrng*mc.scaleX+mc.spd, player_target.y, clock);
 														}
 												}
-												if(temp_dis <= mc.ai_attrng+mc.spd && (mc.y <= player_target.y+5 && mc.y >= player_target.y-5)){
+												if(temp_dis <= mc.ai_attrng*mc.scaleX && (mc.y <= player_target.y+5 && mc.y >= player_target.y-5)){
 													//attack!
-													mc.ai_tick = clock+mc.ai_cooldown;
-													player_punch(mc);
+													if(player_target == local_player){
+														player_punch(mc);
+													} 
+													
 												}
 											}else{
 												//---EVASIVE MODE---
@@ -1187,7 +1628,7 @@
 													
 													var des :Point = new Point(player_target.x+desx, player_target.y+desy);
 														if(player_target == local_player){
-															plot_goal(mc, des.x, des.y);
+															plot_goal(mc, des.x, des.y, clock);
 														}
 													
 												}
@@ -1222,7 +1663,7 @@
 					if (_control.isConnected()){
 					}else{
 						if (ground.hitTestPoint(pX,pY)){
-							plot_goal(mc, pX, pY);
+							plot_goal(mc, pX, pY, clock);
 						}
 					}
 					
@@ -1277,8 +1718,42 @@
 			}
 		}
 		
+		//-------------------------------------RESPAWN PLAYER-------------------------------------
+    	protected function player_respawn_local () :void
+    	{
+			var msg :Object
+			local_player.hp = local_player.maxhp;
+			local_player.energy = 100;
+			local_player.knockback = false;
+			local_player.stun = false;
+			local_player.character.alpha = 1;
+			
+			player_move(local_player, 100,(ground.y-ground.height/2),true);
+			//************************************
+			//                -W-
+				if (_control.isConnected()) {
+					msg = new Object;
+					msg[0] = room_num;
+					msg[1] = _control.getMyId();
+					msg[2] = 100; //X
+					msg[3] = (ground.y-ground.height/2); //Y
+					msg[4] = local_player.sprinting;
+					msg[5] = local_player.hp;
+					msg[6] = local_player.energy;
+					msg[7] = true;
+					_control.sendMessage (p_move, msg);
+					current_mps+=1;
+			}
+			//                -W-
+			//************************************
+			
+			plot_goal(local_player, 100,(ground.y-ground.height/2), clock);
+			enable_mouse();
+			enable_keys();
+    	}
+		
 		//-------------------------------------MOVE PLAYER---------------------------------------
-    	protected function player_move (mc:MovieClip, pX:Number, pY:Number) :void
+    	protected function player_move (mc:MovieClip, pX:Number, pY:Number, effect) :void
     	{
 			mc.x = pX;
 			mc.y = pY;
@@ -1295,6 +1770,17 @@
 			mc.moving = false;
 			mc.sprinting = false;
 			mc.sliding = false;
+			
+			if (effect){
+				mc.character.gotoAndPlay("spawn");
+				mc.animation = "spawn";
+				//var ghost :death_effect = new death_effect();
+				//bg.addChild(ghost);
+				//ghost.x = mc.x;
+				//ghost.y = mc.y;
+				//player_scale(ghost);
+				mc.character.alpha = 1;
+			}
     	}
 		
 		//-------------------------------------DELETE PC-----------------------------------------
@@ -1303,19 +1789,43 @@
 			if (bg.actors.getChildByName(id)){
 				bg.actors.getChildByName(id).removeEventListener("enterFrame", player_enterFrame);
 				bg.actors.removeChild(bg.actors.getChildByName(id));
+				hud.radar.view.removeChild(bg.actors.getChildByName(id).blip);
 				pc_count -= 1;
 			}
+    	}
+		
+		//-------------------------------------DELETE NPC-----------------------------------------
+    	protected function delete_npc (mc:MovieClip) :void
+    	{
+			mc.removeEventListener("enterFrame", player_enterFrame);
+			hud.radar.view.removeChild(mc.blip);
+			bg.actors.removeChild(mc);
+			
+			//var ghost :death_effect = new death_effect();
+			//bg.addChild(ghost);
+			//ghost.x = mc.x;
+			//ghost.y = mc.y;
+			//player_scale(ghost);
     	}
 		
 		//-------------------------------------DELETE NPCS----------------------------------------
     	protected function clear_npcs () :void
     	{
+			var ghost :death_effect;
 			var n:Number = 0;
 			if (npc_count){
 				var t:Number = npc_count;
 				while(n <= t){
 					if (bg.actors.getChildByName("npc_"+n)){
 						bg.actors.getChildByName("npc_"+n).removeEventListener("enterFrame", player_enterFrame);
+						
+						ghost = new death_effect();
+						bg.addChild(ghost);
+						ghost.x = bg.actors.getChildByName("npc_"+n).x;
+						ghost.y =bg.actors.getChildByName("npc_"+n).y;
+						player_scale(ghost);
+						
+						hud.radar.view.removeChild(bg.actors.getChildByName("npc_"+n).blip);
 						bg.actors.removeChild(bg.actors.getChildByName("npc_"+n));
 					}
 					n++;
@@ -1329,55 +1839,49 @@
     	{
 			var n:Number = 0;
 			var mob: MovieClip;
+			var mob_tar: MovieClip;
 			
 			var msg :Object = new Object;
 			msg[0] = room_num;
 			msg[1] = _control.getMyId();
-			
-			
-			var m:Number = 3;
+
+			var m:Number = 2;
 			
 			if (npc_count){
 				var t:Number = npc_count;
 				while(n <= t){
-					if (bg.actors.getChildByName("npc_"+n)){
-						mob = bg.actors.getChildByName("npc_"+n);
-						msg[m] = "npc_"+n;
-						msg[m+1] = mob.x;
-						msg[m+2] = mob.y;
-						msg[m+3] = mob.ai_mode;
-						msg[m+4] = mob.ai_target;
-						msg[m+5] = mob.stun;
-						msg[m+6] = mob.knockback;
-						msg[m+7] = mob.stun_counter;
-						msg[m+8] = mob.ai_tick;
-						msg[m+9] = mob.new_x;
-						msg[m+10] = mob.new_y;
-						msg[m+11] = mob.old_x;
-						msg[m+12] = mob.old_y;
-						msg[m+13] = mob.sliding;
-						
-						msg[m+14] = mob.move_start;
-						msg[m+15] = mob.move_time;
-						msg[m+16] = mob.move_distance;
-						msg[m+17] = mob.goal_x;
-						msg[m+18] = mob.goal_y;
-						msg[m+19] = mob.start_x;
-						msg[m+20] = mob.start_y;
-						
-						m = m+21;
+					mob = bg.actors.getChildByName("npc_"+n);
+					if (mob){
+						//_control.localChat("NPC_"+1+"...");
+						mob_tar = bg.actors.getChildByName(mob.ai_target);
+						if(mob_tar == local_player){
+							//_control.localChat("...You're target.");
+							msg[m] = "npc_"+n;
+							if (mob.moving){
+								msg[m+1] = mob.goal_x;
+								msg[m+2] = mob.goal_y;
+								msg[m+4] = mob.move_A;
+							}else{
+								msg[m+1] = mob.x;
+								msg[m+2] = mob.y;
+								msg[m+4] = clock;
+							}
+							msg[m+3] = mob.ai_target;
+							m = m+5;
+						}
 						
 					}
 					n++;
 				}
 			}
-			
-			//msg[2] = n-1;
 			_control.sendMessage (REPORT, msg);
+			current_mps+=1;
     	}
 		
 		//-------------------------------------LOAD NPCS----------------------------------------
-		private function load_npcs() :void{
+		private function load_npcs(room:Number, wave:Number) :void{
+			clear_npcs();
+			
 			var mobs :MovieClip = new all_mobs();
 			//mobs.gotoAndStop(room_num);
 			
@@ -1388,14 +1892,33 @@
 			var element :String;
 			var table :Number;
 			var olddmgg :Number;
+			if (_control.amInControl()){
+				var elementt :String = "totalMobHP";
+				var tablee :Number = _control.get(elementt);
+				if (tablee == 0) {
+						tablee = 0;
+						_control.set(elementt, tablee);
+				}
+			}
+			
+			
+			var total_found :Number = 0;
 			
 			//_control.localChat("Spawning "+(t)+" Mobs.");
 			while(n < t){
 					//moo = mobs.getChildByName("mob_"+n);
 					moo = mobs.getChildAt(n);
-					if (moo && moo.name == "m"+String(room_num)){
+					if (moo && moo.name == "m"+String(room)+"_w"+String(wave)){
 						//_control.localChat("Spawning Mob "+n+".");
-						newmob = create_player(moo.mt.text, "NPC", moo.x, moo.y, moo.hp.text, moo.spd.text, n);
+						newmob = create_player(moo.mt.text, "NPC", moo.x, moo.y, moo.hp.text, moo.spd.text, moo.rng.text, moo.fst.text, moo.max.text, moo.min.text, moo.knockback.text, moo.stun.text,n, wave);
+						total_found ++;
+						
+						if (_control.amInControl()){
+							tablee = _control.get(elementt);
+							tablee += moo.hp.text;
+							_control.set(elementt, tablee);
+						}
+						
 						newmob = null;
 						moo = null;
 					}else{
@@ -1404,6 +1927,10 @@
 					n++;
 			}
 			npc_killcount = 0;
+			
+			if(total_found == 0){
+				allclear = true;
+			}
 		}
 		
 		//-------------------------------------POKE!---------------------------------------------
@@ -1424,7 +1951,9 @@
 				msg[4] = local_player.sprinting;
 				msg[5] = local_player.hp;
 				msg[6] = local_player.energy;
+				msg[7] = local_player.character.scaleX;
         		_control.sendMessage (p_goal, msg);
+				current_mps+=1;
 			}
 			//                -W-
 			//************************************
@@ -1446,7 +1975,7 @@
 					if (sprint_hit == true && local_limiter != true){
 						local_player.sprinting = true;
 					}
-					plot_goal(local_player, pos.x, pos.y);
+					plot_goal(local_player, pos.x, pos.y, clock);
 					
 					
 					//************************************
@@ -1460,7 +1989,10 @@
 						msg[4] = local_player.sprinting;
 						msg[5] = local_player.hp;
 						msg[6] = local_player.energy;
+						msg[7] = local_player.character.scaleX;
+						msg[8] = clock;
 						_control.sendMessage (p_goal, msg);
+						current_mps+=1;
 					}
 					//                -W-
 					//************************************
@@ -1469,7 +2001,7 @@
 		}
 		
 		//-------------------------------------PLOT GOAL-----------------------------------------
-		private function plot_goal(mc:MovieClip, pX:Number, pY:Number){
+		private function plot_goal(mc:MovieClip, pX:Number, pY:Number, alpha:Number){
 			if ((mc.animation == "idle" || mc.animation == "walk")){ //&& mc.sliding == false){
 				mc.start_x = mc.x;
 				mc.start_y = mc.y;
@@ -1481,9 +2013,149 @@
 				
 				mc.move_distance = Point.distance(lp_start,lp_goal);
 				mc.move_time = 0;
+				mc.move_A = alpha;
 				
 				mc.moving = true;
 				mc.animation = "walk";
+			}
+		}
+		
+		//-------------------------------------SPAWN COIN-----------------------------------------
+		private function create_coin(pX:Number, pY:Number, flag:String, count:int, amount:int = 1, 
+									 sX:Number=-99, sY:Number=-99) :void{
+			
+			itemcount = count;
+			
+			if(sX == -99){
+				sX = (Math.random()*30)+(-15);
+			}
+			if(sY == -99){
+				sY = (Math.random()*5)+(-2.5);
+			}
+			var mc :MovieClip;
+			
+			for(var am:Number = 1;am <= amount; am++){
+				if(flag == "coin"){
+					mc = new coin();
+					mc.flag = "coin";
+				}else{
+					mc = new health();
+					mc.flag = "health";
+				}
+				
+				mc.name = "item_"+count;
+				itemcount += 1;
+				
+				bg.actors.addChild(mc);
+				mc.x = pX;
+				mc.y = pY;
+				
+				player_scale(mc);
+				player_depth(mc);
+				
+				mc.old_x = pX+sX;
+				mc.old_y = pY+sY;
+				mc.new_x = pX;
+				mc.new_y = pY;
+				
+				mc.birth = clock;
+				mc.tog = 1;
+				mc.addEventListener("enterFrame", update_coin);
+			}
+		}
+		private function update_coin(e:Event):void{
+			var mc:MovieClip;
+			mc = e.target;
+
+			mc.new_x = mc.x;
+			mc.new_y = mc.y;
+			
+			var xslide = (mc.new_x-mc.old_x)*0.99;
+			var yslide = (mc.new_y-mc.old_y)*0.99;
+			if((yslide+xslide)/2 > 0.1){
+				mc.x += xslide;
+				mc.y += yslide;
+				mc.old_x = mc.new_x;
+				mc.old_y = mc.new_y;
+				
+				player_scale(mc);
+				player_depth(mc);
+			}
+			
+			if(mc.flag == "coin"){
+				var sparkle1 :MovieClip;
+				var rnd :Number = Math.random()*100;
+				if (rnd > 33 && current_fps >= 20){
+					sparkle1 = new coin_spark();
+					bg.addChild(sparkle1);
+					sparkle1.x = mc.x+Math.random()*30+(-15);
+					sparkle1.y = mc.y+mc.cn.y+Math.random()*30+(-15);
+				}
+			}
+			
+			if (mc.birth+9000 < clock){
+				mc.tog = mc.tog*(-1);
+				if(mc.tog == 1){
+					mc.alpha = 1;
+				}else{
+					mc.alpha = 0;
+				}
+				if (mc.birth+10000 < clock){
+					mc.removeEventListener("enterFrame", update_coin);
+					mc.parent.removeChild(mc);
+				}
+			}
+			
+			if (mc.birth+1500 < clock){
+				if(mc.boundbox.hitTestObject(local_player.boundbox)){
+					if (_control.isConnected()) {
+						var msgg :Object = new Object;
+						msgg[0] = room_num;
+						msgg[1] = _control.getMyId();
+						msgg[2] = mc.name;
+						_control.sendMessage (d_item, msgg);
+						current_mps+=1;
+					}
+					//                -W-
+					//************************************
+					
+					if(mc.flag == "coin"){
+						mc.cn.stop();
+						
+						var sparks :MovieClip;
+						sparks = new coinGOT();
+						bg.addChild(sparks);
+						sparks.x = mc.x;
+						sparks.y = mc.y;
+						player_scale(sparks);
+						
+						mc.removeEventListener("enterFrame", update_coin);
+						mc.parent.removeChild(mc);
+						increase_score(5);
+						local_exp += 15;
+						if (_control.isConnected()) {
+							var flow :Number = Math.round(_control.getAvailableFlow()*0.2);
+							if(flow < 1){
+								flow = 1;
+							}
+							_control.awardFlow(flow);
+						}
+					}else{
+						increase_score(25);
+						
+						var crosses :MovieClip;
+						crosses = new health_got();
+						bg.addChild(crosses);
+						crosses.x = mc.x;
+						crosses.y = mc.y;
+						player_scale(crosses);
+						player_heal(local_player, (local_player.maxhp-local_player.hp))
+						
+						mc.removeEventListener("enterFrame", update_coin);
+						mc.parent.removeChild(mc);
+					}
+					
+				}
 			}
 		}
 		
@@ -1543,18 +2215,21 @@
 								mc.goal_y = mc.y;
 							}
 							if (mc.sliding == false){
-								player_move(mc, mc.x, mc.y);
+								player_move(mc, mc.x, mc.y, false);
 							}
 							mc.animation = "punch";
 							health_tick = clock+3000;
-							
+							current_attack += 1;
+							last_attack = clock;
 							//************************************
 							//                -W-
 							if (_control.isConnected()) {
 								var msg :Object = new Object;
 								msg[0] = room_num;
 								msg[1] = _control.getMyId();
+								msg[2] = local_player.character.scaleX;
 								_control.sendMessage (p_punch, msg);
+								current_mps+=1;
 							}
 							//                -W-
 							//************************************
@@ -1562,7 +2237,23 @@
 				}
 			}else{
 				if (mc.animation == "idle" || mc.animation == "walk"){
-					player_move(mc, mc.x, mc.y);
+					if (mc.flag == "NPC"){
+						mc.ai_tick = clock+mc.ai_cooldown;
+						//************************************
+						//                -W-
+						if (_control.isConnected()) {
+							var msgg :Object = new Object;
+							msgg[0] = room_num;
+							msgg[1] = _control.getMyId();
+							msgg[3] = mc.name;
+							msgg[2] = local_player.character.scaleX;
+							_control.sendMessage (n_punch, msgg);
+							current_mps+=1;
+						}
+						//                -W-
+						//************************************
+					}
+					player_move(mc, mc.x, mc.y, false);
 					mc.animation = "punch";
 				}
 			}
@@ -1587,18 +2278,21 @@
 								mc.goal_y = mc.y;
 							}
 							if (mc.sliding == false){
-								player_move(mc, mc.x, mc.y);
+								player_move(mc, mc.x, mc.y, false);
 							}
 							mc.animation = "kick";
 							health_tick = clock+3000;
-							
+							current_attack = 0;
+							last_attack = clock;
 							//************************************
 							//                -W-
 							if (_control.isConnected()) {
 								var msg :Object = new Object;
 								msg[0] = room_num;
 								msg[1] = _control.getMyId();
-								_control.sendMessage (p_kick, msg);
+								msg[2] = local_player.character.scaleX;
+								_control.sendMessage (n_kick, msg);
+								current_mps+=1;
 							}
 							//                -W-
 							//************************************
@@ -1606,7 +2300,23 @@
 				}
 			}else{
 				if (mc.animation == "idle" || mc.animation == "walk"){
-					player_move(mc, mc.x, mc.y);
+					if (mc.flag == "NPC"){
+						mc.ai_tick = clock+mc.ai_cooldown;
+						//************************************
+						//                -W-
+						if (_control.isConnected()) {
+							var msgg :Object = new Object;
+							msgg[0] = room_num;
+							msgg[1] = _control.getMyId();
+							msgg[3] = mc.name;
+							msgg[2] = local_player.character.scaleX;
+							_control.sendMessage (p_kick, msgg);
+							current_mps+=1;
+						}
+						//                -W-
+						//************************************
+					}
+					player_move(mc, mc.x, mc.y, false);
 					mc.animation = "kick";
 				}
 			}
@@ -1629,7 +2339,7 @@
 						mc.goal_y = mc.y;
 					}
 					if (mc.sliding == false){
-						player_move(mc, mc.x, mc.y);
+						player_move(mc, mc.x, mc.y, false);
 					}
 					mc.animation = "block";
 					
@@ -1639,12 +2349,14 @@
 						var msg :Object = new Object;
 						msg[0] = room_num;
 						msg[1] = _control.getMyId();
+						msg[2] = local_player.character.scaleX;
 						_control.sendMessage (p_block, msg);
+						current_mps+=1;
 					}
 					//                -W-
 					//************************************
 				}else{
-					player_move(mc, mc.x, mc.y);
+					player_move(mc, mc.x, mc.y, false);
 					mc.animation = "block";
 				}
 			}
@@ -1658,10 +2370,12 @@
 					//************************************
 					//                -W-
 					if (_control.isConnected()) {
-						var msg :Object = new Object;
-						msg[0] = room_num;
-						msg[1] = _control.getMyId();
-						_control.sendMessage (p_block_stop, msg);
+						var msgg :Object = new Object;
+						msgg[0] = room_num;
+						msgg[1] = _control.getMyId();
+						msgg[2] = local_player.character.scaleX;
+						_control.sendMessage (p_block_stop, msgg);
+						current_mps+=1;
 					}
 					//                -W-
 					//************************************
@@ -1672,39 +2386,52 @@
     	}
 		
 		//-------------------------------------HURT PLAYER----------------------------------------
-		protected function player_hurt (mc:MovieClip, dmg:Number, attacker_name:String, knockback:Number, stun:Number) :void
+		protected function player_heal (mc:MovieClip, dmg:Number) :void
+    	{	
+			if (mc == local_player){
+				mc.hp += dmg;
+				var temp_heal:MovieClip;
+				temp_heal = new heal_num_player;
+				temp_heal.txt.dmg.text = "+"+String(Math.round(dmg));
+				bg.addChild(temp_heal);
+				temp_heal.x = mc.x;
+				temp_heal.y = mc.y;
+				player_scale(temp_heal);
+			}
+		}
+		
+		protected function player_hurt (mc:MovieClip, dmg:Number, attacker_name:String, knockback:Number, stun:Number, coins:int=0) :void
     	{	
 			var attacker :MovieClip = bg.actors.getChildByName(attacker_name);
 			
 			var temp_block :MovieClip;
 			
+			
 			if (mc.animation_old == "block" || mc.animation == "block" ){
 				if (mc == local_player){
-					if (local_player.energy > 0){
-						dmg = dmg/2;
-						local_player.energy -= dmg;
-						dmg = 0;
-						health_tick = clock+3000;
-						
-						temp_block = new block();
-						bg.addChild(temp_block);
-						temp_block.x = mc.x+Math.random()*50;
-						temp_block.y = mc.y;
-						player_scale(temp_block);
-						
-					}else{
-						if(mc == local_player){
-								mc.hp -= dmg;
+						if (local_player.energy > 0){
+							dmg = dmg/2;
+							local_player.energy -= dmg;
+							dmg = 0;
+							health_tick = clock+3000;
+							
+							temp_block = new block();
+							bg.addChild(temp_block);
+							temp_block.x = mc.x+Math.random()*50;
+							temp_block.y = mc.y;
+							player_scale(temp_block);
+							
+						}else{
+							mc.hp -= dmg;
+							health_tick = clock+6000;
+							mc.animation = "hurt";
+							player_move(mc, mc.x, mc.y, false);
 						}
-						health_tick = clock+6000;
-						mc.animation = "hurt";
-						player_move(mc, mc.x, mc.y);
-					}
 				}
 			}else{
 				if (_control.isConnected()){
 					if(mc == local_player){
-						mc.hp -= dmg;
+							mc.hp -= dmg;
 					}else{
 						mc.ai_tick = clock+mc.ai_cooldown+2000*((mc.hp/mc.maxhp)-mc.scaleX);
 						mc.ai_target = attacker_name;
@@ -1717,14 +2444,37 @@
 					mc.ai_mode = "active";
 				}
 				mc.animation = "hurt";
-				player_move(mc, mc.x, mc.y);
+				player_move(mc, mc.x, mc.y, false);
 			}
 			
 			if (mc == local_player){
 				local_exp -= dmg;
 			}
 			
+			if (coins > 0 && mc.ai_target == local_player.name){
+					//************************************
+					//                -W-
+					if (_control.isConnected()) {
+						var msgg :Object = new Object;
+						msgg[0] = room_num;
+						msgg[1] = _control.getMyId();
+						msgg[2] = mc.x;
+						msgg[3] = mc.y;
+						msgg[4] = "coin";
+						msgg[5] = coins;
+						msgg[6] = (Math.random()*30)+(-15);
+						msgg[7] = (Math.random()*5)+(-2.5);
+						itemcount += 1;
+						msgg[8] = itemcount;
+						_control.sendMessage (s_item, msgg);
+						current_mps+=1;
+					}
+					//                -W-
+					//************************************
+			}
+			
 			if (dmg > 0){
+				
 				if (stun > 0){
 					mc.stun = true;
 					mc.stun_counter = clock+(stun*1000)
@@ -1757,7 +2507,7 @@
 				var temp_num :MovieClip;
 				var temp_snap :MovieClip;
 				if (dmg > 80){
-					root.camera.gotoAndPlay("x_light");
+					game.camera.gotoAndPlay("x_light");
 					if (mc.flag == "PC"){
 						temp_num = new dmg_crit_num_player();
 					}else{
@@ -1800,6 +2550,48 @@
 		
 		
 		
+		protected function sendmsg (n:String, msg:Object) :void
+    	{
+			if(current_mps < 8){ //Below threshold
+				current_mps++;
+				//************************************
+				//                -W-
+				if (_control.isConnected()) {
+						_control.sendMessage (n, msg);
+						current_mps+=1;
+				}
+				//                -W-
+				//************************************
+				
+			}else{ //Too many messages sent! Wait!
+				var TBS: _MSG = new _MSG();
+				TBS.msg = msg;
+				TBS.name = n;
+				MSGBOX.addChild(TBS);
+				TBS.addEventListener("enterFrame", update_MSG);
+				
+			}
+    	}
+		protected function update_MSG (e:Event) :void
+    	{
+			var mc:MovieClip = e.target;
+			if(current_mps < 8){
+				current_mps++;
+				//************************************
+				//                -W-
+				if (_control.isConnected()) {
+						_control.sendMessage (mc.name, mc.msg);
+						current_mps+=1;
+				}
+				//                -W-
+				//************************************
+				mc.removeEventListener("enterFrame", update_MSG);
+				MSGBOX.removeChild(mc);
+			}
+    	}
+		
+		
+		
 		
 		public static const p_goal :String = "New Player Goal";
 		public static const n_goal :String = "New NPC Goal";
@@ -1809,8 +2601,14 @@
 		public static const p_block :String = "Player Blocked";
 		public static const p_block_stop :String = "Player Stopped Blocking";
 		
+		public static const n_punch :String = "Enemy Punched";
+		public static const n_kick :String = "Enemy Kicked";
+		
 		public static const p_hurt :String = "This guy took damage!";
 		public static const n_hurt :String = "This guy hit me!";
+		
+		public static const s_item :String = "Spawn an item!";
+		public static const d_item :String = "Delete an item!";
 		
 		public static const p_quit :String = "Player quit the game";
 		
@@ -1827,255 +2625,218 @@
 		// from MessageReceivedListener 
 		public function messageReceived (event :MessageReceivedEvent) :void
 		{
-			var room :Number = int(event.value[0]);
-			var id :int = int(event.value[1]);
-			var moo_id: String = id;
-			var moo: MovieClip;
-			
-			//---PUBLIC---
-			switch (event.name) {
-				case GTNR:
-					room_num = int(event.value[0]);
-					gotonextroom = true;
-					break;
-						
-				case CLOCK_UPDATE:
-					clock = int(event.value[2]);
-					break;
-						
-				case p_msg:
-					var chat :String = String(event.value[2]);
-					_control.localChat(chat);
-					break;
-						
-				case p_quit:
-					player_delete(moo_id);
-					break;
-						
-				case p_hurt:
-					var mobb :Number = event.value[2];
-					var dmgg :Number = Number(event.value[3]);
-					if (_control.isConnected() && _control.amInControl()){
-						var element :String = "r"+String(room)+"_m"+mobb;
-						var table :Number = _control.get(element);
-						if (table == 0) {
-							//_control.localChat(element+" does not exsist: Creating...");
-							table = bg.actors.getChildByName("npc_"+mobb).maxhp;
-						}
-						table -= dmgg;
-						//_control.localChat("S: "+element+" = "+table);
-						_control.set(element, table);
-					}
-					break;
-					
-				case n_goal:
-						_control.localChat("n_goal "+String(event.value[4]));
-						gX = Number(event.value[2]);
-						gY = Number(event.value[3]);
-						moo = bg.actors.getChildByName(String(event.value[4]));
-						if (moo){
-							moo.ai_target = String(event.value[5]);
-							plot_goal(moo, gX, gY);
-						}
+			if(gameover){
+				
+			}else{
+				var room :Number = int(event.value[0]);
+				var id :int = int(event.value[1]);
+				var moo_id: String = id;
+				var moo: MovieClip;
+				
+				var element :String;
+				var table :Number;
+				
+				//---PUBLIC---
+				switch (event.name) {
+					case s_item:
+						create_coin( Number(event.value[2]),  Number(event.value[3]),  String(event.value[4]), int(event.value[8]),  int(event.value[5]),  Number(event.value[6]),  Number(event.value[7]));
 						break;
 					
-				case REPORT:
-						var m:Number = 3;
-						var n:Number = 0;
-						var moob :MovieClip;
-							var t:Number = npc_count;
-							while(event.value[m]){//(n <= t){
-								if (event.value[m]){
-									//_control.localChat(event.value[m] +"  "+event.value[m+1]+":"+event.value[m+2]);
-								}
-								moob = bg.actors.getChildByName(String(event.value[m]));
-								if (moob){
-									_control.localChat(moob.name+" reported");
-									//moob = bg.actors.getChildByName(String(event.value[m]));
-									
-									//moob.x = 			Number(event.value[m+1]);
-									//moob.y = 			Number(event.value[m+2]);
-									
-									moob.ai_mode =		String(event.value[m+3]);
-									moob.ai_target = 	String(event.value[m+4]);
-									//moob.stun = 		Boolean(event.value[m+5]);
-									//moob.knockback = 	Boolean(event.value[m+6]);
-									//moob.stun_counter = Number(event.value[m+7]);
-									moob.ai_tick = 		Number(event.value[m+8]);
-									//moob.new_x = 		Number(event.value[m+9]);
-									//moob.new_y = 		Number(event.value[m+10]);
-									//moob.old_x = 		Number(event.value[m+11]);
-									//moob.old_y = 		Number(event.value[m+12]);
-									//moob.sliding = 		Boolean(event.value[m+13]);
-									
-									//moob.move_start = 	Number(event.value[m+14]);
-									//moob.move_time =	Number(event.value[m+15]);
-									//moob.move_distance =Number(event.value[m+16]);
-									moob.goal_x =		Number(event.value[m+17]);
-									moob.goal_y =		Number(event.value[m+18]);
-									//moob.start_x =		Number(event.value[m+19]);
-									//moob.start_y =		Number(event.value[m+20]);
-									
-									moob = null;
-									
-									//m += 14;
-								}
-								m = m+21;
-								n++;
-							}
-			}
-			
-			
-			//---LOCAL---
-			if (room == room_num && id != _control.getMyId()){
-				if (bg.actors.getChildByName(moo_id)){
-				}else{
-					var local_name: String = _control.getOccupantName(id);
-					moo = create_player(local_name, "PC", 0, 0, 100, 15, moo_id);
-				}
-				
-				var gX :Number;
-				var gY :Number;
-				switch (event.name){
-					case p_goal:
-						gX = Number(event.value[2]);
-						gY = Number(event.value[3]);
-						moo = bg.actors.getChildByName(moo_id);
-						moo.sprinting = event.value[4];
-						moo.hp = event.value[5];
-						moo.energy = event.value[6];
-						plot_goal(moo, gX, gY);
+					case GTNR:
+						room_num = int(event.value[0]);
+						gotonextroom = true;
 						break;
 							
-					case p_move:
-						gX = Number(event.value[2]);
-						gY = Number(event.value[3]);
-						moo = bg.actors.getChildByName(moo_id);
-						moo.sprinting = event.value[4];
-						moo.hp = event.value[5];
-						moo.energy = event.value[6];
-						player_move(moo, gX, gY);
+					case CLOCK_UPDATE:
+						clock = int(event.value[2]);
+						break;
+							
+					case p_msg:
+						var chat :String = String(event.value[2]);
+						_control.localChat(chat);
+						break;
+							
+					case p_quit:
+						player_delete(moo_id);
+						break;
+							
+					case p_hurt:
+						var mobb :Number = event.value[2];
+						var dmgg :Number = Number(event.value[3]);
+						if (_control.isConnected() && _control.amInControl()){
+							element = "r"+String(room)+"_m"+mobb+"_w"+String(event.value[6]);
+							table = _control.get(element);
+							if (table == 0) {
+								//_control.localChat(element+" does not exsist: Creating...");
+								table = bg.actors.getChildByName("npc_"+mobb).maxhp;
+							}
+							table -= dmgg;
+							//_control.localChat("S: "+element+" = "+table);
+							_control.set(element, table);
+							
+							element = "enemyDamage";
+							table = _control.get(element);
+							if (table == 0) {
+								table = dmgg;
+								_control.set(element, table);
+							}else{
+								table += dmgg;
+								_control.set(element, table);
+							}
+						}
 						break;
 						
 					case n_hurt:
-						player_hurt (bg.actors.getChildByName(moo_id), Number(event.value[3]), "npc_x", Number(event.value[4]), Number(event.value[5]));
-						break;
-					}
-					break;
-							
-					case p_punch:
-						moo = bg.actors.getChildByName(moo_id);
-						player_punch(moo);
-						break;
-							
-					case p_kick:
-						moo = bg.actors.getChildByName(moo_id);
-						player_kick(moo);
-						break;
-							
-					case p_block:
-						moo = bg.actors.getChildByName(moo_id);
-						player_block(moo);
-						break;
-							
-					case p_block_stop:
-						moo = bg.actors.getChildByName(moo_id);
-						player_block_stop(moo);
+						var ndmgg :Number = Number(event.value[3]);
+						if (_control.isConnected() && _control.amInControl()){
+							element = "playerDamage";
+							table = _control.get(element);
+							if (table == 0) {
+								table = ndmgg;
+								_control.set(element, table);
+							}else{
+								table += ndmgg;
+								_control.set(element, table);
+							}
+						}
 						break;
 						
-					case p_hurt:
-						var mob :Number = event.value[2];
-						var dmg :Number = Number(event.value[3]);
-						player_hurt (bg.actors.getChildByName("npc_"+mob), dmg, String(id), Number(event.value[4]), Number(event.value[5]));
-						break;
+					case n_goal:
+							gX = Number(event.value[2]);
+							gY = Number(event.value[3]);
+							moo = bg.actors.getChildByName(String(event.value[4]));
+							if (moo){
+								moo.ai_target = String(event.value[5]);
+								plot_goal(moo, gX, gY, clock);//Number(event.value[6]));
+							}
+							break;
+						
+					case REPORT:
+							var m:Number = 2;
+							var n:Number = 0;
+							var moob :MovieClip;
+								var t:Number = npc_count;
+								while(event.value[m]){
+									moob = bg.actors.getChildByName(String(event.value[m]));
+									if (moob){
+										moob.ai_target = String(event.value[m+3]);
+										plot_goal(moob, Number(event.value[m+1]), Number(event.value[m+2]), clock);//Number(event.value[m+4]));
+										//_control.localChat(moob.name+" reported");
+										moob = null;
+									}
+									m = m+5
+								}
 				}
-			}else if (room != room_num && id != _control.getMyId()){
-				player_delete(moo_id);
-			}
-			
-			
-			//---IDLE OUT---
-			if (bg.actors.getChildByName(moo_id)){
-				bg.actors.getChildByName(moo_id).lastupdate = clock;
-			}
-			
-			
-			//---Things that need to happen no matter what!---
-			//if (event.name == GTNR){
-				//room_num = int(event.value[0]);
-				//gotonextroom = true;
-			//}else if (event.name == CLOCK_UPDATE){
-				//clock = int(event.value[0]);
-			//}else if (event.name == p_msg){
-				//var chat :String = String(event.value[1]);
-				//_control.localChat(chat);
-			//}else if (event.name == p_quit){
-				//player_delete(moo_id);
-			//}else if (event.name == p_hurt){
-				//var mobb :Number = event.value[2];
-				//var dmgg :Number = Number(event.value[3]);
-				//if (_control.isConnected() && _control.amInControl()){
-					//var element :String = "r"+String(room)+"_m"+mobb;
-					//var table :Number = _control.get(element);
-					//if (table == 0) {
-						//_control.localChat(element+" does not exsist: Creating...");
-						//table = bg.actors.getChildByName("npc_"+mobb).maxhp;
-					//}
-					//table -= dmgg;
-					//_control.localChat("S: "+element+" = "+table);
-					//_control.set(element, table);
-				//}
-			//}
-			
-			//---Things that only happen if you're in the same room!---
-			//if (room == room_num && id != _control.getMyId()){
-				//if (bg.actors.getChildByName(moo_id)){
-				//}else{
-					//var local_name: String = _control.getOccupantName(id);
-					//moo = create_player(local_name, "PC", 0, 0, 100, 15, moo_id);
-				//}
 				
-				//if (event.name == p_goal){
-						//var gX :Number = Number(event.value[2]);
-						//var gY :Number = Number(event.value[3]);
-						//moo = bg.actors.getChildByName(moo_id);
-						//moo.sprinting = event.value[4];
-						//moo.hp = event.value[5];
-						//moo.energy = event.value[6];
-						//plot_goal(moo, gX, gY);
-
-				//}else if (event.name == p_move){
-						//var gX :Number = Number(event.value[2]);
-						//var gY :Number = Number(event.value[3]);
-						//moo = bg.actors.getChildByName(moo_id);
-						//moo.sprinting = event.value[4];
-						//moo.hp = event.value[5];
-						//moo.energy = event.value[6];
-						//player_move(moo, gX, gY);
-
-				//}else if (event.name == p_punch){
-						//moo = bg.actors.getChildByName(moo_id);
-						//player_punch(moo);
-
-				//}else if (event.name == p_kick){
-						//moo = bg.actors.getChildByName(moo_id);
-						//player_kick(moo);
-				//}else if (event.name == p_block){
-						//moo = bg.actors.getChildByName(moo_id);
-						//player_block(moo);
-				//}else if (event.name == p_block_stop){
-						//moo = bg.actors.getChildByName(moo_id);
-						//player_block_stop(moo);
-				//}else if (event.name == p_hurt){
-						//var mob :Number = event.value[2];
-						//var dmg :Number = Number(event.value[3]);
-						//player_hurt (bg.actors.getChildByName("npc_"+mob), dmg, String(id), Number(event.value[4]), Number(event.value[5]));
-				//}else{
-					//_control.localChat("UNKNOWN PACKET");
-				//}
-			//} else if (room != room_num && id != _control.getMyId()){
-				//player_delete(moo_id);
-			//}
+				
+				//---LOCAL---
+				if (room == room_num && id != _control.getMyId()){
+					if (bg.actors.getChildByName(moo_id)){
+					}else{
+						var local_name: String = _control.getOccupantName(id);
+						moo = create_player(local_name, "PC", 0, 0, 100, 250, 0,0,0,0,0,0, moo_id, 0);
+						if (_control.amInControl()) {
+							clock_nextupdate = clock;
+							var msgr :Object = new Object;
+							msgr[0] = room_num;
+							msgr[1] = _control.getMyId();
+							msgr[2] = clock
+							_control.sendMessage (CLOCK_UPDATE, msgr);
+							current_mps+=1;
+						}
+					}
+					
+					var gX :Number;
+					var gY :Number;
+					switch (event.name){
+						
+						case p_hurt:
+							var mob :Number = Number(event.value[2]);
+							var dmg :Number = Number(event.value[3]);
+							if(bg.actors.getChildByName("npc_"+mob)){
+								player_hurt (bg.actors.getChildByName("npc_"+mob), dmg, String(id), Number(event.value[4]), Number(event.value[5]), int(event.value[7]));
+							}
+							break;
+						
+						case d_item:
+							var tempitem:MovieClip = bg.actors.getChildByName(String(event.value[2]));
+							if(tempitem){
+								tempitem.removeEventListener("enterFrame", update_coin);
+								tempitem.parent.removeChild(tempitem);
+							}
+							break;
+						
+						case p_goal:
+							gX = Number(event.value[2]);
+							gY = Number(event.value[3]);
+							moo = bg.actors.getChildByName(moo_id);
+							moo.sprinting = event.value[4];
+							moo.hp = event.value[5];
+							moo.energy = event.value[6];
+							moo.character.scaleX = Number(event.value[7]);
+							plot_goal(moo, gX, gY, clock);// Number(event.value[8]));
+							break;
+								
+						case p_move:
+							gX = Number(event.value[2]);
+							gY = Number(event.value[3]);
+							moo = bg.actors.getChildByName(moo_id);
+							moo.sprinting = event.value[4];
+							moo.hp = event.value[5];
+							moo.energy = event.value[6];
+							player_move(moo, gX, gY, Boolean(event.value[7]));
+							break;
+							
+						case n_hurt:
+							player_hurt (bg.actors.getChildByName(moo_id), Number(event.value[3]), "npc_x", Number(event.value[4]), Number(event.value[5]));
+							break;
+						
+						case n_punch:
+							moo = bg.actors.getChildByName(String(event.value[3]));
+							moo.character.scaleX = Number(event.value[2]);
+							player_punch(moo);
+							break;
+								
+						case n_kick:
+							moo = bg.actors.getChildByName(String(event.value[3]));
+							moo.character.scaleX = Number(event.value[2]);
+							player_kick(moo);
+							break;
+						
+						case p_punch:
+							moo = bg.actors.getChildByName(moo_id);
+							moo.character.scaleX = Number(event.value[2]);
+							player_punch(moo);
+							break;
+								
+						case p_kick:
+							moo = bg.actors.getChildByName(moo_id);
+							moo.character.scaleX = Number(event.value[2]);
+							player_kick(moo);
+							break;
+								
+						case p_block:
+							moo = bg.actors.getChildByName(moo_id);
+							moo.character.scaleX = Number(event.value[2]);
+							player_block(moo);
+							break;
+								
+						case p_block_stop:
+							moo = bg.actors.getChildByName(moo_id);
+							moo.character.scaleX = Number(event.value[2]);
+							player_block_stop(moo);
+							break;
+					}
+				}else if (room != room_num && id != _control.getMyId()){
+					//player_delete(moo_id);
+				}
+				
+				
+				//---IDLE OUT---
+				if (bg.actors.getChildByName(moo_id)){
+					bg.actors.getChildByName(moo_id).lastupdate = clock;
+				}
+			}
 		}
 		 	
 		public function propertyChanged( event :PropertyChangedEvent):void
