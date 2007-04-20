@@ -14,7 +14,7 @@ public class Avatar extends Item
     /** The avatar media. */
     public var avatarMedia :MediaDesc;
 
-    /** The scale to apply to the avatar media. */
+    /** The scaling to apply to the avatar media. */
     public var scale :Number;
 
     /**
