@@ -32,10 +32,13 @@ import com.threerings.msoy.client.WorldContext;
  */
 public class ChatChannelPanel extends VBox
 {
+    /** Our width. */
+    public static const SIDEBAR_WIDTH :int = 300;
+
     public function ChatChannelPanel (ctx :WorldContext)
     {
         _ctx = ctx;
-        width = 200;
+        width = SIDEBAR_WIDTH;
 
         addChild(_tabnav = new SuperTabNavigator());
         _tabnav.closePolicy = SuperTab.CLOSE_SELECTED;
@@ -54,7 +57,6 @@ public class ChatChannelPanel extends VBox
         _inputBox = new HBox();
         _inputBox.styleName = "chatControl";
         _inputBox.addChild(_input = new ChatInput());
-        _input.width = 100;
         _input.height = ControlBar.HEIGHT-4;
         _input.addEventListener(FlexEvent.ENTER, sendChat, false, 0, true);
         var send :CommandButton = new CommandButton();

@@ -54,7 +54,6 @@ public class ChatControl extends HBox
         _locObs = new LocationAdapter(null, locationDidChange);
 
         addChild(_txt = new ChatInput());
-        _txt.width = 200;
         _txt.height = height;
 
         _but = new CommandButton();

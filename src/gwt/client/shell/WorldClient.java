@@ -25,7 +25,7 @@ public class WorldClient extends Widget
         // clear out our content and the expand/close controls
         RootPanel.get("content").clear();
         RootPanel.get("content").setWidth("0px");
-        
+
         // note that we need to hack our popups
         Page.displayingFlash = true;
 
@@ -42,6 +42,9 @@ public class WorldClient extends Widget
             clientGo(flashArgs);
             clientMinimized(false);
         }
+
+        // have the client take up all the space
+        RootPanel.get("client").setWidth("100%");
     }
 
     public static void minimize ()
@@ -51,9 +54,7 @@ public class WorldClient extends Widget
 
         if (_client != null) {
             clientMinimized(true);
-            RootPanel.get("content").setWidth("724px");
-        } else {
-            RootPanel.get("content").setWidth("100%");
+            RootPanel.get("client").setWidth("300px");
         }
     }
 
@@ -61,6 +62,7 @@ public class WorldClient extends Widget
     {
         if (_client != null) {
             clientUnload();
+            RootPanel.get("client").setWidth("0px");
             RootPanel.get("client").clear();
             _client = null;
             RootPanel.get("content").setWidth("100%");
@@ -123,7 +125,7 @@ public class WorldClient extends Widget
         }
     }-*/;
 
-    /** 
+    /**
      * notifies the flash client that we're either minimized or not.
      */
     protected static native void clientMinimized (boolean mini) /*-{
