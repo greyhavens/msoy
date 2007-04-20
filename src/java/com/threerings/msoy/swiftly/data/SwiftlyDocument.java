@@ -56,7 +56,7 @@ public abstract class SwiftlyDocument
     }
 
     /** Required for the dobj system. Do not use. */
-    protected SwiftlyDocument ()
+    public SwiftlyDocument ()
     {
     }
     

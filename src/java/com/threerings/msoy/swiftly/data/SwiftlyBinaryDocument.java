@@ -35,7 +35,7 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     }
 
     /** Required for the dobj system. Do not use. */
-    protected SwiftlyBinaryDocument ()
+    public SwiftlyBinaryDocument ()
     {
     }
 

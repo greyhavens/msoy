@@ -42,7 +42,7 @@ public class SwiftlyTextDocument extends SwiftlyDocument
     }
 
     /** Required for the dobj system. Do not use. */
-    protected SwiftlyTextDocument ()
+    public SwiftlyTextDocument ()
     {
     }
 
