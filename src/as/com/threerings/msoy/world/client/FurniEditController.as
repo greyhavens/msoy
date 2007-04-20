@@ -7,6 +7,7 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 import flash.ui.Keyboard;
 
 import mx.containers.Canvas;
@@ -63,8 +64,6 @@ public class FurniEditController
         _buttonPanel = new HBox();
         _buttonPanel.visible = false;
         _buttonPanel.setStyle("horizontalGap", 0);
-        _buttonPanel.width = 200;   // flex won't display anything unless these
-        _buttonPanel.height = 200;  // parameters are set manually to pixel values. 
         for each (var def :Object in _menuButtons) {
                 var button :Button = new Button();
                 button.styleName = "furniEditButton";    
@@ -83,6 +82,10 @@ public class FurniEditController
 
                 _buttonPanel.addChild(button);
         }
+
+        _buttonPanel.width = 150; // oh flex, you're so silly. why must I set these manually?
+        _buttonPanel.height = 20;
+
     }
     
     /** Wrapper around the event handler function generator */
@@ -112,7 +115,7 @@ public class FurniEditController
     /**
      * Switches to a new editing mode, where the mode is one of the EDIT_* constants.
      */
-    public function setMode (newMode :String) :void
+    protected function setMode (newMode :String) :void
     {
         var oldMode :String = _mode;
         _mode = newMode;
@@ -131,10 +134,18 @@ public class FurniEditController
     /** Moves the button panel to somewhere near the furni being edited. */
     protected function updatePanelPosition () :void
     {
-        var p :Point = _furni.localToGlobal(new Point(0, 0)); // upper left
-        _buttonPanel.x = p.x;  // todo: take care of panel appearing out of view,
-        _buttonPanel.y = p.y;  //   or getting dropped in z-ordering
-        _container.setChildIndex(_buttonPanel, _container.numChildren - 1);
+        var location :Point = _furni.getRect(_roomView).topLeft; // in room view coordinate space
+        var room :Rectangle = _roomView.scrollRect;
+
+        if (room != null) {
+            // clamp the location to be always in view
+            location.x = Math.max(Math.min(location.x, room.right - _buttonPanel.width), room.x);
+            location.y = Math.max(Math.min(location.y, room.bottom - _buttonPanel.height), room.y);
+        }
+        
+        var c :Point = _container.globalToLocal(_roomView.localToGlobal(location));
+        _buttonPanel.x = c.x;  
+        _buttonPanel.y = c.y;  
     }
     
     /**
@@ -462,9 +473,10 @@ public class FurniEditController
     /**
      * All editing buttons are defined in this array. Each array entry is an object
      * with the following fields:
-     *   button - points to an instance of a DisplayObject for this button
-     *   media - a collection of instances of Class for the button's states
+     *   icon - a Class object of button's icon (can be null)
+     *   text - a string that contains button label (can be null)
      *   click - a MouseEvent handler that will process a mouse click on this button
+     *   button - points to an instance of a DisplayObject for this button
      */
     protected var _menuButtons :Array; 
 
@@ -478,7 +490,7 @@ public class FurniEditController
      */
     protected var _listeners :Object;
 
-    // Button media. Right now we only have 'up' skins, but we also anticipate 'down' and 'over'
+    // Button media. 
     [Embed(source="../../../../../../../rsrc/media/skins/button/furniedit/move_root.png")]
     protected static const MOVE_ICON :Class;
     [Embed(source="../../../../../../../rsrc/media/skins/button/furniedit/resize_root.png")]
