@@ -56,17 +56,4 @@ public abstract class RatingRecord<T extends ItemRecord> extends PersistentRecor
     /** The rating, from 1 to 5 */
     public byte rating;
     
-    // AUTO-GENERATED: METHODS START
-    /**
-     * Create and return a primary {@link Key} to identify a {@link #RatingRecord}
-     * with the supplied key values.
-     */
-    public static Key<RatingRecord> getKey (int itemId, int memberId)
-    {
-        return new Key<RatingRecord>(
-                RatingRecord.class,
-                new String[] { ITEM_ID, MEMBER_ID },
-                new Comparable[] { itemId, memberId });
-    }
-    // AUTO-GENERATED: METHODS END
 }

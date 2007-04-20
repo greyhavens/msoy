@@ -362,17 +362,4 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
 
     protected abstract Item createItem ();
 
-    // AUTO-GENERATED: METHODS START
-    /**
-     * Create and return a primary {@link Key} to identify a {@link #ItemRecord}
-     * with the supplied key values.
-     */
-    public static Key<ItemRecord> getKey (int itemId)
-    {
-        return new Key<ItemRecord>(
-                ItemRecord.class,
-                new String[] { ITEM_ID },
-                new Comparable[] { itemId });
-    }
-    // AUTO-GENERATED: METHODS END
 }

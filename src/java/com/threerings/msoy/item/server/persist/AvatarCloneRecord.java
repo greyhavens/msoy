@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
@@ -31,4 +32,18 @@ public class AvatarCloneRecord extends CloneRecord<AvatarRecord>
     /** The scale to apply to the avatar. */
     @Column(defaultValue="1")
     public float scale;
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #AvatarCloneRecord}
+     * with the supplied key values.
+     */
+    public static Key<AvatarCloneRecord> getKey (int itemId)
+    {
+        return new Key<AvatarCloneRecord>(
+                AvatarCloneRecord.class,
+                new String[] { ITEM_ID },
+                new Comparable[] { itemId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

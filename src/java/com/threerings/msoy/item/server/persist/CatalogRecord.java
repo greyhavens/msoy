@@ -151,17 +151,4 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
         return listing;
     }
 
-    // AUTO-GENERATED: METHODS START
-    /**
-     * Create and return a primary {@link Key} to identify a {@link #CatalogRecord}
-     * with the supplied key values.
-     */
-    public static Key<CatalogRecord> getKey (int itemId)
-    {
-        return new Key<CatalogRecord>(
-                CatalogRecord.class,
-                new String[] { ITEM_ID },
-                new Comparable[] { itemId });
-    }
-    // AUTO-GENERATED: METHODS END
 }

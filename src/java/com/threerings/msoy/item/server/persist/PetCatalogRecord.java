@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 
@@ -22,4 +23,18 @@ public class PetCatalogRecord extends CatalogRecord<PetRecord>
     {
         super(listing);
     }
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #PetCatalogRecord}
+     * with the supplied key values.
+     */
+    public static Key<PetCatalogRecord> getKey (int itemId)
+    {
+        return new Key<PetCatalogRecord>(
+                PetCatalogRecord.class,
+                new String[] { ITEM_ID },
+                new Comparable[] { itemId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

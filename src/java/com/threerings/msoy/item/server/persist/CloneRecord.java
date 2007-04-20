@@ -104,17 +104,4 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
     /** Where it's being used. */
     public int location;
 
-    // AUTO-GENERATED: METHODS START
-    /**
-     * Create and return a primary {@link Key} to identify a {@link #CloneRecord}
-     * with the supplied key values.
-     */
-    public static Key<CloneRecord> getKey (int itemId)
-    {
-        return new Key<CloneRecord>(
-                CloneRecord.class,
-                new String[] { ITEM_ID },
-                new Comparable[] { itemId });
-    }
-    // AUTO-GENERATED: METHODS END
 }
