@@ -13,7 +13,6 @@ import java.sql.Timestamp;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -189,7 +188,7 @@ public class MemberRepository extends DepotRepository
      * Returns name information for all members that match the supplied search string. Currently
      * display name and email address are searched.
      */
-    public ArrayList<MemberNameRecord> findMemberNames (String search, int limit)
+    public List<MemberNameRecord> findMemberNames (String search, int limit)
         throws PersistenceException
     {
         return findAll(MemberNameRecord.class,
@@ -416,7 +415,7 @@ public class MemberRepository extends DepotRepository
      * Returns the NeighborFriendRecords for all the established friends of a given member, through
      * an inner join between {@link MemberRecord} and {@link FriendRecord}.
      */
-    public ArrayList<NeighborFriendRecord> getNeighborhoodFriends (final int memberId)
+    public List<NeighborFriendRecord> getNeighborhoodFriends (final int memberId)
         throws PersistenceException
     {
         SQLOperator joinCondition =
@@ -463,7 +462,7 @@ public class MemberRepository extends DepotRepository
     public boolean getFriendStatus (int firstId, int secondId)
         throws PersistenceException
     {
-        ArrayList<FriendRecord> friends = findAll(
+        List<FriendRecord> friends = findAll(
             FriendRecord.class,
             new Where(new And(new Or(new And(new Equals(FriendRecord.INVITER_ID, firstId),
                                              new Equals(FriendRecord.INVITEE_ID, secondId)),
