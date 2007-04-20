@@ -7,6 +7,7 @@ import flash.events.Event;
 
 import com.threerings.util.Name;
 
+import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.client.WorldContext;
 
 /**

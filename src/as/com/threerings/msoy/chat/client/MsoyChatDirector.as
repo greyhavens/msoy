@@ -14,6 +14,8 @@ import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.TellFeedbackMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
+import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.client.WorldContext;
 
 /**
@@ -54,7 +56,7 @@ public class MsoyChatDirector extends ChatDirector
      * Opens a chat channel to the specified friend, selecting the appropriate tab if said channel
      * is already open.
      */
-    public function openFriendChannel (friend :Name) :void
+    public function openFriendChannel (friend :MemberName) :void
     {
         var channel :ChatChannel = ChatChannel.makeFriendChannel(friend);
         _ccpanel.getChatDisplay(channel, getHistory(channel), true);
@@ -105,7 +107,7 @@ public class MsoyChatDirector extends ChatDirector
         if ((msg.localtype == ChatCodes.USER_CHAT_TYPE && msg is UserMessage) ||
             msg is TellFeedbackMessage) {
             var umsg :UserMessage = (msg as UserMessage);
-            return ChatChannel.makeFriendChannel(umsg.getSpeakerDisplayName() as Name);
+            return ChatChannel.makeFriendChannel(umsg.getSpeakerDisplayName() as MemberName);
         }
         // TODO: real custom chat channels
         return null;

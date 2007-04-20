@@ -7,10 +7,13 @@ import java.util.Comparator;
 
 import com.threerings.util.Name;
 
+import com.threerings.presents.dobj.DSet;
+
 /**
  * Extends {@link Name} with persistent member information.
  */
 public class MemberName extends Name
+    implements DSet.Entry
 {
     /** A comparator for sorting Names by their display portion, case insensitively. */
     public static final Comparator BY_DISPLAY_NAME = new Comparator() {
@@ -50,6 +53,12 @@ public class MemberName extends Name
      * Return the memberId of this user, or 0 if they're a guest.
      */
     public int getMemberId ()
+    {
+        return _memberId;
+    }
+
+    // from DSet.Entry
+    public Comparable getKey ()
     {
         return _memberId;
     }

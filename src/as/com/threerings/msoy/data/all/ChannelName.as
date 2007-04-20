@@ -59,7 +59,7 @@ public class ChannelName extends Name
     {
         if (other is ChannelName) {
             var oc :ChannelName = (other as ChannelName);
-            return oc._creatorId == _creatorId && oc._name.equals(_name);
+            return oc._creatorId == _creatorId && oc._name == _name;
         } else {
             return false;
         }

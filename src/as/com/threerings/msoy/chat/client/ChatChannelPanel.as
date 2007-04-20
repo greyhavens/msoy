@@ -21,11 +21,12 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.chat.client.ChatDisplay;
 
-import com.threerings.msoy.chat.client.ChatChannel;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldClient;
 import com.threerings.msoy.client.WorldContext;
+
+import com.threerings.msoy.chat.data.ChatChannel;
 
 /**
  * Displays our various chat channels in tabs.
@@ -88,7 +89,7 @@ public class ChatChannelPanel extends VBox
         // create a new tab if we did not find one already in use
         if (tab == null) {
             tab = new ChannelChatTab(_ctx, channel);
-            tab.label = Msgs.GENERAL.xlate(channel.getName());
+            tab.label = Msgs.GENERAL.xlate(channel.ident.toString());
             tab.getOverlay().setHistory(history);
             tabidx = _tabnav.numChildren;
             _tabnav.addChild(tab);
