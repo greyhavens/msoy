@@ -5,9 +5,9 @@ package com.threerings.msoy.item.server.persist;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.samskivert.Log;
@@ -138,7 +138,7 @@ public abstract class ItemRepository<
     /**
      * Loads all original items owned by the specified member.
      */
-    public Collection<T> loadOriginalItems (int ownerId)
+    public List<T> loadOriginalItems (int ownerId)
         throws PersistenceException
     {
         return findAll(getItemClass(), new Where(ItemRecord.OWNER_ID, ownerId),
@@ -148,7 +148,7 @@ public abstract class ItemRepository<
     /**
      * Loads all cloned items owned by the specified member.
      */
-    public Collection<T> loadClonedItems (int ownerId)
+    public List<T> loadClonedItems (int ownerId)
         throws PersistenceException
     {
         return loadClonedItems(new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId));
@@ -157,7 +157,7 @@ public abstract class ItemRepository<
     /**
      * Loads the specified items. Omits missing items from results.
      */
-    public Collection<T> loadItems (int[] itemIds)
+    public List<T> loadItems (int[] itemIds)
         throws PersistenceException
     {
         if (itemIds.length == 0) {
@@ -165,7 +165,7 @@ public abstract class ItemRepository<
         }
         Comparable[] idArr = IntListUtil.box(itemIds);
         Where inClause = new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr));
-        Collection<T> items = loadClonedItems(inClause);
+        List<T> items = loadClonedItems(inClause);
         items.addAll(findAll(getItemClass(), inClause));
         return items;
     }
@@ -175,7 +175,7 @@ public abstract class ItemRepository<
      * number of rows. This method can either require all flags to be set, or merely at
      * least one of them.
      */
-    public Collection<T> loadItemsByFlag (byte flagMask, boolean all, int count)
+    public List<T> loadItemsByFlag (byte flagMask, boolean all, int count)
         throws PersistenceException
     {
         return findAll(
@@ -199,7 +199,7 @@ public abstract class ItemRepository<
      * Loads all the raw clone records associated with a given original item id. This is
      * potentially a very large dataset.
      */
-    public Collection<CLT> loadCloneRecords (int itemId)
+    public List<CLT> loadCloneRecords (int itemId)
         throws PersistenceException
     {
         return findAll(getCloneClass(), new Where(CloneRecord.ORIGINAL_ITEM_ID, itemId));
@@ -209,12 +209,12 @@ public abstract class ItemRepository<
      * Loads and returns all items (clones and originals) that are "in use" at the specified
      * location.
      */
-    public Collection<T> loadItemsByLocation (int location)
+    public List<T> loadItemsByLocation (int location)
         throws PersistenceException
     {
-        Collection<T> items = loadClonedItems(
+        List<T> items = loadClonedItems(
             new Where(getCloneColumn(CloneRecord.LOCATION), location));
-        Collection<T> citems = findAll(
+        List<T> citems = findAll(
             getItemClass(),new Where(getItemColumn(ItemRecord.LOCATION), location));
         items.addAll(citems);
         return items;
@@ -255,7 +255,7 @@ public abstract class ItemRepository<
      *       Depot code that we don't know how to handle yet (or possibly some fiddling with
      *       the Item vs Catalog class hierarchies). 
      */
-    public Collection<CAT> loadCatalog (byte sortBy, boolean mature, String search, int tag,
+    public List<CAT> loadCatalog (byte sortBy, boolean mature, String search, int tag,
                                         int creator, int offset, int rows)
         throws PersistenceException
     {
@@ -329,7 +329,7 @@ public abstract class ItemRepository<
         }
         
         // finally fetch all the catalog records of interest
-        Collection<CAT> records = findAll(getCatalogClass(), clauses);
+        List<CAT> records = findAll(getCatalogClass(), clauses);
 
         if (records.size() == 0) {
             return records;
@@ -343,7 +343,7 @@ public abstract class ItemRepository<
         }
 
         // load those items and map item ID's to items
-        Collection<T> items = findAll(
+        List<T> items = findAll(
             getItemClass(), new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr)));
         Map<Integer, T> map = new HashMap<Integer, T>();
         for (T iRec : items) {
@@ -657,7 +657,7 @@ public abstract class ItemRepository<
     /**
      * Performs the necessary join to load cloned items matching the supplied where clause.
      */
-    protected Collection<T> loadClonedItems (Where where)
+    protected List<T> loadClonedItems (Where where)
         throws PersistenceException
     {
         return findAll(
