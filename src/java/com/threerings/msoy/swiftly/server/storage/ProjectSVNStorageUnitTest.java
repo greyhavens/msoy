@@ -16,6 +16,7 @@ import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 
 import org.apache.commons.io.FileUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -137,8 +138,8 @@ public class ProjectSVNStorageUnitTest extends TestCase
         PathElement path = PathElement.createFile("UnitTest.as", null, "text/x-actionscript");
 
         // Create and initialize broken document
-        SwiftlyDocument brokenDoc = new SwiftlyIOExceptionDocument();
-        brokenDoc.init(null, path, "utf8");
+        SwiftlyDocument brokenDoc = new SwiftlyIOExceptionDocument(
+            new ByteArrayInputStream(new byte[0]), path);
 
         // Commit the IOException-raising document
         try {
@@ -288,6 +289,12 @@ public class ProjectSVNStorageUnitTest extends TestCase
     protected static class SwiftlyIOExceptionDocument
         extends SwiftlyDocument
     {
+        public SwiftlyIOExceptionDocument (ByteArrayInputStream stream, PathElement path)
+            throws IOException
+        {
+            super(stream, path);
+        }
+
         public InputStream getModifiedData ()
             throws IOException
         {

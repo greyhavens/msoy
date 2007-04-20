@@ -240,8 +240,7 @@ public class ProjectRoomManager extends PlaceManager
 
         SwiftlyTextDocument doc = null;
         try {
-            doc = new SwiftlyTextDocument();
-            doc.init(null, element, ProjectStorage.TEXT_ENCODING);
+            doc = new SwiftlyTextDocument(null, element, ProjectStorage.TEXT_ENCODING);
         } catch (IOException e) {
             listener.requestFailed("e.add_document_failed");
             return;
@@ -784,9 +783,9 @@ public class ProjectRoomManager extends PlaceManager
                     PathElement element = PathElement.createFile(_fileName, _parent, mimeType);
 
                     // create the new SwiftlyDocument
-                    SwiftlyDocument doc = SwiftlyDocument.createFromMimeType(mimeType);
-                    doc.init(
-                        new FileInputStream(_tempFile), element, ProjectStorage.TEXT_ENCODING);
+                    FileInputStream data = new FileInputStream(_tempFile);
+                    SwiftlyDocument doc = SwiftlyDocument.createFromPathElement(data, element,
+                        ProjectStorage.TEXT_ENCODING);
                     return doc;
                 }
 

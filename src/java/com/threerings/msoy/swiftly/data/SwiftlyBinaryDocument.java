@@ -4,7 +4,6 @@
 package com.threerings.msoy.swiftly.data;
 
 import java.io.File;
-import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -20,11 +19,31 @@ import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
  */
 public class SwiftlyBinaryDocument extends SwiftlyDocument
 {
-    @Override // from SwiftlyDocument
-    public void init (InputStream data, PathElement path, String encoding)
+    public static class DocumentFactory
+        implements SwiftlyDocument.DocumentFactory
+    {
+        public boolean handlesMimeType (String mimeType) {
+            // This binary document type can handle any mimetype
+            return true;
+        }
+
+        public SwiftlyDocument createDocument (InputStream data, PathElement path, String encoding)
+            throws IOException
+        {
+            return new SwiftlyBinaryDocument(data, path);
+        }
+    }
+
+    /** Required for the dobj system. Do not use. */
+    protected SwiftlyBinaryDocument ()
+    {
+    }
+
+    /** Instantiate a binary document with the given data and path. */
+    public SwiftlyBinaryDocument (InputStream data, PathElement path)
         throws IOException
     {
-        super.init(data, path, encoding);
+        super(data, path);
 
         // create our blank modified data file
         _modifiedStore = File.createTempFile("swiftlydocument", ".modfile");
@@ -80,13 +99,6 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     {
         // Cannot be displayed or edited
         return;
-    }
-
-    @Override // from SwiftlyDocument
-    public boolean handlesMimeType (String mimeType)
-    {
-        // this binary document type can handle any mimetype
-        return true;
     }
 
     @Override // from SwiftlyDocument

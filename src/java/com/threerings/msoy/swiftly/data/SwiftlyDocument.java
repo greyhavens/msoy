@@ -4,13 +4,10 @@
 package com.threerings.msoy.swiftly.data;
 
 import java.io.File;
-import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
-
-import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
 
@@ -30,22 +27,41 @@ public abstract class SwiftlyDocument
     /** Uniquely identifies this document element in the distributed state. */
     public int documentId;
 
-    /**
-     * Returns a new SwiftlyDocument using the supplied mimeType;
-     */
-    public static SwiftlyDocument createFromMimeType (String mimeType)
-    {
-        for (SwiftlyDocument doc : _documentTypes) {
-            if (doc.handlesMimeType(mimeType)) {
-                return (SwiftlyDocument)doc.clone();
-            }
-        }
-        // BinaryDocument handles all mime types so this statement should never be reached
-        return null;
+    /** Implemented by concrete subclasses to support construction based on mime type */
+    public interface DocumentFactory {
+        /** Returns true if the provided mime type is supported. */
+        public boolean handlesMimeType (String mimeType);
+
+        /** Construct a new SwiftlyDocument. */
+        public SwiftlyDocument createDocument (InputStream data, PathElement path,
+            String encoding) throws IOException;
     }
 
+    /**
+     * Returns a new SwiftlyDocument using the supplied PathElement's mimeType;
+     */
+    public static SwiftlyDocument createFromPathElement (InputStream data, PathElement path,
+        String encoding)
+        throws IOException
+    {
+        for (DocumentFactory factory : _documentTypeFactories) {
+            if (factory.handlesMimeType(path.getMimeType())) {
+                return factory.createDocument(data, path, encoding);
+            }
+        }
+ 
+        // BinaryDocument handles all mime types so this statement should never be reached
+        throw new RuntimeException("Unhandled mime-type. SwiftlyBinaryDocument should handle" +
+            "all mime types");
+    }
+
+    /** Required for the dobj system. Do not use. */
+    protected SwiftlyDocument ()
+    {
+    }
+    
     /** Initializes the SwiftlyDocument. */
-    public void init (InputStream data, PathElement path, String encoding)
+    public SwiftlyDocument (InputStream data, PathElement path)
         throws IOException
     {
         _path = path;
@@ -76,9 +92,6 @@ public abstract class SwiftlyDocument
 
     /** Tell the supplied editor to load this document. */
     public abstract void loadInEditor (SwiftlyDocumentEditor editor);
-
-    /** Returns true if the supplied mime type is supported by this SwiftlyDocument type */
-    public abstract boolean handlesMimeType (String mimeType);
 
     public Comparable getKey ()
     {
@@ -168,8 +181,9 @@ public abstract class SwiftlyDocument
      *  post-serialization. */
     protected Comparable _pathKey;
 
-    /** Instances of all the SwiftlyDocument types. */
-    protected static SwiftlyDocument[] _documentTypes = {
-        new SwiftlyTextDocument(), new SwiftlyBinaryDocument()
+    /** Instances of all the SwiftlyDocument factories. Order determines mime-type handling precedence. */
+    protected static DocumentFactory[] _documentTypeFactories = {
+        new SwiftlyTextDocument.DocumentFactory(),
+        new SwiftlyBinaryDocument.DocumentFactory()
     };
 }

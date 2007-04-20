@@ -29,8 +29,7 @@ public class SwiftlyTextDocumentUnitTest extends TestCase
 
         InputStream input = new FileInputStream(inputFile);
     
-        _doc = new SwiftlyTextDocument();
-        _doc.init(input, null, TEXT_ENCODING);
+        _doc = new SwiftlyTextDocument(input, null, TEXT_ENCODING);
     }
 
     public void testInstantiate ()

@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import java.net.URI;
@@ -52,9 +53,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.msoy.swiftly.data.PathElement;
-import com.threerings.msoy.swiftly.data.SwiftlyBinaryDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
-import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 
 import static com.threerings.msoy.Log.log;
@@ -277,8 +276,8 @@ public class ProjectSVNStorage
         }
 
         try {
-            swiftlyDoc = SwiftlyDocument.createFromMimeType(path.getMimeType());
-            swiftlyDoc.init(new FileInputStream(tempFile), path, ProjectStorage.TEXT_ENCODING);
+            InputStream data = new FileInputStream(tempFile);
+            swiftlyDoc = SwiftlyDocument.createFromPathElement(data, path, ProjectStorage.TEXT_ENCODING);
         } catch (IOException ioe) {
             throw new ProjectStorageException.InternalError("Failure instantiating SwiftlyDocument: " + ioe, ioe);
         } finally {

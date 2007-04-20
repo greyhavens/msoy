@@ -3,10 +3,8 @@
 
 package com.threerings.msoy.swiftly.data;
 
-import java.io.File;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 
@@ -21,30 +19,46 @@ import com.threerings.msoy.swiftly.client.SwiftlyDocumentEditor;
  */
 public class SwiftlyTextDocument extends SwiftlyDocument
 {
-    public String getText ()
+    public static class DocumentFactory
+        implements SwiftlyDocument.DocumentFactory
     {
-        return _text;
+        public boolean handlesMimeType (String mimeType) {
+            for (String type : _mimeTypes) {
+                if (mimeType.startsWith(type)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public SwiftlyDocument createDocument (InputStream data, PathElement path, String encoding)
+            throws IOException
+        {
+            return new SwiftlyTextDocument(data, path, encoding);
+        }
+
+        /** Mime types supported by this document type. */
+        private String[] _mimeTypes = {"text/"};
     }
 
-    public void setText (String text)
+    /** Required for the dobj system. Do not use. */
+    protected SwiftlyTextDocument ()
     {
-        _text = text;
-        _changed = true;
     }
 
-    @Override // from SwiftlyDocument
-    public void init (InputStream data, PathElement path, String encoding)
+    /** Instantiate a text document with the given data, path, and text encoding. */
+    public SwiftlyTextDocument (InputStream data, PathElement path, String encoding)
         throws IOException
     {
-        super.init(data, path, encoding);
-
+        super(data, path);
+    
         // TODO: Stack of deltas and a mmap()'d base document, such that we
         // don't waste RAM storing the whole file in memory.
-
+    
         // text will remain blank if this is a new document
         _text = "";
         _encoding = encoding;
-
+    
         if (data != null) {
             StringBuffer textBuffer = new StringBuffer();
             FileOutputStream fileOutput = new FileOutputStream(_backingStore);
@@ -59,6 +73,17 @@ public class SwiftlyTextDocument extends SwiftlyDocument
             _text = textBuffer.toString();
             fileOutput.close();
         }
+    }
+    
+    public String getText ()
+    {
+        return _text;
+    }
+
+    public void setText (String text)
+    {
+        _text = text;
+        _changed = true;
     }
 
     @Override // from SwiftlyDocument
@@ -102,17 +127,6 @@ public class SwiftlyTextDocument extends SwiftlyDocument
         editor.editTextDocument(this);
     }
 
-    @Override // from SwiftlyDocument
-    public boolean handlesMimeType (String mimeType)
-    {
-        for (String type : _mimeTypes) {
-            if (mimeType.startsWith(type)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public String getTextEncoding ()
     {
         return _encoding;
@@ -147,7 +161,4 @@ public class SwiftlyTextDocument extends SwiftlyDocument
 
     /** Text encoding. */
     protected transient String _encoding;
-
-    /** Mime types supported by this document type. */
-    protected String[] _mimeTypes = {"text/"};
 }
