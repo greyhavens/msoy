@@ -163,11 +163,8 @@ public class MemberRepository extends DepotRepository
     public MemberNameRecord loadMemberName (int memberId)
         throws PersistenceException
     {
-        Collection<MemberNameRecord> result = loadMemberNames(new int[] { memberId });
-        if (result.size() > 0) {
-            return result.iterator().next();
-        }
-        return null;
+        List<MemberNameRecord> result = loadMemberNames(new int[] { memberId });
+        return result.isEmpty() ? null : result.get(0);
     }
 
     /**
@@ -176,7 +173,7 @@ public class MemberRepository extends DepotRepository
      * TODO: Implement findAll(Persistent.class, Comparable... keys) or the like,
      *       as per MDB's suggestion, say so we can cache properly.
      */
-    public Collection<MemberNameRecord> loadMemberNames (int[] memberIds)
+    public List<MemberNameRecord> loadMemberNames (int[] memberIds)
         throws PersistenceException
     {
         if (memberIds.length == 0) {
@@ -192,7 +189,7 @@ public class MemberRepository extends DepotRepository
      * Returns name information for all members that match the supplied search string. Currently
      * display name and email address are searched.
      */
-    public Collection<MemberNameRecord> findMemberNames (String search, int limit)
+    public ArrayList<MemberNameRecord> findMemberNames (String search, int limit)
         throws PersistenceException
     {
         return findAll(MemberNameRecord.class,
@@ -419,7 +416,7 @@ public class MemberRepository extends DepotRepository
      * Returns the NeighborFriendRecords for all the established friends of a given member, through
      * an inner join between {@link MemberRecord} and {@link FriendRecord}.
      */
-    public Collection<NeighborFriendRecord> getNeighborhoodFriends (final int memberId)
+    public ArrayList<NeighborFriendRecord> getNeighborhoodFriends (final int memberId)
         throws PersistenceException
     {
         SQLOperator joinCondition =
@@ -437,7 +434,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Returns the NeighborFriendRecords for all the given members.
      */
-    public Collection<NeighborFriendRecord> getNeighborhoodMembers (final int[] memberIds)
+    public List<NeighborFriendRecord> getNeighborhoodMembers (final int[] memberIds)
         throws PersistenceException
     {
         if (memberIds.length == 0) {
@@ -466,7 +463,7 @@ public class MemberRepository extends DepotRepository
     public boolean getFriendStatus (int firstId, int secondId)
         throws PersistenceException
     {
-        Collection<FriendRecord> friends = findAll(
+        ArrayList<FriendRecord> friends = findAll(
             FriendRecord.class,
             new Where(new And(new Or(new And(new Equals(FriendRecord.INVITER_ID, firstId),
                                              new Equals(FriendRecord.INVITEE_ID, secondId)),
