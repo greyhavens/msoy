@@ -38,6 +38,8 @@ import com.threerings.msoy.game.client.FloatingTableDisplay;
 public class TopPanel extends Canvas 
     implements LocationObserver
 {
+    public static const DECORATIVE_MARGIN_HEIGHT :int = 4;
+
     /**
      * Construct the top panel.
      */
@@ -174,7 +176,9 @@ public class TopPanel extends Canvas
         if (_placeBox.parent != this) {
             return null;
         }
+        removeChild(_headerBar);
         removeChild(_placeBox);
+        layoutPanels();
         return _placeBox;
     }
 
@@ -189,7 +193,9 @@ public class TopPanel extends Canvas
             Log.getLog(this).warning("Requested to restore PlaceBox but it's still added.");
             _placeBox.parent.removeChild(_placeBox);
         }
+        addChild(_headerBar);
         addChild(_placeBox);
+        layoutPanels();
     }
 
     /**
@@ -415,6 +421,15 @@ public class TopPanel extends Canvas
             _rightPanel.setStyle(
                 "bottom", getBottomPanelHeight() + ControlBar.HEIGHT + DECORATIVE_MARGIN_HEIGHT);
             _headerBar.setStyle("right", _rightPanel.width);
+
+            // if we have no place view currently, stretch the right panel all the way to the left,
+            // otherwise let it be as wide as it wants to be
+            if (_placeBox.parent == this) {
+                _rightPanel.clearStyle("left");
+            } else {
+                _rightPanel.setStyle("left", 0);
+            }
+
         } else {
             _headerBar.setStyle("right", 0);
         }
@@ -424,6 +439,10 @@ public class TopPanel extends Canvas
 
     protected function updatePlaceViewSize () :void
     {
+        if (_placeBox.parent != this) {
+            return; // nothing doing if we're not in control
+        }
+
         var botHeight :int = getBottomPanelHeight();
         var w :int = stage.stageWidth - getLeftPanelWidth() - getRightPanelWidth();
         var h :int = stage.stageHeight - ControlBar.HEIGHT - botHeight - HeaderBar.HEIGHT;
@@ -492,8 +511,6 @@ public class TopPanel extends Canvas
 
     /** the currently active table display */
     protected var _tableDisp :FloatingTableDisplay;
-
-    protected static const DECORATIVE_MARGIN_HEIGHT :int = 4;
 
     protected static const MIN_FLASH_VERSION :int = 9;
     protected static const MIN_FLASH_REVISION :int = 28;

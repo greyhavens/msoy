@@ -17,7 +17,6 @@ import flexlib.controls.tabBarClasses.SuperTab;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.util.HashMap;
-import com.threerings.util.Name;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.chat.client.ChatDisplay;
@@ -40,6 +39,8 @@ public class ChatChannelPanel extends VBox
 
         addChild(_tabnav = new SuperTabNavigator());
         _tabnav.closePolicy = SuperTab.CLOSE_SELECTED;
+        _tabnav.setStyle("paddingTop", 0);
+        _tabnav.dragEnabled = false;
         _tabnav.percentWidth = 100;
         _tabnav.percentHeight = 100;
         _tabnav.addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE, tabRemoved);
@@ -66,24 +67,17 @@ public class ChatChannelPanel extends VBox
     }
 
     /**
-     * Called when the client is minimized.
-     */
-    public function setMinimized (minimized :Boolean) :void
-    {
-    }
-
-    /**
      * Returns the chat display to use for the specified channel.
      */
     public function getChatDisplay (
         channel :ChatChannel, history :HistoryList, select :Boolean) :ChatDisplay
     {
         var tabidx :int = -1;
-        var tab :ChatTab = null;
+        var tab :ChannelChatTab = null;
         for (var ii :int = 0; ii < _tabnav.numChildren; ii++) {
             var ctab :ChatTab = (_tabnav.getChildAt(ii) as ChatTab);
-            if (ctab.channel.equals(channel)) {
-                tab = ctab;
+            if (ctab is ChannelChatTab && (ctab as ChannelChatTab).channel.equals(channel)) {
+                tab = (ctab as ChannelChatTab);
                 tabidx = ii;
                 break;
             }
@@ -91,7 +85,7 @@ public class ChatChannelPanel extends VBox
 
         // create a new tab if we did not find one already in use
         if (tab == null) {
-            tab = new ChatTab(_ctx, channel, this);
+            tab = new ChannelChatTab(_ctx, channel);
             tab.label = Msgs.GENERAL.xlate(channel.getName());
             tab.getOverlay().setHistory(history);
             tabidx = _tabnav.numChildren;
@@ -109,6 +103,13 @@ public class ChatChannelPanel extends VBox
             _ctx.getTopPanel().getControlBar().setChannelChatInput(_inputBox);
         }
 
+        // if we're selecting the tab in question, focus the chat input as well
+        if (select) {
+            callLater(function () :void {
+                _input.setFocus();
+            });
+        }
+
         return tab.getOverlay();
     }
 
@@ -124,8 +125,29 @@ public class ChatChannelPanel extends VBox
 
     protected function minimizationChanged (event :ValueEvent) :void
     {
-        var minimized :Boolean = (event.value as Boolean);
-        // TODO: hijack the PlaceBox, stuff it into a tab, more bits
+        if (event.value as Boolean && _wtab == null) {
+            var select :Boolean = (_tabnav.numChildren == 0);
+            _wtab = new WorldChatTab(_ctx);
+            _wtab.label = Msgs.GENERAL.xlate("m.world_channel");
+            _tabnav.addChildAt(_wtab, 0);
+            _tabnav.setClosePolicyForTab(0, SuperTab.CLOSE_NEVER);
+
+            // select this tab if none are selected
+            if (select) {
+                _tabnav.selectedIndex = 0;
+            }
+
+            // if we're not visible, add ourselves
+            if (parent == null) {
+                _ctx.getTopPanel().setRightPanel(this);
+                _ctx.getTopPanel().getControlBar().setChannelChatInput(_inputBox);
+            }
+
+        } else if (_wtab != null) {
+            _tabnav.removeChild(_wtab);
+            _wtab.shutdown();
+            _wtab = null;
+        }
     }
 
     /**
@@ -133,74 +155,22 @@ public class ChatChannelPanel extends VBox
      */
     protected function sendChat (... ignored) :void
     {
-        var tab :ChatTab = (_tabnav.getChildAt(_tabnav.selectedIndex) as ChatTab);
-        if (tab == null) {
-            // wtf?
-            return;
-        }
-
         var message :String = StringUtil.trim(_input.text);
         if ("" == message) {
             return;
         }
 
-        // TODO: request listener
-        _ctx.getChatDirector().requestTell(tab.channel.ident as Name, message, null);
-        _input.text = "";
+        var tab :ChatTab = (_tabnav.getChildAt(_tabnav.selectedIndex) as ChatTab);
+        if (tab != null) {
+            tab.sendChat(message);
+            _input.text = "";
+        } // else wtf?
     }
 
     protected var _ctx :WorldContext;
     protected var _tabnav :SuperTabNavigator;
+    protected var _wtab :WorldChatTab;
     protected var _inputBox :HBox;
     protected var _input :ChatInput;
 }
-}
-
-import flash.events.Event;
-import mx.core.Container;
-
-import com.threerings.msoy.client.WorldContext;
-
-import com.threerings.msoy.chat.client.ChatChannel;
-import com.threerings.msoy.chat.client.ChatChannelPanel;
-import com.threerings.msoy.chat.client.ChatOverlay;
-
-/**
- * Displays a single chat tab.
- */
-class ChatTab extends Container
-{
-    public var channel :ChatChannel;
-
-    public function ChatTab (ctx :WorldContext, channel :ChatChannel, host :ChatChannelPanel)
-    {
-        styleName = "channelChatTab";
-        this.channel = channel;
-        _host = host;
-        _overlay = new ChatOverlay(ctx);
-        _overlay.setClickableGlyphs(true);
-
-        addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
-        addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
-    }
-
-    public function getOverlay () :ChatOverlay
-    {
-        return _overlay;
-    }
-
-    protected function handleAddRemove (event :Event) :void
-    {
-        if (event.type == Event.ADDED_TO_STAGE) {
-            _overlay.setTarget(this);
-        } else {
-            _overlay.setTarget(null);
-        }
-    }
-
-    /** Our tab-managing host. */
-    protected var _host :ChatChannelPanel;
-
-    /** Actually renders chat. */
-    protected var _overlay :ChatOverlay;
 }
