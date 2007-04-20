@@ -6,11 +6,9 @@ package com.threerings.msoy.swiftly.client;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -19,7 +17,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 
@@ -28,8 +25,6 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -263,18 +258,22 @@ public class ProjectPanel extends JPanel
             _roomObj.service.addPathElement(_ctx.getClient(), element);
 
         } else if (type == PathElement.Type.FILE) {
-            element = _editor.showCreateFileDialog(parentElement);
-            if (element == null) {
+            CreateFileDialog dialog = _editor.showCreateFileDialog(parentElement);
+            if (dialog == null) {
                 return; // if the user hit cancel do no more
             }
 
+            String fileName = dialog.getName();
+            String mimeType = dialog.getMimeType();
+
             // report an error if this path already exists
-            if (_roomObj.pathElementExists(element.getName(), parentElement)) {
+            if (_roomObj.pathElementExists(fileName, parentElement)) {
                 _editor.showErrorMessage(_msgs.get("e.document_already_exists"));
                 return;
             }
 
-            _roomObj.service.addDocument(_ctx.getClient(), element, new InvocationListener () {
+            _roomObj.service.addDocument(_ctx.getClient(), fileName, parentElement, mimeType,
+                new InvocationListener () {
                 public void requestFailed (String reason)
                 {
                     _editor.showErrorMessage(_msgs.get(reason));

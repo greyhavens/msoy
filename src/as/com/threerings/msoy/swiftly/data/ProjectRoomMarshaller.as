@@ -29,12 +29,12 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static const ADD_DOCUMENT :int = 1;
 
     // from interface ProjectRoomService
-    public function addDocument (arg1 :Client, arg2 :PathElement, arg3 :InvocationService_InvocationListener) :void
+    public function addDocument (arg1 :Client, arg2 :String, arg3 :PathElement, arg4 :String, arg5 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener3.listener = arg3;
+        var listener5 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener5.listener = arg5;
         sendRequest(arg1, ADD_DOCUMENT, [
-            arg2, listener3
+            arg2, arg3, arg4, listener5
         ]);
     }
 

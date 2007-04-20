@@ -24,12 +24,12 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int ADD_DOCUMENT = 1;
 
     // from interface ProjectRoomService
-    public void addDocument (Client arg1, PathElement arg2, InvocationService.InvocationListener arg3)
+    public void addDocument (Client arg1, String arg2, PathElement arg3, String arg4, InvocationService.InvocationListener arg5)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
-        listener3.listener = arg3;
+        ListenerMarshaller listener5 = new ListenerMarshaller();
+        listener5.listener = arg5;
         sendRequest(arg1, ADD_DOCUMENT, new Object[] {
-            arg2, listener3
+            arg2, arg3, arg4, listener5
         });
     }
 

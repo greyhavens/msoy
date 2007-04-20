@@ -4,7 +4,6 @@ import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 
-import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 public class EditorToolBar extends JToolBar

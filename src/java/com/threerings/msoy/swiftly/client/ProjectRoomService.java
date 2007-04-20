@@ -7,7 +7,6 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
 import com.threerings.msoy.swiftly.data.PathElement;
-import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 
 /**
  * Provides invocation services pertaining to a particular project room.
@@ -27,8 +26,9 @@ public interface ProjectRoomService extends InvocationService
     public void renamePathElement (Client client, int elementId, String newName,
                                    ConfirmListener listener);
 
-    /** Requests to add a document to the project. element is the "parent" of the new document. */
-    public void addDocument (Client client, PathElement element, InvocationListener listener);
+    /** Requests to add a document to the project. */
+    public void addDocument (Client client, String fileName, PathElement parent, String mimeType,
+                             InvocationListener listener);
 
     /** Requests that the specified document be updated (currently wholesale but some day with
      * diffs). */

@@ -11,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.util.logging.Level;
 import javax.swing.JApplet;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -41,7 +40,6 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.web.client.DeploymentConfig;
 
-import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 

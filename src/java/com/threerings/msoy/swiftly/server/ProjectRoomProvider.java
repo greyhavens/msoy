@@ -19,7 +19,7 @@ public interface ProjectRoomProvider extends InvocationProvider
     /**
      * Handles a {@link ProjectRoomService#addDocument} request.
      */
-    public void addDocument (ClientObject caller, PathElement arg1, InvocationService.InvocationListener arg2)
+    public void addDocument (ClientObject caller, String arg1, PathElement arg2, String arg3, InvocationService.InvocationListener arg4)
         throws InvocationException;
 
     /**

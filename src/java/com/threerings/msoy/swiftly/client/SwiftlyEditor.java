@@ -8,26 +8,18 @@ import java.io.FileOutputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
 
 import sdoc.Gutter;
 
@@ -35,7 +27,6 @@ import org.apache.commons.io.IOUtils;
 
 import com.samskivert.swing.HGroupLayout;
 import com.samskivert.swing.VGroupLayout;
-import com.samskivert.swing.util.SwingUtil;
 import com.samskivert.util.StringUtil;
 import com.threerings.util.MessageBundle;
 
@@ -48,7 +39,6 @@ import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.crowd.client.PlacePanel;
-import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.micasa.client.ChatPanel;
@@ -56,7 +46,6 @@ import com.threerings.micasa.client.OccupantList;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.CompilerOutput;
 import com.threerings.msoy.swiftly.data.FlexCompilerOutput;
 import com.threerings.msoy.swiftly.data.PathElement;
@@ -168,6 +157,7 @@ public class SwiftlyEditor extends PlacePanel
         _editorTabs.closePathElementTab(element);
     }
 
+    // from SwiftlyDocumentEditor
     public void editTextDocument (SwiftlyTextDocument document)
     {
         PathElement pathElement = document.getPathElement();
@@ -184,6 +174,12 @@ public class SwiftlyEditor extends PlacePanel
 
         // TODO: text pane will not be a listener
         _roomObj.addListener(textPane);
+    }
+
+    // from SwiftlyDocumentEditor
+    public List<FileTypes> getCreateableFileTypes ()
+    {
+        return _createableFileTypes; 
     }
 
     public void updateTabTitleAt (PathElement pathElement)
@@ -275,15 +271,14 @@ public class SwiftlyEditor extends PlacePanel
      * @param parentElement the PathElement that will be the parent of the returned PathElement
      * @return the new path element. null if the user clicked cancel
      */
-    public PathElement showCreateFileDialog (PathElement parentElement)
+    public CreateFileDialog showCreateFileDialog (PathElement parentElement)
     {
-        CreateFileDialog dialog = new CreateFileDialog();
+        CreateFileDialog dialog = new CreateFileDialog(this, _projectPanel, _msgs);
         // return null if the user hit cancelled or did not set a file name
         if (dialog.wasCancelled() || StringUtil.isBlank(dialog.getName())) {
             return null;
         }
-        // TODO: clean this up. I should not be returning a PathElement just for convenience
-        return PathElement.createFile(dialog.getName(), parentElement, dialog.getMimeType());
+        return dialog;
     }
 
     /**
@@ -395,7 +390,7 @@ public class SwiftlyEditor extends PlacePanel
     /** Initialize the file types that can be created */
     protected void initFileTypes ()
     {
-        _createableFileTypes = new ArrayList<FileTypes>();
+        _createableFileTypes = new ArrayList<SwiftlyDocumentEditor.FileTypes>();
         _createableFileTypes.add(
             new FileTypes(_msgs.get("m.filetypes." + MediaDesc.TEXT_ACTIONSCRIPT),
                           MediaDesc.mimeTypeToString(MediaDesc.TEXT_ACTIONSCRIPT)));
@@ -451,97 +446,8 @@ public class SwiftlyEditor extends PlacePanel
         }
     }
 
-    /** A dialog window to prompt the user for a file name and file type. */
-    protected class CreateFileDialog extends JDialog
-    {
-        public CreateFileDialog () {
-            super(new JFrame(), _msgs.get("m.dialog.create_file.title"), true);
-            setLayout(new GridLayout(3, 3, 10, 10));
-            setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-            // file name input
-            add(new JLabel(_msgs.get("m.dialog.create_file.name")));
-            _text = new JTextField();
-            _text.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    _cancelled = false;
-                    setVisible(false);
-                }
-            });
-            _text.setEditable(true);
-            add(_text);
-
-            // file type chooser
-            add(new JLabel(_msgs.get("m.dialog.create_file.type")));
-            _comboBox = new JComboBox(_createableFileTypes.toArray());
-            add(_comboBox);
-
-            // ok/cancel buttons
-            JButton button = new JButton(_msgs.get("m.dialog.create_file.create"));
-            button.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    _cancelled = false;
-                    setVisible(false);
-                }
-            });
-            add(button);
-            button = new JButton(_msgs.get("m.dialog.create_file.cancel"));
-            button.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    _cancelled = true;
-                    setVisible(false);
-                }
-            });
-            add(button);
-
-            // display the dialog
-            pack();
-            setLocationRelativeTo(_projectPanel);
-            setVisible(true);
-        }
-
-        public String getName ()
-        {
-            return _text.getText();
-        }
-
-        public String getMimeType ()
-        {
-            return ((FileTypes)_comboBox.getSelectedItem()).mimeType;
-        }
-
-        public boolean wasCancelled ()
-        {
-            return _cancelled;
-        }
-
-        protected JTextField _text;
-        protected JComboBox _comboBox;
-
-        /** Whether the user clicked cancel. defaults to true to deal with closing the dialog. */
-        protected boolean _cancelled = true;
-    }
-
-    /** A class that maps a human friendly name to a mime type. */
-    protected class FileTypes
-    {
-        public FileTypes (String displayName, String mimeType)
-        {
-            this.displayName = displayName;
-            this.mimeType = mimeType;
-        }
-
-        public String toString()
-        {
-            return displayName;
-        }
-
-        public String displayName;
-        public String mimeType;
-    }
-
-    /** A list of files that can be created by Swiftly. */
-    protected ArrayList<FileTypes> _createableFileTypes;
+    /** A list of files that can be created by this SwiftlyDocumentEditor. */
+    protected ArrayList<SwiftlyDocumentEditor.FileTypes> _createableFileTypes;
 
     protected SwiftlyContext _ctx;
     protected ProjectRoomController _ctrl;

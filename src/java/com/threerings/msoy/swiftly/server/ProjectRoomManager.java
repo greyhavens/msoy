@@ -230,13 +230,12 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void addDocument (ClientObject caller, PathElement element,
-                             final InvocationListener listener)
+    public void addDocument (ClientObject caller, String fileName, PathElement parent,
+                             String mimeType, final InvocationListener listener)
     {
         // TODO: check access!
 
-        // Re-bind transient instance variables
-        element.lazarus(_roomObj.pathElements);
+        PathElement element = PathElement.createFile(fileName, parent, mimeType);
 
         SwiftlyTextDocument doc = null;
         try {
