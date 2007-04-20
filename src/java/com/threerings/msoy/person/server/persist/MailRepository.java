@@ -4,7 +4,7 @@
 package com.threerings.msoy.person.server.persist;
 
 import java.sql.Timestamp;
-import java.util.Collection;
+import java.util.List;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntListUtil;
@@ -52,7 +52,7 @@ public class MailRepository extends DepotRepository
         throws PersistenceException
     {
         int read = 0, unread = 0;
-        Collection<MailCountRecord> records = findAll(
+        List<MailCountRecord> records = findAll(
             MailCountRecord.class,
             new Where(MailMessageRecord.OWNER_ID_C, memberId,
                 MailMessageRecord.FOLDER_ID_C, folderId),
@@ -73,7 +73,7 @@ public class MailRepository extends DepotRepository
     /**
      * Fetch and return all folder records for a given member.
      */
-    public Collection<MailFolderRecord> getFolders (int memberId)
+    public List<MailFolderRecord> getFolders (int memberId)
         throws PersistenceException
     {
         testFolders(memberId);
@@ -98,7 +98,7 @@ public class MailRepository extends DepotRepository
      *
      * TODO: If messages end up being non-trivial in size, separate into own table.
      */
-     public Collection<MailMessageRecord> getMessages (int memberId, int folderId)
+     public List<MailMessageRecord> getMessages (int memberId, int folderId)
          throws PersistenceException
      {
          return findAll(MailMessageRecord.class,

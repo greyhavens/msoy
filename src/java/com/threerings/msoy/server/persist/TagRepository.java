@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import java.util.Collection;
+import java.util.List;
 
 import com.samskivert.io.PersistenceException;
 
@@ -91,7 +91,7 @@ public abstract class TagRepository extends DepotRepository
      * Join TagNameRecord and TagRecord, group by tag, and count how many targets reference each
      * such tag.
      */
-    public Collection<TagPopularityRecord> getPopularTags (int rows)
+    public List<TagPopularityRecord> getPopularTags (int rows)
         throws PersistenceException
     {
         return findAll(TagPopularityRecord.class,
@@ -106,7 +106,7 @@ public abstract class TagRepository extends DepotRepository
     /**
      * Loads all tag records for the given target, translated to tag names.
      */
-    public Collection<TagNameRecord> getTags (int targetId)
+    public List<TagNameRecord> getTags (int targetId)
         throws PersistenceException
     {
         return findAll(TagNameRecord.class,
@@ -118,7 +118,7 @@ public abstract class TagRepository extends DepotRepository
     /**
      * Loads all the tag history records for a given target.
      */
-    public Collection<TagHistoryRecord> getTagHistoryByTarget (int targetId)
+    public List<TagHistoryRecord> getTagHistoryByTarget (int targetId)
         throws PersistenceException
     {
         return findAll(_tagHistoryClass, new Where(TagHistoryRecord.TARGET_ID, targetId));
@@ -127,7 +127,7 @@ public abstract class TagRepository extends DepotRepository
     /**
      * Loads all the tag history records for a given member.
      */
-    public Collection<TagHistoryRecord> getTagHistoryByMember (int memberId)
+    public List<TagHistoryRecord> getTagHistoryByMember (int memberId)
         throws PersistenceException
     {
         return findAll(_tagHistoryClass, new Where(TagHistoryRecord.MEMBER_ID, memberId));

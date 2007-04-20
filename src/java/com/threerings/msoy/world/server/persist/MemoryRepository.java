@@ -4,6 +4,7 @@
 package com.threerings.msoy.world.server.persist;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
@@ -27,7 +28,7 @@ public class MemoryRepository extends DepotRepository
     /**
      * Loads the memory for the specified item.
      */
-    public Collection<MemoryRecord> loadMemory (byte itemType, int itemId)
+    public List<MemoryRecord> loadMemory (byte itemType, int itemId)
         throws PersistenceException
     {
         return findAll(MemoryRecord.class,
@@ -38,7 +39,7 @@ public class MemoryRepository extends DepotRepository
     /**
      * Loads up the all memory records for all items with the specified type and ids.
      */
-    public Collection<MemoryRecord> loadMemories (byte itemType, Collection<Integer> itemIds)
+    public List<MemoryRecord> loadMemories (byte itemType, Collection<Integer> itemIds)
         throws PersistenceException
     {
         return findAll(MemoryRecord.class,

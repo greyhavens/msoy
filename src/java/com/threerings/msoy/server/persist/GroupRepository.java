@@ -4,8 +4,8 @@
 package com.threerings.msoy.server.persist;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import java.sql.Date;
@@ -77,7 +77,7 @@ public class GroupRepository extends DepotRepository
     /**
      * Returns a list of all public and inv-only groups, sorted by size, then by creation time.
      */
-    public Collection<GroupRecord> getGroupsList ()
+    public List<GroupRecord> getGroupsList ()
         throws PersistenceException
     {
         return findAll(GroupRecord.class, new Where(new Not(new Equals(GroupRecord.POLICY, 
@@ -91,7 +91,7 @@ public class GroupRepository extends DepotRepository
      * Searches all public and inv-only groups for the search string against the indexed blurb, 
      * charter and name fields.  Results are returned in order of relevance.
      */
-    public Collection<GroupRecord> searchGroups (String searchString) 
+    public List<GroupRecord> searchGroups (String searchString) 
         throws PersistenceException
     {
         // for now, always operate with boolean searching enabled, without query expansion
@@ -103,7 +103,7 @@ public class GroupRepository extends DepotRepository
     /**
      * Searches all groups for the specified tag.  Tagging is not supported on exclusive groups
      */
-    public Collection<GroupRecord> searchForTag (String tag)
+    public List<GroupRecord> searchForTag (String tag)
         throws PersistenceException
     {
         ArrayList<Integer> groupIds = new ArrayList<Integer>();
@@ -127,7 +127,7 @@ public class GroupRepository extends DepotRepository
     /**
      * Fetches multiple groups by id.
      */
-    public Collection<GroupRecord> loadGroups (int[] groupIds)
+    public List<GroupRecord> loadGroups (int[] groupIds)
         throws PersistenceException
     {
         if (groupIds.length == 0) {
@@ -273,7 +273,7 @@ public class GroupRepository extends DepotRepository
     /**
      * Fetches the membership roster of a given group.
      */
-    public Collection<GroupMembershipRecord> getMembers (int groupId)
+    public List<GroupMembershipRecord> getMembers (int groupId)
         throws PersistenceException
     {
         return findAll(GroupMembershipRecord.class,
@@ -283,7 +283,7 @@ public class GroupRepository extends DepotRepository
     /**
      * Fetches the group memberships a given member belongs to.
      */
-    public Collection<GroupMembershipRecord> getMemberships (int memberId)
+    public List<GroupMembershipRecord> getMemberships (int memberId)
         throws PersistenceException
     {
         return findAll(GroupMembershipRecord.class,

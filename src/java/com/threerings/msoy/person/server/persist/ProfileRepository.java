@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.person.server.persist;
 
-import java.util.Collection;
+import java.util.List;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntListUtil;
@@ -38,7 +38,7 @@ public class ProfileRepository extends DepotRepository
     /**
      * Loads the profile photos for all of the specified members.
      */
-    public Collection<ProfilePhotoRecord> loadProfilePhotos (int[] memberIds)
+    public List<ProfilePhotoRecord> loadProfilePhotos (int[] memberIds)
         throws PersistenceException
     {
         return findAll(ProfilePhotoRecord.class,

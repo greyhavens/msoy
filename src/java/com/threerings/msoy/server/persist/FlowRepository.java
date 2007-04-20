@@ -6,7 +6,7 @@ package com.threerings.msoy.server.persist;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Collection;
+import java.util.List;
 
 import com.samskivert.io.PersistenceException;
 
@@ -116,7 +116,7 @@ public class FlowRepository extends DepotRepository
             new Equals(MemberActionLogRecord.MEMBER_ID, memberId),
             new LessThanEquals(MemberActionLogRecord.ACTION_TIME_C, now)));
 
-        Collection<MemberActionCountRecord> records = findAll(
+        List<MemberActionCountRecord> records = findAll(
             MemberActionCountRecord.class,
             new FromOverride(MemberActionLogRecord.class),
             condition,
@@ -166,7 +166,7 @@ public class FlowRepository extends DepotRepository
         if (gameRecord.accumMinutes >= 
                 RuntimeConfig.server.abuseFactorReassessment) {
             // load all actions logged since our last assessment
-            Collection<GameFlowSummaryRecord> records =
+            List<GameFlowSummaryRecord> records =
                 findAll(GameFlowSummaryRecord.class,
                     new Where(GameFlowGrantLogRecord.GAME_ID, gameId),
                     new FromOverride(GameFlowGrantLogRecord.class),
