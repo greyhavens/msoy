@@ -6,7 +6,6 @@ package com.threerings.msoy.swiftly.server.persist;
 import java.sql.Timestamp;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -57,15 +56,8 @@ public class SwiftlyRepository extends DepotRepository
     public List<SwiftlyProjectRecord> findRemixableProjects ()
         throws PersistenceException
     {
-        ArrayList<SwiftlyProjectRecord> projects = new ArrayList<SwiftlyProjectRecord>();
-        for (SwiftlyProjectRecord record : findAll(
-                SwiftlyProjectRecord.class,
-                new Where(SwiftlyProjectRecord.REMIXABLE_C, true))) {
-                
-            projects.add(record);                  
-        }
-
-        return projects;
+        return findAll(SwiftlyProjectRecord.class,
+            new Where(SwiftlyProjectRecord.REMIXABLE_C, true));
     }
 
     /**
@@ -171,7 +163,7 @@ public class SwiftlyRepository extends DepotRepository
             insert(record);
         } catch (DuplicateKeyException dke) {
             // Already exists, return it
-            Collection<SwiftlySVNStorageRecord> result;
+            List<SwiftlySVNStorageRecord> result;
             
             result = findAll(SwiftlySVNStorageRecord.class,
                 new Where(
@@ -186,9 +178,7 @@ public class SwiftlyRepository extends DepotRepository
 
             // There can only be one!
             assert(result.size() == 1);
-            for (SwiftlySVNStorageRecord curRecord : result) {
-                return curRecord;
-            }
+            return result.get(0);
         }
         return record;
     }
@@ -197,7 +187,7 @@ public class SwiftlyRepository extends DepotRepository
     /**
      * Fetches the collaborators for a given project.
      */
-    public Collection<SwiftlyCollaboratorsRecord> getCollaborators (int projectId)
+    public List<SwiftlyCollaboratorsRecord> getCollaborators (int projectId)
         throws PersistenceException
     {
         return findAll(SwiftlyCollaboratorsRecord.class,
@@ -207,7 +197,7 @@ public class SwiftlyRepository extends DepotRepository
     /**
      * Fetches the projects a given member is a collaborator on.
      */
-    public Collection<SwiftlyCollaboratorsRecord> getMemberships (int memberId)
+    public List<SwiftlyCollaboratorsRecord> getMemberships (int memberId)
         throws PersistenceException
     {
         return findAll(SwiftlyCollaboratorsRecord.class,
