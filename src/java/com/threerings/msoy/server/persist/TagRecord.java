@@ -44,17 +44,4 @@ public abstract class TagRecord extends PersistentRecord
     @Id
     public int targetId;
 
-    // AUTO-GENERATED: METHODS START
-    /**
-     * Create and return a primary {@link Key} to identify a {@link #TagRecord}
-     * with the supplied key values.
-     */
-    public static Key<TagRecord> getKey (int tagId, int targetId)
-    {
-        return new Key<TagRecord>(
-                TagRecord.class,
-                new String[] { TAG_ID, TARGET_ID },
-                new Comparable[] { tagId, targetId });
-    }
-    // AUTO-GENERATED: METHODS END
 }
