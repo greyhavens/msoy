@@ -26,6 +26,10 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     {
         super.init(data, path, encoding);
 
+        // create our blank modified data file
+        _modifiedStore = File.createTempFile("swiftlydocument", ".modfile");
+        _modifiedStore.deleteOnExit();
+
         // Copy our data into a backing store file
         if (data != null) {
             FileOutputStream fileOutput = new FileOutputStream(_backingStore);
@@ -41,12 +45,6 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     public void setData (InputStream data, String encoding)
         throws IOException
     {
-        // create our modified data file if necessary
-        if (_modifiedStore == null) {
-            _modifiedStore = File.createTempFile("swiftlydocument", ".modfile");
-            _modifiedStore.deleteOnExit();
-        }
-
         FileOutputStream fileOutput = new FileOutputStream(_modifiedStore);
         try {
             IOUtils.copy(data, new FileOutputStream(_modifiedStore));
@@ -72,9 +70,9 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     {
         super.commit();
 
-        // now that we're committed we can nix our modified store
-        _modifiedStore.delete();
-        _modifiedStore = null;
+        // now that we're committed we can clear our modified store
+        FileOutputStream stream = new FileOutputStream(_modifiedStore, false);
+        stream.close();
     }
 
     @Override // from SwiftlyDocument

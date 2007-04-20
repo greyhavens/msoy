@@ -140,12 +140,12 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static const START_FILE_UPLOAD :int = 10;
 
     // from interface ProjectRoomService
-    public function startFileUpload (arg1 :Client, arg2 :PathElement, arg3 :InvocationService_ConfirmListener) :void
+    public function startFileUpload (arg1 :Client, arg2 :String, arg3 :PathElement, arg4 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
+        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener4.listener = arg4;
         sendRequest(arg1, START_FILE_UPLOAD, [
-            arg2, listener3
+            arg2, arg3, listener4
         ]);
     }
 

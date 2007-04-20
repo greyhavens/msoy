@@ -70,7 +70,7 @@ public interface ProjectRoomProvider extends InvocationProvider
     /**
      * Handles a {@link ProjectRoomService#startFileUpload} request.
      */
-    public void startFileUpload (ClientObject caller, PathElement arg1, InvocationService.ConfirmListener arg2)
+    public void startFileUpload (ClientObject caller, String arg1, PathElement arg2, InvocationService.ConfirmListener arg3)
         throws InvocationException;
 
     /**

@@ -45,7 +45,7 @@ public interface ProjectRoomService extends InvocationService
     function renamePathElement (arg1 :Client, arg2 :int, arg3 :String, arg4 :InvocationService_ConfirmListener) :void;
 
     // from Java interface ProjectRoomService
-    function startFileUpload (arg1 :Client, arg2 :PathElement, arg3 :InvocationService_ConfirmListener) :void;
+    function startFileUpload (arg1 :Client, arg2 :String, arg3 :PathElement, arg4 :InvocationService_ConfirmListener) :void;
 
     // from Java interface ProjectRoomService
     function updateDocument (arg1 :Client, arg2 :int, arg3 :String) :void;

@@ -218,10 +218,8 @@ public class ProjectPanel extends JPanel
                     }
 
                     // mime type will be determined on the server after the upload
-                    PathElement uploadedFile = PathElement.createFile(
-                        file.getName(), getCurrentParent(), null);
-                    _roomObj.service.startFileUpload(_ctx.getClient(), uploadedFile,
-                        new ConfirmListener () {
+                    _roomObj.service.startFileUpload(_ctx.getClient(), file.getName(),
+                        getCurrentParent(), new ConfirmListener () {
                         public void requestProcessed () {
                             _uploadFileAction.setEnabled(false);
                             UploadTask task = new UploadTask(file);

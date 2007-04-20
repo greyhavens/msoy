@@ -47,7 +47,8 @@ public interface ProjectRoomService extends InvocationService
     public void loadDocument (Client client, PathElement element, ConfirmListener listener);
 
     /** Reqests that an upload file session be started */
-    public void startFileUpload (Client client, PathElement parent, ConfirmListener listener);
+    public void startFileUpload (Client client, String filename, PathElement parent,
+                                 ConfirmListener listener);
 
     /** Uploads some file data */
     public void uploadFile (Client client, byte[] data);

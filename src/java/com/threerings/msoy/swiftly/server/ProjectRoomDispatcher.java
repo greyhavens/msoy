@@ -104,7 +104,7 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
         case ProjectRoomMarshaller.START_FILE_UPLOAD:
             ((ProjectRoomProvider)provider).startFileUpload(
                 source,
-                (PathElement)args[0], (InvocationService.ConfirmListener)args[1]
+                (String)args[0], (PathElement)args[1], (InvocationService.ConfirmListener)args[2]
             );
             return;
 

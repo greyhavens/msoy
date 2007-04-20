@@ -135,12 +135,12 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int START_FILE_UPLOAD = 10;
 
     // from interface ProjectRoomService
-    public void startFileUpload (Client arg1, PathElement arg2, InvocationService.ConfirmListener arg3)
+    public void startFileUpload (Client arg1, String arg2, PathElement arg3, InvocationService.ConfirmListener arg4)
     {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
-        listener3.listener = arg3;
+        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
+        listener4.listener = arg4;
         sendRequest(arg1, START_FILE_UPLOAD, new Object[] {
-            arg2, listener3
+            arg2, arg3, listener4
         });
     }
 

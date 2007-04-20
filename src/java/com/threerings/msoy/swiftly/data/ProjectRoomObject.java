@@ -85,6 +85,45 @@ public class ProjectRoomObject extends PlaceObject
     }
 
     /**
+     * Given a name and a parent, search the existing path elements for that element.
+     * Return the element if found, null otherwise
+     */
+    public PathElement findPathElement (String name, PathElement parent)
+    {
+        for (PathElement elem : pathElements) {
+            PathElement foundParent = elem.getParent();
+            
+            // the root was found, but caller was not asking for the root so continue
+            if (foundParent == null && parent != null) {
+                continue;
+            }
+
+            // if foundParent is null, elem is the root. If the requested parent is also null,
+            // the caller was looking for the root, so compare the names. otherwise, check to see
+            // if the found elements parent matches the supplied parent and then check the names
+            if ((foundParent == null && parent == null) || 
+                 foundParent.equals(parent)) {
+                // if that element's name matches the name provided, we have found the element
+                if (elem.getName().equals(name)) {
+                    return elem;
+                }
+            }
+        }
+        
+        // return null if we did not find the element
+        return null;
+    }
+
+    /**
+     * Given a name and a parent, search the existing path elements for that element.
+     * Return true if found, false otherwise
+     */
+    public boolean doesPathElementExist (String name, PathElement parent)
+    {
+        return findPathElement(name, parent) != null;
+    }
+
+    /**
      * Returns the resolved document for the supplied path element or null if the document is not
      * yet resolved or the path element does not correspond to a document (is a directory).
      */
