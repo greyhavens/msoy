@@ -33,6 +33,14 @@ import static com.threerings.msoy.Log.log;
 public class ChatChannelManager
     implements ChatChannelProvider, ChatChannelCodes
 {
+    /**
+     * Initializes this manager during server startup.
+     */
+    public void init ()
+    {
+        // TODO: stuff!
+    }
+
     // from interface ChatChannelProvider
     public void joinChannel (ClientObject caller, ChatChannel channel,
                              ChatChannelService.ResultListener listener)

@@ -4,19 +4,25 @@
 # Configuration for a MetaSOY! server installation
 
 #
-# Defines the name for this server installation.
-
-server_name = msoy
-
-#
 # The hostname used by the client to connect to the game server
 
 server_host = game.metasoy.com
+
+# For a peer server installation, use nodename.server_host like so:
+# node1.server_host = node1.metasoy.com
+# node2.server_host = node2.metasoy.com
 
 #
 # Is this a development deployment?
 
 dev_deployment = true
+
+#
+# If this server is running as a part of a cluster, this value should be set to
+# a shared secret that will be used to authenticate with other servers in the
+# cluster. If it is left commented out, the server will run standalone.
+
+# server_secret = Is it secret? Is it safe?
 
 #
 # The port on which the server listens for client and HTTP connections.

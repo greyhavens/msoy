@@ -61,6 +61,7 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.game.server.LobbyRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
@@ -92,6 +93,9 @@ public class MsoyServer extends WhirledServer
     /** Our runtime admin manager. */
     public static MsoyAdminManager adminMan = new MsoyAdminManager();
 
+    /** Manages interactions with our peer servers. */
+    public static MsoyPeerManager peerMan;
+
     /** Our runtime member manager. */
     public static MemberManager memberMan = new MemberManager();
 
@@ -100,6 +104,9 @@ public class MsoyServer extends WhirledServer
 
     /** Our runtime mail manager. */
     public static MailManager mailMan = new MailManager();
+
+    /** Our runtime chat channel manager. */
+    public static ChatChannelManager channelMan = new ChatChannelManager();
 
     /** Contains information on our members. */
     public static MemberRepository memberRepo;
@@ -308,6 +315,13 @@ public class MsoyServer extends WhirledServer
         confReg = new DatabaseConfigRegistry(conProv, invoker);
         AdminProvider.init(invmgr, confReg);
 
+        // if we have a node name and shared secret, assume we're running in a cluster
+        String node = System.getProperty("node");
+        if (node != null && ServerConfig.sharedSecret != null) {
+            log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
+            peerMan = new MsoyPeerManager(conProv, invoker);
+        }
+
         // initialize the swiftly invoker
         swiftlyInvoker = new Invoker("swiftly_invoker", omgr);
         swiftlyInvoker.setDaemon(true);
@@ -337,6 +351,11 @@ public class MsoyServer extends WhirledServer
     public void shutdown ()
     {
         super.shutdown();
+
+        // shutdown our peer manager and logoff of our peer nodes
+        if (peerMan != null) {
+            peerMan.shutdown();
+        }
 
         // shut down our http server
         try {
@@ -426,9 +445,15 @@ public class MsoyServer extends WhirledServer
         parlorMan.init(invmgr, plreg);
         sceneRepo = (MsoySceneRepository) _screp;
         adminMan.init(this);
+        if (peerMan != null) {
+            peerMan.init(ServerConfig.nodeName, ServerConfig.sharedSecret,
+                         ServerConfig.backChannelHost, ServerConfig.serverHost,
+                         getListenPorts()[0]);
+        }
         memberMan.init(memberRepo, groupRepo);
         groupMan.init(groupRepo, memberRepo);
         mailMan.init(conProv, memberRepo);
+        channelMan.init();
         itemMan.init(conProv);
         swiftlyMan.init(invmgr);
         petMan.init(invmgr);

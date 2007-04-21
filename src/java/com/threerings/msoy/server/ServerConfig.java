@@ -5,8 +5,13 @@ package com.threerings.msoy.server;
 
 import java.io.File;
 import java.util.Properties;
+
 import com.samskivert.util.Config;
+import com.samskivert.util.StringUtil;
+
 import com.threerings.presents.client.Client;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides access to installation specific configuration. Properties that
@@ -15,17 +20,23 @@ import com.threerings.presents.client.Client;
  */
 public class ServerConfig
 {
-    /** The name assigned to this server installation. */
-    public static String serverName;
+    /** The name assigned to this server node. */
+    public static String nodeName;
 
     /** The root directory of the server installation. */
     public static File serverRoot;
 
-    /** The hostname to use when connecting to this server. */
+    /** The publicly accessible DNS name of the host on which this server is running. */
     public static String serverHost;
+
+    /** The back-channel DNS name of the host on which this server is running. */
+    public static String backChannelHost;
 
     /** The ports on which we are listening for client connections. */
     public static int[] serverPorts;
+
+    /** The secret used to authenticate other servers in our cluster. */
+    public static String sharedSecret;
 
     /** The local directory where dictionary files are stored. */
     public static File dictionaryDir;
@@ -73,7 +84,6 @@ public class ServerConfig
      */
     static {
         // fill in our standard properties
-        serverName = config.getValue("server_name", "msoy");
         serverRoot = new File(config.getValue("server_root", "/tmp"));
         mediaDir = new File(config.getValue("media_dir", "/tmp"));
         mediaS3Enable = config.getValue("media_s3enable", false);
@@ -81,8 +91,24 @@ public class ServerConfig
         mediaS3Id = config.getValue("media_s3id", "id");
         mediaS3Key = config.getValue("media_s3key", "key");
         serverHost = config.getValue("server_host", "localhost");
-        serverPorts = config.getValue(
-            "server_ports", Client.DEFAULT_SERVER_PORTS);
-    }
+        serverPorts = config.getValue("server_ports", Client.DEFAULT_SERVER_PORTS);
 
+        // if we're a server node (not the webapp or a tool) do some extra stuff
+        if (Boolean.getBoolean("is_node")) {
+            // our node name and hostname come from system properties passed by our startup scripts
+            nodeName = System.getProperty("node");
+            if (StringUtil.isBlank(nodeName)) {
+                log.warning("Missing 'node' system property. Cannot start.");
+            }
+            backChannelHost = System.getProperty("hostname");
+            if (StringUtil.isBlank(backChannelHost)) {
+                log.warning("Missing 'hostname' system property. Cannot start.");
+            }
+            if (StringUtil.isBlank(nodeName) || StringUtil.isBlank(backChannelHost)) {
+                System.exit(-1);
+            }
+            // fill in our node-specific properties
+            serverHost = config.getValue(nodeName + ".server_host", serverHost);
+        }
+    }
 }
