@@ -7,6 +7,8 @@ import java.util.HashMap;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DObject;
+import com.threerings.presents.dobj.EntryRemovedEvent;
+import com.threerings.presents.dobj.SetAdapter;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
@@ -129,8 +131,6 @@ public class ChatChannelManager
             ccobj = createChannel(channel);
         }
 
-        // TODO: add a listener to the channel object and shut it down when the last chatter leaves
-
         log.info("Adding " + user.who() + " to " + channel + ".");
         ccobj.addToChatters(new ChatterInfo(user));
         listener.requestProcessed(ccobj.getOid());
@@ -144,6 +144,7 @@ public class ChatChannelManager
         assert(!_channels.containsKey(channel));
         log.info("Creating chat channel " + channel + ".");
 
+        // create and initialize the chat channel object
         final ChatChannelObject ccobj = MsoyServer.omgr.registerObject(new ChatChannelObject());
         ccobj.channel = channel;
         SpeakProvider.SpeakerValidator validator = new SpeakProvider.SpeakerValidator() {
@@ -152,11 +153,46 @@ public class ChatChannelManager
                 return (who == null || ccobj.chatters.containsKey(who.memberName));
             }
         };
-        ccobj.setSpeakService((SpeakMarshaller)MsoyServer.invmgr.registerDispatcher(
-                                  new SpeakDispatcher(new SpeakProvider(ccobj, validator))));
+        SpeakDispatcher sd = new SpeakDispatcher(new SpeakProvider(ccobj, validator));
+        ccobj.setSpeakService((SpeakMarshaller)MsoyServer.invmgr.registerDispatcher(sd));
+        // add a listener to the channel object to shut it down when the last chatter leaves
+        ccobj.addListener(new ShutdownListener(ccobj));
+        // map the channel to its distributed object
         _channels.put(channel, ccobj);
+
         return ccobj;
     }
+
+    /**
+     * Called when the last chatter leaves a channel, cleans up and destroys the channel.
+     */
+    protected void shutdownChannel (ChatChannel channel)
+    {
+        ChatChannelObject ccobj = _channels.remove(channel);
+        if (ccobj == null) {
+            log.warning("Requested to shutdown unmapped channel [channel=" + channel + "].");
+        } else {
+            log.info("Shutting down chat channel: " + channel + ".");
+            MsoyServer.invmgr.clearDispatcher(ccobj.speakService);
+            MsoyServer.omgr.destroyObject(ccobj.getOid());
+        }
+    }
+
+    protected class ShutdownListener extends SetAdapter
+    {
+        public ShutdownListener (ChatChannelObject chobj) {
+            _chobj = chobj;
+        }
+        public void entryRemoved (EntryRemovedEvent event) {
+            if (ChatChannelObject.CHATTERS.equals(event.getName())) {
+                if (_chobj.chatters.size() == 0) {
+                    // this will destroy the object so we need not stop listening
+                    shutdownChannel(_chobj.channel);
+                }
+            }
+        }
+        protected ChatChannelObject _chobj;
+    };
 
     /** Contains a mapping of all active chat channels. */
     protected HashMap<ChatChannel,ChatChannelObject> _channels =
