@@ -97,7 +97,6 @@ public class MsoyChatDirector extends ChatDirector
         var ready :Function = function () :void {
             _ccpanel.getChatDisplay(channel, getHistory(channel), true);
         };
-        log.info("Mapping " + channel + ".");
         _chandlers.put(channel.toLocalType(), new ChannelHandler(_wctx, channel, ready));
     }
 
@@ -107,7 +106,6 @@ public class MsoyChatDirector extends ChatDirector
      */
     public function getChannelObject (channel :ChatChannel) :ChatChannelObject
     {
-        log.info("Looking up " + channel + ".");
         var handler :ChannelHandler = _chandlers.get(channel.toLocalType()) as ChannelHandler;
         return (handler == null) ? null : handler.chanobj;
     }
@@ -117,7 +115,6 @@ public class MsoyChatDirector extends ChatDirector
      */
     public function closeChannel (channel :ChatChannel) :void
     {
-        log.info("Clearing " + channel + ".");
         var handler :ChannelHandler = _chandlers.remove(channel.toLocalType()) as ChannelHandler;
         if (handler != null) {
             handler.shutdown();
@@ -178,7 +175,6 @@ public class MsoyChatDirector extends ChatDirector
      */
     protected function determineChannel (msg :ChatMessage) :ChatChannel
     {
-        log.info("Determining channel " + msg.localtype);
         if ((msg.localtype == ChatCodes.USER_CHAT_TYPE && msg is UserMessage) ||
             msg is TellFeedbackMessage) {
             var umsg :UserMessage = (msg as UserMessage);
