@@ -15,8 +15,6 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.ObjectAccessError;
-import com.threerings.presents.dobj.ObjectDeathListener;
-import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.util.SafeSubscriber;
 
 import com.threerings.msoy.client.WorldContext;
@@ -29,7 +27,7 @@ import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.util.Controller;
 import com.threerings.util.CommandEvent;
 
-public class LobbyController extends Controller implements Subscriber, ObjectDeathListener
+public class LobbyController extends Controller implements Subscriber
 {
     /** A command to submit a configured table configuration for creation. */
     public static const SUBMIT_TABLE :String = "SubmitTable";
@@ -67,23 +65,12 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
     public function objectAvailable (obj :DObject) :void 
     {
         _lobj = obj as LobbyObject;
-        _lobj.addListener(this);
         _panel.init(_lobj);
 
         _tableDir = new TableDirector(_mctx, LobbyObject.TABLES);
         _tableDir.setTableObject(obj);
         _tableDir.addTableObserver(_panel);
         _tableDir.addSeatednessObserver(_panel);
-    }
-
-    // from ObjectDeathListener
-    public function objectDestroyed (event :ObjectDestroyedEvent) :void
-    {
-        if (event.getTargetOid() == _lobj.getOid()) {
-            // the lobby was shut down (probably because it has been idle for too long)
-            // remove the panel, which will trigger a proper shutdown
-            _mctx.getTopPanel().clearLeftPanel(_panel);
-        }
     }
 
     /**
@@ -195,9 +182,6 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
         _tableDir.clearTableObject();
         _tableDir.removeTableObserver(_panel);
         _tableDir.removeSeatednessObserver(_panel);
-        if (_lobj != null) {
-            _lobj.removeListener(this);
-        }
     }
 
     /** The provider of free cheese. */
