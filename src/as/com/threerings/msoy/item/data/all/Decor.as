@@ -45,18 +45,18 @@ public class Decor extends Item
     {
     }
 
+    // from Item
+    override public function getPreviewMedia () :MediaDesc
+    {
+        return getFurniMedia();
+    }
+
     //
     override public function isConsistent () :Boolean
     {
         return super.isConsistent() &&
             type < TYPE_COUNT && width > 0 && height > 0 && depth > 0 &&
             horizon <= 1 && horizon >= 0;
-    }
-
-    // from Item
-    override public function getPreviewMedia () :MediaDesc
-    {
-        return getFurniMedia();
     }
 
     // from Item

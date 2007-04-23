@@ -19,16 +19,16 @@ public class Video extends Item
     }
 
     // from Item
+    override public function getPreviewMedia () :MediaDesc
+    {
+        return getThumbnailMedia(); // TODO: support preview image
+    }
+
+    // from Item
     override public function isConsistent () :Boolean
     {
         return super.isConsistent() && (videoMedia != null) && videoMedia.isVideo() &&
             nonBlank(name);
-    }
-
-    // from Item
-    override public function getPreviewMedia () :MediaDesc
-    {
-        return getThumbnailMedia(); // TODO: support preview image
     }
 
     // from Item

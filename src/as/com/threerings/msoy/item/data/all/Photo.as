@@ -26,15 +26,15 @@ public class Photo extends Item
     }
 
     // from Item
-    override public function isConsistent () :Boolean
-    {
-        return super.isConsistent() && (photoMedia != null);
-    }
-
-    // from Item
     override public function getPreviewMedia () :MediaDesc
     {
         return photoMedia;
+    }
+
+    // from Item
+    override public function isConsistent () :Boolean
+    {
+        return super.isConsistent() && (photoMedia != null);
     }
 
     // from Item

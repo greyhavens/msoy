@@ -19,15 +19,15 @@ public class Document extends Item
     }
 
     // from Item
-    override public function isConsistent () :Boolean
-    {
-        return super.isConsistent() && (docMedia != null) && nonBlank(name);
-    }
-
-    // from Item
     override public function getPreviewMedia () :MediaDesc
     {
         return getThumbnailMedia();
+    }
+
+    // from Item
+    override public function isConsistent () :Boolean
+    {
+        return super.isConsistent() && (docMedia != null) && nonBlank(name);
     }
 
     // from Item

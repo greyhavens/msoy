@@ -38,15 +38,15 @@ public class Avatar extends Item
     }
 
     // from Item
-    override public function isConsistent () :Boolean
-    {
-        return super.isConsistent() && (avatarMedia != null);
-    }
-
-    // from Item
     override public function getPreviewMedia () :MediaDesc
     {
         return avatarMedia;
+    }
+
+    // from Item
+    override public function isConsistent () :Boolean
+    {
+        return super.isConsistent() && (avatarMedia != null);
     }
 
     // from Item

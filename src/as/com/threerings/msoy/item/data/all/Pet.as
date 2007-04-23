@@ -33,16 +33,16 @@ public class Pet extends Item
     {
     }
 
-    //
-    override public function isConsistent () :Boolean
-    {
-        return super.isConsistent() && (furniMedia != null) && nonBlank(name);
-    }
-
     // from Item
     override public function getPreviewMedia () :MediaDesc
     {
         return getFurniMedia();
+    }
+
+    //
+    override public function isConsistent () :Boolean
+    {
+        return super.isConsistent() && (furniMedia != null) && nonBlank(name);
     }
 
     // from Item
