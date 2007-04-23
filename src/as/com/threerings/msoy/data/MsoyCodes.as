@@ -21,5 +21,8 @@ public class MsoyCodes extends InvocationCodes
 
     /** Identifies our general message bundle. */
     public static const GENERAL_MSGS :String = "general";
+
+    /** Identifies our chat message bundle. */
+    public static const CHAT_MSGS :String = "chat";
 }
 }

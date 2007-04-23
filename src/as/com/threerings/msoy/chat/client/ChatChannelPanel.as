@@ -61,7 +61,7 @@ public class ChatChannelPanel extends VBox
         _input.height = ControlBar.HEIGHT-4;
         _input.addEventListener(FlexEvent.ENTER, sendChat, false, 0, true);
         var send :CommandButton = new CommandButton();
-        send.label = Msgs.GENERAL.get("b.send");
+        send.label = Msgs.CHAT.get("b.send");
         send.setFunction(sendChat);
         send.height = ControlBar.HEIGHT-4;
         _inputBox.addChild(send);
@@ -150,7 +150,7 @@ public class ChatChannelPanel extends VBox
         if (minimized && _wtab == null) {
             var select :Boolean = (_tabnav.numChildren == 0);
             _wtab = new WorldChatTab(_ctx);
-            _wtab.label = Msgs.GENERAL.xlate("m.world_channel");
+            _wtab.label = Msgs.CHAT.xlate("l.world_channel");
             _tabnav.addChildAt(_wtab, 0);
             _tabnav.setClosePolicyForTab(0, SuperTab.CLOSE_NEVER);
 

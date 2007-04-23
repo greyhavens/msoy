@@ -21,6 +21,7 @@ import com.threerings.crowd.util.CrowdContext;
 import com.threerings.crowd.chat.client.ChatDirector;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 
 /**
  * Provides services shared by all clients.
@@ -163,7 +164,7 @@ public /*abstract*/ class BaseContext
 
     protected function createChatDirector () :ChatDirector
     {
-        return new ChatDirector(this, _msgMgr, "general");
+        return new ChatDirector(this, _msgMgr, MsoyCodes.CHAT_MSGS);
     }
 
     protected var _client :Client;

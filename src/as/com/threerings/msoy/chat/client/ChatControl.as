@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.chat.client {
 
 import flash.display.DisplayObjectContainer;
@@ -57,25 +60,12 @@ public class ChatControl extends HBox
         _txt.height = height;
 
         _but = new CommandButton();
-        _but.label = Msgs.GENERAL.get("b.send");
+        _but.label = Msgs.CHAT.get("b.send");
         _but.height = height;
         _but.setFunction(sendChat);
         addChild(_but);
 
-//        _txt.addEventListener(KeyboardEvent.KEY_UP, keyEvent, false, 0, true);
         _txt.addEventListener(FlexEvent.ENTER, sendChat, false, 0, true);
-
-//        updateTarget();
-    }
-
-    /**
-     * Called by various entities to start doing a Tell on someone.
-     */
-    public static function initiateTell (name :MemberName) :void
-    {
-        for each (var control :ChatControl in _controls) {
-            control.initiateTell(name);
-        }
     }
 
     /**
@@ -103,16 +93,6 @@ public class ChatControl extends HBox
     {
         _txt.enabled = enabled;
         _but.enabled = enabled;
-    }
-
-    /**
-     * Initiate a tell to the specified user.
-     */
-    public function initiateTell (name :MemberName) :void
-    {
-//        _ctx.getChatDirector().addChatter(name);
-//        _target = name;
-//        updateTarget();
     }
 
     override public function parentChanged (p :DisplayObjectContainer) :void
@@ -149,66 +129,23 @@ public class ChatControl extends HBox
             return;
         }
 
-        if (_target == null) {
-            var result :String = _ctx.getChatDirector().requestChat(
-                null, message, true);
-            if (result != ChatCodes.SUCCESS) {
-                _ctx.displayFeedback(null, result);
-                return;
-            }
-
-        } else {
-            _ctx.getChatDirector().requestTell(_target, message, null);
+        var result :String = _ctx.getChatDirector().requestChat(null, message, true);
+        if (result != ChatCodes.SUCCESS) {
+            _ctx.displayFeedback(null, result);
+            return;
         }
 
-        // if there was no error, clear the entry area in prep
-        // for the next entry event
+        // if there was no error, clear the entry area in prep for the next entry event
         _txt.text = "";
     }
 
-//    protected function keyEvent (event :KeyboardEvent) :void
-//    {
-//        switch (event.keyCode) {
-//        case Keyboard.DOWN:
-//            selectTarget(true);
-//            break;
-//
-//        case Keyboard.UP:
-//            selectTarget(false);
-//            break;
-//        }
-//    }
-
     /**
-     * Routed from our LocationAdapter, we observe the entry or exit
-     * from places.
+     * Routed from our LocationAdapter, we observe the entry or exit from places.
      */
     protected function locationDidChange (plobj :PlaceObject) :void
     {
         updateTarget();
     }
-
-//    /**
-//     * Select a different target from the list of chat targets.
-//     */
-//    protected function selectTarget (down :Boolean) :void
-//    {
-//        var chatters :Array = _ctx.getChatDirector().getChatters();
-//
-//        var idx :int = ArrayUtil.indexOf(chatters, _target);
-//        if (down) {
-//            idx = Math.min(chatters.length - 1, idx + 1);
-//        } else {
-//            idx = Math.max(-1, idx - 1);
-//        }
-//
-//        if (idx >= 0) {
-//            _target = (chatters[idx] as MemberName);
-//        } else {
-//            _target = null;
-//        }
-//        updateTarget();
-//    }
 
     /**
      * Called to update the text we display in our target button.
@@ -217,21 +154,6 @@ public class ChatControl extends HBox
     {
         var plobj :PlaceObject = _ctx.getLocationDirector().getPlaceObject();
         _txt.enabled = (plobj != null);
-//        var label :String;
-//        var enabled :Boolean = true;
-//        if (_target == null) {
-//            if (plobj == null) {
-//                label = Msgs.GENERAL.get("l.select_chatter");
-//                enabled = false;
-//
-//            } else {
-//                label = Msgs.GENERAL.get("m.world");
-//            }
-//        } else {
-//            label = _target.toString();
-//        }
-//
-//        _txt.enabled = enabled;
     }
 
     /** Our client-side context. */
@@ -239,9 +161,6 @@ public class ChatControl extends HBox
 
     /** Our location observer. */
     protected var _locObs :LocationAdapter;
-
-    /** Our actual currently-selected chat target, or null for 'world'. */
-    protected var _target :MemberName;
 
     /** The place where the user may enter chat. */
     protected var _txt :ChatInput;
@@ -252,8 +171,8 @@ public class ChatControl extends HBox
     /** An array of the currently shown-controls. */
     protected static var _controls :Array = [];
 
-    /** The preserved current line of text when traversing history or
-     * carried between instances of ChatControl. */
+    /** The preserved current line of text when traversing history or carried between instances of
+     * ChatControl. */
     protected static var _curLine :String;
 }
 }

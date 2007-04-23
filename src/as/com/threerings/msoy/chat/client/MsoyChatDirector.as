@@ -16,6 +16,7 @@ import com.threerings.crowd.chat.data.TellFeedbackMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
@@ -35,7 +36,7 @@ public class MsoyChatDirector extends ChatDirector
 
     public function MsoyChatDirector (ctx :WorldContext)
     {
-        super(ctx, ctx.getMessageManager(), "general");
+        super(ctx, ctx.getMessageManager(), MsoyCodes.CHAT_MSGS);
         _wctx = ctx;
         _ccpanel = new ChatChannelPanel(_wctx);
 
@@ -284,7 +285,7 @@ class ChannelHandler implements Subscriber
     protected function failed (cause :String) :void
     {
         var msg :String = MessageBundle.compose("m.join_channel_failed", cause);
-        _ctx.displayFeedback(MsoyCodes.GENERAL_MSGS, msg);
+        _ctx.displayFeedback(MsoyCodes.CHAT_MSGS, msg);
     }
 
     protected var _ctx :WorldContext;

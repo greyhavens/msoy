@@ -49,7 +49,7 @@ public class ChannelChatTab extends ChatTab
             if (ccobj != null) {
                 _ctx.getChatDirector().requestChat(ccobj.speakService, message, false);
             } else {
-                _ctx.getChatDirector().displayFeedback(MsoyCodes.GENERAL_MSGS, "m.channel_closed");
+                _ctx.getChatDirector().displayFeedback(MsoyCodes.CHAT_MSGS, "m.channel_closed");
             }
         }
     }

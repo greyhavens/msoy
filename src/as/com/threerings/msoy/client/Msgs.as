@@ -18,6 +18,12 @@ public class Msgs
         return _general;
     }
 
+    /** The chat message bundle. */
+    public static function get CHAT () :MessageBundle
+    {
+        return _chat;
+    }
+
     /** The editing message bundle. */
     public static function get EDITING () :MessageBundle
     {
@@ -52,6 +58,7 @@ public class Msgs
         }
 
         _general = msgMgr.getBundle("general");
+        _chat = msgMgr.getBundle("chat");
         _editing = msgMgr.getBundle("editing");
         _game = msgMgr.getBundle("game");
         _item = msgMgr.getBundle("item");
@@ -59,6 +66,7 @@ public class Msgs
     }
 
     protected static var _general :MessageBundle;
+    protected static var _chat :MessageBundle;
     protected static var _editing :MessageBundle;
     protected static var _game :MessageBundle;
     protected static var _item :MessageBundle;
