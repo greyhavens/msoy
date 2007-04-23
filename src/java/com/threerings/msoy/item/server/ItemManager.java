@@ -8,8 +8,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map.Entry;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
@@ -18,6 +20,7 @@ import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ObserverList;
+import com.samskivert.util.Predicate;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
@@ -39,6 +42,7 @@ import com.threerings.msoy.world.data.FurniData;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
@@ -49,6 +53,8 @@ import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.item.server.persist.ItemListInfoRecord;
+import com.threerings.msoy.item.server.persist.ItemListRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PetRepository;
@@ -111,6 +117,8 @@ public class ItemManager
         _repos.put(Item.VIDEO, repo);
         repo = new DecorRepository(conProv);
         _repos.put(Item.DECOR, repo);
+
+        _listRepo = new ItemListRepository(conProv);
 
         // register our invocation service
         MsoyServer.invmgr.registerDispatcher(new ItemDispatcher(this), MsoyCodes.WORLD_GROUP);
@@ -275,6 +283,131 @@ public class ItemManager
                     return items;
                 }
             });
+    }
+
+    public List<ItemListInfo> getItemLists (int memberId)
+        throws PersistenceException
+    {
+        if (MsoyServer.omgr.isDispatchThread()) {
+            throw new IllegalStateException("Must be called from the invoker");
+        }
+
+        // load up the user's lists
+        List<ItemListInfoRecord> records = _listRepo.loadItemListInfos(memberId);
+
+        int nn = records.size();
+        List<ItemListInfo> list = new ArrayList<ItemListInfo>(nn);
+        for (int ii = 0; ii < nn; ii++) {
+            list.add(records.get(ii).toItemListInfo());
+        }
+
+        return list;
+    }
+
+    public ItemListInfo createItemList (int memberId, byte type, String name)
+    {
+        // TODO
+        return null;
+    }
+
+    public void addItemToList (ItemListInfo info, Item item)
+    {
+        // TODO: easy addition without having to rewrite old stuff
+    }
+
+    public void loadItemList (final int listId, ResultListener<ArrayList<Item>> listener)
+    {
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<ArrayList<Item>>(listener) {
+                public ArrayList<Item> invokePersistResult () throws PersistenceException {
+                    // first, look up the list
+                    ItemListInfoRecord infoRecord = _listRepo.loadItemListInfo(listId);
+                    ItemIdent[] idents = _listRepo.loadItemList(listId);
+
+                    // now we're going to load all of these items
+                    LookupList lookupList = new LookupList();
+                    for (ItemIdent ident : idents) {
+                        try {
+                            lookupList.addItem(ident);
+                        } catch (MissingRepositoryException mre) {
+                            log.warning("Omitting bogus item from list: " + ident);
+                        }
+                    }
+
+                    // now look up all those items
+                    HashMap<ItemIdent, Item> items = new HashMap<ItemIdent, Item>();
+                    // mass-lookup items, a repo at a time
+                    for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : lookupList) {
+                        for (ItemRecord rec : tup.left.loadItems(tup.right)) {
+                            Item item = rec.toItem();
+                            items.put(item.getIdent(), item);
+                        }
+                    }
+
+                    // prune any items that need pruning
+                    pruneItemsFromList(infoRecord, items.values());
+
+                    // then, if we're missing any items, we need to re-save the list
+                    if (idents.length != items.size()) {
+                        ArrayList<ItemIdent> newIdents = new ArrayList<ItemIdent>(items.size());
+                        for (ItemIdent ident : idents) {
+                            if (items.containsKey(ident)) {
+                                newIdents.add(ident);
+                            }
+                        }
+
+                        // now save the list
+                        idents = new ItemIdent[newIdents.size()];
+                        newIdents.toArray(idents);
+                        _listRepo.saveItemList(listId, idents);
+                    }
+
+                    // finally, return all the items in list order
+                    ArrayList<Item> list = new ArrayList<Item>(idents.length);
+                    for (ItemIdent ident : idents) {
+                        list.add(items.get(ident));
+                    }
+                    return list;
+                }
+            });
+    }
+
+    /**
+     * Depending on the type of the list, prune any items are not supposed to be in it legally.
+     */
+    protected void pruneItemsFromList (ItemListInfoRecord infoRecord, Collection<Item> items)
+        throws PersistenceException
+    {
+        Predicate<Item> pred;
+        switch (infoRecord.type) {
+        default:
+            throw new PersistenceException("Do not know how to prune items from lists of type " +
+                infoRecord.type);
+            // implicit break
+
+        case ItemListInfo.VIDEO_PLAYLIST: // fall through to AUDIO_PLAYLIST
+        case ItemListInfo.AUDIO_PLAYLIST:
+            // the items must all be owned
+            final int memberId = infoRecord.memberId;
+            pred = new Predicate<Item>() {
+                public boolean isMatch (Item item) {
+                    return (item.ownerId == memberId);
+                }
+            };
+            break;
+
+        case ItemListInfo.CATALOG_BUNDLE:
+            // the items must all be listed in the catalog
+            pred = new Predicate<Item>() {
+                public boolean isMatch (Item item) {
+                    return (item.ownerId == 0); // TODO: this catches other cases besides listed?
+                }
+            };
+            break;
+        }
+
+        // filter any items that do not match the predicate
+        pred.filter(items);
     }
 
     /**
@@ -1202,4 +1335,7 @@ public class ItemManager
     /** A mapping from item type to update listeners. */
     protected HashMap<Class<? extends ItemRecord>,ObserverList<ItemUpdateListener>> _listeners =
         new HashMap<Class<? extends ItemRecord>,ObserverList<ItemUpdateListener>>();
+
+    /** The special repository that stores item lists. */
+    protected ItemListRepository _listRepo;
 }

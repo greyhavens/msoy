@@ -26,6 +26,7 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
@@ -81,6 +82,10 @@ public class MsoyClientResolver extends CrowdClientResolver
         // load up this member's persistent stats
         List<Stat> stats = MsoyServer.statRepo.loadStats(member.memberId);
         userObj.stats = new StatSet(stats.iterator());
+
+        // load up any item lists they may have
+        List<ItemListInfo> itemLists = MsoyServer.itemMan.getItemLists(member.memberId);
+        userObj.lists = new DSet<ItemListInfo>(itemLists);
 
         // calculate flow evaporation since last logon
         int dT = (int) ((System.currentTimeMillis() - member.lastSession.getTime()) / 60000);

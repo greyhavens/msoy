@@ -137,6 +137,9 @@ public class MemberObject extends MsoyBodyObject
     /* The game summary for the forming game table that this user is sitting at. */
     public var pendingGame :GameSummary;
 
+    /** The item lists owned by this user. */
+    public var lists :DSet;
+
     /**
      * Return this member's unique id.
      */
@@ -370,6 +373,7 @@ public class MemberObject extends MsoyBodyObject
         groups = (ins.readObject() as DSet);
         hasNewMail = ins.readBoolean();
         pendingGame = (ins.readObject() as GameSummary);
+        lists = (ins.readObject() as DSet);
     }
 }
 }
