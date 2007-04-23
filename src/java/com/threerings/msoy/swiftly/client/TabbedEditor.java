@@ -123,6 +123,7 @@ public class TabbedEditor extends CloseAndMaxTabbedPane
         PathElement pathElement = tab.getPathElement();
         remove(_tabList.get(pathElement.elementId));
         _tabList.remove(pathElement.elementId);
+        _editor.tabRemoved(tab);
         assignTabKeys();
     }
 

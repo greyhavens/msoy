@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
@@ -176,7 +177,7 @@ public class SwiftlyEditor extends PlacePanel
         // set the document into the text pane
         textPane.setDocument(document);
 
-        // TODO: text pane will not be a listener
+        // TODO: remove when the the textpane is no longer the document listener
         _roomObj.addListener(textPane);
     }
 
@@ -191,11 +192,15 @@ public class SwiftlyEditor extends PlacePanel
         _editorTabs.updateTabTitleAt(pathElement);
     }
 
-    public void closeCurrentTab ()
+    public void tabRemoved (TabbedEditorComponent tab)
     {
-        // TODO: SwiftlyTextPane will no longer be a listener
-        // _roomObj.removeListener(_editorTabs.getSelectedComponent());
-        _editorTabs.closeCurrentTab();
+        // TODO: remove when the the textpane is no longer the document listener
+        if (tab instanceof TabbedEditorScroller) {
+            Component comp = ((TabbedEditorScroller)tab).getViewport().getView();
+            if (comp instanceof SwiftlyTextPane) {
+                _roomObj.removeListener((SwiftlyTextPane)comp);
+            }
+        }
     }
 
     /**
