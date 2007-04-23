@@ -53,13 +53,15 @@ public class Ribbon extends Box
      */
     public function set selectedIndex (index :int) :void
     {
-        if (index < numChildren && index >= -1) {
-            _selectedIndex = index;
-        } else {
-            throw new ArgumentError("Invalid value for selectedIndex: " + index +
-                                    " is not in range.");
+        if (index != _selectedIndex) {
+            if (index < numChildren && index >= -1) {
+                _selectedIndex = index;
+            } else {
+                throw new ArgumentError("Invalid value for selectedIndex: " + index +
+                                        " is not in range.");
+            }
+            updateDisplay();
         }
-        updateDisplay();
     }
 
     /** Retrieves the active child, or null of no active object was set. */
@@ -88,8 +90,10 @@ public class Ribbon extends Box
      */
     public function set collapsed (value :Boolean) :void
     {
-        _collapsed = value;
-        updateDisplay();
+        if (value != _collapsed) {
+            _collapsed = value;
+            updateDisplay();
+        }
     }
 
     // from Box
@@ -107,13 +111,12 @@ public class Ribbon extends Box
               { event: MouseEvent.MOUSE_UP,    capture: true,   handler: handleMouseUp }, 
               { event: MouseEvent.ROLL_OUT,                     handler: handleRollOut }
             ];
-        
+
+        // if we're added to display list, add event listeners, otherwise remove them
         var fn :Function = (p != null) ? addEventListener : removeEventListener;
         for each (var def :Object in handlers) {
             fn(def.event, def.handler, def.capture == true);
         }
-
-        updateDisplay();
     }
 
     // from UIComponent
@@ -130,10 +133,9 @@ public class Ribbon extends Box
      */
     protected function handleMouseDown (event :MouseEvent) :void
     {
-        if (_collapsed) {
+        if (collapsed) {
             startFoldoutTimer();
         } 
-        updateDisplay();
     }
 
     /**
@@ -142,17 +144,17 @@ public class Ribbon extends Box
      */
     protected function handleMouseUp (event :MouseEvent) :void
     {
-        if (_collapsed) {
+        if (collapsed) {
             // mouse-up during a regular click - ignore
             stopFoldoutTimer();
         } else {
+            // mouse-up when unfolded - pick a new child and collapse again
             var obj :DisplayObject = event.target as DisplayObject;
             if (contains(obj)) {
                 selectedChild = obj;
-                _collapsed = true;
+                collapsed = true;
             }
         }
-        updateDisplay();
     }
 
     /**
@@ -161,8 +163,7 @@ public class Ribbon extends Box
     protected function handleRollOut (event :MouseEvent) :void
     {
         stopFoldoutTimer();
-        _collapsed = true;
-        updateDisplay();
+        collapsed = true;
     }
 
     /**
@@ -240,8 +241,7 @@ public class Ribbon extends Box
      */
     protected function handleFoldoutTimer (event :TimerEvent) :void
     {
-        _collapsed = false;
-        updateDisplay();
+        collapsed = false;
     }
         
     /** How long the mouse button needs to be pressed to expand the ribbon, in milliseconds. */

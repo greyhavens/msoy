@@ -36,6 +36,11 @@ public class FurniEditController
     public static const EDIT_MOVE :String = "EditMove";
     public static const EDIT_RESIZE :String = "EditResize";
 
+    /** State modifiers. */
+    public static const MOD_NONE :String = "ModNone";
+    public static const MOD_SHIFT :String = "ModShift";
+    public static const MOD_CTRL :String = "ModCtrl";
+    
     /** Constructor. */
     public function FurniEditController ()
     {
@@ -54,38 +59,72 @@ public class FurniEditController
 
         // create a collection of button definitions. handlers are closures on this instance.
         _menuButtons = [
-            { button: null, icon: MOVE_ICON, text: null, handler: move },
-            { button: null, icon: RESIZE_ICON, text: null, handler: resize },
-            { button: null, icon: HFLIP_ICON, text: null, handler: hflip },
+            [ { button: null, icon: MOVE_ICON, text: null, handler: move },
+              { button: null, icon: MOVE_Y_ICON, text: null, handler: move },
+              { button: null, icon: MOVE_Z_ICON, text: null, handler: move } ],
+            [ { button: null, icon: RESIZE_ICON, text: null, handler: resize },
+              { button: null, icon: RESIZE_CONST_ICON, text: null, handler: resize_const },
+              { button: null, icon: RESIZE_DEF_ICON, text: null, handler: resize_defaults } ],
+            [ { button: null, icon: HFLIP_ICON, text: null, handler: hflip },
+              { button: null, icon: VFLIP_ICON, text: null, handler: vflip } ],
             { button: null, icon: CANCEL_ICON, text: null, handler: cancel },
             { button: null, icon: null, text: "b.edit_furni_ok", handler: commit } ];
+    }
 
+    /** Creates a whole set of button instances, and adds them to the specified container. */
+    protected function makeButtonPanel () :Container
+    {
         // now create button display objects for each definition
-        _buttonPanel = new HBox();
-        _buttonPanel.visible = false;
-        _buttonPanel.setStyle("horizontalGap", 0);
-        for each (var def :Object in _menuButtons) {
-                var button :Button = new Button();
-                button.styleName = "furniEditButton";    
-                button.height = 20;
-                if (def.icon != null) {
-                    button.setStyle("icon", def.icon as Class);
-                    button.width = 20;
-                }
-                if (def.text != null) {
-                    button.label = Msgs.GENERAL.get(def.text);
-                }
-                if (def.handler != null) {
-                    addButtonListener(button, def.handler);
-                }
-                def.button = button; // store this instance back in the button definition
+        var buttonPanel :Container = new HBox(); 
+        buttonPanel.styleName = "furniEditPanel";
+        buttonPanel.visible = false;
 
-                _buttonPanel.addChild(button);
+        buttonPanel.width = 150;
+        buttonPanel.height = 100;
+
+        buttonPanelHelper(_menuButtons, buttonPanel);
+        return buttonPanel;
+    }
+
+    /** Helper function to create buttons. */
+    protected function buttonPanelHelper (defs :Array, container :Container) :void
+    {
+        for each (var def :Object in defs) {
+            if (def is Array) {  
+                // create a new Ribbon container, and put all definitions in there
+                var ribbon :Ribbon = new Ribbon();
+                ribbon.styleName = "furniEditPanel";
+                buttonPanelHelper(def as Array, ribbon);
+                container.addChild(ribbon);
+                if (def.length > 0) {
+                    ribbon.selectedIndex = 0;
+                    ribbon.collapsed = true;
+                }
+            } else {
+                container.addChild(makeButton(def));
+            }
+        }
+    }
+
+    /** Create a Button instance based on the definition object. */
+    protected function makeButton (def :Object) :Button
+    {
+        var button :Button = new Button();
+        button.styleName = "furniEditButton";    
+        button.height = 20;
+        if (def.icon != null) {
+            button.setStyle("icon", def.icon as Class);
+            button.width = 20;
+        }
+        if (def.text != null) {
+            button.label = Msgs.GENERAL.get(def.text);
+        }
+        if (def.handler != null) {
+            addButtonListener(button, def.handler);
         }
 
-        _buttonPanel.width = 150; // oh flex, you're so silly. why must I set these manually?
-        _buttonPanel.height = 20;
-
+        def.button = button; // store this instance back in the button definition
+        return button;
     }
     
     /** Wrapper around the event handler function generator */
@@ -113,12 +152,14 @@ public class FurniEditController
     }
 
     /**
-     * Switches to a new editing mode, where the mode is one of the EDIT_* constants.
+     * Switches to a new editing mode, where the mode is one of the EDIT_* constants,
+     * and modifier is an optional value as one of the MOD_* constants (MOD_NONE by default).
      */
-    protected function setMode (newMode :String) :void
+    protected function setMode (newMode :String, newModifier :String = MOD_NONE) :void
     {
         var oldMode :String = _mode;
         _mode = newMode;
+        _modifier = newModifier;
 
         addOrRemoveListeners (oldMode, false);
         addOrRemoveListeners (newMode, true);
@@ -166,7 +207,8 @@ public class FurniEditController
         _endCallback = endCallback;
         _positionAtShift = null;
         _container = ctx.getTopPanel().getPlaceContainer();
-        
+
+        _buttonPanel = makeButtonPanel();
         _container.addChild(_buttonPanel);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyboardHandler);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyboardHandler);
@@ -214,20 +256,41 @@ public class FurniEditController
     }
 
     /** Start moving the sprite. */
-    protected function move () :void {
+    protected function move () :void
+    {
         setMode(EDIT_MOVE);
     }
     
     /** Start resizing the sprite. */
-    protected function resize () :void {
+    protected function resize () :void
+    {
         setMode(EDIT_RESIZE);
     }
 
-    /** Just invert the horizontal scaling factor. */
-    protected function hflip () :void {
+    /** Start resizing the sprite in proportion-constrained mode. */
+    protected function resize_const () :void
+    {
+        setMode(EDIT_RESIZE, MOD_SHIFT);
+    }
+
+    /** Restore original resize values. */
+    protected function resize_defaults () :void
+    {
+        scaleFurni(new Point(1, 1));
+    }
+
+    /** Invert the horizontal scaling factor. */
+    protected function hflip () :void
+    {
         scaleFurni(new Point(- _furni.getMediaScaleX(), _furni.getMediaScaleY()));
     }
 
+    /** Invert the vertical scaling factor. */
+    protected function vflip () :void
+    {
+        scaleFurni(new Point(_furni.getMediaScaleX(), - _furni.getMediaScaleY()));
+    }
+    
     /**
      * Shut down any furni editing data, and call the endCallback function.
      */
@@ -239,6 +302,7 @@ public class FurniEditController
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyboardHandler);
         _roomView.stage.removeEventListener(Event.RESIZE, resizeHandler);
         _container.removeChild(_buttonPanel);
+        _buttonPanel = null;
         
         _endCallback(edits);
 
@@ -362,7 +426,10 @@ public class FurniEditController
         return new Point(newScaleX, newScaleY);
     }
 
-    /** Finds x and y scaling factors that will resize the current furni based on mouse position. */
+    /**
+     * Finds x and y scaling factors that will resize the current furni based on
+     * mouse position.
+     */
     protected function findScale (event :MouseEvent) :Point
     {
         // find hotspot position in terms of sprite width and height
@@ -376,9 +443,38 @@ public class FurniEditController
         var dy :Number = pivot.y - event.stageY; // positive above hotspot
 
         // convert pixel position to how wide and tall the furni would have to be in order
-        // to reach that position - and pass it into the scaling function.
-        return computeScale(dx / px, dy / py); 
+        // to reach that position
+        var newwidth :Number = dx / px;
+        var newheight :Number = dy / py;
+
+        // if we're scaling proportionally, lock the two distances
+        if (_modifier == MOD_SHIFT) {
+            // this math is broken and loses precision. todo: revisit.
+            var proportion :Number =
+                clampMagnitude (_furni.getActualWidth() / _furni.getActualHeight(), 0.01, 100);
+            //trace("PROPORTION: " + proportion);
+            
+            if (Math.abs(newwidth) < Math.abs(newheight)) {
+                newheight = clampMagnitude(newheight, 1, newwidth / proportion);
+            } else {
+                newwidth = clampMagnitude(newwidth, 1, newheight * proportion);
+            }
+        }
+
+        // scale the furni!
+        return computeScale(newwidth, newheight); 
     }
+
+    /**
+     * Returns the result of clamping the magnitude of /value/ to be no smaller than /lower/
+     * magnitude, but no larger than /upper/ magnitude. Since only magnitude is clamped,
+     * /lower/ and /higher/ sign values are ignored, and /value/'s original sign is preserved.
+     */
+    protected function clampMagnitude (value :Number, lower :Number, upper :Number) :Number
+    {
+        var sign :Number = value >= 0 ? 1 : -1;
+        return sign * Math.max(Math.abs(lower), Math.min(Math.abs(value), Math.abs(upper)));
+    }        
     
     /** Handles mouse movement during furni resize. */
     protected function handleMouseInResizeMode (event :MouseEvent) :void
@@ -466,6 +562,9 @@ public class FurniEditController
     /** Current editing mode, as one of the EDIT_* constant values. */
     protected var _mode :String = EDIT_OFF;
 
+    /** Current editing mode modifier, as one of the MOD_* constant values. */
+    protected var _modifier :String = MOD_NONE;
+
     /** The last mouse position (in stage coordinates!) before the user hit "shift"
      *  to switch to vertical positioning. */
     protected var _positionAtShift :Point;
@@ -493,10 +592,20 @@ public class FurniEditController
     // Button media. 
     [Embed(source="../../../../../../../rsrc/media/skins/button/furniedit/move_root.png")]
     protected static const MOVE_ICON :Class;
+    [Embed(source="../../../../../../../rsrc/media/skins/button/furniedit/move_Y.png")]
+    protected static const MOVE_Y_ICON :Class;
+    [Embed(source="../../../../../../../rsrc/media/skins/button/furniedit/move_Z.png")]
+    protected static const MOVE_Z_ICON :Class;
     [Embed(source="../../../../../../../rsrc/media/skins/button/furniedit/resize_root.png")]
     protected static const RESIZE_ICON :Class;
+    [Embed(source="../../../../../../../rsrc/media/skins/button/furniedit/resize_constrained.png")]
+    protected static const RESIZE_CONST_ICON :Class;
+    [Embed(source="../../../../../../../rsrc/media/skins/button/furniedit/resize_defaults.png")]
+    protected static const RESIZE_DEF_ICON :Class;
     [Embed(source="../../../../../../../rsrc/media/skins/button/furniedit/flip_root.png")]
     protected static const HFLIP_ICON :Class;
+    [Embed(source="../../../../../../../rsrc/media/skins/button/furniedit/flip_vertical.png")]
+    protected static const VFLIP_ICON :Class;
     [Embed(source="../../../../../../../rsrc/media/skins/button/backtolobby.png")] // TEMP
     protected static const CANCEL_ICON :Class;
 }
