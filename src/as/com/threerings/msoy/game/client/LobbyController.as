@@ -195,6 +195,9 @@ public class LobbyController extends Controller implements Subscriber, ObjectDea
         _tableDir.clearTableObject();
         _tableDir.removeTableObserver(_panel);
         _tableDir.removeSeatednessObserver(_panel);
+        if (_lobj != null) {
+            _lobj.removeListener(this);
+        }
     }
 
     /** The provider of free cheese. */
