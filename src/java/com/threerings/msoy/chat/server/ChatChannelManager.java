@@ -8,12 +8,14 @@ import java.util.HashMap;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.crowd.chat.data.SpeakMarshaller;
 import com.threerings.crowd.chat.server.SpeakProvider;
 import com.threerings.crowd.chat.server.SpeakDispatcher;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
@@ -36,9 +38,10 @@ public class ChatChannelManager
     /**
      * Initializes this manager during server startup.
      */
-    public void init ()
+    public void init (InvocationManager invmgr)
     {
-        // TODO: stuff!
+        // register our chat channel service
+        invmgr.registerDispatcher(new ChatChannelDispatcher(this), MsoyCodes.WORLD_GROUP);
     }
 
     // from interface ChatChannelProvider
@@ -80,8 +83,11 @@ public class ChatChannelManager
             }
         }
 
-        // add the caller to the channel
-        ccobj.addToChatters(new ChatterInfo(user));
+        // add the caller to the channel (if they're not already for some reason)
+        if (!ccobj.chatters.containsKey(user.memberName)) {
+            log.info("Adding " + user.who() + " to " + channel + ".");
+            ccobj.addToChatters(new ChatterInfo(user));
+        }
 
         // and let them know that they're good to go
         listener.requestProcessed(ccobj.getOid());
@@ -93,6 +99,7 @@ public class ChatChannelManager
         MemberObject user = (MemberObject)caller;
         ChatChannelObject ccobj = _channels.get(channel);
         if (ccobj != null && ccobj.chatters.containsKey(user.memberName)) {
+            log.info("Removing " + user.who() + " from " + ccobj.channel + ".");
             ccobj.removeFromChatters(user.memberName);
         }
     }
@@ -124,6 +131,7 @@ public class ChatChannelManager
 
         // TODO: add a listener to the channel object and shut it down when the last chatter leaves
 
+        log.info("Adding " + user.who() + " to " + channel + ".");
         ccobj.addToChatters(new ChatterInfo(user));
         listener.requestProcessed(ccobj.getOid());
     }

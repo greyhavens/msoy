@@ -70,6 +70,20 @@ public class ChatChannelPanel extends VBox
     }
 
     /**
+     * Locates the specified chat display, returning null if it is not open.
+     */
+    public function findChatDisplay (channel :ChatChannel) :ChatDisplay
+    {
+        for (var ii :int = 0; ii < _tabnav.numChildren; ii++) {
+            var ctab :ChatTab = (_tabnav.getChildAt(ii) as ChatTab);
+            if (ctab is ChannelChatTab && (ctab as ChannelChatTab).channel.equals(channel)) {
+                return (ctab as ChannelChatTab).getOverlay();
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns the chat display to use for the specified channel.
      */
     public function getChatDisplay (
@@ -89,7 +103,7 @@ public class ChatChannelPanel extends VBox
         // create a new tab if we did not find one already in use
         if (tab == null) {
             tab = new ChannelChatTab(_ctx, channel);
-            tab.label = Msgs.GENERAL.xlate(channel.ident.toString());
+            tab.label = channel.ident.toString();
             tab.getOverlay().setHistory(history);
             tabidx = _tabnav.numChildren;
             _tabnav.addChild(tab);
@@ -123,6 +137,10 @@ public class ChatChannelPanel extends VBox
                 _ctx.getTopPanel().clearRightPanel(this);
                 _ctx.getTopPanel().getControlBar().setChannelChatInput(null);
             }
+        }
+        if (event.relatedObject is ChannelChatTab) {
+            var channel :ChatChannel = (event.relatedObject as ChannelChatTab).channel;
+            (_ctx.getChatDirector() as MsoyChatDirector).closeChannel(channel);
         }
     }
 

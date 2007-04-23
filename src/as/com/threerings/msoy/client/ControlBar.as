@@ -205,7 +205,7 @@ public class ControlBar extends HBox
         if (isMember && user.tokens.isSupport()) {
             _channelBtn = new CommandButton();
             _channelBtn.toolTip = Msgs.GENERAL.get("i.channel");
-            _channelBtn.setCommand(MsoyController.POP_FRIENDS_MENU, _channelBtn);
+            _channelBtn.setCommand(MsoyController.POP_CHANNEL_MENU, _channelBtn);
             _channelBtn.styleName = "controlBarButtonAvatar";
             addChild(_channelBtn);
         }

@@ -696,16 +696,15 @@ public class ChatOverlay
         var localtype :String = msg.localtype;
 
         if (msg is TellFeedbackMessage) {
-            return (history || isApprovedLocalType(localtype)) ? TELLFEEDBACK
-                                                               : IGNORECHAT;
+            return (history || isApprovedLocalType(localtype)) ? TELLFEEDBACK : IGNORECHAT;
+
         } else if (msg is UserMessage) {
             var type :int = 0;
 
             if (ChatCodes.USER_CHAT_TYPE == localtype) {
                 type = TELL;
-
-            } else if (ChatCodes.PLACE_CHAT_TYPE == localtype ||
-                       SpotCodes.CLUSTER_CHAT_TYPE == localtype) {
+            } else /*if (ChatCodes.PLACE_CHAT_TYPE == localtype ||
+                     SpotCodes.CLUSTER_CHAT_TYPE == localtype)*/ {
                 type = PLACE;
             }
             // TODO: more types

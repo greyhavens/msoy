@@ -18,5 +18,8 @@ public class MsoyCodes extends InvocationCodes
 
     /** Defines our world invocation services group. */
     public static const WORLD_GROUP :String = "msoy.world";
+
+    /** Identifies our general message bundle. */
+    public static const GENERAL_MSGS :String = "general";
 }
 }

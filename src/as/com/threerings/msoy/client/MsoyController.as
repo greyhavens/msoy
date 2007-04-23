@@ -42,6 +42,7 @@ import com.threerings.msoy.data.SceneBookmarkEntry;
 import com.threerings.msoy.chat.client.ChatControl;
 
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.chat.client.ChatControl;
@@ -74,8 +75,8 @@ public class MsoyController extends Controller
     /** Command to display the recent scenes list. */
     public static const POP_ROOMS_MENU :String = "PopRoomsMenu";
 
-    /** Command to display the friends menu. */
-    public static const POP_FRIENDS_MENU :String = "PopFriendsMenu";
+    /** Command to display the chat channel menu. */
+    public static const POP_CHANNEL_MENU :String = "PopChannelMenu";
 
     /** Command to display the pets popup. */
     public static const SHOW_PETS :String = "ShowPets";
@@ -104,8 +105,8 @@ public class MsoyController extends Controller
     /** Command to add/remove friends. */
     public static const ALTER_FRIEND :String = "AlterFriend";
 
-    /** Command to initiate private conversation with the specified user. */
-    public static const TELL :String = "Tell";
+    /** Command to open the chat interface for a particular chat channel. */
+    public static const OPEN_CHANNEL :String = "OpenChannel";
 
     /** Command to edit preferences. */
     public static const CHAT_PREFS :String = "ChatPrefs";
@@ -134,7 +135,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the SHOW_FRIENDS command.
+     * Handles the SHOW_FRIENDS command.
      */
     public function handleShowFriends (show :Boolean) :void
     {
@@ -142,23 +143,23 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the TELL command.
+     * Handles the OPEN_CHANNEL command.
      */
-    public function handleTell (user :MemberName) :void
+    public function handleOpenChannel (name :Name) :void
     {
-        (_ctx.getChatDirector() as MsoyChatDirector).openFriendChannel(user);
+        (_ctx.getChatDirector() as MsoyChatDirector).openChannel(name);
     }
 
     /**
-     * Handle the POP_FRIENDS_MENU command.
+     * Handle the POP_CHANNEL_MENU command.
      */
-    public function handlePopFriendsMenu (trigger :Button) :void
+    public function handlePopChannelMenu (trigger :Button) :void
     {
         var friends :Array = _ctx.getMemberObject().getSortedEstablishedFriends();
         friends = friends.map(function (fe :FriendEntry, index :int, array :Array) :Object {
             return {
                 label: fe.name.toString(),
-                command: TELL,
+                command: OPEN_CHANNEL,
                 arg: fe.name
             };
         });
@@ -166,22 +167,22 @@ public class MsoyController extends Controller
             friends.push({ label: Msgs.GENERAL.get("m.no_friends") });
         }
 
-//         var chatters :Array = _ctx.getChatDirector().getChatters();
-//         chatters = chatters.map(function (name :MemberName, index :int, array :Array) :Object {
-//             return {
-//                 label: name.toString(),
-//                 command: TELL,
-//                 arg: name
-//             };
-//         });
-//         if (chatters.length == 0) {
-//             chatters.push({ label: Msgs.GENERAL.get("m.no_chatters") });
-//         }
+        var groups :Array = _ctx.getMemberObject().groups.toArray();
+        groups = groups.map(function (gm :GroupMembership, index :int, array :Array) :Object {
+            return {
+                label: gm.group.toString(),
+                command: OPEN_CHANNEL,
+                arg: gm.group
+            };
+        });
+        if (groups.length == 0) {
+            groups.push({ label: Msgs.GENERAL.get("m.no_groups") });
+        }
 
         var menuData :Array = [];
         menuData = menuData.concat(friends);
-//         menuData.push({ type: "separator" });
-//         menuData = menuData.concat(chatters);
+        menuData.push({ type: "separator" });
+        menuData = menuData.concat(groups);
         CommandMenu.createMenu(menuData).popUp(trigger, true, true);
     }
 

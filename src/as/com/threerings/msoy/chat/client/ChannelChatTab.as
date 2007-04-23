@@ -7,8 +7,11 @@ import flash.events.Event;
 
 import com.threerings.util.Name;
 
-import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.data.MsoyCodes;
+
+import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.chat.data.ChatChannelObject;
 
 /**
  * Displays an actual chat channel.
@@ -37,8 +40,18 @@ public class ChannelChatTab extends ChatTab
     // @Override // from ChatTab
     override public function sendChat (message :String) :void
     {
-        // TODO: the right thing for friends vs real chat channels
-        _ctx.getChatDirector().requestTell(channel.ident as Name, message, null);
+        if (channel.type == ChatChannel.FRIEND_CHANNEL) {
+            _ctx.getChatDirector().requestTell(channel.ident as Name, message, null);
+
+        } else {
+            var ccobj :ChatChannelObject =
+                (_ctx.getChatDirector() as MsoyChatDirector).getChannelObject(channel);
+            if (ccobj != null) {
+                _ctx.getChatDirector().requestChat(ccobj.speakService, message, false);
+            } else {
+                _ctx.getChatDirector().displayFeedback(MsoyCodes.GENERAL_MSGS, "m.channel_closed");
+            }
+        }
     }
 
     protected function handleAddRemove (event :Event) :void

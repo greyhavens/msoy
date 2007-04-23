@@ -60,6 +60,14 @@ public class ChatChannel extends SimpleStreamableObject
     {
     }
 
+    /**
+     * Returns a string we can use to register this channel with the ChatDirector.
+     */
+    public String toLocalType ()
+    {
+        return type + ":" + ident;
+    }
+
     @Override // from Object
     public boolean equals (Object other)
     {
@@ -74,6 +82,12 @@ public class ChatChannel extends SimpleStreamableObject
     public int hashCode ()
     {
         return type ^ ident.hashCode();
+    }
+
+    @Override // from Object
+    public String toString ()
+    {
+        return toLocalType();
     }
 
     protected ChatChannel (int type, Name ident)

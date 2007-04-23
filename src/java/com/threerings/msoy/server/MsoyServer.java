@@ -453,7 +453,7 @@ public class MsoyServer extends WhirledServer
         memberMan.init(memberRepo, groupRepo);
         groupMan.init(groupRepo, memberRepo);
         mailMan.init(conProv, memberRepo);
-        channelMan.init();
+        channelMan.init(invmgr);
         itemMan.init(conProv);
         swiftlyMan.init(invmgr);
         petMan.init(invmgr);

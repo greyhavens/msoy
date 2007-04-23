@@ -14,7 +14,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 
 /**
- * Used to distribute chat messages to all participates in a chat channel.
+ * Used to distribute chat messages to all participants in a chat channel.
  */
 public class ChatChannelObject extends DObject
     implements SpeakObject
