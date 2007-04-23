@@ -67,6 +67,10 @@ public class SwiftlyEditor extends PlacePanel
         _ctrl = ctrl;
         _msgs = _ctx.getMessageManager().getBundle(SwiftlyCodes.SWIFTLY_MSGS);
 
+        // setup the path to the avatar viewer using the client version
+        _avatarViewerPath = "/clients/" + _ctx.getClient().getVersion() +
+                            "/avatarviewer.swf?avatar=";
+
         setLayout(new VGroupLayout(
                       VGroupLayout.STRETCH, VGroupLayout.STRETCH, 5, VGroupLayout.TOP));
         // let's not jam ourselves up against the edges of the window
@@ -411,7 +415,7 @@ public class SwiftlyEditor extends PlacePanel
         try {
             URL url = new URL(resultUrl);
             if (_roomObj.project.projectType == Item.AVATAR) {
-                url = new URL(url, AVATAR_VIEWER_PATH + URLEncoder.encode(url.toString(), "UTF-8"));
+                url = new URL(url, _avatarViewerPath + URLEncoder.encode(url.toString(), "UTF-8"));
             }
             _ctx.getAppletContext().showDocument(url, "_blank");
 
@@ -468,5 +472,5 @@ public class SwiftlyEditor extends PlacePanel
     protected ProjectPanel _projectPanel;
     protected Action _previewAction, _exportAction;
 
-    protected static final String AVATAR_VIEWER_PATH = "/clients/avatarviewer.swf?avatar=";
+    protected String _avatarViewerPath;
 }
