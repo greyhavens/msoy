@@ -314,7 +314,7 @@ public class SwiftlyEditor extends PlacePanel
         _roomObj = (ProjectRoomObject)plobj;
         _roomObj.addListener(this);
 
-        // Raise all any documents from the dead, re-binding transient
+        // Raise any documents from the dead, re-binding transient
         // instance variables.
         for (SwiftlyDocument document : _roomObj.documents) {
             document.lazarus(_roomObj.pathElements);
