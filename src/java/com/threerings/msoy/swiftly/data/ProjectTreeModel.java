@@ -40,9 +40,6 @@ public class ProjectTreeModel extends DefaultTreeModel
 
         // construct our tree model based on the room object's contents
         PathElement root = roomObj.getRootElement();
-        if (root == null) {
-            return; // ack! log a warning
-        }
 
         PathElementTreeNode node = new PathElementTreeNode(root);
         setRoot(node);

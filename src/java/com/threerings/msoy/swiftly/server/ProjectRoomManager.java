@@ -69,12 +69,9 @@ public class ProjectRoomManager extends PlaceManager
     /**
      * Called by the {@link SwiftlyManager} after creating this project room manager.
      */
-    public void init (SwiftlyProject project, ProjectStorage storage)
+    public void init (final SwiftlyProject project, ProjectStorage storage)
     {
         _storage = storage;
-
-        // Stick the project in the dobj
-        _roomObj.setProject(project);
 
         // References to our on-disk SDKs
         File flexSdk = new File(ServerConfig.serverRoot + FLEX_SDK);
@@ -104,6 +101,8 @@ public class ProjectRoomManager extends PlaceManager
                 for (PathElement element : _projectTree) {
                     _roomObj.addPathElement(element);
                 }
+                // Inform any listeners that the project has been loaded by adding it to the dobj
+                _roomObj.setProject(project);
             }
 
             protected List<PathElement> _projectTree;

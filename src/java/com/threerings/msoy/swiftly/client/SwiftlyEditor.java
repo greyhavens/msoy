@@ -320,8 +320,11 @@ public class SwiftlyEditor extends PlacePanel
             document.lazarus(_roomObj.pathElements);
         }
 
-        // let our project panel know about all the roomy goodness
-        _projectPanel.setProject(_roomObj);
+        // if we have already resolved the project, load it into the project panel
+        // otherwise we'll wait for the message that the project has been resolved later
+        if (_roomObj.project != null) {
+            _projectPanel.setProject(_roomObj);
+        }
     }
 
     @Override // from PlacePanel
@@ -353,6 +356,10 @@ public class SwiftlyEditor extends PlacePanel
 
         } else if (event.getName().equals(ProjectRoomObject.BUILDING)) {
             _ctrl.buildAction.setEnabled(!_roomObj.building);
+
+        // the project has been loaded or changed. tell the project panel to make the project tree
+        } else if (event.getName().equals(ProjectRoomObject.PROJECT)) {
+            _projectPanel.setProject(_roomObj);
         }
     }
 
