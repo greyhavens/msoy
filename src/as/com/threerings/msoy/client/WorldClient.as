@@ -131,6 +131,7 @@ public class WorldClient extends BaseClient
 
         // these cause bundles to be compiled in.
         [ResourceBundle("general")]
+        [ResourceBundle("chat")]
         [ResourceBundle("game")]
         [ResourceBundle("editing")]
         [ResourceBundle("item")]
