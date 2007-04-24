@@ -184,9 +184,8 @@ public class SwiftlyTextPane extends JEditorPane
         _popup.add(_undoAction);
         _popup.add(_redoAction);
 
-        MouseListener popupListener = new PopupListener();
         // add popupListener to the textpane
-        addMouseListener(popupListener);
+        addMouseListener(new PopupListener());
     }
 
     protected void addKeyAction (Action action, KeyStroke key)

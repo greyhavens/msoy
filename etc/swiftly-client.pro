@@ -25,6 +25,7 @@
     !**/msoy/game/data/MsoyMatchConfig.class,**/msoy/game/data/*Config.class,
     **/msoy/game/data/GameMemberInfo.class,**/msoy/game/data/GameSummary.class,
     **/msoy/world/data/WorldOccupantInfo.class,**/infosys/closeandmaxtabbedpane/**)
+-injars ../dist/msoy-media.jar(**/icons/swiftly/**)
 -injars ../dist/lib/sdoc-0.5.0-beta-ooo.jar(!META-INF/*)
 
 -dontskipnonpubliclibraryclasses

@@ -80,19 +80,17 @@ public class SwiftlyEditor extends PlacePanel
         // add our toolbar
         add(_toolbar = new EditorToolBar(ctrl, _ctx, this), VGroupLayout.FIXED);
 
-        // set up the top pane: project panel and editor
+        // set up the top pane: editor and project panel
         _editorTabs = new TabbedEditor(_ctx, this);
         _editorTabs.setMinimumSize(new Dimension(400, 400));
 
         _projectPanel = new ProjectPanel(_ctx, this);
         _projectPanel.setMinimumSize(new Dimension(0, 0));
 
-        JSplitPane topPane =
-            new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _projectPanel, _editorTabs);
-        topPane.setOneTouchExpandable(true);
-        topPane.setDividerLocation(200);
+        _topPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _editorTabs, _projectPanel);
+        _topPane.setOneTouchExpandable(true);
 
-        // set up the bottom pane: chat and console
+        // set up the bottom pane: console and chat
         JPanel chatPanel = new JPanel(
             new HGroupLayout(HGroupLayout.STRETCH, HGroupLayout.STRETCH, 5, HGroupLayout.LEFT));
         chatPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -104,11 +102,10 @@ public class SwiftlyEditor extends PlacePanel
         _console = new Console(_ctx, this);
         _console.setMinimumSize(new Dimension(0, 0));
 
-        JSplitPane bottomPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chatPanel, _console);
-        bottomPane.setOneTouchExpandable(true);
-        bottomPane.setDividerLocation(400);
+        _bottomPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _console, chatPanel);
+        _bottomPane.setOneTouchExpandable(true);
 
-        _contentPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topPane, bottomPane);
+        _contentPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, _topPane, _bottomPane);
         _contentPane.setOneTouchExpandable(true);
         add(_contentPane);
 
@@ -124,6 +121,11 @@ public class SwiftlyEditor extends PlacePanel
         // set up our divider location when we are first laid out
         if (getHeight() != 0 && _contentPane.getLastDividerLocation() == 0) {
             _contentPane.setDividerLocation(getHeight()-200);
+        }
+        if (getWidth() != 0 &&
+            _topPane.getLastDividerLocation() == 0 && _bottomPane.getLastDividerLocation() == 0) {
+            _topPane.setDividerLocation(getWidth()-250);
+            _bottomPane.setDividerLocation(getWidth()-350);
         }
     }
 
@@ -471,6 +473,8 @@ public class SwiftlyEditor extends PlacePanel
     protected ProjectRoomObject _roomObj;
 
     protected JSplitPane _contentPane;
+    protected JSplitPane _topPane;
+    protected JSplitPane _bottomPane;
     protected TabbedEditor _editorTabs;
     protected Console _console;
     protected EditorToolBar _toolbar;

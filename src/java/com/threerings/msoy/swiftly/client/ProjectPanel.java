@@ -4,14 +4,20 @@
 package com.threerings.msoy.swiftly.client;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import java.io.File;
 import java.io.FileInputStream;
 
+import java.net.URL;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
@@ -56,10 +62,10 @@ public class ProjectPanel extends JPanel
 
         _uploadFileAction = createUploadFileAction();
 
-        add(_scrollPane, BorderLayout.CENTER);
         setupToolbar();
+        add(_toolbar, BorderLayout.PAGE_START);
         setupPopup();
-        add(_toolbar, BorderLayout.PAGE_END);
+        add(_scrollPane, BorderLayout.CENTER);
     }
 
     /**
@@ -79,9 +85,10 @@ public class ProjectPanel extends JPanel
         _tree.setShowsRootHandles(true);
         _tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         _tree.addTreeSelectionListener(this);
+        _tree.addMouseListener(new PopupListener());
 
         _scrollPane.getViewport().setView(_tree);
-        disableToolbar();
+        setToolbarEnabled(false);
     }
 
     // from interface TreeSelectionListener
@@ -162,43 +169,51 @@ public class ProjectPanel extends JPanel
         });
     }
 
-    protected Action createPlusButtonAction ()
+    protected Action createDeleteFileAction ()
     {
-        // TODO need icon
-        return new AbstractAction("+") {
-            // from AbstractAction
-            public void actionPerformed (ActionEvent e) {
-                _popup.show(_plusButton, _plusButton.getX(),
-                    _plusButton.getY() - _popup.getHeight());
-            }
-        };
-    }
-
-    protected Action createMinusButtonAction ()
-    {
-        // TODO need icon
-        return new AbstractAction("-") {
-            // from AbstractAction
+        URL imageURL = getClass().getResource(DELETE_FILE_ICON);
+        Action action =
+        new AbstractAction(_msgs.get("m.action.delete_file"), new ImageIcon(imageURL)) {
             public void actionPerformed (ActionEvent e) {
                 deletePathElement();
             }
         };
+        action.putValue(AbstractAction.SHORT_DESCRIPTION, _msgs.get("m.tooltip.delete_file"));
+        return action;
+    }
+
+    protected Action createRenameFileAction ()
+    {
+        URL imageURL = getClass().getResource(RENAME_FILE_ICON);
+        Action action =
+        new AbstractAction(_msgs.get("m.action.rename_file"), new ImageIcon(imageURL)) {
+            public void actionPerformed (ActionEvent e) {
+                // tell the tree to start editing the selected path
+                _tree.startEditingAtPath(_tree.getSelectionPath());
+            }
+        };
+        action.putValue(AbstractAction.SHORT_DESCRIPTION, _msgs.get("m.tooltip.rename_file"));
+        return action;
     }
 
     protected Action createAddFileAction ()
     {
-        return new AbstractAction(_msgs.get("m.action.add_file")) {
-            // from AbstractAction
+        URL imageURL = getClass().getResource(ADD_FILE_ICON);
+        Action action =
+            new AbstractAction(_msgs.get("m.action.add_file"), new ImageIcon(imageURL)) {
             public void actionPerformed (ActionEvent e) {
                 addPathElement(PathElement.Type.FILE);
             }
         };
+        action.putValue(AbstractAction.SHORT_DESCRIPTION, _msgs.get("m.tooltip.add_file"));
+        return action;
     }
 
     protected Action createUploadFileAction ()
     {
-        return new AbstractAction(_msgs.get("m.action.upload_file")) {
-            // from AbstractAction
+        URL imageURL = getClass().getResource(UPLOAD_FILE_ICON);
+        Action action =
+            new AbstractAction(_msgs.get("m.action.upload_file"), new ImageIcon(imageURL)) {
             public void actionPerformed (ActionEvent e) {
                 // TODO: implement filters based on supported MediaDesc mime types
                 // FileNameExtensionFilter filter =
@@ -233,17 +248,20 @@ public class ProjectPanel extends JPanel
                 }
             }
         };
+        action.putValue(AbstractAction.SHORT_DESCRIPTION, _msgs.get("m.tooltip.upload_file"));
+        return action;
     }
 
+    /* TODO: disabled until backend support is added
     protected Action createAddDirectoryAction ()
     {
         return new AbstractAction(_msgs.get("m.action.add_directory")) {
-            // from AbstractAction
             public void actionPerformed (ActionEvent e) {
                 addPathElement(PathElement.Type.DIRECTORY);
             }
         };
     }
+    */
 
     /**
      * Adds a {@link PathElement} to the tree and broadcasts that fact to the server.
@@ -319,7 +337,7 @@ public class ProjectPanel extends JPanel
             public void requestProcessed () {
                 _editor.consoleMessage(_msgs.get("m.element_deleted", element.getName()));
                 // disable the toolbar and unset the selected node
-                disableToolbar();
+                setToolbarEnabled(false);
                 _selectedNode = null;
             }
             public void requestFailed (String reason) {
@@ -341,43 +359,34 @@ public class ProjectPanel extends JPanel
 
     protected void setupToolbar ()
     {
-        _plusButton = new JButton(createPlusButtonAction());
-        _toolbar.add(_plusButton);
-
-        _minusButton = new JButton(createMinusButtonAction());
-        _toolbar.add(_minusButton);
+        _toolbar.add(createButton(createAddFileAction()));
+        _toolbar.add(createButton(_uploadFileAction));
+        _toolbar.add(createButton(createDeleteFileAction()));
 
         _toolbar.setFloatable(false);
-        disableToolbar();
+        setToolbarEnabled(false);
+    }
+
+    protected JButton createButton (Action action)
+    {
+        JButton button = new JButton(action);
+        // hide the action text
+        button.setText("");
+        return button;
     }
 
     protected void setupPopup ()
     {
         _popup = new JPopupMenu();
-        // XXX temp disabled until working server side
-        // _popup.add(createAddDirectoryAction());
-        _popup.add(_uploadFileAction);
-        _popup.add(createAddFileAction());
-        // in order for getHeight() to give a reasonable value the first time, we need to show
-        // the popup at least once. pack() doesn't seem to do this.
-        _popup.setVisible(true);
-        _popup.setVisible(false);
-    }
-
-    protected void enableToolbar ()
-    {
-        setToolbarEnabled(true);
-    }
-
-    protected void disableToolbar ()
-    {
-        setToolbarEnabled(false);
+        _popup.add(createDeleteFileAction());
+        _popup.add(createRenameFileAction());
     }
 
     protected void setToolbarEnabled (boolean value)
     {
-        _plusButton.setEnabled(value);
-        _minusButton.setEnabled(value);
+        for (Component button : _toolbar.getComponents()) {
+            button.setEnabled(value);
+        }
     }
 
     protected PathElementTreeNode getSelectedNode ()
@@ -394,9 +403,33 @@ public class ProjectPanel extends JPanel
     {
         // if this is the first selection enable the buttons
         if (_selectedNode == null) {
-            enableToolbar();
+            setToolbarEnabled(true);
         }
         _selectedNode = node;
+    }
+
+    protected class PopupListener extends MouseAdapter
+    {
+        @Override // from MouseAdapter
+        public void mousePressed(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+
+        @Override // from MouseAdapter
+        public void mouseReleased(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+
+        protected void maybeShowPopup(MouseEvent e) {
+            if (!e.isPopupTrigger()) {
+                return;
+            }
+            TreePath path = _tree.getPathForLocation(e.getX(), e.getY());
+            if (path != null) {
+                _tree.setSelectionPath(path);
+                _popup.show(e.getComponent(), e.getX(), e.getY());
+            }
+        }
     }
 
     protected class UploadTask extends TaskAdapter
@@ -480,6 +513,12 @@ public class ProjectPanel extends JPanel
     /** The name of the upload task */
     protected static final String UPLOAD_TASK = "upload task";
 
+    /** The location of various icons */
+    protected static final String ADD_FILE_ICON = "/rsrc/icons/swiftly/new.gif";
+    protected static final String UPLOAD_FILE_ICON = "/rsrc/icons/swiftly/upload.gif";
+    protected static final String DELETE_FILE_ICON = "/rsrc/icons/swiftly/delete.gif";
+    protected static final String RENAME_FILE_ICON = "/rsrc/icons/swiftly/rename.gif";
+
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
     protected MessageBundle _msgs;
@@ -489,8 +528,6 @@ public class ProjectPanel extends JPanel
 
     protected JTree _tree;
     protected JToolBar _toolbar = new JToolBar();
-    protected JButton _plusButton;
-    protected JButton _minusButton;
     protected Action _uploadFileAction;
     protected JScrollPane _scrollPane = new JScrollPane();
     protected JPopupMenu _popup;
