@@ -229,16 +229,11 @@ public class RoomView extends AbstractRoomView
                 Msgs.GENERAL.get("b.view_item", kind),
                 MsoyController.VIEW_ITEM, ident));
 
-            // for now, only let support+ see the furni edit menu
-            var user :MemberObject = _ctx.getMemberObject();
-            if (user.tokens.isSupport()) {
-
-                // furni sprites can be moved around. except when they're the background.
-                if (sprite is FurniSprite && sprite != _bg) {
-                    menuItems.push(MenuUtil.createControllerMenuItem(
-                        Msgs.GENERAL.get("b.edit_furni"),
-                        RoomController.EDIT_FURNI, sprite as FurniSprite));
-                }
+            // furni sprites can be moved around. except when they're the background.
+            if (sprite is FurniSprite && sprite != _bg) {
+                menuItems.push(MenuUtil.createControllerMenuItem(
+                                   Msgs.GENERAL.get("b.edit_furni"),
+                                   RoomController.EDIT_FURNI, sprite as FurniSprite));
             }
             
             // TEMP: restrict blocking to members only, for now.

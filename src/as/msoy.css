@@ -332,6 +332,17 @@ Window {
 .furniEditPanel {
   horizontalGap: 0;
   verticalGap: 0;
+  paddingLeft: 4;
+  paddingRight: 4;
+  backgroundImage: Embed(source="../../rsrc/media/skins/button/furniedit/bg.png",
+                         scaleGridLeft="2", scaleGridTop="16", 
+                         scaleGridRight="105", scaleGridBottom="40");
+  backgroundSize: "100%";
+}
+
+.furniEditRibbon { 
+  horizontalGap: 0;
+  verticalGap: 0;
 }
 
 VScrollBar {

@@ -28,11 +28,17 @@ import mx.events.ChildExistenceChangedEvent;
 public class Ribbon extends Box
 {
     /**
+     * The default value for how long the mouse button needs to be pressed to
+     * expand the ribbon, in milliseconds.
+     */
+    public static const DEFAULT_FOLDOUT_DELAY :int = 500;
+
+    /**
      * Constructor
      */
-    public function Ribbon ()
+    public function Ribbon (foldoutDelay :Number = DEFAULT_FOLDOUT_DELAY)
     {
-        _timer = new Timer(FOLDOUT_DELAY, 1);
+        _timer = new Timer(foldoutDelay, 1);
         _timer.addEventListener(TimerEvent.TIMER, handleFoldoutTimer);
         this.horizontalScrollPolicy = ScrollPolicy.OFF;
         this.verticalScrollPolicy = ScrollPolicy.OFF;
@@ -244,9 +250,6 @@ public class Ribbon extends Box
         collapsed = false;
     }
         
-    /** How long the mouse button needs to be pressed to expand the ribbon, in milliseconds. */
-    protected var FOLDOUT_DELAY :int = 500;
-
     /** Index of the currently selected child. */
     protected var _selectedIndex :int = -1;
 

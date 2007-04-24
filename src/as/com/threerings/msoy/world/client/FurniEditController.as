@@ -13,7 +13,10 @@ import flash.ui.Keyboard;
 import mx.containers.Canvas;
 import mx.containers.HBox;
 import mx.controls.Button;
+import mx.controls.Spacer;
 import mx.core.Container;
+import mx.core.ScrollPolicy;
+import mx.events.FlexEvent;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
@@ -59,32 +62,80 @@ public class FurniEditController
 
         // create a collection of button definitions. handlers are closures on this instance.
         _menuButtons = [
-            [ { button: null, icon: MOVE_ICON, text: null, handler: move },
-              { button: null, icon: MOVE_Y_ICON, text: null, handler: move },
-              { button: null, icon: MOVE_Z_ICON, text: null, handler: move } ],
-            [ { button: null, icon: RESIZE_ICON, text: null, handler: resize },
-              { button: null, icon: RESIZE_CONST_ICON, text: null, handler: resize_const },
-              { button: null, icon: RESIZE_DEF_ICON, text: null, handler: resize_defaults } ],
-            [ { button: null, icon: HFLIP_ICON, text: null, handler: hflip },
-              { button: null, icon: VFLIP_ICON, text: null, handler: vflip } ],
-            { button: null, icon: CANCEL_ICON, text: null, handler: cancel },
-            { button: null, icon: null, text: "b.edit_furni_ok", handler: commit } ];
+            [ { icon: MOVE_ICON, text: null, handler: move },
+              { icon: MOVE_Y_ICON, text: null, handler: move },
+              { icon: MOVE_Z_ICON, text: null, handler: move } ],
+            [ { icon: RESIZE_ICON, text: null, handler: resize },
+              { icon: RESIZE_CONST_ICON, text: null, handler: resize_const },
+              { icon: RESIZE_DEF_ICON, text: null, handler: resize_defaults } ],
+            [ { icon: HFLIP_ICON, text: null, handler: hflip },
+              { icon: VFLIP_ICON, text: null, handler: vflip } ]
+            ];
     }
 
-    /** Creates a whole set of button instances, and adds them to the specified container. */
+    /** Creates the furni editor UI. */
     protected function makeButtonPanel () :Container
     {
-        // now create button display objects for each definition
-        var buttonPanel :Container = new HBox(); 
-        buttonPanel.styleName = "furniEditPanel";
+        // create a canvas with a background that sits in the upper left.
+        //
+        // since we can't control background alignment from styles, we need to create a separate
+        // widget just for the background, and drop it at the right location. nice.
+        
+        var buttonPanel :Container = new Canvas(); 
         buttonPanel.visible = false;
+        buttonPanel.horizontalScrollPolicy = ScrollPolicy.OFF;
+        buttonPanel.verticalScrollPolicy = ScrollPolicy.OFF;
+        buttonPanel.width = 200;  // max width
+        buttonPanel.height = 100; // more than necessary, to leave room for ribbons foldout
 
-        buttonPanel.width = 150;
-        buttonPanel.height = 100;
+        var background :Container = new Canvas();
+        background.horizontalScrollPolicy = ScrollPolicy.OFF;
+        background.verticalScrollPolicy = ScrollPolicy.OFF;
+        background.styleName = "furniEditPanel";
+        background.x = background.y = 0;
+        background.height = 44;
+        buttonPanel.addChild(background);
 
-        buttonPanelHelper(_menuButtons, buttonPanel);
+        // cancel button in the upper right corner of the bitmap
+        var bcancel :Button = new Button();
+        bcancel.setStyle("icon", CANCEL_ICON);
+        addButtonListener(bcancel, cancel);
+        bcancel.styleName = "furniEditButton";
+        bcancel.width = bcancel.height = 13;
+        bcancel.setStyle("right", 2);
+        bcancel.setStyle("top", 2);
+        background.addChild(bcancel);
+
+        // ok button and a bit of a spacer
+        var elts :Container = new HBox();
+        elts.styleName = "furniEditRibbon";
+        elts.x = 66;
+        elts.y = 20;
+        background.addChild(elts);
+
+        var bcommit :Button = new Button();
+        bcommit.label = Msgs.GENERAL.get("b.edit_furni_ok");
+        addButtonListener(bcommit, commit);
+        bcommit.styleName = "furniEditButton";
+        bcommit.height = 20;
+        elts.addChild(bcommit);
+
+        var spacer :Spacer = new Spacer;
+        spacer.width = 4;
+        elts.addChild(spacer);
+
+        // a mini-panel for the ribbons
+        var pulldowns :HBox = new HBox();
+        buttonPanelHelper(_menuButtons, pulldowns);
+        pulldowns.x = 3;
+        pulldowns.y = 20;
+        pulldowns.styleName = "furniEditRibbon";
+        buttonPanel.addChild(pulldowns);
+        
+        
         return buttonPanel;
     }
+
 
     /** Helper function to create buttons. */
     protected function buttonPanelHelper (defs :Array, container :Container) :void
@@ -93,7 +144,7 @@ public class FurniEditController
             if (def is Array) {  
                 // create a new Ribbon container, and put all definitions in there
                 var ribbon :Ribbon = new Ribbon();
-                ribbon.styleName = "furniEditPanel";
+                ribbon.styleName = "furniEditRibbon";
                 buttonPanelHelper(def as Array, ribbon);
                 container.addChild(ribbon);
                 if (def.length > 0) {
@@ -110,7 +161,7 @@ public class FurniEditController
     protected function makeButton (def :Object) :Button
     {
         var button :Button = new Button();
-        button.styleName = "furniEditButton";    
+        button.styleName = "furniEditButton";
         button.height = 20;
         if (def.icon != null) {
             button.setStyle("icon", def.icon as Class);
@@ -123,7 +174,6 @@ public class FurniEditController
             addButtonListener(button, def.handler);
         }
 
-        def.button = button; // store this instance back in the button definition
         return button;
     }
     
@@ -606,7 +656,7 @@ public class FurniEditController
     protected static const HFLIP_ICON :Class;
     [Embed(source="../../../../../../../rsrc/media/skins/button/furniedit/flip_vertical.png")]
     protected static const VFLIP_ICON :Class;
-    [Embed(source="../../../../../../../rsrc/media/skins/button/backtolobby.png")] // TEMP
+    [Embed(source="../../../../../../../rsrc/media/skins/button/furniedit/close.png")]
     protected static const CANCEL_ICON :Class;
 }
 }
