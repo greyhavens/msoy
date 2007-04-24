@@ -317,6 +317,12 @@ public class ProjectPanel extends JPanel
             return;
         }
 
+        // don't let the user delete the project
+        if (element.getType() == PathElement.Type.ROOT) {
+            _editor.showErrorMessage(_msgs.get("e.cannot_delete_project"));
+            return;
+        }
+
         // Confirm the user actually wants to delete this PathElement
         if (!_editor.showConfirmDialog(_msgs.get("m.dialog.confirm_delete", element.getName()))) {
             return;
@@ -328,9 +334,6 @@ public class ProjectPanel extends JPanel
         } else if (element.getType() == PathElement.Type.DIRECTORY) {
             // TODO oh god we have to remove all the tabs associated with this directory
             // soo.. every tab that has a common parent id() ?
-        } else if (element.getType() == PathElement.Type.ROOT){
-            // TODO you're trying to remove the project itself? Does Homey play that?
-            return;
         }
         _roomObj.service.deletePathElement(_ctx.getClient(), element.elementId, 
             new ConfirmListener () {
