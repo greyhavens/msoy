@@ -4,6 +4,7 @@
 package com.threerings.msoy.chat.client {
 
 import flexlib.containers.SuperTabNavigator;
+import flexlib.controls.tabBarClasses.SuperTab;
 
 /**
  * Undoes some stupid stuff that SuperTabNavigator does in an attempt to preserve and work around
@@ -14,6 +15,20 @@ import flexlib.containers.SuperTabNavigator;
  */
 public class ChatTabNavigator extends SuperTabNavigator
 {
+    public function ChatTabNavigator ()
+    {
+        popUpButtonPolicy = POPUPPOLICY_OFF;
+        dragEnabled = false;
+
+        // this adjusts the gap between the *bottom* of the tabs and the contents; you might thing
+        // it referred to the padding at the top of the TabNavigator panel, but that would be far
+        // too straightforward for those clever Flex engineers; on top of that, Flex hardcodes a
+        // one pixel overlap for the tab bars because the default style works that way, so we're
+        // actually setting a 4 pixel gap between the bottom of the tabs and the top of the
+        // contents of the tab here; amazing!
+        setStyle("paddingTop", 5);
+    }
+
     override protected function createChildren() :void
     {
         super.createChildren();

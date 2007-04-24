@@ -43,20 +43,10 @@ public class ChatChannelPanel extends VBox
         width = SIDEBAR_WIDTH;
 
         addChild(_tabnav = new ChatTabNavigator());
-        _tabnav.closePolicy = SuperTab.CLOSE_SELECTED;
-        _tabnav.popUpButtonPolicy = SuperTabNavigator.POPUPPOLICY_OFF;
-        _tabnav.dragEnabled = false;
+        _tabnav.closePolicy = SuperTab.CLOSE_SELECTED; // can't do this in the constructor, yay!
         _tabnav.percentWidth = 100;
         _tabnav.percentHeight = 100;
         _tabnav.addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE, tabRemoved);
-
-        // this adjusts the gap between the *bottom* of the tabs and the contents; you might thing
-        // it referred to the padding at the top of the TabNavigator panel, but that would be far
-        // too straightforward for those clever Flex engineers; on top of that, Flex hardcodes a
-        // one pixel overlap for the tab bars because the default style works that way, so we're
-        // actually setting a 4 pixel gap between the bottom of the tabs and the top of the
-        // contents of the tab here; amazing!
-        _tabnav.setStyle("paddingTop", 5);
 
         // create a UI for sending chat which we'll show when we're active
         _inputBox = new HBox();
