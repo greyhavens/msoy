@@ -33,29 +33,33 @@ Panel {
 }
 
 TabNavigator {
-  backgroundColor: #FFFFFF;
   borderStyle: none;
   borderThickness: 0;
-  tabHeight: 20;
-  tabStyleName: "msoyTab";
-  selectedTabTextStyleName: "selectedMsoyTab";
+  tabHeight: 19;
+  tabStyleName: "msoyTabButton";
+  selectedTabTextStyleName: "selectedMsoyTabButton";
 }
 
-.msoyTab {
-  highlightAlphas: 0, 0;
-  fillAlphas: 1, 1;
-  fillColors: #666666, #333333;
-  backgroundColor: #FFFFFF;
-  borderColor: #333333;
-  color: #ffffff;
-  textRollOverColor: #ffffff;
-  themeColor: #999999;
+.msoyTabButton {
+  color: #b4cbd7;
   fontFamily: Arial;
+  textRollOverColor: #b4cbd7;
+  overSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
+          scaleGridTop="3", scaleGridBottom="17",
+          scaleGridLeft="3", scaleGridRight="9");
+  selectedOverSkin: Embed(source="../../rsrc/media/skins/tab/selected.png",
+          scaleGridTop="3", scaleGridBottom="17",
+          scaleGridLeft="3", scaleGridRight="9");
+  selectedUpSkin: Embed(source="../../rsrc/media/skins/tab/selected.png",
+          scaleGridTop="3", scaleGridBottom="17",
+          scaleGridLeft="3", scaleGridRight="9");
+  upSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
+          scaleGridTop="3", scaleGridBottom="17",
+          scaleGridLeft="3", scaleGridRight="9");
 }
 
-.selectedMsoyTab {
-  color: #000000;
-  textRollOverColor: #000000;
+.selectedMsoyTabButton {
+  color: black;
 }
 
 .channelChatTab {
@@ -494,33 +498,6 @@ Tree {
   paddingLeft: 4px;
   paddingRight: 4px;
   paddingBottom: 4px;
-}
-
-.lobbyTabs {
-  tabStyleName: lobbyTabButton;
-  selectedTabTextStyleName: lobbyTabSelectedText;
-  tabHeight: 20;
-}
-
-.lobbyTabButton {
-  color: #b4cbd7;
-  textRollOverColor: #b4cbd7;
-  overSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/tab/selected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/tab/selected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
-  upSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
-}
-
-.lobbyTabSelectedText { 
-  color: black;
 }
 
 .lobbyTableList {
