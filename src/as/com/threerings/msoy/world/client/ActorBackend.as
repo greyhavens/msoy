@@ -8,11 +8,16 @@ public class ActorBackend extends EntityBackend
     {
         super.populateControlProperties(o);
 
-        o["setWalkSpeed_v1"] = setWalkSpeed_v1;
+        o["setMoveSpeed_v1"] = setMoveSpeed_v1;
         o["setLocation_v1"] = setLocation_v1;
         o["setOrientation_v1"] = setOrientation_v1;
         o["setState_v1"] = setState_v1;
         o["getState_v1"] = getState_v1;
+
+        // oldness (used for a very short time), deprecated 2007-04-24
+        o["setWalkSpeed_v1"] = function (num :Number) :void {
+            setMoveSpeed_v1(num * 1000);
+        };
     }
 
     override protected function populateControlInitProperties (o :Object) :void
@@ -27,11 +32,11 @@ public class ActorBackend extends EntityBackend
     }
 
     /**
-     * Called by user code to configure the default walking speed for this actor.
+     * Called by user code to configure the default move speed for this actor.
      */
-    protected function setWalkSpeed_v1 (speed :Number) :void
+    protected function setMoveSpeed_v1 (pixelsPerSecond :Number) :void
     {
-        (_sprite as ActorSprite).setWalkSpeedFromUser(speed);
+        (_sprite as ActorSprite).setMoveSpeedFromUser(pixelsPerSecond);
     }
 
     /**

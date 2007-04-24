@@ -49,11 +49,11 @@ public class ActorSprite extends MsoySprite
     /** The maximum height of an avatar sprite. */
     public static const MAX_HEIGHT :int = 450;
 
-    /** The default walk speed, in pixels per millisecond. */
-    public static const DEFAULT_WALK_SPEED :Number = .5;
+    /** The default move speed, in pixels per millisecond. */
+    public static const DEFAULT_MOVE_SPEED :Number = 500;
 
-    /** The minimum walk speed, in pixels per millisecond. */
-    public static const MIN_WALK_SPEED :Number = .05;
+    /** The minimum move speed, in pixels per millisecond. */
+    public static const MIN_MOVE_SPEED :Number = 50;
 
     /**
      * Creates an actor sprite for the supplied occupant.
@@ -136,9 +136,9 @@ public class ActorSprite extends MsoySprite
     /**
      * Return the walk speed of this actor, in pixels / millisecond.
      */
-    public function getWalkSpeed () :Number
+    public function getMoveSpeed () :Number
     {
-        return Math.max(MIN_WALK_SPEED, _walkSpeed * _scale);
+        return Math.max(MIN_MOVE_SPEED, _moveSpeed * _scale);
     }
 
     override public function getDesc () :String
@@ -490,6 +490,14 @@ public class ActorSprite extends MsoySprite
         }
     }
 
+    override protected function willShowNewMedia () :void
+    {
+        super.willShowNewMedia();
+
+        // reset the move speed
+        _moveSpeed = DEFAULT_MOVE_SPEED;
+    }
+
     override protected function createBackend () :EntityBackend
     {
         return new ActorBackend();
@@ -517,9 +525,9 @@ public class ActorSprite extends MsoySprite
         Log.getLog(this).debug("user-set orientation is currently TODO.");
     }
 
-    internal function setWalkSpeedFromUser (speed :Number) :void
+    internal function setMoveSpeedFromUser (speed :Number) :void
     {
-        _walkSpeed = speed;
+        _moveSpeed = speed;
         // don't worry, it'll be bounded by the minimum at the appropriate place
     }
 
@@ -569,8 +577,8 @@ public class ActorSprite extends MsoySprite
     /** The media scale we should use. */
     protected var _scale :Number = 1;
 
-    /** The walk speed, in pixels per millisecond. */
-    protected var _walkSpeed :Number = DEFAULT_WALK_SPEED;
+    /** The move speed, in pixels per second. */
+    protected var _moveSpeed :Number = DEFAULT_MOVE_SPEED;
 
     /** A decoration used when we're in a table in a lobby. */
     protected var _tableIcon :TableIcon;

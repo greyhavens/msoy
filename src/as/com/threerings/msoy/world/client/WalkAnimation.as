@@ -30,7 +30,7 @@ public class WalkAnimation extends Animation
         var dz :Number = scene.getDepth() * (dest.z - src.z);
 
         // calculate the duration- walk speed is specified in pixels/ms.
-        _duration = int(Math.sqrt((dx * dx) + (dy * dy) + (dz * dz)) / spr.getWalkSpeed());
+        _duration = int(1000 * Math.sqrt((dx * dx) + (dy * dy) + (dz * dz)) / spr.getMoveSpeed());
     }
 
     /**
