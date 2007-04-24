@@ -156,10 +156,12 @@ public /*abstract*/ class Item
             return "pet";
         } else if (type == AUDIO) { 
             return "audio";
+        } else if (type == VIDEO) {
+            return "video";
         } else if (type == DECOR) {
             return "decor";
         } else {
-            return null;
+            return "unknown:" + type;
         }
     }
 
