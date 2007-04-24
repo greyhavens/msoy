@@ -35,7 +35,7 @@ Panel {
 TabNavigator {
   borderStyle: none;
   borderThickness: 0;
-  tabHeight: 19;
+  tabHeight: 20;
   tabStyleName: "msoyTabButton";
   selectedTabTextStyleName: "selectedMsoyTabButton";
 }
@@ -62,9 +62,39 @@ TabNavigator {
   color: black;
 }
 
+SuperTabNavigator { 
+  leftButtonStyleName: "msoyLeftArrowTabButton";
+  rightButtonStyleName: "msoyRightArrowTabButton";
+  popUpButtonPolicy: off;
+  buttonWidth: 10;
+}
+
+.msoyLeftArrowTabButton {
+  upSkin: Embed(source="../../rsrc/media/skins/tab/tab_left.png");
+  overSkin: Embed(source="../../rsrc/media/skins/tab/tab_left.png");
+  downSkin: Embed(source="../../rsrc/media/skins/tab/tab_left.png");
+}
+
+.msoyRightArrowTabButton {
+  upSkin: Embed(source="../../rsrc/media/skins/tab/tab_right.png");
+  overSkin: Embed(source="../../rsrc/media/skins/tab/tab_right.png");
+  downSkin: Embed(source="../../rsrc/media/skins/tab/tab_right.png");
+}
+
+SuperTab { 
+  closeButtonStyleName: "msoyCloseTabButton";
+}
+
+.msoyCloseTabButton {
+  upSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
+  overSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
+  downSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
+}
+
 .channelChatTab {
   borderStyle: none;
   borderThickness: 0;
+  backgroundColor: #FFFFFF;
 }
 
 Accordion {

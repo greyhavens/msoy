@@ -6,6 +6,7 @@ package com.threerings.msoy.chat.client {
 import mx.core.mx_internal;
 
 import mx.containers.HBox;
+import mx.containers.TabNavigator;
 import mx.containers.VBox;
 
 import mx.events.ChildExistenceChangedEvent;
@@ -41,18 +42,21 @@ public class ChatChannelPanel extends VBox
         _ctx = ctx;
         width = SIDEBAR_WIDTH;
 
-        addChild(_tabnav = new SuperTabNavigator());
+        addChild(_tabnav = new ChatTabNavigator());
         _tabnav.closePolicy = SuperTab.CLOSE_SELECTED;
-        _tabnav.setStyle("paddingTop", 0);
+        _tabnav.popUpButtonPolicy = SuperTabNavigator.POPUPPOLICY_OFF;
         _tabnav.dragEnabled = false;
         _tabnav.percentWidth = 100;
         _tabnav.percentHeight = 100;
         _tabnav.addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE, tabRemoved);
 
-// if this simply worked, I could perhaps have spent the last three hours of my life working on
-// something that made people happy; but it doesn't (nor do a dozen other attempts to accomplish
-// the same goal); I still don't know how we're going to get the TabBar to draw a black background
-//         _tabnav.mx_internal::getTabBar().setStyle("backgroundColor", "#000000");
+        // this adjusts the gap between the *bottom* of the tabs and the contents; you might thing
+        // it referred to the padding at the top of the TabNavigator panel, but that would be far
+        // too straightforward for those clever Flex engineers; on top of that, Flex hardcodes a
+        // one pixel overlap for the tab bars because the default style works that way, so we're
+        // actually setting a 4 pixel gap between the bottom of the tabs and the top of the
+        // contents of the tab here; amazing!
+        _tabnav.setStyle("paddingTop", 5);
 
         // create a UI for sending chat which we'll show when we're active
         _inputBox = new HBox();
