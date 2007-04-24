@@ -750,9 +750,11 @@ public class RoomController extends SceneController
                 return;
 
             case Keyboard.SHIFT:
-                if (keyDown && _walkTarget.visible) {
-                    // record the y position at this
-                    _shiftPressed = new Point(_roomView.stage.mouseX, _roomView.stage.mouseY);
+                if (keyDown) {
+                    if (_walkTarget.visible && (_shiftPressed == null)) {
+                        // record the y position at this
+                        _shiftPressed = new Point(_roomView.stage.mouseX, _roomView.stage.mouseY);
+                    }
 
                 } else {
                     _shiftPressed = null;
