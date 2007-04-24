@@ -9,7 +9,7 @@ public class CurseFilter extends com.threerings.crowd.chat.client.CurseFilter
 {
     public function CurseFilter (ctx :BaseContext)
     {
-        super(Msgs.GENERAL.get("x.cursewords"), Msgs.GENERAL.get("x.stopwords"));
+        super(Msgs.CHAT.get("x.cursewords"), Msgs.CHAT.get("x.stopwords"));
     }
 
     override public function getFilterMode () :int

@@ -155,25 +155,19 @@ public class MsoyController extends Controller
      */
     public function handlePopChannelMenu (trigger :Button) :void
     {
-        var friends :Array = _ctx.getMemberObject().getSortedEstablishedFriends();
-        friends = friends.map(function (fe :FriendEntry, index :int, array :Array) :Object {
-            return {
-                label: fe.name.toString(),
-                command: OPEN_CHANNEL,
-                arg: fe.name
-            };
-        });
+        var friends :Array = new Array();
+        for each (var fe :FriendEntry in _ctx.getMemberObject().getSortedEstablishedFriends()) {
+            if (fe.online) {
+                friends.push({ label: fe.name.toString(), command: OPEN_CHANNEL, arg: fe.name });
+            }
+        }
         if (friends.length == 0) {
             friends.push({ label: Msgs.GENERAL.get("m.no_friends") });
         }
 
         var groups :Array = _ctx.getMemberObject().groups.toArray();
         groups = groups.map(function (gm :GroupMembership, index :int, array :Array) :Object {
-            return {
-                label: gm.group.toString(),
-                command: OPEN_CHANNEL,
-                arg: gm.group
-            };
+            return { label: gm.group.toString(), command: OPEN_CHANNEL, arg: gm.group };
         });
         if (groups.length == 0) {
             groups.push({ label: Msgs.GENERAL.get("m.no_groups") });
@@ -200,20 +194,15 @@ public class MsoyController extends Controller
         var memberObj :MemberObject = _ctx.getMemberObject();
 
         var friends :Array = memberObj.getSortedEstablishedFriends();
-        friends = friends.map(
-            function (fe :FriendEntry, index :int, array :Array) :Object {
-                return {
-                    label: fe.name.toString(),
-                    command: GO_MEMBER_HOME,
-                    arg: fe.getMemberId()
-                };
-            });
+        friends = friends.map(function (fe :FriendEntry, index :int, array :Array) :Object {
+            return { label: fe.name.toString(), command: GO_MEMBER_HOME, arg: fe.getMemberId()
+            };
+        });
 
         var recent :Array = memberObj.recentScenes.toArray();
-        recent.sort(
-            function (sb1 :SceneBookmarkEntry, sb2 :SceneBookmarkEntry) :int {
-                return int(sb1.lastVisit - sb2.lastVisit);
-            });
+        recent.sort(function (sb1 :SceneBookmarkEntry, sb2 :SceneBookmarkEntry) :int {
+            return int(sb1.lastVisit - sb2.lastVisit);
+        });
 
         var owned :Array = memberObj.ownedScenes.toArray();
         // TODO: sort owned?

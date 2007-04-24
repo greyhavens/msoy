@@ -46,8 +46,9 @@ import com.threerings.flash.ColorUtil;
 import com.threerings.whirled.spot.data.SpotCodes;
 
 import com.threerings.msoy.client.ControlBar;
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.Prefs;
+import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.data.MsoyCodes;
 
 public class ChatOverlay
     implements ChatDisplay
@@ -397,8 +398,8 @@ public class ChatOverlay
             var format :String = msg.getFormat();
             if (format != null) {
                 var umsg :UserMessage = (msg as UserMessage);
-                var prefix :String = _ctx.xlate(null, format,
-                    umsg.getSpeakerDisplayName()) + " ";
+                var prefix :String = _ctx.xlate(
+                    MsoyCodes.CHAT_MSGS, format, umsg.getSpeakerDisplayName()) + " ";
 
                 if (useQuotes(type)) {
                     prefix += "\"";
@@ -699,30 +700,19 @@ public class ChatOverlay
             return (history || isApprovedLocalType(localtype)) ? TELLFEEDBACK : IGNORECHAT;
 
         } else if (msg is UserMessage) {
-            var type :int = 0;
-
-            if (ChatCodes.USER_CHAT_TYPE == localtype) {
-                type = TELL;
-            } else /*if (ChatCodes.PLACE_CHAT_TYPE == localtype ||
-                     SpotCodes.CLUSTER_CHAT_TYPE == localtype)*/ {
-                type = PLACE;
-            }
-            // TODO: more types
-
+            var type :int = (ChatCodes.USER_CHAT_TYPE == localtype) ? TELL : PLACE;
             // factor in the mode
-            if (type != 0) {
-                switch ((msg as UserMessage).mode) {
-                case ChatCodes.DEFAULT_MODE:
-                    return type | SPEAK;
-                case ChatCodes.EMOTE_MODE:
-                    return type | EMOTE;
-                case ChatCodes.THINK_MODE:
-                    return type | THINK;
-                case ChatCodes.SHOUT_MODE:
-                    return type | SHOUT;
-                case ChatCodes.BROADCAST_MODE:
-                    return BROADCAST; // broadcast always looks like broadcast
-                }
+            switch ((msg as UserMessage).mode) {
+            case ChatCodes.DEFAULT_MODE:
+                return type | SPEAK;
+            case ChatCodes.EMOTE_MODE:
+                return type | EMOTE;
+            case ChatCodes.THINK_MODE:
+                return type | THINK;
+            case ChatCodes.SHOUT_MODE:
+                return type | SHOUT;
+            case ChatCodes.BROADCAST_MODE:
+                return BROADCAST; // broadcast always looks like broadcast
             }
 
         } else if (msg is SystemMessage) {

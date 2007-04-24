@@ -40,7 +40,6 @@ public class ChatChannel extends SimpleStreamableObject
      */
     public static function makeFriendChannel (friend :MemberName) :ChatChannel
     {
-        Log.getLog(ChatChannel).info("Creating friend channel " + friend);
         return new ChatChannel(FRIEND_CHANNEL, friend);
     }
 
@@ -49,7 +48,6 @@ public class ChatChannel extends SimpleStreamableObject
      */
     public static function makeGroupChannel (group :GroupName) :ChatChannel
     {
-        Log.getLog(ChatChannel).info("Creating group channel " + group);
         return new ChatChannel(GROUP_CHANNEL, group);
     }
 
@@ -58,7 +56,6 @@ public class ChatChannel extends SimpleStreamableObject
      */
     public static function makePrivateChannel (channel :ChannelName) :ChatChannel
     {
-        Log.getLog(ChatChannel).info("Creating private channel " + channel);
         return new ChatChannel(PRIVATE_CHANNEL, channel);
     }
 

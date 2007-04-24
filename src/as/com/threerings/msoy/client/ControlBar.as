@@ -202,7 +202,7 @@ public class ControlBar extends HBox
         footerRight.styleName = "controlBarFooterRight";
         addHideableChild(footerRight);
 
-        if (isMember && user.tokens.isSupport()) {
+        if (isMember) {
             _channelBtn = new CommandButton();
             _channelBtn.toolTip = Msgs.GENERAL.get("i.channel");
             _channelBtn.setCommand(MsoyController.POP_CHANNEL_MENU, _channelBtn);
