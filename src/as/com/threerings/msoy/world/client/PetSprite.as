@@ -37,6 +37,12 @@ public class PetSprite extends ActorSprite
         return "PetSprite[" + _occInfo.username + " (oid=" + _occInfo.bodyOid + ")]";
     }
 
+    override protected function getStatusColor (status :int) :uint
+    {
+        // all pets are white-named
+        return 0xFFFFFF;
+    }
+
     override protected function postClickAction () :void
     {
         CommandEvent.dispatch(this, RoomController.PET_CLICKED, this);
