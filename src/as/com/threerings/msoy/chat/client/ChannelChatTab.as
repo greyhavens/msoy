@@ -7,8 +7,11 @@ import flash.events.Event;
 
 import com.threerings.util.Name;
 
+import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.chat.data.SystemMessage;
+
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
-import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
@@ -46,12 +49,20 @@ public class ChannelChatTab extends ChatTab
         } else {
             var ccobj :ChatChannelObject =
                 (_ctx.getChatDirector() as MsoyChatDirector).getChannelObject(channel);
-            if (ccobj != null) {
+            var result :String = (ccobj == null) ? "m.channel_closed" :
                 _ctx.getChatDirector().requestChat(ccobj.speakService, message, false);
-            } else {
-                _ctx.getChatDirector().displayFeedback(MsoyCodes.CHAT_MSGS, "m.channel_closed");
+            if (result != ChatCodes.SUCCESS) {
+                _ctx.getChatDirector().dispatchMessage(createFeedback(result));
             }
         }
+    }
+
+    protected function createFeedback (message :String) :SystemMessage
+    {
+        var msg :SystemMessage = new SystemMessage();
+        msg.attentionLevel = SystemMessage.FEEDBACK;
+        msg.setClientInfo(Msgs.CHAT.xlate(message), channel.toLocalType());
+        return msg;
     }
 
     protected function handleAddRemove (event :Event) :void
