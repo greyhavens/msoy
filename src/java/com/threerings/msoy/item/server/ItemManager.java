@@ -293,7 +293,7 @@ public class ItemManager
         }
 
         // load up the user's lists
-        List<ItemListInfoRecord> records = _listRepo.loadItemListInfos(memberId);
+        List<ItemListInfoRecord> records = _listRepo.loadInfos(memberId);
 
         int nn = records.size();
         List<ItemListInfo> list = new ArrayList<ItemListInfo>(nn);
@@ -321,14 +321,15 @@ public class ItemManager
             new RepositoryListenerUnit<ArrayList<Item>>(listener) {
                 public ArrayList<Item> invokePersistResult () throws PersistenceException {
                     // first, look up the list
-                    ItemListInfoRecord infoRecord = _listRepo.loadItemListInfo(listId);
-                    ItemIdent[] idents = _listRepo.loadItemList(listId);
+                    ItemListInfoRecord infoRecord = _listRepo.loadInfo(listId);
+                    ItemIdent[] idents = _listRepo.loadList(listId);
 
                     // now we're going to load all of these items
                     LookupList lookupList = new LookupList();
                     for (ItemIdent ident : idents) {
                         try {
                             lookupList.addItem(ident);
+
                         } catch (MissingRepositoryException mre) {
                             log.warning("Omitting bogus item from list: " + ident);
                         }
@@ -359,7 +360,7 @@ public class ItemManager
                         // now save the list
                         idents = new ItemIdent[newIdents.size()];
                         newIdents.toArray(idents);
-                        _listRepo.saveItemList(listId, idents);
+                        _listRepo.saveList(listId, idents);
                     }
 
                     // finally, return all the items in list order
@@ -406,7 +407,7 @@ public class ItemManager
             break;
         }
 
-        // filter any items that do not match the predicate
+        // filter to keep only the items that match the predicate
         pred.filter(items);
     }
 

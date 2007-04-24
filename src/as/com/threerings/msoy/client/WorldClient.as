@@ -35,6 +35,7 @@ import com.threerings.msoy.item.data.ItemMarshaller;
 import com.threerings.msoy.item.data.all.Document;
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.ItemList;
 import com.threerings.msoy.item.data.all.Photo;
 
 import com.threerings.msoy.world.data.PetMarshaller;
@@ -128,6 +129,7 @@ public class WorldClient extends BaseClient
         c = PetMarshaller;
         c = WorldGameConfig;
         c = ChiyogamiController;
+        c = ItemList;
 
         // these cause bundles to be compiled in.
         [ResourceBundle("general")]

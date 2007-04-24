@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
+import java.util.logging.Level;
+
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.ConnectionProvider;
@@ -16,36 +18,55 @@ import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
+import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
+
+import static com.threerings.msoy.Log.log;
 
 public class ItemListRepository extends DepotRepository
 {
     public ItemListRepository (ConnectionProvider provider)
     {
         super(new PersistenceContext("itemlistdb", provider));
+
+        // TEMP: test and create tables
+        try {
+            loadInfos(0);
+            loadList(0);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Unable to configure list tables", pe);
+        }
     }
 
-    public void createItemList (ItemListInfoRecord record)
+    public void createList (ItemListInfoRecord record)
         throws PersistenceException
     {
         // 
     }
 
+    public void deleteList (int listId)
+        throws PersistenceException
+    {
+        // delete both tables
+        delete(ItemListInfoRecord.class, listId);
+        delete(ItemIdentListRecord.class, listId);
+    }
+
     /**
      * Load all the ItemListInfos for the specified member. Does not add in "standard" lists.
      */
-    public List<ItemListInfoRecord> loadItemListInfos (int memberId)
+    public List<ItemListInfoRecord> loadInfos (int memberId)
         throws PersistenceException
     {
-        List<ItemListInfoRecord> list = Collections.emptyList();
-//        List<ItemListInfoRecord> list = findAll(ItemListInfoRecord.class,
-//            new Where(ItemListInfoRecord.MEMBER_ID_C, memberId));
+        //List<ItemListInfoRecord> list = Collections.emptyList();
+        List<ItemListInfoRecord> list = findAll(ItemListInfoRecord.class,
+            new Where(ItemListInfoRecord.MEMBER_ID_C, memberId));
         return list;
     }
 
-    public ItemListInfoRecord loadItemListInfo (int listId)
+    public ItemListInfoRecord loadInfo (int listId)
         throws PersistenceException
     {
         return load(ItemListInfoRecord.class, listId);
@@ -54,16 +75,26 @@ public class ItemListRepository extends DepotRepository
     /**
      * Load the specified item list info.
      */
-    public ItemIdent[] loadItemList (int listId)
+    public ItemIdent[] loadList (int listId)
         throws PersistenceException
     {
-        ItemListRecord record = load(ItemListRecord.class, listId);
-        return record.toItemList();
+        List<ItemIdentListRecord> list = findAll(ItemIdentListRecord.class,
+            new Where(ItemIdentListRecord.LIST_ID_C, listId),
+            OrderBy.ascending(ItemIdentListRecord.SEQUENCE_C));
+
+        int size = list.size();
+        ItemIdent[] idents = new ItemIdent[size];
+        for (int ii = 0; ii < size; ii++) {
+            idents[ii] = list.get(ii).toItemIdent();
+        }
+
+        return idents;
     }
 
-    public void saveItemList (int listId, ItemIdent[] items)
+    public void saveList (int listId, ItemIdent[] items)
         throws PersistenceException
     {
-        store(new ItemListRecord(listId, items));
+        // TODO: depot method to overwrite all rows with the same primary key with a new set
+        // of rows
     }
 }

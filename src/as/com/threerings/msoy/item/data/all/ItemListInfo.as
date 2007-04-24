@@ -3,9 +3,11 @@
 
 package com.threerings.msoy.item.data.all {
 
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
 
-import com.threerings.presnets.dobj.DSet_Entry;
+import com.threerings.presents.dobj.DSet_Entry;
 
 public class ItemListInfo
     implements Streamable, DSet_Entry
@@ -18,7 +20,7 @@ public class ItemListInfo
 
     public var listId :int;
 
-    public var memberId :int;
+//    public var memberId :int;
 
     public var type :int;
 
@@ -37,7 +39,7 @@ public class ItemListInfo
     public function readObject (ins :ObjectInputStream) :void
     {
         listId = ins.readInt();
-        memberId = ins.readInt();
+//        memberId = ins.readInt();
         type = ins.readByte();
         name = (ins.readField(String) as String);
     }
@@ -46,7 +48,7 @@ public class ItemListInfo
     public function writeObject (out :ObjectOutputStream) :void
     {
         out.writeInt(listId);
-        out.writeInt(memberId);
+//        out.writeInt(memberId);
         out.writeByte(type);
         out.writeField(name);
     }

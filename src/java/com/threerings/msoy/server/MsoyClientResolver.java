@@ -83,9 +83,9 @@ public class MsoyClientResolver extends CrowdClientResolver
         List<Stat> stats = MsoyServer.statRepo.loadStats(member.memberId);
         userObj.stats = new StatSet(stats.iterator());
 
-        // load up any item lists they may have
-        List<ItemListInfo> itemLists = MsoyServer.itemMan.getItemLists(member.memberId);
-        userObj.lists = new DSet<ItemListInfo>(itemLists);
+//        // load up any item lists they may have
+//        List<ItemListInfo> itemLists = MsoyServer.itemMan.getItemLists(member.memberId);
+//        userObj.lists = new DSet<ItemListInfo>(itemLists);
 
         // calculate flow evaporation since last logon
         int dT = (int) ((System.currentTimeMillis() - member.lastSession.getTime()) / 60000);
