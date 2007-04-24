@@ -33,7 +33,7 @@ public class PetsDialog extends FloatingPanel
         _roomContainer = ctx.getTopPanel().getPlaceContainer();
         _roomContainer.addEventListener(DragEvent.DRAG_DROP, dragDropHandler);
         _roomDragger = new RoomDragHandler(_roomContainer);
-        _pets = new InventoryPicker(_ctx, Item.PET, true);
+        _pets = new InventoryPicker(_ctx, [ Item.PET ], null, true);
         open(false);
     }
 

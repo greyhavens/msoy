@@ -77,7 +77,7 @@ public class SingleItemSelector extends VBox
                         setSelectedItem(item);
                     }
                 },
-                new InventoryPicker(_ctx, _soleType));
+                new InventoryPicker(_ctx, [ _soleType ]));
             ips.open(true, this);
 
         } else if (evt.target == _clear) {

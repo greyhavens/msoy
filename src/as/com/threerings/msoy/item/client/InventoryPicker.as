@@ -58,10 +58,18 @@ public class InventoryPicker extends VBox
         return null;
     }
 
-    public function InventoryPicker (ctx :WorldContext, soleType :int = Item.NOT_A_TYPE,
-                                     showUsed :Boolean = false)
+    /**
+     * Create an inventory picker.
+     *
+     * @param includedTypes if specified, the list of item types to show, and excludeTypes is
+     *                      ignored.
+     * @param excludeTypes if includedTypes == null, may contain item types to exclude.
+     */
+    public function InventoryPicker (
+        ctx :WorldContext, includedTypes :Array = null, excludedTypes :Array = null,
+        showUsed :Boolean = false)
     {
-        _collection = new InventoryCollectionView(ctx, soleType, showUsed);
+        _collection = new InventoryCollectionView(ctx, includedTypes, excludedTypes, showUsed);
 
         _tree = new InventoryTree();
         _tree.verticalScrollPolicy = ScrollPolicy.ON;

@@ -57,7 +57,7 @@ public class PrefsDialog extends FloatingPanel
         _defaultAvatar.avatarMedia = _defaultAvatar.thumbMedia =
             Avatar.getDefaultMemberAvatarMedia();
 
-        _avatars = new InventoryPicker(_ctx, Item.AVATAR, true);
+        _avatars = new InventoryPicker(_ctx, [ Item.AVATAR ], null, true);
         _avatars.addFakeItem(_defaultAvatar);
 
         open(true);

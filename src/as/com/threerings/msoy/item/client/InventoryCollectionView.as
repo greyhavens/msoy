@@ -33,9 +33,12 @@ public class InventoryCollectionView extends ArrayCollection
 {
     /**
      * Construct a new InventoryCollectionView.
+     * @param includedTypes if specified, the list of item types to show, and excludeTypes is
+     *                      ignored.
+     * @param excludeTypes if includedTypes == null, may contain item types to exclude.
      */
     public function InventoryCollectionView (
-        ctx :WorldContext, soleType :int = Item.NOT_A_TYPE,
+        ctx :WorldContext, includedTypes :Array = null, excludedTypes :Array = null,
         showUsed :Boolean = false)
     {
         _ctx = ctx;
@@ -53,13 +56,25 @@ public class InventoryCollectionView extends ArrayCollection
             });
         }
 
-        // set the shown types
-        if (soleType != Item.NOT_A_TYPE) {
-            setShownTypes([ soleType ]);
+        // clean up the passed-in lists, figure what we'll really show
+        var shownTypes :Array;
+        if (includedTypes != null) {
+            // prune any not listed here
+            shownTypes = allTypes.filter(function (type :int, ... ignored) :Boolean {
+                return (includedTypes.indexOf(type) != -1);
+            });
+
+        } else if (excludedTypes != null) {
+            shownTypes = allTypes.filter(function (type :int, ... ignored) :Boolean {
+                return (excludedTypes.indexOf(type) == -1);
+            });
 
         } else {
-            setShownTypes(allTypes);
+            shownTypes = allTypes;
         }
+
+        // and set it.
+        setShownTypes(shownTypes);
     }
 
     /**

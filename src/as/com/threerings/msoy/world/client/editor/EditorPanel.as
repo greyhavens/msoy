@@ -213,7 +213,7 @@ public class EditorPanel extends VBox
 
         _inventoryBox = new VBox();
         _inventoryBox.label = Msgs.EDITING.get("t.inventory");
-        inventory = new InventoryPicker(_ctx);
+        inventory = new InventoryPicker(_ctx, null, [ Item.AVATAR ]);
         inventory.percentWidth = 100;
         inventory.percentHeight = 100;
         _inventoryBox.addChild(inventory);
