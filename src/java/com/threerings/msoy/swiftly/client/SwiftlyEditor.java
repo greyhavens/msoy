@@ -213,6 +213,14 @@ public class SwiftlyEditor extends PlacePanel
         _console.consoleMessage(message);
     }
 
+    /**
+     * See {@link Console} for documentation.
+     */
+    public void consoleErrorMessage (String message)
+    {
+        _console.errorMessage(message);
+    }
+
     public AbstractAction createCloseCurrentTabAction ()
     {
         return _editorTabs.createCloseCurrentTabAction();
@@ -297,7 +305,8 @@ public class SwiftlyEditor extends PlacePanel
      */
     public void showErrorMessage (String message)
     {
-        _console.errorMessage(message);
+        JOptionPane.showInternalMessageDialog(
+            this, message, _msgs.get("m.dialog.error.title"), JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -356,7 +365,7 @@ public class SwiftlyEditor extends PlacePanel
             consoleMessage(_msgs.xlate(_roomObj.consoleOut));
 
         } else if (event.getName().equals(ProjectRoomObject.CONSOLE_ERR)) {
-            showErrorMessage(_msgs.xlate(_roomObj.consoleErr));
+            consoleErrorMessage(_msgs.xlate(_roomObj.consoleErr));
 
         } else if (event.getName().equals(ProjectRoomObject.RESULT)) {
             displayBuildResult();
@@ -459,7 +468,7 @@ public class SwiftlyEditor extends PlacePanel
             if (didSucceed) {
                 consoleMessage(flexOut.toString());
             } else {
-                showErrorMessage(flexOut.toString());
+                consoleErrorMessage(flexOut.toString());
             }
         }
     }
