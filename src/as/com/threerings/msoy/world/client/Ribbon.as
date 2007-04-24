@@ -13,7 +13,6 @@ import mx.containers.Box;
 import mx.core.UIComponent;
 import mx.core.ScrollPolicy;
 
-import mx.events.ChildExistenceChangedEvent;
 
 
 /**
@@ -44,44 +43,23 @@ public class Ribbon extends Box
         this.verticalScrollPolicy = ScrollPolicy.OFF;
     }
 
-    /**
-     * Retrieves the index of the active child, in [0, numChildren-1] if any children exist,
-     * -1 otherwise.
-     */
-    public function get selectedIndex () :int
-    {
-        return _selectedIndex;
-    }
-
-    /**
-     * Sets the active child based on its index, in [0, numChildren-1],
-     * or -1 to disactivate all children.
-     */
-    public function set selectedIndex (index :int) :void
-    {
-        if (index != _selectedIndex) {
-            if (index < numChildren && index >= -1) {
-                _selectedIndex = index;
-            } else {
-                throw new ArgumentError("Invalid value for selectedIndex: " + index +
-                                        " is not in range.");
-            }
-            updateDisplay();
-        }
-    }
-
     /** Retrieves the active child, or null of no active object was set. */
     public function get selectedChild () :DisplayObject
     {
-        return _selectedIndex >= 0 ? getChildAt(_selectedIndex) : null;
+        return _selectedChild;
     }
 
-    /** Sets the specified child object as the active child. */
+    /** Sets the specified child object as the active child. If null, no child is active. */
     public function set selectedChild (element :DisplayObject) :void
     {
-        _selectedIndex = getChildIndex(element);
+        if (element == null || this.contains(element)) {
+            _selectedChild = element;
+        } else {
+            throw new ArgumentError("Display object " + element + " needs to be added " +
+                                    "to the display list before it can be selected. ");
+        }
     }
-
+    
     /**
      * Sets the current state of the ribbon. If true, the ribbon is 'collapsed' and only
      * the active child will be visible. If false, all children are visible.
@@ -157,6 +135,14 @@ public class Ribbon extends Box
             // mouse-up when unfolded - pick a new child and collapse again
             var obj :DisplayObject = event.target as DisplayObject;
             if (contains(obj)) {
+                // dispatch a click
+                var click :MouseEvent = new MouseEvent(
+                    MouseEvent.CLICK, event.bubbles, event.cancelable, event.localX, event.localY,
+                    event.relatedObject, event.ctrlKey, event.altKey, event.shiftKey,
+                    event.buttonDown, event.delta);
+                obj.dispatchEvent(click);
+                                                  
+                // now collapse, forcing everyone to redraw
                 selectedChild = obj;
                 collapsed = true;
             }
@@ -250,11 +236,11 @@ public class Ribbon extends Box
         collapsed = false;
     }
         
-    /** Index of the currently selected child. */
-    protected var _selectedIndex :int = -1;
+    /** Currently selected child (potentially null). */
+    protected var _selectedChild :DisplayObject;
 
     /** Is the ribbon collapsed? */
-    protected var _collapsed :Boolean = false;
+    protected var _collapsed :Boolean;
 
     /** Ribbon rollout timer. */
     protected var _timer :Timer;

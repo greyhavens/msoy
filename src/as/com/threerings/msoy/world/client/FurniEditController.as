@@ -148,7 +148,7 @@ public class FurniEditController
                 buttonPanelHelper(def as Array, ribbon);
                 container.addChild(ribbon);
                 if (def.length > 0) {
-                    ribbon.selectedIndex = 0;
+                    ribbon.selectedChild = ribbon.getChildAt(0);
                     ribbon.collapsed = true;
                 }
             } else {
