@@ -418,7 +418,7 @@ public class ActorSprite extends MsoySprite
         // if we have a configured _height use that in relation to the hot spot y position,
         // otherwise assume our label goes above our bounding box
         var baseY :Number = isNaN(_height) ? 0 :
-            (getMediaScaleY() * _locScale * _fxScaleY * (_hotSpot.y - _height));
+            (getMediaScaleY() * _locScale * _fxScaleY * (getMediaHotSpot().y - _height));
         _label.y = baseY - _label.height;
     }
 
