@@ -480,7 +480,7 @@ public class ActorSprite extends MsoySprite
     {
         switch (status) {
         case OccupantInfo.IDLE:
-            return 0xFFFFFF;
+            return 0x777777;
 
         case OccupantInfo.DISCONNECTED:
             return 0xFF0000;
