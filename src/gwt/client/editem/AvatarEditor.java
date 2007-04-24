@@ -38,6 +38,7 @@ public class AvatarEditor extends ItemEditor
                     return CEditem.emsgs.errAvatarNotFlash();
                 }
                 _avatar.avatarMedia = desc;
+                _avatar.scale = 1f;
                 return null;
             }
         }), CEditem.emsgs.avatarMainTab());
