@@ -17,6 +17,8 @@ import com.threerings.crowd.server.CrowdObjectAccess;
 
 import com.threerings.whirled.server.WhirledClient;
 
+import com.threerings.msoy.admin.server.RuntimeConfig;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyTokenRing;
@@ -104,7 +106,9 @@ public class MsoyClient extends WhirledClient
 
                     // use a naive session length for now, ignoring web activity
                     MsoyServer.memberRepo.noteSessionEnded(
-                        name.getMemberId(), Math.round(_connectTime / 60f));
+                        name.getMemberId(), Math.round(_connectTime / 60f),
+                        RuntimeConfig.server.humanityReassessment);
+
                 } catch (Exception e) {
                     log.log(Level.WARNING,
                             "Failed to note ended session [member=" + name + "].", e);

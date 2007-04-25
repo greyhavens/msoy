@@ -45,7 +45,6 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
-import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -381,19 +380,20 @@ public class MemberRepository extends DepotRepository
      * minutes spent online, and set their last session time to now. We also test to see if it
      * is time to reassess this member's humanity.
      */
-    public void noteSessionEnded (int memberId, int minutes)
+    public void noteSessionEnded (int memberId, int minutes, long humanityReassessFreq)
         throws PersistenceException
     {
         long now = System.currentTimeMillis();
         MemberRecord record = loadMember(memberId);
         Timestamp nowStamp = new Timestamp(now);
 
-        if (RuntimeConfig.server.humanityReassessment > 0 &&
-            RuntimeConfig.server.humanityReassessment <
-            ((now - record.lastHumanityAssessment.getTime())/1000)) {
+        // reassess their humanity if the time has come
+        if (humanityReassessFreq > 0 &&
+            humanityReassessFreq < ((now - record.lastHumanityAssessment.getTime())/1000)) {
             record.humanity = _flowRepo.assessHumanity(memberId, record.humanity, nowStamp);
             record.lastHumanityAssessment = nowStamp;
         }
+
         // expire flow without updating MemberObject, since we're dropping session anyway
         _flowRepo.expireFlow(record, minutes);
         record.sessions ++;
