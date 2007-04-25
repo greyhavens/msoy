@@ -119,7 +119,7 @@
   font-size: 18px;
   font-weight: bold;
   color: #FFFFFF;
-  background: #82898e;
+  background-image: url(/images/ui/popup/header_tile.png);
   padding: 2px;
 }
 
@@ -133,13 +133,13 @@
 
 .itemDetailPanel .Extras {
   color: #FFFFFF;
-  background: #82898e;
+  background: #242424;
   text-align: left;
   padding-left: 10px;
 }
 
 .itemDetailPanel .Buttons {
-  background: #82898e;
+  background: #242424;
   text-align: right;
   width: 1px;
 }
