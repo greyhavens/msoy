@@ -7,6 +7,8 @@ import com.samskivert.util.ObjectUtil;
 
 import com.threerings.io.SimpleStreamableObject;
 
+import com.threerings.presents.dobj.DSet;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -15,7 +17,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  * Contains information on the location of furniture in a scene.
  */
 public class FurniData extends SimpleStreamableObject
-    implements Cloneable
+    implements Cloneable, DSet.Entry
 {
     /** An actionType indicating 'no action'.
      * actionData = null to capture mouse events, or "-" to pass through. */
@@ -93,6 +95,12 @@ public class FurniData extends SimpleStreamableObject
             return new String[] { actionData.substring(0, colonDex),
                 actionData.substring(colonDex + 1) };
         }
+    }
+
+    // from DSet.Entry
+    public Comparable getKey ()
+    {
+        return id;
     }
 
     // documentation inherited

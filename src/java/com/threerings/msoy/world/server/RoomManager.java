@@ -45,6 +45,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.world.client.RoomService;
@@ -88,6 +89,18 @@ public class RoomManager extends SpotSceneManager
             // return the error string
             return ie.getMessage();
         }
+    }
+
+    /**
+     * Create a new effect for use in this room.
+     */
+    public FurniData createEffect (MediaDesc media, MsoyLocation loc)
+    {
+        FurniData furni = new FurniData();
+        furni.id = _nextEffectId++;
+        furni.media = media;
+        furni.loc = loc;
+        return furni;
     }
 
     /**
@@ -746,4 +759,7 @@ public class RoomManager extends SpotSceneManager
 
     /** For all WorldMemberInfo's, a mapping of ItemIdent to the member's oid. */
     protected HashMap<ItemIdent,Integer> _avatarIdents = new HashMap<ItemIdent,Integer>();
+
+    /** The next id to use for an effect. */
+    protected short _nextEffectId;
 }

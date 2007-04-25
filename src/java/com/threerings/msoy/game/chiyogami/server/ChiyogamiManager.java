@@ -39,6 +39,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
+import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomObject;
@@ -238,12 +239,21 @@ public class ChiyogamiManager extends GameManager
 
         moveBody(_bossObj, .5, .5);
         repositionAllPlayers(System.currentTimeMillis());
+
+        // add a piece of fire to the middle of the room
+        FurniData fire = _roomMgr.createEffect(
+            new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
+                "chiyogami/Fire"),
+            new MsoyLocation(.5, 0, .5, 0));
+        _effects.add(fire);
+        _roomObj.addToEffects(fire);
     }
 
     protected void endRound ()
     {
         bossSpeak("I think I sprained my pinky, I've got to go...");
 
+        removeAllEffects();
         shutdownBoss();
         endGame();
     }
@@ -255,6 +265,19 @@ public class ChiyogamiManager extends GameManager
         shutdownBoss();
         _roomObj.removeListener(_roomListener);
         _roomObj.postMessage(RoomObject.PLAY_MUSIC); // no arg stops music
+    }
+
+    protected void removeAllEffects ()
+    {
+        _roomObj.startTransaction();
+        try {
+            for (FurniData effect : _effects) {
+                _roomObj.removeFromEffects(effect.getKey());
+            }
+        } finally {
+            _roomObj.commitTransaction();
+        }
+        _effects.clear();
     }
 
     protected void shutdownBoss ()
@@ -656,6 +679,9 @@ public class ChiyogamiManager extends GameManager
 
     /** The room object where the game is taking place. */
     protected RoomObject _roomObj;
+
+    /** The currently displayed effects. */
+    protected ArrayList<FurniData> _effects = new ArrayList<FurniData>();
 
     /** The boss object. */
     protected BossObject _bossObj;

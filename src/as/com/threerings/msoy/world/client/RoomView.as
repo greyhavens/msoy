@@ -144,6 +144,7 @@ public class RoomView extends AbstractRoomView
         if (!_loadAllMedia) {
             _loadAllMedia = true;
             updateAllFurni();
+            updateAllEffects();
         }
 
         // we hide all avatars instead of visiting them.
@@ -266,6 +267,7 @@ public class RoomView extends AbstractRoomView
 
         // this will take care of anything added
         updateAllFurni();
+        updateAllEffects();
     }
 
     /**
@@ -350,6 +352,9 @@ public class RoomView extends AbstractRoomView
             if (ctrl.controllerOid == _ctx.getMemberObject().getOid()) {
                 dispatchGotControl(ctrl.ident);
             }
+
+        } else if (RoomObject.EFFECTS == name) {
+            addEffect(event.getEntry() as FurniData);
         }
     }
 
@@ -366,6 +371,9 @@ public class RoomView extends AbstractRoomView
 
         } else if (RoomObject.MEMORIES == name) {
             dispatchMemoryChanged(event.getEntry() as MemoryEntry);
+
+        } else if (RoomObject.EFFECTS == name) {
+            updateEffect(event.getEntry() as FurniData);
         }
     }
 
@@ -376,6 +384,9 @@ public class RoomView extends AbstractRoomView
 
         if (PlaceObject.OCCUPANT_INFO == name) {
             removeBody((event.getOldEntry() as ActorInfo).getBodyOid());
+
+        } else if (RoomObject.EFFECTS == name) {
+            removeEffect(event.getKey() as int);
         }
     }
 
@@ -487,6 +498,7 @@ public class RoomView extends AbstractRoomView
         // stop listening for avatar speak action triggers
         _ctx.getChatDirector().removeChatDisplay(this);
 
+        removeAll(_effects);
         removeAllOccupants();
 
         super.didLeavePlace(plobj);
@@ -526,7 +538,20 @@ public class RoomView extends AbstractRoomView
     {
         _loadAllMedia = true;
         updateAllFurni();
+        updateAllEffects();
         addAllOccupants();
+    }
+
+    /**
+     * Re-layout any effects.
+     */
+    protected function updateAllEffects () :void
+    {
+        if (shouldLoadAll()) {
+            for each (var effect :FurniData in _roomObj.effects.toArray()) {
+                updateEffect(effect);
+            }
+        }
     }
 
     override protected function relayout () :void
@@ -538,6 +563,9 @@ public class RoomView extends AbstractRoomView
             locationUpdated(sprite);
         }
         for each (sprite in _pendingRemovals.values()) {
+            locationUpdated(sprite);
+        }
+        for each (sprite in _effects.values()) {
             locationUpdated(sprite);
         }
     }
@@ -682,6 +710,33 @@ public class RoomView extends AbstractRoomView
         _entities.put(newInfo.getItemIdent(), actor);
     }
 
+    protected function addEffect (furni :FurniData) :FurniSprite
+    {
+        var sprite :FurniSprite = new FurniSprite(furni); // TODO: effectSprite?
+        addChildAt(sprite, 1);
+        sprite.setLocation(furni.loc);
+        _effects.put(furni.id, sprite);
+        return sprite;
+    }
+
+    protected function updateEffect (furni :FurniData) :void
+    {
+        var sprite :FurniSprite = (_effects.get(furni.id) as FurniSprite);
+        if (sprite != null) {
+            sprite.update(furni);
+        } else {
+            addEffect(furni);
+        }
+    }
+
+    protected function removeEffect (effectId :int) :void
+    {
+        var sprite :FurniSprite = (_effects.remove(effectId) as FurniSprite);
+        if (sprite != null) {
+            removeSprite(sprite);
+        }
+    }
+
     /**
      * Called when a sprite message arrives on the room object.
      */
@@ -802,6 +857,9 @@ public class RoomView extends AbstractRoomView
 
     /** Maps ItemIdent -> MsoySprite for entities (furni, avatars, pets). */
     protected var _entities :HashMap = new HashMap();
+
+    /** Maps effect id -> FurniData for effects. */
+    protected var _effects :HashMap = new HashMap();
 
     /** The sprite we should center on. */
     protected var _centerSprite :MsoySprite;

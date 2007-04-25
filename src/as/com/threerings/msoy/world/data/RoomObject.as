@@ -23,6 +23,9 @@ public class RoomObject extends SpotSceneObject
 
     /** The field name of the <code>controllers</code> field. */
     public static const CONTROLLERS :String = "controllers";
+
+    /** The field name of the <code>effects</code> field. */
+    public static const EFFECTS :String = "effects";
     // AUTO-GENERATED: FIELDS END
 
     /** A message sent by the server to have occupants load, but not play,
@@ -50,6 +53,9 @@ public class RoomObject extends SpotSceneObject
     /** Contains mappings for all controlled entities in this room. */
     public var controllers :DSet = new DSet();
 
+    /** Contains the currently displayed "effects" (temporary furniture..). */
+    public var effects :DSet = new DSet();
+
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
@@ -57,6 +63,7 @@ public class RoomObject extends SpotSceneObject
         roomService = (ins.readObject() as RoomMarshaller);
         memories = (ins.readObject() as DSet);
         controllers = (ins.readObject() as DSet);
+        effects = (ins.readObject() as DSet);
     }
 }
 }

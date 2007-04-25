@@ -9,12 +9,14 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
 
+import com.threerings.presents.dobj.DSet_Entry;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 public class FurniData
-    implements Cloneable, Hashable, Streamable
+    implements Cloneable, Hashable, Streamable, DSet_Entry
 {
     /** An actionType indicating 'no action'.
         actionData = null to capture mouse events, or "-" to pass through. */
@@ -111,6 +113,12 @@ public class FurniData
     public function isPerspective () :Boolean
     {
         return (layoutInfo & 1) != 0;
+    }
+
+    // from DSet_Entry
+    public function getKey () :Object
+    {
+        return id;
     }
 
     // documentation inherited from superinterface Equalable
