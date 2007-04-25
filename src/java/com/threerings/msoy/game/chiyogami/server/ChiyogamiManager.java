@@ -244,7 +244,7 @@ public class ChiyogamiManager extends GameManager
         EffectData bkg = _roomMgr.createEffect(
             new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
                 "chiyogami/FX_arrow"),
-            new MsoyLocation(.5, 0, .5, 0), RoomCodes.BACKGROUND_EFFECT_LAYER);
+            new MsoyLocation(.5, 0, 0, 0), RoomCodes.BACKGROUND_EFFECT_LAYER);
         _effects.add(bkg);
         _roomObj.addToEffects(bkg);
     }
