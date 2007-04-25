@@ -62,8 +62,7 @@ public class AbstractRoomView extends Sprite
     }
 
     // from MsoyPlaceView
-    public function setPlaceSize (
-        unscaledWidth :Number, unscaledHeight :Number) :void
+    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
     {
         _actualWidth = unscaledWidth;
         _actualHeight = unscaledHeight;
@@ -289,7 +288,7 @@ public class AbstractRoomView extends Sprite
      */
     protected function relayout () :void
     {
-        var scale :Number = (_actualHeight / _layout.metrics.sceneHeight);
+        var scale :Number = computeScale();
         scaleX = scale;
         scaleY = scale;
 
@@ -302,6 +301,14 @@ public class AbstractRoomView extends Sprite
         for each (sprite in _otherSprites) {
             locationUpdated(sprite);
         }
+    }
+
+    /**
+     * Returns the scale at which to render our room view.
+     */
+    protected function computeScale () :Number
+    {
+        return (_actualHeight / _layout.metrics.sceneHeight);
     }
 
     /**

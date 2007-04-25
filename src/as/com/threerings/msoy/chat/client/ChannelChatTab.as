@@ -17,6 +17,7 @@ import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.SystemMessage;
 
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.chat.data.ChatChannel;
@@ -123,7 +124,7 @@ public class ChannelChatTab extends ChatTab
     protected function handleAddRemove (event :Event) :void
     {
         if (event.type == Event.ADDED_TO_STAGE) {
-            _overlay.setTarget(this, ChatChannelPanel.SIDEBAR_WIDTH);
+            _overlay.setTarget(this, TopPanel.RIGHT_SIDEBAR_WIDTH);
         } else {
             _overlay.setTarget(null);
         }

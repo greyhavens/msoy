@@ -73,7 +73,7 @@ public class WorldClient extends BaseClient
      *
      * @eventType minimizationChanged
      */
-    public static const MINIZATION_CHANGED :String = "minimizationChanged";
+    public static const MINIMIZATION_CHANGED :String = "minimizationChanged";
 
     /**
      * An event dispatched when we learn whether or not the client is embedded.
@@ -318,7 +318,7 @@ public class WorldClient extends BaseClient
     protected function externalSetMinimized (minimized :Boolean) :void   
     {
         log.info("Client was notified that its minimized status has changed: " + minimized);
-        dispatchEvent(new ValueEvent(MINIZATION_CHANGED, _minimized = minimized));
+        dispatchEvent(new ValueEvent(MINIMIZATION_CHANGED, _minimized = minimized));
     }
 
     protected var _wctx :WorldContext;

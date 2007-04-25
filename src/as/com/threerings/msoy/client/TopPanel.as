@@ -40,6 +40,8 @@ public class TopPanel extends Canvas
 {
     public static const DECORATIVE_MARGIN_HEIGHT :int = 4;
 
+    public static const RIGHT_SIDEBAR_WIDTH :int = 300;
+
     /**
      * Construct the top panel.
      */
@@ -92,7 +94,7 @@ public class TopPanel extends Canvas
 
         app.stage.addEventListener(Event.RESIZE, stageResized);
 
-        _ctx.getClient().addEventListener(WorldClient.MINIZATION_CHANGED, minimizationChanged);
+        _ctx.getClient().addEventListener(WorldClient.MINIMIZATION_CHANGED, minimizationChanged);
     }
 
     /**

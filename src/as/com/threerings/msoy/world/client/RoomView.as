@@ -22,6 +22,7 @@ import mx.core.Container;
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 import com.threerings.util.Name;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -59,6 +60,8 @@ import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.Prefs;
+import com.threerings.msoy.client.TopPanel;
+import com.threerings.msoy.client.WorldClient;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.data.MemberObject;
@@ -467,6 +470,9 @@ public class RoomView extends AbstractRoomView
 
         super.willEnterPlace(plobj);
 
+        // listen for client minimization events
+        _ctx.getClient().addEventListener(WorldClient.MINIMIZATION_CHANGED, minimizationChanged);
+
         _roomObj.addListener(this);
 
         _ctx.getChatDirector().addChatDisplay(chatOverlay);
@@ -499,6 +505,9 @@ public class RoomView extends AbstractRoomView
         // stop listening for avatar speak action triggers
         _ctx.getChatDirector().removeChatDisplay(this);
 
+        // stop listening for client minimization events
+        _ctx.getClient().removeEventListener(WorldClient.MINIMIZATION_CHANGED, minimizationChanged);
+
         removeAll(_effects);
         removeAllOccupants();
 
@@ -523,8 +532,7 @@ public class RoomView extends AbstractRoomView
     {
         var canScroll :Boolean = super.scrollViewBy(xpixels);
         if (canScroll) {
-            // remove any autoscrolling (if tick is not a registered listener
-            // this will safely noop)
+            // remove any autoscrolling (if tick is not a registered listener this will noop)
             removeEventListener(Event.ENTER_FRAME, tick);
             _jumpScroll = false;
         }
@@ -532,8 +540,7 @@ public class RoomView extends AbstractRoomView
     }
 
     /**
-     * Once the background image is finished, we want to load all the
-     * rest of the sprites.
+     * Once the background image is finished, we want to load all the rest of the sprites.
      */
     protected function backgroundFinishedLoading () :void
     {
@@ -541,6 +548,14 @@ public class RoomView extends AbstractRoomView
         updateAllFurni();
         updateAllEffects();
         addAllOccupants();
+    }
+
+    /**
+     * Called when the client is minimized or unminimized.
+     */
+    protected function minimizationChanged (event :ValueEvent) :void
+    {
+        relayout();
     }
 
     /**
@@ -569,6 +584,16 @@ public class RoomView extends AbstractRoomView
         for each (sprite in _effects.values()) {
             locationUpdated(sprite);
         }
+    }
+
+    override protected function computeScale () :Number
+    {
+        var scale :Number = super.computeScale();
+        if ((_ctx.getClient() as WorldClient).isMinimized()) {
+            scale *= (TopPanel.RIGHT_SIDEBAR_WIDTH / stage.width);
+        }
+        log.info("Adjusting scale [natural=" + super.computeScale() + ", current=" + scale + "].");
+        return scale;
     }
 
     override protected function shouldLoadAll () :Boolean

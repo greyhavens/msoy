@@ -642,11 +642,9 @@ public class ChatOverlay
     }
 
     /**
-     * Called from the HistoryList to notify us that messages were added
-     * to the history.
+     * Called from the HistoryList to notify us that messages were added to the history.
      *
-     * @param adjustment if non-zero, the number of old history entries
-     * that were pruned.
+     * @param adjustment if non-zero, the number of old history entries that were pruned.
      */
     internal function historyUpdated (adjustment :int) :void
     {

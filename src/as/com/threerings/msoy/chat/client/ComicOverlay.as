@@ -16,6 +16,7 @@ import com.threerings.util.Name;
 import com.threerings.flash.ColorUtil;
 import com.threerings.flash.DisplayUtil;
 
+import com.threerings.msoy.client.WorldClient;
 import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.crowd.chat.data.ChatCodes;
@@ -58,14 +59,12 @@ public class ComicOverlay extends ChatOverlay
         if (_target != null) {
             clearBubbles(true);
         }
-
         super.setTarget(target, targetWidth);
     }
 
     override public function clear () :void
     {
         super.clear();
-
         clearBubbles(true);
     }
 
@@ -91,21 +90,21 @@ public class ComicOverlay extends ChatOverlay
 
     override protected function shouldShowFromHistory (msg :ChatMessage, index :int) :Boolean
     {
-        // only show if the message was received since we last entered
-        // a new place, or if it's place-less chat.
-        return ((index >= _newPlacePoint) ||
-                (! isPlaceOrientedType(getType(msg, false))));
+        // if we're minimized, show nothing
+        if ((_ctx.getClient() as WorldClient).isMinimized()) {
+            return false;
+        }
+        // only show if the message was received since we last entered a new place, or if it's
+        // place-less chat.
+        return ((index >= _newPlacePoint) || (! isPlaceOrientedType(getType(msg, false))));
     }
 
     override protected function isApprovedLocalType (localtype :String) :Boolean
     {
-        if (ChatCodes.PLACE_CHAT_TYPE == localtype ||
-                ChatCodes.USER_CHAT_TYPE == localtype) {
+        if (ChatCodes.PLACE_CHAT_TYPE == localtype || ChatCodes.USER_CHAT_TYPE == localtype) {
             return true;
         }
-
-        log.debug("Ignoring non-standard system/feedback chat " +
-                  "[localtype=" + localtype + "].");
+        log.debug("Ignoring non-standard system/feedback chat [localtype=" + localtype + "].");
         return false;
     }
 
@@ -117,8 +116,15 @@ public class ComicOverlay extends ChatOverlay
         return (placeOf(type)) == PLACE;
     }
 
-    override protected function displayTypedMessageNow (
-        msg :ChatMessage, type :int) :Boolean
+    override public function displayMessage (msg :ChatMessage, alreadyDisp :Boolean) :Boolean
+    {
+        if ((_ctx.getClient() as WorldClient).isMinimized()) {
+            return false; // no comic messages while minimized
+        }
+        return super.displayMessage(msg, alreadyDisp);
+    }
+
+    override protected function displayTypedMessageNow (msg :ChatMessage, type :int) :Boolean
     {
         switch (placeOf(type)) {
         case INFO:
@@ -206,22 +212,20 @@ public class ComicOverlay extends ChatOverlay
 //    }
 
     /**
-     * Create a chat bubble with the specified type
-     * and text.
+     * Create a chat bubble with the specified type and text.
      *
-     * @param speakerloc if non-null, specifies that a tail should be
-     * added which points to that location.
+     * @param speakerloc if non-null, specifies that a tail should be added which points to that
+     * location.
      * @return true if we successfully laid out the bubble
      */
     protected function createBubble (
-        msg :ChatMessage, type :int, 
-        speaker :Name, speakerloc :Rectangle) :Boolean
+        msg :ChatMessage, type :int, speaker :Name, speakerloc :Rectangle) :Boolean
     {
         var ii :int;
         var texts :Array = formatMessage(msg, type, false);
         var lifetime :int = getLifetime(msg, true);
-        var bubble :BubbleGlyph = new BubbleGlyph(this, type, lifetime, speaker,
-            _defaultFmt, texts);
+        var bubble :BubbleGlyph =
+            new BubbleGlyph(this, type, lifetime, speaker, _defaultFmt, texts);
 
         // get the size of the new bubble
         var r :Rectangle = getBubbleSize(type, bubble.getTextSize());
@@ -242,14 +246,14 @@ public class ComicOverlay extends ChatOverlay
             placer = bigR.clone();
 
             positionRectIdeally(placer, type, speakerloc);
-            // we actually try to place midway between ideal and old
-            // and adjust up half the height of the new boy
+            // we actually try to place midway between ideal and old and adjust up half the height
+            // of the new boy
             placer.x = (placer.x + bigR.x) / 2;
             placer.y = (placer.y + (bigR.y - (r.height / 2))) / 2;
         }
 
-        // then look for a place nearby where it will fit
-        // (making sure we only put it in the area above the subtitles)
+        // then look for a place nearby where it will fit (making sure we only put it in the area
+        // above the subtitles)
         var vbounds :Rectangle = new Rectangle(
             0, 0, _target.width, _target.height - _subtitleHeight);
         if (!DisplayUtil.positionRect(placer, vbounds, getAvoidList(speaker))) {
@@ -270,8 +274,7 @@ public class ComicOverlay extends ChatOverlay
                 bub.removeTail();
                 var ob :Rectangle = bub.getBubbleBounds();
                 // recenter the translated bub within placer's width..
-                var xadjust :int = dx - (ob.x - bigR.x) +
-                    (placer.width - ob.width) / 2;
+                var xadjust :int = dx - (ob.x - bigR.x) + (placer.width - ob.width) / 2;
                 bub.x += xadjust;
                 bub.y += dy;
             }
@@ -285,8 +288,8 @@ public class ComicOverlay extends ChatOverlay
         _bubbles.push(bubble);
         _overlay.addChild(bubble);
 
-        // and we need to dirty all the bubbles because they'll all
-        // be painted in slightly different colors
+        // and we need to dirty all the bubbles because they'll all be painted in slightly
+        // different colors
         var numbubs :int = _bubbles.length;
         for (ii = 0; ii < numbubs; ii++) {
             (_bubbles[ii] as BubbleGlyph).setAgeLevel(this, numbubs - ii - 1);
@@ -296,11 +299,10 @@ public class ComicOverlay extends ChatOverlay
     }
 
     /**
-     * Calculate the size of the chat bubble based on the dimensions
-     * of the label and the type of chat. It will be turned into a shape
-     * later, but we manipulate it for a while as just a rectangle
-     * (which are easier to move about and do intersection tests with,
-     * and besides the Shape interface has no way to translate).
+     * Calculate the size of the chat bubble based on the dimensions of the label and the type of
+     * chat. It will be turned into a shape later, but we manipulate it for a while as just a
+     * rectangle (which are easier to move about and do intersection tests with, and besides the
+     * Shape interface has no way to translate).
      */
     protected function getBubbleSize (type :int, r :Rectangle) :Rectangle
     {
@@ -326,8 +328,7 @@ public class ComicOverlay extends ChatOverlay
      * @return the padding that should be applied to the bubble's label.
      */
     internal function drawBubbleShape (
-        g :Graphics, type :int, txtWidth :int, txtHeight :int,
-        ageLevel :int = 0) :int
+        g :Graphics, type :int, txtWidth :int, txtHeight :int, ageLevel :int = 0) :int
     {
         // this little bit copied from superclass- if we keep: reuse
         var outline :uint = getOutlineColor(type);
@@ -361,8 +362,7 @@ public class ComicOverlay extends ChatOverlay
     }
 
     /**
-     * Get the function that draws the bubble shape for the
-     * specified type of bubble.
+     * Get the function that draws the bubble shape for the specified type of bubble.
      */
     protected function getBubbleShape (type :int) :Function
     {
@@ -375,10 +375,8 @@ public class ComicOverlay extends ChatOverlay
         switch (modeOf(type)) {
         case SPEAK:
             return drawRoundedBubble;
-
         case EMOTE:
             return drawEmoteBubble;
-
         case THINK:
             return drawThinkBubble;
         }
@@ -455,8 +453,8 @@ public class ComicOverlay extends ChatOverlay
     }
 
     /**
-     * Position the rectangle in its ideal location given the type
-     * and speaker positon (which may be null).
+     * Position the rectangle in its ideal location given the type and speaker positon (which may
+     * be null).
      */
     protected function positionRectIdeally (
         r :Rectangle, type :int, speaker :Rectangle) :void
@@ -520,8 +518,7 @@ public class ComicOverlay extends ChatOverlay
     }
 
     /**
-     * Expire a bubble, if necessary, and return the old bubbles
-     * for the specified speaker.
+     * Expire a bubble, if necessary, and return the old bubbles for the specified speaker.
      */
     protected function getAndExpireBubbles (speaker :Name) :Array
     {
@@ -561,8 +558,8 @@ public class ComicOverlay extends ChatOverlay
     }
 
     /**
-     * Return a list of rectangular areas that we should avoid while
-     * laying out a bubble for the specified speaker.
+     * Return a list of rectangular areas that we should avoid while laying out a bubble for the
+     * specified speaker.
      */
     protected function getAvoidList (speaker :Name) :Array
     {

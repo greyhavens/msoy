@@ -24,6 +24,7 @@ import com.threerings.crowd.chat.client.ChatDisplay;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldClient;
 import com.threerings.msoy.client.WorldContext;
 
@@ -34,13 +35,10 @@ import com.threerings.msoy.chat.data.ChatChannel;
  */
 public class ChatChannelPanel extends VBox
 {
-    /** Our width. */
-    public static const SIDEBAR_WIDTH :int = 300;
-
     public function ChatChannelPanel (ctx :WorldContext)
     {
         _ctx = ctx;
-        width = SIDEBAR_WIDTH;
+        width = TopPanel.RIGHT_SIDEBAR_WIDTH;
 
         addChild(_tabnav = new ChatTabNavigator());
         _tabnav.closePolicy = SuperTab.CLOSE_SELECTED; // can't do this in the constructor, yay!
@@ -60,7 +58,7 @@ public class ChatChannelPanel extends VBox
         send.height = ControlBar.HEIGHT-4;
         _inputBox.addChild(send);
 
-        _ctx.getClient().addEventListener(WorldClient.MINIZATION_CHANGED, minimizationChanged);
+        _ctx.getClient().addEventListener(WorldClient.MINIMIZATION_CHANGED, minimizationChanged);
     }
 
     /**
