@@ -32,9 +32,30 @@ public abstract class SwiftlyDocument
         /** Returns true if the provided mime type is supported. */
         public boolean handlesMimeType (String mimeType);
 
+        /** Construct a new, blank SwiftlyDocument. */
+        public SwiftlyDocument createDocument (PathElement path,
+            String encoding) throws IOException;
+
         /** Construct a new SwiftlyDocument. */
         public SwiftlyDocument createDocument (InputStream data, PathElement path,
             String encoding) throws IOException;
+    }
+
+    /**
+     * Returns a new, blank SwiftlyDocument using the supplied PathElement's mimeType;
+     */
+    public static SwiftlyDocument createFromPathElement (PathElement path, String encoding)
+        throws IOException
+    {
+        for (DocumentFactory factory : _documentTypeFactories) {
+            if (factory.handlesMimeType(path.getMimeType())) {
+                return factory.createDocument(path, encoding);
+            }
+        }
+ 
+        // BinaryDocument handles all mime types so this statement should never be reached
+        throw new RuntimeException("Unhandled mime-type. SwiftlyBinaryDocument should handle" +
+            "all mime types");
     }
 
     /**

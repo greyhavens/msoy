@@ -776,10 +776,11 @@ public class ProjectRoomManager extends PlaceManager
                     // create the new PathElement
                     PathElement element = PathElement.createFile(_fileName, _parent, mimeType);
 
-                    // create the new SwiftlyDocument
-                    FileInputStream data = new FileInputStream(_tempFile);
-                    SwiftlyDocument doc = SwiftlyDocument.createFromPathElement(data, element,
+                    // create the new, blank SwiftlyDocument
+                    SwiftlyDocument doc = SwiftlyDocument.createFromPathElement(element,
                         ProjectStorage.TEXT_ENCODING);
+                    // insert the uploaded file data into the new document
+                    doc.setData(new FileInputStream(_tempFile), ProjectStorage.TEXT_ENCODING);
                     return doc;
                 }
 

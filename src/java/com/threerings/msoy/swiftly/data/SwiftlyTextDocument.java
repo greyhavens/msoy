@@ -31,6 +31,12 @@ public class SwiftlyTextDocument extends SwiftlyDocument
             return false;
         }
 
+        public SwiftlyDocument createDocument (PathElement path, String encoding)
+            throws IOException
+        {
+            return new SwiftlyTextDocument(path, encoding);
+        }
+
         public SwiftlyDocument createDocument (InputStream data, PathElement path, String encoding)
             throws IOException
         {
@@ -44,6 +50,13 @@ public class SwiftlyTextDocument extends SwiftlyDocument
     /** Required for the dobj system. Do not use. */
     public SwiftlyTextDocument ()
     {
+    }
+
+    /** Instantiate a new, blank text document with the given path, and text encoding. */
+    public SwiftlyTextDocument (PathElement path, String encoding)
+        throws IOException
+    {
+        this(null, path, encoding);
     }
 
     /** Instantiate a text document with the given data, path, and text encoding. */

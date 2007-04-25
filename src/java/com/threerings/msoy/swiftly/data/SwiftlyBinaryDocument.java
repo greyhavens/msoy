@@ -27,6 +27,12 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
             return true;
         }
 
+        public SwiftlyDocument createDocument (PathElement path, String encoding)
+            throws IOException
+        {
+            return new SwiftlyBinaryDocument(path);
+        }
+
         public SwiftlyDocument createDocument (InputStream data, PathElement path, String encoding)
             throws IOException
         {
@@ -37,6 +43,13 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     /** Required for the dobj system. Do not use. */
     public SwiftlyBinaryDocument ()
     {
+    }
+
+    /** Instantiate a new, blank binary document with the given path. */
+    public SwiftlyBinaryDocument (PathElement path)
+        throws IOException
+    {
+        this(null, path);
     }
 
     /** Instantiate a binary document with the given data and path. */
@@ -67,6 +80,8 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
         FileOutputStream fileOutput = new FileOutputStream(_modifiedStore);
         try {
             IOUtils.copy(data, new FileOutputStream(_modifiedStore));
+            // only set changed true if the copy worked
+            _changed = true;
         } finally {
             fileOutput.close();
         }
@@ -76,8 +91,8 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     public boolean isDirty ()
         throws IOException
     {
-        if (_modifiedStore != null) {
-            // if input was received, perform the expensive compare
+        // if the file was modified, perform the expensive compare
+        if (_changed) {
             return !IOUtils.contentEquals(getOriginalData(), getModifiedData());
         }
         return false;
@@ -92,6 +107,9 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
         // now that we're committed we can clear our modified store
         FileOutputStream stream = new FileOutputStream(_modifiedStore, false);
         stream.close();
+
+        // note that we're no longer modified
+        _changed = false;
     }
 
     @Override // from SwiftlyDocument
@@ -105,7 +123,7 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     public InputStream getModifiedData ()
         throws IOException
     {
-        return _modifiedStore == null ? null : new FileInputStream(_modifiedStore);
+        return new FileInputStream(_modifiedStore);
     }
 
     @Override // from Object
@@ -114,13 +132,14 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     {
         // be sure to delete our modified store
         try {
-            if (_modifiedStore != null) {
-                _modifiedStore.delete();
-            }
+            _modifiedStore.delete();
         } finally {
             super.finalize();
         }
     }
+
+    /** If this document has been modified. */
+    protected boolean _changed = false;
 
     /** Modified disk-backing of the document data or null. */
     protected transient File _modifiedStore;
