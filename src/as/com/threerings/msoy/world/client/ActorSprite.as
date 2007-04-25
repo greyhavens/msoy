@@ -504,8 +504,9 @@ public class ActorSprite extends MsoySprite
     {
         super.willShowNewMedia();
 
-        // reset the move speed
+        // reset the move speed and the _height
         _moveSpeed = DEFAULT_MOVE_SPEED;
+        _height = NaN;
     }
 
     override protected function createBackend () :EntityBackend
