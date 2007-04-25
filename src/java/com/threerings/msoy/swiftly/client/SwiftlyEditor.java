@@ -80,28 +80,30 @@ public class SwiftlyEditor extends PlacePanel
         // add our toolbar
         add(_toolbar = new EditorToolBar(ctrl, _ctx, this), VGroupLayout.FIXED);
 
-        // set up the top pane: editor and project panel
+        // set up the left pane: the tabbed editor
         _editorTabs = new TabbedEditor(_ctx, this);
         _editorTabs.setMinimumSize(new Dimension(400, 400));
 
+        // set up the right pane: project panel and chat
         _projectPanel = new ProjectPanel(_ctx, this);
-        _projectPanel.setMinimumSize(new Dimension(0, 0));
+        _projectPanel.setMinimumSize(new Dimension(200, 200));
 
-        _topPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _editorTabs, _projectPanel);
-        _topPane.setOneTouchExpandable(true);
-
-        // set up the bottom pane: console and chat
         JPanel chatPanel = new JPanel(
             new HGroupLayout(HGroupLayout.STRETCH, HGroupLayout.STRETCH, 5, HGroupLayout.LEFT));
         chatPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         OccupantList ol;
         chatPanel.add(ol = new OccupantList(_ctx), HGroupLayout.FIXED);
-        ol.setPreferredSize(new Dimension(100, 0));
+        ol.setPreferredSize(new Dimension(50, 0));
         chatPanel.add(new ChatPanel(_ctx, false));
+        chatPanel.setMinimumSize(new Dimension(0, 0));
 
+        _rightPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, _projectPanel, chatPanel);
+        _rightPane.setOneTouchExpandable(true);
+
+        // add the console window which starts hidden
         _console = new Console(_ctx, this);
 
-        _contentPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, _topPane, chatPanel);
+        _contentPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _editorTabs, _rightPane);
         _contentPane.setOneTouchExpandable(true);
         add(_contentPane);
 
@@ -114,11 +116,11 @@ public class SwiftlyEditor extends PlacePanel
         super.doLayout();
 
         // set up our divider location when we are first laid out
-        if (getHeight() != 0 && _contentPane.getLastDividerLocation() == 0) {
-            _contentPane.setDividerLocation(getHeight()-200);
-        }
-        if (getWidth() != 0 && _topPane.getLastDividerLocation() == 0) {
-            _topPane.setDividerLocation(getWidth()-250);
+        if (getWidth() != 0 && _contentPane.getLastDividerLocation() == 0) {
+            _contentPane.setDividerLocation(getWidth()-200);
+
+            // start with the chat pane hidden
+            _rightPane.setDividerLocation(getHeight());
         }
     }
 
@@ -476,7 +478,7 @@ public class SwiftlyEditor extends PlacePanel
     protected ProjectRoomObject _roomObj;
 
     protected JSplitPane _contentPane;
-    protected JSplitPane _topPane;
+    protected JSplitPane _rightPane;
     protected TabbedEditor _editorTabs;
     protected Console _console;
     protected EditorToolBar _toolbar;
