@@ -93,8 +93,9 @@ public class SwiftlyRepository extends DepotRepository
             // repository, returning an existing one isn't likely to be what they expect.
 
             // ownerId,projectName already exists, return it
-            return load(SwiftlyProjectRecord.class, SwiftlyProjectRecord.OWNER_ID,
-                record.ownerId, SwiftlyProjectRecord.PROJECT_NAME, record.projectName);
+            return load(SwiftlyProjectRecord.class,
+                        new Where(SwiftlyProjectRecord.OWNER_ID, record.ownerId,
+                                  SwiftlyProjectRecord.PROJECT_NAME, record.projectName));
         }
         return record;
     }
@@ -150,7 +151,8 @@ public class SwiftlyRepository extends DepotRepository
      * Creates and loads a SwiftlySVNStorageRecord. If the record already exists, the existing
      * record will be returned and the database will not be modified.
      */
-    public SwiftlySVNStorageRecord createSVNStorage (String protocol, String host, int port, String baseDir)
+    public SwiftlySVNStorageRecord createSVNStorage (String protocol, String host, int port,
+                                                     String baseDir)
         throws PersistenceException
     {
         SwiftlySVNStorageRecord record = new SwiftlySVNStorageRecord();
@@ -208,12 +210,11 @@ public class SwiftlyRepository extends DepotRepository
      * Fetches the membership details for a given project and member, or null.
      * 
      */
-    public SwiftlyCollaboratorsRecord getMembership(int projectId, int memberId)
+    public SwiftlyCollaboratorsRecord getMembership (int projectId, int memberId)
         throws PersistenceException
     {
         return load(SwiftlyCollaboratorsRecord.class,
-                    SwiftlyCollaboratorsRecord.PROJECT_ID, projectId,
-                    SwiftlyCollaboratorsRecord.MEMBER_ID, memberId);
+                    SwiftlyCollaboratorsRecord.getKey(projectId, memberId));
     }
 
     /**
@@ -236,12 +237,9 @@ public class SwiftlyRepository extends DepotRepository
     public boolean leaveCollaborators (int projectId, int memberId)
         throws PersistenceException
     {
-        Key<SwiftlyCollaboratorsRecord> key = new Key<SwiftlyCollaboratorsRecord>(
-                SwiftlyCollaboratorsRecord.class,
-                SwiftlyCollaboratorsRecord.PROJECT_ID, projectId,
-                SwiftlyCollaboratorsRecord.MEMBER_ID, memberId);
-        int rows = deleteAll(SwiftlyCollaboratorsRecord.class, key, key);
-        return rows > 0;
+        Key<SwiftlyCollaboratorsRecord> key =
+            SwiftlyCollaboratorsRecord.getKey(projectId, memberId);
+        return deleteAll(SwiftlyCollaboratorsRecord.class, key, key) > 0;
     }
 
 }
