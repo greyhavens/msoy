@@ -6,6 +6,7 @@ package com.threerings.msoy.chat.client {
 import com.threerings.util.ObserverList;
 
 import com.threerings.crowd.chat.data.ChatMessage;
+import com.threerings.crowd.chat.data.SystemMessage;
 
 public class HistoryList
 {
@@ -58,6 +59,16 @@ public class HistoryList
 
         _history.push(msg);
         notify(adjusted);
+    }
+
+    /**
+     * Filters out all transient (feedback, etc.) messages from this history.
+     */
+    public function filterTransient () :void
+    {
+        _history = _history.filter(function (item :ChatMessage, index :int, array :Array) :Boolean {
+            return !(item is SystemMessage);
+        });
     }
 
 //     // from ChatDisplay

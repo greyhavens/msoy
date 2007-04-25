@@ -120,6 +120,8 @@ public class MsoyChatDirector extends ChatDirector
         if (handler != null) {
             handler.shutdown();
         }
+        // filter out any transient (feedback, etc.) messages from this channel's chat history
+        getHistory(channel).filterTransient();
     }
 
     // from ChatDirector

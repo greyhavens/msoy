@@ -65,9 +65,9 @@ public class ChatOverlay
 //        _overlay.alpha = ALPHA;
         _overlay.blendMode = BlendMode.LAYER;
 
-        // NOTE: Any null values in the override formats will use the
-        // value from the default, so if a property is added to the default
-        // then it should be explicitely negated if not desired in an override.
+        // NOTE: Any null values in the override formats will use the value from the default, so if
+        // a property is added to the default then it should be explicitely negated if not desired
+        // in an override.
         _defaultFmt = new TextFormat();
         _defaultFmt.font = FONT;
         _defaultFmt.size = 10;
@@ -107,8 +107,11 @@ public class ChatOverlay
      *
      * @param target the container to which a chat overlay should be added; or null to release
      * references and internal resources associated with the previous target.
+     * @param targetWidth an optional parameter forcing the target width to the specified value so
+     * that message layout will work properly even if the target has not yet been laid out and does
+     * not yet have its proper width.
      */
-    public function setTarget (target :Container) :void
+    public function setTarget (target :Container, targetWidth :int = -1) :void
     {
         if (_target != null) {
             // removing from the old
@@ -126,6 +129,7 @@ public class ChatOverlay
         }
 
         _target = target;
+        _targetWidth = targetWidth;
         if (_target != null) {
             // adding to the new
             _overlay.x = 0;
@@ -524,8 +528,7 @@ public class ChatOverlay
     /**
      * Used by ChatGlyphs to draw the shape on their Graphics.
      */
-    internal function drawSubtitleShape (
-        g :Graphics, type :int, width :int, height :int) :int
+    internal function drawSubtitleShape (g :Graphics, type :int, width :int, height :int) :int
     {
         var outline :uint = getOutlineColor(type);
         var background :uint;
@@ -1068,7 +1071,7 @@ public class ChatOverlay
 
     internal function getTargetTextWidth () :int
     {
-        var w :int = _target.width;
+        var w :int = (_targetWidth == -1) ? _target.width : _targetWidth;
         if (_historyBar != null) {
             w -= ScrollBar.THICKNESS;
         }
@@ -1086,6 +1089,9 @@ public class ChatOverlay
 
     /** The target container over which we're overlaying chat. */
     protected var _target :Container;
+
+    /** An override for the width of our target container. */
+    protected var _targetWidth :int = -1;
 
     /** The stage of our target, while tracking mouseWheel in history mode. */
     protected var _stage :Stage;

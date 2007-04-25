@@ -53,13 +53,13 @@ public class ComicOverlay extends ChatOverlay
         super.layout();
     }
 
-    override public function setTarget (target :Container) :void
+    override public function setTarget (target :Container, targetWidth :int = -1) :void
     {
         if (_target != null) {
             clearBubbles(true);
         }
 
-        super.setTarget(target);
+        super.setTarget(target, targetWidth);
     }
 
     override public function clear () :void

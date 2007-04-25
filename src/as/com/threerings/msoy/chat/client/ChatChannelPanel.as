@@ -99,6 +99,7 @@ public class ChatChannelPanel extends VBox
             tab = new ChannelChatTab(_ctx, channel);
             tab.label = channel.ident.toString();
             tab.getOverlay().setHistory(history);
+            tab.init((_ctx.getChatDirector() as MsoyChatDirector).getChannelObject(channel));
             tabidx = _tabnav.numChildren;
             _tabnav.addChild(tab);
         }
@@ -133,6 +134,7 @@ public class ChatChannelPanel extends VBox
             }
         }
         if (event.relatedObject is ChannelChatTab) {
+            (event.relatedObject as ChannelChatTab).shutdown();
             var channel :ChatChannel = (event.relatedObject as ChannelChatTab).channel;
             (_ctx.getChatDirector() as MsoyChatDirector).closeChannel(channel);
         }
@@ -180,7 +182,9 @@ public class ChatChannelPanel extends VBox
         if (tab != null) {
             tab.sendChat(message);
             _input.text = "";
-        } // else wtf?
+        } else {
+            Log.getLog(this).warning("Missing selected chat tab?! Dropping '" + message + "'.");
+        }
     }
 
     protected var _ctx :WorldContext;
