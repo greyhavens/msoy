@@ -599,15 +599,13 @@ public class ProjectRoomManager extends PlaceManager
         // this is called back on the dobj thread and must only report results
         public void resultReceived () {
             if (_error != null) {
-                _roomObj.setConsoleErr(
-                    MessageBundle.tcompose("m.build_failed_reason", _error.getMessage()));
+                log.warning("Project build failed: " + _error.getMessage());
+                _roomObj.setConsoleErr(MessageBundle.tcompose("m.build_failed"));
                 return;
             }
 
             // Check for failure
             if (_result.buildSuccessful()) {
-                _roomObj.setConsoleOut("m.build_complete");
-
                 // TODO: This is an awful last minute hack!
                 try {
                     File endResult = File.createTempFile(
@@ -622,8 +620,6 @@ public class ProjectRoomManager extends PlaceManager
                     // XXX HACK HACK HACK
                 }
 
-            } else {
-                _roomObj.setConsoleErr("m.build_failed");
             }
 
             // Provide build output

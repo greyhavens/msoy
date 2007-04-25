@@ -4,7 +4,9 @@
 package com.threerings.msoy.swiftly.client;
 
 import java.awt.Color;
+import java.awt.Dimension;
 
+import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
@@ -14,20 +16,28 @@ import javax.swing.text.StyleConstants;
 
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
-public class Console extends JScrollPane
+public class Console extends JFrame
 {
     public Console (SwiftlyContext ctx, SwiftlyEditor editor)
     {
-        super(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         _ctx = ctx;
         _editor = editor;
 
+        setDefaultCloseOperation(HIDE_ON_CLOSE);
+
         _consoleText = new JTextPane(_document = new DefaultStyledDocument());
-        setViewportView(_consoleText);
         _consoleText.setEditable(false);
+
+        JScrollPane scroller = new JScrollPane(_consoleText,
+            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scroller.setPreferredSize(new Dimension(400, 400));
+        setContentPane(scroller);
 
         StyleConstants.setBold(_error, true);
         StyleConstants.setForeground(_error, Color.red);
+
+        pack();
+        setVisible(false);
     }
 
     /**
@@ -35,7 +45,7 @@ public class Console extends JScrollPane
      */
     public void consoleMessage (String message)
     {
-         appendMessage(message + "\n", _normal);
+        appendMessage(message + "\n", _normal);
     }
 
     /**
@@ -51,6 +61,7 @@ public class Console extends JScrollPane
      */
     protected void appendMessage (String message, SimpleAttributeSet set)
     {
+        setVisible(true);
         try {
             _document.insertString(_document.getLength(), message, set);
             _consoleText.setCaretPosition(_document.getLength());

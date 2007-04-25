@@ -59,8 +59,6 @@ public class ProjectRoomController extends PlaceController
      */
     protected void buildProject ()
     {
-        // report to the user that we're starting the build
-        _editor.buildStarted();
         // disable the action on this client
         buildAction.setEnabled(false);
         // the results of this request will be communicated via _roomObj.console

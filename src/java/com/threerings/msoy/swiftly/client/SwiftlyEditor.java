@@ -100,17 +100,12 @@ public class SwiftlyEditor extends PlacePanel
         chatPanel.add(new ChatPanel(_ctx, false));
 
         _console = new Console(_ctx, this);
-        _console.setMinimumSize(new Dimension(0, 0));
 
-        _bottomPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _console, chatPanel);
-        _bottomPane.setOneTouchExpandable(true);
-
-        _contentPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, _topPane, _bottomPane);
+        _contentPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, _topPane, chatPanel);
         _contentPane.setOneTouchExpandable(true);
         add(_contentPane);
 
         initFileTypes();
-        consoleMessage(_msgs.get("m.welcome"));
     }
 
     @Override // from Component
@@ -122,10 +117,8 @@ public class SwiftlyEditor extends PlacePanel
         if (getHeight() != 0 && _contentPane.getLastDividerLocation() == 0) {
             _contentPane.setDividerLocation(getHeight()-200);
         }
-        if (getWidth() != 0 &&
-            _topPane.getLastDividerLocation() == 0 && _bottomPane.getLastDividerLocation() == 0) {
+        if (getWidth() != 0 && _topPane.getLastDividerLocation() == 0) {
             _topPane.setDividerLocation(getWidth()-250);
-            _bottomPane.setDividerLocation(getWidth()-350);
         }
     }
 
@@ -252,6 +245,15 @@ public class SwiftlyEditor extends PlacePanel
         return _exportAction;
     }
 
+    public Action createShowConsoleAction ()
+    {
+        return new AbstractAction(_msgs.get("m.action.show_console")) {
+            public void actionPerformed (ActionEvent e) {
+                _console.setVisible(true);
+            }
+        };
+    }
+
     public EditorToolBar getToolbar()
     {
         return _toolbar;
@@ -318,14 +320,6 @@ public class SwiftlyEditor extends PlacePanel
         int response = JOptionPane.showInternalConfirmDialog(
             this, message, _msgs.get("m.dialog.confirm.title"), JOptionPane.YES_NO_OPTION);
         return response == JOptionPane.YES_OPTION;
-    }
-
-    /**
-     * Display a line in the console when the build starts.
-     */
-    public void buildStarted () 
-    {
-        consoleMessage(_msgs.get("m.build_started"));
     }
 
     @Override // from PlacePanel
@@ -483,7 +477,6 @@ public class SwiftlyEditor extends PlacePanel
 
     protected JSplitPane _contentPane;
     protected JSplitPane _topPane;
-    protected JSplitPane _bottomPane;
     protected TabbedEditor _editorTabs;
     protected Console _console;
     protected EditorToolBar _toolbar;

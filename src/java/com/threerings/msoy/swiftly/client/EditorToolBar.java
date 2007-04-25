@@ -19,17 +19,21 @@ public class EditorToolBar extends JToolBar
     protected void setupToolbar ()
     {
         // TODO add mini icons for these + tooltips with keyboard shortcuts
-        JButton build = new JButton(_ctrl.buildAction);
-        build.setFont(build.getFont().deriveFont(Font.BOLD));
-        add(build);
+        JButton button = new JButton(_ctrl.buildAction);
+        button.setFont(button.getFont().deriveFont(Font.BOLD));
+        add(button);
 
-        JButton preview = new JButton(_editor.getPreviewAction());
-        preview.setFont(preview.getFont().deriveFont(Font.BOLD));
-        add(preview);
+        button = new JButton(_editor.getPreviewAction());
+        button.setFont(button.getFont().deriveFont(Font.BOLD));
+        add(button);
 
-        JButton export = new JButton(_editor.getExportAction());
-        export.setFont(export.getFont().deriveFont(Font.BOLD));
-        add(export);
+        button = new JButton(_editor.getExportAction());
+        button.setFont(button.getFont().deriveFont(Font.BOLD));
+        add(button);
+
+        button = new JButton(_editor.createShowConsoleAction());
+        button.setFont(button.getFont().deriveFont(Font.BOLD));
+        add(button);
 
         setFloatable(false);
     }
@@ -37,6 +41,4 @@ public class EditorToolBar extends JToolBar
     protected ProjectRoomController _ctrl;
     protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
-
-    protected JButton _saveButton;
 }
