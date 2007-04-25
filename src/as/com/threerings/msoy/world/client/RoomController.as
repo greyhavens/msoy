@@ -1021,6 +1021,7 @@ import flash.display.Sprite;
 
 import com.threerings.msoy.world.client.RoomElement;
 import com.threerings.msoy.world.data.MsoyLocation;
+import com.threerings.msoy.world.data.RoomCodes;
 
 class WalkTarget extends Sprite
     implements RoomElement
@@ -1046,9 +1047,9 @@ class WalkTarget extends Sprite
     }
 
     // from RoomElement
-    public function isIncludedInLayout () :Boolean
+    public function getRoomLayer () :int
     {
-        return true;
+        return RoomCodes.FURNITURE_LAYER;
     }
 
     // from RoomElement

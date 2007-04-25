@@ -70,6 +70,7 @@ import com.threerings.msoy.chat.client.ComicOverlay;
 import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.EntityControl;
+import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
@@ -354,7 +355,7 @@ public class RoomView extends AbstractRoomView
             }
 
         } else if (RoomObject.EFFECTS == name) {
-            addEffect(event.getEntry() as FurniData);
+            addEffect(event.getEntry() as EffectData);
         }
     }
 
@@ -373,7 +374,7 @@ public class RoomView extends AbstractRoomView
             dispatchMemoryChanged(event.getEntry() as MemoryEntry);
 
         } else if (RoomObject.EFFECTS == name) {
-            updateEffect(event.getEntry() as FurniData);
+            updateEffect(event.getEntry() as EffectData);
         }
     }
 
@@ -548,7 +549,7 @@ public class RoomView extends AbstractRoomView
     protected function updateAllEffects () :void
     {
         if (shouldLoadAll()) {
-            for each (var effect :FurniData in _roomObj.effects.toArray()) {
+            for each (var effect :EffectData in _roomObj.effects.toArray()) {
                 updateEffect(effect);
             }
         }
@@ -710,28 +711,28 @@ public class RoomView extends AbstractRoomView
         _entities.put(newInfo.getItemIdent(), actor);
     }
 
-    protected function addEffect (furni :FurniData) :FurniSprite
+    protected function addEffect (effect :EffectData) :FurniSprite
     {
-        var sprite :FurniSprite = new FurniSprite(furni); // TODO: effectSprite?
+        var sprite :EffectSprite = new EffectSprite(effect);
         addChildAt(sprite, 1);
-        sprite.setLocation(furni.loc);
-        _effects.put(furni.id, sprite);
+        sprite.setLocation(effect.loc);
+        _effects.put(effect.id, sprite);
         return sprite;
     }
 
-    protected function updateEffect (furni :FurniData) :void
+    protected function updateEffect (effect :EffectData) :void
     {
-        var sprite :FurniSprite = (_effects.get(furni.id) as FurniSprite);
+        var sprite :FurniSprite = (_effects.get(effect.id) as FurniSprite);
         if (sprite != null) {
-            sprite.update(furni);
+            sprite.update(effect);
         } else {
-            addEffect(furni);
+            addEffect(effect);
         }
     }
 
     protected function removeEffect (effectId :int) :void
     {
-        var sprite :FurniSprite = (_effects.remove(effectId) as FurniSprite);
+        var sprite :EffectSprite = (_effects.remove(effectId) as EffectSprite);
         if (sprite != null) {
             removeSprite(sprite);
         }
@@ -858,7 +859,7 @@ public class RoomView extends AbstractRoomView
     /** Maps ItemIdent -> MsoySprite for entities (furni, avatars, pets). */
     protected var _entities :HashMap = new HashMap();
 
-    /** Maps effect id -> FurniData for effects. */
+    /** Maps effect id -> EffectData for effects. */
     protected var _effects :HashMap = new HashMap();
 
     /** The sprite we should center on. */

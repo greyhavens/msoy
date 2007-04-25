@@ -2,6 +2,7 @@ package com.threerings.msoy.world.client {
 
 import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.RoomCodes;
 
 public class DecorSprite extends FurniSprite
 {
@@ -13,9 +14,9 @@ public class DecorSprite extends FurniSprite
         super(decor);
     }
     
-    override public function isIncludedInLayout () :Boolean
+    override public function getRoomLayer () :int
     {
-        return false; // because it's a background
+        return RoomCodes.DECOR_LAYER;
     }
 
     public function getDecorData () :DecorData

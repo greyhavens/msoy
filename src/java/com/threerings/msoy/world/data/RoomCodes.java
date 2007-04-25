@@ -16,4 +16,16 @@ public interface RoomCodes extends InvocationCodes
     /** An error (sort of) reported when an entity requests control but is already being controlled
      * by another client. */
     public static final String E_ALREADY_CONTROLLED = "e.already_controlled";
+
+    /** A room layer that is in front of normal furniture and such. */
+    public static final byte FOREGROUND_EFFECT_LAYER = 0;
+
+    /** The normal room layer where most things are placed. */
+    public static final byte FURNITURE_LAYER = 1;
+
+    /** A room layer that is behind of normal furniture, but in front of decor. */
+    public static final byte BACKGROUND_EFFECT_LAYER = 2;
+
+    /** The backmost layer, should only be occupied by decor objects. */
+    public static final byte DECOR_LAYER = 3;
 }

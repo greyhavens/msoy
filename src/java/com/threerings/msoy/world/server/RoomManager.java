@@ -51,6 +51,7 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.DecorData;
+import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemoryEntry;
@@ -94,13 +95,22 @@ public class RoomManager extends SpotSceneManager
     /**
      * Create a new effect for use in this room.
      */
-    public FurniData createEffect (MediaDesc media, MsoyLocation loc)
+    public EffectData createEffect (MediaDesc media, MsoyLocation loc, byte roomLayer)
     {
-        FurniData furni = new FurniData();
-        furni.id = _nextEffectId++;
-        furni.media = media;
-        furni.loc = loc;
-        return furni;
+        EffectData effect = new EffectData();
+        effect.id = _nextEffectId++;
+        effect.media = media;
+        effect.loc = loc;
+        effect.roomLayer = roomLayer;
+        return effect;
+    }
+
+    /**
+     * Create a new effect for use in this room.
+     */
+    public EffectData createEffect (MediaDesc media, MsoyLocation loc)
+    {
+        return createEffect(media, loc, RoomCodes.FURNITURE_LAYER);
     }
 
     /**

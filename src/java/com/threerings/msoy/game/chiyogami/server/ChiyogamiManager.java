@@ -39,7 +39,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
-import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomObject;
@@ -240,13 +240,13 @@ public class ChiyogamiManager extends GameManager
         moveBody(_bossObj, .5, .5);
         repositionAllPlayers(System.currentTimeMillis());
 
-        // add a piece of fire to the middle of the room
-        FurniData fire = _roomMgr.createEffect(
+        // TEMP background effect
+        EffectData bkg = _roomMgr.createEffect(
             new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
                 "chiyogami/FX_arrow"),
-            new MsoyLocation(.5, 0, .5, 0));
-        _effects.add(fire);
-        _roomObj.addToEffects(fire);
+            new MsoyLocation(.5, 0, .5, 0), RoomCodes.BACKGROUND_EFFECT_LAYER);
+        _effects.add(bkg);
+        _roomObj.addToEffects(bkg);
     }
 
     protected void endRound ()
@@ -272,7 +272,7 @@ public class ChiyogamiManager extends GameManager
     {
         _roomObj.startTransaction();
         try {
-            for (FurniData effect : _effects) {
+            for (EffectData effect : _effects) {
                 _roomObj.removeFromEffects(effect.getKey());
             }
         } finally {
@@ -682,7 +682,7 @@ public class ChiyogamiManager extends GameManager
     protected RoomObject _roomObj;
 
     /** The currently displayed effects. */
-    protected ArrayList<FurniData> _effects = new ArrayList<FurniData>();
+    protected ArrayList<EffectData> _effects = new ArrayList<EffectData>();
 
     /** The boss object. */
     protected BossObject _bossObj;

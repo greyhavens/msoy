@@ -52,7 +52,7 @@ public class RoomObject extends SpotSceneObject
     public DSet<EntityControl> controllers = new DSet<EntityControl>();
 
     /** Contains the currently displayed "effects" (temporary furniture..). */
-    public DSet<FurniData> effects = new DSet<FurniData>();
+    public DSet<EffectData> effects = new DSet<EffectData>();
 
     // AUTO-GENERATED: METHODS START
     /**
@@ -172,7 +172,7 @@ public class RoomObject extends SpotSceneObject
      * <code>effects</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void addToEffects (FurniData elem)
+    public void addToEffects (EffectData elem)
     {
         requestEntryAdd(EFFECTS, effects, elem);
     }
@@ -192,7 +192,7 @@ public class RoomObject extends SpotSceneObject
      * <code>effects</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void updateEffects (FurniData elem)
+    public void updateEffects (EffectData elem)
     {
         requestEntryUpdate(EFFECTS, effects, elem);
     }
@@ -207,10 +207,10 @@ public class RoomObject extends SpotSceneObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setEffects (DSet<com.threerings.msoy.world.data.FurniData> value)
+    public void setEffects (DSet<com.threerings.msoy.world.data.EffectData> value)
     {
         requestAttributeChange(EFFECTS, value, this.effects);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.world.data.FurniData> clone =
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.world.data.EffectData> clone =
             (value == null) ? null : value.typedClone();
         this.effects = clone;
     }

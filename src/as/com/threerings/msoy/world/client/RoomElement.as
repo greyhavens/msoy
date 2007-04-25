@@ -9,10 +9,11 @@ import com.threerings.msoy.world.data.MsoyLocation;
 public interface RoomElement
 {
     /**
-     * Should this element be z-sorted? If true, it will be laid out based on its z coordinate.
-     * If false, it will be displayed behind all other objects in the room.
+     * Return the layer upon which this element should be layed out.
+     * 
+     * @return probably RoomCodes.FURNITURE_LAYER.
      */
-    function isIncludedInLayout () :Boolean;
+    function getRoomLayer () :int;
 
     /**
      * Set the logical location of the element. The orientation is not updated.

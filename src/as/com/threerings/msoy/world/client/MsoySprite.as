@@ -56,6 +56,7 @@ import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.MsoyLocation;
+import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomObject;
 
 
@@ -76,9 +77,9 @@ public class MsoySprite extends MediaContainer
     }
 
     // from RoomElement
-    public function isIncludedInLayout () :Boolean
+    public function getRoomLayer () :int
     {
-        return true;
+        return RoomCodes.FURNITURE_LAYER;
     }
 
     // from RoomElement

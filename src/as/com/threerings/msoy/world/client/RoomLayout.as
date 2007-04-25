@@ -270,11 +270,7 @@ public class RoomLayout {
         offset = (offset != null ? offset : NO_OFFSET);
         
         target.setScreenLocation(screen.x - offset.x, screen.y - offset.y, scale);
-        
-        // maybe call the room view, and tell it to find a new z ordering for this target
-        if (target.isIncludedInLayout()) {
-            adjustZOrder(target as DisplayObject);
-        }
+        adjustZOrder(target as DisplayObject);
     }
 
 
@@ -299,7 +295,7 @@ public class RoomLayout {
         var z :Number;
         while (newdex > 0) {
             z = getZOfChildAt(newdex - 1);
-            if (isNaN(z) || z >= ourZ) {
+            if (z >= ourZ) {
                 break;
             }
             newdex--;
@@ -308,7 +304,7 @@ public class RoomLayout {
         if (newdex == dex) {
             while (newdex < _parentView.numChildren - 1) {
                 z = getZOfChildAt(newdex + 1);
-                if (isNaN(z) || z <= ourZ) {
+                if (z <= ourZ) {
                     break;
                 }
                 newdex++;
@@ -326,14 +322,11 @@ public class RoomLayout {
      */
     protected function getZOfChildAt (index :int) :Number
     {
-        var disp :DisplayObject = _parentView.getChildAt(index);
-        if (disp is RoomElement) {
-            var re :RoomElement = (disp as RoomElement);
-            if (re.isIncludedInLayout()) {
-                return re.getLocation().z;
-            }
-        }
-        return NaN; // either not a RoomElement, or not included in layout
+        var re :RoomElement = RoomElement(_parentView.getChildAt(index));
+
+        // we multiply the layer constant by 1000 to spread out the z values that
+        // normally lie in the 0 -> 1 range.
+        return re.getLocation().z + (1000 * re.getRoomLayer());
     }
 
 
