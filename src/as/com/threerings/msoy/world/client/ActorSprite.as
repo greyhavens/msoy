@@ -359,6 +359,16 @@ public class ActorSprite extends MsoySprite
         arrangeDecorations();
     }
 
+    override protected function contentDimensionsUpdated () :void
+    {
+        super.contentDimensionsUpdated();
+
+        // recheck our label (TODO: this should perhaps be in updateMediaPosition (which means we'd
+        // take this out of scaleUpdated() as well) but we need to trace through the twisty loading
+        // process to find out for sure)
+        recheckLabel();
+    }
+
     override public function shutdown (completely :Boolean = true) :void
     {
         if (completely) {
