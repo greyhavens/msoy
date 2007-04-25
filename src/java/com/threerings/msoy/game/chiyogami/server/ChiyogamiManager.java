@@ -243,7 +243,7 @@ public class ChiyogamiManager extends GameManager
         // add a piece of fire to the middle of the room
         FurniData fire = _roomMgr.createEffect(
             new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
-                "chiyogami/Fire"),
+                "chiyogami/FX_arrow"),
             new MsoyLocation(.5, 0, .5, 0));
         _effects.add(fire);
         _roomObj.addToEffects(fire);
