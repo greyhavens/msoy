@@ -61,6 +61,8 @@ public class ProjectPanel extends JPanel
         _msgs = _ctx.getMessageManager().getBundle(SwiftlyCodes.SWIFTLY_MSGS);
 
         _uploadFileAction = createUploadFileAction();
+        _deleteFileAction = createDeleteFileAction();
+        _renameFileAction = createRenameFileAction();
 
         setupToolbar();
         add(_toolbar, BorderLayout.PAGE_START);
@@ -152,6 +154,9 @@ public class ProjectPanel extends JPanel
                                    final TreePath path)
     {
         // don't allow the template file name to be changed
+        // TODO: replace this with disabling the click and hold rename method
+        // if the element that is selected is the project template or root
+        // there should be a way to mark the node [at least the root] as not "editable"
         if (_roomObj.project.getTemplateSourceName().equals(element.getName())) {
             _editor.showErrorMessage(_msgs.get("e.cannot_rename_template"));
             return;
@@ -312,16 +317,6 @@ public class ProjectPanel extends JPanel
     protected void deletePathElement ()
     {
         final PathElement element = getSelectedPathElement();
-        if (_roomObj.project.getTemplateSourceName().equals(element.getName())) {
-            _editor.showErrorMessage(_msgs.get("e.cannot_delete_template"));
-            return;
-        }
-
-        // don't let the user delete the project
-        if (element.getType() == PathElement.Type.ROOT) {
-            _editor.showErrorMessage(_msgs.get("e.cannot_delete_project"));
-            return;
-        }
 
         // Confirm the user actually wants to delete this PathElement
         if (!_editor.showConfirmDialog(_msgs.get("m.dialog.confirm_delete", element.getName()))) {
@@ -364,7 +359,7 @@ public class ProjectPanel extends JPanel
     {
         _toolbar.add(createButton(createAddFileAction()));
         _toolbar.add(createButton(_uploadFileAction));
-        _toolbar.add(createButton(createDeleteFileAction()));
+        _toolbar.add(createButton(_deleteFileAction));
 
         _toolbar.setFloatable(false);
         setToolbarEnabled(false);
@@ -381,8 +376,8 @@ public class ProjectPanel extends JPanel
     protected void setupPopup ()
     {
         _popup = new JPopupMenu();
-        _popup.add(createDeleteFileAction());
-        _popup.add(createRenameFileAction());
+        _popup.add(_deleteFileAction);
+        _popup.add(_renameFileAction);
     }
 
     protected void setToolbarEnabled (boolean value)
@@ -408,6 +403,18 @@ public class ProjectPanel extends JPanel
         if (_selectedNode == null) {
             setToolbarEnabled(true);
         }
+
+        PathElement element = node.getElement();
+        // if the selected node is the root or the project template, disable delete and rename
+        if (_roomObj.project.getTemplateSourceName().equals(element.getName()) ||
+            element.getType() == PathElement.Type.ROOT) {
+            _deleteFileAction.setEnabled(false);
+            _renameFileAction.setEnabled(false);
+        } else {
+            _deleteFileAction.setEnabled(true);
+            _renameFileAction.setEnabled(true);
+        }
+
         _selectedNode = node;
     }
 
@@ -532,6 +539,8 @@ public class ProjectPanel extends JPanel
     protected JTree _tree;
     protected JToolBar _toolbar = new JToolBar();
     protected Action _uploadFileAction;
+    protected Action _deleteFileAction;
+    protected Action _renameFileAction;
     protected JScrollPane _scrollPane = new JScrollPane();
     protected JPopupMenu _popup;
 }
