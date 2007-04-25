@@ -45,18 +45,20 @@ public class ChannelChatTab extends ChatTab
 
     public function init (ccobj :ChatChannelObject) :void
     {
-        _ccobj = ccobj;
-        _ccobj.addListener(this);
+        if (ccobj != null) {
+            _ccobj = ccobj;
+            _ccobj.addListener(this);
 
-        // report on the current occupants of the channel
-        var occs :String = "";
-        for each (var ci :ChatterInfo in _ccobj.chatters.toArray()) {
-            if (occs.length > 0) {
-                occs += ", ";
+            // report on the current occupants of the channel
+            var occs :String = "";
+            for each (var ci :ChatterInfo in _ccobj.chatters.toArray()) {
+                if (occs.length > 0) {
+                    occs += ", ";
+                }
+                occs += ci.name;
             }
-            occs += ci.name;
+            displayFeedback(MessageBundle.tcompose("m.channel_occs", occs));
         }
-        displayFeedback(MessageBundle.tcompose("m.channel_occs", occs));
     }
 
     public function shutdown () :void
