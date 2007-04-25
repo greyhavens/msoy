@@ -47,15 +47,7 @@ public abstract class SwiftlyDocument
     public static SwiftlyDocument createFromPathElement (PathElement path, String encoding)
         throws IOException
     {
-        for (DocumentFactory factory : _documentTypeFactories) {
-            if (factory.handlesMimeType(path.getMimeType())) {
-                return factory.createDocument(path, encoding);
-            }
-        }
- 
-        // BinaryDocument handles all mime types so this statement should never be reached
-        throw new RuntimeException("Unhandled mime-type. SwiftlyBinaryDocument should handle" +
-            "all mime types");
+        return SwiftlyDocument.createFromPathElement(null, path, encoding);
     }
 
     /**
@@ -67,7 +59,11 @@ public abstract class SwiftlyDocument
     {
         for (DocumentFactory factory : _documentTypeFactories) {
             if (factory.handlesMimeType(path.getMimeType())) {
-                return factory.createDocument(data, path, encoding);
+                if (data != null) {
+                    return factory.createDocument(data, path, encoding);
+                } else {
+                    return factory.createDocument(path, encoding);
+                }
             }
         }
  
