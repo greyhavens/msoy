@@ -461,13 +461,15 @@
       <jvmarg value="-Dos.name=Windows"/>
       <arg value="+flexlib=${flexsdk.dir}/frameworks"/>
       <arg line="-library-path ${flexsdk.dir}/frameworks/libs"/>
+      <arg line="-library-path lib/corelib.swc"/>
+      <arg line="-library-path lib/flexlib.swc"/>
       <arg line="-library-path ${deploy.dir}/ooo.swc"/>
-      <arg line="-templates-path ${flexsdk.dir}/asdoc/templates"/>
       <arg line="-doc-sources projects/flexlib/src"/>
-      <arg line="-doc-sources src/as"/>
+      <arg line="-templates-path ${flexsdk.dir}/asdoc/templates"/>
       <arg line="-doc-sources projects/narya/src/as"/>
       <arg line="-doc-sources projects/nenya/src/as"/>
       <arg line="-doc-sources projects/vilya/src/as"/>
+      <arg line="-doc-sources src/as"/>
       <arg line="-output ${deploy.dir}/asdoc"/>
     </java>
   </target>
