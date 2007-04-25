@@ -13,6 +13,7 @@ import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import com.threerings.flash.Vector3;
 import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -42,8 +43,48 @@ public class RoomLayout {
     {
         return _metrics;
     }
-    
 
+    /**
+     * Turn the screen coordinate into a MsoyLocation, with the orient field set to 0.
+     *   @param shiftPoint if present, constraints movement to points along a vertical
+     *                     line (parallel with the y-axis) passing through that point.
+     *
+     *   @return a ClickLocation object.
+     */
+    public function pointToLocation (
+        globalX :Number, globalY :Number, shiftPoint :Point = null, yOffset :Number = 0)
+        :ClickLocation
+    {
+        // get click location, in screen coords
+        var p :Point = new Point(globalX, globalY);
+        p = _parentView.globalToLocal(p);
+
+        var cloc :ClickLocation;
+        if (shiftPoint == null) {
+            // just return the intersection of the line of sight with the first available wall
+            cloc = _metrics.screenToWallProjection(p.x, p.y);
+            
+        } else {
+            // convert shift point to a line passing vertically through the room
+            var constraint :Point = _parentView.globalToLocal(shiftPoint);
+            var constLocation :ClickLocation =
+                _metrics.screenToWallProjection(constraint.x, constraint.y);
+            var constraintVector :Vector3 = _metrics.toVector3(constLocation.loc);
+
+            // now find a point on the constraint line pointed to by the mouse
+            var yLocation :Vector3 =
+                _metrics.screenToYLineProjection(p.x, p.y, constraintVector).clampToUnitBox();
+
+            // we're done - make a fake "floor" location
+            cloc = new ClickLocation(ClickLocation.FLOOR, _metrics.toMsoyLocation(yLocation));
+        }
+
+        // take any optional offset into account
+        cloc.loc.y += yOffset / _metrics.sceneHeight;
+        return cloc;
+
+    }
+        
     /**
      * Turn the screen coordinate into a MsoyLocation, with the orient field set to 0.
      * @param shiftPoint (optional) another global coordinate at which shift
@@ -51,7 +92,8 @@ public class RoomLayout {
      *
      * @return a ClickLocation object.
      */
-    public function pointToLocation (
+    /*
+    public function pointToLocation_legacy (
         globalX :Number, globalY :Number, shiftPoint :Point = null, yOffset :Number = 0)
         :ClickLocation
     {
@@ -166,7 +208,7 @@ public class RoomLayout {
 
         return new ClickLocation(clickWall, new MsoyLocation(xx, yy, zz, 0));
     }
-
+    */
 
 
     // Perspectivization

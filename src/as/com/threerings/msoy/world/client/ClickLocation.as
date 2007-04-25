@@ -16,6 +16,9 @@ public class ClickLocation
     public static const LEFT_WALL :int = 3;
     public static const RIGHT_WALL :int = 4;
 
+    protected static const WALL_DEBUG_NAMES :Array =
+        [ "floor", "back wall", "ceiling", "left wall", "right wall" ];
+
     /** Where the click actually landed. */
     public var click :int;
 
@@ -29,6 +32,12 @@ public class ClickLocation
     {
         this.click = click;
         this.loc = loc;
+    }
+
+    /** Prints click location in human-readable form. */
+    public function toString () :String
+    {
+        return "[ClickLocation: click=" + WALL_DEBUG_NAMES[click] + ", loc=" + loc + "]";
     }
 }
 }
