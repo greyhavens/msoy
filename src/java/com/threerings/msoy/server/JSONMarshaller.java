@@ -126,7 +126,7 @@ public class JSONMarshaller<T>
     {
         try {
             // try the exhaustive list of possible JSON types
-            if (state instanceof String) {
+            if (state instanceof String || state instanceof Boolean) {
                 return state;
             }
             if (state instanceof Integer) {
