@@ -363,10 +363,10 @@ public class ActorSprite extends MsoySprite
     {
         super.contentDimensionsUpdated();
 
-        // recheck our label (TODO: this should perhaps be in updateMediaPosition (which means we'd
-        // take this out of scaleUpdated() as well) but we need to trace through the twisty loading
-        // process to find out for sure)
-        recheckLabel();
+        // recheck our scale (TODO: this should perhaps be done differently, but we need to trace
+        // through the twisty loading process to find out for sure.
+        // scaleUpdated is specifically needed to be called to make the avatarviewer happy.
+        scaleUpdated();
     }
 
     override public function shutdown (completely :Boolean = true) :void
