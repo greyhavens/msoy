@@ -83,6 +83,10 @@ public class AvatarViewerComp extends Canvas
     protected function gotParams (params :Object) :void
     {
         var media :String = String(params["avatar"]);
+        var scale :Number = Number(params["scale"]);
+        if (isNaN(scale) || (scale == 0)) {
+            scale = 1;
+        }
 
         var count :int = 1;
         var testing :Boolean = false;
@@ -92,7 +96,7 @@ public class AvatarViewerComp extends Canvas
         }
 
         for (var ii :int = count; ii > 0; ii--) {
-            var avatar :ViewerAvatarSprite = new ViewerAvatarSprite();
+            var avatar :ViewerAvatarSprite = new ViewerAvatarSprite(scale);
             _avatars.push(avatar);
 
             avatar.setMedia(media);
@@ -220,9 +224,10 @@ import com.threerings.msoy.world.client.AvatarSprite;
 
 class ViewerAvatarSprite extends AvatarSprite
 {
-    public function ViewerAvatarSprite ()
+    public function ViewerAvatarSprite (scale :Number)
     {
         super(null);
+        _scale = scale; // defined in ActorSprite
         configureMouseProperties();
     }
 

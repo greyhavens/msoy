@@ -120,7 +120,7 @@ public class BaseItemDetailPopup extends BorderedDialog
         if (item instanceof Avatar) {
             // special avatar viewer: TODO: only display in catalog / inventory
             // and not for 3rd parties?
-            return FlashClients.createAvatarViewer(preview.getMediaPath());
+            return FlashClients.createAvatarViewer(preview.getMediaPath(), ((Avatar) item).scale);
 
         } else if (preview.isVideo()) {
             return FlashClients.createVideoViewer(preview.getMediaPath());

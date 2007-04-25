@@ -54,11 +54,11 @@ public class FlashClients
             "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hotspotData);
     }
 
-    public static HTML createAvatarViewer (String avatarPath)
+    public static HTML createAvatarViewer (String avatarPath, float scale)
     {
         return WidgetUtil.createFlashContainer(
             "avatarViewer", "/clients/" + DeploymentConfig.version + "/avatarviewer.swf",
-            360, 450, "avatar=" + URL.encodeComponent(avatarPath));
+            360, 450, "avatar=" + URL.encodeComponent(avatarPath) + "&scale=" + scale);
     }
 
     public static HTML createVideoViewer (String videoPath)
