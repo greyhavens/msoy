@@ -31,8 +31,9 @@ public class Game extends Item
      */
     public function isInWorld () :Boolean
     {
-        return (StringUtil.trim(config) == "avrg") ||
-            (0 == config.indexOf("Chiyogami"));
+        // TODO: this will change
+        return (0 <= config.indexOf("<toggle ident=\"avrg\" start=\"true\"/>")) ||
+            (0 <= config.indexOf("<toggle ident=\"chiyogami\" start=\"true\"/>"));
     }
 
     public function getGameDefinition() :GameDefinition 
