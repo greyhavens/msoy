@@ -46,7 +46,6 @@ import com.threerings.msoy.world.data.RoomObject;
 public class AbstractRoomView extends Sprite
     implements MsoyPlaceView
 {
-
     public function AbstractRoomView (ctx :WorldContext)
     {
         _ctx = ctx;
@@ -103,10 +102,10 @@ public class AbstractRoomView extends Sprite
     public function locationUpdated (sprite :MsoySprite) :void
     {
         _layout.updateScreenLocation(sprite, sprite.getLayoutHotSpot());
-        
+
         if (sprite == _bg && _scene.getSceneType() == Decor.FIXED_IMAGE) {
             sprite.x += getScrollOffset();
-        }        
+        }
     }
 
     /**
@@ -116,7 +115,7 @@ public class AbstractRoomView extends Sprite
     {
         _editing = editing;
         _furni.forEach(spriteVisitFn);
-        
+
         if (_bg != null) {
             spriteVisitFn(null, _bg);
         }
@@ -158,8 +157,8 @@ public class AbstractRoomView extends Sprite
     }
 
     /**
-     * Get the full boundaries of our scrolling area.
-     * The Rectangle returned may be destructively modified.
+     * Get the full boundaries of our scrolling area.  The Rectangle returned may be destructively
+     * modified.
      */
     public function getScrollBounds () :Rectangle
     {
@@ -167,8 +166,8 @@ public class AbstractRoomView extends Sprite
             return new Rectangle(0, 0, _actualWidth, _actualHeight);
         }
 
-        var r :Rectangle = new Rectangle(0, 0, _scene.getWidth() * scaleX, 
-            _scene.getHeight() * scaleY);
+        var r :Rectangle = new Rectangle(
+            0, 0, _scene.getWidth() * scaleX, _scene.getHeight() * scaleY);
         if (_editing) {
             r.inflate(_actualWidth * 2 / 3, 0);
         }
@@ -196,12 +195,12 @@ public class AbstractRoomView extends Sprite
 
     /**
      * Sets the background sprite. If the data value is null, simply removes the old one.
-     * Note: this 
+     * Note: this
      */
     public function setBackground (decordata :DecorData) :void
     {
         if (_bg != null) {
-            removeSprite(_bg); 
+            removeSprite(_bg);
             _bg = null;
         }
         if (decordata != null) {
@@ -219,7 +218,7 @@ public class AbstractRoomView extends Sprite
     {
         return _bg;
     }
-    
+
     // documentation inherited from interface PlaceView
     public function willEnterPlace (plobj :PlaceObject) :void
     {
@@ -312,9 +311,8 @@ public class AbstractRoomView extends Sprite
     }
 
     /**
-     * Should we load everything that we know how to?
-     * This is used by a subclass to restrict loading to certain things
-     * when the room is first entered.
+     * Should we load everything that we know how to?  This is used by a subclass to restrict
+     * loading to certain things when the room is first entered.
      */
     protected function shouldLoadAll () :Boolean
     {
@@ -329,7 +327,6 @@ public class AbstractRoomView extends Sprite
         var bounds :Rectangle = getScrollBounds();
         if (bounds.width > _actualWidth) {
             scrollRect = new Rectangle(0, 0, _actualWidth, _actualHeight);
-
         } else {
             scrollRect = null;
         }
@@ -343,6 +340,7 @@ public class AbstractRoomView extends Sprite
     }
 
     /**
+     * Sets all sprites in the supplied map to active or non-active.
      */
     protected function setActive (map :HashMap, active :Boolean) :void
     {
@@ -396,7 +394,7 @@ public class AbstractRoomView extends Sprite
     {
         _backdrop.drawRoom(this, _actualWidth, _actualHeight, _editing);
     }
-    
+
     /** The msoy context. */
     protected var _ctx :WorldContext;
 
@@ -417,7 +415,7 @@ public class AbstractRoomView extends Sprite
 
     /** Helper object that draws a room backdrop with four walls. */
     protected var _backdrop :RoomBackdrop = new RoomBackdrop();
-    
+
     /** Our background sprite, if any. */
     protected var _bg :DecorSprite;
 
@@ -429,6 +427,5 @@ public class AbstractRoomView extends Sprite
 
     /** Are we editing the scene? */
     protected var _editing :Boolean = false;
-
 }
 }
