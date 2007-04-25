@@ -261,7 +261,7 @@ public class GroupRepository extends DepotRepository
         throws PersistenceException
     {
         GroupMembershipCount count =
-            load(GroupMembershipCount.class, GroupMembershipRecord.GROUP_ID, groupId,
+            load(GroupMembershipCount.class, new Where(GroupMembershipRecord.GROUP_ID, groupId),
                  new FieldOverride(GroupMembershipCount.COUNT, "count(*)"),
                  new FromOverride(GroupMembershipRecord.class));
         if (count == null) {
