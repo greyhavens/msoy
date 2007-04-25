@@ -475,28 +475,6 @@
     <delete dir="${deploy.dir}/tmp/ezgame"/>
   </target>
 
-  <!-- TEMP: builds the SDK; this will soon move into the whirled repository -->
-  <target name="temp_sdk">
-    <property name="sdk.build" value="${deploy.dir}/sdk/whirled"/>
-    <mkdir dir="${sdk.build}"/>
-    <copy todir="${sdk.build}">
-      <fileset dir="data/temp_sdk" includes="**"/>
-    </copy>
-    <mkdir dir="${sdk.build}/lib"/>
-    <copy todir="${sdk.build}/lib">
-     <fileset dir="${deploy.dir}">
-       <include name="whirled.swc"/>
-       <include name="whirled-code.jar"/>
-     </fileset>
-    </copy>
-    <copy todir="${sdk.build}">
-      <fileset dir="." includes="src/as/com/whirled/**" excludes="**/WorldGameControl.as"/>
-      <fileset dir="projects/vilya" includes="src/as/com/threerings/ezgame/*.as"/>
-    </copy>
-    <zip destfile="${deploy.dir}/sdk/whirled_sdk.zip" basedir="${deploy.dir}/sdk"
-         includes="whirled/**"/>
-  </target>
-
   <!-- builds, runs Proguard on and signs a Java client -->
   <target name="proguard">
     <!-- figure out where the Java rt.jar file lives -->
@@ -741,7 +719,7 @@
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distall" depends="prepare,distprojects,dist,flashapps,jclients,temp_sdk,tests">
+  <target name="distall" depends="prepare,distprojects,dist,flashapps,jclients,tests">
     <antcall target="gclient">
       <param name="full" value="true"/>
     </antcall>
@@ -830,9 +808,8 @@
 
   <!-- install extra pages stuff into ${pkg.base} -->
   <target name="prepare-pages-extra">
-    <antcall target="temp_sdk"/>
     <copy todir="${pkg.base}/pages">
-      <fileset dir="${deploy.dir}/sdk" includes="whirled_sdk.zip"/>
+      <fileset dir="${deploy.dir}/sdk" includes="whirled_sdk*.zip"/>
     </copy>
     <mkdir dir="${pkg.base}/pages/buildresults"/>
   </target>
