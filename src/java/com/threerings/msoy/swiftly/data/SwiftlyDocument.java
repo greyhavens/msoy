@@ -47,7 +47,7 @@ public abstract class SwiftlyDocument
     public static SwiftlyDocument createFromPathElement (PathElement path, String encoding)
         throws IOException
     {
-        return SwiftlyDocument.createFromPathElement(null, path, encoding);
+        return createFromPathElement(null, path, encoding);
     }
 
     /**
