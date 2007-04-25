@@ -379,6 +379,10 @@ public class MemberRepository extends DepotRepository
      * Note that a member's session has ended: increment their sessions, add in the number of
      * minutes spent online, and set their last session time to now. We also test to see if it
      * is time to reassess this member's humanity.
+     *
+     * @param the duration of the session in minutes.
+     * @param humanityReassessFreq the number of seconds between humanity reassessments or zero if
+     * humanity assessment is disabled.
      */
     public void noteSessionEnded (int memberId, int minutes, long humanityReassessFreq)
         throws PersistenceException
