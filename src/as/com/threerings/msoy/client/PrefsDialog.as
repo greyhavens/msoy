@@ -135,10 +135,6 @@ public class PrefsDialog extends FloatingPanel
 
         tainer.addChild(_avatars);
 
-        var btn :CommandButton = new CommandButton(MsoyController.PURCHASE_ROOM);
-        btn.label = Msgs.GENERAL.get("b.purchase_room");
-        tainer.addChild(btn);
-
         return tainer;
     }
 
