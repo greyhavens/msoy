@@ -590,9 +590,8 @@ public class RoomView extends AbstractRoomView
     {
         var scale :Number = super.computeScale();
         if ((_ctx.getClient() as WorldClient).isMinimized()) {
-            scale *= (TopPanel.RIGHT_SIDEBAR_WIDTH / stage.width);
+            scale *= (TopPanel.RIGHT_SIDEBAR_WIDTH / stage.stageWidth);
         }
-        log.info("Adjusting scale [natural=" + super.computeScale() + ", current=" + scale + "].");
         return scale;
     }
 
