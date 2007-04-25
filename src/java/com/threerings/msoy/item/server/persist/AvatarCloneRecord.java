@@ -33,6 +33,15 @@ public class AvatarCloneRecord extends CloneRecord<AvatarRecord>
     @Column(defaultValue="1")
     public float scale;
 
+    @Override
+    public void initialize (ItemRecord parent, int newOwnerId, int flowPaid, int goldPaid)
+    {
+        super.initialize(parent, newOwnerId, flowPaid, goldPaid);
+
+        // and copy the parent's scale
+        this.scale = ((AvatarRecord) parent).scale;
+    }
+
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link #AvatarCloneRecord}

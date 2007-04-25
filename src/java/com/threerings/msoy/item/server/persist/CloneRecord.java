@@ -104,4 +104,15 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
     /** Where it's being used. */
     public int location;
 
+    /**
+     * Initialize a new clone with the specified values.
+     */
+    public void initialize (ItemRecord parent, int newOwnerId, int flowPaid, int goldPaid)
+    {
+        this.originalItemId = parent.itemId;
+        this.ownerId = newOwnerId;
+        this.flowPaid = flowPaid;
+        this.goldPaid = goldPaid;
+        this.purchaseTime = new Timestamp(System.currentTimeMillis());
+    }
 }

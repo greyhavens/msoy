@@ -116,7 +116,7 @@ public class CatalogServlet extends MsoyServiceServlet
             }
 
             // create the clone row in the database!
-            int cloneId = repo.insertClone(ident.itemId, mrec.memberId, flowCost, listing.goldCost);
+            int cloneId = repo.insertClone(listing.item, mrec.memberId, flowCost, listing.goldCost);
 
             // note the new purchase for the item
             repo.nudgeListing(ident.itemId, true);

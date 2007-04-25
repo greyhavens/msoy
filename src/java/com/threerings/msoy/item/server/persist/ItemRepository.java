@@ -467,7 +467,7 @@ public abstract class ItemRepository<
      * Insert an item clone into the database with the given owner.  This fills itemId with the
      * next available unique ID and ownerId with the supplied value for the new owner.
      */
-    public int insertClone (int itemId, int newOwnerId, int flowPaid, int goldPaid)
+    public int insertClone (ItemRecord parent, int newOwnerId, int flowPaid, int goldPaid)
         throws PersistenceException
     {
         CLT record;
@@ -476,11 +476,7 @@ public abstract class ItemRepository<
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
-        record.originalItemId = itemId;
-        record.ownerId = newOwnerId;
-        record.flowPaid = flowPaid;
-        record.goldPaid = goldPaid;
-        record.purchaseTime = new Timestamp(System.currentTimeMillis());
+        record.initialize(parent, newOwnerId, flowPaid, goldPaid);
         insert(record);
         return record.itemId;
     }
