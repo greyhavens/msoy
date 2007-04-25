@@ -262,6 +262,7 @@ public class ChiyogamiManager extends GameManager
     {
         super.didShutdown();
 
+        removeAllEffects();
         shutdownBoss();
         _roomObj.removeListener(_roomListener);
         _roomObj.postMessage(RoomObject.PLAY_MUSIC); // no arg stops music
