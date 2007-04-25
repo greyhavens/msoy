@@ -809,7 +809,7 @@
   <!-- install extra pages stuff into ${pkg.base} -->
   <target name="prepare-pages-extra">
     <copy todir="${pkg.base}/pages">
-      <fileset dir="${deploy.dir}/sdk" includes="whirled_sdk*.zip"/>
+      <fileset dir="data" includes="whirled_sdk*.zip"/>
     </copy>
     <mkdir dir="${pkg.base}/pages/buildresults"/>
   </target>
