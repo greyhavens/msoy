@@ -618,7 +618,8 @@ public class RoomController extends SceneController
                         _walkTarget.alpha = 1;
                     }
 
-                    showWalkTarget = true;
+                    // don't show the walk target if we're "in front" of the room view
+                    showWalkTarget = (cloc.loc.z >= 0);
                     _walkTarget.setLocation(cloc.loc);
                     _roomView.layout.updateScreenLocation(_walkTarget);
                 }
@@ -717,10 +718,10 @@ public class RoomController extends SceneController
             }
 
             // calculate where the location is
-            var cloc :ClickLocation =
-                _roomView.layout.pointToLocation(
-                    event.stageX, event.stageY, _shiftPressed, getAvatarYOffset());
-            if (cloc.click == ClickLocation.FLOOR) {
+            var cloc :ClickLocation = _roomView.layout.pointToLocation(
+                event.stageX, event.stageY, _shiftPressed, getAvatarYOffset());
+            if (cloc.click == ClickLocation.FLOOR &&
+                cloc.loc.z >= 0) { // disallow clicking in "front" of the scene when minimized
                 // orient the location as appropriate
                 var newLoc :MsoyLocation = cloc.loc;
                 var degrees :Number = 180 / Math.PI *
