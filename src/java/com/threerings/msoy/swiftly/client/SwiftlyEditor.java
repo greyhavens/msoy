@@ -351,6 +351,9 @@ public class SwiftlyEditor extends PlacePanel
             _roomObj = null;
         }
 
+        // destroy the console window
+        _console.dispose();
+
         // TODO: shutdown the project panel?
     }
 
