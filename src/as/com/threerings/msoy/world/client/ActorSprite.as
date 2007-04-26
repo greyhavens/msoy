@@ -248,14 +248,14 @@ public class ActorSprite extends MsoySprite
     {
         // if there's already a move, kill it
         if (_walk != null) {
-            _walk.stop();
+            _walk.stopAnimation();
         }
 
         // set the orientation towards the new location
         setOrientation(destLoc.orient, false);
 
         _walk = new WalkAnimation(this, scene, _loc, destLoc);
-        _walk.start();
+        _walk.startAnimation();
         appearanceChanged();
     }
 
@@ -287,7 +287,7 @@ public class ActorSprite extends MsoySprite
     public function stopMove () :void
     {
         if (_walk != null) {
-            _walk.stop();
+            _walk.stopAnimation();
             _walk = null;
         }
     }
@@ -583,7 +583,7 @@ public class ActorSprite extends MsoySprite
 
     protected var _label :TextField;
     protected var _occInfo :ActorInfo;
-    protected var _walk :Animation;
+    protected var _walk :WalkAnimation;
 
     /** The media scale we should use. */
     protected var _scale :Number = 1;

@@ -5,7 +5,7 @@ import flash.events.TimerEvent;
 import flash.utils.Timer;
 import flash.utils.getTimer; // function import
 
-import com.threerings.flash.Animation;
+import com.threerings.flash.AnimationImpl;
 
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -13,14 +13,12 @@ import com.threerings.msoy.world.data.MsoyScene;
 /**
  * Handles moving an ActorSprite around in a scene.
  */
-public class WalkAnimation extends Animation
+public class WalkAnimation extends AnimationImpl
 {
     public function WalkAnimation (
         spr :ActorSprite, scene :MsoyScene,
         src :MsoyLocation, dest :MsoyLocation)
     {
-        super();
-
         _sprite = spr;
         _source = [ src.x, src.y, src.z, src.orient ];
         _dest = [ dest.x, dest.y, dest.z, dest.orient ];
@@ -36,21 +34,20 @@ public class WalkAnimation extends Animation
     /**
      * Update the actor's location based on the time elapsed.
      */
-    override protected function enterFrame () :void
+    override public function updateAnimation (elapsed :Number) :void
     {
-        var currentTime :int = _now - _start;
-        if (currentTime >= _duration) {
+        if (elapsed >= _duration) {
             // golly, we're done!
             _sprite.setLocation(_dest);
             _sprite.walkCompleted(_dest[3] as Number); // orient
-            stop();
+            stopAnimation();
             return;
         }
 
         // otherwise calculate the intermediate location
         var current :Array = [];
         for (var ii :int = 0; ii < 3; ii++) { // don't do orient
-            current[ii] = moveFunction(currentTime, _source[ii],
+            current[ii] = moveFunction(elapsed, _source[ii],
                 _dest[ii] - _source[ii], _duration);
         }
         _sprite.setLocation(current);
@@ -62,7 +59,7 @@ public class WalkAnimation extends Animation
     protected static function moveFunction (
         stamp :int, initial :Number, delta :Number, duration :int) :Number
     {
-        return (delta * stamp) / duration + initial;
+        return ((delta * stamp) / duration) + initial;
     }
 
     /** The sprite we'll be moving. */
