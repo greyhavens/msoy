@@ -16,16 +16,17 @@ import com.samskivert.util.StringUtil;
 /**
  * Contains persistent data stored for every member of MetaSOY.
  */
-@Entity(indices={ @Index(columns={"inviterId"}), @Index(columns={"inviteeId"})})
+@Entity(indices={ @Index(columns={"inviterId"}), @Index(columns={"inviteeId"}), 
+    @Index(columns={"inviteeEmailHash"})})
 public class InvitationRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #inviteeEmailHash} field. */
-    public static final String INVITEE_EMAIL_HASH = "inviteeEmailHash";
+    /** The column identifier for the {@link #inviteeEmail} field. */
+    public static final String INVITEE_EMAIL = "inviteeEmail";
 
-    /** The qualified column identifier for the {@link #inviteeEmailHash} field. */
-    public static final ColumnExp INVITEE_EMAIL_HASH_C =
-        new ColumnExp(InvitationRecord.class, INVITEE_EMAIL_HASH);
+    /** The qualified column identifier for the {@link #inviteeEmail} field. */
+    public static final ColumnExp INVITEE_EMAIL_C =
+        new ColumnExp(InvitationRecord.class, INVITEE_EMAIL);
 
     /** The column identifier for the {@link #inviterId} field. */
     public static final String INVITER_ID = "inviterId";
@@ -33,6 +34,13 @@ public class InvitationRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #inviterId} field. */
     public static final ColumnExp INVITER_ID_C =
         new ColumnExp(InvitationRecord.class, INVITER_ID);
+
+    /** The column identifier for the {@link #inviteHash} field. */
+    public static final String INVITE_HASH = "inviteHash";
+
+    /** The qualified column identifier for the {@link #inviteHash} field. */
+    public static final ColumnExp INVITE_HASH_C =
+        new ColumnExp(InvitationRecord.class, INVITE_HASH);
 
     /** The column identifier for the {@link #inviteeId} field. */
     public static final String INVITEE_ID = "inviteeId";
@@ -60,12 +68,17 @@ public class InvitationRecord extends PersistentRecord
      * object in a way that will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 1;
 
-    /** The MD5 hash of the email address that this invitation was sent to */
-    @Id 
-    public byte[] inviteeEmailHash;
+    /** The email address we're sending this invitation to. */
+    @Id
+    public String inviteeEmail;
 
     /** The inviter's member Id */
+    @Id
     public int inviterId; 
+
+    /** An MD5 Hash generated from the invitee's email address and the inviter's memberId. Used
+     * for the unique URL that is sent with this invitation. */
+    public byte[] inviteHash;
 
     /** The memberId that was assigned to the invitee when (if) the invitation was accepted. */
     public int inviteeId;
@@ -87,27 +100,17 @@ public class InvitationRecord extends PersistentRecord
         return StringUtil.fieldsToString(this);
     }
 
-    /* 
-     * ACK! Arrays are not Comparable.  Samskivert's GenRecordTask does not generate a proper Key 
-     * for this class.  In fact, I'm not immediately sure if Key can be used with a byte[] 
-     * column.  
-     *
-     * PLEASE NOTE: until this is sorted out, ant genrecord will BREAK THIS CLASS.  If you
-     * run it and compilation fails, comment out the automatically generated getKey () function
-     * below! 
-     */
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link #InvitationRecord}
      * with the supplied key values.
      */
-    /*
-    public static Key<InvitationRecord> getKey (byte[] inviteeEmailHash)
+    public static Key<InvitationRecord> getKey (String inviteeEmail, int inviterId)
     {
         return new Key<InvitationRecord>(
                 InvitationRecord.class,
-                new String[] { INVITEE_EMAIL_HASH },
-                new Comparable[] { inviteeEmailHash });
-    }*/
+                new String[] { INVITEE_EMAIL, INVITER_ID },
+                new Comparable[] { inviteeEmail, inviterId });
+    }
     // AUTO-GENERATED: METHODS END
 }
