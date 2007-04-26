@@ -3,12 +3,21 @@
 
 package com.threerings.msoy.swiftly.client;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.JToolBar;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
@@ -30,10 +39,39 @@ public class Console extends JFrame
         _consoleText = new JTextPane(_document = new DefaultStyledDocument());
         _consoleText.setEditable(false);
 
+        // stick the text pane into a scroller
         JScrollPane scroller = new JScrollPane(_consoleText,
             JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller.setPreferredSize(new Dimension(400, 400));
-        setContentPane(scroller);
+
+        // setup the toolbar
+        JToolBar toolbar = new JToolBar();
+        JButton button = new JButton(
+            new AbstractAction(ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.clear")) {
+            public void actionPerformed (ActionEvent e) {
+                clearConsole();
+            }
+        });
+        button.setFont(button.getFont().deriveFont(Font.BOLD));
+        // push the buttons into the center of the toolbar
+        toolbar.add(Box.createHorizontalGlue());
+        toolbar.add(button);
+        button = new JButton(
+            new AbstractAction(ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.close")) {
+            public void actionPerformed (ActionEvent e) {
+                hideWindow();
+            }
+        });
+        button.setFont(button.getFont().deriveFont(Font.BOLD));
+        toolbar.add(button);
+        toolbar.add(Box.createHorizontalGlue());
+        toolbar.setFloatable(false);
+
+        // add the scroller and toolbar to a panel and set that as the content pane
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(scroller, BorderLayout.CENTER);
+        panel.add(toolbar, BorderLayout.PAGE_END);
+        setContentPane(panel);
 
         StyleConstants.setBold(_error, true);
         StyleConstants.setForeground(_error, Color.red);
@@ -70,6 +108,22 @@ public class Console extends JFrame
         } catch (BadLocationException e) {
             // nada
         }
+    }
+
+    /**
+     * Hides the console window.
+     */
+    protected void hideWindow ()
+    {
+        setVisible(false);
+    }
+
+    /**
+     * Clears the console.
+     */
+    protected void clearConsole ()
+    {
+        _consoleText.setText("");
     }
 
     protected SwiftlyContext _ctx;
