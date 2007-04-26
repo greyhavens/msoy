@@ -7,7 +7,26 @@ import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.MsoyLocation;
 
 /**
- * Much of this will change soon when I add heights.
+ * Room parameters in screen coordinates, and associated conversion routines.
+ *
+ * Rooms are measured in two coordinate spaces: room coordinates, and screen coordinates.
+ *
+ * In room space, the room is an axis-aligned unit cube, with one corner at the origin and
+ * the other at [1, 1, 1]. The player's camera is centered on the [0.5, 0.5, z] axis,
+ * and the viewport is defined as the square [[0, 0, 0], [1, 1, 0]] (i.e. the 'front wall'
+ * of the unit cube), with origin in the lower left. Objects locations are expressed
+ * in room space. 
+ *
+ * In pixel space, the room has a specific height, width, and depth, with origin at upper left.
+ * Because the front wall serves as the viewport, and the view is always axis-aligned
+ * and looking in the +z direction, conversion into pixel space reduces to projecting
+ * all objects onto the front wall, and then converting their x, y coordinates from room space
+ * to pixel space.
+ *
+ * Horizon value changes where the room's "horizon line" is displayed in the viewport.
+ * Changes to the horizon can be considered as skewing the room square, such that
+ * the back wall shifts up or down. The skew is done during conversion between screen
+ * and room coordinate spaces. 
  */
 public class RoomMetrics
 {
@@ -22,46 +41,25 @@ public class RoomMetrics
 
     /**
      * Scene horizon value, in [0, 1], where 0 means horizon is at the topmost line of the view
-     * (so we're shifting the floor up), 0.5 means it's in the middle of the screen,
-     * and 1 means it's at the very bottom (so we're shifting the floor down).
+     * (so we're shifting the back wall up), 0.5 means it's in the middle of the screen,
+     * and 1 means it's at the very bottom (so we're shifting the back wall down).
      */
     public var sceneHorizon :Number;
 
-    /** The scale of media items at z = 1.0 (far wall). */
-    public var farScale :Number;
-
-    /** The scale of media items at z = 0.0 (near wall). */
-    public const nearScale :Number = 1.0;
-
-    /** Difference between the scale of nearest and farthest objects. */
-    public var scaleRange :Number;
-
-    /** Actual pixel height of the back wall. */
-    public var backWallHeight :Number;
-
-    /** Actual pixel width of the back wall. */
-    public var backWallWidth :Number;
-
-    /** Y pixel of the top of the back wall. */
-    public var backWallTop :Number;
-
-    /** Y pixel of the bottom of the back wall. */
-    public var backWallBottom :Number;
-
-    /** Y pixel of the horizon (also its height in pixels from the top of the screen). */
-    public var horizonY :Number;
-
-    /** Camera location, in room coordinates.
-     *  The camera always looks in the direction of [ 0, 0, 1 ], the positive z axis. */
+    /**
+     * Camera location, in room coordinates.
+     * The camera always looks in the direction of [ 0, 0, 1 ], the positive z axis.
+     */
     public var camera :Vector3;
 
+    /** Camera's focal length. */
+    public var focal :Number;
+    
     /**
-     * Floor skew vector. Horizon changes skews the room, by raising or lowering the room's back
-     * wall, and this vector represents the skew as a vector from the center of the front wall
-     * to the center of the back wall. If the horizon is neutral at 0.5, the vector is parallel to
-     * the z-axis.
+     * Floor skew factor. Horizon changes skews the room, as if raising or lowering the
+     * room's back wall, and this is the value of this vertical skew offset.
      */
-    public var skew :Vector3;
+    public var skewoffset :Number;
 
     /** Floor normal: vector normal to the skewed floor, pointing up. */
     protected var nfloor :Vector3;
@@ -73,30 +71,23 @@ public class RoomMetrics
     /** Read and update metrics from decor data. */
     public function update (data :DecorData) :void
     {
-        this.sceneDepth = nearScale * data.depth;
-        this.sceneWidth = nearScale * data.width;
-        this.sceneHeight = nearScale * data.height;
-        this.sceneHorizon = data.horizon;
-        var sky :Number = 1 - sceneHorizon; // sky height in room units (from 0 to 1).
-
         // I'm using 'this' to make clear which assignments are for public props
-        this.farScale = (sceneDepth == 0) ? 0 : (FOCAL / (FOCAL + sceneDepth));
-        this.scaleRange = nearScale - farScale;
-        this.backWallHeight = data.height * farScale;
-        this.backWallWidth = data.width * farScale;
-
-        this.horizonY = sceneHeight * sky;
-        this.backWallTop = horizonY - (backWallHeight * sky);
-        this.backWallBottom = backWallTop + backWallHeight;
-
-        this.camera = new Vector3 (0.5, 0.5, - FOCAL / sceneDepth);
+        this.focal = DEFAULT_FOCAL;
+        this.sceneDepth = data.depth;
+        this.sceneWidth = data.width;
+        this.sceneHeight = data.height;
+        this.sceneHorizon = data.horizon;
+        this.camera = new Vector3 (0.5, 0.5, - focal / sceneDepth);
 
         // calculate floor skew
-        var upSkew :Vector3   = new Vector3(0,  0.5, FOCAL / sceneDepth); // at horizon = 0
-        var downSkew :Vector3 = new Vector3(0, -0.5, FOCAL / sceneDepth); // at horizon = 1
-        this.skew = Vector3.interpolate(downSkew, upSkew, sceneHorizon).normalize();
-        this.skew = skew.multiply(1 / skew.z); // make it stretch from near to far wall
-        
+        var upSkew :Vector3   = new Vector3(0,  0.5, focal / sceneDepth); // at horizon = 0
+        var downSkew :Vector3 = new Vector3(0, -0.5, focal / sceneDepth); // at horizon = 1
+        var skew :Vector3     = Vector3.interpolate(downSkew, upSkew, sceneHorizon);
+
+        // make the skew vector stretch from near to far wall, and remember its y-value
+        skew = skew.normalize().multiply(1 / skew.z); 
+        this.skewoffset = skew.y;
+        // save its normals
         this.nfloor = new Vector3(skew.x, skew.z, -skew.y).normalize();
         this.nceiling = nfloor.multiply(-1);
     }
@@ -132,6 +123,15 @@ public class RoomMetrics
     }
 
     /**
+     * Returns a point in screen coordinates corresponding to the vector in room coordinates.
+     */
+    // Why doesn't Actionscript support method overloading? What the flash?
+    public function roomToScreenV3 (v :Vector3) :Point
+    {
+        return roomToScreen(v.x, v.y, v.z);
+    }
+
+    /**
      * Given a screen location, draws a line of sight vector and tries to find the closest
      * intersection with any of the walls within the unit cube. Returns a location in room
      * coordinates, with "back wall" as the default click target if no other intersection exists.
@@ -142,11 +142,16 @@ public class RoomMetrics
         
         // intersect with the five walls (except for the near wall :)
         var walls :Array = [
-            [ ClickLocation.FLOOR, l.intersection(camera, leftBottomNearCorner, nfloor) ],
-            [ ClickLocation.CEILING, l.intersection(camera, rightTopNearCorner, nceiling) ],
-            [ ClickLocation.LEFT_WALL, l.intersection(camera, leftBottomNearCorner, nRight) ],
-            [ ClickLocation.RIGHT_WALL, l.intersection(camera, rightTopNearCorner, nLeft) ],
-            [ ClickLocation.BACK_WALL, l.intersection(camera, farCenter, nToCamera) ] ];
+            [ ClickLocation.FLOOR,
+              l.intersection(camera, LEFT_BOTTOM_NEAR, nfloor) ],
+            [ ClickLocation.CEILING,
+              l.intersection(camera, RIGHT_TOP_NEAR, nceiling) ],
+            [ ClickLocation.LEFT_WALL,
+              unskewVector(l.intersection(camera, LEFT_BOTTOM_NEAR, N_RIGHT)) ],
+            [ ClickLocation.RIGHT_WALL,
+              unskewVector(l.intersection(camera, RIGHT_TOP_NEAR, N_LEFT)) ],
+            [ ClickLocation.BACK_WALL,
+              unskewVector(l.intersection(camera, CENTER_CENTER_FAR, N_TO_CAMERA)) ] ];
 
         var min :Number = Infinity;
         var minpair :Array = walls[4];
@@ -182,26 +187,26 @@ public class RoomMetrics
 
         // find the line of sight vector, and the normal of the plane it defines
         var line :Vector3 = screenToLineOfSight(x, y);
-        var n :Vector3 = line.cross(nLeft).normalize();
+        var n :Vector3 = line.cross(N_LEFT).normalize();
 
         // find where this plane intersects with the constrained ray
-        var result :Vector3 = nAbsoluteUp.intersection(p, camera, n);
+        var result :Vector3 = N_UP.intersection(p, camera, n);
 
-        // unskew the result
+        // subtract any room skew factors
         return unskewVector(result);
     }        
 
-    /** Returns a new vector that skews the parameter based on floor skew. */
+    /** Add skewing factor to the vector (used before projecting onto front wall). */
     public function skewVector (v :Vector3) :Vector3
     {
-        var yoffset :Number = interpolate(0, skew.y, v.z);
+        var yoffset :Number = interpolate(0, skewoffset, v.z);
         return new Vector3 (v.x, v.y + yoffset, v.z);
     }
     
-    /** Returns a new vector that skews the parameter based on floor skew. */
+    /** Remove skewing factor from the vector (used on results of line of sight calculation). */
     public function unskewVector (v :Vector3) :Vector3
     {
-        var yoffset :Number = interpolate(0, skew.y, v.z);
+        var yoffset :Number = interpolate(0, skewoffset, v.z);
         return new Vector3 (v.x, v.y - yoffset, v.z);
     }
 
@@ -214,7 +219,7 @@ public class RoomMetrics
         target = skewVector(target);
         
         // draw a ray from the camera, and see where it falls on the front wall
-        return target.subtract(camera).intersection(camera, leftBottomNearCorner, nToCamera);
+        return target.subtract(camera).intersection(camera, LEFT_BOTTOM_NEAR, N_TO_CAMERA);
     }
         
     /**
@@ -274,43 +279,21 @@ public class RoomMetrics
         return new Vector3 (loc.x, loc.y, loc.z);
     }
 
-    // LEGACY FUNCTIONS (TEMPORARY)
-    /*
-    public function roomToScreen_legacy (x :Number, y :Number, z :Number) :Point
-    {
-        var position :Point = roomDistanceToPixelDistance (new Point(x, y), z);
-        var leftOffset :Number = interpolate(0, (sceneWidth - backWallWidth) / 2, z);
-        var groundOffset :Number = interpolate(0, sceneHeight - backWallBottom, z);
-        var xPosition :Number = leftOffset + position.x;
-        var yPosition :Number = sceneHeight - (groundOffset + position.y);
-        return new Point(xPosition, yPosition);
-    }
-
-    public function pixelDistanceToRoomDistance_legacy (delta :Point, z :Number) :Point
-    {
-        var roomHeightAtDepth :Number = interpolate(sceneHeight, backWallHeight, z);
-        var roomWidthAtDepth :Number = interpolate(sceneWidth, backWallWidth, z);
-        return new Point(delta.x / roomWidthAtDepth, delta.y / roomHeightAtDepth);
-    }
-    
-    public function scaleAtDepth_legacy (z :Number) :Number
-    {
-        return interpolate(nearScale, farScale, z);
-    }
-    */
-
-    /** The focal length of our perspective rendering. */
-    public static const FOCAL :Number = 800;
+    /** Initial focal length of our perspective rendering. */
+    public static const DEFAULT_FOCAL :Number = 488; 
 
     /** Convenience position vectors, in room coordinates. */
-    public static const leftBottomNearCorner :Vector3 = new Vector3(0, 0, 0);
-    public static const rightTopNearCorner :Vector3 = new Vector3(1, 1, 0);
-    public static const farCenter :Vector3 = new Vector3(0.5, 0.5, 1);
+    public static const LEFT_BOTTOM_NEAR :Vector3  = new Vector3( 0, 0, 0);
+    public static const RIGHT_TOP_NEAR :Vector3    = new Vector3( 1, 1, 0);
+    public static const LEFT_BOTTOM_FAR :Vector3  = new Vector3( 0, 0, 1);
+    public static const RIGHT_TOP_FAR :Vector3    = new Vector3( 1, 1, 1);
+    public static const CENTER_CENTER_FAR :Vector3 = new Vector3(.5,.5, 1);
 
     /** Convenience normal vectors. */
-    public static const nLeft :Vector3       = new Vector3(-1, 0, 0);
-    public static const nRight :Vector3      = new Vector3( 1, 0, 0);
-    public static const nToCamera :Vector3   = new Vector3( 0, 0,-1);
-    public static const nAbsoluteUp :Vector3 = new Vector3( 0, 1, 0);
+    public static const N_LEFT :Vector3       = new Vector3(-1, 0, 0);
+    public static const N_RIGHT :Vector3      = new Vector3( 1, 0, 0);
+    public static const N_UP :Vector3         = new Vector3( 0, 1, 0);
+    public static const N_DOWN :Vector3       = new Vector3( 0,-1, 0);
+    public static const N_TO_CAMERA :Vector3  = new Vector3( 0, 0,-1);
 }
 }

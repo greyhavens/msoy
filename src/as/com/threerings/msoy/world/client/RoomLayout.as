@@ -85,130 +85,6 @@ public class RoomLayout {
 
     }
         
-    /**
-     * Turn the screen coordinate into a MsoyLocation, with the orient field set to 0.
-     * @param shiftPoint (optional) another global coordinate at which shift
-     *                   was held down, to offset the y coordinate of the result.
-     *
-     * @return a ClickLocation object.
-     */
-    /*
-    public function pointToLocation_legacy (
-        globalX :Number, globalY :Number, shiftPoint :Point = null, yOffset :Number = 0)
-        :ClickLocation
-    {
-        var p :Point;
-        var shiftOffset :Number = 0;
-        if (shiftPoint == null) {
-            p = new Point(globalX, globalY);
-
-        } else {
-            shiftOffset = shiftPoint.y - globalY;
-            p = shiftPoint;
-        }
-
-        p = _parentView.globalToLocal(p);
-        var x :Number = p.x;
-        var y :Number = p.y;
-
-        var floorWidth :Number, floorInset :Number;
-        var xx :Number, yy :Number, zz :Number;
-        var scale :Number;
-        var clickWall :int;
-
-        // do some partitioning depending on where the y lies
-        if (y < _metrics.backWallTop) {
-            clickWall = ClickLocation.CEILING;
-            scale = _metrics.farScale +
-                (_metrics.backWallTop - y) / _metrics.backWallTop * (MAX_SCALE - _metrics.farScale);
-
-        } else if (y < _metrics.backWallBottom) {
-            clickWall = ClickLocation.BACK_WALL;
-            scale = _metrics.farScale;
-
-        } else {
-            clickWall = ClickLocation.FLOOR;
-            scale = _metrics.farScale +
-                (y - _metrics.backWallBottom) / (_metrics.sceneHeight - _metrics.backWallBottom) *
-                (MAX_SCALE - _metrics.farScale);
-        }
-
-        // see how wide the floor is at that scale
-        floorWidth = (_metrics.sceneWidth * scale);
-        floorInset = (_metrics.sceneWidth - floorWidth) / 2;
-
-        if (x < floorInset || x - floorInset > floorWidth) {
-            if (x < floorInset) {
-                clickWall = ClickLocation.LEFT_WALL;
-                xx = 0;
-
-            } else {
-                clickWall = ClickLocation.RIGHT_WALL;
-                xx = MAX_COORD;
-            }
-
-            // recalculate floorWidth at the minimum scale
-            if (scale != _metrics.farScale) {
-                floorWidth = (_metrics.sceneWidth * _metrics.farScale);
-                floorInset = (_metrics.sceneWidth - floorWidth) / 2;
-            }
-
-            switch (clickWall) {
-            case ClickLocation.LEFT_WALL:
-                scale = _metrics.farScale + (x / floorInset) * (MAX_SCALE - _metrics.farScale);
-                break;
-
-            case ClickLocation.RIGHT_WALL:
-                scale = _metrics.farScale +
-                    ((_metrics.sceneWidth - x) / floorInset) * (MAX_SCALE - _metrics.farScale);
-                break;
-
-            default:
-                throw new Error(clickWall);
-            }
-
-            // TODO: factor in horizon here
-            var wallHeight :Number = (_metrics.sceneHeight * scale);
-            var wallInset :Number = (_metrics.sceneHeight - wallHeight) / 2;
-            yy = MAX_COORD * (1 - ((y - wallInset) / wallHeight));
-            zz = MAX_COORD * ((scale - _metrics.farScale) / (MAX_SCALE - _metrics.farScale));
-
-        } else {
-            // normal case: the x coordinate is within the floor width
-            // at that scale, so we're definitely not clicking on a side wall
-            xx = ((x - floorInset) / floorWidth) * MAX_COORD;
-
-            switch (clickWall) {
-            case ClickLocation.CEILING:
-            case ClickLocation.FLOOR:
-                yy = (clickWall == ClickLocation.CEILING) ? MAX_COORD : 0;
-                // if on the floor, we want take into account the yOffset
-                if (clickWall == ClickLocation.FLOOR) {
-                    yy = (yOffset / _metrics.sceneHeight) +
-                        (shiftOffset / (scale * _metrics.sceneHeight * _parentView.scaleY));
-                    if (yy < 0 || yy > MAX_COORD) {
-                        yy = Math.min(MAX_COORD, Math.max(0, yy));
-                    }
-                } else {
-                    yy = 0;
-                }
-                zz = MAX_COORD * (1 - ((scale - _metrics.farScale) / _metrics.scaleRange));
-                break;
-
-            case ClickLocation.BACK_WALL:
-                // y is simply how high they clicked on the wall
-                yy = (_metrics.backWallBottom - y) / _metrics.backWallHeight;
-                zz = 1;
-                break;
-
-            default:
-                throw new Error(clickWall);
-            }
-        }
-
-        return new ClickLocation(clickWall, new MsoyLocation(xx, yy, zz, 0));
-    }
-    */
 
 
     // Perspectivization
@@ -233,7 +109,7 @@ public class RoomLayout {
         // of the hotspot
 
         // the scale of the object is determined by the z coordinate
-        var distH :Number = RoomMetrics.FOCAL + (_metrics.sceneDepth * loc.z);
+        var distH :Number = _metrics.focal + (_metrics.sceneDepth * loc.z);
         var dist0 :Number = (hotSpot.x * mediaScaleX);
         var distN :Number = (contentWidth - hotSpot.x) * mediaScaleX;
         if (loc.x < .5) {
@@ -242,9 +118,9 @@ public class RoomLayout {
             distN *= -1;
         }
 
-        var scale0 :Number = RoomMetrics.FOCAL / (distH + dist0);
-        var scaleH :Number = RoomMetrics.FOCAL / distH;
-        var scaleN :Number = RoomMetrics.FOCAL / (distH + distN);
+        var scale0 :Number = _metrics.focal / (distH + dist0);
+        var scaleH :Number = _metrics.focal / distH;
+        var scaleN :Number = _metrics.focal / (distH + distN);
 
         var logicalY :Number = loc.y + ((contentHeight * mediaScaleY) / _metrics.sceneHeight);
 
@@ -283,9 +159,10 @@ public class RoomLayout {
         var floorWidth :Number = (_metrics.sceneWidth * scale);
         var floorInset :Number = (_metrics.sceneWidth - floorWidth) / 2;
 
+        var horizonY :Number = _metrics.sceneHeight * (1 - _metrics.sceneHorizon);
         return new Point(floorInset + (x * floorWidth),
-            _metrics.horizonY + ((_metrics.sceneHeight - _metrics.horizonY) -
-                                 (y * _metrics.sceneHeight)) * scale);
+                         horizonY + ((_metrics.sceneHeight - horizonY) -
+                                     (y * _metrics.sceneHeight)) * scale);
     }
     */
     
