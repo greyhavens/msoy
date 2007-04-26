@@ -63,8 +63,8 @@ public class FurniEditController
         // create a collection of button definitions. handlers are closures on this instance.
         _menuButtons = [
             [ { icon: MOVE_ICON, text: null, handler: move },
-              { icon: MOVE_Y_ICON, text: null, handler: move },
-              { icon: MOVE_Z_ICON, text: null, handler: move } ],
+              { icon: MOVE_Y_ICON, text: null, handler: ymove },
+              { icon: MOVE_Z_ICON, text: null, handler: zmove } ],
             [ { icon: RESIZE_ICON, text: null, handler: resize },
               { icon: RESIZE_CONST_ICON, text: null, handler: resize_const },
               { icon: RESIZE_DEF_ICON, text: null, handler: resize_defaults } ],
@@ -209,7 +209,7 @@ public class FurniEditController
     {
         var oldMode :String = _mode;
         _mode = newMode;
-        _modifier = newModifier;
+        setModifier(newModifier);
 
         addOrRemoveListeners (oldMode, false);
         addOrRemoveListeners (newMode, true);
@@ -219,6 +219,24 @@ public class FurniEditController
             _buttonPanel.visible = true;
         } else {
             _buttonPanel.visible = false;
+        }
+    }
+
+    /** Returns info about the current mode modifier, as one of the MOD_* constants. */
+    public function getModifier () :String
+    {
+        return _modifier;
+    }
+    
+    /** Sets the current mode modifier. */
+    protected function setModifier (newModifier :String) :void
+    {
+        _modifier = newModifier;
+        
+        if (_modifier == MOD_NONE) {
+            _modAnchor = null;
+        } else {
+            _modAnchor = _furni.getLocation();
         }
     }
 
@@ -255,7 +273,7 @@ public class FurniEditController
         _roomView = roomView;
         _scene = scene;
         _endCallback = endCallback;
-        _positionAtShift = null;
+        _modAnchor = null;
         _container = ctx.getTopPanel().getPlaceContainer();
 
         _buttonPanel = makeButtonPanel();
@@ -311,6 +329,18 @@ public class FurniEditController
         setMode(EDIT_MOVE);
     }
     
+    /** Start moving the sprite. */
+    protected function ymove () :void
+    {
+        setMode(EDIT_MOVE, MOD_SHIFT);
+    }
+    
+    /** Start moving the sprite. */
+    protected function zmove () :void
+    {
+        setMode(EDIT_MOVE, MOD_CTRL);
+    }
+    
     /** Start resizing the sprite. */
     protected function resize () :void
     {
@@ -358,13 +388,13 @@ public class FurniEditController
 
         _originalFurniData = null;
         _container = null;
-        _positionAtShift = null;
+        _modAnchor = null;
         _endCallback = null;
         _scene = null;
         _roomView = null;
         _furni = null;
     }
-    
+
     /**
      * Given a mode name, looks up listener information in the _listeners collection,
      * and either adds or removes the appropriate listeners (based on the addListener variable).
@@ -408,28 +438,27 @@ public class FurniEditController
             _furni.getFurniData().loc = loc;
         }
     }
+
+    protected function findNewFurniPosition (event :MouseEvent) :MsoyLocation
+    {
+        var currentPosition :Point = new Point(_roomView.stage.mouseX, _roomView.stage.mouseY);
+        var cloc :ClickLocation = _roomView.layout.pointToLocation(
+            event.stageX, event.stageY, _modAnchor, getModifier() == MOD_SHIFT);
+        
+        return cloc.loc;
+    }
     
     /** Handles mouse movement during furni movement. */
     protected function handleMouseInMoveMode (event :MouseEvent) :void
     {
-        var cloc :ClickLocation =
-            _roomView.layout.pointToLocation(event.stageX, event.stageY, _positionAtShift);
-        
-        if (cloc.click == ClickLocation.FLOOR) {
-            moveFurni(cloc.loc, false);
-        }
+        moveFurni(findNewFurniPosition(event), false);
     }
 
     /** Handles mouse clicks during furni movement. */
     protected function handleClickInMoveMode (event :MouseEvent) :void
     {
-        var cloc :ClickLocation =
-            _roomView.layout.pointToLocation(event.stageX, event.stageY, _positionAtShift);
-        
-        if (cloc.click == ClickLocation.FLOOR) {
-            moveFurni(cloc.loc, true);
-            setMode(EDIT_SHOWMENU);
-        }
+        moveFurni(findNewFurniPosition(event), true);
+        setMode(EDIT_SHOWMENU);
     }
 
     /** Handles key presses during furni movement  */
@@ -498,7 +527,7 @@ public class FurniEditController
         var newheight :Number = dy / py;
 
         // if we're scaling proportionally, lock the two distances
-        if (_modifier == MOD_SHIFT) {
+        if (getModifier() == MOD_SHIFT) {
             // this math is broken and loses precision. todo: revisit.
             var proportion :Number =
                 clampMagnitude (_furni.getActualWidth() / _furni.getActualHeight(), 0.01, 100);
@@ -569,12 +598,20 @@ public class FurniEditController
      */
     protected function keyboardHandler (event :KeyboardEvent) :void
     {
-        if (event.keyCode == Keyboard.SHIFT) {
-            if (event.type == KeyboardEvent.KEY_DOWN) {
-                _positionAtShift = new Point(_roomView.stage.mouseX, _roomView.stage.mouseY);
-            } else {
-                _positionAtShift = null;
+        if (event.type == KeyboardEvent.KEY_DOWN) {
+            switch (event.keyCode) {
+            case Keyboard.SHIFT:
+                setModifier(MOD_SHIFT);
+                break;
+            case Keyboard.CONTROL:
+                setModifier(MOD_CTRL);
+                break;
+            default:
+                setModifier(MOD_NONE);
+                break;
             }
+        } else {
+            setModifier(MOD_NONE);
         }
 
         event.updateAfterEvent();
@@ -589,7 +626,6 @@ public class FurniEditController
             updatePanelPosition();
         }
     }
-
 
     /** Flex container for the scene. */       
     protected var _container :Container;
@@ -615,9 +651,11 @@ public class FurniEditController
     /** Current editing mode modifier, as one of the MOD_* constant values. */
     protected var _modifier :String = MOD_NONE;
 
-    /** The last mouse position (in stage coordinates!) before the user hit "shift"
-     *  to switch to vertical positioning. */
-    protected var _positionAtShift :Point;
+    /**
+     * The last furni position, in room coordinates, before the user hit a mod key
+     * or selected a mod sub-option.
+     */
+    protected var _modAnchor :MsoyLocation;
 
     /**
      * All editing buttons are defined in this array. Each array entry is an object

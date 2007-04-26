@@ -45,48 +45,73 @@ public class RoomLayout {
     }
 
     /**
-     * Turn the screen coordinate into a MsoyLocation, with the orient field set to 0.
-     *   @param shiftPoint if present, constraints movement to points along a vertical
-     *                     line (parallel with the y-axis) passing through that point.
+     * Turn the screen coordinate into an MsoyLocation, with the orient field set to 0.
+     *   @param constraint  If present, constraints movement to points along a vertical
+     *                      line (parallel with the y-axis) passing through that point.
+     *                      yConstraint can either be a Point containing screen coordinates,
+     *                      or an MsoyLocation containing room coordinates.
+     *   @param isConstraintVertical This flag is only used when the constraint is non-null;
+     *                      if true it constrains movement to the y-axis, otherwise to the z-axis.
      *
      *   @return a ClickLocation object.
      */
     public function pointToLocation (
-        globalX :Number, globalY :Number, shiftPoint :Point = null, yOffset :Number = 0)
-        :ClickLocation
+        globalX :Number, globalY :Number, constraint :Object = null,
+        isConstraintVertical :Boolean = true) :ClickLocation
     {
         // get click location, in screen coords
         var p :Point = new Point(globalX, globalY);
         p = _parentView.globalToLocal(p);
 
         var cloc :ClickLocation;
-        if (shiftPoint == null) {
-            // just return the intersection of the line of sight with the first available wall.
+        if (constraint == null) {
+
+            // find the intersection of the line of sight with the first available wall.
             cloc = _metrics.screenToAllWallsProjection(p.x, p.y);
             
         } else {
-            // convert shift point to a line passing vertically through the room
-            var constraint :Point = _parentView.globalToLocal(shiftPoint);
-            var constLocation :ClickLocation =
-                _metrics.screenToAllWallsProjection(constraint.x, constraint.y);
-            var constraintVector :Vector3 = _metrics.toVector3(constLocation.loc);
+            var constraintVector :Vector3;
 
+            if (constraint is Point) {
+                // the constraint is a point on screen - convert it
+                var pconstraint :Point = _parentView.globalToLocal(constraint as Point);
+                var constLocation :ClickLocation =
+                    _metrics.screenToAllWallsProjection(pconstraint.x, pconstraint.y);
+                constraintVector = _metrics.toVector3(constLocation.loc);
+                
+            } else if (constraint is MsoyLocation) {
+                // the constraint is a room location - we're ready to go!
+                constraintVector = _metrics.toVector3(constraint as MsoyLocation);
+                
+            } else {
+                throw new ArgumentError("Invalid constraint argument type");
+            }
+
+            // which constraint operation are we using?
+            var fn :Function = (isConstraintVertical) ?
+                _metrics.screenToYLineProjection : _metrics.screenToZLineProjection; 
+            
             // now find a point on the constraint line pointed to by the mouse
-            var yLocation :Vector3 =
-                _metrics.screenToYLineProjection(p.x, p.y, constraintVector).clampToUnitBox();
+            var yLocation :Vector3 = fn(p.x, p.y, constraintVector).clampToUnitBox();
 
             // we're done - make a fake "floor" location
             cloc = new ClickLocation(ClickLocation.FLOOR, _metrics.toMsoyLocation(yLocation));
         }
 
-        // take any optional offset into account
-        cloc.loc.y += yOffset / _metrics.sceneHeight;
-        return cloc;
-
-    }
+        clampClickLocation(cloc);
         
+        return cloc;
+    }
 
+    /** Clamps a click location to be inside the unit box. */
+    protected function clampClickLocation (cloc :ClickLocation) :void
+    {
+        cloc.loc.x = Math.min(Math.max(cloc.loc.x, 0), 1);
+        cloc.loc.y = Math.min(Math.max(cloc.loc.y, 0), 1);
+        cloc.loc.z = Math.min(Math.max(cloc.loc.z, 0), 1);
+    }
 
+    
     // Perspectivization
     // Disabled for now, until we settle on new room layout logic
     // getPerspInfo comes from FurniSprite, checkPerspective() and updatePerspective()

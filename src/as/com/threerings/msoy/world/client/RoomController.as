@@ -602,8 +602,9 @@ public class RoomController extends SceneController
         if (hit !== undefined) {
             if (hitter == null) {
                 var cloc :ClickLocation =
-                    _roomView.layout.pointToLocation(sx, sy, _shiftPressed, getAvatarYOffset());
-
+                    _roomView.layout.pointToLocation(sx, sy, _shiftPressed);
+                addAvatarYOffset(cloc);
+                
                 if (cloc.click == ClickLocation.FLOOR && _mctx.worldProps.userControlsAvatar) {
                     if (cloc.loc.y != 0) {
                         _flyTarget.setLocation(cloc.loc);
@@ -719,7 +720,9 @@ public class RoomController extends SceneController
 
             // calculate where the location is
             var cloc :ClickLocation = _roomView.layout.pointToLocation(
-                event.stageX, event.stageY, _shiftPressed, getAvatarYOffset());
+                event.stageX, event.stageY, _shiftPressed);
+            addAvatarYOffset(cloc);
+            
             if (cloc.click == ClickLocation.FLOOR &&
                 cloc.loc.z >= 0) { // disallow clicking in "front" of the scene when minimized
                 // orient the location as appropriate
@@ -784,13 +787,19 @@ public class RoomController extends SceneController
      * unless shift is being held down, in which case use 0 so that the user
      * can select their height precisely.
      */
-    protected function getAvatarYOffset () :int
+    protected function addAvatarYOffset (cloc :ClickLocation) :void
     {
         if (_shiftPressed != null) {
-            return 0;
+            return;
         }
+        
         var av :AvatarSprite = _roomView.getMyAvatar();
-        return (av == null) ? 0 : av.getPreferredY();
+        if (av != null) {
+            var pxoffset :Point = new Point(0, av.getPreferredY());
+            var delta :Point =
+                _roomView.layout.metrics.pixelDistanceToRoomDistance(pxoffset, cloc.loc.z);
+            cloc.loc.y += delta.y;
+        }
     }
 
     /**

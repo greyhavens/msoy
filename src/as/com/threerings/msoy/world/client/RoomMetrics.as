@@ -222,6 +222,27 @@ public class RoomMetrics
     }        
 
     /**
+     * Given a screen location l, and a positional constraint p, finds a location on the
+     * z-axis-aligned line passing through p that corresponds to the screen location.
+     */
+    public function screenToZLineProjection (x :Number, y :Number, p :Vector3) :Vector3
+    {
+        // similarly to the y-location finder, we treat p as defining a ray parallel with
+        // the z axis, and player's cursor as sweeping a horizontal plane anchored at the camera.
+        // all we need to do is find the intersection.
+
+        // find the line of sight vector, and the normal of the horizontal plane
+        var line :Vector3 = screenToLineOfSight(x, y);
+        var n :Vector3 = line.cross(N_UP).normalize();
+
+        // find where this plane intersects with the constrained ray
+        var result :Vector3 = N_TO_CAMERA.intersection(p, camera, n);
+
+        return result;
+    }
+
+
+    /**
      * Draws a ray from the point in the room to the camera, and finds where it intersects
      * with the front wall.
      */
