@@ -127,11 +127,18 @@ public class MemberRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #flags} field. */
     public static final ColumnExp FLAGS_C =
         new ColumnExp(MemberRecord.class, FLAGS);
+
+    /** The column identifier for the {@link #inviterId} field. */
+    public static final String INVITER_ID = "inviterId";
+
+    /** The qualified column identifier for the {@link #inviterId} field. */
+    public static final ColumnExp INVITER_ID_C =
+        new ColumnExp(MemberRecord.class, INVITER_ID);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 6;
+    public static final int SCHEMA_VERSION = 7;
 
     /** A flag denoting this user as having support privileges. */
     public static final int SUPPORT_FLAG = 1 << 0;
@@ -191,6 +198,10 @@ public class MemberRecord extends PersistentRecord
 
     /** Various one bit data. */
     public int flags;
+
+    /** The memberId of the person who invited this person. */
+    @Column(defaultValue="0")
+    public int inviterId;
 
     /** A blank constructor used when loading records from the database. */
     public MemberRecord ()
