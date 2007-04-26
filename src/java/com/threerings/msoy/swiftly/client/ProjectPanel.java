@@ -405,14 +405,17 @@ public class ProjectPanel extends JPanel
         }
 
         PathElement element = node.getElement();
+        // TODO: revist this code. cleanup at the very least
         // if the selected node is the root or the project template, disable delete and rename
         if (_roomObj.project.getTemplateSourceName().equals(element.getName()) ||
             element.getType() == PathElement.Type.ROOT) {
             _deleteFileAction.setEnabled(false);
             _renameFileAction.setEnabled(false);
+            _tree.setEditable(false);
         } else {
             _deleteFileAction.setEnabled(true);
             _renameFileAction.setEnabled(true);
+            _tree.setEditable(true);
         }
 
         _selectedNode = node;
