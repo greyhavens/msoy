@@ -153,15 +153,6 @@ public class ProjectPanel extends JPanel
     public void renamePathElement (final PathElement element, String newName,
                                    final TreePath path)
     {
-        // don't allow the template file name to be changed
-        // TODO: replace this with disabling the click and hold rename method
-        // if the element that is selected is the project template or root
-        // there should be a way to mark the node [at least the root] as not "editable"
-        if (_roomObj.project.getTemplateSourceName().equals(element.getName())) {
-            _editor.showErrorMessage(_msgs.get("e.cannot_rename_template"));
-            return;
-        }
-
         _roomObj.service.renamePathElement(_ctx.getClient(), element.elementId, newName,
             new ConfirmListener () {
             public void requestProcessed () {
