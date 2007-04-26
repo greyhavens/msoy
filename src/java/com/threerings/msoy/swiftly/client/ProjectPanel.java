@@ -25,6 +25,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
+import javax.swing.ToolTipManager;
 
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -84,10 +85,12 @@ public class ProjectPanel extends JPanel
         // XXX disable dragging until the rest of the support can be wired up
         // _tree.setDragEnabled(true);
         _tree.setEditable(true);
-        _tree.setShowsRootHandles(true);
+        _tree.setShowsRootHandles(false);
         _tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         _tree.addTreeSelectionListener(this);
         _tree.addMouseListener(new PopupListener());
+        _tree.setCellRenderer(new ProjectTreeCellRenderer());
+        ToolTipManager.sharedInstance().registerComponent(_tree);
 
         _scrollPane.getViewport().setView(_tree);
         setToolbarEnabled(false);
