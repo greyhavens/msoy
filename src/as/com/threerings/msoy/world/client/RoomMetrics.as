@@ -82,13 +82,13 @@ public class RoomMetrics
         // calculate floor skew
         var upSkew :Vector3   = new Vector3(0,  0.5, focal / sceneDepth); // at horizon = 0
         var downSkew :Vector3 = new Vector3(0, -0.5, focal / sceneDepth); // at horizon = 1
-        var skew :Vector3     = Vector3.interpolate(downSkew, upSkew, sceneHorizon);
+        var skew :Vector3     = Vector3.interpolate(downSkew, upSkew, sceneHorizon).normalize();
 
         // make the skew vector stretch from near to far wall, and remember its y-value
-        skew = skew.normalize().multiply(1 / skew.z); 
-        this.skewoffset = skew.y;
+        var nskew :Vector3 = skew.multiply(1 / skew.z); 
+        this.skewoffset = nskew.y;
         // save its normals
-        this.nfloor = new Vector3(skew.x, skew.z, -skew.y).normalize();
+        this.nfloor = new Vector3(nskew.x, nskew.z, -nskew.y).normalize();
         this.nceiling = nfloor.multiply(-1);
     }
 
