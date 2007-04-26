@@ -795,10 +795,7 @@ public class RoomController extends SceneController
         
         var av :AvatarSprite = _roomView.getMyAvatar();
         if (av != null) {
-            var pxoffset :Point = new Point(0, av.getPreferredY());
-            var delta :Point =
-                _roomView.layout.metrics.pixelDistanceToRoomDistance(pxoffset, cloc.loc.z);
-            cloc.loc.y += delta.y;
+            cloc.loc.y += (av.getPreferredY() / _roomView.layout.metrics.sceneHeight);
         }
     }
 
