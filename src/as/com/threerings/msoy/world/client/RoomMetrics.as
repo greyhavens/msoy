@@ -61,13 +61,9 @@ public class RoomMetrics
      */
     public var skewoffset :Number;
 
-    /** Floor normal: vector normal to the skewed floor, pointing up. */
-    protected var nfloor :Vector3;
-
-    /** Ceiling normal: vector normal to the skewed floor, pointing down. */
-    protected var nceiling :Vector3;
-        
-
+    /** Wall definition objects, mapping from wall type IDs to anchor points and normals. */
+    public var walldefs :Array; 
+    
     /** Read and update metrics from decor data. */
     public function update (data :DecorData) :void
     {
@@ -87,9 +83,17 @@ public class RoomMetrics
         // make the skew vector stretch from near to far wall, and remember its y-value
         var nskew :Vector3 = skew.multiply(1 / skew.z); 
         this.skewoffset = nskew.y;
-        // save its normals
-        this.nfloor = new Vector3(nskew.x, nskew.z, -nskew.y).normalize();
-        this.nceiling = nfloor.multiply(-1);
+        // save its normals: one of the skewed floor pointing up, the other pointing down
+        var nfloor :Vector3 = new Vector3(nskew.x, nskew.z, -nskew.y).normalize();
+        var nceiling :Vector3 = nfloor.multiply(-1);
+
+        // wall definitions for this room. 
+        this.walldefs = [
+            { type: ClickLocation.FLOOR,      point: LEFT_BOTTOM_NEAR,  normal: nfloor },
+            { type: ClickLocation.CEILING,    point: RIGHT_TOP_NEAR,    normal: nceiling },
+            { type: ClickLocation.LEFT_WALL,  point: LEFT_BOTTOM_NEAR,  normal: N_RIGHT },
+            { type: ClickLocation.RIGHT_WALL, point: RIGHT_TOP_NEAR,    normal: N_LEFT },
+            { type: ClickLocation.BACK_WALL,  point: CENTER_CENTER_FAR, normal: N_TO_CAMERA } ];
     }
 
     /** Finds horizon level in room coordinates, as projected onto the front wall. */
@@ -133,44 +137,68 @@ public class RoomMetrics
      * intersection with any of the walls within the unit cube. Returns a location in room
      * coordinates, with "back wall" as the default click target if no other intersection exists.
      */
-    public function screenToWallProjection (x :Number, y :Number) :ClickLocation
+    public function screenToAllWallsProjection (x :Number, y :Number) :ClickLocation
     {
         var l :Vector3 = screenToLineOfSight(x, y);
+
+        var mindistance :Number = Infinity;
+        var minpoint :Vector3 = Vector3.INFINITE;
+        var minwall :int = ClickLocation.BACK_WALL;
         
         // intersect with the five walls (except for the near wall :)
-        var walls :Array = [
-            [ ClickLocation.FLOOR,
-              l.intersection(camera, LEFT_BOTTOM_NEAR, nfloor) ],
-            [ ClickLocation.CEILING,
-              l.intersection(camera, RIGHT_TOP_NEAR, nceiling) ],
-            [ ClickLocation.LEFT_WALL,
-              unskewVector(l.intersection(camera, LEFT_BOTTOM_NEAR, N_RIGHT)) ],
-            [ ClickLocation.RIGHT_WALL,
-              unskewVector(l.intersection(camera, RIGHT_TOP_NEAR, N_LEFT)) ],
-            [ ClickLocation.BACK_WALL,
-              unskewVector(l.intersection(camera, CENTER_CENTER_FAR, N_TO_CAMERA)) ] ];
-
-        var min :Number = Infinity;
-        var minpair :Array = walls[4];
-        for each (var pair :Array in walls) {
-            var location :int = pair[0];
-            var len :Number = pair[1].length();
-            if (len <= min && pair[1].z > 0) { // only check points in the scene
-                min = len;
-                minpair = pair;
+        for each (var def :Object in walldefs) {
+            var pos :Vector3 = lineOfSightToWallProjection(l, def);
+            if (pos.length() < mindistance) {
+                minpoint = pos;
+                mindistance = pos.length();
+                minwall = def.type;
             }
         }
 
-        var v :Vector3 = minpair[1];
-        
-        // because the room is skewed, we need to "unskew" it.
-        // it's as easy as projecting back to the flat horizontal plane.
-        if (minpair[0] == ClickLocation.FLOOR) { v.y = 0; }
-        if (minpair[0] == ClickLocation.CEILING) { v.y = 1; }
-
-        return new ClickLocation(minpair[0], new MsoyLocation (v.x, v.y, v.z, 0));
+        return new ClickLocation(minwall, toMsoyLocation(minpoint));
     }
 
+    /**
+     * Given a screen location and wall type (one of the ClickLocation.* constants),
+     * draws a line of sight vector, and tries to intersect it with that wall.
+     * Returns a point of intersection, or Vector3.INFINITE if the wall is parallel,
+     * or point of intersection lies behind the front wall (in z < 0).
+     */
+    public function screenToWallProjection (x :Number, y :Number, wall :int) :Vector3
+    {
+        var l :Vector3 = screenToLineOfSight(x, y);
+
+        var def :Object = null;
+        for each (var o :Object in walldefs) {
+            if (o.type == wall) {
+                def = o;
+            }
+        }
+
+        // sanity check
+        if (def == null) {
+            throw new ArgumentError ("Wall identifier " + wall + " is not supported.");
+        }
+
+        return lineOfSightToWallProjection(l, def);
+    }
+
+    /**
+     * Given a line of sight vector (unskewed) and a wall definition object (from the walldefs
+     * array), tries to intersect it with that wall. Returns a point of intersection,
+     * or Vector3.INFINITE if the wall is parallel to the vector, or point of intersection
+     * lies behind the front wall (in z < 0).
+     */
+    protected function lineOfSightToWallProjection (l :Vector3, def :Object) :Vector3
+    {
+        var pos :Vector3 = l.intersection(camera, def.point, def.normal);
+        if (pos.z < 0) {
+            return Vector3.INFINITE;
+        } else {
+            return applySkew(pos);
+        }
+    }
+        
     /**
      * Given a screen location l, and a positional constraint p, finds a location on the vertical
      * line passing through p that corresponds to the screen location.
@@ -190,35 +218,37 @@ public class RoomMetrics
         var result :Vector3 = N_UP.intersection(p, camera, n);
 
         // subtract any room skew factors
-        return unskewVector(result);
+        return applySkew(result);
     }        
 
-    /** Add skewing factor to the vector (used before projecting onto front wall). */
-    public function skewVector (v :Vector3) :Vector3
-    {
-        var yoffset :Number = interpolate(0, skewoffset, v.z);
-        return new Vector3 (v.x, v.y + yoffset, v.z);
-    }
-    
-    /** Remove skewing factor from the vector (used on results of line of sight calculation). */
-    public function unskewVector (v :Vector3) :Vector3
-    {
-        var yoffset :Number = interpolate(0, skewoffset, v.z);
-        return new Vector3 (v.x, v.y - yoffset, v.z);
-    }
-
     /**
-     * Draws a ray from the camera to the point in the room, and finds where it intersects
-     * with the front wall. If the room is skewed, that's taken into account automatically.
+     * Draws a ray from the point in the room to the camera, and finds where it intersects
+     * with the front wall.
      */
     public function positionOnFrontWall (target :Vector3) :Vector3
     {
-        target = skewVector(target);
+        target = applySkew(target, true);
         
         // draw a ray from the camera, and see where it falls on the front wall
         return target.subtract(camera).intersection(camera, LEFT_BOTTOM_NEAR, N_TO_CAMERA);
     }
         
+    /**
+     * Apply skewing factor to the vector. Forward skew is applied when projecting a ray
+     * from the screen into room space; reverse when projecting from room back onto screen.
+     */
+    protected function applySkew (v :Vector3, forward :Boolean = false) :Vector3
+    {
+        var yoffset :Number = interpolate(0, forward ? skewoffset : -skewoffset, v.z);
+
+        var v :Vector3 = new Vector3 (v.x, v.y + yoffset, v.z);
+        if (Math.abs(v.y) < 0.001) {
+            v.y = 0;  // remove any loss of precision artifacts
+        }
+        
+        return v;
+    }
+    
     /**
      * Given dx and dy values (as a point) and z value, in room coordinates,
      * converts them to pixel dx and dy.
@@ -292,5 +322,6 @@ public class RoomMetrics
     public static const N_UP :Vector3         = new Vector3( 0, 1, 0);
     public static const N_DOWN :Vector3       = new Vector3( 0,-1, 0);
     public static const N_TO_CAMERA :Vector3  = new Vector3( 0, 0,-1);
+
 }
 }

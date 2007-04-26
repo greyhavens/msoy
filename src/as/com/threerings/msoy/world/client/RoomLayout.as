@@ -61,14 +61,14 @@ public class RoomLayout {
 
         var cloc :ClickLocation;
         if (shiftPoint == null) {
-            // just return the intersection of the line of sight with the first available wall
-            cloc = _metrics.screenToWallProjection(p.x, p.y);
+            // just return the intersection of the line of sight with the first available wall.
+            cloc = _metrics.screenToAllWallsProjection(p.x, p.y);
             
         } else {
             // convert shift point to a line passing vertically through the room
             var constraint :Point = _parentView.globalToLocal(shiftPoint);
             var constLocation :ClickLocation =
-                _metrics.screenToWallProjection(constraint.x, constraint.y);
+                _metrics.screenToAllWallsProjection(constraint.x, constraint.y);
             var constraintVector :Vector3 = _metrics.toVector3(constLocation.loc);
 
             // now find a point on the constraint line pointed to by the mouse
@@ -247,11 +247,6 @@ public class RoomLayout {
         // normally lie in the 0 -> 1 range.
         return re.getLocation().z + (1000 * re.getRoomLayer());
     }
-
-
-    private static const MAX_SCALE :Number = 1;
-    private static const MAX_COORD :Number = 1;
-
 
     /** Room metrics storage. */
     protected var _metrics :RoomMetrics;
