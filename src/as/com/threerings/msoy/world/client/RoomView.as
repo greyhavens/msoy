@@ -120,9 +120,7 @@ public class RoomView extends AbstractRoomView
         super.setScene(scene);
 
         // set the top of the history to the back wall/floor corner
-        var m :RoomMetrics = _layout.metrics;
-        var farcorner :Point = m.roomToScreenV3(RoomMetrics.LEFT_BOTTOM_FAR);
-        chatOverlay.setSubtitlePercentage((m.sceneHeight - farcorner.y) / m.sceneHeight);
+        chatOverlay.setSubtitlePercentage(_layout.metrics.horizonLevel);
     }
 
     // from LoadingWatcher

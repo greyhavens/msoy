@@ -92,6 +92,12 @@ public class RoomMetrics
         this.nceiling = nfloor.multiply(-1);
     }
 
+    /** Finds horizon level in room coordinates, as projected onto the front wall. */
+    public function get horizonLevel () :Number
+    {
+        return positionOnFrontWall(RoomMetrics.LEFT_BOTTOM_FAR).y;
+    }
+
     /**
      * Given a screen position, in pixels from upper-left corner, returns a vector
      * from the camera through that pixel position on the front wall,
@@ -120,15 +126,6 @@ public class RoomMetrics
         var yPosition :Number = sceneHeight - v.y * sceneHeight;
         
         return new Point(xPosition, yPosition);
-    }
-
-    /**
-     * Returns a point in screen coordinates corresponding to the vector in room coordinates.
-     */
-    // Why doesn't Actionscript support method overloading? What the flash?
-    public function roomToScreenV3 (v :Vector3) :Point
-    {
-        return roomToScreen(v.x, v.y, v.z);
     }
 
     /**
