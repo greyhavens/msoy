@@ -51,9 +51,9 @@ import com.threerings.msoy.game.chiyogami.client.ChiyogamiController;
 /**
  * Dispatched when the client is minimized or unminimized.
  * 
- * @eventType com.threerings.msoy.client.WorldClient.MINIMIZATION_CHANGED
+ * @eventType com.threerings.msoy.client.WorldClient.MINI_WILL_CHANGE
  */
-[Event(name="minimizationChanged", type="com.threerings.util.ValueEvent")]
+[Event(name="miniWillChange", type="com.threerings.util.ValueEvent")]
 
 /**
  * Dispatched when the client is known to be either embedded or not. This happens shortly after the
@@ -71,9 +71,9 @@ public class WorldClient extends BaseClient
     /**
      * An event dispatched when the client is minimized or unminimized.
      *
-     * @eventType minimizationChanged
+     * @eventType miniWillChange
      */
-    public static const MINIMIZATION_CHANGED :String = "minimizationChanged";
+    public static const MINI_WILL_CHANGE :String = "miniWillChange";
 
     /**
      * An event dispatched when we learn whether or not the client is embedded.
@@ -318,7 +318,7 @@ public class WorldClient extends BaseClient
     protected function externalSetMinimized (minimized :Boolean) :void   
     {
         log.info("Client was notified that its minimized status has changed: " + minimized);
-        dispatchEvent(new ValueEvent(MINIMIZATION_CHANGED, _minimized = minimized));
+        dispatchEvent(new ValueEvent(MINI_WILL_CHANGE, _minimized = minimized));
     }
 
     protected var _wctx :WorldContext;

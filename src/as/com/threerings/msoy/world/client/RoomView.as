@@ -471,7 +471,7 @@ public class RoomView extends AbstractRoomView
         super.willEnterPlace(plobj);
 
         // listen for client minimization events
-        _ctx.getClient().addEventListener(WorldClient.MINIMIZATION_CHANGED, minimizationChanged);
+        _ctx.getClient().addEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
 
         _roomObj.addListener(this);
 
@@ -506,7 +506,7 @@ public class RoomView extends AbstractRoomView
         _ctx.getChatDirector().removeChatDisplay(this);
 
         // stop listening for client minimization events
-        _ctx.getClient().removeEventListener(WorldClient.MINIMIZATION_CHANGED, minimizationChanged);
+        _ctx.getClient().removeEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
 
         removeAll(_effects);
         removeAllOccupants();
@@ -553,7 +553,7 @@ public class RoomView extends AbstractRoomView
     /**
      * Called when the client is minimized or unminimized.
      */
-    protected function minimizationChanged (event :ValueEvent) :void
+    protected function miniWillChange (event :ValueEvent) :void
     {
         relayout();
     }
@@ -588,11 +588,12 @@ public class RoomView extends AbstractRoomView
 
     override protected function computeScale () :Number
     {
-        var scale :Number = super.computeScale();
+        // when minimized, use a TV aspect ratio with a target size of 300x240
         if ((_ctx.getClient() as WorldClient).isMinimized()) {
-            scale *= (TopPanel.RIGHT_SIDEBAR_WIDTH / stage.stageWidth);
+            return (4 * TopPanel.RIGHT_SIDEBAR_WIDTH / 5) / _actualHeight;
+        } else {
+            return super.computeScale();
         }
-        return scale;
     }
 
     override protected function shouldLoadAll () :Boolean
@@ -622,9 +623,8 @@ public class RoomView extends AbstractRoomView
         }
 
         var centerX :int = _centerSprite.x + _centerSprite.getLayoutHotSpot().x;
-        var bounds :Rectangle = getScrollBounds();
-        var newX :Number = centerX - rect.width/2;
-        newX = Math.min(bounds.x + bounds.width - rect.width, Math.max(bounds.x, newX));
+        var newX :Number = centerX - (_actualWidth / scaleX)/2;
+        newX = Math.min(_scene.getWidth() - rect.width, Math.max(0, newX));
 
         if (_jumpScroll) {
             rect.x = newX;

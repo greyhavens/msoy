@@ -58,7 +58,7 @@ public class ChatChannelPanel extends VBox
         send.height = ControlBar.HEIGHT-4;
         _inputBox.addChild(send);
 
-        _ctx.getClient().addEventListener(WorldClient.MINIMIZATION_CHANGED, minimizationChanged);
+        _ctx.getClient().addEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
     }
 
     /**
@@ -138,7 +138,7 @@ public class ChatChannelPanel extends VBox
         }
     }
 
-    protected function minimizationChanged (event :ValueEvent) :void
+    protected function miniWillChange (event :ValueEvent) :void
     {
         var minimized :Boolean = (event.value as Boolean);
         if (minimized && _wtab == null) {

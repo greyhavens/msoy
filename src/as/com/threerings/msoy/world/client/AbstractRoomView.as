@@ -74,10 +74,8 @@ public class AbstractRoomView extends Sprite
      */
     public function getGlobalBounds () :Rectangle
     {
-        var r :Rectangle = getScrollBounds();
-        r.topLeft = localToGlobal(r.topLeft);
-        r.bottomRight = localToGlobal(r.bottomRight);
-        return r;
+        var p :Point = localToGlobal(new Point(0, 0));
+        return new Rectangle(p.x, p.y, _actualWidth, _actualHeight);
     }
 
     /**
@@ -120,9 +118,7 @@ public class AbstractRoomView extends Sprite
             spriteVisitFn(null, _bg);
         }
 
-        if (editing) {
-
-        } else {
+        if (!editing) {
             updateAllFurni();
         }
     }
@@ -140,8 +136,7 @@ public class AbstractRoomView extends Sprite
         }
 
         var bounds :Rectangle = getScrollBounds();
-        rect.x = Math.min(bounds.x + bounds.width - rect.width,
-                          Math.max(bounds.x, rect.x + xpixels));
+        rect.x = Math.min(_scene.getWidth() - bounds.width, Math.max(0, rect.x + xpixels));
         scrollRect = rect;
         scrollRectUpdated();
         return true;
@@ -162,14 +157,13 @@ public class AbstractRoomView extends Sprite
      */
     public function getScrollBounds () :Rectangle
     {
-        if (_scene == null) {
-            return new Rectangle(0, 0, _actualWidth, _actualHeight);
+        var r :Rectangle = new Rectangle(0, 0, _actualWidth / scaleX, _actualHeight / scaleY);
+        if (_scene != null) {
+            r.width = Math.min(_scene.getWidth(), r.width);
+            r.height = Math.min(_scene.getHeight(), r.height);
         }
-
-        var r :Rectangle = new Rectangle(
-            0, 0, _scene.getWidth() * scaleX, _scene.getHeight() * scaleY);
         if (_editing) {
-            r.inflate(_actualWidth * 2 / 3, 0);
+            r.inflate(_actualWidth * 2 / 3, 0); // TODO: obsolete?
         }
         return r;
     }
@@ -288,8 +282,8 @@ public class AbstractRoomView extends Sprite
     protected function relayout () :void
     {
         var scale :Number = computeScale();
-        scaleX = scale;
         scaleY = scale;
+        scaleX = scale;
 
         configureScrollRect();
 
@@ -324,11 +318,10 @@ public class AbstractRoomView extends Sprite
      */
     protected function configureScrollRect () :void
     {
-        var bounds :Rectangle = getScrollBounds();
-        if (bounds.width > _actualWidth) {
-            scrollRect = new Rectangle(0, 0, _actualWidth, _actualHeight);
-        } else {
+        if (_actualWidth >= _scene.getWidth()) {
             scrollRect = null;
+        } else {
+            scrollRect = getScrollBounds();
         }
     }
 

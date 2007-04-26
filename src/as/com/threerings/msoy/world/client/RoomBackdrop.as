@@ -24,8 +24,7 @@ public class RoomBackdrop
     }
 
     /**
-     * Draws the room backdrop on the specified sprite, with specified
-     * unscaled parameters.
+     * Draws the room backdrop on the specified sprite, with specified unscaled parameters.
      */
     public function drawRoom (
         sprite :Sprite, unscaledWidth :Number, unscaledHeight :Number, editing :Boolean) :void
@@ -33,18 +32,15 @@ public class RoomBackdrop
         var g :Graphics = sprite.graphics;
         g.clear();
 
-        // fill all our screen area with transparent pixels, so that
-        // mousing anywhere in our bounds includes us in the
-        // event dispatch. This is primarily necessary to get the
-        // ContextMenu working properly.
+        // fill all our screen area with transparent pixels, so that mousing anywhere in our bounds
+        // includes us in the event dispatch. This is primarily necessary to get the ContextMenu
+        // working properly.
         if (!isNaN(unscaledWidth) && !isNaN(unscaledHeight)) {
-            var w :Number = unscaledWidth / sprite.scaleX;
-            var h :Number = unscaledHeight / sprite.scaleY;
             g.beginFill(0, 0);
-            g.drawRect(0, 0, w, h);
+            g.drawRect(0, 0, unscaledWidth, unscaledHeight);
             g.endFill();
         }
- 
+
         var drawWalls :Boolean = (_roomType == Decor.DRAWN_ROOM);
         var drawEdges :Boolean = drawWalls || editing;
         if (!drawEdges) {
@@ -52,8 +48,8 @@ public class RoomBackdrop
         }
 
         // variable names: [l/r][l/u][f/b] - left/right, lower/upper, front/back
-        // Note: you can verify that a line connects two corners along an edge
-        // by checking that the two endpoints differ in only one letter.
+        // Note: you can verify that a line connects two corners along an edge by checking that the
+        // two endpoints differ in only one letter.
         var llf :Point = _metrics.roomToScreen(0, 0, 0);
         var llb :Point = _metrics.roomToScreen(0, 0, 1);
         var luf :Point = _metrics.roomToScreen(0, 1, 0);
@@ -131,5 +127,4 @@ public class RoomBackdrop
     /** One of the Decor.* enum values that describe different room types. */
     protected var _roomType :int;
 }
-
 }

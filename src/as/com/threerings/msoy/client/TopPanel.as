@@ -94,7 +94,7 @@ public class TopPanel extends Canvas
 
         app.stage.addEventListener(Event.RESIZE, stageResized);
 
-        _ctx.getClient().addEventListener(WorldClient.MINIMIZATION_CHANGED, minimizationChanged);
+        _ctx.getClient().addEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
     }
 
     /**
@@ -196,7 +196,7 @@ public class TopPanel extends Canvas
             _placeBox.parent.removeChild(_placeBox);
         }
         addChild(_headerBar);
-        addChild(_placeBox);
+        addChildAt(_placeBox, 0);
         layoutPanels();
     }
 
@@ -396,9 +396,9 @@ public class TopPanel extends Canvas
         layoutPanels();
     }
 
-    protected function minimizationChanged (event :ValueEvent) :void
+    protected function miniWillChange (event :ValueEvent) :void
     {
-        // clear out our left panel if we were just minimized
+        // clear out our left panel if we are about to be minimized
         if (event.value as Boolean) {
             clearLeftPanel(null);
         }

@@ -53,8 +53,8 @@ public class WorldClient extends Widget
         Page.displayingFlash = false;
 
         if (_client != null) {
-            clientMinimized(true);
             RootPanel.get("client").setWidth("300px");
+            clientMinimized(true);
         }
     }
 
@@ -126,7 +126,7 @@ public class WorldClient extends Widget
     }-*/;
 
     /**
-     * notifies the flash client that we're either minimized or not.
+     * Notifies the flash client that we're either minimized or not.
      */
     protected static native void clientMinimized (boolean mini) /*-{
         var client = $doc.getElementById("asclient");

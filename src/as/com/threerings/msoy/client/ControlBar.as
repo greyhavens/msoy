@@ -67,7 +67,7 @@ public class ControlBar extends HBox
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
         addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
 
-        _ctx.getClient().addEventListener(WorldClient.MINIMIZATION_CHANGED, minimizationChanged);
+        _ctx.getClient().addEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
         _ctx.getClient().addEventListener(WorldClient.EMBEDDED_STATE_KNOWN, embeddedStateKnown);
 
         checkControls();
@@ -231,7 +231,7 @@ public class ControlBar extends HBox
         }
     }
 
-    protected function minimizationChanged (event :ValueEvent) :void
+    protected function miniWillChange (event :ValueEvent) :void
     {
         var minimized :Boolean = (event.value as Boolean);
         for each (var child :UIComponent in _hiders) {

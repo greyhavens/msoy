@@ -57,10 +57,12 @@ public class WorldChatTab extends ChatTab
     {
         var height :int = stage.stageHeight - ControlBar.HEIGHT - HeaderBar.HEIGHT -
             TopPanel.DECORATIVE_MARGIN_HEIGHT;
+        // we don't have our proper width yet (the stage has not yet resized), so we have to
+        // hardcode the width to the one we know we'll be receiving
+        _placeBox.width = TopPanel.RIGHT_SIDEBAR_WIDTH;
         _placeBox.height = height;
-        _placeBox.width = stage.stageWidth;
         _placeBox.move(0, 0);
-        _placeBox.wasResized(stage.stageWidth, height);
+        _placeBox.wasResized(TopPanel.RIGHT_SIDEBAR_WIDTH, height);
     }
 
     protected var _placeBox :PlaceBox;
