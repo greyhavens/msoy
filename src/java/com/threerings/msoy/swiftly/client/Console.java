@@ -14,12 +14,14 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 public class Console extends JFrame
 {
     public Console (SwiftlyContext ctx, SwiftlyEditor editor)
     {
+        super(ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.console.title"));
         _ctx = ctx;
         _editor = editor;
 
