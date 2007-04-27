@@ -5,6 +5,7 @@ package com.threerings.msoy.item.server.persist;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -287,49 +288,46 @@ public abstract class ItemRepository<
                 "Sort method not implemented [sortBy=" + sortBy + "]");
         }
         // we collect separate query conditions in one array
-        SQLOperator[] whereBits = new SQLOperator[0];
+        ArrayList<SQLOperator> whereBits = new ArrayList<SQLOperator>();
         // and actual clauses in another
-        QueryClause[] clauses = new QueryClause[] {
-            new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
-                     getItemClass(), ItemRecord.ITEM_ID),
-            new Limit(offset, rows)
-        };
+        ArrayList<QueryClause> clauses = new ArrayList<QueryClause>();
+        clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+                     getItemClass(), ItemRecord.ITEM_ID));
+        clauses.add(new Limit(offset, rows));
         
         if (sortExp != null) {
-            clauses = ArrayUtil.append(clauses, sortExp);
+            clauses.add(sortExp);
         }
 
         if (search != null && search.length() > 0) {
-            whereBits = ArrayUtil.append(whereBits, new Like(ItemRecord.NAME, "%" + search + "%"));
+            whereBits.add(new Like(ItemRecord.NAME, "%" + search + "%"));
         }
 
         if (tag > 0) {
             // join against TagRecord
-            clauses = ArrayUtil.append(
-                clauses,
-                new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
-                         getTagRepository().getTagClass(), TagRecord.TARGET_ID));
+            clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+                                 getTagRepository().getTagClass(), TagRecord.TARGET_ID));
             // and add a condition
-            whereBits = ArrayUtil.append(whereBits, new Equals(TagRecord.TAG_ID, tag));
+            whereBits.add(new Equals(TagRecord.TAG_ID, tag));
         }
         
         if (creator > 0) {
-            whereBits = ArrayUtil.append(whereBits, new Equals(ItemRecord.CREATOR_ID, creator));
+            whereBits.add(new Equals(ItemRecord.CREATOR_ID, creator));
         }
 
         if (!mature) {
             // add a check to make sure ItemRecord.FLAG_MATURE is not set on any returned items
-            whereBits = ArrayUtil.append(
-                whereBits, new Equals(new BitAnd(ItemRecord.FLAGS, Item.FLAG_MATURE), 0));
+            whereBits.add(new Equals(new BitAnd(ItemRecord.FLAGS, Item.FLAG_MATURE), 0));
         }
 
         // see if there's any where bits to turn into an actual where clause
-        if (whereBits.length > 0) {
-            clauses = ArrayUtil.append(clauses, new Where(new And(whereBits)));
+        if (whereBits.size() > 0) {
+            clauses.add(new Where(new And(whereBits.toArray(new SQLOperator[whereBits.size()]))));
         }
         
         // finally fetch all the catalog records of interest
-        List<CAT> records = findAll(getCatalogClass(), clauses);
+        List<CAT> records = findAll(
+            getCatalogClass(), clauses.toArray(new QueryClause[clauses.size()]));
 
         if (records.size() == 0) {
             return records;
