@@ -31,9 +31,9 @@ public class MsoyGameConfig extends EZGameConfig
     /** The manager to use, or null for MsoyGameManager. */
     public var manager :String;
 
-    override public function createConfigurator () :GameConfigurator
+    public function MsoyGameConfig ()
     {
-        return new FlexGameConfigurator();
+        // used for unserialization
     }
 
     override public function createController () :PlaceController
@@ -60,6 +60,11 @@ public class MsoyGameConfig extends EZGameConfig
         super.writeObject(out);
         out.writeField(controller);
         out.writeField(manager);
+    }
+
+    override public function createConfigurator () :GameConfigurator
+    {
+        return new FlexGameConfigurator();
     }
 }
 }

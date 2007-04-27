@@ -608,6 +608,7 @@
       <fileset dir="${src.dir}">
         <include name="**/msoy/data/*.java"/>
         <include name="**/msoy/data/all/*.java"/>
+        <include name="**/msoy/game/data/*.java"/>
         <exclude name="**/*CustomFieldSerializer.java"/> <!-- fucking GWT -->
         <exclude name="**/MemberName.java"/> <!-- alas, too fiddly -->
         <include name="**/msoy/item/data/all/*.java"/>

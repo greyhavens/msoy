@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.data;
 
+import com.threerings.util.ActionScript;
+
 import com.threerings.crowd.data.BodyObject;
 
 import com.threerings.parlor.data.Table;
@@ -14,7 +16,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
- * A msoy-specific table.
+ * An msoy-specific table.
  */
 public class MsoyTable extends Table
 {
@@ -26,7 +28,7 @@ public class MsoyTable extends Table
     {
     }
 
-    @Override
+    @Override @ActionScript(omit=true)
     public void init (int lobbyOid, TableConfig tconfig, GameConfig config)
     {
         super.init(lobbyOid, tconfig, config);
@@ -35,7 +37,7 @@ public class MsoyTable extends Table
         headShots = new MediaDesc[size];
     }
 
-    @Override
+    @Override @ActionScript(omit=true)
     public void setOccupantPos (int position, BodyObject body)
     {
         super.setOccupantPos(position, body);
@@ -44,7 +46,7 @@ public class MsoyTable extends Table
         headShots[position] = member.getHeadShotMedia();
     }
 
-    @Override
+    @Override @ActionScript(omit=true)
     public void clearOccupantPos (int position)
     {
         super.clearOccupantPos(position);

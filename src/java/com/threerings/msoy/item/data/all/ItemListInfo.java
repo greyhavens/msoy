@@ -11,6 +11,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
 import com.threerings.presents.dobj.DSet;
 
+/**
+ * Contains metadata for a list of items.
+ */
 public class ItemListInfo
     implements Streamable, IsSerializable, DSet.Entry
 {

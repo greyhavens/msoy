@@ -57,10 +57,7 @@ public class MsoyTableManager extends TableManager
         super.notePlayerAdded(table, body);
 
         if (_summary == null) {
-            _summary = new GameSummary();
-            _summary.name = _lobj.game.name;
-            _summary.gameId = _lobj.game.itemId;
-            _summary.thumbMedia = _lobj.game.thumbMedia;
+            _summary = new GameSummary(_lobj.game);
         }
 
         // attach the GameSummary to our MemberObject, and update our occupant info 

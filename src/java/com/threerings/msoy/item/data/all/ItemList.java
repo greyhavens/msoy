@@ -8,6 +8,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
 import com.threerings.presents.dobj.DSet;
 
+/**
+ * Represents a list of items created by a user.
+ */
 public class ItemList
     implements Streamable, IsSerializable, DSet.Entry
 {

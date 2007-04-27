@@ -10,17 +10,26 @@ import com.threerings.io.TypedArray;
 
 import com.threerings.presents.dobj.DSet_Entry;
 
+/**
+ * Represents a list of items created by a user.
+ */
 public class ItemList
     implements Streamable, DSet_Entry
 {
+    /** The summary info about this list. */
     public var info :ItemListInfo;
 
+    /** The actual items in this ItemList. IF null, indicates that this is
+     * a summary entry for the ItemList that does not contain the actual content.
+     * If an ItemList is truly empty, then this will be a zero-element array.
+     */
     public var items :TypedArray;
 
     public function ItemList ()
     {
     }
 
+    // from DSet.Entry
     public function getKey () :Object
     {
         return info.getKey();
@@ -29,7 +38,7 @@ public class ItemList
     // from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        info = ins.readObject() as ItemListInfo;
+        info = (ins.readObject() as ItemListInfo);
         items = (ins.readObject() as TypedArray);
     }
 
