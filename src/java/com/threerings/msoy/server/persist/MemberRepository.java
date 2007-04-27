@@ -455,6 +455,69 @@ public class MemberRepository extends DepotRepository
             new Where(new In(MemberRecord.MEMBER_ID_C, idArr)));
     }
 
+    /**
+     * Grants the given number of invites to the given memberId
+     */
+    public void grantInvites (int number, int memberId) 
+        throws PersistenceException
+    {
+        // TODO
+    }
+
+    /** 
+     * Grants the given number of invites to all users who's last session expired after the given
+     * Timestamp.  
+     *
+     * @param lastSession Anybody who's been logged in since this timestamp will get the invites.
+     *                    If this parameter is null, everybody will get the invites.
+     */
+    public void grantInvites (int number, Timestamp lastSession)
+        throws PersistenceException
+    {
+        // TODO
+    }
+
+    /**
+     * Get the number of invites this member has available to send out.
+     */
+    public int getInvitesGranted (int memberId)
+        throws PersistenceException
+    {
+        // TODO
+        return 0;
+    }
+
+    /** 
+     * get the total number of invites that this user has sent
+     */
+    public int getInvitesSent (int memberId) 
+        throws PersistenceException
+    {
+        // TODO 
+        return 0;
+    }
+
+    /**
+     * Get a list of the invites that this user has already sent out that have not yet been
+     * accepted.
+     */
+    public List<InvitationRecord> loadPendingInvites (int memberId)
+        throws PersistenceException
+    {
+        // TODO
+        return null;
+    }
+
+    /**
+     * Find and return in the InvitationRecord that cooresponds to the given unique code.
+     */
+    public InvitationRecord loadInvite (String inviteId) 
+        throws PersistenceException
+    {
+        // TODO
+        return null;
+    }
+
     @Entity
     @Computed
     protected static class FriendCount extends PersistentRecord

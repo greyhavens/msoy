@@ -17,7 +17,7 @@ import com.samskivert.util.StringUtil;
  * Contains persistent data stored for every member of MetaSOY.
  */
 @Entity(indices={ @Index(columns={"inviterId"}), @Index(columns={"inviteeId"}), 
-    @Index(columns={"inviteeEmailHash"})})
+    @Index(columns={"inviteId"})})
 public class InvitationRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -35,12 +35,12 @@ public class InvitationRecord extends PersistentRecord
     public static final ColumnExp INVITER_ID_C =
         new ColumnExp(InvitationRecord.class, INVITER_ID);
 
-    /** The column identifier for the {@link #inviteHash} field. */
-    public static final String INVITE_HASH = "inviteHash";
+    /** The column identifier for the {@link #inviteId} field. */
+    public static final String INVITE_ID = "inviteId";
 
-    /** The qualified column identifier for the {@link #inviteHash} field. */
-    public static final ColumnExp INVITE_HASH_C =
-        new ColumnExp(InvitationRecord.class, INVITE_HASH);
+    /** The qualified column identifier for the {@link #inviteId} field. */
+    public static final ColumnExp INVITE_ID_C =
+        new ColumnExp(InvitationRecord.class, INVITE_ID);
 
     /** The column identifier for the {@link #inviteeId} field. */
     public static final String INVITEE_ID = "inviteeId";
@@ -76,9 +76,10 @@ public class InvitationRecord extends PersistentRecord
     @Id
     public int inviterId; 
 
-    /** An MD5 Hash generated from the invitee's email address and the inviter's memberId. Used
-     * for the unique URL that is sent with this invitation. */
-    public byte[] inviteHash;
+    /** A randomly generated string of numbers and characters that is used to uniquely identify
+     * this invitation. */
+    @Column(unique=true)
+    public String inviteId;
 
     /** The memberId that was assigned to the invitee when (if) the invitation was accepted. */
     public int inviteeId;
