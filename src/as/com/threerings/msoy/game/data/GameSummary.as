@@ -16,7 +16,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 /**
- * Provides information on the game that a player is currently matchmaking for.
+ * Contains metadata about a game for which a player is currently matchmaking.
  */
 public class GameSummary extends SimpleStreamableObject
     implements Cloneable
