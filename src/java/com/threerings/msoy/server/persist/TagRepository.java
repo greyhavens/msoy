@@ -139,7 +139,7 @@ public abstract class TagRepository extends DepotRepository
     public TagNameRecord getTag (String tagName)
         throws PersistenceException
     {
-        return load(TagNameRecord.class, TagNameRecord.TAG, tagName);
+        return load(TagNameRecord.class, new Where(TagNameRecord.TAG, tagName));
     }
 
     /**
