@@ -56,18 +56,6 @@ public class RoomLayoutFlatworld extends RoomLayoutStandard {
         return 0.25;
     }
 
-    // from superclass RoomLayoutStandard
-    override protected function getZOfChildAt (index :int) :Number
-    {
-        // in this version, we use vertical position for z-ordering -
-        // higher items in the back, lower up front
-        
-        var re :RoomElement = RoomElement(_parentView.getChildAt(index));
-
-        // we multiply the layer constant by 1000 to spread out the z values that
-        // normally lie in the 0 -> 1 range.
-        return re.getLocation().y + (1000 * re.getRoomLayer());
-    }
 }
 }
     

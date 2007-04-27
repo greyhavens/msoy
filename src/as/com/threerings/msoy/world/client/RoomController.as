@@ -795,8 +795,7 @@ public class RoomController extends SceneController
         
         var av :AvatarSprite = _roomView.getMyAvatar();
         if (av != null) {
-            var prefY :Number =
-                cloc.loc.y + av.getPreferredY() / _roomView.layout.metrics.sceneHeight;
+            var prefY :Number = av.getPreferredY() / _roomView.layout.metrics.sceneHeight;
             // but clamp their preferred Y into the normal range
             cloc.loc.y = Math.min(1, Math.max(0, prefY));
         }
