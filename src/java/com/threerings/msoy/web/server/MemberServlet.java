@@ -46,16 +46,6 @@ public class MemberServlet extends MsoyServiceServlet
     implements MemberService
 {
     // from MemberService
-    public MemberName getName (int memberId)
-        throws ServiceException
-    {
-        ServletWaiter<MemberName> waiter =
-            new ServletWaiter<MemberName>("getName[" + memberId + "]");
-        MsoyServer.memberMan.getName(memberId, waiter);
-        return waiter.waitForResult();
-    }
-
-    // from MemberService
     public boolean getFriendStatus (WebCreds creds, final int memberId)
         throws ServiceException
     {

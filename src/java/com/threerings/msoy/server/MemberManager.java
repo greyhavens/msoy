@@ -126,38 +126,6 @@ public class MemberManager
     }
 
     /**
-     * Look up a member's name and construct a {@link MemberName} from it.
-     */
-    public void getName (final int memberId, ServletWaiter<MemberName> waiter)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<MemberName>(waiter) {
-            public MemberName invokePersistResult () throws PersistenceException {
-                MemberNameRecord record = _memberRepo.loadMemberName(memberId);
-                if (record != null) {
-                    return new MemberName(record.name, record.memberId);
-                }
-                return null;
-            }
-        });
-    }
-
-    /**
-     * Look up some members' names and construct {@link MemberName}s from'em.
-     */
-    public void getNames (final int[] memberId, ServletWaiter<List<MemberName>> waiter)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<MemberName>>(waiter) {
-            public List<MemberName> invokePersistResult () throws PersistenceException {
-                List<MemberName> result = new ArrayList<MemberName>();
-                for (MemberNameRecord record : _memberRepo.loadMemberNames(memberId)) {
-                    result.add(new MemberName(record.name, record.memberId));
-                }
-                return result;
-            }
-        });
-    }
-
-    /**
      * Update the user's occupant info.
      */
     public void updateOccupantInfo (MemberObject user)

@@ -12,11 +12,6 @@ import com.threerings.msoy.web.data.WebCreds;
 public interface MemberServiceAsync
 {
     /**
-     * The asynchronous version of {@link MemberService#getName}.
-     */
-    public void getName (int memberId, AsyncCallback callback);
-
-    /**
      * The asynchronous version of {@link MemberService#getFriendStatus}.
      */
     public void getFriendStatus (WebCreds creds, int memberId, AsyncCallback callback);
