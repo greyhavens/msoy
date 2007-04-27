@@ -248,13 +248,39 @@ public abstract class ItemRepository<
         }
     }
 
-    public CAT findRandomCatalogEntryByTag (String tag)
+    /**
+     * Find a single catalog entry randomly.
+     */
+    public CAT pickRandomCatalogEntry ()
+        throws PersistenceException
+    {
+        CAT record = load(getCatalogClass(), new QueryClause[] {
+            new Limit(0, 1),
+            OrderBy.random()
+        });
+
+        if (record != null) {
+            record.item = loadOriginalItem(record.itemId);
+        }
+        return record;
+    }
+
+    /**
+     * Find a single random catalog entry that is tagged with *any* of the specified tags.
+     */
+    public CAT findRandomCatalogEntryByTags (String... tags)
         throws PersistenceException
     {
         // first find the tag record...
-        TagNameRecord tagRecord = getTagRepository().getTag(tag);
-        if (tagRecord == null) {
+        List<TagNameRecord> tagRecords = getTagRepository().getTags(tags);
+        int tagCount = tagRecords.size();
+        if (tagCount == 0) {
             return null;
+        }
+
+        Integer[] tagIds = new Integer[tagCount];
+        for (int ii = 0; ii < tagCount; ii++) {
+            tagIds[ii] = tagRecords.get(ii).tagId;
         }
 
         List<CAT> records = findAll(getCatalogClass(),
@@ -265,7 +291,7 @@ public abstract class ItemRepository<
                 OrderBy.random(),
                 new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
                     getTagRepository().getTagClass(), TagRecord.TARGET_ID),
-                new Where(new Equals(TagRecord.TAG_ID, tagRecord.tagId))
+                new Where(new In(TagRecord.TAG_ID, tagIds))
             });
 
         if (records.isEmpty()) {
@@ -273,8 +299,7 @@ public abstract class ItemRepository<
         }
 
         CAT record = records.get(0);
-        T itemRecord = loadOriginalItem(record.itemId);
-        record.item = itemRecord;
+        record.item = loadOriginalItem(record.itemId);
         return record;
     }
 

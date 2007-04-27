@@ -26,6 +26,7 @@ import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
+import com.samskivert.jdbc.depot.operator.Conditionals.In;
 
 import com.threerings.msoy.web.data.TagHistory;
 
@@ -131,6 +132,15 @@ public abstract class TagRepository extends DepotRepository
         throws PersistenceException
     {
         return findAll(_tagHistoryClass, new Where(TagHistoryRecord.MEMBER_ID, memberId));
+    }
+
+    /**
+     * Loads all tag records for the specified tags.
+     */
+    public List<TagNameRecord> getTags (String[] tags)
+        throws PersistenceException
+    {
+        return findAll(TagNameRecord.class, new Where(new In(TagNameRecord.TAG_C, tags)));
     }
 
     /**
