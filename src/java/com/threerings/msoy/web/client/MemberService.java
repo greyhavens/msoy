@@ -23,12 +23,6 @@ public interface MemberService extends RemoteService
         throws ServiceException;
 
     /**
-     * Figure out whether or not a given member is online.
-     */
-    public boolean isOnline (int memberId)
-        throws ServiceException;
-
-    /**
      * Figure out whether or not a given member is your friend.
      */
     public boolean getFriendStatus (WebCreds creds, int memberId)

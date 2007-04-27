@@ -56,13 +56,6 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public boolean isOnline (int memberId)
-        throws ServiceException
-    {
-        return MsoyServer.lookupMember(memberId) != null;
-    }
-
-    // from MemberService
     public boolean getFriendStatus (WebCreds creds, final int memberId)
         throws ServiceException
     {

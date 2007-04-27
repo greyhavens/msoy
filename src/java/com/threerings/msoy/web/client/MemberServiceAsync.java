@@ -17,11 +17,6 @@ public interface MemberServiceAsync
     public void getName (int memberId, AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link MemberService#isOnline}.
-     */
-    public void isOnline (int memberId, AsyncCallback callback);
-
-    /**
      * The asynchronous version of {@link MemberService#getFriendStatus}.
      */
     public void getFriendStatus (WebCreds creds, int memberId, AsyncCallback callback);
