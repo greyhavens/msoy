@@ -640,3 +640,8 @@ body {
   height: 20px;
   top: 30px;
 }
+
+.editAccount .Header {
+  font-weight: bold;
+}
+

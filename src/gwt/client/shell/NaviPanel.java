@@ -104,6 +104,12 @@ public class NaviPanel extends FlexTable
                     }
                     menu.addItem("Friends", fmenu);
                 } // TODO: add "invite" link if no friends?
+                menu.addItem("Invites", true, new Command() {
+                    public void execute () {
+                        new SendInvitesDialog().show();
+                        _popped.hide();
+                    }
+                });
                 popupMenu(sender, menu);
             }
         });

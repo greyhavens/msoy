@@ -352,6 +352,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String tagMatureFlag();
 
   /**
+   * Translated "Send Invitations to Whirled".
+   * 
+   * @return translated "Send Invitations to Whirled"
+   * @gwt.key sendInvitesTitle
+   */
+  String sendInvitesTitle();
+
+  /**
    * Translated "Click ''Submit'' to configure your Permaname.".
    * 
    * @return translated "Click ''Submit'' to configure your Permaname."
