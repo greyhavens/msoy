@@ -43,6 +43,7 @@ import com.samskivert.jdbc.depot.operator.SQLOperator;
 
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
+import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
@@ -245,6 +246,36 @@ public abstract class ItemRepository<
                             ", usageType=" + usageType + ", location=" + location + "].");
             }
         }
+    }
+
+    public CAT findRandomCatalogEntryByTag (String tag)
+        throws PersistenceException
+    {
+        // first find the tag record...
+        TagNameRecord tagRecord = getTagRepository().getTag(tag);
+        if (tagRecord == null) {
+            return null;
+        }
+
+        List<CAT> records = findAll(getCatalogClass(),
+            new QueryClause[] {
+                new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+                    getItemClass(), ItemRecord.ITEM_ID),
+                new Limit(0, 1),
+                OrderBy.random(),
+                new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+                    getTagRepository().getTagClass(), TagRecord.TARGET_ID),
+                new Where(new Equals(TagRecord.TAG_ID, tagRecord.tagId))
+            });
+
+        if (records.isEmpty()) {
+            return null;
+        }
+
+        CAT record = records.get(0);
+        T itemRecord = loadOriginalItem(record.itemId);
+        record.item = itemRecord;
+        return record;
     }
 
     /**
