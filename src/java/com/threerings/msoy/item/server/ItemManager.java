@@ -1004,7 +1004,7 @@ public class ItemManager
                 int originalId = item.parentId != 0 ? item.parentId : ident.itemId;
 
                 // map tag to tag id
-                TagNameRecord tag = repo.getTagRepository().getTag(tagName);
+                TagNameRecord tag = repo.getTagRepository().getOrCreateTag(tagName);
 
                 // and do the actual work
                 TagHistoryRecord historyRecord = doTag ?

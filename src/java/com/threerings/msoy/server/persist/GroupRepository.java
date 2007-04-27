@@ -108,7 +108,7 @@ public class GroupRepository extends DepotRepository
     {
         ArrayList<Integer> groupIds = new ArrayList<Integer>();
         for (GroupTagRecord tagRec : findAll(GroupTagRecord.class,
-            new Where(GroupTagRecord.TAG_ID, _tagRepo.getTag(tag).tagId))) {
+            new Where(GroupTagRecord.TAG_ID, _tagRepo.getOrCreateTag(tag).tagId))) {
             groupIds.add(tagRec.targetId);
         }
         return findAll(GroupRecord.class, new Where(new In(GroupRecord.class, 

@@ -338,7 +338,7 @@ public class GroupServlet extends MsoyServiceServlet
             long now = System.currentTimeMillis();
                 
             TagRepository tagRepo = MsoyServer.groupRepo.getTagRepository();
-            TagNameRecord tagRec = tagRepo.getTag(tagName);
+            TagNameRecord tagRec = tagRepo.getOrCreateTag(tagName);
 
             TagHistoryRecord historyRecord = set ?
                 tagRepo.tag(groupId, tagRec.tagId, memrec.memberId, now) :

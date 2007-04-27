@@ -134,13 +134,22 @@ public abstract class TagRepository extends DepotRepository
     }
 
     /**
-     * Finds the tag record for a certain tag, or create it.
+     * Finds the tag record for a certain tag.
      */
     public TagNameRecord getTag (String tagName)
         throws PersistenceException
     {
+        return load(TagNameRecord.class, TagNameRecord.TAG, tagName);
+    }
+
+    /**
+     * Finds the tag record for a certain tag, or create it.
+     */
+    public TagNameRecord getOrCreateTag (String tagName)
+        throws PersistenceException
+    {
         // load the tag, if it exists
-        TagNameRecord record = load(TagNameRecord.class, TagNameRecord.TAG, tagName);
+        TagNameRecord record = getTag(tagName);
         if (record == null) {
             // if it doesn't, create it on the fly
             record = new TagNameRecord();
@@ -151,7 +160,7 @@ public abstract class TagRepository extends DepotRepository
     }
 
     /**
-     * Find the tag record for a certain tag id, or create it.
+     * Find the tag record for a certain tag id.
      */
     public TagNameRecord getTag (int tagId)
         throws PersistenceException
