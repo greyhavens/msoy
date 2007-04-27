@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.game.client {
 
 import com.threerings.util.MessageBundle;
@@ -10,10 +13,6 @@ import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.dobj.Subscriber;
 
-import com.threerings.parlor.client.Invitation;
-import com.threerings.parlor.client.InvitationHandler;
-import com.threerings.parlor.client.InvitationResponseObserver;
-
 import com.threerings.parlor.client.GameReadyObserver;
 import com.threerings.parlor.game.client.GameController;
 import com.threerings.parlor.game.data.GameConfig;
@@ -22,83 +21,37 @@ import com.threerings.parlor.game.data.GameObject;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-
 import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.GameCodes;
 import com.threerings.msoy.game.data.WorldGameConfig;
 
 /**
- * A director that manages invitations and game starting.
+ * A director that manages game related bits.
  */
 public class GameDirector extends BasicDirector
-    implements InvitationHandler, InvitationResponseObserver, AttributeChangeListener, Subscriber,
-               GameReadyObserver
+    implements AttributeChangeListener, Subscriber, GameReadyObserver
 {
     public static const log :Log = Log.getLog(GameDirector);
-
-    // TODO: All this Invitation stuff needs to be ripped out.  In metasoy you will not invite
-    // players to a game configuration (do you?)  you instead invite to the lobby... etc.
 
     public function GameDirector (ctx :WorldContext)
     {
         super(ctx);
         _mctx = ctx;
 
-        ctx.getParlorDirector().setInvitationHandler(this);
-
         // handle gameReady so that we can enter games in a browser history friendly manner
         ctx.getParlorDirector().addGameReadyObserver(this);
     }
 
     /**
-     * Called to pop-up a panel to configure an invitation to the specified player.
+     * Called by the LobbyController when we join or create a game table. We need to keep this
+     * around so that we can enter the game properly if/when we end up in an actual game.
      */
-    public function configureInvite (invitee :MemberName) :void
+    public function setMatchingGame (game :Game) :void
     {
-        displayFeedback("Hopefully nothing is actually calling this code");
-//        new InvitePanel(_mctx, invitee);
-    }
-
-    /**
-     * Send an invitation to the specified player, managing the handling of all responses.
-     */
-    public function sendInvite (invitee :MemberName, config :GameConfig) :void
-    {
-        _invitation = _mctx.getParlorDirector().invite(invitee, config, this);
-    }
-
-    // from InvitationHandler
-    public function invitationReceived (invite :Invitation) :void
-    {
-        displayFeedback(MessageBundle.tcompose("m.invite_received", invite.opponent));
-        // TODO: an ahoy panel of sorts?
-        invite.accept();
-    }
-
-    // from InvitationHandler
-    public function invitationCancelled (invite :Invitation) :void
-    {
-        displayFeedback(MessageBundle.tcompose("m.invite_cancelled", invite.opponent));
-    }
-
-    // from InvitationResponseObserver
-    public function invitationAccepted (invite :Invitation) :void
-    {
-        _invitation = null;
-        displayFeedback(MessageBundle.tcompose("m.invite_accepted", invite.opponent));
-    }
-
-    // from InvitationResponseObserver
-    public function invitationRefused (invite :Invitation, msg :String) :void
-    {
-        displayFeedback(MessageBundle.tcompose("m.invite_refused", invite.opponent));
-    }
-
-    // from InvitationResponseObserver
-    public function invitationCountered (invite :Invitation, config :GameConfig) :void
-    {
-        // TODO ??
+        _matchingGame = game;
     }
 
     // from interface AttributeChangeListener
@@ -145,12 +98,11 @@ public class GameDirector extends BasicDirector
         // let the scene director know that we're leaving our current scene
         _mctx.getTopPanel().clearTableDisplay();
         _mctx.getSceneDirector().didLeaveScene();
-        if (_mctx.getMemberObject().pendingGame == null) {
-            log.warning("Zoiks! No pending game [gameOid=" + gameOid + "].");
+        if (_matchingGame == null) {
+            log.warning("Got game ready but we were never in a table? [oid=" + gameOid + "].");
         } else {
             // route our entry to the game through GWT so that we can handle non-Flash games
-            _mctx.getMsoyController().handleGoGame(
-                [ _mctx.getMemberObject().pendingGame.gameId, gameOid ]);
+            _mctx.getMsoyController().handleGoGame([ _matchingGame.itemId, gameOid ]);
         }
         return true;
     }
@@ -202,8 +154,9 @@ public class GameDirector extends BasicDirector
     /** A casted ref to the msoy context. */
     protected var _mctx :WorldContext;
 
-    /** The invitation we're currently processing. */
-    protected var _invitation :Invitation;
+    /** Tracks the game id of the last game of which we joined a table. We need to remember this
+     * because by the time we get around to entering that game, we no longer have this info. */
+    protected var _matchingGame :Game;
 
     /** The oid of the world game object to which we are subscribed or are subscribing to. */
     protected var _worldGameOid :int;

@@ -105,6 +105,7 @@ public class LobbyController extends Controller implements Subscriber
     public function handleSubmitTable (args :Array) :void
     {
         _tableDir.createTable(args[0] as TableConfig, args[1] as GameConfig);
+        _mctx.getGameDirector().setMatchingGame(_lobj.game);
     }
 
     /**
@@ -113,6 +114,7 @@ public class LobbyController extends Controller implements Subscriber
     public function handleJoinTable (args :Array) :void
     {
         _tableDir.joinTable(args[0] as int /*tableId*/, args[1] as int /*pos*/);
+        _mctx.getGameDirector().setMatchingGame(_lobj.game);
     }
 
     /**

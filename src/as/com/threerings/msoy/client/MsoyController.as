@@ -51,10 +51,10 @@ import com.threerings.msoy.chat.client.ReportingListener;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import com.threerings.msoy.game.client.FloatingTableDisplay;
 import com.threerings.msoy.game.client.LobbyController;
 import com.threerings.msoy.game.client.LobbyService;
 import com.threerings.msoy.game.client.WorldGameService;
-import com.threerings.msoy.game.client.FloatingTableDisplay;
 
 import com.threerings.msoy.world.client.RoomView;
 
@@ -375,20 +375,20 @@ public class MsoyController extends Controller
         if (disp != null && disp.getGameId() == gameId) {
             // if we're already in a table for this game id, just rejoin the current lobby
             CommandEvent.dispatch(disp.getRenderer(), LobbyController.JOIN_LOBBY);
-        } else {
-            var lsvc :LobbyService =
-                (_ctx.getClient().requireService(LobbyService) as LobbyService);
-            lsvc.identifyLobby(_ctx.getClient(), gameId,
-                new ResultWrapper(function (cause :String) :void {
-                    log.warning("fetching LobbyObject oid failed: " + cause);
-                    _gameId = -1;
-                },
-                function (result :Object) :void {
-                    // this will create a panel and add it to the side panel on the top level
-                    new LobbyController(_ctx, int(result));
-                    gameLobbyShown(gameId);
-                }));
+            return;
         }
+
+        var lsvc :LobbyService = (_ctx.getClient().requireService(LobbyService) as LobbyService);
+        var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
+            log.warning("fetching LobbyObject oid failed: " + cause);
+            _gameId = -1;
+        },
+        function (result :Object) :void {
+            // this will create a panel and add it to the side panel on the top level
+            new LobbyController(_ctx, int(result));
+            gameLobbyShown(gameId);
+        });
+        lsvc.identifyLobby(_ctx.getClient(), gameId, cb);
     }
 
     /**
