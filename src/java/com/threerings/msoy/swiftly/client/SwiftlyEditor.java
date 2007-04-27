@@ -39,7 +39,9 @@ import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetListener;
 
+import com.threerings.crowd.client.OccupantAdapter;
 import com.threerings.crowd.client.PlacePanel;
+import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.micasa.client.ChatPanel;
@@ -100,6 +102,14 @@ public class SwiftlyEditor extends PlacePanel
         _rightPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, _projectPanel, chatPanel);
         _rightPane.setOneTouchExpandable(true);
 
+        // add an OccupantObserver to reveal the chat panel if someone joins
+        _ctx.getOccupantDirector().addOccupantObserver(new OccupantAdapter() {
+            @Override // from OccupantAdapter
+            public void occupantEntered (OccupantInfo info) {
+                showChatPanel();
+            }
+        });
+
         // add the console window which starts hidden
         _console = new Console(_ctx, this);
 
@@ -117,10 +127,15 @@ public class SwiftlyEditor extends PlacePanel
 
         // set up our divider location when we are first laid out
         if (getWidth() != 0 && _contentPane.getLastDividerLocation() == 0) {
+            // TODO: use a relative number.
             _contentPane.setDividerLocation(getWidth()-200);
 
-            // start with the chat pane hidden
-            _rightPane.setDividerLocation(getHeight());
+            // start with the chat panel hidden if no one else is in the room
+            if (_roomObj.occupants.size() > 1) {
+                showChatPanel();
+            } else {
+                hideChatPanel();
+            }
         }
     }
 
@@ -422,6 +437,20 @@ public class SwiftlyEditor extends PlacePanel
                           MediaDesc.mimeTypeToString(MediaDesc.TEXT_ACTIONSCRIPT)));
         _createableFileTypes.add(new FileTypes(_msgs.get("m.filetypes." + MediaDesc.TEXT_PLAIN),
                                                MediaDesc.mimeTypeToString(MediaDesc.TEXT_PLAIN)));
+    }
+
+    protected void showChatPanel ()
+    {
+        // only show the chat panel if the split pane has hidden it completely
+        if (_rightPane.getDividerLocation() == _rightPane.getMaximumDividerLocation()) {
+            // TODO: use a relative number.
+            _rightPane.setDividerLocation(getHeight()-300);
+        }
+    }
+
+    protected void hideChatPanel ()
+    {
+        _rightPane.setDividerLocation(_rightPane.getMaximumDividerLocation());
     }
 
     protected void showPreview ()
