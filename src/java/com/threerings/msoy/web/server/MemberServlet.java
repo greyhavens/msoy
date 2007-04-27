@@ -58,20 +58,6 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public Integer getMemberHomeId (WebCreds creds, final int memberId)
-        throws ServiceException
-    {
-        final ServletWaiter<Integer> waiter =
-            new ServletWaiter<Integer>("getHomeId[" + memberId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.memberMan.getHomeId(MsoySceneModel.OWNER_TYPE_MEMBER, memberId, waiter);
-            }
-        });
-        return waiter.waitForResult();
-    }
-
-    // from MemberService
     public void addFriend (final WebCreds creds, final int friendId)
         throws ServiceException
     {

@@ -17,11 +17,6 @@ public interface MemberServiceAsync
     public void getFriendStatus (WebCreds creds, int memberId, AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link MemberService#getMemberHomeId}.
-     */
-    public void getMemberHomeId (WebCreds creds, int memberId, AsyncCallback callback);
-
-    /**
      * The asynchronous version of {@link MemberService#acceptFriend}.
      */
     public void addFriend (WebCreds creds, int friendId, AsyncCallback callback);
