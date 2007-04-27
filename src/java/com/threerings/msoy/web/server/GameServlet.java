@@ -94,7 +94,7 @@ public class GameServlet extends MsoyServiceServlet
         case MediaDesc.APPLICATION_JAVA_ARCHIVE:
             // ignore maxSeats in the case of a party game - always display a lobby
             config.type = (!match.isPartyGame && match.maxSeats == 1) ?
-                LaunchConfig.JAVA_SOLO : LaunchConfig.JAVA_LOBBIED;
+                LaunchConfig.JAVA_SOLO : LaunchConfig.JAVA_FLASH_LOBBIED;
             break;
         default:
             log.warning("Requested config for game of unknown media type " +

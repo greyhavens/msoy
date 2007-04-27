@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.game.server;
 
 import com.threerings.crowd.data.PlaceObject;

@@ -33,12 +33,14 @@ public class MsoyTable extends Table
     // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
+        super.readObject(ins);
         headShots = (ins.readObject() as TypedArray);
     }
 
     // from interface Streamable
     override public function writeObject (out :ObjectOutputStream) :void
     {
+        super.writeObject(out);
         out.writeObject(headShots);
     }
 }

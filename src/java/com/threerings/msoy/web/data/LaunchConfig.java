@@ -20,11 +20,14 @@ public class LaunchConfig
     /** A constant used to denote single player Flash games. */
     public static final int FLASH_SOLO = 2;
 
-    /** A constant used to denote lobbied Java games. */
-    public static final int JAVA_LOBBIED = 3;
+    /** A constant used to denote Java games lobbied in Flash. */
+    public static final int JAVA_FLASH_LOBBIED = 3;
+
+    /** A constant used to denote Java games lobbied themselves (in Java). */
+    public static final int JAVA_SELF_LOBBIED = 4;
 
     /** A constant used to denote single player Java games. */
-    public static final int JAVA_SOLO = 4;
+    public static final int JAVA_SOLO = 5;
 
     /** The unique identifier for the game in question. */
     public int gameId;

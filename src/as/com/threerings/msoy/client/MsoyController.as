@@ -93,6 +93,9 @@ public class MsoyController extends Controller
     /** Command to go to a group's home scene. */
     public static const GO_GROUP_HOME :String = "GoGroupHome";
 
+    /** Command to go to a running game (gameId + placeOid). */
+    public static const GO_GAME :String = "GoGame";
+
     /** Command to join a game lobby. */
     public static const JOIN_GAME_LOBBY :String = "JoinGameLobby";
 
@@ -353,6 +356,17 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Handle the GO_GAME command to go to a non-Flash game.
+     */
+    public function handleGoGame (args :Array) :void
+    {
+        var gameId :int = int(args[0]), placeOid :int = int(args[1]);
+        if (!handleInternalGo("game", gameId + "_" + placeOid)) {
+            // TODO: report that we could not join the game and that we are very sad
+        }
+    }
+
+    /**
      * Handle JOIN_GAME_LOBBY.
      */
     public function handleJoinGameLobby (gameId :int) :void
@@ -385,9 +399,7 @@ public class MsoyController extends Controller
         var wgsvc :WorldGameService =
             (_ctx.getClient().requireService(WorldGameService) as WorldGameService);
         wgsvc.joinWorldGame(_ctx.getClient(), gameId,
-            new InvocationAdapter(function (cause :String) :void {
-                log.warning("Ack: " + cause);
-            }));
+                            new ReportingListener(_ctx, "game", "e.join_world_game_failed"));
     }
 
     /**
@@ -398,9 +410,7 @@ public class MsoyController extends Controller
         var wgsvc :WorldGameService =
             (_ctx.getClient().requireService(WorldGameService) as WorldGameService);
         wgsvc.leaveWorldGame(_ctx.getClient(),
-            new InvocationAdapter(function (cause :String) :void {
-                log.warning("Ack: " + cause);
-            }));
+                             new ReportingListener(_ctx, "game", "e.leave_world_game_failed"));
     }
 
     /**
@@ -594,12 +604,13 @@ public class MsoyController extends Controller
     /**
      * Called by LobbyController to indicate that there is no longer a game lobby visible
      */
-    public function gameLobbyCleared (gameId :int) :void
+    public function gameLobbyCleared (gameId :int, playerInitiated :Boolean) :void
     {
         if (gameId == _gameId) {
             _gameId = -1;
-            // perform our bookmarkable URL magic, if we're not minimized
-            if (!_ctx.getWorldClient().isMinimized()) {
+            // if the player initiated the close, restore the URL to point to the current scene,
+            // otherwise we were minimized or are heading into a game, so don't mess with the URL
+            if (playerInitiated) {
                 var scene :Scene = _ctx.getSceneDirector().getScene();
                 if (scene != null) {
                     wentToScene(scene.getId());

@@ -46,8 +46,10 @@ public class index extends Page
             return;
         }
 
+        // our args are 'gameId-gameOid' or just 'gameId'
+        int[] args = splitArgs(token);
         try {
-            loadLaunchConfig(Integer.parseInt(token));
+            loadLaunchConfig(args[0], (args.length > 1) ? args[1] : -1);
         } catch (Exception e) {
             // TODO: display error
         }
@@ -72,12 +74,12 @@ public class index extends Page
         CGame.msgs = (GameMessages)GWT.create(GameMessages.class);
     }
 
-    protected void loadLaunchConfig (int gameId)
+    protected void loadLaunchConfig (int gameId, final int gameOid)
     {
         // load up the information needed to launch the game
         CGame.gamesvc.loadLaunchConfig(CGame.creds, gameId, new AsyncCallback() {
             public void onSuccess (Object result) {
-                launchGame((LaunchConfig)result);
+                launchGame((LaunchConfig)result, gameOid);
             }
             public void onFailure (Throwable cause) {
                 CGame.serverError(cause);
@@ -85,7 +87,7 @@ public class index extends Page
         });
     }
 
-    protected void launchGame (LaunchConfig config)
+    protected void launchGame (LaunchConfig config, int gameOid)
     {
         Widget display = null;
         boolean contentIsFlash = false, contentIsJava = false;
@@ -97,8 +99,12 @@ public class index extends Page
             break;
 
         case LaunchConfig.FLASH_LOBBIED:
-            WorldClient.display("gameLobby=" + config.gameId);
-            setCloseButton("game", getPageArgs());
+            if (gameOid <= 0) {
+                WorldClient.display("gameLobby=" + config.gameId);
+            } else {
+                WorldClient.display("location=" + gameOid);
+            }
+            setCloseButton("game", "" + config.gameId);
             break;
 
         case LaunchConfig.FLASH_SOLO:
@@ -106,17 +112,21 @@ public class index extends Page
             contentIsFlash = true;
             break;
 
-        case LaunchConfig.JAVA_LOBBIED:
-            // TODO: need to nix the world client
-            display = WidgetUtil.createApplet(
-                "game", "/clients/" + DeploymentConfig.version + "/game-client.jar",
-                "com.threerings.msoy.game.client.GameApplet", 800, 600,
-                new String[] { "game_id", "" + config.gameId,
-                               "resource_url", config.resourceURL,
-                               "server", config.server,
-                               "port", "" + config.port,
-                               "authtoken", (CGame.creds == null) ? "" : CGame.creds.token });
-            contentIsJava = true;
+        case LaunchConfig.JAVA_FLASH_LOBBIED:
+            WorldClient.display("gameLobby=" + config.gameId);
+            setCloseButton("game", getPageArgs());
+
+        case LaunchConfig.JAVA_SELF_LOBBIED:
+//             // TODO: need to nix the world client
+//             display = WidgetUtil.createApplet(
+//                 "game", "/clients/" + DeploymentConfig.version + "/game-client.jar",
+//                 "com.threerings.msoy.game.client.GameApplet", 800, 600,
+//                 new String[] { "game_id", "" + config.gameId,
+//                                "resource_url", config.resourceURL,
+//                                "server", config.server,
+//                                "port", "" + config.port,
+//                                "authtoken", (CGame.creds == null) ? "" : CGame.creds.token });
+//             contentIsJava = true;
             break;
 
         case LaunchConfig.JAVA_SOLO:

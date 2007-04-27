@@ -153,7 +153,13 @@ public class GameDirector extends BasicDirector
         // let the scene director know that we're leaving our current scene
         _mctx.getTopPanel().clearTableDisplay();
         _mctx.getSceneDirector().didLeaveScene();
-        _mctx.getMsoyController().handleGoLocation(gameOid);
+        if (_mctx.getMemberObject().pendingGame == null) {
+            log.warning("Zoiks! No pending game [gameOid=" + gameOid + "].");
+        } else {
+            // route our entry to the game through GWT so that we can handle non-Flash games
+            _mctx.getMsoyController().handleGoGame(
+                [ _mctx.getMemberObject().pendingGame.gameId, gameOid ]);
+        }
         return true;
     }
 

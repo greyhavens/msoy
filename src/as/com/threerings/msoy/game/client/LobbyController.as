@@ -86,7 +86,7 @@ public class LobbyController extends Controller implements Subscriber
             tableDisplay.open();
             setControlledPanel(tableDisplay.getRenderer());
             _mctx.getTopPanel().setTableDisplay(tableDisplay);
-            _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId);
+            _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId, _playerInitiatedClose);
 
         } else {
             shutdown();
@@ -142,6 +142,7 @@ public class LobbyController extends Controller implements Subscriber
      */
     public function handleLeaveLobby () :void
     {
+        _playerInitiatedClose = true;
         _mctx.getTopPanel().clearLeftPanel(_panel);
     }
 
@@ -178,7 +179,7 @@ public class LobbyController extends Controller implements Subscriber
             // only clear the display if its a display for this lobby
             _mctx.getTopPanel().clearTableDisplay();
         }
-        _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId);
+        _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId, _playerInitiatedClose);
         _tableDir.clearTableObject();
         _tableDir.removeTableObserver(_panel);
         _tableDir.removeSeatednessObserver(_panel);
@@ -199,5 +200,6 @@ public class LobbyController extends Controller implements Subscriber
     protected var _subscriber :SafeSubscriber;
 
     protected var _panelIsVisible :Boolean;
+    protected var _playerInitiatedClose :Boolean = false;
 }
 }
