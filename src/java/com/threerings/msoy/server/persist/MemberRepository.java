@@ -498,7 +498,6 @@ public class MemberRepository extends DepotRepository
                     "(inviterId=" + memberId + " and memberId=inviteeId) or " +
                     "(inviteeId=" + memberId + " and memberId=inviterId)) " +
                     "order by name";
-                System.err.println("Query " + query);
                 ArrayList<FriendEntry> list = new ArrayList<FriendEntry>();
                 Statement stmt = conn.createStatement();
                 try {
