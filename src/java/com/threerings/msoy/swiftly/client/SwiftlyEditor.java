@@ -98,9 +98,12 @@ public class SwiftlyEditor extends PlacePanel
         ol.setPreferredSize(new Dimension(50, 0));
         chatPanel.add(new ChatPanel(_ctx, false));
         chatPanel.setMinimumSize(new Dimension(0, 0));
+        chatPanel.setPreferredSize(new Dimension(200, 200));
 
         _rightPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, _projectPanel, chatPanel);
         _rightPane.setOneTouchExpandable(true);
+        // give the top pane any extra space
+        _rightPane.setResizeWeight(1);
 
         // add an OccupantObserver to reveal the chat panel if someone joins
         _ctx.getOccupantDirector().addOccupantObserver(new OccupantAdapter() {
@@ -115,6 +118,8 @@ public class SwiftlyEditor extends PlacePanel
 
         _contentPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _editorTabs, _rightPane);
         _contentPane.setOneTouchExpandable(true);
+        // give the left pane any extra space
+        _contentPane.setResizeWeight(1);
         add(_contentPane);
 
         initFileTypes();
@@ -127,8 +132,7 @@ public class SwiftlyEditor extends PlacePanel
 
         // set up our divider location when we are first laid out
         if (getWidth() != 0 && _contentPane.getLastDividerLocation() == 0) {
-            // TODO: use a relative number.
-            _contentPane.setDividerLocation(getWidth()-200);
+            _contentPane.resetToPreferredSizes();
 
             // start with the chat panel hidden if no one else is in the room
             if (_roomObj.occupants.size() > 1) {
@@ -443,14 +447,14 @@ public class SwiftlyEditor extends PlacePanel
     {
         // only show the chat panel if the split pane has hidden it completely
         if (_rightPane.getDividerLocation() == _rightPane.getMaximumDividerLocation()) {
-            // TODO: use a relative number.
-            _rightPane.setDividerLocation(getHeight()-300);
+            _rightPane.resetToPreferredSizes();
         }
     }
 
     protected void hideChatPanel ()
     {
-        _rightPane.setDividerLocation(_rightPane.getMaximumDividerLocation());
+        // this is a bit of a hack, but a better way has not presented itself
+        _rightPane.setDividerLocation(getHeight());
     }
 
     protected void showPreview ()
