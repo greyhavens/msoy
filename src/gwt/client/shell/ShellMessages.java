@@ -128,6 +128,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String noGuests();
 
   /**
+   * Translated "Send Invitations".
+   * 
+   * @return translated "Send Invitations"
+   * @gwt.key sendInvitesSendHeader
+   */
+  String sendInvitesSendHeader();
+
+  /**
    * Translated "Cancel".
    * 
    * @return translated "Cancel"
@@ -320,6 +328,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String tagRemove();
 
   /**
+   * Translated "Pending Invitations".
+   * 
+   * @return translated "Pending Invitations"
+   * @gwt.key sendInvitesPendingHeader
+   */
+  String sendInvitesPendingHeader();
+
+  /**
    * Translated "Flag".
    * 
    * @return translated "Flag"
@@ -438,6 +454,22 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key emailUpdated
    */
   String emailUpdated();
+
+  /**
+   * Translated "You have already sent invitations to these email addresses.".
+   * 
+   * @return translated "You have already sent invitations to these email addresses."
+   * @gwt.key sendInvitesPendingTip
+   */
+  String sendInvitesPendingTip();
+
+  /**
+   * Translated "Enter up to {0} email address below, along with a custom message to invite your friends to Whirled!".
+   * 
+   * @return translated "Enter up to {0} email address below, along with a custom message to invite your friends to Whirled!"
+   * @gwt.key sendInvitesSendTip
+   */
+  String sendInvitesSendTip(String arg0);
 
   /**
    * Translated "{0}...".

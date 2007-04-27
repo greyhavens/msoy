@@ -641,7 +641,12 @@ body {
   top: 30px;
 }
 
-.editAccount .Header {
+.sendInvites .Header {
   font-weight: bold;
 }
 
+.sendInvites .Tip {
+  width: 400px;
+  font-size: 12px;
+  text-align: center;
+}
