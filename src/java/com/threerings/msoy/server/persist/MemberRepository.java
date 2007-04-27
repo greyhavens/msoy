@@ -85,6 +85,10 @@ public class MemberRepository extends DepotRepository
             }
             
         });
+
+        // added 4-27-2007
+        _ctx.registerMigration(MemberRecord.class, new EntityMigration.Rename(8, "inviterId", 
+            MemberRecord.INVITING_FRIEND_ID));
             
         // END TEMP
 
