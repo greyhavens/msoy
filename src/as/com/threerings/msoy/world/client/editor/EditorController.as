@@ -485,7 +485,8 @@ try {
         }
 
         var item :Item = InventoryPicker.dragItem(event);
-        var cloc :ClickLocation = _roomView.layout.pointToLocation(event.stageX, event.stageY);
+        var cloc :ClickLocation =
+            _roomView.layout.pointToFurniLocation(event.stageX, event.stageY);
 
         // let's go ahead and create furni
         addFurni(item, cloc.loc);
@@ -649,7 +650,8 @@ try {
             _editSprite.setLocation(loc);
 
         } else {
-            var cloc :ClickLocation = _roomView.layout.pointToLocation(event.stageX, event.stageY);
+            var cloc :ClickLocation =
+                _roomView.layout.pointToFurniLocation(event.stageX, event.stageY);
             if (cloc.click == ClickLocation.FLOOR) {
                 cloc.loc.y = _editSprite.getLocation().y;
             }

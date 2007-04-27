@@ -93,7 +93,7 @@ public class RoomMetrics
             { type: ClickLocation.CEILING,    point: RIGHT_TOP_NEAR,    normal: nceiling },
             { type: ClickLocation.LEFT_WALL,  point: LEFT_BOTTOM_NEAR,  normal: N_RIGHT },
             { type: ClickLocation.RIGHT_WALL, point: RIGHT_TOP_NEAR,    normal: N_LEFT },
-            { type: ClickLocation.BACK_WALL,  point: CENTER_CENTER_FAR, normal: N_TO_CAMERA } ];
+            { type: ClickLocation.BACK_WALL,  point: CENTER_CENTER_FAR, normal: N_NEAR } ];
     }
 
     /** Finds horizon level in room coordinates, as projected onto the front wall. */
@@ -122,7 +122,7 @@ public class RoomMetrics
     /**
      * Returns a point in screen coordinates corresponding to <x, y, z> point in room coordinates.
      */
-    public function roomToScreen (x :Number, y :Number, z :Number) :Point
+    public function roomToScene (x :Number, y :Number, z :Number) :Point
     {
         var v :Vector3 = positionOnFrontWall(new Vector3(x, y, z));
 
@@ -236,7 +236,7 @@ public class RoomMetrics
         var n :Vector3 = line.cross(N_UP).normalize();
 
         // find where this plane intersects with the constrained ray
-        var result :Vector3 = N_TO_CAMERA.intersection(p, camera, n);
+        var result :Vector3 = N_NEAR.intersection(p, camera, n);
 
         return result;
     }
@@ -251,7 +251,7 @@ public class RoomMetrics
         target = applySkew(target, true);
         
         // draw a ray from the camera, and see where it falls on the front wall
-        return target.subtract(camera).intersection(camera, LEFT_BOTTOM_NEAR, N_TO_CAMERA);
+        return target.subtract(camera).intersection(camera, LEFT_BOTTOM_NEAR, N_NEAR);
     }
         
     /**
@@ -333,16 +333,16 @@ public class RoomMetrics
     /** Convenience position vectors, in room coordinates. */
     public static const LEFT_BOTTOM_NEAR :Vector3  = new Vector3( 0, 0, 0);
     public static const RIGHT_TOP_NEAR :Vector3    = new Vector3( 1, 1, 0);
-    public static const LEFT_BOTTOM_FAR :Vector3  = new Vector3( 0, 0, 1);
-    public static const RIGHT_TOP_FAR :Vector3    = new Vector3( 1, 1, 1);
+    public static const LEFT_BOTTOM_FAR :Vector3   = new Vector3( 0, 0, 1);
+    public static const RIGHT_TOP_FAR :Vector3     = new Vector3( 1, 1, 1);
     public static const CENTER_CENTER_FAR :Vector3 = new Vector3(.5,.5, 1);
 
     /** Convenience normal vectors. */
-    public static const N_LEFT :Vector3       = new Vector3(-1, 0, 0);
-    public static const N_RIGHT :Vector3      = new Vector3( 1, 0, 0);
-    public static const N_UP :Vector3         = new Vector3( 0, 1, 0);
-    public static const N_DOWN :Vector3       = new Vector3( 0,-1, 0);
-    public static const N_TO_CAMERA :Vector3  = new Vector3( 0, 0,-1);
-
+    public static const N_LEFT :Vector3   = new Vector3(-1, 0, 0);
+    public static const N_RIGHT :Vector3  = new Vector3( 1, 0, 0);
+    public static const N_UP :Vector3     = new Vector3( 0, 1, 0);
+    public static const N_DOWN :Vector3   = new Vector3( 0,-1, 0);
+    public static const N_NEAR :Vector3   = new Vector3( 0, 0,-1);
+    public static const N_AWAY :Vector3   = new Vector3( 0, 0, 1);
 }
 }

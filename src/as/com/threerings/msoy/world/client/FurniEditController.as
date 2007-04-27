@@ -442,8 +442,9 @@ public class FurniEditController
     protected function findNewFurniPosition (event :MouseEvent) :MsoyLocation
     {
         var currentPosition :Point = new Point(_roomView.stage.mouseX, _roomView.stage.mouseY);
-        var cloc :ClickLocation = _roomView.layout.pointToLocation(
-            event.stageX, event.stageY, _modAnchor, getModifier() == MOD_SHIFT);
+        var cloc :ClickLocation = _roomView.layout.pointToFurniLocation(
+            event.stageX, event.stageY, _modAnchor,
+            (getModifier() == MOD_SHIFT ? RoomMetrics.N_UP : RoomMetrics.N_AWAY));
         
         return cloc.loc;
     }

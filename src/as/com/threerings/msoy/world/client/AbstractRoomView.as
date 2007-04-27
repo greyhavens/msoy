@@ -49,7 +49,7 @@ public class AbstractRoomView extends Sprite
     public function AbstractRoomView (ctx :WorldContext)
     {
         _ctx = ctx;
-        _layout = new RoomLayout(this);
+        _layout = new RoomLayoutStandard(this); // todo: layout switching
     }
 
     /**

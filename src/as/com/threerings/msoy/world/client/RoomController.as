@@ -601,11 +601,11 @@ public class RoomController extends SceneController
         // ensure we hit no pop-ups
         if (hit !== undefined) {
             if (hitter == null) {
-                var cloc :ClickLocation =
-                    _roomView.layout.pointToLocation(sx, sy, _shiftPressed);
-                addAvatarYOffset(cloc);
+                var cloc :ClickLocation = _roomView.layout.pointToAvatarLocation(
+                    sx, sy, _shiftPressed, RoomMetrics.N_UP);
                 
-                if (cloc.click == ClickLocation.FLOOR && _mctx.worldProps.userControlsAvatar) {
+                if (cloc != null && _mctx.worldProps.userControlsAvatar) {
+                    addAvatarYOffset(cloc);
                     if (cloc.loc.y != 0) {
                         _flyTarget.setLocation(cloc.loc);
                         _roomView.layout.updateScreenLocation(_flyTarget);
@@ -719,13 +719,13 @@ public class RoomController extends SceneController
             }
 
             // calculate where the location is
-            var cloc :ClickLocation = _roomView.layout.pointToLocation(
-                event.stageX, event.stageY, _shiftPressed);
-            addAvatarYOffset(cloc);
+            var cloc :ClickLocation = _roomView.layout.pointToAvatarLocation(
+                event.stageX, event.stageY, _shiftPressed, RoomMetrics.N_UP);
             
-            if (cloc.click == ClickLocation.FLOOR &&
+            if (cloc != null &&
                 cloc.loc.z >= 0) { // disallow clicking in "front" of the scene when minimized
                 // orient the location as appropriate
+                addAvatarYOffset(cloc);
                 var newLoc :MsoyLocation = cloc.loc;
                 var degrees :Number = 180 / Math.PI *
                     Math.atan2(newLoc.z - curLoc.z, newLoc.x - curLoc.x);
