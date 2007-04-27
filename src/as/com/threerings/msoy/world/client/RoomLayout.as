@@ -8,6 +8,7 @@ import flash.geom.Point;
 import com.threerings.flash.Vector3;
 import com.threerings.msoy.world.client.ClickLocation;
 import com.threerings.msoy.world.data.DecorData;
+import com.threerings.msoy.world.data.MsoyLocation;
 
 
 /**
@@ -26,7 +27,17 @@ public interface RoomLayout {
     function get metrics () :RoomMetrics;
 
     /**
-     * Finds a room location for avatar movement, based on a screen coordinate.
+     * Finds screen position (in stage coordinates) of the specified room location,
+     * as projected onto the screen using current room layout.
+     *
+     *   @param location     MsoyLocation object that specifies room location
+     *
+     * @returns A Point with a screen position in stage coordinate system.
+     */
+    function locationToPoint (location :MsoyLocation) :Point;
+    
+    /**
+     * Finds a room location for avatar movement, based on a screen position.
      *
      * Movement locations can be constrained in particular ways; for example, only allowing
      * movement on the floor or the ceiling.
@@ -48,9 +59,10 @@ public interface RoomLayout {
         :ClickLocation;
     
     /**
-     * Finds a room location for furni placement.
+     * Finds a room location for furni placement, based on a screen position.
      *
-     * Furni locations are not usually constrained in the same way as avatars can be.
+     * Furni locations are not usually constrained in the same way as avatars can be,
+     * so this function returns a more straightforward placement than the Avatar version.
      *
      *   @param stageX       Mouse x position, in stage coordinate space
      *   @param stageY       Mouse y position, in stage coordinate space
@@ -79,6 +91,11 @@ public interface RoomLayout {
      *        the object left and up by the specified x and y amounts.
      */
     function updateScreenLocation (target :RoomElement, offset :Point = null) :void;
+
+    /**
+     * Finds a recommended height of the chat overlay, in room units.
+     */
+    function recommendedChatHeight () :Number;
 
 }
 }

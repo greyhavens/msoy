@@ -120,7 +120,7 @@ public class RoomView extends AbstractRoomView
         super.setScene(scene);
 
         // set the top of the history to the back wall/floor corner
-        chatOverlay.setSubtitlePercentage(_layout.metrics.horizonLevel);
+        chatOverlay.setSubtitlePercentage(_layout.recommendedChatHeight());
     }
 
     // from LoadingWatcher

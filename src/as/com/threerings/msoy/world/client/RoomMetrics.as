@@ -57,7 +57,7 @@ public class RoomMetrics
     
     /**
      * Floor skew factor. Horizon changes skews the room, as if raising or lowering the
-     * room's back wall, and this is the value of this vertical skew offset.
+     * room's back wall, and this is the value of this vertical skew offset in room units.
      */
     public var skewoffset :Number;
 
@@ -89,17 +89,12 @@ public class RoomMetrics
 
         // wall definitions for this room. 
         this.walldefs = [
-            { type: ClickLocation.FLOOR,      point: LEFT_BOTTOM_NEAR,  normal: nfloor },
-            { type: ClickLocation.CEILING,    point: RIGHT_TOP_NEAR,    normal: nceiling },
-            { type: ClickLocation.LEFT_WALL,  point: LEFT_BOTTOM_NEAR,  normal: N_RIGHT },
-            { type: ClickLocation.RIGHT_WALL, point: RIGHT_TOP_NEAR,    normal: N_LEFT },
-            { type: ClickLocation.BACK_WALL,  point: CENTER_CENTER_FAR, normal: N_NEAR } ];
-    }
-
-    /** Finds horizon level in room coordinates, as projected onto the front wall. */
-    public function get horizonLevel () :Number
-    {
-        return positionOnFrontWall(RoomMetrics.LEFT_BOTTOM_FAR).y;
+            { type: ClickLocation.FLOOR,      point: LEFT_BOTTOM_NEAR, normal: nfloor   },
+            { type: ClickLocation.CEILING,    point: RIGHT_TOP_FAR,    normal: nceiling },
+            { type: ClickLocation.LEFT_WALL,  point: LEFT_BOTTOM_NEAR, normal: N_RIGHT  },
+            { type: ClickLocation.RIGHT_WALL, point: RIGHT_TOP_FAR,    normal: N_LEFT   },
+            { type: ClickLocation.FRONT_WALL, point: LEFT_BOTTOM_NEAR, normal: N_AWAY   },
+            { type: ClickLocation.BACK_WALL,  point: RIGHT_TOP_FAR,    normal: N_NEAR   } ];
     }
 
     /**
@@ -122,7 +117,7 @@ public class RoomMetrics
     /**
      * Returns a point in screen coordinates corresponding to <x, y, z> point in room coordinates.
      */
-    public function roomToScene (x :Number, y :Number, z :Number) :Point
+    public function roomToScreen (x :Number, y :Number, z :Number) :Point
     {
         var v :Vector3 = positionOnFrontWall(new Vector3(x, y, z));
 
@@ -137,7 +132,7 @@ public class RoomMetrics
      * intersection with any of the walls within the unit cube. Returns a location in room
      * coordinates, with "back wall" as the default click target if no other intersection exists.
      */
-    public function screenToAllWallsProjection (x :Number, y :Number) :ClickLocation
+    public function screenToInnerWallsProjection (x :Number, y :Number) :ClickLocation
     {
         var l :Vector3 = screenToLineOfSight(x, y);
 
@@ -147,11 +142,13 @@ public class RoomMetrics
         
         // intersect with the five walls (except for the near wall :)
         for each (var def :Object in walldefs) {
-            var pos :Vector3 = lineOfSightToWallProjection(l, def);
-            if (pos.length() < mindistance) {
-                minpoint = pos;
-                mindistance = pos.length();
-                minwall = def.type;
+            if (def.type != ClickLocation.FRONT_WALL) {
+                var pos :Vector3 = lineOfSightToWallProjection(l, def);
+                if (pos.length() < mindistance) {
+                    minpoint = pos;
+                    mindistance = pos.length();
+                    minwall = def.type;
+                }
             }
         }
 
@@ -335,7 +332,6 @@ public class RoomMetrics
     public static const RIGHT_TOP_NEAR :Vector3    = new Vector3( 1, 1, 0);
     public static const LEFT_BOTTOM_FAR :Vector3   = new Vector3( 0, 0, 1);
     public static const RIGHT_TOP_FAR :Vector3     = new Vector3( 1, 1, 1);
-    public static const CENTER_CENTER_FAR :Vector3 = new Vector3(.5,.5, 1);
 
     /** Convenience normal vectors. */
     public static const N_LEFT :Vector3   = new Vector3(-1, 0, 0);

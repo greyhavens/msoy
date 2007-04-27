@@ -11,13 +11,14 @@ import com.threerings.msoy.world.data.MsoyLocation;
 public class ClickLocation
 {
     public static const FLOOR :int = 0;
-    public static const BACK_WALL :int = 1;
-    public static const CEILING :int = 2;
-    public static const LEFT_WALL :int = 3;
-    public static const RIGHT_WALL :int = 4;
+    public static const CEILING :int = 1;
+    public static const LEFT_WALL :int = 2;
+    public static const RIGHT_WALL :int = 3;
+    public static const FRONT_WALL :int = 4;
+    public static const BACK_WALL :int = 5;
 
     protected static const WALL_DEBUG_NAMES :Array =
-        [ "floor", "back wall", "ceiling", "left wall", "right wall" ];
+        [ "floor", "ceiling", "left wall", "right wall", "front wall", "back wall" ];
 
     /** Where the click actually landed. */
     public var click :int;

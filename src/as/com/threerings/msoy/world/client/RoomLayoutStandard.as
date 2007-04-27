@@ -37,13 +37,13 @@ public class RoomLayoutStandard implements RoomLayout {
     {
         _metrics.update(data);
     }
-
+    
     // from interface RoomLayout
     public function get metrics () :RoomMetrics
     {
         return _metrics;
     }
-
+    
     // from interface RoomLayout
     public function pointToAvatarLocation (
         stageX :Number, stageY :Number, anchorPoint :Object = null, anchorAxis :Vector3 = null)
@@ -76,7 +76,7 @@ public class RoomLayoutStandard implements RoomLayout {
         if (anchorPoint == null) {
 
             // find the intersection of the line of sight with the first available wall.
-            cloc = _metrics.screenToAllWallsProjection(p.x, p.y);
+            cloc = _metrics.screenToInnerWallsProjection(p.x, p.y);
             
         } else {
             var anchorLocation :Vector3;
@@ -84,7 +84,9 @@ public class RoomLayoutStandard implements RoomLayout {
             if (anchorPoint is Point) {
                 // the constraint is a point on screen - convert it
                 var pp :Point = _parentView.globalToLocal(anchorPoint as Point);
-                var constLocation :ClickLocation = _metrics.screenToAllWallsProjection(pp.x, pp.y);
+                var constLocation :ClickLocation =
+                    _metrics.screenToInnerWallsProjection(pp.x, pp.y);
+                
                 anchorLocation = _metrics.toVector3(constLocation.loc);
                 
             } else if (anchorPoint is MsoyLocation) {
@@ -203,7 +205,19 @@ public class RoomLayoutStandard implements RoomLayout {
                                      (y * _metrics.sceneHeight)) * scale);
     }
     */
-    
+
+    // from interface RoomLayout
+    public function locationToPoint (location :MsoyLocation) :Point
+    {
+        return _metrics.roomToScreen(location.x, location.y, location.z);
+    }
+
+    // from interface RoomLayout
+    public function recommendedChatHeight () :Number
+    {
+        return _metrics.positionOnFrontWall(RoomMetrics.LEFT_BOTTOM_FAR).y;
+    }
+
     // from interface RoomLayout
     public function updateScreenLocation (target :RoomElement, offset :Point = null) :void
     {
@@ -212,7 +226,7 @@ public class RoomLayoutStandard implements RoomLayout {
         }
 
         var loc :MsoyLocation = target.getLocation();
-        var screen :Point = _metrics.roomToScene(loc.x, loc.y, loc.z);
+        var screen :Point = _metrics.roomToScreen(loc.x, loc.y, loc.z);
         var scale :Number = _metrics.scaleAtDepth(loc.z);
         offset = (offset != null ? offset : NO_OFFSET);
         
