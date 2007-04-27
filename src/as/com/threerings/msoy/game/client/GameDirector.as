@@ -31,16 +31,14 @@ import com.threerings.msoy.game.data.WorldGameConfig;
 /**
  * A director that manages invitations and game starting.
  */
-
-// TODO: All this Invitation stuff needs to be ripped out.
-// In metasoy you will not invite players to a game configuration (do you?)
-// you instead invite to the lobby... etc.
-// 
 public class GameDirector extends BasicDirector
     implements InvitationHandler, InvitationResponseObserver, AttributeChangeListener, Subscriber,
                GameReadyObserver
 {
     public static const log :Log = Log.getLog(GameDirector);
+
+    // TODO: All this Invitation stuff needs to be ripped out.  In metasoy you will not invite
+    // players to a game configuration (do you?)  you instead invite to the lobby... etc.
 
     public function GameDirector (ctx :WorldContext)
     {
@@ -54,8 +52,7 @@ public class GameDirector extends BasicDirector
     }
 
     /**
-     * Called to pop-up a panel to configure an invitation to the specified
-     * player.
+     * Called to pop-up a panel to configure an invitation to the specified player.
      */
     public function configureInvite (invitee :MemberName) :void
     {
@@ -64,8 +61,7 @@ public class GameDirector extends BasicDirector
     }
 
     /**
-     * Send an invitation to the specified player, managing the handling
-     * of all responses.
+     * Send an invitation to the specified player, managing the handling of all responses.
      */
     public function sendInvite (invitee :MemberName, config :GameConfig) :void
     {
@@ -75,8 +71,7 @@ public class GameDirector extends BasicDirector
     // from InvitationHandler
     public function invitationReceived (invite :Invitation) :void
     {
-        displayFeedback(
-            MessageBundle.tcompose("m.invite_received", invite.opponent));
+        displayFeedback(MessageBundle.tcompose("m.invite_received", invite.opponent));
         // TODO: an ahoy panel of sorts?
         invite.accept();
     }
@@ -84,28 +79,24 @@ public class GameDirector extends BasicDirector
     // from InvitationHandler
     public function invitationCancelled (invite :Invitation) :void
     {
-        displayFeedback(
-            MessageBundle.tcompose("m.invite_cancelled", invite.opponent));
+        displayFeedback(MessageBundle.tcompose("m.invite_cancelled", invite.opponent));
     }
 
     // from InvitationResponseObserver
     public function invitationAccepted (invite :Invitation) :void
     {
         _invitation = null;
-        displayFeedback(
-            MessageBundle.tcompose("m.invite_accepted", invite.opponent));
+        displayFeedback(MessageBundle.tcompose("m.invite_accepted", invite.opponent));
     }
 
     // from InvitationResponseObserver
     public function invitationRefused (invite :Invitation, msg :String) :void
     {
-        displayFeedback(
-            MessageBundle.tcompose("m.invite_refused", invite.opponent));
+        displayFeedback(MessageBundle.tcompose("m.invite_refused", invite.opponent));
     }
 
     // from InvitationResponseObserver
-    public function invitationCountered (
-            invite :Invitation, config :GameConfig) :void
+    public function invitationCountered (invite :Invitation, config :GameConfig) :void
     {
         // TODO ??
     }
@@ -130,9 +121,10 @@ public class GameDirector extends BasicDirector
             // already subscribed
             return;
         }
+
         _worldGameObj = (obj as GameObject);
-        // the config is set in the memberobject simultaneously with the oid.
-        // so if the oid is up-to-date, we can trust the config as well
+        // the config is set in the memberobject simultaneously with the oid.  so if the oid is
+        // up-to-date, we can trust the config as well
         var cfg :WorldGameConfig = _mctx.getMemberObject().worldGameCfg;
         _worldGameCtrl = (cfg.createController() as GameController);
         _worldGameCtrl.init(_mctx, cfg);
@@ -143,7 +135,7 @@ public class GameDirector extends BasicDirector
     public function requestFailed (oid :int, cause :ObjectAccessError) :void
     {
         log.warning("Failed to subscribe to world game object [oid=" + oid +
-            ", cause=" + cause + "].");
+                    ", cause=" + cause + "].");
         _worldGameOid = 0;
     }
 
