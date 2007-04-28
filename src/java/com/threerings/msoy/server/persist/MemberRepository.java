@@ -483,8 +483,8 @@ public class MemberRepository extends DepotRepository
     public int getInvitesGranted (int memberId)
         throws PersistenceException
     {
-        // TODO
-        return 0;
+        InviterRecord inviter = load(InviterRecord.class, memberId);
+        return inviter != null ? inviter.invitesGranted : 0;
     }
 
     /** 
@@ -504,8 +504,7 @@ public class MemberRepository extends DepotRepository
     public List<InvitationRecord> loadPendingInvites (int memberId)
         throws PersistenceException
     {
-        // TODO
-        return new ArrayList<InvitationRecord>();
+        return findAll(InvitationRecord.class, new Where(InvitationRecord.INVITER_ID, memberId));
     }
 
     /**
