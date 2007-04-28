@@ -4,11 +4,15 @@
 package com.threerings.msoy.game.chiyogami.server;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+
+import java.util.logging.Level;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.QuickSort;
 import com.samskivert.util.RandomUtil;
+import com.samskivert.util.ResultListener;
 
 import com.threerings.util.Name;
 
@@ -35,6 +39,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.server.MsoyServer;
 
+import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
@@ -89,6 +94,16 @@ public class ChiyogamiManager extends GameManager
 
         // update the player's state, just in case
         updatePlayerState(player);
+    }
+
+    /**
+     * Invoked by clients to submit tags for consideration in picking music.
+     */
+    public void submitTags (BodyObject player, String tags)
+    {
+        if (tags != null) {
+            _playerTags.put(player.getOid(), tags);
+        }
     }
 
     /**
@@ -175,8 +190,6 @@ public class ChiyogamiManager extends GameManager
 
     protected void initiateRound ()
     {
-        // right away pick music
-        pickNewMusic();
 
         // have the boss show up in 3 seconds
         new ChiInterval() {
@@ -185,6 +198,14 @@ public class ChiyogamiManager extends GameManager
                 pickNewBoss();
             }
         }.schedule(3000);
+
+        // pick the music 5 seconds before we start the round
+        new ChiInterval() {
+            public void safeExpired ()
+            {
+                pickNewMusic();
+            }
+        }.schedule(DELAY - 5000);
 
         // start the round in 30...
         new ChiInterval() {
@@ -216,6 +237,7 @@ public class ChiyogamiManager extends GameManager
     {
         super.gameDidStart();
 
+        _playerTags.clear(); // clear tags until next time
         updateBossState();
     }
 
@@ -234,7 +256,10 @@ public class ChiyogamiManager extends GameManager
     protected void startRound ()
     {
         startGame();
-        _roomObj.postMessage(RoomObject.PLAY_MUSIC, new Object[] { _music.getMediaPath() });
+        if (_music != null) {
+            _roomObj.postMessage(RoomObject.PLAY_MUSIC,
+                new Object[] { _music.audioMedia.getMediaPath() });
+        }
         bossSpeak("Ok... it's a dance off!");
 
         moveBody(_bossObj, .5, .5);
@@ -304,10 +329,43 @@ public class ChiyogamiManager extends GameManager
 
     protected void pickNewMusic ()
     {
-        String song = RandomUtil.pickRandom(MUSICS);
-        _music  = new StaticMediaDesc(
-            MediaDesc.AUDIO_MPEG, Item.AUDIO, "chiyogami/" + song);
-        _roomObj.postMessage(RoomObject.LOAD_MUSIC, new Object[] { _music.getMediaPath() });
+        _music = null;
+        HashSet<String> set = new HashSet<String>();
+        for (String s : _playerTags.values()) {
+            for (String tag : s.split("\\s")) {
+                set.add(tag);
+            }
+        }
+
+        pickNewMusic(set.toArray(new String[set.size()]));
+    }
+
+    protected void pickNewMusic (final String[] tags)
+    {
+        MsoyServer.itemMan.getRandomCatalogItem(Item.AUDIO, tags, new ResultListener<Item>() {
+            public void requestFailed (Exception cause) {
+                log.log(Level.WARNING, "Failed to pick new music", cause);
+            }
+
+            public void requestCompleted (Item music) {
+                if (music == null && tags != null && tags.length > 0) {
+                    // none of the tags worked, try again without them
+                    pickNewMusic(null);
+
+                } else {
+                    musicPicked((Audio) music);
+                }
+            }
+        });
+    }
+
+    protected void musicPicked (Audio music)
+    {
+        _music = music;
+        if (_roomObj.isActive() && _music != null) {
+            _roomObj.postMessage(RoomObject.LOAD_MUSIC,
+                new Object[] { _music.audioMedia.getMediaPath() });
+        }
     }
 
     /**
@@ -673,7 +731,7 @@ public class ChiyogamiManager extends GameManager
     /** The sceneId of the game. */
     protected int _sceneId;
 
-    protected MediaDesc _music;
+    protected Audio _music;
 
     /** The room manager. */
     protected RoomManager _roomMgr;
@@ -687,11 +745,14 @@ public class ChiyogamiManager extends GameManager
     /** The boss object. */
     protected BossObject _bossObj;
 
-    /** A mapping of playerOid -> String[] of their states. */
+    /** playerOid -> String[] of their states. */
     protected HashIntMap<String[]> _playerStates = new HashIntMap<String[]>();
 
-    /** A mapping of playerOid -> PlayerRec. */
+    /** playerOid -> PlayerRec. */
     protected HashIntMap<PlayerRec> _playerPerfs = new HashIntMap<PlayerRec>();
+
+    /** playerOid -> submitted tags. */
+    protected HashIntMap<String> _playerTags = new HashIntMap<String>();
 
     protected String[] _bossStates = new String[] { null, "Dance 1", "Dance 2" };
 

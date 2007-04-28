@@ -18,6 +18,8 @@ import flash.utils.Timer;
 
 import mx.containers.Canvas;
 
+import mx.core.ScrollPolicy;
+
 import com.threerings.flash.FPSDisplay;
 
 import com.threerings.crowd.client.PlaceView;
@@ -30,6 +32,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 import com.threerings.msoy.game.client.MiniGameContainer;
+import com.threerings.msoy.game.chiyogami.data.ChiyogamiObject;
 
 public class ChiyogamiPanel extends Canvas
     implements PlaceView
@@ -37,19 +40,25 @@ public class ChiyogamiPanel extends Canvas
     public function ChiyogamiPanel (ctx :WorldContext, ctrl :ChiyogamiController)
     {
         _ctrl = ctrl;
+        
+        horizontalScrollPolicy = ScrollPolicy.OFF;
 
-        rawChildren.addChild(new SPLASH() as DisplayObject);
         // TODO: Splash screen
+        rawChildren.addChild(new SPLASH() as DisplayObject);
     }
 
     // from PlaceView
     public function willEnterPlace (plobj :PlaceObject) :void
     {
+        _gameObj = (plobj as ChiyogamiObject);
+
+        recheckTagEntry();
     }
 
     // from PlaceView
     public function didLeavePlace (plobj :PlaceObject) :void
     {
+        _gameObj = null;
     }
 
     /**
@@ -57,6 +66,8 @@ public class ChiyogamiPanel extends Canvas
      */
     public function gameDidStart () :void
     {
+        recheckTagEntry();
+
         // pick a game!
         var game :MediaDesc = MediaDesc(GAMES[
             int(Math.floor(Math.random() * GAMES.length))]);
@@ -81,15 +92,37 @@ public class ChiyogamiPanel extends Canvas
 
     public function gameDidEnd () :void
     {
+        recheckTagEntry();
         rawChildren.removeChild(_minigame);
 
         _minigame.performanceCallback = null;
+    }
+
+    protected function recheckTagEntry () :void
+    {
+        if (_gameObj.isInPlay() == (_tagEntry == null)) {
+            return;
+        }
+
+        if (_tagEntry == null) {
+            _tagEntry = new TagEntryPanel();
+            _tagEntry.x = 450;
+            addChild(_tagEntry);
+
+        } else {
+            removeChild(_tagEntry);
+            _tagEntry = null;
+        }
     }
 
     /** Our controller. */
     protected var _ctrl :ChiyogamiController;
 
     protected var _minigame :MiniGameContainer;
+
+    protected var _gameObj :ChiyogamiObject;
+
+    protected var _tagEntry :TagEntryPanel;
 
     /** The hardcoded games we currently use. */
     protected static const GAMES :Array = [

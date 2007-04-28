@@ -50,6 +50,7 @@ import com.threerings.msoy.item.data.ItemCodes;
 
 import com.threerings.msoy.item.server.persist.AudioRepository;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -1093,6 +1094,39 @@ public class ItemManager
 
                 // we're not resolving anymore.. oops
                 user.setResolvingInventory(user.resolvingInventory & ~(1 << type));
+            }
+        });
+    }
+
+    /**
+     * Get a random item out of the catalog.
+     *
+     * @param tags limits selection to one that matches any of these tags. If omitted,
+     *             selection is from all catalog entries.
+     *
+     * TODO: return a CatalogListing? (currently GWT only)
+     */
+    public void getRandomCatalogItem (
+        final byte itemType, final String[] tags, ResultListener<Item> listener)
+    {
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(itemType, listener);
+        if (repo == null) {
+            return;
+        }
+
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
+            public Item invokePersistResult () throws PersistenceException {
+                CatalogRecord<? extends ItemRecord> record;
+                if (tags == null || tags.length == 0) {
+                    record = repo.pickRandomCatalogEntry();
+
+                } else {
+                    record = repo.findRandomCatalogEntryByTags(tags);
+                }
+                if (record == null) {
+                    return null;
+                }
+                return record.item.toItem();
             }
         });
     }

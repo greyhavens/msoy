@@ -25,6 +25,9 @@ import com.threerings.msoy.game.chiyogami.data.ChiyogamiObject;
 
 public class ChiyogamiController extends GameController
 {
+    /** A command to be submitted when tags are entered. */
+    public static const TAGS_ENTERED :String = "TagsEntered";
+
     public function ChiyogamiController ()
     {
         super();
@@ -80,6 +83,14 @@ public class ChiyogamiController extends GameController
     public function miniGameReportedPerformance (score :Number, style :Number) :void
     {
         _gameObj.manager.invoke("reportPerf", Float.valueOf(score), Float.valueOf(style));
+    }
+
+    /**
+     * Handle the TAGS_ENTERED command.
+     */
+    public function handleTagsEntered (tags :String) :void
+    {
+        _gameObj.manager.invoke("submitTags", tags);
     }
 
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
