@@ -7,6 +7,8 @@ import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.util.Name;
+
 import com.threerings.msoy.data.MsoyBodyObject;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -28,6 +30,7 @@ public class BossObject extends MsoyBodyObject
     public void init (Avatar avatar)
     {
         _avatar = avatar;
+        setUsername(new Name(avatar.name));
     }
 
     public void init (MediaDesc desc)

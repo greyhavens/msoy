@@ -267,12 +267,15 @@ public class ChiyogamiManager extends GameManager
         repositionAllPlayers(System.currentTimeMillis());
 
         // TEMP background effect
-        EffectData bkg = _roomMgr.createEffect(
+        _effects.add(_roomMgr.addEffect(
             new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
                 "chiyogami/FX_arrow"),
-            new MsoyLocation(.5, 0, 0, 0), RoomCodes.BACKGROUND_EFFECT_LAYER);
-        _effects.add(bkg);
-        _roomObj.addToEffects(bkg);
+            new MsoyLocation(.5, 0, 0, 0), RoomCodes.BACKGROUND_EFFECT_LAYER));
+        // TEMP foreground effect
+        _effects.add(_roomMgr.addEffect(
+            new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
+                "chiyogami/FallBalls"),
+            new MsoyLocation(.5, 0, 0, 0), RoomCodes.FOREGROUND_EFFECT_LAYER));
     }
 
     protected void endRound ()
@@ -280,6 +283,7 @@ public class ChiyogamiManager extends GameManager
         bossSpeak("I think I sprained my pinky, I've got to go...");
 
         removeAllEffects();
+        clearPlayerStates();
         shutdownBoss();
         endGame();
     }
@@ -289,6 +293,7 @@ public class ChiyogamiManager extends GameManager
         super.didShutdown();
 
         removeAllEffects();
+        clearPlayerStates();
         shutdownBoss();
         _roomObj.removeListener(_roomListener);
         _roomObj.postMessage(RoomObject.PLAY_MUSIC); // no arg stops music
@@ -305,6 +310,18 @@ public class ChiyogamiManager extends GameManager
             _roomObj.commitTransaction();
         }
         _effects.clear();
+    }
+
+    @Override
+    protected void bodyLeft (int bodyOid)
+    {
+        super.bodyLeft(bodyOid);
+
+        BodyObject player = (BodyObject) MsoyServer.omgr.getObject(bodyOid);
+        if (player != null && player.isActive()) {
+            // make them stop dancing. I don't care what state they were in before.
+            updateState(player, null);
+        }
     }
 
     protected void shutdownBoss ()
@@ -347,7 +364,6 @@ public class ChiyogamiManager extends GameManager
     {
         _music = null;
         pickNewMusic(getAllUserTags());
-
     }
 
     protected void pickNewMusic (final String[] tags)
@@ -418,8 +434,7 @@ public class ChiyogamiManager extends GameManager
             _bossObj.setUsername(new Name("Downrock"));
 
         } else {
-            _bossObj.init(boss.avatarMedia);
-            _bossObj.setUsername(new Name(boss.name));
+            _bossObj.init(boss);
         }
 
         // add the boss to the room
@@ -631,6 +646,15 @@ public class ChiyogamiManager extends GameManager
         }
 
         updateState(player, state);
+    }
+
+    protected void clearPlayerStates ()
+    {
+        int numPlayers = _gameObj.occupants.size();
+        for (int ii = 0; ii < numPlayers; ii++) {
+            BodyObject player = (BodyObject) MsoyServer.omgr.getObject(_gameObj.occupants.get(ii));
+            updateState(player, null);
+        }
     }
 
     protected void updateBossState ()

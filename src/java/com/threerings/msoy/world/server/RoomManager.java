@@ -93,6 +93,16 @@ public class RoomManager extends SpotSceneManager
     }
 
     /**
+     * Create and add an effect.
+     */
+    public EffectData addEffect (MediaDesc media, MsoyLocation loc, byte roomLayer)
+    {
+        EffectData effect = createEffect(media, loc, roomLayer);
+        _roomObj.addToEffects(effect);
+        return effect;
+    }
+
+    /**
      * Create a new effect for use in this room.
      */
     public EffectData createEffect (MediaDesc media, MsoyLocation loc, byte roomLayer)
