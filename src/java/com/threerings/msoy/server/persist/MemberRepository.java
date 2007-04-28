@@ -461,7 +461,16 @@ public class MemberRepository extends DepotRepository
     public void grantInvites (int number, int memberId) 
         throws PersistenceException
     {
-        // TODO
+        InviterRecord inviterRec = load(InviterRecord.class, memberId);
+        if (inviterRec != null) {
+            inviterRec.invitesGranted += number;
+            update(inviterRec, InviterRecord.INVITES_GRANTED);
+        } else {
+            inviterRec = new InviterRecord();
+            inviterRec.memberId = memberId;
+            inviterRec.invitesGranted = number;
+            insert(inviterRec);
+        }
     }
 
     /** 
@@ -483,16 +492,7 @@ public class MemberRepository extends DepotRepository
         }
 
         for (MemberRecord memRec : activeUsers) {
-            InviterRecord inviterRec = load(InviterRecord.class, memRec.memberId);
-            if (inviterRec != null) {
-                inviterRec.invitesGranted += number;
-                update(inviterRec, InviterRecord.INVITES_GRANTED);
-            } else {
-                inviterRec = new InviterRecord();
-                inviterRec.memberId = memRec.memberId;
-                inviterRec.invitesGranted = number;
-                insert(inviterRec);
-            }
+            grantInvites(number, memRec.memberId);
         }
     }
 
