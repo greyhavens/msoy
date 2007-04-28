@@ -82,7 +82,7 @@ public class SwiftlyPanel extends FlexTable
         getFlexCellFormatter().setHeight(1, 0, "100%");
 
         // clear out any world client because swiftly currently kills it anyawy
-        WorldClient.clearClient();
+        WorldClient.clearClient(true);
     }
 
     protected void updateProjectLink ()

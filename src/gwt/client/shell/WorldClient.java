@@ -20,31 +20,44 @@ import client.util.FlashClients;
  */
 public class WorldClient extends Widget
 {
-    public static void display (String flashArgs)
+    public static void displayFlash (String flashArgs)
     {
-        // clear out our content and the expand/close controls
-        RootPanel.get("content").clear();
-        RootPanel.get("content").setWidth("0px");
-
-        // note that we need to hack our popups
-        Page.displayingFlash = true;
+        // let the page know that we're displaying a client
+        boolean newPage = Page.setShowingClient(true, false);
 
         // create our client if necessary
-        if (_client == null) {
+        if (_fclient == null) {
+            clearClient(false); // clear our Java client if we have one
             if (CShell.creds != null) {
                 flashArgs = "token=" + CShell.creds.token +
                     (flashArgs == null ? "" : ("&" + flashArgs));;
             }
             RootPanel.get("client").clear();
-            RootPanel.get("client").add(_client = FlashClients.createWorldClient(flashArgs));
+            RootPanel.get("client").add(_fclient = FlashClients.createWorldClient(flashArgs));
 
         } else {
-            clientGo(flashArgs);
+            // don't tell the client anything if we're just restoring our URL
+            if (newPage) {
+                clientGo(flashArgs);
+            }
             clientMinimized(false);
         }
+    }
 
-        // have the client take up all the space
-        RootPanel.get("client").setWidth("100%");
+    public static void displayJava (Widget client)
+    {
+        // let the page know that we're displaying a client
+        boolean newPage = Page.setShowingClient(false, true);
+
+        if (_jclient != client) {
+            if (newPage) {
+                clearClient(false); // clear out our flash client if we have one
+                RootPanel.get("client").clear();
+                RootPanel.get("client").add(_jclient = client);
+            }
+        } else {
+            clientMinimized(false);
+        }
     }
 
     public static void minimize ()
@@ -52,33 +65,38 @@ public class WorldClient extends Widget
         // note that we don't need to hack our popups
         Page.displayingFlash = false;
 
-        if (_client != null) {
+        if (_fclient != null || _jclient != null) {
             RootPanel.get("client").setWidth("300px");
             clientMinimized(true);
         }
     }
 
-    public static void clearClient ()
+    public static void clearClient (boolean restoreContent)
     {
-        if (_client != null) {
-            clientUnload();
-            RootPanel.get("client").setWidth("0px");
+        if (_fclient != null || _jclient != null) {
+            if (_fclient != null) {
+                clientUnload(); // TODO: make this work for jclient
+            }
             RootPanel.get("client").clear();
-            _client = null;
+            _fclient = _jclient = null;
+        }
+        if (restoreContent) {
+            RootPanel.get("client").setWidth("0px");
             RootPanel.get("content").setWidth("100%");
         }
     }
 
     public static void didLogon (WebCreds creds)
     {
-        if (_client != null) {
+        if (_fclient != null) {
             clientLogon(creds.getMemberId(), creds.token);
         }
+        // TODO: let jclient know about logon?
     }
 
     public static void didLogoff ()
     {
-        clearClient();
+        clearClient(true);
     }
 
     /**
@@ -139,5 +157,5 @@ public class WorldClient extends Widget
         }
     }-*/;
 
-    protected static Widget _client;
+    protected static Widget _fclient, _jclient;
 }

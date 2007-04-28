@@ -9,6 +9,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -95,6 +96,35 @@ public abstract class Page
         return builder.toString();
     }
 
+    /** 
+     * Notes the history token for the current page so that it can be restored in the event that we
+     * open a normal page and then later close it.
+     *
+     * @return true if we're displaying a different page (or the same page with different
+     * arguments) than the last time we entered "showing client" mode.
+     */
+    public static boolean setShowingClient (boolean clientIsFlash, boolean clientIsJava)
+    {
+        // determine whether or not we're showing a new page
+        boolean newPage = !History.getToken().equals(_closeToken);
+
+        // note the current history token so that we can restore it if needed
+        _closeToken = History.getToken();
+
+        // note whether we need to hack our popups
+        displayingFlash = clientIsFlash;
+        displayingJava = clientIsJava;
+
+        // clear out our content and the expand/close controls
+        RootPanel.get("content").clear();
+        RootPanel.get("content").setWidth("0px");
+
+        // have the client take up all the space
+        RootPanel.get("client").setWidth("100%");
+
+        return newPage;
+    }
+
     /**
      * Called when the page is first resolved to initialize its bits.
      */
@@ -136,8 +166,7 @@ public abstract class Page
     public void clearCloseButton ()
     {
         if (_content != null) {
-            _closeButtonPage = null;
-            _closeButtonToken = null;
+            _closeToken = null;
             _content.setText(0, 2, "");
             _content.setText(0, 3, "");
         }
@@ -208,12 +237,10 @@ public abstract class Page
         _content.getFlexCellFormatter().setStyleName(0, 3, "pageHeaderSep");
         _content.getFlexCellFormatter().setColSpan(1, 0, 4);
 
-        if (_closeButtonPage != null && _closeButtonToken != null) {
+        if (_closeToken != null) {
             _content.setWidget(0, 2, MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
                 public void onClick (Widget sender) {
-                    History.newItem(
-                        Application.createLinkToken(_closeButtonPage, _closeButtonToken));
-                    clearCloseButton();
+                    History.newItem(_closeToken);
                 }
             }));
             _content.setWidget(0, 3, MsoyUI.createLabel("", "Separator"));
@@ -225,8 +252,8 @@ public abstract class Page
         if (_content == null) {
             createContentContainer();
         }
-        // TODO we should probably change the HTML <title> here as well
         _content.setWidget(0, 0, new Label(title));
+        Window.setTitle(CShell.cmsgs.windowTitle(title));
     }
 
     protected void setPageTabs (Widget tabs) 
@@ -235,15 +262,6 @@ public abstract class Page
             createContentContainer();
         }
         _content.setWidget(0, 1, tabs);
-    }
-
-    /** 
-     * sets what the close button will display when pressed.
-     */
-    protected void setCloseButton (String page, String token)
-    {
-        _closeButtonPage = page;
-        _closeButtonToken = token;
     }
 
     /**
@@ -266,10 +284,9 @@ public abstract class Page
         onHistoryChanged(getPageArgs());
     }
 
-    protected static String _closeButtonPage;
-    protected static String _closeButtonToken;
-
     protected FlexTable _content;
+
+    protected static String _closeToken;
 
     protected static final String ARG_SEP = "_";
 }

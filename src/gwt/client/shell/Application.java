@@ -233,7 +233,7 @@ public class Application
                 }
             });
         } else {
-            WorldClient.clearClient();
+            WorldClient.clearClient(true);
             _page.clearCloseButton();
         }
     }

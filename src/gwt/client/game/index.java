@@ -21,9 +21,9 @@ import client.shell.WorldClient;
 import client.util.MsoyUI;
 
 /**
- * Displays a page that allows a player to play a particular game. If it's
- * single player the game is shown, if it's multiplayer the lobby is first
- * shown where the player can find opponents against which to play.
+ * Displays a page that allows a player to play a particular game. If it's single player the game
+ * is shown, if it's multiplayer the lobby is first shown where the player can find opponents
+ * against which to play.
  */
 public class index extends Page
 {
@@ -89,65 +89,55 @@ public class index extends Page
 
     protected void launchGame (LaunchConfig config, int gameOid)
     {
-        Widget display = null;
-        boolean contentIsFlash = false, contentIsJava = false;
-
         switch (config.type) {
         case LaunchConfig.FLASH_IN_WORLD:
-            WorldClient.display("worldGame=" + config.gameId);
-            setCloseButton("game", getPageArgs());
+            WorldClient.displayFlash("worldGame=" + config.gameId);
             break;
 
         case LaunchConfig.FLASH_LOBBIED:
             if (gameOid <= 0) {
-                WorldClient.display("gameLobby=" + config.gameId);
+                WorldClient.displayFlash("gameLobby=" + config.gameId);
             } else {
-                WorldClient.display("location=" + gameOid);
+                WorldClient.displayFlash("location=" + gameOid);
             }
-            setCloseButton("game", "" + config.gameId);
-            break;
-
-        case LaunchConfig.FLASH_SOLO:
-            display = WidgetUtil.createFlashContainer("game", config.gameMediaPath, 800, 600, null);
-            contentIsFlash = true;
             break;
 
         case LaunchConfig.JAVA_FLASH_LOBBIED:
-            WorldClient.display("gameLobby=" + config.gameId);
-            setCloseButton("game", getPageArgs());
-
         case LaunchConfig.JAVA_SELF_LOBBIED:
-//             // TODO: need to nix the world client
-//             display = WidgetUtil.createApplet(
-//                 "game", "/clients/" + DeploymentConfig.version + "/game-client.jar",
-//                 "com.threerings.msoy.game.client.GameApplet", 800, 600,
-//                 new String[] { "game_id", "" + config.gameId,
-//                                "resource_url", config.resourceURL,
-//                                "server", config.server,
-//                                "port", "" + config.port,
-//                                "authtoken", (CGame.creds == null) ? "" : CGame.creds.token });
-//             contentIsJava = true;
+            if (config.type == LaunchConfig.JAVA_FLASH_LOBBIED && gameOid <= 0) {
+                WorldClient.displayFlash("gameLobby=" + config.gameId);
+
+            } else {
+                String[] args = new String[] {
+                    "game_id", "" + config.gameId,
+                    "game_oid", "" + gameOid,
+                    "resource_url", config.resourceURL,
+                    "server", config.server,
+                    "port", "" + config.port,
+                    "authtoken", (CGame.creds == null) ? "" : CGame.creds.token };
+                WorldClient.displayJava(
+                    WidgetUtil.createApplet(
+                        "game", "/clients/" + DeploymentConfig.version + "/game-client.jar",
+                        // TODO: allow games to specify their dimensions in their config
+                        "com.threerings.msoy.game.client.GameApplet", "100%", "600", args));
+            }
+            break;
+
+        case LaunchConfig.FLASH_SOLO:
+            setPageTitle(config.name);
+            setContent(WidgetUtil.createFlashContainer(
+                           "game", config.gameMediaPath, 800, 600, null), true, false);
             break;
 
         case LaunchConfig.JAVA_SOLO:
-            // TODO
+            setPageTitle(config.name);
+            setContent(new Label("Not yet supported"), false, false);
             break;
 
         default:
-            display = new Label(CGame.msgs.errUnknownGameType("" + config.type));
+            setPageTitle(config.name);
+            setContent(new Label(CGame.msgs.errUnknownGameType("" + config.type)), false, false);
             break;
-        }
-
-        if (display != null) {
-            // TODO get the game name in here
-            String title = "Game";
-            if (contentIsFlash) {
-                title = "Single-player Flash " + title;
-            } else if (contentIsJava) {
-                title = "Single-player Java " + title;
-            }
-            setPageTitle(title);
-            setContent(display, contentIsFlash, contentIsJava);
         }
     }
 }

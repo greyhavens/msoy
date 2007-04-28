@@ -232,6 +232,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editTitle();
 
   /**
+   * Translated "Whirled - {0}".
+   * 
+   * @return translated "Whirled - {0}"
+   * @gwt.key windowTitle
+   */
+  String windowTitle(String arg0);
+
+  /**
    * Translated "Update Email Address".
    * 
    * @return translated "Update Email Address"
@@ -288,20 +296,20 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String createReady();
 
   /**
-   * Translated "Let''s Go!".
-   * 
-   * @return translated "Let''s Go!"
-   * @gwt.key createCreate
-   */
-  String createCreate();
-
-  /**
    * Translated "Logging on...".
    * 
    * @return translated "Logging on..."
    * @gwt.key loggingOn
    */
   String loggingOn();
+
+  /**
+   * Translated "Let''s Go!".
+   * 
+   * @return translated "Let''s Go!"
+   * @gwt.key createCreate
+   */
+  String createCreate();
 
   /**
    * Translated "You currently have no pending invitations.".

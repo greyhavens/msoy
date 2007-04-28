@@ -77,7 +77,7 @@ public class DashboardPanel extends FlexTable
     protected void finishDisplayDashboard (ConnectConfig config)
     {
         Page.displayingJava = true;
-        WorldClient.clearClient();
+        WorldClient.clearClient(true);
 
         int row = getRowCount();
         getFlexCellFormatter().setStyleName(row, 0, "Applet");
