@@ -8,9 +8,9 @@ package client.admin;
 public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated ""Active Users" is defined as all users that have logged on within the last week".
+   * Translated ""Active Users" is defined as all users that have logged on within the last week.".
    * 
-   * @return translated ""Active Users" is defined as all users that have logged on within the last week"
+   * @return translated ""Active Users" is defined as all users that have logged on within the last week."
    * @gwt.key activeUsersTip
    */
   String activeUsersTip();
@@ -160,9 +160,9 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewDeletionMailHeader();
 
   /**
-   * Translated "Number of Invitations".
+   * Translated "Number of Invitations:".
    * 
-   * @return translated "Number of Invitations"
+   * @return translated "Number of Invitations:"
    * @gwt.key invitesNumber
    */
   String invitesNumber();
