@@ -40,6 +40,7 @@ import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.data.all.Audio;
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
@@ -327,9 +328,11 @@ public class ChiyogamiManager extends GameManager
         }
     }
 
-    protected void pickNewMusic ()
+    /**
+     * Get all the unique tags that users have submitted.
+     */
+    protected String[] getAllUserTags ()
     {
-        _music = null;
         HashSet<String> set = new HashSet<String>();
         for (String s : _playerTags.values()) {
             for (String tag : s.split("\\s")) {
@@ -337,7 +340,14 @@ public class ChiyogamiManager extends GameManager
             }
         }
 
-        pickNewMusic(set.toArray(new String[set.size()]));
+        return set.toArray(new String[set.size()]);
+    }
+
+    protected void pickNewMusic ()
+    {
+        _music = null;
+        pickNewMusic(getAllUserTags());
+
     }
 
     protected void pickNewMusic (final String[] tags)
@@ -375,12 +385,42 @@ public class ChiyogamiManager extends GameManager
     {
         shutdownBoss();
 
-        String boss = RandomUtil.pickRandom(BOSSES);
+        pickNewBoss(getAllUserTags());
+    }
 
+    protected void pickNewBoss (final String[] tags)
+    {
+        MsoyServer.itemMan.getRandomCatalogItem(Item.AVATAR, tags, new ResultListener<Item>() {
+            public void requestFailed (Exception cause) {
+                log.log(Level.WARNING, "Failed to pick new boss", cause);
+            }
+
+            public void requestCompleted (Item boss) {
+                if (boss == null && tags != null && tags.length > 0) {
+                    // none of the tags worked, try again without them
+                    pickNewBoss(null);
+
+                } else {
+                    bossPicked((Avatar) boss);
+                }
+            }
+        });
+    }
+
+    protected void bossPicked (Avatar boss)
+    {
         _bossObj = MsoyServer.omgr.registerObject(new BossObject());
-        _bossObj.init(new StaticMediaDesc(
-            MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.AVATAR, "chiyogami/" + boss));
-        _bossObj.setUsername(new Name("Downrock"));
+
+        if (boss == null) {
+            String hardBoss = RandomUtil.pickRandom(BOSSES);
+            _bossObj.init(new StaticMediaDesc(
+                MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.AVATAR, "chiyogami/" + boss));
+            _bossObj.setUsername(new Name("Downrock"));
+
+        } else {
+            _bossObj.init(boss.avatarMedia);
+            _bossObj.setUsername(new Name(boss.name));
+        }
 
         // add the boss to the room
         MsoyServer.screg.sceneprov.moveTo(_bossObj, _sceneId, -1, new SceneMoveListener() {
