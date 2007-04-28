@@ -7,6 +7,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
@@ -19,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.MemberInvites;
 
 import client.util.FlashClients;
 import client.util.MsoyUI;
@@ -106,8 +108,15 @@ public class NaviPanel extends FlexTable
                 } // TODO: add "invite" link if no friends?
                 menu.addItem("Invites", true, new Command() {
                     public void execute () {
-                        new SendInvitesDialog().show();
-                        _popped.hide();
+                        CShell.membersvc.getInvitationsStatus(CShell.creds, new AsyncCallback() {
+                            public void onSuccess (Object result) {
+                                new SendInvitesDialog((MemberInvites)result).show();
+                                _popped.hide();
+                            }
+                            public void onFailure (Throwable cause) {
+                                // TODO: what to do, what to do?
+                            }
+                        });
                     }
                 });
                 popupMenu(sender, menu);

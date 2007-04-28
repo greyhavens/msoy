@@ -505,7 +505,7 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         // TODO
-        return null;
+        return new ArrayList<InvitationRecord>();
     }
 
     /**

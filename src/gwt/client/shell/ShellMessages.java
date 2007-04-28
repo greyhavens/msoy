@@ -104,6 +104,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editTip();
 
   /**
+   * Translated "You have no invitations available to send.".
+   * 
+   * @return translated "You have no invitations available to send."
+   * @gwt.key sendInvitesNoneAvailable
+   */
+  String sendInvitesNoneAvailable();
+
+  /**
    * Translated "The passwords you''ve entered do not yet match.".
    * 
    * @return translated "The passwords you''ve entered do not yet match."
@@ -294,6 +302,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key loggingOn
    */
   String loggingOn();
+
+  /**
+   * Translated "You currently have no pending invitations.".
+   * 
+   * @return translated "You currently have no pending invitations."
+   * @gwt.key sendInvitesNoPending
+   */
+  String sendInvitesNoPending();
 
   /**
    * Translated "Refresh".

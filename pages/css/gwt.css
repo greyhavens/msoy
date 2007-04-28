@@ -650,3 +650,8 @@ body {
   font-size: 12px;
   text-align: center;
 }
+
+.sendInvites .Pending {
+  width: 400px;
+  font-size: 12px;
+}

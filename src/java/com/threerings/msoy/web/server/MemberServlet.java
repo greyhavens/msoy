@@ -19,6 +19,7 @@ import com.samskivert.io.PersistenceException;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
+import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.NeighborFriendRecord;
 
@@ -27,6 +28,7 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.MemberInvites;
 
 import com.threerings.msoy.data.Neighborhood;
 import com.threerings.msoy.data.UserAction;
@@ -153,6 +155,27 @@ public class MemberServlet extends MsoyServiceServlet
         });
 
         return waiter.waitForResult();
+    }
+
+    // from MemberService
+    public MemberInvites getInvitationsStatus (WebCreds creds) 
+        throws ServiceException
+    {
+        int memberId = getMemberId(creds);
+
+        try {
+            MemberInvites result = new MemberInvites();
+            result.availableInvitations = MsoyServer.memberRepo.getInvitesGranted(memberId);
+            ArrayList<String> emails = new ArrayList<String>();
+            for (InvitationRecord iRec : MsoyServer.memberRepo.loadPendingInvites(memberId)) {
+                emails.add(iRec.inviteeEmail);
+            }
+            result.pendingInvitations = emails;
+            return result;
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getInvitationsStatus failed [id=" + memberId +"]", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     /**

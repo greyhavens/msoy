@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.MemberInvites;
 
 /**
  * Defines member-specific services available to the GWT/AJAX web client.
@@ -50,5 +51,11 @@ public interface MemberService extends RemoteService
      * Fetch the n most Popular Places data in JSON-serialized form.
      */
     public String serializePopularPlaces (WebCreds creds, int n)
+        throws ServiceException;
+
+    /**
+     * Return the invitation details for the given creds.
+     */
+    public MemberInvites getInvitationsStatus (WebCreds creds) 
         throws ServiceException;
 }

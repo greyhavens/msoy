@@ -41,4 +41,9 @@ public interface MemberServiceAsync
      * The asynchronous version of {@link MemberService#serializePopularPlaces}.
      */
     public void serializePopularPlaces (WebCreds creds, int n, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link MemberService#getInvitationStatus}.
+     */
+    public void getInvitationsStatus (WebCreds creds, AsyncCallback callback);
 }
