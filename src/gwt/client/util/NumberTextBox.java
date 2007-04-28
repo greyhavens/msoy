@@ -18,6 +18,8 @@ public class NumberTextBox extends TextBox
      */
     public NumberTextBox (final boolean allowFloatingPoint) 
     {
+        _allowFloatingPoint = allowFloatingPoint;
+
         addKeyboardListener(new KeyboardListener() {
             public void onKeyUp (Widget sender, char keyCode, int modifiers) { 
                 if ((modifiers & KeyboardListener.MODIFIER_SHIFT) != 0 || keyCode > '9' ||
@@ -41,4 +43,15 @@ public class NumberTextBox extends TextBox
             public void onKeyDown (Widget sender, char keyCode, int modifiers) { }
         });
     }
+
+    /**
+     * Get the number value for the contents of this box.
+     */
+    public Number getValue ()
+    {
+        return _allowFloatingPoint ? (Number)(new Double(getText())) : 
+            (Number)(new Integer(getText()));
+    }
+
+    protected boolean _allowFloatingPoint;
 }

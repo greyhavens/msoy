@@ -3,6 +3,9 @@
 
 package client.admin;
 
+import java.util.Date;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -10,6 +13,7 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import client.util.AlertPopup;
 import client.util.BorderedDialog;
 import client.util.NumberTextBox;
 
@@ -52,7 +56,29 @@ public class IssueInvitesDialog extends BorderedDialog
         }));
         _footer.add(new Button(CAdmin.msgs.invitesIssueButton(), new ClickListener() {
             public void onClick (Widget widget) {
-                // TODO: issue invtes
+                Date activeSince = null;
+                if (_issueToSelection.getSelectedIndex() == 1) {
+                    // one week ago
+                    activeSince = new Date((new Date()).getTime() - 7 * 24 * 60 * 60 * 1000);
+                }
+                CAdmin.adminsvc.grantInvitations(CAdmin.creds, _numberInvites.getValue().intValue(),
+                    activeSince, new AsyncCallback() {
+                        public void onSuccess (Object result) {
+                            (new AlertPopup(CAdmin.msgs.invitesSuccess(_issueToSelection.
+                                getSelectedIndex() == 0 ? CAdmin.msgs.invitesToAll() : 
+                                CAdmin.msgs.invitesToActive(), 
+                                _numberInvites.getValue().toString())) {
+                                public void onButton() {
+                                    IssueInvitesDialog.this.hide();
+                                }
+                            }).alert();
+                        }
+                        public void onFailure (Throwable cause) {
+                            (new AlertPopup(CAdmin.serverError(cause)) {
+                                public void onButton() {}
+                            }).alert();
+                        }
+                    });
             }
         }));
     }

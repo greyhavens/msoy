@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.client;
 
+import java.util.Date;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.ConnectConfig;
@@ -25,5 +27,13 @@ public interface AdminService extends RemoteService
      * Returns a string for each address denoting success or failure.
      */
     public String[] registerAndInvite (WebCreds creds, String[] emails)
+        throws ServiceException;
+
+    /** 
+     * Grants the given number of invitations to the indicated user set.
+     *
+     * @param activeSince If null, all users will receive invitations
+     */
+    public void grantInvitations (WebCreds creds, int numberInvitations, Date activeSince)
         throws ServiceException;
 }

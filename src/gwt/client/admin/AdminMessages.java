@@ -176,6 +176,14 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String indexLogon();
 
   /**
+   * Translated "{0} have been issued {1} invites.".
+   * 
+   * @return translated "{0} have been issued {1} invites."
+   * @gwt.key invitesSuccess
+   */
+  String invitesSuccess(String arg0,  String arg1);
+
+  /**
    * Translated "Admin functions:".
    * 
    * @return translated "Admin functions:"

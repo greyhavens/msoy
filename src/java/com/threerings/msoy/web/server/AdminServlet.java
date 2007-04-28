@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.server;
 
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
 
@@ -106,6 +107,13 @@ public class AdminServlet extends MsoyServiceServlet
         }
 
         return results;
+    }
+
+    // from interface AdminService
+    public void grantInvitations (WebCreds creds, int numberInvitations, Date activeSince)
+        throws ServiceException
+    {
+        // TODO
     }
 
     protected static String createTempPassword ()
