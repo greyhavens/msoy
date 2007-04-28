@@ -29,11 +29,12 @@ public class NumberTextBox extends TextBox
                             if (text.charAt(ii) == '.' && !foundDecimal) {
                                 foundDecimal = true;
                             } else {
-                                setText(text.substring(0, ii) + text.substring(ii+1));
-                                break;
+                                text = text.substring(0, ii) + text.substring(ii+1);
+                                ii--;
                             }
                         }
                     }
+                    setText(text);
                 }
             }
             public void onKeyPress (Widget sender, char keyCode, int modifiers) { }
