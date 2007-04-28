@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -43,16 +44,18 @@ public class SendInvitesDialog extends BorderedDialog
                 "" + invites.availableInvitations));
 
             formatter.setStyleName(row, 0, "rightLabel");
+            formatter.setVerticalAlignment(row, 0, HasVerticalAlignment.ALIGN_TOP);
             contents.setText(row, 0, CShell.cmsgs.sendInvitesEmailAddresses());
             contents.setWidget(row++, 1, _emailAddresses = new TextArea());
-            _emailAddresses.setCharacterWidth(50);
-            _emailAddresses.setVisibleLines(10);
+            _emailAddresses.setCharacterWidth(40);
+            _emailAddresses.setVisibleLines(4);
 
-            formatter.setStyleName(row, 0, "rightLabel");
-            contents.setText(row, 0, CShell.cmsgs.sendInvitesCustomMessage());
-            contents.setWidget(row, 1, _customMessage = new TextArea());
-            _customMessage.setCharacterWidth(50);
-            _customMessage.setVisibleLines(10);
+            contents.setText(row++, 0, CShell.cmsgs.sendInvitesCustomMessage());
+            formatter.setColSpan(row, 0, 3);
+            contents.setWidget(row++, 0, _customMessage = new TextArea());
+            _customMessage.setCharacterWidth(80);
+            _customMessage.setVisibleLines(6);
+            _customMessage.setText(CShell.cmsgs.sendInvitesCustomDefault());
             contents.setWidget(row++, 2, new Button(CShell.cmsgs.sendInvitesSendEmail(), 
                 new ClickListener() {
                     public void onClick (Widget widget) {

@@ -296,6 +296,22 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String createReady();
 
   /**
+   * Translated "Greetings!
+   * 
+   * You are cordially invited to participate in the closed alpha test of Whirled,
+   * Three Rings' exciting new online social world for chat, games and
+   * player-created content.".
+   * 
+   * @return translated "Greetings!
+   * 
+   * You are cordially invited to participate in the closed alpha test of Whirled,
+   * Three Rings' exciting new online social world for chat, games and
+   * player-created content."
+   * @gwt.key sendInvitesCustomDefault
+   */
+  String sendInvitesCustomDefault();
+
+  /**
    * Translated "Logging on...".
    * 
    * @return translated "Logging on..."
