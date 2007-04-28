@@ -224,9 +224,9 @@ public class MemberRepository extends DepotRepository
     {
         // create a new session record for this member
         SessionRecord nsess = new SessionRecord();
-	Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         long now = cal.getTimeInMillis();
-	cal.add(Calendar.DATE, expireDays);
+        cal.add(Calendar.DATE, expireDays);
         nsess.expires = new Date(cal.getTimeInMillis());
         nsess.memberId = memberId;
         nsess.token = StringUtil.md5hex("" + memberId + now + Math.random());
@@ -384,7 +384,7 @@ public class MemberRepository extends DepotRepository
      * minutes spent online, and set their last session time to now. We also test to see if it
      * is time to reassess this member's humanity.
      *
-     * @param the duration of the session in minutes.
+     * @param minutes the duration of the session in minutes.
      * @param humanityReassessFreq the number of seconds between humanity reassessments or zero if
      * humanity assessment is disabled.
      */
@@ -474,7 +474,26 @@ public class MemberRepository extends DepotRepository
     public void grantInvites (int number, Timestamp lastSession)
         throws PersistenceException
     {
-        // TODO
+        List<MemberRecord> activeUsers;
+        if (lastSession != null) {
+            activeUsers = findAll(MemberRecord.class, new Where(
+                new GreaterThanEquals(MemberRecord.LAST_SESSION, lastSession)));
+        } else {
+            activeUsers = findAll(MemberRecord.class);
+        }
+
+        for (MemberRecord memRec : activeUsers) {
+            InviterRecord inviterRec = load(InviterRecord.class, memRec.memberId);
+            if (inviterRec != null) {
+                inviterRec.invitesGranted += number;
+                update(inviterRec, InviterRecord.INVITES_GRANTED);
+            } else {
+                inviterRec = new InviterRecord();
+                inviterRec.memberId = memRec.memberId;
+                inviterRec.invitesGranted = number;
+                insert(inviterRec);
+            }
+        }
     }
 
     /**
@@ -493,8 +512,8 @@ public class MemberRepository extends DepotRepository
     public int getInvitesSent (int memberId) 
         throws PersistenceException
     {
-        // TODO 
-        return 0;
+        InviterRecord inviter = load(InviterRecord.class, memberId);
+        return inviter != null ? inviter.invitesSent : 0;
     }
 
     /**

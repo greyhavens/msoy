@@ -4,10 +4,12 @@
 package com.threerings.msoy.web.server;
 
 import java.io.StringWriter;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
 
+import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.servlet.user.UserUtil;
 import com.samskivert.util.Invoker;
@@ -113,7 +115,19 @@ public class AdminServlet extends MsoyServiceServlet
     public void grantInvitations (WebCreds creds, int numberInvitations, Date activeSince)
         throws ServiceException
     {
-        // TODO
+        MemberRecord memrec = requireAuthedUser(creds);
+        if (!memrec.isAdmin()) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
+
+        try {
+            MsoyServer.memberRepo.grantInvites(numberInvitations, activeSince != null ? 
+                new Timestamp(activeSince.getTime()) : null);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "grantInvitations failed [num=" + numberInvitations + 
+                ", activeSince=" + activeSince + "]", pe);
+            throw new ServiceException(pe.getMessage());
+        }
     }
 
     protected static String createTempPassword ()
