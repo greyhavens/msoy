@@ -59,6 +59,13 @@ public class DashboardPanel extends FlexTable
                 }
             }));
         }
+        if (CAdmin.isAdmin()) {
+            controls.add(new Button(CAdmin.msgs.issueInvites(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    new IssueInvitesDialog().show();
+                }
+            }));
+        }
     }
 
     protected void displayDashboard ()

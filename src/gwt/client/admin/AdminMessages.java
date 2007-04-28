@@ -8,6 +8,14 @@ package client.admin;
 public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
+   * Translated ""Active Users" is defined as all users that have logged on within the last week".
+   * 
+   * @return translated ""Active Users" is defined as all users that have logged on within the last week"
+   * @gwt.key activeUsersTip
+   */
+  String activeUsersTip();
+
+  /**
    * Translated "Unable to find flagged items to display: {0}".
    * 
    * @return translated "Unable to find flagged items to display: {0}"
@@ -16,20 +24,20 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewErrFlaggedItems(String arg0);
 
   /**
-   * Translated "The item has been delisted.".
-   * 
-   * @return translated "The item has been delisted."
-   * @gwt.key reviewDelisted
-   */
-  String reviewDelisted();
-
-  /**
    * Translated "Admin Console".
    * 
    * @return translated "Admin Console"
    * @gwt.key title
    */
   String title();
+
+  /**
+   * Translated "The item has been delisted.".
+   * 
+   * @return translated "The item has been delisted."
+   * @gwt.key reviewDelisted
+   */
+  String reviewDelisted();
 
   /**
    * Translated "The item has been marked as mature.".
@@ -56,14 +64,6 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String inviteTip();
 
   /**
-   * Translated "Delist".
-   * 
-   * @return translated "Delist"
-   * @gwt.key reviewDelist
-   */
-  String reviewDelist();
-
-  /**
    * Translated "Reload".
    * 
    * @return translated "Reload"
@@ -72,12 +72,28 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewReload();
 
   /**
+   * Translated "Delist".
+   * 
+   * @return translated "Delist"
+   * @gwt.key reviewDelist
+   */
+  String reviewDelist();
+
+  /**
    * Translated "Sent!".
    * 
    * @return translated "Sent!"
    * @gwt.key inviteSent
    */
   String inviteSent();
+
+  /**
+   * Translated "Issue To:".
+   * 
+   * @return translated "Issue To:"
+   * @gwt.key invitesIssueSelection
+   */
+  String invitesIssueSelection();
 
   /**
    * Translated "Done".
@@ -120,6 +136,14 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String displayDashboard();
 
   /**
+   * Translated "Issue Invites to Players".
+   * 
+   * @return translated "Issue Invites to Players"
+   * @gwt.key issueInvites
+   */
+  String issueInvites();
+
+  /**
    * Translated "Review Flagged Items".
    * 
    * @return translated "Review Flagged Items"
@@ -134,6 +158,14 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key reviewDeletionMailHeader
    */
   String reviewDeletionMailHeader();
+
+  /**
+   * Translated "Number of Invitations".
+   * 
+   * @return translated "Number of Invitations"
+   * @gwt.key invitesNumber
+   */
+  String invitesNumber();
 
   /**
    * Translated "Please logon above to access Admin services.".
@@ -160,20 +192,20 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewDeletionPrompt();
 
   /**
+   * Translated "Active Users".
+   * 
+   * @return translated "Active Users"
+   * @gwt.key invitesToActive
+   */
+  String invitesToActive();
+
+  /**
    * Translated "Successfully deleted {0} item(s) and notified owner(s).".
    * 
    * @return translated "Successfully deleted {0} item(s) and notified owner(s)."
    * @gwt.key reviewDeletionSuccess
    */
   String reviewDeletionSuccess(String arg0);
-
-  /**
-   * Translated "There are no flagged items to review.".
-   * 
-   * @return translated "There are no flagged items to review."
-   * @gwt.key reviewNoItems
-   */
-  String reviewNoItems();
 
   /**
    * Translated "The item "{0}" has been deleted by the game administrators: {1}".
@@ -184,12 +216,28 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewDeletionMailMessage(String arg0,  String arg1);
 
   /**
+   * Translated "There are no flagged items to review.".
+   * 
+   * @return translated "There are no flagged items to review."
+   * @gwt.key reviewNoItems
+   */
+  String reviewNoItems();
+
+  /**
    * Translated "Delete All".
    * 
    * @return translated "Delete All"
    * @gwt.key reviewDeleteAll
    */
   String reviewDeleteAll();
+
+  /**
+   * Translated "All Users".
+   * 
+   * @return translated "All Users"
+   * @gwt.key invitesToAll
+   */
+  String invitesToAll();
 
   /**
    * Translated "Review Flagged Items".
@@ -216,6 +264,14 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewErrDeletionFailed(String arg0);
 
   /**
+   * Translated "Issue Invitations".
+   * 
+   * @return translated "Issue Invitations"
+   * @gwt.key invitesIssueButton
+   */
+  String invitesIssueButton();
+
+  /**
    * Translated "Dismiss".
    * 
    * @return translated "Dismiss"
@@ -230,6 +286,14 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key reviewDeletionDont
    */
   String reviewDeletionDont();
+
+  /**
+   * Translated "Issue Invitations".
+   * 
+   * @return translated "Issue Invitations"
+   * @gwt.key invitesTitle
+   */
+  String invitesTitle();
 
   /**
    * Translated "Edit".
