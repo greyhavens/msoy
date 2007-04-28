@@ -360,6 +360,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String sendInvitesPendingHeader();
 
   /**
+   * Translated "Email Addresses:".
+   * 
+   * @return translated "Email Addresses:"
+   * @gwt.key sendInvitesEmailAddresses
+   */
+  String sendInvitesEmailAddresses();
+
+  /**
    * Translated "Flag".
    * 
    * @return translated "Flag"
@@ -542,6 +550,22 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key menuLogon
    */
   String menuLogon();
+
+  /**
+   * Translated "Send Invites".
+   * 
+   * @return translated "Send Invites"
+   * @gwt.key sendInvitesSendEmail
+   */
+  String sendInvitesSendEmail();
+
+  /**
+   * Translated "Custom Message:".
+   * 
+   * @return translated "Custom Message:"
+   * @gwt.key sendInvitesCustomMessage
+   */
+  String sendInvitesCustomMessage();
 
   /**
    * Translated "Pick Your Permaname".
