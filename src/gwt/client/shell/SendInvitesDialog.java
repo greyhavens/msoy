@@ -17,8 +17,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 import client.util.BorderedDialog;
 import client.util.AlertPopup;
+import client.util.InfoPopup;
 
 import com.threerings.msoy.web.data.MemberInvites;
+import com.threerings.msoy.web.data.InvitationResults;
 
 /**
  * Display a dialog allowing users to send out the invites that have been granted to them, as well
@@ -41,7 +43,8 @@ public class SendInvitesDialog extends BorderedDialog
         
         formatter.setStyleName(row, 0, "Header");
         formatter.setColSpan(row, 0, 3);
-        contents.setText(row++, 0, CShell.cmsgs.sendInvitesSendHeader());    
+        contents.setText(row++, 0, CShell.cmsgs.sendInvitesSendHeader(
+            "" + invites.availableInvitations));    
         if (_invites.availableInvitations > 0) {
             formatter.setStyleName(row, 0, "Tip");
             formatter.setColSpan(row, 0, 3);
@@ -63,7 +66,11 @@ public class SendInvitesDialog extends BorderedDialog
             contents.setWidget(row++, 2, new Button(CShell.cmsgs.sendInvitesSendEmail(), 
                 new ClickListener() {
                     public void onClick (Widget widget) {
-                        checkAndSend();
+                        if ("".equals(_emailAddresses.getText())) {
+                            (new AlertPopup(CShell.cmsgs.sendInvitesEnterAddresses())).alert();
+                        } else {
+                            checkAndSend();
+                        }
                     }
                 }));
         } else {
@@ -125,7 +132,9 @@ public class SendInvitesDialog extends BorderedDialog
                 CShell.membersvc.sendInvites(CShell.creds, validAddresses, _customMessage.getText(),
                     new AsyncCallback () {
                         public void onSuccess (Object result) {
-                            (new AlertPopup((String)result)).alert();
+                            InvitationResults invRes = (InvitationResults)result;
+                            // TODO (new InfoPopup()).show();
+                            SendInvitesDialog.this.hide();
                         }
                         public void onFailure (Throwable cause) {
                             (new AlertPopup(CShell.serverError(cause))).alert();

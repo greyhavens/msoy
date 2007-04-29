@@ -29,6 +29,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.MemberInvites;
+import com.threerings.msoy.web.data.InvitationResults;
 
 import com.threerings.msoy.data.Neighborhood;
 import com.threerings.msoy.data.UserAction;
@@ -179,13 +180,13 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public String sendInvites (WebCreds creds, List addresses, String customMessage) 
+    public InvitationResults sendInvites (WebCreds creds, List addresses, String customMessage) 
         throws ServiceException
     {
         int memberId = getMemberId(creds);
 
         // TODO
-        return "TODO";
+        return new InvitationResults();
     }
 
     /**

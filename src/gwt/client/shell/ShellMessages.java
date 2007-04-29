@@ -152,12 +152,12 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String noGuests();
 
   /**
-   * Translated "Send Invitations".
+   * Translated "Send Invitations - You have {0} invitations available".
    * 
-   * @return translated "Send Invitations"
+   * @return translated "Send Invitations - You have {0} invitations available"
    * @gwt.key sendInvitesSendHeader
    */
-  String sendInvitesSendHeader();
+  String sendInvitesSendHeader(String arg0);
 
   /**
    * Translated "Cancel".
@@ -174,6 +174,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key createPasswordMismatch
    */
   String createPasswordMismatch();
+
+  /**
+   * Translated "Please enter at least 1 address to send an invitation".
+   * 
+   * @return translated "Please enter at least 1 address to send an invitation"
+   * @gwt.key sendInvitesEnterAddresses
+   */
+  String sendInvitesEnterAddresses();
 
   /**
    * Translated "Permaname:".
