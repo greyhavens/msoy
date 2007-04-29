@@ -21,8 +21,8 @@ import client.util.AlertPopup;
 import com.threerings.msoy.web.data.MemberInvites;
 
 /**
- * Display a dialog allowing users to send out the _invites that have been granted to them, as well
- * as view pending _invites they've sent in the past. 
+ * Display a dialog allowing users to send out the invites that have been granted to them, as well
+ * as view pending invites they've sent in the past. 
  */
 public class SendInvitesDialog extends BorderedDialog
 {
