@@ -120,6 +120,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String sendInvitesNoneAvailable();
 
   /**
+   * Translated "Duplicate email address found: {0}".
+   * 
+   * @return translated "Duplicate email address found: {0}"
+   * @gwt.key sendInvitesDuplicateAddress
+   */
+  String sendInvitesDuplicateAddress(String arg0);
+
+  /**
    * Translated "The passwords you''ve entered do not yet match.".
    * 
    * @return translated "The passwords you''ve entered do not yet match."

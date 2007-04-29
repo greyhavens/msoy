@@ -64,6 +64,11 @@ public class SendInvitesDialog extends BorderedDialog
                         String addresses[] = _emailAddresses.getText().split("\n");
                         for (int ii = 0; ii < addresses.length; ii++) {
                             if (addresses[ii].matches(EMAIL_REGEX)) {
+                                if (validAddresses.contains(addresses[ii])) {
+                                    (new AlertPopup(CShell.cmsgs.sendInvitesDuplicateAddress(
+                                        addresses[ii]))).alert();
+                                    break;
+                                }
                                 validAddresses.add(addresses[ii]);
                             } else {
                                 (new AlertPopup(CShell.cmsgs.sendInvitesInvalidAddress(
