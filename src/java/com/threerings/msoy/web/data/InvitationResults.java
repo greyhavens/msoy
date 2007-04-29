@@ -14,11 +14,14 @@ public class InvitationResults
     implements IsSerializable
 {
     /** A list of the email addresses that the server determined were invalid */
-    public List invalidAddresses;
+    public List invalid;
 
     /** A list of the email addresses that we know failed to receive the invitation */
-    public List failedAddresses;
+    public List failed;
+
+    /** A list of the email addresses that were already registered with whirled */
+    public List alreadyRegistered;
 
     /** A list of the email addresses that we think we successfully sent an invitation to */
-    public List successfulAddresses;
+    public List successful;
 }

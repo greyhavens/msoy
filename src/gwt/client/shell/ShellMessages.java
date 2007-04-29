@@ -280,6 +280,16 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String tagRemoveConfirm(String arg0);
 
   /**
+   * Translated "{0} invitations successful: 
+   * {1}".
+   * 
+   * @return translated "{0} invitations successful: 
+   * {1}"
+   * @gwt.key sendInvitesResultsSuccessful
+   */
+  String sendInvitesResultsSuccessful(String arg0,  String arg1);
+
+  /**
    * Translated "Email address:".
    * 
    * @return translated "Email address:"
@@ -398,6 +408,16 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key sendInvitesPendingHeader
    */
   String sendInvitesPendingHeader();
+
+  /**
+   * Translated "{0} addresses already registered: 
+   * {1}".
+   * 
+   * @return translated "{0} addresses already registered: 
+   * {1}"
+   * @gwt.key sendInvitesResultsAlreadyRegistered
+   */
+  String sendInvitesResultsAlreadyRegistered(String arg0,  String arg1);
 
   /**
    * Translated "Email Addresses:".
@@ -560,6 +580,16 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String noDescrip();
 
   /**
+   * Translated "{0} addresses are invalid: 
+   * {1}".
+   * 
+   * @return translated "{0} addresses are invalid: 
+   * {1}"
+   * @gwt.key sendInvitesResultsInvalid
+   */
+  String sendInvitesResultsInvalid(String arg0,  String arg1);
+
+  /**
    * Translated "Password:".
    * 
    * @return translated "Password:"
@@ -598,6 +628,16 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key sendInvitesSendEmail
    */
   String sendInvitesSendEmail();
+
+  /**
+   * Translated "{0} invitations failed to send: 
+   * {1}".
+   * 
+   * @return translated "{0} invitations failed to send: 
+   * {1}"
+   * @gwt.key sendInvitesResultsFailed
+   */
+  String sendInvitesResultsFailed(String arg0,  String arg1);
 
   /**
    * Translated "Invalid email addresses found: {0}".
@@ -646,6 +686,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key creatingAccount
    */
   String creatingAccount();
+
+  /**
+   * Translated "Send Invitation Results:".
+   * 
+   * @return translated "Send Invitation Results:"
+   * @gwt.key sendInvitesResults
+   */
+  String sendInvitesResults();
 
   /**
    * Translated "Invalid tag: use letters, numbers, and underscore.".

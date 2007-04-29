@@ -3,8 +3,9 @@
 
 package client.shell;
 
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -133,7 +134,37 @@ public class SendInvitesDialog extends BorderedDialog
                     new AsyncCallback () {
                         public void onSuccess (Object result) {
                             InvitationResults invRes = (InvitationResults)result;
-                            // TODO (new InfoPopup()).show();
+                            String results = CShell.cmsgs.sendInvitesResults() + "\n\n";
+                            List[] lists = { invRes.invalid, invRes.failed, 
+                                invRes.alreadyRegistered, invRes.successful };
+                            for (int ii = 0; ii < lists.length; ii++) {
+                                if (lists[ii] != null && lists[ii].size() > 0) {
+                                    String addresses = "";
+                                    Iterator iter = lists[ii].iterator();
+                                    while (iter.hasNext()) {
+                                        addresses += iter.next() + "\n";
+                                    }
+                                    switch(ii) {
+                                    case 0: 
+                                        results += CShell.cmsgs.sendInvitesResultsInvalid(
+                                            "" + lists[ii].size(), addresses);
+                                        break;
+                                    case 1:
+                                        results += CShell.cmsgs.sendInvitesResultsFailed(
+                                            "" + lists[ii].size(), addresses);
+                                        break;
+                                    case 2:
+                                        results += CShell.cmsgs.sendInvitesResultsAlreadyRegistered(
+                                            "" + lists[ii].size(), addresses);
+                                        break;
+                                    case 3:
+                                        results += CShell.cmsgs.sendInvitesResultsSuccessful(
+                                            "" + lists[ii].size(), addresses);
+                                        break;
+                                    }
+                                }
+                            }
+                            (new InfoPopup(results)).show();
                             SendInvitesDialog.this.hide();
                         }
                         public void onFailure (Throwable cause) {
