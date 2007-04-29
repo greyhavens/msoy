@@ -4,6 +4,7 @@
 package client.shell;
 
 import java.util.Iterator;
+import java.util.ArrayList;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -14,6 +15,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.util.BorderedDialog;
+import client.util.AlertPopup;
 
 import com.threerings.msoy.web.data.MemberInvites;
 
@@ -23,7 +25,7 @@ import com.threerings.msoy.web.data.MemberInvites;
  */
 public class SendInvitesDialog extends BorderedDialog
 {
-    public SendInvitesDialog (MemberInvites invites)
+    public SendInvitesDialog (final MemberInvites invites)
     {
         _header.add(createTitleLabel(CShell.cmsgs.sendInvitesTitle(), null));
 
@@ -43,7 +45,6 @@ public class SendInvitesDialog extends BorderedDialog
             contents.setText(row++, 0, CShell.cmsgs.sendInvitesSendTip( 
                 "" + invites.availableInvitations));
 
-            formatter.setStyleName(row, 0, "rightLabel");
             formatter.setVerticalAlignment(row, 0, HasVerticalAlignment.ALIGN_TOP);
             contents.setText(row, 0, CShell.cmsgs.sendInvitesEmailAddresses());
             contents.setWidget(row++, 1, _emailAddresses = new TextArea());
@@ -59,7 +60,33 @@ public class SendInvitesDialog extends BorderedDialog
             contents.setWidget(row++, 2, new Button(CShell.cmsgs.sendInvitesSendEmail(), 
                 new ClickListener() {
                     public void onClick (Widget widget) {
-                        // TODO: Send email
+                        ArrayList validAddresses = new ArrayList();
+                        String addresses[] = _emailAddresses.getText().split("\n");
+                        for (int ii = 0; ii < addresses.length; ii++) {
+                            if (addresses[ii].matches(EMAIL_REGEX)) {
+                                validAddresses.add(addresses[ii]);
+                            } else {
+                                (new AlertPopup(CShell.cmsgs.sendInvitesInvalidAddress(
+                                    addresses[ii])) {
+                                    public void onButton () {}
+                                }).alert();
+                                break;
+                            }
+                        }
+                        if (validAddresses.size() == addresses.length) {
+                            if (validAddresses.size() > invites.availableInvitations) {
+                                (new AlertPopup(CShell.cmsgs.sendInvitesTooMany(
+                                    "" + validAddresses.size(), 
+                                    "" + invites.availableInvitations)) {
+                                    public void onButton() {}
+                                }).alert();
+                            } else {
+                                // TEMP - for testing the email regex in GWTland
+                                (new AlertPopup(validAddresses.size() + " valid addresses found!") {
+                                    public void onButton () {}
+                                }).alert();
+                            }
+                        }
                     }
                 }));
         } else {
@@ -100,6 +127,10 @@ public class SendInvitesDialog extends BorderedDialog
     {
         return new FlexTable();
     }
+
+    /** Originally formulated by lambert@nas.nasa.gov. */
+    protected static final String EMAIL_REGEX = "^([-A-Za-z0-9_.!%+]+@" +
+        "[-a-zA-Z0-9]+(\\.[-a-zA-Z0-9]+)*\\.[-a-zA-Z0-9]+)$";
 
     protected TextArea _emailAddresses;
     protected TextArea _customMessage;

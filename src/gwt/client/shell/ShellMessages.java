@@ -72,6 +72,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String createMissingConfirm();
 
   /**
+   * Translated "Too many addresses ({0}): you have {1} invitations available".
+   * 
+   * @return translated "Too many addresses ({0}): you have {1} invitations available"
+   * @gwt.key sendInvitesTooMany
+   */
+  String sendInvitesTooMany(String arg0,  String arg1);
+
+  /**
    * Translated "Copyright Violation".
    * 
    * @return translated "Copyright Violation"
@@ -512,9 +520,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String sendInvitesPendingTip();
 
   /**
-   * Translated "Enter up to {0} email address below, along with a custom message to invite your friends to Whirled!".
+   * Translated "Enter up to {0} email address below (each on a new line), along with a custom message to invite your friends to Whirled!".
    * 
-   * @return translated "Enter up to {0} email address below, along with a custom message to invite your friends to Whirled!"
+   * @return translated "Enter up to {0} email address below (each on a new line), along with a custom message to invite your friends to Whirled!"
    * @gwt.key sendInvitesSendTip
    */
   String sendInvitesSendTip(String arg0);
@@ -574,6 +582,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key sendInvitesSendEmail
    */
   String sendInvitesSendEmail();
+
+  /**
+   * Translated "Invalid email addresses found: {0}".
+   * 
+   * @return translated "Invalid email addresses found: {0}"
+   * @gwt.key sendInvitesInvalidAddress
+   */
+  String sendInvitesInvalidAddress(String arg0);
 
   /**
    * Translated "Custom Message:".
