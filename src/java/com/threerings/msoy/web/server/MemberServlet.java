@@ -178,6 +178,16 @@ public class MemberServlet extends MsoyServiceServlet
         }
     }
 
+    // from MemberService
+    public String sendInvites (WebCreds creds, List addresses, String customMessage) 
+        throws ServiceException
+    {
+        int memberId = getMemberId(creds);
+
+        // TODO
+        return "TODO";
+    }
+
     /**
      * Constructs and returns a {@link Neighborhood} record for a given member.
      */

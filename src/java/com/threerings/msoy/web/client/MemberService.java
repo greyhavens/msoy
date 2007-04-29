@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.client;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
@@ -57,5 +58,11 @@ public interface MemberService extends RemoteService
      * Return the invitation details for the given creds.
      */
     public MemberInvites getInvitationsStatus (WebCreds creds) 
+        throws ServiceException;
+
+    /** 
+     * Send out some of this person's available invites.
+     */
+    public String sendInvites (WebCreds creds, List addresses, String customMessage)
         throws ServiceException;
 }

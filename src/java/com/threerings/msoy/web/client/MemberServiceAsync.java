@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.client;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -46,4 +48,10 @@ public interface MemberServiceAsync
      * The asynchronous version of {@link MemberService#getInvitationStatus}.
      */
     public void getInvitationsStatus (WebCreds creds, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link MemberService#sendInvites}.
+     */
+    public void sendInvites (WebCreds creds, List addresses, String customMessage, 
+        AsyncCallback callback);
 }

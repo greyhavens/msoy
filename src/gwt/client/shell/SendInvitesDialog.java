@@ -6,6 +6,7 @@ package client.shell;
 import java.util.Iterator;
 import java.util.ArrayList;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -20,14 +21,16 @@ import client.util.AlertPopup;
 import com.threerings.msoy.web.data.MemberInvites;
 
 /**
- * Display a dialog allowing users to send out the invites that have been granted to them, as well
- * as view pending invites they've sent in the past. 
+ * Display a dialog allowing users to send out the _invites that have been granted to them, as well
+ * as view pending _invites they've sent in the past. 
  */
 public class SendInvitesDialog extends BorderedDialog
 {
-    public SendInvitesDialog (final MemberInvites invites)
+    public SendInvitesDialog (MemberInvites invites)
     {
         _header.add(createTitleLabel(CShell.cmsgs.sendInvitesTitle(), null));
+
+        _invites = invites;
 
         FlexTable contents = (FlexTable)_contents;
         FlexCellFormatter formatter = contents.getFlexCellFormatter();
@@ -39,11 +42,11 @@ public class SendInvitesDialog extends BorderedDialog
         formatter.setStyleName(row, 0, "Header");
         formatter.setColSpan(row, 0, 3);
         contents.setText(row++, 0, CShell.cmsgs.sendInvitesSendHeader());    
-        if (invites.availableInvitations > 0) {
+        if (_invites.availableInvitations > 0) {
             formatter.setStyleName(row, 0, "Tip");
             formatter.setColSpan(row, 0, 3);
             contents.setText(row++, 0, CShell.cmsgs.sendInvitesSendTip( 
-                "" + invites.availableInvitations));
+                "" + _invites.availableInvitations));
 
             formatter.setVerticalAlignment(row, 0, HasVerticalAlignment.ALIGN_TOP);
             contents.setText(row, 0, CShell.cmsgs.sendInvitesEmailAddresses());
@@ -60,33 +63,7 @@ public class SendInvitesDialog extends BorderedDialog
             contents.setWidget(row++, 2, new Button(CShell.cmsgs.sendInvitesSendEmail(), 
                 new ClickListener() {
                     public void onClick (Widget widget) {
-                        ArrayList validAddresses = new ArrayList();
-                        String addresses[] = _emailAddresses.getText().split("\n");
-                        for (int ii = 0; ii < addresses.length; ii++) {
-                            if (addresses[ii].matches(EMAIL_REGEX)) {
-                                if (validAddresses.contains(addresses[ii])) {
-                                    (new AlertPopup(CShell.cmsgs.sendInvitesDuplicateAddress(
-                                        addresses[ii]))).alert();
-                                    break;
-                                }
-                                validAddresses.add(addresses[ii]);
-                            } else {
-                                (new AlertPopup(CShell.cmsgs.sendInvitesInvalidAddress(
-                                    addresses[ii]))).alert();
-                                break;
-                            }
-                        }
-                        if (validAddresses.size() == addresses.length) {
-                            if (validAddresses.size() > invites.availableInvitations) {
-                                (new AlertPopup(CShell.cmsgs.sendInvitesTooMany(
-                                    "" + validAddresses.size(), 
-                                    "" + invites.availableInvitations))).alert();
-                            } else {
-                                // TEMP - for testing the email regex in GWTland
-                                (new AlertPopup(validAddresses.size() + " valid addresses found!")).
-                                   alert();
-                            }
-                        }
+                        checkAndSend();
                     }
                 }));
         } else {
@@ -98,12 +75,12 @@ public class SendInvitesDialog extends BorderedDialog
         formatter.setStyleName(row, 0, "Header");
         formatter.setColSpan(row, 0, 3);
         contents.setText(row++, 0, CShell.cmsgs.sendInvitesPendingHeader());
-        if (!invites.pendingInvitations.isEmpty()) {
+        if (!_invites.pendingInvitations.isEmpty()) {
             formatter.setStyleName(row, 0, "Tip");
             formatter.setColSpan(row, 0, 3);
             contents.setText(row++, 0, CShell.cmsgs.sendInvitesPendingTip());
             
-            Iterator pendingIter = invites.pendingInvitations.iterator();
+            Iterator pendingIter = _invites.pendingInvitations.iterator();
             while (pendingIter.hasNext()) {
                 formatter.setStyleName(row, 0, "Pending");
                 formatter.setColSpan(row, 0, 3);
@@ -122,6 +99,42 @@ public class SendInvitesDialog extends BorderedDialog
         }));
     }
 
+    protected void checkAndSend () 
+    {
+        ArrayList validAddresses = new ArrayList();
+        String addresses[] = _emailAddresses.getText().split("\n");
+        for (int ii = 0; ii < addresses.length; ii++) {
+            if (addresses[ii].matches(EMAIL_REGEX)) {
+                if (validAddresses.contains(addresses[ii])) {
+                    (new AlertPopup(CShell.cmsgs.sendInvitesDuplicateAddress(addresses[ii]))).
+                        alert();
+                    break;
+                }
+                validAddresses.add(addresses[ii]);
+            } else {
+                (new AlertPopup(CShell.cmsgs.sendInvitesInvalidAddress(addresses[ii]))).alert();
+                break;
+            }
+        }
+
+        if (validAddresses.size() == addresses.length) {
+            if (validAddresses.size() > _invites.availableInvitations) {
+                (new AlertPopup(CShell.cmsgs.sendInvitesTooMany( "" + validAddresses.size(), 
+                    "" + _invites.availableInvitations))).alert();
+            } else {
+                CShell.membersvc.sendInvites(CShell.creds, validAddresses, _customMessage.getText(),
+                    new AsyncCallback () {
+                        public void onSuccess (Object result) {
+                            (new AlertPopup((String)result)).alert();
+                        }
+                        public void onFailure (Throwable cause) {
+                            (new AlertPopup(CShell.serverError(cause))).alert();
+                        }
+                    });
+            }
+        }
+    }
+
     // @Override // from BorderedDialog
     protected Widget createContents ()
     {
@@ -134,4 +147,5 @@ public class SendInvitesDialog extends BorderedDialog
 
     protected TextArea _emailAddresses;
     protected TextArea _customMessage;
+    protected MemberInvites _invites;
 }
