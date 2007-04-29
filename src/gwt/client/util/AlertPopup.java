@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Label;
 /**
  * A class that will throw an alert up in front of the user, with an "ok" button at the bottom
  */
-public abstract class AlertPopup extends BorderedPopup
+public class AlertPopup extends BorderedPopup
 {
     public AlertPopup (String prompt)
     {
@@ -55,7 +55,9 @@ public abstract class AlertPopup extends BorderedPopup
     /**
      * Called when the user presses the button.
      */
-    public abstract void onButton ();
+    public void onButton () 
+    {
+    }
 
     protected String _prompt;
     protected String _button;

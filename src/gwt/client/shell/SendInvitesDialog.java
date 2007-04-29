@@ -67,9 +67,7 @@ public class SendInvitesDialog extends BorderedDialog
                                 validAddresses.add(addresses[ii]);
                             } else {
                                 (new AlertPopup(CShell.cmsgs.sendInvitesInvalidAddress(
-                                    addresses[ii])) {
-                                    public void onButton () {}
-                                }).alert();
+                                    addresses[ii]))).alert();
                                 break;
                             }
                         }
@@ -77,14 +75,11 @@ public class SendInvitesDialog extends BorderedDialog
                             if (validAddresses.size() > invites.availableInvitations) {
                                 (new AlertPopup(CShell.cmsgs.sendInvitesTooMany(
                                     "" + validAddresses.size(), 
-                                    "" + invites.availableInvitations)) {
-                                    public void onButton() {}
-                                }).alert();
+                                    "" + invites.availableInvitations))).alert();
                             } else {
                                 // TEMP - for testing the email regex in GWTland
-                                (new AlertPopup(validAddresses.size() + " valid addresses found!") {
-                                    public void onButton () {}
-                                }).alert();
+                                (new AlertPopup(validAddresses.size() + " valid addresses found!")).
+                                   alert();
                             }
                         }
                     }
