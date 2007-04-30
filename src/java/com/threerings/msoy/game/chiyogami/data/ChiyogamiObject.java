@@ -13,6 +13,9 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 public class ChiyogamiObject extends GameObject
 {
     // AUTO-GENERATED: FIELDS START
+    /** The field name of the <code>phase</code> field. */
+    public static final String PHASE = "phase";
+
     /** The field name of the <code>bossOid</code> field. */
     public static final String BOSS_OID = "bossOid";
 
@@ -22,6 +25,15 @@ public class ChiyogamiObject extends GameObject
     /** The field name of the <code>bossHealth</code> field. */
     public static final String BOSS_HEALTH = "bossHealth";
     // AUTO-GENERATED: FIELDS END
+
+    /** Phase constants. */
+    public static final byte WAITING = 0;
+    public static final byte PRE_BATTLE = 1;
+    public static final byte BATTLE = 2;
+    public static final byte POST_BATTLE = 3;
+
+    /** The current phase of the game. */
+    public byte phase;
 
     /** The oid of the entity in the room that is the boss. */
     public int bossOid;
@@ -33,6 +45,22 @@ public class ChiyogamiObject extends GameObject
     public float bossHealth;
 
     // AUTO-GENERATED: METHODS START
+    /**
+     * Requests that the <code>phase</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setPhase (byte value)
+    {
+        byte ovalue = this.phase;
+        requestAttributeChange(
+            PHASE, Byte.valueOf(value), Byte.valueOf(ovalue));
+        this.phase = value;
+    }
+
     /**
      * Requests that the <code>bossOid</code> field be set to the
      * specified value. The local value will be updated immediately and an

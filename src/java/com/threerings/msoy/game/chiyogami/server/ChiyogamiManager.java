@@ -144,13 +144,7 @@ public class ChiyogamiManager extends GameManager
                 // the boss is dead!
                 bossSpeak("Oh! My liver! My spleen!");
                 updateState(_bossObj, null);
-
-                // then wait 2 seconds and end the round.
-                new ChiInterval() {
-                    public void safeExpired () {
-                        endRound();
-                    }
-                }.schedule(2000);
+                // we'll notice that he's dead next tick
             }
         }
     }
@@ -179,67 +173,18 @@ public class ChiyogamiManager extends GameManager
         _roomObj.addListener(_roomListener);
 
         super.didStartup();
-
-        // wait 30 seconds and then start...
-        new ChiInterval() {
-            public void safeExpired ()
-            {
-                initiateRound();
-            }
-        }.schedule(DELAY);
-    }
-
-    protected void initiateRound ()
-    {
-
-        // have the boss show up in 3 seconds
-        new ChiInterval() {
-            public void safeExpired ()
-            {
-                pickNewBoss();
-            }
-        }.schedule(3000);
-
-        // pick the music 5 seconds before we start the round
-        new ChiInterval() {
-            public void safeExpired ()
-            {
-                pickNewMusic();
-            }
-        }.schedule(DELAY - 5000);
-
-        // start the round in 30...
-        new ChiInterval() {
-            public void safeExpired ()
-            {
-                startRound();
-            }
-        }.schedule(DELAY);
     }
 
     @Override
     protected void gameWillStart ()
     {
         super.gameWillStart();
-
-        // all player actions must be re-populated
-        _playerStates.clear();
-
-        // create blank perf records for every player, and randomly assign them a side (L|R)
-        _playerPerfs.clear();
-        for (int ii = _gameObj.occupants.size() - 1; ii >= 0; ii--) {
-            int oid = _gameObj.occupants.get(ii);
-            _playerPerfs.put(oid, new PlayerRec(oid));
-        }
     }
 
     @Override
     protected void gameDidStart ()
     {
         super.gameDidStart();
-
-        _playerTags.clear(); // clear tags until next time
-        updateBossState();
     }
 
     @Override
@@ -249,43 +194,6 @@ public class ChiyogamiManager extends GameManager
 
         // TEMP
         shutdown();
-    }
-
-    /**
-     * Start the round!
-     */
-    protected void startRound ()
-    {
-        startGame();
-        if (_music != null) {
-            _roomObj.postMessage(RoomObject.PLAY_MUSIC,
-                new Object[] { _music.audioMedia.getMediaPath() });
-        }
-        bossSpeak("Ok... it's a dance off!");
-
-        moveBody(_bossObj, .5, .5);
-        repositionAllPlayers(System.currentTimeMillis());
-
-        // TEMP background effect
-        _effects.add(_roomMgr.addEffect(
-            new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
-                "chiyogami/FX_arrow"),
-            new MsoyLocation(.5, 0, 0, 0), RoomCodes.BACKGROUND_EFFECT_LAYER));
-        // TEMP foreground effect
-        _effects.add(_roomMgr.addEffect(
-            new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
-                "chiyogami/FallBalls"),
-            new MsoyLocation(.5, 0, 0, 0), RoomCodes.FOREGROUND_EFFECT_LAYER));
-    }
-
-    protected void endRound ()
-    {
-        bossSpeak("I think I sprained my pinky, I've got to go...");
-
-        removeAllEffects();
-        clearPlayerStates();
-        shutdownBoss();
-        endGame();
     }
 
     protected void didShutdown ()
@@ -324,25 +232,120 @@ public class ChiyogamiManager extends GameManager
         }
     }
 
-    protected void shutdownBoss ()
+    @Override
+    protected void tick (long tickStamp)
     {
-        if (_bossObj != null) {
-            bossSpeak("I'm outta here.");
-            MsoyServer.screg.sceneprov.leaveOccupiedScene(_bossObj);
-            MsoyServer.omgr.destroyObject(_bossObj.getOid());
-            _bossObj = null;
-        }
+        super.tick(tickStamp);
 
-        // set the health to NaN to indicate that it's irrelevant
-        if (_gameObj.isActive()) {
-            _gameObj.startTransaction();
-            try {
-                _gameObj.setBossOid(0);
-                _gameObj.setBossHealth(Float.NaN);
-            } finally {
-                _gameObj.commitTransaction();
+        _phaseCounter++;
+        switch (_gameObj.phase) {
+        case ChiyogamiObject.WAITING:
+            // wait, wait, then at #3 pick the boss and music
+            // move to pre-battle once both are ready
+            if (_phaseCounter == 3) {
+                pickNewBoss();
+                pickNewMusic();
+            }
+            break;
+
+        case ChiyogamiObject.PRE_BATTLE:
+            switch (_phaseCounter) {
+            case 1:
+                bossSpeak("Mind if I take over? HAhahaha!");
+                break;
+
+            default:
+                // move the boss randomly around the room
+                moveBody(_bossObj, Math.random(), Math.random());
+                break;
+
+            case 4:
+                // let's start the battle
+                startBattle();
+                break;
+            }
+            break;
+
+        case ChiyogamiObject.BATTLE:
+            updatePlayerPerformances();
+            if (_gameObj.bossHealth == 0) {
+                endBattle();
+            }
+            break;
+
+        case ChiyogamiObject.POST_BATTLE:
+            switch (_phaseCounter) {
+            case 1:
+                bossSpeak("I think I sprained my pinky, I've got to go...");
+                break;
+
+            case 2:
+                shutdownBoss();
+                break;
+
+            case 3:
+                roomSpeak("The next round will begin in a few moments...");
+                setPhase(ChiyogamiObject.WAITING);
+                break;
             }
         }
+    }
+
+    /**
+     * Change the phase of the game.
+     */
+    protected void setPhase (byte phase)
+    {
+        _gameObj.setPhase(phase);
+        _phaseCounter = 0;
+    }
+
+    protected void startBattle ()
+    {
+        setPhase(ChiyogamiObject.BATTLE);
+
+        // all player actions must be re-populated
+        _playerStates.clear();
+
+        // create blank perf records for every player, and randomly assign them a side (L|R)
+        _playerPerfs.clear();
+        for (int ii = _gameObj.occupants.size() - 1; ii >= 0; ii--) {
+            int oid = _gameObj.occupants.get(ii);
+            _playerPerfs.put(oid, new PlayerRec(oid));
+        }
+
+        // start the music playing
+        if (_music != null) {
+            _roomObj.postMessage(RoomObject.PLAY_MUSIC,
+                new Object[] { _music.audioMedia.getMediaPath() });
+        }
+
+        // get the boss ready
+        bossSpeak("Ok... it's a dance off!");
+        moveBody(_bossObj, .5, .5);
+        repositionAllPlayers(System.currentTimeMillis());
+        updateBossState();
+
+        // TEMP background effect
+        _effects.add(_roomMgr.addEffect(
+            new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
+                "chiyogami/FX_arrow"),
+            new MsoyLocation(.5, 0, 0, 0), RoomCodes.BACKGROUND_EFFECT_LAYER));
+        // TEMP foreground effect
+        _effects.add(_roomMgr.addEffect(
+            new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
+                "chiyogami/FallBalls"),
+            new MsoyLocation(.5, 0, 0, 0), RoomCodes.FOREGROUND_EFFECT_LAYER));
+
+
+        _playerTags.clear(); // clear tags until next time
+    }
+
+    protected void endBattle ()
+    {
+        clearPlayerStates(); // TODO: final animation?
+        removeAllEffects();
+        setPhase(ChiyogamiObject.POST_BATTLE);
     }
 
     /**
@@ -360,12 +363,20 @@ public class ChiyogamiManager extends GameManager
         return set.toArray(new String[set.size()]);
     }
 
+    /**
+     * Initiate picking new music for the next battle.
+     */
     protected void pickNewMusic ()
     {
         _music = null;
+        _musicPicked = false;
         pickNewMusic(getAllUserTags());
     }
 
+    /**
+     * Pick new music according to the specified tags, or randomly
+     * if nothing matches the tags.
+     */
     protected void pickNewMusic (final String[] tags)
     {
         MsoyServer.itemMan.getRandomCatalogItem(Item.AUDIO, tags, new ResultListener<Item>() {
@@ -385,13 +396,18 @@ public class ChiyogamiManager extends GameManager
         });
     }
 
+    /**
+     * Called when the music for the battle has finally been picked.
+     */
     protected void musicPicked (Audio music)
     {
         _music = music;
+        _musicPicked = true; // because _music can legally be null, currently
         if (_roomObj.isActive() && _music != null) {
             _roomObj.postMessage(RoomObject.LOAD_MUSIC,
                 new Object[] { _music.audioMedia.getMediaPath() });
         }
+        checkTransitionToPreBattle();
     }
 
     /**
@@ -404,6 +420,10 @@ public class ChiyogamiManager extends GameManager
         pickNewBoss(getAllUserTags());
     }
 
+    /**
+     * Pick new boss according to the specified tags, or randomly
+     * if nothing matches the tags.
+     */
     protected void pickNewBoss (final String[] tags)
     {
         MsoyServer.itemMan.getRandomCatalogItem(Item.AVATAR, tags, new ResultListener<Item>() {
@@ -423,11 +443,15 @@ public class ChiyogamiManager extends GameManager
         });
     }
 
+    /**
+     * Called when the boss for a battle is finally available.
+     */
     protected void bossPicked (Avatar boss)
     {
         _bossObj = MsoyServer.omgr.registerObject(new BossObject());
 
-        if (boss == null) {
+       if (boss == null) {
+           // TODO: remove this old stuff
             String hardBoss = RandomUtil.pickRandom(BOSSES);
             _bossObj.init(new StaticMediaDesc(
                 MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.AVATAR, "chiyogami/" + boss));
@@ -475,25 +499,44 @@ public class ChiyogamiManager extends GameManager
             _gameObj.commitTransaction();
         }
 
-        new ChiInterval() {
-            public void safeExpired ()
-            {
-                bossSpeak("Mind if I take over? HAhahaha!");
-            }
-        }.schedule(2000);
+        checkTransitionToPreBattle();
+    }
 
-        new ChiInterval() {
-            public void safeExpired ()
-            {
-                if (!_gameObj.isInPlay()) {
-                    // move the boss randomly
-                    moveBody(_bossObj, Math.random(), Math.random());
+    /**
+     * We can move to the pre-battle phase once we've picked all the assets
+     * for the upcoming battle.
+     */
+    protected void checkTransitionToPreBattle ()
+    {
+        if (!_gameObj.isActive() || !_musicPicked || (_bossObj == null) ||
+                !_roomObj.occupants.contains(_bossObj.getOid())) {
+            return;
+        }
+        setPhase(ChiyogamiObject.PRE_BATTLE);
+    }
 
-                } else {
-                    cancel();
-                }
+    /**
+     * Shutdown and clear any boss currently in the game.
+     */
+    protected void shutdownBoss ()
+    {
+        if (_bossObj != null) {
+            bossSpeak("I'm outta here.");
+            MsoyServer.screg.sceneprov.leaveOccupiedScene(_bossObj);
+            MsoyServer.omgr.destroyObject(_bossObj.getOid());
+            _bossObj = null;
+        }
+
+        // set the health to NaN to indicate that it's irrelevant
+        if (_gameObj.isActive()) {
+            _gameObj.startTransaction();
+            try {
+                _gameObj.setBossOid(0);
+                _gameObj.setBossHealth(Float.NaN);
+            } finally {
+                _gameObj.commitTransaction();
             }
-        }.schedule(3000, 2000);
+        }
     }
 
     protected void repositionAllPlayers (long now)
@@ -610,8 +653,15 @@ public class ChiyogamiManager extends GameManager
         moveBody(body, x, z, degrees);
     }
 
+    protected void roomSpeak (String message)
+    {
+        // TODO: translations
+        SpeakProvider.sendInfo(_roomObj, null, message);
+    }
+
     protected void bossSpeak (String utterance)
     {
+        // TODO: translations
         SpeakProvider.sendSpeak(_roomObj, _bossObj.username, null, utterance);
     }
 
@@ -678,11 +728,8 @@ public class ChiyogamiManager extends GameManager
         _roomMgr.setState((MsoyBodyObject) body, state);
     }
 
-    @Override
-    protected void tick (long tickStamp)
+    protected void updatePlayerPerformances ()
     {
-        super.tick(tickStamp);
-
         if (!_gameObj.isInPlay()) {
             return;
         }
@@ -765,23 +812,23 @@ public class ChiyogamiManager extends GameManager
         }
     } // End: class RoomListener
 
-    protected abstract class ChiInterval extends Interval
-    {
-        public ChiInterval ()
-        {
-            super(MsoyServer.omgr);
-        }
-
-        public void expired ()
-        {
-            if (_gameObj.isActive()) {
-                safeExpired();
-            }
-        }
-
-        public abstract void safeExpired ();
-
-    } // End: class ChiInterval
+//    protected abstract class ChiInterval extends Interval
+//    {
+//        public ChiInterval ()
+//        {
+//            super(MsoyServer.omgr);
+//        }
+//
+//        public void expired ()
+//        {
+//            if (_gameObj.isActive()) {
+//                safeExpired();
+//            }
+//        }
+//
+//        public abstract void safeExpired ();
+//
+//    } // End: class ChiInterval
 
     /** Listens to the room we're boom-chikka-ing. */
     protected RoomListener _roomListener = new RoomListener();
@@ -797,11 +844,16 @@ public class ChiyogamiManager extends GameManager
 
     protected Audio _music;
 
+    protected boolean _musicPicked;
+
     /** The room manager. */
     protected RoomManager _roomMgr;
 
     /** The room object where the game is taking place. */
     protected RoomObject _roomObj;
+
+    /** Counts the number of ticks we've received in the current phase. */
+    protected int _phaseCounter = 0;
 
     /** The currently displayed effects. */
     protected ArrayList<EffectData> _effects = new ArrayList<EffectData>();
@@ -819,9 +871,6 @@ public class ChiyogamiManager extends GameManager
     protected HashIntMap<String> _playerTags = new HashIntMap<String>();
 
     protected String[] _bossStates = new String[] { null, "Dance 1", "Dance 2" };
-
-    protected static final String[] MUSICS = {
-        "18-Jay-R_MyOtherCarBeatle", "04-Jay-R_SriLankaHigh" };
 
     /** TEMP: The filenames of current boss avatars. */
     protected static final String[] BOSSES = { "bboy" };

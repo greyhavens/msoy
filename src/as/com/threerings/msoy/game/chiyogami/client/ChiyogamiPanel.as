@@ -52,7 +52,7 @@ public class ChiyogamiPanel extends Canvas
     {
         _gameObj = (plobj as ChiyogamiObject);
 
-        recheckTagEntry();
+        checkPhase();
     }
 
     // from PlaceView
@@ -61,46 +61,54 @@ public class ChiyogamiPanel extends Canvas
         _gameObj = null;
     }
 
-    /**
-     * Start things a-moving. TODO
-     */
-    public function gameDidStart () :void
+    public function checkPhase () :void
     {
-        recheckTagEntry();
+        showTagEntry(_gameObj.phase == ChiyogamiObject.WAITING);
+        showMiniGame(_gameObj.phase == ChiyogamiObject.BATTLE);
+    }
 
-        // pick a game!
-        var game :MediaDesc = MediaDesc(GAMES[
-            int(Math.floor(Math.random() * GAMES.length))]);
-
-        _minigame = new MiniGameContainer();
-        _minigame.setup(game);
-
-        _minigame.performanceCallback = _ctrl.miniGameReportedPerformance;
-
-        rawChildren.addChild(_minigame);
-
-        var mask :Shape = new Shape();
-        with (mask.graphics) {
-            beginFill(0xffFFff);
-            drawRect(0, 0, 800, 100);
-            endFill();
+    /**
+     * Add the previously-picked minigame.
+     */
+    protected function showMiniGame (show :Boolean) :void
+    {
+        if (show == (_minigame != null)) {
+            return;
         }
 
-        _minigame.mask = mask;
-        rawChildren.addChild(mask);
+        if (show) {
+            // pick a game!
+            // TODO: move game picking to previous phase
+            var game :MediaDesc = MediaDesc(GAMES[
+                int(Math.floor(Math.random() * GAMES.length))]);
+
+            _minigame = new MiniGameContainer();
+            _minigame.setup(game);
+
+            _minigame.performanceCallback = _ctrl.miniGameReportedPerformance;
+
+            rawChildren.addChild(_minigame);
+
+            var mask :Shape = new Shape();
+            with (mask.graphics) {
+                beginFill(0xffFFff);
+                drawRect(0, 0, 800, 100);
+                endFill();
+            }
+
+            _minigame.mask = mask;
+            rawChildren.addChild(mask);
+
+        } else {
+            rawChildren.removeChild(_minigame);
+            _minigame.performanceCallback = null;
+            _minigame = null;
+        }
     }
 
-    public function gameDidEnd () :void
+    protected function showTagEntry (show :Boolean) :void
     {
-        recheckTagEntry();
-        rawChildren.removeChild(_minigame);
-
-        _minigame.performanceCallback = null;
-    }
-
-    protected function recheckTagEntry () :void
-    {
-        if (_gameObj.isInPlay() == (_tagEntry == null)) {
+        if (show == (_tagEntry != null)) {
             return;
         }
 

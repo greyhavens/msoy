@@ -71,6 +71,9 @@ public class ChiyogamiController extends GameController
         if (name == ChiyogamiObject.BOSS_OID || name == ChiyogamiObject.BOSS_HEALTH) {
             updateBossHealth()
 
+        } else if (name == ChiyogamiObject.PHASE) {
+            phaseChanged();
+
         } else {
             super.attributeChanged(ace);
         }
@@ -115,18 +118,23 @@ public class ChiyogamiController extends GameController
         return super.stateDidChange(state);
     }
 
-    override protected function gameDidStart () :void
+//    override protected function gameDidStart () :void
+//    {
+//        _panel.gameDidStart();
+//
+//        super.gameDidStart();
+//    }
+//
+//    override protected function gameDidEnd () :void
+//    {
+//        super.gameDidEnd();
+//
+//        _panel.gameDidEnd();
+//    }
+
+    protected function phaseChanged () :void
     {
-        _panel.gameDidStart();
-
-        super.gameDidStart();
-    }
-
-    override protected function gameDidEnd () :void
-    {
-        super.gameDidEnd();
-
-        _panel.gameDidEnd();
+        _panel.checkPhase();
     }
 
     /**

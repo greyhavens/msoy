@@ -15,6 +15,9 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 public class ChiyogamiObject extends GameObject
 {
     // AUTO-GENERATED: FIELDS START
+    /** The field name of the <code>phase</code> field. */
+    public static const PHASE :String = "phase";
+
     /** The field name of the <code>bossOid</code> field. */
     public static const BOSS_OID :String = "bossOid";
 
@@ -24,6 +27,15 @@ public class ChiyogamiObject extends GameObject
     /** The field name of the <code>bossHealth</code> field. */
     public static const BOSS_HEALTH :String = "bossHealth";
     // AUTO-GENERATED: FIELDS END
+
+    /** Phase constants. */
+    public static const WAITING :int = 0;
+    public static const PRE_BATTLE :int = 1;
+    public static const BATTLE :int = 2;
+    public static const POST_BATTLE :int = 3;
+
+    /** The current phase of the game. */
+    public var phase :int;
 
     /** The oid of the entity in the room that is the boss. */
     public var bossOid :int;
@@ -38,6 +50,7 @@ public class ChiyogamiObject extends GameObject
     {
         super.readObject(ins);
 
+        phase = ins.readByte();
         bossOid = ins.readInt();
         beatsPerMinute = ins.readFloat();
         bossHealth = ins.readFloat();
