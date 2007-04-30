@@ -238,7 +238,7 @@ public class RoomView extends AbstractRoomView
                 var furni :FurniSprite = sprite as FurniSprite;
                 menuItems.push(MenuUtil.createControllerMenuItem(
                                    Msgs.GENERAL.get("b.edit_furni"),
-                                   RoomController.EDIT_FURNI, furni));
+                                   _ctrl.handleEditFurni, sprite as FurniSprite));
 
                 // TEMP: doors can also be edited from the right-click menu
                 var furnidata :FurniData = furni.getFurniData();
