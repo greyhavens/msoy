@@ -493,11 +493,6 @@ public class RoomController extends SceneController
 //            }
 //        }
 
-        if (!_roomView.getGlobalBounds().contains(stageX, stageY)) {
-            // no hits possible, mouse is out-of-bounds
-            return null;
-        }
-
         // we search from last-drawn to first drawn to get the topmost...
         for (var dex :int = _roomView.numChildren - 1; dex >= 0; dex--) {
             var spr :MsoySprite = (_roomView.getChildAt(dex) as MsoySprite);
