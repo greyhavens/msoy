@@ -362,13 +362,13 @@ Window {
   textAlign: center;
 }
 
-.furniEditButton {
-  paddingLeft: 0;
-  paddingRight: 0;
-  paddingTop: 0;
-  paddingBottom: 0;
-} 
-
+.doorEditPanel { 
+  backgroundImage: Embed(source="../../rsrc/media/skins/button/furniedit/bg.png",
+                         scaleGridLeft="2", scaleGridTop="16", 
+                         scaleGridRight="105", scaleGridBottom="40");
+  backgroundSize: "100%";
+}
+ 
 .furniEditPanel {
   horizontalGap: 0;
   verticalGap: 0;
@@ -384,6 +384,13 @@ Window {
   horizontalGap: 0;
   verticalGap: 0;
 }
+
+.furniEditButton, .doorEditButton {
+  paddingLeft: 0;
+  paddingRight: 0;
+  paddingTop: 0;
+  paddingBottom: 0;
+} 
 
 VScrollBar {
   cornerRadius: 4;

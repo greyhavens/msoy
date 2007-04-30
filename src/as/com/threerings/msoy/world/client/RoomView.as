@@ -235,11 +235,20 @@ public class RoomView extends AbstractRoomView
 
             // furni sprites can be moved around. except when they're the background.
             if (sprite is FurniSprite && sprite != _bg) {
+                var furni :FurniSprite = sprite as FurniSprite;
                 menuItems.push(MenuUtil.createControllerMenuItem(
                                    Msgs.GENERAL.get("b.edit_furni"),
-                                   RoomController.EDIT_FURNI, sprite as FurniSprite));
+                                   RoomController.EDIT_FURNI, furni));
+
+                // TEMP: doors can also be edited from the right-click menu
+                var furnidata :FurniData = furni.getFurniData();
+                if (furnidata.actionType == FurniData.ACTION_PORTAL) {
+                    menuItems.push(MenuUtil.createControllerMenuItem(
+                                       Msgs.GENERAL.get("b.edit_door"),
+                                       RoomController.EDIT_DOOR, furni));
+                }
             }
-            
+
             // TEMP: restrict blocking to members only, for now.
             if (_ctx.getMemberObject().tokens.isSupport() && sprite.isBlockable()) {
                 var isBlocked :Boolean = sprite.isBlocked();
@@ -547,6 +556,9 @@ public class RoomView extends AbstractRoomView
         updateAllFurni();
         updateAllEffects();
         addAllOccupants();
+        
+        // inform the "floating" door editor
+        DoorTargetEditController.setRoomView(this);
     }
 
     /**

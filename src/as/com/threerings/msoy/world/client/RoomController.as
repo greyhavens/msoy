@@ -78,6 +78,7 @@ public class RoomController extends SceneController
 
     public static const EDIT_SCENE :String = "EditScene";
     public static const EDIT_FURNI :String = "EditFurni";
+    public static const EDIT_DOOR :String = "EditDoor";
     
     public static const FURNI_CLICKED :String = "FurniClicked";
     public static const AVATAR_CLICKED :String = "AvatarClicked";
@@ -294,6 +295,24 @@ public class RoomController extends SceneController
                     }));
         }
     }
+
+    /**
+     * Handles EDIT_DOOR.
+     */
+    public function handleEditDoor (furniSprite :FurniSprite) :void
+    {
+        if (_furniEditor.getMode() == FurniEditController.EDIT_OFF) {
+            _roomObj.roomService.editRoom(
+                _mctx.getClient(), new ResultWrapper(
+                    function (cause :String) :void {
+                        _mctx.displayFeedback("general", cause);
+                    },
+                    function (result :Object) :void {
+                        DoorTargetEditController.start(furniSprite, _mctx);
+                    }));
+        }
+    }
+        
 
     /**
      * Handles FURNI_CLICKED.
@@ -1019,7 +1038,7 @@ public class RoomController extends SceneController
 
     /** Controller for editing a particular piece of furni. */
     protected var _furniEditor :FurniEditController = new FurniEditController();
-    
+
     /** The number of pixels we scroll the room on a keypress. */
     protected static const ROOM_SCROLL_INCREMENT :int = 20;
 }
