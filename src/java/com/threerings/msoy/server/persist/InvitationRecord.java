@@ -16,8 +16,10 @@ import com.samskivert.util.StringUtil;
 /**
  * Contains persistent data stored for every member of MetaSOY.
  */
-@Entity(indices={ @Index(columns={"inviterId"}), @Index(columns={"inviteeId"}), 
-    @Index(columns={"inviteId"})})
+@Entity(indices={
+        @Index(name="ixInviter", columns={"inviterId"}),
+        @Index(name="ixInvitee", columns={"inviteeId"}), 
+        @Index(name="ixInvite", columns={"inviteId"})})
 public class InvitationRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
