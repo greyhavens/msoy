@@ -24,6 +24,9 @@ JETTY_USER=msoy
 SERVER_MEMORY=384M
 TOOL_MEMORY=384M
 
+# The host via which to send mail
+SMTP_HOST=localhost
+
 # Locate the mail program
 MAIL=/usr/bin/mail
 if [ ! -f $MAIL ]; then
