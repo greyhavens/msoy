@@ -89,6 +89,10 @@ public class MemberRepository extends DepotRepository
         // added 4-27-2007
         _ctx.registerMigration(MemberRecord.class, new EntityMigration.Rename(8, "inviterId", 
             MemberRecord.INVITING_FRIEND_ID));
+
+        // added 4-30-2007
+        _ctx.registerMigration(InvitationRecord.class, new EntityMigration.Retype(2, "issued"));
+        _ctx.registerMigration(InvitationRecord.class, new EntityMigration.Retype(2, "viewed"));
             
         // END TEMP
 
@@ -523,13 +527,7 @@ public class MemberRepository extends DepotRepository
     public void addInvite (String inviteeEmail, int inviterId, String inviteId)
         throws PersistenceException
     {
-        // create new invitation
-        InvitationRecord rec = new InvitationRecord();
-        rec.inviteeEmail = inviteeEmail;
-        rec.inviterId = inviterId;
-        rec.inviteId = inviteId;
-        rec.issued = new Timestamp((new java.util.Date()).getTime());
-        insert(rec);
+        insert(new InvitationRecord(inviteeEmail, inviterId, inviteId));
         
         InviterRecord inviterRec = load(InviterRecord.class, inviterId);
         inviterRec.invitesGranted--;

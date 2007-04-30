@@ -66,7 +66,7 @@ public class InvitationRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The email address we're sending this invitation to. */
     @Id
@@ -85,14 +85,27 @@ public class InvitationRecord extends PersistentRecord
     public int inviteeId;
 
     /** The time that this invite was sent out */
+    @Column(columnDefinition="issued DATETIME NOT NULL")
     public Timestamp issued;
 
     /** The time that this invitation was first viewed. */
+    @Column(columnDefinition="viewed DATETIME")
     public Timestamp viewed;
 
     /** A blank constructor used when loading records from the database. */
     public InvitationRecord ()
     {
+    }
+
+    /**
+     * Create a new record for an Invitation that is being issued right now.
+     */
+    public InvitationRecord (String inviteeEmail, int inviterId, String inviteId)
+    {
+        this.inviteeEmail = inviteeEmail;
+        this.inviterId = inviterId;
+        this.inviteId = inviteId;
+        issued = new Timestamp((new java.util.Date()).getTime());
     }
 
     /** Generates a string representation of this instance. */
