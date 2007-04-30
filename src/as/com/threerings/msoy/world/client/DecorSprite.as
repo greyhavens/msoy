@@ -75,7 +75,7 @@ public class DecorSprite extends FurniSprite
      */
     protected function checkAlpha () :void
     {
-        alpha = _editing ? .65 : 1;
+        alpha = _editing ? .4 : 1;
     }
 }
 }
