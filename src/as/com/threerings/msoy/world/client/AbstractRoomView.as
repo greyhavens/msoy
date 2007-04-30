@@ -70,15 +70,6 @@ public class AbstractRoomView extends Sprite
     }
 
     /**
-     * Get the room's stage bounds.
-     */
-    public function getGlobalBounds () :Rectangle
-    {
-        var p :Point = localToGlobal(new Point(0, 0));
-        return new Rectangle(p.x, p.y, _actualWidth, _actualHeight);
-    }
-
-    /**
      * Called by the editor to have direct access to our sprite list..
      */
     public function getFurniSprites () :Array
