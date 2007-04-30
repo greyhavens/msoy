@@ -34,6 +34,7 @@ import com.threerings.util.MessageBundle;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.ChangeListener;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -193,7 +194,7 @@ public class SwiftlyEditor extends PlacePanel
         // set the document into the text pane
         textPane.setDocument(document);
 
-        // TODO: remove when the the textpane is no longer the document listener
+        // TODO: remove when the textpane is no longer the document listener
         _roomObj.addListener(textPane);
     }
 
@@ -210,12 +211,10 @@ public class SwiftlyEditor extends PlacePanel
 
     public void tabRemoved (TabbedEditorComponent tab)
     {
-        // TODO: remove when the the textpane is no longer the document listener
-        if (tab instanceof TabbedEditorScroller) {
-            Component comp = ((TabbedEditorScroller)tab).getViewport().getView();
-            if (comp instanceof SwiftlyTextPane) {
-                _roomObj.removeListener((SwiftlyTextPane)comp);
-            }
+        // TODO: remove when the textpane is no longer the document listener
+        Component comp = tab.getEditingComponent();
+        if (comp instanceof ChangeListener) {
+            _roomObj.removeListener((ChangeListener)comp);
         }
     }
 

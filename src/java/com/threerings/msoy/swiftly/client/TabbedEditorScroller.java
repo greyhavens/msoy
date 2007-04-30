@@ -28,5 +28,11 @@ public class TabbedEditorScroller extends JScrollPane
         _pathElement = element;
     }
 
+    // from TabbedEditorComponent
+    public Component getEditingComponent ()
+    {
+        return getViewport().getView();
+    }
+
     protected PathElement _pathElement;
 }
