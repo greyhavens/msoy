@@ -22,6 +22,9 @@ public class InvitationResults
     /** A list of the email addresses that were already registered with whirled */
     public List alreadyRegistered;
 
+    /** A list of the email addresses that were already invited by this user */
+    public List alreadyInvited;
+
     /** A list of the email addresses that we think we successfully sent an invitation to */
     public List successful;
 }

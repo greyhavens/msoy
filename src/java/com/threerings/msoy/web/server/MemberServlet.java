@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.web.server;
 
+import java.io.StringWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +17,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.net.MailUtil;
+import com.samskivert.velocity.VelocityUtil;
+
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
@@ -180,13 +187,100 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
+    @SuppressWarnings("unchecked")
     public InvitationResults sendInvites (WebCreds creds, List addresses, String customMessage) 
         throws ServiceException
     {
         int memberId = getMemberId(creds);
 
-        // TODO
-        return new InvitationResults();
+        InvitationResults results = new InvitationResults();
+
+        VelocityEngine ve;
+        try {
+            ve = VelocityUtil.createEngine();
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to create the velocity engine.", e);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
+        try {
+            for (String email : (List<String>)addresses) {
+                // make sure this user still has available invites
+                if (MsoyServer.memberRepo.getInvitesGranted(memberId) <= 0) {
+                    // silently stop trying to send addresses, since we already check this value
+                    // in GWT land, and deal with it sensibly there.
+                    break;
+                }
+
+                // make sure this address is valid
+                if (!MailUtil.isValidAddress(email)) {
+                    if (results.invalid == null) {
+                        results.invalid = new ArrayList();
+                    }
+                    results.invalid.add(email);
+                    continue;
+                }
+
+                // make sure this address isn't already registered
+                if (MsoyServer.memberRepo.loadMember(email) != null) {
+                    if (results.alreadyRegistered == null) {
+                        results.alreadyRegistered = new ArrayList();
+                    }
+                    results.alreadyRegistered.add(email);
+                    continue;
+                }
+
+                // make sure this user hasn't already invited this address
+                if (MsoyServer.memberRepo.loadInvite(email, memberId) != null) {
+                    if (results.alreadyInvited == null) {
+                        results.alreadyInvited = new ArrayList();
+                    }
+                    results.alreadyInvited.add(email);
+                    continue;
+                }
+
+                // find a free invite id
+                String inviteId;
+                int tries = 0;
+                while (MsoyServer.memberRepo.loadInvite(inviteId = randomInviteId()) != null) {
+                    tries++;
+                }
+                if (tries > 5) {
+                    log.log(Level.WARNING, "InvitationRecord.inviteId space is getting " +
+                        "saturated, it took " + tries + " tries to find a free id");
+                }
+
+                // create and send the invitation
+                VelocityContext ctx = new VelocityContext();
+                ctx.put("custom_message", customMessage);
+                ctx.put("invite_id", inviteId);
+                StringWriter sw = new StringWriter();
+                try {
+                    ve.mergeTemplate("rsrc/email/memberInvite.tmpl", "UTF-8", ctx, sw);
+                    String body = sw.toString();
+                    int nidx = body.indexOf("\n"); // first line is the subject
+                    MailUtil.deliverMail(email, INVITE_FROM, body.substring(0, nidx),
+                        body.substring(nidx+1));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    if (results.failed == null) {
+                        results.failed = new ArrayList();
+                    }
+                    results.failed.add(email + e.getMessage());
+                    continue;
+                }
+                MsoyServer.memberRepo.addInvite(email, memberId, inviteId);
+                if (results.successful == null) {
+                    results.successful = new ArrayList();
+                }
+                results.successful.add(email);
+            }
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "sendInvites failed.", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
+        return results;
     }
 
     /**
@@ -401,4 +495,18 @@ public class MemberServlet extends MsoyServiceServlet
         }
         return arr;
     }
+
+    protected String randomInviteId ()
+    {
+        String rand = "";
+        for (int ii = 0; ii < INVITE_ID_LENGTH; ii++) {
+            rand += INVITE_ID_CHARACTERS.charAt((int)(Math.random() * 
+                INVITE_ID_CHARACTERS.length()));
+        }
+        return rand;
+    }
+
+    protected static final String INVITE_FROM = "peas@whirled.com";
+    protected static final int INVITE_ID_LENGTH = 10;
+    protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
 }

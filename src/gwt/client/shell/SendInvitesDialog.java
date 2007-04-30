@@ -136,7 +136,8 @@ public class SendInvitesDialog extends BorderedDialog
                             InvitationResults invRes = (InvitationResults)result;
                             String results = CShell.cmsgs.sendInvitesResults() + "\n\n";
                             List[] lists = { invRes.invalid, invRes.failed, 
-                                invRes.alreadyRegistered, invRes.successful };
+                                invRes.alreadyRegistered, invRes.alreadyInvited, 
+                                invRes.successful };
                             for (int ii = 0; ii < lists.length; ii++) {
                                 if (lists[ii] != null && lists[ii].size() > 0) {
                                     String addresses = "";
@@ -158,6 +159,10 @@ public class SendInvitesDialog extends BorderedDialog
                                             "" + lists[ii].size(), addresses);
                                         break;
                                     case 3:
+                                        results += CShell.cmsgs.sendInvitesResultsAlreadyInvited(
+                                            "" + lists[ii].size(), addresses);
+                                        break;
+                                    case 4:
                                         results += CShell.cmsgs.sendInvitesResultsSuccessful(
                                             "" + lists[ii].size(), addresses);
                                         break;

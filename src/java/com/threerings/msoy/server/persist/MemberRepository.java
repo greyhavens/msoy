@@ -517,6 +517,27 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Add a new invitation. Also decrements the available invitation count for the inviterId and
+     * increments the number of invites sent.
+     */
+    public void addInvite (String inviteeEmail, int inviterId, String inviteId)
+        throws PersistenceException
+    {
+        // create new invitation
+        InvitationRecord rec = new InvitationRecord();
+        rec.inviteeEmail = inviteeEmail;
+        rec.inviterId = inviterId;
+        rec.inviteId = inviteId;
+        rec.issued = new Timestamp((new java.util.Date()).getTime());
+        insert(rec);
+        
+        InviterRecord inviterRec = load(InviterRecord.class, inviterId);
+        inviterRec.invitesGranted--;
+        inviterRec.invitesSent++;
+        update(inviterRec);
+    }
+
+    /**
      * Get a list of the invites that this user has already sent out that have not yet been
      * accepted.
      */
@@ -527,13 +548,21 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Find and return in the InvitationRecord that cooresponds to the given unique code.
+     * Return the InvitationRecord that cooresponds to the given unique code.
      */
     public InvitationRecord loadInvite (String inviteId) 
         throws PersistenceException
     {
-        // TODO
-        return null;
+        return load(InvitationRecord.class, new Where(InvitationRecord.INVITE_ID, inviteId));
+    }
+
+    /**
+     * Get the invite that was sent to this email address by this member.
+     */
+    public InvitationRecord loadInvite (String email, int memberId)
+        throws PersistenceException
+    {
+        return load(InvitationRecord.class, InvitationRecord.getKey(email, memberId));
     }
 
     @Entity

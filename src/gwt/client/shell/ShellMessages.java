@@ -120,6 +120,16 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String sendInvitesNoneAvailable();
 
   /**
+   * Translated "{0} addresses already invited by you: 
+   * {1}".
+   * 
+   * @return translated "{0} addresses already invited by you: 
+   * {1}"
+   * @gwt.key sendInvitesResultsAlreadyInvited
+   */
+  String sendInvitesResultsAlreadyInvited(String arg0,  String arg1);
+
+  /**
    * Translated "Duplicate email address found: {0}".
    * 
    * @return translated "Duplicate email address found: {0}"
@@ -688,9 +698,11 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String creatingAccount();
 
   /**
-   * Translated "Send Invitation Results:".
+   * Translated "Send Invitation Results:
+   * ".
    * 
-   * @return translated "Send Invitation Results:"
+   * @return translated "Send Invitation Results:
+   * "
    * @gwt.key sendInvitesResults
    */
   String sendInvitesResults();
