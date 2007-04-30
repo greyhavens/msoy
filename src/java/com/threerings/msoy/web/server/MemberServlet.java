@@ -24,6 +24,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
@@ -203,6 +204,9 @@ public class MemberServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
+        int port = ServerConfig.getHttpPort();
+        String host = ServerConfig.serverHost + (port != 80 ? ":" + port : "");
+
         try {
             for (String email : (List<String>)addresses) {
                 // make sure this user still has available invites
@@ -253,6 +257,7 @@ public class MemberServlet extends MsoyServiceServlet
                 // create and send the invitation
                 VelocityContext ctx = new VelocityContext();
                 ctx.put("custom_message", customMessage);
+                ctx.put("server_host", host);
                 ctx.put("invite_id", inviteId);
                 StringWriter sw = new StringWriter();
                 try {
