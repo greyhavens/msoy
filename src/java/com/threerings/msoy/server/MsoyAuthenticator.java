@@ -15,6 +15,8 @@ import com.threerings.presents.net.AuthResponseData;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.net.AuthingConnection;
 
+import com.threerings.whirled.util.NoSuchSceneException;
+
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
@@ -441,10 +443,15 @@ public class MsoyAuthenticator extends Authenticator
         if (inviterId != 0) {
             mrec.invitingFriendId = inviterId;
             try {
-                MsoySceneModel scene = (MsoySceneModel)MsoyServer.sceneRepo.loadSceneModel(
-                    MsoyServer.memberRepo.loadMember(inviterId).homeSceneId);
-                portalAction = scene.sceneId + ":" + scene.name;
-            } catch (Exception e) {
+                MemberRecord inviterMemRec = MsoyServer.memberRepo.loadMember(inviterId);
+                if (inviterMemRec != null) {
+                    MsoySceneModel scene = (MsoySceneModel)MsoyServer.sceneRepo.loadSceneModel(
+                        inviterMemRec.homeSceneId);
+                    if (scene != null) {
+                        portalAction = scene.sceneId + ":" + scene.name;
+                    }
+                }
+            } catch (NoSuchSceneException nsse) {
                 // If we can't load this scene, its not that big of a deal - just let the new 
                 // portal point to the default room.
             }
