@@ -536,6 +536,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String submit();
 
   /**
+   * Translated "Your Whirled Invitation".
+   * 
+   * @return translated "Your Whirled Invitation"
+   * @gwt.key inviteTitle
+   */
+  String inviteTitle();
+
+  /**
    * Translated "Click ''Update'' to update your email address.".
    * 
    * @return translated "Click ''Update'' to update your email address."

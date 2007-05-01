@@ -29,6 +29,7 @@ import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.NeighborFriendRecord;
 
 import com.threerings.msoy.web.client.MemberService;
@@ -38,6 +39,7 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.InvitationResults;
+import com.threerings.msoy.web.data.Invitation;
 
 import com.threerings.msoy.data.Neighborhood;
 import com.threerings.msoy.data.UserAction;
@@ -286,6 +288,32 @@ public class MemberServlet extends MsoyServiceServlet
         }
 
         return results;
+    }
+
+    // from MemberService
+    public Invitation getInvitation (String inviteId) 
+        throws ServiceException
+    {
+        Invitation inv = new Invitation();
+
+        try {
+            InvitationRecord invRec = MsoyServer.memberRepo.loadInvite(inviteId);
+            if (invRec == null) {
+                // probably someone trying to sneak in
+                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            }
+
+            inv.inviteId = invRec.inviteId;
+            inv.inviteeEmail = invRec.inviteeEmail;
+            
+            MemberNameRecord memNameRec = MsoyServer.memberRepo.loadMemberName(invRec.inviterId);
+            inv.inviter = new MemberName(memNameRec.name, memNameRec.memberId);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getInvitation failed [inviteId=" + inviteId + "]", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+         
+        return inv;
     }
 
     /**

@@ -13,6 +13,7 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
@@ -22,7 +23,12 @@ import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
+import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.WebCreds;
+
+import client.shell.InvitationDialog;
+
+import client.util.AlertPopup;
 
 /**
  * Our main application and entry point. This dispatches a requests to the appropriate {@link
@@ -119,7 +125,21 @@ public class Application
             page = token.substring(0, semidx);
             args = token.substring(semidx+1);
         }
-        displayPage(page, args);
+        if ("invite".equals(page)) {
+            // show the default and pop up an invitation dialog
+            displayPage("world", "");
+
+            CShell.membersvc.getInvitation(args, new AsyncCallback () {
+                public void onSuccess (Object result) {
+                    (new InvitationDialog((Invitation)result)).show();
+                }
+                public void onFailure (Throwable cause) {
+                    (new AlertPopup(CShell.serverError(cause))).alert();
+                }
+            });
+        } else {
+            displayPage(page, args);
+        }
     }
 
     protected void initContext ()

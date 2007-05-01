@@ -54,4 +54,9 @@ public interface MemberServiceAsync
      */
     public void sendInvites (WebCreds creds, List addresses, String customMessage, 
         AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link MemberService#getInvitation}.
+     */
+    public void getInvitation (String inviteId, AsyncCallback callback);
 }

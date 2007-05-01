@@ -13,6 +13,7 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.InvitationResults;
+import com.threerings.msoy.web.data.Invitation;
 
 /**
  * Defines member-specific services available to the GWT/AJAX web client.
@@ -65,5 +66,11 @@ public interface MemberService extends RemoteService
      * Send out some of this person's available invites.
      */
     public InvitationResults sendInvites (WebCreds creds, List addresses, String customMessage)
+        throws ServiceException;
+
+    /** 
+     * Grabs the details for an Invitation for the use of the InvitationDialog.
+     */
+    public Invitation getInvitation (String inviteId)
         throws ServiceException;
 }
