@@ -445,7 +445,8 @@ public class MsoyAuthenticator extends Authenticator
                     MsoyServer.memberRepo.loadMember(inviterId).homeSceneId);
                 portalAction = scene.sceneId + ":" + scene.name;
             } catch (Exception e) {
-                // nada
+                // If we can't load this scene, its not that big of a deal - just let the new 
+                // portal point to the default room.
             }
         }
         MsoyServer.memberRepo.insertMember(mrec);
