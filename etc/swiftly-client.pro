@@ -10,10 +10,9 @@
 -injars ../dist/lib/narya-base.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/narya-distrib.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/nenya-rsrc.jar(!META-INF/*,!**/tools/**,!**/server/**)
--injars ../dist/lib/vilya-whirled.jar(!META-INF/*,!**/tools/**,!**/server/**)
+-injars ../dist/lib/vilya-whirled.jar(**/ClusteredBodyObject.class,**/ScenedBodyObject.class)
 -injars ../dist/lib/vilya-micasa.jar(**/util/**,**/client/**)
--injars ../dist/lib/vilya-parlor.jar(**/parlor/util/**,**/ezgame/data/EZGameConfig.class,
-    **/parlor/game/data/GameConfig.class)
+-injars ../dist/lib/vilya-parlor.jar(**/parlor/util/**)
 -injars ../dist/lib/vilya-stats.jar(!META-INF/*,!**/tools/**,!**/persist/**)
 -injars ../dist/lib/threerings.jar(!META-INF/*,**/threerings/util/**)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/IsSerializable.class,
