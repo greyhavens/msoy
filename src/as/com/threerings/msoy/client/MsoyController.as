@@ -309,7 +309,8 @@ public class MsoyController extends Controller
      */
     public function handleViewItem (ident :ItemIdent) :void
     {
-        handleInternalGo("item", "" + ident.itemId);
+        // TODO: use a proper item info page
+        handleInternalGo("inventory", ident.type + "_0_" + ident.itemId);
     }
 
     /**
