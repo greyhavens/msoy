@@ -30,7 +30,6 @@ public class TabbedEditor extends CloseAndMaxTabbedPane
         _ctx = ctx;
         _editor = editor;
 
-        addChangeListener(new TabChangedListener());
         addCloseListener(new CloseListener() {
            public void closeOperation(MouseEvent e) {
               closeTabAt(getOverTabIndex());
@@ -147,15 +146,6 @@ public class TabbedEditor extends CloseAndMaxTabbedPane
             if (tabIndex < 9) {
                 setMnemonicAt(tabIndex, KeyEvent.VK_1 + tabIndex);
             }
-        }
-    }
-
-    // TODO: if this remains unneeded, remove
-    protected class TabChangedListener implements ChangeListener
-    {
-        // from interface ChangeListener
-        public void stateChanged(ChangeEvent evt) {
-            Component tab = getSelectedComponent();
         }
     }
 
