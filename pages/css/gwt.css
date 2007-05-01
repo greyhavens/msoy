@@ -641,7 +641,7 @@ body {
   top: 30px;
 }
 
-.sendInvites .Header {
+.sendInvites .Header, .sendInvitesResultsPopup .Header {
   font-weight: bold;
 }
 
@@ -651,7 +651,15 @@ body {
   text-align: center;
 }
 
-.sendInvites .Pending {
-  width: 400px;
+.sendInvites .Pending, .sendInvitesResultsPopup .Email {
   font-size: 12px;
+  text-align: center;
+}
+
+.sendInvitesResultsPopup .ResultsHeader {
+  background: #222222;
+  color: #EAEFF1;
+  font-size: 22px;
+  font-weight: bold;
+  white-space: nowrap;
 }
