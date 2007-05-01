@@ -363,7 +363,8 @@ public class MsoyController extends Controller
     {
         var gameId :int = int(args[0]), placeOid :int = int(args[1]);
         if (!handleInternalGo("game", gameId + "_" + placeOid)) {
-            // TODO: report that we could not join the game and that we are very sad
+            // fall back to breaking the back button
+            _ctx.getLocationDirector().moveTo(placeOid);
         }
     }
 
