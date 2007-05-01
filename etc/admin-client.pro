@@ -11,8 +11,7 @@
 -injars ../dist/lib/narya-base.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/narya-distrib.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/nenya-rsrc.jar(!META-INF/*,!**/tools/**,!**/server/**)
--injars ../dist/lib/vilya-parlor.jar(**/parlor/util/**,**/ezgame/data/EZGameConfig.class,
-    **/parlor/game/data/GameConfig.class)
+-injars ../dist/lib/vilya-parlor.jar(**/parlor/util/**)
 -injars ../dist/lib/vilya-stats.jar(!META-INF/*,!**/tools/**,!**/persist/**)
 -injars ../dist/lib/vilya-whirled.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/IsSerializable.class)
@@ -20,7 +19,6 @@
     !**/*UnitTest.class,rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
     **/msoy/world/data/WorldMemberInfo.class,**/msoy/item/data/all/**,
     **/msoy/admin/data/**,**/msoy/admin/client/**,**/msoy/admin/util/**,
-    !**/msoy/game/data/MsoyMatchConfig.class,**/msoy/game/data/*Config.class,
     **/msoy/game/data/GameMemberInfo.class,**/msoy/game/data/GameSummary.class,
     **/msoy/world/data/WorldOccupantInfo.class)
 
