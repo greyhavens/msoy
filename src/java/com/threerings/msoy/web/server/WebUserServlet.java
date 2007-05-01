@@ -70,7 +70,6 @@ public class WebUserServlet extends MsoyServiceServlet
         if (invite != null) {
             try {
                 MsoyServer.memberRepo.linkInvite(invite, newAccount);
-                // TODO: make friends out of these people
             } catch (PersistenceException pe) {
                 log.log(Level.WARNING, "linking invites failed [inviteId=" + invite.inviteId + 
                     ", memberId=" + newAccount.memberId + "]", pe);

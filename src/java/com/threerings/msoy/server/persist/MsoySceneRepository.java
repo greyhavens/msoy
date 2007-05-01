@@ -672,6 +672,18 @@ public class MsoySceneRepository extends SimpleRepository
     }
 
     /**
+     * Creates a new blank room pointing to the common area.
+     *
+     * @return the scene id of the newly created room.
+     */
+    public int createBlankRoom (byte ownerType, int ownerId, String roomName)
+        throws PersistenceException
+    {
+        return createBlankRoom(ownerType, ownerId, roomName, null);
+    }
+
+
+    /**
      * Create a new blank room for the specified member.
      *
      * @return the scene id of the newly created room.
@@ -692,7 +704,7 @@ public class MsoySceneRepository extends SimpleRepository
         f.loc = new MsoyLocation(1, 0, 0.5, 0);
         f.scaleX = 1.4f;
         f.actionType = FurniData.ACTION_PORTAL;
-        f.actionData = portalAction;
+        f.actionData = portalAction == null ? "1:A Common Room" : portalAction;
         model.addFurni(f);
 
         return executeUpdate(new Operation<Integer>() {

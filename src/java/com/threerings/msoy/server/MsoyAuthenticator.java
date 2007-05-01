@@ -437,7 +437,7 @@ public class MsoyAuthenticator extends Authenticator
         MemberRecord mrec = new MemberRecord();
         mrec.accountName = account.accountName;
         mrec.name = displayName;
-        String portalAction = "1:A Common Area";
+        String portalAction = null;
         if (inviterId != 0) {
             mrec.invitingFriendId = inviterId;
             try {
@@ -455,9 +455,8 @@ public class MsoyAuthenticator extends Authenticator
         mrec.setFlag(MemberRecord.ADMIN_FLAG, account.tokens.isAdmin());
 
         // create a blank room for them, store it
-        mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(
-            MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, /* TODO: */ mrec.name + "'s room",
-            portalAction);
+        mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER, 
+            mrec.memberId, /* TODO: */ mrec.name + "'s room", portalAction);
         MsoyServer.memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 
         return mrec;

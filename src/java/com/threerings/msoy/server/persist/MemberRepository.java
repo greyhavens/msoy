@@ -548,7 +548,7 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Update the invitation indicated with the new memberId.
+     * Update the invitation indicated with the new memberId, and make friends of these people.
      */
     public void linkInvite (Invitation invite, MemberRecord member)
         throws PersistenceException
