@@ -230,9 +230,11 @@ public class RoomView extends AbstractRoomView
         var ident :ItemIdent = sprite.getItemIdent();
         if (ident != null) {
             var kind :String = Msgs.GENERAL.get(sprite.getDesc());
-            menuItems.push(MenuUtil.createControllerMenuItem(
-                Msgs.GENERAL.get("b.view_item", kind),
-                MsoyController.VIEW_ITEM, ident));
+            if (ident.type >= 0) { // -1 is used for the default avatar, etc.
+                menuItems.push(MenuUtil.createControllerMenuItem(
+                                   Msgs.GENERAL.get("b.view_item", kind),
+                                   MsoyController.VIEW_ITEM, ident));
+            }
 
             // TEMP: restrict blocking to members only, for now.
             if (_ctx.getMemberObject().tokens.isSupport() && sprite.isBlockable()) {
