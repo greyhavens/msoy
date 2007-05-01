@@ -163,13 +163,13 @@ public class SwiftlyEditor extends PlacePanel
             public void requestProcessed () {
                 SwiftlyDocument doc = _roomObj.getDocument(pathElement);
                 if (doc == null) {
-                    showErrorMessage(_msgs.get("e.load_document_failed"));
+                    _ctx.showErrorMessage(_msgs.get("e.load_document_failed"));
                 } else {
                     doc.loadInEditor(SwiftlyEditor.this);
                 }
             }
             public void requestFailed (String reason) {
-                showErrorMessage(_msgs.xlate(reason));
+                _ctx.showErrorMessage(_msgs.xlate(reason));
             }
         });
     }
@@ -216,22 +216,6 @@ public class SwiftlyEditor extends PlacePanel
         if (comp instanceof ChangeListener) {
             _roomObj.removeListener((ChangeListener)comp);
         }
-    }
-
-    /**
-     * See {@link Console} for documentation.
-     */
-    public void consoleMessage (String message)
-    {
-        _console.consoleMessage(message);
-    }
-
-    /**
-     * See {@link Console} for documentation.
-     */
-    public void consoleErrorMessage (String message)
-    {
-        _console.errorMessage(message);
     }
 
     public AbstractAction createCloseCurrentTabAction ()
@@ -323,15 +307,6 @@ public class SwiftlyEditor extends PlacePanel
     }
 
     /**
-     * Shows an error message to the user using the console.
-     */
-    public void showErrorMessage (String message)
-    {
-        JOptionPane.showInternalMessageDialog(
-            this, message, _msgs.get("m.dialog.error.title"), JOptionPane.ERROR_MESSAGE);
-    }
-
-    /**
      * Shows a modal, internal frame dialog asking for user confirmation.
      * Returns true if the user clicked Yes, false if they clicked No.
      */
@@ -379,10 +354,10 @@ public class SwiftlyEditor extends PlacePanel
     public void attributeChanged (AttributeChangedEvent event)
     {
         if (event.getName().equals(ProjectRoomObject.CONSOLE_OUT)) {
-            consoleMessage(_msgs.xlate(_roomObj.consoleOut));
+            _console.consoleMessage(_msgs.xlate(_roomObj.consoleOut));
 
         } else if (event.getName().equals(ProjectRoomObject.CONSOLE_ERR)) {
-            consoleErrorMessage(_msgs.xlate(_roomObj.consoleErr));
+            _console.errorMessage(_msgs.xlate(_roomObj.consoleErr));
 
         } else if (event.getName().equals(ProjectRoomObject.RESULT)) {
             displayBuildResult();
@@ -482,7 +457,7 @@ public class SwiftlyEditor extends PlacePanel
             FileOutputStream ostream = new FileOutputStream(out);
             IOUtils.copy(url.openStream(), ostream);
             ostream.close();
-            consoleMessage(_msgs.get("m.result_exported", out.getPath()));
+            _ctx.showInfoMessage(_msgs.get("m.result_exported", out.getPath()));
 
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed to save build results [to=" + out + "].", e);
@@ -497,9 +472,9 @@ public class SwiftlyEditor extends PlacePanel
         for (CompilerOutput output : _roomObj.result.getOutput()) {
             FlexCompilerOutput flexOut = (FlexCompilerOutput)output;
             if (didSucceed) {
-                consoleMessage(flexOut.toString());
+                _console.consoleMessage(flexOut.toString());
             } else {
-                consoleErrorMessage(flexOut.toString());
+                _console.errorMessage(flexOut.toString());
             }
         }
     }

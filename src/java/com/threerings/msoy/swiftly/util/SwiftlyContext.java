@@ -8,6 +8,7 @@ import java.applet.AppletContext;
 import com.threerings.crowd.util.CrowdContext;
 import com.threerings.util.MessageManager;
 
+import com.threerings.msoy.swiftly.client.PassiveNotifier;
 import com.threerings.msoy.swiftly.client.SwiftlyEditor;
 
 /**
@@ -25,4 +26,10 @@ public interface SwiftlyContext extends CrowdContext
 
     /** Returns the applet context */
     public AppletContext getAppletContext ();
+
+    /** Displays an info level message to the user. */
+    public void showInfoMessage (String message);
+
+    /** Displays an error level message to the user. */
+    public void showErrorMessage (String message);
 }

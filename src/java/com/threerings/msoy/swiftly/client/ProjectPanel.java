@@ -163,7 +163,7 @@ public class ProjectPanel extends JPanel
                 // _treeModel.updateNodeName(element, path);
             }
             public void requestFailed (String reason) {
-                _editor.showErrorMessage(_msgs.get(reason));
+                _ctx.showErrorMessage(_msgs.get(reason));
             }
         });
     }
@@ -227,7 +227,7 @@ public class ProjectPanel extends JPanel
 
                     // display an error to the user if the file being uploaded is too large
                     if (file.length() > MAX_UPLOAD * ONE_MEG) {
-                        _editor.showErrorMessage(_msgs.get("e.upload_too_large",
+                        _ctx.showErrorMessage(_msgs.get("e.upload_too_large",
                             String.valueOf(MAX_UPLOAD)));
                         return;
                     }
@@ -241,7 +241,7 @@ public class ProjectPanel extends JPanel
                             TaskMaster.invokeTask(UPLOAD_TASK, task, new UploadTaskObserver());
                         }
                         public void requestFailed (String reason) {
-                            _editor.showErrorMessage(_msgs.get(reason));
+                            _ctx.showErrorMessage(_msgs.get(reason));
                         }
                     });
                 }
@@ -291,7 +291,7 @@ public class ProjectPanel extends JPanel
 
             // report an error if this path already exists
             if (_roomObj.pathElementExists(fileName, parentElement)) {
-                _editor.showErrorMessage(_msgs.get("e.document_already_exists"));
+                _ctx.showErrorMessage(_msgs.get("e.document_already_exists"));
                 return;
             }
 
@@ -299,7 +299,7 @@ public class ProjectPanel extends JPanel
                 new InvocationListener () {
                 public void requestFailed (String reason)
                 {
-                    _editor.showErrorMessage(_msgs.get(reason));
+                    _ctx.showErrorMessage(_msgs.get(reason));
                 }
             });
         }
@@ -327,13 +327,13 @@ public class ProjectPanel extends JPanel
         _roomObj.service.deletePathElement(_ctx.getClient(), element.elementId, 
             new ConfirmListener () {
             public void requestProcessed () {
-                _editor.consoleMessage(_msgs.get("m.element_deleted", element.getName()));
+                _ctx.showInfoMessage(_msgs.get("m.element_deleted", element.getName()));
                 // disable the toolbar and unset the selected node
                 setToolbarEnabled(false);
                 _selectedNode = null;
             }
             public void requestFailed (String reason) {
-                _editor.showErrorMessage(_msgs.get(reason));
+                _ctx.showErrorMessage(_msgs.get(reason));
             }
         });
     }
@@ -492,18 +492,18 @@ public class ProjectPanel extends JPanel
         // from interface TaskObserver
         public void taskFailed(String name, Throwable exception)
         {
-            _editor.showErrorMessage(_msgs.get("e.upload_failed"));
+            _ctx.showErrorMessage(_msgs.get("e.upload_failed"));
         }
 
         public void requestProcessed ()
         {
-            _editor.consoleMessage(_msgs.get("m.file_upload_complete"));
+            _ctx.showInfoMessage(_msgs.get("m.file_upload_complete"));
             _uploadFileAction.setEnabled(true);
         }
 
         public void requestFailed (String reason)
         {
-            _editor.showErrorMessage(_msgs.get(reason));
+            _ctx.showErrorMessage(_msgs.get(reason));
             _uploadFileAction.setEnabled(true);
         }
     }

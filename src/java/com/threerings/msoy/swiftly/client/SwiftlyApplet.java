@@ -62,6 +62,7 @@ public class SwiftlyApplet extends JApplet
         _occdtr = new OccupantDirector(_ctx);
         _chatdtr = new ChatDirector(_ctx, _msgmgr, "chat");
         _appletContext = getAppletContext();
+        _notifier = new GrowlStyleNotifier(getRootPane().getLayeredPane());
 
         // Get the supplied projectId
         _projectId = Integer.parseInt(getParameter("projectId"));
@@ -272,6 +273,13 @@ public class SwiftlyApplet extends JApplet
             MessageBundle mb = getMessageManager().getBundle(bundle);
             return (mb == null) ? message : mb.xlate(message);
         }
+
+        public void showInfoMessage (String message) {
+            _notifier.showInfo(message);
+        }
+        public void showErrorMessage (String message) {
+            _notifier.showError(message);
+        }
     }
 
     protected SwiftlyContext _ctx = new SwiftlyContextImpl();
@@ -284,6 +292,7 @@ public class SwiftlyApplet extends JApplet
     protected ChatDirector _chatdtr;
     protected SwiftlyEditor _editor;
     protected AppletContext _appletContext;
+    protected PassiveNotifier _notifier;
 
     protected int _projectId;
 
