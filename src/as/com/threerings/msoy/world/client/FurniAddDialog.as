@@ -74,12 +74,6 @@ public class FurniAddDialog extends FloatingPanel
             _roomView.layout.pointToFurniLocation(event.stageX, event.stageY);
 
         addFurni(item, cloc.loc);
-
-        /*
-        var svc :PetService = (_ctx.getClient().requireService(PetService) as PetService);
-        svc.callPet(_ctx.getClient(), item.itemId,
-        new ReportingListener(_ctx, "general", null, "m.pet_called"));
-        */
     }
 
     /**

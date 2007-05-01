@@ -304,7 +304,6 @@ public class RoomController extends SceneController
      */
     public function handleEditFurni (furniSprite :FurniSprite) :void
     {
-        trace("Edit " + furniSprite + "!");
         if (_furniEditor.getMode() == FurniEditController.EDIT_OFF) {
             _roomObj.roomService.editRoom(
                 _mctx.getClient(), new ResultWrapper(
@@ -347,7 +346,9 @@ public class RoomController extends SceneController
         var furni :FurniSprite = sprite as FurniSprite;
         var menuItems :Array = [];
         menuItems.push({ label: Msgs.GENERAL.get("b.edit_furni"),
-                         callback: handleEditFurni, arg: furni });
+                    callback: handleEditFurni, arg: furni });
+        menuItems.push({ label: Msgs.GENERAL.get("b.remove_furni"),
+                    callback: removeFurni, arg: furni });
 
         // TEMP: doors can also be edited from the right-click menu
         var furnidata :FurniData = furni.getFurniData();
@@ -394,14 +395,6 @@ public class RoomController extends SceneController
         }
     }
 
-
-    protected function addFurni () :void
-    {
-        if (_mctx.getTopPanel().getPlaceView() is RoomView) {
-            new FurniAddDialog(_mctx, _roomView, _scene);
-        }
-    }
-    
     /**
      * Handles AVATAR_CLICKED.
      */
@@ -420,7 +413,8 @@ public class RoomController extends SceneController
             if (_mctx.worldProps.userControlsAvatar) {
                 // FIXME ROBERT
                 // this will be moved elsewhere, once we have a proper furni move/edit UI.
-                menuItems.push({ label: Msgs.GENERAL.get("t.add_furni"), callback: addFurni });
+                menuItems.push({ label: Msgs.GENERAL.get("t.add_furni"),
+                                 callback: addNewFurni } );
                 
                 // create a menu for clicking on ourselves
                 var actions :Array = avatar.getAvatarActions();
@@ -567,6 +561,24 @@ public class RoomController extends SceneController
         return null;
     }
 
+    /**
+     * Adds a new piece of furni.
+     */
+    protected function addNewFurni () :void
+    {
+        if (_mctx.getTopPanel().getPlaceView() is RoomView) {
+            new FurniAddDialog(_mctx, _roomView, _scene);
+        }
+    }
+
+    /**
+     * Removes the selected piece of furni.
+     */
+    protected function removeFurni (furniSprite :FurniSprite) :void
+    {
+        sendFurniUpdate([ furniSprite.getFurniData() ], null);
+    }
+    
     /**
      * Begin editing a piece of furni. 
      */
