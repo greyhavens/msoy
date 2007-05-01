@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.Invitation;
 
 import client.util.BorderedDialog;
 
@@ -27,9 +28,10 @@ import client.util.BorderedDialog;
  */
 public class CreateAccountDialog extends BorderedDialog
 {
-    public CreateAccountDialog (StatusPanel parent)
+    public CreateAccountDialog (StatusPanel parent, Invitation invite)
     {
         _parent = parent;
+        _invite = invite;
         _header.add(createTitleLabel(CShell.cmsgs.createTitle(), null));
         _footer.add(_go = new Button(CShell.cmsgs.createCreate(), new ClickListener() {
             public void onClick (Widget sender) {
@@ -52,6 +54,10 @@ public class CreateAccountDialog extends BorderedDialog
                 _password.setFocus(true);
             }
         }));
+        if (invite != null) {
+            // provide the invitation email as the default
+            _email.setText(invite.inviteeEmail);
+        }
         _email.addKeyboardListener(_validator);
         contents.getFlexCellFormatter().setColSpan(row, 0, 2);
         contents.getFlexCellFormatter().setStyleName(row, 0, "Tip");
@@ -137,17 +143,17 @@ public class CreateAccountDialog extends BorderedDialog
         String email = _email.getText().trim(), name = _name.getText().trim();
         String password = _password.getText().trim();
         _status.setText(CShell.cmsgs.creatingAccount());
-        CShell.usersvc.register(
-            DeploymentConfig.version, email, md5hex(password), name, 1, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                hide();
-                // TODO: display some sort of welcome to whirled business
-                _parent.didLogon((WebCreds)result);
-            }
-            public void onFailure (Throwable caught) {
-                _status.setText(CShell.serverError(caught));
-            }
-        });
+        CShell.usersvc.register(DeploymentConfig.version, email, md5hex(password), name, 1, _invite,
+            new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    hide();
+                    // TODO: display some sort of welcome to whirled business
+                    _parent.didLogon((WebCreds)result);
+                }
+                public void onFailure (Throwable caught) {
+                    _status.setText(CShell.serverError(caught));
+                }
+            });
     }
 
     protected native String md5hex (String text) /*-{
@@ -166,6 +172,7 @@ public class CreateAccountDialog extends BorderedDialog
     };
 
     protected StatusPanel _parent;
+    protected Invitation _invite;
     protected TextBox _email, _name;
     protected PasswordTextBox _password, _confirm;
     protected Button _go;

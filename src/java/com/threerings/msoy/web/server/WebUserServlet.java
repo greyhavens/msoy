@@ -19,6 +19,7 @@ import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.Invitation;
 
 import static com.threerings.msoy.Log.log;
 
@@ -41,14 +42,43 @@ public class WebUserServlet extends MsoyServiceServlet
 
     // from interface WebUserService
     public WebCreds register (long clientVersion, String username, String password,
-                              String displayName, int expireDays)
+                              String displayName, int expireDays, Invitation invite)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);
+        boolean ignoreRestrict = false;
+        if (invite != null) {
+            try {
+                if (MsoyServer.memberRepo.inviteAvailable(invite.inviteId)) {
+                    ignoreRestrict = true;
+                } else {
+                    // this is likely due to an attempt to gain access through a trying random 
+                    // invites.
+                    throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+                }
+            } catch (PersistenceException pe) {
+                log.log(Level.WARNING, "checking invite available failed [inviteId=" +
+                    invite.inviteId + "]", pe);
+                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+            }
+        }
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
         MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
-        return startSession(auth.createAccount(username, password, displayName, false), expireDays);
+        MemberRecord newAccount = auth.createAccount(username, password, displayName, 
+            ignoreRestrict);
+        if (invite != null) {
+            try {
+                MsoyServer.memberRepo.linkInvite(invite, newAccount);
+                // TODO: make friends out of these people, and have the new user's door point to 
+                // their friend's room
+            } catch (PersistenceException pe) {
+                log.log(Level.WARNING, "linking invites failed [inviteId=" + invite.inviteId + 
+                    ", memberId=" + newAccount.memberId + "]", pe);
+                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+            }
+        }
+        return startSession(newAccount, expireDays);
     }
 
     // from interface WebUserService

@@ -126,7 +126,7 @@ public class StatusPanel extends FlexTable
             setHTML(0, 1, "&nbsp;");
             setWidget(0, 2, MsoyUI.createActionLabel("Create an account!", new ClickListener() {
                 public void onClick (Widget sender) {
-                    new CreateAccountDialog(StatusPanel.this).show();
+                    new CreateAccountDialog(StatusPanel.this, null).show();
                 }
             }));
 //         } else {

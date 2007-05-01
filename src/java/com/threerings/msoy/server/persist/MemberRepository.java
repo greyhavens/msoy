@@ -48,6 +48,8 @@ import com.samskivert.jdbc.depot.operator.SQLOperator;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.web.data.Invitation;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -533,6 +535,32 @@ public class MemberRepository extends DepotRepository
         inviterRec.invitesGranted--;
         inviterRec.invitesSent++;
         update(inviterRec);
+    }
+
+    /**
+     * Check if the invitation is available for use, or has been claimed already.
+     */
+    public boolean inviteAvailable (String inviteId)
+        throws PersistenceException
+    {
+        return (load(InvitationRecord.class, new Where(InvitationRecord.INVITE_ID, inviteId))).
+            inviteeId == 0;
+    }
+
+    /**
+     * Update the invitation indicated with the new memberId, and update the member indicated with
+     * the inviter indicated in the invite.
+     */
+    public void linkInvite (Invitation invite, MemberRecord member)
+        throws PersistenceException
+    {
+        InvitationRecord invRec = load(InvitationRecord.class, InvitationRecord.getKey(
+            invite.inviteeEmail, invite.inviter.getMemberId()));
+        invRec.inviteeId = member.memberId;
+        update(invRec, InvitationRecord.INVITEE_ID);
+
+        member.invitingFriendId = invite.inviter.getMemberId();
+        update(member, MemberRecord.INVITING_FRIEND_ID);
     }
 
     /**

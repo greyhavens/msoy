@@ -131,7 +131,7 @@ public class Application
 
             CShell.membersvc.getInvitation(args, new AsyncCallback () {
                 public void onSuccess (Object result) {
-                    (new InvitationDialog((Invitation)result)).show();
+                    (new InvitationDialog(_status, (Invitation)result)).show();
                 }
                 public void onFailure (Throwable cause) {
                     (new AlertPopup(CShell.serverError(cause))).alert();

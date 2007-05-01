@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.Invitation;
 
 /**
  * Defines general user services available to the GWT/AJAX web client.
@@ -31,7 +32,7 @@ public interface WebUserService extends RemoteService
      * subsequent remote service calls that require authentication.
      */
     public WebCreds register (long clientVersion, String email, String password, String displayName,
-                              int expireDays)
+                              int expireDays, Invitation invite)
         throws ServiceException;
 
     /**

@@ -16,7 +16,7 @@ import client.util.BorderedDialog;
 
 public class InvitationDialog extends BorderedDialog 
 {
-    public InvitationDialog (Invitation invite) 
+    public InvitationDialog (final StatusPanel status, final Invitation invite) 
     {
         _header.add(createTitleLabel(CShell.cmsgs.inviteTitle(), null));
 
@@ -40,8 +40,8 @@ public class InvitationDialog extends BorderedDialog
 
         _footer.add(new Button(CShell.cmsgs.inviteAccept(), new ClickListener() {
             public void onClick (Widget widget) {
-                // TODO: Display CreateAccountDialog w/ invitation info
                 InvitationDialog.this.hide();
+                (new CreateAccountDialog(status, invite)).show();
             }
         }));
 
