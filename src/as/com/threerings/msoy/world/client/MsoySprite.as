@@ -272,7 +272,7 @@ public class MsoySprite extends MediaContainer
      */
     public function mouseClick (event :MouseEvent) :void
     {
-        if (event.shiftKey) {
+        if ((parent as RoomView).getRoomController().isShiftDown()) {
             postShiftClickAction();
         } else {
             postClickAction();

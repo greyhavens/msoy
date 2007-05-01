@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
@@ -73,6 +76,9 @@ import com.threerings.msoy.world.data.WorldPetInfo;
 
 import com.threerings.msoy.chat.client.ReportingListener;
 
+/**
+ * Manages the various interactions that take place in a room scene.
+ */
 public class RoomController extends SceneController
 {
     private const log :Log = Log.getLog(RoomController);
@@ -97,6 +103,14 @@ public class RoomController extends SceneController
     {
         // every sprite uses our own OID as the instanceid.
         return _mctx.getMemberObject().getOid();
+    }
+
+    /**
+     * Returns true if the shift key is currently held down, false if not.
+     */
+    public function isShiftDown () :Boolean
+    {
+        return _shiftDown;
     }
 
     /**
@@ -329,9 +343,9 @@ public class RoomController extends SceneController
         var menuItems :Array = [];
         var kind :String = Msgs.GENERAL.get(sprite.getDesc());
 
-        menuItems.push({ label: Msgs.GENERAL.get("b.view_item", kind),
-                         command: MsoyController.VIEW_ITEM,
-                         arg: ident });
+//         menuItems.push({ label: Msgs.GENERAL.get("b.view_item", kind),
+//                          command: MsoyController.VIEW_ITEM,
+//                          arg: ident });
 
         // furni sprites can be moved around
         if (sprite is FurniSprite) {
@@ -640,8 +654,6 @@ public class RoomController extends SceneController
             _music.play();
         }
     }
-
-
     
     /**
      * Handle ENTER_FRAME and see if the mouse is now over anything.
@@ -659,13 +671,13 @@ public class RoomController extends SceneController
 
         // if shift is being held down, we're looking for locations only, so
         // skip looking for hitSprites.
-        var hit :* = (_shiftPressed == null) ? getHitSprite(sx, sy) : null
+        var hit :* = (_shiftDownSpot == null) ? getHitSprite(sx, sy) : null
         var hitter :MsoySprite = (hit as MsoySprite);
         // ensure we hit no pop-ups
         if (hit !== undefined) {
             if (hitter == null) {
                 var cloc :ClickLocation = _roomView.layout.pointToAvatarLocation(
-                    sx, sy, _shiftPressed, RoomMetrics.N_UP);
+                    sx, sy, _shiftDownSpot, RoomMetrics.N_UP);
                 
                 if (cloc != null && _mctx.worldProps.userControlsAvatar) {
                     addAvatarYOffset(cloc);
@@ -765,7 +777,7 @@ public class RoomController extends SceneController
     {
         // if shift is being held down, we're looking for locations only, so
         // skip looking for hitSprites.
-        var hit :* = (_shiftPressed == null) ? getHitSprite(event.stageX, event.stageY) : null;
+        var hit :* = (_shiftDownSpot == null) ? getHitSprite(event.stageX, event.stageY) : null;
         if (hit === undefined) {
             return;
         }
@@ -783,7 +795,7 @@ public class RoomController extends SceneController
 
             // calculate where the location is
             var cloc :ClickLocation = _roomView.layout.pointToAvatarLocation(
-                event.stageX, event.stageY, _shiftPressed, RoomMetrics.N_UP);
+                event.stageX, event.stageY, _shiftDownSpot, RoomMetrics.N_UP);
             
             if (cloc != null &&
                 cloc.loc.z >= 0) { // disallow clicking in "front" of the scene when minimized
@@ -817,14 +829,15 @@ public class RoomController extends SceneController
                 return;
 
             case Keyboard.SHIFT:
+                _shiftDown = keyDown;
                 if (keyDown) {
-                    if (_walkTarget.visible && (_shiftPressed == null)) {
+                    if (_walkTarget.visible && (_shiftDownSpot == null)) {
                         // record the y position at this
-                        _shiftPressed = new Point(_roomView.stage.mouseX, _roomView.stage.mouseY);
+                        _shiftDownSpot = new Point(_roomView.stage.mouseX, _roomView.stage.mouseY);
                     }
 
                 } else {
-                    _shiftPressed = null;
+                    _shiftDownSpot = null;
                 }
             }
 
@@ -852,7 +865,7 @@ public class RoomController extends SceneController
      */
     protected function addAvatarYOffset (cloc :ClickLocation) :void
     {
-        if (_shiftPressed != null) {
+        if (_shiftDownSpot != null) {
             return;
         }
         
@@ -1064,8 +1077,11 @@ public class RoomController extends SceneController
 
     protected var _hoverTip :IToolTip;
 
+    /** True if the shift key is currently being held down, false if not. */
+    protected var _shiftDown :Boolean;
+
     /** If shift is being held down, the coordinates at which it was pressed. */
-    protected var _shiftPressed :Point;
+    protected var _shiftDownSpot :Point;
 
     /** The music currently playing in the scene, which may or may not be
      * background music. */
