@@ -563,6 +563,21 @@ public class MemberRepository extends DepotRepository
         return load(InvitationRecord.class, InvitationRecord.getKey(email, memberId));
     }
 
+    /**
+     * returns the InvitationRecord for the given inviteId.  If the record's viewed field is null,
+     * it will fill it in with the current time.
+     */
+    public InvitationRecord viewInvite (String inviteId) 
+        throws PersistenceException
+    {
+        InvitationRecord invRec = loadInvite(inviteId);
+        if (invRec.viewed == null) {
+            invRec.viewed = new Timestamp((new java.util.Date()).getTime());
+            update(invRec, InvitationRecord.VIEWED);
+        }
+        return invRec;
+    }
+
     @Entity
     @Computed
     protected static class FriendCount extends PersistentRecord

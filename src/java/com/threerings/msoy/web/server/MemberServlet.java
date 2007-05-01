@@ -297,8 +297,8 @@ public class MemberServlet extends MsoyServiceServlet
         Invitation inv = new Invitation();
 
         try {
-            InvitationRecord invRec = MsoyServer.memberRepo.loadInvite(inviteId);
-            if (invRec == null) {
+            InvitationRecord invRec = MsoyServer.memberRepo.viewInvite(inviteId);
+            if (invRec == null || invRec.inviteeId != 0) {
                 // probably someone trying to sneak in
                 throw new ServiceException(ServiceException.INTERNAL_ERROR);
             }
