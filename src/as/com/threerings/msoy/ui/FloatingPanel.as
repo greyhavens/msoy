@@ -142,7 +142,7 @@ public class FloatingPanel extends TitleWindow
     protected function createButton (buttonId :int) :Button
     {
         var btn :CommandButton = new CommandButton();
-        btn.setFunction(buttonClicked, buttonId);
+        btn.setCallback(buttonClicked, buttonId);
 
         switch (buttonId) {
         case CANCEL_BUTTON:

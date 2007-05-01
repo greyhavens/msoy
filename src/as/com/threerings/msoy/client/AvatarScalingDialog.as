@@ -50,7 +50,7 @@ public class AvatarScalingDialog extends FloatingPanel
 
         _reset = new CommandButton();
         _reset.label = Msgs.GENERAL.get("b.reset_scale");
-        _reset.setFunction(function () :void {
+        _reset.setCallback(function () :void {
             _slider.value = 1;
         });
 

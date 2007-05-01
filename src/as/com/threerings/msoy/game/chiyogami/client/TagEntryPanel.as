@@ -41,7 +41,7 @@ public class TagEntryPanel extends HBox
         _btn = new CommandButton();
         _btn.label = Msgs.GENERAL.get("b.ok");
         _btn.enabled = false;
-        _btn.setFunction(submitTags);
+        _btn.setCallback(submitTags);
         addChild(_btn);
     }
 

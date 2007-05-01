@@ -72,7 +72,7 @@ public class TableCreationPanel extends HBox
         gconf.setGameConfig(config);
 
         _createBtn = new CommandButton();
-        _createBtn.setFunction(function () :void {
+        _createBtn.setCallback(function () :void {
             CommandEvent.dispatch(_panel, LobbyController.SUBMIT_TABLE,
                 [ tconfigger.getTableConfig(), gconfigger.getGameConfig() ]);
         });

@@ -54,7 +54,7 @@ public class ChatChannelPanel extends VBox
         _input.addEventListener(FlexEvent.ENTER, sendChat, false, 0, true);
         var send :CommandButton = new CommandButton();
         send.label = Msgs.CHAT.get("b.send");
-        send.setFunction(sendChat);
+        send.setCallback(sendChat);
         send.height = ControlBar.HEIGHT-4;
         _inputBox.addChild(send);
 
