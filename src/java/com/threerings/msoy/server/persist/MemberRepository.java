@@ -557,6 +557,8 @@ public class MemberRepository extends DepotRepository
             invite.inviteeEmail, invite.inviter.getMemberId()));
         invRec.inviteeId = member.memberId;
         update(invRec, InvitationRecord.INVITEE_ID);
+
+        inviteFriend(invite.inviter.getMemberId(), member.memberId);
     }
 
     /**
