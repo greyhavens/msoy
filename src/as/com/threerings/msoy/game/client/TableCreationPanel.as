@@ -82,8 +82,12 @@ public class TableCreationPanel extends HBox
         gconf.setGameConfig(config);
 
         _createBtn = new CommandButton();
-        _createBtn.setCallback(_panel.controller.handleSubmitTable,
-            [ tconfigger.getTableConfig(), gconfigger.getGameConfig() ]);
+        // We need to have the button go through this function so that
+        // the TableConfig and GameConfig are created when the button is pressed.
+        _createBtn.setCallback(function () :void {
+            _panel.controller.handleSubmitTable(
+                tconfigger.getTableConfig(), gconfigger.getGameConfig());
+        });
         _createBtn.label = Msgs.GAME.get("b.create");
         var btnBox :HBox = new HBox();
         btnBox.percentWidth = 100;
