@@ -56,6 +56,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
 
+import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.Prefs;
@@ -87,7 +88,8 @@ import com.threerings.msoy.world.data.SceneAttrsUpdate;
  * Displays a room or scene in the virtual world.
  */
 public class RoomView extends AbstractRoomView
-    implements SetListener, MessageListener, ChatDisplay, ChatInfoProvider, LoadingWatcher
+    implements ContextMenuProvider, SetListener, MessageListener,
+               ChatDisplay, ChatInfoProvider, LoadingWatcher
 {
     /** The chat overlay. */
     public var chatOverlay :ComicOverlay;
@@ -207,6 +209,39 @@ public class RoomView extends AbstractRoomView
     public function dimFurni (setDim :Boolean) :void
     {
         setActive(_furni, !setDim);
+    }
+
+    // from ContextMenuProvider
+    public function populateContextMenu (menuItems :Array) :void
+    {
+        var hit :* = _ctrl.getHitSprite(stage.mouseX, stage.mouseY, true);
+        if (hit === undefined) {
+            return;
+        }
+        var sprite :MsoySprite = (hit as MsoySprite);
+        if (sprite == null) {
+            if (_bg == null) {
+                return;
+            } else {
+                sprite = _bg;
+            }
+        }
+
+        var ident :ItemIdent = sprite.getItemIdent();
+        if (ident != null) {
+            var kind :String = Msgs.GENERAL.get(sprite.getDesc());
+            menuItems.push(MenuUtil.createControllerMenuItem(
+                Msgs.GENERAL.get("b.view_item", kind),
+                MsoyController.VIEW_ITEM, ident));
+
+            // TEMP: restrict blocking to members only, for now.
+            if (_ctx.getMemberObject().tokens.isSupport() && sprite.isBlockable()) {
+                var isBlocked :Boolean = sprite.isBlocked();
+                menuItems.push(MenuUtil.createControllerMenuItem(
+                    Msgs.GENERAL.get((isBlocked ? "b.unbleep_item" : "b.bleep_item"), kind),
+                    sprite.toggleBlocked));
+            }
+        }
     }
 
     /**

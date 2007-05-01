@@ -87,7 +87,7 @@ public class RoomController extends SceneController
     public static const EDIT_FURNI :String = "EditFurni";
     public static const EDIT_DOOR :String = "EditDoor";
     
-    public static const SHIFT_CLICKED :String = "ShiftClicked";
+    public static const EDIT_CLICKED :String = "EditClicked";
     public static const FURNI_CLICKED :String = "FurniClicked";
     public static const AVATAR_CLICKED :String = "AvatarClicked";
     public static const PET_CLICKED :String = "PetClicked";
@@ -106,10 +106,12 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Returns true if the shift key is currently held down, false if not.
+     * Returns true if we are in edit mode, false if not.
      */
-    public function isShiftDown () :Boolean
+    public function isEditMode () :Boolean
     {
+        // currently holding shift down puts us in edit mode, soon this will be based on whether or
+        // not the hammer has been clicked
         return _shiftDown;
     }
 
@@ -331,42 +333,25 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Handles SHIFT_CLICKED.
+     * Handles EDIT_CLICKED.
      */
-    public function handleShiftClicked (sprite :MsoySprite) :void
+    public function handleEditClicked (sprite :MsoySprite) :void
     {
         var ident :ItemIdent = sprite.getItemIdent();
-        if (ident == null) {
-            return;
+        if (ident == null || !(sprite is FurniSprite)) {
+            return; // only furni sprites can be edited
         }
 
+        var furni :FurniSprite = sprite as FurniSprite;
         var menuItems :Array = [];
-        var kind :String = Msgs.GENERAL.get(sprite.getDesc());
+        menuItems.push({ label: Msgs.GENERAL.get("b.edit_furni"),
+                         callback: handleEditFurni, arg: furni });
 
-//         menuItems.push({ label: Msgs.GENERAL.get("b.view_item", kind),
-//                          command: MsoyController.VIEW_ITEM,
-//                          arg: ident });
-
-        // furni sprites can be moved around
-        if (sprite is FurniSprite) {
-            var furni :FurniSprite = sprite as FurniSprite;
-            menuItems.push({ label: Msgs.GENERAL.get("b.edit_furni"),
-                             callback: handleEditFurni, arg: furni });
-
-            // TEMP: doors can also be edited from the right-click menu
-            var furnidata :FurniData = furni.getFurniData();
-            if (furnidata.actionType == FurniData.ACTION_PORTAL) {
-                menuItems.push({ label: Msgs.GENERAL.get("b.edit_door"),
-                                 callback: handleEditDoor, arg: furni });
-            }
-        }
-
-        // TEMP: restrict blocking to members only, for now.
-        if (_mctx.getMemberObject().tokens.isSupport() && sprite.isBlockable()) {
-            var isBlocked :Boolean = sprite.isBlocked();
-            var lkey :String = isBlocked ? "b.unbleep_item" : "b.bleep_item";
-            menuItems.push({ label: Msgs.GENERAL.get(lkey, kind),
-                             callback: sprite.toggleBlocked });
+        // TEMP: doors can also be edited from the right-click menu
+        var furnidata :FurniData = furni.getFurniData();
+        if (furnidata.actionType == FurniData.ACTION_PORTAL) {
+            menuItems.push({ label: Msgs.GENERAL.get("b.edit_door"),
+                             callback: handleEditDoor, arg: furni });
         }
 
         // pop up the menu where the mouse is

@@ -272,8 +272,8 @@ public class MsoySprite extends MediaContainer
      */
     public function mouseClick (event :MouseEvent) :void
     {
-        if ((parent as RoomView).getRoomController().isShiftDown()) {
-            postShiftClickAction();
+        if ((parent as RoomView).getRoomController().isEditMode()) {
+            CommandEvent.dispatch(this, RoomController.EDIT_CLICKED, this);
         } else {
             postClickAction();
         }
@@ -420,14 +420,6 @@ public class MsoySprite extends MediaContainer
     protected function postClickAction () :void
     {
         // nada
-    }
-
-    /**
-     * Post a command event when we're shift clicked.
-     */
-    protected function postShiftClickAction () :void
-    {
-        CommandEvent.dispatch(this, RoomController.SHIFT_CLICKED, this);
     }
 
     protected function configureMouseProperties () :void
