@@ -35,6 +35,8 @@ import com.threerings.whirled.client.SceneService.SceneMoveListener;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 
+import com.threerings.whirled.spot.data.SceneLocation;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.server.MsoyServer;
@@ -257,7 +259,7 @@ public class ChiyogamiManager extends GameManager
 
             default:
                 // move the boss randomly around the room
-                moveBody(_bossObj, Math.random(), Math.random());
+                moveBodyTo(_bossObj, Math.random(), Math.random());
                 break;
 
             case 4:
@@ -344,7 +346,7 @@ public class ChiyogamiManager extends GameManager
 
         // get the boss ready
         bossSpeak("Ok... it's a dance off!");
-        moveBody(_bossObj, .5, .5);
+        moveBody(_bossObj, .5, .5, 0);
         repositionAllPlayers(System.currentTimeMillis());
         updateBossState();
 
@@ -679,13 +681,37 @@ public class ChiyogamiManager extends GameManager
     }
 
     /**
-     * Move the specified body to the specified location, facing [ .5, 0, 0 ].
+     * Move the specified body to the specified location, facing [ .5, .5, 0 ].
      */
     protected void moveBody (BodyObject body, double x, double z)
     {
-        double angle = Math.atan2(.5 - x, z - .5);
-        int degrees = (360 + (int) Math.round(angle * 180 / Math.PI)) % 360;
-        moveBody(body, x, z, degrees);
+        moveBody(body, x, z, radiansToOrient(Math.atan2(.5 - z, .5 - x)));
+    }
+
+    /**
+     * Move the body to the specified position, facing in the direction
+     * that this new location lies from their previous location.
+     */
+    protected void moveBodyTo (BodyObject body, double x, double z)
+    {
+        SceneLocation sloc = (SceneLocation) _roomObj.occupantLocs.get(body.getOid());
+        if (sloc != null) {
+            MsoyLocation loc = (MsoyLocation) sloc.loc;
+            moveBody(body, x, z, radiansToOrient(Math.atan2(z - loc.z, x - loc.x)));
+
+        } else {
+            // what? fallback
+            moveBody(body, x, z);
+        }
+    }
+
+    /**
+     * Turn an angle in radians into a whirled orientation value, which is degrees with
+     * 0 facing forward.
+     */
+    protected int radiansToOrient (double radians)
+    {
+        return (360 + 90 + (int) Math.round(radians * 180 / Math.PI)) % 360;
     }
 
     /**
