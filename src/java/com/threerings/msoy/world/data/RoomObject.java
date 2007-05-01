@@ -39,8 +39,13 @@ public class RoomObject extends SpotSceneObject
     /** The message sent by the server to kick-off music playing. The music
      * should be played once and then disposed-of. No action
      * should be taken if the music was not loaded. 
-     * Format: [ url ]. */
+     * Format: [ url ], or no-args to stop music. */
     public static final String PLAY_MUSIC = "playMusic";
+
+    /** A message sent by each client to indicate that the music has
+     * finished playing.
+     * Format: [ url ]. */
+    public static final String MUSIC_ENDED = "musicEnded";
 
     /** Our room service marshaller. */
     public RoomMarshaller roomService;

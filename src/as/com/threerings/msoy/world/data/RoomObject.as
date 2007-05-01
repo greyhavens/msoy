@@ -44,6 +44,11 @@ public class RoomObject extends SpotSceneObject
      * Format: [ url ]. */
     public static const PLAY_MUSIC :String = "playMusic";
 
+    /** A message sent by each client to indicate that the music has
+     * finished playing.
+     * Format: [ url ]. */
+    public static const MUSIC_ENDED :String = "musicEnded";
+
     /** Our room service marshaller. */
     public var roomService :RoomMarshaller;
 

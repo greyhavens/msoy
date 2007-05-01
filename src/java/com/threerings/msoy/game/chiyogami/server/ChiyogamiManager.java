@@ -200,6 +200,7 @@ public class ChiyogamiManager extends GameManager
     {
         super.didShutdown();
 
+        _endBattle.cancel();
         removeAllEffects();
         clearPlayerStates();
         shutdownBoss();
@@ -276,7 +277,12 @@ public class ChiyogamiManager extends GameManager
         case ChiyogamiObject.POST_BATTLE:
             switch (_phaseCounter) {
             case 1:
-                bossSpeak("I think I sprained my pinky, I've got to go...");
+                if (_bossWon) {
+                    bossSpeak("Ah ha! You were no match for me! I'm so great!");
+
+                } else {
+                    bossSpeak("I think I sprained my pinky, I've got to go...");
+                }
                 break;
 
             case 2:
@@ -300,6 +306,22 @@ public class ChiyogamiManager extends GameManager
         _phaseCounter = 0;
     }
 
+    /**
+     * We can move to the pre-battle phase once we've picked all the assets
+     * for the upcoming battle.
+     */
+    protected void checkTransitionToPreBattle ()
+    {
+        if (!_gameObj.isActive() || !_musicPicked || (_bossObj == null) ||
+                !_roomObj.occupants.contains(_bossObj.getOid())) {
+            return;
+        }
+        setPhase(ChiyogamiObject.PRE_BATTLE);
+    }
+
+    /**
+     * Transition to the BATTLE phase.
+     */
     protected void startBattle ()
     {
         setPhase(ChiyogamiObject.BATTLE);
@@ -337,15 +359,38 @@ public class ChiyogamiManager extends GameManager
                 "chiyogami/FallBalls"),
             new MsoyLocation(.5, 0, 0, 0), RoomCodes.FOREGROUND_EFFECT_LAYER));
 
-
         _playerTags.clear(); // clear tags until next time
+
+        // and set up an interval to put the kibosh on things if it takes too long
+        _endBattle.schedule(MAX_SONG_LENGTH);
     }
 
+    /**
+     * Transition to the POST_BATTLE phase.
+     */
     protected void endBattle ()
     {
+        _endBattle.cancel();
+
         clearPlayerStates(); // TODO: final animation?
+        _roomObj.postMessage(RoomObject.PLAY_MUSIC); // no arg stops music
         removeAllEffects();
         setPhase(ChiyogamiObject.POST_BATTLE);
+    }
+
+    /**
+     * Called when the music ends (or from our _endBattle interval.
+     */
+    protected void musicDidEnd ()
+    {
+        if (_gameObj.bossHealth == 0) {
+            // the boss just died anyway, don't worry about it
+            return;
+        }
+
+        // otherwise..
+        _bossWon = true;
+        endBattle();
     }
 
     /**
@@ -416,7 +461,7 @@ public class ChiyogamiManager extends GameManager
     protected void pickNewBoss ()
     {
         shutdownBoss();
-
+        _bossWon = false;
         pickNewBoss(getAllUserTags());
     }
 
@@ -464,15 +509,15 @@ public class ChiyogamiManager extends GameManager
         // add the boss to the room
         MsoyServer.screg.sceneprov.moveTo(_bossObj, _sceneId, -1, new SceneMoveListener() {
             public void moveSucceeded (int placeId, PlaceConfig config) {
-                // nada: we wait to hear the oid
+                // nada: we wait to hear the oid in RoomListener
             }
             public void moveSucceededWithUpdates (
                 int placeId, PlaceConfig config, SceneUpdate[] updates) {
-                // nada: we wait to hear the oid
+                // nada: we wait to hear the oid in RoomListener
             }
             public void moveSucceededWithScene (
                 int placeId, PlaceConfig config, SceneModel model) {
-                // nada: we wait to hear the oid
+                // nada: we wait to hear the oid in RoomListener
             }
             public void requestFailed (String reason) {
                 log.warning("Boss failed to enter scene [scene=" + _sceneId +
@@ -503,19 +548,6 @@ public class ChiyogamiManager extends GameManager
     }
 
     /**
-     * We can move to the pre-battle phase once we've picked all the assets
-     * for the upcoming battle.
-     */
-    protected void checkTransitionToPreBattle ()
-    {
-        if (!_gameObj.isActive() || !_musicPicked || (_bossObj == null) ||
-                !_roomObj.occupants.contains(_bossObj.getOid())) {
-            return;
-        }
-        setPhase(ChiyogamiObject.PRE_BATTLE);
-    }
-
-    /**
      * Shutdown and clear any boss currently in the game.
      */
     protected void shutdownBoss ()
@@ -539,6 +571,9 @@ public class ChiyogamiManager extends GameManager
         }
     }
 
+    /**
+     * Called during the BATTLE phase to reposition players according to their performance.
+     */
     protected void repositionAllPlayers (long now)
     {
         // create a list containing only the present players
@@ -653,6 +688,9 @@ public class ChiyogamiManager extends GameManager
         moveBody(body, x, z, degrees);
     }
 
+    /**
+     * Send an info message to the room.
+     */
     protected void roomSpeak (String message)
     {
         // TODO: translations
@@ -781,18 +819,13 @@ public class ChiyogamiManager extends GameManager
      * Listens for changes to the RoomObject in which we're hosted.
      */
     protected class RoomListener
-        implements OidListListener
+        implements OidListListener, MessageListener
     {
         // from OidListListener
         public void objectAdded (ObjectAddedEvent event)
         {
             if (_bossObj != null && _bossObj.getOid() == event.getOid()) {
                 bossAddedToRoom();
-
-//            } else {
-//                if (_gameObj.isInPlay()) {
-//                    repositionAllPlayers();
-//                }
             }
         }
 
@@ -810,25 +843,19 @@ public class ChiyogamiManager extends GameManager
                 }
             }
         }
-    } // End: class RoomListener
 
-//    protected abstract class ChiInterval extends Interval
-//    {
-//        public ChiInterval ()
-//        {
-//            super(MsoyServer.omgr);
-//        }
-//
-//        public void expired ()
-//        {
-//            if (_gameObj.isActive()) {
-//                safeExpired();
-//            }
-//        }
-//
-//        public abstract void safeExpired ();
-//
-//    } // End: class ChiInterval
+        // from MessageListener
+        public void messageReceived (MessageEvent event)
+        {
+            if (RoomObject.MUSIC_ENDED.equals(event.getName())) {
+                String url = (String) event.getArgs()[0];
+                if (_music != null && url.equals(_music.audioMedia.getMediaPath())) {
+                    musicDidEnd();
+                }
+            }
+        }
+
+    } // End: class RoomListener
 
     /** Listens to the room we're boom-chikka-ing. */
     protected RoomListener _roomListener = new RoomListener();
@@ -842,8 +869,10 @@ public class ChiyogamiManager extends GameManager
     /** The sceneId of the game. */
     protected int _sceneId;
 
+    /** The music picked for the battle. */
     protected Audio _music;
 
+    // TEMP: currently music may be null, so this is needed
     protected boolean _musicPicked;
 
     /** The room manager. */
@@ -855,11 +884,21 @@ public class ChiyogamiManager extends GameManager
     /** Counts the number of ticks we've received in the current phase. */
     protected int _phaseCounter = 0;
 
+    /** Set after the BATTLE phase. */
+    protected boolean _bossWon;
+
     /** The currently displayed effects. */
     protected ArrayList<EffectData> _effects = new ArrayList<EffectData>();
 
     /** The boss object. */
     protected BossObject _bossObj;
+
+    /** An interval that will end our battle phase at the appropriate time. */
+    protected Interval _endBattle = new Interval(MsoyServer.omgr) {
+        public void expired () {
+            musicDidEnd();
+        }
+    };
 
     /** playerOid -> String[] of their states. */
     protected HashIntMap<String[]> _playerStates = new HashIntMap<String[]>();
@@ -875,5 +914,6 @@ public class ChiyogamiManager extends GameManager
     /** TEMP: The filenames of current boss avatars. */
     protected static final String[] BOSSES = { "bboy" };
 
-    protected static final int DELAY = 10000; // 30000;
+    /** The maximum length of time we'll go before we end the song. */
+    protected static final int MAX_SONG_LENGTH = 5 * 60 * 1000;
 }

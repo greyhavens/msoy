@@ -845,6 +845,7 @@ public class RoomController extends SceneController
                     _music = _loadingMusic;
                     _loadingMusic = null;
                     _musicIsBackground = false;
+                    _music.addEventListener(Event.COMPLETE, musicFinishedPlaying);
                     _music.play();
 
                 } else {
@@ -885,6 +886,7 @@ public class RoomController extends SceneController
         // set up new music, if needed
         if (_music == null && isPathValid) {
             _music = new SoundPlayer(path);
+            _music.addEventListener(Event.COMPLETE, musicFinishedPlaying);
             // TODO: we probably need to wait for COMPLETE
             _music.loop();
         }
@@ -893,6 +895,14 @@ public class RoomController extends SceneController
         if (_music != null) {
             _music.setVolume(data.volume);
         }
+    }
+
+    /**
+     * Callback when the music finishes.
+     */
+    protected function musicFinishedPlaying (... ignored) :void
+    {
+        _roomObj.manager.invoke(RoomObject.MUSIC_ENDED, _music.getURL());
     }
 
     /**

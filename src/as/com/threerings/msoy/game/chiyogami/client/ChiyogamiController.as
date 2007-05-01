@@ -112,29 +112,10 @@ public class ChiyogamiController extends GameController
         _worldDelegate.clearPlaceView();
     }
 
-    override protected function stateDidChange (state :int) :Boolean
-    {
-        recheckAvatarControl();
-        return super.stateDidChange(state);
-    }
-
-//    override protected function gameDidStart () :void
-//    {
-//        _panel.gameDidStart();
-//
-//        super.gameDidStart();
-//    }
-//
-//    override protected function gameDidEnd () :void
-//    {
-//        super.gameDidEnd();
-//
-//        _panel.gameDidEnd();
-//    }
-
     protected function phaseChanged () :void
     {
         _panel.checkPhase();
+        recheckAvatarControl();
     }
 
     /**
@@ -172,17 +153,11 @@ public class ChiyogamiController extends GameController
      */
     protected function recheckAvatarControl () :void
     {
-        var inPlay :Boolean = _gameObj.isInPlay();
+        var hasControl :Boolean = (_gameObj.phase != ChiyogamiObject.BATTLE);
 
-        _worldDelegate.setAvatarControl(!inPlay);
+        _worldDelegate.setAvatarControl(hasControl);
 
-        if (inPlay) {
-            // TODO: filter dance-worthy actions/states here, or always on the server???
-
-//            var myActions :Array = _worldDelegate.getMyActions();
-//            var actions :TypedArray = TypedArray.create(String);
-//            actions.addAll(myActions);
-
+        if (!hasControl) {
             var myStates :Array = _worldDelegate.getMyStates();
             var states :TypedArray = TypedArray.create(String);
             states.addAll(myStates);
