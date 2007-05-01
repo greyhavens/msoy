@@ -273,7 +273,7 @@ public class RoomManager extends SpotSceneManager
                 };
                                 
                 // if decor was modified, we should mark new decor as used, and clear the old one
-                    DecorData decorData = msoyScene.getDecorData();
+                DecorData decorData = msoyScene.getDecorData();
                 if (decorData != null && decorData.itemId != up.decorData.itemId) { // modified?
                     MsoyServer.itemMan.updateItemUsage(
                         Item.DECOR, Item.USED_AS_BACKGROUND, user.getMemberId(), _scene.getId(),

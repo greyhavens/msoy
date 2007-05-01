@@ -20,9 +20,6 @@ public class SceneBookmarkEntry
     /** The time of the last visit. */
     public double lastVisit;
 
-    /** An ordering id that is used in relation to the other bookmarks. */
-    public short orderingId;
-
     /** Suitable for deserialization. */
     public SceneBookmarkEntry ()
     {
@@ -45,7 +42,7 @@ public class SceneBookmarkEntry
     public int compareTo (Object other)
     {
         SceneBookmarkEntry that = (SceneBookmarkEntry) other;
-        return this.orderingId - that.orderingId;
+        return this.sceneId - that.sceneId;
     }
 
     @Override

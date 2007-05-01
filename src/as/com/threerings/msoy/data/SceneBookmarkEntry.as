@@ -27,9 +27,6 @@ public class SceneBookmarkEntry
     /** The time of the last visit. */
     public var lastVisit :Number;
 
-    /** An ordering id that is used in relation to the other bookmarks. */
-    public var orderingId :int;
-
     /** Suitable for deserialization. */
     public function SceneBookmarkEntry ()
     {
@@ -45,7 +42,7 @@ public class SceneBookmarkEntry
     public function compareTo (other :Object) :int
     {
         var that :SceneBookmarkEntry = (other as SceneBookmarkEntry);
-        return this.orderingId - that.orderingId;
+        return this.sceneId - that.sceneId;
     }
 
     // from Hashable
@@ -72,7 +69,6 @@ public class SceneBookmarkEntry
         sceneId = ins.readInt();
         sceneName = (ins.readField(String) as String);
         lastVisit = ins.readDouble();
-        orderingId = ins.readShort();
     }
 
     // from superinterface Streamable
@@ -81,7 +77,6 @@ public class SceneBookmarkEntry
         out.writeInt(sceneId);
         out.writeField(sceneName);
         out.writeDouble(lastVisit);
-        out.writeShort(orderingId);
     }
 }
 }

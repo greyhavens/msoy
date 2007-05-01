@@ -307,7 +307,6 @@ public class MemberObject extends MsoyBodyObject
         SceneBookmarkEntry oldest = null;
         for (SceneBookmarkEntry sbe : recentScenes) {
             if (sbe.sceneId == sceneId) {
-                newEntry.orderingId = sbe.orderingId;
                 updateRecentScenes(newEntry);
                 return;
             }
@@ -318,12 +317,16 @@ public class MemberObject extends MsoyBodyObject
 
         int size = recentScenes.size();
         if (size < MAX_RECENT_SCENES) {
-            newEntry.orderingId = (short) size;
             addToRecentScenes(newEntry);
 
         } else {
-            newEntry.orderingId = oldest.orderingId;
-            updateRecentScenes(newEntry);
+            startTransaction();
+            try {
+                removeFromRecentScenes(oldest.getKey());
+                addToRecentScenes(newEntry);
+            } finally {
+                commitTransaction();
+            }
         }
     }
 
