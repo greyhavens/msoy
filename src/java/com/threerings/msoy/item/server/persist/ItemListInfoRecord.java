@@ -20,7 +20,7 @@ import com.threerings.io.Streamable;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 
 @Table
-@Entity(indices={ @Index(columns={"memberId"}) })
+@Entity(indices={ @Index(name="ixMember", columns={"memberId"}) })
 public class ItemListInfoRecord extends PersistentRecord
     implements Streamable
 {
