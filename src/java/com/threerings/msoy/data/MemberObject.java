@@ -110,9 +110,6 @@ public class MemberObject extends MsoyBodyObject
     /** How much lovely flow we've got jangling around on our person. */
     public int flow;
 
-    /** Statistics tracked for this player. */
-    public transient StatSet stats;
-
     /** Our current assessment of how likely to be human this member is, in [0, 255]. */
     public int humanity;
 
@@ -128,9 +125,8 @@ public class MemberObject extends MsoyBodyObject
     /** A bitmask of the item types currently loading or loaded. */
     public int resolvingInventory;
 
-    /** A bitmask of the item types that have been loaded into inventory.
-     * Use isInventoryLoaded() and getItems() to access.
-     */
+    /** A bitmask of the item types that have been loaded into inventory.  Use isInventoryLoaded()
+     * and getItems() to access. */
     public int loadedInventory;
 
     /** The tokens defining the access controls for this user. */
@@ -156,6 +152,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The item lists owned by this user. */
     public DSet<ItemListInfo> lists = new DSet<ItemListInfo>();
+
+    /** Statistics tracked for this player. */
+    public transient StatSet stats;
     
     /**
      * Returns this member's unique id.
