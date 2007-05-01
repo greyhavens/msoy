@@ -11,6 +11,7 @@ import com.threerings.util.Short;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
+import com.threerings.io.Streamable;
 
 import com.threerings.presents.dobj.DSet;
 
@@ -26,7 +27,6 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.game.data.GameSummary;
-import com.threerings.msoy.game.data.WorldGameConfig;
 
 /**
  * Represents a connected msoy user.
@@ -93,7 +93,7 @@ public class MemberObject extends MsoyBodyObject
     public var worldGameOid :int;
 
     /** The world game config that goes along with the oid, or null. */
-    public var worldGameCfg :WorldGameConfig;
+    public var worldGameCfg :Streamable;
 
     /** How much lovely flow we've got jangling around on our person. */
     public var flow :int;
@@ -358,7 +358,7 @@ public class MemberObject extends MsoyBodyObject
 
         memberName = (ins.readObject() as MemberName);
         worldGameOid = ins.readInt();
-        worldGameCfg = (ins.readObject() as WorldGameConfig);
+        worldGameCfg = (ins.readObject() as Streamable);
         flow = ins.readInt();
         humanity = ins.readInt();
         recentScenes = (ins.readObject() as DSet);

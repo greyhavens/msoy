@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import com.samskivert.util.Predicate;
 
+import com.threerings.io.Streamable;
 import com.threerings.parlor.game.data.GameObject;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
@@ -32,7 +33,6 @@ import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.GroupName;
 
 import com.threerings.msoy.game.data.GameMemberInfo;
-import com.threerings.msoy.game.data.WorldGameConfig;
 import com.threerings.msoy.game.data.GameSummary;
 
 /**
@@ -102,8 +102,10 @@ public class MemberObject extends MsoyBodyObject
     /** The object ID of the in-world game that the user is in, or 0. */
     public int worldGameOid;
 
-    /** The world game config that goes along with the oid, or null. */
-    public WorldGameConfig worldGameCfg;
+    /** The config that goes along with the world game oid, or null. This is not typed
+     * WorldGameConfig to avoid introducing a dependency on all the game code in the MemberObject
+     * which is used by numerous clients that don't care about game stuff. */
+    public Streamable worldGameCfg;
 
     /** How much lovely flow we've got jangling around on our person. */
     public int flow;
@@ -371,9 +373,9 @@ public class MemberObject extends MsoyBodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setWorldGameCfg (WorldGameConfig value)
+    public void setWorldGameCfg (Streamable value)
     {
-        WorldGameConfig ovalue = this.worldGameCfg;
+        Streamable ovalue = this.worldGameCfg;
         requestAttributeChange(
             WORLD_GAME_CFG, value, ovalue);
         this.worldGameCfg = value;

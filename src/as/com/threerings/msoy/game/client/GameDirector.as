@@ -82,7 +82,7 @@ public class GameDirector extends BasicDirector
         _worldGameObj = (obj as GameObject);
         // the config is set in the memberobject simultaneously with the oid.  so if the oid is
         // up-to-date, we can trust the config as well
-        var cfg :WorldGameConfig = _mctx.getMemberObject().worldGameCfg;
+        var cfg :WorldGameConfig = (_mctx.getMemberObject().worldGameCfg as WorldGameConfig);
         _worldGameCtrl = (cfg.createController() as GameController);
         _worldGameCtrl.init(_mctx, cfg);
         _worldGameCtrl.willEnterPlace(_worldGameObj);
