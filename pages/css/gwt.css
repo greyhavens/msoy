@@ -641,7 +641,7 @@ body {
   top: 30px;
 }
 
-.sendInvites .Header, .sendInvitesResultsPopup .Header {
+.sendInvites .Header, .sendInvitesResultsPopup .Header, .invitation .Header {
   font-weight: bold;
 }
 
@@ -662,4 +662,9 @@ body {
   font-size: 22px;
   font-weight: bold;
   white-space: nowrap;
+}
+
+.invitation .Body {
+  font-size: 12px;
+  width: 400px;
 }
