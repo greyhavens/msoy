@@ -56,7 +56,6 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
 
-import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.Prefs;
@@ -88,8 +87,7 @@ import com.threerings.msoy.world.data.SceneAttrsUpdate;
  * Displays a room or scene in the virtual world.
  */
 public class RoomView extends AbstractRoomView
-    implements ContextMenuProvider, SetListener, MessageListener,
-               ChatDisplay, ChatInfoProvider, LoadingWatcher
+    implements SetListener, MessageListener, ChatDisplay, ChatInfoProvider, LoadingWatcher
 {
     /** The chat overlay. */
     public var chatOverlay :ComicOverlay;
@@ -209,54 +207,6 @@ public class RoomView extends AbstractRoomView
     public function dimFurni (setDim :Boolean) :void
     {
         setActive(_furni, !setDim);
-    }
-
-    // from ContextMenuProvider
-    public function populateContextMenu (menuItems :Array) :void
-    {
-        var hit :* = _ctrl.getHitSprite(stage.mouseX, stage.mouseY, true);
-        if (hit === undefined) {
-            return;
-        }
-        var sprite :MsoySprite = (hit as MsoySprite);
-        if (sprite == null) {
-            if (_bg == null) {
-                return;
-            } else {
-                sprite = _bg;
-            }
-        }
-        var ident :ItemIdent = sprite.getItemIdent();
-        if (ident != null) {
-            var kind :String = Msgs.GENERAL.get(sprite.getDesc());
-            menuItems.push(MenuUtil.createControllerMenuItem(
-                Msgs.GENERAL.get("b.view_item", kind),
-                MsoyController.VIEW_ITEM, ident));
-
-            // furni sprites can be moved around. except when they're the background.
-            if (sprite is FurniSprite && sprite != _bg) {
-                var furni :FurniSprite = sprite as FurniSprite;
-                menuItems.push(MenuUtil.createControllerMenuItem(
-                                   Msgs.GENERAL.get("b.edit_furni"),
-                                   _ctrl.handleEditFurni, sprite as FurniSprite));
-
-                // TEMP: doors can also be edited from the right-click menu
-                var furnidata :FurniData = furni.getFurniData();
-                if (furnidata.actionType == FurniData.ACTION_PORTAL) {
-                    menuItems.push(MenuUtil.createControllerMenuItem(
-                                       Msgs.GENERAL.get("b.edit_door"),
-                                       RoomController.EDIT_DOOR, furni));
-                }
-            }
-
-            // TEMP: restrict blocking to members only, for now.
-            if (_ctx.getMemberObject().tokens.isSupport() && sprite.isBlockable()) {
-                var isBlocked :Boolean = sprite.isBlocked();
-                menuItems.push(MenuUtil.createControllerMenuItem(
-                    Msgs.GENERAL.get((isBlocked ? "b.unbleep_item" : "b.bleep_item"), kind),
-                    sprite.toggleBlocked));
-            }
-        }
     }
 
     /**

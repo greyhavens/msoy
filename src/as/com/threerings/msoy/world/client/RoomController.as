@@ -57,6 +57,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.editor.EditorController;
 
 import com.threerings.msoy.world.data.AudioData;
@@ -80,6 +81,7 @@ public class RoomController extends SceneController
     public static const EDIT_FURNI :String = "EditFurni";
     public static const EDIT_DOOR :String = "EditDoor";
     
+    public static const SHIFT_CLICKED :String = "ShiftClicked";
     public static const FURNI_CLICKED :String = "FurniClicked";
     public static const AVATAR_CLICKED :String = "AvatarClicked";
     public static const PET_CLICKED :String = "PetClicked";
@@ -284,6 +286,7 @@ public class RoomController extends SceneController
      */
     public function handleEditFurni (furniSprite :FurniSprite) :void
     {
+        trace("Edit " + furniSprite + "!");
         if (_furniEditor.getMode() == FurniEditController.EDIT_OFF) {
             _roomObj.roomService.editRoom(
                 _mctx.getClient(), new ResultWrapper(
@@ -312,7 +315,53 @@ public class RoomController extends SceneController
                     }));
         }
     }
-        
+
+    /**
+     * Handles SHIFT_CLICKED.
+     */
+    public function handleShiftClicked (sprite :MsoySprite) :void
+    {
+        var ident :ItemIdent = sprite.getItemIdent();
+        if (ident == null) {
+            return;
+        }
+
+        var menuItems :Array = [];
+        var kind :String = Msgs.GENERAL.get(sprite.getDesc());
+
+        menuItems.push({ label: Msgs.GENERAL.get("b.view_item", kind),
+                         command: MsoyController.VIEW_ITEM,
+                         arg: ident });
+
+        // furni sprites can be moved around
+        if (sprite is FurniSprite) {
+            var furni :FurniSprite = sprite as FurniSprite;
+            menuItems.push({ label: Msgs.GENERAL.get("b.edit_furni"),
+                             callback: handleEditFurni, arg: furni });
+
+            // TEMP: doors can also be edited from the right-click menu
+            var furnidata :FurniData = furni.getFurniData();
+            if (furnidata.actionType == FurniData.ACTION_PORTAL) {
+                menuItems.push({ label: Msgs.GENERAL.get("b.edit_door"),
+                                 callback: handleEditDoor, arg: furni });
+            }
+        }
+
+        // TEMP: restrict blocking to members only, for now.
+        if (_mctx.getMemberObject().tokens.isSupport() && sprite.isBlockable()) {
+            var isBlocked :Boolean = sprite.isBlocked();
+            var lkey :String = isBlocked ? "b.unbleep_item" : "b.bleep_item";
+            menuItems.push({ label: Msgs.GENERAL.get(lkey, kind),
+                             callback: sprite.toggleBlocked });
+        }
+
+        // pop up the menu where the mouse is
+        if (menuItems.length > 0) {
+            var menu :CommandMenu = CommandMenu.createMenu(menuItems);
+            menu.setDispatcher(_roomView);
+            menu.show();
+        }
+    }
 
     /**
      * Handles FURNI_CLICKED.

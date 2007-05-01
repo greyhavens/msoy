@@ -39,6 +39,7 @@ import flash.system.SecurityDomain;
 
 import flash.net.URLRequest;
 
+import com.threerings.util.CommandEvent;
 import com.threerings.util.Util;
 
 import com.threerings.flash.FilterUtil;
@@ -271,8 +272,11 @@ public class MsoySprite extends MediaContainer
      */
     public function mouseClick (event :MouseEvent) :void
     {
-        // by default, we post some CommandEvent
-        postClickAction();
+        if (event.shiftKey) {
+            postShiftClickAction();
+        } else {
+            postClickAction();
+        }
     }
 
     /**
@@ -416,6 +420,14 @@ public class MsoySprite extends MediaContainer
     protected function postClickAction () :void
     {
         // nada
+    }
+
+    /**
+     * Post a command event when we're shift clicked.
+     */
+    protected function postShiftClickAction () :void
+    {
+        CommandEvent.dispatch(this, RoomController.SHIFT_CLICKED, this);
     }
 
     protected function configureMouseProperties () :void
