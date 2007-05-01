@@ -43,6 +43,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.whirled.client.SceneController;
+import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.ezgame.util.EZObjectMarshaller;
@@ -67,6 +68,7 @@ import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemoryEntry;
+import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomObject;
@@ -392,6 +394,14 @@ public class RoomController extends SceneController
         }
     }
 
+
+    protected function addFurni () :void
+    {
+        if (_mctx.getTopPanel().getPlaceView() is RoomView) {
+            new FurniAddDialog(_mctx, _roomView, _scene);
+        }
+    }
+    
     /**
      * Handles AVATAR_CLICKED.
      */
@@ -408,6 +418,10 @@ public class RoomController extends SceneController
         var menuItems :Array = [];
         if (occInfo.bodyOid == us.getOid()) {
             if (_mctx.worldProps.userControlsAvatar) {
+                // FIXME ROBERT
+                // this will be moved elsewhere, once we have a proper furni move/edit UI.
+                menuItems.push({ label: Msgs.GENERAL.get("t.add_furni"), callback: addFurni });
+                
                 // create a menu for clicking on ourselves
                 var actions :Array = avatar.getAvatarActions();
                 if (actions.length > 0) {
@@ -582,6 +596,42 @@ public class RoomController extends SceneController
         _roomView.dimAvatars(false);
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
+    }
+
+    /**
+     * Creates a furni update out of arrays of furnis to remove and add,
+     * and sends it to the server.
+     */
+    public function sendFurniUpdate (
+        toRemove :Array /* of FurniData */, toAdd :Array /* of FurniData */) :void
+    {
+        var edits :TypedArray = TypedArray.create(SceneUpdate);
+        var addedFurni :TypedArray = TypedArray.create(FurniData);
+        var removedFurni :TypedArray = TypedArray.create(FurniData);
+
+        if (toAdd != null) {
+            for each (var add :FurniData in toAdd) {
+                addedFurni.push(add);
+            }
+        }
+        
+        if (toRemove != null) {
+            for each (var remove :FurniData in toRemove) {
+                removedFurni.push(remove);
+            }
+        }
+
+        var scene :Scene = _mctx.getSceneDirector().getScene();
+        var furniUpdate :ModifyFurniUpdate = new ModifyFurniUpdate();
+        furniUpdate.initialize(
+            scene.getId(), scene.getVersion(),
+            removedFurni.length > 0 ? removedFurni : null,
+            addedFurni.length > 0 ? addedFurni : null);
+
+        edits.push(furniUpdate);
+
+        _roomObj.roomService.updateRoom(_mctx.getClient(), edits, new ReportingListener(_mctx));
+
     }
 
     /**

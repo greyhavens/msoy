@@ -115,29 +115,10 @@ public class DoorTargetEditController
      */
     protected function updateDoor (doordata :FurniData, view :RoomView) :void
     {
-        var scene :Scene = _ctx.getSceneDirector().getScene();
-        
-        // make an update
         var newdata :FurniData = doordata.clone() as FurniData;
         newdata.actionData = String(_destinationScene);
-        
-        var edits :TypedArray = TypedArray.create(SceneUpdate);
-        var oldFurni :TypedArray = TypedArray.create(FurniData);
-        var changedFurni :TypedArray = TypedArray.create(FurniData);
-        var sceneId :int = scene.getId();
-        var version :int = scene.getVersion();
-        var furniUpdate :ModifyFurniUpdate = new ModifyFurniUpdate();
-        
-        oldFurni.push(doordata);
-        changedFurni.push(newdata);
-        furniUpdate.initialize(sceneId, version++, oldFurni, changedFurni);
-        edits.push(furniUpdate);
-        
-        // tell the server
-        var roomObj :RoomObject = view.getRoomObject();
-        roomObj.roomService.updateRoom(
-            _ctx.getClient(), edits, new ReportingListener(_ctx));
-        
+
+        view.getRoomController().sendFurniUpdate([doordata], [newdata]);
     }
 
     /** Creates the UI. */
