@@ -66,12 +66,11 @@ public class WebUserServlet extends MsoyServiceServlet
         // directly as it is thread safe (and it blocks) and we are allowed to block
         MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
         MemberRecord newAccount = auth.createAccount(username, password, displayName, 
-            ignoreRestrict);
+            ignoreRestrict, invite != null ? invite.inviter.getMemberId() : 0);
         if (invite != null) {
             try {
                 MsoyServer.memberRepo.linkInvite(invite, newAccount);
-                // TODO: make friends out of these people, and have the new user's door point to 
-                // their friend's room
+                // TODO: make friends out of these people
             } catch (PersistenceException pe) {
                 log.log(Level.WARNING, "linking invites failed [inviteId=" + invite.inviteId + 
                     ", memberId=" + newAccount.memberId + "]", pe);

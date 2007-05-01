@@ -548,8 +548,7 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Update the invitation indicated with the new memberId, and update the member indicated with
-     * the inviter indicated in the invite.
+     * Update the invitation indicated with the new memberId.
      */
     public void linkInvite (Invitation invite, MemberRecord member)
         throws PersistenceException
@@ -558,9 +557,6 @@ public class MemberRepository extends DepotRepository
             invite.inviteeEmail, invite.inviter.getMemberId()));
         invRec.inviteeId = member.memberId;
         update(invRec, InvitationRecord.INVITEE_ID);
-
-        member.invitingFriendId = invite.inviter.getMemberId();
-        update(member, MemberRecord.INVITING_FRIEND_ID);
     }
 
     /**

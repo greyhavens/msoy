@@ -251,7 +251,7 @@ public class MsoyAuthenticator extends Authenticator
                 member = MsoyServer.memberRepo.loadMember(account.accountName);
                 // if this is their first logon, create them a member record
                 if (member == null) {
-                    member = createMember(account, account.accountName);
+                    member = createMember(account, account.accountName, 0);
                     account.firstLogon = true;
                 }
                 rdata.sessionToken = MsoyServer.memberRepo.startOrJoinSession(member.memberId, 1);
@@ -328,7 +328,7 @@ public class MsoyAuthenticator extends Authenticator
      * @return the newly created member record.
      */
     public MemberRecord createAccount (String username, String password, String displayName,
-                                       boolean ignoreRestrict)
+                                       boolean ignoreRestrict, int inviterId)
         throws ServiceException
     {
         if (!RuntimeConfig.server.registrationEnabled && !ignoreRestrict) {
@@ -343,7 +343,7 @@ public class MsoyAuthenticator extends Authenticator
             domain.validateAccount(account);
 
             // create a new member record for the account
-            return createMember(account, displayName);
+            return createMember(account, displayName, inviterId);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Error creating new account [for=" + username + "].", pe);
@@ -390,7 +390,7 @@ public class MsoyAuthenticator extends Authenticator
             MemberRecord mrec = MsoyServer.memberRepo.loadMember(account.accountName);
             if (mrec == null) {
                 // if this is their first logon, insert a skeleton member record
-                mrec = createMember(account, username);
+                mrec = createMember(account, username, 0);
                 account.firstLogon = true;
             }
 
@@ -430,13 +430,24 @@ public class MsoyAuthenticator extends Authenticator
     /**
      * Called to create a starting member record for a first-time logger in.
      */
-    protected MemberRecord createMember (Account account, String displayName)
+    protected MemberRecord createMember (Account account, String displayName, int inviterId)
         throws PersistenceException
     {
         // create their main member record
         MemberRecord mrec = new MemberRecord();
         mrec.accountName = account.accountName;
         mrec.name = displayName;
+        String portalAction = "1:A Common Area";
+        if (inviterId != 0) {
+            mrec.invitingFriendId = inviterId;
+            try {
+                MsoySceneModel scene = (MsoySceneModel)MsoyServer.sceneRepo.loadSceneModel(
+                    MsoyServer.memberRepo.loadMember(inviterId).homeSceneId);
+                portalAction = scene.sceneId + ":" + scene.name;
+            } catch (Exception e) {
+                // nada
+            }
+        }
         MsoyServer.memberRepo.insertMember(mrec);
 
         // use the tokens filled in by the domain to assign privileges
@@ -445,7 +456,8 @@ public class MsoyAuthenticator extends Authenticator
 
         // create a blank room for them, store it
         mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(
-            MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, /* TODO: */ mrec.name + "'s room");
+            MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, /* TODO: */ mrec.name + "'s room",
+            portalAction);
         MsoyServer.memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 
         return mrec;

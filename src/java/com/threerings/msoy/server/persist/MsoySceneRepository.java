@@ -676,7 +676,7 @@ public class MsoySceneRepository extends SimpleRepository
      *
      * @return the scene id of the newly created room.
      */
-    public int createBlankRoom (byte ownerType, int ownerId, String roomName)
+    public int createBlankRoom (byte ownerType, int ownerId, String roomName, String portalAction)
         throws PersistenceException
     {
         // TODO: we'll clone a starter room
@@ -692,7 +692,7 @@ public class MsoySceneRepository extends SimpleRepository
         f.loc = new MsoyLocation(1, 0, 0.5, 0);
         f.scaleX = 1.4f;
         f.actionType = FurniData.ACTION_PORTAL;
-        f.actionData = "1:A common area";
+        f.actionData = portalAction;
         model.addFurni(f);
 
         return executeUpdate(new Operation<Integer>() {
