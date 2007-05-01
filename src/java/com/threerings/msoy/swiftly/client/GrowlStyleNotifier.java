@@ -20,8 +20,9 @@ import javax.swing.Timer;
 import javax.swing.SwingConstants;
 import javax.swing.text.StyleConstants;
 
-import com.samskivert.swing.util.SwingUtil;
+import com.samskivert.swing.LabelStyleConstants;
 import com.samskivert.swing.MultiLineLabel;
+import com.samskivert.swing.util.SwingUtil;
 
 /**
  * Displays translucent labels which remove themselves after an interval.
@@ -90,6 +91,8 @@ public class GrowlStyleNotifier implements PassiveNotifier
             setOpaque(true);
             setForeground(Color.black);
             setFont(LABEL_FONT);
+            setStyle(LabelStyleConstants.BOLD);
+            setAntiAliased(true);
             addMouseListener(this);
         }
 
@@ -124,7 +127,7 @@ public class GrowlStyleNotifier implements PassiveNotifier
             // nada
         }
 
-        protected static final Font LABEL_FONT = new Font("Times", Font.BOLD, 12);
+        protected static final Font LABEL_FONT = new Font("Times", Font.PLAIN, 13);
 
         protected GrowlStyleNotifier _notifier;
         protected Color _bgColor;
