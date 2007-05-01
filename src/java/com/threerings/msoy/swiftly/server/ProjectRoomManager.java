@@ -536,8 +536,6 @@ public class ProjectRoomManager extends PlaceManager
             // if the commit work, run the build if set
             if (_shouldBuild) {
                 MsoyServer.swiftlyMan.buildExecutor.addTask(new BuildProjectTask());
-            } else {
-                _roomObj.setConsoleOut("m.commit_complete");
             }
         }
 
@@ -600,7 +598,7 @@ public class ProjectRoomManager extends PlaceManager
         public void resultReceived () {
             if (_error != null) {
                 log.warning("Project build failed: " + _error.getMessage());
-                _roomObj.setConsoleErr(MessageBundle.tcompose("m.build_failed"));
+                _roomObj.setConsoleErr(MessageBundle.tcompose("m.build_failed_unexpected"));
                 return;
             }
 

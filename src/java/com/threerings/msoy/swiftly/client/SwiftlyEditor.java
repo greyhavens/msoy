@@ -469,6 +469,11 @@ public class SwiftlyEditor extends PlacePanel
     protected void displayBuildResult ()
     {
         boolean didSucceed = _roomObj.result.buildSuccessful();
+        if (didSucceed) {
+            _ctx.showInfoMessage(_msgs.get("m.build_succeeded"));
+        } else {
+            _ctx.showErrorMessage(_msgs.get("m.build_failed"));
+        }
         for (CompilerOutput output : _roomObj.result.getOutput()) {
             FlexCompilerOutput flexOut = (FlexCompilerOutput)output;
             if (didSucceed) {
