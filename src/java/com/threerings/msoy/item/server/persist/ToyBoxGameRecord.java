@@ -3,8 +3,9 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import com.threerings.ezgame.xml.GameParser;
+
 import com.threerings.toybox.server.persist.GameRecord;
-import com.threerings.toybox.xml.GameParser;
 
 import com.threerings.msoy.game.xml.MsoyGameParser;
 

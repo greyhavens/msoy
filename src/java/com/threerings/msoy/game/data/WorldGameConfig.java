@@ -18,7 +18,7 @@ public class WorldGameConfig extends MsoyGameConfig
     @Override @ActionScript(omit=true)
     public String getManagerClassName ()
     {
-        if (manager == null) {
+        if (getGameDefinition().manager == null) {
             return "com.threerings.msoy.game.server.AVRGameManager";
         } else {
             return super.getManagerClassName();

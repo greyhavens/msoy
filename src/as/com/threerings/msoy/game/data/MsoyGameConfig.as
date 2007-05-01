@@ -10,38 +10,43 @@ import com.threerings.util.ClassUtil;
 
 import com.threerings.crowd.client.PlaceController;
 
-import com.threerings.parlor.client.TableConfigurator;
-import com.threerings.parlor.client.DefaultFlexTableConfigurator;
+import com.threerings.ezgame.data.GameDefinition;
 
-import com.threerings.parlor.game.client.GameConfigurator;
-import com.threerings.parlor.game.client.FlexGameConfigurator;
+import com.threerings.toybox.data.ToyBoxGameConfig;
 
-import com.threerings.ezgame.data.EZGameConfig;
-
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.game.client.MsoyGameController;
 
 /**
  * A game config for a simple multiplayer metasoy flash game.
  */
-public class MsoyGameConfig extends EZGameConfig
+public class MsoyGameConfig extends ToyBoxGameConfig
 {
-    /** The controller to use, or null for MsoyGameController. */
-    public var controller :String;
-
-    /** The manager to use, or null for MsoyGameManager. */
-    public var manager :String;
+    /** The creator provided name of this game. */
+    public var name :String;
 
     public function MsoyGameConfig ()
     {
         // used for unserialization
     }
 
+    /**
+     * Configures this config with information from the supplied {@link Game} item.
+     */
+    public function init (game :Game, gameDef :GameDefinition) :void
+    {
+        this.name = game.name;
+        _gameId = game.getPrototypeId();
+        _gameDef = gameDef;
+    }
+
+    // from PlaceConfig
     override public function createController () :PlaceController
     {
+        var controller :String = getGameDefinition().controller;
         if (controller == null) {
             return new MsoyGameController();
         }
-
         var c :Class = ClassUtil.getClassByName(controller);
         return (new c() as PlaceController);
     }
@@ -50,21 +55,14 @@ public class MsoyGameConfig extends EZGameConfig
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        controller = (ins.readField(String) as String);
-        manager = (ins.readField(String) as String);
+        name = (ins.readField(String) as String);
     }
 
     // from interface Streamable
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-        out.writeField(controller);
-        out.writeField(manager);
-    }
-
-    override public function createConfigurator () :GameConfigurator
-    {
-        return new FlexGameConfigurator();
+        out.writeField(name);
     }
 }
 }

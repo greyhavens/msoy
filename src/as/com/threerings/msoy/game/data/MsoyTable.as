@@ -18,7 +18,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
- * A msoy-specific table.
+ * Extends the standard parlor {@link Table} with some custom data.
  */
 public class MsoyTable extends Table
 {

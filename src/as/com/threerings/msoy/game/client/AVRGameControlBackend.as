@@ -45,8 +45,8 @@ public class AVRGameControlBackend extends WhirledGameControlBackend
         _mctx = ctx;
         _avrGameObj = avrGameObj;
         // the gameIdent matches the prototype of the game
-        _gameIdent = new ItemIdent(Item.GAME,
-            (ctrl.getPlaceConfig() as WorldGameConfig).persistentGameId);
+        _gameIdent = new ItemIdent(
+            Item.GAME, (ctrl.getPlaceConfig() as WorldGameConfig).getGameId());
         
         _avrGameObj.addListener(_memlist);
         

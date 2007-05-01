@@ -19,6 +19,7 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.game.xml.MsoyGameParser;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.data.all.Game;
@@ -67,10 +68,10 @@ public class LobbyRegistry
         _loading.put(gameId, list);
 
         MsoyServer.itemMan.getItem(new ItemIdent(Item.GAME, gameId), new ResultListener<Item>() {
-            public void requestCompleted (Item item)
-            {
+            public void requestCompleted (Item item) {
                 try {
-                    LobbyManager lmgr = new LobbyManager((Game)item);
+                    LobbyManager lmgr = new LobbyManager(
+                        (Game)item, new MsoyGameParser().parseGame((Game)item));
                     // record the lobby oid for the game
                     _lobbies.put(gameId, lmgr);
 

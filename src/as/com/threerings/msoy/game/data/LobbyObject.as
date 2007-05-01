@@ -14,6 +14,8 @@ import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableLobbyObject;
 import com.threerings.parlor.data.TableMarshaller;
 
+import com.threerings.ezgame.data.GameDefinition;
+
 import com.threerings.msoy.item.data.all.Game;
 
 /**
@@ -31,6 +33,9 @@ public class LobbyObject extends DObject implements TableLobbyObject
 
     /** The game we're matchmaking for. */
     public var game :Game;
+
+    /** The parsed configuration info for this game. */
+    public var gameDef :GameDefinition;
 
     /** The tables. */
     public var tables :DSet = new DSet();
@@ -79,6 +84,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
         super.readObject(ins);
 
         game = (ins.readObject() as Game);
+        gameDef = (ins.readObject() as GameDefinition);
         tables = (ins.readObject() as DSet);
         tableService = (ins.readObject() as TableMarshaller);
     }

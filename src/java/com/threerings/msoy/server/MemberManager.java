@@ -584,11 +584,10 @@ public class MemberManager
 
             } else if (plMgr instanceof MsoyGameManager) {
                 MsoyGameConfig config = ((MsoyGameConfig) ((GameManager) plMgr).getGameConfig());
-                PopularPlaceOwner owner =
-                    new PopularPlaceOwner(OwnerType.GAME, config.persistentGameId);
+                PopularPlaceOwner owner = new PopularPlaceOwner(OwnerType.GAME, config.getGameId());
                 PopularGamePlace place = (PopularGamePlace) _placesByOwner.get(owner);
                 if (place == null) {
-                    place = new PopularGamePlace(config.name, config.persistentGameId);
+                    place = new PopularGamePlace(config.name, config.getGameId());
                     _placesByOwner.put(owner, place);
                     _topPlaces.add(place);
                 }

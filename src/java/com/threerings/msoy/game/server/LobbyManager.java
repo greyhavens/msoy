@@ -10,6 +10,8 @@ import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.SetAdapter;
 
+import com.threerings.ezgame.data.GameDefinition;
+
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.server.ItemManager;
@@ -33,12 +35,13 @@ public class LobbyManager
      *
      * @param game The game we're managing a lobby for.
      */
-    public LobbyManager (Game game)
+    public LobbyManager (Game game, GameDefinition gameDef)
     {
         _game = game;
         _lobj = MsoyServer.omgr.registerObject(new LobbyObject());
         _lobj.subscriberListener = this;
         _lobj.setGame(_game);
+        _lobj.setGameDef(gameDef);
 
         // if our game object is mutable, listen for updates from the ItemManager
         if (_game.parentId == 0) {

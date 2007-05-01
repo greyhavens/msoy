@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.game.client {
 
 import flash.events.Event;
@@ -19,6 +22,8 @@ import com.threerings.flex.CommandButton;
 import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.ezgame.data.EZGameConfig;
+import com.threerings.ezgame.data.GameDefinition;
+import com.threerings.ezgame.data.Parameter;
 
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
@@ -26,6 +31,7 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Game;
 
+import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.MsoyTable;
 
 import com.threerings.util.StringUtil;
@@ -80,6 +86,7 @@ public class TableRenderer extends HBox
     override protected function createChildren () :void
     {
         _game = panel.getGame();
+        _gameDef = panel.getGameDefinition();
 
         if (_popup) {
             styleName = "floatingTableRenderer";
@@ -202,13 +209,13 @@ public class TableRenderer extends HBox
         // maybe add a button for entering the game
         if (table.gameOid != -1) {
             var key :String = null;
-            switch (table.config.getGameType()) {
+            switch (table.config.getMatchType()) {
             case GameConfig.PARTY:
                 key = "b.join";
                 break;
 
             default:
-                if (!_game.getGameDefinition().unwatchable) {
+                if (!(_gameDef.match as MsoyMatchConfig).unwatchable) {
                     key = "b.watch";
                 }
                 break;
@@ -238,27 +245,17 @@ public class TableRenderer extends HBox
         }
         _labelsBox.addChild(getConfigRow(ctx.xlate("game", "l.watchers"), String(_watcherCount)));
 
-        var configXML :XML = panel.getGame().getGameDefinition().config;
-        var customConfig :Object = null;
+        var params :Array = null;
         if (table.config is EZGameConfig) {
-            customConfig = (table.config as EZGameConfig).customConfig;
+            params = (table.config as EZGameConfig).getGameDefinition().params;
         }
-
-        if (customConfig != null) {
-            for each (var param :XML in configXML..params.children()) {
-                if (StringUtil.isBlank(param.@ident)) {
-                    continue;
-                }
-                var ident :String = String(param.@ident);
-                var name :String = String(param.@name);
-                var tip :String = String(param.@tip);
-                if (StringUtil.isBlank(name)) {
-                    name = ident;
-                }
-
-                var value :String = String(customConfig[name]);
-                _labelsBox.addChild(getConfigRow(name, value, tip == "" ? name : tip, 
-                    value.length > 5 ? value : ""));
+        if (params != null) {
+            var ezconfig :EZGameConfig = (table.config as EZGameConfig);
+            for each (var param :Parameter in params) {
+                var name :String = StringUtil.isBlank(param.name) ? param.ident : param.name;
+                var value :String = String(ezconfig.params.get(param.ident));
+                value = (value.length > 5 ? value : ""); // TODO: huh?
+                _labelsBox.addChild(getConfigRow(name, value, param.tip, value));
             }
         }
     }
@@ -299,6 +296,7 @@ public class TableRenderer extends HBox
     protected var _seatsGrid :Tile;
 
     protected var _game :Game;
+    protected var _gameDef :GameDefinition;
 
     protected var _popup :Boolean; 
 

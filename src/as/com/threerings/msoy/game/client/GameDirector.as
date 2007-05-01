@@ -26,6 +26,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.GameCodes;
+import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.WorldGameConfig;
 
 /**
@@ -43,6 +44,9 @@ public class GameDirector extends BasicDirector
 
         // handle gameReady so that we can enter games in a browser history friendly manner
         ctx.getParlorDirector().addGameReadyObserver(this);
+
+        // let the compiler know that these must be compiled into the client
+        var c :Class = MsoyGameDefinition;
     }
 
     /**

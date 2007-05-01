@@ -36,10 +36,10 @@ import com.threerings.flex.CommandButton;
 import com.threerings.parlor.client.SeatednessObserver;
 import com.threerings.parlor.client.TableDirector;
 import com.threerings.parlor.client.TableObserver;
-
 import com.threerings.parlor.data.Table;
-
 import com.threerings.parlor.game.data.GameConfig;
+
+import com.threerings.ezgame.data.GameDefinition;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
@@ -130,6 +130,14 @@ public class LobbyPanel extends VBox
     }
 
     /**
+     * Returns the definition for the game we're currently matchmaking.
+     */
+    public function getGameDefinition () :GameDefinition
+    {
+        return _lobbyObj != null ? _lobbyObj.gameDef : null;
+    }
+
+    /**
      * Called to set the creation button.
      */
     public function setCreateButton (btn :CommandButton) :void
@@ -164,8 +172,8 @@ public class LobbyPanel extends VBox
     {
         var idx :int = ArrayUtil.indexOf(_formingTables.source, table);
         if (idx >= 0) {
-            if (table.gameOid != -1 && GameConfig.SEATED_GAME == 
-                getGame().getGameDefinition().gameType) {
+            if (table.gameOid != -1 && GameConfig.SEATED_GAME ==
+                _lobbyObj.gameDef.match.getMatchType()) {
                 _formingTables.removeItemAt(idx);
                 _runningTables.addItem(table);
             } else {
@@ -342,7 +350,7 @@ public class LobbyPanel extends VBox
         list.dataProvider = _formingTables;
 
         // only display tabs for seated games
-        if (getGame().getGameDefinition().gameType == GameConfig.SEATED_GAME) {
+        if (_lobbyObj.gameDef.match.getMatchType() == GameConfig.SEATED_GAME) {
             var tabsBox :HBox = new HBox();
             tabsBox.styleName = "tabsBox";
             tabsBox.percentWidth = 100;

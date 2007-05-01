@@ -44,10 +44,7 @@ public class MsoyTableManager extends TableManager
     protected GameConfig createConfig (Table table) 
     {
         MsoyGameConfig config = (MsoyGameConfig)super.createConfig(table);
-        // fill in our game id and name
-        Game game = _lobj.game;
-        config.persistentGameId = game.getPrototypeId();
-        config.name = game.name;
+        config.init(_lobj.game, _lobj.gameDef);
         return config;
     }
 

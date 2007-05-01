@@ -42,7 +42,7 @@ public class WorldGameConfig extends MsoyGameConfig
     // from MsoyGameConfig
     override public function createController () :PlaceController
     {
-        if (controller == null) {
+        if (getGameDefinition().controller == null) {
             // this is the EZ-game equivalent for WorldGames...
             return new AVRGameController();
         } else {

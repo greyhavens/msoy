@@ -3,20 +3,26 @@
 
 package com.threerings.msoy.game.data;
 
-import com.threerings.util.ActionScript;
-
-import com.threerings.toybox.data.GameDefinition;
+import com.threerings.ezgame.data.GameDefinition;
 
 /**
- * Customizes the standard {@link GameDefinition} for MSOY which mainly means
- * looking for our game jar files using a different naming scheme.
+ * Customizes the standard {@link GameDefinition} for MSOY which mainly means looking for our game
+ * jar files using a different naming scheme.
  */
-@ActionScript(omit=true)
 public class MsoyGameDefinition extends GameDefinition
 {
-    @Override // from GameDefinition
-    public String getJarName (int gameId)
+    /**
+     * Configures the path to this game's media.
+     */
+    public void setMediaPath (String mediaPath)
     {
-        return digest + ".jar";
+        // we reuse the digest field for this as we don't otherwise use it in MSOY
+        digest = mediaPath;
+    }
+
+    @Override // from GameDefinition
+    public String getMediaPath (int gameId)
+    {
+        return digest;
     }
 }

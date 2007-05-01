@@ -24,9 +24,8 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.data.GameObject;
 import com.threerings.parlor.game.server.GameManager;
 
-import com.threerings.toybox.data.TableMatchConfig;
-import com.threerings.toybox.xml.GameParser;
-import com.threerings.toybox.server.persist.GameRecord;
+import com.threerings.ezgame.data.GameDefinition;
+import com.threerings.ezgame.data.TableMatchConfig;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -56,7 +55,7 @@ public class WorldGameRegistry
     public WorldGameRegistry ()
     {
     }
-    
+
     /**
      * Initialize the lobby registry.
      */
@@ -67,7 +66,7 @@ public class WorldGameRegistry
 
     // from WorldGameProvider
     public void joinWorldGame (
-        ClientObject caller, int gameId, 
+        ClientObject caller, int gameId,
         final InvocationService.InvocationListener listener)
         throws InvocationException
     {
@@ -86,7 +85,7 @@ public class WorldGameRegistry
             joinWorldGame(member, gameOid);
             return;
         }
-        
+
         // create the result listener to join the game
         ResultListener<Integer> rlistener = new ResultListener<Integer>() {
             public void requestCompleted (Integer result) {
@@ -103,7 +102,7 @@ public class WorldGameRegistry
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         };
-        
+
         ResultListenerList<Integer> list = _loading.get(gameKey);
         if (list != null) {
             // if we're already resolving this game, add this listener
@@ -117,41 +116,31 @@ public class WorldGameRegistry
         _loading.put(gameKey, list);
 
         // retrieve the game item
-        MsoyServer.itemMan.getItem(new ItemIdent(Item.GAME, gameId),
-            new ResultListener<Item>() {
+        MsoyServer.itemMan.getItem(new ItemIdent(Item.GAME, gameId), new ResultListener<Item>() {
             public void requestCompleted (Item item) {
                 try {
                     final Game game = (Game) item;
-                    TableMatchConfig match = (TableMatchConfig)(new GameRecord () {
-                        { definition = game.config; } // instance initializer
-                        protected GameParser createParser () {
-                            return new MsoyGameParser();
-                        }
-                    }).parseGameDefinition().match;
+                    final GameDefinition gdef = new MsoyGameParser().parseGame(game);
+
                     WorldGameConfig config = new WorldGameConfig();
-                    config.name = game.name;
-                    config.persistentGameId = game.getPrototypeId();
-                    config.gameMedia = game.gameMedia.getMediaPath();
-                    // when we support SEATED_CONTINUOUS, MsoyMatchConfig will need to recognize 
-                    // that as a game type in the XML definition, and do something better than a
-                    // isPartyGame boolean
-                    config.gameType = match.isPartyGame ? GameConfig.PARTY : GameConfig.SEATED_GAME;
-                    //config.game = game;
+                    config.init(game, gdef);
                     config.startSceneId = gameKey.right;
-                    if (config.gameType == GameConfig.PARTY) {
+                    if (config.getMatchType() == GameConfig.PARTY) {
                         config.players = new Name[0];
                     } else {
-                        config.players = new Name[match.maxSeats];
+                        config.players = new Name[((TableMatchConfig)gdef.match).maxSeats];
                     }
+
                     // TODO: fix Chiyogami stuff... game.config will never be non-xml anymore
                     if (game.config != null &&
-                            game.config.contains("<toggle ident=\"chiyogami\" start=\"true\"/>")) {
+                        game.config.contains("<toggle ident=\"chiyogami\" start=\"true\"/>")) {
                         String prefix = "com.threerings.msoy.game.chiyogami.";
-                        config.controller = prefix + "client.ChiyogamiController";
-                        config.manager = prefix + "server.ChiyogamiManager";
+                        gdef.controller = prefix + "client.ChiyogamiController";
+                        gdef.manager = prefix + "server.ChiyogamiManager";
                     }
 
                     MsoyServer.plreg.createPlace(config);
+
                 } catch (Exception e) {
                     log.log(Level.WARNING, "Exception configuring world game", e);
                     requestFailed(e);
@@ -184,7 +173,7 @@ public class WorldGameRegistry
         int gameOid = member.worldGameOid;
 
         clearWorldGame(member);
-        
+
         // remove them from the occupant list
         GameObject gobj = getGameObject(member, gameOid);
         if (gobj != null && gobj.isActive()) {
@@ -215,10 +204,10 @@ public class WorldGameRegistry
         WorldGameConfig config = (WorldGameConfig) manager.getConfig();
 
         // make sure the entry refers to the game
-        entry.item = new ItemIdent(Item.GAME, config.persistentGameId);
-        
+        entry.item = new ItemIdent(Item.GAME, config.getGameId());
+
         // TODO: verify that the memory does not exceed legal size
-        
+
         // mark it as modified and update the game object; we'll save it when we unload the game
         AVRGameObject wgobj = (AVRGameObject) gameObj;
         entry.modified = true;
@@ -228,7 +217,7 @@ public class WorldGameRegistry
             wgobj.addToMemories(entry);
         }
     }
-    
+
     /**
      * Called by WorldGameManagerDelegates instances after they're all ready to go.
      */
@@ -237,11 +226,11 @@ public class WorldGameRegistry
         WorldGameConfig config = (WorldGameConfig) manager.getConfig();
 
         // record the oid and manager for the game
-        IntTuple gameKey = new IntTuple(config.persistentGameId, config.startSceneId);
+        IntTuple gameKey = new IntTuple(config.getGameId(), config.startSceneId);
 
         _games.put(gameKey, gameOid);
         _managers.put(gameOid, manager);
-        
+
         // remove the list of listeners and notify each of them
         _loading.remove(gameKey).requestCompleted(gameOid);
     }
@@ -264,7 +253,7 @@ public class WorldGameRegistry
         WorldGameConfig config = (WorldGameConfig) manager.getConfig();
 
         // destroy our record of that game
-        IntTuple gameKey = new IntTuple(config.persistentGameId, config.startSceneId);
+        IntTuple gameKey = new IntTuple(config.getGameId(), config.startSceneId);
 
         _games.remove(gameKey);
         _managers.remove(gameOid);
@@ -281,15 +270,15 @@ public class WorldGameRegistry
         if (member.worldGameOid == gameOid) {
             return;
         }
-        
+
         // make sure the game object exists
         GameObject gobj = getGameObject(member, gameOid);
 
         // TODO: verify that there's room for them to join?
-        
+
         // leave the current game, if any
         leaveWorldGame(member);
-        
+
         // add to the occupant list
         int memberOid = member.getOid();
         GameManager gmgr = _managers.get(gameOid);
@@ -302,7 +291,7 @@ public class WorldGameRegistry
         } finally {
             gobj.commitTransaction();
         }
-        
+
         // set their game field
         member.startTransaction();
         try {
@@ -327,7 +316,7 @@ public class WorldGameRegistry
             member.commitTransaction();
         }
     }
-    
+
     /**
      * Retrieves the world game object, throwing an exception if it does not exist.
      */
@@ -342,13 +331,13 @@ public class WorldGameRegistry
         }
         return gobj;
     }
-    
+
     /** Maps [gameId, sceneId] -> world game oid. */
     protected HashMap<IntTuple, Integer> _games = new HashMap<IntTuple, Integer>();
-    
+
     /** Maps game oids -> game managers. */
     protected HashIntMap<GameManager> _managers = new HashIntMap<GameManager>();
-    
+
     /** Maps [gameId, sceneId] -> listeners waiting for a world game to load. */
     protected HashMap<IntTuple, ResultListenerList<Integer>> _loading =
         new HashMap<IntTuple, ResultListenerList<Integer>>();

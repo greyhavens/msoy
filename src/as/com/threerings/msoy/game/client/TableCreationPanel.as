@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.game.client {
 
 import mx.core.ScrollPolicy;
@@ -18,6 +21,7 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.client.GameConfigurator;
 
 import com.threerings.ezgame.client.EZGameConfigurator;
+import com.threerings.ezgame.data.GameDefinition;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
@@ -25,7 +29,7 @@ import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.msoy.game.data.GameDefinition;
+import com.threerings.msoy.game.data.MsoyMatchConfig;
 
 public class TableCreationPanel extends HBox
 {
@@ -33,6 +37,7 @@ public class TableCreationPanel extends HBox
     {
         _ctx = ctx;
         _game = panel.getGame();
+        _gameDef = panel.getGameDefinition();
         _panel = panel;
     }
 
@@ -50,25 +55,30 @@ public class TableCreationPanel extends HBox
         var gconf :EZGameConfigurator = new EZGameConfigurator();
         var gconfigger :GameConfigurator = gconf;
         gconfigger.init(_ctx);
-        var gameDef :GameDefinition = _game.getGameDefinition();
-        gconf.setXMLConfig(gameDef.config);
+
+        var match :MsoyMatchConfig = (_gameDef.match as MsoyMatchConfig);
         var tconfigger :TableConfigurator;
-        if (gameDef.gameType == GameConfig.PARTY) {
+        switch (match.getMatchType()) {
+        case GameConfig.PARTY:
             tconfigger = new DefaultFlexTableConfigurator(-1, -1, -1, true);
-        } else if (gameDef.gameType == GameConfig.SEATED_GAME)  {
+            break;
+
+        case GameConfig.SEATED_GAME:
             // using min_seats for start_seats until we put start_seats in the configuration
-            tconfigger = new DefaultFlexTableConfigurator(gameDef.minSeats, gameDef.minSeats,
-                gameDef.maxSeats, true, Msgs.GAME.get("l.players"), Msgs.GAME.get("l.private"));
-        } else { 
-            Log.getLog(this).warning("<match type='" + gameDef.gameType + "'> is not a valid type");
+            tconfigger = new DefaultFlexTableConfigurator(
+                match.minSeats, match.minSeats, match.maxSeats, true,
+                Msgs.GAME.get("l.players"), Msgs.GAME.get("l.private"));
+            break;
+
+        default:
+            Log.getLog(this).warning(
+                "<match type='" + match.getMatchType() + "'> is not a valid type");
             return;
         }
         tconfigger.init(_ctx, gconfigger);
 
         var config :MsoyGameConfig = new MsoyGameConfig();
-        config.gameMedia = _game.gameMedia.getMediaPath();
-        config.persistentGameId = _game.getPrototypeId();
-        config.gameType = gameDef.gameType;
+        config.init(_game, _gameDef);
         gconf.setGameConfig(config);
 
         _createBtn = new CommandButton();
@@ -90,6 +100,9 @@ public class TableCreationPanel extends HBox
 
     /** The game item, for configuration reference. */
     protected var _game :Game;
+
+    /** The game item, for configuration reference. */
+    protected var _gameDef :GameDefinition;
 
     /** The lobby panel we're in. */
     protected var _panel :LobbyPanel;

@@ -47,10 +47,9 @@ public class AVRGameManager extends MsoyGameManager
     {
         super.didStartup();
         
-        // TODO: this needs some re-thinking, there could be more than 
-        // one instance of this game running simultaneously and they will
-        // overwrite each other's memory.
-        final int prototypeId = ((WorldGameConfig) _config).persistentGameId;
+        // TODO: this needs some re-thinking, there could be more than one instance of this game
+        // running simultaneously and they will overwrite each other's memory.
+        final int prototypeId = _gameconfig.getGameId();
         MsoyServer.invoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 try {

@@ -17,7 +17,6 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.ezgame.data.EZGameConfig;
 import com.threerings.ezgame.server.EZGameManager;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -86,7 +85,7 @@ public class MsoyGameManager extends EZGameManager
             public boolean invoke () {
                 try {
                     _antiAbuseFactor = MsoyServer.memberRepo.getFlowRepository().getAntiAbuseFactor(
-                        ((MsoyGameConfig) _config).persistentGameId);
+                        _gameconfig.getGameId());
                 } catch (PersistenceException pe) {
                     log.log(Level.WARNING, "Failed to fetch game's anti-abuse factor [where=" +
                             where() + "]", pe);
@@ -135,7 +134,7 @@ public class MsoyGameManager extends EZGameManager
             MsoyServer.invoker.postUnit(new Invoker.Unit() {
                 public boolean invoke () {
                     try {
-                        int gameId = ((MsoyGameConfig) _config).persistentGameId;
+                        int gameId = _gameconfig.getGameId();
                         MsoyServer.memberRepo.noteGameEnded(gameId, _playerMinutes);
                     } catch (PersistenceException pe) {
                         log.log(Level.WARNING, "Failed to note end of game [where=" +
@@ -213,7 +212,7 @@ public class MsoyGameManager extends EZGameManager
         // award it
         MsoyServer.memberMan.grantFlow(
             record.memberId, awarded, UserAction.PLAYED_GAME,
-            ((EZGameConfig) getConfig()).persistentGameId + " " + record.secondsPlayed); 
+            _gameconfig.getGameId() + " " + record.secondsPlayed); 
     }
 
     @Override

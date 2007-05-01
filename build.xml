@@ -695,6 +695,11 @@
     </copy>
   </target>
 
+  <!-- convenience targets that build specific projects and copy the results -->
+  <target name="toybox">
+    <antcall target="distprojects"><param name="projects" value="toybox"/></antcall>
+  </target>
+
   <!-- a target for rebuilding everything -->
   <target name="all" depends="clean,prepare,compile,javadoc,dist"/>
 

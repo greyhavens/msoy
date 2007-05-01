@@ -9,10 +9,6 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.data.InvocationCodes;
-import com.threerings.presents.server.InvocationException;
-
-import com.threerings.toybox.xml.GameParser;
-import com.threerings.toybox.server.persist.GameRecord;
 
 import com.threerings.msoy.game.xml.MsoyGameParser;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
@@ -71,16 +67,11 @@ public class GameServlet extends MsoyServiceServlet
                 match.minSeats = match.startSeats = 1;
                 match.maxSeats = 2;
             } else {
-                match = (MsoyMatchConfig)(new GameRecord() {
-                    { definition = game.config; } // anonymous constructor
-                    protected GameParser createParser () {
-                        return new MsoyGameParser();
-                    }
-                }).parseGameDefinition().match;
+                match = (MsoyMatchConfig)new MsoyGameParser().parseGame(game).match;
             }
 
-        } catch (InvocationException ie) {
-            log.log(Level.WARNING, "Failed to parse XML game definition [id=" + gameId + "]", ie);
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to parse XML game definition [id=" + gameId + "]", e);
             throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
         }
 
