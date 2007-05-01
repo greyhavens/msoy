@@ -568,7 +568,9 @@ public class MemberRepository extends DepotRepository
     public List<InvitationRecord> loadPendingInvites (int memberId)
         throws PersistenceException
     {
-        return findAll(InvitationRecord.class, new Where(InvitationRecord.INVITER_ID, memberId));
+        return findAll(InvitationRecord.class, new Where(new And(new Equals(
+            InvitationRecord.INVITER_ID, memberId), new Equals(InvitationRecord.INVITEE_ID,
+            0))));
     }
 
     /**
