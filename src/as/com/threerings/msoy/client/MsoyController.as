@@ -359,9 +359,8 @@ public class MsoyController extends Controller
     /**
      * Handle the GO_GAME command to go to a non-Flash game.
      */
-    public function handleGoGame (args :Array) :void
+    public function handleGoGame (gameId :int, placeOid :int) :void
     {
-        var gameId :int = int(args[0]), placeOid :int = int(args[1]);
         if (!handleInternalGo("game", gameId + "_" + placeOid)) {
             // fall back to breaking the back button
             _ctx.getLocationDirector().moveTo(placeOid);
@@ -418,9 +417,9 @@ public class MsoyController extends Controller
     /**
      * Handles ALTER_FRIEND.
      */
-    public function handleAlterFriend (args :Array) :void
+    public function handleAlterFriend (memberId :int, makeFriend :Boolean) :void
     {
-        _ctx.getMemberDirector().alterFriend(int(args[0]), Boolean(args[1]));
+        _ctx.getMemberDirector().alterFriend(memberId, makeFriend);
     }
 
     /**

@@ -102,7 +102,7 @@ public class GameDirector extends BasicDirector
             log.warning("Got game ready but we were never in a table? [oid=" + gameOid + "].");
         } else {
             // route our entry to the game through GWT so that we can handle non-Flash games
-            _mctx.getMsoyController().handleGoGame([ _matchingGame.itemId, gameOid ]);
+            _mctx.getMsoyController().handleGoGame(_matchingGame.itemId, gameOid);
         }
         return true;
     }
