@@ -42,7 +42,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
     // from interface WebUserService
     public WebCreds register (long clientVersion, String username, String password,
-                              String displayName, int expireDays, Invitation invite)
+                              final String displayName, int expireDays, final Invitation invite)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);
@@ -65,7 +65,7 @@ public class WebUserServlet extends MsoyServiceServlet
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
         MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
-        MemberRecord newAccount = auth.createAccount(username, password, displayName, 
+        final MemberRecord newAccount = auth.createAccount(username, password, displayName, 
             ignoreRestrict, invite != null ? invite.inviter.getMemberId() : 0);
         if (invite != null) {
             try {
@@ -75,6 +75,20 @@ public class WebUserServlet extends MsoyServiceServlet
                     ", memberId=" + newAccount.memberId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
+            // send a notification email that the friend as accepted his invite
+            final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
+                "deliver invite accepted message");
+            MsoyServer.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    // TODO How do we i18n this when we don't know anybody's locale??
+                    MsoyServer.mailMan.deliverMessage(newAccount.memberId, 
+                        invite.inviter.getMemberId(), "Invitation Accepted!",
+                        "The invitation that you sent to " + invite.inviteeEmail + " has been " +
+                        "accepted.  Your friend has chosen the display name \"" + displayName +
+                        "\", and has been added to your friend's list.", null, waiter);
+                }
+            });
+            waiter.waitForResult();
         }
         return startSession(newAccount, expireDays);
     }
