@@ -218,19 +218,24 @@ public class CatalogServlet extends MsoyServiceServlet
                                 ", ident="+ ident + "].");
                     throw new ServiceException(ItemCodes.ACCESS_DENIED);
                 }
-
                 // reset any important bits
                 listItem.clearForListing();
 
                 // use the updated description
                 listItem.description = descrip;
 
-                // then insert it as the immutable copy we list
+                // acquire a current timestamp
+                long now = System.currentTimeMillis();
+                
+                // then insert the record as the immutable copy we list (filling in its itemId)
                 repo.insertOriginalItem(listItem);
 
+                // then copy tags from original to immutable
+                repo.getTagRepository().copyTags(
+                    ident.itemId, listItem.itemId, mrec.memberId, now);
+                
                 // and finally create & insert the catalog record
-                CatalogRecord record= repo.insertListing(
-                    listItem, rarity, System.currentTimeMillis());
+                CatalogRecord record= repo.insertListing(listItem, rarity, now);
 
                 if (price > 0) {
                     int flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
