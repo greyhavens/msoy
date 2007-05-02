@@ -104,9 +104,8 @@ public class GameClient
 
     public void start (String authtoken, int gameId, final int gameOid)
     {
-        if (StringUtil.isBlank(authtoken) || gameId == -1) {
-            log.warning("Missing required parameters [authtoken=" + authtoken +
-                        ", game_id=" + gameId + "].");
+        if (gameId == -1) {
+            log.warning("Missing required parameters [game_id=" + gameId + "].");
             // TODO: display some error to the user
             return;
         }
