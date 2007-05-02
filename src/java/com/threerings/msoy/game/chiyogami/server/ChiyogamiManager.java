@@ -525,7 +525,7 @@ public class ChiyogamiManager extends GameManager
            // TODO: remove this old stuff
             String hardBoss = RandomUtil.pickRandom(BOSSES);
             _bossObj.init(new StaticMediaDesc(
-                MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.AVATAR, "chiyogami/" + boss));
+                MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.AVATAR, "chiyogami/" + hardBoss));
             _bossObj.setUsername(new Name("Downrock"));
 
         } else {
@@ -831,7 +831,9 @@ public class ChiyogamiManager extends GameManager
                     updatePlayerState(player, now);
                 }
                 // then, update the boss
-                updateBossState();
+                if (_gameObj.bossHealth > 0) {
+                    updateBossState();
+                }
 
                 repositionAllPlayers(now);
 
@@ -842,14 +844,6 @@ public class ChiyogamiManager extends GameManager
             _gameObj.commitTransaction();
         }
     }
-
-//    protected void updateAction (int oid, String action)
-//    {
-//        WorldOccupantInfo winfo = (WorldOccupantInfo) _roomObj.occupantInfo.get(oid);
-//
-//        _roomObj.postMessage(RoomCodes.SPRITE_MESSAGE, winfo.getItemIdent(),
-//            action, null, true);
-//    }
 
     /**
      * Tracks performance for each player.
@@ -963,10 +957,8 @@ public class ChiyogamiManager extends GameManager
     /** playerOid -> submitted tags. */
     protected HashIntMap<String> _playerTags = new HashIntMap<String>();
 
-    protected String[] _bossStates = new String[] { null, "Dance 1", "Dance 2" };
-
     /** TEMP: The filenames of current boss avatars. */
-    protected static final String[] BOSSES = { "bboy" };
+    protected static final String[] BOSSES = { "bboy", "HulaGirl" };
 
     /** The maximum length of time we'll go before we end the song. */
     protected static final int MAX_SONG_LENGTH = 5 * 60 * 1000;
