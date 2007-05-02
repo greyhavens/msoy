@@ -54,7 +54,6 @@ import com.threerings.whirled.spot.server.SpotProvider;
 import com.threerings.whirled.util.SceneFactory;
 
 import com.threerings.stats.server.persist.StatRepository;
-import com.threerings.toybox.server.ToyBoxManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
@@ -62,6 +61,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.chat.server.ChatChannelManager;
+import com.threerings.msoy.game.server.HostedGameManager;
 import com.threerings.msoy.game.server.LobbyRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
@@ -146,7 +146,7 @@ public class MsoyServer extends WhirledServer
 
     /** The in-world game registry for this server. */
     public static WorldGameRegistry worldGameReg = new WorldGameRegistry();
-    
+
     /** Our transition repository. */
     public static TransitionRepository transitRepo;
 
@@ -154,13 +154,13 @@ public class MsoyServer extends WhirledServer
     public static MsoyHttpServer httpServer;
 
     /** Handles sandboxed game server code. */
-    public static ToyBoxManager toyMan = new ToyBoxManager();
+    public static HostedGameManager hostedMan = new HostedGameManager();
 
     /** Handles our cuddly little pets. */
     public static PetManager petMan = new PetManager();
 
     /** Handles word lookup services */
-    public static DictionaryManager dictionary; 
+    public static DictionaryManager dictionary;
 
     /** All blocking Swiftly subversion actions must occur on this thread. */
     public static Invoker swiftlyInvoker;
@@ -405,7 +405,7 @@ public class MsoyServer extends WhirledServer
     {
         return new PlaceRegistry(invmgr, omgr) {
             public ClassLoader getClassLoader (PlaceConfig config) {
-                ClassLoader loader = toyMan.getClassLoader(config);
+                ClassLoader loader = hostedMan.getClassLoader(config);
                 return (loader == null) ? super.getClassLoader(config) : loader;
             }
         };
@@ -465,11 +465,10 @@ public class MsoyServer extends WhirledServer
                 return ((MemberObject) cliObj).getMemberId();
             }
         });
-        toyMan.init(omgr, invoker, invmgr, plreg, itemMan.getGameRepository());
         dictionary.init(new File(ServerConfig.serverRoot, "data/dictionary"));
 
         sceneRepo.finishInit();
-        
+
         // create and start up our HTTP server
         httpServer = new MsoyHttpServer();
         httpServer.init();
