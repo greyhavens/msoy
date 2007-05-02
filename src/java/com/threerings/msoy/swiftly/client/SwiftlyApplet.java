@@ -131,11 +131,6 @@ public class SwiftlyApplet extends JApplet
         Interval.resetTimer();
     }
 
-    public SwiftlyEditor getEditor ()
-    {
-        return _editor;
-    }
-
     // from interface RunQueue
     public void postRunnable (Runnable r)
     {
@@ -262,7 +257,7 @@ public class SwiftlyApplet extends JApplet
         }
 
         public void setPlaceView (PlaceView view) {
-            setContentPane(_editor = (SwiftlyEditor)view);
+            setContentPane((SwiftlyEditor)view);
             SwingUtil.refresh(getRootPane());
         }
         public void clearPlaceView (PlaceView view) {
@@ -293,7 +288,6 @@ public class SwiftlyApplet extends JApplet
     protected LocationDirector _locdtr;
     protected OccupantDirector _occdtr;
     protected ChatDirector _chatdtr;
-    protected SwiftlyEditor _editor;
     protected AppletContext _appletContext;
     protected PassiveNotifier _notifier;
 
