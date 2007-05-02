@@ -87,7 +87,7 @@ public class SwiftlyManager
                      ", room=" + mgr.getPlaceObject().getOid() + "].");
             listener.requestProcessed(mgr.getPlaceObject().getOid());
 
-        } catch (Exception e) {
+        } catch (InstantiationException e) {
             log.log(Level.WARNING, "Failed to create project room [config=" + config + "].", e);
             throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
         }

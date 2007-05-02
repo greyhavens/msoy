@@ -8,6 +8,7 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import javax.swing.JApplet;
 import javax.swing.JButton;
@@ -101,8 +102,10 @@ public class SwiftlyApplet extends JApplet
                     createGUI();
                 }
             });
-        } catch (Exception e) {
-            System.err.println("createGUI didn't successfully complete.");
+        } catch (InterruptedException e) {
+            System.err.println("createGUI thread interrupted.");
+        } catch (InvocationTargetException e) {
+            System.err.println("createGUI counld't be invoked.");
             Exception ee = (Exception) e.getCause();
             ee.printStackTrace();
             System.out.println("Foo: " + ee);
@@ -223,7 +226,7 @@ public class SwiftlyApplet extends JApplet
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } else {
                 UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-            }
+            }            
         } catch (Exception e) {
             // this should just fall back on a working theme
         }
