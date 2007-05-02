@@ -146,7 +146,8 @@ public class SwiftlyEditor extends PlacePanel
             }
         }
     }
-
+    
+    /** Requests that the given path element be opened in the editor. */
     public void openPathElement (final PathElement pathElement)
     {
         // If the tab already exists, then select it and be done.
@@ -177,6 +178,7 @@ public class SwiftlyEditor extends PlacePanel
         });
     }
 
+    /** Requests that the given path element be closed, if open, in the editor. */
     public void closePathElement (PathElement element)
     {
         _editorTabs.closePathElementTab(element);
@@ -207,11 +209,13 @@ public class SwiftlyEditor extends PlacePanel
         return _createableFileTypes; 
     }
 
-    public void updateTabTitleAt (PathElement pathElement)
+    /** Should be called when a path element is changed to update the tab title if open */ 
+    public void pathElementChanged (PathElement pathElement)
     {
         _editorTabs.updateTabTitleAt(pathElement);
     }
 
+    /** Should be called when a tab is removed to remove any listeners */
     public void tabRemoved (TabbedEditorComponent tab)
     {
         // TODO: remove when the textpane is no longer the document listener
@@ -259,16 +263,6 @@ public class SwiftlyEditor extends PlacePanel
                 _console.setVisible(true);
             }
         };
-    }
-
-    public EditorToolBar getToolbar()
-    {
-        return _toolbar;
-    }
-
-    public ProjectPanel getProjectPanel ()
-    {
-        return _projectPanel;
     }
 
     /**

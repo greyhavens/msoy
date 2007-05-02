@@ -118,7 +118,7 @@ public class ProjectPanel extends JPanel
         // TODO we are in single selection mode so only one node will ever change [right?]
         PathElementTreeNode node = (PathElementTreeNode)e.getChildren()[0];
         if (node.getElement().getType() == PathElement.Type.FILE) {
-            _editor.updateTabTitleAt(node.getElement());
+            _editor.pathElementChanged(node.getElement());
         }
     }
 
