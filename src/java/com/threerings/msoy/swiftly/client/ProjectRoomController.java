@@ -13,6 +13,8 @@ import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
+import com.threerings.presents.client.InvocationService.InvocationListener;
+
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
@@ -61,8 +63,13 @@ public class ProjectRoomController extends PlaceController
     {
         // disable the action on this client
         buildAction.setEnabled(false);
-        // the results of this request will be communicated via _roomObj.console
-        _roomObj.service.buildProject(_ctx.getClient());
+        // the successful results of this request will be communicated via _roomObj.result
+        _roomObj.service.buildProject(_ctx.getClient(), new InvocationListener () {
+            public void requestFailed (String reason) {
+                _ctx.showErrorMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, reason));
+            }
+        });
+
     }
 
     protected SwiftlyContext _ctx;

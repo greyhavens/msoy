@@ -55,7 +55,8 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
 
         case ProjectRoomMarshaller.BUILD_PROJECT:
             ((ProjectRoomProvider)provider).buildProject(
-                source                
+                source,
+                (InvocationService.InvocationListener)args[0]
             );
             return;
 

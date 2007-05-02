@@ -267,7 +267,7 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void buildProject (ClientObject caller)
+    public void buildProject (ClientObject caller, InvocationListener listener)
     {
         // TODO: check access!
 
@@ -275,7 +275,7 @@ public class ProjectRoomManager extends PlaceManager
         _roomObj.setBuilding(true);
 
         // perform a commit first. if that works, it will run the build
-        doCommit(true);
+        doCommit(true, listener);
     }
 
     // from interface ProjectRoomProvider
@@ -465,31 +465,46 @@ public class ProjectRoomManager extends PlaceManager
     protected void didShutdown ()
     {
         super.didShutdown();
-        doCommit(false);
+        onShutdownCommit();
         MsoyServer.swiftlyMan.projectDidShutdown(this);
     }
 
     /**
-     * Issue a request on the executor to commit this project; any log output should be collected,
-     * then published on _roomObj.console. If the commit works, it will start the build if true was
-     * passed as a parameter.
+     * Issue a request on the executor to commit this project; failure will not be reported to
+     * the user, only logged on the server. For use only by the server.
      */
-    protected void doCommit (boolean shouldBuild)
+    protected void onShutdownCommit ()
     {
-        MsoyServer.swiftlyMan.svnExecutor.addTask(new CommitProjectTask(shouldBuild));
+        doCommit(false, new InvocationListener() {
+            public void requestFailed (String reason) {
+                // nada. no result will be provided to the user.
+            }
+        });
+    }
+
+    /**
+     * Issue a request on the executor to commit this project; failure will be reported on the
+     * listener. If the commit works, it will start the build if true was passed as a parameter.
+     */
+    protected void doCommit (boolean shouldBuild, InvocationListener listener)
+    {
+        MsoyServer.swiftlyMan.svnExecutor.addTask(new CommitProjectTask(shouldBuild, listener));
     }
 
     /** Handles a request to commit our project. */
     protected class CommitProjectTask implements SerialExecutor.ExecutorTask
     {
-        public CommitProjectTask (boolean shouldBuild) {
+        public CommitProjectTask (boolean shouldBuild, InvocationListener listener)
+        {
             _projectId = ((ProjectRoomConfig)_config).projectId;
             _shouldBuild = shouldBuild;
+            _listener = listener;
             // take a snapshot of our documents while we're on the dobj thread
             _allDocs = _roomObj.documents.toArray(new SwiftlyDocument[_roomObj.documents.size()]);
         }
 
-        public boolean merge (SerialExecutor.ExecutorTask other) {
+        public boolean merge (SerialExecutor.ExecutorTask other)
+        {
             // we don't want more than one pending commit for a project
             if (other instanceof CommitProjectTask) {
                 return _projectId == ((CommitProjectTask)other)._projectId;
@@ -497,12 +512,14 @@ public class ProjectRoomManager extends PlaceManager
             return false;
         }
 
-        public long getTimeout () {
+        public long getTimeout ()
+        {
             return 60 * 1000L; // 60 seconds is all you get kid
         }
 
         // this is called on the executor thread and can go hog wild with the blocking
-        public void executeTask () {
+        public void executeTask ()
+        {
             try {
                 // commit each swiftly document in the project that has changed
                 for (SwiftlyDocument doc : _allDocs) {
@@ -520,7 +537,8 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         // this is called back on the dobj thread and must only report results
-        public void resultReceived () {
+        public void resultReceived ()
+        {
             // update the documents that were committed (any that got added to this list got
             // committed, even if we later failed)
             for (SwiftlyDocument doc : _modDocs) {
@@ -529,19 +547,20 @@ public class ProjectRoomManager extends PlaceManager
 
             if (_error != null) {
                 log.warning("Project storage commit failed: " + _error.getMessage());
-                _roomObj.setConsoleErr("m.commit_failed");
+                _listener.requestFailed("e.commit_failed_unexpected");
                 return;
             }
 
-            // if the commit work, run the build if set
+            // if the commit worked, run the build if instructed
             if (_shouldBuild) {
-                MsoyServer.swiftlyMan.buildExecutor.addTask(new BuildProjectTask());
+                MsoyServer.swiftlyMan.buildExecutor.addTask(new BuildProjectTask(_listener));
             }
         }
 
         // this is called back on the dobj thread and must only report failure
-        public void timedOut () {
-            _roomObj.setConsoleErr("m.commit_timed_out");
+        public void timedOut ()
+        {
+            _listener.requestFailed("e.commit_timed_out");
         }
 
         protected SwiftlyDocument[] _allDocs;
@@ -549,17 +568,21 @@ public class ProjectRoomManager extends PlaceManager
 
         protected int _projectId;
         protected boolean _shouldBuild;
+        protected InvocationListener _listener;
         protected Throwable _error;
     }
 
     /** Handles a request to build our project. */
     protected class BuildProjectTask implements SerialExecutor.ExecutorTask
     {
-        public BuildProjectTask () {
+        public BuildProjectTask (InvocationListener listener)
+        {
             _projectId = ((ProjectRoomConfig)_config).projectId;
+            _listener = listener;
         }
 
-        public boolean merge (SerialExecutor.ExecutorTask other) {
+        public boolean merge (SerialExecutor.ExecutorTask other)
+        {
             // we don't want more than one pending build for a project
             if (other instanceof BuildProjectTask) {
                 return _projectId == ((BuildProjectTask)other)._projectId;
@@ -567,12 +590,14 @@ public class ProjectRoomManager extends PlaceManager
             return false;
         }
 
-        public long getTimeout () {
+        public long getTimeout ()
+        {
             return 60 * 1000L; // 60 seconds is all you get kid
         }
 
         // this is called on the executor thread and can go hog wild with the blocking
-        public void executeTask () {
+        public void executeTask ()
+        {
             try {
                 // Get the local build directory
                 File topBuildDir = new File(ServerConfig.serverRoot + LOCAL_BUILD_DIRECTORY);
@@ -595,10 +620,14 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         // this is called back on the dobj thread and must only report results
-        public void resultReceived () {
+        public void resultReceived ()
+        {
+            // Inform the clients that the build is finished
+            _roomObj.setBuilding(false);
+
             if (_error != null) {
                 log.warning("Project build failed: " + _error.getMessage());
-                _roomObj.setConsoleErr(MessageBundle.tcompose("m.build_failed_unexpected"));
+                _listener.requestFailed("e.build_failed_unexpected");
                 return;
             }
 
@@ -622,17 +651,17 @@ public class ProjectRoomManager extends PlaceManager
 
             // Provide build output
             _roomObj.setResult(_result);
-            // Inform the clients that the build is finished
-            _roomObj.setBuilding(false);
         }
 
         // this is called back on the dobj thread and must only report failure
-        public void timedOut () {
-            _roomObj.setConsoleErr("m.build_timed_out");
+        public void timedOut ()
+        {
+            _listener.requestFailed("e.build_timed_out");
         }
 
         protected File _buildDir;
         protected int _projectId;
+        protected InvocationListener _listener;
         protected Throwable _error;
         protected BuildResult _result;
     }
@@ -641,22 +670,26 @@ public class ProjectRoomManager extends PlaceManager
     protected class FinishFileUploadTask implements SerialExecutor.ExecutorTask
     {
         public FinishFileUploadTask (UploadFile uploadFile, ClientObject caller,
-                                     ConfirmListener listener) {
+                                     ConfirmListener listener)
+        {
             _uploadFile = uploadFile;
             _caller = caller;
             _listener = listener;
         }
 
-        public boolean merge (SerialExecutor.ExecutorTask other) {
+        public boolean merge (SerialExecutor.ExecutorTask other)
+        {
             return false;
         }
 
-        public long getTimeout () {
+        public long getTimeout ()
+        {
             return 60 * 1000L; // 60 seconds is all you get kid
         }
 
         // this is called on the executor thread and can go hog wild with the blocking
-        public void executeTask () {
+        public void executeTask ()
+        {
             try {
                 // finalize the upload
                 _doc = _uploadFile.finishUpload();
@@ -671,7 +704,8 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         // this is called back on the dobj thread and must only report results
-        public void resultReceived () {
+        public void resultReceived ()
+        {
             // if we failed, stop here
             if (_error != null) {
                 log.log(Level.WARNING, "Finish upload failed.", _error);
@@ -700,8 +734,9 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         // this is called back on the dobj thread and must only report failure
-        public void timedOut () {
-            _listener.requestFailed("e.finish_upload_failed");
+        public void timedOut ()
+        {
+            _listener.requestFailed("e.file_upload_timed_out");
         }
 
         protected UploadFile _uploadFile;

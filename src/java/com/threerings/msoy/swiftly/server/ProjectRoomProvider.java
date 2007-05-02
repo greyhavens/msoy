@@ -30,7 +30,8 @@ public interface ProjectRoomProvider extends InvocationProvider
     /**
      * Handles a {@link ProjectRoomService#buildProject} request.
      */
-    public void buildProject (ClientObject caller);
+    public void buildProject (ClientObject caller, InvocationService.InvocationListener arg1)
+        throws InvocationException;
 
     /**
      * Handles a {@link ProjectRoomService#commitProject} request.

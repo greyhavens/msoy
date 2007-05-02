@@ -48,10 +48,12 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int BUILD_PROJECT = 3;
 
     // from interface ProjectRoomService
-    public void buildProject (Client arg1)
+    public void buildProject (Client arg1, InvocationService.InvocationListener arg2)
     {
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
         sendRequest(arg1, BUILD_PROJECT, new Object[] {
-            
+            listener2
         });
     }
 
