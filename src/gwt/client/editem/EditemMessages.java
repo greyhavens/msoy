@@ -56,9 +56,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String editorFurniTab();
 
   /**
-   * Translated "Game Definition".
+   * Translated "Custom Parameters".
    * 
-   * @return translated "Game Definition"
+   * @return translated "Custom Parameters"
    * @gwt.key gameDefinition
    */
   String gameDefinition();
@@ -72,6 +72,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String errTableNotImage();
 
   /**
+   * Translated "Manager".
+   * 
+   * @return translated "Manager"
+   * @gwt.key gameManager
+   */
+  String gameManager();
+
+  /**
    * Translated "Game Lobby Table background image".
    * 
    * @return translated "Game Lobby Table background image"
@@ -80,20 +88,20 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameTableTitle();
 
   /**
-   * Translated "Game Media".
-   * 
-   * @return translated "Game Media"
-   * @gwt.key gameMainTab
-   */
-  String gameMainTab();
-
-  /**
    * Translated "Video data must be an FLV, MPEG, WMV or Quicktime file.".
    * 
    * @return translated "Video data must be an FLV, MPEG, WMV or Quicktime file."
    * @gwt.key errVideoNotVideo
    */
   String errVideoNotVideo();
+
+  /**
+   * Translated "Game Media".
+   * 
+   * @return translated "Game Media"
+   * @gwt.key gameMainTab
+   */
+  String gameMainTab();
 
   /**
    * Translated "Pets must be a web-viewable image type.".
@@ -200,12 +208,28 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameMinPlayers();
 
   /**
+   * Translated "Identifier".
+   * 
+   * @return translated "Identifier"
+   * @gwt.key gameIdent
+   */
+  String gameIdent();
+
+  /**
    * Translated "Main Game media".
    * 
    * @return translated "Main Game media"
    * @gwt.key gameMainTitle
    */
   String gameMainTitle();
+
+  /**
+   * Translated "These three fields are only needed for Java games.".
+   * 
+   * @return translated "These three fields are only needed for Java games."
+   * @gwt.key gameJavaTip
+   */
+  String gameJavaTip();
 
   /**
    * Translated "Image shown when Item is placed in the World as Furniture".
@@ -224,20 +248,20 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String decorMainTitle();
 
   /**
-   * Translated "Photos must be a web-viewable image type.".
-   * 
-   * @return translated "Photos must be a web-viewable image type."
-   * @gwt.key errPhotoNotFlash
-   */
-  String errPhotoNotFlash();
-
-  /**
    * Translated "Room Settings".
    * 
    * @return translated "Room Settings"
    * @gwt.key decorConfigTab
    */
   String decorConfigTab();
+
+  /**
+   * Translated "Photos must be a web-viewable image type.".
+   * 
+   * @return translated "Photos must be a web-viewable image type."
+   * @gwt.key errPhotoNotFlash
+   */
+  String errPhotoNotFlash();
 
   /**
    * Translated "Avatars must be a web-viewable media.".
@@ -302,6 +326,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key msgItemUpdated
    */
   String msgItemUpdated();
+
+  /**
+   * Translated "Controller".
+   * 
+   * @return translated "Controller"
+   * @gwt.key gameController
+   */
+  String gameController();
 
   /**
    * Translated "Dimensions:".
@@ -414,6 +446,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key decorMainTab
    */
   String decorMainTab();
+
+  /**
+   * Translated "Failed to parse your custom parameter: {0}".
+   * 
+   * @return translated "Failed to parse your custom parameter: {0}"
+   * @gwt.key gameDefinitionError
+   */
+  String gameDefinitionError(String arg0);
 
   /**
    * Translated "Game Type".

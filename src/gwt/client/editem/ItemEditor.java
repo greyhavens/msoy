@@ -141,8 +141,7 @@ public abstract class ItemEditor extends BorderedDialog
     }
 
     /**
-     * Configures this editor with a reference to the item service and its item
-     * panel parent.
+     * Configures this editor with a reference to the item service and its item panel parent.
      */
     public void init (EditorHost parent)
     {
@@ -150,8 +149,8 @@ public abstract class ItemEditor extends BorderedDialog
     }
 
     /**
-     * Configures this editor with an item to edit. The item may be freshly
-     * constructed if we are using the editor to create a new item.
+     * Configures this editor with an item to edit. The item may be freshly constructed if we are
+     * using the editor to create a new item.
      */
     public void setItem (Item item)
     {
@@ -291,8 +290,8 @@ public abstract class ItemEditor extends BorderedDialog
     }
 
     /**
-     * Editors should override this method to indicate when the item is in a
-     * consistent state and may be uploaded.
+     * Editors should override this method to indicate when the item is in a consistent state and
+     * may be uploaded.
      */
     protected boolean itemConsistent ()
     {
@@ -319,8 +318,7 @@ public abstract class ItemEditor extends BorderedDialog
     }
 
     /**
-     * Configures this item editor with the hash value for media that it is
-     * about to upload.
+     * Configures this item editor with the hash value for media that it is about to upload.
      */
     protected void setHash (
         String id, String mediaHash, int mimeType, int constraint, int width, int height,
@@ -342,8 +340,7 @@ public abstract class ItemEditor extends BorderedDialog
                 MediaDesc.stringToHash(thumbMediaHash), (byte)thumbMimeType, (byte)thumbConstraint);
         }
 
-        // have the item re-validate that no media ids are duplicated
-        // unnecessarily
+        // have the item re-validate that no media ids are duplicated unnecessarily
         _item.checkConsolidateMedia();
 
         // re-check the other two, as they may have changed
@@ -359,8 +356,7 @@ public abstract class ItemEditor extends BorderedDialog
     }
 
     /**
-     * Called to re-set the displayed furni media to the MediaDesc
-     * returned by the item.
+     * Called to re-set the displayed furni media to the MediaDesc returned by the item.
      */
     protected void recheckFurniMedia ()
     {
@@ -370,8 +366,7 @@ public abstract class ItemEditor extends BorderedDialog
     }
 
     /**
-     * Called to re-set the displayed thumb media to the MediaDesc
-     * returned by the item.
+     * Called to re-set the displayed thumb media to the MediaDesc returned by the item.
      */
     protected void recheckThumbMedia ()
     {
@@ -381,8 +376,8 @@ public abstract class ItemEditor extends BorderedDialog
     }
 
     /**
-     * This is called from our magical JavaScript method by JavaScript code
-     * received from the server as a response to our file upload POST request.
+     * This is called from our magical JavaScript method by JavaScript code received from the
+     * server as a response to our file upload POST request.
      */
     protected static void callBridge (
         String id, String mediaHash, int mimeType, int constraint, int width, int height,
@@ -393,9 +388,8 @@ public abstract class ItemEditor extends BorderedDialog
     }
 
     /**
-     * Editors should call this method when something changes that might render
-     * an item consistent or inconsistent. It will update the enabled status of
-     * the submit button.
+     * Editors should call this method when something changes that might render an item consistent
+     * or inconsistent. It will update the enabled status of the submit button.
      */
     protected void updateSubmittable ()
     {
@@ -403,11 +397,18 @@ public abstract class ItemEditor extends BorderedDialog
     }
 
     /**
-     * Called when the user has clicked the "update" or "create" button to
-     * commit their edits or create a new item, respectively.
+     * Called when the user has clicked the "update" or "create" button to commit their edits or
+     * create a new item, respectively.
      */
     protected void commitEdit ()
     {
+        try {
+            prepareItem();
+        } catch (Exception e) {
+            new InfoPopup(e.getMessage()).show();
+            return;
+        }
+
         AsyncCallback cb = new AsyncCallback() {
             public void onSuccess (Object result) {
                 new InfoPopup(_item.itemId == 0 ? CEditem.emsgs.msgItemCreated() :
@@ -424,6 +425,17 @@ public abstract class ItemEditor extends BorderedDialog
         } else {
             CEditem.itemsvc.updateItem(CEditem.creds, _item, cb);
         }
+    }
+
+    /**
+     * Called when the user clicks create or update. The editor should flush any interface element
+     * settings back to the item being edited and return null if the item is ready for editing. It
+     * can throw an exception with a message to display to the user if the commit should be aborted
+     * due to invalid or missing data.
+     */
+    protected void prepareItem ()
+        throws Exception
+    {
     }
 
     /**

@@ -24,7 +24,6 @@ public final class MemberName_CustomFieldSerializer
     public static MemberName instantiate (SerializationStreamReader streamReader)
         throws SerializationException
     {        
-        GWT.log("Unserializing...", null);
         return new MemberName(streamReader.readString(), streamReader.readInt());
     }
 
