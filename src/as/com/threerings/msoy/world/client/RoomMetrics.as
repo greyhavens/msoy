@@ -122,7 +122,7 @@ public class RoomMetrics
         var v :Vector3 = positionOnFrontWall(new Vector3(x, y, z));
 
         var xPosition :Number = v.x * sceneWidth;
-        var yPosition :Number = sceneHeight - v.y * sceneHeight;
+        var yPosition :Number = (1 - v.y) * sceneHeight;
         
         return new Point(xPosition, yPosition);
     }

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.display.DisplayObject;
+
 import flash.geom.Point;
 
 import com.threerings.flash.Vector3;
@@ -29,7 +31,12 @@ public class RoomLayoutFlatworld extends RoomLayoutStandard {
         :ClickLocation
     {
         // this version drops everything onto the front plane. 
-        return pointToFurniLocation(stageX, stageY, anchorPoint, anchorAxis);
+        var cloc :ClickLocation = pointToFurniLocation(stageX, stageY, anchorPoint, anchorAxis);
+        cloc.click = ClickLocation.FLOOR;
+        if (anchorPoint == null) {
+            cloc.loc.y = 0;
+        }
+        return cloc;
     }
     
     // from interface RoomLayout
@@ -47,6 +54,17 @@ public class RoomLayoutFlatworld extends RoomLayoutStandard {
             new ClickLocation(ClickLocation.FRONT_WALL, _metrics.toMsoyLocation(v));
         clampClickLocation(cloc);
         return cloc;
+    }
+
+    override public function updateScreenLocation (target :RoomElement, offset :Point = null) :void
+    {
+        var loc :MsoyLocation = target.getLocation();
+
+        offset = (offset != null) ? offset : NO_OFFSET;
+
+        target.setScreenLocation(loc.x * _metrics.sceneWidth - offset.x,
+           ((1 - loc.y) * _metrics.sceneHeight) - offset.y, 1);
+        adjustZOrder(target as DisplayObject);
     }
 
     // from interface RoomLayout
