@@ -8,6 +8,14 @@ package client.shell;
 public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
+   * Translated "{0} addresses have opted out of receiving mail from Whirled:".
+   * 
+   * @return translated "{0} addresses have opted out of receiving mail from Whirled:"
+   * @gwt.key sendInvitesResultsOptedOut
+   */
+  String sendInvitesResultsOptedOut(String arg0);
+
+  /**
    * Translated "Display name:".
    * 
    * @return translated "Display name:"
@@ -328,20 +336,20 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String sendInvitesResultsInvalid(String arg0);
 
   /**
-   * Translated "Your password has been updated.".
-   * 
-   * @return translated "Your password has been updated."
-   * @gwt.key passwordUpdated
-   */
-  String passwordUpdated();
-
-  /**
    * Translated "Welcome, {0}".
    * 
    * @return translated "Welcome, {0}"
    * @gwt.key inviteIntro
    */
   String inviteIntro(String arg0);
+
+  /**
+   * Translated "Your password has been updated.".
+   * 
+   * @return translated "Your password has been updated."
+   * @gwt.key passwordUpdated
+   */
+  String passwordUpdated();
 
   /**
    * Translated "Logon".

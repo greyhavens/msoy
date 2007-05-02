@@ -236,6 +236,15 @@ public class MemberServlet extends MsoyServiceServlet
                     continue;
                 }
 
+                // make sure this address isn't on the opt-out list
+                if (MsoyServer.memberRepo.hasOptedOut(email)) {
+                    if (results.optedOut == null) {
+                        results.optedOut = new ArrayList();
+                    }
+                    results.optedOut.add(email);
+                    continue;
+                }
+
                 // make sure this user hasn't already invited this address
                 if (MsoyServer.memberRepo.loadInvite(email, memberId) != null) {
                     if (results.alreadyInvited == null) {

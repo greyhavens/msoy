@@ -606,6 +606,24 @@ public class MemberRepository extends DepotRepository
         return invRec;
     }
 
+    /**
+     * Add an email address to the opt-out list.
+     */
+    public void addOptOutEmail (String email)
+        throws PersistenceException
+    {
+        insert(new OptOutRecord(email));
+    }
+
+    /**
+     * Returns true if the given email address is on the opt-out list
+     */
+    public boolean hasOptedOut (String email)
+        throws PersistenceException
+    {
+        return load(OptOutRecord.class, email) != null;
+    }
+
     @Entity
     @Computed
     protected static class FriendCount extends PersistentRecord

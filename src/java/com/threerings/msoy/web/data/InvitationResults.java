@@ -19,6 +19,9 @@ public class InvitationResults
     /** A list of the email addresses that we know failed to receive the invitation */
     public List failed;
 
+    /** A list of the email addresses of people that have opted-out from email from whirled. */
+    public List optedOut;
+
     /** A list of the email addresses that were already registered with whirled */
     public List alreadyRegistered;
 

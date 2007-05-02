@@ -181,7 +181,7 @@ public class SendInvitesDialog extends BorderedDialog
             int row = 0;
 
             List[] lists = { invRes.successful, invRes.alreadyRegistered, invRes.alreadyInvited,
-                invRes.failed, invRes.invalid };
+                invRes.optedOut, invRes.failed, invRes.invalid };
             for (int ii = 0; ii < lists.length; ii++) {
                 if (lists[ii] != null && lists[ii].size() > 0) {
                     formatter.setStyleName(row, 0, "Header");
@@ -200,10 +200,14 @@ public class SendInvitesDialog extends BorderedDialog
                             "" + lists[ii].size()));
                         break;
                     case 3:
+                        contents.setText(row++, 0, CShell.cmsgs.sendInvitesResultsOptedOut(
+                            "" + lists[ii].size()));
+                        break;
+                    case 4:
                         contents.setText(row++, 0, CShell.cmsgs.sendInvitesResultsFailed("" +
                             lists[ii].size()));
                         break;
-                    case 4:
+                    case 5:
                         contents.setText(row++, 0, CShell.cmsgs.sendInvitesResultsInvalid("" +
                             lists[ii].size()));
                         break;
