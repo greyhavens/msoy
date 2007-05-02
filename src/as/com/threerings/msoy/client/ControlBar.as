@@ -43,6 +43,15 @@ public class ControlBar extends HBox
     /** The height of the control bar. This is fixed. */
     public static const HEIGHT :int = 24;
 
+    /** Different groups of UI elements. */
+    public static const UI_ALL :String = "All UI Elements"; // created automatically
+    public static const UI_STD :String = "Standard Member UI";
+    public static const UI_MINI :String = "Member UI Mini";
+    public static const UI_EDIT :String = "Member UI Edit";
+    public static const UI_GUEST :String = "Guest UI";
+
+    public static const ALL_UI_GROUPS :Array = [ UI_ALL, UI_STD, UI_MINI, UI_EDIT, UI_GUEST ];
+    
     public function ControlBar (ctx :WorldContext, top :TopPanel)
     {
         _ctx = ctx;
@@ -120,108 +129,130 @@ public class ControlBar extends HBox
         }
 
         removeAllChildren();
-        _hiders.length = 0;
+        clearAllGroups();
+        
         _chatControl = null;
         _avatarBtn = null;
         _editBtn = null;
         _channelBtn = null;
 
-        if (isMember) {
-            addHideableChild(_chatControl = new ChatControl(_ctx, this.height - 4));
+        _chatControl = new ChatControl(_ctx, this.height - 4);
+        addGroupChild(_chatControl, [ UI_STD, UI_EDIT ]);
+        
+        var chatBtn :CommandButton = new CommandButton();
+        chatBtn.toolTip = Msgs.GENERAL.get("i.chatPrefs");
+        chatBtn.setCommand(MsoyController.CHAT_PREFS);
+        chatBtn.styleName = "controlBarButtonChat";
+        addGroupChild(chatBtn, [ UI_STD ]);
 
-            var chatBtn :CommandButton = new CommandButton();
-            chatBtn.toolTip = Msgs.GENERAL.get("i.chatPrefs");
-            chatBtn.setCommand(MsoyController.CHAT_PREFS);
-            chatBtn.styleName = "controlBarButtonChat";
-            addHideableChild(chatBtn);
+        var volBtn :CommandButton = new CommandButton();
+        volBtn.toolTip = Msgs.GENERAL.get("i.volume");
+        volBtn.setCommand(ControlBarController.POP_VOLUME, volBtn);
+        volBtn.styleName = "controlBarButtonVolume";
+        addGroupChild(volBtn, [ UI_STD, UI_GUEST, UI_EDIT ]);
 
-            var volBtn :CommandButton = new CommandButton();
-            volBtn.toolTip = Msgs.GENERAL.get("i.volume");
-            volBtn.setCommand(ControlBarController.POP_VOLUME, volBtn);
-            volBtn.styleName = "controlBarButtonVolume";
-            addHideableChild(volBtn);
+        _avatarBtn = new CommandButton();
+        _avatarBtn.toolTip = Msgs.GENERAL.get("i.avatar");
+        _avatarBtn.setCommand(MsoyController.PICK_AVATAR);
+        _avatarBtn.styleName = "controlBarButtonAvatar";
+        addGroupChild(_avatarBtn, [ UI_STD ]);
 
-            _avatarBtn = new CommandButton();
-            _avatarBtn.toolTip = Msgs.GENERAL.get("i.avatar");
-            _avatarBtn.setCommand(MsoyController.PICK_AVATAR);
-            _avatarBtn.styleName = "controlBarButtonAvatar";
-            addHideableChild(_avatarBtn);
+        _petBtn = new CommandButton();
+        _petBtn.toolTip = Msgs.GENERAL.get("i.pet");
+        _petBtn.setCommand(MsoyController.SHOW_PETS);
+        _petBtn.styleName = "controlBarButtonPet";
+        addGroupChild(_petBtn, [ UI_STD ]);
 
-            _petBtn = new CommandButton();
-            _petBtn.toolTip = Msgs.GENERAL.get("i.pet");
-            _petBtn.setCommand(MsoyController.SHOW_PETS);
-            _petBtn.styleName = "controlBarButtonPet";
-            addHideableChild(_petBtn);
+        _editBtn = new CommandButton();
+        _editBtn.toolTip = Msgs.GENERAL.get("i.editScene");
+        _editBtn.setCommand(ControlBarController.EDIT_SCENE);
+        _editBtn.styleName = "controlBarButtonEdit";
+        _editBtn.enabled = false;
+        addGroupChild(_editBtn, [ UI_STD ]);
 
-            _editBtn = new CommandButton();
-            _editBtn.toolTip = Msgs.GENERAL.get("i.editScene");
-            _editBtn.setCommand(ControlBarController.EDIT_SCENE);
-            _editBtn.styleName = "controlBarButtonEdit";
-            _editBtn.enabled = false;
-            addHideableChild(_editBtn);
-
-        } else {
-            if (_ctx.getWorldClient().isEmbedded()) {
-                addHideableChild(_logonPanel = new LogonPanel(_ctx, this.height - 4));
-            }
-
-            volBtn = new CommandButton();
-            volBtn.setCommand(ControlBarController.POP_VOLUME, volBtn);
-            volBtn.styleName = "controlBarButtonVolume";
-            addHideableChild(volBtn);
+        if (_ctx.getWorldClient().isEmbedded()) {
+            _logonPanel = new LogonPanel(_ctx, this.height - 4);
+            addGroupChild(_logonPanel, [ UI_GUEST ]);
         }
 
         // some elements that are common to guest and logged in users
         var footerLeft :SkinnableImage = new SkinnableImage();
         footerLeft.styleName = "controlBarFooterLeft";
-        addHideableChild(footerLeft);
+        addGroupChild(footerLeft, [ UI_STD, UI_GUEST ]);
 
         var blank :Canvas = new Canvas();
         blank.styleName = "controlBarSpacer";
         blank.height = this.height;
         blank.percentWidth = 100;
-        addChild(blank);
-
-        // don't do navigation down here for now...
-        /*_goback = new CommandButton();
-        _goback.setCommand(ControlBarController.MOVE_BACK, _goback);
-        _goback.styleName = "controlBarButtonGoBack";
-        addHideableChild(_goback);
-
-        _loc = new CanvasWithText(this.height - 4);
-        _loc.styleName = "controlBarLocationText";
-        _loc.height = this.height;
-        _loc.width = 200;
-        addHideableChild(_loc);
-
-        _bookend = new SkinnableImage();
-        _bookend.styleName = "controlBarBookend";
-        addHideableChild(_bookend);*/
+        addGroupChild(blank, [ UI_STD, UI_MINI, UI_GUEST ]);
 
         var footerRight :SkinnableImage = new SkinnableImage();
         footerRight.styleName = "controlBarFooterRight";
-        addHideableChild(footerRight);
+        addGroupChild(footerRight, [ UI_STD, UI_GUEST ]);
 
-        if (isMember) {
-            _channelBtn = new CommandButton();
-            _channelBtn.toolTip = Msgs.GENERAL.get("i.channel");
-            _channelBtn.setCommand(MsoyController.POP_CHANNEL_MENU, _channelBtn);
-            _channelBtn.styleName = "controlBarButtonChannel";
-            addChild(_channelBtn);
-        }
+        _channelBtn = new CommandButton();
+        _channelBtn.toolTip = Msgs.GENERAL.get("i.channel");
+        _channelBtn.setCommand(MsoyController.POP_CHANNEL_MENU, _channelBtn);
+        _channelBtn.styleName = "controlBarButtonChannel";
+        addGroupChild(_channelBtn, [ UI_STD, UI_MINI ]);
 
         // and remember how things are set for now
         _isMember = isMember;
+        _isMinimized = false;
+        _isEditing = false;
 
+        updateUI();
+        
         recheckAvatarControl();
     }
 
-    protected function addHideableChild (child :UIComponent) :void
+    protected function clearAllGroups () :void
     {
-        addChild(child);
-        _hiders.push(child);
+        for each (var key :String in ALL_UI_GROUPS) {
+            if (_groups[key] == null) {
+                _groups[key] = new Array();
+            } else {
+                _groups[key].length = 0;
+            }
+        }
     }
 
+    protected function addGroupChild (child :UIComponent, groupNames :Array) :void
+    {
+        addChild(child);
+        for each (var groupName :String in groupNames) {
+            if (groupName != UI_ALL) {
+                _groups[groupName].push(child);
+            }
+            _groups[UI_ALL].push(child);
+        }
+    }
+
+    protected function updateGroup (groupName :String, value :Boolean) :void
+    {
+        var elt :UIComponent = null;
+
+        for each (elt in _groups[groupName]) {
+            elt.visible = elt.includeInLayout = value;
+        }
+    }
+
+    protected function updateUI () :void
+    {
+        updateGroup(UI_ALL, false);
+        if (_isMember) {
+            if (_isMinimized) {
+                updateGroup(UI_MINI, true);
+            } else if (_isEditing) {
+                updateGroup(UI_EDIT, true);
+            } else {
+                updateGroup(UI_STD, true);
+            }
+        } else {
+            updateGroup(UI_GUEST, true);
+        }
+    }   
+    
     protected function embeddedStateKnown (event :ValueEvent) :void
     {
         var embedded :Boolean = (event.value as Boolean);
@@ -233,11 +264,9 @@ public class ControlBar extends HBox
 
     protected function miniWillChange (event :ValueEvent) :void
     {
-        var minimized :Boolean = (event.value as Boolean);
-        for each (var child :UIComponent in _hiders) {
-            child.visible = !minimized;
-            child.includeInLayout = !minimized;
-        }
+        _isMinimized = (event.value as Boolean);
+        _isEditing = (_isEditing && ! _isMinimized);
+        updateUI();
     }
 
     protected function handleAddRemove (event :Event) :void
@@ -300,11 +329,20 @@ public class ControlBar extends HBox
     /** Are we currently configured to show the controls for a member? */
     protected var _isMember :Boolean;
 
+    /** Are we in a minimized mode? */
+    protected var _isMinimized :Boolean;
+
+    /** Are we in room editing mode? */
+    protected var _isEditing :Boolean;
+    
     /** The back-movement button. */
     protected var _goback :CommandButton;
 
+    /** Object that contains all the different groups of UI elements. */
+    protected var _groups :Object = new Object();
+    
     /** A list of children that can be hidden when we are minimized. */
-    protected var _hiders :Array = new Array();
+    //protected var _hiders :Array = new Array();
 
     /** Our chat control. */
     protected var _chatControl :ChatControl;
