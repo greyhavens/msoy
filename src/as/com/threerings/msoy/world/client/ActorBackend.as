@@ -13,6 +13,7 @@ public class ActorBackend extends EntityBackend
         o["setOrientation_v1"] = setOrientation_v1;
         o["setState_v1"] = setState_v1;
         o["getState_v1"] = getState_v1;
+        o["getRoomBounds_v1"] = getRoomBounds_v1;
 
         // oldness (used for a very short time), deprecated 2007-04-24
         o["setWalkSpeed_v1"] = function (num :Number) :void {
@@ -53,6 +54,14 @@ public class ActorBackend extends EntityBackend
     protected function setOrientation_v1 (orient :Number) :void
     {
         (_sprite as ActorSprite).setOrientationFromUser(orient);
+    }
+
+    /**
+     * Called by user code to determine the current room's boundaries.
+     */
+    protected function getRoomBounds_v1 () :Array
+    {
+        return (_sprite as ActorSprite).getRoomBounds();
     }
 
     /**

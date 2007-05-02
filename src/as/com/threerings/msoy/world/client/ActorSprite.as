@@ -563,6 +563,19 @@ public class ActorSprite extends MsoySprite
         return (_occInfo as WorldOccupantInfo).getState();
     }
 
+    /**
+     * Get the room bounds.
+     * Called by user code.
+     */
+    public function getRoomBounds () :Array
+    {
+        if (!(parent is RoomView)) {
+            return null;
+        }
+        var metrics :RoomMetrics = RoomView(parent).layout.metrics;
+        return [ metrics.sceneWidth, metrics.sceneHeight, metrics.sceneDepth];
+    }
+
     override public function getMediaScaleX () :Number
     {
         return _scale;
