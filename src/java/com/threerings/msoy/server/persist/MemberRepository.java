@@ -624,6 +624,20 @@ public class MemberRepository extends DepotRepository
         return load(OptOutRecord.class, email) != null;
     }
 
+    /** 
+     * Adds the invitee's email address to the opt-out list, and sets this invitation's inviteeId
+     * to -1, indicating that it is no longer available, and the invitee chose to opt-out.
+     */
+    public void optOutInvite (Invitation invite) 
+        throws PersistenceException
+    {
+        addOptOutEmail(invite.inviteeEmail);
+
+        InvitationRecord invRec = loadInvite(invite.inviteId);
+        invRec.inviteeId = -1;
+        update(invRec, InvitationRecord.INVITEE_ID);
+    }
+
     @Entity
     @Computed
     protected static class FriendCount extends PersistentRecord

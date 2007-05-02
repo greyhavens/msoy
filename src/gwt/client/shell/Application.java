@@ -129,9 +129,20 @@ public class Application
             // show the default and pop up an invitation dialog
             displayPage("world", "");
 
-            CShell.membersvc.getInvitation(args, new AsyncCallback () {
+            CShell.membersvc.getInvitation(args, true, new AsyncCallback () {
                 public void onSuccess (Object result) {
                     (new InvitationDialog(_status, (Invitation)result)).show();
+                }
+                public void onFailure (Throwable cause) {
+                    (new AlertPopup(CShell.serverError(cause))).alert();
+                }
+            });
+        } else if ("optout".equals(page)) {
+            displayPage("world", "");
+
+            CShell.membersvc.getInvitation(args, false, new AsyncCallback () {
+                public void onSuccess (Object result) {
+                    (new OptOutDialog((Invitation)result)).show();
                 }
                 public void onFailure (Throwable cause) {
                     (new AlertPopup(CShell.serverError(cause))).alert();

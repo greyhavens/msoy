@@ -300,13 +300,18 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public Invitation getInvitation (String inviteId) 
+    public Invitation getInvitation (String inviteId, boolean viewing)
         throws ServiceException
     {
         Invitation inv = new Invitation();
 
         try {
-            InvitationRecord invRec = MsoyServer.memberRepo.viewInvite(inviteId);
+            InvitationRecord invRec;
+            if (viewing) {
+                invRec = MsoyServer.memberRepo.viewInvite(inviteId);
+            } else {
+                invRec = MsoyServer.memberRepo.loadInvite(inviteId);
+            }
             if (invRec == null || invRec.inviteeId != 0) {
                 // probably someone trying to sneak in
                 throw new ServiceException(ServiceException.INTERNAL_ERROR);
@@ -323,6 +328,22 @@ public class MemberServlet extends MsoyServiceServlet
         }
          
         return inv;
+    }
+
+    // from MemberService
+    public void optOut (Invitation invite) 
+        throws ServiceException
+    {
+        try {
+            if (!MsoyServer.memberRepo.inviteAvailable(invite.inviteId)) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            }
+
+            MsoyServer.memberRepo.optOutInvite(invite);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "optOut failed [inviteId=" + invite.inviteId + "]", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     /**

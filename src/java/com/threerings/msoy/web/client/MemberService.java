@@ -70,7 +70,16 @@ public interface MemberService extends RemoteService
 
     /** 
      * Grabs the details for an Invitation for the use of the InvitationDialog.
+     *
+     * @param viewing If true, this will ensure that the viewed date in the database has been set.
+     * If false, the viewdate will be left alone.
      */
-    public Invitation getInvitation (String inviteId)
+    public Invitation getInvitation (String inviteId, boolean viewing)
+        throws ServiceException;
+
+    /**
+     * Adds the email address from the given invite to the opt-out list.
+     */
+    public void optOut (Invitation invite)
         throws ServiceException;
 }

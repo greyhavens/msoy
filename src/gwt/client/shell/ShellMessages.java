@@ -120,6 +120,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editPermaNameTip();
 
   /**
+   * Translated "Opt Out".
+   * 
+   * @return translated "Opt Out"
+   * @gwt.key optOutAccept
+   */
+  String optOutAccept();
+
+  /**
    * Translated "Whirled is still an alpha product, with plenty of hiccups to go around.  The current audience is a small group of people trusted to help us test and expand Whirled.  If you would like to join the crew, click on "Accept Invitation" below, and you can create an account to call your own!".
    * 
    * @return translated "Whirled is still an alpha product, with plenty of hiccups to go around.  The current audience is a small group of people trusted to help us test and expand Whirled.  If you would like to join the crew, click on "Accept Invitation" below, and you can create an account to call your own!"
@@ -240,6 +248,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String sendInvitesEmailAddresses();
 
   /**
+   * Translated "{0} will no longer receive email from whirled.com".
+   * 
+   * @return translated "{0} will no longer receive email from whirled.com"
+   * @gwt.key optOutSuccessful
+   */
+  String optOutSuccessful(String arg0);
+
+  /**
    * Translated "Mature".
    * 
    * @return translated "Mature"
@@ -318,6 +334,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key sendInvitesPendingTip
    */
   String sendInvitesPendingTip();
+
+  /**
+   * Translated "Three Rings respects your wish opt-out of receiving email from whirled.com.  In order to complete your submission of an opt-out request, please click on the "Opt Out" button below.  If you reached this dialog in error, you can cancel it by clicking on "Not Now".".
+   * 
+   * @return translated "Three Rings respects your wish opt-out of receiving email from whirled.com.  In order to complete your submission of an opt-out request, please click on the "Opt Out" button below.  If you reached this dialog in error, you can cancel it by clicking on "Not Now"."
+   * @gwt.key optOutBody1
+   */
+  String optOutBody1();
 
   /**
    * Translated "No description provided for this item.".
@@ -664,6 +688,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String sendInvitesNoPending();
 
   /**
+   * Translated "Hello, {0}".
+   * 
+   * @return translated "Hello, {0}"
+   * @gwt.key optOutIntro
+   */
+  String optOutIntro(String arg0);
+
+  /**
    * Translated "Remove Tag".
    * 
    * @return translated "Remove Tag"
@@ -696,6 +728,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editPermaReady();
 
   /**
+   * Translated "Opt Out of Email from Whirled".
+   * 
+   * @return translated "Opt Out of Email from Whirled"
+   * @gwt.key optOutTitle
+   */
+  String optOutTitle();
+
+  /**
    * Translated "Email Address:".
    * 
    * @return translated "Email Address:"
@@ -726,6 +766,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key inviteTitle
    */
   String inviteTitle();
+
+  /**
+   * Translated "Not Now".
+   * 
+   * @return translated "Not Now"
+   * @gwt.key optOutReject
+   */
+  String optOutReject();
 
   /**
    * Translated "Enter up to {0} email address below (each on a new line), along with a custom message to invite your friends to Whirled!".
