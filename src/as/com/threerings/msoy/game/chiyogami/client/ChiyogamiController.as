@@ -16,7 +16,7 @@ import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import com.threerings.msoy.world.client.ActorSprite;
+import com.threerings.msoy.world.client.AvatarSprite;
 import com.threerings.msoy.world.client.RoomView;
 
 import com.threerings.msoy.game.client.WorldGameControllerDelegate;
@@ -47,21 +47,14 @@ public class ChiyogamiController extends GameController
 
         super.willEnterPlace(plobj);
 
-        // this is a pile of crap- continue trying to set up the boss's
-        // health bar until we succeed. It appears we are instantiated even prior
-        // to the roomview becoming active. Wow!
-        var fn :Function = function () :void {
-            if (!updateBossHealth()) {
-                _mctx.getClient().callLater(fn);
-            }
-        };
-        fn();
+        recheckBoss();
     }
 
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
         super.didLeavePlace(plobj);
 
+        _checkingBoss = false;
         _gameObj = null;
     }
 
@@ -69,7 +62,7 @@ public class ChiyogamiController extends GameController
     {
         var name :String = ace.getName();
         if (name == ChiyogamiObject.BOSS_OID || name == ChiyogamiObject.BOSS_HEALTH) {
-            updateBossHealth()
+            recheckBoss();
 
         } else if (name == ChiyogamiObject.PHASE) {
             phaseChanged();
@@ -119,11 +112,37 @@ public class ChiyogamiController extends GameController
     }
 
     /**
-     * Update the boss's health.
+     * Called to initiate a few things that need to be done with the boss.
+     */
+    protected function recheckBoss () :void
+    {
+        if (_checkingBoss) {
+            return; // already doing it
+        }
+
+        _checkingBoss = true;
+        // this is a pile of crap- continue trying to set up the boss's
+        // health bar until we succeed. It appears we are instantiated even prior
+        // to the roomview becoming active. Wow!
+        var fn :Function = function () :void {
+            if (_checkingBoss && !doBossCheck()) {
+                _mctx.getClient().callLater(fn);
+
+            } else {
+                _checkingBoss = false;
+            }
+        };
+        fn();
+    }
+
+    /**
+     * Find the boss avatar and do what we can to initialize it.
+     * Don't call this directly, call recheckBoss().
+     *
      * @return false if we were unable to do so because things seem
      *               to still be initializing.
      */
-    protected function updateBossHealth () :Boolean
+    protected function doBossCheck () :Boolean
     {
         if (_gameObj.bossOid == 0) {
             _bossHealth = null;
@@ -135,10 +154,16 @@ public class ChiyogamiController extends GameController
             if (roomView == null) {
                 return false;
             }
-            var boss :ActorSprite = roomView.getActor(_gameObj.bossOid);
+            var boss :AvatarSprite = (roomView.getActor(_gameObj.bossOid) as AvatarSprite);
             if (boss == null) {
                 return false;
             }
+            if (!boss.isContentInitialized()) {
+                return false;
+            }
+
+            // tell the manager about the boss' states
+            _gameObj.manager.invoke("setBossStates", massageStates(boss.getAvatarStates()));
 
             _bossHealth = new HealthMeter();
             boss.addDecoration(_bossHealth);
@@ -158,12 +183,22 @@ public class ChiyogamiController extends GameController
         _worldDelegate.setAvatarControl(hasControl);
 
         if (!hasControl) {
-            var myStates :Array = _worldDelegate.getMyStates();
-            var states :TypedArray = TypedArray.create(String);
-            states.addAll(myStates);
-
-            _gameObj.manager.invoke("setStates", states);
+            _gameObj.manager.invoke("setStates", massageStates(_worldDelegate.getMyStates()));
         }
+    }
+
+    /**
+     * Turn an Array into a TypedArray of String, and replace the first state with null.
+     */
+    protected function massageStates (states :Array) :TypedArray
+    {
+        var wrapped :TypedArray = TypedArray.create(String);
+        wrapped.addAll(states);
+        // if not being shown to a user, the default state can be replaced with null
+        if (wrapped.length > 0) {
+            wrapped[0] = null;
+        }
+        return wrapped;
     }
 
     /** Our world context. */
@@ -177,6 +212,9 @@ public class ChiyogamiController extends GameController
 
     /** Our panel. */
     protected var _panel :ChiyogamiPanel;
+
+    /** Are we currently trying to initialize various things with the boss? */
+    protected var _checkingBoss :Boolean;
 
     /** The boss's health meter. */
     protected var _bossHealth :HealthMeter;

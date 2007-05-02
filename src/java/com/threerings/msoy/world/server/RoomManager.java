@@ -134,8 +134,8 @@ public class RoomManager extends SpotSceneManager
         // update the occupant info
         OccupantInfo occInfo = getOccupantInfo(actor.getOid());
         WorldOccupantInfo winfo = (WorldOccupantInfo) occInfo;
-        if (ObjectUtil.equals(winfo.getState(), state)) {
-            // no change, no event
+        // if they're no longer here, or there was no change, we're done.
+        if (winfo == null || ObjectUtil.equals(winfo.getState(), state)) {
             return;
         }
 

@@ -13,6 +13,7 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.QuickSort;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.ResultListener;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.util.Name;
 
@@ -77,26 +78,25 @@ public class ChiyogamiManager extends GameManager
      */
     public void setStates (BodyObject player, String[] states)
     {
-        // possibly filter down to just dance actions (and the default state)
-        ArrayList<String> list = new ArrayList<String>(states.length);
-        for (String state : states) {
-            if (state == null || state.toLowerCase().startsWith("dance")) {
-                list.add(state);
-            }
-        }
-        int size = list.size();
-        // if a non-empty (and non-identical) subset of the states
-        // are dancing states, select out just those
-        if (size != 0 && size != states.length) {
-            states = new String[size];
-            list.toArray(states);
-        }
-
-        // stash the states
-        _playerStates.put(player.getOid(), states);
+        setAvatarStates(player, states);
 
         // update the player's state, just in case
         updatePlayerState(player);
+    }
+
+    /**
+     * Invoked by clients to report the boss' states, which we
+     * otherwise do not know!
+     */
+    public void setBossStates (BodyObject player, String[] states)
+    {
+        // TODO: intercept hacking, perhaps record all the states that
+        // each player submits and go with the consensus..
+
+        System.err.println("Player reported boss states: " + StringUtil.toString(states));
+
+        // for now, just believe the last person
+        setAvatarStates(_bossObj, states);
     }
 
     /**
@@ -149,6 +149,30 @@ public class ChiyogamiManager extends GameManager
                 // we'll notice that he's dead next tick
             }
         }
+    }
+
+    /**
+     * Record the states for an avatar, as sent by a player.
+     */
+    protected void setAvatarStates (BodyObject body, String[] states)
+    {
+        // possibly filter down to just dance actions (and the default state)
+        ArrayList<String> list = new ArrayList<String>(states.length);
+        for (String state : states) {
+            if (state == null || state.toLowerCase().startsWith("dance")) {
+                list.add(state);
+            }
+        }
+        int size = list.size();
+        // if a non-empty (and non-identical) subset of the states
+        // are dancing states, select out just those
+        if (size != 0 && size != states.length) {
+            states = new String[size];
+            list.toArray(states);
+        }
+
+        // stash the states
+        _playerStates.put(body.getOid(), states);
     }
 
     @Override
@@ -729,6 +753,11 @@ public class ChiyogamiManager extends GameManager
         SpeakProvider.sendSpeak(_roomObj, _bossObj.username, null, utterance);
     }
 
+    protected void updateBossState ()
+    {
+        updatePlayerState(_bossObj, .5f); // TODO: boss scoring ? ? ?
+    }
+
     protected void updatePlayerState (BodyObject player)
     {
         updatePlayerState(player, System.currentTimeMillis());
@@ -771,19 +800,6 @@ public class ChiyogamiManager extends GameManager
         }
     }
 
-    protected void updateBossState ()
-    {
-        updateState(_bossObj, _bossStates[RandomUtil.getInt(2) + 1]);
-    }
-
-//    protected void updateAction (int oid, String action)
-//    {
-//        WorldOccupantInfo winfo = (WorldOccupantInfo) _roomObj.occupantInfo.get(oid);
-//
-//        _roomObj.postMessage(RoomCodes.SPRITE_MESSAGE, winfo.getItemIdent(),
-//            action, null, true);
-//    }
-
     /**
      * Update the state of the specified player.
      */
@@ -802,16 +818,20 @@ public class ChiyogamiManager extends GameManager
         try {
             _roomObj.startTransaction();
             try {
+                int bossOid = _bossObj.getOid();
                 long now = System.currentTimeMillis();
                 int numPlayers = _gameObj.occupants.size();
                 for (int ii = 0; ii < numPlayers; ii++) {
+                    int oid = _gameObj.occupants.get(ii);
+                    if (oid == bossOid) {
+                        continue;
+                    }
                     BodyObject player = (BodyObject) MsoyServer.omgr.getObject(
                         _gameObj.occupants.get(ii));
                     updatePlayerState(player, now);
                 }
-                if (_gameObj.bossHealth > 0) {
-                    updateBossState();
-                }
+                // then, update the boss
+                updateBossState();
 
                 repositionAllPlayers(now);
 
@@ -822,6 +842,14 @@ public class ChiyogamiManager extends GameManager
             _gameObj.commitTransaction();
         }
     }
+
+//    protected void updateAction (int oid, String action)
+//    {
+//        WorldOccupantInfo winfo = (WorldOccupantInfo) _roomObj.occupantInfo.get(oid);
+//
+//        _roomObj.postMessage(RoomCodes.SPRITE_MESSAGE, winfo.getItemIdent(),
+//            action, null, true);
+//    }
 
     /**
      * Tracks performance for each player.
