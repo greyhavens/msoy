@@ -5,6 +5,9 @@ package com.threerings.msoy.swiftly.client;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -441,17 +444,22 @@ public class SwiftlyEditor extends PlacePanel
             }
             _ctx.getAppletContext().showDocument(url, "_blank");
 
-        } catch (Exception e) {
-            log.warning("Failed to display results [url=" + resultUrl + ", error=" + e + "].");
-            // TODO: we sent ourselves a bad url? display an error dialog?
+        } catch (MalformedURLException e) {
+            log.warning("Malformed results URL [url=" + resultUrl + ", error=" + e + "].");
+            _ctx.showErrorMessage(_msgs.get("e.preview_failed"));
+
+        } catch (UnsupportedEncodingException e) {
+            log.warning("Failed to encode results URL [url=" + resultUrl + ", error=" + e + "].");
+            _ctx.showErrorMessage(_msgs.get("e.preview_failed"));
         }
     }
 
     protected void exportResult ()
     {
         File out = null;
+        String resultUrl = _roomObj.result.getBuildResultURL();
         try {
-            URL url = new URL(_roomObj.result.getBuildResultURL());
+            URL url = new URL(resultUrl);
             out = new File(System.getProperty("user.home") + File.separator + "Desktop" +
                            File.separator + _roomObj.project.getOutputFileName());
             FileOutputStream ostream = new FileOutputStream(out);
@@ -459,9 +467,13 @@ public class SwiftlyEditor extends PlacePanel
             ostream.close();
             _ctx.showInfoMessage(_msgs.get("m.result_exported", out.getPath()));
 
-        } catch (Exception e) {
+        } catch (MalformedURLException e) {
+            log.log(Level.WARNING, "Malformed results URL [url=" + resultUrl + "].", e);
+            _ctx.showErrorMessage(_msgs.get("e.export_failed"));
+
+        } catch (IOException e) {
             log.log(Level.WARNING, "Failed to save build results [to=" + out + "].", e);
-            // TODO: report an error
+            _ctx.showErrorMessage(_msgs.get("e.export_failed"));
         }
     }
 
