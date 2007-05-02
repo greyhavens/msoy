@@ -91,6 +91,15 @@ public class GameEditor extends ItemEditor
             }
             _extras.setText(childrenText);
         }
+
+        Object[] bits = { "ident", _ident, "controller", _controller, "manager", _manager };
+        for (int ii = 0; ii < bits.length; ii += 2) {
+            NodeList elems = xml.getElementsByTagName((String)bits[ii]);
+            if (elems.getLength() > 0) {
+                Element elem = (Element)elems.item(0);
+                ((TextBox)bits[ii+1]).setText(elem.getFirstChild().toString());
+            }
+        }
     }
 
     // @Override from ItemEditor
@@ -121,6 +130,7 @@ public class GameEditor extends ItemEditor
         bits.setText(row, 0, CEditem.emsgs.gameGameType());
         bits.setWidget(row++, 1, bind(_matchType = new ListBox(), new Binder() {
             public void valueChanged () {
+                // TODO: disable or hide min/max players and watchable if this is a party game
             }
         }));
         _matchType.addItem(CEditem.dmsgs.getString("gameType0"));
@@ -130,10 +140,12 @@ public class GameEditor extends ItemEditor
         bits.setText(row, 0, CEditem.emsgs.gameMinPlayers());
         bits.setWidget(row++, 1, _minPlayers = new TextBox());
         _minPlayers.setText("1");
+        _minPlayers.setVisibleLength(5);
 
         bits.setText(row, 0, CEditem.emsgs.gameMaxPlayers());
         bits.setWidget(row++, 1, _maxPlayers = new TextBox());
         _maxPlayers.setText("1");
+        _maxPlayers.setVisibleLength(5);
 
         bits.setText(row, 0, CEditem.emsgs.gameWatchable());
         bits.setWidget(row++, 1, _watchable = new CheckBox());
@@ -145,6 +157,20 @@ public class GameEditor extends ItemEditor
         bits.getFlexCellFormatter().setColSpan(row++, 0, 2);
         _extras.setCharacterWidth(80);
         _extras.setVisibleLines(5);
+
+        bits.setText(row, 0, CEditem.emsgs.gameJavaTip());
+        bits.getFlexCellFormatter().setColSpan(row++, 0, 2);
+
+        bits.setText(row, 0, CEditem.emsgs.gameIdent());
+        bits.setWidget(row++, 1, _ident = new TextBox());
+
+        bits.setText(row, 0, CEditem.emsgs.gameController());
+        bits.setWidget(row++, 1, _controller = new TextBox());
+        _controller.setVisibleLength(40);
+
+        bits.setText(row, 0, CEditem.emsgs.gameManager());
+        bits.setWidget(row++, 1, _manager = new TextBox());
+        _manager.setVisibleLength(40);
 
         super.createInterface(contents, tabs);
     }
@@ -175,6 +201,16 @@ public class GameEditor extends ItemEditor
 
         if (!_watchable.isChecked()) {
             match.appendChild(xml.createElement("unwatchable"));
+        }
+
+        Object[] bits = { "ident", _ident, "controller", _controller, "manager", _manager };
+        for (int ii = 0; ii < bits.length; ii += 2) {
+            String text = ((TextBox)bits[ii+1]).getText();
+            if (text.length() > 0) {
+                Element elem = xml.createElement((String)bits[ii]);
+                elem.appendChild(xml.createTextNode(text));
+                xml.getFirstChild().appendChild(elem);
+            }
         }
 
         String extras = _extras.getText();
@@ -229,5 +265,6 @@ public class GameEditor extends ItemEditor
     protected TextBox _minPlayers, _maxPlayers;
     protected ListBox _matchType;
     protected CheckBox _watchable;
+    protected TextBox _ident, _controller, _manager;
     protected TextArea _extras;
 }

@@ -224,9 +224,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameMainTitle();
 
   /**
-   * Translated "These three fields are only needed for Java games.".
+   * Translated "These fields are only needed for Java games.".
    * 
-   * @return translated "These three fields are only needed for Java games."
+   * @return translated "These fields are only needed for Java games."
    * @gwt.key gameJavaTip
    */
   String gameJavaTip();
