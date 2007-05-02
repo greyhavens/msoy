@@ -51,13 +51,18 @@ public class ProfileServlet extends MsoyServiceServlet
         // TODO: whatever filtering and profanity checking that we want
 
         try {
-            // firstly stuff their profile data into the database
-            boolean created = MsoyServer.profileRepo.storeProfile(
-                new ProfileRecord(memrec.memberId, profile));
+            // load their old profile record for "first time configuration" purposes
+            ProfileRecord oprof = MsoyServer.profileRepo.loadProfile(memrec.memberId);
+
+            // stuff their updated profile data into the database
+            ProfileRecord nrec = new ProfileRecord(memrec.memberId, profile);
+            nrec.modifications = oprof.modifications+1;
+            MsoyServer.profileRepo.storeProfile(nrec);
 
             // record that the user updated their profile
-            logUserAction(memrec, created ? UserAction.CREATED_PROFILE :
-                          UserAction.UPDATED_PROFILE, null);
+            UserAction action = (nrec.modifications == 1) ?
+                UserAction.CREATED_PROFILE : UserAction.UPDATED_PROFILE;
+            logUserAction(memrec, action, null);
 
             // handle a display name change if necessary
             if (memrec.name == null || !memrec.name.equals(displayName)) {

@@ -90,10 +90,14 @@ public class ProfileRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The unique id of the memory with whom this profile is associated. */
     @Id public int memberId;
+
+    /** The number of times the user has modified their profile. We need this for first time
+     * profile creation purposes, so we'll have some statistical fun while we're at it. */
+    public int modifications;
 
     /** The hash code of the user's profile photo. */
     @Column(nullable=true)
