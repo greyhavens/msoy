@@ -8,6 +8,7 @@ import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
+import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import flash.filters.GlowFilter;
@@ -17,6 +18,7 @@ import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
 import com.threerings.util.Util;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.Animation;
 import com.threerings.flash.FilterUtil;
@@ -30,6 +32,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.client.WorldContext;
 
+import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.WorldOccupantInfo;
@@ -77,6 +80,18 @@ public class ActorSprite extends MsoySprite
         if (occInfo != null) {
             setActorInfo(occInfo);
         }
+    }
+
+    /**
+     * Add a special effect to this actor.
+     */
+    public function addTransientEffect (effect :EffectData) :void
+    {
+        var sprite :EffectSprite = new EffectSprite(effect);
+        sprite.addEventListener(MediaContainer.SIZE_KNOWN, handleEffectSizeKnown);
+        sprite.addEventListener(EffectSprite.EFFECT_FINISHED, handleEffectFinished);
+        sprite.x = getActualWidth()/2;
+        addChild(sprite);
     }
 
     /**
@@ -430,6 +445,28 @@ public class ActorSprite extends MsoySprite
         var baseY :Number = isNaN(_height) ? 0 :
             (getMediaScaleY() * _locScale * _fxScaleY * (getMediaHotSpot().y - _height));
         _label.y = baseY - _label.height;
+    }
+
+    /**
+     * Handle an effect for which the size is now known.
+     */
+    protected function handleEffectSizeKnown (event :ValueEvent) :void
+    {
+        var effectSprite :EffectSprite = (event.target as EffectSprite);
+        var size :Array = event.value as Array;
+
+        var p :Point = effectSprite.getLayoutHotSpot();
+        effectSprite.x = (getActualWidth() - size[0])/2 - p.x;
+        effectSprite.y = (getActualHeight() - size[1])/2 - p.y;
+    }
+
+    /**
+     * Handle an effect that has finished playing.
+     */
+    protected function handleEffectFinished (event :ValueEvent) :void
+    {
+        var effectSprite :EffectSprite = (event.target as EffectSprite);
+        removeChild(effectSprite);
     }
 
     /**

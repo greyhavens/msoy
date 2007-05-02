@@ -130,9 +130,12 @@ public class ChiyogamiManager extends GameManager
         // last score, for now
         updatePlayerState(player, score);
 
-        // and we want to report this performance instantly to clients
-        // so that they can react?
-        // TODO
+        // possibly play an effect for the player
+        if (score >= .8 || style >= .8) {
+            _roomMgr.addTransientEffect(player.getOid(),
+                new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
+                    "chiyogami/BonusHarp"));
+        }
 
         // affect the health of the boss
         float health = _gameObj.bossHealth;
@@ -199,18 +202,6 @@ public class ChiyogamiManager extends GameManager
         _roomObj.addListener(_roomListener);
 
         super.didStartup();
-    }
-
-    @Override
-    protected void gameWillStart ()
-    {
-        super.gameWillStart();
-    }
-
-    @Override
-    protected void gameDidStart ()
-    {
-        super.gameDidStart();
     }
 
     @Override

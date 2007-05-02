@@ -3,10 +3,15 @@
 
 package com.threerings.msoy.world.client {
 
+import com.threerings.util.ValueEvent;
+
 import com.threerings.msoy.world.data.EffectData;
 
 public class EffectSprite extends FurniSprite
 {
+    /** A value event dispatched when the effect is finished. */
+    public static const EFFECT_FINISHED :String = "EffectFinished";
+
     public function EffectSprite (effect :EffectData)
     {
         super(effect);
@@ -25,6 +30,17 @@ public class EffectSprite extends FurniSprite
     override public function getMaxContentHeight () :int
     {
         return int.MAX_VALUE;
+    }
+
+    // from MsoySprite
+    override public function sendMessage (name :String, arg :Object, isAction :Boolean) :void
+    {
+        if (!isAction && name == "effectFinished") {
+            dispatchEvent(new ValueEvent(EFFECT_FINISHED, null));
+
+        } else {
+            super.sendMessage(name, arg, isAction);
+        }
     }
 }
 }

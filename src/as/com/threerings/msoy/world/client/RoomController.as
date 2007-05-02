@@ -65,6 +65,7 @@ import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.editor.EditorController;
 
 import com.threerings.msoy.world.data.AudioData;
+import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemoryEntry;
@@ -964,6 +965,10 @@ public class RoomController extends SceneController
                 }
             }
             break;
+
+        case RoomObject.ADD_EFFECT:
+            addTransientEffect(args[0] as int /*bodyOid*/, args[1] as EffectData);
+            break;
         }
     }
 
@@ -1012,6 +1017,20 @@ public class RoomController extends SceneController
     protected function musicFinishedPlaying (... ignored) :void
     {
         _roomObj.manager.invoke(RoomObject.MUSIC_ENDED, _music.getURL());
+    }
+
+    /**
+     * Add a transient effect to an actor sprite.
+     */
+    protected function addTransientEffect (bodyOid :int, effect :EffectData) :void
+    {
+        var actor :ActorSprite = _roomView.getActor(bodyOid);
+        if (actor != null) {
+            actor.addTransientEffect(effect);
+
+        } else {
+            log.info("Unable to find actor for transient effect [bodyOid=" + bodyOid + "].");
+        }
     }
 
     /**

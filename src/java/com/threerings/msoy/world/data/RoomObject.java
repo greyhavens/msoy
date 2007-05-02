@@ -47,6 +47,11 @@ public class RoomObject extends SpotSceneObject
      * Format: [ url ]. */
     public static final String MUSIC_ENDED = "musicEnded";
 
+    /** A message sent by the server when an effect should be added to
+     * the specified player's sprite.
+     * Format: [ oid, EffectData ]. */
+    public static final String ADD_EFFECT = "addEffect";
+
     /** Our room service marshaller. */
     public RoomMarshaller roomService;
 

@@ -93,6 +93,16 @@ public class RoomManager extends SpotSceneManager
     }
 
     /**
+     * Add a transient effect on the specified body.
+     */
+    public void addTransientEffect (int bodyOid, MediaDesc media)
+    {
+        EffectData effect = new EffectData();
+        effect.media = media;
+        _roomObj.postMessage(RoomObject.ADD_EFFECT, bodyOid, effect);
+    }
+
+    /**
      * Create and add an effect.
      */
     public EffectData addEffect (MediaDesc media, MsoyLocation loc, byte roomLayer)

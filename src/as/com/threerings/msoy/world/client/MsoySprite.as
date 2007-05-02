@@ -537,7 +537,7 @@ public class MsoySprite extends MediaContainer
      * This sprite is sending a message to all clients. Called by our backend in response to a
      * request from usercode.
      */
-    internal function sendMessage (name :String, arg :Object, isAction :Boolean) :void
+    public function sendMessage (name :String, arg :Object, isAction :Boolean) :void
     {
         if (_ident != null && (parent is RoomView) && validateUserData(name, arg)) {
             (parent as RoomView).getRoomController().sendSpriteMessage(_ident, name, arg, isAction);

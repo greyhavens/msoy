@@ -30,24 +30,29 @@ public class RoomObject extends SpotSceneObject
 
     /** A message sent by the server to have occupants load, but not play,
      * the specified music.
-     * Format: [ url ].  */
+     * Format: [ url | AudioItem ].  */
     public static const LOAD_MUSIC :String = "loadMusic";
 
     /** A corresponding message sent by each client when they've got the music
      * completely loaded. No other status is needed.
-     * Format: [ url ]. */
+     * Format: [ url | MediaDesc ]. */
     public static const MUSIC_LOADED :String = "musicLoaded";
 
     /** The message sent by the server to kick-off music playing. The music
      * should be played once and then disposed-of. No action
      * should be taken if the music was not loaded. 
-     * Format: [ url ]. */
+     * Format: [ url | Audio item ]. */
     public static const PLAY_MUSIC :String = "playMusic";
 
     /** A message sent by each client to indicate that the music has
      * finished playing.
-     * Format: [ url ]. */
+     * Format: [ url | MediaDesc ]. */
     public static const MUSIC_ENDED :String = "musicEnded";
+
+    /** A message sent by the server when an effect should be added to
+     * the specified player's sprite.
+     * Format: [ oid, EffectData ]. */
+    public static const ADD_EFFECT :String = "addEffect";
 
     /** Our room service marshaller. */
     public var roomService :RoomMarshaller;
