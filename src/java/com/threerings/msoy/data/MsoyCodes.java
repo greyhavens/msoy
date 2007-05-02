@@ -22,6 +22,12 @@ public interface MsoyCodes extends InvocationCodes
     /** The translation message bundle for our general client bits. */
     public static final String GENERAL_MSGS = "general";
 
+    /** The translation message bundle for our chat messages. */
+    public static final String CHAT_MSGS = "chat";
+
+    /** The translation message bundle for our Java game applet. */
+    public static final String GAME_MSGS = "game";
+
     /** The translation message bundle for our group services. */
     public static final String GROUP_MSGS = "group";
 

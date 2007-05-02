@@ -362,8 +362,9 @@ public class MsoyController extends Controller
     public function handleGoGame (gameId :int, placeOid :int) :void
     {
         if (!handleInternalGo("game", gameId + "_" + placeOid)) {
+            NetUtil.navigateToURL("/#game-" + gameId + "_" + placeOid, false);
             // fall back to breaking the back button
-            _ctx.getLocationDirector().moveTo(placeOid);
+            // _ctx.getLocationDirector().moveTo(placeOid);
         }
     }
 

@@ -3,47 +3,114 @@
 
 package com.threerings.msoy.game.client;
 
-import com.samskivert.util.StringUtil;
+import java.util.logging.Level;
+
+import com.samskivert.util.Interval;
+import com.samskivert.util.LoggingLogProvider;
+import com.samskivert.util.OneLineLogFormatter;
 
 import com.threerings.presents.client.Client;
 
-import com.threerings.toybox.client.ToyBoxApplet;
-import com.threerings.toybox.client.ToyBoxClient;
+import com.threerings.media.FrameManager;
+import com.threerings.media.ManagedJApplet;
 
-import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.web.client.DeploymentConfig;
+import static com.threerings.msoy.Log.log;
 
 /**
- * Holds the main Java interface to lobbying and launching (Java) games.
+ * Holds the main Java interface to launching (Java) games.
  */
-public class GameApplet extends ToyBoxApplet
+public class GameApplet extends ManagedJApplet
 {
-    @Override // from ToyBoxApplet
+    public void setTitle (String title)
+    {
+        // TODO
+    }
+
+    @Override // from Applet
+    public void init ()
+    {
+        super.init();
+
+        // set up the proper logging services
+        com.samskivert.util.Log.setLogProvider(new LoggingLogProvider());
+        OneLineLogFormatter.configureDefaultHandler();
+
+        log.info("Java: " + System.getProperty("java.version") +
+            ", " + System.getProperty("java.vendor") + ")");
+
+        // create our frame manager
+        _framemgr = FrameManager.newInstance(this);
+
+        try {
+            // create and initialize our client instance
+            _client = new GameClient();
+            _client.init(this);
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to create the game client.", e);
+            return;
+        }
+
+        // configure our server and port
+        String server = getParameter("server");
+        int port = getIntParameter("port", -1);
+        if (server == null || port <= 0) {
+            log.warning("Failed to obtain server and port parameters [server=" + server +
+                        ", port=" + port + "].");
+            return;
+        }
+        log.info("Using [server=" + server + ", port=" + port + "].");
+        _client.getContext().getClient().setServer(server, new int[] { port });
+    }
+
+    @Override // from Applet
     public void start ()
     {
-        // if we have an authtoken we'll be auto-logging in, so don't display a
-        // username and password
-        String authtoken = getParameter("authtoken");
-        if (!StringUtil.isBlank(authtoken)) {
-            _client.getClientController().getLogonPanel().setAutoLoggingOn();
-        }
-
         super.start();
 
-        // now do our autologin if appropriate
-        if (!StringUtil.isBlank(authtoken)) {
-            MsoyCredentials creds = new MsoyCredentials();
-            creds.sessionToken = authtoken;
+        // start up our frame manager
+        _framemgr.start();
+
+        // pass our credentials and game information to the client
+        _client.start(getParameter("authtoken"), getIntParameter("game_id", -1),
+                      getIntParameter("game_oid", -1));
+    }
+
+    @Override // from Applet
+    public void stop ()
+    {
+        super.stop();
+        _framemgr.stop();
+
+        // if we're logged on, log off
+        if (_client != null) {
             Client client = _client.getContext().getClient();
-            client.setCredentials(creds);
-            client.setVersion(String.valueOf(DeploymentConfig.version));
-            client.logon();
+            if (client != null && client.isLoggedOn()) {
+                client.logoff(true);
+            }
         }
     }
 
-    @Override // from ToyBoxApplet
-    protected ToyBoxClient createClient ()
+    @Override // from Applet
+    public void destroy ()
     {
-        return new GameClient();
+        super.destroy();
+        log.info("GameApplet destroyed.");
+
+        // we need to cope with our threads being destroyed but our classes not
+        // being unloaded
+        Interval.resetTimer();
     }
+
+    /** Helpy helper function. */
+    protected int getIntParameter (String name, int defvalue)
+    {
+        try {
+            return Integer.parseInt(getParameter(name));
+        } catch (Exception e) {
+            return defvalue;
+        }
+    }
+
+    protected GameClient _client;
+    protected FrameManager _framemgr;
 }

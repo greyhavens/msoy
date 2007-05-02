@@ -45,18 +45,13 @@ public class HostedGameManager
 
         log.info("Creating custom classloader for " + manager + ".");
 
-        ArrayList<URL> ulist = new ArrayList<URL>();
-        String path = "";
+        String path = gconfig.getGameDefinition().getMediaPath(gconfig.getGameId());
         try {
-            path = gconfig.getGameDefinition().getMediaPath(gconfig.getGameId());
-            ulist.add(new URL(path));
+            loader = new URLClassLoader(new URL[] { new URL(path) }, getClass().getClassLoader());
+            _loaders.put(manager, loader);
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed to create URL for class loader [path=" + path + "].", e);
         }
-
-        loader = new URLClassLoader(
-            ulist.toArray(new URL[ulist.size()]), getClass().getClassLoader());
-        _loaders.put(manager, loader);
         return loader;
     }
 
