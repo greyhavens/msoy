@@ -576,7 +576,7 @@
       </fileset>
     </service>
     <service header="lib/SOURCE_HEADER" classpathref="classpath">
-      <fileset dir="${src.dir}" includes="**/swiftly/data/*Service.java"/>
+      <fileset dir="${src.dir}" includes="**/swiftly/client/*Service.java"/>
     </service>
   </target>
 
