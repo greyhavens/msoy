@@ -336,9 +336,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String sendInvitesPendingTip();
 
   /**
-   * Translated "Three Rings respects your wish opt-out of receiving email from whirled.com.  In order to complete your submission of an opt-out request, please click on the "Opt Out" button below.  If you reached this dialog in error, you can cancel it by clicking on "Not Now".".
+   * Translated "Three Rings respects your wish to opt-out of receiving email from whirled.com.  In order to complete your submission of an opt-out request, please click on the "Opt Out" button below.  If you reached this dialog in error, you can cancel it by clicking on "Not Now".".
    * 
-   * @return translated "Three Rings respects your wish opt-out of receiving email from whirled.com.  In order to complete your submission of an opt-out request, please click on the "Opt Out" button below.  If you reached this dialog in error, you can cancel it by clicking on "Not Now"."
+   * @return translated "Three Rings respects your wish to opt-out of receiving email from whirled.com.  In order to complete your submission of an opt-out request, please click on the "Opt Out" button below.  If you reached this dialog in error, you can cancel it by clicking on "Not Now"."
    * @gwt.key optOutBody1
    */
   String optOutBody1();
