@@ -628,19 +628,6 @@
       configdef="rsrc/config/media/colordefs.xml"/>
   </target>
 
-  <!-- run the "design wall" verification -->
-  <target name="verifydesign">
-    <!-- Validate Persistence Dependencies -->
-    <verifydesign design="${basedir}/etc/verifydesign-persist.xml">
-        <path>
-            <fileset dir="${deploy.dir}/classes">
-                <include name="**/persist/*.class"/>
-                <exclude name="**/*UnitTest.class"/>
-            </fileset>
-        </path>
-    </verifydesign>
-  </target>
-
   <!-- run the unit tests -->
   <target name="tests" depends="compile" description="Runs unit tests.">
     <mkdir dir="${basedir}/${deploy.dir}/tmp"/>
