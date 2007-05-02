@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import javax.swing.JLayeredPane;
 import javax.swing.Timer;
 import javax.swing.SwingConstants;
-import javax.swing.text.StyleConstants;
 
 import com.samskivert.swing.LabelStyleConstants;
 import com.samskivert.swing.MultiLineLabel;
@@ -82,7 +81,7 @@ public class GrowlStyleNotifier implements PassiveNotifier
     {
         public NotificationLabel (String message, Level level, GrowlStyleNotifier notifier)
         {
-            super(message, StyleConstants.ALIGN_CENTER, SwingConstants.HORIZONTAL, LABEL_WIDTH);
+            super(message, SwingConstants.CENTER, SwingConstants.HORIZONTAL, LABEL_WIDTH);
             _notifier = notifier;
             _bgColor = level.color;
 
