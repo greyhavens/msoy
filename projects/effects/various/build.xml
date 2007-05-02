@@ -5,7 +5,7 @@
 <project name="discomoire" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name"         value="FallBalls"/>
+  <property name="app.name"         value="BonusHarp"/>
   <property name="root.path"        value="../../.."/>
   <property name="flex.path"        value="${root.path}/tools/extern/flex_sdk"/>
 
