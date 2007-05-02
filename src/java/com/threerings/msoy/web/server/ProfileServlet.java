@@ -60,9 +60,8 @@ public class ProfileServlet extends MsoyServiceServlet
             MsoyServer.profileRepo.storeProfile(nrec);
 
             // record that the user updated their profile
-            UserAction action = (nrec.modifications == 1) ?
-                UserAction.CREATED_PROFILE : UserAction.UPDATED_PROFILE;
-            logUserAction(memrec, action, null);
+            logUserAction(memrec, (nrec.modifications == 1) ?
+                          UserAction.CREATED_PROFILE : UserAction.UPDATED_PROFILE, null);
 
             // handle a display name change if necessary
             if (memrec.name == null || !memrec.name.equals(displayName)) {
