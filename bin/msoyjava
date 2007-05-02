@@ -70,4 +70,4 @@ LD_LIBRARY_PATH=$MSOY_HOME/dist/lib/`uname -m`-`uname -s`
 export LD_LIBRARY_PATH
 
 # do the deed
-$JAVA_VM $JAVA_ARGS $ARGS
+exec $JAVA_VM $JAVA_ARGS $ARGS
