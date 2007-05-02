@@ -191,7 +191,11 @@ public class GameClient
         _msgmgr = new MessageManager(MESSAGE_MANAGER_PREFIX);
         _locdir = new LocationDirector(_ctx) {
             public boolean moveBack () {
-                log.info("TODO!");
+                try {
+                    _shell.getAppletContext().showDocument(new URL("javascript:back()"));
+                } catch (Exception e) {
+                    log.warning("Failed to move back: " + e);
+                }
                 return false;
             }
 
