@@ -69,15 +69,6 @@ public class GameClient
 
         // keep this for later
         _shell = shell;
-
-        // use the game name as our title if we have one
-        String title = _ctx.xlate(MsoyCodes.GAME_MSGS, "m.app_title");
-        try {
-            title = System.getProperty("game_name", title);
-        } catch (SecurityException se) {
-            // alas
-        }
-        _shell.setTitle(title);
         _keydisp = new KeyDispatcher(_shell.getWindow());
 
         // stuff our top-level pane into the top-level of our shell
@@ -181,7 +172,7 @@ public class GameClient
      */
     protected ToyBoxContext createContextImpl ()
     {
-        return new ToyBoxContextImpl();
+        return new GameContextImpl();
     }
 
     /**
@@ -267,84 +258,69 @@ public class GameClient
      * The context implementation. This provides access to all of the objects and services that are
      * needed by the operating client.
      */
-    protected class ToyBoxContextImpl extends ToyBoxContext
+    protected class GameContextImpl extends ToyBoxContext
     {
         /**
          * Apparently the default constructor has default access, rather than protected access,
          * even though this class is declared to be protected. Why, I don't know, but we need to be
          * able to extend this class elsewhere, so we need this.
          */
-        protected ToyBoxContextImpl ()
-        {
+        protected GameContextImpl () {
         }
 
-        public Client getClient ()
-        {
+        public Client getClient () {
             return _client;
         }
 
-        public DObjectManager getDObjectManager ()
-        {
+        public DObjectManager getDObjectManager () {
             return _client.getDObjectManager();
         }
 
-        public Config getConfig ()
-        {
+        public Config getConfig () {
             return _config;
         }
 
-        public ResourceManager getResourceManager ()
-        {
+        public ResourceManager getResourceManager () {
             return _rsrcmgr;
         }
 
-        public LocationDirector getLocationDirector ()
-        {
+        public LocationDirector getLocationDirector () {
             return _locdir;
         }
 
-        public OccupantDirector getOccupantDirector ()
-        {
+        public OccupantDirector getOccupantDirector () {
             return _occdir;
         }
 
-        public ChatDirector getChatDirector ()
-        {
+        public ChatDirector getChatDirector () {
             return _chatdir;
         }
 
-        public ParlorDirector getParlorDirector ()
-        {
+        public ParlorDirector getParlorDirector () {
             return _pardtr;
         }
 
-        public void setPlaceView (PlaceView view)
-        {
+        public void setPlaceView (PlaceView view) {
             setMainPanel((JPanel)view);
         }
 
-        public void clearPlaceView (PlaceView view)
-        {
+        public void clearPlaceView (PlaceView view) {
             // we'll just let the next place view replace our old one
         }
 
-        public MessageManager getMessageManager ()
-        {
+        public MessageManager getMessageManager () {
             return _msgmgr;
         }
 
-        public ToyBoxDirector getToyBoxDirector ()
-        {
-            return null; // not used in MSOY
+        public ToyBoxDirector getToyBoxDirector () {
+            throw new RuntimeException("ToyBoxDirector is not supported in Whirled.");
         }
 
-        public FrameManager getFrameManager ()
-        {
+        public FrameManager getFrameManager () {
             return _shell.getFrameManager();
         }
 
-        public KeyDispatcher getKeyDispatcher ()
-        {
+        public KeyDispatcher getKeyDispatcher () {
             return _keydisp;
         }
     }

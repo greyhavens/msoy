@@ -21,11 +21,6 @@ import static com.threerings.msoy.Log.log;
  */
 public class GameApplet extends ManagedJApplet
 {
-    public void setTitle (String title)
-    {
-        // TODO
-    }
-
     @Override // from Applet
     public void init ()
     {
