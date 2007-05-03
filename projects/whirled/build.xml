@@ -1,0 +1,64 @@
+<?xml version="1.0" standalone="yes"?>
+<!-- build configuration -->
+<project name="whirled" default="compile" basedir=".">
+
+  <!-- configuration properties -->
+  <property name="app.name"    value="whirled"/>
+  <property name="deploy.dir"  value="dist"/>
+
+  <!-- import some targets to enumerate library dependencies -->
+  <property name="libs.dir" value="../../${deploy.dir}/lib"/>
+  <import file="etc/libs-incl.xml"/>
+
+  <!-- declare our classpath -->
+  <path id="classpath">
+    <pathelement location="${deploy.dir}/classes"/>
+    <fileset dir="${deploy.dir}/lib" includes="**/*.jar"/>
+  </path>
+
+  <!-- prepares the application directories -->
+  <target name="prepare">
+    <mkdir dir="${deploy.dir}"/>
+    <mkdir dir="${deploy.dir}/classes"/>
+    <copy todir="${deploy.dir}/classes">
+      <fileset dir="src/java" includes="**/*.properties"/>
+    </copy>
+    <mkdir dir="${deploy.dir}/classes/rsrc"/>
+    <copy todir="${deploy.dir}/classes/rsrc">
+      <fileset dir="rsrc" includes="**/*"/>
+    </copy>
+    <mkdir dir="${deploy.dir}/lib"/>
+    <copy todir="${deploy.dir}/lib" flatten="true">
+      <fileset refid="${app.name}.libs"/>
+    </copy>
+  </target>
+
+  <!-- cleans out the intermediate build files -->
+  <target name="clean">
+    <delete dir="${deploy.dir}/classes"/>
+    <delete failonerror="false"><fileset dir="${deploy.dir}" includes="*.jar"/></delete>
+  </target>
+
+  <!-- wipes the entire build directory clean -->
+  <target name="distclean" depends="clean">
+    <delete dir="${deploy.dir}"/>
+  </target>
+
+  <!-- build the java class files -->
+  <target name="compile" depends="prepare">
+    <javac srcdir="src/java" destdir="${deploy.dir}/classes" includeAntRuntime="false"
+           debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
+      <classpath refid="classpath"/>
+      <compilerarg value="-Xlint"/>
+      <compilerarg value="-Xlint:-serial"/>
+    </javac>
+  </target>
+
+  <!-- the default target is to rebuild everything -->
+  <target name="all" depends="clean,prepare,compile"/>
+
+  <!-- builds our jar file -->
+  <target name="dist" depends="prepare,compile">
+    <jar destfile="${deploy.dir}/${app.name}.jar" basedir="${deploy.dir}/classes"/>
+  </target>
+</project>
