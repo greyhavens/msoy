@@ -90,7 +90,7 @@ public class ProfileRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 4;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The unique id of the memory with whom this profile is associated. */
     @Id public int memberId;
