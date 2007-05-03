@@ -42,5 +42,19 @@ public class EffectSprite extends FurniSprite
             super.sendMessage(name, arg, isAction);
         }
     }
+
+    // from MsoySprite
+    override protected function configureMouseProperties () :void
+    {
+        // effects cannot and should not interact with the mouse
+        mouseChildren = false;
+        mouseEnabled = false;
+    }
+
+    // from FurniSprite
+    override protected function isLoadingWatched () :Boolean
+    {
+        return false; // Effects are not watched.
+    }
 }
 }

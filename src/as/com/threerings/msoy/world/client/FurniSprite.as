@@ -368,7 +368,9 @@ public class FurniSprite extends MsoySprite
 
     override protected function startedLoading () :void
     {
-        updateLoadingCount(1);
+        if (isLoadingWatched()) {
+            updateLoadingCount(1);
+        }
         super.startedLoading();
     }
 
@@ -378,8 +380,20 @@ public class FurniSprite extends MsoySprite
             _loadedCallback();
         }
 
-        updateLoadingCount(-1);
+        if (isLoadingWatched()) {
+            updateLoadingCount(-1);
+        }
         super.stoppedLoading();
+    }
+
+    /**
+     * Is the loading of this sprite being watched?
+     *
+     * @returns true for standard FurniSprites
+     */
+    protected function isLoadingWatched () :Boolean
+    {
+        return true;
     }
 
     /**

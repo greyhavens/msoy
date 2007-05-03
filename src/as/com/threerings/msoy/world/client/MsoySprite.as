@@ -41,6 +41,7 @@ import flash.net.URLRequest;
 
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Util;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.FilterUtil;
 import com.threerings.flash.MediaContainer;
@@ -68,6 +69,10 @@ import com.threerings.msoy.world.data.RoomObject;
 public class MsoySprite extends MediaContainer
     implements RoomElement
 {
+    /** The type of a ValueEvent that is dispatched when the location is updated,
+     * but ONLY if the parent is not an AbstractRoomView. */
+    public static const LOCATION_UPDATED :String = "locationUpdated";
+
     /**
      * Constructor.
      */
@@ -437,6 +442,9 @@ public class MsoySprite extends MediaContainer
     {
         if (parent is AbstractRoomView) {
             (parent as AbstractRoomView).locationUpdated(this);
+
+        } else {
+            dispatchEvent(new ValueEvent(LOCATION_UPDATED, null));
         }
     }
 
@@ -474,20 +482,6 @@ public class MsoySprite extends MediaContainer
 
         // we may need to be repositioned
         locationUpdated();
-    }
-
-    /**
-     * A callback called when there is a status event from using the local connection.
-     */
-    protected static function onLocalConnStatus (event :StatusEvent) :void
-    {
-        // This method exists because if we don't eat status-error messages then they end up
-        // bubbling up somewhere else.
-
-        if (event.level != "status") {
-//            Log.getLog(MsoySprite).debug("Unable to communicate with media " +
-//                "[event=" + event + "].");
-        }
     }
 
     override protected function contentDimensionsUpdated () :void

@@ -88,7 +88,7 @@ public class ActorSprite extends MsoySprite
     public function addTransientEffect (effect :EffectData) :void
     {
         var sprite :EffectSprite = new EffectSprite(effect);
-        sprite.addEventListener(MediaContainer.SIZE_KNOWN, handleEffectSizeKnown);
+        sprite.addEventListener(MsoySprite.LOCATION_UPDATED, handleEffectUpdated);
         sprite.addEventListener(EffectSprite.EFFECT_FINISHED, handleEffectFinished);
         sprite.x = getActualWidth()/2;
         addChild(sprite);
@@ -448,16 +448,14 @@ public class ActorSprite extends MsoySprite
     }
 
     /**
-     * Handle an effect for which the size is now known.
+     * Handles an update to an effect's size/hotspot/etc.
      */
-    protected function handleEffectSizeKnown (event :ValueEvent) :void
+    protected function handleEffectUpdated (event :ValueEvent) :void
     {
         var effectSprite :EffectSprite = (event.target as EffectSprite);
-        var size :Array = event.value as Array;
-
         var p :Point = effectSprite.getLayoutHotSpot();
-        effectSprite.x = (getActualWidth() - size[0])/2 - p.x;
-        effectSprite.y = (getActualHeight() - size[1])/2 - p.y;
+        effectSprite.x = getActualWidth()/2 - p.x;
+        effectSprite.y = getActualHeight()/2 - p.y;
     }
 
     /**
