@@ -155,7 +155,7 @@ public class CreateAccountDialog extends BorderedDialog
             _status.setText(CShell.cmsgs.createMissingConfirm());
         } else if (!password.equals(confirm)) {
             _status.setText(CShell.cmsgs.createPasswordMismatch());
-        } else if (name.length() == 0) {
+        } else if (name.length() == 0){
             _status.setText(CShell.cmsgs.createMissingName());
         } else if (_dateOfBirth.getDate() == null) {
             _status.setText(CShell.cmsgs.createMissingDoB());
@@ -171,8 +171,8 @@ public class CreateAccountDialog extends BorderedDialog
         String email = _email.getText().trim(), name = _name.getText().trim();
         String password = _password.getText().trim();
         _status.setText(CShell.cmsgs.creatingAccount());
-        CShell.usersvc.register(DeploymentConfig.version, email, md5hex(password), name, 1, _invite,
-            new AsyncCallback() {
+        CShell.usersvc.register(DeploymentConfig.version, email, md5hex(password), name, 
+            _dateOfBirth.getDate(), 1, _invite, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     hide();
                     // TODO: display some sort of welcome to whirled business

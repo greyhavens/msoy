@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.client;
 
+import java.util.Date;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.data.WebCreds;
@@ -23,7 +25,7 @@ public interface WebUserServiceAsync
      * The asynchronous version of {@link WebUserService#register}.
      */
     public void register (long clientVersion, String username, String password, String displayName,
-                          int expireDays, Invitation invite, AsyncCallback callback);
+                          Date birthday, int expireDays, Invitation invite, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link WebUserService#validateSession}.

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.client;
 
+import java.util.Date;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.ServiceException;
@@ -32,7 +34,7 @@ public interface WebUserService extends RemoteService
      * subsequent remote service calls that require authentication.
      */
     public WebCreds register (long clientVersion, String email, String password, String displayName,
-                              int expireDays, Invitation invite)
+                              Date birthday, int expireDays, Invitation invite)
         throws ServiceException;
 
     /**

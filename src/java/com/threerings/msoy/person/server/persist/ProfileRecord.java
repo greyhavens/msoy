@@ -90,7 +90,7 @@ public class ProfileRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     /** The unique id of the memory with whom this profile is associated. */
     @Id public int memberId;
@@ -110,10 +110,10 @@ public class ProfileRecord extends PersistentRecord
     public byte photoConstraint;
 
     /** The member's home page URL (maxlen: 255). */
-    public String homePageURL;
+    public String homePageURL = "";
 
     /** A short bit of text provided by the member (maxlen: 255). */
-    public String headline;
+    public String headline = "";
 
     /** Whether the member identifies as male or female. */
     public boolean isMale;
@@ -123,7 +123,7 @@ public class ProfileRecord extends PersistentRecord
     public Date birthday;
 
     /** The locale from which the member claims to hail (maxlen: 255). */
-    public String location;
+    public String location = "";
 
     public ProfileRecord ()
     {

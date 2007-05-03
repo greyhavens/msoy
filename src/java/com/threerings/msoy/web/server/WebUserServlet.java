@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.web.server;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
@@ -41,11 +44,21 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public WebCreds register (long clientVersion, String username, String password,
-                              final String displayName, int expireDays, final Invitation invite)
+    public WebCreds register (long clientVersion, String username, String password, 
+                              final String displayName, Date birthday, int expireDays, 
+                              final Invitation invite)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);
+
+        // check age restriction
+        Calendar thirteenYearsAgo = Calendar.getInstance();
+        thirteenYearsAgo.add(Calendar.YEAR, -13);
+        if (birthday.compareTo(thirteenYearsAgo.getTime()) > 0) {
+            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+        }
+
+        // check invitation validity
         boolean ignoreRestrict = false;
         if (invite != null) {
             try {
@@ -62,11 +75,19 @@ public class WebUserServlet extends MsoyServiceServlet
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
         }
+
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
         MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
         final MemberRecord newAccount = auth.createAccount(username, password, displayName, 
             ignoreRestrict, invite != null ? invite.inviter.getMemberId() : 0);
+        try {
+            MsoyServer.profileRepo.setBirthday(newAccount.memberId, birthday);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "failed to set birthday on new account's profile [memberId=" +
+                newAccount.memberId + ", birthday=" + birthday + "]", pe);
+            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+        }
         if (invite != null) {
             try {
                 MsoyServer.memberRepo.linkInvite(invite, newAccount);
@@ -75,7 +96,7 @@ public class WebUserServlet extends MsoyServiceServlet
                     ", memberId=" + newAccount.memberId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
-            // send a notification email that the friend as accepted his invite
+            // send a notification email that the friend has accepted his invite
             final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
                 "deliver invite accepted message");
             MsoyServer.omgr.postRunnable(new Runnable() {
