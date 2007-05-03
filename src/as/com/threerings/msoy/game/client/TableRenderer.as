@@ -245,17 +245,16 @@ public class TableRenderer extends HBox
         }
         _labelsBox.addChild(getConfigRow(ctx.xlate("game", "l.watchers"), String(_watcherCount)));
 
-        var params :Array = null;
         if (table.config is EZGameConfig) {
-            params = (table.config as EZGameConfig).getGameDefinition().params;
-        }
-        if (params != null) {
-            var ezconfig :EZGameConfig = (table.config as EZGameConfig);
-            for each (var param :Parameter in params) {
-                var name :String = StringUtil.isBlank(param.name) ? param.ident : param.name;
-                var value :String = String(ezconfig.params.get(param.ident));
-                value = (value.length > 5 ? value : ""); // TODO: huh?
-                _labelsBox.addChild(getConfigRow(name, value, param.tip, value));
+            var params :Array = (table.config as EZGameConfig).getGameDefinition().params;
+            if (params != null) {
+                var ezconfig :EZGameConfig = (table.config as EZGameConfig);
+                for each (var param :Parameter in params) {
+                    var name :String = StringUtil.isBlank(param.name) ? param.ident : param.name;
+                    var value :String = String(ezconfig.params.get(param.ident));
+                    _labelsBox.addChild(getConfigRow(name, value, param.tip, 
+                        value.length > 5 ? value : ""));
+                }
             }
         }
     }
