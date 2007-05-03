@@ -546,7 +546,7 @@ public class ProjectRoomManager extends PlaceManager
             }
 
             if (_error != null) {
-                log.warning("Project storage commit failed: " + _error.getMessage());
+                log.log(Level.WARNING, "Project storage commit failed.", _error);
                 _listener.requestFailed("e.commit_failed_unexpected");
                 return;
             }
@@ -626,7 +626,7 @@ public class ProjectRoomManager extends PlaceManager
             _roomObj.setBuilding(false);
 
             if (_error != null) {
-                log.warning("Project build failed: " + _error.getMessage());
+                log.log(Level.WARNING, "Project build failed.", _error);
                 _listener.requestFailed("e.build_failed_unexpected");
                 return;
             }
