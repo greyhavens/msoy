@@ -32,7 +32,7 @@ Panel {
   color: #FFFFFF;
 }
 
-TabNavigator {
+TabNavigator, TabBar {
   borderStyle: none;
   borderThickness: 0;
   tabHeight: 20;
