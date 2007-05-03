@@ -35,9 +35,7 @@ public class IssueInvitesDialog extends BorderedDialog
 
         formatter.setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CAdmin.msgs.invitesNumber());
-        contents.setWidget(row++, 1, _numberInvites = new NumberTextBox(false));
-        _numberInvites.setMaxLength(3);
-        _numberInvites.setVisibleLength(3);
+        contents.setWidget(row++, 1, _numberInvites = new NumberTextBox(false, 3));
 
         formatter.setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CAdmin.msgs.invitesIssueSelection());

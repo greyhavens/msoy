@@ -48,6 +48,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String menuGames();
 
   /**
+   * Translated "Birthdate:".
+   * 
+   * @return translated "Birthdate:"
+   * @gwt.key createDateOfBirth
+   */
+  String createDateOfBirth();
+
+  /**
    * Translated "Here you can update your account information.".
    * 
    * @return translated "Here you can update your account information."
@@ -174,6 +182,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key sendInvitesResultsSuccessful
    */
   String sendInvitesResultsSuccessful(String arg0);
+
+  /**
+   * Translated "Please enter your date of birth.".
+   * 
+   * @return translated "Please enter your date of birth."
+   * @gwt.key createMissingDoB
+   */
+  String createMissingDoB();
 
   /**
    * Translated "Quick add:".
@@ -376,6 +392,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String passwordUpdated();
 
   /**
+   * Translated "You must be at least 13 years old to use Whirled.".
+   * 
+   * @return translated "You must be at least 13 years old to use Whirled."
+   * @gwt.key createNotThirteen
+   */
+  String createNotThirteen();
+
+  /**
    * Translated "Logon".
    * 
    * @return translated "Logon"
@@ -478,6 +502,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key tagFlagCancelButton
    */
   String tagFlagCancelButton();
+
+  /**
+   * Translated "You must be over the age of 13 to play in Whirled.".
+   * 
+   * @return translated "You must be over the age of 13 to play in Whirled."
+   * @gwt.key createDateOfBirthTip
+   */
+  String createDateOfBirthTip();
 
   /**
    * Translated "Flag".
@@ -856,9 +888,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String menuMe();
 
   /**
-   * Translated "Your display name will be shown to other users in Whirled.".
+   * Translated "Your display name will be shown to other users in Whirled, and is not permanent.".
    * 
-   * @return translated "Your display name will be shown to other users in Whirled."
+   * @return translated "Your display name will be shown to other users in Whirled, and is not permanent."
    * @gwt.key createDisplayNameTip
    */
   String createDisplayNameTip();

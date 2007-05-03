@@ -12,11 +12,24 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class NumberTextBox extends TextBox
 {
+    public NumberTextBox (boolean allowFloatingPoint) 
+    {
+        this(allowFloatingPoint, 0, 0);
+    }
+
+    /**
+     * Constructor to set both the visible and maximum lengths to the given value.
+     */
+    public NumberTextBox (boolean allowFloatingPoint, int length)
+    {
+        this(allowFloatingPoint, length, length);
+    }
+
     /**
      * @param allowFloatingPoint If true, a single decimal point is part of the allowed character 
      * set.  Otherwise, only [0-9]* is accepted.
      */
-    public NumberTextBox (final boolean allowFloatingPoint) 
+    public NumberTextBox (final boolean allowFloatingPoint, int maxLength, int visibleLength) 
     {
         _allowFloatingPoint = allowFloatingPoint;
 
@@ -42,6 +55,13 @@ public class NumberTextBox extends TextBox
             public void onKeyPress (Widget sender, char keyCode, int modifiers) { }
             public void onKeyDown (Widget sender, char keyCode, int modifiers) { }
         });
+
+        if (maxLength != 0) {
+            setMaxLength(maxLength);
+        }
+        if (visibleLength != 0) {
+            setVisibleLength(visibleLength);
+        }
     }
 
     /**

@@ -3,6 +3,8 @@
 
 package client.shell;
 
+import java.util.Date;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -21,7 +23,9 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.Invitation;
 
+import client.util.AlertPopup;
 import client.util.BorderedDialog;
+import client.util.DateFields;
 
 /**
  * Displays an interface for creating a new account.
@@ -35,7 +39,12 @@ public class CreateAccountDialog extends BorderedDialog
         _header.add(createTitleLabel(CShell.cmsgs.createTitle(), null));
         _footer.add(_go = new Button(CShell.cmsgs.createCreate(), new ClickListener() {
             public void onClick (Widget sender) {
-                createAccount();
+                Date thirteenYearsAgo = new Date(new Date().getTime() - THIRTEEN_YEARS);
+                if (thirteenYearsAgo.compareTo(_dateOfBirth.getDate()) < 0) {
+                    (new AlertPopup(CShell.cmsgs.createNotThirteen())).alert();
+                } else {
+                    createAccount();
+                }
             }
         }));
         _go.setEnabled(false);
@@ -94,6 +103,14 @@ public class CreateAccountDialog extends BorderedDialog
         contents.getFlexCellFormatter().setStyleName(row, 0, "Tip");
         contents.setText(row++, 0, CShell.cmsgs.createDisplayNameTip());
 
+        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+        contents.setText(row, 0, CShell.cmsgs.createDateOfBirth());
+        contents.setWidget(row++, 1, _dateOfBirth = new DateFields());
+        _dateOfBirth.addKeyboardListenerToFields(_validator);
+        contents.getFlexCellFormatter().setColSpan(row, 0, 2);
+        contents.getFlexCellFormatter().setStyleName(row, 0, "Tip");
+        contents.setText(row++, 0, CShell.cmsgs.createDateOfBirthTip());
+
         contents.getFlexCellFormatter().setColSpan(row, 0, 2);
         contents.getFlexCellFormatter().setStyleName(row, 0, "Status");
         contents.setWidget(row++, 0, _status = new Label(""));
@@ -131,6 +148,8 @@ public class CreateAccountDialog extends BorderedDialog
             _status.setText(CShell.cmsgs.createPasswordMismatch());
         } else if (name.length() == 0) {
             _status.setText(CShell.cmsgs.createMissingName());
+        } else if (_dateOfBirth.getDate() == null) {
+            _status.setText(CShell.cmsgs.createMissingDoB());
         } else {
             _status.setText(CShell.cmsgs.createReady());
             valid = true;
@@ -171,10 +190,13 @@ public class CreateAccountDialog extends BorderedDialog
         }
     };
 
+    protected static final long THIRTEEN_YEARS = 13L * 365 * 24 * 60 * 60 * 1000;
+
     protected StatusPanel _parent;
     protected Invitation _invite;
     protected TextBox _email, _name;
     protected PasswordTextBox _password, _confirm;
+    protected DateFields _dateOfBirth;
     protected Button _go;
     protected Label _status;
 }
