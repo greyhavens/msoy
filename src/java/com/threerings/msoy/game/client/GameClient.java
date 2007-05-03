@@ -21,6 +21,9 @@ import com.threerings.util.MessageManager;
 import com.threerings.util.Name;
 
 import com.threerings.media.FrameManager;
+import com.threerings.media.image.ImageManager;
+import com.threerings.media.sound.SoundManager;
+import com.threerings.media.tile.TileManager;
 import com.threerings.resource.ResourceManager;
 
 import com.threerings.presents.client.Client;
@@ -40,7 +43,8 @@ import com.threerings.ezgame.data.GameDefinition;
 import com.threerings.parlor.client.ParlorDirector;
 
 import com.threerings.toybox.client.ToyBoxDirector;
-import com.threerings.toybox.util.ToyBoxContext;
+
+import com.whirled.util.WhirledContext;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
@@ -132,7 +136,7 @@ public class GameClient
      * Returns a reference to the context in effect for this client. This reference is valid for
      * the lifetime of the application.
      */
-    public ToyBoxContext getContext ()
+    public WhirledContext getContext ()
     {
         return _ctx;
     }
@@ -165,11 +169,11 @@ public class GameClient
     }
 
     /**
-     * Creates the {@link ToyBoxContext} implementation that will be passed around to all of the
+     * Creates the {@link WhirledContext} implementation that will be passed around to all of the
      * client code. Derived classes may wish to override this and create some extended context
      * implementation.
      */
-    protected ToyBoxContext createContextImpl ()
+    protected WhirledContext createContextImpl ()
     {
         return new GameContextImpl();
     }
@@ -185,9 +189,14 @@ public class GameClient
         // create the handles on our various services
         _client = new Client(null, this);
 
-        // create our managers and directors
+        // create our managers
         _rsrcmgr = new ResourceManager("rsrc");
         _msgmgr = new MessageManager(MESSAGE_MANAGER_PREFIX);
+        _imgmgr = new ImageManager(_rsrcmgr, _shell);
+        _tilemgr = new TileManager(_imgmgr);
+        _sndmgr = new SoundManager(_rsrcmgr);
+
+        // and our directors
         _locdir = new LocationDirector(_ctx) {
             public boolean moveBack () {
                 try {
@@ -261,7 +270,7 @@ public class GameClient
      * The context implementation. This provides access to all of the objects and services that are
      * needed by the operating client.
      */
-    protected class GameContextImpl extends ToyBoxContext
+    protected class GameContextImpl extends WhirledContext
     {
         /**
          * Apparently the default constructor has default access, rather than protected access,
@@ -326,9 +335,21 @@ public class GameClient
         public KeyDispatcher getKeyDispatcher () {
             return _keydisp;
         }
+
+        public ImageManager getImageManager () {
+            return _imgmgr;
+        }
+
+        public TileManager getTileManager () {
+            return _tilemgr;
+        }
+
+        public SoundManager getSoundManager () {
+            return _sndmgr;
+        }
     }
 
-    protected ToyBoxContext _ctx;
+    protected WhirledContext _ctx;
     protected GameApplet _shell;
     protected JPanel _root = new JPanel(new BorderLayout()); // TODO?
     protected Config _config = new Config("toybox");
@@ -337,6 +358,10 @@ public class GameClient
     protected ResourceManager _rsrcmgr;
     protected MessageManager _msgmgr;
     protected KeyDispatcher _keydisp;
+
+    protected ImageManager _imgmgr;
+    protected TileManager _tilemgr;
+    protected SoundManager _sndmgr;
 
     protected LocationDirector _locdir;
     protected OccupantDirector _occdir;

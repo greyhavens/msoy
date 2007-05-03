@@ -16,6 +16,7 @@
 -injars ../dist/lib/vilya-stats.jar(!META-INF/*,!**/tools/**,!**/persist/**)
 -injars ../dist/lib/vilya-whirled.jar(**/ClusteredBodyObject.class,**/ScenedBodyObject.class)
 -injars ../dist/lib/toybox.jar(!META-INF/*,!**/tools/**,!**/server/**,!**/xml/**)
+-injars ../dist/lib/whirled.jar(!META-INF/*,!**/tools/**,!**/server/**,!**/xml/**)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/IsSerializable.class)
 -injars ../dist/msoy-code.jar(
     rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,**/msoy/item/data/all/**,
@@ -56,8 +57,13 @@
     public protected *;
 }
 
-# similarly for all of the narya libraries
+# similarly for all of the narya, nenya and vilya libraries
 -keep public class com.threerings.** {
+    public protected *;
+}
+
+# similarly for all of the whirled libraries
+-keep public class com.whirled.** {
     public protected *;
 }
 

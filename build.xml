@@ -22,7 +22,7 @@
   <property name="build_version" value="0"/>
 
   <!-- define our subprojects and include the standard build system -->
-  <property name="projects" value="samskivert,narya,nenya,vilya,toybox,s3lib,threerings"/>
+  <property name="projects" value="samskivert,narya,nenya,vilya,toybox,s3lib,threerings,whirled"/>
   <import file="build/etc/build-support.xml"/>
   <fileset dir="." id="check.paths">
     <include name="projects/s3lib/java/src/java/**/*.java"/>
@@ -688,6 +688,11 @@
   <!-- convenience targets that build specific projects and copy the results -->
   <target name="toybox">
     <antcall target="distprojects"><param name="projects" value="toybox"/></antcall>
+  </target>
+
+  <!-- convenience targets that build specific projects and copy the results -->
+  <target name="whirled">
+    <antcall target="distprojects"><param name="projects" value="whirled"/></antcall>
   </target>
 
   <!-- a target for rebuilding everything -->

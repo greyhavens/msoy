@@ -16,6 +16,5 @@ public interface LobbyService extends InvocationService
      *
      * @param gameId the item id of a Game-type item.
      */
-    public void identifyLobby (
-        Client client, int gameId, ResultListener listener);
+    public void identifyLobby (Client client, int gameId, ResultListener listener);
 }
