@@ -350,16 +350,6 @@
 
   <!-- just rebuilds the Flash client, assumes nothing has changed -->
   <target name="asquick">
-    <if><not><isset property="type"/></not><then>
-      <echo level="warning">No type property specified!
-        Guessing -Dtype=world ...</echo>
-      <property name="type" value="world"/>
-    </then></if>
-    <if><equals arg1="${type}" arg2="header"/><then>
-      <property name="extension" value="as"/>
-    </then><else>
-      <property name="extension" value="mxml"/>
-    </else></if>
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
@@ -368,11 +358,11 @@
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-incremental=true"/>
       <arg value="-output"/>
-      <arg value="${deploy.dir}/${type}-client.swf"/>
+      <arg value="${deploy.dir}/world-client.swf"/>
       <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/${type}.${extension}"/>
+      <arg value="${asrc.dir}/world.mxml"/>
     </exec>
-    <copy file="${deploy.dir}/${type}-client.swf" todir="pages/clients/${build_version}"/>
+    <copy file="${deploy.dir}/world-client.swf" todir="pages/clients/${build_version}"/>
   </target>
 
   <!-- builds our Flash client -->
