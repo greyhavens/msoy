@@ -54,6 +54,7 @@ public class TableRenderer extends HBox
         }
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
+        percentWidth = 100;
     }
 
     override public function set data (newData :Object) :void
@@ -66,12 +67,8 @@ public class TableRenderer extends HBox
     override public function set width (width :Number) :void
     {
         super.width = width;
-        if (_seatsGrid != null) {
-            if (_popup) {
-                _seatsGrid.width = width;
-            } else if (_seatsGrid.numChildren > 2) {
-                _seatsGrid.width = width - CONFIG_WIDTH - PADDING_WIDTH - 10; 
-            }
+        if (_popup && _seatsGrid != null) {
+            _seatsGrid.width = width;
         }
     }
 
@@ -148,7 +145,6 @@ public class TableRenderer extends HBox
 
         // update the seats
         var length :int = table.occupants == null ? 0 : table.occupants.length;
-        Log.getLog(this).debug("occupants: " + length);
         if (length != 0) {
             updateSeats(table, length);
         }
@@ -163,10 +159,7 @@ public class TableRenderer extends HBox
 
         if (!_popup) {
             updateConfig(table);
-            validateNow();
-            if (_seatsGrid.numChildren > 2) {
-                _seatsGrid.width = width - CONFIG_WIDTH - PADDING_WIDTH - 10; 
-            }
+            _seatsGrid.width = parent.width - CONFIG_WIDTH - PADDING_WIDTH - 10; 
         }
     }
 
@@ -175,25 +168,15 @@ public class TableRenderer extends HBox
         for (var ii :int = 0; ii < length; ii++) {
             var seat :SeatRenderer;
             if (_seatsGrid.numChildren <= ii) {
-                Log.getLog(this).debug("appending seat renderer");
                 seat = new SeatRenderer();
                 _seatsGrid.addChild(seat);
             } else if (!(_seatsGrid.getChildAt(ii) is SeatRenderer)) {
-                Log.getLog(this).debug("inserting seat renderer");
                 seat = new SeatRenderer();
                 _seatsGrid.addChildAt(seat, ii);
             } else {
-                Log.getLog(this).debug("fetching seat renderer");
                 seat = (_seatsGrid.getChildAt(ii) as SeatRenderer);
             }
             seat.update(ctx, table, ii, panel.isSeated());
-        }
-        //_seatsGrid.invalidateSize();
-        //_seatsGrid.validateNow();
-        //Log.getLog(this).debug("seatsGrid: " + _seatsGrid.numChildren + ", width: " + 
-            //_seatsGrid.measuredWidth + ", height: " + _seatsGrid.measuredHeight);
-        if (!_popup) {
-            width = width;
         }
     }
 
@@ -351,7 +334,6 @@ class SeatRenderer extends HBox
         _table = table;
         _index = index;
         var occupant :MemberName = _table.occupants[_index] as MemberName;
-        Log.getLog(this).debug("occupant: " + occupant);
 
         if (occupant != null) {
             prepareOccupant();
