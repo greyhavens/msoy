@@ -48,6 +48,7 @@ public class FloatingTableDisplay extends FloatingPanel
 
     public function shutdown () :void
     {
+        Log.dumpStack();
         _hasBeenShutDown = true;
         close();
         _tableDir.removeTableObserver(this);
@@ -71,7 +72,7 @@ public class FloatingTableDisplay extends FloatingPanel
     public function tableUpdated (table :Table) :void
     {
         if (table.tableId == _table.tableId) {
-            if (table.gameOid != 0) {
+            if (table.gameOid > 0) {
                 shutdown();
 
             } else {
