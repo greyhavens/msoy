@@ -31,7 +31,7 @@ public class GameApplet extends ManagedJApplet
         OneLineLogFormatter.configureDefaultHandler();
 
         log.info("Java: " + System.getProperty("java.version") +
-            ", " + System.getProperty("java.vendor") + ")");
+                 ", " + System.getProperty("java.vendor") + ")");
 
         // create our frame manager
         _framemgr = FrameManager.newInstance(this);

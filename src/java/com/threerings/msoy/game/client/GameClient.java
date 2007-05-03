@@ -9,6 +9,7 @@ import java.util.logging.Level;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import com.samskivert.util.Config;
@@ -144,7 +145,7 @@ public class GameClient
     /**
      * Sets the main user interface panel.
      */
-    public void setMainPanel (JPanel panel)
+    public void setMainPanel (JComponent panel)
     {
         // remove the old panel
         _root.removeAll();
@@ -313,7 +314,7 @@ public class GameClient
         }
 
         public void setPlaceView (PlaceView view) {
-            setMainPanel((JPanel)view);
+            setMainPanel((JComponent)view);
         }
 
         public void clearPlaceView (PlaceView view) {
