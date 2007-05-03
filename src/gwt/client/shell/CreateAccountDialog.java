@@ -39,8 +39,17 @@ public class CreateAccountDialog extends BorderedDialog
         _header.add(createTitleLabel(CShell.cmsgs.createTitle(), null));
         _footer.add(_go = new Button(CShell.cmsgs.createCreate(), new ClickListener() {
             public void onClick (Widget sender) {
-                Date thirteenYearsAgo = new Date(new Date().getTime() - THIRTEEN_YEARS);
-                if (thirteenYearsAgo.compareTo(_dateOfBirth.getDate()) < 0) {
+                String[] today = new Date().toString().split(" ");
+                String thirteenYearsAgo = "";
+                for (int ii = 0; ii < today.length; ii++) {
+                    if (today[ii].matches("[0-9]{4}")) {
+                        int year = Integer.valueOf(today[ii]).intValue();
+                        today[ii] = "" + (year - 13);
+                    }
+                    thirteenYearsAgo += today[ii] + " ";
+                }
+
+                if (new Date(thirteenYearsAgo).compareTo(_dateOfBirth.getDate()) < 0) {
                     (new AlertPopup(CShell.cmsgs.createNotThirteen())).alert();
                 } else {
                     createAccount();
@@ -189,8 +198,6 @@ public class CreateAccountDialog extends BorderedDialog
             });
         }
     };
-
-    protected static final long THIRTEEN_YEARS = 13L * 365 * 24 * 60 * 60 * 1000;
 
     protected StatusPanel _parent;
     protected Invitation _invite;
