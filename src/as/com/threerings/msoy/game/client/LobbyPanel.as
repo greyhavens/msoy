@@ -160,7 +160,7 @@ public class LobbyPanel extends VBox
     // from TableObserver
     public function tableAdded (table :Table) :void
     {
-        if (_runningTables != null && table.occupants.length == 1) {
+        if (_runningTables != null && table.gameOid > 0) {
             _runningTables.addItem(table);
         } else {
             _formingTables.addItem(table);
@@ -172,7 +172,7 @@ public class LobbyPanel extends VBox
     {
         var idx :int = ArrayUtil.indexOf(_formingTables.source, table);
         if (idx >= 0) {
-            if (table.gameOid != -1 && GameConfig.SEATED_GAME ==
+            if (table.gameOid > 0 && GameConfig.SEATED_GAME ==
                 _lobbyObj.gameDef.match.getMatchType()) {
                 _formingTables.removeItemAt(idx);
                 _runningTables.addItem(table);
