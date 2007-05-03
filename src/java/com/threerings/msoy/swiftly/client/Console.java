@@ -9,6 +9,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 
+import java.util.List;
+
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -22,6 +24,7 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import com.threerings.msoy.swiftly.data.CompilerOutput;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
@@ -80,19 +83,24 @@ public class Console extends JFrame
     }
 
     /**
-     * Appends a message to the console. A newline is added.
+     * Iterates over the supplied CompilerOutput and prints messages to the console.
      */
-    public void consoleMessage (String message)
+    public void displayCompilerOutput (List<CompilerOutput> output)
     {
-        appendMessage(message + "\n", _normal);
-    }
-
-    /**
-     * Appends an error message to the console, styled bold and red. A newline is added.
-     */
-    public void errorMessage (String message)
-    {
-        appendMessage(message + "\n", _error);
+        for (CompilerOutput line : output) {
+            switch (line.getLevel()) {
+                case ERROR:
+                case WARNING:
+                    appendMessage(line.toString() + "\n", _error);
+                    break;
+                case INFO:
+                    appendMessage(line.toString() + "\n", _normal);
+                    break;
+                case IGNORE:
+                case UNKNOWN:
+                    break;
+            }
+        }
     }
 
     /**

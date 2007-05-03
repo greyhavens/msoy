@@ -53,8 +53,6 @@ import com.threerings.micasa.client.OccupantList;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
-import com.threerings.msoy.swiftly.data.CompilerOutput;
-import com.threerings.msoy.swiftly.data.FlexCompilerOutput;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
@@ -468,20 +466,12 @@ public class SwiftlyEditor extends PlacePanel
     /** Displays the build result on the console */
     protected void displayBuildResult ()
     {
-        boolean didSucceed = _roomObj.result.buildSuccessful();
-        if (didSucceed) {
+        if (_roomObj.result.buildSuccessful()) {
             _ctx.showInfoMessage(_msgs.get("m.build_succeeded"));
         } else {
             _ctx.showErrorMessage(_msgs.get("m.build_failed"));
         }
-        for (CompilerOutput output : _roomObj.result.getOutput()) {
-            FlexCompilerOutput flexOut = (FlexCompilerOutput)output;
-            if (didSucceed) {
-                _console.consoleMessage(flexOut.toString());
-            } else {
-                _console.errorMessage(flexOut.toString());
-            }
-        }
+        _console.displayCompilerOutput(_roomObj.result.getOutput());
     }
 
     /** A list of files that can be created by this SwiftlyDocumentEditor. */
