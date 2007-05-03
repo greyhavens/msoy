@@ -48,7 +48,6 @@ public class FloatingTableDisplay extends FloatingPanel
 
     public function shutdown () :void
     {
-        Log.dumpStack();
         _hasBeenShutDown = true;
         close();
         _tableDir.removeTableObserver(this);
