@@ -138,6 +138,10 @@ public class FurniSprite extends MsoySprite
         // TODO: pass body as arg? Pass dimensions of body as arg?
         // TODO: receive a path or some other descriptor of an animation
         //       for the body???
+
+        // Note: these constants are defined in FurniControl, but there's  no way to reference
+        // that without that class being compiled in, and constants are not inlined.
+        // So- we've made the decision to a) Duplicate and b) Don't fuck up step a.
         messageReceived(entering ? "bodyEntered" : "bodyLeft", null, true);
     }
 
