@@ -438,12 +438,13 @@ public class ActorSprite extends MsoySprite
      */
     protected function recheckLabel () :void
     {
+        var hotSpot :Point = getMediaHotSpot();
         // note: may overflow the media area..
-        _label.x = (getActualWidth() - _label.width) / 2;
+        _label.x = (getMediaScaleX() * _locScale * _fxScaleX * hotSpot.x) - (_label.width/2);
         // if we have a configured _height use that in relation to the hot spot y position,
         // otherwise assume our label goes above our bounding box
         var baseY :Number = isNaN(_height) ? 0 :
-            (getMediaScaleY() * _locScale * _fxScaleY * (getMediaHotSpot().y - _height));
+            (getMediaScaleY() * _locScale * _fxScaleY * (hotSpot.y - _height));
         _label.y = baseY - _label.height;
     }
 
