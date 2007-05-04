@@ -6,6 +6,7 @@ package com.threerings.msoy.world.client.editor {
 import mx.controls.Button;
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.world.client.ClickLocation;
@@ -191,7 +192,15 @@ public class RoomEditController
     protected function startModify () :void
     {
         trace("*** startModify, current action: " + _currentAction);
-        _panel.updateFocus(_lastAcquisition, true);
+
+        // if we haven't acquired a target, skip this phase, even if this action supports it
+        if (_currentFurni == null) {
+            switchToPhase(nextPhase());
+            return;
+        }
+
+        // otherwise start modification functionality
+        _panel.updateFocus(_currentFurni, true);
     }
 
     protected function moveModify (x :Number, y :Number) :void
@@ -200,7 +209,12 @@ public class RoomEditController
         case ACTION_MOVE:
             moveFurni(findNewFurniPosition(x, y), false);
             break;
+        case ACTION_SCALE:
+            scaleFurni(_currentFurni, x, y);
+            break;
         }
+
+        _panel.updateFocus(_currentFurni, true);
     }
 
     protected function clickModify (sprite :MsoySprite, event :MouseEvent) :void
@@ -209,6 +223,9 @@ public class RoomEditController
         case ACTION_MOVE:
             moveFurni(findNewFurniPosition(event.stageX, event.stageY), true);
             break;
+        case ACTION_SCALE:
+            scaleFurni(_currentFurni, event.stageX, event.stageY);
+            break;
         }
 
         switchToPhase(nextPhase());
@@ -216,7 +233,7 @@ public class RoomEditController
 
     protected function endModify () :void
     {
-        _panel.updateFocus(_lastAcquisition, false);
+        _panel.updateFocus(_currentFurni, false);
     }
 
     // Phase: commit
@@ -228,6 +245,7 @@ public class RoomEditController
         trace("*** startCommit, current action: " + _currentAction);
         switch (_currentAction) {
         case ACTION_MOVE:
+        case ACTION_SCALE:
             commitFurniData();
             break;
         }
@@ -262,6 +280,82 @@ public class RoomEditController
         return cloc.loc;
     }
 
+    // Scaling only functions
+
+    protected function scaleFurni (furni :FurniSprite, x :Number, y :Number) :void
+    {
+        var scale :Point = findScale(furni, x, y);
+        furni.setMediaScaleX(scale.x);
+        furni.setMediaScaleY(scale.y);
+    }
+
+    /** Given some width, height values in screen coordinates, finds x and y scaling factors
+     *  that would resize the current furni to those coordinates. */
+    protected function computeScale (furni :FurniSprite, width :Number, height :Number) :Point
+    {
+        const e :Number = 0.1; // zero scale will get bumped up to this value
+        
+        // get current size info in pixels
+        var oldwidth :Number = Math.max(furni.getActualWidth(), 1);
+        var oldheight :Number = Math.max(furni.getActualHeight(), 1);
+
+        // figure out the proportion of pixels per scaling unit that produced old width and height
+        var xProportions :Number = Math.max(Math.abs(oldwidth / furni.getMediaScaleX()), 1);
+        var yProportions :Number = Math.max(Math.abs(oldheight / furni.getMediaScaleY()), 1);
+
+        // find new scaling ratios for the desired width and height
+        var newScaleX :Number = width / xProportions;
+        var newScaleY :Number = height / yProportions;
+        newScaleX = (newScaleX != 0 ? newScaleX : e);
+        newScaleY = (newScaleY != 0 ? newScaleY : e);
+        
+        return new Point(newScaleX, newScaleY);
+    }
+
+    /**
+     * Finds x and y scaling factors that will resize the current furni based on
+     * mouse position.
+     */
+    protected function findScale (furni: FurniSprite, x :Number, y: Number) :Point
+    {
+        // find hotspot position in terms of sprite width and height
+        var hotspot :Point = furni.getLayoutHotSpot();
+        var px :Number = hotspot.x / furni.getActualWidth();  
+        var py :Number = hotspot.y / furni.getActualHeight(); 
+
+        // find pixel distance from hotspot to mouse pointer
+        var pivot :Point = furni.localToGlobal(hotspot);      
+        var dx :Number = x - pivot.x; // positive to the right of hotspot
+        var dy :Number = pivot.y - y; // positive above hotspot
+
+        // convert pixel position to how wide and tall the furni would have to be in order
+        // to reach that position
+        var newwidth :Number = dx / px;
+        var newheight :Number = dy / py;
+
+        // if we're scaling proportionally, lock the two distances
+        /*
+        if (getModifier() == MOD_SHIFT) {
+            // this math is broken and loses precision. todo: revisit.
+            var proportion :Number =
+                clampMagnitude (_furni.getActualWidth() / _furni.getActualHeight(), 0.01, 100);
+            //trace("PROPORTION: " + proportion);
+            
+            if (Math.abs(newwidth) < Math.abs(newheight)) {
+                newheight = clampMagnitude(newheight, 1, newwidth / proportion);
+            } else {
+                newwidth = clampMagnitude(newwidth, 1, newheight * proportion);
+            }
+        }
+        */
+
+        // scale the furni!
+        return computeScale(furni, newwidth, newheight); 
+    }
+
+
+    // Phase and action helpers
+
     /** Sends an update to the server, updating furni information. */
     protected function commitFurniData () :void
     {
@@ -270,8 +364,6 @@ public class RoomEditController
                 [ _originalFurniData ], [ _currentFurni.getFurniData() ]);
         }
     }
-
-    // Phase and action helpers
 
     /** Returns true if the given phase supports the given action. */
     protected function phaseSupports (phase :int, action :String) :Boolean {
