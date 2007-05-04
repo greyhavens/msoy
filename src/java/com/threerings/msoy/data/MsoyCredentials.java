@@ -15,17 +15,16 @@ import com.threerings.presents.net.UsernamePasswordCreds;
  */
 public class MsoyCredentials extends UsernamePasswordCreds
 {
-    /** A session token that identifies a user without requiring username
-     * or password. */
+    /** A session token that identifies a user without requiring username or password. */
     public String sessionToken;
 
     /** The machine identifier of the client, if one is known. */
     public String ident;
 
     /**
-     * Creates credentials with the specified username and password.
-     * {@link #ident} should be set before logging in unless the client does
-     * not know its machine identifier in which case it should be left null.
+     * Creates credentials with the specified username and password.  {@link #ident} should be set
+     * before logging in unless the client does not know its machine identifier in which case it
+     * should be left null.
      */
     public MsoyCredentials (Name username, Password password)
     {
