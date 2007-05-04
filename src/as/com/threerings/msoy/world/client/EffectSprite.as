@@ -43,6 +43,11 @@ public class EffectSprite extends FurniSprite
         }
     }
 
+    override protected function createBackend () :EntityBackend
+    {
+        return new EffectBackend();
+    }
+
     // from MsoySprite
     override protected function configureMouseProperties () :void
     {
