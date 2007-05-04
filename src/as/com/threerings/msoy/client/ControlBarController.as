@@ -6,6 +6,7 @@ package com.threerings.msoy.client {
 import flash.events.IEventDispatcher;
 import mx.controls.Button;
 
+import com.threerings.flex.CommandButton;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
 
@@ -44,6 +45,9 @@ public class ControlBarController extends Controller
 
     /** Command to open room editing mode. */
     public static const EDIT_SCENE :String = "handleEditScene";
+    
+    /** Opens up a new toolbar and a new room editor. */
+    public static const ROOM_EDIT :String = "handleRoomEdit";
     
     /** Create the controller. */
     public function ControlBarController (
@@ -117,6 +121,18 @@ public class ControlBarController extends Controller
             room.getRoomController().handleEditScene();
         }
     }   
+
+    /**
+     * Handle the ROOM_EDIT command.
+     */
+    public function handleRoomEdit (button :CommandButton) :void
+    {
+        if (canEditScene()) {
+            var room :RoomView = _topPanel.getPlaceView() as RoomView;
+            room.getRoomController().handleRoomEdit(button);
+        }
+    }   
+
 
     // IMPLEMENTATION DETAILS
 

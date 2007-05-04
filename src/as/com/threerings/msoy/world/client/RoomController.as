@@ -115,7 +115,7 @@ public class RoomController extends SceneController
     {
         // currently holding shift down puts us in edit mode, soon this will be based on whether or
         // not the hammer has been clicked
-        return _shiftDown;
+        return _shiftDown || isRoomEditing();
     }
 
     /**
@@ -312,6 +312,7 @@ public class RoomController extends SceneController
                         _mctx.displayFeedback("general", cause);
                     },
                     function (result :Object) :void {
+                        // FIXME ROBERT: DELETEME
                         beginEditingFurni(furniSprite, result as Array);
                     }));
         }
@@ -335,6 +336,34 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Handle the ROOM_EDIT command.
+     */
+    public function handleRoomEdit (button :DisplayObject) :void
+    {
+        _roomObj.roomService.editRoom(
+            _mctx.getClient(), new ResultWrapper(
+                function (cause :String) :void {
+                    _mctx.displayFeedback("general", cause);
+                },
+                function (result :Object) :void {
+                    // if we're editing, let's finish, otherwise let's start!
+                    if (isRoomEditing()) {
+                        endRoomEditing();
+                    } else {
+                        beginRoomEditing(button);
+                    }
+                }));
+    }
+
+    /**
+     * Returns true if we are in edit mode, false if not.
+     */
+    public function isRoomEditing () :Boolean
+    {
+        return _roomEditPanel != null && _roomEditPanel.isOpen;
+    }
+
+    /**
      * Handles EDIT_CLICKED.
      */
     public function handleEditClicked (sprite :MsoySprite) :void
@@ -342,6 +371,10 @@ public class RoomController extends SceneController
         var ident :ItemIdent = sprite.getItemIdent();
         if (ident == null || !(sprite is FurniSprite)) {
             return; // only furni sprites can be edited
+        }
+
+        if (isRoomEditing()) {
+            return; // don't let editor v. 1 interfere with editor v. 2
         }
 
         var furni :FurniSprite = sprite as FurniSprite;
@@ -579,10 +612,11 @@ public class RoomController extends SceneController
     {
         sendFurniUpdate([ furniSprite.getFurniData() ], null);
     }
-    
+
     /**
      * Begin editing a piece of furni. 
      */
+    // TODO ROBERT: DELETE ME
     protected function beginEditingFurni (furni :FurniSprite, allItems :Array) :void
     {
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
@@ -599,6 +633,7 @@ public class RoomController extends SceneController
     /**
      * End editing a piece of furni.
      */
+    // TODO ROBERT: DELETE ME
     public function endEditingFurni (edits :TypedArray) :void
     {
         if (edits != null) {
@@ -609,6 +644,28 @@ public class RoomController extends SceneController
         _roomView.dimAvatars(false);
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
+    }
+
+    /**
+     * Begin editing the room.
+     */
+    protected function beginRoomEditing (button :DisplayObject) :void
+    {
+        _walkTarget.visible = false;
+        _flyTarget.visible = false;
+        setHoverSprite(null);
+
+        _roomEditPanel = new RoomEditPanel(_mctx, button, _roomView);
+        _roomEditPanel.open(false, null, button);
+    }
+
+    /**
+     * End editing the room.
+     */
+    public function endRoomEditing () :void
+    {
+        _roomEditPanel.close();
+        _roomEditPanel = null;
     }
 
     /**
@@ -716,13 +773,19 @@ public class RoomController extends SceneController
         var sy :Number = _roomView.stage.mouseY;
         var showWalkTarget :Boolean = false;
         var showFlyTarget :Boolean = false;
+        var hoverTarget :MsoySprite = null;
+
+        if (isRoomEditing()) {
+            _roomEditPanel.mouseMove(sx, sy);
+        }
 
         // if shift is being held down, we're looking for locations only, so
         // skip looking for hitSprites.
-        var hit :* = (_shiftDownSpot == null) ? getHitSprite(sx, sy) : null
+        var hit :* = (_shiftDownSpot == null) ? getHitSprite(sx, sy, isRoomEditing()) : null
         var hitter :MsoySprite = (hit as MsoySprite);
         // ensure we hit no pop-ups
         if (hit !== undefined) {
+            hoverTarget = hitter;
             if (hitter == null) {
                 var cloc :ClickLocation = _roomView.layout.pointToAvatarLocation(
                     sx, sy, _shiftDownSpot, RoomMetrics.N_UP);
@@ -748,17 +811,29 @@ public class RoomController extends SceneController
                     _roomView.layout.updateScreenLocation(_walkTarget);
                 }
 
-            } else if (!hitter.hasAction()) {
+            } else if (!hoverTarget.hasAction()) {
                 // it may have captured the mouse, but it doesn't actually
                 // have any action, so we don't hover it.
-                hitter = null;
+                hoverTarget = null;
+            }
+            
+            // if we're editing the room, don't highlight any furni at all,
+            if (isRoomEditing()) {
+                hoverTarget = null;
+                
+                // let the editor override our decision to display walk targets
+                showWalkTarget = (showWalkTarget && _roomEditPanel.isMovementEnabled);
+                showFlyTarget = (showWalkTarget && _roomEditPanel.isMovementEnabled);
+                
+                // and tell the editor which sprite was being hovered (whether highlighted or not)
+                _roomEditPanel.mouseOverSprite(hitter); 
             }
         }
 
         _walkTarget.visible = showWalkTarget;
         _flyTarget.visible = showFlyTarget;
 
-        setHoverSprite(hitter, sx, sy);
+        setHoverSprite(hoverTarget, sx, sy);
     }
 
     /**
@@ -825,16 +900,19 @@ public class RoomController extends SceneController
     {
         // if shift is being held down, we're looking for locations only, so
         // skip looking for hitSprites.
-        var hit :* = (_shiftDownSpot == null) ? getHitSprite(event.stageX, event.stageY) : null;
+        var hit :* = (_shiftDownSpot == null) ?
+            getHitSprite(event.stageX, event.stageY, isRoomEditing()) : null;
+        
         if (hit === undefined) {
             return;
         }
 
         var hitter :MsoySprite = (hit as MsoySprite);
+        
+        // deal with the target
         if (hitter != null) {
             // let the sprite decide what to do with it
             hitter.mouseClick(event);
-
         } else if (_mctx.worldProps.userControlsAvatar) {
             var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();
             if (curLoc == null) {
@@ -857,6 +935,12 @@ public class RoomController extends SceneController
                 _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
             }
         }
+
+        // and in any case, tell the editor
+        if (isRoomEditing()) {
+            _roomEditPanel.mouseClick(hitter, event);
+        }
+
     }
 
     protected function keyEvent (event :KeyboardEvent) :void
@@ -1172,6 +1256,9 @@ public class RoomController extends SceneController
     /** Are we editing the current scene? */
     protected var _editor :EditorController; 
 
+    /** Panel for in-room furni editing. */
+    protected var _roomEditPanel :RoomEditPanel; 
+    
     /** Controller for editing a particular piece of furni. */
     protected var _furniEditor :FurniEditController = new FurniEditController();
 
