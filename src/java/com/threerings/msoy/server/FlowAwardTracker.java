@@ -65,7 +65,7 @@ public class FlowAwardTracker
         for (FlowRecord record : _flowRecords.values()) {
             // only track players that haven't already left
             if (record.beganStamp != 0) {
-                record.secondsPlayed = endStamp - record.beganStamp;
+                record.secondsPlayed += endStamp - record.beganStamp;
                 record.beganStamp = 0;
             }
         }
@@ -125,7 +125,7 @@ public class FlowAwardTracker
         // if they're leaving in the middle of things, update their secondsPlayed,
         // just so that it's correct for calculations below
         if (_tracking) {
-            record.secondsPlayed = now() - record.beganStamp;
+            record.secondsPlayed += now() - record.beganStamp;
             record.beganStamp = 0;
         }
 
