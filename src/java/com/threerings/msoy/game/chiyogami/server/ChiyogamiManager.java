@@ -204,6 +204,8 @@ public class ChiyogamiManager extends GameManager
         _roomObj.addListener(_roomListener);
 
         super.didStartup();
+
+        startGame();
     }
 
     @Override
@@ -217,6 +219,8 @@ public class ChiyogamiManager extends GameManager
 
     protected void didShutdown ()
     {
+        awardFlow();
+
         super.didShutdown();
 
         _endBattle.cancel();
