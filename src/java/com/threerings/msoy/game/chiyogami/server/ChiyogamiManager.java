@@ -58,6 +58,7 @@ import com.threerings.msoy.world.server.RoomManager;
 import com.threerings.msoy.game.data.WorldGameConfig;
 import com.threerings.msoy.game.data.PerfRecord;
 
+import com.threerings.msoy.game.server.FlowAwardDelegate;
 import com.threerings.msoy.game.server.WorldGameManagerDelegate;
 import com.threerings.msoy.game.chiyogami.data.ChiyogamiObject;
 
@@ -71,6 +72,7 @@ public class ChiyogamiManager extends GameManager
     public ChiyogamiManager ()
     {
         addDelegate(_worldDelegate = new WorldGameManagerDelegate(this));
+        addDelegate(_flowDelegate = new FlowAwardDelegate(this));
     }
 
     /**
@@ -389,10 +391,24 @@ public class ChiyogamiManager extends GameManager
     {
         _endBattle.cancel();
 
-        clearPlayerStates(); // TODO: final animation?
+        awardFlow();
+        clearPlayerStates();
         _roomObj.postMessage(RoomObject.PLAY_MUSIC); // no arg stops music
         removeAllEffects();
         setPhase(ChiyogamiObject.POST_BATTLE);
+    }
+
+    /**
+     * Award flow to all the players.
+     */
+    protected void awardFlow ()
+    {
+        for (PlayerRec rec : _playerPerfs.values()) {
+            // their score / style averages will be between 0 and 1,
+            // we award them the max of those as a percentage of their possible flow..
+            _flowDelegate.tracker.awardFlowPercentage(rec.oid,
+                Math.max(rec.getAverageScore(), rec.getAverageStyle()));
+        }
     }
 
     /**
@@ -901,6 +917,9 @@ public class ChiyogamiManager extends GameManager
 
     /** Our world delegate. */
     protected WorldGameManagerDelegate _worldDelegate;
+
+    /** Our flow delegate. */
+    protected FlowAwardDelegate _flowDelegate;
 
     /** A casted ref to our gameobject, this hides our superclass _gameObj. */
     protected ChiyogamiObject _gameObj;
