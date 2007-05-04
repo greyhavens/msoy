@@ -41,6 +41,22 @@ public class PerfRecord
         return (calcStyle = getAccumulated(now, _styles));
     }
 
+    /**
+     * Get the average score over all scores posted.
+     */
+    public float getAverageScore ()
+    {
+        return (_count == 0) ? 0 : _totalScore / _count;
+    }
+
+    /**
+     * Get the average style over all styles posted.
+     */
+    public float getAverageStyle ()
+    {
+        return (_count == 0) ? 0 : _totalStyle / _count;
+    }
+
     // from Comparable
     public int compareTo (PerfRecord that)
     {
