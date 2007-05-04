@@ -32,11 +32,17 @@ public class FlexCompilerOutput
             String level;
 
             // If the regex matched, there's no way the integers can be invalid.
-            _fileName = match.group(1);
+            String fullFilePath = match.group(1);
             _lineNumber = Integer.parseInt(match.group(2));                
             _columnNumber = Integer.parseInt(match.group(3));
             level = match.group(4);
             _message = match.group(5);
+
+            // Remove server side paths from the file name.
+            _path = SERVER_SIDE_PATH.matcher(fullFilePath).replaceAll("");
+
+            // store the relative path of the file into the path
+            _fileName = _path.substring(_path.lastIndexOf("/") + 1);
 
             // Parse the level string.
             if ((_level = _messageLevels.get(level)) == null) {
@@ -54,7 +60,7 @@ public class FlexCompilerOutput
         }
 
         // Unknown message type; strip nasty pathses from it
-        _message = flexMessage.replaceAll("\\S*localbuilder[0-9]+/", "");
+        _message = SERVER_SIDE_PATH.matcher(flexMessage).replaceAll("");
         _level = CompilerOutput.Level.UNKNOWN;
         _fileName = null;
         _lineNumber = -1;
@@ -87,6 +93,12 @@ public class FlexCompilerOutput
     }
 
     // from CompilerOutput interface
+    public String getPath ()
+    {
+        return _path;
+    }
+
+    // from CompilerOutput interface
     public String getFileName ()
     {
         return _fileName;
@@ -107,13 +119,13 @@ public class FlexCompilerOutput
     /**
      * Summarizes this message usefully.
      */
+    @Override
     public String toString ()
     {
         if (_fileName == null) {
             return _message;
         } else {
-            return _fileName.substring(_fileName.lastIndexOf("/")+1) + ":" +
-                _lineNumber + ": " + _message;
+            return getFileName() + ":" + _lineNumber + ": " + _message;
         }
     }
 
@@ -158,6 +170,9 @@ public class FlexCompilerOutput
     /** File name referenced. null if no file. */
     protected String _fileName = null;
 
+    /** Path of referenced file name, relative to the project root. null if no file. */
+    protected String _path = null;
+
     /** Compiler text message. */
     protected String _message;
 
@@ -170,6 +185,11 @@ public class FlexCompilerOutput
      */
     protected static final Pattern _FLEX_MSG_PATTERN =
         Pattern.compile("(.*)\\(([0-9]+)\\): col: ([0-9]+):? ([A-Za-z]+): (.*)");
+
+    /**
+     * Matches the server side path in which the project was built.
+     */
+    protected static final Pattern SERVER_SIDE_PATH = Pattern.compile("\\S*localbuilder[0-9]+/");
 
     /** Map flex compiler level strings to CompilerOutput.Level enums. */
     protected static final Map<String,CompilerOutput.Level> _messageLevels =

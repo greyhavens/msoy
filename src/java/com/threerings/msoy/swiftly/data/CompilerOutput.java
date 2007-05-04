@@ -36,6 +36,11 @@ public interface CompilerOutput
     public String getFileName();
 
     /**
+     * Returns the relative path of the file name referenced, or null if no file was specified.
+     */
+    public String getPath();
+
+    /**
      * Returns the compiler's text message.
      */
     public String getMessage();
