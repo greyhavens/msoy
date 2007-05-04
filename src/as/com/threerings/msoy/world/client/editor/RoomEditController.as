@@ -244,13 +244,16 @@ public class RoomEditController
         
         trace("*** startCommit, current action: " + _currentAction);
         switch (_currentAction) {
+            // both move and scale actions commit data immediately, then force a return
+            // back to the init state, so the player can move or scale more objects
         case ACTION_MOVE:
         case ACTION_SCALE:
             commitFurniData();
+            switchToPhase(PHASE_INIT);
             break;
+        default:
+            switchToPhase(nextPhase());
         }
-        
-        switchToPhase(nextPhase());
     }
 
     protected function doDone () :void
@@ -379,10 +382,6 @@ public class RoomEditController
      */
     protected function revertPhase (action :String) :int
     {
-        trace("*** revert phase");
-        trace("*** current phase: " + PHASENAMES[_currentPhase]);
-        trace("    current action: " + _currentAction + "    new action: " + action);
-
         // if we're done, just restart
         if (_currentPhase == PHASE_DONE) {
             return PHASE_INIT;
@@ -404,10 +403,6 @@ public class RoomEditController
      */
     protected function nextPhase () :int
     {
-        trace("*** next phase");
-        trace("*** current phase: " + PHASENAMES[_currentPhase]);
-        trace("    current action: " + _currentAction);
-
         var next :int = _currentPhase + 1; // start from next phase, and search forward
         while (next < PHASE_DONE) {
             if (phaseSupports(next, _currentAction)) {

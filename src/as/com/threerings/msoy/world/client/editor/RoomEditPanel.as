@@ -9,6 +9,7 @@ import flash.display.Graphics;
 import flash.display.Shape;
 import flash.events.IEventDispatcher;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import mx.containers.HBox;
@@ -19,6 +20,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.ui.FloatingPanel;
 
 
@@ -205,13 +207,13 @@ public class RoomEditPanel extends FloatingPanel
             return; // nothing to do
         }
 
-        decorateSprite(sprite, enabled, true);
+        decorateSprite(sprite, enabled, enabled);
     }
 
     /**
      * Redraws sprite decoration, adding borders and/or stem.
      */
-    public function decorateSprite (
+    protected function decorateSprite (
         sprite :MsoySprite, drawBorder :Boolean, drawStem :Boolean) :void
     {
         var g :Graphics = sprite.graphics;
@@ -220,12 +222,41 @@ public class RoomEditPanel extends FloatingPanel
         var w :Number = sprite.getActualWidth();
         var h :Number = sprite.getActualHeight();
 
+        // compute location info for the stem from the current location to the floor
+        if (drawStem) {
+            // get sprite location in room and stage coordinates
+            var roomLocation :MsoyLocation = sprite.getLocation();
+            var stageLocation :Point =
+                _view.localToGlobal(_view.layout.locationToPoint(roomLocation));
+            var spriteLocation :Point = sprite.globalToLocal(stageLocation);
+
+            // get root location by dropping the sprite y value, and converting back to screen
+            var roomRoot :MsoyLocation = new MsoyLocation(roomLocation.x, 0, roomLocation.z, 0);
+            var stageRoot :Point =
+                _view.localToGlobal(_view.layout.locationToPoint(roomRoot));
+            var spriteRoot :Point = sprite.globalToLocal(stageRoot); 
+        }
+
+        // draw the outline part of the border
+        g.lineStyle(3, 0x000000, 0.5, true);
+        if (drawStem) {
+            g.moveTo(spriteRoot.x, spriteRoot.y);
+            g.lineTo(spriteLocation.x, spriteLocation.y);
+        }
         if (drawBorder) {
-            g.lineStyle(3, 0x000000, 0.5, true);
             g.drawRect(-2, -2, w + 3, h + 3);
-            g.lineStyle(1, 0xffffff, 1, true);
+        }
+
+        // draw the white center of the border
+        g.lineStyle(1, 0xffffff, 1, true);
+        if (drawStem) {
+            g.moveTo(spriteRoot.x, spriteRoot.y);
+            g.lineTo(spriteLocation.x, spriteLocation.y);
+        }
+        if (drawBorder) {
             g.drawRect(-2, -2, w + 3, h + 3);
-        } 
+        }
+
     }
 
     /** Resets all toggle buttons except for the specified one. */
