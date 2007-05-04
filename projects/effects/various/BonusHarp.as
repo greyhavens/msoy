@@ -10,7 +10,7 @@ import flash.media.Sound;
 
 import flash.utils.Timer;
 
-import com.whirled.FurniControl;
+import com.whirled.EffectControl;
 
 import com.threerings.flash.Siner;
 
@@ -22,7 +22,7 @@ public class BonusHarp extends Sprite
 {
     public function BonusHarp ()
     {
-        _ctrl = new FurniControl(this);
+        _ctrl = new EffectControl(this);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
@@ -60,10 +60,10 @@ public class BonusHarp extends Sprite
     protected function handleFinished (... ignored) :void
     {
         // signify that we're done.
-        _ctrl.sendMessage("effectFinished");
+        _ctrl.effectFinished();
     }
 
-    protected var _ctrl :FurniControl;
+    protected var _ctrl :EffectControl;
 
     protected var _yay :DisplayObject;
 
