@@ -5,14 +5,18 @@ package com.threerings.msoy.world.client.editor {
 
 import mx.controls.Button;
 import flash.events.Event;
+import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.ui.Keyboard;
 
+import com.threerings.flash.Vector3;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.world.client.ClickLocation;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.DecorSprite;
 import com.threerings.msoy.world.client.MsoySprite;
+import com.threerings.msoy.world.client.RoomMetrics;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 
@@ -67,6 +71,11 @@ public class RoomEditController
 
     // for debugging only
     protected static const PHASENAMES :Array = [ "init", "acquire", "modify", "commit", "done" ];
+
+
+    /** Editing mode preferences. */
+    public var moveYAxisOnly :Boolean;
+    public var moveZAxisOnly :Boolean;
     
     public function RoomEditController (ctx :WorldContext, panel :RoomEditPanel)
     {
@@ -76,10 +85,15 @@ public class RoomEditController
 
     public function init () :void
     {
+        _panel.roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyboard);
+        _panel.roomView.stage.addEventListener(KeyboardEvent.KEY_UP, handleKeyboard);
     }
 
     public function deinit () :void
     {
+        _panel.roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyboard);
+        _panel.roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, handleKeyboard);
+
         switchToPhase(PHASE_DONE); // just end whatever was going on, skipping commit
     }
 
@@ -120,12 +134,28 @@ public class RoomEditController
         processAction(action);
     }
 
+    /**
+     * Keeps track of the different keys used to modify edit settings.
+     */
+    protected function handleKeyboard (event :KeyboardEvent) :void
+    {
+        // this is very ad hoc right now. do we have any big plans for keyboard shortcuts?
+        if (_currentAction == ACTION_MOVE && _currentPhase == PHASE_MODIFY) {
+            if (event.type == KeyboardEvent.KEY_DOWN) {
+                moveYAxisOnly = (event.keyCode == Keyboard.SHIFT);
+                moveZAxisOnly = (event.keyCode == Keyboard.CONTROL);
+            }
+            if (event.type == KeyboardEvent.KEY_UP) {
+                moveYAxisOnly = moveYAxisOnly && !(event.keyCode == Keyboard.SHIFT);
+                moveZAxisOnly = moveZAxisOnly && !(event.keyCode == Keyboard.CONTROL);
+            }
+        }
+    }
 
     // Phase: init
 
     protected function doInit () :void
     {
-        trace("*** startInit, current action: " + _currentAction);
         switchToPhase(nextPhase());
     }
 
@@ -133,8 +163,6 @@ public class RoomEditController
 
     protected function startAcquire () :void
     {
-        trace("*** startAcquire, current action: " + _currentAction);
-
         if (_currentTarget != null && _originalTargetData != null) {
             // somehow we ended up here after a target was already selected! in this case,
             // restore the target to what it used to be, because we'll acquire a fresh one
@@ -187,8 +215,6 @@ public class RoomEditController
     
     protected function startModify () :void
     {
-        trace("*** startModify, current action: " + _currentAction);
-
         // if we haven't acquired a target, skip this phase, even if this action supports it
         if (_currentTarget == null) {
             switchToPhase(nextPhase());
@@ -238,7 +264,6 @@ public class RoomEditController
     {
         // add undo stack functionality here
         
-        trace("*** startCommit, current action: " + _currentAction);
         switch (_currentAction) {
             // both the move and scale actions commit data immediately, then force a return
             // back to the init state, so the player can move or scale more objects
@@ -263,8 +288,6 @@ public class RoomEditController
 
     protected function endCommit () :void
     {
-        trace("*** endCommit");
-        
         // clean up state variables
         _currentTarget = null;
         _originalTargetData = null;
@@ -272,7 +295,6 @@ public class RoomEditController
 
     protected function doDone () :void
     {
-        trace("*** startDone, current action: " + _currentAction);
         // no phase switches here. :)
     }
 
@@ -290,10 +312,19 @@ public class RoomEditController
 
     protected function findNewFurniPosition (x :Number, y :Number) :MsoyLocation
     {
+        var anchor :MsoyLocation = ((moveYAxisOnly || moveZAxisOnly) && _currentTarget != null) ?
+            _currentTarget.getLocation() : null;
+        
+        var direction :Vector3 = null;
+        if (moveYAxisOnly) {
+            direction = RoomMetrics.N_UP;
+        }
+        if (moveZAxisOnly) {
+            direction = RoomMetrics.N_AWAY;
+        }
+            
         var cloc :ClickLocation = _panel.roomView.layout.pointToFurniLocation(
-            x, y, null, null);
-            //_modAnchor,
-            //(getModifier() == MOD_SHIFT ? RoomMetrics.N_UP : RoomMetrics.N_AWAY));
+            x, y, anchor, direction);
         
         return cloc.loc;
     }
@@ -385,7 +416,6 @@ public class RoomEditController
 
     /** Returns true if the given phase supports the given action. */
     protected function phaseSupports (phase :int, action :String) :Boolean {
-        trace("*** testing if phase " + PHASENAMES[phase] + " supports " + action);
         var actions :Array = PHASEACTIONS[phase];
         return (actions.indexOf(action) != -1);
     }
@@ -437,7 +467,6 @@ public class RoomEditController
     {
         // get the latest phase supported by the current action
         var phase :int = revertPhase(action);
-        trace("*** processAction: " + action + " found new phase: " + PHASENAMES[phase]);
         _currentAction = action;
         switchToPhase(phase);
     }
@@ -446,8 +475,8 @@ public class RoomEditController
     protected function switchToPhase (phase :int) :void
     {
 
-        trace("*** switchToPhase from: " + PHASENAMES[_currentPhase] +
-              " to: " + PHASENAMES[phase]);
+        trace("*** switchToPhase from: " + PHASENAMES[_currentPhase] + 
+             " to: " + PHASENAMES[phase]);
         if (phase != _currentPhase) {
             (DEINITS[_currentPhase] as Function)();
             _currentPhase = phase;
