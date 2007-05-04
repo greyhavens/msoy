@@ -410,8 +410,13 @@ public class ChiyogamiManager extends GameManager
         for (PlayerRec rec : _playerPerfs.values()) {
             // their score / style averages will be between 0 and 1,
             // we award them the max of those as a percentage of their possible flow..
-            _flowDelegate.tracker.awardFlowPercentage(rec.oid,
+            int flowGained = _flowDelegate.tracker.awardFlowPercentage(rec.oid,
                 Math.max(rec.getAverageScore(), rec.getAverageStyle()));
+            if (flowGained > 0) {
+                _roomMgr.addTransientEffect(rec.oid, 
+                    new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
+                        "chiyogami/FlowGain"), String.valueOf(flowGained));
+            }
         }
     }
 
