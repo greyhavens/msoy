@@ -40,17 +40,18 @@ public class SwiftlyTextPane extends JEditorPane
 {
     public static final int PRINT_MARGIN_WIDTH = 100; 
 
-    public SwiftlyTextPane (SwiftlyContext ctx, SwiftlyEditor editor, PathElement pathElement)
+    public SwiftlyTextPane (SwiftlyContext ctx, SwiftlyEditor editor, SwiftlyTextDocument document)
     {
         _ctx = ctx;
         _editor = editor;
+        _document = document;
         _msgs = _ctx.getMessageManager().getBundle(SwiftlyCodes.SWIFTLY_MSGS);
 
         // TODO: this might not be required
         _kit = new SyntaxEditorKit();
         setEditorKit(_kit);
 
-        setContentType(pathElement.getMimeType());
+        setContentType(document.getPathElement().getMimeType());
 
         // setup the actions
         _undoAction = new UndoAction();
@@ -78,16 +79,8 @@ public class SwiftlyTextPane extends JEditorPane
         _syntaxDoc.addUndoableEditListener(new UndoHandler());
         _syntaxDoc.addDocumentListener(new DocumentElementListener());
 
-        // lock the editor to input waiting for the document to load
-        setEditable(false);
-    }
-
-    public void setDocument (SwiftlyTextDocument document)
-    {
-        _document = document;
+        // load the document into the text pane
         loadDocumentText();
-        // unlock the editor
-        setEditable(true);
     }
 
     // from DocumentUpdateListener

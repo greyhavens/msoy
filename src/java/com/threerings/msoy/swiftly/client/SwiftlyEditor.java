@@ -186,16 +186,13 @@ public class SwiftlyEditor extends PlacePanel
     public void editTextDocument (SwiftlyTextDocument document)
     {
         PathElement pathElement = document.getPathElement();
-        SwiftlyTextPane textPane = new SwiftlyTextPane(_ctx, this, pathElement);
+        SwiftlyTextPane textPane = new SwiftlyTextPane(_ctx, this, document);
         TabbedEditorScroller scroller = new TabbedEditorScroller(textPane, pathElement);
         // add line numbers
         scroller.setRowHeaderView(new Gutter(textPane, scroller));
 
         // add the tab
         _editorTabs.addEditorTab(scroller, pathElement);
-
-        // set the document into the text pane
-        textPane.setDocument(document);
 
         // TODO: remove when the textpane is no longer the document listener
         _roomObj.addListener(textPane);
@@ -280,9 +277,8 @@ public class SwiftlyEditor extends PlacePanel
      // TODO: this is only being used to name directories. Consider simplifying
     public String showSelectPathElementNameDialog (PathElement.Type pathElementType)
     {
-        String prompt;
-        prompt = _msgs.get("m.dialog.select_name." + pathElementType);
-        return JOptionPane.showInternalInputDialog(this, prompt);
+        return JOptionPane.showInternalInputDialog(
+            this, _msgs.get("m.dialog.select_name." + pathElementType));
     }
 
     /**
