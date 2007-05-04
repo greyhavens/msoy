@@ -86,6 +86,7 @@ public class RoomEditPanel extends FloatingPanel
         var makeEvent :Function =
             function (handler :Function, button :Button, def :Object) :Function {
                 return function (event :MouseEvent) :void {
+                    resetOtherToggleButtons(button);
                     handler(button, def);
                 };
         }
@@ -207,14 +208,6 @@ public class RoomEditPanel extends FloatingPanel
         decorateSprite(sprite, enabled, true);
     }
 
-    /** Called by the controller, resets all toggle buttons. */
-    public function resetToggleButtons () :void
-    {
-        for each (var child :Button in _toggleButtons) {
-            child.selected = false;
-            }    
-    }
-
     /**
      * Redraws sprite decoration, adding borders and/or stem.
      */
@@ -234,7 +227,17 @@ public class RoomEditPanel extends FloatingPanel
             g.drawRect(-2, -2, w + 3, h + 3);
         } 
     }
-  
+
+    /** Resets all toggle buttons except for the specified one. */
+    protected function resetOtherToggleButtons (button :Button) :void
+    {
+        for each (var child :Button in _toggleButtons) {
+            if (child.toggle && child != button) {
+                child.selected = false;
+            }
+        }    
+    }
+
     protected var _anchor :DisplayObject;
     protected var _controller :RoomEditController;
 

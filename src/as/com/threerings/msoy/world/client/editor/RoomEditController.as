@@ -181,7 +181,9 @@ public class RoomEditController
         _currentFurni = _lastAcquisition;
         _lastAcquisition = null;
 
-        _originalFurniData = _currentFurni.getFurniData();
+        if (_currentFurni != null) {
+            _originalFurniData = _currentFurni.getFurniData();
+        }
     }
 
     // Phase: modify
@@ -235,7 +237,6 @@ public class RoomEditController
 
     protected function doDone () :void
     {
-        _panel.resetToggleButtons();
         trace("*** startDone, current action: " + _currentAction);
         // no phase switches here. :)
     }
