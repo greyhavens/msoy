@@ -20,7 +20,7 @@ public class FlexCompilerOutputUnitTest extends TestCase
         assertEquals(39, output.getLineNumber());
         assertEquals(50, output.getColumnNumber());
         assertEquals("Mirror.as", output.getFileName());
-        assertEquals("Mirror/Mirror.as", output.getPath());
+        assertEquals("/Mirror/Mirror.as", output.getPath());
         assertEquals(CompilerOutput.Level.ERROR, output.getLevel());
         assertEquals("Something bad happened", output.getMessage());
     }

@@ -189,7 +189,7 @@ public class FlexCompilerOutput
     /**
      * Matches the server side path in which the project was built.
      */
-    protected static final Pattern SERVER_SIDE_PATH = Pattern.compile("\\S*localbuilder[0-9]+/");
+    protected static final Pattern SERVER_SIDE_PATH = Pattern.compile("\\S*localbuilder[0-9]+");
 
     /** Map flex compiler level strings to CompilerOutput.Level enums. */
     protected static final Map<String,CompilerOutput.Level> _messageLevels =
