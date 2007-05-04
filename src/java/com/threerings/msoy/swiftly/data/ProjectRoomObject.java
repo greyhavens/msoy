@@ -103,6 +103,22 @@ public class ProjectRoomObject extends PlaceObject
     }
 
     /**
+     * Given a full path string, search the existing path elements for that element.
+     * Return the element if found, null otherwise
+     */
+    public PathElement findPathElementByPath (String path)
+    {
+        for (PathElement elem : pathElements) {
+            if (elem.getAbsolutePath().equals(path)) {
+                return elem;
+            }
+        }
+        
+        // return null if we did not find the element
+        return null;
+    }
+
+    /**
      * Given a name and a parent, search the existing path elements for that element.
      * Return true if found, false otherwise
      */

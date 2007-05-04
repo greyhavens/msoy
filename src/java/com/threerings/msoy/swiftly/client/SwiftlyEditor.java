@@ -329,6 +329,9 @@ public class SwiftlyEditor extends PlacePanel
         if (_roomObj.project != null) {
             _projectPanel.setProject(_roomObj);
         }
+
+        // set the room object in the console now that it is available
+        _console.setRoomObject(_roomObj);
     }
 
     @Override // from PlacePanel
