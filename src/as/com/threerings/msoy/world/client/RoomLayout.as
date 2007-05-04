@@ -27,7 +27,7 @@ public interface RoomLayout {
     function get metrics () :RoomMetrics;
 
     /**
-     * Finds screen position (in stage coordinates) of the specified room location,
+     * Finds screen position (in coordinates of the room view) of the specified room location,
      * as projected onto the screen using current room layout.
      *
      *   @param location     MsoyLocation object that specifies room location
