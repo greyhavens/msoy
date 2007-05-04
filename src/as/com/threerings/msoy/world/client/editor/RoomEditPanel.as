@@ -73,6 +73,12 @@ public class RoomEditPanel extends FloatingPanel
     {
         return _view;
     }
+
+    /** Returns the edit controller. */
+    public function get controller () :RoomEditController
+    {
+        return _controller;
+    }
     
 
     // from superclasses
@@ -86,36 +92,20 @@ public class RoomEditPanel extends FloatingPanel
         // in the defining function's stack frame. so we want a fresh stack frame for each
         // function instance, and have to make one manually.)
         var makeEvent :Function =
-            function (handler :Function, button :Button, def :Object) :Function {
+            function (action :String, button :Button, def :Object) :Function {
                 return function (event :MouseEvent) :void {
                     resetOtherToggleButtons(button);
-                    handler(button, def);
+                    _controller.handleActionSelection(action, button, def);
                 };
         }
 
         // now make me some buttons!
 
-        var defs :Array = [
-            { style: "Room",  toggle: false,    tip:  "i.room_button",
-              fn: _controller.roomButtonClick,  info: "i.room_button_detail" },
-            
-            { style: "Move",  toggle: true,     tip:  "i.move_button",
-              fn: _controller.moveButtonClick,  info: "i.move_button_detail" },
-            
-            { style: "Scale", toggle: true,     tip:  "i.scale_button",
-              fn: _controller.scaleButtonClick, info: "i.scale_button_detail" },
-            
-            { style: "Trash", toggle: false,    tip:  "i.delete_button",
-              fn: _controller.trashButtonClick, info: "i.delete_button_detail" },
-            
-            { style: "Undo",  toggle: false, tip: "i.undo_button" },
-            ];
-
         var box :HBox = new HBox();
         box.styleName = "roomEditPanelContainer";
         addChild(box);
         
-        for each (var def :Object in defs)
+        for each (var def :Object in BUTTON_DEFINITIONS)
         {
             var button :Button = new Button();
             button.styleName = "roomEditButton" + (def.style as String);
@@ -124,11 +114,9 @@ public class RoomEditPanel extends FloatingPanel
                 _toggleButtons.push(button);
             }
             button.toolTip = Msgs.EDITING.get(def.tip as String);
-            if (def.fn != null) {
-                button.addEventListener(
-                    MouseEvent.CLICK, makeEvent(def.fn as Function, button, def));
-            }
-                                            
+            button.addEventListener(
+                MouseEvent.CLICK, makeEvent(def.action as String, button, def));
+                                                        
             box.addChild(button);
         }
 
@@ -143,7 +131,6 @@ public class RoomEditPanel extends FloatingPanel
         
     }
 
-                                    
 
     /**
      * Returns true if avatar movement is enabled (most of the time), or false otherwise
@@ -155,37 +142,6 @@ public class RoomEditPanel extends FloatingPanel
         // or scaling objects in the room)
         return this.isOpen && 
             _controller.currentPhase != RoomEditController.PHASE_MODIFY;
-    }
-
-    /**
-     * Called by the room contoller, on every frame when the mouse is over a sprite.
-     */
-    public function mouseOverSprite (sprite :MsoySprite) :void
-    {
-        if (this.isOpen) {
-            _controller.mouseOverSprite(sprite);
-        }
-    }
-
-    /**
-     * Called by the room controller, on every frame, with new mouse position in stage units.
-     */
-    public function mouseMove (x :Number, y :Number) :void
-    {
-        if (this.isOpen) {
-            _controller.mouseMove(x, y);
-        }
-    }
-
-    /**
-     * Called by the room controller to process mouse clicks. If the click landed on top of
-     * a sprite, the /sprite/ variable will hold its reference.
-     */
-    public function mouseClick (sprite :MsoySprite, event :MouseEvent) :void
-    {
-        if (this.isOpen) {
-            _controller.mouseClick(sprite, event);
-        }
     }
 
     
@@ -276,6 +232,30 @@ public class RoomEditPanel extends FloatingPanel
         }    
     }
 
+
+    /** Constant button definitions. */
+    protected static const BUTTON_DEFINITIONS :Array = [
+        { style: "Room", toggle: false,
+          action: RoomEditController.ACTION_ROOM,
+          tip:  "i.room_button", info: "i.room_button_detail" },
+        
+        { style: "Move", toggle: true,
+          action: RoomEditController.ACTION_MOVE,
+          tip:  "i.move_button", info: "i.move_button_detail" },
+        
+        { style: "Scale", toggle: true,
+          action: RoomEditController.ACTION_SCALE,
+          tip:  "i.scale_button", info: "i.scale_button_detail" },
+        
+        { style: "Trash", toggle: false,
+          action: RoomEditController.ACTION_DELETE,
+          tip:  "i.delete_button", info: "i.delete_button_detail" },
+        
+        { style: "Undo", toggle: false,
+          action: RoomEditController.ACTION_UNDO,
+          tip: "i.undo_button", info: "i.undo_button_detail" },
+        ];
+    
     protected var _anchor :DisplayObject;
     protected var _controller :RoomEditController;
 
@@ -289,7 +269,5 @@ public class RoomEditPanel extends FloatingPanel
 
     /** Room we're editing. */
     protected var _view :RoomView;
-
-
 }
 }

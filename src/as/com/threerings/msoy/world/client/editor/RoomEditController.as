@@ -90,7 +90,7 @@ public class RoomEditController
     }
 
 
-    // Panel accessors for activity coming in from the room
+    // Panel accessors
 
     /** Receives mouse updates from the panel, with x, y values in scene coordinates. */
     public function mouseMove (x :Number, y :Number) :void
@@ -110,39 +110,18 @@ public class RoomEditController
         (CLICKS[_currentPhase] as Function)(sprite, event);
     }
 
-
-    // Panel click handlers
-
-    /** Handle click on the move button. */
-    public function moveButtonClick (button :Button, def :Object) :void
+    /** Handle click on one of the action buttons. */
+    public function handleActionSelection (action :String, button :Button, def :Object) :void
     {
-        _panel.setInfoLabel (button.selected ? def : null);
-        processAction(ACTION_MOVE);
-    }
-
-    /** Handle click on the scale button. */
-    public function scaleButtonClick (button :Button, def :Object) :void
-    {
-        _panel.setInfoLabel(button.selected ? def : null);
-        processAction(ACTION_SCALE);
-    }
-
-    /** Handle click on the room edit button. */
-    public function roomButtonClick (button :Button, def :Object) :void
-    {
-        _panel.setInfoLabel(def);
-        processAction(ACTION_ROOM);
-    }
-
-    /** Handle click on the trash button. */
-    public function trashButtonClick (button :Button, def :Object) :void
-    {
-        _panel.setInfoLabel(def);
-        processAction(ACTION_DELETE);
+        // update info bar when momentary buttons are pressed, or when toggle buttons are on
+        var displayInfo :Boolean = (! button.toggle) || button.selected; 
+        _panel.setInfoLabel (displayInfo ? def : null);
+        
+        processAction(action);
     }
 
 
-    // Input handlers based on the current phase
+    // Phase: init
 
     protected function doInit () :void
     {

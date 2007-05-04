@@ -777,7 +777,7 @@ public class RoomController extends SceneController
         var hoverTarget :MsoySprite = null;
 
         if (isRoomEditing()) {
-            _roomEditPanel.mouseMove(sx, sy);
+            _roomEditPanel.controller.mouseMove(sx, sy);
         }
 
         // if shift is being held down, we're looking for locations only, so
@@ -827,7 +827,7 @@ public class RoomController extends SceneController
                 showFlyTarget = (showWalkTarget && _roomEditPanel.isMovementEnabled);
                 
                 // and tell the editor which sprite was being hovered (whether highlighted or not)
-                _roomEditPanel.mouseOverSprite(hitter); 
+                _roomEditPanel.controller.mouseOverSprite(hitter); 
             }
         }
 
@@ -939,7 +939,7 @@ public class RoomController extends SceneController
 
         // and in any case, tell the editor
         if (isRoomEditing()) {
-            _roomEditPanel.mouseClick(hitter, event);
+            _roomEditPanel.controller.mouseClick(hitter, event);
         }
 
     }
