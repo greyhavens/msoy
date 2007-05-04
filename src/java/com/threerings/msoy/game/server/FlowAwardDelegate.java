@@ -123,6 +123,14 @@ public class FlowAwardDelegate extends GameManagerDelegate
         }
     }
 
+    @Override
+    public void didShutdown ()
+    {
+        super.didShutdown();
+
+        tracker.shutdown();
+    }
+
     /**
      * Convenience method to get our game Id.
      */
