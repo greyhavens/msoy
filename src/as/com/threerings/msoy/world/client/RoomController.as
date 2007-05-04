@@ -62,6 +62,7 @@ import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.world.client.MsoySprite;
+import com.threerings.msoy.world.client.editor.RoomEditPanel;
 import com.threerings.msoy.world.client.editor.EditorController;
 
 import com.threerings.msoy.world.data.AudioData;

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.world.client.editor {
 
 import mx.controls.Button;
 import flash.events.Event;
@@ -9,6 +9,9 @@ import flash.events.MouseEvent;
 
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.world.client.ClickLocation;
+import com.threerings.msoy.world.client.FurniSprite;
+import com.threerings.msoy.world.client.DecorSprite;
+import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 

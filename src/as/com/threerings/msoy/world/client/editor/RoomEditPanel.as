@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.world.client.editor {
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -18,6 +18,7 @@ import mx.controls.Label;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.world.client.MsoySprite;
+import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.ui.FloatingPanel;
 
 
