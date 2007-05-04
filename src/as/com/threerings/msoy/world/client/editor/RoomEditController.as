@@ -134,6 +134,13 @@ public class RoomEditController
         processAction(ACTION_ROOM);
     }
 
+    /** Handle click on the trash button. */
+    public function trashButtonClick (button :Button, def :Object) :void
+    {
+        _panel.setInfoLabel(def);
+        processAction(ACTION_DELETE);
+    }
+
 
     // Input handlers based on the current phase
 
@@ -148,8 +155,19 @@ public class RoomEditController
     protected function startAcquire () :void
     {
         trace("*** startAcquire, current action: " + _currentAction);
-        _panel.updateFocus(_lastAcquisition, false);
-        _lastAcquisition = null;
+
+        if (_currentTarget != null && _originalTargetData != null) {
+            // somehow we ended up here after a target was already selected! in this case,
+            // restore the target to what it used to be, because we'll acquire a fresh one
+            _currentTarget.update(_originalTargetData);
+            _currentTarget = null;
+            _originalTargetData = null;
+        }
+
+        if (_acquireCandidate != null) {
+            _panel.clearFocus(_acquireCandidate);
+            _acquireCandidate = null;
+        }
     }
 
     protected function hoverAcquire (sprite :MsoySprite) :void
@@ -159,31 +177,30 @@ public class RoomEditController
             sprite = null;
         }
         // and make sure it's not the same as what we hit on the last frame
-        if (_lastAcquisition != sprite) {
-            trace("SPRITE: " + sprite);
-            _panel.updateFocus(_lastAcquisition, false);
-            _lastAcquisition = sprite as FurniSprite;
-            _panel.updateFocus(_lastAcquisition, true);
+        if (_acquireCandidate != sprite) {
+            _panel.clearFocus(_acquireCandidate);
+            _acquireCandidate = sprite as FurniSprite;
+            _panel.updateFocus(_acquireCandidate, _currentAction);
         }
     }
 
     protected function clickAcquire (sprite :MsoySprite, event :MouseEvent) :void
     {
         // if we clicked on something, transition to the next phase, otherwise keep trying
-        if (_lastAcquisition != null) {
+        if (_acquireCandidate != null) {
             switchToPhase(nextPhase());
         }
     }
 
     protected function endAcquire () :void
     {
-        _panel.updateFocus(_lastAcquisition, false);
+        _panel.clearFocus(_acquireCandidate);
 
-        _currentFurni = _lastAcquisition;
-        _lastAcquisition = null;
+        _currentTarget = _acquireCandidate;
+        _acquireCandidate = null;
 
-        if (_currentFurni != null) {
-            _originalFurniData = _currentFurni.getFurniData();
+        if (_currentTarget != null) {
+            _originalTargetData = _currentTarget.getFurniData();
         }
     }
 
@@ -194,37 +211,37 @@ public class RoomEditController
         trace("*** startModify, current action: " + _currentAction);
 
         // if we haven't acquired a target, skip this phase, even if this action supports it
-        if (_currentFurni == null) {
+        if (_currentTarget == null) {
             switchToPhase(nextPhase());
             return;
         }
 
         // otherwise start modification functionality
-        _panel.updateFocus(_currentFurni, true);
+        _panel.updateFocus(_currentTarget, _currentAction);
     }
 
     protected function moveModify (x :Number, y :Number) :void
     {
         switch (_currentAction) {
         case ACTION_MOVE:
-            moveFurni(findNewFurniPosition(x, y), false);
+            moveFurni(_currentTarget, findNewFurniPosition(x, y), false);
             break;
         case ACTION_SCALE:
-            scaleFurni(_currentFurni, x, y);
+            scaleFurni(_currentTarget, x, y);
             break;
         }
 
-        _panel.updateFocus(_currentFurni, true);
+        _panel.updateFocus(_currentTarget, _currentAction);
     }
 
     protected function clickModify (sprite :MsoySprite, event :MouseEvent) :void
     {
         switch (_currentAction) {
         case ACTION_MOVE:
-            moveFurni(findNewFurniPosition(event.stageX, event.stageY), true);
+            moveFurni(_currentTarget, findNewFurniPosition(event.stageX, event.stageY), true);
             break;
         case ACTION_SCALE:
-            scaleFurni(_currentFurni, event.stageX, event.stageY);
+            scaleFurni(_currentTarget, event.stageX, event.stageY);
             break;
         }
 
@@ -233,27 +250,45 @@ public class RoomEditController
 
     protected function endModify () :void
     {
-        _panel.updateFocus(_currentFurni, false);
+        _panel.clearFocus(_currentTarget);
     }
 
     // Phase: commit
     
-    protected function doCommit () :void
+    protected function startCommit () :void
     {
         // add undo stack functionality here
         
         trace("*** startCommit, current action: " + _currentAction);
         switch (_currentAction) {
-            // both move and scale actions commit data immediately, then force a return
+            // both the move and scale actions commit data immediately, then force a return
             // back to the init state, so the player can move or scale more objects
         case ACTION_MOVE:
         case ACTION_SCALE:
-            commitFurniData();
+            if (_currentTarget != null && _originalTargetData != null) {
+                commitFurniData(_originalTargetData, _currentTarget.getFurniData());
+            }
             switchToPhase(PHASE_INIT);
+            return;
+        case ACTION_DELETE:
+            // delete the old object
+            if (_originalTargetData != null) {
+                commitFurniData(_originalTargetData, null);
+            }
             break;
-        default:
-            switchToPhase(nextPhase());
         }
+
+        // note: MOVE and SCALE never reach this line
+        switchToPhase(nextPhase());
+    }
+
+    protected function endCommit () :void
+    {
+        trace("*** endCommit");
+        
+        // clean up state variables
+        _currentTarget = null;
+        _originalTargetData = null;
     }
 
     protected function doDone () :void
@@ -265,11 +300,12 @@ public class RoomEditController
 
     // Movement only functions
     
-    protected function moveFurni (loc :MsoyLocation, updateFurniData :Boolean = false) :void
+    protected function moveFurni (
+        target :FurniSprite, loc :MsoyLocation, updateFurniData :Boolean) :void
     {
-        _currentFurni.setLocation(loc);
+        target.setLocation(loc);
         if (updateFurniData) {
-            _currentFurni.getFurniData().loc = loc;
+            target.getFurniData().loc = loc;
         }
     }
 
@@ -356,17 +392,17 @@ public class RoomEditController
         return computeScale(furni, newwidth, newheight); 
     }
 
+    // Helpers
+
+    /** Sends an update to the server. /toRemove/ will be removed, and /toAdd/ added. */
+    protected function commitFurniData (toRemove :FurniData, toAdd :FurniData) :void
+    {
+        var adds :Array = (toAdd != null) ? [ toAdd ] : null;
+        var deletes :Array = (toRemove != null) ? [ toRemove ] : null;
+        _panel.roomView.getRoomController().sendFurniUpdate(deletes, adds);
+    }
 
     // Phase and action helpers
-
-    /** Sends an update to the server, updating furni information. */
-    protected function commitFurniData () :void
-    {
-        if (_originalFurniData != null && _currentFurni != null) {
-            _panel.roomView.getRoomController().sendFurniUpdate(
-                [ _originalFurniData ], [ _currentFurni.getFurniData() ]);
-        }
-    }
 
     /** Returns true if the given phase supports the given action. */
     protected function phaseSupports (phase :int, action :String) :Boolean {
@@ -449,16 +485,20 @@ public class RoomEditController
     protected const CLICKS  :Array = [ none,   clickAcquire,  clickModify,  none,     none   ];
 
     /** Phase initialization and shutdown helpers, indexed by PHASE_* value. */
-    protected const INITS   :Array = [ doInit, startAcquire,  startModify,  doCommit, doDone ];
-    protected const DEINITS :Array = [ none,   endAcquire,    endModify,    none,     none   ];
+    protected const INITS   :Array = [ doInit, startAcquire,  startModify,  startCommit, doDone ];
+    protected const DEINITS :Array = [ none,   endAcquire,    endModify,    endCommit,   none   ];
 
     protected var _ctx :WorldContext;
     protected var _panel :RoomEditPanel;
 
-    protected var _lastAcquisition :FurniSprite;
+    /** During acquisition phase, points to the different sprites as the mouse hovers over them. */
+    protected var _acquireCandidate :FurniSprite;
+
+    /** Result of the acquisition phase, points to the acquired sprite. */
+    protected var _currentTarget :FurniSprite;
     
-    protected var _currentFurni :FurniSprite;
-    protected var _originalFurniData :FurniData;
+    /** Result of the acquisition phase, contains the acquired sprite's original data. */
+    protected var _originalTargetData :FurniData;
 
     protected var _currentAction :String;
     protected var _currentPhase :int = PHASE_DONE;

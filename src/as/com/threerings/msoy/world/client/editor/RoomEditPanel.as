@@ -96,7 +96,7 @@ public class RoomEditPanel extends FloatingPanel
         // now make me some buttons!
 
         var defs :Array = [
-            { style: "Room",  toggle: false,    tip: "i.room_button",
+            { style: "Room",  toggle: false,    tip:  "i.room_button",
               fn: _controller.roomButtonClick,  info: "i.room_button_detail" },
             
             { style: "Move",  toggle: true,     tip:  "i.move_button",
@@ -105,7 +105,8 @@ public class RoomEditPanel extends FloatingPanel
             { style: "Scale", toggle: true,     tip:  "i.scale_button",
               fn: _controller.scaleButtonClick, info: "i.scale_button_detail" },
             
-            { style: "Trash", toggle: false, tip: "i.delete_button" },
+            { style: "Trash", toggle: false,    tip:  "i.delete_button",
+              fn: _controller.trashButtonClick, info: "i.delete_button_detail" },
             
             { style: "Undo",  toggle: false, tip: "i.undo_button" },
             ];
@@ -197,28 +198,34 @@ public class RoomEditPanel extends FloatingPanel
             (def != null && def.info != null) ? Msgs.EDITING.get(def.info as String) : "";
     }
 
+    /** Called by the controller, clears any focus rectangle displayed over the sprite. */
+    public function clearFocus (sprite :MsoySprite) :void
+    {
+        if (sprite != null) {
+            sprite.graphics.clear();
+        }
+    }
+    
     /**
      * Called by the controller, to display a focus rectangle around the specified sprite.
-     * When the /enabled/ parameter is true, the focus rectangle is displayed, otherwise removed.
+     * The /action/ argument should be one of the RoomEditController.ACTION_* constants.
      */
-    public function updateFocus (sprite :MsoySprite, enabled :Boolean) :void
+    public function updateFocus (sprite :MsoySprite, action :String) :void
     {
         if (sprite == null) {
             return; // nothing to do
         }
 
-        decorateSprite(sprite, enabled, enabled);
-    }
-
-    /**
-     * Redraws sprite decoration, adding borders and/or stem.
-     */
-    protected function decorateSprite (
-        sprite :MsoySprite, drawBorder :Boolean, drawStem :Boolean) :void
-    {
+        clearFocus(sprite);
+        
+        var drawStem :Boolean = (action == RoomEditController.ACTION_MOVE);
+        var drawBorder :Boolean = (action == RoomEditController.ACTION_MOVE ||
+                                   action == RoomEditController.ACTION_SCALE ||
+                                   action == RoomEditController.ACTION_DELETE);
+        var highlightColor :uint =
+            (action == RoomEditController.ACTION_DELETE) ? 0xff0000 : 0xffffff;            
+        
         var g :Graphics = sprite.graphics;
-        g.clear();
-
         var w :Number = sprite.getActualWidth();
         var h :Number = sprite.getActualHeight();
 
@@ -248,7 +255,7 @@ public class RoomEditPanel extends FloatingPanel
         }
 
         // draw the white center of the border
-        g.lineStyle(1, 0xffffff, 1, true);
+        g.lineStyle(1, highlightColor, 1, true);
         if (drawStem) {
             g.moveTo(spriteRoot.x, spriteRoot.y);
             g.lineTo(spriteLocation.x, spriteLocation.y);
