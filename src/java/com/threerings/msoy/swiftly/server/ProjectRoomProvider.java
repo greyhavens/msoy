@@ -17,6 +17,12 @@ import com.threerings.presents.server.InvocationProvider;
 public interface ProjectRoomProvider extends InvocationProvider
 {
     /**
+     * Handles a {@link ProjectRoomService#abortFileUpload} request.
+     */
+    public void abortFileUpload (ClientObject caller, InvocationService.ConfirmListener arg1)
+        throws InvocationException;
+
+    /**
      * Handles a {@link ProjectRoomService#addDocument} request.
      */
     public void addDocument (ClientObject caller, String arg1, PathElement arg2, String arg3, InvocationService.InvocationListener arg4)

@@ -395,6 +395,42 @@ public class ProjectRoomManager extends PlaceManager
             new FinishFileUploadTask(uploadFile, caller, listener));
     }
 
+    // from interface ProjectRoomProvider
+    public void abortFileUpload (final ClientObject caller, final ConfirmListener listener)
+        throws InvocationException
+    {
+        final UploadFile uploadFile = _currentUploads.get(caller.getOid());
+        if (uploadFile == null) {
+            throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
+        }
+
+        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("abortFileUpload") {
+            public boolean invoke () {
+                try {
+                    // cleanup the upload file
+                    uploadFile.abortUpload();
+
+                } catch (Exception error) {
+                    // we'll report this on resultReceived()
+                    _error = error;
+                }
+                return true;
+            }
+
+            public void handleResult () {
+                if (_error == null) {
+                    listener.requestProcessed();
+                } else {
+                    log.log(Level.WARNING,
+                        "Aborting upload failed [file=" + uploadFile + "].", _error);
+                    listener.requestFailed("e.abort_upload_failed");
+                }
+            }
+
+            protected Exception _error;
+        });
+    }
+
     // from interface SetListener
     public void entryAdded (EntryAddedEvent event)
     {
@@ -821,7 +857,19 @@ public class ProjectRoomManager extends PlaceManager
                 // remove the temp file no matter what
                 _tempFile.delete();
             }
+        }
 
+        public void abortUpload()
+            throws IOException
+        {
+            try {
+                // close the FileOutputStream
+                _fileOutput.close();
+
+            } finally {
+                // remove the temp file no matter what
+                _tempFile.delete();
+            }
         }
 
         // TODO factor this out into a static method in PathElement? Where?

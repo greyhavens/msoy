@@ -39,6 +39,13 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
+        case ProjectRoomMarshaller.ABORT_FILE_UPLOAD:
+            ((ProjectRoomProvider)provider).abortFileUpload(
+                source,
+                (InvocationService.ConfirmListener)args[0]
+            );
+            return;
+
         case ProjectRoomMarshaller.ADD_DOCUMENT:
             ((ProjectRoomProvider)provider).addDocument(
                 source,

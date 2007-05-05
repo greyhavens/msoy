@@ -55,4 +55,7 @@ public interface ProjectRoomService extends InvocationService
 
     /** Finalizes a file upload */
     public void finishFileUpload (Client client, ConfirmListener listener);
+
+    /** Aborts a file upload */
+    public void abortFileUpload (Client client, ConfirmListener listener);
 }
