@@ -25,6 +25,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
+import javax.swing.ProgressMonitorInputStream;
 import javax.swing.ToolTipManager;
 
 import javax.swing.event.TreeModelEvent;
@@ -451,8 +452,11 @@ public class ProjectPanel extends JPanel
         public Object invoke()
             throws Exception
         {
-            // TODO: update a modal progress bar
-            FileInputStream input = new FileInputStream(_file);
+            // TODO: i18n the progress monitor dialog title if possible
+            ProgressMonitorInputStream input = new ProgressMonitorInputStream(
+                ProjectPanel.this,
+                _msgs.get("m.dialog.upload_progress") + _file.getName(),
+                new FileInputStream(_file));
             int len;
             byte[] buf = new byte[UPLOAD_BLOCK_SIZE];
             while ((len = input.read(buf)) > 0) {
@@ -463,8 +467,10 @@ public class ProjectPanel extends JPanel
                 } else {
                     _roomObj.service.uploadFile(_ctx.getClient(), buf);
                 }
-                // wait a little to avoid sending too many messages to presents
-                Thread.sleep(200);
+                // Presents itself does some queueing/sleeping so just keep the reads happening 
+                // at roughly the speed the messages are actually being sent so the feedback the
+                // progress monitor is giving reflects some kind of reality.
+                Thread.sleep(800);
             }
             input.close();
             return null; // TODO: meh
@@ -495,12 +501,14 @@ public class ProjectPanel extends JPanel
             _ctx.showErrorMessage(_msgs.get("e.upload_failed"));
         }
 
+        // from interface ConfirmListener
         public void requestProcessed ()
         {
             _ctx.showInfoMessage(_msgs.get("m.file_upload_complete"));
             _uploadFileAction.setEnabled(true);
         }
 
+        // from interface ConfirmListener
         public void requestFailed (String reason)
         {
             _ctx.showErrorMessage(_msgs.get(reason));
