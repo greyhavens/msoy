@@ -113,7 +113,7 @@ public class SwiftlyBinaryDocument extends SwiftlyDocument
     }
 
     @Override // from SwiftlyDocument
-    public void loadInEditor (SwiftlyDocumentEditor editor)
+    public void loadInEditor (SwiftlyDocumentEditor editor, int row, int column)
     {
         // Cannot be displayed or edited
         return;

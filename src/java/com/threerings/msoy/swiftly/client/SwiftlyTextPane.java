@@ -1,6 +1,7 @@
 package com.threerings.msoy.swiftly.client;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -36,7 +37,7 @@ import sdoc.SyntaxEditorKit;
 import sdoc.SyntaxSupport;
 
 public class SwiftlyTextPane extends JEditorPane
-    implements DocumentUpdateListener
+    implements DocumentUpdateListener, PositionableComponent
 {
     public static final int PRINT_MARGIN_WIDTH = 100; 
 
@@ -91,6 +92,18 @@ public class SwiftlyTextPane extends JEditorPane
             event.getEditorOid() != _ctx.getClient().getClientOid()) {
             loadDocumentText();
         }
+    }
+
+    // from PositionableComponent
+    public Component getComponent ()
+    {
+        return this;
+    }
+
+    // from PositionableComponent
+    public void gotoLocation (int row, int column)
+    {
+        // TODO move the caret to this location and highlight briefly?
     }
 
     public Action createCutAction ()

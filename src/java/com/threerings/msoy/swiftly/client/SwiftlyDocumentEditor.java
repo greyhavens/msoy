@@ -9,7 +9,11 @@ import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 
 public interface SwiftlyDocumentEditor
 {
-    public void editTextDocument (SwiftlyTextDocument document);
+    /**
+      * Requests the supplied SwiftlyTextDocument be opened in this editor at the supplied
+      * row and column.
+      */
+    public void editTextDocument (SwiftlyTextDocument document, int row, int column);
 
     public List<FileTypes> getCreateableFileTypes ();
 

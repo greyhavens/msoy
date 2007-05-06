@@ -138,7 +138,7 @@ public class Console extends JFrame
     /**
      * Appends a button to the console which goes to a line number in a document.
      */
-    protected void appendLineNumberButton (CompilerOutput line)
+    protected void appendLineNumberButton (final CompilerOutput line)
     {
         // the button must be wrapped in a style
         Style style = _document.addStyle("LineNumberButton", null);
@@ -151,12 +151,11 @@ public class Console extends JFrame
         }
 
         // create the button and action
-        // TODO open the exact line number and column
         LineNumberButton button = new LineNumberButton();
         button.addActionListener(new AbstractAction() {
             public void actionPerformed (ActionEvent e)
             {
-                _editor.openPathElement(pathElement); 
+                _editor.openPathElement(pathElement, line.getLineNumber(), line.getColumnNumber());
             }
         });
         button.setToolTipText(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.tooltip.line_number"));

@@ -144,19 +144,36 @@ public class SwiftlyEditor extends PlacePanel
             }
         }
     }
-    
+
     /** Requests that the given path element be opened in the editor. */
     public void openPathElement (final PathElement pathElement)
     {
         // If the tab already exists, then select it and be done.
-        if (_editorTabs.selectTab(pathElement)) {
+        if (_editorTabs.selectTab(pathElement) != null) {
+            return;
+        }
+
+        // otherwise ask that the element be opened at the starting position
+        openPathElement(pathElement, 0, 0);
+    }
+
+    /**
+      * Requests that the given path element be opened in the editor, at the supplied
+      * row and column.
+      */
+    public void openPathElement (final PathElement pathElement, final int row, final int column)
+    {
+        // If the tab already exists, then select it and tell it to move to row and column.
+        TabbedEditorComponent tab;
+        if ((tab = _editorTabs.selectTab(pathElement)) != null) {
+            tab.gotoLocation(row, column);
             return;
         }
 
         // If the document is already in the dset, load that.
         SwiftlyDocument doc = _roomObj.getDocument(pathElement);
         if (doc != null) {
-            doc.loadInEditor(this);
+            doc.loadInEditor(this, row, column);
             return;
         }
 
@@ -167,7 +184,7 @@ public class SwiftlyEditor extends PlacePanel
                 if (doc == null) {
                     _ctx.showErrorMessage(_msgs.get("e.load_document_failed"));
                 } else {
-                    doc.loadInEditor(SwiftlyEditor.this);
+                    doc.loadInEditor(SwiftlyEditor.this, row, column);
                 }
             }
             public void requestFailed (String reason) {
@@ -183,7 +200,7 @@ public class SwiftlyEditor extends PlacePanel
     }
 
     // from SwiftlyDocumentEditor
-    public void editTextDocument (SwiftlyTextDocument document)
+    public void editTextDocument (SwiftlyTextDocument document, int row, int column)
     {
         PathElement pathElement = document.getPathElement();
         SwiftlyTextPane textPane = new SwiftlyTextPane(_ctx, this, document);
@@ -193,6 +210,9 @@ public class SwiftlyEditor extends PlacePanel
 
         // add the tab
         _editorTabs.addEditorTab(scroller, pathElement);
+
+        // goto the starting location
+        textPane.gotoLocation(row, column);
 
         // TODO: remove when the textpane is no longer the document listener
         _roomObj.addListener(textPane);
