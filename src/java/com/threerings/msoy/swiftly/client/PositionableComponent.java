@@ -17,6 +17,7 @@ public interface PositionableComponent
 
     /**
      * Requests that this component move to the row and column supplied if possible.
+     * Row and column = 0 request that the component be loaded at the initial position.
      */
     public void gotoLocation (int row, int column);
 }

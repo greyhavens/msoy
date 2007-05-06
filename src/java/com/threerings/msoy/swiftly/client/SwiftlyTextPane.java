@@ -3,6 +3,7 @@ package com.threerings.msoy.swiftly.client;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -13,6 +14,10 @@ import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Element;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -103,7 +108,40 @@ public class SwiftlyTextPane extends JEditorPane
     // from PositionableComponent
     public void gotoLocation (int row, int column)
     {
-        // TODO move the caret to this location and highlight briefly?
+        // if row and column are 0, this call is to just open the document, so no highlight
+        boolean initial = false;
+        if ((row + column) == 0) {
+            initial = true;
+        }
+
+        // move the caret to the requested position
+        Element root = getDocument().getDefaultRootElement();
+        // row = 1, column = 1 is the starting position. anything less will be a problem
+        int character = Math.max(column, 1);
+        int line = Math.max(row, 1);
+        line = Math.min(line, root.getElementCount());
+        setCaretPosition(root.getElement(line - 1).getStartOffset() + (character - 1));
+
+        // if this was a request to move to a particular location [not just the start] highlight
+        // the new position
+        if (!initial) {
+            try {
+                final Object highlight = getHighlighter().addHighlight(
+                    getCaretPosition(), getCaretPosition() + 1,
+                    new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));;
+                // show the highlighting for 3 seconds
+                Timer timer = new Timer(3000, new ActionListener () {
+                    public void actionPerformed (ActionEvent evt)
+                    {
+                        getHighlighter().removeHighlight(highlight);
+                    }
+                });
+                timer.setRepeats(false);
+                timer.start();
+            } catch (BadLocationException e) {
+                // nada. can't highlight nothing
+            }
+        }
     }
 
     public Action createCutAction ()
