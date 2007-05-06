@@ -418,6 +418,9 @@ public class ProjectRoomManager extends PlaceManager
             }
 
             public void handleResult () {
+                // the upload was aborted, so remove it from the list
+                _currentUploads.remove(caller.getOid());
+
                 if (_error == null) {
                     listener.requestProcessed();
                 } else {
