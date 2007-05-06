@@ -517,8 +517,8 @@ public class ProjectPanel extends JPanel
             _uploadFileAction.setEnabled(true);
             // first inform the user that the upload failed
             _ctx.showErrorMessage(_msgs.get("e.upload_failed"));
-            // we'll also inform the user that the upload aborted successfully though
-            _result = UploadTask.ABORTED;
+            // no need to inform the user that the upload aborted successfully though
+            _result = null;
             // cleanup the backend state of the upload
             _roomObj.service.abortFileUpload(_ctx.getClient(), this);
         }
@@ -526,7 +526,9 @@ public class ProjectPanel extends JPanel
         // from interface ConfirmListener
         public void requestProcessed ()
         {
-            _ctx.showInfoMessage(_msgs.get(_result));
+            if (_result != null) {
+                _ctx.showInfoMessage(_msgs.get(_result));
+            }
         }
 
         // from interface ConfirmListener
