@@ -6,7 +6,7 @@ package com.threerings.msoy.swiftly.client;
 import java.awt.Component;
 
 /** 
- * Provides the implementing Component with methods to chance the currently displayed position.  
+ * Provides the implementing Component with methods to change the currently displayed position.  
  */
 public interface PositionableComponent
 {
