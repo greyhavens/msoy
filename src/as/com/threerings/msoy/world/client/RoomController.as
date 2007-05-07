@@ -1097,6 +1097,30 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Do any needed clientside adjustments to the effect data.
+     */
+    public function adjustEffectData (effect :EffectData) :EffectData
+    {
+        switch (effect.actionType) {
+        default:
+            log.warning("Unhandled EffectData parameter mode: " + effect.actionType);
+            Log.dumpStack();
+            // fall through to MODE_NONE...
+
+        case EffectData.MODE_NONE:
+            return effect;
+
+        case EffectData.MODE_XLATE:
+            effect.actionData = Msgs.GENERAL.xlate(effect.actionData);
+            break;
+        }
+
+        // set the mode to MODE_NONE to indicate that we've adjusted
+        effect.actionType = EffectData.MODE_NONE;
+        return effect;
+    }
+
+    /**
      * Callback when the music finishes.
      */
     protected function musicFinishedPlaying (... ignored) :void
@@ -1111,7 +1135,7 @@ public class RoomController extends SceneController
     {
         var actor :ActorSprite = _roomView.getActor(bodyOid);
         if (actor != null) {
-            actor.addTransientEffect(effect);
+            actor.addTransientEffect(adjustEffectData(effect));
 
         } else {
             log.info("Unable to find actor for transient effect [bodyOid=" + bodyOid + "].");

@@ -97,17 +97,17 @@ public class RoomManager extends SpotSceneManager
      */
     public void addTransientEffect (int bodyOid, MediaDesc media)
     {
-        addTransientEffect(bodyOid, media, null);
+        addTransientEffect(bodyOid, media, EffectData.MODE_NONE, null);
     }
 
     /**
      * Add a transient effect on the specified body.
      */
-    public void addTransientEffect (int bodyOid, MediaDesc media, String parameters)
+    public void addTransientEffect (int bodyOid, MediaDesc media, byte paramMode, String parameter)
     {
         EffectData effect = new EffectData();
         effect.media = media;
-        effect.actionData = parameters;
+        effect.setParameter(paramMode, parameter);
         _roomObj.postMessage(RoomObject.ADD_EFFECT, bodyOid, effect);
     }
 

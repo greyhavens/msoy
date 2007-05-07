@@ -8,6 +8,12 @@ import com.threerings.io.ObjectOutputStream;
 
 public class EffectData extends FurniData
 {
+    /** The parameter should not be adjusted. */
+    public static const MODE_NONE :int = 0;
+
+    /** The parameter should be i18n translated. */
+    public static const MODE_XLATE :int = 1;
+
     /** The layer upon which the effect should reside. @see RoomCodes. */
     public var roomLayer :int;
 

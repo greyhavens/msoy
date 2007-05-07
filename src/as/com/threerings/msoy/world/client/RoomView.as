@@ -735,7 +735,7 @@ public class RoomView extends AbstractRoomView
 
     protected function addEffect (effect :EffectData) :FurniSprite
     {
-        var sprite :EffectSprite = new EffectSprite(effect);
+        var sprite :EffectSprite = new EffectSprite(_ctrl.adjustEffectData(effect));
         addChildAt(sprite, 1);
         sprite.setLocation(effect.loc);
         _effects.put(effect.id, sprite);
@@ -746,7 +746,7 @@ public class RoomView extends AbstractRoomView
     {
         var sprite :FurniSprite = (_effects.get(effect.id) as FurniSprite);
         if (sprite != null) {
-            sprite.update(effect);
+            sprite.update(_ctrl.adjustEffectData(effect));
         } else {
             addEffect(effect);
         }
