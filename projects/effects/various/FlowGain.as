@@ -31,8 +31,11 @@ public class FlowGain extends Sprite
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
 
-        var params :String = _ctrl.getParameters();
-        var msg :String = "+" + (params != null ? params : "") + " flow!";
+        var message :String = _ctrl.getParameters();
+        if (message == null) {
+            trace("No parameters from EffectControl, showing generic message.");
+            message = "+Flow!";
+        }
 
         var format :TextFormat = new TextFormat();
         format.size = 32;
@@ -43,7 +46,7 @@ public class FlowGain extends Sprite
         var tf :TextField = new TextField();
         tf.defaultTextFormat = format;
         tf.autoSize = TextFieldAutoSize.LEFT;
-        tf.text = msg;
+        tf.text = message;
         tf.width = tf.textWidth + 5;
         tf.height = tf.textHeight + 4;
 
