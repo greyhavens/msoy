@@ -4,7 +4,6 @@
 package com.threerings.msoy.world.client {
 
 import flash.display.Graphics;
-import flash.display.Sprite;
 
 import flash.geom.Point;
 
@@ -24,17 +23,17 @@ public class RoomBackdrop
     }
 
     /**
-     * Draws the room backdrop on the specified sprite, with specified unscaled parameters.
+     * Draws the room backdrop on the specified graphics, with specified unscaled parameters.
      */
-    public function drawRoom (
-        sprite :Sprite, unscaledWidth :Number, unscaledHeight :Number, editing :Boolean) :void
+    public function drawRoom (g :Graphics, unscaledWidth :Number, unscaledHeight :Number,
+                              editing :Boolean, edgeAlpha :Number = 1.0) :void
     {
-        var g :Graphics = sprite.graphics;
         g.clear();
 
         // fill all our screen area with transparent pixels, so that mousing anywhere in our bounds
         // includes us in the event dispatch. This is primarily necessary to get the ContextMenu
         // working properly.
+        // todo: remove?
         if (!isNaN(unscaledWidth) && !isNaN(unscaledHeight)) {
             g.beginFill(0, 0);
             g.drawRect(0, 0, unscaledWidth, unscaledHeight);
@@ -60,6 +59,25 @@ public class RoomBackdrop
         var ruf :Point = _metrics.roomToScreen(1, 1, 0);
         var rub :Point = _metrics.roomToScreen(1, 1, 1);
 
+        var wallFn :Function = function (width :Number, color :uint, alpha :Number) :void {
+            g.lineStyle(width, color, alpha);
+            g.moveTo(luf.x, luf.y);
+            g.lineTo(lub.x, lub.y);
+            g.lineTo(rub.x, rub.y);
+            
+            g.moveTo(ruf.x, ruf.y);
+            g.lineTo(rub.x, rub.y);
+            g.lineTo(rlb.x, rlb.y);
+
+            g.moveTo(rlf.x, rlf.y);
+            g.lineTo(rlb.x, rlb.y);
+            g.lineTo(llb.x, llb.y);
+
+            g.moveTo(llf.x, llf.y);
+            g.lineTo(llb.x, llb.y);
+            g.lineTo(lub.x, lub.y);
+        }
+        
         if (drawWalls) {
             // fill in the floor
             g.beginFill(0x333333);
@@ -92,31 +110,12 @@ public class RoomBackdrop
             g.lineTo(luf.x, luf.y);
             g.endFill();
 
-        } else {
-            g.beginFill(0xFFFFFF);
-            g.drawRect(luf.x, luf.y, rlf.x - luf.x, rlf.y - luf.y);
-            g.endFill();
-        }
+        } 
 
         // draw the lines defining the walls
         if (drawEdges) {
-            g.lineStyle(2);
-            g.moveTo(luf.x, luf.y);
-            g.lineTo(lub.x, lub.y);
-            g.lineTo(rub.x, rub.y);
-
-            g.moveTo(ruf.x, ruf.y);
-            g.lineTo(rub.x, rub.y);
-            g.lineTo(rlb.x, rlb.y);
-
-            g.moveTo(rlf.x, rlf.y);
-            g.lineTo(rlb.x, rlb.y);
-            g.lineTo(llb.x, llb.y);
-
-            g.moveTo(llf.x, llf.y);
-            g.lineTo(llb.x, llb.y);
-            g.lineTo(lub.x, lub.y);
-
+            wallFn(3, 0x000000, edgeAlpha);
+            wallFn(1, 0xffffff, edgeAlpha);
             g.lineStyle(0, 0, 0); // stop drawing lines
         }
     }

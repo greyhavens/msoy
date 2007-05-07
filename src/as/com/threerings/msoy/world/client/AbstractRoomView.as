@@ -100,6 +100,7 @@ public class AbstractRoomView extends Sprite
     /**
      * Enable or disable editing. Called by the EditRoomController.
      */
+    // FIXME ROBERT: DELETE ME
     public function setEditing (editing :Boolean, spriteVisitFn :Function) :void
     {
         _editing = editing;
@@ -112,6 +113,16 @@ public class AbstractRoomView extends Sprite
         if (!editing) {
             updateAllFurni();
         }
+    }
+
+    /**
+     * Enable or disable room editing overlay. 
+     */
+    // note: this function will soon replace setEditing
+    public function setEditingOverlay (editing :Boolean) :void
+    {
+        _editing = editing;
+        updateDrawnRoom();
     }
 
     /**
@@ -376,7 +387,25 @@ public class AbstractRoomView extends Sprite
 
     protected function updateDrawnRoom () :void
     {
-        _backdrop.drawRoom(this, _actualWidth, _actualHeight, _editing);
+        if (_editing && _bg != null) {
+            // if we're editing, see if we need to recreate the overlay
+            if (_backdropOverlay == null) {
+                _backdropOverlay = new Shape();
+                addChild(_backdropOverlay);
+            }
+        } else {
+            // if we're not editing, destroy the overlay if it's still around
+            if (_backdropOverlay != null) {
+                removeChild(_backdropOverlay);
+                _backdropOverlay = null;
+            }
+        }
+
+        // if the overlay exists, then we should update it
+        if (_backdropOverlay != null) {
+            _backdrop.drawRoom(
+                _backdropOverlay.graphics, _actualWidth, _actualHeight, _editing, 0.4);
+        }
     }
 
     /** The msoy context. */
@@ -400,6 +429,9 @@ public class AbstractRoomView extends Sprite
     /** Helper object that draws a room backdrop with four walls. */
     protected var _backdrop :RoomBackdrop = new RoomBackdrop();
 
+    /** Transparent bitmap on which we can draw the room backdrop.*/
+    protected var _backdropOverlay :Shape;
+    
     /** Our background sprite, if any. */
     protected var _bg :DecorSprite;
 

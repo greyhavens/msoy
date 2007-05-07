@@ -775,14 +775,14 @@ public class RoomController extends SceneController
         var showWalkTarget :Boolean = false;
         var showFlyTarget :Boolean = false;
         var hoverTarget :MsoySprite = null;
-
+        
         if (isRoomEditing()) {
             _roomEditPanel.controller.mouseMove(sx, sy);
         }
-
+        
         // if shift is being held down, we're looking for locations only, so
         // skip looking for hitSprites.
-        var hit :* = (_shiftDownSpot == null) ? getHitSprite(sx, sy, isRoomEditing()) : null
+        var hit :* = (_shiftDownSpot == null) ? getHitSprite(sx, sy, isCurrentlyEditing) : null;
         var hitter :MsoySprite = (hit as MsoySprite);
         // ensure we hit no pop-ups
         if (hit !== undefined) {
@@ -902,7 +902,7 @@ public class RoomController extends SceneController
         // if shift is being held down, we're looking for locations only, so
         // skip looking for hitSprites.
         var hit :* = (_shiftDownSpot == null) ?
-            getHitSprite(event.stageX, event.stageY, isRoomEditing()) : null;
+            getHitSprite(event.stageX, event.stageY, isCurrentlyEditing) : null;
         
         if (hit === undefined) {
             return;

@@ -87,10 +87,12 @@ public class RoomEditController
     {
         _panel.roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyboard);
         _panel.roomView.stage.addEventListener(KeyboardEvent.KEY_UP, handleKeyboard);
+        _panel.roomView.setEditingOverlay(true);
     }
 
     public function deinit () :void
     {
+        _panel.roomView.setEditingOverlay(false);
         _panel.roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyboard);
         _panel.roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, handleKeyboard);
 

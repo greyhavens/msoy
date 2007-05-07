@@ -191,7 +191,8 @@ public class DecorViewerComp extends Canvas
     {
         // redraw the room backdrop
         _backdrop.setRoom(_data);
-        _backdrop.drawRoom(_backdropCanvas, _backdropCanvas.width, _backdropCanvas.height, true);
+        _backdrop.drawRoom(
+            _backdropCanvas.graphics, _backdropCanvas.width, _backdropCanvas.height, true);
 
         // scale the canvas so that the entire backdrop fits on the canvas
         var scaleX :Number = PREVIEW_BOX_SIZE / _data.width;
