@@ -663,6 +663,7 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.game.data.GameSummary;
 
 import com.threerings.msoy.world.client.ActorSprite;
+import com.threerings.msoy.world.client.MsoySprite;
 
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
@@ -710,8 +711,7 @@ class TableIcon extends ScalingMediaContainer
 
     protected function handleMouseIn (... ignored) :void
     {
-        // TODO?
-        this.filters = [ new GlowFilter(0x00ff00, 1, 32, 32, 2) ];
+        this.filters = [ new GlowFilter(MsoySprite.GAME_HOVER, 1, 32, 32, 2) ];
     }
 
     protected function handleMouseOut (... ignored) :void

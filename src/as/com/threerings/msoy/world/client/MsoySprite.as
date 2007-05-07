@@ -73,6 +73,13 @@ public class MsoySprite extends MediaContainer
      * but ONLY if the parent is not an AbstractRoomView. */
     public static const LOCATION_UPDATED :String = "locationUpdated";
 
+    /** Hover colors. */
+    public static const AVATAR_HOVER :uint = 0x99BFFF;// light blue
+    public static const PET_HOVER :uint = 0x999999;// light gray
+    public static const PORTAL_HOVER :uint = 0xe04040; // reddish
+    public static const GAME_HOVER :uint = 0xFFFFFF;  // white
+    public static const OTHER_HOVER :uint = 0x000000; // black
+
     /**
      * Constructor.
      */
@@ -664,12 +671,5 @@ public class MsoySprite extends MediaContainer
 
     /** Our control backend, communicates with usercode. */
     protected var _backend :EntityBackend;
-
-    /** Hover colors. */
-    protected static const AVATAR_HOVER :uint = 0x99BFFF;// light blue
-    protected static const PET_HOVER :uint = 0x999999;// light gray
-    protected static const PORTAL_HOVER :uint = 0xe04040; // reddish
-    protected static const GAME_HOVER :uint = 0xFFFFFF;  // white
-    protected static const OTHER_HOVER :uint = 0x000000; // black
 }
 }
