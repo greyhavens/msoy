@@ -32,6 +32,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 import com.threerings.msoy.game.client.MiniGameContainer;
+import com.threerings.msoy.game.client.MiniGameTestPanel;
 import com.threerings.msoy.game.chiyogami.data.ChiyogamiObject;
 
 public class ChiyogamiPanel extends Canvas
@@ -39,6 +40,7 @@ public class ChiyogamiPanel extends Canvas
 {
     public function ChiyogamiPanel (ctx :WorldContext, ctrl :ChiyogamiController)
     {
+        _ctx = ctx;
         _ctrl = ctrl;
         
         horizontalScrollPolicy = ScrollPolicy.OFF;
@@ -99,10 +101,20 @@ public class ChiyogamiPanel extends Canvas
             _minigame.mask = mask;
             rawChildren.addChild(mask);
 
+            if (_ctx.getMemberObject().tokens.isAdmin()) {
+                var testPanel :MiniGameTestPanel = new MiniGameTestPanel(_minigame);
+                testPanel.x = 500;
+                addChild(testPanel);
+            }
+
         } else {
             rawChildren.removeChild(_minigame);
             _minigame.performanceCallback = null;
             _minigame = null;
+
+            if (numChildren > 0) {
+                removeChildAt(0);
+            }
         }
     }
 
@@ -122,6 +134,9 @@ public class ChiyogamiPanel extends Canvas
             _tagEntry = null;
         }
     }
+
+    /** The giver of life. */
+    protected var _ctx :WorldContext;
 
     /** Our controller. */
     protected var _ctrl :ChiyogamiController;
