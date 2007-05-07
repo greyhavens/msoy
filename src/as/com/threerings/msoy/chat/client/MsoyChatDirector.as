@@ -43,6 +43,10 @@ public class MsoyChatDirector extends ChatDirector
         // let the compiler know that these must be compiled into the client
         var c :Class = ChatChannelMarshaller;
         c = ChatterInfo;
+
+        var msg :MessageBundle = _msgmgr.getBundle(_bundle);
+        registerCommandHandler(msg, "action", new AvatarActionHandler(false));
+        registerCommandHandler(msg, "state", new AvatarActionHandler(true));
     }
 
     /**

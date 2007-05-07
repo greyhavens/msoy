@@ -265,6 +265,24 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Called to enact the avatar action globally: all users will see it.
+     */
+    public function doAvatarAction (action :String) :void
+    {
+        sendSpriteMessage(_roomView.getMyAvatar().getItemIdent(),
+            action, null, true);
+    }
+
+    /**
+     * Called to enact an avatar state change.
+     */
+    public function doAvatarState (state :String) :void
+    {
+        var avatar :AvatarSprite = _roomView.getMyAvatar();
+        setActorState(avatar.getItemIdent(), avatar.getOid(), state);
+    }
+
+    /**
      * Close and reset all music.
      */
     protected function closeAllMusic (resumeBackground :Boolean) :void
@@ -1217,24 +1235,6 @@ public class RoomController extends SceneController
     {
         super.sceneUpdated(update);
         _roomView.processUpdate(update);
-    }
-
-    /**
-     * Called to enact the avatar action globally: all users will see it.
-     */
-    protected function doAvatarAction (action :String) :void
-    {
-        sendSpriteMessage(_roomView.getMyAvatar().getItemIdent(),
-            action, null, true);
-    }
-
-    /**
-     * Called to enact an avatar state change.
-     */
-    protected function doAvatarState (state :String) :void
-    {
-        var avatar :AvatarSprite = _roomView.getMyAvatar();
-        setActorState(avatar.getItemIdent(), avatar.getOid(), state);
     }
 
     /** The life-force of the client. */
