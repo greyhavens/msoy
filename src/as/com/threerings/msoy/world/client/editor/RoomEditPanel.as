@@ -57,7 +57,6 @@ public class RoomEditPanel extends FloatingPanel
     // from FloatingPanel
     override public function close () :void
     {
-        trace("*** CLOSE!");
         _controller.deinit();
         super.close();
     }

@@ -105,7 +105,6 @@ public class RoomEditController
         return _currentPhase;
     }
 
-
     // Panel accessors
 
     /** Receives mouse updates from the panel, with x, y values in scene coordinates. */
@@ -129,11 +128,18 @@ public class RoomEditController
     /** Handle click on one of the action buttons. */
     public function handleActionSelection (action :String, button :Button, def :Object) :void
     {
-        // update info bar when momentary buttons are pressed, or when toggle buttons are on
-        var displayInfo :Boolean = (! button.toggle) || button.selected; 
-        _panel.setInfoLabel (displayInfo ? def : null);
+        // when momentary buttons are pressed, or when toggle buttons are clicked on,
+        // update the info bar and start the action. when toggle buttons are clicked off,
+        // force current action to end.
         
-        processAction(action);
+        var actionExists :Boolean = (! button.toggle) || button.selected;
+        if (actionExists) {
+            _panel.setInfoLabel (def);
+            processAction(action);
+        } else {
+            _panel.setInfoLabel (null);
+            switchToPhase(PHASE_DONE);
+        }
     }
 
     /**
