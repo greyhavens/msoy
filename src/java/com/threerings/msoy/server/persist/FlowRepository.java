@@ -163,8 +163,7 @@ public class FlowRepository extends DepotRepository
         GameAbuseRecord gameRecord = getAbuseRecord(gameId, false);
         gameRecord.accumMinutes += playerMinutes;
 
-        if (gameRecord.accumMinutes >= 
-                RuntimeConfig.server.abuseFactorReassessment) {
+        if (gameRecord.accumMinutes >= RuntimeConfig.server.abuseFactorReassessment) {
             // load all actions logged since our last assessment
             List<GameFlowSummaryRecord> records =
                 findAll(GameFlowSummaryRecord.class,
