@@ -41,11 +41,11 @@ public class TabbedEditorScroller extends JScrollPane
     }
 
     // from PositionableComponent
-    public void gotoLocation (int row, int column)
+    public void gotoLocation (int row, int column, boolean highlight)
     {
         // unless the setters on JScrollPane are overriden and the view is stored as an instance
         // variable as a PositionableComponent, this cast is probably unavoidable and presumptuous 
-        ((PositionableComponent)getEditingComponent()).gotoLocation(row, column);
+        ((PositionableComponent)getEditingComponent()).gotoLocation(row, column, highlight);
     }
 
     protected PathElement _pathElement;

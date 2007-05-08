@@ -154,26 +154,28 @@ public class SwiftlyEditor extends PlacePanel
         }
 
         // otherwise ask that the element be opened at the starting position
-        openPathElement(pathElement, 0, 0);
+        openPathElement(pathElement, 1, 1, false);
     }
 
     /**
       * Requests that the given path element be opened in the editor, at the supplied
       * row and column.
+      * @param highlight indicates whether the new location should be highlighted briefly
       */
-    public void openPathElement (final PathElement pathElement, final int row, final int column)
+    public void openPathElement (final PathElement pathElement, final int row, final int column,
+                                 final boolean highlight)
     {
         // If the tab already exists, then select it and tell it to move to row and column.
         TabbedEditorComponent tab;
         if ((tab = _editorTabs.selectTab(pathElement)) != null) {
-            tab.gotoLocation(row, column);
+            tab.gotoLocation(row, column, highlight);
             return;
         }
 
         // If the document is already in the dset, load that.
         SwiftlyDocument doc = _roomObj.getDocument(pathElement);
         if (doc != null) {
-            doc.loadInEditor(this, row, column);
+            doc.loadInEditor(this, row, column, highlight);
             return;
         }
 
@@ -184,7 +186,7 @@ public class SwiftlyEditor extends PlacePanel
                 if (doc == null) {
                     _ctx.showErrorMessage(_msgs.get("e.load_document_failed"));
                 } else {
-                    doc.loadInEditor(SwiftlyEditor.this, row, column);
+                    doc.loadInEditor(SwiftlyEditor.this, row, column, highlight);
                 }
             }
             public void requestFailed (String reason) {
@@ -200,7 +202,8 @@ public class SwiftlyEditor extends PlacePanel
     }
 
     // from SwiftlyDocumentEditor
-    public void editTextDocument (SwiftlyTextDocument document, int row, int column)
+    public void editTextDocument (SwiftlyTextDocument document, int row, int column,
+                                  boolean highlight)
     {
         PathElement pathElement = document.getPathElement();
         SwiftlyTextPane textPane = new SwiftlyTextPane(_ctx, this, document);
@@ -212,7 +215,7 @@ public class SwiftlyEditor extends PlacePanel
         _editorTabs.addEditorTab(scroller, pathElement);
 
         // goto the starting location
-        textPane.gotoLocation(row, column);
+        textPane.gotoLocation(row, column, highlight);
 
         // TODO: remove when the textpane is no longer the document listener
         _roomObj.addListener(textPane);

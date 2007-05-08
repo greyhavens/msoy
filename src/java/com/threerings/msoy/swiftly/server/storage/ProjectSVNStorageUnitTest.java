@@ -306,7 +306,9 @@ public class ProjectSVNStorageUnitTest extends TestCase
             return true;
         }
         
-        public void loadInEditor (SwiftlyDocumentEditor editor, int row, int column) {
+        public void loadInEditor (SwiftlyDocumentEditor editor, int row, int column,
+                                  boolean highlight)
+        {
             return;
         }
         

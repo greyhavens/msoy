@@ -155,7 +155,8 @@ public class Console extends JFrame
         button.addActionListener(new AbstractAction() {
             public void actionPerformed (ActionEvent e)
             {
-                _editor.openPathElement(pathElement, line.getLineNumber(), line.getColumnNumber());
+                _editor.openPathElement(
+                    pathElement, line.getLineNumber(), line.getColumnNumber(), true);
             }
         });
         button.setToolTipText(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.tooltip.line_number"));

@@ -135,9 +135,9 @@ public class SwiftlyTextDocument extends SwiftlyDocument
     }
 
     @Override // from SwiftlyDocument
-    public void loadInEditor (SwiftlyDocumentEditor editor, int row, int column)
+    public void loadInEditor (SwiftlyDocumentEditor editor, int row, int column, boolean highlight)
     {
-        editor.editTextDocument(this, row, column);
+        editor.editTextDocument(this, row, column, highlight);
     }
 
     public String getTextEncoding ()

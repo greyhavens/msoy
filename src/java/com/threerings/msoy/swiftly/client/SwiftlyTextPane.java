@@ -106,14 +106,8 @@ public class SwiftlyTextPane extends JEditorPane
     }
 
     // from PositionableComponent
-    public void gotoLocation (int row, int column)
+    public void gotoLocation (int row, int column, boolean highlight)
     {
-        // if row and column are 0, this call is to just open the document, so no highlight
-        boolean initial = false;
-        if ((row + column) == 0) {
-            initial = true;
-        }
-
         // move the caret to the requested position
         Element root = getDocument().getDefaultRootElement();
         // row = 1, column = 1 is the starting position. anything less will be a problem
@@ -122,18 +116,17 @@ public class SwiftlyTextPane extends JEditorPane
         line = Math.min(line, root.getElementCount());
         setCaretPosition(root.getElement(line - 1).getStartOffset() + (character - 1));
 
-        // if this was a request to move to a particular location [not just the start] highlight
-        // the new position
-        if (!initial) {
+        // highlight the new position if requested
+        if (highlight) {
             try {
-                final Object highlight = getHighlighter().addHighlight(
+                final Object position = getHighlighter().addHighlight(
                     getCaretPosition(), getCaretPosition() + 1,
                     new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));;
                 // show the highlighting for 3 seconds
                 Timer timer = new Timer(3000, new ActionListener () {
                     public void actionPerformed (ActionEvent evt)
                     {
-                        getHighlighter().removeHighlight(highlight);
+                        getHighlighter().removeHighlight(position);
                     }
                 });
                 timer.setRepeats(false);

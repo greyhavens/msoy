@@ -107,8 +107,12 @@ public abstract class SwiftlyDocument
     /** Check to see if the document has changed. */
     public abstract boolean isDirty () throws IOException;
 
-    /** Tell the supplied editor to load this document, at the supplied row and column. */
-    public abstract void loadInEditor (SwiftlyDocumentEditor editor, int row, int column);
+    /**
+     * Tell the supplied editor to load this document, at the supplied row and column.
+     * @param highlight indicates whether the new location should be highlighted briefly
+     */
+    public abstract void loadInEditor (SwiftlyDocumentEditor editor, int row, int column,
+                                       boolean highlight);
 
     public Comparable getKey ()
     {
