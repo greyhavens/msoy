@@ -200,9 +200,9 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String viewRemove();
 
   /**
-   * Translated "Welcome to <b>Swiftly</b> the Whirled Integrated Development Environment.  <p><font size="-1">Beware that Swiftly is <i>really</i> Alpha and a lot of work remains to be done. That said, play with it and enjoy, and soon we'll be asking for your feedback. Right now we're really busy implementing a bunch of stuff that we <i>know</i> needs to be done.</font></p>".
+   * Translated "Welcome to <b>Swiftly</b> the Whirled Integrated Development Environment.  <p><font size="-1">Beware that Swiftly is <i>really</i> Alpha and a lot of work remains to be done. That said, play with it and enjoy, and soon we''ll be asking for your feedback. Right now we're really busy implementing a bunch of stuff that we <i>know</i> needs to be done.</font></p>".
    * 
-   * @return translated "Welcome to <b>Swiftly</b> the Whirled Integrated Development Environment.  <p><font size="-1">Beware that Swiftly is <i>really</i> Alpha and a lot of work remains to be done. That said, play with it and enjoy, and soon we'll be asking for your feedback. Right now we're really busy implementing a bunch of stuff that we <i>know</i> needs to be done.</font></p>"
+   * @return translated "Welcome to <b>Swiftly</b> the Whirled Integrated Development Environment.  <p><font size="-1">Beware that Swiftly is <i>really</i> Alpha and a lot of work remains to be done. That said, play with it and enjoy, and soon we''ll be asking for your feedback. Right now we're really busy implementing a bunch of stuff that we <i>know</i> needs to be done.</font></p>"
    * @gwt.key swiftlyIntro
    */
   String swiftlyIntro();
