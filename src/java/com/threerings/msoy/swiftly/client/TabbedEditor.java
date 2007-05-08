@@ -88,15 +88,15 @@ public class TabbedEditor extends CloseAndMaxTabbedPane
     }
 
     /**
-     * Closes the tab holding the provided PathElement.
+     * Closes the tab holding the provided PathElement. Does nothing if the element is not open.
      */
     public void closePathElementTab (PathElement pathElement)
     {
-        Component tab = _tabList.get(pathElement.elementId).getComponent();
+        TabbedEditorComponent tab = _tabList.get(pathElement.elementId);
         if (tab == null) {
             return;
         }
-        closeTabAt(indexOfComponent(tab));
+        closeTabAt(indexOfComponent(tab.getComponent()));
     }
 
     /**
