@@ -816,7 +816,7 @@ public class RoomController extends SceneController
                 
                 // let the editor override our decision to display walk targets
                 showWalkTarget = (showWalkTarget && _roomEditPanel.isMovementEnabled);
-                showFlyTarget = (showWalkTarget && _roomEditPanel.isMovementEnabled);
+                showFlyTarget = (showFlyTarget && _roomEditPanel.isMovementEnabled);
                 
                 // and tell the editor which sprite was being hovered (whether highlighted or not)
                 _roomEditPanel.controller.mouseOverSprite(hitter); 
