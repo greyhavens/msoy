@@ -16,7 +16,6 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.game.server.GameManagerDelegate;
 
-
 import com.threerings.msoy.data.UserAction;
 
 import com.threerings.msoy.server.FlowAwardTracker;
@@ -53,14 +52,14 @@ public class FlowAwardDelegate extends GameManagerDelegate
         MsoyServer.invoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 try {
-                    _antiAbuseFactor = MsoyServer.memberRepo.getFlowRepository().getAntiAbuseFactor(
-                        gameId);
+                    _antiAbuseFactor =
+                        MsoyServer.memberRepo.getFlowRepository().getAntiAbuseFactor(gameId);
 
                 } catch (PersistenceException pe) {
                     log.log(Level.WARNING, "Failed to fetch game's anti-abuse factor [where=" +
                             where() + "]", pe);
-                    // if for some reason our anti-abuse mechanism is on the blink, let's eat
-                    // humble pie and treat them all like upstanding citizens
+                    // if for some reason our anti-abuse mechanism is on the blink, assume the
+                    // game is innocent until proven guilty
                     _antiAbuseFactor = 1.0f;
                 }
                 return true; // = call handleResult()
@@ -106,7 +105,7 @@ public class FlowAwardDelegate extends GameManagerDelegate
 
         tracker.stopTracking();
 
-        // TODO: Zell? Something's half-done here.
+        // TODO: This value is currently always zero; see declaration below.
         if (_playerMinutes != 0) {
             final int gameId = getGameId();
             MsoyServer.invoker.postUnit(new Invoker.Unit() {
@@ -149,6 +148,11 @@ public class FlowAwardDelegate extends GameManagerDelegate
         tracker.init(flowPerMinute, UserAction.PLAYED_GAME, String.valueOf(getGameId()));
     }
 
-    /** TODO? CRUFT? ZELL? */
+    /**
+     * Cumulative player minutes for this game, reported when the game ends and used by the
+     * anti-abuse algorithm.
+     * 
+     * TODO: Not yet implemented. Should track players entering and leaving.
+     */
     protected int _playerMinutes;
 }
