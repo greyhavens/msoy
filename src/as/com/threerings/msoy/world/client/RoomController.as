@@ -607,8 +607,10 @@ public class RoomController extends SceneController
         // we search from last-drawn to first drawn to get the topmost...
         for (var dex :int = _roomView.numChildren - 1; dex >= 0; dex--) {
             var spr :MsoySprite = (_roomView.getChildAt(dex) as MsoySprite);
-            if ((spr != null) && (all || (spr.isActive() && spr.capturesMouse())) &&
-                    spr.hitTestPoint(stageX, stageY, true)) {
+            if ((spr != null) && !(spr is DecorSprite) &&
+                (all || (spr.isActive() && spr.capturesMouse())) &&
+                spr.hitTestPoint(stageX, stageY, true))
+            {
                 return spr;
             }
         }
