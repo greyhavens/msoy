@@ -836,7 +836,8 @@ public class RoomController extends SceneController
         
         // if shift is being held down, we're looking for locations only, so
         // skip looking for hitSprites.
-        var hit :* = (_shiftDownSpot == null) ? getHitSprite(sx, sy, isCurrentlyEditing) : null;
+        var getAll :Boolean = isCurrentlyEditing || isRoomEditing();
+        var hit :* = (_shiftDownSpot == null) ? getHitSprite(sx, sy, getAll) : null;
         var hitter :MsoySprite = (hit as MsoySprite);
         // ensure we hit no pop-ups
         if (hit !== undefined) {
@@ -955,8 +956,9 @@ public class RoomController extends SceneController
     {
         // if shift is being held down, we're looking for locations only, so
         // skip looking for hitSprites.
+        var getAll :Boolean = isCurrentlyEditing || isRoomEditing();
         var hit :* = (_shiftDownSpot == null) ?
-            getHitSprite(event.stageX, event.stageY, isCurrentlyEditing) : null;
+            getHitSprite(event.stageX, event.stageY, getAll) : null;
         
         if (hit === undefined) {
             return;
