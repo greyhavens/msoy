@@ -69,7 +69,7 @@ public class DecorData extends FurniData
     override public function equals (other :Object) :Boolean
     {
         return (other is DecorData) &&
-            (other as DecorData).id == this.id;
+            (other as DecorData).itemId == this.itemId;
     }
 
     // documentation inherited from interface Hashable

@@ -70,7 +70,7 @@ public class DecorData extends FurniData
     public boolean equals (Object other)
     {
         return (other instanceof DecorData) &&
-            ((DecorData) other).id == this.id;
+            ((DecorData) other).itemId == this.itemId;
     }
 
     // documentation inherited
