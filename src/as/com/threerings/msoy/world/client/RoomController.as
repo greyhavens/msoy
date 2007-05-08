@@ -90,7 +90,6 @@ public class RoomController extends SceneController
     private const log :Log = Log.getLog(RoomController);
 
     public static const EDIT_SCENE :String = "EditScene";
-    public static const EDIT_FURNI :String = "EditFurni";
     public static const EDIT_DOOR :String = "EditDoor";
     
     public static const EDIT_CLICKED :String = "EditClicked";
@@ -322,29 +321,11 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Handles EDIT_FURNI.
-     */
-    public function handleEditFurni (furniSprite :FurniSprite) :void
-    {
-        if (_furniEditor.getMode() == FurniEditController.EDIT_OFF) {
-            _roomObj.roomService.editRoom(
-                _mctx.getClient(), new ResultWrapper(
-                    function (cause :String) :void {
-                        _mctx.displayFeedback("general", cause);
-                    },
-                    function (result :Object) :void {
-                        // FIXME ROBERT: DELETEME
-                        beginEditingFurni(furniSprite, result as Array);
-                    }));
-        }
-    }
-
-    /**
      * Handles EDIT_DOOR.
      */
     public function handleEditDoor (furniSprite :FurniSprite) :void
     {
-        if (_furniEditor.getMode() == FurniEditController.EDIT_OFF) {
+        if (! isRoomEditing()) {
             _roomObj.roomService.editRoom(
                 _mctx.getClient(), new ResultWrapper(
                     function (cause :String) :void {
@@ -400,10 +381,6 @@ public class RoomController extends SceneController
 
         var furni :FurniSprite = sprite as FurniSprite;
         var menuItems :Array = [];
-        menuItems.push({ label: Msgs.GENERAL.get("b.edit_furni"),
-                    callback: handleEditFurni, arg: furni });
-        menuItems.push({ label: Msgs.GENERAL.get("b.remove_furni"),
-                    callback: removeFurni, arg: furni });
 
         // TEMP: doors can also be edited from the right-click menu
         var furnidata :FurniData = furni.getFurniData();
@@ -625,47 +602,6 @@ public class RoomController extends SceneController
         if (_mctx.getTopPanel().getPlaceView() is RoomView) {
             new FurniAddDialog(_mctx, _roomView, _scene);
         }
-    }
-
-    /**
-     * Removes the selected piece of furni.
-     */
-    protected function removeFurni (furniSprite :FurniSprite) :void
-    {
-        sendFurniUpdate([ furniSprite.getFurniData() ], null);
-    }
-
-    /**
-     * Begin editing a piece of furni. 
-     */
-    // TODO ROBERT: DELETE ME
-    protected function beginEditingFurni (furni :FurniSprite, allItems :Array) :void
-    {
-        _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
-        _roomView.dimAvatars(true);
-        setHoverSprite(null);
-        // maybe disable/dim other furnis?
-        _walkTarget.visible = false;
-        _flyTarget.visible = false;
-
-        _furniEditor.start(furni, _roomView, _scene, _mctx, endEditingFurni);
-    }
-
-    /**
-     * End editing a piece of furni.
-     */
-    // TODO ROBERT: DELETE ME
-    public function endEditingFurni (edits :TypedArray) :void
-    {
-        if (edits != null) {
-            _roomObj.roomService.updateRoom(
-                _mctx.getClient(), edits, new ReportingListener(_mctx));
-        }
-
-        _roomView.dimAvatars(false);
-        _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
     }
 
     /**
@@ -1323,9 +1259,6 @@ public class RoomController extends SceneController
     /** Panel for in-room furni editing. */
     protected var _roomEditPanel :RoomEditPanel; 
     
-    /** Controller for editing a particular piece of furni. */
-    protected var _furniEditor :FurniEditController = new FurniEditController();
-
     /** The number of pixels we scroll the room on a keypress. */
     protected static const ROOM_SCROLL_INCREMENT :int = 20;
 }
