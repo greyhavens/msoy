@@ -3,25 +3,19 @@
 
 package com.threerings.msoy.swiftly.client;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 
-import java.net.URL;
 import java.util.List;
 
 import javax.swing.AbstractAction;
-import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
-import javax.swing.JToolBar;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
@@ -52,35 +46,7 @@ public class Console extends JFrame
         JScrollPane scroller = new JScrollPane(_consoleText,
             JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller.setPreferredSize(new Dimension(400, 400));
-
-        // setup the toolbar
-        JToolBar toolbar = new JToolBar();
-        JButton button = new JButton(
-            new AbstractAction(ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.clear")) {
-            public void actionPerformed (ActionEvent e) {
-                clearConsole();
-            }
-        });
-        button.setFont(button.getFont().deriveFont(Font.BOLD));
-        // push the buttons into the center of the toolbar
-        toolbar.add(Box.createHorizontalGlue());
-        toolbar.add(button);
-        button = new JButton(
-            new AbstractAction(ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.close")) {
-            public void actionPerformed (ActionEvent e) {
-                hideWindow();
-            }
-        });
-        button.setFont(button.getFont().deriveFont(Font.BOLD));
-        toolbar.add(button);
-        toolbar.add(Box.createHorizontalGlue());
-        toolbar.setFloatable(false);
-
-        // add the scroller and toolbar to a panel and set that as the content pane
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(scroller, BorderLayout.CENTER);
-        panel.add(toolbar, BorderLayout.PAGE_END);
-        setContentPane(panel);
+        setContentPane(scroller);
 
         StyleConstants.setBold(_error, true);
         StyleConstants.setForeground(_error, Color.red);
@@ -102,6 +68,11 @@ public class Console extends JFrame
      */
     public void displayCompilerOutput (List<CompilerOutput> output)
     {
+        // first, clear the console
+        clearConsole();
+
+        // then display each line of output
+        boolean wasOutput = false;
         for (CompilerOutput line : output) {
             switch (line.getLevel()) {
                 case ERROR:
@@ -110,14 +81,21 @@ public class Console extends JFrame
                         appendLineNumberButton(line);
                     }
                     appendMessage(line.getMessage() + "\n", _error);
+                    wasOutput = true;
                     break;
                 case INFO:
                     appendMessage(line.getMessage() + "\n", _normal);
+                    wasOutput = true;
                     break;
                 case IGNORE:
                 case UNKNOWN:
                     break;
             }
+        }
+
+        // if no output was displayed, hide the window
+        if (!wasOutput) {
+            setVisible(false);
         }
     }
 
@@ -168,17 +146,7 @@ public class Console extends JFrame
         appendMessage("ignored", style);
     }
 
-    /**
-     * Hides the console window.
-     */
-    protected void hideWindow ()
-    {
-        setVisible(false);
-    }
-
-    /**
-     * Clears the console.
-     */
+    /** Clears the console.  */
     protected void clearConsole ()
     {
         _consoleText.setText("");
