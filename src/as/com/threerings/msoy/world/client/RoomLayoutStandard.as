@@ -283,11 +283,15 @@ public class RoomLayoutStandard implements RoomLayout {
      */
     protected function getZOfChildAt (index :int) :Number
     {
-        var re :RoomElement = RoomElement(_parentView.getChildAt(index));
+        var re :RoomElement = _parentView.getChildAt(index) as RoomElement;
 
-        // we multiply the layer constant by 1000 to spread out the z values that
-        // normally lie in the 0 -> 1 range.
-        return re.getLocation().z + (1000 * re.getRoomLayer());
+        if (re != null) {
+            // we multiply the layer constant by 1000 to spread out the z values that
+            // normally lie in the 0 -> 1 range.
+            return re.getLocation().z + (1000 * re.getRoomLayer());
+        } else {
+            return NaN;
+        }
     }
 
     /** Room metrics storage. */
