@@ -66,7 +66,7 @@ public class AbstractRoomView extends Sprite
         _actualWidth = unscaledWidth;
         _actualHeight = unscaledHeight;
         relayout();
-        updateDrawnRoom();
+        updateEditingOverlay();
     }
 
     /**
@@ -121,8 +121,32 @@ public class AbstractRoomView extends Sprite
     // note: this function will soon replace setEditing
     public function setEditingOverlay (visible :Boolean) :void
     {
-        _overlayVisible = visible;
-        updateDrawnRoom();
+        if (visible) {
+            // see if we need to recreate the overlay
+            if (_backdropOverlay == null) {
+                _backdropOverlay = new BackdropOverlay();
+                addChild(_backdropOverlay);
+                updateEditingOverlay();
+            }
+        } else {
+            // destroy the overlay if it's still around
+            if (_backdropOverlay != null) {
+                removeChild(_backdropOverlay);
+                _backdropOverlay = null;
+            }
+        }
+    }
+
+    /**
+     * Refreshes the overlay used to draw the room edges in editing mode.
+     */
+    protected function updateEditingOverlay () :void
+    {
+        // if the overlay exists, then we should update it
+        if (_backdropOverlay != null) {
+            _backdrop.drawRoom(_backdropOverlay.graphics, _actualWidth, _actualHeight, true, 0.4);
+            _layout.updateScreenLocation(_backdropOverlay);
+        }
     }
 
     /**
@@ -241,7 +265,7 @@ public class AbstractRoomView extends Sprite
         _scene = scene;
         _layout.update(scene.getDecorData());
         _backdrop.setRoom(scene.getDecorData());
-        updateDrawnRoom();
+        updateEditingOverlay();
         relayout();
     }
 
@@ -385,29 +409,6 @@ public class AbstractRoomView extends Sprite
         _ctx.getMediaDirector().returnSprite(sprite);
     }
 
-    protected function updateDrawnRoom () :void
-    {
-        if (_overlayVisible) {
-            // if we're editing, see if we need to recreate the overlay
-            if (_backdropOverlay == null) {
-                _backdropOverlay = new Shape();
-                addChild(_backdropOverlay);
-            }
-        } else {
-            // if we're not editing, destroy the overlay if it's still around
-            if (_backdropOverlay != null) {
-                removeChild(_backdropOverlay);
-                _backdropOverlay = null;
-            }
-        }
-
-        // if the overlay exists, then we should update it
-        if (_backdropOverlay != null) {
-            _backdrop.drawRoom(
-                _backdropOverlay.graphics, _actualWidth, _actualHeight, _overlayVisible, 0.4);
-        }
-    }
-
     /** The msoy context. */
     protected var _ctx :WorldContext;
 
@@ -430,11 +431,8 @@ public class AbstractRoomView extends Sprite
     protected var _backdrop :RoomBackdrop = new RoomBackdrop();
 
     /** Transparent bitmap on which we can draw the room backdrop.*/
-    protected var _backdropOverlay :Shape;
+    protected var _backdropOverlay :BackdropOverlay;
 
-    /** Should the backdrop overlay be displayed? */
-    protected var _overlayVisible :Boolean;
-    
     /** Our background sprite, if any. */
     protected var _bg :DecorSprite;
 
@@ -448,3 +446,44 @@ public class AbstractRoomView extends Sprite
     protected var _editing :Boolean = false;
 }
 }
+
+
+import flash.display.Shape;
+
+import com.threerings.msoy.world.client.RoomElement;
+import com.threerings.msoy.world.data.MsoyLocation;
+import com.threerings.msoy.world.data.RoomCodes;
+
+/**
+ * This shape is used to draw room edges on top of everything during editing.
+ */
+internal class BackdropOverlay extends Shape
+    implements RoomElement
+{
+    // documentation inherited from interface RoomElement
+    public function getRoomLayer () :int
+    {
+        return RoomCodes.FOREGROUND_EFFECT_LAYER;
+    }
+
+    // documentation inherited from interface RoomElement
+    public function getLocation () :MsoyLocation
+    {
+        return DEFAULT_LOCATION;
+    }        
+
+    // documentation inherited from interface RoomElement
+    public function setLocation (newLoc :Object) :void
+    {
+        // no op - this object is not placed inside the room
+    }
+
+    // documentation inherited from interface RoomElement
+    public function setScreenLocation (x :Number, y :Number, scale :Number) :void
+    {
+        // no op - this object cannot be moved, it's always displayed directly on top of the room
+    }
+
+    protected static const DEFAULT_LOCATION :MsoyLocation = new MsoyLocation(0, 0, 0, 0);
+}
+        
