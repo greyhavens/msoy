@@ -16,9 +16,12 @@ import com.threerings.msoy.world.client.ClickLocation;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.DecorSprite;
 import com.threerings.msoy.world.client.MsoySprite;
+import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomMetrics;
+import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
+import com.threerings.msoy.world.data.MsoyScene;
 
 /**
  * Controller for the room editing panel.
@@ -88,21 +91,42 @@ public class RoomEditController
         _panel.roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyboard);
         _panel.roomView.stage.addEventListener(KeyboardEvent.KEY_UP, handleKeyboard);
         _panel.roomView.setEditingOverlay(true);
+
+        _settings = new SettingsController(_ctx, this);
+
+        // todo: after refactoring, call RoomController.startEditing
     }
 
     public function deinit () :void
     {
+        switchToPhase(PHASE_DONE); // just end whatever was going on, skipping commit
+
+        // todo: after refactoring, call RoomController.endEditing
+
+        _settings.finish(false);
+        _settings = null;
+        
         _panel.roomView.setEditingOverlay(false);
         _panel.roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyboard);
         _panel.roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, handleKeyboard);
-
-        switchToPhase(PHASE_DONE); // just end whatever was going on, skipping commit
     }
 
     /** Returns current editing phase, as one of the PHASE_* constants. */
     public function get currentPhase () :int
     {
         return _currentPhase;
+    }
+
+    /** Returns a reference to the current room view. */
+    public function get roomView () :RoomView
+    {
+        return _panel.roomView;
+    }
+
+    /** Returns a reference to the current room controller. */
+    public function get roomCtrl () :RoomController
+    {
+        return _panel.roomView.getRoomController();
     }
 
     // Panel accessors
@@ -142,6 +166,30 @@ public class RoomEditController
         }
     }
 
+    // Helpers
+
+    /**
+     * Sends an update to the server. /toRemove/ will be removed, and /toAdd/ added.
+     */
+    public function updateFurni (toRemove :FurniData, toAdd :FurniData) :void
+    {
+        var adds :Array = (toAdd != null) ? [ toAdd ] : null;
+        var deletes :Array = (toRemove != null) ? [ toRemove ] : null;
+        roomCtrl.sendFurniUpdate(deletes, adds);
+    }
+
+    /**
+     * Sends an update to the server. /oldScene/ will be updated with data from the /newScene/.
+     */
+    public function updateScene (oldScene :MsoyScene, newScene :MsoyScene) :void
+    {
+        // maybe save the old scene in the undo stack?
+        
+        roomCtrl.sendSceneUpdate(newScene);
+    }
+
+
+    
     /**
      * Keeps track of the different keys used to modify edit settings.
      */
@@ -164,6 +212,12 @@ public class RoomEditController
 
     protected function doInit () :void
     {
+        // non-target buttons (room settings, undo) perform their actions here.
+        switch (_currentAction) {
+        case ACTION_ROOM:
+            _settings.start();
+        }
+            
         switchToPhase(nextPhase());
     }
 
@@ -278,14 +332,14 @@ public class RoomEditController
         case ACTION_MOVE:
         case ACTION_SCALE:
             if (_currentTarget != null && _originalTargetData != null) {
-                commitFurniData(_originalTargetData, _currentTarget.getFurniData());
+                updateFurni(_originalTargetData, _currentTarget.getFurniData());
             }
             switchToPhase(PHASE_INIT);
             return;
         case ACTION_DELETE:
             // delete the old object
             if (_originalTargetData != null) {
-                commitFurniData(_originalTargetData, null);
+                updateFurni(_originalTargetData, null);
             }
             break;
         }
@@ -301,6 +355,8 @@ public class RoomEditController
         _originalTargetData = null;
     }
 
+    // Phase: done
+    
     protected function doDone () :void
     {
         // no phase switches here. :)
@@ -410,16 +466,6 @@ public class RoomEditController
         return computeScale(furni, newwidth, newheight); 
     }
 
-    // Helpers
-
-    /** Sends an update to the server. /toRemove/ will be removed, and /toAdd/ added. */
-    protected function commitFurniData (toRemove :FurniData, toAdd :FurniData) :void
-    {
-        var adds :Array = (toAdd != null) ? [ toAdd ] : null;
-        var deletes :Array = (toRemove != null) ? [ toRemove ] : null;
-        _panel.roomView.getRoomController().sendFurniUpdate(deletes, adds);
-    }
-
     // Phase and action helpers
 
     /** Returns true if the given phase supports the given action. */
@@ -518,5 +564,9 @@ public class RoomEditController
 
     protected var _currentAction :String;
     protected var _currentPhase :int = PHASE_DONE;
+
+    /** Settings. */
+    protected var _settings :SettingsController;
+
 }
 }

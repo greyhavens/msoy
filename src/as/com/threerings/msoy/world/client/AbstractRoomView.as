@@ -119,9 +119,9 @@ public class AbstractRoomView extends Sprite
      * Enable or disable room editing overlay. 
      */
     // note: this function will soon replace setEditing
-    public function setEditingOverlay (editing :Boolean) :void
+    public function setEditingOverlay (visible :Boolean) :void
     {
-        _editing = editing;
+        _overlayVisible = visible;
         updateDrawnRoom();
     }
 
@@ -165,7 +165,7 @@ public class AbstractRoomView extends Sprite
             r.height = Math.min(_scene.getHeight(), r.height);
         }
         if (_editing) {
-            r.inflate(_actualWidth * 2 / 3, 0); // TODO: obsolete?
+            // r.inflate(_actualWidth * 2 / 3, 0); // TODO: obsolete?
         }
         return r;
     }
@@ -387,7 +387,7 @@ public class AbstractRoomView extends Sprite
 
     protected function updateDrawnRoom () :void
     {
-        if (_editing && _bg != null) {
+        if (_overlayVisible) {
             // if we're editing, see if we need to recreate the overlay
             if (_backdropOverlay == null) {
                 _backdropOverlay = new Shape();
@@ -404,7 +404,7 @@ public class AbstractRoomView extends Sprite
         // if the overlay exists, then we should update it
         if (_backdropOverlay != null) {
             _backdrop.drawRoom(
-                _backdropOverlay.graphics, _actualWidth, _actualHeight, _editing, 0.4);
+                _backdropOverlay.graphics, _actualWidth, _actualHeight, _overlayVisible, 0.4);
         }
     }
 
@@ -431,6 +431,9 @@ public class AbstractRoomView extends Sprite
 
     /** Transparent bitmap on which we can draw the room backdrop.*/
     protected var _backdropOverlay :Shape;
+
+    /** Should the backdrop overlay be displayed? */
+    protected var _overlayVisible :Boolean;
     
     /** Our background sprite, if any. */
     protected var _bg :DecorSprite;

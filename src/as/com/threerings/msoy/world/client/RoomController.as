@@ -73,7 +73,9 @@ import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.msoy.world.data.SceneAttrsUpdate;
 import com.threerings.msoy.world.data.WorldMemberInfo;
 import com.threerings.msoy.world.data.WorldOccupantInfo;
 import com.threerings.msoy.world.data.WorldPetInfo;
@@ -367,7 +369,7 @@ public class RoomController extends SceneController
                 function (result :Object) :void {
                     // if we're editing, let's finish, otherwise let's start!
                     if (isRoomEditing()) {
-                        endRoomEditing();
+                        cancelRoomEditing();
                     } else {
                         beginRoomEditing(button);
                     }
@@ -674,17 +676,32 @@ public class RoomController extends SceneController
         _flyTarget.visible = false;
         setHoverSprite(null);
 
-        _roomEditPanel = new RoomEditPanel(_mctx, button, _roomView);
+        // this function will be called when the edit panel is closing
+        var wrapupFn :Function = function () :void {
+            _roomEditPanel = null;
+            // re-start any music
+            if (_music != null) {
+                _music.play();
+            }
+        }
+
+        if (_music != null && ! _musicIsBackground) {
+            _music.close();
+            _music = null;
+            _musicIsBackground = true;
+        }
+        
+        _roomEditPanel = new RoomEditPanel(_mctx, button, _roomView, wrapupFn);
         _roomEditPanel.open(false, null, button);
     }
 
     /**
      * End editing the room.
      */
-    public function endRoomEditing () :void
+    public function cancelRoomEditing () :void
     {
         _roomEditPanel.close();
-        _roomEditPanel = null;
+        
     }
 
     /**
@@ -723,6 +740,25 @@ public class RoomController extends SceneController
 
     }
 
+    /**
+     * Creates a scene update from an updated scene object.
+     */
+    public function sendSceneUpdate (updatedScene :MsoyScene) :void
+    {
+        var edits :TypedArray = TypedArray.create(SceneUpdate);
+        var attrUpdate :SceneAttrsUpdate = new SceneAttrsUpdate();
+        var updatedModel :MsoySceneModel = updatedScene.getSceneModel() as MsoySceneModel;
+
+        attrUpdate.init(updatedScene.getId(), updatedScene.getVersion());
+        attrUpdate.name = updatedModel.name;
+        attrUpdate.decorData = updatedModel.decorData;
+        attrUpdate.audioData = updatedModel.audioData;
+        attrUpdate.entrance = updatedModel.entrance;
+        edits.push(attrUpdate);
+
+        _roomObj.roomService.updateRoom(_mctx.getClient(), edits, new ReportingListener(_mctx));
+    }
+    
     /**
      * Begin editing the scene.
      */

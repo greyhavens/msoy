@@ -29,12 +29,14 @@ import com.threerings.msoy.ui.FloatingPanel;
  */
 public class RoomEditPanel extends FloatingPanel
 {
-    public function RoomEditPanel (ctx :WorldContext, anchor :DisplayObject, view :RoomView)
+    public function RoomEditPanel (
+        ctx :WorldContext, anchor :DisplayObject, view :RoomView, wrapupFn :Function)
     {
         super(ctx, Msgs.EDITING.get("t.editor"));
         _anchor = anchor;
         _controller = new RoomEditController(ctx, this);
         _view = view;
+        _wrapupFn = wrapupFn;
 
         styleName = "roomEditPanel";
         showCloseButton = true;
@@ -57,8 +59,10 @@ public class RoomEditPanel extends FloatingPanel
     // from FloatingPanel
     override public function close () :void
     {
-        _controller.deinit();
         super.close();
+
+        _controller.deinit();
+        _wrapupFn();
     }
 
     /** Returns true if this panel is open on screen. */
@@ -268,5 +272,8 @@ public class RoomEditPanel extends FloatingPanel
 
     /** Room we're editing. */
     protected var _view :RoomView;
+
+    /** Callback function that gets called as the last step of shutdown. */
+    protected var _wrapupFn :Function;
 }
 }

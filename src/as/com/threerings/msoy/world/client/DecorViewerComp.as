@@ -105,11 +105,6 @@ public class DecorViewerComp extends Canvas
         preview.width = preview.height = PREVIEW_BOX_SIZE;
         addChild(preview);
         
-        _backdropCanvas = new Canvas();
-        _backdropCanvas.x = _backdropCanvas.y = 0;
-        _backdropCanvas.width = _backdropCanvas.height = PREVIEW_BOX_SIZE;
-        preview.addChild(_backdropCanvas);
-
         var mask :Canvas = new Canvas();
         mask.x = mask.y = 0;
         mask.width = mask.height = PREVIEW_BOX_SIZE;
@@ -117,8 +112,11 @@ public class DecorViewerComp extends Canvas
         g.beginFill(0xffffff); 
         g.drawRect(0, 0, mask.width, mask.height);
         g.endFill();
-        preview.addChild(mask);
         preview.mask = mask;
+
+        _backdropCanvas = new Canvas();
+        _backdropCanvas.x = _backdropCanvas.y = 0;
+        _backdropCanvas.width = _backdropCanvas.height = PREVIEW_BOX_SIZE;
 
         // UIComponent wrapper is needed around a plain old sprite object
         _wrapper = new UIComponent();
@@ -126,7 +124,10 @@ public class DecorViewerComp extends Canvas
         _wrapper.x = _backdropCanvas.x;
         _wrapper.y = _backdropCanvas.y;
         _wrapper.addChild(_media);
+
+        preview.addChild(mask);
         preview.addChild(_wrapper);
+        preview.addChild(_backdropCanvas);
         
         // send an initialization request to GWT
         if (ExternalInterface.available) {
