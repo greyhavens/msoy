@@ -8,9 +8,6 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import javax.swing.JApplet;

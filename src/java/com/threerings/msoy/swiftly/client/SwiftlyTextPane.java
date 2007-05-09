@@ -30,7 +30,6 @@ import javax.swing.undo.UndoManager;
 
 import com.threerings.msoy.swiftly.data.DocumentUpdateListener;
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
-import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
