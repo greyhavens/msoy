@@ -45,7 +45,6 @@ public class SettingsController extends Controller
      */
     public function finish (saveSettings :Boolean) :void
     {
-        trace("FINISH: " + saveSettings);
         if (_panel != null) {
 
             var origScene :MsoyScene = _ctx.getSceneDirector().getScene() as MsoyScene;

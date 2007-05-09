@@ -370,6 +370,7 @@ Window {
   upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_undo.png");
   overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_undo_over.png");
   downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_undo_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_undo_disabled.png");
 }
 
 .roomEditLabel {

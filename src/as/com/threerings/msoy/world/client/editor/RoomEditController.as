@@ -19,6 +19,8 @@ import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomMetrics;
 import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.client.updates.SceneUpdateAction;
+import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -176,9 +178,8 @@ public class RoomEditController
      */
     public function updateFurni (toRemove :FurniData, toAdd :FurniData) :void
     {
-        var adds :Array = (toAdd != null) ? [ toAdd ] : null;
-        var deletes :Array = (toRemove != null) ? [ toRemove ] : null;
-        roomCtrl.sendFurniUpdate(deletes, adds);
+        roomCtrl.applyUpdate(new FurniUpdateAction(_ctx, toRemove, toAdd));
+        _panel.updateUndoButton(true);
     }
 
     /**
@@ -186,9 +187,8 @@ public class RoomEditController
      */
     public function updateScene (oldScene :MsoyScene, newScene :MsoyScene) :void
     {
-        // maybe save the old scene in the undo stack?
-        
-        roomCtrl.sendSceneUpdate(newScene);
+        roomCtrl.applyUpdate(new SceneUpdateAction(_ctx, oldScene, newScene));
+        _panel.updateUndoButton(true);
     }
 
 
@@ -219,6 +219,9 @@ public class RoomEditController
         switch (_currentAction) {
         case ACTION_ROOM:
             _settings.start();
+        case ACTION_UNDO:
+            // undo the last action, and set undo button's enabled state appropriately
+            _panel.updateUndoButton(roomCtrl.undoLastUpdate());
         }
             
         switchToPhase(nextPhase());
@@ -272,7 +275,7 @@ public class RoomEditController
         _acquireCandidate = null;
 
         if (_currentTarget != null) {
-            _originalTargetData = _currentTarget.getFurniData();
+            _originalTargetData = _currentTarget.getFurniData().clone() as FurniData;
         }
     }
 
@@ -531,9 +534,6 @@ public class RoomEditController
     /** Switch to the new phase. */
     protected function switchToPhase (phase :int) :void
     {
-
-        trace("*** switchToPhase from: " + PHASENAMES[_currentPhase] + 
-             " to: " + PHASENAMES[phase]);
         if (phase != _currentPhase) {
             (DEINITS[_currentPhase] as Function)();
             _currentPhase = phase;

@@ -14,6 +14,7 @@ import com.threerings.io.TypedArray;
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -118,7 +119,8 @@ public class DoorTargetEditController
         var newdata :FurniData = doordata.clone() as FurniData;
         newdata.actionData = String(_destinationScene);
 
-        view.getRoomController().sendFurniUpdate([doordata], [newdata]);
+        view.getRoomController().applyUpdate(
+            new FurniUpdateAction(_ctx, doordata, newdata));
     }
 
     /** Creates the UI. */

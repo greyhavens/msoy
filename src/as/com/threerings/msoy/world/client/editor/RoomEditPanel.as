@@ -110,6 +110,7 @@ public class RoomEditPanel extends FloatingPanel
         
         for each (var def :Object in BUTTON_DEFINITIONS)
         {
+            // go through the list of definitions, and create buttons
             var button :Button = new Button();
             button.styleName = "roomEditButton" + (def.style as String);
             if (def.toggle as Boolean) {
@@ -117,9 +118,15 @@ public class RoomEditPanel extends FloatingPanel
                 _toggleButtons.push(button);
             }
             button.toolTip = Msgs.EDITING.get(def.tip as String);
+            button.enabled = (def.enabled == undefined || def.enabled as Boolean);
             button.addEventListener(
                 MouseEvent.CLICK, makeEvent(def.action as String, button, def));
-                                                        
+
+            // some special processing
+            if (def.action == RoomEditController.ACTION_UNDO) {
+                _undoButton = button;
+            }
+
             box.addChild(button);
         }
 
@@ -226,6 +233,12 @@ public class RoomEditPanel extends FloatingPanel
 
     }
 
+    /** Called by the controller, sets undo button status based on the undo stack contents. */
+    public function updateUndoButton (enabled :Boolean) :void
+    {
+        _undoButton.enabled = enabled;
+    }
+    
     /** Resets all toggle buttons except for the specified one. */
     protected function resetOtherToggleButtons (button :Button) :void
     {
@@ -259,7 +272,7 @@ public class RoomEditPanel extends FloatingPanel
           action: RoomEditController.ACTION_DELETE,
           tip:  "i.delete_button", info: "i.delete_button_detail" },
         
-        { style: "Undo", toggle: false,
+        { style: "Undo", toggle: false, enabled: false,
           action: RoomEditController.ACTION_UNDO,
           tip: "i.undo_button", info: "i.undo_button_detail" },
         ];
@@ -268,6 +281,7 @@ public class RoomEditPanel extends FloatingPanel
     protected var _controller :RoomEditController;
 
     protected var _toggleButtons :Array = new Array();
+    protected var _undoButton :Button;
 
     /** Info label. */
     protected var _label :Label;

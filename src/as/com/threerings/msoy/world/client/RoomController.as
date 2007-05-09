@@ -62,6 +62,8 @@ import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.world.client.MsoySprite;
+import com.threerings.msoy.world.client.updates.UpdateAction;
+import com.threerings.msoy.world.client.updates.UpdateStack;
 import com.threerings.msoy.world.client.editor.RoomEditPanel;
 import com.threerings.msoy.world.client.editor.EditorController;
 
@@ -246,6 +248,11 @@ public class RoomController extends SceneController
     // documentation inherited
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
+        _updates.reset();
+        if (isRoomEditing()) {
+            cancelRoomEditing();
+        }
+
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
@@ -642,60 +649,32 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Creates a furni update out of arrays of furnis to remove and add,
-     * and sends it to the server.
+     * Applies a specified room update object to the current room.
      */
-    public function sendFurniUpdate (
-        toRemove :Array /* of FurniData */, toAdd :Array /* of FurniData */) :void
+    public function applyUpdate (update :UpdateAction) :void
     {
-        var edits :TypedArray = TypedArray.create(SceneUpdate);
-        var addedFurni :TypedArray = TypedArray.create(FurniData);
-        var removedFurni :TypedArray = TypedArray.create(FurniData);
-
-        if (toAdd != null) {
-            for each (var add :FurniData in toAdd) {
-                addedFurni.push(add);
-            }
-        }
-        
-        if (toRemove != null) {
-            for each (var remove :FurniData in toRemove) {
-                removedFurni.push(remove);
-            }
-        }
-
-        var scene :Scene = _mctx.getSceneDirector().getScene();
-        var furniUpdate :ModifyFurniUpdate = new ModifyFurniUpdate();
-        furniUpdate.initialize(
-            scene.getId(), scene.getVersion(),
-            removedFurni.length > 0 ? removedFurni : null,
-            addedFurni.length > 0 ? addedFurni : null);
-
-        edits.push(furniUpdate);
-
-        _roomObj.roomService.updateRoom(_mctx.getClient(), edits, new ReportingListener(_mctx));
-
+        _updates.push(update);
     }
 
     /**
-     * Creates a scene update from an updated scene object.
+     * Undo the effects of the most recent update. Returns true if the update stack contains more
+     * actions, false if it's become empty.
      */
-    public function sendSceneUpdate (updatedScene :MsoyScene) :void
+    public function undoLastUpdate () :Boolean
     {
-        var edits :TypedArray = TypedArray.create(SceneUpdate);
-        var attrUpdate :SceneAttrsUpdate = new SceneAttrsUpdate();
-        var updatedModel :MsoySceneModel = updatedScene.getSceneModel() as MsoySceneModel;
-
-        attrUpdate.init(updatedScene.getId(), updatedScene.getVersion());
-        attrUpdate.name = updatedModel.name;
-        attrUpdate.decorData = updatedModel.decorData;
-        attrUpdate.audioData = updatedModel.audioData;
-        attrUpdate.entrance = updatedModel.entrance;
-        edits.push(attrUpdate);
-
-        _roomObj.roomService.updateRoom(_mctx.getClient(), edits, new ReportingListener(_mctx));
+        _updates.pop();
+        return _updates.length != 0;
     }
-    
+
+    /**
+     * Sends the entire array of room edits to the server.
+     *  @param updates a TypedArray containing instances of SceneUpdate object.
+     */
+    protected function updateRoom (updates :TypedArray /* of SceneUpdate */) :void
+    {
+        _roomObj.roomService.updateRoom(_mctx.getClient(), updates, new ReportingListener(_mctx));
+    }
+
     /**
      * Begin editing the scene.
      */
@@ -1258,6 +1237,9 @@ public class RoomController extends SceneController
 
     /** Panel for in-room furni editing. */
     protected var _roomEditPanel :RoomEditPanel; 
+
+    /** Stack that stores the sequence of room updates. */
+    protected var _updates :UpdateStack = new UpdateStack(updateRoom);
     
     /** The number of pixels we scroll the room on a keypress. */
     protected static const ROOM_SCROLL_INCREMENT :int = 20;

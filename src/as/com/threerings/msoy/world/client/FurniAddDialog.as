@@ -17,6 +17,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -90,7 +91,7 @@ public class FurniAddDialog extends FloatingPanel
         furni.loc = loc;
         configureFurniAction(furni, item);
 
-        _roomView.getRoomController().sendFurniUpdate(null, [furni]);
+        _roomView.getRoomController().applyUpdate(new FurniUpdateAction(_ctx, null, furni));
     }
 
     /**
