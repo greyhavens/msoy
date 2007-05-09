@@ -102,13 +102,24 @@ public class ActorSprite extends MsoySprite
      *        control layout and other bits.
      *        Supported properties:
      *        toolTip <String> any tool tip text.
+     *        weight <Number> a sort order, higher numbers will be closer to the name. (0 if missing)
      */
     public function addDecoration (dec :DisplayObject, constraints :Object = null) :void
     {
         if (_decorations == null) {
             _decorations = [];
         }
-        _decorations.push(dec, constraints);
+        // provide a default constraints if none
+        if (constraints == null) {
+            constraints = {};
+        }
+        // store the decoration inside the constraints object
+        constraints["dec"] = dec;
+        _decorations.push(constraints);
+
+        // TODO: is there no stable sort available to us?
+        // For now, I'll just sort, but I don't like it!
+        _decorations.sort(decorationSort);
 
         addChild(dec);
         arrangeDecorations();
@@ -120,15 +131,18 @@ public class ActorSprite extends MsoySprite
     public function removeDecoration (dec :DisplayObject) :void
     {
         if (_decorations != null) {
-            var dex :int = _decorations.indexOf(dec);
-            if (dex != -1) {
-                _decorations.splice(dex, 2);
-                removeChild(dec);
-                if (_decorations.length == 0) {
-                    _decorations = null;
+            for (var ii :int = 0; ii < _decorations.length; ii++) {
+                if (_decorations[ii].dec == dec) {
+                    _decorations.splice(ii, 1);
+                    removeChild(dec);
+                    if (_decorations.length == 0) {
+                        _decorations = null;
 
-                } else {
-                    arrangeDecorations();
+                    } else {
+                        arrangeDecorations();
+                    }
+
+                    return; // no need to continue
                 }
             }
         }
@@ -142,8 +156,8 @@ public class ActorSprite extends MsoySprite
         if (_decorations == null) {
             return;
         }
-        for (var ii :int = 0; ii < _decorations.length; ii += 2) {
-            removeChild(_decorations[ii] as DisplayObject);
+        for (var ii :int = 0; ii < _decorations.length; ii++) {
+            removeChild(_decorations[ii].dec as DisplayObject);
         }
         _decorations = null;
     }
@@ -209,7 +223,23 @@ public class ActorSprite extends MsoySprite
             _label.width = _label.textWidth + 5; // the magic number
             _label.height = _label.textHeight + 4;
             recheckLabel();
-            arrangeDecorations();
+
+            // if our idle status has changed...
+            if ((newInfo.status == OccupantInfo.IDLE) == (_idleIcon == null)) {
+                if (_idleIcon == null) {
+                    _idleIcon = (new IDLE_ICON() as DisplayObject);
+                    addDecoration(_idleIcon, { weight: Number.MAX_VALUE });
+
+                } else {
+                    removeDecoration(_idleIcon);
+                    _idleIcon = null;
+                }
+
+            } else {
+                // the bounds of the label may have changed, re-arrange
+                // (if we added or removed the idle icon, it was already done...)
+                arrangeDecorations();
+            }
         }
 
         // note the old info...
@@ -320,10 +350,10 @@ public class ActorSprite extends MsoySprite
     override public function mouseClick (event :MouseEvent) :void
     {
         // see if it actually landed on a decoration
-        var dec :DisplayObject = getDecorationAt(event.stageX, event.stageY);
-        if (dec != null) {
+        var decCons :Object = getDecorationAt(event.stageX, event.stageY);
+        if (decCons != null) {
             // deliver it there
-            dec.dispatchEvent(event);
+            DisplayObject(decCons.dec).dispatchEvent(event);
 
         } else {
             // otherwise, do the standard thing
@@ -335,7 +365,8 @@ public class ActorSprite extends MsoySprite
     {
         // see if we're hovering over a new decoration..
         var decorTip :String = null;
-        var hoverDec :DisplayObject = hovered ? getDecorationAt(stageX, stageY) : null;
+        var hoverCons :Object = hovered ? getDecorationAt(stageX, stageY) : null;
+        var hoverDec :DisplayObject = (hoverCons == null) ? null : DisplayObject(hoverCons.dec);
         if (hoverDec != _hoverDecoration) {
             if (_hoverDecoration != null) {
                 _hoverDecoration.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OUT));
@@ -346,7 +377,7 @@ public class ActorSprite extends MsoySprite
             }
         }
         if (hoverDec != null) {
-            decorTip = getDecorationConstraint(hoverDec)["toolTip"];
+            decorTip = hoverCons["toolTip"];
         }
 
         // always call super, but hover is only true if we hit no decorations
@@ -479,8 +510,8 @@ public class ActorSprite extends MsoySprite
 
         // place the decorations over the name label, with our best guess as to their size
         var ybase :Number = _label.y;
-        for (var ii :int = 0; ii < _decorations.length; ii += 2) {
-            var dec :DisplayObject = DisplayObject(_decorations[ii]);
+        for (var ii :int = 0; ii < _decorations.length; ii++) {
+            var dec :DisplayObject = DisplayObject(_decorations[ii].dec);
             var rect :Rectangle = dec.getRect(dec);
             ybase -= (rect.height + DECORATION_PAD);
             dec.x = (getActualWidth() - rect.width) / 2 - rect.x
@@ -489,15 +520,16 @@ public class ActorSprite extends MsoySprite
     }
 
     /**
-     * Return the decoration under the specified stage coordinates.
+     * Return the decoration's constraints for the decoration under the
+     * specified stage coordinates.
      */
-    protected function getDecorationAt (stageX :int, stageY :int) :DisplayObject
+    protected function getDecorationAt (stageX :int, stageY :int) :Object
     {
         if (_decorations != null) {
-            for (var ii :int = 0; ii < _decorations.length; ii += 2) {
-                var disp :DisplayObject = (_decorations[ii] as DisplayObject);
+            for (var ii :int = 0; ii < _decorations.length; ii++) {
+                var disp :DisplayObject = (_decorations[ii].dec as DisplayObject);
                 if (disp.hitTestPoint(stageX, stageY, true)) {
-                    return disp;
+                    return _decorations[ii];
                 }
             }
         }
@@ -505,21 +537,23 @@ public class ActorSprite extends MsoySprite
     }
 
     /**
-     * Get the associated constraint object for the specified decoration.
-     * Always returns non-null.
+     * Sort function for decoration constraints...
      */
-    protected function getDecorationConstraint (decoration :DisplayObject) :Object
+    protected function decorationSort (cons1 :Object, cons2 :Object) :int
     {
-        var cons :Object = null;
-        if (_decorations != null) {
-            for (var ii :int = 0; ii < _decorations.length; ii += 2) {
-                if (_decorations[ii] == decoration) {
-                    cons = _decorations[ii + 1];
-                    break;
-                }
-            }
+        var w1 :Number = ("weight" in cons1) ? (cons1["weight"] as Number) : 0;
+        var w2 :Number = ("weight" in cons2) ? (cons2["weight"] as Number) : 0;
+
+        // higher weights have a higher priority
+        if (w1 > w2) {
+            return -1;
+
+        } else if (w1 < w2) {
+            return 1;
+
+        } else {
+            return 0;
         }
-        return (cons != null) ? cons : {};
     }
 
     protected function getStatusColor (status :int) :uint
@@ -643,6 +677,9 @@ public class ActorSprite extends MsoySprite
     /** A decoration used when we're in a table in a lobby. */
     protected var _tableIcon :TableIcon;
 
+    /** A decoration added when we've idled out. */
+    protected var _idleIcon :DisplayObject;
+
     /** Display objects to be shown above the name for this actor,
      * configured by external callers. */
     protected var _decorations :Array;
@@ -651,6 +688,9 @@ public class ActorSprite extends MsoySprite
     protected var _hoverDecoration :DisplayObject;
 
     protected static const DECORATION_PAD :int = 5;
+
+    [Embed(source="../../../../../../../rsrc/media/idle.png")]
+    protected static const IDLE_ICON :Class;
 }
 }
 
