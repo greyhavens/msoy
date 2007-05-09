@@ -50,6 +50,8 @@
     <init> ();
     public void readObject (com.threerings.io.ObjectInputStream);
     public void writeObject (com.threerings.io.ObjectOutputStream);
+    public void readField_* (com.threerings.io.ObjectInputStream);
+    public void writeField_* (com.threerings.io.ObjectOutputStream);
 }
 
 -keep public class * extends java.lang.Enum {

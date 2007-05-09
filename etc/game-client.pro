@@ -57,6 +57,18 @@
     public protected *;
 }
 
+-keep public class * extends com.threerings.presents.dobj.DObject {
+    !static !transient <fields>;
+}
+-keep public class * implements com.threerings.io.Streamable {
+    !static !transient <fields>;
+    <init> ();
+    public void readObject (com.threerings.io.ObjectInputStream);
+    public void writeObject (com.threerings.io.ObjectOutputStream);
+    public void readField_* (com.threerings.io.ObjectInputStream);
+    public void writeField_* (com.threerings.io.ObjectOutputStream);
+}
+
 # similarly for all of the narya, nenya and vilya libraries
 -keep public class com.threerings.** {
     public protected *;
