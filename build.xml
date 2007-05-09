@@ -497,10 +497,12 @@
         <property name="sign.alias" value="threerings-dev"/>
       </else>
     </if>
-    <signjar lazy="true" keystore="${sign.keystore}" storepass="${sign.storepass}"
-             alias="${sign.alias}">
-      <fileset dir="${deploy.dir}" includes="${ident}-client.jar"/>
-    </signjar>
+    <if><equals arg1="${ident}" arg2="swiftly"/><then>
+      <signjar lazy="true" keystore="${sign.keystore}" storepass="${sign.storepass}"
+               alias="${sign.alias}">
+        <fileset dir="${deploy.dir}" includes="${ident}-client.jar"/>
+      </signjar>
+    </then></if>
     <copy file="${deploy.dir}/${ident}-client.jar" todir="pages/clients/${build_version}"/>
   </target>
 
