@@ -637,6 +637,7 @@ public class RoomController extends SceneController
         
         _roomEditPanel = new RoomEditPanel(_mctx, button, _roomView, wrapupFn);
         _roomEditPanel.open(false, null, button);
+        _roomEditPanel.updateUndoButton(_updates.length != 0);
     }
 
     /**

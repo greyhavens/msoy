@@ -13,16 +13,20 @@ import com.threerings.whirled.data.SceneUpdate;
  */
 public class UpdateStack
 {
+    /** Default max length of the undo stack. */
+    public static const DEFAULT_MAX_LENGTH :int = 10;
+    
     /**
      * Creates a new update stack. The updateFn is a function that performs server access, of type:
      *   function (array :TypedArray of SceneUpdates) :void
      * Whenever an action is pushed or popped off the stack, its SceneUpdate object will be
      * recreated, and passed to updateFn, which will notify the server.
      */
-    public function UpdateStack (updateFn :Function)
+    public function UpdateStack (updateFn :Function, maxLength :int = DEFAULT_MAX_LENGTH)
     {
         reset();
         _updateFn = updateFn;
+        _maxLength = maxLength;
     }
 
     /**
@@ -30,6 +34,10 @@ public class UpdateStack
      */
     public function push (action :UpdateAction) :void
     {
+        if (length >= _maxLength) {
+            _stack.shift(); // drop the oldest one
+        }
+        
         _stack.push(action);
         update(action.makeApply());
     }
@@ -75,6 +83,7 @@ public class UpdateStack
     }
 
 
+    protected var _maxLength :int;
     protected var _stack :Array;
     protected var _updateFn :Function;
 }
