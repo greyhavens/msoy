@@ -31,6 +31,13 @@ public class ProfileRecord extends PersistentRecord
     public static final ColumnExp MEMBER_ID_C =
         new ColumnExp(ProfileRecord.class, MEMBER_ID);
 
+    /** The column identifier for the {@link #modifications} field. */
+    public static final String MODIFICATIONS = "modifications";
+
+    /** The qualified column identifier for the {@link #modifications} field. */
+    public static final ColumnExp MODIFICATIONS_C =
+        new ColumnExp(ProfileRecord.class, MODIFICATIONS);
+
     /** The column identifier for the {@link #photoHash} field. */
     public static final String PHOTO_HASH = "photoHash";
 
