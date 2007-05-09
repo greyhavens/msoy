@@ -452,8 +452,10 @@ public class RoomController extends SceneController
             if (_mctx.worldProps.userControlsAvatar) {
                 // FIXME ROBERT
                 // this will be moved elsewhere, once we have a proper furni move/edit UI.
-                menuItems.push({ label: Msgs.GENERAL.get("t.add_furni"),
-                                 callback: addNewFurni } );
+                if (_scene.canEdit(us)) {
+                    menuItems.push({ label: Msgs.GENERAL.get("t.add_furni"),
+                                     callback: addNewFurni } );
+                }
                 
                 // create a menu for clicking on ourselves
                 var actions :Array = avatar.getAvatarActions();
