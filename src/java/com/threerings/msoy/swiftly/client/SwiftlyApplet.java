@@ -8,6 +8,9 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import javax.swing.JApplet;
@@ -52,8 +55,12 @@ public class SwiftlyApplet extends JApplet
     @Override // from JApplet
     public void init()
     {
-        // set up better logging
-        OneLineLogFormatter.configureDefaultHandler();
+        // set up better logging if possible
+        try {
+            OneLineLogFormatter.configureDefaultHandler();
+        } catch (SecurityException se) {
+            log.info("Running in sandbox. Unable to configure logging.");
+        }
 
         // create our client services
         _client = new Client(null, this);
@@ -86,7 +93,11 @@ public class SwiftlyApplet extends JApplet
             log.warning("Missing session token parameter (authtoken).");
             return;
         }
-        creds.ident = IdentUtil.getMachineIdentifier();
+        try {
+            creds.ident = IdentUtil.getMachineIdentifier();
+        } catch (SecurityException se) {
+            // no problem, we will have no ident
+        }
         // if we got a real ident from the client, mark it as such
         if (creds.ident != null && !creds.ident.matches("S[A-Za-z0-9/+]{32}")) {
             creds.ident = "C" + creds.ident;

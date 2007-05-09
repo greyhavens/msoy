@@ -26,9 +26,13 @@ public class GameApplet extends ManagedJApplet
     {
         super.init();
 
-        // set up the proper logging services
-        com.samskivert.util.Log.setLogProvider(new LoggingLogProvider());
-        OneLineLogFormatter.configureDefaultHandler();
+        // set up better logging if possible
+        try {
+            com.samskivert.util.Log.setLogProvider(new LoggingLogProvider());
+            OneLineLogFormatter.configureDefaultHandler();
+        } catch (SecurityException se) {
+            log.info("Running in sandbox. Unable to configure logging.");
+        }
 
         log.info("Java: " + System.getProperty("java.version") +
                  ", " + System.getProperty("java.vendor") + ")");
