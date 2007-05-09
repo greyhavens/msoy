@@ -5,6 +5,7 @@ import flash.events.EventDispatcher;
 
 import mx.collections.ArrayCollection;
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Util;
 
 import com.threerings.presents.client.ResultWrapper;
@@ -282,6 +283,7 @@ public class InventoryCollectionView extends ArrayCollection
         }
 
         var rawList :Array = _memberObj.getItems(type);
+        ArrayUtil.sort(rawList);
         var item :Item;
 
         showList.disableAutoUpdate();

@@ -70,9 +70,16 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
     /** The qualified column identifier for the {@link #location} field. */
     public static final ColumnExp LOCATION_C =
         new ColumnExp(CloneRecord.class, LOCATION);
+
+    /** The column identifier for the {@link #lastTouched} field. */
+    public static final String LAST_TOUCHED = "lastTouched";
+
+    /** The qualified column identifier for the {@link #lastTouched} field. */
+    public static final ColumnExp LAST_TOUCHED_C =
+        new ColumnExp(CloneRecord.class, LAST_TOUCHED);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int BASE_SCHEMA_VERSION = 3;
+    public static final int BASE_SCHEMA_VERSION = 4;
     public static final int BASE_MULTIPLIER = 1000;
     public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
@@ -104,6 +111,10 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
     /** Where it's being used. */
     public int location;
 
+    /** The timestamp at which this item was last used or modified. */
+    @Column(columnDefinition="lastTouched TIMESTAMP NOT NULL")
+    public Timestamp lastTouched;
+
     /**
      * Initialize a new clone with the specified values.
      */
@@ -114,5 +125,6 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
         this.flowPaid = flowPaid;
         this.goldPaid = goldPaid;
         this.purchaseTime = new Timestamp(System.currentTimeMillis());
+        this.lastTouched = null;
     }
 }

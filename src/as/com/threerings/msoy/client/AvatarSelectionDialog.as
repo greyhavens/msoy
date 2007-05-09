@@ -19,6 +19,8 @@ import mx.controls.scrollClasses.ScrollBar;
 
 import mx.core.ScrollPolicy;
 
+import com.threerings.util.ArrayUtil;
+
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.item.client.ItemRenderer;
 import com.threerings.msoy.item.data.all.Item;
@@ -150,6 +152,7 @@ public class AvatarSelectionDialog extends FloatingPanel
         
         // Get avatars from player's inventory
         var items :Array = _memberObj.getItems(Item.AVATAR);
+        ArrayUtil.sort(items);
 
         // hide any 'used' avatars, unless we're wearing them
         for (var ii :int = items.length - 1; ii >= 0; ii--) {

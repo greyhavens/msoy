@@ -17,7 +17,7 @@ import com.threerings.presents.dobj.DSet;
  * as they must be translatable into JavaScript ({@link IsSerializable}) and must work with the
  * Presents streaming system ({@link Streamable}).
  */
-public abstract class Item implements Streamable, IsSerializable, DSet.Entry
+public abstract class Item implements Comparable, Streamable, IsSerializable, DSet.Entry
 {
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
     public static final byte OCCUPANT = (byte) -1; // runtime only
@@ -101,6 +101,9 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
     /** A number, interpreted along with 'used' that identifies the location at which this item is
      * being used. */
     public int location;
+
+    /** Our last-touched timestamp, expressed as a double (for actionscript compat, groan). */
+    public double lastTouched;
 
     /** The user provided name for this item. */
     public String name;
@@ -314,6 +317,21 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
             return (this.itemId == that.itemId) && (this.getType() == that.getType());
         }
         return false;
+    }
+
+    // from Comparable
+    public int compareTo (Object other)
+    {
+        double thatTouched = ((Item) other).lastTouched;
+        if (lastTouched > thatTouched) {
+            return -1;
+
+        } else if (lastTouched < thatTouched) {
+            return 1;
+
+        } else {
+            return 0;
+        }
     }
 
     // @Override // from Object

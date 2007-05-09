@@ -718,7 +718,9 @@ public abstract class ItemRepository<
             new FieldOverride(ItemRecord.PARENT_ID, getItemClass(), ItemRecord.ITEM_ID),
             new FieldOverride(ItemRecord.OWNER_ID, getCloneClass(), CloneRecord.OWNER_ID),
             new FieldOverride(ItemRecord.LOCATION, getItemClass(), CloneRecord.LOCATION),
-            new FieldOverride(ItemRecord.USED, getItemClass(), CloneRecord.USED));
+            new FieldOverride(ItemRecord.USED, getItemClass(), CloneRecord.USED),
+            new FieldOverride(ItemRecord.LAST_TOUCHED, getCloneClass(), CloneRecord.LAST_TOUCHED)
+            );
     }
 
     protected ColumnExp getItemColumn (String cname)

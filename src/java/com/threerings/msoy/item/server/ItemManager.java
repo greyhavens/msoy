@@ -477,11 +477,13 @@ public class ItemManager
 
                 public void handleSuccess () {
                     super.handleSuccess();
+                    final double lastTouched = (double) System.currentTimeMillis();
                     if (oldItemId != 0) {
                         updateUserCache(memberId, itemType, oldItemIds, new ItemUpdateOp() {
                             public void update (Item item) {
                                 item.used = Item.UNUSED;
                                 item.location = 0;
+                                item.lastTouched = lastTouched;
                             }
                         }, true);
                     }
@@ -490,6 +492,8 @@ public class ItemManager
                             public void update (Item item) {
                                 item.used = itemUseType;
                                 item.location = locationId;
+                                // make the now-used item sliiightly more recently touched..
+                                item.lastTouched = lastTouched + 1;
                             }
                         }, true);
                     }
@@ -573,12 +577,14 @@ public class ItemManager
                 // #4 is currently unhandled- we don't know who the
                 // owner of those items is without reading that out of the DB.
                 Iterator<Tuple<Byte, int[]>> itr = unused.typeIterator();
+                final double lastTouched = (double) System.currentTimeMillis();
                 while (itr.hasNext()) {
                     Tuple<Byte, int[]> tup = itr.next();
                     updateUserCache(editorMemberId, tup.left, tup.right, new ItemUpdateOp() {
                         public void update (Item item) {
                             item.used = Item.UNUSED;
                             item.location = 0;
+                            item.lastTouched = lastTouched;
                         }
                     }, false);
                 }
@@ -589,6 +595,7 @@ public class ItemManager
                         public void update (Item item) {
                             item.used = Item.USED_AS_FURNITURE;
                             item.location = sceneId;
+                            item.lastTouched = lastTouched;
                         }
                     }, false);
                 }
@@ -764,6 +771,9 @@ public class ItemManager
                 // let the object forget whence it came
                 int originalId = item.parentId;
                 item.parentId = 0;
+                item.used = Item.UNUSED;
+                item.location = 0;
+                item.lastTouched = null;
                 // insert it as a genuinely new item
                 item.itemId = 0;
                 repo.insertOriginalItem(item);

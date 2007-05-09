@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
+import com.samskivert.util.QuickSort;
 import com.samskivert.velocity.VelocityUtil;
 
 import org.apache.velocity.VelocityContext;
@@ -101,6 +102,7 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from interface MemberService
+    @SuppressWarnings("unchecked")
     public ArrayList loadInventory (final WebCreds creds, final byte type)
         throws ServiceException
     {
@@ -121,7 +123,10 @@ public class MemberServlet extends MsoyServiceServlet
                 MsoyServer.itemMan.loadInventory(memrec.memberId, type, waiter);
             }
         });
-        return waiter.waitForResult();
+        ArrayList<Item> result = waiter.waitForResult();
+        // sort the list
+        QuickSort.sort(result);
+        return result;
     }
 
     // from MemberService

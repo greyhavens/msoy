@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.sql.Timestamp;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
@@ -94,6 +96,13 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public static final ColumnExp LOCATION_C =
         new ColumnExp(ItemRecord.class, LOCATION);
 
+    /** The column identifier for the {@link #lastTouched} field. */
+    public static final String LAST_TOUCHED = "lastTouched";
+
+    /** The qualified column identifier for the {@link #lastTouched} field. */
+    public static final ColumnExp LAST_TOUCHED_C =
+        new ColumnExp(ItemRecord.class, LAST_TOUCHED);
+
     /** The column identifier for the {@link #name} field. */
     public static final String NAME = "name";
 
@@ -151,7 +160,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         new ColumnExp(ItemRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int BASE_SCHEMA_VERSION = 8;
+    public static final int BASE_SCHEMA_VERSION = 9;
     public static final int BASE_MULTIPLIER = 1000;
 
     public static ItemRecord newRecord (Item item) {
@@ -209,6 +218,10 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** Where it's being used. */
     public int location;
 
+    /** The timestamp at which this item was last touched. */
+    @Column(columnDefinition="lastTouched TIMESTAMP NOT NULL")
+    public Timestamp lastTouched;
+
     /** A user supplied name for this item. */
     public String name;
 
@@ -254,6 +267,9 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         flags = item.flags;
         used = item.used;
         location = item.location;
+        // we intentially null the lastTouched field so that it gets filled in with a new timestmap
+        lastTouched = null;
+        //lastTouched = new Timestamp((long) item.lastTouched);
         name = (item.name == null) ? "" : item.name;
         description = (item.description == null) ? "" : item.description;
         if (item.thumbMedia != null) {
@@ -329,6 +345,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         this.ownerId = clone.ownerId;
         this.used = clone.used;
         this.location = clone.location;
+        this.lastTouched = clone.lastTouched;
     }
 
     /**
@@ -343,6 +360,11 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         item.rating = rating;
         item.used = used;
         item.location = location;
+        // If lastTouched is null, it means that this record was not loaded from the db,
+        // but rather was created from an item and is now being turned back into an item.
+        // Probably we were just saved to the db, so lastTouched is now..
+        item.lastTouched = (double) ((lastTouched == null) ? System.currentTimeMillis()
+                                                           : lastTouched.getTime());
         item.name = name;
         item.description = description;
         item.creatorId = creatorId;

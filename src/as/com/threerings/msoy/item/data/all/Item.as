@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.data.all {
 
+import com.threerings.util.Comparable;
 import com.threerings.util.HashMap;
 import com.threerings.util.Hashable;
 import com.threerings.util.MethodQueue;
@@ -23,7 +24,7 @@ import com.threerings.presents.dobj.DSet_Entry;
  * ({@link Streamable}) and must work with the JORA object persistence system.
  */
 public /*abstract*/ class Item
-    implements Hashable, Streamable, DSet_Entry
+    implements Comparable, Hashable, Streamable, DSet_Entry
 {
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
     public static const OCCUPANT :int = -1; // only used at runtime
@@ -97,6 +98,9 @@ public /*abstract*/ class Item
     /** A number, interpreted along with 'used' that identifies the
      * location at which this item is being used. */
     public var location :int;
+
+    /** Our last-touched timetamp. */
+    public var lastTouched :Number;
 
     /** The name of this item (max length 255 characters). */
     public var name :String;
@@ -283,6 +287,21 @@ public /*abstract*/ class Item
         return false;
     }
 
+    // from Comparable
+    public function compareTo (other :Object) :int
+    {
+        var thatTouched :Number = Item(other).lastTouched;
+        if (lastTouched > thatTouched) {
+            return -1;
+
+        } else if (lastTouched < thatTouched) {
+            return 1;
+
+        } else {
+            return 0;
+        }
+    }
+
     // from Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
@@ -294,6 +313,7 @@ public /*abstract*/ class Item
         out.writeFloat(rating);
         out.writeByte(used);
         out.writeInt(location);
+        out.writeDouble(lastTouched);
         out.writeField(name);
         out.writeField(description);
         out.writeObject(thumbMedia);
@@ -311,6 +331,7 @@ public /*abstract*/ class Item
         rating = ins.readFloat();
         used = ins.readByte();
         location = ins.readInt();
+        lastTouched = ins.readDouble();
         name = (ins.readField(String) as String);
         description = (ins.readField(String) as String);
         thumbMedia = (ins.readObject() as MediaDesc);
