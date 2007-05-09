@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.MouseListener;
+import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -96,17 +96,13 @@ public class ProjectEdit extends BorderedDialog
             _collabMenuPanel.add(_collabMenu);
             final Label addCollabs = new Label(CSwiftly.msgs.addCollaborators());
             addCollabs.addStyleName("LabelLink");
-            addCollabs.addMouseListener(new MouseListener() {
+            addCollabs.addMouseListener(new MouseListenerAdapter() {
                 public void onMouseDown (Widget sender, int x, int y) {
                     updateCollabMenu();
                     _collabMenuPanel.setPopupPosition(addCollabs.getAbsoluteLeft() + x,
                         addCollabs.getAbsoluteTop() + y);
                     _collabMenuPanel.show();
                 }
-                public void onMouseLeave (Widget sender) { }
-                public void onMouseUp (Widget sender, int x, int y) { }
-                public void onMouseEnter (Widget sender) { }
-                public void onMouseMove (Widget sender, int x, int y) { }
             });
             contents.setWidget(idx, 2, addCollabs);
         }
@@ -186,19 +182,11 @@ public class ProjectEdit extends BorderedDialog
             final InlineLabel collaborator = new InlineLabel(name.toString());
             collaborator.addStyleName("LabelLink");
             // use a MouseListener instead of ClickListener to get at the mouse (x,y)
-            collaborator.addMouseListener(new MouseListener() {
+            collaborator.addMouseListener(new MouseListenerAdapter() {
                 public void onMouseDown (Widget sender, int x, int y) {
                     collabMenuPanel.setPopupPosition(collaborator.getAbsoluteLeft() + x,
                                                      collaborator.getAbsoluteTop() + y);
                     collabMenuPanel.show();
-                }
-                public void onMouseLeave (Widget sender) {
-                }
-                public void onMouseUp (Widget sender, int x, int y) {
-                }
-                public void onMouseEnter (Widget sender) {
-                }
-                public void onMouseMove (Widget sender, int x, int y) {
                 }
             });
             _collaborators.add(collaborator);
