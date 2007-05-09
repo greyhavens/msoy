@@ -161,7 +161,6 @@ public class MsoyAuthenticator extends Authenticator
             // make sure they've sent valid credentials
             try {
                 creds = (MsoyCredentials) req.getCredentials();
-
             } catch (ClassCastException cce) {
                 log.log(Level.WARNING, "Invalid creds " + req.getCredentials() + ".", cce);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
