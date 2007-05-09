@@ -301,10 +301,11 @@ Window {
 
 .roomEditPanel {  
   borderStyle: "solid";
-  borderThicknessLeft: 1;
-  borderThicknessRight: 1;
-  borderThicknessTop: 1;
-  borderThicknessBottom: 1;
+  borderThickness: 1;
+  borderThicknessLeft: 0;
+  borderThicknessRight: 0;
+  borderThicknessTop: 0;
+  borderThicknessBottom: 0;
   paddingBottom: 0;
   paddingTop: 0;
   paddingLeft: 0;
@@ -315,6 +316,7 @@ Window {
 
 .roomEditPanelContainer { 
   borderStyle: "none";
+  borderThickness: 0;
   borderThicknessLeft: 0;
   borderThicknessRight: 0;
   borderThicknessTop: 0;
