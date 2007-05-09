@@ -130,6 +130,7 @@ public class RoomEditPanel extends FloatingPanel
         addChild(labelrow); 
         
         _label = new Label();
+        _label.styleName = "roomEditLabel";
         labelrow.addChild(_label);
         
     }
@@ -249,6 +250,10 @@ public class RoomEditPanel extends FloatingPanel
         { style: "Scale", toggle: true,
           action: RoomEditController.ACTION_SCALE,
           tip:  "i.scale_button", info: "i.scale_button_detail" },
+        
+        { style: "Prefs", toggle: false,
+          action: RoomEditController.ACTION_PREFS,
+          tip:  "i.prefs_button", info: "i.prefs_button_detail" },
         
         { style: "Trash", toggle: false,
           action: RoomEditController.ACTION_DELETE,

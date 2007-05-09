@@ -354,6 +354,12 @@ Window {
   selectedDownSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_scale_selected.png");
 }
 
+.roomEditButtonPrefs {
+  upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_actions.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_actions_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_actions_down.png");
+}
+
 .roomEditButtonTrash {
   upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_trash.png");
   overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_trash_over.png");
@@ -364,6 +370,13 @@ Window {
   upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_undo.png");
   overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_undo_over.png");
   downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_undo_down.png");
+}
+
+.roomEditLabel {
+    color: #000000;
+    themeColor: #54a9da;
+    fontFamily: "Arial";
+    fontSize: 9;
 }
 
 .logonPanel {

@@ -43,6 +43,7 @@ public class RoomEditController
     public static const ACTION_ROOM :String = "Edit Room";
     public static const ACTION_MOVE :String = "Edit Move";
     public static const ACTION_SCALE :String = "Edit Scale";
+    public static const ACTION_PREFS :String = "Edit Preferences";
     public static const ACTION_DELETE :String = "Edit Delete";
     public static const ACTION_UNDO :String = "Edit Undo";
     
@@ -66,11 +67,13 @@ public class RoomEditController
     public static const PHASE_DONE    :int = 4;
 
     public static const PHASEACTIONS :Array =
-        [ /* init */    [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE, ACTION_UNDO, ACTION_ROOM ],
+        [ /* init */    [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE,
+                              ACTION_UNDO, ACTION_ROOM,  ACTION_PREFS ],
           /* acquire */ [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE ],
           /* modify */  [ ACTION_MOVE, ACTION_SCALE ],
           /* commit */  [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE ],
-          /* done */    [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE, ACTION_UNDO, ACTION_ROOM ] ];
+          /* done */    [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE,
+                              ACTION_UNDO, ACTION_ROOM,  ACTION_PREFS ] ];
 
     // for debugging only
     protected static const PHASENAMES :Array = [ "init", "acquire", "modify", "commit", "done" ];
