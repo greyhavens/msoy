@@ -117,7 +117,8 @@ public class index extends Page
                     "authtoken", (CGame.creds == null) ? "" : CGame.creds.token };
                 WorldClient.displayJava(
                     WidgetUtil.createApplet(
-                        "game", "/clients/" + DeploymentConfig.version + "/game-client.jar",
+                        "game", "/clients/" + DeploymentConfig.version + "/game-client.jar," +
+                        config.gameMediaPath,
                         // TODO: allow games to specify their dimensions in their config
                         "com.threerings.msoy.game.client.GameApplet", "100%", "600", args));
             }

@@ -207,14 +207,6 @@ public class GameClient
                 }
                 return false;
             }
-
-            protected PlaceController createController (PlaceConfig config) {
-                if (config instanceof MsoyGameConfig) {
-                    return createGameController((MsoyGameConfig)config);
-                } else {
-                    return super.createController(config);
-                }
-            }
         };
         _occdir = new OccupantDirector(_ctx);
         _chatdir = new ChatDirector(_ctx, _msgmgr, MsoyCodes.CHAT_MSGS);
@@ -233,39 +225,6 @@ public class GameClient
 //             return _cctrl;
 //         }
 //     }
-
-    protected PlaceController createGameController (MsoyGameConfig config)
-    {
-        String path = config.getGameDefinition().getMediaPath(config.getGameId());
-        ClassLoader loader;
-        try {
-            loader = new URLClassLoader(new URL[] { new URL(path) }, getClass().getClassLoader());
-        } catch (Exception e) {
-            log.warning("Failed to create game class loader [path=" + path + ", error=" + e + "].");
-            return null;
-        }
-
-        String ccls = config.getGameDefinition().controller;
-        PlaceController ctrl;
-        try {
-            ctrl = (PlaceController)Class.forName(ccls, true, loader).newInstance();
-        } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to create controller [class=" + ccls + "].", e);
-            return null;
-        }
-
-        // configure the resource manager to load media from the game's class loader
-        _rsrcmgr.setClassLoader(loader);
-
-        // configure the distributed object system to load classes from the game's class loader
-        _ctx.getClient().setClassLoader(loader);
-
-        // configure our message manager with this class loader so that we can obtain translation
-        // resources from the game message bundles
-        _ctx.getMessageManager().setClassLoader(loader);
-
-        return ctrl;
-    }
 
     /**
      * The context implementation. This provides access to all of the objects and services that are
