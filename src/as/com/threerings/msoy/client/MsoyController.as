@@ -5,13 +5,17 @@ package com.threerings.msoy.client {
 
 import flash.events.IEventDispatcher;
 import flash.events.KeyboardEvent;
+import flash.events.MouseEvent;
 import flash.events.TextEvent;
+import flash.events.TimerEvent;
 
 import flash.system.Capabilities;
 
 import flash.text.TextField;
 
 import flash.ui.Keyboard;
+
+import flash.utils.Timer;
 
 import mx.controls.Button;
 
@@ -21,6 +25,10 @@ import com.threerings.util.Name;
 import com.threerings.util.NetUtil;
 import com.threerings.util.StringUtil;
 import com.threerings.util.CommandEvent;
+
+import com.threerings.crowd.client.BodyService;
+import com.threerings.crowd.data.CrowdCodes;
+import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.flex.CommandMenu;
 
@@ -132,9 +140,16 @@ public class MsoyController extends Controller
     public function MsoyController (ctx :WorldContext, topPanel :TopPanel)
     {
         _ctx = ctx;
+        _ctx.getClient().addServiceGroup(CrowdCodes.CROWD_GROUP);
         _ctx.getClient().addClientObserver(this);
         _topPanel = topPanel;
         setControlledPanel(ctx.getStage());
+
+        _idleTimer = new Timer(ChatCodes.DEFAULT_IDLE_TIME, 1);
+        _idleTimer.addEventListener(TimerEvent.TIMER, function (... ignored) :void {
+            setIdle(true)
+        });
+        restartIdleTimer();
     }
 
     /**
@@ -659,11 +674,13 @@ public class MsoyController extends Controller
         if (_controlledPanel != null) {
             _controlledPanel.removeEventListener(TextEvent.LINK, handleLink);
             _controlledPanel.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown, true);
+            _controlledPanel.removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
         }
         super.setControlledPanel(panel);
         if (_controlledPanel != null) {
             _controlledPanel.addEventListener(TextEvent.LINK, handleLink);
             _controlledPanel.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown, true);
+            _controlledPanel.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
         }
     }
 
@@ -680,6 +697,8 @@ public class MsoyController extends Controller
      */
     protected function handleKeyDown (event :KeyboardEvent) :void
     {
+        restartIdleTimer();
+
         switch (event.keyCode) {
         // TODO: not F7
         case Keyboard.F7:
@@ -705,6 +724,36 @@ public class MsoyController extends Controller
         }
     }
 
+    /**
+     * Handle mouse movement on the stage.
+     */
+    protected function handleMouseMove (event :MouseEvent) :void
+    {
+        restartIdleTimer();
+    }
+
+    /**
+     * Called when we've detected user activity, like mouse movement or key presses.
+     */
+    protected function restartIdleTimer () :void
+    {
+        setIdle(false);
+        _idleTimer.reset();
+        _idleTimer.start();
+    }
+
+    /**
+     * Update our idle status.
+     */
+    protected function setIdle (nowIdle :Boolean) :void
+    {
+        if (nowIdle != _idle) {
+            _idle = nowIdle;
+            var bsvc :BodyService = _ctx.getClient().requireService(BodyService) as BodyService;
+            bsvc.setIdle(_ctx.getClient(), nowIdle);
+        }
+    }
+
     /** Provides access to client-side directors and services. */
     protected var _ctx :WorldContext;
 
@@ -716,6 +765,12 @@ public class MsoyController extends Controller
 
     /** The currently loaded game lobby, used for magic URL bookmarkable gamelobbies */
     protected var _gameId :int = -1;
+
+    /** Whether we think we're idle or not. */
+    protected var _idle :Boolean = false;
+
+    /** A timer to watch our idleness. */
+    protected var _idleTimer :Timer;
 
     /** A string to give up for embedding your local scene. */
     protected var _sceneIdString :String;
