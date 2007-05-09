@@ -14,7 +14,7 @@ import com.threerings.whirled.data.SceneUpdate;
 public class UpdateStack
 {
     /** Default max length of the undo stack. */
-    public static const DEFAULT_MAX_LENGTH :int = 10;
+    public static const DEFAULT_MAX_LENGTH :int = 100;
     
     /**
      * Creates a new update stack. The updateFn is a function that performs server access, of type:
