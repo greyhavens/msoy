@@ -16,20 +16,19 @@ import flash.text.TextFormat;
 
 import flash.utils.getTimer; // function import
 
+import com.threerings.flash.FrameSprite;
+
 import com.whirled.EffectControl;
 
 /**
  * A simple effect that displays a flow gain.
  */
 [SWF(width="100", height="200")]
-public class FlowGain extends Sprite
+public class FlowGain extends FrameSprite
 {
     public function FlowGain ()
     {
         _ctrl = new EffectControl(this);
-
-        addEventListener(Event.ADDED_TO_STAGE, handleAdded);
-        addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
 
         var message :String = _ctrl.getParameters();
         if (message == null) {
@@ -59,18 +58,13 @@ public class FlowGain extends Sprite
         _ctrl.setHotSpot(_hotSpot.x, _hotSpot.y);
     }
 
-    protected function handleAdded (... ignored) :void
+    override protected function handleAdded (... ignored) :void
     {
         _stamp = getTimer();
-        addEventListener(Event.ENTER_FRAME, handleFrame);
+        super.handleAdded();
     }
 
-    protected function handleRemoved (... ignored) :void
-    {
-        removeEventListener(Event.ENTER_FRAME, handleFrame);
-    }
-
-    protected function handleFrame (... ignored) :void
+    override protected function handleFrame (... ignored) :void
     {
         var elapsed :Number = getTimer() - _stamp;
 

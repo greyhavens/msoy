@@ -9,16 +9,16 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 
+import com.threerings.flash.FrameSprite;
+
 [SWF(width="500", height="500")]
-public class DiscoMoire extends Sprite
+public class DiscoMoire extends FrameSprite
 {
     public static const WIDTH :int = 500;
     public static const HEIGHT :int = 500;
 
     public function DiscoMoire ()
     {
-        root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
-
         var dim :Number = Math.max(WIDTH, HEIGHT);
 
         dim += JIGGLE*2;
@@ -46,16 +46,9 @@ public class DiscoMoire extends Sprite
         }
         this.mask = mask;
         addChild(mask); // Fuck you very much, flash.
-
-        addEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
 
-    protected function handleUnload (event :Event) :void
-    {
-        removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
-    }
-
-    protected function handleEnterFrame (event :Event) :void
+    override protected function handleFrame (... ignored) :void
     {
         for (var ii :int = _bursts.length - 1; ii >= 0; ii--) {
             var radians :Number = Number(_radians[ii]);

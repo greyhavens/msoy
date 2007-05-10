@@ -6,26 +6,16 @@ import flash.display.Sprite;
 
 import flash.utils.getTimer; // function import
 
+import com.threerings.flash.FrameSprite;
+
 [SWF(width="2000", height="500")]
-public class FallBalls extends Sprite
+public class FallBalls extends FrameSprite
 {
     public function FallBalls ()
     {
-        addEventListener(Event.ADDED_TO_STAGE, handleAdded);
-        addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
     }
 
-    protected function handleAdded (... ignored) :void
-    {
-        addEventListener(Event.ENTER_FRAME, handleFrame);
-    }
-
-    protected function handleRemoved (... ignored) :void
-    {
-        removeEventListener(Event.ENTER_FRAME, handleFrame);
-    }
-
-    protected function handleFrame (... ignored) :void
+    override protected function handleFrame (... ignored) :void
     {
         var now :Number = getTimer();
 

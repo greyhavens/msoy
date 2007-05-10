@@ -12,20 +12,18 @@ import flash.utils.Timer;
 
 import com.whirled.EffectControl;
 
+import com.threerings.flash.FrameSprite;
 import com.threerings.flash.Siner;
 
 /**
  * A simple effect that can be played on an avatar when they do well.
  */
 [SWF(width="100", height="200")]
-public class BonusHarp extends Sprite
+public class BonusHarp extends FrameSprite
 {
     public function BonusHarp ()
     {
         _ctrl = new EffectControl(this);
-
-        addEventListener(Event.ADDED_TO_STAGE, handleAdded);
-        addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
 
         _yay = new YAY() as DisplayObject;
         _yay.x = 10;
@@ -35,24 +33,19 @@ public class BonusHarp extends Sprite
         _ctrl.setHotSpot(_yay.x + _yay.width/2, _yay.y + _yay.height/2);
     }
 
-    protected function handleAdded (... ignored) :void
+    override protected function handleAdded (... ignored) :void
     {
-        addEventListener(Event.ENTER_FRAME, handleFrame);
-
         var sound :Sound = new SOUND() as Sound;
         sound.play();
         _endTimer.delay = sound.length;
         _endTimer.addEventListener(TimerEvent.TIMER, handleFinished);
         _endTimer.start();
         _tilt.reset();
+
+        super.handleAdded();
     }
 
-    protected function handleRemoved (... ignored) :void
-    {
-        removeEventListener(Event.ENTER_FRAME, handleFrame);
-    }
-
-    protected function handleFrame (... ignored) :void
+    override protected function handleFrame (... ignored) :void
     {
         _yay.rotation = _tilt.value;
     }
