@@ -11,7 +11,18 @@ public class FallBalls extends Sprite
 {
     public function FallBalls ()
     {
+        addEventListener(Event.ADDED_TO_STAGE, handleAdded);
+        addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
+    }
+
+    protected function handleAdded (... ignored) :void
+    {
         addEventListener(Event.ENTER_FRAME, handleFrame);
+    }
+
+    protected function handleRemoved (... ignored) :void
+    {
+        removeEventListener(Event.ENTER_FRAME, handleFrame);
     }
 
     protected function handleFrame (... ignored) :void
@@ -21,7 +32,9 @@ public class FallBalls extends Sprite
         addBall(now);
 
         for (var ii :int = _balls.length - 1; ii >= 0; ii--) {
-            if (!_balls[ii].update(now)) {
+            var ball :Ball = _balls[ii] as Ball;
+            if (!ball.update(now)) {
+                removeChild(ball);
                 _balls.splice(ii, 1); // remove that ball, it's done.
             }
         }
@@ -45,9 +58,9 @@ public class FallBalls extends Sprite
 
 import flash.display.BlendMode;
 import flash.display.Graphics;
-import flash.display.Sprite;
+import flash.display.Shape;
 
-class Ball extends Sprite
+class Ball extends Shape
 {
     public function Ball (radius :Number, speed :Number, now :Number) :void
     {
