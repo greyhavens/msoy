@@ -5,6 +5,7 @@ package com.threerings.msoy.chat.client {
 
 import flash.display.Graphics;
 
+import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import mx.core.Container;
@@ -567,9 +568,18 @@ public class ComicOverlay extends ChatOverlay
         if (_provider == null) {
             return avoid;
         }
+        var r :Rectangle;
 
         // for now we don't accept low-priority avoids
         _provider.getAvoidables(speaker, avoid, null);
+
+        // shift those by any offset on our overlay
+        var offset :Point = _overlay.localToGlobal(new Point(0, 0));
+        offset.x *= -1;
+        offset.y *= -1;
+        for each (r in avoid) {
+            r.offsetPoint(offset);
+        }
 
         // add the existing chatbub non-tail areas from other speakers
         for each (var bub :BubbleGlyph in _bubbles) {

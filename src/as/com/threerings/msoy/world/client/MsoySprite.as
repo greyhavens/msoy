@@ -162,7 +162,8 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Get the rectangle bounding this sprite on the stage.
+     * Get the stage-coordinate rectangle of the bounds of this sprite, including any
+     * non-media content like decorations.
      */
     public function getStageRect () :Rectangle
     {
