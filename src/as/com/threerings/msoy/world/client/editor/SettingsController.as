@@ -31,6 +31,9 @@ public class SettingsController extends Controller
     public function start () :void
     {
         if (_panel == null) {
+
+            _origScene = _ctx.getSceneDirector().getScene() as MsoyScene;
+
             // make a copy of the scene, so we can edit it
             _editScene = (_ctx.getSceneDirector().getScene() as MsoyScene).clone() as MsoyScene;
             _editModel = _editScene.getSceneModel() as MsoySceneModel;
@@ -47,8 +50,7 @@ public class SettingsController extends Controller
     {
         if (_panel != null) {
 
-            var origScene :MsoyScene = _ctx.getSceneDirector().getScene() as MsoyScene;
-            var origModel :MsoySceneModel = origScene.getSceneModel() as MsoySceneModel;
+            var origModel :MsoySceneModel = _origScene.getSceneModel() as MsoySceneModel;
 
             var samename :Boolean = Util.equals(_editModel.name, origModel.name);
             var sameaudio :Boolean = Util.equals(_editModel.audioData, origModel.audioData);
@@ -58,7 +60,7 @@ public class SettingsController extends Controller
             if (saveSettings) {
                 
                 if (! (samename && sameaudio && samedecor)) {
-                    _ctrl.updateScene(origScene, _editScene);
+                    _ctrl.updateScene(_origScene, _editScene);
                 }
                 
             } else {
@@ -68,16 +70,19 @@ public class SettingsController extends Controller
                 if (! sameaudio) {
                     setBackgroundMusic(origModel.audioData);
                 }
-            }
 
+                _ctrl.roomView.setScene(_origScene);
+                _ctrl.roomView.rereadScene();
+            }
+                
             _panel.close();
             _panel = null;
             _editModel = null;
             _editScene = null;
+            _origScene = null;
         }
     }
 
-    
     /**
      * Called by the panel to update the room name.
      */
@@ -101,8 +106,8 @@ public class SettingsController extends Controller
      */
     public function setBackground (decordata :DecorData) :void
     {
+        _ctrl.roomView.setScene(_editScene);
         _ctrl.roomView.setBackground(decordata);
-        sceneModelUpdated();
     }
 
     /**
@@ -110,25 +115,16 @@ public class SettingsController extends Controller
      */
     public function setBackgroundMusic (audiodata :AudioData) :void
     {
+        _ctrl.roomView.setScene(_editScene);
         _ctrl.roomCtrl.setBackgroundMusic(audiodata);
-        sceneModelUpdated();
     }
    
-    /**
-     * Called by the panel to notify us that the scene model has changed.
-     */
-    public function sceneModelUpdated () :void
-    {
-        _ctrl.roomView.setScene(_editScene);
-    }
-
-
-    
     protected var _panel :SettingsPanel;
 
     protected var _ctx :WorldContext;
     protected var _ctrl :RoomEditController;
-    
+
+    protected var _origScene :MsoyScene;
     protected var _editScene :MsoyScene;
     protected var _editModel :MsoySceneModel;
 }
