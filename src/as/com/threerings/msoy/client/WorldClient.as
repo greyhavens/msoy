@@ -20,8 +20,6 @@ import com.threerings.util.ResultAdapter;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.presents.data.ClientObject;
-
 import com.threerings.flash.MenuUtil;
 
 import com.threerings.whirled.data.SceneMarshaller;
@@ -204,14 +202,6 @@ public class WorldClient extends BaseClient
     }
 
     // from BaseClient
-    override public function gotClientObject (clobj :ClientObject) :void
-    {
-        super.gotClientObject(clobj);
-
-        displayChatTip();
-    }
-
-    // from BaseClient
     override protected function createContext () :BaseContext
     {
         return (_wctx = new WorldContext(this));
@@ -229,17 +219,6 @@ public class WorldClient extends BaseClient
 
         _embedded = !Boolean(ExternalInterface.call("helloWhirled"));
         dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
-    }
-
-    /**
-     * Display a tip of the day in chat.
-     */
-    protected function displayChatTip () :void
-    {
-        // TODO: ideally, we use MessageBundle.getAll(), but we can't currently
-        // get all the keys from a resource bundle...
-        var numTips :int = parseInt(Msgs.GENERAL.get("n.tip_count"));
-        _wctx.displayInfo("general", "m.tip_" + int(1 + (Math.random() * numTips)));
     }
 
     /**

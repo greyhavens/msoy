@@ -145,6 +145,9 @@ public class MsoyController extends Controller
         _topPanel = topPanel;
         setControlledPanel(ctx.getStage());
 
+        _tipTimer = new Timer(15000, 1);
+        _tipTimer.addEventListener(TimerEvent.TIMER, displayChatTip);
+
         _idleTimer = new Timer(ChatCodes.DEFAULT_IDLE_TIME, 1);
         _idleTimer.addEventListener(TimerEvent.TIMER, function (... ignored) :void {
             setIdle(true)
@@ -666,6 +669,20 @@ public class MsoyController extends Controller
         return shouldLoadNewPages() && NetUtil.navigateToURL("#" + page + "-" + args, true);
     }
 
+    /**
+     * Display a tip of the day in chat.
+     */
+    protected function displayChatTip (... ignored) :void
+    {
+        // TODO: ideally, we use MessageBundle.getAll(), but we can't currently
+        // get all the keys from a resource bundle...
+        var numTips :int = parseInt(Msgs.GENERAL.get("n.tip_count"));
+        _ctx.displayInfo("general", "m.tip_" + int(1 + (Math.random() * numTips)));
+
+        // we are now done with this timer..
+        _tipTimer = null;
+    }
+
     override protected function setControlledPanel (
         panel :IEventDispatcher) :void
     {
@@ -740,6 +757,11 @@ public class MsoyController extends Controller
         setIdle(false);
         _idleTimer.reset();
         _idleTimer.start();
+
+        if (_tipTimer != null) {
+            _tipTimer.reset();
+            _tipTimer.start();
+        }
     }
 
     /**
@@ -771,6 +793,9 @@ public class MsoyController extends Controller
 
     /** A timer to watch our idleness. */
     protected var _idleTimer :Timer;
+
+    /** A timer to wait for a little bit of idle to pop up a chat tip. */
+    protected var _tipTimer :Timer;
 
     /** A string to give up for embedding your local scene. */
     protected var _sceneIdString :String;
