@@ -56,11 +56,11 @@ import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.WorldOccupantInfo;
 import com.threerings.msoy.world.server.RoomManager;
 
-import com.threerings.msoy.game.data.WorldGameConfig;
 import com.threerings.msoy.game.data.PerfRecord;
-
-import com.threerings.msoy.game.server.FlowAwardDelegate;
+import com.threerings.msoy.game.data.WorldGameConfig;
+import com.threerings.msoy.game.server.WhirledGameDelegate;
 import com.threerings.msoy.game.server.WorldGameManagerDelegate;
+
 import com.threerings.msoy.game.chiyogami.data.ChiyogamiObject;
 
 import static com.threerings.msoy.Log.log;
@@ -73,7 +73,7 @@ public class ChiyogamiManager extends GameManager
     public ChiyogamiManager ()
     {
         addDelegate(_worldDelegate = new WorldGameManagerDelegate(this));
-        addDelegate(_flowDelegate = new FlowAwardDelegate(this));
+        addDelegate(_whirledDelegate = new WhirledGameDelegate(this));
     }
 
     /**
@@ -412,7 +412,7 @@ public class ChiyogamiManager extends GameManager
         for (PlayerRec rec : _playerPerfs.values()) {
             // their score / style averages will be between 0 and 1,
             // we award them the max of those as a percentage of their possible flow..
-            int flowGained = _flowDelegate.tracker.awardFlowPercentage(rec.oid,
+            int flowGained = _whirledDelegate.tracker.awardFlowPercentage(rec.oid,
                 Math.max(rec.getAverageScore(), rec.getAverageStyle()));
             if (flowGained > 0) {
                 _roomMgr.addTransientEffect(rec.oid, effectMedia, EffectData.MODE_XLATE,
@@ -928,8 +928,8 @@ public class ChiyogamiManager extends GameManager
     /** Our world delegate. */
     protected WorldGameManagerDelegate _worldDelegate;
 
-    /** Our flow delegate. */
-    protected FlowAwardDelegate _flowDelegate;
+    /** Handles Whirled game services. */
+    protected WhirledGameDelegate _whirledDelegate;
 
     /** A casted ref to our gameobject, this hides our superclass _gameObj. */
     protected ChiyogamiObject _gameObj;

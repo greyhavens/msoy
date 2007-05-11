@@ -64,7 +64,7 @@ public class MsoyGameController extends EZGameController
     {
         _panel.backend.validateConnected();
         _flowAwarded += amount;
-        (_gobj as MsoyGameObject).msoyGameService.awardFlow(_pctx.getClient() ,amount,
+        (_gobj as MsoyGameObject).whirledGameService.awardFlow(_pctx.getClient() ,amount,
             new InvocationAdapter(function (cause :String) :void {
                 Log.getLog(MsoyGameController).warning("Unable to award flow: " + cause);
             }));

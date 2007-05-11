@@ -1,8 +1,12 @@
+//
+// $Id$
+
 package com.threerings.msoy.game.data {
 
 import com.threerings.io.ObjectInputStream;
 
 import com.threerings.ezgame.data.EZGameObject;
+import com.whirled.data.WhirledGameMarshaller;
 
 public class MsoyGameObject extends EZGameObject
 {
@@ -15,14 +19,14 @@ public class MsoyGameObject extends EZGameObject
     public var flowPerMinute :int;
 
     /** The whirled game services. */
-    public var msoyGameService :MsoyGameMarshaller;
+    public var whirledGameService :WhirledGameMarshaller;
 
     override protected function readDefaultFields (ins :ObjectInputStream) :void
     {
         super.readDefaultFields(ins);
 
         flowPerMinute = ins.readInt();
-        msoyGameService = (ins.readObject() as MsoyGameMarshaller);
+        whirledGameService = (ins.readObject() as WhirledGameMarshaller);
     }
 }
 }

@@ -1,23 +1,34 @@
+//
+// $Id$
+
 package com.threerings.msoy.game.data;
 
-import com.threerings.ezgame.data.EZGameObject;
 import com.threerings.presents.dobj.DSet;
 
+import com.threerings.ezgame.data.EZGameObject;
+
+import com.whirled.data.WhirledGameMarshaller;
+import com.whirled.data.WhirledGameObject;
+
+/**
+ * Maintains additional state for MSOY games.
+ */
 public class MsoyGameObject extends EZGameObject
+    implements WhirledGameObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>flowPerMinute</code> field. */
     public static final String FLOW_PER_MINUTE = "flowPerMinute";
 
-    /** The field name of the <code>msoyGameService</code> field. */
-    public static final String MSOY_GAME_SERVICE = "msoyGameService";
+    /** The field name of the <code>whirledGameService</code> field. */
+    public static final String WHIRLED_GAME_SERVICE = "whirledGameService";
     // AUTO-GENERATED: FIELDS END
 
     /** The base per-minute flow rate of this game. */
     public int flowPerMinute;
 
     /** The whirled game services. */
-    public MsoyGameMarshaller msoyGameService;
+    public WhirledGameMarshaller whirledGameService;
 
     // AUTO-GENERATED: METHODS START
     /**
@@ -37,19 +48,19 @@ public class MsoyGameObject extends EZGameObject
     }
 
     /**
-     * Requests that the <code>msoyGameService</code> field be set to the
+     * Requests that the <code>whirledGameService</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
      * that the attribute did change. Proxied copies of this object (on
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setMsoyGameService (MsoyGameMarshaller value)
+    public void setWhirledGameService (WhirledGameMarshaller value)
     {
-        MsoyGameMarshaller ovalue = this.msoyGameService;
+        WhirledGameMarshaller ovalue = this.whirledGameService;
         requestAttributeChange(
-            MSOY_GAME_SERVICE, value, ovalue);
-        this.msoyGameService = value;
+            WHIRLED_GAME_SERVICE, value, ovalue);
+        this.whirledGameService = value;
     }
     // AUTO-GENERATED: METHODS END
 }
