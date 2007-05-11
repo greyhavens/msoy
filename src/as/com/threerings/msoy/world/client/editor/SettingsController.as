@@ -35,7 +35,7 @@ public class SettingsController extends Controller
             _origScene = _ctx.getSceneDirector().getScene() as MsoyScene;
 
             // make a copy of the scene, so we can edit it
-            _editScene = (_ctx.getSceneDirector().getScene() as MsoyScene).clone() as MsoyScene;
+            _editScene = _origScene.clone() as MsoyScene;
             _editModel = _editScene.getSceneModel() as MsoySceneModel;
 
             _panel = new SettingsPanel(_ctx, _editModel, this);
