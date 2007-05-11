@@ -326,6 +326,7 @@
       <srcfiles dir="projects/nenya/lib" includes="**/*.swc"/>
       <srcfiles dir="projects/vilya/src/as" includes="**/*.as"/>
       <srcfiles dir="projects/toybox/src/as" includes="**/*.as"/>
+      <srcfiles dir="projects/whirled/src/as" includes="**/*.as"/>
     </uptodate>
   </target>
 
