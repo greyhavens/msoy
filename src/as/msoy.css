@@ -8,24 +8,24 @@ Application {
 }
 
 Panel {
-  cornerRadius: 0;
-  headerHeight: 20;
-  borderThickness: 0;
-  dropShadowEnabled: true;
-  shadowDistance: 2;
-  dropShadowColor: #443522;
-  roundedBottomCorners: false;
-  textAlign: left;
   backgroundAlpha: 1;
-  borderAlpha: 1;
-  highlightAlphas: 0, 0;
-  borderStyle: undefined;
-  headerColors: #413424, #5c4934;
-  footerColors: #ffffff, #c7c7c7;
   backgroundColor: #ffffff;
-  borderColor: #d6c09c;
-  titleStyleName: "msoyTitleStyle";
+  borderAlpha: 1;
+  borderColor: #000000;
+  borderStyle: undefined;
+  borderThickness: 0;
+  cornerRadius: 0;
+  dropShadowColor: #443522;
+  dropShadowEnabled: true;
+  footerColors: #ffffff, #c7c7c7;
+  headerColors: #000000, #444444;
+  headerHeight: 20;
+  highlightAlphas: 0, 0;
   modalTransparencyBlur: 0;
+  roundedBottomCorners: false;
+  shadowDistance: 2;
+  textAlign: left;
+  titleStyleName: "msoyTitleStyle";
 }
 
 .msoyTitleStyle {
