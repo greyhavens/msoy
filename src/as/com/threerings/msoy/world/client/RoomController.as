@@ -29,6 +29,7 @@ import com.threerings.io.TypedArray;
 
 import com.threerings.flash.MenuUtil;
 
+import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandMenu;
 
 import com.threerings.presents.client.ResultWrapper;
@@ -350,7 +351,7 @@ public class RoomController extends SceneController
     /**
      * Handle the ROOM_EDIT command.
      */
-    public function handleRoomEdit (button :DisplayObject) :void
+    public function handleRoomEdit (button :CommandButton) :void
     {
         _roomObj.roomService.editRoom(
             _mctx.getClient(), new ResultWrapper(
@@ -607,11 +608,13 @@ public class RoomController extends SceneController
     /**
      * Begin editing the room.
      */
-    protected function beginRoomEditing (button :DisplayObject) :void
+    protected function beginRoomEditing (button :CommandButton) :void
     {
         _walkTarget.visible = false;
         _flyTarget.visible = false;
         setHoverSprite(null);
+
+        button.selected = true;
 
         // this function will be called when the edit panel is closing
         var wrapupFn :Function = function () :void {
@@ -620,6 +623,7 @@ public class RoomController extends SceneController
             if (_music != null) {
                 _music.play();
             }
+            button.selected = false;
         }
 
         if (_music != null && ! _musicIsBackground) {
@@ -639,7 +643,6 @@ public class RoomController extends SceneController
     public function cancelRoomEditing () :void
     {
         _roomEditPanel.close();
-        
     }
 
     /**
