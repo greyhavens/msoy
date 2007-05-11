@@ -61,7 +61,10 @@
   <target name="prepare-flex">
     <!-- generate the whirled-config.xml file using the flex.path -->
     <copy tofile="etc/whirled-config.xml" file="etc/whirled-config.xml.in" overwrite="true">
-      <filterset><filter token="flex_path" value="${flex.path}"/></filterset>
+      <filterset>
+        <filter token="lib_path" value="../../lib"/>
+        <filter token="flex_path" value="${flex.path}"/>
+      </filterset>
     </copy>
   </target>
 
@@ -100,7 +103,7 @@
   <target name="all" depends="clean,prepare,compile"/>
 
   <!-- builds our jar file -->
-  <target name="dist" depends="prepare,compile">
+  <target name="dist" depends="prepare,compile,aslib">
     <jar destfile="${deploy.dir}/${app.name}.jar" basedir="${deploy.dir}/classes"/>
   </target>
 </project>
