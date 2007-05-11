@@ -380,7 +380,8 @@ public class ChiyogamiManager extends GameManager
         // TEMP foreground effect
         _effects.add(_roomMgr.addEffect(
             new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
-                "chiyogami/FallBalls"), null, RoomCodes.FOREGROUND_EFFECT_LAYER));
+                "chiyogami/FallBalls"), new MsoyLocation(.5, 0, 0, 0),
+                RoomCodes.FOREGROUND_EFFECT_LAYER));
 
         _playerTags.clear(); // clear tags until next time
 
