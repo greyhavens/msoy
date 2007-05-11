@@ -226,9 +226,11 @@ public class RoomEditController
         switch (_currentAction) {
         case ACTION_ROOM:
             _settings.start();
+            break;
         case ACTION_UNDO:
             // undo the last action, and set undo button's enabled state appropriately
             _panel.updateUndoButton(roomCtrl.undoLastUpdate());
+            break;
         }
     }
 
