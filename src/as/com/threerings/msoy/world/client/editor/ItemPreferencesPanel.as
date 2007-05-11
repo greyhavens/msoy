@@ -38,7 +38,10 @@ public class ItemPreferencesPanel extends FloatingPanel
         _roomCtrl = roomCtrl;
     }
 
-    /** Reads properties from the furni object, and updates the panel appropriately. */
+    /**
+     * Refreshes the panel with the furni data. If another furni was being edited, this
+     * will simply overwrite the edits, effectively cancelling previous changes.
+     */
     public function update (furniData :FurniData) :void
     {
         // abandon previous edits
@@ -46,19 +49,19 @@ public class ItemPreferencesPanel extends FloatingPanel
 
         var def :Object = getActionDef(_furniData.actionType);
 
-        // is this a drop down item?
-        if (isActionTypeEditable(_furniData.actionType)) {
+        // can this action type be edited by the player?
+        var editable :Boolean = isActionTypeEditable(_furniData.actionType);
+        if (editable) {
             // select the right drop down entry based on the action type
-            _actionType.selectedIndex = getActionIndex(_furniData.actionType);
-            _actionLabel.visible = _actionLabel.includeInLayout = false;
-            _actionType.visible = _actionType.includeInLayout = true;
-            updateDisplay(def);
+            _actionTypeSelection.selectedIndex = getActionIndex(_furniData.actionType);
+            updateTypePanels(def);
         } else {
-            _actionLabel.text = def.label;
-            _actionType.selectedIndex = 0;
-            _actionLabel.visible = _actionLabel.includeInLayout = true;
-            _actionType.visible = _actionType.includeInLayout = false;
+            _readOnlyActionLabel.text = def.label;
+            _actionTypeSelection.selectedIndex = 0;
         }
+
+        _actionTypeSelection.visible = _actionTypeSelection.includeInLayout = editable;
+        _readOnlyActionLabel.visible = _readOnlyActionLabel.includeInLayout = ! editable;
     }
         
     
@@ -67,7 +70,8 @@ public class ItemPreferencesPanel extends FloatingPanel
     {
         super.createChildren();
 
-        // generate combo box definitions
+        // generate combo box definitions, including only those actions that are
+        // mentioned in the EDITABLE array.
         var entries :Array = new Array();
         for each (var type :int in EDITABLE_ACTION_TYPES) {
             var def :Object = getActionDef(type);
@@ -81,25 +85,27 @@ public class ItemPreferencesPanel extends FloatingPanel
         addChild(grid);
         
         // this combo box will let the user pick a type
-        _actionType = new ComboBox();
-        _actionType.dataProvider = entries;
+        _actionTypeSelection = new ComboBox();
+        _actionTypeSelection.dataProvider = entries;
         // and this will be displayed instead of the drop-down box if the user can't edit it
-        _actionLabel = new TextInput();
-        _actionLabel.editable = false;
-        var action :HBox = new HBox();
-        action.addChild(_actionLabel);
-        action.addChild(_actionType);
+        _readOnlyActionLabel = new TextInput();
+        _readOnlyActionLabel.editable = false;
         
+        var action :HBox = new HBox();
+        action.addChild(_readOnlyActionLabel);
+        action.addChild(_actionTypeSelection);
+
+        // make editing panels for each action type
         GridUtil.addRow(grid, MsoyUI.createLabel(Msgs.EDITING.get("l.action")), action);
         _actionPanels = new ViewStack();
         _actionPanels.resizeToContent = true;
         for each (var entry :Object in entries) {
-                if (entry.viewGenerator != null) {
-                    _actionPanels.addChild((entry.viewGenerator as Function)());
-                } else {
-                    _actionPanels.addChild(new VBox());
-                }
+            if (entry.panelCreateFn != null) {
+                _actionPanels.addChild((entry.panelCreateFn as Function)());
+            } else {
+                _actionPanels.addChild(new VBox());
             }
+        }
         addChild(_actionPanels);
 
         // this label is for support+
@@ -119,8 +125,9 @@ public class ItemPreferencesPanel extends FloatingPanel
     override protected function childrenCreated () :void
     {
         // set data binding functions
-        BindingUtils.bindProperty(_actionPanels, "selectedIndex", _actionType, "selectedIndex");
-        BindingUtils.bindSetter(updateDisplay, _actionType, "selectedItem");
+        BindingUtils.bindProperty(
+            _actionPanels, "selectedIndex", _actionTypeSelection, "selectedIndex");
+        BindingUtils.bindSetter(updateTypePanels, _actionTypeSelection, "selectedItem");
     }
 
     // from superclass
@@ -145,12 +152,12 @@ public class ItemPreferencesPanel extends FloatingPanel
      * Called when a new type is selected from the list, it will find call the appropriate panel's
      * update function. The panel itself is popped to the top independently of this function.
      */
-    protected function updateDisplay (def :Object) :void
+    protected function updateTypePanels (def :Object) :void
     {
         var actionData :String = _furniData != null ? _furniData.actionData : null;
         if (def != null) {
-            if (def.updateGenerator != null) {
-                (def.updateGenerator as Function)();
+            if (def.panelUpdateFn != null) {
+                (def.panelUpdateFn as Function)();
             }
             _debug.text = actionData;
         } else {
@@ -189,7 +196,7 @@ public class ItemPreferencesPanel extends FloatingPanel
         
         var setportal :CommandButton = new CommandButton();
         setportal.label = Msgs.EDITING.get("b.set_portal");
-        setportal.setCallback(this.editDoorTarget);
+        setportal.setCallback(this.editPortalTarget);
 
         GridUtil.addRow(grid, MsoyUI.createLabel(Msgs.EDITING.get("l.dest_scene")), _door);
         GridUtil.addRow(grid, MsoyUI.createLabel(Msgs.EDITING.get("l.set_portal")), setportal);
@@ -206,7 +213,11 @@ public class ItemPreferencesPanel extends FloatingPanel
         }
     }
 
-    protected function editDoorTarget () :void
+    /**
+     * Called when the player clicks on the "set portal" button, this function closes
+     * this properties editor, and tells the room controller to start a new door editor.
+     */
+    protected function editPortalTarget () :void
     {
         var data :FurniData = _furniData;  // keep a reference to the furni data
         buttonClicked(OK_BUTTON);          // close this window, saving changes
@@ -219,12 +230,12 @@ public class ItemPreferencesPanel extends FloatingPanel
      */
     protected function getUserModifications () :FurniData
     {
-        if (_furniData == null || _actionType.selectedIndex == -1) {
+        if (_furniData == null || _actionTypeSelection.selectedIndex == -1) {
             return null; // nothing to do!
         }
 
         var newData :FurniData;
-        var type :int = _actionType.selectedItem.data;
+        var type :int = _actionTypeSelection.selectedItem.data;
 
         if (! isActionTypeEditable(type)) {
             // these aren't handled by this editor, so let's not touch the data
@@ -252,14 +263,6 @@ public class ItemPreferencesPanel extends FloatingPanel
         }
     }
             
-
-    /** Copies action type and data from the source object to the target. */
-    protected function copyAction (source :Object, target :Object) :void
-    {
-        target.actionType = source.actionType;
-        target.actionData = source.actionData;
-    }
-
     /** Returns the index in ACTIONS of the action definiton with specified type. */
     protected function getActionIndex (actionType :int) :int
     {
@@ -296,21 +299,19 @@ public class ItemPreferencesPanel extends FloatingPanel
 
         { data: FurniData.ACTION_PORTAL,
           label: Msgs.EDITING.get("l.action_portal"),
-          viewGenerator: createPortalPanel,
-          updateGenerator: updatePortalPanel },
+          panelCreateFn: createPortalPanel,
+          panelUpdateFn: updatePortalPanel },
 
         { data: FurniData.ACTION_URL,
           label: Msgs.EDITING.get("l.action_url"),
-          viewGenerator: createURLPanel,
-          updateGenerator: updateURLPanel },
+          panelCreateFn: createURLPanel,
+          panelUpdateFn: updateURLPanel },
 
         { data: FurniData.ACTION_LOBBY_GAME,
-          label: Msgs.EDITING.get("l.action_lobby_game"),
-          editable: false },
+          label: Msgs.EDITING.get("l.action_lobby_game") },
 
         { data: FurniData.ACTION_WORLD_GAME,
-          label: Msgs.EDITING.get("l.action_world_game"),
-          editable: false }
+          label: Msgs.EDITING.get("l.action_world_game") }
 
         ];
 
@@ -322,8 +323,8 @@ public class ItemPreferencesPanel extends FloatingPanel
     protected var _furniData :FurniData;
 
     protected var _comboEntries :Array = new Array();
-    protected var _actionLabel :TextInput;
-    protected var _actionType :ComboBox;
+    protected var _readOnlyActionLabel :TextInput;
+    protected var _actionTypeSelection :ComboBox;
     protected var _actionPanels :ViewStack;
     protected var _url :TextInput;
     protected var _door :TextInput;
