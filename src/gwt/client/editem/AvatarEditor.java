@@ -47,6 +47,12 @@ public class AvatarEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
+    protected void createFurniUploader (TabPanel tabs)
+    {
+        // nada: avatars should no longer have a furni visualization
+    }
+
+    // @Override from ItemEditor
     protected void createThumbUploader (TabPanel tabs)
     {
         String title = CEditem.emsgs.avatarThumbTitle();
