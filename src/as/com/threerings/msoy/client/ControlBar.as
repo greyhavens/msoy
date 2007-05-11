@@ -180,6 +180,7 @@ public class ControlBar extends HBox
             _roomeditBtn.setCommand(ControlBarController.ROOM_EDIT, _roomeditBtn);
             _roomeditBtn.styleName = "controlBarButtonEdit";
             _roomeditBtn.enabled = false;
+            _roomeditBtn.toggle = true;
             addGroupChild(_roomeditBtn, [ UI_STD ]);
         }
         
