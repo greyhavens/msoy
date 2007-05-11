@@ -1283,6 +1283,12 @@ class WalkTarget extends Sprite
     }
 
     // from RoomElement
+    public function getLayoutType () :int
+    {
+        return RoomCodes.LAYOUT_NORMAL;
+    }
+
+    // from RoomElement
     public function getRoomLayer () :int
     {
         return RoomCodes.FURNITURE_LAYER;

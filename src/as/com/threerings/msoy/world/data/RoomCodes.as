@@ -22,5 +22,11 @@ public class RoomCodes
 
     /** The backmost layer, should only be occupied by decor objects. */
     public static const DECOR_LAYER :int = 3;
+
+    /** Layout constant: normal layout. */
+    public static const LAYOUT_NORMAL :int = 0;
+
+    /** Layout constant: fill the visible room area. */
+    public static const LAYOUT_FILL :int = 1;
 }
 }

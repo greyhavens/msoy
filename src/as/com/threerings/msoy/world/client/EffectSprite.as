@@ -6,6 +6,7 @@ package com.threerings.msoy.world.client {
 import com.threerings.util.ValueEvent;
 
 import com.threerings.msoy.world.data.EffectData;
+import com.threerings.msoy.world.data.RoomCodes;
 
 public class EffectSprite extends FurniSprite
 {
@@ -15,6 +16,18 @@ public class EffectSprite extends FurniSprite
     public function EffectSprite (effect :EffectData)
     {
         super(effect);
+    }
+
+    override public function setLocation (newLoc :Object) :void
+    {
+        if (newLoc != null) {
+            super.setLocation(newLoc);
+        }
+    }
+
+    override public function getLayoutType () :int
+    {
+        return (_furni.loc == null) ? RoomCodes.LAYOUT_FILL : super.getLayoutType();
     }
 
     override public function getRoomLayer () :int

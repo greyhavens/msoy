@@ -461,6 +461,12 @@ internal class BackdropOverlay extends Shape
     implements RoomElement
 {
     // documentation inherited from interface RoomElement
+    public function getLayoutType () :int
+    {
+        return RoomCodes.LAYOUT_NORMAL;
+    }
+
+    // documentation inherited from interface RoomElement
     public function getRoomLayer () :int
     {
         return RoomCodes.FOREGROUND_EFFECT_LAYER;
@@ -486,4 +492,3 @@ internal class BackdropOverlay extends Shape
 
     protected static const DEFAULT_LOCATION :MsoyLocation = new MsoyLocation(0, 0, 0, 0);
 }
-        

@@ -90,6 +90,12 @@ public class MsoySprite extends MediaContainer
     }
 
     // from RoomElement
+    public function getLayoutType () :int
+    {
+        return RoomCodes.LAYOUT_NORMAL;
+    }
+
+    // from RoomElement
     public function getRoomLayer () :int
     {
         return RoomCodes.FURNITURE_LAYER;

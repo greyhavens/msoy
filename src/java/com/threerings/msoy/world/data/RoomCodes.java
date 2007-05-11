@@ -28,4 +28,10 @@ public interface RoomCodes extends InvocationCodes
 
     /** The backmost layer, should only be occupied by decor objects. */
     public static final byte DECOR_LAYER = 3;
+
+    /** Layout constant: normal layout. */
+    public static final byte LAYOUT_NORMAL = 0;
+
+    /** Layout constant: fill the visible room area. */
+    public static final byte LAYOUT_FILL = 1;
 }

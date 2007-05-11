@@ -17,6 +17,7 @@ import com.threerings.flash.Vector3;
 import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.RoomCodes;
 
 
 /**
@@ -225,12 +226,30 @@ public class RoomLayoutStandard implements RoomLayout {
             throw new ArgumentError("Invalid target passed to updateScreenLocation: " + target);
         }
 
-        var loc :MsoyLocation = target.getLocation();
-        var screen :Point = _metrics.roomToScreen(loc.x, loc.y, loc.z);
-        var scale :Number = _metrics.scaleAtDepth(loc.z);
-        offset = (offset != null ? offset : NO_OFFSET);
-        
-        target.setScreenLocation(screen.x - offset.x, screen.y - offset.y, scale);
+        switch (target.getLayoutType()) {
+        default:
+            Log.getLog(this).warning("Unknown layout type: " + target.getLayoutType() +
+                ", falling back to LAYOUT_NORMAL.");
+            // fall through to LAYOUT_NORMAL
+
+        case RoomCodes.LAYOUT_NORMAL:
+            var loc :MsoyLocation = target.getLocation();
+            var screen :Point = _metrics.roomToScreen(loc.x, loc.y, loc.z);
+            var scale :Number = _metrics.scaleAtDepth(loc.z);
+            offset = (offset != null ? offset : NO_OFFSET);
+            target.setScreenLocation(screen.x - offset.x, screen.y - offset.y, scale);
+            break;
+
+        case RoomCodes.LAYOUT_FILL:
+            var disp :DisplayObject = (target as DisplayObject);
+            disp.x = 0;
+            disp.y = 0;
+            var r :Rectangle = _parentView.getScrollBounds();
+            disp.width = r.width;
+            disp.height = r.height;
+            break;
+        }
+
         adjustZOrder(target as DisplayObject);
     }
 
@@ -301,7 +320,7 @@ public class RoomLayoutStandard implements RoomLayout {
     protected var _parentView :AbstractRoomView;
 
     /** Point (0, 0) expressed as a constant. */
-    protected static const NO_OFFSET :Point = new Point (0, 0);
+    protected static const NO_OFFSET :Point = new Point(0, 0);
 }
 }
     

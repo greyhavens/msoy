@@ -9,6 +9,13 @@ import com.threerings.msoy.world.data.MsoyLocation;
 public interface RoomElement
 {
     /**
+     * Return the type of layout to do for this element.
+     * 
+     * @return probably RoomCodes.LAYOUT_NORMAL.
+     */
+    function getLayoutType () :int
+
+    /**
      * Return the layer upon which this element should be layed out.
      * 
      * @return probably RoomCodes.FURNITURE_LAYER.
