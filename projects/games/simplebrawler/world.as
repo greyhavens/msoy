@@ -51,6 +51,7 @@
 		
 		public var time_speed:Number = 1.0;
 		public var fps:Number = 20;
+		public var fps_now:Number = 0;
 		public var current_mps:Number = 0;
 		
 		//Keyboard inputs
@@ -113,6 +114,8 @@
 		public var pk_status: String = "off";
 		
 		public var MSGBOX: MovieClip;
+		public var MSGCOUNT: int;
+		public var MSGSENT: int;
 		
 		/** Game control. */
     	protected var _control :WhirledGameControl; //-W-
@@ -241,13 +244,13 @@
 					var msg :Object = new Object;
 					msg[0] = room_num;
 					msg[1] = _control.getMyId();
-					_control.sendMessage (p_quit, msg);
-					current_mps+=1;
+					sendmsg (p_quit, msg);
+					
 					msg[0] = room_num;
 					msg[1] = _control.getMyId();
 					msg[2] = String(local_player.pName+" left the game.");
-					_control.sendMessage (p_msg, msg);
-					current_mps+=1;
+					sendmsg (p_msg, msg);
+					
 				}
 			//                -W-
 			//************************************
@@ -262,10 +265,11 @@
 			}else{
 				hud.fps_output.textColor = 0xFFFFFF;
 			}
+			fps_now = current_fps;
 			current_fps=0;
 			
 			hud.mps_output.text = "MPS: "+current_mps;
-			if(current_mps >= 10){
+			if(current_mps >= 8){
 				hud.mps_output.textColor = 0xFF0000;
 			}else{
 				hud.mps_output.textColor = 0xFFFFFF;
@@ -349,8 +353,8 @@
 						msg[0] = room_num;
 						msg[1] = _control.getMyId();
 						msg[2] = clock
-						_control.sendMessage (CLOCK_UPDATE, msg);
-						current_mps+=1;
+						sendmsg (CLOCK_UPDATE, msg);
+						
 					}
 				}
 			//                -W-
@@ -377,8 +381,8 @@
 						msg[5] = local_player.hp;
 						msg[6] = local_player.energy;
 						msg[7] = false;
-						_control.sendMessage (p_move, msg);
-						current_mps+=1;
+						sendmsg (p_move, msg);
+						
 				}
 				//                -W-
 				//************************************
@@ -426,8 +430,8 @@
 					msg[6] = local_player.energy;
 					msg[7] = local_player.character.scaleX;
 					msg[8] = clock;
-					_control.sendMessage (p_goal, msg);
-					current_mps+=1;
+					sendmsg (p_goal, msg);
+					
 			}
 			//                -W-
 			//************************************
@@ -701,8 +705,8 @@
 					var msg :Object = new Object;
 					msg[0] = room_num;
 					msg[1] = _control.getMyId();
-					_control.sendMessage (GTNR, msg);
-					current_mps+=1;
+					sendmsg (GTNR, msg, "High");
+					
 				}
 				//
 				//************************************ 
@@ -750,8 +754,8 @@
 				current_attack = 0;
 			}
 			
-			if(current_attack > 6){
-				current_attack = 0;
+			if(current_attack > 3){
+				current_attack = 1;
 			}
 			
 			p1_status = "off";
@@ -929,12 +933,27 @@
 			mc.flag = t;
 			mc.id = id;
 			
+			//---ATTACKS---
+			if (mc.flag == "PC"){
+				mc.att_p = new Array();
+				mc.att_k = new Array();
+				mc.att_p[0] = "left swing";
+				mc.att_p[1] = "right swing";
+				mc.att_p[2] = "thrust";
+				mc.att_k[0] = "up cut";
+				mc.att_k[1] = "down cut";
+				mc.att_k[2] = "wide cut";
+			}
+			
+			
 			if (mc.flag == "PC"){
 				mc.name_plate.name_plate.text = mc.pName;
 				mc.name = id;
 				pc_count += 1;
 				mc.lastupdate = clock;
 			} else if (mc.flag == "NPC"){
+				mc.removeChild(mc.dmgbox);
+				
 				mc.name_plate.name_plate.text = "";
 				mc.name_plate.name_plate.textColor = 0xCC0000;
 				mc.name = "npc_"+npc_count;
@@ -950,6 +969,22 @@
 				if (n == "BOSS" && mc.flag == "NPC"){
 					mc.removeChild(mc.character);
 					mc.character = new kosmos();
+					mc.addChild(mc.character);
+				}else if (n == "Midboss" && mc.flag == "NPC"){
+					mc.removeChild(mc.character);
+					mc.character = new mandicore();
+					mc.addChild(mc.character);
+				}else if (n == "Brute" && mc.flag == "NPC"){
+					mc.removeChild(mc.character);
+					mc.character = new ogre();
+					mc.addChild(mc.character);
+				}else if (n == "Grunt" && mc.flag == "NPC"){
+					mc.removeChild(mc.character);
+					mc.character = new archer();
+					mc.addChild(mc.character);
+				}else if (n == "Peon" && mc.flag == "NPC"){
+					mc.removeChild(mc.character);
+					mc.character = new RiverCity();
 					mc.addChild(mc.character);
 				}
 			}
@@ -1008,11 +1043,10 @@
 			mc.addEventListener("enterFrame", player_enterFrame);
 			player_scale(mc);
 			
-			if (mc.pName == "Jessica" || mc.pName == "Cherub"){
-				//mc.hp = 3200;
-				//mc.maxhp = 3200;
+			if (mc.pName == "Jessica"){
+				mc.hp = 3200;
+				mc.maxhp = 3200;
 				mc.removeChild(mc.character);
-				//mc.character = null;
 				mc.character = new kosmos();
 				mc.addChild(mc.character);
 			}
@@ -1021,6 +1055,9 @@
 			
 			mc.animation = "spawn";
 			mc.character.gotoAndPlay("spawn");
+			if(mc.flag == "PC"){
+				mc.dmgbox.gotoAndPlay("spawn");
+			}
 			
 			return mc
     	}
@@ -1032,8 +1069,8 @@
 					var msgg :Object = new Object;
 					msgg[0] = room_num;
 					msgg[1] = e.target.name;
-					_control.sendMessage (p_quit, msgg);
-					current_mps+=1;
+					sendmsg (p_quit, msgg);
+					
 				}
 			}
 			
@@ -1079,8 +1116,9 @@
 								msgh[7] = (Math.random()*5)+(-2.5);
 								itemcount += 1;
 								msgh[8] = itemcount;
-								_control.sendMessage (s_item, msgh);
-								current_mps+=1;
+								sendmsg (s_item, msgh, "High");
+								create_coin( msgg[2], msgg[3], msgg[4], msgg[8],  msgg[5],  msgg[6],  msgg[7]);
+								
 							}
 							//                -W-
 							//************************************
@@ -1171,13 +1209,15 @@
 						if ((xslide > 0.5 || xslide < -0.5) || (yslide > 0.5 || yslide < -0.5)){
 							e.target.x += xslide;
 							e.target.y += yslide;
-							if(e.target.knockback != true && xslide > e.target.scaleX && e.target.dustcount <= clock){
-								e.target.dustcount = clock+250;
-								var tempdust :MovieClip = new slide_dust();
-								bg.addChild(tempdust);
-								tempdust.x = e.target.x;
-								tempdust.y = e.target.y;
-								player_scale(tempdust);
+							if(fps_now >= 20){
+								if(e.target.knockback != true && xslide > e.target.scaleX && e.target.dustcount <= clock){
+									e.target.dustcount = clock+250;
+									var tempdust :MovieClip = new slide_dust();
+									bg.addChild(tempdust);
+									tempdust.x = e.target.x;
+									tempdust.y = e.target.y;
+									player_scale(tempdust);
+								}
 							}
 						}else{
 							e.target.sliding = false;
@@ -1287,7 +1327,12 @@
 					e.target.animation = "stun";
 				}
 				
-				if (e.target.character.currentFrame < 10 && e.target.animation_old != "idle"){
+				if (e.target.flag == "PC" && (e.target.dmgbox.currentFrame < 5 && e.target.animation_old != "idle")){
+					e.target.animation = "idle";
+					e.target.animation_old = "idle";
+				}
+				
+				if (e.target.flag != "PC" && (e.target.character.currentFrame < 5 && e.target.animation_old != "idle")){
 					e.target.animation = "idle";
 					e.target.animation_old = "idle";
 				}
@@ -1308,19 +1353,28 @@
 				}
 	
 				if (e.target.animation != e.target.animation_old){
+					if(e.target == local_player){
+						e.target.dmgbox.gotoAndPlay(e.target.animation);
+					}
 					e.target.character.gotoAndPlay(e.target.animation);
 					
-					if (e.target == local_player){
-						if (e.target.animation == "punch"){
-							e.target.dmgbox.gotoAndPlay(e.target.animation);
-						}else if (e.target.animation == "kick"){
-							e.target.dmgbox.gotoAndPlay(e.target.animation);
-						}
-					}else if(e.target.flag != "PC"){
-						if (e.target.animation == "punch"){
-							e.target.dmgbox.gotoAndPlay(e.target.animation);
-						}else if (e.target.animation == "kick"){
-							e.target.dmgbox.gotoAndPlay(e.target.animation);
+					if (e.target.flag == "PC"){
+						if (e.target.animation == "punch" || e.target.animation == "kick"){
+							e.target.dmgbox.gotoAndPlay(e.target.attack_name);
+							
+							if(e.target.attack_name == "left swing"){
+								e.target.character.gotoAndPlay("punch1");
+							}else if(e.target.attack_name == "right swing"){
+								e.target.character.gotoAndPlay("punch3");
+							}else if(e.target.attack_name == "thrust"){
+								e.target.character.gotoAndPlay("punch2");
+							}else if(e.target.attack_name == "up cut"){
+								e.target.character.gotoAndPlay("punch1");
+							}else if(e.target.attack_name == "down cut"){
+								e.target.character.gotoAndPlay("punch3");
+							}else if(e.target.attack_name == "wide cut"){
+								e.target.character.gotoAndPlay("punch1");
+							}
 						}
 					}
 				}
@@ -1352,7 +1406,7 @@
 									mov = bg.actors.getChildByName("npc_"+n);
 									if (mov.knockback == false){
 										if (mov.hp > 0){
-											if (e.target.boundbox.hitTestObject(mov.boundbox)){
+											if (e.target.character.boundbox.hitTestObject(mov.character.boundbox)){
 												if (mov.animation != "hurt"){
 													dmg = (e.target.maxhp/4);
 													player_hurt(bg.actors.getChildByName("npc_"+n),dmg, String(e.target.ai_target), xslide, 0);
@@ -1367,8 +1421,8 @@
 														msg[5] = 0;
 														msg[6] = wave_num;
 														msg[7] = 0;
-														_control.sendMessage (p_hurt, msg);
-														current_mps+=1;
+														sendmsg (p_hurt, msg);
+														
 													}
 													//                -W-
 													//************************************
@@ -1394,21 +1448,18 @@
 								if (bg.actors.getChildByName("npc_"+n)){
 									mov = bg.actors.getChildByName("npc_"+n);
 									if (mov.hp > 0){
-										if (e.target.dmgbox.hitTestObject(mov.boundbox)){
+										if (e.target.dmgbox.dmg_box.hitTestObject(mov.character.boundbox)){
 											//If it hits dood, hurt dood.
 											if (mov.animation != "hurt"){
-												dmg = ((Math.random()*50)+10)*(local_level*0.5);
-												if (e.target.animation == "kick"){
-													knock_amount = 15;
-												}
-												if (e.target.animation == "punch"){
-													//stun_amount = 1.5;
-													knock_amount = 0;
-												}
+												dmg = attack_data(e.target.attack_name, "dmg"); //((Math.random()*50)+10)*(local_level*0.5);
+												knock_amount = 0;
 												if (e.target.sliding == true){
 													knock_amount += xslide*2;
 												}
-												//local_exp += (dmg/5)/(local_level*0.5);
+												knock_amount += attack_data(e.target.attack_name, "kb");
+												stun_amount = attack_data(e.target.attack_name, "stn");
+												
+												local_exp += (dmg/5)/(local_level*0.5);
 												var coinrnd :Number = Math.random()*100
 												if(coinrnd > 75){
 															coinrnd = 1;
@@ -1430,8 +1481,8 @@
 														msg[5] = stun_amount;
 														msg[6] = wave_num;
 														msg[7] = coinrnd;
-														_control.sendMessage (p_hurt, msg);
-														current_mps+=1;
+														sendmsg (p_hurt, msg, "High");
+														
 													}
 													//                -W-
 													//************************************
@@ -1446,7 +1497,7 @@
 					} else if (e.target.flag != "PC"){
 						dmg = 0;
 							if (local_player.hp > 0){
-								if (e.target.dmgbox.hitTestObject(local_player.boundbox)){
+								if (e.target.character.dmgbox.hitTestObject(local_player.boundbox)){
 									if (local_player.animation != "hurt"){
 										dmg = e.target.ai_min+Math.random()*(e.target.ai_max-e.target.ai_min);
 										player_hurt(local_player, dmg, String(e.target.name), e.target.ai_knockback, e.target.ai_stun);
@@ -1459,8 +1510,8 @@
 											msg[3] = dmg;
 											msg[4] = 0;
 											msg[5] = 0;
-											_control.sendMessage (n_hurt, msg);
-											current_mps+=1;
+											sendmsg (n_hurt, msg, "Low");
+											
 										}
 										//                -W-
 										//************************************
@@ -1481,6 +1532,7 @@
 						}
 						
 					}else if(e.target.flag == "PC"){
+						e.target.dmgbox.gotoAndPlay(e.target.animation);
 						if(e.target == local_player){
 							var elementt :String = "koCount";
 							var tablee :Number = _control.get(elementt);
@@ -1595,11 +1647,11 @@
 												//---ATTACK MODE---
 												if( mc.x > player_target.x){
 														if(player_target == local_player){
-															plot_goal(mc, player_target.x+mc.ai_attrng*mc.scaleX-mc.spd, player_target.y, clock);
+															plot_goal(mc, player_target.x+mc.ai_attrng*mc.scaleX-mc.spd+((Math.random()*50)-25), player_target.y, clock);
 														}
 												}else{
 														if(player_target == local_player){
-															plot_goal(mc, player_target.x-mc.ai_attrng*mc.scaleX+mc.spd, player_target.y, clock);
+															plot_goal(mc, player_target.x-mc.ai_attrng*mc.scaleX+mc.spd+((Math.random()*50)-25), player_target.y, clock);
 														}
 												}
 												if(temp_dis <= mc.ai_attrng*mc.scaleX && (mc.y <= player_target.y+5 && mc.y >= player_target.y-5)){
@@ -1617,11 +1669,11 @@
 													//var seedrnd2 :Number = (mc.hp/mc.maxhp)*(player_target.hp/player_target.maxhp)+(clock/mc.ai_tick);
 													var rnd1 :Random = new Random(mc.hp+mc.ai_tick);
 													var desx :Number = (rnd1.nextNumber()*mc.ai_range)+(mc.ai_range/4);
-													var flipcoin :Boolean = rnd1.nextBoolean();
-													if (flipcoin){
+													var flipcoin :int = Math.random()*100;//rnd1.nextBoolean();
+													if (flipcoin > 50){
 														desx = desx*(-1);
 													}
-													var desy :Number = rnd1.nextNumber()*125;
+													var desy :Number =  Math.random()*125;//rnd1.nextNumber()*125;
 													if (player_target.scaleX > 0.75){
 														desy = desy*(-1);
 													}
@@ -1741,8 +1793,8 @@
 					msg[5] = local_player.hp;
 					msg[6] = local_player.energy;
 					msg[7] = true;
-					_control.sendMessage (p_move, msg);
-					current_mps+=1;
+					sendmsg (p_move, msg, "High");
+					
 			}
 			//                -W-
 			//************************************
@@ -1773,6 +1825,9 @@
 			
 			if (effect){
 				mc.character.gotoAndPlay("spawn");
+				if(mc.flag == "PC"){
+					mc.dmgbox.gotoAndPlay("spawn");
+				}
 				mc.animation = "spawn";
 				//var ghost :death_effect = new death_effect();
 				//bg.addChild(ghost);
@@ -1874,8 +1929,8 @@
 					n++;
 				}
 			}
-			_control.sendMessage (REPORT, msg);
-			current_mps+=1;
+			sendmsg (REPORT, msg, "High");
+			
     	}
 		
 		//-------------------------------------LOAD NPCS----------------------------------------
@@ -1952,8 +2007,8 @@
 				msg[5] = local_player.hp;
 				msg[6] = local_player.energy;
 				msg[7] = local_player.character.scaleX;
-        		_control.sendMessage (p_goal, msg);
-				current_mps+=1;
+        		sendmsg (p_goal, msg, "Low");
+				
 			}
 			//                -W-
 			//************************************
@@ -1991,8 +2046,8 @@
 						msg[6] = local_player.energy;
 						msg[7] = local_player.character.scaleX;
 						msg[8] = clock;
-						_control.sendMessage (p_goal, msg);
-						current_mps+=1;
+						sendmsg (p_goal, msg, "Low");
+						
 					}
 					//                -W-
 					//************************************
@@ -2085,7 +2140,7 @@
 			if(mc.flag == "coin"){
 				var sparkle1 :MovieClip;
 				var rnd :Number = Math.random()*100;
-				if (rnd > 33 && current_fps >= 20){
+				if (rnd > 33 && fps_now >= 20){
 					sparkle1 = new coin_spark();
 					bg.addChild(sparkle1);
 					sparkle1.x = mc.x+Math.random()*30+(-15);
@@ -2113,8 +2168,8 @@
 						msgg[0] = room_num;
 						msgg[1] = _control.getMyId();
 						msgg[2] = mc.name;
-						_control.sendMessage (d_item, msgg);
-						current_mps+=1;
+						sendmsg (d_item, msgg);
+						
 					}
 					//                -W-
 					//************************************
@@ -2132,7 +2187,7 @@
 						mc.removeEventListener("enterFrame", update_coin);
 						mc.parent.removeChild(mc);
 						increase_score(5);
-						local_exp += 15;
+						//local_exp += 15;
 						if (_control.isConnected()) {
 							var flow :Number = Math.round(_control.getAvailableFlow()*0.2);
 							if(flow < 1){
@@ -2200,6 +2255,12 @@
     	protected function player_punch (mc:MovieClip) :void
     	{	
 			if (mc == local_player){
+				if (mc.att_p[current_attack]){
+					mc.attack_name = mc.att_p[current_attack];
+				}else{
+					mc.attack_name = mc.att_p[0];
+				}
+				
 				if (local_player.energy >= 25 && local_limiter != true){
 						if ((mc.animation == "idle" || mc.animation == "walk") && mc.animation_old != "punch"){
 							local_player.energy -= 25;
@@ -2228,8 +2289,8 @@
 								msg[0] = room_num;
 								msg[1] = _control.getMyId();
 								msg[2] = local_player.character.scaleX;
-								_control.sendMessage (p_punch, msg);
-								current_mps+=1;
+								sendmsg (p_punch, msg, "Low");
+								
 							}
 							//                -W-
 							//************************************
@@ -2247,8 +2308,8 @@
 							msgg[1] = _control.getMyId();
 							msgg[3] = mc.name;
 							msgg[2] = local_player.character.scaleX;
-							_control.sendMessage (n_punch, msgg);
-							current_mps+=1;
+							sendmsg (n_punch, msgg, "Low");
+							
 						}
 						//                -W-
 						//************************************
@@ -2262,6 +2323,11 @@
 		//-------------------------------------KICK!----------------------------------------------
     	protected function player_kick (mc:MovieClip) :void
     	{
+			if (mc.att_k[current_attack]){
+					mc.attack_name = mc.att_k[current_attack];
+			}else{
+					mc.attack_name = mc.att_k[0];
+			}
 			if (mc == local_player){
 				if (local_player.energy >= 25 && local_limiter != true){
 						if ((mc.animation == "idle" || mc.animation == "walk") && mc.animation_old != "kick"){
@@ -2291,8 +2357,8 @@
 								msg[0] = room_num;
 								msg[1] = _control.getMyId();
 								msg[2] = local_player.character.scaleX;
-								_control.sendMessage (n_kick, msg);
-								current_mps+=1;
+								sendmsg (n_kick, msg, "Low");
+								
 							}
 							//                -W-
 							//************************************
@@ -2310,8 +2376,8 @@
 							msgg[1] = _control.getMyId();
 							msgg[3] = mc.name;
 							msgg[2] = local_player.character.scaleX;
-							_control.sendMessage (p_kick, msgg);
-							current_mps+=1;
+							sendmsg (p_kick, msgg, "Low");
+							
 						}
 						//                -W-
 						//************************************
@@ -2350,8 +2416,8 @@
 						msg[0] = room_num;
 						msg[1] = _control.getMyId();
 						msg[2] = local_player.character.scaleX;
-						_control.sendMessage (p_block, msg);
-						current_mps+=1;
+						sendmsg (p_block, msg, "Low");
+						
 					}
 					//                -W-
 					//************************************
@@ -2374,8 +2440,8 @@
 						msgg[0] = room_num;
 						msgg[1] = _control.getMyId();
 						msgg[2] = local_player.character.scaleX;
-						_control.sendMessage (p_block_stop, msgg);
-						current_mps+=1;
+						sendmsg (p_block_stop, msgg, "Low");
+						
 					}
 					//                -W-
 					//************************************
@@ -2412,6 +2478,23 @@
 						if (local_player.energy > 0){
 							dmg = dmg/2;
 							local_player.energy -= dmg;
+							
+							
+							mc.sliding = true;
+							mc.moving = false;
+							mc.sprinting =false;
+							mc.move_time = 0;
+							mc.move_distance = 0;
+							mc.start_x = mc.goal_x;
+							mc.start_y =mc.goal_y;
+							mc.goal_x = mc.x;
+							mc.goal_y = mc.y;
+							if (attacker.x > mc.x){
+								mc.old_x = mc.x+(dmg+knockback);
+							}else{
+								mc.old_x = mc.x-(dmg+knockback);
+							}
+							
 							dmg = 0;
 							health_tick = clock+3000;
 							
@@ -2466,8 +2549,8 @@
 						msgg[7] = (Math.random()*5)+(-2.5);
 						itemcount += 1;
 						msgg[8] = itemcount;
-						_control.sendMessage (s_item, msgg);
-						current_mps+=1;
+						sendmsg (s_item, msgg, "High");
+						create_coin( msgg[2], msgg[3], msgg[4], msgg[8],  msgg[5],  msgg[6],  msgg[7]);
 					}
 					//                -W-
 					//************************************
@@ -2544,13 +2627,100 @@
 			
 			
     	}
+		
+		
+		protected function attack_data (attack_name:String, info:String) :Number
+    	{
+			var par:Number = 0;
+			switch (attack_name) {
+					
+					case "left swing":
+						if(info == "dmg"){
+							par = ((Math.random()*5)+5)*(local_level*0.5);
+						}else if(info == "kb"){
+							par = 0;
+						}else if(info == "stn"){
+							par = 0;
+						}
+						break;
+					
+					case "right swing":
+						if(info == "dmg"){
+							par = ((Math.random()*6)+6)*(local_level*0.5);
+						}else if(info == "kb"){
+							par = 0;
+						}else if(info == "stn"){
+							par = 0;
+						}
+						break;
+						
+					case "thrust":
+						if(info == "dmg"){
+							par = ((Math.random()*10)+10)*(local_level*0.5);
+						}else if(info == "kb"){
+							par = 20;
+						}else if(info == "stn"){
+							par = 0;
+						}
+						break;
+						
+					case "up cut":
+						if(info == "dmg"){
+							par = ((Math.random()*10)+20)*(local_level*0.5);
+						}else if(info == "kb"){
+							par = 20;
+						}else if(info == "stn"){
+							par = 0.5;
+						}
+						break;
+						
+					case "down cut":
+						if(info == "dmg"){
+							par = ((Math.random()*15)+20)*(local_level*0.5);
+						}else if(info == "kb"){
+							par = 0;
+						}else if(info == "stn"){
+							par = 3.0;
+						}
+						break;
+						
+					case "wide cut":
+						if(info == "dmg"){
+							par = ((Math.random()*20)+40)*(local_level*0.5);
+						}else if(info == "kb"){
+							par = 40;
+						}else if(info == "stn"){
+							par = 0;
+						}
+						break;
+			}
+			return par;
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		//----------------------------------------------------------------------------------------
 		//----------------------------------------------------------------------------------------
 		//----------------------------------------------------------------------------------------
 		
 		
 		
-		protected function sendmsg (n:String, msg:Object) :void
+		protected function sendmsg (n:String, msg:Object, imp:String="Normal") :void
     	{
 			if(current_mps < 8){ //Below threshold
 				current_mps++;
@@ -2558,14 +2728,27 @@
 				//                -W-
 				if (_control.isConnected()) {
 						_control.sendMessage (n, msg);
-						current_mps+=1;
+						current_mps++;
 				}
 				//                -W-
 				//************************************
 				
 			}else{ //Too many messages sent! Wait!
-				var TBS: _MSG = new _MSG();
+				var k :int = int(hud.tbs_output.text);
+				k++;
+				hud.tbs_output.text = k;
+				
+				var TBS: MovieClip;
+				TBS = new _MSG();
+				TBS.msg = new Object();
 				TBS.msg = msg;
+				TBS.imp = imp;
+				
+				TBS.birth = clock;
+				
+				TBS.order = MSGCOUNT;
+				MSGCOUNT++;
+				
 				TBS.name = n;
 				MSGBOX.addChild(TBS);
 				TBS.addEventListener("enterFrame", update_MSG);
@@ -2575,16 +2758,37 @@
 		protected function update_MSG (e:Event) :void
     	{
 			var mc:MovieClip = e.target;
-			if(current_mps < 8){
+			var k :int;
+			
+			if(current_mps < 8 && (MSGSENT >= mc.order || mc.imp == "High")){
 				current_mps++;
+				//MSGSENT = mc.order+1;
 				//************************************
 				//                -W-
 				if (_control.isConnected()) {
 						_control.sendMessage (mc.name, mc.msg);
-						current_mps+=1;
+						current_mps++;
 				}
 				//                -W-
 				//************************************
+				k = int(hud.tbs_output.text);
+				k-=1;
+				hud.tbs_output.text = k;
+				mc.removeEventListener("enterFrame", update_MSG);
+				MSGBOX.removeChild(mc);
+			}
+			
+			if(mc.birth+2500 < clock && mc.imp == "Low"){
+				k = int(hud.tbs_output.text);
+				k-=1;
+				hud.tbs_output.text = k;
+				mc.removeEventListener("enterFrame", update_MSG);
+				MSGBOX.removeChild(mc);
+			}
+			if(mc.birth+5000 < clock && mc.imp == "Normal"){
+				k = int(hud.tbs_output.text);
+				k-=1;
+				hud.tbs_output.text = k;
 				mc.removeEventListener("enterFrame", update_MSG);
 				MSGBOX.removeChild(mc);
 			}
@@ -2638,9 +2842,6 @@
 				
 				//---PUBLIC---
 				switch (event.name) {
-					case s_item:
-						create_coin( Number(event.value[2]),  Number(event.value[3]),  String(event.value[4]), int(event.value[8]),  int(event.value[5]),  Number(event.value[6]),  Number(event.value[7]));
-						break;
 					
 					case GTNR:
 						room_num = int(event.value[0]);
@@ -2741,14 +2942,18 @@
 							msgr[0] = room_num;
 							msgr[1] = _control.getMyId();
 							msgr[2] = clock
-							_control.sendMessage (CLOCK_UPDATE, msgr);
-							current_mps+=1;
+							sendmsg (CLOCK_UPDATE, msgr, "High");
+							//_control.sendMessage (CLOCK_UPDATE, msgr);
+							
 						}
 					}
 					
 					var gX :Number;
 					var gY :Number;
 					switch (event.name){
+						case s_item:
+							create_coin( Number(event.value[2]),  Number(event.value[3]),  String(event.value[4]), int(event.value[8]),  int(event.value[5]),  Number(event.value[6]),  Number(event.value[7]));
+							break;
 						
 						case p_hurt:
 							var mob :Number = Number(event.value[2]);
