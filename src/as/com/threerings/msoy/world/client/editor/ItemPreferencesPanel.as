@@ -10,6 +10,7 @@ import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.containers.ViewStack;
+import mx.controls.CheckBox;
 import mx.controls.ComboBox;
 import mx.controls.TextInput;
 import mx.core.UIComponent;
@@ -110,12 +111,12 @@ public class ItemPreferencesPanel extends FloatingPanel
 
         // this label is for support+
         _debug = new TextInput();
-        _debug.setStyle("color", 0xff0000);
         _debug.editable = false;
         if (_ctx.getMemberObject().tokens.isSupport()) {
             var dgrid :Grid = new Grid();
+            dgrid.setStyle("color", 0xff0000);
             addChild(dgrid);
-            GridUtil.addRow(dgrid, MsoyUI.createLabel(Msgs.EDITING.get("l.action")), _debug);
+            GridUtil.addRow(dgrid, Msgs.EDITING.get("l.action"), _debug);
         }
         
         addButtons(OK_BUTTON, CANCEL_BUTTON);
@@ -124,6 +125,8 @@ public class ItemPreferencesPanel extends FloatingPanel
     // from superclass
     override protected function childrenCreated () :void
     {
+        super.childrenCreated();
+
         // set data binding functions
         BindingUtils.bindProperty(
             _actionPanels, "selectedIndex", _actionTypeSelection, "selectedIndex");
@@ -147,7 +150,6 @@ public class ItemPreferencesPanel extends FloatingPanel
         super.buttonClicked(buttonId);
     }
 
-
     /**
      * Called when a new type is selected from the list, it will find call the appropriate panel's
      * update function. The panel itself is popped to the top independently of this function.
@@ -165,6 +167,27 @@ public class ItemPreferencesPanel extends FloatingPanel
         }
     }
     
+    // FurniData.ACTION_NONE functions
+    
+    protected function createNonePanel () :UIComponent
+    {
+        var grid :Grid = new Grid();
+        GridUtil.addRow(
+            grid, MsoyUI.createLabel(Msgs.EDITING.get("l.captureMouse")),
+            _captureMouse = new CheckBox());
+        return grid;
+    }
+
+    protected function updateNonePanel () :void
+    {
+        if (_furniData != null) {
+            // null == capture mouse, "-" means don't.
+            // We don't just check for null, because we want to default back to capturing
+            // if the user is switching from a different action type.
+            _captureMouse.selected = (_furniData.actionData != "-");
+        }
+    }
+
     // URL functions
     
     protected function createURLPanel () :UIComponent
@@ -246,6 +269,9 @@ public class ItemPreferencesPanel extends FloatingPanel
         newData.actionType = type;
 
         switch (type) {
+        case FurniData.ACTION_NONE:
+            newData.actionData = _captureMouse.selected ? null : "-";
+            break;
         case FurniData.ACTION_URL:
             newData.actionData = _url.text;
             break;
@@ -295,7 +321,9 @@ public class ItemPreferencesPanel extends FloatingPanel
     /** Definitions of different action types and how they affect the preferences panel. */
     protected const ACTIONS :Array = [
         { data: FurniData.ACTION_NONE,
-          label: Msgs.EDITING.get("l.action_none") },
+          label: Msgs.EDITING.get("l.action_none"),
+          panelCreateFn: createNonePanel,
+          panelUpdateFn: updateNonePanel },
 
         { data: FurniData.ACTION_PORTAL,
           label: Msgs.EDITING.get("l.action_portal"),
@@ -326,6 +354,7 @@ public class ItemPreferencesPanel extends FloatingPanel
     protected var _readOnlyActionLabel :TextInput;
     protected var _actionTypeSelection :ComboBox;
     protected var _actionPanels :ViewStack;
+    protected var _captureMouse :CheckBox;
     protected var _url :TextInput;
     protected var _door :TextInput;
     protected var _debug :TextInput;
