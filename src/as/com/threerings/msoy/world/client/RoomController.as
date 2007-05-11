@@ -330,18 +330,21 @@ public class RoomController extends SceneController
     /**
      * Handles EDIT_DOOR.
      */
-    public function handleEditDoor (furniSprite :FurniSprite) :void
+    public function handleEditDoor (furniData :FurniData) :void
     {
-        if (! isRoomEditing()) {
-            _roomObj.roomService.editRoom(
-                _mctx.getClient(), new ResultWrapper(
-                    function (cause :String) :void {
-                        _mctx.displayFeedback("general", cause);
-                    },
-                    function (result :Object) :void {
-                        DoorTargetEditController.start(furniSprite, _mctx);
-                    }));
+        if (isRoomEditing()) {
+            cancelRoomEditing();
         }
+
+        trace("HANDLE EDIT: " + furniData);
+        _roomObj.roomService.editRoom(
+            _mctx.getClient(), new ResultWrapper(
+                function (cause :String) :void {
+                    _mctx.displayFeedback("general", cause);
+                },
+                function (result :Object) :void {
+                    DoorTargetEditController.start(furniData, _mctx);
+                }));
     }
 
     /**

@@ -73,6 +73,14 @@ public class FloatingPanel extends TitleWindow
     }
 
     /**
+     * This property is true if the floating panel is currently open.
+     */
+    public function get isOpen () :Boolean
+    {
+        return _parent != null;
+    }
+    
+    /**
      * Close this FloatingPanel.
      */
     public function close () :void

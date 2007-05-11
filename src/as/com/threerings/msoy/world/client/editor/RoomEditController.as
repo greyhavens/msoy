@@ -53,9 +53,9 @@ public class RoomEditController
      * PHASE_* constants describe the current editing phase. Each action can go through
      * the following phases:
      *   init    - resets targeting (all actions)
-     *   acquire - target is acquired for editing mode (move, scale, delete)
+     *   acquire - target is acquired for editing mode (move, scale, delete, prefs)
      *   modify  - target is modified based on movement (move, scale)
-     *   commit  - editing changes are committed (move, scale, delete)
+     *   commit  - acquisition/modification changes are processed (move, scale, delete, prefs)
      *   done    - editing is finalized (all actions)
      * If a new action is selected before the /done/ phase, the current phase is rolled back
      * to the latest phase valid for the new type of action. For example, if we're in the
@@ -69,17 +69,20 @@ public class RoomEditController
     public static const PHASE_DONE    :int = 4;
 
     public static const PHASEACTIONS :Array =
-        [ /* init */    [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE,
-                              ACTION_UNDO, ACTION_ROOM,  ACTION_PREFS ],
-          /* acquire */ [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE ],
+        [ /* init */    [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE, ACTION_PREFS,
+                              ACTION_UNDO, ACTION_ROOM ],
+          /* acquire */ [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE, ACTION_PREFS ],
           /* modify */  [ ACTION_MOVE, ACTION_SCALE ],
-          /* commit */  [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE ],
-          /* done */    [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE,
-                              ACTION_UNDO, ACTION_ROOM,  ACTION_PREFS ] ];
+          /* commit */  [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE, ACTION_PREFS ],
+          /* done */    [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE, ACTION_PREFS,
+                              ACTION_UNDO, ACTION_ROOM ] ];
 
     // for debugging only
     protected static const PHASENAMES :Array = [ "init", "acquire", "modify", "commit", "done" ];
 
+    /** Drawing properties for the acquire phase. */
+    protected static const ACQUIRE_DANGEROUS_ACTIONS :Array = [ ACTION_DELETE ];
+    protected static const ACQUIRE_STEM_ACTIONS :Array = [ ACTION_MOVE ];
 
     /** Editing mode preferences. */
     public var moveYAxisOnly :Boolean;
@@ -98,6 +101,7 @@ public class RoomEditController
         _panel.roomView.setEditingOverlay(true);
 
         _settings = new SettingsController(_ctx, this);
+        _itemprefs = new ItemPreferencesPanel(_ctx, this, roomCtrl);
 
         // todo: after refactoring, call RoomController.startEditing
     }
@@ -108,6 +112,9 @@ public class RoomEditController
 
         // todo: after refactoring, call RoomController.endEditing
 
+        _itemprefs.close();
+        _itemprefs = null;
+        
         _settings.finish(false);
         _settings = null;
         
@@ -190,9 +197,7 @@ public class RoomEditController
         roomCtrl.applyUpdate(new SceneUpdateAction(_ctx, oldScene, newScene));
         _panel.updateUndoButton(true);
     }
-
-
-    
+  
     /**
      * Keeps track of the different keys used to modify edit settings.
      */
@@ -211,9 +216,11 @@ public class RoomEditController
         }
     }
 
-    // Phase: init
-
-    protected function doInit () :void
+    /**
+     * Handles clicking on one of the target-less actions. After calling this function,
+     * they fall through to their /done/ phase.
+     */
+    protected function handleActionsWithoutTargets () :void
     {
         // non-target buttons (room settings, undo) perform their actions here.
         switch (_currentAction) {
@@ -223,7 +230,14 @@ public class RoomEditController
             // undo the last action, and set undo button's enabled state appropriately
             _panel.updateUndoButton(roomCtrl.undoLastUpdate());
         }
-            
+    }
+
+    
+    // Phase: init
+
+    protected function doInit () :void
+    {
+        handleActionsWithoutTargets();
         switchToPhase(nextPhase());
     }
 
@@ -255,7 +269,12 @@ public class RoomEditController
         if (_acquireCandidate != sprite) {
             _panel.clearFocus(_acquireCandidate);
             _acquireCandidate = sprite as FurniSprite;
-            _panel.updateFocus(_acquireCandidate, _currentAction);
+
+            var dangerous :Boolean = (ACQUIRE_DANGEROUS_ACTIONS.indexOf(_currentAction) != -1);
+            var drawStem :Boolean = (ACQUIRE_STEM_ACTIONS.indexOf(_currentAction) != -1);
+            var highlightColor :uint = dangerous ? 0xff0000 : 0xffffff;
+
+            _panel.updateFocus(_acquireCandidate, _currentAction, drawStem, highlightColor);
         }
     }
 
@@ -290,7 +309,8 @@ public class RoomEditController
         }
 
         // otherwise start modification functionality
-        _panel.updateFocus(_currentTarget, _currentAction);
+        var drawStem :Boolean = (ACQUIRE_STEM_ACTIONS.indexOf(_currentAction) != -1);
+        _panel.updateFocus(_currentTarget, _currentAction, drawStem);
     }
 
     protected function moveModify (x :Number, y :Number) :void
@@ -304,7 +324,8 @@ public class RoomEditController
             break;
         }
 
-        _panel.updateFocus(_currentTarget, _currentAction);
+        var drawStem :Boolean = (ACQUIRE_STEM_ACTIONS.indexOf(_currentAction) != -1);
+        _panel.updateFocus(_currentTarget, _currentAction, drawStem);
     }
 
     protected function clickModify (sprite :MsoySprite, event :MouseEvent) :void
@@ -330,28 +351,33 @@ public class RoomEditController
     
     protected function startCommit () :void
     {
-        // add undo stack functionality here
+        var nextPhase :int = nextPhase();
         
         switch (_currentAction) {
-            // both the move and scale actions commit data immediately, then force a return
-            // back to the init state, so the player can move or scale more objects
-        case ACTION_MOVE:
+        case ACTION_MOVE:  // falls through
         case ACTION_SCALE:
+            // both the move and scale actions commit data immediately, then force a return
+            // back to the init state, so the player can move or scale more objects. 
             if (_currentTarget != null && _originalTargetData != null) {
                 updateFurni(_originalTargetData, _currentTarget.getFurniData());
             }
-            switchToPhase(PHASE_INIT);
-            return;
+            nextPhase = PHASE_INIT; // force a loop
+            break;
         case ACTION_DELETE:
             // delete the old object
             if (_originalTargetData != null) {
                 updateFurni(_originalTargetData, null);
             }
             break;
+        case ACTION_PREFS:
+            // display/refresh a properties window
+            if (_currentTarget != null) {
+                displayProperties(_currentTarget);
+            }
+            break;
         }
 
-        // note: MOVE and SCALE never reach this line
-        switchToPhase(nextPhase());
+        switchToPhase(nextPhase);
     }
 
     protected function endCommit () :void
@@ -472,6 +498,20 @@ public class RoomEditController
         return computeScale(furni, newwidth, newheight); 
     }
 
+    // Item properties display
+
+    /**
+     * Opens an editing window for furni properties. If one is already open, it just gets
+     * refreshed with new furni info.
+     */
+    protected function displayProperties (sprite :FurniSprite) :void
+    {
+        if (! _itemprefs.isOpen) {
+            _itemprefs.open();
+        }
+        _itemprefs.update(sprite.getFurniData());
+    }
+    
     // Phase and action helpers
 
     /** Returns true if the given phase supports the given action. */
@@ -517,7 +557,6 @@ public class RoomEditController
         }
         return PHASE_DONE;
     }
-
     
     /**
      * Start a completely new action. Finds the latest phase valid for this action,
@@ -555,7 +594,7 @@ public class RoomEditController
 
     protected var _ctx :WorldContext;
     protected var _panel :RoomEditPanel;
-
+    
     /** During acquisition phase, points to the different sprites as the mouse hovers over them. */
     protected var _acquireCandidate :FurniSprite;
 
@@ -568,8 +607,8 @@ public class RoomEditController
     protected var _currentAction :String;
     protected var _currentPhase :int = PHASE_DONE;
 
-    /** Settings. */
     protected var _settings :SettingsController;
+    protected var _itemprefs :ItemPreferencesPanel;
 
 }
 }

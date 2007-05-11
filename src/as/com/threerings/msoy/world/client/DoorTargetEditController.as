@@ -66,26 +66,26 @@ public class DoorTargetEditController
      * Start editing a door. Displays the target editor window, which waits for the player
      * to click on a 'submit' button to specify target location.
      */
-    public static function start (door :FurniSprite, ctx :WorldContext) :void
+    public static function start (doorData :FurniData, ctx :WorldContext) :void
     {
         if (editing) {
             _this.deinit();
         }
 
-        _this.init(door, ctx);
+        _this.init(doorData, ctx);
     }
     
     /**
      * Initializes all internal data structures.
      */
-    protected function init (door :FurniSprite, ctx :WorldContext) :void
+    protected function init (doorData :FurniData, ctx :WorldContext) :void
     {
         _ctx = ctx;
         _container = ctx.getTopPanel().getPlaceContainer();
         _ui = makeUI();
 
         _doorScene = _ctx.getSceneDirector().getScene().getId();
-        _doorId = door.getFurniData().itemId;
+        _doorId = doorData.itemId;
         _destinationScene = 0;
                 
         _container.addChild(_ui);
@@ -94,11 +94,11 @@ public class DoorTargetEditController
     /**
      * Shuts down any editing data structures. 
      */
-    protected function deinit (doordata :FurniData = null, view :RoomView = null) :void
+    protected function deinit (doorData :FurniData = null, view :RoomView = null) :void
     {
         // if we got update info, send it to the server
-        if (doordata != null && view != null) {
-            updateDoor(doordata, view);
+        if (doorData != null && view != null) {
+            updateDoor(doorData, view);
         }
 
         // now clean up
@@ -114,13 +114,13 @@ public class DoorTargetEditController
     /**
      * Creates a furni update based on provided door data, and sends it to the server.
      */
-    protected function updateDoor (doordata :FurniData, view :RoomView) :void
+    protected function updateDoor (doorData :FurniData, view :RoomView) :void
     {
-        var newdata :FurniData = doordata.clone() as FurniData;
+        var newdata :FurniData = doorData.clone() as FurniData;
         newdata.actionData = String(_destinationScene);
 
         view.getRoomController().applyUpdate(
-            new FurniUpdateAction(_ctx, doordata, newdata));
+            new FurniUpdateAction(_ctx, doorData, newdata));
     }
 
     /** Creates the UI. */

@@ -65,12 +65,6 @@ public class RoomEditPanel extends FloatingPanel
         _wrapupFn();
     }
 
-    /** Returns true if this panel is open on screen. */
-    public function get isOpen () :Boolean
-    {
-        return (_parent != null);
-    }
-
     /** Returns current room layout. */
     public function get roomView () :RoomView
     {
@@ -177,20 +171,15 @@ public class RoomEditPanel extends FloatingPanel
      * Called by the controller, to display a focus rectangle around the specified sprite.
      * The /action/ argument should be one of the RoomEditController.ACTION_* constants.
      */
-    public function updateFocus (sprite :MsoySprite, action :String) :void
+    public function updateFocus (
+        sprite :MsoySprite, action :String,
+        drawStem :Boolean = false, highlightColor :uint = 0xffffff) :void
     {
         if (sprite == null) {
             return; // nothing to do
         }
 
         clearFocus(sprite);
-        
-        var drawStem :Boolean = (action == RoomEditController.ACTION_MOVE);
-        var drawBorder :Boolean = (action == RoomEditController.ACTION_MOVE ||
-                                   action == RoomEditController.ACTION_SCALE ||
-                                   action == RoomEditController.ACTION_DELETE);
-        var highlightColor :uint =
-            (action == RoomEditController.ACTION_DELETE) ? 0xff0000 : 0xffffff;            
         
         var g :Graphics = sprite.graphics;
         var w :Number = sprite.getActualWidth();
@@ -213,22 +202,18 @@ public class RoomEditPanel extends FloatingPanel
 
         // draw the outline part of the border
         g.lineStyle(3, 0x000000, 0.5, true);
+        g.drawRect(-2, -2, w + 3, h + 3);
         if (drawStem) {
             g.moveTo(spriteRoot.x, spriteRoot.y);
             g.lineTo(spriteLocation.x, spriteLocation.y);
-        }
-        if (drawBorder) {
-            g.drawRect(-2, -2, w + 3, h + 3);
         }
 
         // draw the white center of the border
         g.lineStyle(1, highlightColor, 1, true);
+        g.drawRect(-2, -2, w + 3, h + 3);
         if (drawStem) {
             g.moveTo(spriteRoot.x, spriteRoot.y);
             g.lineTo(spriteLocation.x, spriteLocation.y);
-        }
-        if (drawBorder) {
-            g.drawRect(-2, -2, w + 3, h + 3);
         }
 
     }
