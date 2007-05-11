@@ -144,7 +144,8 @@ public class AbstractRoomView extends Sprite
     {
         // if the overlay exists, then we should update it
         if (_backdropOverlay != null) {
-            _backdrop.drawRoom(_backdropOverlay.graphics, _actualWidth, _actualHeight, true, 0.4);
+            _backdrop.drawRoom(
+                _backdropOverlay.graphics, _actualWidth, _actualHeight, true, false, 0.4);
             _layout.updateScreenLocation(_backdropOverlay);
         }
     }

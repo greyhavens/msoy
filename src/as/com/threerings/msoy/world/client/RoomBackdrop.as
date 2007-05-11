@@ -25,8 +25,9 @@ public class RoomBackdrop
     /**
      * Draws the room backdrop on the specified graphics, with specified unscaled parameters.
      */
-    public function drawRoom (g :Graphics, unscaledWidth :Number, unscaledHeight :Number,
-                              editing :Boolean, edgeAlpha :Number = 1.0) :void
+    public function drawRoom (
+        g :Graphics, unscaledWidth :Number, unscaledHeight :Number,
+        drawEdges :Boolean, fillWalls :Boolean, edgeAlpha :Number = 1.0) :void
     {
         g.clear();
 
@@ -40,8 +41,6 @@ public class RoomBackdrop
             g.endFill();
         }
 
-        var drawWalls :Boolean = (_roomType == Decor.DRAWN_ROOM);
-        var drawEdges :Boolean = drawWalls || editing;
         if (!drawEdges) {
             return; // nothing to draw
         }
@@ -78,7 +77,7 @@ public class RoomBackdrop
             g.lineTo(lub.x, lub.y);
         }
         
-        if (drawWalls) {
+        if (fillWalls) {
             // fill in the floor
             g.beginFill(0x333333);
             g.moveTo(llf.x, llf.y);

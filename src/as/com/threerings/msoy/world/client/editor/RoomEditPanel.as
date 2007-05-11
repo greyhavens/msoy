@@ -16,9 +16,11 @@ import mx.containers.HBox;
 import mx.controls.Button;
 import mx.controls.Label;
 
+import com.threerings.flex.CommandButton;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.world.client.MsoySprite;
+import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.ui.FloatingPanel;
@@ -123,6 +125,19 @@ public class RoomEditPanel extends FloatingPanel
 
             box.addChild(button);
         }
+
+        // TEMP add furniture button
+        [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/rollout_plus.png")]
+        const addicon :Class;
+        var add :CommandButton = new CommandButton();
+        add.setStyle("icon", addicon);
+        add.width = 28;
+        add.height = 25;
+        add.toolTip = Msgs.GENERAL.get("t.add_furni");
+        var roomCtrl :RoomController = roomView.getRoomController();
+        add.setCallback(roomCtrl.addNewFurni);
+        box.addChild(add);
+        // end temp 
 
         // make the label row
 

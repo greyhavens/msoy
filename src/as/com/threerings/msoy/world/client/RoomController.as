@@ -392,13 +392,6 @@ public class RoomController extends SceneController
         var furni :FurniSprite = sprite as FurniSprite;
         var menuItems :Array = [];
 
-        // TEMP: doors can also be edited from the right-click menu
-        var furnidata :FurniData = furni.getFurniData();
-        if (furnidata.actionType == FurniData.ACTION_PORTAL) {
-            menuItems.push({ label: Msgs.GENERAL.get("b.edit_door"),
-                             callback: handleEditDoor, arg: furni });
-        }
-
         // pop up the menu where the mouse is
         if (menuItems.length > 0) {
             var menu :CommandMenu = CommandMenu.createMenu(menuItems);
@@ -453,13 +446,6 @@ public class RoomController extends SceneController
         var menuItems :Array = [];
         if (occInfo.bodyOid == us.getOid()) {
             if (_mctx.worldProps.userControlsAvatar) {
-                // FIXME ROBERT
-                // this will be moved elsewhere, once we have a proper furni move/edit UI.
-                if (_scene.canEdit(us)) {
-                    menuItems.push({ label: Msgs.GENERAL.get("t.add_furni"),
-                                     callback: addNewFurni } );
-                }
-                
                 // create a menu for clicking on ourselves
                 var actions :Array = avatar.getAvatarActions();
                 if (actions.length > 0) {
@@ -607,12 +593,14 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Adds a new piece of furni.
+     * Opens a dialog for adding furnis.
      */
-    protected function addNewFurni () :void
+    // this is temp, until we get javascript furni drops working.
+    public function addNewFurni () :void
     {
         if (_mctx.getTopPanel().getPlaceView() is RoomView) {
-            new FurniAddDialog(_mctx, _roomView, _scene);
+            // just a floating popup. 
+            new FurniAddDialog(_mctx, _roomView, _scene); 
         }
     }
 

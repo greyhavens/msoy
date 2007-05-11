@@ -163,26 +163,26 @@ public class ControlBar extends HBox
         _petBtn.styleName = "controlBarButtonPet";
         addGroupChild(_petBtn, [ UI_STD ]);
 
-        _editBtn = new CommandButton();
-        _editBtn.toolTip = Msgs.GENERAL.get("i.editScene");
-        _editBtn.setCommand(ControlBarController.EDIT_SCENE);
-        _editBtn.styleName = "controlBarButtonEdit";
-        _editBtn.enabled = false;
-        addGroupChild(_editBtn, [ UI_STD ]);
-
-        // FIXME ROBERT
-        // TEMP: second edit button for testing in-room editing UI. support+ only.
+        // TEMP: the former room editor is only available for support+, and will be removed soon
+        // (i'm just keeping it around for reference - robert)
         if (_ctx.getMemberObject() != null &&
             _ctx.getMemberObject().tokens.isSupport())
         {
-            _roomeditBtn = new CommandButton();
-            _roomeditBtn.toolTip = Msgs.GENERAL.get("i.editScene");
-            _roomeditBtn.setCommand(ControlBarController.ROOM_EDIT, _roomeditBtn);
-            _roomeditBtn.styleName = "controlBarButtonEdit";
-            _roomeditBtn.enabled = false;
-            _roomeditBtn.toggle = true;
-            addGroupChild(_roomeditBtn, [ UI_STD ]);
+            _editBtn = new CommandButton();
+            _editBtn.toolTip = Msgs.GENERAL.get("i.editScene");
+            _editBtn.setCommand(ControlBarController.EDIT_SCENE);
+            _editBtn.styleName = "controlBarButtonEdit";
+            _editBtn.enabled = false;
+            addGroupChild(_editBtn, [ UI_STD ]);
         }
+        
+        _roomeditBtn = new CommandButton();
+        _roomeditBtn.toolTip = Msgs.GENERAL.get("i.editScene");
+        _roomeditBtn.setCommand(ControlBarController.ROOM_EDIT, _roomeditBtn);
+        _roomeditBtn.styleName = "controlBarButtonEdit";
+        _roomeditBtn.enabled = false;
+        _roomeditBtn.toggle = true;
+        addGroupChild(_roomeditBtn, [ UI_STD ]);
         
         if (_ctx.getWorldClient().isEmbedded()) {
             _logonPanel = new LogonPanel(_ctx, this.height - 4);
