@@ -589,28 +589,29 @@ public class ComicOverlay extends ChatOverlay
             }
         }
 
-        if (_avoids == null) {
-            _avoids = new Sprite();
-            _overlay.addChild(_avoids);
-        }
-
-        while (_avoids.numChildren > 0) {
-            _avoids.removeChildAt(0);
-        }
-
-        for each (r in avoid) {
-            var s :Sprite = new Sprite();
-            s.graphics.lineStyle(1, 0xFF0000);
-            s.graphics.drawRect(0, 0, r.width, r.height);
-            s.x = r.x;
-            s.y = r.y;
-            _avoids.addChild(s);
-        }
-
+//        if (_avoids == null) {
+//            _avoids = new Sprite();
+//            _overlay.addChild(_avoids);
+//        }
+//
+//        while (_avoids.numChildren > 0) {
+//            _avoids.removeChildAt(0);
+//        }
+//
+//        for each (r in avoid) {
+//            var s :Sprite = new Sprite();
+//            s.graphics.lineStyle(1, 0xFF0000);
+//            s.graphics.drawRect(0, 0, r.width, r.height);
+//            s.x = r.x;
+//            s.y = r.y;
+//            _avoids.addChild(s);
+//        }
+//
         return avoid;
     }
 
-    protected var _avoids :Sprite;
+// DEBUGGING: drawing red boxes around the avoid areas
+//    protected var _avoids :Sprite;
 
     // documentation inherited
     override protected function getDisplayDurationIndex () :int
