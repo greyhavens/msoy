@@ -97,7 +97,7 @@ public class ItemPreferencesPanel extends FloatingPanel
         action.addChild(_actionTypeSelection);
 
         // make editing panels for each action type
-        GridUtil.addRow(grid, MsoyUI.createLabel(Msgs.EDITING.get("l.action")), action);
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.action"), action);
         _actionPanels = new ViewStack();
         _actionPanels.resizeToContent = true;
         for each (var entry :Object in entries) {
@@ -172,9 +172,7 @@ public class ItemPreferencesPanel extends FloatingPanel
     protected function createNonePanel () :UIComponent
     {
         var grid :Grid = new Grid();
-        GridUtil.addRow(
-            grid, MsoyUI.createLabel(Msgs.EDITING.get("l.captureMouse")),
-            _captureMouse = new CheckBox());
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.captureMouse"), _captureMouse = new CheckBox());
         return grid;
     }
 
@@ -193,9 +191,7 @@ public class ItemPreferencesPanel extends FloatingPanel
     protected function createURLPanel () :UIComponent
     {
         var grid :Grid = new Grid();
-        GridUtil.addRow(
-            grid, MsoyUI.createLabel(Msgs.EDITING.get("l.url")),
-            _url = new TextInput());
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.url"), _url = new TextInput());
         return grid;
     }
 
@@ -221,8 +217,8 @@ public class ItemPreferencesPanel extends FloatingPanel
         setportal.label = Msgs.EDITING.get("b.set_portal");
         setportal.setCallback(this.editPortalTarget);
 
-        GridUtil.addRow(grid, MsoyUI.createLabel(Msgs.EDITING.get("l.dest_scene")), _door);
-        GridUtil.addRow(grid, MsoyUI.createLabel(Msgs.EDITING.get("l.set_portal")), setportal);
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.dest_scene"), _door);
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.set_portal"), setportal);
             
         return grid;
     }
