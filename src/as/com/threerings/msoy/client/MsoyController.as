@@ -380,11 +380,11 @@ public class MsoyController extends Controller
     public function handleGoGame (gameId :int, placeOid :int) :void
     {
         if (!handleInternalGo("game", gameId + "_" + placeOid)) {
-//             // fall back to breaking the back button
-//             _ctx.getLocationDirector().moveTo(placeOid);
+            // fall back to breaking the back button
+            _ctx.getLocationDirector().moveTo(placeOid);
             // TODO: if this is a Java game and we're in embedded mode, try popping up a new
             // browser window
-            NetUtil.navigateToURL("/#game-" + gameId + "_" + placeOid, false);
+            // NetUtil.navigateToURL("/#game-" + gameId + "_" + placeOid, false);
         }
     }
 
