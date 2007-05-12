@@ -79,9 +79,9 @@ public class TabbedEditor extends CloseAndMaxTabbedPane
      */
     public void updateTabTitleAt (PathElement pathElement)
     {
-        Component tab = _tabList.get(pathElement.elementId).getComponent();
-        if (tab != null) {
-            setTitleAt(indexOfComponent(tab), pathElement.getName());
+        TabbedEditorComponent tab;
+        if ((tab = _tabList.get(pathElement.elementId)) != null) {
+            setTitleAt(indexOfComponent(tab.getComponent()), pathElement.getName());
         }
     }
 
