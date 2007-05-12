@@ -44,7 +44,7 @@ public class TabbedEditorScroller extends JScrollPane
     public void gotoLocation (int row, int column, boolean highlight)
     {
         // if the component being scrolled implements PositionableComponent, call gotoLocation
-        // since swing itself is not type safe, instanceof/cast seems ok here
+        // since Swing itself is not type safe, instanceof/cast seems ok here
         if (getEditingComponent() instanceof PositionableComponent) {
             ((PositionableComponent)getEditingComponent()).gotoLocation(row, column, highlight);
         }

@@ -65,6 +65,7 @@ public class SwiftlyImageDocument extends SwiftlyBinaryDocument
         _image = IOUtils.toByteArray(getOriginalData());
     }
 
+    /** Returns the image data as a byte array */
     public byte[] getImage ()
     {
         return _image;

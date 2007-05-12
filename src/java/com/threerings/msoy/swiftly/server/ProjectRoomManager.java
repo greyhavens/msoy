@@ -93,6 +93,8 @@ public class ProjectRoomManager extends PlaceManager
                     return true;
                 } catch (ProjectStorageException pse) {
                     // TODO: Handle this how?
+                    log.log(Level.WARNING,
+                        "Loading project tree failed. [project=" + project + "].", pse);
                     return false;
                 }
             }
@@ -475,7 +477,7 @@ public class ProjectRoomManager extends PlaceManager
         try {
             FileUtils.deleteDirectory(_buildDir);
         } catch (IOException e) {
-            // TODO: log this
+            log.log(Level.WARNING, "Unable to delete build directory [dir=" + _buildDir + "].", e);
         } finally {
             super.finalize();
         }
@@ -752,9 +754,6 @@ public class ProjectRoomManager extends PlaceManager
                 return;
             }
 
-            // the upload worked, so remove it from the list
-            _currentUploads.remove(_caller.getOid());
-
             // otherwise add or update our path element and document
             PathElement element = _doc.getPathElement();
             if (element.elementId == 0) {
@@ -767,6 +766,9 @@ public class ProjectRoomManager extends PlaceManager
             } else {
                 _roomObj.updateDocuments(_doc);
             }
+
+            // the upload worked, so remove it from the list
+            _currentUploads.remove(_caller.getOid());
 
             // and let the caller know we finally made it
             _listener.requestProcessed();
