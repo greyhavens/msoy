@@ -107,6 +107,8 @@ public class SwiftlyTextPane extends JEditorPane
     // from PositionableComponent
     public void gotoLocation (int row, int column, boolean highlight)
     {
+        // TODO: the component should get focus after moving the caret
+
         // move the caret to the requested position
         Element root = getDocument().getDefaultRootElement();
         // row = 1, column = 1 is the starting position. anything less will be a problem

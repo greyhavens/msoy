@@ -205,6 +205,7 @@ public abstract class SwiftlyDocument
     /** Instances of all the SwiftlyDocument factories. Order determines mime-type handling precedence. */
     protected static DocumentFactory[] _documentTypeFactories = {
         new SwiftlyTextDocument.DocumentFactory(),
+        new SwiftlyImageDocument.DocumentFactory(),
         new SwiftlyBinaryDocument.DocumentFactory()
     };
 }

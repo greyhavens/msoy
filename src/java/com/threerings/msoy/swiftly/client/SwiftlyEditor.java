@@ -57,6 +57,7 @@ import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.data.SwiftlyImageDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
@@ -219,6 +220,17 @@ public class SwiftlyEditor extends PlacePanel
 
         // TODO: remove when the textpane is no longer the document listener
         _roomObj.addListener(textPane);
+    }
+
+    // from SwiftlyDocumentEditor
+    public void editImageDocument (SwiftlyImageDocument document)
+    {
+        PathElement pathElement = document.getPathElement();
+        SwiftlyImagePane imagePane = new SwiftlyImagePane(_ctx, document);
+        TabbedEditorScroller scroller = new TabbedEditorScroller(imagePane, pathElement);
+
+        // add the tab
+        _editorTabs.addEditorTab(scroller, pathElement);
     }
 
     // from SwiftlyDocumentEditor
