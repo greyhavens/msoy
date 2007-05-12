@@ -10,7 +10,6 @@ import com.threerings.msoy.swiftly.data.SwiftlyImageDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 public class SwiftlyImagePane extends JPanel
-    implements PositionableComponent
 {
     public SwiftlyImagePane (SwiftlyContext ctx, SwiftlyImageDocument document)
     {
@@ -25,17 +24,6 @@ public class SwiftlyImagePane extends JPanel
     public void displayImage ()
     {
         _label.setIcon(new ImageIcon(_document.getImage()));
-    }
-
-    // from PositionableComponent
-    public Component getComponent ()
-    {
-        return this;
-    }
-
-    // from PositionableComponent
-    public void gotoLocation (int row, int column, boolean highlight)
-    {
     }
 
     protected SwiftlyContext _ctx;

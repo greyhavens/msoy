@@ -9,9 +9,9 @@ import com.threerings.msoy.swiftly.data.PathElement;
 public class TabbedEditorScroller extends JScrollPane
     implements TabbedEditorComponent
 {
-    public TabbedEditorScroller (PositionableComponent view, PathElement pathElement)
+    public TabbedEditorScroller (Component view, PathElement pathElement)
     {
-        super(view.getComponent(), JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+        super(view, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
               JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         _pathElement = pathElement;
     }
@@ -43,9 +43,11 @@ public class TabbedEditorScroller extends JScrollPane
     // from PositionableComponent
     public void gotoLocation (int row, int column, boolean highlight)
     {
-        // unless the setters on JScrollPane are overriden and the view is stored as an instance
-        // variable as a PositionableComponent, this cast is probably unavoidable and presumptuous 
-        ((PositionableComponent)getEditingComponent()).gotoLocation(row, column, highlight);
+        // if the component being scrolled implements PositionableComponent, call gotoLocation
+        // since swing itself is not type safe, instanceof/cast seems ok here
+        if (getEditingComponent() instanceof PositionableComponent) {
+            ((PositionableComponent)getEditingComponent()).gotoLocation(row, column, highlight);
+        }
     }
 
     protected PathElement _pathElement;
