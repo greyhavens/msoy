@@ -86,6 +86,6 @@ public class SwiftlyImageDocument extends SwiftlyBinaryDocument
         editor.editImageDocument(this);
     }
 
-    /** Image contents, ineffeciently stored entirely in memory. */
+    /** Image contents, inefficiently stored entirely in memory. */
     protected byte[] _image;
 }

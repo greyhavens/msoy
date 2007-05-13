@@ -166,7 +166,7 @@ public class SwiftlyTextDocument extends SwiftlyDocument
         }
     }
 
-    /** Document contents, ineffeciently stored entirely in memory. */
+    /** Document contents, inefficiently stored entirely in memory. */
     protected String _text;
 
     /** If this document has received any input. */
