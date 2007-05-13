@@ -218,7 +218,7 @@ public class SwiftlyEditor extends PlacePanel
         // goto the starting location
         textPane.gotoLocation(row, column, highlight);
 
-        // TODO: remove when the textpane is no longer the document listener
+        // add the text pane as a listener for document set updates and documentupdate events
         _roomObj.addListener(textPane);
     }
 
@@ -231,6 +231,9 @@ public class SwiftlyEditor extends PlacePanel
 
         // add the tab
         _editorTabs.addEditorTab(scroller, pathElement);
+
+        // add the image pane as a set listener for document updates
+        _roomObj.addListener(imagePane);
     }
 
     // from SwiftlyDocumentEditor

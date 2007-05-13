@@ -28,9 +28,16 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
+import com.threerings.presents.dobj.EntryAddedEvent;
+import com.threerings.presents.dobj.EntryRemovedEvent;
+import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.SetListener;
+
 import com.threerings.msoy.swiftly.data.DocumentUpdateListener;
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
+import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
@@ -41,7 +48,7 @@ import sdoc.SyntaxEditorKit;
 import sdoc.SyntaxSupport;
 
 public class SwiftlyTextPane extends JEditorPane
-    implements DocumentUpdateListener, PositionableComponent
+    implements DocumentUpdateListener, SetListener, PositionableComponent
 {
     public static final int PRINT_MARGIN_WIDTH = 100; 
 
@@ -96,6 +103,40 @@ public class SwiftlyTextPane extends JEditorPane
             event.getEditorOid() != _ctx.getClient().getClientOid()) {
             loadDocumentText();
         }
+    }
+
+    // from interface SetListener
+    public void entryAdded (EntryAddedEvent event)
+    {
+        // nada
+    }
+
+    // from interface SetListener
+    public void entryUpdated (EntryUpdatedEvent event)
+    {
+        if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
+            SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
+            // check to see if the updated document is the one being displayed
+            if (element.documentId == _document.documentId) {
+                SwiftlyTextDocument newDoc = (SwiftlyTextDocument)element;
+                SwiftlyTextDocument oldDoc = (SwiftlyTextDocument)event.getOldEntry();
+
+                // update the document reference to point at the new document
+                _document = newDoc;
+
+                // only refresh the text if the document text has changed in the new document
+                if (!newDoc.getText().equals(oldDoc.getText())) {
+                    // display the new text
+                    loadDocumentText();
+                }
+            }
+        }
+    }
+
+    // from interface SetListener
+    public void entryRemoved (EntryRemovedEvent event)
+    {
+        // nada
     }
 
     // from PositionableComponent
