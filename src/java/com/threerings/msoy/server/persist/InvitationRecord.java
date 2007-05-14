@@ -3,15 +3,21 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+
+import com.samskivert.io.PersistenceException;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-
 import com.samskivert.util.StringUtil;
+
+import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.data.Invitation;
 
 /**
  * Contains persistent data stored for every member of MetaSOY.
@@ -114,6 +120,17 @@ public class InvitationRecord extends PersistentRecord
     public String toString ()
     {
         return StringUtil.fieldsToString(this);
+    }
+
+    public Invitation toInvitationObject () 
+        throws PersistenceException
+    {
+        Invitation inv = new Invitation();
+        inv.inviteeEmail = inviteeEmail;
+        inv.inviteId = inviteId;
+        MemberNameRecord memNameRec = MsoyServer.memberRepo.loadMemberName(inviterId);
+        inv.inviter = new MemberName(memNameRec.name, memNameRec.memberId);
+        return inv;
     }
 
     // AUTO-GENERATED: METHODS START

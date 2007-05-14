@@ -654,6 +654,7 @@ body {
 .sendInvites .Pending, .sendInvitesResultsPopup .Email {
   font-size: 12px;
   text-align: center;
+  cursor: pointer;
 }
 
 .sendInvitesResultsPopup .ResultsHeader {

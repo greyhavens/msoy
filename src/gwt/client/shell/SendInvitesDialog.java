@@ -26,6 +26,7 @@ import client.util.InfoPopup;
 
 import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.InvitationResults;
+import com.threerings.msoy.web.data.Invitation;
 
 /**
  * Display a dialog allowing users to send out the invites that have been granted to them, as well
@@ -33,7 +34,7 @@ import com.threerings.msoy.web.data.InvitationResults;
  */
 public class SendInvitesDialog extends BorderedDialog
 {
-    public SendInvitesDialog (MemberInvites invites)
+    public SendInvitesDialog (final MemberInvites invites)
     {
         _header.add(createTitleLabel(CShell.cmsgs.sendInvitesTitle(), null));
 
@@ -96,8 +97,15 @@ public class SendInvitesDialog extends BorderedDialog
 
             Iterator pendingIter = _invites.pendingInvitations.iterator();
             while (pendingIter.hasNext()) {
-                formatter.setStyleName(row, col, "Pending");
-                contents.setText(row, col++, (String)pendingIter.next());
+                final Invitation inv = (Invitation)pendingIter.next();
+                Label invLabel = new Label(inv.inviteeEmail);
+                invLabel.setStyleName("Pending");
+                invLabel.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        (new InfoPopup(invites.serverUrl + inv.inviteId)).show();
+                    }
+                });
+                contents.setWidget(row, col++, invLabel);
                 if (col == 3) {
                     row++;
                     col = 0;

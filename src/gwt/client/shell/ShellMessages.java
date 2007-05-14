@@ -344,9 +344,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String emailUpdated();
 
   /**
-   * Translated "You have already sent invitations to these email addresses.".
+   * Translated "You have already sent invitations to these email addresses.  Clicking on an address will show you the invitation URL that you can email or IM to your friend.".
    * 
-   * @return translated "You have already sent invitations to these email addresses."
+   * @return translated "You have already sent invitations to these email addresses.  Clicking on an address will show you the invitation URL that you can email or IM to your friend."
    * @gwt.key sendInvitesPendingTip
    */
   String sendInvitesPendingTip();

@@ -182,11 +182,14 @@ public class MemberServlet extends MsoyServiceServlet
         try {
             MemberInvites result = new MemberInvites();
             result.availableInvitations = MsoyServer.memberRepo.getInvitesGranted(memberId);
-            ArrayList<String> emails = new ArrayList<String>();
+            ArrayList<Invitation> pending = new ArrayList<Invitation>();
             for (InvitationRecord iRec : MsoyServer.memberRepo.loadPendingInvites(memberId)) {
-                emails.add(iRec.inviteeEmail);
+                pending.add(iRec.toInvitationObject());
             }
-            result.pendingInvitations = emails;
+            result.pendingInvitations = pending;
+            int port = ServerConfig.getHttpPort();
+            result.serverUrl = "http://" + ServerConfig.serverHost + 
+                (port != 80 ? ":" + port : "") + "/#invite-";
             return result;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getInvitationsStatus failed [id=" + memberId +"]", pe);
@@ -308,8 +311,7 @@ public class MemberServlet extends MsoyServiceServlet
     public Invitation getInvitation (String inviteId, boolean viewing)
         throws ServiceException
     {
-        Invitation inv = new Invitation();
-
+        Invitation inv;
         try {
             InvitationRecord invRec;
             if (viewing) {
@@ -321,17 +323,11 @@ public class MemberServlet extends MsoyServiceServlet
                 // probably someone trying to sneak in
                 throw new ServiceException(ServiceException.INTERNAL_ERROR);
             }
-
-            inv.inviteId = invRec.inviteId;
-            inv.inviteeEmail = invRec.inviteeEmail;
-            
-            MemberNameRecord memNameRec = MsoyServer.memberRepo.loadMemberName(invRec.inviterId);
-            inv.inviter = new MemberName(memNameRec.name, memNameRec.memberId);
+            inv = invRec.toInvitationObject();
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getInvitation failed [inviteId=" + inviteId + "]", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
-         
         return inv;
     }
 

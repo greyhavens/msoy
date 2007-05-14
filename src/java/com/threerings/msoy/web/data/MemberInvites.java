@@ -16,6 +16,9 @@ public class MemberInvites
     /** The number of invites available. */
     public int availableInvitations;
 
-    /** The list of pending invitations email addresses. */
+    /** The list of pending Invitations. */
     public List pendingInvitations;
+
+    /** The server host string that should be prepended on the invite id */
+    public String serverUrl;
 }
