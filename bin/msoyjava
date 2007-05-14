@@ -57,12 +57,12 @@ fi
 
 # add all necessary JAR files and $MSOY_HOME to the CLASSPATH
 CLASSPATH="$JAVA_HOME/jre/lib/rt.jar"
-for jar in $MSOY_HOME/dist/lib/*.jar $MSOY_HOME/dist/msoy-code.jar; do
-    if [ -e $jar ]; then
-        CLASSPATH=$jar:$CLASSPATH
+for JAR in $MSOY_HOME/dist/lib/*.jar $MSOY_HOME/dist/msoy-code.jar; do
+    if [ -e $JAR ]; then
+        CLASSPATH=$JAR:$CLASSPATH
     fi
 done
-CLASSPATH=$MSOY_HOME:$CLASSPATH
+CLASSPATH=$MSOY_HOME/dist:$CLASSPATH
 export CLASSPATH
 
 # do the deed
