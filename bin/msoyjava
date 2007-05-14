@@ -55,7 +55,7 @@ if [ ! -z "$NEEDS_MEMBAR" ]; then
      JAVA_ARGS="$JAVA_ARGS -XX:+UseMembar"
 fi
 
-# add all necessary JAR files and $MSOY_HOME to the CLASSPATH
+# add all necessary JAR files and $MSOY_HOME/dist to the CLASSPATH
 CLASSPATH="$JAVA_HOME/jre/lib/rt.jar"
 for JAR in $MSOY_HOME/dist/lib/*.jar $MSOY_HOME/dist/msoy-code.jar; do
     if [ -e $JAR ]; then
