@@ -9,13 +9,15 @@ import java.awt.Font;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
+import org.jvnet.substance.SubstanceDefaultTreeCellRenderer;
+
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.PathElementTreeNode;
 
 /** 
  * Overrides DefaultTreeCellRenderer to render a Swiftly specific JTree. 
  */ 
-public class ProjectTreeCellRenderer extends DefaultTreeCellRenderer
+public class ProjectTreeCellRenderer extends SubstanceDefaultTreeCellRenderer
 {
     /** 
      * Sets the tree icons based on PathElement type.
