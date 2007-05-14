@@ -706,7 +706,21 @@ public class MsoyController extends Controller
      */
     protected function handleLink (evt :TextEvent) :void
     {
-        showExternalURL(evt.text);
+        var url :String = evt.text;
+        if (StringUtil.startsWith(url, COMMAND_URL)) {
+            var cmd :String = url.substring(COMMAND_URL.length);
+            var arg :String = null;
+            var slash :int = cmd.indexOf("/");
+            if (slash != -1) {
+                arg = cmd.substring(slash + 1);
+                cmd = cmd.substring(0, slash);
+            }
+            CommandEvent.dispatch(evt.target as IEventDispatcher, cmd, arg);
+
+        } else {
+            // A regular URL
+            showExternalURL(url);
+        }
     }
 
     /**
@@ -799,5 +813,8 @@ public class MsoyController extends Controller
 
     /** A string to give up for embedding your local scene. */
     protected var _sceneIdString :String;
+
+    /** The URL prefix for 'command' URLs, that post CommendEvents. */
+    protected static const COMMAND_URL :String = "command://";
 }
 }
