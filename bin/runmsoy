@@ -65,14 +65,13 @@ fi
 CLASSPATH="$JAVA_HOME/jre/lib/rt.jar"
 
 # Add all necessary JAR files to the CLASSPATH
-for jar in $MSOY_HOME/dist/lib/*.jar $MSOY_HOME/dist/msoy-code.jar; do
-    if [ -e $jar ]; then
-        CLASSPATH=$jar:$CLASSPATH
+for JAR in $MSOY_HOME/dist/lib/*.jar $MSOY_HOME/dist/msoy-code.jar; do
+    if [ -e $JAR ]; then
+        CLASSPATH=$JAR:$CLASSPATH
     fi
 done
 
-# Add the deployment directory to the CLASSPATH (so that $MSOY_HOME/rsrc
-# is accessible)
+# Add the deployment directory to the CLASSPATH (for our config files)
 CLASSPATH=$MSOY_HOME/dist:$CLASSPATH
 export CLASSPATH
 
