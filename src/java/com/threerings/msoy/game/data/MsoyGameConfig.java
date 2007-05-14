@@ -32,16 +32,6 @@ public class MsoyGameConfig extends ToyBoxGameConfig
         _gameDef = gameDef;
     }
 
-    @Override
-    public PlaceController createController ()
-    {
-        try {
-            return (PlaceController) Class.forName(getGameDefinition().controller).newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Override @ActionScript(omit=true)
     public String getManagerClassName ()
     {
