@@ -181,32 +181,6 @@ public class CatalogServlet extends MsoyServiceServlet
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(ident.type);
         try {
             if (list) {
-                final int price;
-                // TEMP: admins don't have to pay to list; when this gets factored into
-                // FinancialAction then admins/support can not pay for anything
-                if (mrec.isAdmin()) {
-                    price = 0;
-                } else {
-                    switch (rarity) {
-                    case CatalogListing.RARITY_PLENTIFUL:
-                        price = 100; break;
-                    case CatalogListing.RARITY_COMMON:
-                        price = 200; break;
-                    case CatalogListing.RARITY_NORMAL:
-                        price = 300; break;
-                    case CatalogListing.RARITY_UNCOMMON:
-                        price = 400; break;
-                    case CatalogListing.RARITY_RARE:
-                        price = 500; break;
-                    default:
-                        log.warning("Unknown rarity [item=" + ident + ", rarity=" + rarity + "]");
-                        throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
-                    }
-                }
-                if (mrec.flow < price) {
-                    throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
-                }
-
                 // load a copy of the original item
                 ItemRecord listItem = repo.loadOriginalItem(ident.itemId);
                 if (listItem == null) {
@@ -236,13 +210,6 @@ public class CatalogServlet extends MsoyServiceServlet
                 
                 // and finally create & insert the catalog record
                 CatalogRecord record= repo.insertListing(listItem, rarity, now);
-
-                if (price > 0) {
-                    int flow = MsoyServer.memberRepo.getFlowRepository().updateFlow(
-                        mrec.memberId, price, UserAction.LISTED_ITEM + " " + ident.type +
-                        " " + ident.itemId + " " + rarity, false);
-                    MemberManager.queueFlowUpdated(mrec.memberId, flow);
-                }
 
                 logUserAction(mrec, UserAction.LISTED_ITEM, ident.toString() + " " + rarity);
 

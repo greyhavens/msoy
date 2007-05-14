@@ -5,7 +5,6 @@ package client.inventory;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -70,23 +69,7 @@ public class DoListItemPopup extends BorderedDialog
         rarityBox.addItem(CInventory.msgs.doListRarityRare());
 
         rarityBox.setSelectedIndex(2);
-        rarityBox.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
-                ListBox box = (ListBox) sender;
-                _priceBox.setText(String.valueOf(_prices[box.getSelectedIndex()]));
-            }
-        });
         flow.add(rarityBox);
-        _content.add(flow);
-
-        flow = new FlowPanel();
-        flow.addStyleName("PriceRow");
-        flow.add(new InlineLabel(CInventory.msgs.doListHdrPrice(), false, false, true));
-
-        flow.add(new Image("/images/header/symbol_flow.png"));
-        _priceBox = new Label(String.valueOf(_prices[2]));
-        _priceBox.addStyleName("Price");
-        flow.add(_priceBox);
         _content.add(flow);
 
         _content.add(_status);
@@ -142,7 +125,6 @@ public class DoListItemPopup extends BorderedDialog
     };
 
     protected Label _status;
-    protected Label _priceBox;
     protected VerticalPanel _content;
     protected TextArea _description;
     protected Button _listIt;
@@ -153,6 +135,4 @@ public class DoListItemPopup extends BorderedDialog
         CatalogListing.RARITY_NORMAL, CatalogListing.RARITY_UNCOMMON,
         CatalogListing.RARITY_RARE
     };
-    
-    protected static final int[] _prices = new int[] { 100, 200, 300, 400, 500 };
 }
