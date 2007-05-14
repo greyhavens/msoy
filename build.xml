@@ -675,10 +675,6 @@
       <classpath refid="classpath"/>
       <compilerarg value="-Xlint:unchecked"/>
     </javac>
-    <!-- copy native libraries into dist/lib -->
-    <copy todir="${deploy.dir}/lib">
-      <fileset dir="projects/narya/${deploy.dir}/lib" includes="**/libsignal.so"/>
-    </copy>
   </target>
 
   <!-- builds the javadoc documentation -->

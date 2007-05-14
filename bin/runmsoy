@@ -76,10 +76,6 @@ done
 CLASSPATH=$MSOY_HOME/dist:$CLASSPATH
 export CLASSPATH
 
-# Set up the LD_LIBRARY_PATH to include our shared libraries
-LD_LIBRARY_PATH=$MSOY_HOME/dist/lib/`uname -m`-`uname -s`
-export LD_LIBRARY_PATH
-
 # Create the logfile
 touch $LOGFILE
 

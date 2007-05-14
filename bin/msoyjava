@@ -65,9 +65,5 @@ done
 CLASSPATH=$MSOY_HOME:$CLASSPATH
 export CLASSPATH
 
-# set up the LD_LIBRARY_PATH to include our shared libraries
-LD_LIBRARY_PATH=$MSOY_HOME/dist/lib/`uname -m`-`uname -s`
-export LD_LIBRARY_PATH
-
 # do the deed
 exec $JAVA_VM $JAVA_ARGS $ARGS
