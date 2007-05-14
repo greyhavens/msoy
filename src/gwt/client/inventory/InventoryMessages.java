@@ -120,9 +120,9 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String logon();
 
   /**
-   * Translated "The rarity you choose for an item will influence its purchase price.".
+   * Translated "The rarity you choose for an item influences its purchase price.".
    * 
-   * @return translated "The rarity you choose for an item will influence its purchase price."
+   * @return translated "The rarity you choose for an item influences its purchase price."
    * @gwt.key doListRarityBlurb
    */
   String doListRarityBlurb();
@@ -222,6 +222,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key doListBtnListIt
    */
   String doListBtnListIt();
+
+  /**
+   * Translated "Listing cost:".
+   * 
+   * @return translated "Listing cost:"
+   * @gwt.key doListHdrPrice
+   */
+  String doListHdrPrice();
 
   /**
    * Translated "Plentiful".

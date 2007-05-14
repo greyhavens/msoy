@@ -76,6 +76,18 @@
   margin-top: 5px;
 }
 
+.doListItem .PriceRow {
+  margin-left: 40px;
+  margin-top: 10px;
+}
+
+.PriceRow .Price {
+  display: inline;
+  font-family: Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+}
+
 .doListItem .Status {
   padding-top: 5px;
 }
