@@ -44,7 +44,6 @@ import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyBinaryDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
@@ -52,9 +51,6 @@ import com.threerings.msoy.swiftly.server.build.LocalProjectBuilder;
 import com.threerings.msoy.swiftly.server.build.ProjectBuilderException;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
-
-import org.semanticdesktop.aperture.mime.identifier.MimeTypeIdentifier;
-import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifier;
 
 import org.apache.commons.io.FileUtils;
 
@@ -838,7 +834,8 @@ public class ProjectRoomManager extends PlaceManager
                 }
 
                 // determine the mime type of the uploaded file
-                String mimeType = determineMimeType(_fileName, _tempFile);
+                SwiftlyMimeTypeIdentifier identifier = new SwiftlyMimeTypeIdentifier();
+                String mimeType = identifier.determineMimeType(_fileName, _tempFile);
 
                 // if we already have an existing file, update it
                 if (_doc != null) {
@@ -875,39 +872,6 @@ public class ProjectRoomManager extends PlaceManager
                 // remove the temp file no matter what
                 _tempFile.delete();
             }
-        }
-
-        // TODO factor this out into a static method in PathElement? Where?
-        protected String determineMimeType (String fileName, File fileData)
-            throws IOException
-        {
-            MimeTypeIdentifier identifier = new MagicMimeTypeIdentifier();
-            String mimeType = null;
-
-            /* Identify the mime type */
-            FileInputStream stream = new FileInputStream(fileData);
-            byte[] firstBytes = new byte[identifier.getMinArrayLength()];
-
-            // Read identifying bytes from the to-be-added file
-            if (stream.read(firstBytes, 0, firstBytes.length) >= firstBytes.length) {
-                // Required data was read, attempt magic identification
-                mimeType = identifier.identify(firstBytes, fileName, null);
-            }
-
-            // If that failed, try our internal path-based type detection.
-            if (mimeType == null) {
-                // Get the miserly byte mime-type
-                byte miserMimeType = MediaDesc.suffixToMimeType(fileName);
-
-                // If a valid type was returned, convert to a string.
-                // Otherwise, don't set a mime type.
-                // TODO: binary file detection
-                if (miserMimeType != -1) {
-                    mimeType = MediaDesc.mimeTypeToString(miserMimeType);
-                }
-            }
-
-            return mimeType;
         }
 
         protected String _fileName;

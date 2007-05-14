@@ -20,9 +20,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.semanticdesktop.aperture.mime.identifier.MimeTypeIdentifier;
-import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifier;
-
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNErrorCode;
@@ -49,11 +46,11 @@ import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 import org.tmatesoft.svn.core.wc.ISVNRepositoryPool;
 import org.tmatesoft.svn.core.wc.DefaultSVNRepositoryPool;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.server.SwiftlyMimeTypeIdentifier;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 
 import static com.threerings.msoy.Log.log;
@@ -664,8 +661,6 @@ public class ProjectSVNStorage
     private static void svnAddDirectory (ISVNEditor editor, String parentPath, File sourceDir)
         throws SVNException, FileNotFoundException, IOException
     {
-        MimeTypeIdentifier identifier = new MagicMimeTypeIdentifier();
-
         for (File file : sourceDir.listFiles()) {
             String fileName = file.getName();
             String subPath = parentPath + "/" + fileName;
@@ -687,30 +682,10 @@ public class ProjectSVNStorage
             } else if (file.isFile()) {
                 SVNDeltaGenerator deltaGenerator = new SVNDeltaGenerator();
                 String checksum;
-                String mimeType = null;
 
-                /* Identify the mime type */
-                FileInputStream stream = new FileInputStream(targetFile);
-                byte[] firstBytes = new byte[identifier.getMinArrayLength()];
-
-                // Read identifying bytes from the to-be-added file
-                if (stream.read(firstBytes, 0, firstBytes.length) >= firstBytes.length) {
-                    // Required data was read, attempt magic identification
-                    mimeType = identifier.identify(firstBytes, targetFile.getName(), null);
-                }
-
-                // If that failed, try our internal path-based type detection.
-                if (mimeType == null) {
-                    // Get the miserly byte mime-type
-                    byte miserMimeType = MediaDesc.suffixToMimeType(targetFile.getName());
-
-                    // If a valid type was returned, convert to a string.
-                    // Otherwise, don't set a mime type.
-                    // TODO: binary file detection
-                    if (miserMimeType != -1) {
-                        mimeType = MediaDesc.mimeTypeToString(miserMimeType);
-                    }
-                }
+                // determine the mime type if possible
+                SwiftlyMimeTypeIdentifier identifier = new SwiftlyMimeTypeIdentifier();
+                String mimeType = identifier.determineMimeType(targetFile.getName(), targetFile);
 
                 // Add the file, generating the delta and checksum.
                 editor.addFile(subPath, null, -1);
