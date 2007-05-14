@@ -745,8 +745,14 @@ public class ProjectRoomManager extends PlaceManager
         {
             // if we failed, stop here
             if (_error != null) {
-                log.log(Level.WARNING, "Finish upload failed.", _error);
-                _listener.requestFailed("e.finish_upload_failed");
+                if (_error instanceof CannotDetermineMimeTypeException) {
+                    // let's see what people were trying to upload for now
+                    log.warning("Unable to determine mime type." + _error);
+                    _listener.requestFailed("e.mimetype_not_found");
+                } else {
+                    log.log(Level.WARNING, "Finish upload failed.", _error);
+                    _listener.requestFailed("e.finish_upload_failed");
+                }
                 return;
             }
 
@@ -822,7 +828,7 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         public SwiftlyDocument finishUpload()
-            throws IOException
+            throws IOException, CannotDetermineMimeTypeException
         {
             try {
                 // close the FileOutputStream
@@ -836,6 +842,11 @@ public class ProjectRoomManager extends PlaceManager
                 // determine the mime type of the uploaded file
                 SwiftlyMimeTypeIdentifier identifier = new SwiftlyMimeTypeIdentifier();
                 String mimeType = identifier.determineMimeType(_fileName, _tempFile);
+
+                // if we were unable to determine the mimetype, throw an exception
+                if (mimeType == null) {
+                    throw new CannotDetermineMimeTypeException("File name: " + _fileName);
+                }
 
                 // if we already have an existing file, update it
                 if (_doc != null) {
@@ -882,6 +893,15 @@ public class ProjectRoomManager extends PlaceManager
 
         /** flag to track if the upload failed at any point */
         protected IOException _error;
+    }
+
+    /** An exception for when the mime type cannot be determined for a file. */
+    protected static class CannotDetermineMimeTypeException extends Exception
+    {
+        public CannotDetermineMimeTypeException (String message)
+        {
+            super(message);
+        }
     }
 
     protected ProjectRoomObject _roomObj;
