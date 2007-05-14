@@ -8,8 +8,6 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.EntityMigration;
 
-import com.threerings.toybox.server.ToyBoxManager;
-
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 
@@ -23,7 +21,6 @@ public class GameRepository extends ItemRepository<
         GameCloneRecord,
         GameCatalogRecord,
         GameRatingRecord>
-    implements ToyBoxManager.GameRepository
 {
     @Entity(name="GameTagRecord")
     public static class GameTagRecord extends TagRecord
@@ -45,47 +42,6 @@ public class GameRepository extends ItemRepository<
         _ctx.registerMigration(GameRecord.class, new EntityMigration.Drop(8007, "maxPlayers"));
         _ctx.registerMigration(GameRecord.class, new EntityMigration.Drop(8007, "unwatchable"));
         // END TEMP
-    }
-
-    // from ToyBoxManager.GameRepository
-    public ToyBoxGameRecord loadGame (int gameId)
-        throws PersistenceException
-    {
-        // load up the GameRecord for this game and do some conversion
-        GameRecord game = load(GameRecord.class, gameId);
-        if (game == null) {
-            return null;
-        }
-
-        // we create a custom parser that will create a custom game definition that will look for
-        // the game jar file using the digest as a name instead of the game ident
-        ToyBoxGameRecord tgame = new ToyBoxGameRecord();
-
-        tgame.gameId = gameId;
-        tgame.name = game.name;
-        tgame.maintainerId = game.creatorId;
-        tgame.status = ToyBoxGameRecord.Status.READY.toString();
-        tgame.host = ""; // TODO
-        tgame.definition = game.config; 
-        tgame.digest = MediaDesc.hashToString(game.gameMediaHash);
-        tgame.description = ""; // TODO
-        tgame.created = null; // TODO
-        tgame.lastUpdated = null; // TODO
-        return tgame;
-    }
-
-    // from ToyBoxManager.GameRepository
-    public void incrementPlaytime (int gameId, int minutes)
-        throws PersistenceException
-    {
-        // TODO: do we care?
-    }
-
-    // from ToyBoxManager.GameRepository
-    public void updateOnlineCount (int gameId, int players)
-        throws PersistenceException
-    {
-        // not used
     }
 
     @Override
