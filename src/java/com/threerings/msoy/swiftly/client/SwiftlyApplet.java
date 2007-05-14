@@ -44,6 +44,8 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
+import org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel;
+
 import static com.threerings.msoy.Log.log;
 
 public class SwiftlyApplet extends JApplet
@@ -223,16 +225,11 @@ public class SwiftlyApplet extends JApplet
     protected void createGUI ()
     {
         try {
-            // TODO: The GTK L&F breaks some bits. Just use the default L&F
-            // on anything other than Mac OS and Windows, for now.
-            if (RunAnywhere.isMacOS() || RunAnywhere.isWindows()) {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } else {
-                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-            }            
+            UIManager.setLookAndFeel(new SubstanceBusinessBlackSteelLookAndFeel());
         } catch (Exception e) {
             // this should just fall back on a working theme
         }
+        // TODO: still useful when using substance?
         // let's see how things look without every font being bold
         UIManager.put("swing.boldMetal", Boolean.FALSE);
         // remove the borders from the splitpane so we can add our own later

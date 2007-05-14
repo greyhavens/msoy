@@ -23,16 +23,18 @@
     **/msoy/world/data/WorldMemberInfo.class,**/msoy/item/data/all/**,**/msoy/web/data/**,
     **/msoy/swiftly/data/**,**/msoy/swiftly/client/**,**/msoy/swiftly/util/**,
     **/msoy/game/data/GameMemberInfo.class,**/msoy/game/data/GameSummary.class,
-    **/msoy/world/data/WorldOccupantInfo.class,**/infosys/closeandmaxtabbedpane/**)
+    **/msoy/world/data/WorldOccupantInfo.class)
 -injars ../dist/msoy-media.jar(**/icons/swiftly/**)
 -injars ../dist/lib/sdoc-0.5.0-beta-ooo.jar(!META-INF/*)
+-injars ../dist/lib/substance-lite.jar(!META-INF/*)
 
 -dontskipnonpubliclibraryclasses
 -dontobfuscate
 -outjars ../dist/swiftly-client.jar
 
-# we need whatever we keep of samskivert to be around in its entirety so
-# that if a game uses the same classfile, the whole thing is there
+-keep public class org.jvnet.substance.* {
+    *;
+}
 
 -keepnames class * implements java.io.Serializable
 -keepclassmembers class * implements java.io.Serializable {

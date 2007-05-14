@@ -15,26 +15,36 @@ import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
+import org.jvnet.substance.SubstanceLookAndFeel;
+import org.jvnet.substance.TabCloseListener;
+
 import com.samskivert.util.HashIntMap;
 
-import com.infosys.closeandmaxtabbedpane.CloseAndMaxTabbedPane;
-import com.infosys.closeandmaxtabbedpane.CloseListener;
-
-public class TabbedEditor extends CloseAndMaxTabbedPane
+public class TabbedEditor extends JTabbedPane
 {
     public TabbedEditor (SwiftlyContext ctx, SwiftlyEditor editor)
     {
-        super(false);
         _ctx = ctx;
         _editor = editor;
 
-        addCloseListener(new CloseListener() {
-           public void closeOperation(MouseEvent e) {
-              closeTabAt(getOverTabIndex());
-           }
-        });
-        setMaxIcon(false);
         setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        putClientProperty(SubstanceLookAndFeel.TABBED_PANE_CLOSE_BUTTONS_PROPERTY, Boolean.TRUE);
+
+        // register tab close listener
+        SubstanceLookAndFeel.registerTabCloseChangeListener(this, new TabCloseListener() {
+            public void tabClosing(JTabbedPane tabbedPane, Component tabComponent) {
+                // TODO: factor out with closeTabAt
+                TabbedEditorComponent tab = (TabbedEditorComponent)tabComponent;
+                PathElement pathElement = tab.getPathElement();
+                _tabList.remove(pathElement.elementId);
+                _editor.tabRemoved(tab);
+                assignTabKeys();
+            }
+
+            public void tabClosed(JTabbedPane tabbedPane, Component tabComponent) {
+                SubstanceLookAndFeel.unregisterTabCloseChangeListener(this);
+            }
+        });
     }
 
     /**
