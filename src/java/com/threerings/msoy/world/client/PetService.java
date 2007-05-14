@@ -5,6 +5,7 @@ package com.threerings.msoy.world.client;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.util.Name;
 
 import com.threerings.msoy.item.data.all.Pet;
 
@@ -25,4 +26,10 @@ public interface PetService extends InvocationService
      * restrictions, see the {@link Pet} order constants for details.
      */
     public void orderPet (Client client, int petId, int order, ConfirmListener listener);
+
+    /**
+     * Sends a chat message from the pet with specified id and name.
+     */
+    public void sendChat (Client client, int petId, Name username, String message,
+                          ConfirmListener listener);
 }

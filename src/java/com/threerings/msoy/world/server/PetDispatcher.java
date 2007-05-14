@@ -11,6 +11,7 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.util.Name;
 
 /**
  * Dispatches requests to the {@link PetProvider}.
@@ -49,6 +50,13 @@ public class PetDispatcher extends InvocationDispatcher
             ((PetProvider)provider).orderPet(
                 source,
                 ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (InvocationService.ConfirmListener)args[2]
+            );
+            return;
+
+        case PetMarshaller.SEND_CHAT:
+            ((PetProvider)provider).sendChat(
+                source,
+                ((Integer)args[0]).intValue(), (Name)args[1], (String)args[2], (InvocationService.ConfirmListener)args[3]
             );
             return;
 

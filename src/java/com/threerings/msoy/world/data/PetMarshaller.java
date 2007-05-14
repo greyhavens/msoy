@@ -8,6 +8,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
+import com.threerings.util.Name;
 
 /**
  * Provides the implementation of the {@link PetService} interface
@@ -42,6 +43,19 @@ public class PetMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, ORDER_PET, new Object[] {
             Integer.valueOf(arg2), Integer.valueOf(arg3), listener4
+        });
+    }
+
+    /** The method id used to dispatch {@link #sendChat} requests. */
+    public static final int SEND_CHAT = 3;
+
+    // from interface PetService
+    public void sendChat (Client arg1, int arg2, Name arg3, String arg4, InvocationService.ConfirmListener arg5)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener5 = new InvocationMarshaller.ConfirmMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, SEND_CHAT, new Object[] {
+            Integer.valueOf(arg2), arg3, arg4, listener5
         });
     }
 }

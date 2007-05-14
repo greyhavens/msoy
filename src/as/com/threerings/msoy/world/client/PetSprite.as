@@ -48,9 +48,21 @@ public class PetSprite extends ActorSprite
         CommandEvent.dispatch(this, RoomController.PET_CLICKED, this);
     }
 
-//     override protected function createBackend () :EntityBackend
-//     {
-//         return new PetBackend();
-//     }
+    override protected function createBackend () :EntityBackend
+    {
+        return new PetBackend();
+    }
+
+    /**
+     * This function sends a chat message to the entire room. Called by our backend
+     * in response to a request from usercode.
+     */
+    public function sendChatMessage (msg :String) :void
+    {
+        if (_ident != null && (parent is RoomView)) {
+            (parent as RoomView).getRoomController().sendPetChatMessage(msg, getActorInfo());
+        }
+    }
+
 }
 }

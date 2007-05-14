@@ -12,6 +12,7 @@ import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
+import com.threerings.util.Name;
 
 /**
  * Provides the implementation of the {@link PetService} interface
@@ -46,6 +47,19 @@ public class PetMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, ORDER_PET, [
             Integer.valueOf(arg2), Integer.valueOf(arg3), listener4
+        ]);
+    }
+
+    /** The method id used to dispatch {@link #sendChat} requests. */
+    public static const SEND_CHAT :int = 3;
+
+    // from interface PetService
+    public function sendChat (arg1 :Client, arg2 :int, arg3 :Name, arg4 :String, arg5 :InvocationService_ConfirmListener) :void
+    {
+        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, SEND_CHAT, [
+            Integer.valueOf(arg2), arg3, arg4, listener5
         ]);
     }
 }

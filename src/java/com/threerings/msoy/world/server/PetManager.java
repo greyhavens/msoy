@@ -13,7 +13,10 @@ import com.samskivert.util.HashIntMap;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
+import com.threerings.util.Name;
 
+import com.threerings.crowd.chat.server.SpeakProvider;
+import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.data.MemberObject;
@@ -126,7 +129,7 @@ public class PetManager
             log.warning("callPet() by non-owner [who=" + user.who() + ", pet=" + petId + "].");
             throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
         }
-
+        
         // now check to see if the pet is already loaded
         PetHandler handler = _handlers.get(petId);
         if (handler != null) {
@@ -183,6 +186,33 @@ public class PetManager
         handler.orderPet(user, order);
         listener.requestProcessed();
     }
+
+    // from interface PetProvider
+    public void sendChat (ClientObject caller, int petId, Name username, String message,
+                          PetService.ConfirmListener listener)
+        throws InvocationException
+    {
+        final MemberObject user = (MemberObject)caller;
+
+        // check to see if the pet is already loaded
+        PetHandler handler = _handlers.get(petId);
+        if (handler == null) {
+            log.warning("sendChat() on non-resolved pet [who=" + user.who() +
+                        ", pet=" + petId + "].");
+            throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
+        }
+
+        // get the room and send the chat message there.
+        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.location);
+        if (pmgr == null) {
+            log.warning("sendChat() on invalid location [location=" + user.location + "]");
+        } else {
+            SpeakProvider.sendSpeak(pmgr.getPlaceObject(), username, null, message);
+        }             
+        
+        listener.requestProcessed();
+    }       
+
 
     /**
      * Called after {@link #loadRoomPets} has loaded our persistent pet data to finish the job of

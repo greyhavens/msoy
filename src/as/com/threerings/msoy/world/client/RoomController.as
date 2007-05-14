@@ -54,6 +54,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.TopPanel;
+import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 
@@ -176,6 +177,19 @@ public class RoomController extends SceneController
         _roomObj.roomService.setActorState(_mctx.getClient(), ident, actorOid, state);
     }
 
+    /**
+     * Handles a request by an entity item to send a chat message.
+     */
+    public function sendPetChatMessage (msg :String, info :ActorInfo) :void
+    {
+        var svc :PetService = (_mctx.getClient().requireService(PetService) as PetService);
+        if (checkCanRequest(info.getItemIdent(), "PetService")) {
+            svc.sendChat(
+                _mctx.getClient(), info.getItemIdent().itemId, info.username, msg,
+                new ReportingListener(_mctx));
+        }
+    }
+    
     /**
      * Handles a request by an item in our room to update its memory.
      */
@@ -541,10 +555,8 @@ public class RoomController extends SceneController
     /**
      * Handles ORDER_PET.
      */
-    public function handleOrderPet (args :Array) :void
+    public function handleOrderPet (petId :int, command :int) :void
     {
-        var petId :int = int(args[0]);
-        var command :int = int(args[1]);
         var svc :PetService = (_mctx.getClient().requireService(PetService) as PetService);
         svc.orderPet(_mctx.getClient(), petId, command,
                      new ReportingListener(_mctx, "general", null, "m.pet_ordered" + command));
