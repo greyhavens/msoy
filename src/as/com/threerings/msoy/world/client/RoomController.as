@@ -66,6 +66,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.updates.UpdateAction;
 import com.threerings.msoy.world.client.updates.UpdateStack;
+import com.threerings.msoy.world.client.editor.DoorTargetEditController;
 import com.threerings.msoy.world.client.editor.RoomEditPanel;
 import com.threerings.msoy.world.client.editor.EditorController;
 

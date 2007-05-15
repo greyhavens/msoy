@@ -70,6 +70,7 @@ import com.threerings.msoy.chat.client.ChatInfoProvider;
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.ComicOverlay;
 
+import com.threerings.msoy.world.client.editor.DoorTargetEditController;
 import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.EntityControl;

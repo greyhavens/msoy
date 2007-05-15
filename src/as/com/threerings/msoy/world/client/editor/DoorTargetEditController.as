@@ -1,4 +1,4 @@
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.world.client.editor {
 
 import flash.events.MouseEvent;
 
@@ -14,6 +14,7 @@ import com.threerings.io.TypedArray;
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
@@ -261,7 +262,7 @@ public class DoorTargetEditController
     protected var _ui :Container;
 
     // Button media. 
-    [Embed(source="../../../../../../../rsrc/media/skins/button/furniedit/close.png")]
+    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/close.png")]
     protected static const CANCEL_ICON :Class;
 }
 }
