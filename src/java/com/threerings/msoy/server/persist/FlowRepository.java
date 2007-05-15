@@ -14,17 +14,19 @@ import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
-import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
+import com.samskivert.jdbc.depot.operator.Logic.*;
+
 import com.samskivert.util.ArrayUtil;
+import com.samskivert.util.IntIntMap;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserAction;
@@ -102,45 +104,47 @@ public class FlowRepository extends DepotRepository
     /**
      * Assess this member's humanity based on actions taken between the last assessment and now.
      */
-    public int assessHumanity (int memberId, int currentHumanity, Timestamp now)
+    public int assessHumanity (int memberId, int currentHumanity, int secsSinceLast)
         throws PersistenceException
     {
-        // create the condition that specifices which log records we're interested in
-        Where condition = new Where(new And(
-            new Equals(MemberActionLogRecord.MEMBER_ID, memberId),
-            new LessThanEquals(MemberActionLogRecord.ACTION_TIME_C, now)));
+        // load up all of their actions since our last humanity assessment
+        Where condition = new Where(MemberActionLogRecord.MEMBER_ID, memberId);
+        List<MemberActionLogRecord> records = findAll(MemberActionLogRecord.class, condition);
 
-        List<MemberActionCountRecord> records = findAll(
-            MemberActionCountRecord.class,
-            new FromOverride(MemberActionLogRecord.class),
-            condition,
-            new FieldOverride(MemberActionCountRecord.ACTION_ID,
-                              MemberActionLogRecord.ACTION_ID_C),
-            new FieldOverride(MemberActionCountRecord.COUNT, new LiteralExp("COUNT(*)")),
-            new GroupBy(MemberActionLogRecord.ACTION_ID_C));
-
-        if (records.size() > 0) {
-            // for each action, update the summary records with action counts
-            for (MemberActionCountRecord record : records) {
-                // and update each summary table
-                updateLiteral(
-                    MemberActionSummaryRecord.class,
-                    MemberActionSummaryRecord.MEMBER_ID, memberId,
-                    MemberActionSummaryRecord.ACTION_ID, record.actionId,
-                    new String[] {
-                        MemberActionSummaryRecord.COUNT,
-                        MemberActionSummaryRecord.COUNT + " + " + record.count
-                    });
-            }
-
-            // if all went well, clear the log tables -- no cache invalidation needed because
-            // these records do not define a primary key at all
-            deleteAll(MemberActionLogRecord.class, condition, null);
-
-            // bump humanity by about 0.1 if we did anything at all in the past 24+ hours
-            currentHumanity = Math.min(currentHumanity + 30, 255);
+        // if they've done nothing of note, do not adjust their humanity
+        if (records.size() == 0) {
+            return currentHumanity;
         }
-        return currentHumanity;
+
+        // summarize their action counts and compute any humanity adjustment
+        HumanityHelper helper = new HumanityHelper();
+        IntIntMap actionCounts = new IntIntMap();
+        for (MemberActionLogRecord record : records) {
+            // note that they performed this action once
+            actionCounts.increment(record.actionId, 1);
+            // tell our humanity helper about the record
+            helper.noteRecord(record);
+        }
+
+        // update their action summary counts
+        for (IntIntMap.IntIntEntry entry : actionCounts.entrySet()) {
+            updateLiteral(
+                MemberActionSummaryRecord.class,
+                MemberActionSummaryRecord.MEMBER_ID, memberId,
+                MemberActionSummaryRecord.ACTION_ID, entry.getIntKey(),
+                new String[] {
+                    MemberActionSummaryRecord.COUNT,
+                    MemberActionSummaryRecord.COUNT + " + " + entry.getIntValue()
+                });
+        }
+
+        // clear their log tables -- no cache invalidation needed because these records do not
+        // define a primary key at all
+        deleteAll(MemberActionLogRecord.class, condition, null);
+
+        // finally compute a new humanity assessment for this member (TODO: load up action summary
+        // counts, pass that data in as well)
+        return helper.computeNewHumanity(memberId, currentHumanity, secsSinceLast);
     }
 
     /**

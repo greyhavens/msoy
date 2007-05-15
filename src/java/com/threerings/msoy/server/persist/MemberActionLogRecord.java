@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.util.StringUtil;
 
 /**
  * Maintains a per-member log of timestamped actions with optional extra data.
@@ -60,4 +61,10 @@ public class MemberActionLogRecord extends PersistentRecord
     /** An (optional) opaque value, offline parsed/interpreted depending on the action. */
     @Column(nullable=true)
     public String data;
+
+    @Override // from Object
+    public String toString ()
+    {
+        return StringUtil.fieldsToString(this);
+    }
 }

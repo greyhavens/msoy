@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -189,7 +190,7 @@ public class MemberRecord extends PersistentRecord
     @Column(columnDefinition="lastSession DATETIME NOT NULL")
     public Timestamp lastSession;
 
-    /** This member's current humanity rating, between 0 and 255. */
+    /** This member's current humanity rating, between 0 and {@link MemberObject#MAX_HUMANITY}. */
     public int humanity;
 
     /** The time at which we last assessed this member's humanity. */

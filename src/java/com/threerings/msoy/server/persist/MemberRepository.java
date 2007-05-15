@@ -45,6 +45,7 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -296,7 +297,7 @@ public class MemberRepository extends DepotRepository
             member.created = new Date(now);
             member.lastSession = new Timestamp(now);
             member.lastHumanityAssessment = new Timestamp(now);
-            member.humanity = 100;
+            member.humanity = MemberObject.MAX_HUMANITY/2;
         }
         insert(member);
     }
@@ -394,7 +395,7 @@ public class MemberRepository extends DepotRepository
      * @param humanityReassessFreq the number of seconds between humanity reassessments or zero if
      * humanity assessment is disabled.
      */
-    public void noteSessionEnded (int memberId, int minutes, long humanityReassessFreq)
+    public void noteSessionEnded (int memberId, int minutes, int humanityReassessFreq)
         throws PersistenceException
     {
         long now = System.currentTimeMillis();
@@ -402,9 +403,9 @@ public class MemberRepository extends DepotRepository
         Timestamp nowStamp = new Timestamp(now);
 
         // reassess their humanity if the time has come
-        if (humanityReassessFreq > 0 &&
-            humanityReassessFreq < ((now - record.lastHumanityAssessment.getTime())/1000)) {
-            record.humanity = _flowRepo.assessHumanity(memberId, record.humanity, nowStamp);
+        int secsSinceLast = (int)((now - record.lastHumanityAssessment.getTime())/1000);
+        if (humanityReassessFreq > 0 && humanityReassessFreq < secsSinceLast) {
+            record.humanity = _flowRepo.assessHumanity(memberId, record.humanity, secsSinceLast);
             record.lastHumanityAssessment = nowStamp;
         }
 

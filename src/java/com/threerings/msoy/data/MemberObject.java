@@ -96,6 +96,9 @@ public class MemberObject extends MsoyBodyObject
     public static final String LISTS = "lists";
     // AUTO-GENERATED: FIELDS END
 
+    /** The {@link #humanity} value for a fully actualized human. */
+    public static final int MAX_HUMANITY = 255;
+
     /** The name and id information for this user. */
     public MemberName memberName;
 
@@ -110,7 +113,8 @@ public class MemberObject extends MsoyBodyObject
     /** How much lovely flow we've got jangling around on our person. */
     public int flow;
 
-    /** Our current assessment of how likely to be human this member is, in [0, 255]. */
+    /** Our current assessment of how likely to be human this member is, in [0, {@link
+     * #MAX_HUMANITY}]. */
     public int humanity;
 
     /** The recent scenes we've been through. */
@@ -189,7 +193,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public double getHumanity ()
     {
-        return (double) humanity / 0x100;
+        return humanity / (double)MAX_HUMANITY;
     }
 
     // documentation inherited
