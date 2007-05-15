@@ -46,13 +46,14 @@ public class HumanityHelper
      */
     public int computeNewHumanity (int memberId, int currentHumanity, int secsSinceLast)
     {
-        double adjust = 1;
+        // this will  be multiplied by MAX_HUMANITY and added to their current value
+        double adjust = 0;
 
-        // adjust based on gameplay time
+        // compute an adjustment based on gameplay time
         adjust += computeGameplayAdjustment(memberId, secsSinceLast);
 
         // actually adjust their current value and bound it
-        currentHumanity = (int)Math.round(currentHumanity * adjust);
+        currentHumanity += (int)Math.round(MemberObject.MAX_HUMANITY * adjust);
         return Math.max(Math.min(currentHumanity, MemberObject.MAX_HUMANITY), 0);
     }
 
@@ -84,7 +85,8 @@ public class HumanityHelper
 
         // TEMP: log this so that we can eyeball what's happening for a while
         if (adjust != 1) {
-            log.info("Adjusting humanity [id=" + memberId + ", hpd=" + hoursPerDay + "].");
+            log.info("Adjusting humanity [id=" + memberId + ", hpd=" + hoursPerDay +
+                     ", adjust=" + adjust + "].");
         }
         // END TEMP
 
