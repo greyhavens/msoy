@@ -202,9 +202,13 @@ public class CatalogPanel extends VerticalPanel
         creatorDisplay.setStyleName("creatorContents");
         _tagCloudContainer.setWidget(creatorDisplay);
 
-        // force ourselves back to page 0
-        String args = Page.composeArgs(new int[] { _type, 0 });
-        History.newItem(Application.createLinkToken("catalog", args));
+        if (_page == 0) {
+            refreshItems(true);
+        } else {
+            // force ourselves back to page 0
+            String args = Page.composeArgs(new int[] { _type, 0 });
+            History.newItem(Application.createLinkToken("catalog", args));
+        }
     }
 
     /**
