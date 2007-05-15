@@ -96,6 +96,7 @@ public class ProfileServlet extends MsoyServiceServlet
             ArrayList<Object> data = new ArrayList<Object>();
             data.add(layout);
             data.add(memrec.getName());
+            data.add(memrec.permaName);
             for (Object bdata : layout.blurbs) {
                 data.add(resolveBlurbData(memrec, (BlurbData)bdata));
             }

@@ -64,6 +64,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String inviteToGroup();
 
   /**
+   * Translated "Permaname: {0}".
+   * 
+   * @return translated "Permaname: {0}"
+   * @gwt.key permaName
+   */
+  String permaName(String arg0);
+
+  /**
    * Translated "Your display name must be between {0} and {1} characters long.".
    * 
    * @return translated "Your display name must be between {0} and {1} characters long."

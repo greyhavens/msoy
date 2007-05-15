@@ -47,7 +47,7 @@ public class ProfileBlurb extends Blurb
         _content.setStyleName("profileBlurb");
 
         _content.setWidget(0, 0, _photo = new Image());
-        _content.getFlexCellFormatter().setRowSpan(0, 0, 5);
+        _content.getFlexCellFormatter().setRowSpan(0, 0, 6);
 
         _content.setWidget(0, 1, _displayName = new Label("name"));
         _displayName.setStyleName("Name");
@@ -56,15 +56,16 @@ public class ProfileBlurb extends Blurb
         _headline.setStyleName("Headline");
         _content.setWidget(2, 1, _homepage = new HTML("homepage"));
         _content.setWidget(3, 1, _laston = new Label("..."));
+        _content.setWidget(4, 1, _permaNameLabel = new Label("permaname"));
 
         _content.setWidget(1, 2, _blog = new HTML(""));
         _content.setWidget(2, 2, _gallery = new HTML(""));
         // setWidget(3, 2, _hood = new HTML(""));
 
-        _content.setWidget(4, 1, _buttons = new HorizontalPanel());
+        _content.setWidget(5, 1, _buttons = new HorizontalPanel());
         _buttons.setSpacing(5);
-        _content.getFlexCellFormatter().setColSpan(4, 1, 3);
-        _content.getFlexCellFormatter().setHorizontalAlignment(4, 1, HasAlignment.ALIGN_RIGHT);
+        _content.getFlexCellFormatter().setColSpan(5, 1, 3);
+        _content.getFlexCellFormatter().setHorizontalAlignment(5, 1, HasAlignment.ALIGN_RIGHT);
 
         _edit = new Button("Edit");
         _edit.addClickListener(new ClickListener() {
@@ -147,6 +148,11 @@ public class ProfileBlurb extends Blurb
         updatePhoto(_profile.photo);
 
         _displayName.setText(_name.toString());
+        if (_permaName == null) {
+            _permaNameLabel.setText("");
+        } else {
+            _permaNameLabel.setText(CProfile.msgs.permaName(_permaName));
+        }
         _headline.setText(_profile.headline);
         _laston.setText(_profile.lastLogon > 0L ?
                         CProfile.msgs.lastOnline(_lfmt.format(new Date(_profile.lastLogon))) : "");
@@ -245,7 +251,7 @@ public class ProfileBlurb extends Blurb
     protected Profile _profile;
     protected Image _photo;
     protected HTML _homepage;
-    protected Label _displayName, _headline, _laston;
+    protected Label _displayName, _headline, _laston, _permaNameLabel;
     protected HTML _blog, _gallery, _hood;
 
     protected Button _edit;
