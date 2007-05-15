@@ -496,9 +496,9 @@ public class MailApplication extends DockPanel
 //            headerRows.getFlexCellFormatter().setWidth(row, 1, "100%");
 
             // the name column
-            MemberName who =
-                _currentFolder == MailFolder.SENT_FOLDER_ID ? headers.recipient : headers.sender;
-            Label sender = new Label(who.toString());
+            MemberName who = _currentFolder == MailFolder.SENT_FOLDER_ID ?
+                headers.recipient : headers.sender;
+            Widget sender = Application.memberViewLink(who.toString(), who.getMemberId());
             sender.setStyleName("Sender");
             rows.setWidget(rowCnt, 2, sender);
             rows.getFlexCellFormatter().setWidth(rowCnt, 2, "150px");
@@ -595,8 +595,12 @@ public class MailApplication extends DockPanel
         // TODO: Figure out wrapping for long subject lines
         subject.setStyleName("Subject");
         headers.add(subject); 
-        Label sender = new Label(CMail.msgs.appHdrFrom() + ": " + _message.headers.sender);
+        HorizontalPanel sender = new HorizontalPanel();
+        sender.setSpacing(5);
         sender.setStyleName("Sender");
+        sender.add(new Label(CMail.msgs.appHdrFrom() + ":"));
+        sender.add(Application.memberViewLink(
+            _message.headers.sender.toString(), _message.headers.sender.getMemberId()));
         headers.add(sender);
         Label date = new Label(formatDate(_message.headers.sent));
         date.setStyleName("Date");

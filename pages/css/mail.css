@@ -153,6 +153,7 @@
 }
 
 .HeaderPanel .Row .Sender {
+    text-decoration: underline;
     width: 150px;
 }
 
@@ -203,6 +204,7 @@
 }
 
 .Message .Header .Sender {
+    text-decoration: underline;
     margin-top: 5px;
     width: 18em;
 }
