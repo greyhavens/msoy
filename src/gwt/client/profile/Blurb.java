@@ -41,10 +41,9 @@ public abstract class Blurb extends FlexTable
      * Configures this blurb with a context and the member id for whom it is
      * displaying content.
      */
-    public void init (MemberName name, String permaName, int blurbId, Object blurbData)
+    public void init (MemberName name, int blurbId, Object blurbData)
     {
         _name = name;
-        _permaName = permaName;
         _blurbId = blurbId;
         if (blurbData instanceof BlurbData.ResolutionFailure) {
             didFail(((BlurbData.ResolutionFailure)blurbData).cause);
@@ -93,7 +92,6 @@ public abstract class Blurb extends FlexTable
     protected abstract void didFail (String cause);
 
     protected MemberName _name;
-    protected String _permaName;
     protected int _blurbId;
     protected Label _header;
 }

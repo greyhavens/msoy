@@ -17,14 +17,14 @@ import com.threerings.msoy.web.data.ProfileLayout;
  */
 public class OneColumnLayout extends VerticalPanel
 {
-    public OneColumnLayout (MemberName name, String permaName, ProfileLayout layout,    
+    public OneColumnLayout (MemberName name, ProfileLayout layout,    
         ArrayList blurbs)
     {
         for (int ii = 0; ii < layout.blurbs.size(); ii++) {
             BlurbData bdata = (BlurbData)layout.blurbs.get(ii);
             Blurb blurb = Blurb.createBlurb(bdata.type);
             if (blurb != null) {
-                blurb.init(name, permaName, bdata.blurbId, blurbs.get(ii));
+                blurb.init(name, bdata.blurbId, blurbs.get(ii));
                 add(blurb);
             } else {
                 add(new Label("Unknown blurb type " + bdata.type));

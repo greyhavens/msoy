@@ -96,7 +96,6 @@ public class ProfileServlet extends MsoyServiceServlet
             ArrayList<Object> data = new ArrayList<Object>();
             data.add(layout);
             data.add(memrec.getName());
-            data.add(memrec.permaName);
             for (Object bdata : layout.blurbs) {
                 data.add(resolveBlurbData(memrec, (BlurbData)bdata));
             }
@@ -193,7 +192,7 @@ public class ProfileServlet extends MsoyServiceServlet
         throws PersistenceException
     {
         ProfileRecord prec = MsoyServer.profileRepo.loadProfile(memrec.memberId);
-        Profile profile = (prec == null) ? new Profile() : prec.toProfile();
+        Profile profile = (prec == null) ? new Profile() : prec.toProfile(memrec.permaName);
 
         // TODO: if they're online right now, show that
         profile.lastLogon = (memrec.lastSession != null) ? memrec.lastSession.getTime() : 0L;

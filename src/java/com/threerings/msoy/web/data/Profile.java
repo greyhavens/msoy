@@ -51,4 +51,7 @@ public class Profile implements IsSerializable
 
     /** True if this member has a photo gallery. */
     public boolean hasGallery;
+
+    /** The user's permaName */
+    public String permaName;
 }

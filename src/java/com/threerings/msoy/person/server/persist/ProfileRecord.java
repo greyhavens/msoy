@@ -156,7 +156,7 @@ public class ProfileRecord extends PersistentRecord
     /**
      * Creates a runtime record from this persistent record.
      */
-    public Profile toProfile ()
+    public Profile toProfile (String permaName)
     {
         Profile profile = new Profile();
         profile.homePageURL = homePageURL;
@@ -167,6 +167,7 @@ public class ProfileRecord extends PersistentRecord
         if (photoHash != null) {
             profile.photo = new MediaDesc(photoHash, photoMimeType, photoConstraint);
         }
+        profile.permaName = permaName;
         return profile;
     }
 

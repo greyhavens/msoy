@@ -56,7 +56,7 @@ public class ProfileBlurb extends Blurb
         _headline.setStyleName("Headline");
         _content.setWidget(2, 1, _homepage = new HTML("homepage"));
         _content.setWidget(3, 1, _laston = new Label("..."));
-        _content.setWidget(4, 1, _permaNameLabel = new Label("permaname"));
+        _content.setWidget(4, 1, _permaName = new Label("permaname"));
 
         _content.setWidget(1, 2, _blog = new HTML(""));
         _content.setWidget(2, 2, _gallery = new HTML(""));
@@ -148,10 +148,10 @@ public class ProfileBlurb extends Blurb
         updatePhoto(_profile.photo);
 
         _displayName.setText(_name.toString());
-        if (_permaName == null) {
-            _permaNameLabel.setText("");
+        if (_profile.permaName == null) {
+            _permaName.setText("");
         } else {
-            _permaNameLabel.setText(CProfile.msgs.permaName(_permaName));
+            _permaName.setText(CProfile.msgs.permaName(_profile.permaName));
         }
         _headline.setText(_profile.headline);
         _laston.setText(_profile.lastLogon > 0L ?
@@ -251,7 +251,7 @@ public class ProfileBlurb extends Blurb
     protected Profile _profile;
     protected Image _photo;
     protected HTML _homepage;
-    protected Label _displayName, _headline, _laston, _permaNameLabel;
+    protected Label _displayName, _headline, _laston, _permaName;
     protected HTML _blog, _gallery, _hood;
 
     protected Button _edit;
