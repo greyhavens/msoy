@@ -186,7 +186,6 @@ public class CatalogPanel extends VerticalPanel
         _searchSortPanel.clearSearchBox();
         _tag = null;
         _creator = creatorId;
-        refreshItems(true);
 
         FlowPanel creatorDisplay = new FlowPanel();
         creatorDisplay.add(new InlineLabel(CCatalog.msgs.creatorDisplay() + creatorName + " "));
@@ -202,6 +201,10 @@ public class CatalogPanel extends VerticalPanel
         creatorDisplay.add(clearCreator);
         creatorDisplay.setStyleName("creatorContents");
         _tagCloudContainer.setWidget(creatorDisplay);
+
+        // force ourselves back to page 0
+        String args = Page.composeArgs(new int[] { _type, 0 });
+        History.newItem(Application.createLinkToken("catalog", args));
     }
 
     /**
