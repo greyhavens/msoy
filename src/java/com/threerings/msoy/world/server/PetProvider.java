@@ -9,7 +9,6 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
-import com.threerings.util.Name;
 
 /**
  * Defines the server-side of the {@link PetService}.
@@ -31,6 +30,6 @@ public interface PetProvider extends InvocationProvider
     /**
      * Handles a {@link PetService#sendChat} request.
      */
-    public void sendChat (ClientObject caller, int arg1, Name arg2, String arg3, InvocationService.ConfirmListener arg4)
+    public void sendChat (ClientObject caller, int arg1, int arg2, String arg3, InvocationService.ConfirmListener arg4)
         throws InvocationException;
 }

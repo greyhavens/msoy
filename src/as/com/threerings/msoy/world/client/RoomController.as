@@ -185,7 +185,7 @@ public class RoomController extends SceneController
         var svc :PetService = (_mctx.getClient().requireService(PetService) as PetService);
         if (checkCanRequest(info.getItemIdent(), "PetService")) {
             svc.sendChat(
-                _mctx.getClient(), info.getItemIdent().itemId, info.username, msg,
+                _mctx.getClient(), info.bodyOid, _scene.getId(), msg,
                 new ReportingListener(_mctx));
         }
     }

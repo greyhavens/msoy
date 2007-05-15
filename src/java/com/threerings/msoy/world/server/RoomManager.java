@@ -617,7 +617,7 @@ public class RoomManager extends SpotSceneManager
      * controlled by the calling client, true is returned. Otherwise false is returned (indicating
      * that another client currently has control of the item).
      */
-    protected boolean checkAssignControl (MemberObject who, ItemIdent item, String from)
+    public boolean checkAssignControl (MemberObject who, ItemIdent item, String from)
     {
         Integer memberOid = _avatarIdents.get(item);
         if (memberOid != null) {

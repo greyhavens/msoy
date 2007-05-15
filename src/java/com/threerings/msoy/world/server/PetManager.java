@@ -18,6 +18,7 @@ import com.threerings.util.Name;
 import com.threerings.crowd.chat.server.SpeakProvider;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -32,6 +33,7 @@ import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.PetCodes;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.WorldOccupantInfo;
+import com.threerings.msoy.world.data.WorldPetInfo;
 import com.threerings.msoy.world.server.persist.MemoryRecord;
 
 import static com.threerings.msoy.Log.log;
@@ -188,27 +190,46 @@ public class PetManager
     }
 
     // from interface PetProvider
-    public void sendChat (ClientObject caller, int petId, Name username, String message,
+    public void sendChat (ClientObject caller, int bodyOid, int sceneId, String message,
                           PetService.ConfirmListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject)caller;
 
-        // check to see if the pet is already loaded
-        PetHandler handler = _handlers.get(petId);
-        if (handler == null) {
-            log.warning("sendChat() on non-resolved pet [who=" + user.who() +
-                        ", pet=" + petId + "].");
+        // get the manager of the room where we're chatting
+        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.location);
+        if (! (pmgr instanceof RoomManager)) {
+            log.warning("sendChat() on invalid location [location=" + user.location + "]");
             throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
         }
 
-        // get the room and send the chat message there.
-        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.location);
-        if (pmgr == null) {
-            log.warning("sendChat() on invalid location [location=" + user.location + "]");
+        // are we in the right scene?
+        RoomManager mgr = (RoomManager) pmgr;
+        if (mgr.getScene().getId() != sceneId) {
+            log.warning("sendChat() requested during a room change; chat will be ignored.");
+            
         } else {
-            SpeakProvider.sendSpeak(pmgr.getPlaceObject(), username, null, message);
-        }             
+
+            // get occupant info, make sure the given oid is a pet in the room!
+            OccupantInfo info = mgr.getOccupantInfo(bodyOid);
+            if (! (info instanceof WorldPetInfo)) {
+                log.warning("sendChat() on invalid occupant [bodyOid=" +
+                            bodyOid + ", loc=" + user.location);
+                throw new InvocationException(PetCodes.E_INTERNAL_ERROR);    
+            }
+            
+            // check if the user actually owns the pet
+            WorldPetInfo petInfo = (WorldPetInfo)info;
+            if (! mgr.checkAssignControl(user, petInfo.getItemIdent(), "PetManager.sendChat")) {
+                log.warning("sendChat() requested by non-owner [who=" + user.who() +
+                            ", pet=" + petInfo + "].");
+                throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
+            }
+
+            // it's in the room, let's chat
+            PlaceObject place = mgr.getPlaceObject();
+            SpeakProvider.sendSpeak(place, petInfo.username, null, message);
+        }
         
         listener.requestProcessed();
     }       

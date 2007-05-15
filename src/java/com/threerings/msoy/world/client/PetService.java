@@ -7,6 +7,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.util.Name;
 
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Pet;
 
 /**
@@ -30,6 +31,6 @@ public interface PetService extends InvocationService
     /**
      * Sends a chat message from the pet with specified id and name.
      */
-    public void sendChat (Client client, int petId, Name username, String message,
-                          ConfirmListener listener);
+    public void sendChat (
+        Client client, int bodyOid, int sceneId, String message, ConfirmListener listener);
 }
