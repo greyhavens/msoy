@@ -18,7 +18,7 @@ import mx.events.DragEvent;
 
 import mx.core.Container;
 
-import com.threerings.presents.client.ConfirmAdapter;
+import com.threerings.presents.client.ResultWrapper;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Controller;
 import com.threerings.util.Iterator;
@@ -360,14 +360,14 @@ try {
      */
     public function handlePurchaseRoom () :void
     {
-        var listener :ConfirmAdapter =
-            new ConfirmAdapter (
+        var listener :ResultWrapper =
+            new ResultWrapper (
                 function (cause :String) :void {  // failure handler
                     Log.getLog(this).info("Room purchase failure: " + cause);
                     _ctx.displayFeedback(null, cause);
                 },
-                function () :void {               // success handler
-                    Log.getLog(this).info("Room purchase success!");
+                function (result :Object) :void { // success handler
+                    Log.getLog(this).info("Room purchase success! New room: " + result);
                     _ctx.displayFeedback("editing", "m.room_created_in_editor");
                     _panel.spritePropertiesUpdated();
                 });

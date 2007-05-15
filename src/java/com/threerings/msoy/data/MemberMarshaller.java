@@ -49,9 +49,9 @@ public class MemberMarshaller extends InvocationMarshaller
     public static final int PURCHASE_ROOM = 3;
 
     // from interface MemberService
-    public void purchaseRoom (Client arg1, InvocationService.ConfirmListener arg2)
+    public void purchaseRoom (Client arg1, InvocationService.ResultListener arg2)
     {
-        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
         listener2.listener = arg2;
         sendRequest(arg1, PURCHASE_ROOM, new Object[] {
             listener2

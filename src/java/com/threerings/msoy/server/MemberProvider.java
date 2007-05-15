@@ -30,7 +30,7 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#purchaseRoom} request.
      */
-    public void purchaseRoom (ClientObject caller, InvocationService.ConfirmListener arg1)
+    public void purchaseRoom (ClientObject caller, InvocationService.ResultListener arg1)
         throws InvocationException;
 
     /**

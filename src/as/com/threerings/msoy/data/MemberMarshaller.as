@@ -56,9 +56,9 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const PURCHASE_ROOM :int = 3;
 
     // from interface MemberService
-    public function purchaseRoom (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void
+    public function purchaseRoom (arg1 :Client, arg2 :InvocationService_ResultListener) :void
     {
-        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
         listener2.listener = arg2;
         sendRequest(arg1, PURCHASE_ROOM, [
             listener2

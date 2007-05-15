@@ -511,6 +511,8 @@ public class RoomView extends AbstractRoomView
 
         _ctx.getChatDirector().removeChatDisplay(chatOverlay);
         chatOverlay.setTarget(null);
+
+        setLoading(false);
     }
 
     override public function locationUpdated (sprite :MsoySprite) :void
@@ -546,7 +548,7 @@ public class RoomView extends AbstractRoomView
         addAllOccupants();
         
         // inform the "floating" door editor
-        DoorTargetEditController.setRoomView(this);
+        DoorTargetEditController.updateLocation();
     }
 
     /**

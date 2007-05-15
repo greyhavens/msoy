@@ -11,9 +11,12 @@ import mx.core.Container;
 import mx.core.ScrollPolicy;
 
 import com.threerings.io.TypedArray;
+import com.threerings.presents.client.ResultWrapper;
 import com.threerings.msoy.chat.client.ReportingListener;
+import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.data.FurniData;
@@ -84,68 +87,51 @@ public class DoorTargetEditController
         _ctx = ctx;
         _container = ctx.getTopPanel().getPlaceContainer();
         _ui = makeUI();
+        _ui.open();
+        _ui.x = _ui.y = 0;
 
         _doorScene = _ctx.getSceneDirector().getScene().getId();
         _doorId = doorData.itemId;
         _destinationScene = 0;
-                
-        _container.addChild(_ui);
     }
 
     /**
      * Shuts down any editing data structures. 
      */
-    protected function deinit (doorData :FurniData = null, view :RoomView = null) :void
+    protected function deinit (doorData :FurniData = null) :void
     {
-        // if we got update info, send it to the server
-        if (doorData != null && view != null) {
-            updateDoor(doorData, view);
+        // if we got update info...
+        if (doorData != null) {
+            // ...create a furni update based on the door data, and send it to the server.
+            var ctrl :RoomController =
+                _ctx.getLocationDirector().getPlaceController() as RoomController;
+            
+            var newdata :FurniData = doorData.clone() as FurniData;
+            newdata.actionData = String(_destinationScene);
+            
+            ctrl.applyUpdate(new FurniUpdateAction(_ctx, doorData, newdata));
         }
 
         // now clean up
-        _container.removeChild(_ui);
-        
         _doorId = _doorScene = _destinationScene = 0;
-        
+
+        _ui.close();
         _ui = null;
         _container = null;
         _ctx = null;
     }
 
-    /**
-     * Creates a furni update based on provided door data, and sends it to the server.
-     */
-    protected function updateDoor (doorData :FurniData, view :RoomView) :void
-    {
-        var newdata :FurniData = doorData.clone() as FurniData;
-        newdata.actionData = String(_destinationScene);
-
-        view.getRoomController().applyUpdate(
-            new FurniUpdateAction(_ctx, doorData, newdata));
-    }
-
     /** Creates the UI. */
-    protected function makeUI () :Container
+    protected function makeUI () :FloatingPanel
     {
-        var panel :Container = new Canvas();
-        panel.styleName = "doorEditPanel";
-        panel.horizontalScrollPolicy = ScrollPolicy.OFF;
-        panel.verticalScrollPolicy = ScrollPolicy.OFF;
-        panel.width = 120;  // do i want these absolute?
-        panel.height = 100;
-        panel.x = panel.y = 0;
+        var panel :FloatingPanel = new FloatingPanel(_ctx, Msgs.EDITING.get("t.edit_door"));
+        panel.showCloseButton = true;
 
-        // cancel button in the upper right corner
-        var bcancel :Button = new Button();
-        bcancel.setStyle("icon", CANCEL_ICON);
-        bcancel.addEventListener(MouseEvent.CLICK, cancel);
-        bcancel.styleName = "doorEditButton";
-        bcancel.width = bcancel.height = 13;
-        bcancel.setStyle("right", 2);
-        bcancel.setStyle("top", 2);
-        panel.addChild(bcancel);
+        var label :Text = new Text();
+        label.text = Msgs.EDITING.get("l.edit_door_label");
+        panel.addChild(label);
 
-        var elts :VBox = new VBox();
+        var elts :HBox = new HBox();
         elts.setStyle("right", 2);
         elts.setStyle("left", 2);
         elts.setStyle("top", 20);
@@ -153,19 +139,18 @@ public class DoorTargetEditController
         elts.verticalScrollPolicy = ScrollPolicy.OFF;
         panel.addChild(elts);
 
-        var label :Text = new Text();
-        label.text = Msgs.GENERAL.get("l.edit_door_label");
-        label.percentWidth = 100;
-        label.percentHeight = 100;
-        elts.addChild(label);
-
         var bcommit :Button = new Button();
-        bcommit.label = Msgs.GENERAL.get("b.edit_door_ok");
+        bcommit.label = Msgs.EDITING.get("b.edit_door_ok");
         bcommit.addEventListener(MouseEvent.CLICK, select);
         bcommit.styleName = "doorEditButton";
-        bcommit.percentWidth = 100;
         elts.addChild(bcommit);
 
+        var bpurchase :Button = new Button();
+        bpurchase.label = Msgs.EDITING.get("b.buy_room");
+        bpurchase.addEventListener(MouseEvent.CLICK, purchase);
+        bpurchase.styleName = "doorEditButton";
+        elts.addChild(bpurchase);
+        
         return panel;
     }
 
@@ -178,34 +163,85 @@ public class DoorTargetEditController
     }
 
     /**
-     * Called when the player hits the 'select' button. Starts the chain of events that will
-     * set the door target and move the player back to the room where the door was.
+     * Called when the player hits the 'select' button. 
      */
     protected function select (event :MouseEvent) :void
     {
-        // the sequence of events started by this function is as follows:
-        // 1. we remember the current scene as the new target, and issue a request
-        //    to transfer the player back to the scene with the door.
-        // 2. once there, we set the door target to point to the new location.
-        //
-        // this baroque order of operations reflects a usage pattern in our code,
-        // which requires that a scene be loaded up before it can be edited.
-        
         var sd :SceneDirector = _ctx.getSceneDirector();
         if (sd != null) {
-            
-            // remember where we are
-            _destinationScene = sd.getScene().getId();
-            
-            // ask the player to move back to the old room
-            sd.moveTo(_doorScene);
+            // the door should point to where we are right now
+            setDoor(sd.getScene().getId());
         }
     }
 
     /**
-     * Processes notifications when the player enters a new room.
+     * Called when the player hits the 'purchase' button. 
      */
-    public static function setRoomView (view :RoomView) :void
+    protected function purchase (event :MouseEvent) :void
+    {
+        var listener :ResultWrapper =
+            new ResultWrapper (
+                function (cause :String) :void
+                {   // failure handler
+                    Log.getLog(this).info("Room purchase failure: " + cause);
+                    _ctx.displayFeedback(null, cause);
+                },
+                function (result :Object) :void
+                {   // success handler
+                    if (result != null) {
+                        var newSceneId :int = int(Number(result));
+                        // Log.getLog(this).info("Room purchase success, id = " + newSceneId);
+                        setDoor(newSceneId);
+                    }
+                });
+        
+        _ctx.getWorldDirector().purchaseRoom(listener);
+    }
+
+    /**
+     * Given the target scene Id, this function starts the chain of events that will
+     * set the door target and move the player back to the room where the door was.
+     */
+    protected function setDoor (targetSceneId :int) :void
+    {
+        // the sequence of events started by this function is as follows:
+        // 1. we remember the current scene as the new target, and issue a request
+        //    to transfer the player back to the scene with the door.
+        // 2. once we've traveled there, we set the door target to point to the new location.
+        //
+        // this baroque order of operations reflects a usage pattern in our code,
+        // which requires that a scene be loaded up before it can be edited.
+
+        var sd :SceneDirector = _ctx.getSceneDirector();
+        if (sd == null) {
+            Log.getLog(this).warning("Room purchase failure: scene director not initialized.");
+            return;
+        }
+
+        var scene :MsoyScene = sd.getScene() as MsoyScene;
+
+        // remember the target
+        _destinationScene = targetSceneId;
+
+        // are we already in the room with the door?
+        if (scene.getId() == _doorScene) {
+
+            // get ready to rock!
+            finalizeCommit(scene);
+                
+        } else {
+
+            // move the player back to the room with the door
+            sd.moveTo(_doorScene);
+            // the rest will be triggered via updateLocation(), once we get there...
+        }
+    }
+    
+    /**
+     * Called when the player enters a new room. If we're committing a door, and we
+     * just traveled to the room where the door was placed, finish up editing.
+     */
+    public static function updateLocation () :void
     {
         // we only care about this if we're actually in the process of setting a target door
         if (committing) {
@@ -214,7 +250,7 @@ public class DoorTargetEditController
             // if we're editing, and we traversed back to the original door location,
             // update the door and end editing.
             if (scene.getId() == _this._doorScene) {
-                _this.finalizeCommit(scene, view);
+                _this.finalizeCommit(scene);
             }
         }
     }
@@ -222,7 +258,7 @@ public class DoorTargetEditController
     /**
      * Called after we've returned to the room with the door, will set the door's target.
      */
-    protected function finalizeCommit (scene :MsoyScene, view :RoomView) :void
+    protected function finalizeCommit (scene :MsoyScene) :void
     {
         // find the door furni
         var furnis :Array = scene.getFurni();
@@ -230,7 +266,7 @@ public class DoorTargetEditController
             // check to make sure the object still exists there, and is still a door.
             // todo: we probably want some kind of a lock here.   
             if (data.itemId == _doorId && data.actionType == FurniData.ACTION_PORTAL) {
-                deinit(data, view);
+                deinit(data);
                 return;
             }
         }
@@ -259,11 +295,7 @@ public class DoorTargetEditController
     protected var _ctx :WorldContext;
 
     /** Canvas that contains the editing UI. */
-    protected var _ui :Container;
-
-    // Button media. 
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/close.png")]
-    protected static const CANCEL_ICON :Class;
+    protected var _ui :FloatingPanel;
 }
 }
     

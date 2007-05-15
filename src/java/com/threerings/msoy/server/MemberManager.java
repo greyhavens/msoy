@@ -348,7 +348,7 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void purchaseRoom (ClientObject caller, final InvocationService.ConfirmListener listener)
+    public void purchaseRoom (ClientObject caller, final InvocationService.ResultListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
@@ -377,7 +377,7 @@ public class MemberManager
             }
             public void handleSuccess () {
                 user.addToOwnedScenes(new SceneBookmarkEntry(_newRoomId, roomName, 0));
-                listener.requestProcessed();
+                listener.requestProcessed(_newRoomId);
             }
             public void handleFailure (Exception pe) {
                 log.warning("Unable to create a new room [user=" + user.which() +

@@ -55,7 +55,7 @@ public class MemberDispatcher extends InvocationDispatcher
         case MemberMarshaller.PURCHASE_ROOM:
             ((MemberProvider)provider).purchaseRoom(
                 source,
-                (InvocationService.ConfirmListener)args[0]
+                (InvocationService.ResultListener)args[0]
             );
             return;
 

@@ -277,10 +277,8 @@ public class ItemPreferencesPanel extends FloatingPanel
         }
 
         if (! _furniData.equivalent(newData)) {
-            trace("UPDATING ACTION DATA");
             return newData;
         } else {
-            trace("NOT UPDATING ACTION DATA");
             return null;
         }
     }

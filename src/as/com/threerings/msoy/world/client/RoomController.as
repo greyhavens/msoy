@@ -352,7 +352,6 @@ public class RoomController extends SceneController
             cancelRoomEditing();
         }
 
-        trace("HANDLE EDIT: " + furniData);
         _roomObj.roomService.editRoom(
             _mctx.getClient(), new ResultWrapper(
                 function (cause :String) :void {
