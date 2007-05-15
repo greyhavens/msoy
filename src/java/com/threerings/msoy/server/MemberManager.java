@@ -389,49 +389,51 @@ public class MemberManager
     }
     
     /**
-     * Grant a member some flow, categorized and optionally metatagged with an action
-     * type and a detail String. The member's {@link MemberRecord} is updated, as is the
-     * {@link DailyFlowGrantedRecord}. Finally, a line is written to the flow grant log.
+     * Grant a member some flow, categorized and optionally metatagged with an action type and a
+     * detail String. The member's {@link MemberRecord} is updated, as is the {@link
+     * DailyFlowGrantedRecord}. A {@link MemberActionLogRecord} is recorded for the supplied grant
+     * action. Finally, a line is written to the flow grant log.
      */
     public void grantFlow (final int memberId, final int amount,
                            final UserAction grantAction, final String details)
     {
         MsoyServer.invoker.postUnit(new RepositoryUnit("grantFlow") {
             public void invokePersist () throws PersistenceException {
-                _flow = _memberRepo.getFlowRepository().updateFlow(
-                    memberId, amount, grantAction.toString() + " " + details, true);
+                _flow = _memberRepo.getFlowRepository().grantFlow(
+                    memberId, amount, grantAction, details);
             }
             public void handleSuccess () {
                 flowUpdated(memberId, _flow);
             }
             public void handleFailure (Exception pe) {
                 log.log(Level.WARNING, "Unable to grant flow [memberId=" + memberId +
-                        ", grantAction=" + grantAction + ", amount=" + amount + ", details=" +
-                        details + "]", pe);
+                        ", action=" + grantAction + ", amount=" + amount +
+                        ", details=" + details + "]", pe);
             }
             protected int _flow;
         });
     }
 
     /**
-     * Debit a member some flow, categorized and optionally metatagged with an action
-     * type and a detail String. The member's {@link MemberRecord} is updated, as is the
-     * {@link DailyFlowSpentRecord}. Finally, a line is written to the flow grant log.
+     * Debit a member some flow, categorized and optionally metatagged with an action type and a
+     * detail String. The member's {@link MemberRecord} is updated, as is the {@link
+     * DailyFlowSpentRecord}. A {@link MemberActionLogRecord} is recorded for the supplied spend
+     * action. Finally, a line is written to the flow grant log.
      */
     public void spendFlow (final int memberId, final int amount,
                            final UserAction spendAction, final String details)
     {
         MsoyServer.invoker.postUnit(new RepositoryUnit("spendFlow") {
             public void invokePersist () throws PersistenceException {
-                _flow = _memberRepo.getFlowRepository().updateFlow(
-                    memberId, amount, spendAction.toString() + " " + details, false);
+                _flow = _memberRepo.getFlowRepository().spendFlow(
+                    memberId, amount, spendAction, details);
             }
             public void handleSuccess () {
                 flowUpdated(memberId, _flow);
             }
             public void handleFailure (Exception pe) {
                 log.log(Level.WARNING, "Unable to spend flow [memberId=" + memberId +
-                        ", grantAction=" + spendAction + ", amount=" + amount +
+                        ", action=" + spendAction + ", amount=" + amount +
                         ", details=" + details + "]", pe);
             }
             protected int _flow;

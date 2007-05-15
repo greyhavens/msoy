@@ -47,8 +47,8 @@ public class FlowRepository extends DepotRepository
         // let this long long column name be replaced by something more sensible
         _ctx.registerMigration(
             GameAbuseRecord.class,
-            new EntityMigration.Rename(2, "accumMinutesSinceLastAssessment", "accumMinutes")); 
-        
+            new EntityMigration.Rename(2, "accumMinutesSinceLastAssessment", "accumMinutes"));
+
         // add a cache invalidator that listens to MemberRecord updates
         _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
             public void entryInvalidated (CacheKey key, MemberRecord member) {
@@ -63,7 +63,7 @@ public class FlowRepository extends DepotRepository
     /**
      * Fetch the computed {@link MemberFlowRecord} for the given member. This effectively
      * executes 'select flow from MemberRecord where memberId=?'.
-     * 
+     *
      * TODO: This should probably not be cached at all.
      */
     public MemberFlowRecord loadMemberFlow (int memberId)
@@ -87,20 +87,14 @@ public class FlowRepository extends DepotRepository
      * @return -1 if no flow was granted as a result of this action, the member's new flow count if
      * flow was granted by the action.
      */
-    public int logUserAction (int memberId, UserAction action, String data)
+    public int logUserAction (int memberId, UserAction action, String details)
         throws PersistenceException
     {
-        MemberActionLogRecord record = new MemberActionLogRecord();
-        record.memberId = memberId;
-        record.actionId = action.getNumber();
-        record.actionTime = new Timestamp(System.currentTimeMillis());
-        record.data = data;
-        insert(record);
-
         // if they get flow for performing this action, grant it to them
         if (action.getFlow() > 0) {
-            return updateFlow(memberId, action.getFlow(), action.toString() + " " + data, true);
+            return grantFlow(memberId, action.getFlow(), action, details);
         } else {
+            recordUserAction(memberId, action, details);
             return -1;
         }
     }
@@ -177,7 +171,7 @@ public class FlowRepository extends DepotRepository
             // write an algorithm that actually does something with 'records' here
             gameRecord.abuseFactor = 123;
             gameRecord.accumMinutes = 0;
-            
+
             // then delete the records
             deleteAll(MemberActionLogRecord.class,
                       new Where(GameFlowGrantLogRecord.GAME_ID, gameId),
@@ -190,16 +184,16 @@ public class FlowRepository extends DepotRepository
      * <em>Do not use this method!</em> It exists only because we must work with the coin system
      * which tracks members by username rather than id.
      */
-    public int grantFlow (String accountName, int actionId, String details, int amount)
+    public int grantFlow (String accountName, int amount, UserAction action, String details)
         throws PersistenceException
     {
         MemberRecord record =
             load(MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME, accountName));
         if (record == null) {
             throw new PersistenceException(
-                "Unknown member [accountName=" + accountName + ", actionId=" + actionId + "]");
+                "Unknown member [accountName=" + accountName + ", action=" + action + "]");
         }
-        return updateFlow(record.memberId, amount, details, false);
+        return grantFlow(record.memberId, amount, action, details);
     }
 
     /**
@@ -219,11 +213,36 @@ public class FlowRepository extends DepotRepository
     }
 
     /**
+     * Deducts the specified amount of flow from the supplied member's record. The supplied user
+     * action will also be logged with a {@link MemberActionLogRecord}.
+     *
+     * @return the member's new flow value following the update.
+     */
+    public int spendFlow (int memberId, int amount, UserAction action, String details)
+        throws PersistenceException
+    {
+        return updateFlow(memberId, amount, action, details, false);
+    }
+
+    /**
+     * Adds the specified amount of flow to the supplied member's record. The supplied user action
+     * will also be logged with a {@link MemberActionLogRecord}.
+     *
+     * @return the member's new flow value following the update.
+     */
+    public int grantFlow (int memberId, int amount, UserAction action, String details)
+        throws PersistenceException
+    {
+        return updateFlow(memberId, amount, action, details, true);
+    }
+
+    /**
      * Helper function for {@link #spendFlow} and {@link #grantFlow}.
      *
      * @return the user's new flow value following the update.
      */
-    public int updateFlow (int memberId, int amount, String details, boolean grant)
+    protected int updateFlow (
+        int memberId, int amount, UserAction action, String details, boolean grant)
         throws PersistenceException
     {
         String type = (grant ? "grant" : " spend");
@@ -253,7 +272,7 @@ public class FlowRepository extends DepotRepository
                         ", amount=" + amount +                 ", mods=" + mods + "].");
         }
         Date date = new Date(System.currentTimeMillis());
-        
+
         boolean again = false;
         do {
             mods = updateLiteral(
@@ -288,11 +307,29 @@ public class FlowRepository extends DepotRepository
             }
         } while (again);
 
-        MsoyServer.flowLog(
-            memberId + (grant ? " G " : " S ") + amount + (details != null ? " " + details : ""));
+        // record the associated user action
+        recordUserAction(memberId, action, details);
+
+        // log this to the audit log as well
+        String loginfo = action + (details != null ? " " + details : "");
+        MsoyServer.flowLog(memberId + (grant ? " G " : " S ") + amount + " " + loginfo);
 
         // TODO: can we magically get the updated value from the database? stored procedure?
         return loadMemberFlow(memberId).flow;
+    }
+
+    /**
+     * Records a user action in the database.
+     */
+    protected void recordUserAction (int memberId, UserAction action, String details)
+        throws PersistenceException
+    {
+        MemberActionLogRecord record = new MemberActionLogRecord();
+        record.memberId = memberId;
+        record.actionId = action.getNumber();
+        record.actionTime = new Timestamp(System.currentTimeMillis());
+        record.data = details;
+        insert(record);
     }
 
     // read a game abuse record or create one if needed, possibly also inserting it into the db

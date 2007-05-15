@@ -20,12 +20,13 @@ public enum UserAction
     SENT_FRIEND_INVITE(10, 300),
     ACCEPTED_FRIEND_INVITE(11, 200),
 
-    PLAYED_GAME(20, 300),
+    PLAYED_GAME(20, 0),
 
     CREATED_ITEM(30, 200),
     BOUGHT_ITEM(31, 0),
     LISTED_ITEM(32, 0),
     RETURNED_ITEM(33, 0),
+    RECEIVED_PAYOUT(34, 0),
     ;
 
     /**
