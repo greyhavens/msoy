@@ -8,6 +8,7 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 import flash.ui.Keyboard;
 
 import com.threerings.flash.Vector3;
@@ -292,6 +293,7 @@ public class RoomEditController
     {
         _panel.clearFocus(_acquireCandidate);
 
+        // remember the target
         _currentTarget = _acquireCandidate;
         _acquireCandidate = null;
 
@@ -311,20 +313,20 @@ public class RoomEditController
         }
 
         // otherwise start modification functionality
+
+        _modOriginalBounds = new Rectangle(
+            _currentTarget.x, _currentTarget.y,
+            _currentTarget.getActualWidth(), _currentTarget.getActualHeight());
+        _modOriginalHotspot = _currentTarget.localToGlobal(_currentTarget.getLayoutHotSpot());
+        _modOriginalMouse = new Point(_panel.roomView.stage.mouseX, _panel.roomView.stage.mouseY);
+        
         var drawStem :Boolean = (ACQUIRE_STEM_ACTIONS.indexOf(_currentAction) != -1);
         _panel.updateFocus(_currentTarget, _currentAction, drawStem);
     }
 
     protected function moveModify (x :Number, y :Number) :void
     {
-        switch (_currentAction) {
-        case ACTION_MOVE:
-            moveFurni(_currentTarget, findNewFurniPosition(x, y), false);
-            break;
-        case ACTION_SCALE:
-            scaleFurni(_currentTarget, x, y);
-            break;
-        }
+        processModify(x, y, false);
 
         var drawStem :Boolean = (ACQUIRE_STEM_ACTIONS.indexOf(_currentAction) != -1);
         _panel.updateFocus(_currentTarget, _currentAction, drawStem);
@@ -332,20 +334,28 @@ public class RoomEditController
 
     protected function clickModify (sprite :MsoySprite, event :MouseEvent) :void
     {
-        switch (_currentAction) {
-        case ACTION_MOVE:
-            moveFurni(_currentTarget, findNewFurniPosition(event.stageX, event.stageY), true);
-            break;
-        case ACTION_SCALE:
-            scaleFurni(_currentTarget, event.stageX, event.stageY);
-            break;
-        }
+        processModify(event.stageX, event.stageY, true);
 
         switchToPhase(nextPhase());
     }
-
+    
+    protected function processModify (x :Number, y :Number, isClick :Boolean) :void
+    {
+        switch (_currentAction) {
+        case ACTION_MOVE:
+            moveFurni(_currentTarget, findNewFurniPosition(x, y), isClick);
+            break;
+        case ACTION_SCALE:
+            scaleFurni(_currentTarget, x, y);
+            break;
+        }
+    }
+    
     protected function endModify () :void
     {
+        _modOriginalBounds = null;
+        _modOriginalMouse = null;
+        _modOriginalHotspot = null;
         _panel.clearFocus(_currentTarget);
     }
 
@@ -411,6 +421,9 @@ public class RoomEditController
 
     protected function findNewFurniPosition (x :Number, y :Number) :MsoyLocation
     {
+        x -= (_modOriginalMouse.x - _modOriginalHotspot.x);
+        y -= (_modOriginalMouse.y - _modOriginalHotspot.y);
+        
         var anchor :MsoyLocation = ((moveYAxisOnly || moveZAxisOnly) && _currentTarget != null) ?
             _currentTarget.getLocation() : null;
         
@@ -466,37 +479,19 @@ public class RoomEditController
      */
     protected function findScale (furni: FurniSprite, x :Number, y: Number) :Point
     {
-        // find hotspot position in terms of sprite width and height
-        var hotspot :Point = furni.getLayoutHotSpot();
-        var px :Number = hotspot.x / furni.getActualWidth();  
-        var py :Number = hotspot.y / furni.getActualHeight(); 
+        // find pixel distance from hotspot to the current and the original mouse pointer
+        var mouse :Point = new Point(x, y);
+        var newoffset :Point = mouse.subtract(_modOriginalHotspot);
+        var oldoffset :Point = _modOriginalMouse.subtract(_modOriginalHotspot);
 
-        // find pixel distance from hotspot to mouse pointer
-        var pivot :Point = furni.localToGlobal(hotspot);      
-        var dx :Number = x - pivot.x; // positive to the right of hotspot
-        var dy :Number = pivot.y - y; // positive above hotspot
+        // find scaling factor based on mouse movement
+        var scaleX :Number = newoffset.x / oldoffset.x;
+        var scaleY :Number = newoffset.y / oldoffset.y;
 
-        // convert pixel position to how wide and tall the furni would have to be in order
-        // to reach that position
-        var newwidth :Number = dx / px;
-        var newheight :Number = dy / py;
-
-        // if we're scaling proportionally, lock the two distances
-        /*
-        if (getModifier() == MOD_SHIFT) {
-            // this math is broken and loses precision. todo: revisit.
-            var proportion :Number =
-                clampMagnitude (_furni.getActualWidth() / _furni.getActualHeight(), 0.01, 100);
-            //trace("PROPORTION: " + proportion);
-            
-            if (Math.abs(newwidth) < Math.abs(newheight)) {
-                newheight = clampMagnitude(newheight, 1, newwidth / proportion);
-            } else {
-                newwidth = clampMagnitude(newwidth, 1, newheight * proportion);
-            }
-        }
-        */
-
+        // find how big we want the new bitmap to be
+        var newwidth :Number = _modOriginalBounds.width * scaleX;
+        var newheight :Number = _modOriginalBounds.height * scaleY;
+        
         // scale the furni!
         return computeScale(furni, newwidth, newheight); 
     }
@@ -603,9 +598,19 @@ public class RoomEditController
 
     /** Result of the acquisition phase, points to the acquired sprite. */
     protected var _currentTarget :FurniSprite;
-    
+
     /** Result of the acquisition phase, contains the acquired sprite's original data. */
     protected var _originalTargetData :FurniData;
+
+    /** Sprite size at the beginning of modifications.
+     *  Only valid in the modification phase. */
+    protected var _modOriginalBounds :Rectangle;
+    /** Sprite hotspot in stage coordinates at the beginning of modifications.
+     *  Only valid in the modification phase. */
+    protected var _modOriginalHotspot :Point;
+    /** Mouse position at the beginning of modifications.
+     *  Only valid in the modification phase. */
+    protected var _modOriginalMouse :Point;
 
     protected var _currentAction :String;
     protected var _currentPhase :int = PHASE_DONE;

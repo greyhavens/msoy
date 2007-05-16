@@ -81,6 +81,21 @@ public interface RoomLayout {
         :ClickLocation;
     
     /**
+     * Finds the projection of mouse coordinates onto a plane in the room, parallel with the
+     * front wall, intersecting the room at specified depth. This type of functionality is useful
+     * for converting mouse position into room position at some constant depth.
+     *
+     *   @param stageX       Mouse x position, in stage coordinate space
+     *   @param stageY       Mouse y position, in stage coordinate space
+     *   @param depth        Z position of the intersection wall, in room coordinate space.
+     *
+     * @returns An MsoyLocation for this intersection (with z value equal to depth), or null
+     * if no valid location was found.
+     *
+     */
+    function pointToLocationAtDepth (stageX :Number, stageY :Number, depth :Number) :MsoyLocation;
+    
+    /**
      * Given a position in room space, this function finds its projection in screen space, and
      * updates the DisplayObject's position and scale appropriately. If the display object
      * participates in screen layout (and most of them do, with the notable exception of decor),

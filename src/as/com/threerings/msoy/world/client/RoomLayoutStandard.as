@@ -61,6 +61,24 @@ public class RoomLayoutStandard implements RoomLayout {
     {
         return pointToLocation(stageX, stageY, anchorPoint, anchorAxis);
     }
+
+    // from interface RoomLayout
+    public function pointToLocationAtDepth (
+        stageX :Number, stageY :Number, depth :Number) :MsoyLocation
+    {
+        // get click location, in screen coords
+        var p :Point = new Point(stageX, stageY);
+        p = _parentView.globalToLocal(p);
+
+        // let's make an anchor point
+        var anchor :Vector3 = new Vector3(0, 0, depth);
+
+        // find the intersection of the line of sight with the plane
+        var loc :Vector3 = _metrics.screenToPlaneProjection(
+            p.x, p.y, anchor, RoomMetrics.N_NEAR);
+        
+        return (loc != Vector3.INFINITE) ? _metrics.toMsoyLocation(loc) : null;
+    }
     
     /**
      * Turn the screen coordinate into an MsoyLocation, with the orient field set to 0.

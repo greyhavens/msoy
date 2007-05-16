@@ -143,7 +143,7 @@ public class RoomMetrics
         // intersect with the five walls (except for the near wall :)
         for each (var def :Object in walldefs) {
             if (def.type != ClickLocation.FRONT_WALL) {
-                var pos :Vector3 = lineOfSightToWallProjection(l, def);
+                var pos :Vector3 = lineOfSightToPlaneProjection(l, def.point, def.normal);
                 if (pos.length() < mindistance) {
                     minpoint = pos;
                     mindistance = pos.length();
@@ -163,8 +163,6 @@ public class RoomMetrics
      */
     public function screenToWallProjection (x :Number, y :Number, wall :int) :Vector3
     {
-        var l :Vector3 = screenToLineOfSight(x, y);
-
         var def :Object = null;
         for each (var o :Object in walldefs) {
             if (o.type == wall) {
@@ -177,25 +175,39 @@ public class RoomMetrics
             throw new ArgumentError ("Wall identifier " + wall + " is not supported.");
         }
 
-        return lineOfSightToWallProjection(l, def);
+        return screenToPlaneProjection(x, y, def.point, def.normal);
     }
 
     /**
-     * Given a line of sight vector (unskewed) and a wall definition object (from the walldefs
-     * array), tries to intersect it with that wall. Returns a point of intersection,
-     * or Vector3.INFINITE if the wall is parallel to the vector, or point of intersection
-     * lies behind the front wall (in z < 0).
+     * Given a screen location and a wall location (as a point and a normal in room coordinates),
+     * draws a line of sight vector, and tries to intersect it with that wall.
+     * Returns a point of intersection, or Vector3.INFINITE if the wall is parallel,
+     * or point of intersection lies behind the front wall (in z < 0).
      */
-    protected function lineOfSightToWallProjection (l :Vector3, def :Object) :Vector3
+    public function screenToPlaneProjection (x :Number, y :Number, point :Vector3, normal :Vector3)
+        :Vector3
     {
-        var pos :Vector3 = l.intersection(camera, def.point, def.normal);
+        var l :Vector3 = screenToLineOfSight(x, y);
+        return lineOfSightToPlaneProjection(l, point, normal);
+    }
+
+    /**
+     * Given a line of sight vector (unskewed) and a wall defined by a point and a normal vector,
+     * tries to intersect that vector with that wall. Returns a point of intersection in the
+     * z => 0 half-space, or Vector3.INFINITE if the wall is either parallel to the vector,
+     * or the intersection lies behind the front wall (z < 0).
+     */
+    protected function lineOfSightToPlaneProjection (l :Vector3, point :Vector3, normal :Vector3)
+        :Vector3
+    {
+        var pos :Vector3 = l.intersection(camera, point, normal);
         if (pos.z < 0) {
             return Vector3.INFINITE;
         } else {
             return applySkew(pos);
         }
     }
-        
+
     /**
      * Given a screen location l, and a positional constraint p, finds a location on the vertical
      * line passing through p that corresponds to the screen location.
