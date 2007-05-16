@@ -8,6 +8,8 @@ import flash.text.TextFormat;
 
 import com.threerings.util.Name;
 
+import com.threerings.flash.TextFieldUtil;
+
 public class BubbleGlyph extends ChatGlyph
 {
     public function BubbleGlyph (
@@ -18,7 +20,7 @@ public class BubbleGlyph extends ChatGlyph
         _speaker = speaker;
 
         var txt :TextField = createTextField();
-        txt.width = 400; // TODO
+        txt.width = overlay.getTargetTextWidth();
         txt.autoSize = TextFieldAutoSize.CENTER;
 
         setText(txt, defaultFmt, texts);
@@ -87,30 +89,26 @@ public class BubbleGlyph extends ChatGlyph
             return;
         }
 
-//        var linesToUse :int = 1;
-//        var lastRatio = (txt.textWidth + ChatOverlay.PAD * 2) /
-//                        (txt.textHeight + ChatOverlay.PAD * 2);
-//        for (var lines :int = 2; true; lines++) {
-//            var ratio : ((txt.textWidth / lines) + (ChatOverlay.PAD * 2)) /
-//                ((txt.textHeight * lines) + (ChatOverlay.PAD * 2));
-//            if (Math.abs(ratio - GOLDEN) < Math.abs(lastRatio - GOLDEN)) {
-//                // we're getting closer
-//                lastRatio = ratio;
-//
-//            } else {
-//                // we're getting further away, the last one was it
-//                linesToUse = (lines - 1);
-//                break;
-//            }
-//        }
+        const PAD :int = ChatOverlay.PAD * 2;
+        var w :Number = txt.textWidth + TextFieldUtil.WIDTH_PAD;
+        var h :Number = txt.textHeight + TextFieldUtil.HEIGHT_PAD;
 
-        // TODO: god, do we really want to try tweaking the textfield's
-        // width and trying to make it golden?
+        var linesToUse :int = txt.numLines;
+        var lastRatio :Number = (w + PAD) / (h + PAD);
+        for (var lines :int = linesToUse + 1; true; lines++) {
+            var ratio :Number = ((w * linesToUse / lines) + PAD) / ((h / linesToUse * lines) + PAD);
+            if (Math.abs(ratio - GOLDEN) < Math.abs(lastRatio - GOLDEN)) {
+                // we're getting closer
+                lastRatio = ratio;
 
-        // for right now, if text all fits on one line, make the width 200
-        if (txt.numLines == 1) {
-            txt.width = 200;
+            } else {
+                // we're getting further away, the last one was it
+                linesToUse = (lines - 1);
+                break;
+            }
         }
+
+        txt.width = TextFieldUtil.WIDTH_PAD + txt.textWidth * (txt.numLines / linesToUse);
     }
 
     /** The name of the speaker. */
