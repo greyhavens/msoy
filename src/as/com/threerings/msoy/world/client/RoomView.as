@@ -325,18 +325,9 @@ public class RoomView extends AbstractRoomView
      */
     public function getPets () :Array /* of PetSprite */
     {
-        var results :Array = new Array();
-        var iter :Iterator = _roomObj.occupantInfo.iterator();
-        while (iter.hasNext()) {
-            var info :OccupantInfo = (iter.next() as OccupantInfo);
-            if (info is WorldPetInfo) {
-                var sprite :PetSprite = _actors.get(info.bodyOid) as PetSprite;
-                if (sprite != null) {
-                    results.push(sprite);
-                }
-            }
-        }
-        return results;
+        return _actors.values().filter(function (o :*, i :int, a :Array) :Boolean {
+                return (o is PetSprite);
+            });
     }
     
     /**
