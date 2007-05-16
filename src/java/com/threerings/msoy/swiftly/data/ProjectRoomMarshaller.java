@@ -50,10 +50,12 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int ADD_PATH_ELEMENT = 3;
 
     // from interface ProjectRoomService
-    public void addPathElement (Client arg1, PathElement arg2)
+    public void addPathElement (Client arg1, PathElement arg2, InvocationService.InvocationListener arg3)
     {
+        ListenerMarshaller listener3 = new ListenerMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, ADD_PATH_ELEMENT, new Object[] {
-            arg2
+            arg2, listener3
         });
     }
 
@@ -87,10 +89,12 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int DELETE_DOCUMENT = 6;
 
     // from interface ProjectRoomService
-    public void deleteDocument (Client arg1, int arg2)
+    public void deleteDocument (Client arg1, int arg2, InvocationService.InvocationListener arg3)
     {
+        ListenerMarshaller listener3 = new ListenerMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, DELETE_DOCUMENT, new Object[] {
-            Integer.valueOf(arg2)
+            Integer.valueOf(arg2), listener3
         });
     }
 
@@ -163,10 +167,12 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int UPDATE_DOCUMENT = 12;
 
     // from interface ProjectRoomService
-    public void updateDocument (Client arg1, int arg2, String arg3)
+    public void updateDocument (Client arg1, int arg2, String arg3, InvocationService.InvocationListener arg4)
     {
+        ListenerMarshaller listener4 = new ListenerMarshaller();
+        listener4.listener = arg4;
         sendRequest(arg1, UPDATE_DOCUMENT, new Object[] {
-            Integer.valueOf(arg2), arg3
+            Integer.valueOf(arg2), arg3, listener4
         });
     }
 
@@ -174,10 +180,12 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     public static final int UPDATE_PATH_ELEMENT = 13;
 
     // from interface ProjectRoomService
-    public void updatePathElement (Client arg1, PathElement arg2)
+    public void updatePathElement (Client arg1, PathElement arg2, InvocationService.InvocationListener arg3)
     {
+        ListenerMarshaller listener3 = new ListenerMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, UPDATE_PATH_ELEMENT, new Object[] {
-            arg2
+            arg2, listener3
         });
     }
 

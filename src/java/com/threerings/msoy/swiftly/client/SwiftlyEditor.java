@@ -35,6 +35,7 @@ import com.samskivert.util.StringUtil;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.ChangeListener;
@@ -304,7 +305,13 @@ public class SwiftlyEditor extends PlacePanel
      */
     public void updateDocument (int elementId, String text)
     {
-        _roomObj.service.updateDocument(_ctx.getClient(), elementId, text);
+        _roomObj.service.updateDocument(_ctx.getClient(), elementId, text,
+            new InvocationListener () {
+            public void requestFailed (String reason)
+            {
+                _ctx.showErrorMessage(_msgs.get(reason));
+            }
+        });
     }
 
     /**

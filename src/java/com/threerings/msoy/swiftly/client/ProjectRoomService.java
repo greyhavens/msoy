@@ -14,10 +14,11 @@ import com.threerings.msoy.swiftly.data.PathElement;
 public interface ProjectRoomService extends InvocationService
 {
     /** Requests to add a path element to the project. */
-    public void addPathElement (Client client, PathElement element);
+    public void addPathElement (Client client, PathElement element, InvocationListener listener);
 
     /** Requests that the specified path element be updated (wholesale). */
-    public void updatePathElement (Client client, PathElement element);
+    public void updatePathElement (Client client, PathElement element,
+                                   InvocationListener listener);
 
     /** Requests that the specified path element be removed from the project. */
     public void deletePathElement (Client client, int elementId, ConfirmListener listener);
@@ -32,10 +33,11 @@ public interface ProjectRoomService extends InvocationService
 
     /** Requests that the specified document be updated (currently wholesale but some day with
      * diffs). */
-    public void updateDocument (Client client, int elementId, String text);
+    public void updateDocument (Client client, int elementId, String text,
+                                InvocationListener listener);
 
     /** Requests that the specified document be removed from the project. */
-    public void deleteDocument (Client client, int elementId);
+    public void deleteDocument (Client client, int elementId, InvocationListener listener);
 
     /** Requests that the project be build and the artifacts be published to the game object. */
     public void buildProject (Client client, InvocationListener listener);

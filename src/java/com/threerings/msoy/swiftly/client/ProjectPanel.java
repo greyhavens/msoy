@@ -281,7 +281,12 @@ public class ProjectPanel extends JPanel
             }
             element = PathElement.createDirectory(name, parentElement);
             // TODO: this is clearly broken. no directory is actually being created on the server
-            _roomObj.service.addPathElement(_ctx.getClient(), element);
+            _roomObj.service.addPathElement(_ctx.getClient(), element, new InvocationListener () {
+                public void requestFailed (String reason)
+                {
+                    _ctx.showErrorMessage(_msgs.get(reason));
+                }
+            });
 
         } else if (type == PathElement.Type.FILE) {
             CreateFileDialog dialog = _editor.showCreateFileDialog(parentElement);

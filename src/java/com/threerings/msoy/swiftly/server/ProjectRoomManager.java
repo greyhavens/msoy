@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.SerialExecutor;
 import com.samskivert.util.HashIntMap;
@@ -29,6 +30,8 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
+
+import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
@@ -65,9 +68,11 @@ public class ProjectRoomManager extends PlaceManager
     /**
      * Called by the {@link SwiftlyManager} after creating this project room manager.
      */
-    public void init (final SwiftlyProject project, ProjectStorage storage)
+    public void init (final SwiftlyProject project, ArrayIntSet collaborators,
+                      ProjectStorage storage)
     {
         _storage = storage;
+        _collaborators = collaborators;
 
         // References to our on-disk SDKs
         File flexSdk = new File(ServerConfig.serverRoot + FLEX_SDK);
@@ -108,18 +113,25 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void addPathElement (ClientObject caller, PathElement element)
+    public void addPathElement (ClientObject caller, PathElement element,
+                                InvocationListener listener)
+        throws InvocationException
     {
-        // TODO: check access!
+        // check that the caller has the correct permissions to perform this action
+        checkPermissions(caller);
 
         // for now just update the room object
         _roomObj.addPathElement(element);
     }
 
     // from interface ProjectRoomProvider
-    public void updatePathElement (ClientObject caller, PathElement element)
+    public void updatePathElement (ClientObject caller, PathElement element,
+                                   InvocationListener listener)
+        throws InvocationException
     {
-        // TODO: check access!
+        // check that the caller has the correct permissions to perform this action
+        checkPermissions(caller);
+
         _roomObj.updatePathElements(element);
     }
 
@@ -128,7 +140,8 @@ public class ProjectRoomManager extends PlaceManager
                                    final ConfirmListener listener)
         throws InvocationException
     {
-        // TODO: check access!
+        // check that the caller has the correct permissions to perform this action
+        checkPermissions(caller);
 
         final PathElement element = _roomObj.pathElements.get(elementId);
         if (element == null) {
@@ -182,7 +195,8 @@ public class ProjectRoomManager extends PlaceManager
                                    final ConfirmListener listener)
         throws InvocationException
     {
-        // TODO: check access!
+        // check that the caller has the correct permissions to perform this action
+        checkPermissions(caller);
 
         final PathElement element = _roomObj.pathElements.get(elementId);
         if (element == null) {
@@ -229,8 +243,10 @@ public class ProjectRoomManager extends PlaceManager
     // from interface ProjectRoomProvider
     public void addDocument (ClientObject caller, String fileName, PathElement parent,
                              String mimeType, final InvocationListener listener)
+        throws InvocationException
     {
-        // TODO: check access!
+        // check that the caller has the correct permissions to perform this action
+        checkPermissions(caller);
 
         PathElement element = PathElement.createFile(fileName, parent, mimeType);
 
@@ -250,24 +266,33 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void updateDocument (ClientObject caller, int elementId, String text)
+    public void updateDocument (ClientObject caller, int elementId, String text,
+                                InvocationListener listener)
+        throws InvocationException
     {
-        // TODO: check access!
+        // check that the caller has the correct permissions to perform this action
+        checkPermissions(caller);
+
         _roomObj.postEvent(
             new DocumentUpdatedEvent(_roomObj.getOid(), caller.getOid(), elementId, text));
     }
 
     // from interface ProjectRoomProvider
-    public void deleteDocument (ClientObject caller, int elementId)
+    public void deleteDocument (ClientObject caller, int elementId, InvocationListener listener)
+        throws InvocationException
     {
-        // TODO: check access!
+        // check that the caller has the correct permissions to perform this action
+        checkPermissions(caller);
+
         _roomObj.removeFromDocuments(elementId);
     }
 
     // from interface ProjectRoomProvider
     public void buildProject (ClientObject caller, InvocationListener listener)
+        throws InvocationException
     {
-        // TODO: check access!
+        // check that the caller has the correct permissions to perform this action
+        checkPermissions(caller);
 
         // inform all the clients that a build is starting
         _roomObj.setBuilding(true);
@@ -280,18 +305,19 @@ public class ProjectRoomManager extends PlaceManager
     public void commitProject (ClientObject caller, String commitMsg, ConfirmListener listener)
         throws InvocationException
     {
-        // TODO: check access!
+        // check that the caller has the correct permissions to perform this action
+        checkPermissions(caller);
 
-        // TODO: run the commit on the executor and post the result to the listener on success or
-        // failure
         throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
     }
 
     // from interface ProjectRoomProvider
     public void loadDocument (ClientObject caller, final PathElement element,
                               final ConfirmListener listener)
+        throws InvocationException
     {
-        // TODO: check access!
+        // check that the caller has the correct permissions to perform this action
+        checkPermissions(caller);
 
         // Load the document from the storage provider
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("loadDocument") {
@@ -325,6 +351,9 @@ public class ProjectRoomManager extends PlaceManager
                                  final PathElement parent, final ConfirmListener listener)
         throws InvocationException
     {
+        // check that the caller has the correct permissions to perform this action
+        checkPermissions(caller);
+
         // attempt to find the path element in the dobj
         final PathElement element = _roomObj.findPathElement(fileName, parent);
 
@@ -383,6 +412,9 @@ public class ProjectRoomManager extends PlaceManager
     public void finishFileUpload (ClientObject caller, ConfirmListener listener)
         throws InvocationException
     {
+        // check that the caller has the correct permissions to perform this action
+        checkPermissions(caller);
+
         UploadFile uploadFile = _currentUploads.get(caller.getOid());
         if (uploadFile == null) {
             throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
@@ -397,6 +429,9 @@ public class ProjectRoomManager extends PlaceManager
     public void abortFileUpload (final ClientObject caller, final ConfirmListener listener)
         throws InvocationException
     {
+        // check that the caller has the correct permissions to perform this action
+        checkPermissions(caller);
+
         final UploadFile uploadFile = _currentUploads.get(caller.getOid());
         if (uploadFile == null) {
             throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
@@ -526,6 +561,18 @@ public class ProjectRoomManager extends PlaceManager
     protected void doCommit (boolean shouldBuild, InvocationListener listener)
     {
         MsoyServer.swiftlyMan.svnExecutor.addTask(new CommitProjectTask(shouldBuild, listener));
+    }
+
+    /**
+     * Returns true if the supplied memberId is a collaborator for this project, false otherwise.
+     */
+    protected void checkPermissions (ClientObject caller)
+        throws InvocationException
+    {
+        MemberObject memobj = (MemberObject)caller;
+        if (_collaborators.contains(memobj.getMemberId())) {
+            throw new InvocationException("e.access_denied");
+        }
     }
 
     /** Handles a request to commit our project. */
@@ -905,6 +952,7 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     protected ProjectRoomObject _roomObj;
+    protected ArrayIntSet _collaborators;
     protected ProjectStorage _storage;
     protected LocalProjectBuilder _builder;
     protected File _buildDir;

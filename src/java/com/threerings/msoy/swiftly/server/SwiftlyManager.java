@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SerialExecutor;
@@ -27,6 +28,7 @@ import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
@@ -102,8 +104,13 @@ public class SwiftlyManager
 
                     SwiftlySVNStorageRecord storageRecord =
                         MsoyServer.swiftlyRepo.loadStorageRecordForProject(projectId);
-                    _storage = new ProjectSVNStorage(
-                        projectRecord.toSwiftlyProject(), storageRecord);
+                    _storage = new ProjectSVNStorage(_project, storageRecord);
+
+                    _collaborators = new ArrayIntSet();
+                    for (SwiftlyCollaboratorsRecord record :
+                        MsoyServer.swiftlyRepo.getCollaborators(projectId)) {
+                        _collaborators.add(record.memberId);
+                    }
                     return true;
 
                 } catch (ProjectStorageException pse) {
@@ -119,11 +126,12 @@ public class SwiftlyManager
             }
 
             public void handleResult () {
-                mgr.init(_project, _storage);
+                mgr.init(_project, _collaborators, _storage);
             }
 
             protected SwiftlyProject _project;
             protected ProjectStorage _storage;
+            protected ArrayIntSet _collaborators;
         });
     }
 
