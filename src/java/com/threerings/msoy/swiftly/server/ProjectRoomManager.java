@@ -564,7 +564,7 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     /**
-     * Returns true if the supplied memberId is a collaborator for this project, false otherwise.
+     * Throws an InvocationException if the supplied caller is not a collaborator on the project.
      */
     protected void checkPermissions (ClientObject caller)
         throws InvocationException
