@@ -21,6 +21,7 @@ import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.SubscriberListener;
+import com.threerings.msoy.game.xml.MsoyGameParser;
 
 import static com.threerings.msoy.Log.log;
 
@@ -48,9 +49,7 @@ public class LobbyManager
             _uplist = new ItemManager.ItemUpdateListener() {
                 public void itemUpdated (ItemRecord item) {
                     if (item.itemId == getGameId()) {
-                        // update the game in the lobby object, everything else is groovy
-                        _lobj.setGame((Game)item.toItem());
-                        _tableMgr.gameUpdated();
+                        updateGame((Game) item.toItem());
                     }
                 }
             };
@@ -105,6 +104,34 @@ public class LobbyManager
     public void subscriberCountChanged (DObject target)
     {
         recheckShutdownInterval();
+    }
+
+    /**
+     * Update the game item associated with this lobby.
+     */
+    protected void updateGame (Game game)
+    {
+        // update the game in the lobby object, everything else is groovy
+        GameDefinition gameDef;
+        try {
+            gameDef = new MsoyGameParser().parseGame(game);
+
+        } catch (Exception e) {
+            log.warning("Error parsing new game definition [gameId=" + game.itemId +
+                ", err=" + e + "].");
+            return;
+        }
+
+        // Accept the new game, and update the lobby object
+        _game = game;
+        _lobj.startTransaction();
+        try {
+            _lobj.setGame(game);
+            _lobj.setGameDef(gameDef);
+        } finally {
+            _lobj.commitTransaction();
+        }
+        _tableMgr.gameUpdated();
     }
     
     /**
