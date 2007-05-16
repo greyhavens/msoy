@@ -53,6 +53,8 @@ public class BorderedPopup extends PopupPanel
             DOM.setStyleAttribute(elem, "top", "-5000px");
             super.show();
             recenter();
+        } else {
+            super.show();
         }
     }
 
