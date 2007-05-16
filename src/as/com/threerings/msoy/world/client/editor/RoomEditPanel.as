@@ -268,7 +268,7 @@ public class RoomEditPanel extends FloatingPanel
           action: RoomEditController.ACTION_PREFS,
           tip:  "i.prefs_button", info: "i.prefs_button_detail" },
         
-        { style: "Trash", toggle: false,
+        { style: "Trash", toggle: true,
           action: RoomEditController.ACTION_DELETE,
           tip:  "i.delete_button", info: "i.delete_button_detail" },
         

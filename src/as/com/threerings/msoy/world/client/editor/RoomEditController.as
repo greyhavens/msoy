@@ -370,6 +370,7 @@ public class RoomEditController
             if (_originalTargetData != null) {
                 updateFurni(_originalTargetData, null);
             }
+            nextPhase = PHASE_INIT; // force a loop
             break;
         case ACTION_PREFS:
             // display/refresh a properties window
