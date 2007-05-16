@@ -351,7 +351,30 @@ public class MsoySprite extends MediaContainer
                     (Loader(_media).content is Bitmap)) {
                 var b :Bitmap = Bitmap(Loader(_media).content);
                 var p :Point = b.globalToLocal(new Point(x, y));
-                return b.bitmapData.hitTest(new Point(0, 0), 0, p);
+                // we need to check against the bitmap and the mask...
+                if (((_media.mask == null) || _media.mask.hitTestPoint(x, y, shapeFlag)) &&
+                        b.bitmapData.hitTest(new Point(0, 0), 0, p)) {
+                    // the bitmap is hit, great!
+                    return true;
+
+                } else {
+                    // the bitmap was not hit, see if other children were hit...
+                    var oldEn :Boolean = Loader(_media).mouseEnabled;
+                    var oldCh :Boolean = Loader(_media).mouseChildren;
+                    Loader(_media).mouseEnabled = false;
+                    Loader(_media).mouseChildren = false;
+                    var retVal :Boolean;
+                    try {
+                        retVal = super.hitTestPoint(x, y, shapeFlag);
+//                        if (retVal == true) {
+//                            trace("I guess we hit it after all...");
+//                        }
+                    } finally {
+                        Loader(_media).mouseEnabled = oldEn;
+                        Loader(_media).mouseChildren = oldCh;
+                    }
+                    return retVal;
+                }
             }
         } catch (err :Error) {
             // nada
