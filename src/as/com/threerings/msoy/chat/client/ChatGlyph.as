@@ -15,6 +15,8 @@ import flash.text.TextFormat;
 import flash.utils.Timer;
 import flash.utils.getTimer; // function import
 
+import com.threerings.flash.TextFieldUtil;
+
 public class ChatGlyph extends Sprite
 {
     public function ChatGlyph (
@@ -58,6 +60,7 @@ public class ChatGlyph extends Sprite
         txt.wordWrap = true;
         txt.selectable = true; // enable copy/paste
         txt.alwaysShowSelection = true; // show selection even when not focused
+        TextFieldUtil.trackSingleSelectable(txt);
         return txt;
     }
 
@@ -111,10 +114,8 @@ public class ChatGlyph extends Sprite
         // but I'd like to not depend on that.
         // This is so typical of the total lack of respect Adobe has
         // for their developers: everyone is left to guess these on their own.
-        const FUDGE_X :int = 5;
-        const FUDGE_Y :int = 4;
-        txt.width = txt.textWidth + FUDGE_X;
-        txt.height = txt.textHeight + FUDGE_Y;
+        txt.width = txt.textWidth + TextFieldUtil.WIDTH_PAD;
+        txt.height = txt.textHeight + TextFieldUtil.HEIGHT_PAD;
     }
 
     protected function handleStartExpire (evt :TimerEvent) :void
