@@ -351,34 +351,28 @@ public class MsoySprite extends MediaContainer
                     (Loader(_media).content is Bitmap)) {
                 var b :Bitmap = Bitmap(Loader(_media).content);
                 var p :Point = b.globalToLocal(new Point(x, y));
-                // we need to check against the bitmap and the mask...
-                if (((_media.mask == null) || _media.mask.hitTestPoint(x, y, shapeFlag)) &&
+                // check that it's within the content bounds, and then check the bitmap directly
+                if (p.x >= 0 && p.x <= getMaxContentWidth() && p.y >= 0 &&
+                        p.y <= getMaxContentHeight() &&
                         b.bitmapData.hitTest(new Point(0, 0), 0, p)) {
-                    // the bitmap is hit, great!
                     return true;
 
                 } else {
                     // the bitmap was not hit, see if other children were hit...
-                    var oldEn :Boolean = Loader(_media).mouseEnabled;
-                    var oldCh :Boolean = Loader(_media).mouseChildren;
-                    Loader(_media).mouseEnabled = false;
-                    Loader(_media).mouseChildren = false;
-                    var retVal :Boolean;
-                    try {
-                        retVal = super.hitTestPoint(x, y, shapeFlag);
-//                        if (retVal == true) {
-//                            trace("I guess we hit it after all...");
-//                        }
-                    } finally {
-                        Loader(_media).mouseEnabled = oldEn;
-                        Loader(_media).mouseChildren = oldCh;
+                    for (var ii :int = numChildren - 1; ii >= 0; ii--) {
+                        var child :DisplayObject = getChildAt(ii);
+                        if (child != _media && child.hitTestPoint(x, y, shapeFlag)) {
+                            return true;
+                        }
                     }
-                    return retVal;
+                    return false;
                 }
             }
         } catch (err :Error) {
             // nada
         }
+
+        // normal hit testing
         return super.hitTestPoint(x, y, shapeFlag);
     }
 
