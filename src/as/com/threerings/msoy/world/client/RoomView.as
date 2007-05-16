@@ -84,6 +84,7 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
+import com.threerings.msoy.world.data.WorldPetInfo;
 
 /**
  * Displays a room or scene in the virtual world.
@@ -320,6 +321,25 @@ public class RoomView extends AbstractRoomView
     }
 
     /**
+     * A convenience function to get an array of all sprites for all pets in the room.
+     */
+    public function getPets () :Array /* of PetSprite */
+    {
+        var results :Array = new Array();
+        var iter :Iterator = _roomObj.occupantInfo.iterator();
+        while (iter.hasNext()) {
+            var info :OccupantInfo = (iter.next() as OccupantInfo);
+            if (info is WorldPetInfo) {
+                var sprite :PetSprite = _actors.get(info.bodyOid) as PetSprite;
+                if (sprite != null) {
+                    results.push(sprite);
+                }
+            }
+        }
+        return results;
+    }
+    
+    /**
      * Return the current location of the avatar that represents our body.
      */
     public function getMyCurrentLocation () :MsoyLocation
@@ -452,6 +472,12 @@ public class RoomView extends AbstractRoomView
                 (getActorByName(umsg.getSpeakerDisplayName()) as AvatarSprite);
             if (avatar != null) {
                 avatar.performAvatarSpoke();
+            }
+
+            // send it to pets as well
+            var petSprites :Array = getPets();
+            for each (var pet :PetSprite in petSprites) {
+                pet.processChatMessage(umsg);
             }
         }
 

@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.world.client {
 
+import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.util.CommandEvent;
 
 import com.threerings.msoy.data.ActorInfo;
@@ -64,5 +65,12 @@ public class PetSprite extends ActorSprite
         }
     }
 
+    /**
+     * Receives a chat message from the room, and forwards it over to user land.
+     */
+    public function processChatMessage (msg :UserMessage) :void
+    {
+        callUserCode("receivedChat_v1", msg.getSpeakerDisplayName().getNormal(), msg.message);
+    }
 }
 }
