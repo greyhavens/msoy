@@ -70,7 +70,7 @@ public class PetSprite extends ActorSprite
      */
     public function processChatMessage (msg :UserMessage) :void
     {
-        callUserCode("receivedChat_v1", msg.getSpeakerDisplayName().getNormal(), msg.message);
+        callUserCode("receivedChat_v1", msg.getSpeakerDisplayName().toString(), msg.message);
     }
 }
 }
