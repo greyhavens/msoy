@@ -103,6 +103,7 @@ public class ActorSprite extends MsoySprite
      *        Supported properties:
      *        toolTip <String> any tool tip text.
      *        weight <Number> a sort order, higher numbers will be closer to the name. (0 if missing)
+     *        bounds <Rectangle> hand-specify the bounds (useful for SWFs)
      */
     public function addDecoration (dec :DisplayObject, constraints :Object = null) :void
     {
@@ -249,7 +250,13 @@ public class ActorSprite extends MsoySprite
             if ((newInfo.status == OccupantInfo.IDLE) == (_idleIcon == null)) {
                 if (_idleIcon == null) {
                     _idleIcon = (new IDLE_ICON() as DisplayObject);
-                    addDecoration(_idleIcon, { weight: Number.MAX_VALUE });
+                    // TODO: unhack this scaling when we have final artwork
+                    _idleIcon.scaleX = 1/3;
+                    _idleIcon.scaleY = 1/3;
+                    addDecoration(_idleIcon, {
+                        weight: Number.MAX_VALUE,
+                        bounds: new Rectangle(0, 0, 400 * 1/3, 110)
+                    });
 
                 } else {
                     removeDecoration(_idleIcon);
@@ -533,7 +540,10 @@ public class ActorSprite extends MsoySprite
         var ybase :Number = _label.y;
         for (var ii :int = 0; ii < _decorations.length; ii++) {
             var dec :DisplayObject = DisplayObject(_decorations[ii].dec);
-            var rect :Rectangle = dec.getRect(dec);
+            var rect :Rectangle = _decorations[ii]["bounds"] as Rectangle;
+            if (rect == null) {
+                rect = dec.getRect(dec);
+            }
             ybase -= (rect.height + DECORATION_PAD);
             dec.x = (getActualWidth() - rect.width) / 2 - rect.x
             dec.y = ybase - rect.y;
@@ -710,7 +720,7 @@ public class ActorSprite extends MsoySprite
 
     protected static const DECORATION_PAD :int = 5;
 
-    [Embed(source="../../../../../../../rsrc/media/idle.png")]
+    [Embed(source="../../../../../../../rsrc/media/idle.swf")]
     protected static const IDLE_ICON :Class;
 }
 }
