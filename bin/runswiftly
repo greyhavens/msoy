@@ -1,0 +1,42 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Sets up standard bits and runs java
+
+MSOY_HOME=`dirname $0`
+MSOY_HOME=`cd $MSOY_HOME/.. ; pwd`
+
+JAVA_VM="$JAVA_HOME/bin/java"
+if [ ! -e $JAVA_VM ]; then
+    echo "$0: Cannot find JVM in $JAVA_HOME. Exiting."
+    exit 255
+fi
+
+# set up our java arguments
+JAVA_ARGS=""
+
+# extract -D arguments so that we can put them before the classname
+while [ ! -z "$1" ]; do
+    case "$1" in
+        -D*)
+            JAVA_ARGS="$JAVA_ARGS '$1'"
+            ;;
+
+        *)
+            ARGS="$ARGS '$1'"
+            ;;
+    esac
+    shift
+done
+
+# add all necessary JAR files and $GAME_HOME to the CLASSPATH
+CLASSPATH="$JAVA_HOME/jre/lib/rt.jar"
+for JAR in $MSOY_HOME/dist/lib/*.jar; do
+    CLASSPATH=$CLASSPATH:$JAR
+done
+CLASSPATH=$MSOY_HOME/dist/classes:$CLASSPATH
+export CLASSPATH
+
+# do the deed
+eval $JAVA_VM $JAVA_ARGS com.threerings.msoy.swiftly.client.SwiftlyStandAlone $ARGS

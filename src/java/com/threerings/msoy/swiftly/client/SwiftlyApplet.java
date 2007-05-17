@@ -18,16 +18,19 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicBorders;
 
-import com.samskivert.swing.util.SwingUtil;
 import com.samskivert.util.Config;
 import com.samskivert.util.Interval;
 import com.samskivert.util.OneLineLogFormatter;
 import com.samskivert.util.RunAnywhere;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
+import com.samskivert.swing.util.SwingUtil;
+import com.samskivert.servlet.user.Password;
+
 import com.threerings.util.IdentUtil;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.MessageManager;
+import com.threerings.util.Name;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientObserver;
@@ -89,8 +92,9 @@ public class SwiftlyApplet extends JApplet
         MsoyCredentials creds = new MsoyCredentials();
         creds.sessionToken = getParameter("authtoken");
         if (StringUtil.isBlank(creds.sessionToken)) {
-            log.warning("Missing session token parameter (authtoken).");
-            return;
+            // attempt to use a username and password instead
+            creds = new MsoyCredentials(new Name(getParameter("username")),
+                Password.makeFromClear(getParameter("password")));
         }
         try {
             creds.ident = IdentUtil.getMachineIdentifier();
@@ -115,7 +119,7 @@ public class SwiftlyApplet extends JApplet
         } catch (InterruptedException e) {
             System.err.println("createGUI thread interrupted.");
         } catch (InvocationTargetException e) {
-            System.err.println("createGUI counld't be invoked.");
+            System.err.println("createGUI couldn't be invoked.");
             Exception ee = (Exception) e.getCause();
             ee.printStackTrace();
             System.out.println("Foo: " + ee);
@@ -205,7 +209,7 @@ public class SwiftlyApplet extends JApplet
     // from interface ClientObserver
     public void clientFailedToLogon (Client client, Exception cause)
     {
-        // TODO: freak out!
+        setContentPane(new JLabel(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.logon_failed")));
         log.log(Level.WARNING, "Couldn't log on!", cause);
     }
 
