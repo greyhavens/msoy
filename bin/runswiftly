@@ -45,7 +45,6 @@ for JAR in $MSOY_HOME/dist/lib/*.jar; do
     CLASSPATH=$CLASSPATH:$JAR
 done
 CLASSPATH=$MSOY_HOME/dist/classes:$CLASSPATH
-CLASSPATH=/usr/share/java/bsh.jar:$CLASSPATH
 export CLASSPATH
 
 # grab some settings useful for swiftly
