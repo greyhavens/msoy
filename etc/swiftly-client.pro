@@ -19,7 +19,8 @@
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/IsSerializable.class,
     **/user/client/rpc/SerializableException.class)
 -injars ../dist/msoy-code.jar(
-    !**/*UnitTest.class,rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
+    !**/*UnitTest.class,!**/msoy/swiftly/client/SwiftlyStandAlone*,rsrc/**,
+    **/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
     **/msoy/world/data/WorldMemberInfo.class,**/msoy/item/data/all/**,**/msoy/web/data/**,
     **/msoy/swiftly/data/**,**/msoy/swiftly/client/**,**/msoy/swiftly/util/**,
     **/msoy/game/data/GameMemberInfo.class,**/msoy/game/data/GameSummary.class,
