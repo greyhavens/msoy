@@ -313,6 +313,8 @@ public class RoomEditController
         _modOriginalBounds = new Rectangle(
             _currentTarget.x, _currentTarget.y,
             _currentTarget.getActualWidth(), _currentTarget.getActualHeight());
+        _modOriginalScale = new Point(
+            _currentTarget.getMediaScaleX(), _currentTarget.getMediaScaleY());
         _modOriginalHotspot = _currentTarget.localToGlobal(_currentTarget.getLayoutHotSpot());
         _modOriginalMouse = new Point(_panel.roomView.stage.mouseX, _panel.roomView.stage.mouseY);
         
@@ -350,6 +352,7 @@ public class RoomEditController
     protected function endModify () :void
     {
         _modOriginalBounds = null;
+        _modOriginalScale = null;
         _modOriginalMouse = null;
         _modOriginalHotspot = null;
         _panel.clearFocus(_currentTarget);
@@ -441,55 +444,17 @@ public class RoomEditController
 
     protected function scaleFurni (furni :FurniSprite, x :Number, y :Number) :void
     {
-        var scale :Point = findScale(furni, x, y);
-        furni.setMediaScaleX(scale.x);
-        furni.setMediaScaleY(scale.y);
-    }
-
-    /** Given some width, height values in screen coordinates, finds x and y scaling factors
-     *  that would resize the current furni to those coordinates. */
-    protected function computeScale (furni :FurniSprite, width :Number, height :Number) :Point
-    {
-        const e :Number = 0.1; // zero scale will get bumped up to this value
-        
-        // get current size info in pixels
-        var oldwidth :Number = Math.max(furni.getActualWidth(), 1);
-        var oldheight :Number = Math.max(furni.getActualHeight(), 1);
-
-        // figure out the proportion of pixels per scaling unit that produced old width and height
-        var xProportions :Number = Math.max(Math.abs(oldwidth / furni.getMediaScaleX()), 1);
-        var yProportions :Number = Math.max(Math.abs(oldheight / furni.getMediaScaleY()), 1);
-
-        // find new scaling ratios for the desired width and height
-        var newScaleX :Number = width / xProportions;
-        var newScaleY :Number = height / yProportions;
-        newScaleX = (newScaleX != 0 ? newScaleX : e);
-        newScaleY = (newScaleY != 0 ? newScaleY : e);
-        
-        return new Point(newScaleX, newScaleY);
-    }
-
-    /**
-     * Finds x and y scaling factors that will resize the current furni based on
-     * mouse position.
-     */
-    protected function findScale (furni: FurniSprite, x :Number, y: Number) :Point
-    {
         // find pixel distance from hotspot to the current and the original mouse pointer
         var mouse :Point = new Point(x, y);
         var newoffset :Point = mouse.subtract(_modOriginalHotspot);
         var oldoffset :Point = _modOriginalMouse.subtract(_modOriginalHotspot);
 
         // find scaling factor based on mouse movement
-        var scaleX :Number = newoffset.x / oldoffset.x;
-        var scaleY :Number = newoffset.y / oldoffset.y;
+        var ratioX :Number = newoffset.x / oldoffset.x;
+        var ratioY :Number = newoffset.y / oldoffset.y;
 
-        // find how big we want the new bitmap to be
-        var newwidth :Number = _modOriginalBounds.width * scaleX;
-        var newheight :Number = _modOriginalBounds.height * scaleY;
-        
-        // scale the furni!
-        return computeScale(furni, newwidth, newheight); 
+        furni.setMediaScaleX(ratioX * _modOriginalScale.x);
+        furni.setMediaScaleY(ratioY * _modOriginalScale.y);
     }
 
     // Item properties display
@@ -601,6 +566,9 @@ public class RoomEditController
     /** Sprite size at the beginning of modifications.
      *  Only valid in the modification phase. */
     protected var _modOriginalBounds :Rectangle;
+    /** Sprite scale at the beginning of modifications.
+     *  Only valid in the modification phase. */
+    protected var _modOriginalScale :Point;
     /** Sprite hotspot in stage coordinates at the beginning of modifications.
      *  Only valid in the modification phase. */
     protected var _modOriginalHotspot :Point;
