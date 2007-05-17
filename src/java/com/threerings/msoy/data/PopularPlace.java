@@ -10,7 +10,6 @@ import com.threerings.util.ActionScript;
 
 import com.threerings.whirled.server.SceneManager;
 
-import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 /**
@@ -39,6 +38,11 @@ public abstract class PopularPlace extends SimpleStreamableObject
         /** The manager for this scene. */
         public SceneManager plMgr;
 
+        protected PopularScenePlace(PopularPlaceOwner owner)
+        {
+            super(owner);
+        }
+
         @Override
         public String getName ()
         {
@@ -59,8 +63,9 @@ public abstract class PopularPlace extends SimpleStreamableObject
 
     public static class PopularGamePlace extends PopularPlace
     {
-        public PopularGamePlace (String name, int id)
+        public PopularGamePlace (PopularPlaceOwner owner, String name, int id)
         {
+            super(owner);
             _name = name;
             _id = id;
         }
@@ -83,20 +88,30 @@ public abstract class PopularPlace extends SimpleStreamableObject
 
     public static class PopularMemberPlace extends PopularScenePlace
     {
-        public PopularMemberPlace (SceneManager manager)
+        public PopularMemberPlace (PopularPlaceOwner owner, SceneManager manager)
         {
+            super(owner);
             plMgr = manager;
         }
     }
 
     public static class PopularGroupPlace extends PopularScenePlace
     {
-        public PopularGroupPlace (SceneManager manager)
+        public PopularGroupPlace (PopularPlaceOwner owner, SceneManager manager)
         {
+            super(owner);
             plMgr = manager;
         }
     }
 
+    protected PopularPlace (PopularPlaceOwner owner)
+    {
+        this.owner = owner;
+    }
+    
+    /** The member, group or game this {@link PopularPlace} summary belongs to. */
+    public PopularPlaceOwner owner;
+    
     /** The number of people who are in this place. */
     public int population;
     

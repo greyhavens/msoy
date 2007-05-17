@@ -495,7 +495,8 @@ public class MemberManager
                     isGroup ? OwnerType.GROUP : OwnerType.MEMBER, model.ownerId);
                 PopularScenePlace place = (PopularScenePlace) _placesByOwner.get(owner);
                 if (place == null) {
-                    place = isGroup ? new PopularGroupPlace(rMgr) : new PopularMemberPlace(rMgr);
+                    place = isGroup ?
+                        new PopularGroupPlace(owner, rMgr) : new PopularMemberPlace(owner, rMgr);
                     // update the main data structures
                     _placesByOwner.put(owner, place);
                     _topPlaces.add(place);
@@ -513,7 +514,7 @@ public class MemberManager
                 PopularPlaceOwner owner = new PopularPlaceOwner(OwnerType.GAME, config.getGameId());
                 PopularGamePlace place = (PopularGamePlace) _placesByOwner.get(owner);
                 if (place == null) {
-                    place = new PopularGamePlace(config.name, config.getGameId());
+                    place = new PopularGamePlace(owner, config.name, config.getGameId());
                     _placesByOwner.put(owner, place);
                     _topPlaces.add(place);
                 }
@@ -546,7 +547,7 @@ public class MemberManager
 
             if (place == null) {
                 // or sometimes, there's somebody in the lobby of a game that nobody is playing
-                place = new PopularGamePlace(game.name, game.getPrototypeId());
+                place = new PopularGamePlace(owner, game.name, game.getPrototypeId());
                 _placesByOwner.put(owner, place);
                 _topPlaces.add(place);
             }
