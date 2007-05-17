@@ -100,40 +100,36 @@ public class AbstractRoomView extends Sprite
     /**
      * Enable or disable editing. Called by the EditRoomController.
      */
-    // FIXME ROBERT: DELETE ME
-    public function setEditing (editing :Boolean, spriteVisitFn :Function) :void
+    public function setEditing (editing :Boolean) :void
     {
         _editing = editing;
-        _furni.forEach(spriteVisitFn);
 
+        // update all sprites
+        _furni.forEach(function (key :*, sprite :MsoySprite) :void {
+                sprite.setEditing(_editing);
+            });
         if (_bg != null) {
-            spriteVisitFn(null, _bg);
+            _bg.setEditing(_editing);
         }
 
-        if (!editing) {
-            updateAllFurni();
-        }
-    }
+        if (_editing) {
 
-    /**
-     * Enable or disable room editing overlay. 
-     */
-    // note: this function will soon replace setEditing
-    public function setEditingOverlay (visible :Boolean) :void
-    {
-        if (visible) {
             // see if we need to recreate the overlay
             if (_backdropOverlay == null) {
                 _backdropOverlay = new BackdropOverlay();
                 addChild(_backdropOverlay);
                 updateEditingOverlay();
             }
+
         } else {
             // destroy the overlay if it's still around
             if (_backdropOverlay != null) {
                 removeChild(_backdropOverlay);
                 _backdropOverlay = null;
             }
+
+            // definitely update the furni
+            updateAllFurni();
         }
     }
 
@@ -387,6 +383,7 @@ public class AbstractRoomView extends Sprite
         var sprite :FurniSprite = _ctx.getMediaDirector().getFurni(furni);
         addChildAt(sprite, 1);
         sprite.setLocation(furni.loc);
+        sprite.setEditing(_editing);
         _furni.put(furni.id, sprite);
         return sprite;
     }

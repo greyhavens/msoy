@@ -23,6 +23,7 @@ import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.data.MsoyLocation;
+import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.ui.FloatingPanel;
 
 
@@ -127,6 +128,7 @@ public class RoomEditPanel extends FloatingPanel
         }
 
         // TEMP add furniture button
+        // to be removed once we get dropping from javascript to work
         [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/rollout_plus.png")]
         const addicon :Class;
         var add :CommandButton = new CommandButton();
@@ -135,7 +137,10 @@ public class RoomEditPanel extends FloatingPanel
         add.height = 25;
         add.toolTip = Msgs.GENERAL.get("t.add_furni");
         var roomCtrl :RoomController = roomView.getRoomController();
-        add.setCallback(roomCtrl.addNewFurni);
+        add.setCallback(function () :void {
+                // just a floating popup.
+                new FurniAddDialog(_ctx, _view, _ctx.getSceneDirector().getScene() as MsoyScene); 
+            });
         box.addChild(add);
         // end temp 
 

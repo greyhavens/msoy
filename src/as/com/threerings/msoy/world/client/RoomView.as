@@ -140,28 +140,15 @@ public class RoomView extends AbstractRoomView
         }
     }
 
-    override public function setEditing (editing :Boolean, spriteVisitFn :Function) :void
+    override public function setEditing (editing :Boolean) :void
     {
-        super.setEditing(editing, spriteVisitFn);
+        super.setEditing(editing);
 
-        // if we haven't yet started loading sprites other than the background,
-        // start now
+        // if we haven't yet started loading sprites other than the background, start now
         if (!_loadAllMedia) {
             _loadAllMedia = true;
             updateAllFurni();
             updateAllEffects();
-        }
-
-        // we hide all avatars instead of visiting them.
-        if (editing) {
-            _roomObj.removeListener(this);
-            removeAllOccupants();
-            setCenterSprite(null);
-
-        } else {
-            rereadScene();
-            _roomObj.addListener(this)
-            addAllOccupants();
         }
     }
 

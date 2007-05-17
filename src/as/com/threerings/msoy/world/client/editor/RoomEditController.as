@@ -99,27 +99,23 @@ public class RoomEditController
     {
         _panel.roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyboard);
         _panel.roomView.stage.addEventListener(KeyboardEvent.KEY_UP, handleKeyboard);
-        _panel.roomView.setEditingOverlay(true);
-
+        _panel.roomView.setEditing(true);
+        
         _settings = new SettingsController(_ctx, this);
         _itemprefs = new ItemPreferencesPanel(_ctx, this, roomCtrl);
-
-        // todo: after refactoring, call RoomController.startEditing
     }
 
     public function deinit () :void
     {
         switchToPhase(PHASE_DONE); // just end whatever was going on, skipping commit
 
-        // todo: after refactoring, call RoomController.endEditing
-
         _itemprefs.close();
         _itemprefs = null;
         
         _settings.finish(false);
         _settings = null;
-        
-        _panel.roomView.setEditingOverlay(false);
+
+        _panel.roomView.setEditing(false);
         _panel.roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyboard);
         _panel.roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, handleKeyboard);
     }

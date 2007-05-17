@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.world.client.editor {
 
 import mx.events.DragEvent;
 
@@ -17,6 +17,9 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.world.client.ClickLocation;
+import com.threerings.msoy.world.client.RoomDragHandler;
+import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;

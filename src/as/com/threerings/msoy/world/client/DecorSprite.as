@@ -27,7 +27,6 @@ public class DecorSprite extends FurniSprite
     override public function update (furni :FurniData) :void
     {
         super.update(furni);
-        checkAlpha();
     }
 
     override public function getDesc () :String
@@ -39,12 +38,6 @@ public class DecorSprite extends FurniSprite
     {
         // no tooltip
         return null;
-    }
-
-    override public function setEditing (editing :Boolean) :void
-    {
-        super.setEditing(editing);
-        checkAlpha();
     }
 
     // documentation inherited
@@ -77,12 +70,5 @@ public class DecorSprite extends FurniSprite
         }
     }
 
-    /**
-     * Configure our alpha differently depending on whether or not we're editing.
-     */
-    protected function checkAlpha () :void
-    {
-        alpha = _editing ? .4 : 1;
-    }
 }
 }

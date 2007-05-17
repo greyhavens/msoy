@@ -163,19 +163,6 @@ public class ControlBar extends HBox
         _petBtn.styleName = "controlBarButtonPet";
         addGroupChild(_petBtn, [ UI_STD ]);
 
-        // TEMP: the former room editor is only available for support+, and will be removed soon
-        // (i'm just keeping it around for reference - robert)
-        if (_ctx.getMemberObject() != null &&
-            _ctx.getMemberObject().tokens.isSupport())
-        {
-            _editBtn = new CommandButton();
-            _editBtn.toolTip = Msgs.GENERAL.get("i.editScene");
-            _editBtn.setCommand(ControlBarController.EDIT_SCENE);
-            _editBtn.styleName = "controlBarButtonEdit";
-            _editBtn.enabled = false;
-            addGroupChild(_editBtn, [ UI_STD ]);
-        }
-        
         _roomeditBtn = new CommandButton();
         _roomeditBtn.toolTip = Msgs.GENERAL.get("i.editScene");
         _roomeditBtn.setCommand(ControlBarController.ROOM_EDIT, _roomeditBtn);

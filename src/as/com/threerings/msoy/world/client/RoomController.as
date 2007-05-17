@@ -94,9 +94,7 @@ public class RoomController extends SceneController
 {
     private const log :Log = Log.getLog(RoomController);
 
-    public static const EDIT_SCENE :String = "EditScene";
     public static const EDIT_DOOR :String = "EditDoor";
-    
     public static const EDIT_CLICKED :String = "EditClicked";
     public static const FURNI_CLICKED :String = "FurniClicked";
     public static const AVATAR_CLICKED :String = "AvatarClicked";
@@ -324,23 +322,6 @@ public class RoomController extends SceneController
         if (resumeBackground && _music == null) {
             setBackgroundMusic(_scene.getAudioData());
         }
-    }
-
-    /**
-     * Handles EDIT_SCENE.
-     */
-    public function handleEditScene () :void
-    {
-        if (isCurrentlyEditing) {
-            return; // handled: we're editing
-        }
-        _roomObj.roomService.editRoom(_mctx.getClient(), new ResultWrapper(
-            function (cause :String) :void {
-                _mctx.displayFeedback("general", cause);
-            },
-            function (result :Object) :void {
-                startEditing(result as Array);
-            }));
     }
 
     /**
@@ -606,18 +587,6 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Opens a dialog for adding furnis.
-     */
-    // this is temp, until we get javascript furni drops working.
-    public function addNewFurni () :void
-    {
-        if (_mctx.getTopPanel().getPlaceView() is RoomView) {
-            // just a floating popup. 
-            new FurniAddDialog(_mctx, _roomView, _scene); 
-        }
-    }
-
-    /**
      * Begin editing the room.
      */
     protected function beginRoomEditing (button :CommandButton) :void
@@ -685,62 +654,6 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Begin editing the scene.
-     */
-    protected function startEditing (items :Array) :void
-    {
-        // set up editing
-        _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
-        _walkTarget.visible = false;
-        _flyTarget.visible = false;
-
-        if (_music != null) {
-            if (_musicIsBackground) {
-                // let's not stop the music; it makes the volume slider hard to use
-                // _music.stop();
-            } else {
-                _music.close();
-                _music = null;
-                _musicIsBackground = true;
-            }
-        }
-
-        _editor = new EditorController(_mctx, this, _roomView, _scene, items);
-    }
-
-    /**
-     * Returns true if this scene is currently being edited.
-     */
-    public function get isCurrentlyEditing () :Boolean
-    {
-        return (_editor != null);
-    }
-
-    /**
-     * Exit editing mode.
-     */
-    public function endEditing (edits :TypedArray) :void
-    {
-        _editor = null;
-
-        // turn editing off
-        _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
-
-        // possibly save the edits
-        if (edits != null) {
-            _roomObj.roomService.updateRoom(_mctx.getClient(), edits,
-                new ReportingListener(_mctx));
-        }
-
-        // re-start any music
-        if (_music != null) {
-            _music.play();
-        }
-    }
-    
-    /**
      * Handle ENTER_FRAME and see if the mouse is now over anything.
      * Normally the flash player will dispatch mouseOver/mouseLeft
      * for an object even if the mouse isn't moving: the sprite could move.
@@ -761,8 +674,7 @@ public class RoomController extends SceneController
         
         // if shift is being held down, we're looking for locations only, so
         // skip looking for hitSprites.
-        var getAll :Boolean = isCurrentlyEditing || isRoomEditing();
-        var hit :* = (_shiftDownSpot == null) ? getHitSprite(sx, sy, getAll) : null;
+        var hit :* = (_shiftDownSpot == null) ? getHitSprite(sx, sy, isRoomEditing()) : null;
         var hitter :MsoySprite = (hit as MsoySprite);
         // ensure we hit no pop-ups
         if (hit !== undefined) {
@@ -881,9 +793,8 @@ public class RoomController extends SceneController
     {
         // if shift is being held down, we're looking for locations only, so
         // skip looking for hitSprites.
-        var getAll :Boolean = isCurrentlyEditing || isRoomEditing();
         var hit :* = (_shiftDownSpot == null) ?
-            getHitSprite(event.stageX, event.stageY, getAll) : null;
+            getHitSprite(event.stageX, event.stageY, isRoomEditing()) : null;
         
         if (hit === undefined) {
             return;
@@ -1240,9 +1151,6 @@ public class RoomController extends SceneController
     protected var _walkTarget :WalkTarget = new WalkTarget();
 
     protected var _flyTarget :WalkTarget = new WalkTarget(true);
-
-    /** Are we editing the current scene? */
-    protected var _editor :EditorController; 
 
     /** Panel for in-room furni editing. */
     protected var _roomEditPanel :RoomEditPanel; 

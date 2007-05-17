@@ -43,9 +43,6 @@ public class ControlBarController extends Controller
     /** Command to move back to the previous location. */
     public static const MOVE_BACK :String = "handleMoveBack";
 
-    /** Command to open room editing mode. */
-    public static const EDIT_SCENE :String = "handleEditScene";
-    
     /** Opens up a new toolbar and a new room editor. */
     public static const ROOM_EDIT :String = "handleRoomEdit";
     
@@ -110,17 +107,6 @@ public class ControlBarController extends Controller
             CommandEvent.dispatch(trigger, MsoyController.GO_SCENE, _backstack.pop());
         }
     }
-
-    /**
-     * Handle the EDIT_SCENE command.
-     */
-    public function handleEditScene () :void
-    {
-        if (canEditScene()) {
-            var room :RoomView = _topPanel.getPlaceView() as RoomView;
-            room.getRoomController().handleEditScene();
-        }
-    }   
 
     /**
      * Handle the ROOM_EDIT command.
