@@ -68,12 +68,6 @@ public class SwiftlyStandAlone
                 }
             }
 
-            // TODO: pull this information out of ServerConfig which is setup how?
-            /*
-            _properties.add("server", ServerConfig.serverHost);
-            _properties.add("port", ServerConfig.serverPorts[0]);
-            */
-            
             // TODO: sanity check _properties for missing values
         }
     

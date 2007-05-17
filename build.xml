@@ -34,7 +34,6 @@
 
   <!-- declare the properties files. -->
   <property name="props.list"     value="server.properties"/>
-  <property name="optprops.list"  value="build.properties"/>
 
   <!-- declare the files from bin needed in the package -->
   <property name="bin.list" value="msoy,msoyrespawn,msoyserver,msoyjava,runmsoy,mysql"/>
@@ -669,7 +668,10 @@
   </target>
 
   <!-- build the java class files -->
-  <target name="compile" depends="jprepare">
+  <target name="compile" depends="jprepare,qcompile"/>
+
+  <!-- builds the java class files only, without preparing the build directories etc. -->
+  <target name="qcompile">
     <javac srcdir="${src.dir}" destdir="${classes.dir}"
            debug="on" optimize="off" deprecation="on">
       <classpath refid="classpath"/>

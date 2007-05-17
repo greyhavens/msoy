@@ -38,5 +38,13 @@ done
 CLASSPATH=$MSOY_HOME/dist/classes:$CLASSPATH
 export CLASSPATH
 
+# grab some settings useful for swiftly
+SERVER=`grep 'server_host' $MSOY_HOME/dist/server.properties | cut -f 2 -d="" | sed 's/^[ \t]*//;s/[ \t]*$//'`
+# just take the first port
+PORT=`grep 'server_ports' $MSOY_HOME/dist/server.properties | cut -f 2 -d="" | cut -f 1 -d "," | sed 's/^[ \t]*//;s/[ \t]*$//'`
+
+# add in the found arguments
+ARGS="$ARGS server=$SERVER port=$PORT"
+
 # do the deed
 eval $JAVA_VM $JAVA_ARGS com.threerings.msoy.swiftly.client.SwiftlyStandAlone $ARGS
