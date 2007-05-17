@@ -19,6 +19,15 @@ JAVA_ARGS=""
 # extract -D arguments so that we can put them before the classname
 while [ ! -z "$1" ]; do
     case "$1" in
+        -debugger)
+            JDWP_ARGS="transport=dt_socket,server=y,address=8000,suspend=n";
+            JAVA_ARGS="-agentlib:jdwp=$JDWP_ARGS $JAVA_ARGS"
+            ;;
+
+        -console)
+            JAVA_ARGS="-Dcom.sun.management.jmxremote $JAVA_ARGS"
+            ;;
+
         -D*)
             JAVA_ARGS="$JAVA_ARGS '$1'"
             ;;
