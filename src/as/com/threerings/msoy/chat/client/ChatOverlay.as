@@ -383,7 +383,7 @@ public class ChatOverlay
      */
     protected function createSubtitle (msg :ChatMessage, type :int, expires :Boolean) :SubtitleGlyph
     {
-        var texts :Array = formatMessage(msg, type, true);
+        var texts :Array = formatMessage(msg, type, true, _userSpeakFmt);
         var lifetime :int = getLifetime(msg, expires);
         return new SubtitleGlyph(this, type, lifetime, _defaultFmt, texts);
     }
@@ -391,10 +391,11 @@ public class ChatOverlay
     /**
      * Return an array of Strings and TextFormats for creating a ChatGlyph.
      */
-    protected function formatMessage (msg :ChatMessage, type :int, forceSpeaker :Boolean) :Array
+    protected function formatMessage (
+        msg :ChatMessage, type :int, forceSpeaker :Boolean, userSpeakFmt :TextFormat) :Array
     {
         // first parse the message text into plain and links
-        var texts :Array = parseLinks(msg.message);
+        var texts :Array = parseLinks(msg.message, userSpeakFmt);
 
         // possibly insert the formatting
         if (forceSpeaker || alwaysUseSpeaker(type)) {
@@ -419,7 +420,7 @@ public class ChatOverlay
      * Return an array of text strings, with any string needing special formatting preceeded by
      * that format.
      */
-    protected function parseLinks (text :String) :Array
+    protected function parseLinks (text :String, userSpeakFmt :TextFormat) :Array
     {
         // parse the text into an array with urls at odd elements
         var array :Array = StringUtil.parseURLs(text);
@@ -428,10 +429,10 @@ public class ChatOverlay
         for (var ii :int = array.length - 1; ii >= 0; ii--) {
             if (ii % 2 == 0) {
                 // normal text at even-numbered elements...
-                array.splice(ii, 0, _userSpeakFmt);
+                array.splice(ii, 0, userSpeakFmt);
             } else {
                 // links at the odd indexes
-                array.splice(ii, 0, createLinkFormat(String(array[ii])));
+                array.splice(ii, 0, createLinkFormat(String(array[ii]), userSpeakFmt));
             }
         }
         return array;
@@ -440,9 +441,10 @@ public class ChatOverlay
     /**
      * Create a link format for the specified link text.
      */
-    protected function createLinkFormat (url :String) :TextFormat
+    protected function createLinkFormat (url :String, userSpeakFmt :TextFormat) :TextFormat
     {
         var fmt :TextFormat = new TextFormat();
+        fmt.align = userSpeakFmt.align;
         fmt.font = FONT;
         fmt.size = 10;
         fmt.underline = true;

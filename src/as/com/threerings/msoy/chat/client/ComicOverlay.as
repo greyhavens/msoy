@@ -9,6 +9,9 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import flash.text.TextFormat;
+import flash.text.TextFormatAlign;
+
 import mx.core.Container;
 
 import com.threerings.util.ArrayUtil;
@@ -36,6 +39,18 @@ public class ComicOverlay extends ChatOverlay
     public function ComicOverlay (ctx :WorldContext)
     {
         super(ctx);
+
+        // Bubbles use copies of the standard subtitle formats, only with align = CENTER.
+        _defaultBubbleFmt = new TextFormat(_defaultFmt.font, _defaultFmt.size,
+            _defaultFmt.color, _defaultFmt.bold, _defaultFmt.italic, _defaultFmt.underline,
+            _defaultFmt.url, _defaultFmt.target, TextFormatAlign.CENTER,
+            _defaultFmt.leftMargin, _defaultFmt.rightMargin, _defaultFmt.indent,
+            _defaultFmt.leading);
+        _userBubbleFmt = new TextFormat(_userSpeakFmt.font, _userSpeakFmt.size,
+            _userSpeakFmt.color, _userSpeakFmt.bold, _userSpeakFmt.italic, _userSpeakFmt.underline,
+            _userSpeakFmt.url, _userSpeakFmt.target, TextFormatAlign.CENTER,
+            _userSpeakFmt.leftMargin, _userSpeakFmt.rightMargin, _userSpeakFmt.indent,
+            _userSpeakFmt.leading);
     }
 
     /**
@@ -224,10 +239,10 @@ public class ComicOverlay extends ChatOverlay
         msg :ChatMessage, type :int, speaker :Name, speakerloc :Rectangle) :Boolean
     {
         var ii :int;
-        var texts :Array = formatMessage(msg, type, false);
+        var texts :Array = formatMessage(msg, type, false, _userBubbleFmt);
         var lifetime :int = getLifetime(msg, true);
         var bubble :BubbleGlyph =
-            new BubbleGlyph(this, type, lifetime, speaker, _defaultFmt, texts);
+            new BubbleGlyph(this, type, lifetime, speaker, _defaultBubbleFmt, texts);
 
         // get the size of the new bubble
         var r :Rectangle = getBubbleSize(type, bubble.getTextSize());
@@ -622,6 +637,12 @@ public class ComicOverlay extends ChatOverlay
 
     /** The provider of info about laying out bubbles. */ 
     protected var _provider :ChatInfoProvider;
+
+    /** A copy of super's _defaultFmt, with a differnent alignment. */
+    protected var _defaultBubbleFmt :TextFormat;
+
+    /** A copy of super's _userSpeakFmt, with a different alignment. */
+    protected var _userBubbleFmt :TextFormat;
 
     /** The place in our history at which we last entered a new place. */
     protected var _newPlacePoint :int = 0;
