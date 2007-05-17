@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -24,16 +25,18 @@ import com.samskivert.velocity.VelocityUtil;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.server.PlaceManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.NeighborFriendRecord;
 
 import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
@@ -42,14 +45,25 @@ import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.Neighborhood;
-import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.PopularPlace;
+import com.threerings.msoy.data.Neighborhood.NeighborEntity;
 import com.threerings.msoy.data.Neighborhood.NeighborGroup;
 import com.threerings.msoy.data.Neighborhood.NeighborMember;
+import com.threerings.msoy.data.PopularPlace.PopularGamePlace;
+import com.threerings.msoy.data.PopularPlace.PopularMemberPlace;
+import com.threerings.msoy.data.PopularPlace.PopularPlaceOwner;
+import com.threerings.msoy.data.PopularPlace.PopularScenePlace;
+import com.threerings.msoy.data.PopularPlace.PopularPlaceOwner.OwnerType;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.data.WorldMemberInfo;
+import com.threerings.parlor.game.server.GameManager;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.whirled.server.SceneManager;
 
 import static com.threerings.msoy.Log.log;
 
@@ -59,6 +73,10 @@ import static com.threerings.msoy.Log.log;
 public class MemberServlet extends MsoyServiceServlet
     implements MemberService
 {
+    /** The maximum number of named members to list for a place. */
+    public static final int NAMED_MEMBERS_IN_POPULAR_PLACE = 8;
+
+
     // from MemberService
     public boolean getFriendStatus (WebCreds creds, final int memberId)
         throws ServiceException
@@ -130,12 +148,97 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public String serializePopularPlaces (WebCreds creds, int n)
+    public String serializePopularPlaces (final WebCreds creds, final int n)
         throws ServiceException
     {
-        ServletWaiter<String> waiter =
+        // if we're logged on, fetch our friends list, on the servlet thread
+        final List<FriendEntry> friends;
+        if (creds != null) {
+            try {
+                friends = MsoyServer.memberRepo.getFriends(creds.getMemberId());
+            } catch (PersistenceException e) {
+                log.log(Level.WARNING, "Failed to list friends");
+                throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+            }
+        } else {
+            friends = new ArrayList<FriendEntry>();
+        }
+
+        final ServletWaiter<String> waiter =
             new ServletWaiter<String>("serializePopularPlaces[" + n + "]");
-        MsoyServer.memberMan.serializePopularPlaces(n, waiter);
+
+        // then proceed to the dobj thread to get runtime state
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                try {
+                    JSONArray homes = new JSONArray();
+                    JSONArray groups = new JSONArray();
+                    JSONArray games = new JSONArray();
+
+                    // locate each one of our online friends
+                    for (FriendEntry entry : friends) {
+                        MemberObject friend = MsoyServer.lookupMember(entry.name);
+                        if (friend == null || friend.location == -1) {
+                            continue;
+                        }
+                        
+                        // map the specific location to an owner (game, person, group) cluster
+                        PopularPlaceOwner owner;
+                        PlaceManager manager = MsoyServer.plreg.getPlaceManager(friend.location);
+                        if (manager instanceof SceneManager) {
+                            SceneManager rMgr = ((SceneManager) manager);
+                            MsoyScene scene = (MsoyScene) rMgr.getScene();
+                            MsoySceneModel model = (MsoySceneModel) scene.getSceneModel();
+
+                            if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+                                owner = new PopularPlaceOwner(OwnerType.GROUP, model.ownerId);
+                                
+                            } else if (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
+                                owner = new PopularPlaceOwner(OwnerType.MEMBER, model.ownerId);
+                                
+                            } else {
+                                throw new IllegalArgumentException(
+                                    "unknown owner type: " + model.ownerType);
+                            }
+                            
+                        } else if (manager instanceof GameManager) {
+                            int id = (((GameManager) manager).getGameConfig()).getGameId();
+                            owner = new PopularPlaceOwner(OwnerType.GAME, id);
+                            
+                        } else {
+                            waiter.requestFailed(new IllegalArgumentException(
+                                "Unexpected manager type: " + manager.getClass()));
+                            return;
+                        }
+                        
+                        // then fetch the cached summary of that cluster
+                        PopularPlace place = MsoyServer.memberMan.getPopularPlace(owner);
+                        if (place != null) {
+                            filePopularPlace(place, homes, groups, games);
+                        }
+                    }
+
+                    // after we've enumerated our friends, we add in the top populous places too 
+                    int n = 3; // TODO: totally ad-hoc
+                    for (PopularPlace place : MsoyServer.memberMan.getTopPlaces()) {
+                        filePopularPlace(place, homes, groups, games);
+                        if (--n <= 0) {
+                            break;
+                        }
+                    }
+
+                    JSONObject result = new JSONObject();
+                    result.put("friends", homes);
+                    result.put("groups", groups);
+                    result.put("games", games);
+                    result.put("totpop", MsoyServer.memberMan.getPopulationCount());
+                    waiter.requestCompleted(URLEncoder.encode(result.toString(), "UTF-8"));
+                } catch (Exception e) {
+                    waiter.requestFailed(e);
+                    return;
+                }
+            }
+        });
         return waiter.waitForResult();
     }
 
@@ -458,6 +561,26 @@ public class MemberServlet extends MsoyServiceServlet
         return nFriend;
     }
 
+    protected void filePopularPlace (PopularPlace place, JSONArray homes,
+                                     JSONArray groups, JSONArray games)
+        throws JSONException
+    {
+        JSONObject obj = new JSONObject();
+        obj.put("name", place.getName());
+        obj.put("pop", place.population);
+        obj.put("id", place.getId());
+        if (place instanceof PopularGamePlace) {
+            games.put(obj);
+        } else {
+            obj.put("sceneId", ((PopularScenePlace) place).getSceneId());
+            if (place instanceof PopularMemberPlace) {
+                homes.put(obj);
+            } else {
+                groups.put(obj);
+            }
+        }
+    }
+
     /**
      * Figures out the population of the various rooms associated with a neighborhood; a group's
      * and a member's home scenes. This must be called on the dobj thread.
@@ -465,31 +588,22 @@ public class MemberServlet extends MsoyServiceServlet
     protected void finalizeNeighborhood (Neighborhood hood)
     {
         if (hood.member != null) {
-            finalizeEntity(hood.member);
+            NeighborMember friend = hood.member;
+            int memberId = friend.member.getMemberId();
+            fillIn(friend);
+            friend.isOnline = MsoyServer.lookupMember(memberId) != null;
         }
         if (hood.group != null) {
-            finalizeEntity(hood.group);
+            fillIn(hood.group);
         }
         for (NeighborGroup group : hood.neighborGroups) {
-            finalizeEntity(group);
+            fillIn(group);
         }
         for (NeighborMember friend : hood.neighborMembers) {
-            finalizeEntity(friend);
+            int memberId = friend.member.getMemberId();
+            fillIn(friend);
+            friend.isOnline = MsoyServer.lookupMember(memberId) != null;
         }
-    }
-
-    /** Sets the population of a neighbour group. */
-    protected void finalizeEntity (NeighborGroup group)
-    {
-        MsoyServer.memberMan.fillIn(group);
-    }
-
-    /** Sets the population of a neighbour friend and figure out if it's online. */
-    protected void finalizeEntity (NeighborMember friend)
-    {
-        int memberId = friend.member.getMemberId();
-        MsoyServer.memberMan.fillIn(friend);
-        friend.isOnline = MsoyServer.lookupMember(memberId) != null;
     }
 
     /** Performs handcrafted JSON serialization, to minimize the overhead. */
@@ -568,6 +682,56 @@ public class MemberServlet extends MsoyServiceServlet
                 INVITE_ID_CHARACTERS.length()));
         }
         return rand;
+    }
+
+    /**
+     * Fill in the popSet and popCount members of a {@link NeighborGroup} instance.
+     * 
+     * This must be called on the dobj thread.
+     */
+    protected void fillIn (NeighborGroup group)
+    {
+        fillIn(group, (PopularScenePlace) MsoyServer.memberMan.getPopularPlace(
+            new PopularPlaceOwner(OwnerType.GROUP, group.group.getGroupId())));
+    }
+
+    /**
+     * Fill in the popSet and popCount members of a {@link NeighborMember} instance.
+     * 
+     * This must be called on the dobj thread.
+     */
+    protected void fillIn (NeighborMember member)
+    {
+        fillIn(member, (PopularScenePlace) MsoyServer.memberMan.getPopularPlace(
+            new PopularPlaceOwner(OwnerType.MEMBER, member.member.getMemberId())));
+    }
+
+    /**
+     * Fill in the popSet and popCount members of a {@link NeighborEntity} instance
+     * given the supplied, associated {@link PopularPlace}.
+     * 
+     * This must be called on the dobj thread.
+     */
+    protected void fillIn (NeighborEntity entity, PopularScenePlace place)
+    {
+        if (place == null) {
+            entity.popSet = null;
+            entity.popCount = 0;
+            return;
+        }
+    
+        entity.popSet = new HashSet<MemberName>();
+        int cnt = NAMED_MEMBERS_IN_POPULAR_PLACE;
+        for (OccupantInfo info : place.plMgr.getPlaceObject().occupantInfo) {
+            // only count members
+            if (info instanceof WorldMemberInfo) {
+                entity.popSet.add((MemberName) info.username);
+                if (--cnt == 0) {
+                    break;
+                }
+            }
+        }
+        entity.popCount = place.plMgr.getPlaceObject().occupantInfo.size();
     }
 
     protected static final String INVITE_FROM = "peas@whirled.com";

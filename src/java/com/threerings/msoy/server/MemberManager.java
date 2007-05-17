@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,9 +43,6 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.SceneBookmarkEntry;
-import com.threerings.msoy.data.Neighborhood.NeighborEntity;
-import com.threerings.msoy.data.Neighborhood.NeighborGroup;
-import com.threerings.msoy.data.Neighborhood.NeighborMember;
 import com.threerings.msoy.data.PopularPlace.*;
 import com.threerings.msoy.data.PopularPlace.PopularPlaceOwner.OwnerType;
 import com.threerings.msoy.game.data.LobbyObject;
@@ -83,9 +79,6 @@ public class MemberManager
     /** Cache popular place computations for five seconds while we're debugging. */
     public static final long POPULAR_PLACES_CACHE_LIFE = 5*1000;
 
-    /** The maximum number of named members to list for a place. */
-    public static final int NAMED_MEMBERS_IN_POPULAR_PLACE = 8;
-    
     /**
      * This can be called from any thread to queue an update of the member's current flow if they
      * are online.
@@ -205,44 +198,21 @@ public class MemberManager
     }
     
     /**
-     * Return a JSON-serialized version of the Popular Places data structure.
+     * Return a list of the most populous places in the whirled, sorted by population.
      */
-    public void serializePopularPlaces (int n, ResultListener<String> listener)
+    public Iterable<PopularPlace> getTopPlaces ()
     {
         updatePPCache();
+        return _topPlaces;
+    }
 
-        try {
-            JSONArray friends = new JSONArray();
-            JSONArray groups = new JSONArray();
-            JSONArray games = new JSONArray();
-            for (PopularPlace place : _topPlaces) {
-                JSONObject obj = new JSONObject();
-                obj.put("name", place.getName());
-                obj.put("pop", place.population);
-                obj.put("id", place.getId());
-                if (place instanceof PopularGamePlace) {
-                    games.put(obj);
-                } else {
-                    obj.put("sceneId", ((PopularScenePlace) place).getSceneId());
-                    if (place instanceof PopularMemberPlace) {
-                        friends.put(obj);
-                    } else {
-                        groups.put(obj);
-                    }
-                }
-                if (--n <= 0) {
-                    break;
-                }
-            }
-            JSONObject result = new JSONObject();
-            result.put("friends", friends);
-            result.put("groups", groups);
-            result.put("games", games);
-            result.put("totpop", _totalPopulation);
-            listener.requestCompleted(URLEncoder.encode(result.toString(), "UTF-8"));
-        } catch (Exception e) {
-            listener.requestFailed(e);
-        }
+    /**
+     * Return the total population count in the whirled.
+     */
+    public int getPopulationCount ()
+    {
+        updatePPCache();
+        return _totalPopulation;
     }
 
     // from interface MemberProvider
@@ -467,62 +437,16 @@ public class MemberManager
     }
     
     /**
-     * Fill in the popSet and popCount members of a {@link NeighborGroup} instance.
+     * Look up and return the {@link PopularPlace} associated with the given owner, if any.
      * 
      * This must be called on the dobj thread.
      */
-    public void fillIn (NeighborGroup group)
+    public PopularPlace getPopularPlace(PopularPlaceOwner owner)
     {
         updatePPCache();
-        fillIn(group, (PopularScenePlace) _placesByOwner.get(
-            new PopularPlaceOwner(OwnerType.GROUP, group.group.getGroupId())));
+        return _placesByOwner.get(owner);
     }
 
-    /**
-     * Fill in the popSet and popCount members of a {@link NeighborMember} instance.
-     * 
-     * This must be called on the dobj thread.
-     */
-    public void fillIn (NeighborMember member)
-    {
-        updatePPCache();
-        fillIn(member, (PopularScenePlace) _placesByOwner.get(
-            new PopularPlaceOwner(OwnerType.MEMBER, member.member.getMemberId())));
-    }
-
-    /**
-     * Fill in the popSet and popCount members of a {@link NeighborEntity} instance
-     * given the supplied, associated {@link PopularPlace}.
-     * 
-     * This must be called on the dobj thread.
-     * 
-     * TODO: If we're going to bother showing the names of people present, we have to
-     * do it properly: this only looks at a single Place, where the population count is
-     * taken from every Place with a given owner (person, group or game); thus we could
-     * have a plaque showing population 20 but only list three names. That's silly.
-     */
-    protected void fillIn (NeighborEntity entity, PopularScenePlace place)
-    {
-        if (place == null) {
-            entity.popSet = null;
-            entity.popCount = 0;
-            return;
-        }
-
-        entity.popSet = new HashSet<MemberName>();
-        int cnt = NAMED_MEMBERS_IN_POPULAR_PLACE;
-        for (OccupantInfo info : place.plMgr.getPlaceObject().occupantInfo) {
-            // only count members
-            if (info instanceof WorldMemberInfo) {
-                entity.popSet.add((MemberName) info.username);
-                if (--cnt == 0) {
-                    break;
-                }
-            }
-        }
-        entity.popCount = place.plMgr.getPlaceObject().occupantInfo.size();
-    }
-    
     /**
      * Iterates over all the lobbies and the scenes in the world at the moment, find out the n most
      * populated ones and sort all scenes by owner. cache the values.
