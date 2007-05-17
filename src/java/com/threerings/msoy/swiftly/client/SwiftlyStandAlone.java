@@ -3,15 +3,22 @@
 
 package com.threerings.msoy.swiftly.client;
 
+import java.applet.Applet;
 import java.applet.AppletContext;
 import java.applet.AppletStub;
+import java.applet.AudioClip;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.Image;
+
+import java.io.InputStream;
 
 import java.net.URL;
 
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
@@ -95,42 +102,36 @@ public class SwiftlyStandAlone
         {
             _applet = applet;
             _properties = properties;
+            _context = new SwiftlyAppletContext();
         }
     
-        // from AppletStub
         public void appletResize (int width, int height)
         {
             _applet.resize(width, height);
         }
 
-        // from AppletStub
         public AppletContext getAppletContext ()
         {
-            // TODO:
-            return null;
+            return _context;
         }
 
-        // from AppletStub
         public URL getCodeBase()
         {
-            // TODO:
-            return null;
+            // TODO: this should probably work
+            throw new NotImplementedException();
         }
 
-        // from AppletStub
         public URL getDocumentBase ()
         {
-            // TODO:
-            return null;
+            // TODO: this should probably work
+            throw new NotImplementedException();
         }
 
-        // from AppletStub
         public String getParameter (String name)
         {
             return _properties.get(name);
         }
 
-        // from AppletStub
         public boolean isActive ()
         {
             return true;
@@ -138,5 +139,70 @@ public class SwiftlyStandAlone
         
         SwiftlyApplet _applet;
         HashMap<String, String> _properties;
+        AppletContext _context;
+    }
+
+    protected static class SwiftlyAppletContext
+        implements AppletContext
+    {
+        public Applet getApplet(String name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Enumeration<Applet> getApplets()
+        {
+            throw new NotImplementedException();
+        }
+
+        public AudioClip getAudioClip(URL url)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Image getImage(URL url)
+        {
+            throw new NotImplementedException();
+        }
+
+        public InputStream getStream(String key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Iterator<String> getStreamKeys()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void setStream(String key, InputStream stream)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void showDocument(URL url)
+        {
+            // TODO: this should probably work
+            throw new NotImplementedException();
+        }
+
+        public void showDocument(URL url, String target)
+        {
+            // TODO: this should probably work
+            throw new NotImplementedException();
+        }
+
+        public void showStatus(String status)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    protected static class NotImplementedException extends RuntimeException
+    {
+        NotImplementedException ()
+        {
+            super("Not implemented in AppletContext");
+        }
     }
 }
