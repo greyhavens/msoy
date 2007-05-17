@@ -14,6 +14,7 @@ import java.awt.Image;
 
 import java.io.InputStream;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.util.Enumeration;
@@ -23,6 +24,10 @@ import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+
+import com.samskivert.swing.MultiLineLabel;
 
 import static com.threerings.msoy.Log.log;
 
@@ -48,7 +53,6 @@ public class SwiftlyStandAlone
             }
         });
         frame.setContentPane(applet);
-        // TODO: need to setup an applet context too
         applet.setStub(new SwiftlyAppletStub(applet, properties));
         applet.init();
         applet.start();
@@ -115,16 +119,19 @@ public class SwiftlyStandAlone
             return _context;
         }
 
-        public URL getCodeBase()
+        public URL getCodeBase ()
         {
-            // TODO: this should probably work
-            throw new NotImplementedException();
+            try {
+                return new URL("file:////"  + System.getProperty("user.dir") + "/");
+            } catch (MalformedURLException e) {
+                System.err.println("Unable to determine the code base URL");
+                return null;
+            }
         }
 
         public URL getDocumentBase ()
         {
-            // TODO: this should probably work
-            throw new NotImplementedException();
+            return getCodeBase();
         }
 
         public String getParameter (String name)
@@ -145,64 +152,68 @@ public class SwiftlyStandAlone
     protected static class SwiftlyAppletContext
         implements AppletContext
     {
-        public Applet getApplet(String name)
+        public Applet getApplet (String name)
         {
             throw new NotImplementedException();
         }
 
-        public Enumeration<Applet> getApplets()
+        public Enumeration<Applet> getApplets ()
         {
             throw new NotImplementedException();
         }
 
-        public AudioClip getAudioClip(URL url)
+        public AudioClip getAudioClip (URL url)
         {
             throw new NotImplementedException();
         }
 
-        public Image getImage(URL url)
+        public Image getImage (URL url)
         {
             throw new NotImplementedException();
         }
 
-        public InputStream getStream(String key)
+        public InputStream getStream (String key)
         {
             throw new NotImplementedException();
         }
 
-        public Iterator<String> getStreamKeys()
+        public Iterator<String> getStreamKeys ()
         {
             throw new NotImplementedException();
         }
 
-        public void setStream(String key, InputStream stream)
+        public void setStream (String key, InputStream stream)
         {
             throw new NotImplementedException();
         }
 
-        public void showDocument(URL url)
+        public void showDocument (URL url)
         {
-            // TODO: this should probably work
-            throw new NotImplementedException();
+            showDocument(url, "_blank");
         }
 
-        public void showDocument(URL url, String target)
+        public void showDocument (URL url, String target)
         {
-            // TODO: this should probably work
-            throw new NotImplementedException();
+            JFrame frame = new JFrame("showDocument() window");
+            frame.setContentPane(new MultiLineLabel(
+                "showDocument() called wth [url=" + url + " target=" + target + "].",
+                SwingConstants.CENTER, SwingConstants.HORIZONTAL, 400));
+            frame.pack();
+            frame.setVisible(true);
         }
 
-        public void showStatus(String status)
+        public void showStatus (String status)
         {
-            throw new NotImplementedException();
+            System.out.println("showStatus() called with: " + status);
+        }
+
+        protected static class NotImplementedException extends RuntimeException
+        {
+            NotImplementedException ()
+            {
+                super("Not implemented in AppletContext");
+            }
         }
     }
 
-    protected static class NotImplementedException extends RuntimeException
-    {
-        NotImplementedException ()
-        {
-            super("Not implemented in AppletContext");
-        }
-    }
 }
