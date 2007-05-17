@@ -19,7 +19,6 @@ import flash.text.TextFormat;
 
 import flash.utils.getTimer; // function import
 
-import mx.events.FlexEvent;
 import mx.events.ResizeEvent;
 import mx.events.ScrollEvent;
 
@@ -163,8 +162,8 @@ public class ChatOverlay
             _historyBar.includeInLayout = false;
             configureHistoryBarSize();
             _target.addChild(_historyBar);
-            _target.addEventListener(FlexEvent.ADD, handleTargetAdded);
-            _target.addEventListener(FlexEvent.REMOVE, handleTargetRemoved);
+            _target.addEventListener(Event.ADDED_TO_STAGE, handleTargetAdded);
+            _target.addEventListener(Event.REMOVED_FROM_STAGE, handleTargetRemoved);
             handleTargetAdded();
             resetHistoryOffset();
 
@@ -178,8 +177,8 @@ public class ChatOverlay
             figureCurrentHistory();
 
         } else {
-            _target.removeEventListener(FlexEvent.ADD, handleTargetAdded);
-            _target.removeEventListener(FlexEvent.REMOVE, handleTargetRemoved);
+            _target.removeEventListener(Event.ADDED_TO_STAGE, handleTargetAdded);
+            _target.removeEventListener(Event.REMOVED_FROM_STAGE, handleTargetRemoved);
             handleTargetRemoved();
             _target.removeChild(_historyBar);
             _historyBar.removeEventListener(ScrollEvent.SCROLL, handleHistoryScroll);
@@ -754,10 +753,10 @@ public class ChatOverlay
      */
     protected function getSubtitleSpacing (type :int) :int
     {
-        switch (placeOf(type)) {
-        default:
+//        switch (placeOf(type)) {
+//        default:
             return 1;
-        }
+//        }
     }
 
     /**
@@ -843,7 +842,7 @@ public class ChatOverlay
      * When we're in history mode, listen for our target being added
      * to the hierarchy.
      */
-    protected function handleTargetAdded (event :FlexEvent = null) :void
+    protected function handleTargetAdded (... ignored) :void
     {
         if (_target.stage) {
             // we need to listen to the stage for mouse wheel events,
@@ -857,7 +856,7 @@ public class ChatOverlay
      * When in history mode, listen for our target being removed
      * from the hierarchy.
      */
-    protected function handleTargetRemoved (event :FlexEvent = null) :void
+    protected function handleTargetRemoved (... ignored) :void
     {
         if (_stage) {
             _stage.removeEventListener(MouseEvent.MOUSE_WHEEL, handleMouseWheel);
