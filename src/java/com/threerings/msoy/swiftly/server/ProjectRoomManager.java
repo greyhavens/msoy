@@ -570,7 +570,7 @@ public class ProjectRoomManager extends PlaceManager
         throws InvocationException
     {
         MemberObject memobj = (MemberObject)caller;
-        if (_collaborators.contains(memobj.getMemberId())) {
+        if (!_collaborators.contains(memobj.getMemberId())) {
             throw new InvocationException("e.access_denied");
         }
     }
