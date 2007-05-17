@@ -8,8 +8,10 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -56,6 +58,7 @@ import com.threerings.msoy.data.PopularPlace.PopularMemberPlace;
 import com.threerings.msoy.data.PopularPlace.PopularPlaceOwner;
 import com.threerings.msoy.data.PopularPlace.PopularScenePlace;
 import com.threerings.msoy.data.PopularPlace.PopularPlaceOwner.OwnerType;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -75,7 +78,6 @@ public class MemberServlet extends MsoyServiceServlet
 {
     /** The maximum number of named members to list for a place. */
     public static final int NAMED_MEMBERS_IN_POPULAR_PLACE = 8;
-
 
     // from MemberService
     public boolean getFriendStatus (WebCreds creds, final int memberId)
@@ -171,17 +173,15 @@ public class MemberServlet extends MsoyServiceServlet
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 try {
-                    JSONArray homes = new JSONArray();
-                    JSONArray groups = new JSONArray();
-                    JSONArray games = new JSONArray();
-
-                    // locate each one of our online friends
+                    Map<PopularPlaceOwner, Set<MemberName>> popSets =
+                        new HashMap<PopularPlaceOwner, Set<MemberName>>();
+                    // retrieve the location of each one of our online friends
                     for (FriendEntry entry : friends) {
                         MemberObject friend = MsoyServer.lookupMember(entry.name);
                         if (friend == null || friend.location == -1) {
                             continue;
                         }
-                        
+
                         // map the specific location to an owner (game, person, group) cluster
                         PopularPlaceOwner owner;
                         PlaceManager manager = MsoyServer.plreg.getPlaceManager(friend.location);
@@ -210,18 +210,35 @@ public class MemberServlet extends MsoyServiceServlet
                                 "Unexpected manager type: " + manager.getClass()));
                             return;
                         }
-                        
+                        Set<MemberName> set = popSets.get(owner);
+                        if (set == null) {
+                            set = new HashSet<MemberName>();
+                            popSets.put(owner, set);
+                        }
+                        set.add(friend.memberName);
+                    }
+                    
+                    JSONArray homes = new JSONArray();
+                    JSONArray groups = new JSONArray();
+                    JSONArray games = new JSONArray();
+
+                    for (Map.Entry<PopularPlaceOwner, Set<MemberName>> entry :
+                            popSets.entrySet()) {
                         // then fetch the cached summary of that cluster
-                        PopularPlace place = MsoyServer.memberMan.getPopularPlace(owner);
+                        PopularPlace place = MsoyServer.memberMan.getPopularPlace(entry.getKey());
                         if (place != null) {
-                            filePopularPlace(place, homes, groups, games);
+                            filePopularPlace(place, entry.getValue(), homes, groups, games);
                         }
                     }
 
                     // after we've enumerated our friends, we add in the top populous places too 
                     int n = 3; // TODO: totally ad-hoc
                     for (PopularPlace place : MsoyServer.memberMan.getTopPlaces()) {
-                        filePopularPlace(place, homes, groups, games);
+                        // make sure we didn't already include this place in the code above
+                        if (popSets.containsKey(place.owner)) {
+                            continue;
+                        }
+                        filePopularPlace(place, null, homes, groups, games);
                         if (--n <= 0) {
                             break;
                         }
@@ -561,7 +578,7 @@ public class MemberServlet extends MsoyServiceServlet
         return nFriend;
     }
 
-    protected void filePopularPlace (PopularPlace place, JSONArray homes,
+    protected void filePopularPlace (PopularPlace place, Set<MemberName> peeps, JSONArray homes,
                                      JSONArray groups, JSONArray games)
         throws JSONException
     {
@@ -569,6 +586,9 @@ public class MemberServlet extends MsoyServiceServlet
         obj.put("name", place.getName());
         obj.put("pop", place.population);
         obj.put("id", place.getId());
+        if (peeps != null) {
+            obj.put("peeps", toJSON(peeps));
+        }
         if (place instanceof PopularGamePlace) {
             games.put(obj);
         } else {
