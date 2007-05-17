@@ -26,6 +26,9 @@ import static com.threerings.msoy.Log.log;
 public class SwiftlyStandAlone
 {
     static public void main (String argv[]) {
+        // parse and check the arguments
+        HashMap<String, String> properties = parseArguments(argv);
+
         final SwiftlyApplet applet = new SwiftlyApplet();
         JFrame frame = new JFrame("Swiftly Applet Test Window");
         frame.addWindowListener (new WindowAdapter()
@@ -39,7 +42,7 @@ public class SwiftlyStandAlone
         });
         frame.setContentPane(applet);
         // TODO: need to setup an applet context too
-        applet.setStub(new SwiftlyAppletStub(argv, applet));
+        applet.setStub(new SwiftlyAppletStub(applet, properties));
         applet.init();
         applet.start();
         // TODO: allow this to be set on the command line?
@@ -47,28 +50,51 @@ public class SwiftlyStandAlone
         frame.pack();
         frame.setVisible(true);
     }
+
+    protected static HashMap<String, String> parseArguments (String argv[])
+    {
+        HashMap<String, String> properties = new HashMap<String, String>();
+        for (int i = 0; i < argv.length; i++) {
+            try {
+                StringTokenizer parser = new StringTokenizer(argv[i], "=");
+                String name = parser.nextToken().toString();
+                String value = parser.nextToken("\"").toString();
+                value = value.substring(1);
+                properties.put(name, value);
+            } catch (NoSuchElementException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // check the command line arguments for missing values
+        String errorMsg = "";
+        if (!(properties.containsKey("username") || properties.containsKey("password"))) {
+            errorMsg = errorMsg + "Username and password required. Use username= password=\n";
+        }
+        if (!(properties.containsKey("server") || properties.containsKey("port"))) {
+            errorMsg = errorMsg + "Server and port required. Use server= port=\n";
+        }
+        if (!properties.containsKey("projectId")) {
+            errorMsg = errorMsg + "projectId required. Use projectId=\n";
+        }
+
+        // report any errors and quit
+        if (!errorMsg.equals("")) {
+            System.err.println("Missing arguments:");
+            System.err.println(errorMsg);
+            System.exit(1);
+        }
+
+        return properties;
+    }
     
     protected static class SwiftlyAppletStub
         implements AppletStub
     {
-        SwiftlyAppletStub (String argv[], SwiftlyApplet applet)
+        SwiftlyAppletStub (SwiftlyApplet applet, HashMap<String, String> properties)
         {
             _applet = applet;
-            _properties = new HashMap<String, String>();
-
-            for (int i = 0; i < argv.length; i++) {
-                try {
-                    StringTokenizer parser = new StringTokenizer(argv[i], "=");
-                    String name = parser.nextToken().toString();
-                    String value = parser.nextToken("\"").toString();
-                    value = value.substring(1);
-                    _properties.put(name, value);
-                } catch (NoSuchElementException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // TODO: sanity check _properties for missing values
+            _properties = properties;
         }
     
         // from AppletStub
