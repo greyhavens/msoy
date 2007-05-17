@@ -42,6 +42,10 @@ while [ ! -z "$1" ]; do
             JAVA_ARGS="-agentlib:jdwp=$JDWP_ARGS $JAVA_ARGS"
             ;;
 
+        -jconsole)
+            JAVA_ARGS="-Dcom.sun.management.jmxremote $JAVA_ARGS"
+            ;;
+
         *)
             ARGS="$ARGS $1"
             ;;

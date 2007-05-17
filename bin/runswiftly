@@ -24,7 +24,7 @@ while [ ! -z "$1" ]; do
             JAVA_ARGS="-agentlib:jdwp=$JDWP_ARGS $JAVA_ARGS"
             ;;
 
-        -console)
+        -jconsole)
             JAVA_ARGS="-Dcom.sun.management.jmxremote $JAVA_ARGS"
             ;;
 
@@ -45,6 +45,7 @@ for JAR in $MSOY_HOME/dist/lib/*.jar; do
     CLASSPATH=$CLASSPATH:$JAR
 done
 CLASSPATH=$MSOY_HOME/dist/classes:$CLASSPATH
+CLASSPATH=/usr/share/java/bsh.jar:$CLASSPATH
 export CLASSPATH
 
 # grab some settings useful for swiftly
