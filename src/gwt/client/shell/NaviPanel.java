@@ -86,7 +86,6 @@ public class NaviPanel extends FlexTable
                     }
                     menu.addItem("Friends' Homes", fmenu);
                 }
-                addLink(menu, "My Neighborhood", "world", "nm" + creds.getMemberId());
                 addLink(menu, "Popular Spots", "world", "p");
                 // TODO: bank/alchemist
                 popupMenu(sender, menu);

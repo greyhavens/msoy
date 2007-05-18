@@ -73,14 +73,6 @@ public class index extends Page
                 // go to a specific member's home
                 WorldClient.displayFlash("location=" + id(token, 1));
 
-            } else if (token.startsWith("ng")) {
-                // go to the neighborhood around the specified group
-                displayNeighborhood(_entryCounter, id(token, 2), true);
-
-            } else if (token.startsWith("nm")) {
-                // go to the neighborhood around the specified member
-                displayNeighborhood(_entryCounter, id(token, 2), false);
-
             } else if (token.startsWith("p")) {
                 // display popular places by request
                 displayHotSpots(_entryCounter);
@@ -133,27 +125,6 @@ public class index extends Page
 
         // load up our translation dictionaries
         CWorld.msgs = (WorldMessages)GWT.create(WorldMessages.class);
-    }
-
-    protected void displayNeighborhood (final int requestEntryCount, int entityId, boolean isGroup)
-    {
-        CWorld.membersvc.serializeNeighborhood(
-            CWorld.creds, entityId, isGroup, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                if (result == null) {
-                    setContent(new Label(CWorld.msgs.noSuchNeighborhood()));
-                }
-                if (requestEntryCount == _entryCounter) {
-                    neighborhood((String) result);
-                }
-            }
-            public void onFailure (Throwable caught) {
-                if (requestEntryCount == _entryCounter) {
-                    setContent(new Label(CWorld.serverError(caught)));
-                }
-            }
-        });
-        scheduleReload();
     }
 
     protected void displayHotSpots (final int requestEntryCount)

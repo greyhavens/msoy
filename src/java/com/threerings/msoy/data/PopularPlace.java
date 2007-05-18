@@ -3,14 +3,16 @@
 
 package com.threerings.msoy.data;
 
-import com.samskivert.util.IntTuple;
-
+import com.threerings.crowd.server.PlaceManager;
 import com.threerings.io.SimpleStreamableObject;
 import com.threerings.util.ActionScript;
 
 import com.threerings.whirled.server.SceneManager;
 
+import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.server.MsoyGameManager;
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.parlor.game.server.GameManager;
 
 /**
  * Represent a single place in the top list of populated places.
@@ -18,64 +20,57 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 @ActionScript(omit=true)
 public abstract class PopularPlace extends SimpleStreamableObject
 {
-    public static class PopularPlaceOwner extends IntTuple
+    public static PopularPlace getPopularPlace (PlaceManager plMgr)
     {
-        public enum OwnerType
-        {
-            MEMBER,
-            GROUP,
-            GAME;
-        }
+        if (plMgr instanceof SceneManager) {
+            SceneManager rMgr = ((SceneManager) plMgr);
+            MsoySceneModel model = (MsoySceneModel) rMgr.getScene().getSceneModel();
 
-        public PopularPlaceOwner (OwnerType type, int ownerId)
-        {
-            super(type.ordinal(), ownerId);
+            if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+                return new PopularGroupPlace(model.ownerId);
+            }
+            if (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
+                return new PopularMemberPlace(model.ownerId);
+            }
+            throw new IllegalArgumentException("unknown owner type: " + model.ownerType);
         }
+        if (plMgr instanceof MsoyGameManager) {
+            MsoyGameConfig config = (MsoyGameConfig) ((GameManager) plMgr).getGameConfig();
+            return new PopularGamePlace(config.name, config.getGameId());
+        }
+        throw new IllegalArgumentException("unknown place manager type: " + plMgr.getClass());
     }
 
     public static abstract class PopularScenePlace extends PopularPlace
     {
-        /** The manager for this scene. */
-        public SceneManager plMgr;
-
-        protected PopularScenePlace(PopularPlaceOwner owner)
+        protected PopularScenePlace (int ownerId)
         {
-            super(owner);
+            _ownerId = ownerId;
         }
 
-        @Override
-        public String getName ()
-        {
-            return plMgr.getScene().getName();
-        }
-        
         @Override
         public int getId ()
         {
-            return ((MsoySceneModel) plMgr.getScene().getSceneModel()).ownerId;
+            return _ownerId;
         }
-        
-        public int getSceneId ()
+
+        protected int _ownerId;
+
+        public int getSceneId()
         {
-            return plMgr.getScene().getId();
+            // TODO Auto-generated method stub
+            return 1;
         }
     }
 
     public static class PopularGamePlace extends PopularPlace
     {
-        public PopularGamePlace (PopularPlaceOwner owner, String name, int id)
+        public PopularGamePlace (String name, int id)
         {
-            super(owner);
             _name = name;
             _id = id;
         }
 
-        @Override
-        public String getName ()
-        {
-            return _name;
-        }
-        
         @Override
         public int getId ()
         {
@@ -88,36 +83,33 @@ public abstract class PopularPlace extends SimpleStreamableObject
 
     public static class PopularMemberPlace extends PopularScenePlace
     {
-        public PopularMemberPlace (PopularPlaceOwner owner, SceneManager manager)
+        public PopularMemberPlace (int ownerId)
         {
-            super(owner);
-            plMgr = manager;
+            super(ownerId);
         }
     }
 
     public static class PopularGroupPlace extends PopularScenePlace
     {
-        public PopularGroupPlace (PopularPlaceOwner owner, SceneManager manager)
+        public PopularGroupPlace (int ownerId)
         {
-            super(owner);
-            plMgr = manager;
+            super(ownerId);
         }
     }
 
-    protected PopularPlace (PopularPlaceOwner owner)
-    {
-        this.owner = owner;
-    }
-    
-    /** The member, group or game this {@link PopularPlace} summary belongs to. */
-    public PopularPlaceOwner owner;
-    
-    /** The number of people who are in this place. */
-    public int population;
-    
-    /** Returns the name of this user- or group-owned scene, or game. */
-    public abstract String getName ();
-    
     /** Returns the id of this user, group or game. */
     public abstract int getId ();
+
+    @Override
+    public int hashCode()
+    {
+        return getId();
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        return obj != null && getClass() == obj.getClass() &&
+            getId() == ((PopularPlace) obj).getId();
+    }
 }

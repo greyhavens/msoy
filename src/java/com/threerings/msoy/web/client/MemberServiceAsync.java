@@ -36,12 +36,6 @@ public interface MemberServiceAsync
     public void loadInventory (WebCreds creds, byte type, AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link MemberService#serializeNeighborhood}.
-     */
-    public void serializeNeighborhood (WebCreds creds, int entityId, boolean forGroup,
-                                       AsyncCallback callback);
-
-    /**
      * The asynchronous version of {@link MemberService#serializePopularPlaces}.
      */
     public void serializePopularPlaces (WebCreds creds, int n, AsyncCallback callback);

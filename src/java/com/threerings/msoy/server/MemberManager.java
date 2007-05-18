@@ -3,68 +3,43 @@
 
 package com.threerings.msoy.server;
 
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import java.util.logging.Level;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 
-import com.samskivert.util.IntTuple;
+import com.samskivert.util.Interval;
 import com.samskivert.util.ResultListener;
 
-import com.threerings.parlor.data.Table;
-import com.threerings.parlor.game.server.GameManager;
+
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 
-import com.threerings.crowd.data.OccupantInfo;
-import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.whirled.server.SceneManager;
 
-import com.threerings.msoy.data.PopularPlace;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.SceneBookmarkEntry;
-import com.threerings.msoy.data.PopularPlace.*;
-import com.threerings.msoy.data.PopularPlace.PopularPlaceOwner.OwnerType;
-import com.threerings.msoy.game.data.LobbyObject;
-import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.msoy.game.server.LobbyManager;
-import com.threerings.msoy.game.server.MsoyGameManager;
 import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.web.data.FriendInviteObject;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
-import com.threerings.msoy.world.data.WorldMemberInfo;
 
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.GroupRepository;
-import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
@@ -100,6 +75,24 @@ public class MemberManager
         _memberRepo = memberRepo;
         _groupRepo = groupRepo;
         MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.BASE_GROUP);
+
+        _ppCache = new PopularPlacesCache();
+        _ppInvalidator = new Interval(MsoyServer.omgr) {
+            public void expired() {
+                PopularPlacesCache newCache = new PopularPlacesCache();
+                synchronized(this) {
+                    _ppCache = newCache;
+                }
+            }
+        };
+        _ppInvalidator.schedule(POPULAR_PLACES_CACHE_LIFE, true);
+    }
+
+    public PopularPlacesCache getPPCache ()
+    {
+        synchronized(this) {
+            return _ppCache;
+        }
     }
 
     /**
@@ -195,24 +188,6 @@ public class MemberManager
                 }
             }
         });
-    }
-    
-    /**
-     * Return a list of the most populous places in the whirled, sorted by population.
-     */
-    public Iterable<PopularPlace> getTopPlaces ()
-    {
-        updatePPCache();
-        return _topPlaces;
-    }
-
-    /**
-     * Return the total population count in the whirled.
-     */
-    public int getPopulationCount ()
-    {
-        updatePPCache();
-        return _totalPopulation;
     }
 
     // from interface MemberProvider
@@ -436,138 +411,6 @@ public class MemberManager
         });
     }
     
-    /**
-     * Look up and return the {@link PopularPlace} associated with the given owner, if any.
-     * 
-     * This must be called on the dobj thread.
-     */
-    public PopularPlace getPopularPlace(PopularPlaceOwner owner)
-    {
-        updatePPCache();
-        return _placesByOwner.get(owner);
-    }
-
-    /**
-     * Iterates over all the lobbies and the scenes in the world at the moment, find out the n most
-     * populated ones and sort all scenes by owner. cache the values.
-     * 
-     * This must be called on the dobj thread.
-     */
-    protected void updatePPCache ()
-    {
-        if (System.currentTimeMillis() - _popularPlaceStamp <= POPULAR_PLACES_CACHE_LIFE) {
-            return;
-        }
-        _placesByOwner = new HashMap<PopularPlaceOwner, PopularPlace>();
-        _topPlaces = new LinkedList<PopularPlace>();
-        _totalPopulation = 0;
-        Iterator<?> i = MsoyServer.plreg.enumeratePlaceManagers();
-        while (i.hasNext()) {
-            PlaceManager plMgr = (PlaceManager) i.next();
-            PlaceObject plObj = plMgr.getPlaceObject();
-
-            int count = 0;
-            for (OccupantInfo info : plObj.occupantInfo) {
-                if (info instanceof WorldMemberInfo) {
-                    count ++;
-                }
-            }
-            // don't track places without members in them at all
-            if (count == 0) {
-                continue;
-            }
-
-            if (plMgr instanceof SceneManager) {
-                SceneManager rMgr = ((SceneManager) plMgr);
-                MsoyScene scene = (MsoyScene) rMgr.getScene();
-                MsoySceneModel model = (MsoySceneModel) scene.getSceneModel();
-
-                boolean isGroup;
-                if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                    isGroup = true;
-                } else if (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                    isGroup = false;
-                } else {
-                    throw new IllegalArgumentException("unknown owner type: " + model.ownerType);
-                }
-
-                PopularPlaceOwner owner = new PopularPlaceOwner(
-                    isGroup ? OwnerType.GROUP : OwnerType.MEMBER, model.ownerId);
-                PopularScenePlace place = (PopularScenePlace) _placesByOwner.get(owner);
-                if (place == null) {
-                    place = isGroup ?
-                        new PopularGroupPlace(owner, rMgr) : new PopularMemberPlace(owner, rMgr);
-                    // update the main data structures
-                    _placesByOwner.put(owner, place);
-                    _topPlaces.add(place);
-                }
-
-                if (place.plMgr == null ||
-                    count > place.plMgr.getPlaceObject().occupantInfo.size()) {
-                    place.plMgr = rMgr;
-                }
-                place.population += count;
-                _totalPopulation += count;
-
-            } else if (plMgr instanceof MsoyGameManager) {
-                MsoyGameConfig config = ((MsoyGameConfig) ((GameManager) plMgr).getGameConfig());
-                PopularPlaceOwner owner = new PopularPlaceOwner(OwnerType.GAME, config.getGameId());
-                PopularGamePlace place = (PopularGamePlace) _placesByOwner.get(owner);
-                if (place == null) {
-                    place = new PopularGamePlace(owner, config.name, config.getGameId());
-                    _placesByOwner.put(owner, place);
-                    _topPlaces.add(place);
-                }
-                
-                place.population += count;
-                _totalPopulation += count;
-            }
-        }
-
-        // let's iterate over the lobbies too, which are no longer places
-        i = MsoyServer.lobbyReg.enumerateLobbyManagers();
-        while (i.hasNext()) {
-            LobbyObject lObj = ((LobbyManager) i.next()).getLobbyObject();
-            
-            // then add up the population count for each table being formed in this lobby
-            int count = 0;
-            for (Table table : lObj.tables) {
-                count += table.getOccupiedCount();
-            }
-            
-            // we skip empty lobbies, obviously
-            if (count == 0) {
-                continue;
-            }
-
-            // otherwise we're most likely dealing with a game that's already been registered
-            Game game = lObj.game;
-            PopularPlaceOwner owner = new PopularPlaceOwner(OwnerType.GAME, game.getPrototypeId());
-            PopularGamePlace place = (PopularGamePlace) _placesByOwner.get(owner);
-
-            if (place == null) {
-                // or sometimes, there's somebody in the lobby of a game that nobody is playing
-                place = new PopularGamePlace(owner, game.name, game.getPrototypeId());
-                _placesByOwner.put(owner, place);
-                _topPlaces.add(place);
-            }
-            
-            place.population += count;
-            // we don't increase total population: these are people we've already counted once
-        }
-
-        /*
-         * TODO: this is currently O(N log N) in the number of rooms; if that is unrealistic in
-         * the long run, we can easily make it O(N) by just bubbling into the top 20 (whatever)
-         * rooms on the fly, as we enumerate the scene managers.
-         * */
-        Collections.sort(_topPlaces, new Comparator<PopularPlace>() {
-            public int compare (PopularPlace o1, PopularPlace o2) {
-                return o1.population > o2.population ? -1 : o1.population == o2.population ? 0 : 1;
-            }
-        });
-        _popularPlaceStamp = System.currentTimeMillis();
-    }
 
     /**
      * Generic alterFriend() functionality for the two public methods above. Please note that user
@@ -686,18 +529,12 @@ public class MemberManager
 
     }
 
-    /** A mapping of ownerType/ownerId tuples to sets of scene ID's. Cached. */
-    protected Map<PopularPlaceOwner, PopularPlace> _placesByOwner;
-    
-    /** A list of every place (lobby or scene) in the world, sorted by population. */
-    protected List<PopularPlace> _topPlaces;
+    /** An interval that updates the popular places cache reference every so often. */
+    protected Interval _ppInvalidator;
 
-    /** The total number of people in the whirled. */
-    protected int _totalPopulation;
+    /** The most recent summary of popular places in the whirled. */
+    protected PopularPlacesCache _ppCache;
 
-    /** The time when the cached values were last calculated. */
-    protected long _popularPlaceStamp;
-    
     /** Provides access to persistent member data. */
     protected MemberRepository _memberRepo;
     
