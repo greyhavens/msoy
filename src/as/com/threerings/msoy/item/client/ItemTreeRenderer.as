@@ -9,8 +9,6 @@ import mx.controls.listClasses.BaseListData;
 import mx.controls.treeClasses.TreeItemRenderer;
 import mx.controls.treeClasses.TreeListData;
 
-import com.threerings.flash.MediaContainer;
-
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
@@ -28,17 +26,17 @@ public class ItemTreeRenderer extends TreeItemRenderer
         TreeListData(value).icon = null;
         var node :Object = TreeListData(value).item;
         if (node is Item) {
-            var media :MediaContainer;
+            var media :ScalingMediaContainer;
             if (_wrapper == null) {
                 media = new ScalingMediaContainer(
                     MAX_MEDIA_WIDTH, MAX_MEDIA_HEIGHT);
                 _wrapper = new MediaWrapper(media, MAX_MEDIA_WIDTH, MAX_MEDIA_HEIGHT);
 
             } else {
-                media = _wrapper.getMediaContainer();
+                media = _wrapper.getMediaContainer() as ScalingMediaContainer;
             }
             var item :Item = Item(node);
-            media.setMedia(item.getThumbnailPath());
+            media.setMediaDesc(item.getThumbnailMedia());
 
         } else if (_wrapper != null) {
             _wrapper.getMediaContainer().shutdown();

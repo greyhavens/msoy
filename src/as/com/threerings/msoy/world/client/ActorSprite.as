@@ -750,7 +750,7 @@ class TableIcon extends ScalingMediaContainer
         super(30, 30);
         _host = host;
         _gameSummary = gameSummary;
-        setMedia(gameSummary.getThumbMedia().getMediaPath());
+        setMediaDesc(gameSummary.getThumbMedia());
 
         addEventListener(MouseEvent.MOUSE_OVER, handleMouseIn);
         addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);

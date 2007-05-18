@@ -8,9 +8,6 @@ import flash.display.LoaderInfo;
 import flash.display.Shape;
 import flash.display.Sprite;
 
-import flash.display.Bitmap;
-import flash.display.BitmapData;
-
 import flash.errors.IOError;
 
 import flash.events.Event;
@@ -40,16 +37,14 @@ import flash.system.SecurityDomain;
 import flash.net.URLRequest;
 
 import com.threerings.util.CommandEvent;
-import com.threerings.util.Util;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.FilterUtil;
-import com.threerings.flash.MediaContainer;
 import com.threerings.flash.VideoDisplayer;
 
 import com.threerings.ezgame.util.EZObjectMarshaller;
 
-import com.threerings.msoy.client.Prefs;
+import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -66,7 +61,7 @@ import com.threerings.msoy.world.data.RoomObject;
  * A base sprite that concerns itself with the mundane details of
  * loading and communication with the loaded media content.
  */
-public class MsoySprite extends MediaContainer
+public class MsoySprite extends MsoyMediaContainer
     implements RoomElement
 {
     /** The type of a ValueEvent that is dispatched when the location is updated,
@@ -331,52 +326,6 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * This method is NOT used in normal mouseOver calculations.
-     * Normal mouseOver stuff seems to be completely broken for transparent
-     * images: the transparent portion is a 'hit'. I've (Ray) tried
-     * just about everything to fix this, more than once.
-     */
-    override public function hitTestPoint (
-        x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
-    {
-        // if we're holding a bitmap, do something smarter than the
-        // flash built-in and actually check for *GASP* transparent pixels!
-        try {
-            if (shapeFlag && _media is Loader && _desc.isImage() &&
-                    // the childAllowsParent check here causes a security
-                    // violation if it doesn't. WHAT THE FUCK. So we also
-                    // do the isImage() check above in addition to
-                    // try to head-off security errors at the pass
-                    Loader(_media).contentLoaderInfo.childAllowsParent &&
-                    (Loader(_media).content is Bitmap)) {
-                var b :Bitmap = Bitmap(Loader(_media).content);
-                var p :Point = b.globalToLocal(new Point(x, y));
-                // check that it's within the content bounds, and then check the bitmap directly
-                if (p.x >= 0 && p.x <= getMaxContentWidth() && p.y >= 0 &&
-                        p.y <= getMaxContentHeight() &&
-                        b.bitmapData.hitTest(new Point(0, 0), 0, p)) {
-                    return true;
-
-                } else {
-                    // the bitmap was not hit, see if other children were hit...
-                    for (var ii :int = numChildren - 1; ii >= 0; ii--) {
-                        var child :DisplayObject = getChildAt(ii);
-                        if (child != _media && child.hitTestPoint(x, y, shapeFlag)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            }
-        } catch (err :Error) {
-            // nada
-        }
-
-        // normal hit testing
-        return super.hitTestPoint(x, y, shapeFlag);
-    }
-
-    /**
      * Unload the media we're displaying, clean up any resources.
      *
      * @param completely if true, we're going away and should stop
@@ -397,46 +346,21 @@ public class MsoySprite extends MediaContainer
         _hotSpot = null;
     }
 
-    public function isBlockable () :Boolean
-    {
-        return !(_desc is StaticMediaDesc);
-    }
-
-    public function isBlocked () :Boolean
-    {
-        return Prefs.isMediaBlocked(_desc.getMediaId());
-    }
-
-    public function toggleBlocked () :void
-    {
-        var nowBlocked :Boolean = !isBlocked();
-        Prefs.setMediaBlocked(_desc.getMediaId(), nowBlocked);
-        setIsBlocked(nowBlocked);
-    }
-
+    /**
+     * This method should be used by MsoySprite and subclasses to set
+     * the media being shown, instead of the various public superclass
+     * methods like setMediaDesc() and setMedia().
+     */
     protected function setup (desc :MediaDesc, ident :ItemIdent) :void
     {
-        if (Util.equals(desc, _desc)) {
-            return;
-        }
-
-        _desc = desc;
         _ident = ident;
-
-        setIsBlocked(Prefs.isMediaBlocked(_desc.getMediaId()));
-//        scaleUpdated();
-//        configureMouseProperties();
+        setMediaDesc(desc);
     }
 
-    protected function setIsBlocked (blocked :Boolean) :void
+    override protected function didShowNewMedia () :void
     {
-        var desc :MediaDesc;
-        if (blocked) {
-            desc = new StaticMediaDesc(MediaDesc.IMAGE_JPEG, Item.FURNITURE, "blocked");
-        } else {
-            desc = _desc;
-        }
-        setMedia(desc.getMediaPath());
+        super.didShowNewMedia();
+
         scaleUpdated();
         configureMouseProperties();
     }
@@ -666,9 +590,6 @@ public class MsoySprite extends MediaContainer
 
     /** The current logical coordinate of this media. */
     public const _loc :MsoyLocation = new MsoyLocation();
-
-    /** Our Media descriptor. */
-    protected var _desc :MediaDesc;
 
     /** Identifies the item we are visualizing. All furniture will have an ident, but only our
      * avatar sprite will know its ident (and only we can update our avatar's memory, etc.).  */

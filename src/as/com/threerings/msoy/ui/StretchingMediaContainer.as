@@ -1,16 +1,14 @@
 package com.threerings.msoy.ui {
 
-import com.threerings.flash.MediaContainer;
-
 /**
  * A MediaContainer that will stretch its underlying image to take up the full area allotted to it
  * by the surrounding MediaWrapper.
  */
-public class StretchingMediaContainer extends MediaContainer
+public class StretchingMediaContainer extends MsoyMediaContainer
 {
-    public function StretchingMediaContainer (url :String = null)
+    public function StretchingMediaContainer (desc :MediaDesc = null)
     {
-        super(url);
+        super(desc);
     }
 
     override public function getMediaScaleX () :Number

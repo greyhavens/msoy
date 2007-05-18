@@ -1,8 +1,6 @@
 package com.threerings.msoy.ui {
 
-import com.threerings.flash.MediaContainer;
-
-public class ScalingMediaContainer extends MediaContainer
+public class ScalingMediaContainer extends MsoyMediaContainer
 {
     public var maxW :int;
     public var maxH :int;

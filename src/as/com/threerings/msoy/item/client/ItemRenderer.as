@@ -11,8 +11,6 @@ import mx.core.ScrollPolicy;
 
 import com.threerings.util.Util;
 
-import com.threerings.flash.MediaContainer;
-
 import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.ui.MediaWrapper;
@@ -58,7 +56,7 @@ public class ItemRenderer extends Box
             if (!Util.equals(item, _item)) {
                 _item = item;
 
-                _container.setMedia(_item.getThumbnailPath());
+                _container.setMediaDesc(_item.getThumbnailMedia());
                 _label.text = _item.name;
             }
 
@@ -92,7 +90,7 @@ public class ItemRenderer extends Box
         }
     }
 
-    protected var _container :MediaContainer;
+    protected var _container :ScalingMediaContainer;
     protected var _label :Label;
     protected var _item :Item;
 }

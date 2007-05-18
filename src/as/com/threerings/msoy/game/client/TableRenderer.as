@@ -337,7 +337,7 @@ class SeatRenderer extends HBox
 
         if (occupant != null) {
             prepareOccupant();
-            _headShot.setMedia((_table.headShots[_index] as MediaDesc).getMediaPath());
+            _headShot.setMediaDesc((_table.headShots[_index] as MediaDesc));
             _name.text = occupant.toString();
             if (occupant.equals(_ctx.getMemberObject().memberName)) {
                 _leaveBtn.setCommand(LobbyController.LEAVE_TABLE, _table.tableId);
