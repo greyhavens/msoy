@@ -6,14 +6,19 @@ package com.threerings.msoy.ui {
 import com.threerings.util.Util;
 
 import com.threerings.flash.MediaContainer;
+import com.threerings.flash.MenuUtil;
 
+import com.threerings.msoy.client.ContextMenuProvider;
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 public class MsoyMediaContainer extends MediaContainer
+    implements ContextMenuProvider
 {
     public function MsoyMediaContainer (desc :MediaDesc = null)
     {
@@ -64,6 +69,22 @@ public class MsoyMediaContainer extends MediaContainer
         var nowBlocked :Boolean = !isBlocked();
         Prefs.setMediaBlocked(_desc.getMediaId(), nowBlocked);
         setIsBlocked(nowBlocked);
+    }
+
+    // from ContextMenuProvider
+    public function populateContextMenu (ctx :WorldContext, menuItems :Array) :void
+    {
+        // TEMP: restrict blocking to support only, for now
+        if (ctx.getMemberObject().tokens.isSupport() && isBlockable()) {
+            var isBlocked :Boolean = isBlocked();
+            // TODO: if there happens to be another bleepable MsoyMediaContainer
+            // also under the mouse, we'll probably clobber each other's menu items.
+            // There's no human-meaningful identifier we can inject in the string from just
+            // the MediaDesc. Punting!
+            menuItems.push(MenuUtil.createControllerMenuItem(
+                Msgs.GENERAL.get(isBlocked ? "b.unbleep_media" : "b.bleep_media"),
+                toggleBlocked));
+        }
     }
 
     // TODO: doc

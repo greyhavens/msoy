@@ -243,7 +243,7 @@ public class WorldClient extends BaseClient
                 do {
                     seenObjects.push(disp);
                     if (disp is ContextMenuProvider) {
-                        (disp as ContextMenuProvider).populateContextMenu(custom);
+                        (disp as ContextMenuProvider).populateContextMenu(_wctx, custom);
                     }
                     disp = disp.parent;
 
@@ -255,7 +255,7 @@ public class WorldClient extends BaseClient
 
         // HACK: putting the separator in the menu causes the item to not
         // work in linux, so we don't do it in linux.
-        var useSep :Boolean = (-1 == Capabilities.os.search("Linux"));
+        var useSep :Boolean = (-1 == Capabilities.os.indexOf("Linux"));
 
         // add the About menu item
         custom.push(MenuUtil.createControllerMenuItem(

@@ -9,6 +9,6 @@ public interface ContextMenuProvider
     /**
      * Called to add to the array of custom menu items.
      */
-    function populateContextMenu (menuItems :Array) :void;
+    function populateContextMenu (ctx :WorldContext, menuItems :Array) :void;
 }
 }
