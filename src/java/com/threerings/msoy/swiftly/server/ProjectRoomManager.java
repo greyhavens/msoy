@@ -317,6 +317,9 @@ public class ProjectRoomManager extends PlaceManager
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
+        // TODO: this only protects the initial loading of the document. Once loaded into the dset
+        // any user in the room can load the file from the dset. For read only mode we're going
+        // to want to allow anyone to load a document anyway so this is going to have to change.
         checkPermissions(caller);
 
         // Load the document from the storage provider
