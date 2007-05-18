@@ -142,13 +142,11 @@ public class DoorTargetEditController
         var bcommit :Button = new Button();
         bcommit.label = Msgs.EDITING.get("b.edit_door_ok");
         bcommit.addEventListener(MouseEvent.CLICK, select);
-        bcommit.styleName = "doorEditButton";
         elts.addChild(bcommit);
 
         var bpurchase :Button = new Button();
         bpurchase.label = Msgs.EDITING.get("b.buy_room");
         bpurchase.addEventListener(MouseEvent.CLICK, purchase);
-        bpurchase.styleName = "doorEditButton";
         elts.addChild(bpurchase);
         
         return panel;

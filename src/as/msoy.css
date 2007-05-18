@@ -332,6 +332,21 @@ Window {
   verticalGap: 0;
 }
 
+.roomEditLabelContainer { 
+  borderStyle: "none";
+  borderThickness: 0;
+  borderThicknessLeft: 0;
+  borderThicknessRight: 0;
+  borderThicknessTop: 0;
+  borderThicknessBottom: 0;
+  paddingBottom: 0;
+  paddingTop: 0;
+  paddingLeft: 5;
+  paddingRight: 5;
+  horizontalGap: 0;
+  verticalGap: 0;
+}
+
 .roomEditButtonRoom {
   upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_room.png");
   overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_room_over.png");
@@ -388,6 +403,17 @@ Window {
     fontSize: 9;
 }
 
+.roomEditButtonExpand {
+  upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_plus.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_plus.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_plus.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_plus.png");
+  selectedUpSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_minus.png");
+  selectedOverSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_minus.png");
+  selectedDownSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_minus.png");
+  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_minus.png");
+}
+
 .logonPanel {
   paddingRight: 2;
 }
@@ -434,30 +460,7 @@ Window {
   textAlign: center;
 }
 
-.doorEditPanel { 
-  backgroundImage: Embed(source="../../rsrc/media/skins/button/furniedit/bg.png",
-                         scaleGridLeft="2", scaleGridTop="16", 
-                         scaleGridRight="105", scaleGridBottom="40");
-  backgroundSize: "100%";
-}
- 
-.furniEditPanel {
-  horizontalGap: 0;
-  verticalGap: 0;
-  paddingLeft: 4;
-  paddingRight: 4;
-  backgroundImage: Embed(source="../../rsrc/media/skins/button/furniedit/bg.png",
-                         scaleGridLeft="2", scaleGridTop="16", 
-                         scaleGridRight="105", scaleGridBottom="40");
-  backgroundSize: "100%";
-}
-
-.furniEditRibbon { 
-  horizontalGap: 0;
-  verticalGap: 0;
-}
-
-.furniEditButton, .doorEditButton {
+.editButton {
   paddingLeft: 0;
   paddingRight: 0;
   paddingTop: 0;

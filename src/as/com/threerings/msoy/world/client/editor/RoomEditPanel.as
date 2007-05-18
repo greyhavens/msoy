@@ -15,6 +15,7 @@ import flash.geom.Rectangle;
 import mx.containers.HBox;
 import mx.controls.Button;
 import mx.controls.Label;
+import mx.controls.Spacer;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.msoy.client.Msgs;
@@ -147,12 +148,25 @@ public class RoomEditPanel extends FloatingPanel
         // make the label row
 
         var labelrow :HBox = new HBox();
-        labelrow.styleName = "roomEditPanelContainer";
+        labelrow.styleName = "roomEditLabelContainer";
+        labelrow.setStyle("verticalAlign", "middle");
+        labelrow.percentWidth = 100;
         addChild(labelrow); 
         
         _label = new Label();
         _label.styleName = "roomEditLabel";
         labelrow.addChild(_label);
+
+        var spacer :Spacer = new Spacer();
+        spacer.percentWidth = 100;
+        labelrow.addChild(spacer);
+
+        var expand :CommandButton = new CommandButton();
+        expand.styleName = "roomEditButtonExpand";
+        expand.toggle = true;
+        expand.width = expand.height = 9;
+        expand.setCallback(function () :void { /* todo */ });
+        labelrow.addChild(expand);
         
     }
 
