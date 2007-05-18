@@ -385,7 +385,7 @@ public class MemberServlet extends MsoyServiceServlet
         throws JSONException
     {
         JSONObject obj = new JSONObject();
-        obj.put("name", "Place #" + place.getId()); // TODO TODO
+        obj.put("name", place.getName());
         obj.put("pop", MsoyServer.memberMan.getPPCache().getPopulation(place));
         obj.put("id", place.getId());
         if (peeps != null) {

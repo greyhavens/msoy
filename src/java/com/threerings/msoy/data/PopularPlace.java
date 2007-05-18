@@ -7,10 +7,12 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.io.SimpleStreamableObject;
 import com.threerings.util.ActionScript;
 
+import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.server.SceneManager;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.server.MsoyGameManager;
+import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.parlor.game.server.GameManager;
 
@@ -24,13 +26,14 @@ public abstract class PopularPlace extends SimpleStreamableObject
     {
         if (plMgr instanceof SceneManager) {
             SceneManager rMgr = ((SceneManager) plMgr);
-            MsoySceneModel model = (MsoySceneModel) rMgr.getScene().getSceneModel();
+            MsoyScene scene = (MsoyScene) rMgr.getScene();
+            MsoySceneModel model = (MsoySceneModel) scene.getSceneModel();
 
             if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                return new PopularGroupPlace(model.ownerId);
+                return new PopularGroupPlace(scene);
             }
             if (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                return new PopularMemberPlace(model.ownerId);
+                return new PopularMemberPlace(scene);
             }
             throw new IllegalArgumentException("unknown owner type: " + model.ownerType);
         }
@@ -43,24 +46,29 @@ public abstract class PopularPlace extends SimpleStreamableObject
 
     public static abstract class PopularScenePlace extends PopularPlace
     {
-        protected PopularScenePlace (int ownerId)
+        protected PopularScenePlace (MsoyScene scene)
         {
-            _ownerId = ownerId;
+            _scene = scene;
         }
 
         @Override
         public int getId ()
         {
-            return _ownerId;
+            return ((MsoySceneModel )_scene.getSceneModel()).ownerId;
         }
 
-        protected int _ownerId;
-
-        public int getSceneId()
+        @Override
+        public String getName()
         {
-            // TODO Auto-generated method stub
-            return 1;
+            return _scene.getName();
         }
+        
+        public int getSceneId ()
+        {
+            return _scene.getId();
+        }
+        
+        protected Scene _scene;
     }
 
     public static class PopularGamePlace extends PopularPlace
@@ -77,28 +85,37 @@ public abstract class PopularPlace extends SimpleStreamableObject
             return _id;
         }
 
+        @Override
+        public String getName()
+        {
+            return _name;
+        }
+
         protected String _name;
         protected int _id;
     }
 
     public static class PopularMemberPlace extends PopularScenePlace
     {
-        public PopularMemberPlace (int ownerId)
+        public PopularMemberPlace (MsoyScene scene)
         {
-            super(ownerId);
+            super(scene);
         }
     }
 
     public static class PopularGroupPlace extends PopularScenePlace
     {
-        public PopularGroupPlace (int ownerId)
+        public PopularGroupPlace (MsoyScene scene)
         {
-            super(ownerId);
+            super(scene);
         }
     }
 
     /** Returns the id of this user, group or game. */
     public abstract int getId ();
+
+    /** Returns a descriptive name of this user, group or game. */
+    public abstract String getName ();
 
     @Override
     public int hashCode()
