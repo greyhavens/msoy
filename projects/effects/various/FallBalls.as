@@ -2,17 +2,27 @@ package {
 
 import flash.events.Event;
 
+import flash.display.Shape;
 import flash.display.Sprite;
+
+import flash.geom.Matrix;
 
 import flash.utils.getTimer; // function import
 
 import com.threerings.flash.FrameSprite;
 
-[SWF(width="2000", height="500")]
+[SWF(width="500", height="500")]
 public class FallBalls extends FrameSprite
 {
     public function FallBalls ()
     {
+        // Verified: a mask is enough to "reserve our shape"
+        var mask :Shape = new Shape();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, 0, 500, 500);
+        mask.graphics.endFill();
+        this.mask = mask;
+        addChild(mask); // fucking freaky ass freakazoids
     }
 
     override protected function handleFrame (... ignored) :void
@@ -32,17 +42,20 @@ public class FallBalls extends FrameSprite
 
     protected function addBall (now :Number) :void
     {
-        var ball :Ball = new Ball(10 + (Math.random() * 15), .01 + (Math.random() / 5), now);
+        var matrix :Matrix = this.transform.concatenatedMatrix;
+        var radius :Number = 10 + (15 * Math.random());
+
+        var ball :Ball = new Ball(radius / matrix.a, radius / matrix.d,
+            .01 + (Math.random() / 5), now);
         ball.y = -25;
-        ball.x = Math.random() * 2000;
-        // start a new ball
+        ball.x = Math.random() * 500;
         _balls.push(ball);
         addChild(ball);
     }
 
     protected var _balls :Array = [];
 
-    public static const TERMINAL_Y :int = 600;
+    public static const TERMINAL_Y :int = 500;
 }
 }
 
@@ -52,11 +65,11 @@ import flash.display.Shape;
 
 class Ball extends Shape
 {
-    public function Ball (radius :Number, speed :Number, now :Number) :void
+    public function Ball (xradius :Number, yradius :Number, speed :Number, now :Number) :void
     {
         blendMode = BlendMode.INVERT;
         graphics.beginFill(0xFFFFFF);
-        graphics.drawCircle(0, 0, radius);
+        graphics.drawEllipse(0, 0, xradius, yradius);
         graphics.endFill();
 
         _speed = speed;
