@@ -37,7 +37,8 @@ import static com.threerings.msoy.Log.log;
  */
 public class SwiftlyStandAlone
 {
-    static public void main (String argv[]) {
+    static public void main (String argv[])
+    {
         // parse and check the arguments
         HashMap<String, String> properties = parseArguments(argv);
 
