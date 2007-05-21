@@ -77,6 +77,7 @@ public class PopularPlacesCache
             PopularPlace place = PopularPlace.getPopularPlace(plMgr);
             _population.incrementCount(place, count);
             _topPlaces.add(place);
+            _totalPopulation += count;
         }
 
         // let's iterate over the lobbies too, which are no longer places

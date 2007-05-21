@@ -280,6 +280,8 @@ public class HoodViz extends Sprite
         _canvas.addChild(bitHolder);
 
         if (neighbor != null) {
+            var yy :int = p.y;
+
             var format :TextFormat = new TextFormat();
             format.font = "hoodFont";
             format.size = 24;
@@ -288,15 +290,33 @@ public class HoodViz extends Sprite
             var text :TextField = new TextField();
             text.defaultTextFormat = format;
             text.embedFonts = true;
-            text.text = neighbor.getName();
+            text.text = neighbor.getName() + ": " + neighbor.population;
             text.filters = [ new GlowFilter(0x660000, 1, 3, 3, 255) ];
             text.autoSize = TextFieldAutoSize.CENTER;
             text.wordWrap = true;
             text.width = 200;
             text.x = p.x;
-            text.y = p.y;
-
+            text.y = yy;
+            yy += text.height;
             _labels.push(text);
+
+            if (neighbor.friends && neighbor.friends.length > 0) {
+                format = new TextFormat();
+                format.font = "hoodFont";
+                format.size = 18;
+                format.color = 0x660000;
+
+                text = new TextField();
+                text.defaultTextFormat = format;
+                text.embedFonts = true;
+                text.text = neighbor.friends.join(", ");
+                text.autoSize = TextFieldAutoSize.CENTER;
+                text.wordWrap = true;
+                text.width = 200;
+                text.x = p.x;
+                text.y = yy;
+                _labels.push(text);
+            }
         }
 
         if (update) {
@@ -388,9 +408,9 @@ public class HoodViz extends Sprite
                 tipContent.addChild(obj);
             }
 
-            if (house.peeps != null && house.peeps.length > 0) {
-                str = "Here: " + house.peeps.join(", ");
-                if (house.peeps.length < house.population) {
+            if (house.friends != null && house.friends.length > 0) {
+                str = "Here: " + house.friends.join(", ");
+                if (house.friends.length < house.population) {
                     str += " ...";
                 }
                 obj = getTextField(str, false);
@@ -428,7 +448,7 @@ public class HoodViz extends Sprite
                 tipContent.addChild(obj);
             }
 
-            if (group.peeps != null && group.peeps.length > 0) {
+            if (group.friends != null && group.friends.length > 0) {
                 if (loader == null) {
                     // if we're showing people but no logo, add a rule
                     rule = new _rule();
@@ -436,8 +456,8 @@ public class HoodViz extends Sprite
                     tipContent.addChild(rule);
                 }
 
-                str = "Here: " + group.peeps.join(", ");
-                if (group.peeps.length < group.population) {
+                str = "Friends: " + group.friends.join(", ");
+                if (group.friends.length < group.population) {
                     str += " ...";
                 }
                 obj = getTextField(str, false);

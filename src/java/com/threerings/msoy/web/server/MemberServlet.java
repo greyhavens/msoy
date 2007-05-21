@@ -175,7 +175,8 @@ public class MemberServlet extends MsoyServiceServlet
                     JSONArray games = new JSONArray();
 
                     for (Map.Entry<PopularPlace, Set<MemberName>> entry : popSets.entrySet()) {
-                        filePopularPlace(entry.getKey(), entry.getValue(), homes, groups, games);
+                        filePopularPlace(
+                            creds.name, entry.getKey(), entry.getValue(), homes, groups, games);
                     }
 
                     // after we've enumerated our friends, we add in the top populous places too 
@@ -185,7 +186,7 @@ public class MemberServlet extends MsoyServiceServlet
                         if (popSets.containsKey(place)) {
                             continue;
                         }
-                        filePopularPlace(place, null, homes, groups, games);
+                        filePopularPlace(creds.name, place, null, homes, groups, games);
                         if (--n <= 0) {
                             break;
                         }
@@ -380,16 +381,20 @@ public class MemberServlet extends MsoyServiceServlet
         }
     }
 
-    protected void filePopularPlace (PopularPlace place, Set<MemberName> peeps, JSONArray homes,
-                                     JSONArray groups, JSONArray games)
+    protected void filePopularPlace (MemberName who, PopularPlace place, Set<MemberName> friends,
+                                     JSONArray homes, JSONArray groups, JSONArray games)
         throws JSONException
     {
         JSONObject obj = new JSONObject();
         obj.put("name", place.getName());
         obj.put("pop", MsoyServer.memberMan.getPPCache().getPopulation(place));
         obj.put("id", place.getId());
-        if (peeps != null) {
-            obj.put("peeps", toJSON(peeps));
+        if (friends != null) {
+            JSONArray arr = new JSONArray();
+            for (MemberName bit : friends) {
+                arr.put(bit.equals(who) ? "You" : bit.toString());
+            }
+            obj.put("friends", arr);
         }
         if (place instanceof PopularGamePlace) {
             games.put(obj);
@@ -401,15 +406,6 @@ public class MemberServlet extends MsoyServiceServlet
                 groups.put(obj);
             }
         }
-    }
-
-    protected <T> JSONArray toJSON (Set<T> set)
-    {
-        JSONArray arr = new JSONArray();
-        for (T bit : set) {
-            arr.put(bit);
-        }
-        return arr;
     }
 
     protected String randomInviteId ()
