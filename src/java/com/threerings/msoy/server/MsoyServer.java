@@ -232,6 +232,7 @@ public class MsoyServer extends WhirledServer
     public static void registerMember (MemberObject member)
     {
         _online.put(member.memberName, member);
+        memberMan.registerMember(member);
 
         // update our members online count in the status object
         adminMan.statObj.setMembersOnline(clmgr.getClientCount());

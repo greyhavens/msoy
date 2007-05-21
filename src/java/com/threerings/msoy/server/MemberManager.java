@@ -18,6 +18,8 @@ import com.samskivert.util.ResultListener;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.server.PlaceManager;
@@ -40,6 +42,7 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.GroupRepository;
+import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
@@ -63,6 +66,19 @@ public class MemberManager
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.memberMan.flowUpdated(memberId, newFlow);
+            }
+        });
+    }
+
+    /**
+     * This can be called from any thread to queue an update of the member's current accumulated
+     * flow if they are online.
+     */
+    public static void queueAccFlowUpdated (final int memberId, final int newAccFlow)
+    {
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.accFlowUpdated(memberId, newAccFlow);
             }
         });
     }
@@ -148,6 +164,18 @@ public class MemberManager
     }
 
     /**
+     * Called when a member's accumulated flow is updated.  If they are online, we update {@link
+     * MemberObject#accFlow}.
+     */
+    public void accFlowUpdated (int memberId, int newAccFlow) 
+    {
+        MemberObject user = MsoyServer.lookupMember(memberId);
+        if (user != null) {
+            user.setAccFlow(newAccFlow);
+        }
+    }
+
+    /**
      * Export alterFriend() functionality according to the web servlet way of doing things. 
      */
     public void alterFriend (int userId, int friendId, boolean add,
@@ -185,6 +213,23 @@ public class MemberManager
                     handleFailure(new InvocationException("m.no_such_user"));
                 } else {
                     super.handleSuccess();
+                }
+            }
+        });
+    }
+
+    /** 
+     * Called by MsoyServer to indicate that a user has logged on.  It is used to listen on the
+     * member object for changes to accumulated flow so that the member's level can be updated
+     * as necessary.
+     */
+    public void registerMember (final MemberObject member)
+    {
+        checkCurrentLevel(member);
+        member.addListener(new AttributeChangeListener() {
+            public void attributeChanged (AttributeChangedEvent event) {
+                if (MemberObject.ACC_FLOW.equals(event.getName())) {
+                    checkCurrentLevel(member);
                 }
             }
         });
@@ -344,18 +389,19 @@ public class MemberManager
     {
         MsoyServer.invoker.postUnit(new RepositoryUnit("grantFlow") {
             public void invokePersist () throws PersistenceException {
-                _flow = _memberRepo.getFlowRepository().grantFlow(
+                _flowRec = _memberRepo.getFlowRepository().grantFlow(
                     memberId, amount, grantAction, details);
             }
             public void handleSuccess () {
-                flowUpdated(memberId, _flow);
+                flowUpdated(memberId, _flowRec.flow);
+                accFlowUpdated(memberId, _flowRec.accFlow);
             }
             public void handleFailure (Exception pe) {
                 log.log(Level.WARNING, "Unable to grant flow [memberId=" + memberId +
                         ", action=" + grantAction + ", amount=" + amount +
                         ", details=" + details + "]", pe);
             }
-            protected int _flow;
+            protected MemberFlowRecord _flowRec;
         });
     }
 
@@ -371,7 +417,7 @@ public class MemberManager
         MsoyServer.invoker.postUnit(new RepositoryUnit("spendFlow") {
             public void invokePersist () throws PersistenceException {
                 _flow = _memberRepo.getFlowRepository().spendFlow(
-                    memberId, amount, spendAction, details);
+                    memberId, amount, spendAction, details).flow;
             }
             public void handleSuccess () {
                 flowUpdated(memberId, _flow);
@@ -396,22 +442,33 @@ public class MemberManager
         MsoyServer.invoker.postUnit(new RepositoryUnit("takeAction") {
             public void invokePersist () throws PersistenceException {
                 // record that that took the action
-                _flow = _memberRepo.getFlowRepository().logUserAction(memberId, action, details);
+                _flowRec = _memberRepo.getFlowRepository().logUserAction(memberId, action, details);
             }
             public void handleSuccess () {
-                if (_flow > 0) {
-                    flowUpdated(memberId, _flow);
+                if (_flowRec != null) {
+                    flowUpdated(memberId, _flowRec.flow);
+                    accFlowUpdated(memberId, _flowRec.accFlow);
                 }
             }
             public void handleFailure (Exception pe) {
                 log.warning("Unable to note user action [memberId=" + memberId +
                             ", action=" + action + ", details=" + details + "]");
             }
-            protected int _flow;
+            protected MemberFlowRecord _flowRec;
         });
     }
-    
 
+    /** 
+     * Check if the member's accumulated flow level matches up with their current level, and update
+     * their current level if necessary
+     */
+    protected void checkCurrentLevel (final MemberObject member)
+    {
+        // TODO
+        log.info("Current accumulated flow level updated, or user just logged in [memberId=" + 
+            member.memberName.getMemberId() + ", accFlow=" + member.accFlow + "]");
+    }
+    
     /**
      * Generic alterFriend() functionality for the two public methods above. Please note that user
      * can be null here (i.e. offline).

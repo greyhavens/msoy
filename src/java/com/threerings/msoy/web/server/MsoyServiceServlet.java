@@ -16,6 +16,7 @@ import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.data.ServiceException;
@@ -84,10 +85,11 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     protected void logUserAction (MemberRecord memrec, UserAction action, String details)
         throws PersistenceException
     {
-        int flow = MsoyServer.memberRepo.getFlowRepository().logUserAction(
+        MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().logUserAction(
             memrec.memberId, action, details);
-        if (flow >= 0) {
-            MemberManager.queueFlowUpdated(memrec.memberId, flow);
+        if (flowRec != null) {
+            MemberManager.queueFlowUpdated(memrec.memberId, flowRec.flow);
+            MemberManager.queueAccFlowUpdated(memrec.memberId, flowRec.accFlow);
         }
     }
 

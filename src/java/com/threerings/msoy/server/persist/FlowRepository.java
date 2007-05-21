@@ -86,10 +86,10 @@ public class FlowRepository extends DepotRepository
     /**
      * Logs an action for a member with optional action-specific data, which may be null.
      *
-     * @return -1 if no flow was granted as a result of this action, the member's new flow count if
-     * flow was granted by the action.
+     * @return -1 if no flow was granted as a result of this action, the member's new 
+     * MemberFlowRecord if flow was granted by the action.
      */
-    public int logUserAction (int memberId, UserAction action, String details)
+    public MemberFlowRecord logUserAction (int memberId, UserAction action, String details)
         throws PersistenceException
     {
         // if they get flow for performing this action, grant it to them
@@ -97,7 +97,7 @@ public class FlowRepository extends DepotRepository
             return grantFlow(memberId, action.getFlow(), action, details);
         } else {
             recordUserAction(memberId, action, details);
-            return -1;
+            return null;
         }
     }
 
@@ -197,7 +197,7 @@ public class FlowRepository extends DepotRepository
             throw new PersistenceException(
                 "Unknown member [accountName=" + accountName + ", action=" + action + "]");
         }
-        return grantFlow(record.memberId, amount, action, details);
+        return grantFlow(record.memberId, amount, action, details).flow;
     }
 
     /**
@@ -222,7 +222,7 @@ public class FlowRepository extends DepotRepository
      *
      * @return the member's new flow value following the update.
      */
-    public int spendFlow (int memberId, int amount, UserAction action, String details)
+    public MemberFlowRecord spendFlow (int memberId, int amount, UserAction action, String details)
         throws PersistenceException
     {
         return updateFlow(memberId, amount, action, details, false);
@@ -234,7 +234,7 @@ public class FlowRepository extends DepotRepository
      *
      * @return the member's new flow value following the update.
      */
-    public int grantFlow (int memberId, int amount, UserAction action, String details)
+    public MemberFlowRecord grantFlow (int memberId, int amount, UserAction action, String details)
         throws PersistenceException
     {
         return updateFlow(memberId, amount, action, details, true);
@@ -245,7 +245,7 @@ public class FlowRepository extends DepotRepository
      *
      * @return the user's new flow value following the update.
      */
-    protected int updateFlow (
+    protected MemberFlowRecord updateFlow (
         int memberId, int amount, UserAction action, String details, boolean grant)
         throws PersistenceException
     {
@@ -319,7 +319,7 @@ public class FlowRepository extends DepotRepository
         MsoyServer.flowLog(memberId + (grant ? " G " : " S ") + amount + " " + loginfo);
 
         // TODO: can we magically get the updated value from the database? stored procedure?
-        return loadMemberFlow(memberId).flow;
+        return loadMemberFlow(memberId);
     }
 
     /**

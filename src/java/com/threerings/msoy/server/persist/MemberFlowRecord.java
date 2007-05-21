@@ -29,6 +29,13 @@ public class MemberFlowRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #flow} field. */
     public static final ColumnExp FLOW_C =
         new ColumnExp(MemberFlowRecord.class, FLOW);
+
+    /** The column identifier for the {@link #accFlow} field. */
+    public static final String ACC_FLOW = "accFlow";
+
+    /** The qualified column identifier for the {@link #accFlow} field. */
+    public static final ColumnExp ACC_FLOW_C =
+        new ColumnExp(MemberFlowRecord.class, ACC_FLOW);
     // AUTO-GENERATED: FIELDS END
     
     /** See {@MemberRecord#memberId}. */
@@ -37,6 +44,9 @@ public class MemberFlowRecord extends PersistentRecord
 
     /** See {@MemberRecord#flow}. */
     public int flow;
+
+    /** See {@MemberRecord#accFlow}. */
+    public int accFlow;
 
     // AUTO-GENERATED: METHODS START
     /**
