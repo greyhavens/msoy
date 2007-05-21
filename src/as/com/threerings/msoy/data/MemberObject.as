@@ -49,6 +49,9 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>flow</code> field. */
     public static const FLOW :String = "flow";
 
+    /** The field name of the <code>accFlow</code> field. */
+    public static const ACC_FLOW :String = "accFlow";
+
     /** The field name of the <code>recentScenes</code> field. */
     public static const RECENT_SCENES :String = "recentScenes";
 
@@ -97,6 +100,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** How much lovely flow we've got jangling around on our person. */
     public var flow :int;
+
+    /** How much total lovely flow we've jangled around on our person. */
+    public var accFlow :int;
 
     /** Our current assessment of how likely to be human this member is, in [0, 255]. */
     public var humanity :int;
@@ -360,6 +366,7 @@ public class MemberObject extends MsoyBodyObject
         worldGameOid = ins.readInt();
         worldGameCfg = (ins.readObject() as Streamable);
         flow = ins.readInt();
+        accFlow = ins.readInt();
         humanity = ins.readInt();
         recentScenes = (ins.readObject() as DSet);
         ownedScenes = (ins.readObject() as DSet);
