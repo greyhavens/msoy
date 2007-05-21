@@ -508,11 +508,9 @@
         -->
         <fileset dir="${deploy.dir}" includes="${ident}-client*.jar"/>
       </signjar>
+      <copy file="${deploy.dir}/${ident}-client-signed.jar" todir="pages/clients/${build_version}"/>
     </then></if>
     <copy file="${deploy.dir}/${ident}-client.jar" todir="pages/clients/${build_version}"/>
-    <!--
-    <copy file="${deploy.dir}/${ident}-client-signed.jar" todir="pages/clients/${build_version}"/>
-    -->
   </target>
 
   <!-- builds our Java clients -->
