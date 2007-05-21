@@ -29,6 +29,7 @@ import javax.swing.JTree;
 import javax.swing.ProgressMonitorInputStream;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
+import javax.swing.LookAndFeel;
 
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -46,6 +47,9 @@ import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.ProjectTreeModel;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
+
+import com.threerings.msoy.swiftly.client.signed.SignedFileChooser;
+import com.threerings.msoy.swiftly.client.signed.UploadTask;
 
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.client.InvocationService.InvocationListener;
@@ -221,26 +225,30 @@ public class ProjectPanel extends JPanel
                 // FileNameExtensionFilter filter =
                 // new FileNameExtensionFilter("JPG & GIF Images", "jpg", "gif");
                 // chooser.setFileFilter(filter);
-                JFileChooser fc = new JFileChooser();
-                fc.setApproveButtonText(_msgs.get("m.action.upload"));
-                int returnVal = fc.showOpenDialog(_editor);
+                SignedFileChooser sfc = new SignedFileChooser();
+                sfc.setApproveButtonText(_msgs.get("m.action.upload"));
+                int returnVal = sfc.showOpenDialog(_editor);
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    final File file = fc.getSelectedFile();
+                    // these operations need to happen in the signed code
+                    final File file = sfc.getSelectedFile();
+                    final long fileLength = sfc.getSelectedFileLength();
+                    final String fileName = sfc.getSelectedFileName();
 
                     // display an error to the user if the file being uploaded is too large
-                    if (file.length() > MAX_UPLOAD * ONE_MEG) {
+                    if (fileLength > MAX_UPLOAD * ONE_MEG) {
                         _ctx.showErrorMessage(_msgs.get("e.upload_too_large",
                             String.valueOf(MAX_UPLOAD)));
                         return;
                     }
 
                     // mime type will be determined on the server after the upload
-                    _roomObj.service.startFileUpload(_ctx.getClient(), file.getName(),
+                    _roomObj.service.startFileUpload(_ctx.getClient(), fileName,
                         getCurrentParent(), new ConfirmListener () {
                         public void requestProcessed () {
                             _uploadFileAction.setEnabled(false);
-                            UploadTask task = new UploadTask(file);
+                            UploadTask task =
+                                new UploadTask(file, ProjectPanel.this, _roomObj, _ctx);
                             TaskMaster.invokeTask(UPLOAD_TASK, task, new UploadTaskObserver());
                         }
                         public void requestFailed (String reason) {
@@ -447,60 +455,6 @@ public class ProjectPanel extends JPanel
         }
     }
 
-    protected class UploadTask extends TaskAdapter
-    {
-        public static final String SUCCEEDED = "m.file_upload_complete";
-        public static final String ABORTED = "m.abort_upload_complete";
-
-        public UploadTask (File file)
-        {
-            super();
-            _file = file;
-        }
-
-        @Override
-        public Object invoke()
-            throws Exception
-        {
-            // tweak the dialog title and cancel button of the standard progress monitor
-            UIManager.put("ProgressMonitor.progressText",
-                _msgs.get("m.dialog.upload_progress.title"));
-            UIManager.put("OptionPane.cancelButtonText",
-                _msgs.get("m.dialog.upload_progress.cancel"));
-
-            // create a progress monitor to inform the user of the file upload status
-            ProgressMonitorInputStream input = new ProgressMonitorInputStream(
-                ProjectPanel.this,
-                _msgs.get("m.dialog.upload_progress") + _file.getName(),
-                new FileInputStream(_file));
-            int len;
-            byte[] buf = new byte[UPLOAD_BLOCK_SIZE];
-            try {
-                while ((len = input.read(buf)) > 0) {
-                    if (len < UPLOAD_BLOCK_SIZE) {
-                        byte[] nbuf = new byte[len];
-                        System.arraycopy(buf, 0, nbuf, 0, len);
-                        _roomObj.service.uploadFile(_ctx.getClient(), nbuf);
-                    } else {
-                        _roomObj.service.uploadFile(_ctx.getClient(), buf);
-                    }
-                    // Presents itself does some queueing/sleeping so just keep the reads
-                    // happening at roughly the speed the messages are actually being sent so
-                    // the feedback the progress monitor is giving reflects some kind of reality.
-                    Thread.sleep(800);
-                }
-            } catch (InterruptedIOException iie) {
-                // user hit cancel, abort the task.
-                return ABORTED;
-            } finally {
-                input.close();
-            }
-            return SUCCEEDED;
-        }
-
-        protected File _file;
-    }
-
     protected class UploadTaskObserver
         implements TaskObserver, ConfirmListener
     {
@@ -544,9 +498,6 @@ public class ProjectPanel extends JPanel
 
         protected String _result;
     }
-
-    /** Upload block size is 256K to avoid Presents freakouts. */
-    protected static final int UPLOAD_BLOCK_SIZE = 262144;
 
     /** Maximum file upload size is 10 megs. */
     protected static final int MAX_UPLOAD = 10;

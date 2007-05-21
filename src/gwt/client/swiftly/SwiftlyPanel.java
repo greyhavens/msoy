@@ -70,7 +70,8 @@ public class SwiftlyPanel extends FlexTable
 
         // Add the applet
         _applet = WidgetUtil.createApplet(
-            "swiftly", "/clients/" + DeploymentConfig.version + "/swiftly-client.jar",
+            "swiftly", "/clients/" + DeploymentConfig.version + "/swiftly-client.jar" + 
+            ",/clients/" + DeploymentConfig.version + "/swiftly-client-signed.jar",
             "com.threerings.msoy.swiftly.client.SwiftlyApplet", "100%", "100%",
             new String[] {  "authtoken", _authtoken,
                             "projectId", String.valueOf(_project.projectId),

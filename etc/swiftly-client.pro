@@ -30,10 +30,11 @@
 
 -dontskipnonpubliclibraryclasses
 -dontobfuscate
+-outjars ../dist/swiftly-client-signed.jar(**/msoy/swiftly/client/signed/**)
 -outjars ../dist/swiftly-client.jar
 
--keep public class org.jvnet.substance.* {
-    *;
+-keep class * extends javax.swing.plaf.ComponentUI {
+    public static javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent);
 }
 
 -keepnames class * implements java.io.Serializable

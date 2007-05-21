@@ -12,6 +12,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Image;
 
+import java.io.File;
 import java.io.InputStream;
 
 import java.net.MalformedURLException;
@@ -123,7 +124,7 @@ public class SwiftlyStandAlone
         public URL getCodeBase ()
         {
             try {
-                return new URL("file:////"  + System.getProperty("user.dir") + "/");
+                return new File(System.getProperty("user.dir")).toURL();
             } catch (MalformedURLException e) {
                 System.err.println("Unable to determine the code base URL");
                 return null;
