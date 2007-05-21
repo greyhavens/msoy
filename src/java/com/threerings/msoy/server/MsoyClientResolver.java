@@ -91,6 +91,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         int dT = (int) ((System.currentTimeMillis() - member.lastSession.getTime()) / 60000);
         MsoyServer.memberRepo.getFlowRepository().expireFlow(member, dT); // modifies member.flow
         userObj.setFlow(member.flow);
+        userObj.setAccFlow(member.accFlow);
 
         userObj.setHumanity(member.humanity);
         userObj.setOwnedScenes(new DSet<SceneBookmarkEntry>(
