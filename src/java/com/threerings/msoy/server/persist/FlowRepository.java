@@ -86,7 +86,7 @@ public class FlowRepository extends DepotRepository
     /**
      * Logs an action for a member with optional action-specific data, which may be null.
      *
-     * @return -1 if no flow was granted as a result of this action, the member's new 
+     * @return null if no flow was granted as a result of this action, the member's new 
      * MemberFlowRecord if flow was granted by the action.
      */
     public MemberFlowRecord logUserAction (int memberId, UserAction action, String details)
