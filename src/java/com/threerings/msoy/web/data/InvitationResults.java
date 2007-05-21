@@ -13,21 +13,21 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class InvitationResults
     implements IsSerializable
 {
-    /** A list of the email addresses that the server determined were invalid */
-    public List invalid;
+    /** The invitation was successful. */
+    public static final String SUCCESS = null;
 
-    /** A list of the email addresses that we know failed to receive the invitation */
-    public List failed;
+    /** The invitee email was invalid. */
+    public static final String INVALID_EMAIL = "e.invalid_email";
 
-    /** A list of the email addresses of people that have opted-out from email from whirled. */
-    public List optedOut;
+    /** The invitee has opted out of communications from Whirled. */
+    public static final String OPTED_OUT = "e.opted_out";
 
-    /** A list of the email addresses that were already registered with whirled */
-    public List alreadyRegistered;
+    /** The invitee has already registered. */
+    public static final String ALREADY_REGISTERED = "e.already_registered";
 
-    /** A list of the email addresses that were already invited by this user */
-    public List alreadyInvited;
+    /** The invitee has already been invited by the inviter. */
+    public static final String ALREADY_INVITED = "e.already_invited";
 
-    /** A list of the email addresses that we think we successfully sent an invitation to */
-    public List successful;
+    /** The results for each address sent in the request. */
+    public String[] results;
 }

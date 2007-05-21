@@ -34,6 +34,11 @@ public interface WebUserServiceAsync
                                  AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link WebUserService#sendForgotPasswordEmail}.
+     */
+    public void sendForgotPasswordEmail (String email, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link WebUserService#updateEmail}.
      */
     public void updateEmail (WebCreds creds, String newEmail, AsyncCallback callback);

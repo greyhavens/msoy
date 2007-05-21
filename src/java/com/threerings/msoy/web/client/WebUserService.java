@@ -45,6 +45,12 @@ public interface WebUserService extends RemoteService
         throws ServiceException;
 
     /**
+     * Sends a "forgot my password" email to the account registered with the supplied address.
+     */
+    public void sendForgotPasswordEmail (String email)
+        throws ServiceException;
+
+    /**
      * Updates the email address on file for this account.
      */
     public void updateEmail (WebCreds creds, String newEmail)

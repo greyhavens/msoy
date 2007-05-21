@@ -15,17 +15,13 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.util.BorderedPopup;
 import client.util.FlashClients;
 import client.util.MsoyUI;
 
@@ -77,7 +73,7 @@ public class StatusPanel extends FlexTable
      */
     public void showLogonPopup (int px, int py)
     {
-        LogonPopup popup = new LogonPopup();
+        LogonPopup popup = new LogonPopup(this);
         popup.show();
         popup.setPopupPosition(px == -1 ? (Window.getClientWidth() - popup.getOffsetWidth()) : px,
                                py == -1 ? HEADER_HEIGHT : py);
@@ -191,76 +187,6 @@ public class StatusPanel extends FlexTable
     protected void clearCookie (String name)
     {
         CookieUtil.clear("/", name);
-    }
-
-    protected native String md5hex (String text) /*-{
-       return $wnd.hex_md5(text);
-    }-*/;
-
-    protected class LogonPopup extends BorderedPopup
-        implements ClickListener
-    {
-        public LogonPopup ()
-        {
-            super(true);
-            _centerOnShow = false;
-
-            FlexTable contents = new FlexTable();
-            contents.setStyleName("logonPopup");
-            setWidget(contents);
-            contents.getFlexCellFormatter().setStyleName(0, 0, "rightLabel");
-            contents.setText(0, 0, CShell.cmsgs.logonEmail());
-            contents.setWidget(0, 1, _email = new TextBox());
-            _email.setText(CookieUtil.get("who"));
-            _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
-                public void onClick (Widget sender) {
-                    _password.setFocus(true);
-                }
-            }));
-
-            contents.getFlexCellFormatter().setStyleName(1, 0, "rightLabel");
-            contents.setText(1, 0, CShell.cmsgs.logonPassword());
-            contents.setWidget(1, 1, _password = new PasswordTextBox());
-            _password.addKeyboardListener(new EnterClickAdapter(this));
-
-            contents.setWidget(2, 0, _status = new Label(""));
-            contents.getFlexCellFormatter().setColSpan(2, 0, 2);
-        }
-
-        // @Override // from PopupPanel
-        public void show ()
-        {
-            super.show();
-            if (_email.getText().length() == 0) {
-                _email.setFocus(true);
-            } else {
-                _password.setFocus(true);
-            }
-        }
-
-        // from interface ClickListener
-        public void onClick (Widget sender)
-        {
-            String account = _email.getText(), password = _password.getText();
-            if (account.length() > 0 && password.length() > 0) {
-                _status.setText(CShell.cmsgs.loggingOn());
-                CShell.usersvc.login(
-                    DeploymentConfig.version, account, md5hex(password), 1, new AsyncCallback() {
-                    public void onSuccess (Object result) {
-                        hide();
-                        didLogon((WebCreds)result);
-                    }
-                    public void onFailure (Throwable caught) {
-                        CShell.log("Logon failed [account=" + _email.getText() + "]", caught);
-                        _status.setText(CShell.serverError(caught));
-                    }
-                });
-            }
-        }
-
-        protected TextBox _email;
-        protected PasswordTextBox _password;
-        protected Label _status;
     }
 
     protected static class LevelsDisplay extends FlexTable

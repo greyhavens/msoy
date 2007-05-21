@@ -28,4 +28,8 @@ public interface ServerMessages extends ConstantsWithLookup
     public String insufficient_gold ();
 
     public String no_such_project ();
+
+    public String opted_out ();
+    public String already_registered ();
+    public String already_invited ();
 }

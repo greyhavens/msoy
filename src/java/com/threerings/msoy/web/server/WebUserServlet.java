@@ -9,8 +9,9 @@ import java.util.Date;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.net.MailUtil;
 import com.samskivert.jdbc.DuplicateKeyException;
+import com.samskivert.net.MailUtil;
+import com.samskivert.util.ResultListener;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.server.MsoyAuthenticator;
@@ -65,13 +66,13 @@ public class WebUserServlet extends MsoyServiceServlet
                 if (MsoyServer.memberRepo.inviteAvailable(invite.inviteId)) {
                     ignoreRestrict = true;
                 } else {
-                    // this is likely due to an attempt to gain access through a trying random 
+                    // this is likely due to an attempt to gain access through a trying random
                     // invites.
                     throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
                 }
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "checking invite available failed [inviteId=" +
-                    invite.inviteId + "]", pe);
+                log.log(Level.WARNING, "Checking invite availability failed [inviteId=" +
+                        invite.inviteId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
         }
@@ -88,29 +89,32 @@ public class WebUserServlet extends MsoyServiceServlet
                 newAccount.memberId + ", birthday=" + birthday + "]", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
+
+        // if we were invited by another player, wire that all up
         if (invite != null) {
             try {
                 MsoyServer.memberRepo.linkInvite(invite, newAccount);
             } catch (PersistenceException pe) {
                 log.log(Level.WARNING, "linking invites failed [inviteId=" + invite.inviteId + 
-                    ", memberId=" + newAccount.memberId + "]", pe);
+                        ", memberId=" + newAccount.memberId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
+
             // send a notification email that the friend has accepted his invite
-            final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
-                "deliver invite accepted message");
             MsoyServer.omgr.postRunnable(new Runnable() {
                 public void run () {
-                    // TODO How do we i18n this when we don't know anybody's locale??
-                    MsoyServer.mailMan.deliverMessage(newAccount.memberId, 
-                        invite.inviter.getMemberId(), "Invitation Accepted!",
-                        "The invitation that you sent to " + invite.inviteeEmail + " has been " +
-                        "accepted.  Your friend has chosen the display name \"" + displayName +
-                        "\", and has been added to your friend's list.", null, waiter);
+                    // TODO: this should be a custom mail message type (perhaps just one that
+                    // displays a translatable string from the server)
+                    String body = "The invitation that you sent to " + invite.inviteeEmail +
+                        " has been accepted.  Your friend has chosen the display name \"" +
+                        displayName + "\", and has been added to your friend's list.";
+                    MsoyServer.mailMan.deliverMessage(
+                        newAccount.memberId, invite.inviter.getMemberId(), "Invitation Accepted!",
+                        body, null, new ResultListener.NOOP<Void>());
                 }
             });
-            waiter.waitForResult();
         }
+
         return startSession(newAccount, expireDays);
     }
 
@@ -133,6 +137,24 @@ public class WebUserServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to refresh session [tok=" + authtok + "].", pe);
+            throw new ServiceException(MsoyAuthCodes.SERVER_UNAVAILABLE);
+        }
+    }
+
+    // from interface WebUserService
+    public void sendForgotPasswordEmail (String email)
+        throws ServiceException
+    {
+        try {
+            MemberRecord mrec = MsoyServer.memberRepo.loadMember(email);
+            if (mrec == null) {
+                throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
+            }
+
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to lookup account [email=" + email + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_UNAVAILABLE);
         }
     }

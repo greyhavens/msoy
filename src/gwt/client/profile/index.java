@@ -55,7 +55,7 @@ public class index extends MsgsEntryPoint
 
         } else {
             // TODO: display member search interface
-            setContent(new Label(CProfile.msgs.indexLogon()));
+            setContent(MsoyUI.createLabel(CProfile.msgs.indexLogon(), "infoLabel"));
         }
     }
 

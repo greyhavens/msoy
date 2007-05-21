@@ -8,14 +8,6 @@ package client.shell;
 public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "{0} addresses have opted out of receiving mail from Whirled:".
-   * 
-   * @return translated "{0} addresses have opted out of receiving mail from Whirled:"
-   * @gwt.key sendInvitesResultsOptedOut
-   */
-  String sendInvitesResultsOptedOut(String arg0);
-
-  /**
    * Translated "Display name:".
    * 
    * @return translated "Display name:"
@@ -176,9 +168,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editEmail();
 
   /**
-   * Translated "{0} invitations sent successfully: ".
+   * Translated "Sent invite to: {0}".
    * 
-   * @return translated "{0} invitations sent successfully: "
+   * @return translated "Sent invite to: {0}"
    * @gwt.key sendInvitesResultsSuccessful
    */
   String sendInvitesResultsSuccessful(String arg0);
@@ -198,6 +190,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key tagQuickAdd
    */
   String tagQuickAdd();
+
+  /**
+   * Translated "Sending email...".
+   * 
+   * @return translated "Sending email..."
+   * @gwt.key sendingForgotEmail
+   */
+  String sendingForgotEmail();
 
   /**
    * Translated "Let''s Go!".
@@ -224,14 +224,6 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String inviteBody1(String arg0);
 
   /**
-   * Translated "Select one...".
-   * 
-   * @return translated "Select one..."
-   * @gwt.key tagSelectOne
-   */
-  String tagSelectOne();
-
-  /**
    * Translated "Update".
    * 
    * @return translated "Update"
@@ -240,20 +232,20 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String update();
 
   /**
+   * Translated "Select one...".
+   * 
+   * @return translated "Select one..."
+   * @gwt.key tagSelectOne
+   */
+  String tagSelectOne();
+
+  /**
    * Translated "Pending Invitations".
    * 
    * @return translated "Pending Invitations"
    * @gwt.key sendInvitesPendingHeader
    */
   String sendInvitesPendingHeader();
-
-  /**
-   * Translated "{0} addresses already registered: ".
-   * 
-   * @return translated "{0} addresses already registered: "
-   * @gwt.key sendInvitesResultsAlreadyRegistered
-   */
-  String sendInvitesResultsAlreadyRegistered(String arg0);
 
   /**
    * Translated "Email Addresses:".
@@ -368,14 +360,6 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String noDescrip();
 
   /**
-   * Translated "{0} addresses are invalid: ".
-   * 
-   * @return translated "{0} addresses are invalid: "
-   * @gwt.key sendInvitesResultsInvalid
-   */
-  String sendInvitesResultsInvalid(String arg0);
-
-  /**
    * Translated "Welcome, {0}".
    * 
    * @return translated "Welcome, {0}"
@@ -416,12 +400,12 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editConfirm();
 
   /**
-   * Translated "{0} invitations failed to send: ".
+   * Translated "Failed for {0}: {1}".
    * 
-   * @return translated "{0} invitations failed to send: "
+   * @return translated "Failed for {0}: {1}"
    * @gwt.key sendInvitesResultsFailed
    */
-  String sendInvitesResultsFailed(String arg0);
+  String sendInvitesResultsFailed(String arg0,  String arg1);
 
   /**
    * Translated "Accept Invitation".
@@ -584,14 +568,6 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String sendInvitesNoneAvailable();
 
   /**
-   * Translated "{0} addresses already invited by you: ".
-   * 
-   * @return translated "{0} addresses already invited by you: "
-   * @gwt.key sendInvitesResultsAlreadyInvited
-   */
-  String sendInvitesResultsAlreadyInvited(String arg0);
-
-  /**
    * Translated "Duplicate email address found: {0}".
    * 
    * @return translated "Duplicate email address found: {0}"
@@ -622,6 +598,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key editPermaName
    */
   String editPermaName();
+
+  /**
+   * Translated "The email has been sent. Be sure to check your spam folder if it doesn't show up after a minute or so.".
+   * 
+   * @return translated "The email has been sent. Be sure to check your spam folder if it doesn't show up after a minute or so."
+   * @gwt.key forgotEmailSent
+   */
+  String forgotEmailSent();
 
   /**
    * Translated "Stuff".
@@ -824,6 +808,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String truncName(String arg0);
 
   /**
+   * Translated "Enter the email address under which your account is registered and press return. We will send you an email with instructions on how to reset your password.".
+   * 
+   * @return translated "Enter the email address under which your account is registered and press return. We will send you an email with instructions on how to reset your password."
+   * @gwt.key forgotPasswordHelp
+   */
+  String forgotPasswordHelp();
+
+  /**
    * Translated "Password:".
    * 
    * @return translated "Password:"
@@ -864,6 +856,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String logonPassword();
 
   /**
+   * Translated "Forgot your password?".
+   * 
+   * @return translated "Forgot your password?"
+   * @gwt.key forgotPassword
+   */
+  String forgotPassword();
+
+  /**
    * Translated "Places".
    * 
    * @return translated "Places"
@@ -880,20 +880,20 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editPasswordReady();
 
   /**
-   * Translated "Me".
-   * 
-   * @return translated "Me"
-   * @gwt.key menuMe
-   */
-  String menuMe();
-
-  /**
    * Translated "Your display name will be shown to other users in Whirled, and is not permanent.".
    * 
    * @return translated "Your display name will be shown to other users in Whirled, and is not permanent."
    * @gwt.key createDisplayNameTip
    */
   String createDisplayNameTip();
+
+  /**
+   * Translated "Me".
+   * 
+   * @return translated "Me"
+   * @gwt.key menuMe
+   */
+  String menuMe();
 
   /**
    * Translated "Flag item as {0}?".

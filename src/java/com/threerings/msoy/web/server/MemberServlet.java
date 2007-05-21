@@ -5,7 +5,10 @@ package com.threerings.msoy.web.server;
 
 import java.io.StringWriter;
 import java.net.URLEncoder;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,11 +22,12 @@ import org.json.JSONObject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
-import com.samskivert.util.QuickSort;
 import com.samskivert.velocity.VelocityUtil;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+
+import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
@@ -40,10 +44,10 @@ import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
 
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.PopularPlace;
 import com.threerings.msoy.data.PopularPlace.PopularGamePlace;
 import com.threerings.msoy.data.PopularPlace.PopularMemberPlace;
 import com.threerings.msoy.data.PopularPlace.PopularScenePlace;
+import com.threerings.msoy.data.PopularPlace;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.presents.data.InvocationCodes;
@@ -99,7 +103,6 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from interface MemberService
-    @SuppressWarnings("unchecked")
     public ArrayList loadInventory (final WebCreds creds, final byte type)
         throws ServiceException
     {
@@ -121,8 +124,12 @@ public class MemberServlet extends MsoyServiceServlet
             }
         });
         ArrayList<Item> result = waiter.waitForResult();
-        // sort the list
-        QuickSort.sort(result);
+        // when Item becomes a type-safe Comparable this Comparator can go away
+        Collections.sort(result, new Comparator<Item>() {
+            public int compare (Item one, Item two) {
+                return one.compareTo(two);
+            }
+        });
         return result;
     }
 
@@ -232,113 +239,29 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    @SuppressWarnings("unchecked")
     public InvitationResults sendInvites (WebCreds creds, List addresses, String customMessage) 
         throws ServiceException
     {
         int memberId = getMemberId(creds);
 
-        InvitationResults results = new InvitationResults();
-
-        VelocityEngine ve;
+        // make sure this user still has available invites
         try {
-            ve = VelocityUtil.createEngine();
-        } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to create the velocity engine.", e);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
-        }
-
-        int port = ServerConfig.getHttpPort();
-        String host = ServerConfig.serverHost + (port != 80 ? ":" + port : "");
-
-        try {
-            for (String email : (List<String>)addresses) {
-                // make sure this user still has available invites
-                if (MsoyServer.memberRepo.getInvitesGranted(memberId) <= 0) {
-                    // silently stop trying to send addresses, since we already check this value
-                    // in GWT land, and deal with it sensibly there.
-                    break;
-                }
-
-                // make sure this address is valid
-                if (!MailUtil.isValidAddress(email)) {
-                    if (results.invalid == null) {
-                        results.invalid = new ArrayList();
-                    }
-                    results.invalid.add(email);
-                    continue;
-                }
-
-                // make sure this address isn't already registered
-                if (MsoyServer.memberRepo.loadMember(email) != null) {
-                    if (results.alreadyRegistered == null) {
-                        results.alreadyRegistered = new ArrayList();
-                    }
-                    results.alreadyRegistered.add(email);
-                    continue;
-                }
-
-                // make sure this address isn't on the opt-out list
-                if (MsoyServer.memberRepo.hasOptedOut(email)) {
-                    if (results.optedOut == null) {
-                        results.optedOut = new ArrayList();
-                    }
-                    results.optedOut.add(email);
-                    continue;
-                }
-
-                // make sure this user hasn't already invited this address
-                if (MsoyServer.memberRepo.loadInvite(email, memberId) != null) {
-                    if (results.alreadyInvited == null) {
-                        results.alreadyInvited = new ArrayList();
-                    }
-                    results.alreadyInvited.add(email);
-                    continue;
-                }
-
-                // find a free invite id
-                String inviteId;
-                int tries = 0;
-                while (MsoyServer.memberRepo.loadInvite(inviteId = randomInviteId()) != null) {
-                    tries++;
-                }
-                if (tries > 5) {
-                    log.log(Level.WARNING, "InvitationRecord.inviteId space is getting " +
-                        "saturated, it took " + tries + " tries to find a free id");
-                }
-
-                // create and send the invitation
-                VelocityContext ctx = new VelocityContext();
-                ctx.put("custom_message", customMessage);
-                ctx.put("server_host", host);
-                ctx.put("invite_id", inviteId);
-                StringWriter sw = new StringWriter();
-                try {
-                    ve.mergeTemplate("rsrc/email/memberInvite.tmpl", "UTF-8", ctx, sw);
-                    String body = sw.toString();
-                    int nidx = body.indexOf("\n"); // first line is the subject
-                    MailUtil.deliverMail(email, INVITE_FROM, body.substring(0, nidx),
-                        body.substring(nidx+1));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    if (results.failed == null) {
-                        results.failed = new ArrayList();
-                    }
-                    results.failed.add(email + e.getMessage());
-                    continue;
-                }
-                MsoyServer.memberRepo.addInvite(email, memberId, inviteId);
-                if (results.successful == null) {
-                    results.successful = new ArrayList();
-                }
-                results.successful.add(email);
+            // we already check this value in GWT land, and deal with it sensibly there
+            if (MsoyServer.memberRepo.getInvitesGranted(memberId) < addresses.size()) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR);
             }
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "sendInvites failed.", pe);
+            log.log(Level.WARNING, "getInvitesGranted failed [id=" + memberId +"]", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
-        return results;
+        InvitationResults ir = new InvitationResults();
+        ir.results = new String[addresses.size()];
+        for (int ii = 0; ii < addresses.size(); ii++) {
+            String email = (String)addresses.get(ii);
+            ir.results[ii] = sendInvite(memberId, email, customMessage);
+        }
+        return ir;
     }
 
     // from MemberService
@@ -405,6 +328,80 @@ public class MemberServlet extends MsoyServiceServlet
             } else {
                 groups.put(obj);
             }
+        }
+    }
+
+    /**
+     * Helper function for {@link #sendInvites}.
+     */
+    protected String sendInvite (int memberId, String email, String customMessage)
+    {
+        try {
+            // make sure this address is valid
+            if (!MailUtil.isValidAddress(email)) {
+                return InvitationResults.INVALID_EMAIL;
+            }
+
+            // make sure this address isn't already registered
+            if (MsoyServer.memberRepo.loadMember(email) != null) {
+                return InvitationResults.ALREADY_REGISTERED;
+            }
+
+            // make sure this address isn't on the opt-out list
+            if (MsoyServer.memberRepo.hasOptedOut(email)) {
+                return InvitationResults.OPTED_OUT;
+            }
+
+            // make sure this user hasn't already invited this address
+            if (MsoyServer.memberRepo.loadInvite(email, memberId) != null) {
+                return InvitationResults.ALREADY_INVITED;
+            }
+
+            // find a free invite id
+            String inviteId;
+            int tries = 0;
+            while (MsoyServer.memberRepo.loadInvite(inviteId = randomInviteId()) != null) {
+                tries++;
+            }
+            if (tries > 5) {
+                log.log(Level.WARNING, "InvitationRecord.inviteId space is getting " +
+                        "saturated, it took " + tries + " tries to find a free id");
+            }
+
+            VelocityEngine ve;
+            try {
+                ve = VelocityUtil.createEngine();
+            } catch (Exception e) {
+                log.log(Level.WARNING, "Failed to create the velocity engine.", e);
+                return ServiceException.INTERNAL_ERROR;
+            }
+
+            int port = ServerConfig.getHttpPort();
+            String host = ServerConfig.serverHost + (port != 80 ? ":" + port : "");
+
+            // create and send the invitation
+            VelocityContext ctx = new VelocityContext();
+            ctx.put("custom_message", customMessage);
+            ctx.put("server_host", host);
+            ctx.put("invite_id", inviteId);
+            StringWriter sw = new StringWriter();
+            try {
+                ve.mergeTemplate("rsrc/email/memberInvite.tmpl", "UTF-8", ctx, sw);
+                String body = sw.toString();
+                int nidx = body.indexOf("\n"); // first line is the subject
+                MailUtil.deliverMail(
+                    email, INVITE_FROM, body.substring(0, nidx), body.substring(nidx+1));
+
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+
+//             MsoyServer.memberRepo.addInvite(email, memberId, inviteId);
+            return InvitationResults.SUCCESS;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "sendInvites failed.", pe);
+            return ServiceException.INTERNAL_ERROR;
         }
     }
 

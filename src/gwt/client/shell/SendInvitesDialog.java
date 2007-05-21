@@ -37,7 +37,6 @@ public class SendInvitesDialog extends BorderedDialog
     public SendInvitesDialog (final MemberInvites invites)
     {
         _header.add(createTitleLabel(CShell.cmsgs.sendInvitesTitle(), null));
-
         _invites = invites;
 
         FlexTable contents = (FlexTable)_contents;
@@ -46,7 +45,6 @@ public class SendInvitesDialog extends BorderedDialog
         contents.setStyleName("sendInvites");
 
         int row = 0;
-        
         formatter.setStyleName(row, 0, "Header");
         formatter.setColSpan(row, 0, 3);
         contents.setText(row++, 0, CShell.cmsgs.sendInvitesSendHeader(
@@ -129,7 +127,7 @@ public class SendInvitesDialog extends BorderedDialog
 
     protected void checkAndSend () 
     {
-        ArrayList validAddresses = new ArrayList();
+        final ArrayList validAddresses = new ArrayList();
         String addresses[] = _emailAddresses.getText().split("\n");
         for (int ii = 0; ii < addresses.length; ii++) {
             if (addresses[ii].matches(EMAIL_REGEX)) {
@@ -153,7 +151,7 @@ public class SendInvitesDialog extends BorderedDialog
                 CShell.membersvc.sendInvites(CShell.creds, validAddresses, _customMessage.getText(),
                     new AsyncCallback () {
                         public void onSuccess (Object result) {
-                            (new ResultsPopup((InvitationResults)result)).show();
+                            (new ResultsPopup(validAddresses, (InvitationResults)result)).show();
                             SendInvitesDialog.this.hide();
                         }
                         public void onFailure (Throwable cause) {
@@ -172,7 +170,7 @@ public class SendInvitesDialog extends BorderedDialog
 
     protected class ResultsPopup extends BorderedPopup 
     {
-        public ResultsPopup (InvitationResults invRes)
+        public ResultsPopup (ArrayList addrs, InvitationResults invRes)
         {
             VerticalPanel top = new VerticalPanel();
             top.setStyleName("sendInvitesResultsPopup");
@@ -183,62 +181,25 @@ public class SendInvitesDialog extends BorderedDialog
 
             FlexTable contents = new FlexTable();
             contents.setCellSpacing(10);
-            FlexCellFormatter formatter = contents.getFlexCellFormatter();
             top.add(contents);
 
             int row = 0;
-
-            List[] lists = { invRes.successful, invRes.alreadyRegistered, invRes.alreadyInvited,
-                invRes.optedOut, invRes.failed, invRes.invalid };
-            for (int ii = 0; ii < lists.length; ii++) {
-                if (lists[ii] != null && lists[ii].size() > 0) {
-                    formatter.setStyleName(row, 0, "Header");
-                    formatter.setColSpan(row, 0, 3);
-                    switch(ii) {
-                    case 0: 
-                        contents.setText(row++, 0, CShell.cmsgs.sendInvitesResultsSuccessful("" + 
-                            lists[ii].size())); 
-                        break;
-                    case 1:
-                        contents.setText(row++, 0, CShell.cmsgs.sendInvitesResultsAlreadyRegistered(
-                            "" + lists[ii].size()));
-                        break;
-                    case 2:
-                        contents.setText(row++, 0, CShell.cmsgs.sendInvitesResultsAlreadyInvited(
-                            "" + lists[ii].size()));
-                        break;
-                    case 3:
-                        contents.setText(row++, 0, CShell.cmsgs.sendInvitesResultsOptedOut(
-                            "" + lists[ii].size()));
-                        break;
-                    case 4:
-                        contents.setText(row++, 0, CShell.cmsgs.sendInvitesResultsFailed("" +
-                            lists[ii].size()));
-                        break;
-                    case 5:
-                        contents.setText(row++, 0, CShell.cmsgs.sendInvitesResultsInvalid("" +
-                            lists[ii].size()));
-                        break;
-                    }
-
-                    Iterator iter = lists[ii].iterator();
-                    int col = 0;
-                    while (iter.hasNext()) {
-                        formatter.setStyleName(row, col, "Email");
-                        contents.setText(row, col++, (String)iter.next());
-                        if (col == 3) {
-                            row++;
-                            col = 0;
-                        }
-                    }
-                    if (col != 0) {
-                        row++;
-                    }
+            for (int ii = 0; ii < invRes.results.length; ii++) {
+                String addr = (String)addrs.get(ii);
+                if (invRes.results[ii] == InvitationResults.SUCCESS) { // null == null
+                    contents.setText(row++, 0, CShell.cmsgs.sendInvitesResultsSuccessful(addr));
+                } else if (invRes.results[ii].startsWith("e.")) { 
+                    contents.setText(row++, 0, CShell.cmsgs.sendInvitesResultsFailed(
+                                         addr, CShell.serverError(invRes.results[ii])));
+                } else {
+                    contents.setText(row++, 0, CShell.cmsgs.sendInvitesResultsFailed(
+                                         addr, invRes.results[ii]));
                 }
             }
 
-            formatter.setHorizontalAlignment(row, 2, HasHorizontalAlignment.ALIGN_RIGHT);
-            contents.setWidget(row++, 2, new Button(CShell.cmsgs.dismiss(), new ClickListener() {
+            contents.getFlexCellFormatter().setHorizontalAlignment(
+                row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+            contents.setWidget(row++, 0, new Button(CShell.cmsgs.dismiss(), new ClickListener() {
                 public void onClick (Widget widget) {
                     hide();
                 }
