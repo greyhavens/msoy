@@ -76,7 +76,7 @@
     <file name="${extlibs.dir}/velocity-1.5-dev.jar"/>
     <file name="${extlibs.dir}/ehcache-1.2.jar"/>
 
-    <file name="tools/lib/java/jetty/lib/org.mortbay.jetty.jar"/>
+    <file name="tools/jetty/lib/org.mortbay.jetty.jar"/>
 
     <file name="lib/json.jar"/>
     <file name="lib/jswiff-8.0-beta-2-threerings.jar"/>
