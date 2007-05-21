@@ -510,7 +510,9 @@
       </signjar>
     </then></if>
     <copy file="${deploy.dir}/${ident}-client.jar" todir="pages/clients/${build_version}"/>
+    <!--
     <copy file="${deploy.dir}/${ident}-client-signed.jar" todir="pages/clients/${build_version}"/>
+    -->
   </target>
 
   <!-- builds our Java clients -->
