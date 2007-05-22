@@ -61,7 +61,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     protected MemberRecord getAuthedUser (WebIdent ident)
         throws ServiceException
     {
-        Integer memberId = _members.get(ident.token);
+        Integer memberId = (ident == null) ? null : _members.get(ident.token);
         if (memberId != null && memberId == ident.memberId) {
             try {
                 return MsoyServer.memberRepo.loadMember(memberId);

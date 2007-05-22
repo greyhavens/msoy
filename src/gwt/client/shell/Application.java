@@ -84,6 +84,17 @@ public class Application
         return token;
     }
 
+    /**
+     * Configures our current history token (normally this is done automatically as the user
+     * navigates, but sometimes we want to override the current token). This does not take any
+     * action based on the token, but the token will be used if the user subsequently logs in or
+     * out.
+     */
+    public static void setCurrentToken (String token)
+    {
+        _currentToken = token;
+    }
+
     // from interface EntryPoint
     public void onModuleLoad ()
     {
@@ -103,11 +114,12 @@ public class Application
         // create our standard navigation panel
         RootPanel.get("navigation").add(_navi = new NaviPanel(_status));
 
-        // initialize the status panel
-        _status.init();
-
         // wire ourselves up to the history-based navigation mechanism
         History.addHistoryListener(this);
+        _currentToken = History.getToken();
+
+        // initialize the status panel
+        _status.init();
 
         // now wait for our status panel to call didLogon() or didLogoff()
     }
@@ -115,6 +127,8 @@ public class Application
     // from interface HistoryListener
     public void onHistoryChanged (String token)
     {
+        _currentToken = token;
+
         String page = (token == null || token.equals("")) ? "world" : token;
         String args = "";
         int semidx = token.indexOf("-");
@@ -122,6 +136,7 @@ public class Application
             page = token.substring(0, semidx);
             args = token.substring(semidx+1);
         }
+
         if (!displayPopup(page, args)) {
             displayPage(page, args);
         }
@@ -197,7 +212,7 @@ public class Application
         _navi.didLogon(creds);
         if (_page == null) {
             // we can now load our starting page
-            onHistoryChanged(History.getToken());
+            onHistoryChanged(_currentToken);
         } else {
             _page.didLogon(creds);
         }
@@ -213,7 +228,7 @@ public class Application
         _navi.didLogoff();
         if (_page == null) {
             // we can now load our starting page
-            onHistoryChanged(History.getToken());
+            onHistoryChanged(_currentToken);
         } else {
             _page.didLogoff();
         }
@@ -332,4 +347,6 @@ public class Application
 
     protected NaviPanel _navi;
     protected StatusPanel _status;
+
+    protected static String _currentToken = "";
 }

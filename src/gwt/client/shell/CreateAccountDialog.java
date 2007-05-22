@@ -176,8 +176,9 @@ public class CreateAccountDialog extends BorderedDialog
             _dateOfBirth.getDate(), 1, _invite, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     hide();
+                    // override the dialog token with the world
+                    Application.setCurrentToken("world");
                     // TODO: display some sort of welcome to whirled business
-                    History.newItem("world");
                     _parent.didLogon((WebCreds)result);
                 }
                 public void onFailure (Throwable caught) {

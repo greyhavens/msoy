@@ -60,6 +60,7 @@ public class WebUserServlet extends MsoyServiceServlet
         Calendar thirteenYearsAgo = Calendar.getInstance();
         thirteenYearsAgo.add(Calendar.YEAR, -13);
         if (birthday.compareTo(thirteenYearsAgo.getTime()) > 0) {
+            log.log(Level.WARNING, "User submitted invalid birtdate [date=" + birthday + "].");
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
 
@@ -67,16 +68,13 @@ public class WebUserServlet extends MsoyServiceServlet
         boolean ignoreRestrict = false;
         if (invite != null) {
             try {
-                if (MsoyServer.memberRepo.inviteAvailable(invite.inviteId)) {
-                    ignoreRestrict = true;
-                } else {
-                    // this is likely due to an attempt to gain access through a trying random
-                    // invites.
-                    throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+                if (!MsoyServer.memberRepo.inviteAvailable(invite.inviteId)) {
+                    throw new ServiceException(MsoyAuthCodes.INVITE_ALREADY_REDEEMED);
                 }
+                ignoreRestrict = true;
             } catch (PersistenceException pe) {
-                log.log(Level.WARNING, "Checking invite availability failed [inviteId=" +
-                        invite.inviteId + "]", pe);
+                log.log(Level.WARNING, "Checking invite availability failed " +
+                        "[inviteId=" + invite.inviteId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
         }

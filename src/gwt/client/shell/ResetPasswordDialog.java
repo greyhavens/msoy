@@ -122,7 +122,8 @@ public class ResetPasswordDialog extends BorderedDialog
             public void onSuccess (Object result) {
                 hide();
                 if (((Boolean)result).booleanValue()) {
-                    History.newItem("world"); // send them to the world
+                    // override the dialog token with the world
+                    Application.setCurrentToken("world");
                     MsoyUI.info(CShell.cmsgs.resetReset());
                 } else {
                     MsoyUI.error(CShell.cmsgs.resetInvalid());

@@ -11,10 +11,12 @@ import com.google.gwt.i18n.client.ConstantsWithLookup;
 public interface ServerMessages extends ConstantsWithLookup
 {
     public String internal_error ();
+    public String server_error ();
     public String access_denied ();
 
     public String server_closed ();
     public String no_registrations ();
+    public String invite_already_redeemed ();
 
     public String no_such_user ();
     public String invalid_password ();

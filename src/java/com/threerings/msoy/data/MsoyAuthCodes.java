@@ -53,4 +53,7 @@ public interface MsoyAuthCodes extends AuthCodes
 
     /** A code indicating that a client's web session has expired. */
     public static final String SESSION_EXPIRED = "m.session_expired";
+
+    /** A code indicating that an invitation has already been redeemed. */
+    public static final String INVITE_ALREADY_REDEEMED = "m.invite_already_redeemed";
 }
