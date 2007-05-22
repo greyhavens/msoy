@@ -592,10 +592,10 @@ public class MemberRepository extends DepotRepository
     /**
      * Get the invite that was sent to thsi email address by this member.
      */
-    public InvitationRecord loadInvite (String email, int memberId)
+    public InvitationRecord loadInvite (String email, int inviterId)
         throws PersistenceException
     {
-        return load(InvitationRecord.class, InvitationRecord.getKey(email, memberId));
+        return load(InvitationRecord.class, InvitationRecord.getKey(email, inviterId));
     }
 
     /**

@@ -242,16 +242,16 @@ public class MemberServlet extends MsoyServiceServlet
     public InvitationResults sendInvites (WebIdent ident, List addresses, String customMessage) 
         throws ServiceException
     {
-        int memberId = getMemberId(ident);
+        MemberRecord mrec = requireAuthedUser(ident);
 
         // make sure this user still has available invites
         try {
             // we already check this value in GWT land, and deal with it sensibly there
-            if (MsoyServer.memberRepo.getInvitesGranted(memberId) < addresses.size()) {
+            if (MsoyServer.memberRepo.getInvitesGranted(mrec.memberId) < addresses.size()) {
                 throw new ServiceException(ServiceException.INTERNAL_ERROR);
             }
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "getInvitesGranted failed [id=" + memberId +"]", pe);
+            log.log(Level.WARNING, "getInvitesGranted failed [id=" + mrec.memberId +"]", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
@@ -259,7 +259,7 @@ public class MemberServlet extends MsoyServiceServlet
         ir.results = new String[addresses.size()];
         for (int ii = 0; ii < addresses.size(); ii++) {
             String email = (String)addresses.get(ii);
-            ir.results[ii] = sendInvite(memberId, email, customMessage);
+            ir.results[ii] = sendInvite(mrec, email, customMessage);
         }
         return ir;
     }
@@ -324,7 +324,7 @@ public class MemberServlet extends MsoyServiceServlet
     /**
      * Helper function for {@link #sendInvites}.
      */
-    protected String sendInvite (int memberId, String email, String customMessage)
+    protected String sendInvite (MemberRecord inviter, String email, String customMessage)
     {
         try {
             // make sure this address is valid
@@ -343,7 +343,7 @@ public class MemberServlet extends MsoyServiceServlet
             }
 
             // make sure this user hasn't already invited this address
-            if (MsoyServer.memberRepo.loadInvite(email, memberId) != null) {
+            if (MsoyServer.memberRepo.loadInvite(email, inviter.memberId) != null) {
                 return InvitationResults.ALREADY_INVITED;
             }
 
@@ -365,12 +365,12 @@ public class MemberServlet extends MsoyServiceServlet
             ctx.put("server_url", ServerConfig.getServerURL());
 
             try {
-                sendEmail(email, ServerConfig.getFromAddress(), "memberInvite", ctx);
+                sendEmail(email, inviter.accountName, "memberInvite", ctx);
             } catch (Exception e) {
                 return e.getMessage();
             }
 
-            MsoyServer.memberRepo.addInvite(email, memberId, inviteId);
+            MsoyServer.memberRepo.addInvite(email, inviter.memberId, inviteId);
             return InvitationResults.SUCCESS;
 
         } catch (PersistenceException pe) {
