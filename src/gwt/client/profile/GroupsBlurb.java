@@ -52,7 +52,7 @@ public class GroupsBlurb extends Blurb
             new ClickCallback(inviteButton) {
                 public boolean callService () {
                     CProfile.groupsvc.getMembershipGroups(
-                        CProfile.creds, CProfile.getMemberId(), true, this);
+                        CProfile.ident, CProfile.getMemberId(), true, this);
                     return true;
                 }
                 public boolean gotResult (Object result) {

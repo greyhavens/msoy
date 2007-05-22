@@ -50,7 +50,7 @@ public class ItemRating extends FlexTable
         _memberRating = memberRating;
         _itemId = new ItemIdent(_item.getType(), _item.getPrototypeId());
         // if we're not logged in, force MODE_READ
-        _mode = (CItem.creds == null) ? MODE_READ : mode;
+        _mode = (CItem.ident == null) ? MODE_READ : mode;
 
         // add the 10 images whose src url's we mercilessly mutate throughout this widget
         for (int i = 0; i < 10; i ++) {
@@ -149,7 +149,7 @@ public class ItemRating extends FlexTable
     protected void rateItem (byte newRating)
     {
         _memberRating = newRating;
-        CItem.itemsvc.rateItem(CItem.creds, _itemId, newRating, new AsyncCallback() {
+        CItem.itemsvc.rateItem(CItem.ident, _itemId, newRating, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _item.rating = ((Float)result).floatValue();
                 _mode = MODE_READ;

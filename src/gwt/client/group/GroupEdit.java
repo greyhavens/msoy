@@ -345,14 +345,14 @@ public class GroupEdit extends BorderedDialog
         };
         // check if we're trying to set the policy to exclusive on a group that has tags
         if (_group.policy == Group.POLICY_EXCLUSIVE) {
-            CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, new AsyncCallback () {
+            CGroup.groupsvc.getTags(CGroup.ident, _group.groupId, new AsyncCallback () {
                 public void onSuccess (Object result) {
                     if (((Collection)result).size() > 0) {
                         MsoyUI.error(CGroup.msgs.errTagsOnExclusive());
                     } else if (_group.groupId > 0) {
-                        CGroup.groupsvc.updateGroup(CGroup.creds, _group, _extras, updateCallback);
+                        CGroup.groupsvc.updateGroup(CGroup.ident, _group, _extras, updateCallback);
                     } else {
-                        CGroup.groupsvc.createGroup(CGroup.creds, _group, _extras, updateCallback);
+                        CGroup.groupsvc.createGroup(CGroup.ident, _group, _extras, updateCallback);
                     }
                 } 
                 public void onFailure (Throwable caught) {
@@ -361,9 +361,9 @@ public class GroupEdit extends BorderedDialog
             });
         } else {
             if (_group.groupId > 0) {
-                CGroup.groupsvc.updateGroup(CGroup.creds, _group, _extras, updateCallback);
+                CGroup.groupsvc.updateGroup(CGroup.ident, _group, _extras, updateCallback);
             } else {
-                CGroup.groupsvc.createGroup(CGroup.creds, _group, _extras, updateCallback);
+                CGroup.groupsvc.createGroup(CGroup.ident, _group, _extras, updateCallback);
             }
         }
     }
@@ -406,7 +406,7 @@ public class GroupEdit extends BorderedDialog
     {
         // the list of images is cached for this object
         if (_images == null) {
-            CGroup.membersvc.loadInventory(CGroup.creds, Item.PHOTO, new AsyncCallback() {
+            CGroup.membersvc.loadInventory(CGroup.ident, Item.PHOTO, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     _images = (List) result;
                     // will use the cached results this time.

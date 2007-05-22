@@ -46,7 +46,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         Button button = new Button(CInventory.msgs.detailDelete());
         new ClickCallback(button) {
             public boolean callService () {
-                CInventory.itemsvc.deleteItem(CInventory.creds, _item.getIdent(), this);
+                CInventory.itemsvc.deleteItem(CInventory.ident, _item.getIdent(), this);
                 return true;
             }
             public boolean gotResult (Object result) {
@@ -84,7 +84,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             button = new Button(CInventory.msgs.detailRemix());
             new ClickCallback(button) {
                 public boolean callService () {
-                    CInventory.itemsvc.remixItem(CInventory.creds, _item.getIdent(), this);
+                    CInventory.itemsvc.remixItem(CInventory.ident, _item.getIdent(), this);
                     return true;
                 }
                 public boolean gotResult (Object result) {

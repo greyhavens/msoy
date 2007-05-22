@@ -148,7 +148,7 @@ public class SendInvitesDialog extends BorderedDialog
                                  "" + _invites.availableInvitations));
 
             } else {
-                CShell.membersvc.sendInvites(CShell.creds, validAddresses, _customMessage.getText(),
+                CShell.membersvc.sendInvites(CShell.ident, validAddresses, _customMessage.getText(),
                     new AsyncCallback () {
                         public void onSuccess (Object result) {
                             new ResultsPopup(validAddresses, (InvitationResults)result).show();

@@ -346,7 +346,7 @@ public class MailApplication extends DockPanel
     // fetch the folder list from the backend and trigger a display
     protected void loadFolders ()
     {
-        CMail.mailsvc.getFolders(CMail.creds, new AsyncCallback() {
+        CMail.mailsvc.getFolders(CMail.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _folders = (List) result;
                 refreshFolderPanel();
@@ -418,7 +418,7 @@ public class MailApplication extends DockPanel
             addError("Internal error: asked to load headers, but no folder selected.");
             return;
         }
-        CMail.mailsvc.getHeaders(CMail.creds, _currentFolder, new AsyncCallback() {
+        CMail.mailsvc.getHeaders(CMail.ident, _currentFolder, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _headers = (List) result;
                 refreshHeaderPanel();
@@ -561,7 +561,7 @@ public class MailApplication extends DockPanel
         if (_currentMessage < 0) {
             return;
         }
-        CMail.mailsvc.getMessage(CMail.creds, _currentFolder, _currentMessage, new AsyncCallback() {
+        CMail.mailsvc.getMessage(CMail.ident, _currentFolder, _currentMessage, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _message = (MailMessage) result;
                 _payloadDisplay = _message.payload != null ?
@@ -653,7 +653,7 @@ public class MailApplication extends DockPanel
             msgIds[i] = ((MailHeaders) objects[i]).messageId;
         }
         // then send the deletion request off to the backend
-        CMail.mailsvc.deleteMessages(CMail.creds, folderId, msgIds, new AsyncCallback() {
+        CMail.mailsvc.deleteMessages(CMail.ident, folderId, msgIds, new AsyncCallback() {
             public void onSuccess (Object result) {
                 // if it went well, refresh the folder view and whatnot
                 refresh();

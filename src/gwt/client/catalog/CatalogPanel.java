@@ -124,7 +124,7 @@ public class CatalogPanel extends VerticalPanel
     {
         // load up the item details
         CCatalog.itemsvc.loadItemDetail(
-            CCatalog.creds, listing.item.getIdent(), new AsyncCallback() {
+            CCatalog.ident, listing.item.getIdent(), new AsyncCallback() {
             public void onSuccess (Object result) {
                 clear();
                 add(new ListingDetailPanel((ItemDetail)result, listing, CatalogPanel.this));

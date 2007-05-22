@@ -107,7 +107,7 @@ public class NaviPanel extends FlexTable
                 } // TODO: add "invite" link if no friends?
                 menu.addItem("Invitations", true, new Command() {
                     public void execute () {
-                        CShell.membersvc.getInvitationsStatus(CShell.creds, new AsyncCallback() {
+                        CShell.membersvc.getInvitationsStatus(CShell.ident, new AsyncCallback() {
                             public void onSuccess (Object result) {
                                 new SendInvitesDialog((MemberInvites)result).show();
                                 _popped.hide();

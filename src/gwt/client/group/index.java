@@ -29,7 +29,7 @@ public class index extends MsgsEntryPoint
     {
         setPageTitle(CGroup.msgs.groupTitle());
         // if we're not a dev deployment, disallow guests
-        if (!DeploymentConfig.devDeployment && CGroup.creds == null) {
+        if (!DeploymentConfig.devDeployment && CGroup.ident == null) {
             setContent(MsoyUI.createLabel(CGroup.cmsgs.noGuests(), "infoLabel"));
             return;
         }

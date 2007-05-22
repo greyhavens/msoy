@@ -87,7 +87,7 @@ public class ItemPanel extends VerticalPanel
     public void showDetail (ItemIdent ident)
     {
         // load up the item details
-        CInventory.itemsvc.loadItemDetail(CInventory.creds, ident, new AsyncCallback() {
+        CInventory.itemsvc.loadItemDetail(CInventory.ident, ident, new AsyncCallback() {
             public void onSuccess (Object result) {
                 clear();
                 add(new ItemDetailPanel((ItemDetail)result, ItemPanel.this));
@@ -132,7 +132,7 @@ public class ItemPanel extends VerticalPanel
 
     protected void loadInventory ()
     {
-        CInventory.membersvc.loadInventory(CInventory.creds, _type, new AsyncCallback() {
+        CInventory.membersvc.loadInventory(CInventory.ident, _type, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _contents.setModel(new SimpleDataModel((List)result), _startPage);
             }

@@ -50,7 +50,7 @@ public class index extends Page
         }
 
         // if we're not a dev deployment, disallow guests
-        if (!DeploymentConfig.devDeployment && CWorld.creds == null) {
+        if (!DeploymentConfig.devDeployment && CWorld.ident == null) {
             setContent(MsoyUI.createLabel(CWorld.cmsgs.noGuests(), "infoLabel"));
             return;
         }
@@ -77,7 +77,7 @@ public class index extends Page
                 // display popular places by request
                 displayHotSpots(_entryCounter);
 
-            } else if (CWorld.creds != null) {
+            } else if (CWorld.ident != null) {
                 // we're logged in, go to our home
                 WorldClient.displayFlash(null);
 
@@ -115,7 +115,7 @@ public class index extends Page
     {
         String token = getPageArgs();
         return (token.startsWith("ng") || token.startsWith("nm") || token.startsWith("p") ||
-                CWorld.creds == null);
+                CWorld.ident == null);
     }
 
     // @Override // from Page
@@ -129,7 +129,7 @@ public class index extends Page
 
     protected void displayHotSpots (final int requestEntryCount)
     {
-        CWorld.membersvc.serializePopularPlaces(CWorld.creds, 20, new AsyncCallback() {
+        CWorld.membersvc.serializePopularPlaces(CWorld.ident, 20, new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (requestEntryCount == _entryCounter) {
                     hotSpots((String) result);

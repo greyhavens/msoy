@@ -37,7 +37,7 @@ public class index extends MsgsEntryPoint
     public void onHistoryChanged (String token)
     {
         // if we're not a dev deployment, disallow guests
-        if (!DeploymentConfig.devDeployment && CProfile.creds == null) {
+        if (!DeploymentConfig.devDeployment && CProfile.ident == null) {
             setContent(MsoyUI.createLabel(CProfile.cmsgs.noGuests(), "infoLabel"));
             return;
         }
@@ -49,7 +49,7 @@ public class index extends MsgsEntryPoint
                 // TODO: display error
             }
 
-        } else if (CProfile.creds != null) {
+        } else if (CProfile.ident != null) {
             // display our own profile if we're logged in
             displayMemberPage(CProfile.getMemberId());
 

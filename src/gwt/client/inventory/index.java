@@ -53,7 +53,7 @@ public class index extends EditemEntryPoint
     protected void updateInterface (String args)
     {
         setPageTitle(CInventory.msgs.inventoryTitle());
-        if (CInventory.creds == null) {
+        if (CInventory.ident == null) {
             // if we have no creds, just display a message saying login
             setContent(MsoyUI.createLabel(CInventory.msgs.logon(), "infoLabel"));
             _inventory = null;

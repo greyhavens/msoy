@@ -41,7 +41,7 @@ public class index extends Page
     public void onHistoryChanged (String token)
     {
         // if we're not a dev deployment, disallow guests
-        if (!DeploymentConfig.devDeployment && CGame.creds == null) {
+        if (!DeploymentConfig.devDeployment && CGame.ident == null) {
             setContent(MsoyUI.createLabel(CGame.cmsgs.noGuests(), "infoLabel"));
             return;
         }
@@ -77,7 +77,7 @@ public class index extends Page
     protected void loadLaunchConfig (int gameId, final int gameOid)
     {
         // load up the information needed to launch the game
-        CGame.gamesvc.loadLaunchConfig(CGame.creds, gameId, new AsyncCallback() {
+        CGame.gamesvc.loadLaunchConfig(CGame.ident, gameId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 launchGame((LaunchConfig)result, gameOid);
             }
@@ -114,7 +114,7 @@ public class index extends Page
                     "resource_url", config.resourceURL,
                     "server", config.server,
                     "port", "" + config.port,
-                    "authtoken", (CGame.creds == null) ? "" : CGame.creds.token };
+                    "authtoken", (CGame.ident == null) ? "" : CGame.ident.token };
                 WorldClient.displayJava(
                     WidgetUtil.createApplet(
                         "game", "/clients/" + DeploymentConfig.version + "/game-client.jar," +

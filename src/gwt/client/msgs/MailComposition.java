@@ -169,7 +169,7 @@ public class MailComposition extends BorderedDialog
                 MsoyUI.error("Ai! The message could not be sent.");
             }
         };
-        CMsgs.mailsvc.deliverMessage(CMsgs.creds, _recipient.getMemberId(), _subjectBox.getText(),
+        CMsgs.mailsvc.deliverMessage(CMsgs.ident, _recipient.getMemberId(), _subjectBox.getText(),
                                      _messageBox.getText(), (_payloadComposer == null) ?
                                      null : _payloadComposer.getComposedPayload(), callback);
     }

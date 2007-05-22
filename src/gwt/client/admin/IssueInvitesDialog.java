@@ -59,7 +59,7 @@ public class IssueInvitesDialog extends BorderedDialog
                     // one week ago
                     activeSince = new Date((new Date()).getTime() - 7 * 24 * 60 * 60 * 1000);
                 }
-                CAdmin.adminsvc.grantInvitations(CAdmin.creds, _numberInvites.getValue().intValue(),
+                CAdmin.adminsvc.grantInvitations(CAdmin.ident, _numberInvites.getValue().intValue(),
                     activeSince, new AsyncCallback() {
                         public void onSuccess (Object result) {
                             IssueInvitesDialog.this.hide();

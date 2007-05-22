@@ -29,7 +29,7 @@ public class index extends MsgsEntryPoint
     public void onHistoryChanged (String token)
     {
         // if we have no creds, just display a message saying login
-        if (CMail.creds == null) {
+        if (CMail.ident == null) {
             setContent(MsoyUI.createLabel(CMail.msgs.logon(), "infoLabel"));
             _mainView = null;
             return;

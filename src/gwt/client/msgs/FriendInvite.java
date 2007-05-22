@@ -108,7 +108,7 @@ public abstract class FriendInvite
             protected void refreshUI (final boolean roundtrip)
             {
                 CMsgs.membersvc.getFriendStatus(
-                    CMsgs.creds, _message.headers.sender.getMemberId(), new AsyncCallback() {
+                    CMsgs.ident, _message.headers.sender.getMemberId(), new AsyncCallback() {
                        public void onSuccess (Object result) {
                            buildUI(((Boolean) result).booleanValue(), roundtrip);
                        }
@@ -139,7 +139,7 @@ public abstract class FriendInvite
                 new ClickCallback(ayeButton) {
                     public boolean callService () {
                         CMsgs.membersvc.addFriend(
-                            CMsgs.creds, _message.headers.sender.getMemberId(), this);
+                            CMsgs.ident, _message.headers.sender.getMemberId(), this);
                         return true;
                     }
                     public boolean gotResult (Object result) {
@@ -157,7 +157,7 @@ public abstract class FriendInvite
                 MemberName invitee = _message.headers.recipient;
 
                 CMsgs.mailsvc.deliverMessage(
-                    CMsgs.creds, inviter.getMemberId(),
+                    CMsgs.ident, inviter.getMemberId(),
                     CMsgs.mmsgs.friendReplySubject(),
                     CMsgs.mmsgs.friendReplyBody(invitee.toString()),
                     null,

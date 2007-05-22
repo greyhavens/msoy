@@ -109,7 +109,7 @@ public class ProjectSelectionPanel extends FlexTable
                     MsoyUI.error(CSwiftly.msgs.pleaseEnterProjectName());
                     return false;
                 }
-                CSwiftly.swiftlysvc.createProject(CSwiftly.creds, name, _selectedProjectType,
+                CSwiftly.swiftlysvc.createProject(CSwiftly.ident, name, _selectedProjectType,
                                                   _remixable.isChecked(), this);
                 return true;
             }
@@ -126,7 +126,7 @@ public class ProjectSelectionPanel extends FlexTable
     // get the list of projects that are remixable
     protected void loadRemixableProjects ()
     {
-        CSwiftly.swiftlysvc.getRemixableProjects(CSwiftly.creds, new AsyncCallback() {
+        CSwiftly.swiftlysvc.getRemixableProjects(CSwiftly.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
                 Iterator iter = ((List)result).iterator();
                 if (!iter.hasNext()) {
@@ -151,7 +151,7 @@ public class ProjectSelectionPanel extends FlexTable
     // get the list of projects this user is a collaborator on
     protected void loadMembersProjects ()
     {
-        CSwiftly.swiftlysvc.getMembersProjects(CSwiftly.creds, new AsyncCallback() {
+        CSwiftly.swiftlysvc.getMembersProjects(CSwiftly.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
                 Iterator iter = ((List)result).iterator();
                 if (!iter.hasNext()) {

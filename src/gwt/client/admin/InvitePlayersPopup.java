@@ -76,7 +76,7 @@ public class InvitePlayersPopup extends BorderedDialog
             _emails[ii] = (String)list.get(ii);
         }
 
-        CAdmin.adminsvc.registerAndInvite(CAdmin.creds, _emails, new AsyncCallback() {
+        CAdmin.adminsvc.registerAndInvite(CAdmin.ident, _emails, new AsyncCallback() {
             public void onSuccess (Object result) {
                 String[] responses = (String[])result;
                 String text = "";

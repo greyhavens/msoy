@@ -84,7 +84,7 @@ public class GroupView extends VerticalPanel
      */
     protected void loadGroup (int groupId)
     {
-        CGroup.groupsvc.getGroupDetail(CGroup.creds, groupId, new AsyncCallback() {
+        CGroup.groupsvc.getGroupDetail(CGroup.ident, groupId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _detail = (GroupDetail) result;
                 _group = _detail.group;
@@ -92,7 +92,7 @@ public class GroupView extends VerticalPanel
                 // in case this object is used more than once, make sure that _me is at least 
                 // not stale
                 _me = null;
-                if (CGroup.creds != null) {
+                if (CGroup.ident != null) {
                     _me = GroupView.findMember(_detail.members, CGroup.getMemberId());
                 }
                 buildUI();
@@ -348,17 +348,17 @@ public class GroupView extends VerticalPanel
             final Panel tags = !amManager ? (Panel)new FlowPanel() : (Panel)new TagDetailPanel(
                 new TagDetailPanel.TagService() {
                     public void tag (String tag, AsyncCallback callback) {
-                        CGroup.groupsvc.tagGroup(CGroup.creds, _group.groupId, tag, true, callback);
+                        CGroup.groupsvc.tagGroup(CGroup.ident, _group.groupId, tag, true, callback);
                     }
                     public void untag (String tag, AsyncCallback callback) {
                         CGroup.groupsvc.tagGroup(
-                            CGroup.creds, _group.groupId, tag, false, callback);
+                            CGroup.ident, _group.groupId, tag, false, callback);
                     }
                     public void getRecentTags (AsyncCallback callback) {
-                        CGroup.groupsvc.getRecentTags(CGroup.creds, callback);
+                        CGroup.groupsvc.getRecentTags(CGroup.ident, callback);
                     }
                     public void getTags (AsyncCallback callback) {
-                        CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, callback);
+                        CGroup.groupsvc.getTags(CGroup.ident, _group.groupId, callback);
                     }
                     public boolean supportFlags () {
                         return false;
@@ -373,7 +373,7 @@ public class GroupView extends VerticalPanel
                     }
                 });
             if (!amManager) {
-                CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, new AsyncCallback () {
+                CGroup.groupsvc.getTags(CGroup.ident, _group.groupId, new AsyncCallback () {
                     public void onSuccess (Object result) {
                         Iterator i = ((Collection) result).iterator();
                         while (i.hasNext()) {
@@ -517,7 +517,7 @@ public class GroupView extends VerticalPanel
 
     protected void updateMemberRank (final int memberId, final byte rank) 
     {
-        CGroup.groupsvc.updateMemberRank(CGroup.creds, _group.groupId, memberId, rank,
+        CGroup.groupsvc.updateMemberRank(CGroup.ident, _group.groupId, memberId, rank,
             new AsyncCallback() {
             public void onSuccess (Object result) {
                 loadGroup(_group.groupId);
@@ -539,7 +539,7 @@ public class GroupView extends VerticalPanel
      */
     protected void removeMember (final int memberId, final boolean reload)
     {
-        CGroup.groupsvc.leaveGroup(CGroup.creds, _group.groupId, memberId, new AsyncCallback() {
+        CGroup.groupsvc.leaveGroup(CGroup.ident, _group.groupId, memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (reload) {
                     loadGroup(_group.groupId);
@@ -559,7 +559,7 @@ public class GroupView extends VerticalPanel
     protected void joinGroup () 
     {
         CGroup.groupsvc.joinGroup(
-            CGroup.creds, _group.groupId, CGroup.getMemberId(), new AsyncCallback() {
+            CGroup.ident, _group.groupId, CGroup.getMemberId(), new AsyncCallback() {
             public void onSuccess (Object result) {
                 loadGroup(_group.groupId);
             }

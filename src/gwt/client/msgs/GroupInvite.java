@@ -32,7 +32,7 @@ public abstract class GroupInvite
 {
     public static void getInvitationGroups (AsyncCallback callback)
     {
-        CMsgs.groupsvc.getMembershipGroups(CMsgs.creds, CMsgs.getMemberId(), true, callback);
+        CMsgs.groupsvc.getMembershipGroups(CMsgs.ident, CMsgs.getMemberId(), true, callback);
     }
 
     public static final class Composer
@@ -161,7 +161,7 @@ public abstract class GroupInvite
             protected void refreshUI ()
             {
                 CMsgs.groupsvc.getGroupDetail(
-                    CMsgs.creds, _inviteObject.groupId, new AsyncCallback() {
+                    CMsgs.ident, _inviteObject.groupId, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         _detail = (GroupDetail) result;
                         buildUI();
@@ -200,7 +200,7 @@ public abstract class GroupInvite
 
             protected void joinGroup ()
             {
-                CMsgs.groupsvc.joinGroup(CMsgs.creds, _inviteObject.groupId,
+                CMsgs.groupsvc.joinGroup(CMsgs.ident, _inviteObject.groupId,
                                          CMsgs.getMemberId(), new AsyncCallback() {
                     // if joining the group succeeds, mark this invitation as accepted
                     public void onSuccess (Object result) {

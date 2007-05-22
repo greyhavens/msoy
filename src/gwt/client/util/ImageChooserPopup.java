@@ -30,7 +30,7 @@ public class ImageChooserPopup extends BorderedPopup
 {
     public static void displayImageChooser (final AsyncCallback callback)
     {
-        CShell.membersvc.loadInventory(CShell.creds, Item.PHOTO, new AsyncCallback() {
+        CShell.membersvc.loadInventory(CShell.ident, Item.PHOTO, new AsyncCallback() {
             public void onSuccess (Object result) {
                 new ImageChooserPopup((List)result, callback).show();
             }

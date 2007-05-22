@@ -99,7 +99,7 @@ public class ReviewPopup extends BorderedDialog
     protected void refresh ()
     {
         _centerContent.clear();
-        CAdmin.itemsvc.getFlaggedItems(CAdmin.creds, 10, new AsyncCallback() {
+        CAdmin.itemsvc.getFlaggedItems(CAdmin.ident, 10, new AsyncCallback() {
             public void onSuccess (Object result) {
                 populateUI((List) result);
             }
@@ -167,7 +167,7 @@ public class ReviewPopup extends BorderedDialog
 //          Button button = new Button("Delist");
 //          new ClickCallback(button) {
 //          public boolean callService () {
-//          CAdmin.catalogsvc.listItem(CAdmin.creds, item.getIdent(), false, this);
+//          CAdmin.catalogsvc.listItem(CAdmin.ident, item.getIdent(), false, this);
 //          return true;
 //          }
 //          public boolean gotResult (Object result) {
@@ -192,7 +192,7 @@ public class ReviewPopup extends BorderedDialog
                             // should not happen, but let's be careful
                             return false;
                         }
-                        CAdmin.itemsvc.setFlags(CAdmin.creds, _item.getIdent(), Item.FLAG_MATURE,
+                        CAdmin.itemsvc.setFlags(CAdmin.ident, _item.getIdent(), Item.FLAG_MATURE,
                             Item.FLAG_MATURE, this);
                         return true;
                     }
@@ -229,7 +229,7 @@ public class ReviewPopup extends BorderedDialog
                         return false;
                     }
                     CAdmin.itemsvc.setFlags(
-                        CAdmin.creds, _item.getIdent(),
+                        CAdmin.ident, _item.getIdent(),
                         (byte) (Item.FLAG_FLAGGED_COPYRIGHT | Item.FLAG_FLAGGED_MATURE),
                         (byte) 0, this);
                     return true;
@@ -304,7 +304,7 @@ public class ReviewPopup extends BorderedDialog
                     return;
                 }
                 CAdmin.itemsvc.deleteItemAdmin(
-                   CAdmin.creds, _item.getIdent(), CAdmin.msgs.reviewDeletionMailHeader(),
+                   CAdmin.ident, _item.getIdent(), CAdmin.msgs.reviewDeletionMailHeader(),
                    CAdmin.msgs.reviewDeletionMailMessage(_item.name, _area.getText().trim()),
                    new AsyncCallback() {
                        public void onSuccess (Object result) {

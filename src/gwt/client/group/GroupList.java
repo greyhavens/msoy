@@ -125,7 +125,7 @@ public class GroupList extends VerticalPanel
         popularTagsLabel.addStyleName("PopularTagsLabel");
         _popularTagsContainer.add(popularTagsLabel);
 
-        CGroup.groupsvc.getPopularTags(CGroup.creds, 10, new AsyncCallback() {
+        CGroup.groupsvc.getPopularTags(CGroup.ident, 10, new AsyncCallback() {
             public void onSuccess (Object result) {
                 Iterator iter = ((List)result).iterator();
                 if (!iter.hasNext()) {
@@ -176,15 +176,15 @@ public class GroupList extends VerticalPanel
         };
         
         if (tag != null) {
-            CGroup.groupsvc.searchForTag(CGroup.creds, tag, groupsListCallback);
+            CGroup.groupsvc.searchForTag(CGroup.ident, tag, groupsListCallback);
         } else {
-            CGroup.groupsvc.getGroupsList(CGroup.creds, groupsListCallback);
+            CGroup.groupsvc.getGroupsList(CGroup.ident, groupsListCallback);
         }
     }
 
     protected void performSearch (final String searchString)
     {
-        CGroup.groupsvc.searchGroups(CGroup.creds, searchString, new AsyncCallback() {
+        CGroup.groupsvc.searchGroups(CGroup.ident, searchString, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _groupListContainer.setModel(new SimpleDataModel((List)result), 0);
             }

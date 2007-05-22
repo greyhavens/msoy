@@ -23,6 +23,7 @@ import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 
 import client.util.MsoyUI;
 

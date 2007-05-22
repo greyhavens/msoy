@@ -60,7 +60,7 @@ public class index extends Page
     protected void updateInterface (final String args)
     {
         // if we have no creds, just display a message saying login
-        if (CSwiftly.creds == null) {
+        if (CSwiftly.ident == null) {
             setContent(MsoyUI.createLabel(CSwiftly.msgs.indexLogon(), "infoLabel"));
             return;
         } 
@@ -72,7 +72,7 @@ public class index extends Page
 
         } else {
             // load up the information needed to launch the applet
-            CSwiftly.swiftlysvc.loadConnectConfig(CSwiftly.creds, new AsyncCallback() {
+            CSwiftly.swiftlysvc.loadConnectConfig(CSwiftly.ident, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     try {
                         int projectId = Integer.parseInt(args);

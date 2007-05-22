@@ -61,7 +61,7 @@ public abstract class ItemGift
         // from MailPayloadComposer
         public void messageSent (MemberName recipient)
         {
-            CMsgs.itemsvc.wrapItem(CMsgs.creds, _item.getIdent(), true, new AsyncCallback() {
+            CMsgs.itemsvc.wrapItem(CMsgs.ident, _item.getIdent(), true, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     // good
                 }
@@ -69,8 +69,7 @@ public abstract class ItemGift
                     // this would be bad. we must write the server-side code defensively,
                     // with good logging, and also TODO: there should be a last-minute check
                     // that the item is still owned by the user in getComposedPayload().
-                    CMsgs.log("Failed to wrap item [creds=" + CMsgs.creds + ", item=" +
-                              _item + "]", caught);
+                    CMsgs.log("Failed to wrap item [item=" + _item + "]", caught);
                 }
             });
         }
@@ -163,7 +162,7 @@ public abstract class ItemGift
 
             protected void rightBits (final byte type)
             {
-                CMsgs.membersvc.loadInventory(CMsgs.creds, type, new AsyncCallback() {
+                CMsgs.membersvc.loadInventory(CMsgs.ident, type, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         if (((List) result).size() == 0) {
                             _status.setText(CMsgs.mmsgs.giftNoItems());
@@ -173,8 +172,7 @@ public abstract class ItemGift
                             new ItemChooser((List) result, _imageChooser));
                     }
                     public void onFailure (Throwable caught) {
-                        CMsgs.log("Failed to load inventory [creds=" + CMsgs.creds + ", type=" +
-                                  type + "]", caught);
+                        CMsgs.log("Failed to load inventory [type=" + type + "]", caught);
                         _status.setText(CMsgs.serverError(caught));
                         
                     }
@@ -257,13 +255,12 @@ public abstract class ItemGift
                     }
                 };
                 
-                CMsgs.itemsvc.loadItem(CShell.creds, _giftObject.item, new AsyncCallback() {
+                CMsgs.itemsvc.loadItem(CShell.ident, _giftObject.item, new AsyncCallback() {
                     public void onSuccess (Object result) {
                          _content.add(new ItemThumbnail((Item) result, listener));
                     }
                     public void onFailure (Throwable caught) {
-                        CMsgs.log("Failed to load item [creds=" + CMsgs.creds + ", item=" +
-                                  _giftObject.item + "]", caught);
+                        CMsgs.log("Failed to load item [item=" + _giftObject.item + "]", caught);
                         _status.setText(CShell.serverError(caught));
                     }
                 });
@@ -272,31 +269,28 @@ public abstract class ItemGift
 
             protected void unwrapItem ()
             {
-                CMsgs.itemsvc.wrapItem(
-                    CMsgs.creds, _giftObject.item, false, new AsyncCallback() {
-                        public void onSuccess (Object result) {
-                            // the item is unwrapped, just update the payload
-                            _giftObject.item = null;
-                            updateState(_giftObject, new AsyncCallback() {
-                                public void onSuccess (Object result) {
-                                    // all went well: rebuild the view
-                                    buildUI();
-                                }
-                                public void onFailure (Throwable caught) {
-                                    // this is an unpleasant inconsistency
-                                    CMsgs.log("Failed to update payload state [creds=" +
-                                              CMsgs.creds + ", item=" + _giftObject.item + "]",
-                                              caught);
-                                    _status.setText(CShell.serverError(caught));
-                                }
-                            });
-                        }
-                        public void onFailure (Throwable caught) {
-                            CMsgs.log("Failed to unwrap item [creds=" + CMsgs.creds + ", item=" +
-                                      _giftObject.item + "]", caught);
-                            _status.setText(CShell.serverError(caught));
-                        }
-                    });
+                CMsgs.itemsvc.wrapItem(CMsgs.ident, _giftObject.item, false, new AsyncCallback() {
+                    public void onSuccess (Object result) {
+                        // the item is unwrapped, just update the payload
+                        _giftObject.item = null;
+                        updateState(_giftObject, new AsyncCallback() {
+                            public void onSuccess (Object result) {
+                                // all went well: rebuild the view
+                                buildUI();
+                            }
+                            public void onFailure (Throwable caught) {
+                                // this is an unpleasant inconsistency
+                                CMsgs.log("Failed to update payload state [item=" +
+                                          _giftObject.item + "]", caught);
+                                _status.setText(CShell.serverError(caught));
+                            }
+                        });
+                    }
+                    public void onFailure (Throwable caught) {
+                        CMsgs.log("Failed to unwrap item [item=" + _giftObject.item + "]", caught);
+                        _status.setText(CShell.serverError(caught));
+                    }
+                });
             };
 
             protected boolean _enabled;

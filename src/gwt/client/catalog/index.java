@@ -52,7 +52,7 @@ public class index extends ItemEntryPoint
     protected void updateInterface (String args)
     {
         // if we're not a dev deployment, disallow guests
-        if (!DeploymentConfig.devDeployment && CCatalog.creds == null) {
+        if (!DeploymentConfig.devDeployment && CCatalog.ident == null) {
             setContent(MsoyUI.createLabel(CCatalog.cmsgs.noGuests(), "infoLabel"));
             return;
         }

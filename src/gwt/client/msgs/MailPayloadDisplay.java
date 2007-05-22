@@ -85,7 +85,7 @@ public abstract class MailPayloadDisplay
                 }
             };
         }
-        CMsgs.mailsvc.updatePayload(CMsgs.creds, _message.headers.folderId,
+        CMsgs.mailsvc.updatePayload(CMsgs.ident, _message.headers.folderId,
                                     _message.headers.messageId, payload, callback);
     }
 

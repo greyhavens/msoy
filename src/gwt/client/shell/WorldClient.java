@@ -28,8 +28,8 @@ public class WorldClient extends Widget
         // create our client if necessary
         if (_fclient == null) {
             clearClient(false); // clear our Java client if we have one
-            if (CShell.creds != null) {
-                flashArgs = "token=" + CShell.creds.token +
+            if (CShell.ident != null) {
+                flashArgs = "token=" + CShell.ident.token +
                     (flashArgs == null ? "" : ("&" + flashArgs));;
             }
             RootPanel.get("client").clear();

@@ -231,7 +231,7 @@ public class ProfileBlurb extends Blurb
         _profile.headline = _eheadline.getText().trim();
         _profile.homePageURL = _ehomepage.getText().trim();
 
-        CProfile.profilesvc.updateProfile(CProfile.creds, name, _profile, new AsyncCallback() {
+        CProfile.profilesvc.updateProfile(CProfile.ident, name, _profile, new AsyncCallback() {
             public void onSuccess (Object result) {
                 // go back to edit mode
                 _edit.setText("Edit");

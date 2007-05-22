@@ -35,7 +35,7 @@ public class index extends EditemEntryPoint
     // @Override from Page
     public void onHistoryChanged (String token)
     {
-        if (CAdmin.creds == null) {
+        if (CAdmin.ident == null) {
             setContent(MsoyUI.createLabel(CAdmin.msgs.indexLogon(), "infoLabel"));
         } else {
             displayDashboard();

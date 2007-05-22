@@ -71,7 +71,7 @@ public class DashboardPanel extends FlexTable
     protected void displayDashboard ()
     {
         // load up the information needed to display the dashboard applet
-        CAdmin.adminsvc.loadConnectConfig(CAdmin.creds, new AsyncCallback() {
+        CAdmin.adminsvc.loadConnectConfig(CAdmin.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
                 finishDisplayDashboard((ConnectConfig)result);
             }
@@ -93,6 +93,6 @@ public class DashboardPanel extends FlexTable
                       "com.threerings.msoy.admin.client.AdminApplet", 800, 400,
                       new String[] { "server", config.server,
                                      "port", "" + config.port,
-                                     "authtoken", CAdmin.creds.token }));
+                                     "authtoken", CAdmin.ident.token }));
     }
 }

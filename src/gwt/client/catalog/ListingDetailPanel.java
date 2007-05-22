@@ -63,7 +63,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             new ClickCallback(delist) {
                 public boolean callService () {
                     CCatalog.catalogsvc.listItem(
-                        CCatalog.creds, _item.getIdent(), null, -1, false, this);
+                        CCatalog.ident, _item.getIdent(), null, -1, false, this);
                     return true;
                 }
                 public boolean gotResult (Object result) {
@@ -92,7 +92,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _buttons.add(_purchase = new Button(CCatalog.msgs.listingBuy()));
         new ClickCallback(_purchase) {
             public boolean callService () {
-                CCatalog.catalogsvc.purchaseItem(CCatalog.creds, _item.getIdent(), this);
+                CCatalog.catalogsvc.purchaseItem(CCatalog.ident, _item.getIdent(), this);
                 return true;
             }
             public boolean gotResult (Object result) {

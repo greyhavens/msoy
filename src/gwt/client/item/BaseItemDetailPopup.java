@@ -49,22 +49,22 @@ public class BaseItemDetailPopup extends BorderedDialog
         // add our tag business at the bottom
         _footer.add(new TagDetailPanel(new TagDetailPanel.TagService() {
             public void tag (String tag, AsyncCallback callback) {
-                CItem.itemsvc.tagItem(CItem.creds, _item.getIdent(), tag, true, callback);
+                CItem.itemsvc.tagItem(CItem.ident, _item.getIdent(), tag, true, callback);
             } 
             public void untag (String tag, AsyncCallback callback) {
-                CItem.itemsvc.tagItem(CItem.creds, _item.getIdent(), tag, false, callback);
+                CItem.itemsvc.tagItem(CItem.ident, _item.getIdent(), tag, false, callback);
             }
             public void getRecentTags (AsyncCallback callback) {
-                CItem.itemsvc.getRecentTags(CItem.creds, callback);
+                CItem.itemsvc.getRecentTags(CItem.ident, callback);
             }
             public void getTags (AsyncCallback callback) {
-                CItem.itemsvc.getTags(CItem.creds, _item.getIdent(), callback);
+                CItem.itemsvc.getTags(CItem.ident, _item.getIdent(), callback);
             }
             public boolean supportFlags () {
                 return true;
             }
             public void setFlags (final byte flag, final Label statusLabel) {
-                CItem.itemsvc.setFlags(CItem.creds, _item.getIdent(), flag, flag,
+                CItem.itemsvc.setFlags(CItem.ident, _item.getIdent(), flag, flag,
                                        new AsyncCallback () {
                     public void onSuccess (Object result) {
                         _item.flags |= flag;
@@ -82,7 +82,7 @@ public class BaseItemDetailPopup extends BorderedDialog
         }));
 
         // load up the item details
-        CItem.itemsvc.loadItemDetail(CItem.creds, _item.getIdent(), new AsyncCallback() {
+        CItem.itemsvc.loadItemDetail(CItem.ident, _item.getIdent(), new AsyncCallback() {
             public void onSuccess (Object result) {
                 gotDetail(_detail = (ItemDetail)result);
                 recenter();

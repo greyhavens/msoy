@@ -124,7 +124,7 @@ public class EditAccountDialog extends BorderedDialog
         final String email = _email.getText().trim();
         _upemail.setEnabled(false);
         _email.setEnabled(false);
-        CShell.usersvc.updateEmail(CShell.creds, email, new AsyncCallback() {
+        CShell.usersvc.updateEmail(CShell.ident, email, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _email.setEnabled(true);
                 CShell.creds.accountName = email;
@@ -144,7 +144,7 @@ public class EditAccountDialog extends BorderedDialog
         _uppass.setEnabled(false);
         _password.setEnabled(false);
         _confirm.setEnabled(false);
-        CShell.usersvc.updatePassword(CShell.creds, password, new AsyncCallback() {
+        CShell.usersvc.updatePassword(CShell.ident, password, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _password.setText("");
                 _password.setEnabled(true);
@@ -166,7 +166,7 @@ public class EditAccountDialog extends BorderedDialog
         final String pname = _pname.getText().trim();
         _uppname.setEnabled(false);
         _pname.setEnabled(false);
-        CShell.usersvc.configurePermaName(CShell.creds, pname, new AsyncCallback() {
+        CShell.usersvc.configurePermaName(CShell.ident, pname, new AsyncCallback() {
             public void onSuccess (Object result) {
                 CShell.creds.permaName = pname;
                 FlexTable contents = (FlexTable)_contents;

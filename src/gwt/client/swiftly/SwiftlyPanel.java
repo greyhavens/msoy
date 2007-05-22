@@ -37,7 +37,7 @@ public class SwiftlyPanel extends FlexTable
         _config = config;
 
         // load up the swiftly project record
-        CSwiftly.swiftlysvc.loadProject(CSwiftly.creds, projectId, new AsyncCallback() {
+        CSwiftly.swiftlysvc.loadProject(CSwiftly.ident, projectId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _project = (SwiftlyProject)result;
                 updateProjectLink();

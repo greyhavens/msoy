@@ -54,7 +54,7 @@ public class ProjectEdit extends BorderedDialog
 
         _project = project;
         _listener = listener;
-        _amOwner = (CSwiftly.creds.getMemberId() == project.ownerId);
+        _amOwner = (CSwiftly.getMemberId() == project.ownerId);
 
         _header.add(new InlineLabel(_project.projectName));
 
@@ -113,7 +113,7 @@ public class ProjectEdit extends BorderedDialog
         _footer.add(submit);
         new ClickCallback(submit) {
             public boolean callService () {
-                CSwiftly.swiftlysvc.updateProject(CSwiftly.creds, _project, this);
+                CSwiftly.swiftlysvc.updateProject(CSwiftly.ident, _project, this);
                 return true;
             }
             public boolean gotResult (Object result) {
@@ -151,7 +151,7 @@ public class ProjectEdit extends BorderedDialog
     protected void loadCollaborators()
     {
         CSwiftly.swiftlysvc.getProjectCollaborators(
-            CSwiftly.creds, _project.projectId, new AsyncCallback() {
+            CSwiftly.ident, _project.projectId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 gotCollaborators((List)result);
             }
@@ -235,8 +235,8 @@ public class ProjectEdit extends BorderedDialog
     protected void updateCollabMenu ()
     {
         _collabMenu.clearItems();
-        final int memberId = CSwiftly.creds.getMemberId();
-        CSwiftly.swiftlysvc.getFriends(CSwiftly.creds, new AsyncCallback() {
+        final int memberId = CSwiftly.getMemberId();
+        CSwiftly.swiftlysvc.getFriends(CSwiftly.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
                 Iterator iter = ((List)result).iterator();
                 boolean foundFriend = false;
@@ -290,7 +290,7 @@ public class ProjectEdit extends BorderedDialog
     protected void addCollaborator (final int memberId)
     {
         CSwiftly.swiftlysvc.joinCollaborators(
-            CSwiftly.creds, _project.projectId, memberId, new AsyncCallback() {
+            CSwiftly.ident, _project.projectId, memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 loadCollaborators();
             }
@@ -310,7 +310,7 @@ public class ProjectEdit extends BorderedDialog
     protected void removeCollaborator (final int memberId)
     {
         CSwiftly.swiftlysvc.leaveCollaborators(
-            CSwiftly.creds, _project.projectId, memberId, new AsyncCallback() {
+            CSwiftly.ident, _project.projectId, memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 loadCollaborators();
             }

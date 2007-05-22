@@ -155,7 +155,7 @@ public class TagDetailPanel extends FlexTable
 //             return;
 //         }
 
-//         CItem.itemsvc.getTagHistory(CItem.creds, _itemId, new AsyncCallback() {
+//         CItem.itemsvc.getTagHistory(CItem.ident, _itemId, new AsyncCallback() {
 //             public void onSuccess (Object result) {
 //                 _tagHistory = new FlexTable();
 //                 _tagHistory.setBorderWidth(0);
@@ -255,7 +255,7 @@ public class TagDetailPanel extends FlexTable
             }
         }
 
-//         if (CShell.creds != null) {
+//         if (CShell.ident != null) {
 //             _service.getRecentTags(new AsyncCallback() {
 //                 public void onSuccess (Object result) {
 //                     _quickTags.clear();

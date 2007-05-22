@@ -420,9 +420,9 @@ public abstract class ItemEditor extends BorderedDialog
             }
         };
         if (_item.itemId == 0) {
-            CEditem.itemsvc.createItem(CEditem.creds, _item, cb);
+            CEditem.itemsvc.createItem(CEditem.ident, _item, cb);
         } else {
-            CEditem.itemsvc.updateItem(CEditem.creds, _item, cb);
+            CEditem.itemsvc.updateItem(CEditem.ident, _item, cb);
         }
     }
 
