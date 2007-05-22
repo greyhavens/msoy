@@ -58,7 +58,7 @@ public class ResultExporter
             });
 
         } catch (PrivilegedActionException e) {
-            log.log(Level.WARNING, "Failed to save build results.", e);
+            log.log(Level.WARNING, "Failed to save build results.", e.getException());
             _ctx.showErrorMessage(_msgs.get("e.export_failed"));
         }
     }
