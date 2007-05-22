@@ -600,7 +600,7 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         InvitationRecord invRec = loadInvite(inviteId);
-        if (invRec.viewed == null) {
+        if (invRec != null && invRec.viewed == null) {
             invRec.viewed = new Timestamp((new java.util.Date()).getTime());
             update(invRec, InvitationRecord.VIEWED);
         }
