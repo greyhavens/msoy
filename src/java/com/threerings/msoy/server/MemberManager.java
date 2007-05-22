@@ -447,9 +447,6 @@ public class MemberManager
      */
     protected void checkCurrentLevel (final MemberObject member)
     {
-        // TODO
-        log.info("Current accumulated flow level updated, or user just logged in [memberId=" + 
-            member.memberName.getMemberId() + ", accFlow=" + member.accFlow + "]");
     }
     
     /**

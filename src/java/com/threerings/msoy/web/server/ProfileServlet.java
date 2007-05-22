@@ -57,6 +57,7 @@ public class ProfileServlet extends MsoyServiceServlet
             // stuff their updated profile data into the database
             ProfileRecord nrec = new ProfileRecord(memrec.memberId, profile);
             nrec.modifications = oprof.modifications+1;
+            nrec.birthday = oprof.birthday;
             MsoyServer.profileRepo.storeProfile(nrec);
 
             // record that the user updated their profile
