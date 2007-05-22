@@ -11,8 +11,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InterruptedIOException;
 
 import java.net.URL;
 
@@ -26,10 +24,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
-import javax.swing.ProgressMonitorInputStream;
 import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.LookAndFeel;
 
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -54,7 +49,6 @@ import com.threerings.msoy.swiftly.client.signed.UploadTask;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.client.InvocationService.InvocationListener;
 
-import com.samskivert.swing.util.TaskAdapter;
 import com.samskivert.swing.util.TaskMaster;
 import com.samskivert.swing.util.TaskObserver;
 
