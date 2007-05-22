@@ -13,10 +13,29 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.data.Invitation;
 
 import client.util.BorderedDialog;
+import client.util.MsoyUI;
 
 public class InvitationDialog extends BorderedDialog 
 {
-    public InvitationDialog (final StatusPanel status, final Invitation invite) 
+    public static void display (String args)
+    {
+        CShell.membersvc.getInvitation(args, true, new AsyncCallback () {
+            public void onSuccess (Object result) {
+                (new InvitationDialog(_status, (Invitation)result)).show();
+            }
+            public void onFailure (Throwable cause) {
+                MsoyUI.error(CShell.serverError(cause));
+            }
+        });
+    }
+
+    // @Override // from BorderedDialog
+    public Widget createContents ()
+    {
+        return new FlexTable();
+    }
+
+    protected InvitationDialog (final StatusPanel status, final Invitation invite) 
     {
         _header.add(createTitleLabel(CShell.cmsgs.inviteTitle(), null));
 
@@ -51,11 +70,4 @@ public class InvitationDialog extends BorderedDialog
             }   
         }));
     }
-
-    // @Override // from BorderedDialog
-    public Widget createContents ()
-    {
-        return new FlexTable();
-    }
-
 }

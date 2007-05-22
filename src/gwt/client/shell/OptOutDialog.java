@@ -18,7 +18,25 @@ import client.util.MsoyUI;
 
 public class OptOutDialog extends BorderedDialog
 {
-    public OptOutDialog (final Invitation invite)
+    public static void display (String args)
+    {
+        CShell.membersvc.getInvitation(args, false, new AsyncCallback () {
+            public void onSuccess (Object result) {
+                (new OptOutDialog((Invitation)result)).show();
+            }
+            public void onFailure (Throwable cause) {
+                MsoyUI.error(CShell.serverError(cause));
+            }
+        });
+    }
+
+    // @Override // from BorderedDialog
+    public Widget createContents ()
+    {
+        return new FlexTable();
+    }
+
+    protected OptOutDialog (final Invitation invite)
     {
         _header.add(createTitleLabel(CShell.cmsgs.optOutTitle(), null));
 
@@ -56,11 +74,5 @@ public class OptOutDialog extends BorderedDialog
                 OptOutDialog.this.hide();
             }
         }));
-    }
-
-    // @Override // from BorderedDialog
-    public Widget createContents ()
-    {
-        return new FlexTable();
     }
 }

@@ -13,7 +13,6 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
@@ -23,10 +22,8 @@ import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
-import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.shell.InvitationDialog;
 import client.util.MsoyUI;
 
 /**
@@ -124,28 +121,7 @@ public class Application
             page = token.substring(0, semidx);
             args = token.substring(semidx+1);
         }
-
-        if ("invite".equals(page)) {
-            CShell.membersvc.getInvitation(args, true, new AsyncCallback () {
-                public void onSuccess (Object result) {
-                    (new InvitationDialog(_status, (Invitation)result)).show();
-                }
-                public void onFailure (Throwable cause) {
-                    MsoyUI.error(CShell.serverError(cause));
-                }
-            });
-
-        } else if ("optout".equals(page)) {
-            CShell.membersvc.getInvitation(args, false, new AsyncCallback () {
-                public void onSuccess (Object result) {
-                    (new OptOutDialog((Invitation)result)).show();
-                }
-                public void onFailure (Throwable cause) {
-                    MsoyUI.error(CShell.serverError(cause));
-                }
-            });
-
-        } else {
+        if (!displayPopup(page, args)) {
             displayPage(page, args);
         }
     }
@@ -166,8 +142,6 @@ public class Application
 
     protected void displayPage (String ident, String args)
     {
-        CShell.log("Displaying [page=" + ident + ", args=" + args + "].");
-
         // replace the page if necessary
         if (_page == null || !_page.getPageId().equals(ident)) {
             // tell any existing page that it's being unloaded
@@ -192,6 +166,24 @@ public class Application
 
         // now tell the page about its arguments
         _page.onHistoryChanged(args);
+    }
+
+    protected boolean displayPopup (String ident, String args)
+    {
+        if ("invite".equals(page)) {
+            InvitationDialog.display(args);
+
+        } else if ("optout".equals(page)) {
+            OptOutDialog.display(args);
+
+        } else if ("resetpw".equals(page)) {
+            // TODO
+
+        } else {
+            return false;
+        }
+
+        return true;
     }
 
     /**
