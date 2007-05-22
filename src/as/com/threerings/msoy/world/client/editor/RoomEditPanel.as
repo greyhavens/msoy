@@ -111,6 +111,7 @@ public class RoomEditPanel extends FloatingPanel
 
         var box :HBox = new HBox();
         box.styleName = "roomEditPanelContainer";
+        box.percentWidth = 100;
         addChild(box);
         
         for each (var def :Object in BUTTON_DEFINITIONS)

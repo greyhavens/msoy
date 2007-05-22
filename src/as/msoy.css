@@ -318,6 +318,8 @@ Window {
 } 
 
 .roomEditPanelContainer { 
+  backgroundImage: Embed(source="../../rsrc/media/skins/button/furniedit/button_bar_tile.png");
+  backgroundSize: "100%";
   borderStyle: "none";
   borderThickness: 0;
   borderThicknessLeft: 0;
