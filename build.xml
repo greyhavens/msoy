@@ -63,7 +63,7 @@
     <file name="${extlibs.dir}/javassist.jar"/>
     <file name="${extlibs.dir}/junit-3.7.jar"/>
     <file name="${extlibs.dir}/mail.jar"/>
-    <file name="${extlibs.dir}/mysql-connector-java-3.1.12-bin.jar"/>
+    <file name="${extlibs.dir}/mysql-connector-java-5.0.4-bin.jar"/>
     <file name="${extlibs.dir}/proguard.jar"/>
     <file name="${extlibs.dir}/servlet-2.3.jar"/>
     <file name="${extlibs.dir}/ganymed.jar"/>
