@@ -181,6 +181,7 @@ public class FlowAwardTracker
         if (cappedAmount > 0) {
             MemberObject mObj = (MemberObject) MsoyServer.omgr.getObject(memberOid);
             mObj.setFlow(mObj.flow + cappedAmount);
+            mObj.setAccFlow(mObj.accFlow + cappedAmount);
         }
         return cappedAmount;
     }
@@ -205,6 +206,7 @@ public class FlowAwardTracker
             record.awarded += amount;
             MemberObject mObj = (MemberObject) MsoyServer.omgr.getObject(memberOid);
             mObj.setFlow(mObj.flow + amount);
+            mObj.setAccFlow(mObj.accFlow + amount);
         }
         return amount;
     }
