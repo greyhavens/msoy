@@ -192,6 +192,7 @@ public class Application
     protected void didLogon (WebCreds creds)
     {
         CShell.creds = creds;
+        CShell.ident = new WebIdent(creds.getMemberId(), creds.token);
         _navi.didLogon(creds);
         if (_page == null) {
             // we can now load our starting page
@@ -207,6 +208,7 @@ public class Application
     protected void didLogoff ()
     {
         CShell.creds = null;
+        CShell.ident = null;
         _navi.didLogoff();
         if (_page == null) {
             // we can now load our starting page

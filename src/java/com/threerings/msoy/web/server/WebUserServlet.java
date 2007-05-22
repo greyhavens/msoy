@@ -26,6 +26,7 @@ import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.Invitation;
 
 import static com.threerings.msoy.Log.log;
@@ -179,10 +180,10 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public void updateEmail (WebCreds creds, String newEmail)
+    public void updateEmail (WebIdent ident, String newEmail)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(creds);
+        MemberRecord mrec = requireAuthedUser(ident);
 
         if (!MailUtil.isValidAddress(newEmail)) {
             throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
@@ -204,10 +205,10 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public void updatePassword (WebCreds creds, String newPassword)
+    public void updatePassword (WebIdent ident, String newPassword)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(creds);
+        MemberRecord mrec = requireAuthedUser(ident);
         MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
         auth.updateAccount(mrec.accountName, null, null, newPassword);
     }
@@ -241,10 +242,10 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public void configurePermaName (WebCreds creds, String permaName)
+    public void configurePermaName (WebIdent ident, String permaName)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser(creds);
+        MemberRecord mrec = requireAuthedUser(ident);
         if (mrec.permaName != null) {
             log.warning("Rejecting attempt to reassing permaname [who=" + mrec.accountName +
                         ", oname=" + mrec.permaName + ", nname=" + permaName + "].");

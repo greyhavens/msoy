@@ -10,7 +10,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Defines profile-related services available to the GWT/AJAX web client.
@@ -19,10 +19,8 @@ public interface ProfileService extends RemoteService
 {
     /**
      * Requests that this user's profile be updated.
-     *
-     * @param creds an authentication cookie identifying the requesting user.
      */
-    public void updateProfile (WebCreds creds, String displayName, Profile profile)
+    public void updateProfile (WebIdent ident, String displayName, Profile profile)
         throws ServiceException;
 
     /**

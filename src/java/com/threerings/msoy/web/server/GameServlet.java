@@ -25,7 +25,7 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 
 import static com.threerings.msoy.Log.log;
 
@@ -36,10 +36,10 @@ public class GameServlet extends MsoyServiceServlet
     implements GameService
 {
     // from interface GameService
-    public LaunchConfig loadLaunchConfig (WebCreds creds, int gameId)
+    public LaunchConfig loadLaunchConfig (WebIdent ident, int gameId)
         throws ServiceException
     {
-        // TODO: validate this user's creds
+        // TODO: validate this user's ident
 
         // load up the metadata for this game
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(Item.GAME);

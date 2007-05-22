@@ -10,7 +10,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
@@ -23,43 +23,43 @@ public interface MemberService extends RemoteService
     /**
      * Figure out whether or not a given member is your friend.
      */
-    public boolean getFriendStatus (WebCreds creds, int memberId)
+    public boolean getFriendStatus (WebIdent ident, int memberId)
         throws ServiceException;
 
     /**
      * Accept a friend invitation.
      */
-    public void addFriend (WebCreds creds, int friendId)
+    public void addFriend (WebIdent ident, int friendId)
         throws ServiceException;
 
     /**
      * Remove a friend.
      */
-    public void removeFriend (WebCreds creds, int friendId)
+    public void removeFriend (WebIdent ident, int friendId)
         throws ServiceException;
 
     /**
      * Loads all items in a player's inventory of the specified type.
      */
-    public ArrayList loadInventory (WebCreds creds, byte type)
+    public ArrayList loadInventory (WebIdent ident, byte type)
         throws ServiceException;
 
     /**
      * Fetch the n most Popular Places data in JSON-serialized form.
      */
-    public String serializePopularPlaces (WebCreds creds, int n)
+    public String serializePopularPlaces (WebIdent ident, int n)
         throws ServiceException;
 
     /**
-     * Return the invitation details for the given creds.
+     * Return the invitation details for the given ident.
      */
-    public MemberInvites getInvitationsStatus (WebCreds creds) 
+    public MemberInvites getInvitationsStatus (WebIdent ident) 
         throws ServiceException;
 
     /** 
      * Send out some of this person's available invites.
      */
-    public InvitationResults sendInvites (WebCreds creds, List addresses, String customMessage)
+    public InvitationResults sendInvites (WebIdent ident, List addresses, String customMessage)
         throws ServiceException;
 
     /** 

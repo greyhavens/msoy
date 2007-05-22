@@ -6,7 +6,7 @@ package com.threerings.msoy.web.client;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * The asynchronous (client-side) version of {@link SwiftlyService}.
@@ -16,53 +16,53 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#getRemixableProjects}.
      */
-    public void getRemixableProjects (WebCreds creds, AsyncCallback callback);
+    public void getRemixableProjects (WebIdent ident, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#getMembersProjects}.
      */
-    public void getMembersProjects (WebCreds creds, AsyncCallback callback);
+    public void getMembersProjects (WebIdent ident, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#createProject}.
      */
-    public void createProject (WebCreds creds, String projectName, byte projectType,
+    public void createProject (WebIdent ident, String projectName, byte projectType,
                                boolean remixable, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#updateProject}.
      */
-    public void updateProject (WebCreds creds, SwiftlyProject project, AsyncCallback callback);
+    public void updateProject (WebIdent ident, SwiftlyProject project, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#loadProject}.
      */
-    public void loadProject (WebCreds creds, int projectId, AsyncCallback callback);
+    public void loadProject (WebIdent ident, int projectId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#loadConnectConfig}.
      */
-    public void loadConnectConfig (WebCreds creds, AsyncCallback callback);
+    public void loadConnectConfig (WebIdent ident, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#getProjectCollaborators}.
      */
-    public void getProjectCollaborators (WebCreds creds, int projectId, AsyncCallback callback);
+    public void getProjectCollaborators (WebIdent ident, int projectId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#getFriends}.
      */
-    public void getFriends (WebCreds creds, AsyncCallback callback);
+    public void getFriends (WebIdent ident, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#leaveCollaborators}.
      */
-    public void leaveCollaborators (WebCreds creds, int projectId, int memberId,
-                                         AsyncCallback callback);
+    public void leaveCollaborators (WebIdent ident, int projectId, int memberId,
+                                    AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#joinCollaborators}.
      */
-    public void joinCollaborators (WebCreds creds, int projectId, int memberId,
-                                    AsyncCallback callback);
+    public void joinCollaborators (WebIdent ident, int projectId, int memberId,
+                                   AsyncCallback callback);
 }

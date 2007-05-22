@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.Invitation;
 
 /**
@@ -18,38 +18,38 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#getFriendStatus}.
      */
-    public void getFriendStatus (WebCreds creds, int memberId, AsyncCallback callback);
+    public void getFriendStatus (WebIdent ident, int memberId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MemberService#acceptFriend}.
      */
-    public void addFriend (WebCreds creds, int friendId, AsyncCallback callback);
+    public void addFriend (WebIdent ident, int friendId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MemberService#declineFriend}.
      */
-    public void removeFriend (WebCreds creds, int friendId, AsyncCallback callback);
+    public void removeFriend (WebIdent ident, int friendId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MemberService#loadInventory}.
      */
-    public void loadInventory (WebCreds creds, byte type, AsyncCallback callback);
+    public void loadInventory (WebIdent ident, byte type, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MemberService#serializePopularPlaces}.
      */
-    public void serializePopularPlaces (WebCreds creds, int n, AsyncCallback callback);
+    public void serializePopularPlaces (WebIdent ident, int n, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MemberService#getInvitationStatus}.
      */
-    public void getInvitationsStatus (WebCreds creds, AsyncCallback callback);
+    public void getInvitationsStatus (WebIdent ident, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MemberService#sendInvites}.
      */
-    public void sendInvites (WebCreds creds, List addresses, String customMessage, 
-        AsyncCallback callback);
+    public void sendInvites (WebIdent ident, List addresses, String customMessage, 
+                             AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MemberService#getInvitation}.

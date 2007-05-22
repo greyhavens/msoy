@@ -28,6 +28,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 
 import static com.threerings.msoy.Log.log;
 
@@ -37,20 +38,39 @@ import static com.threerings.msoy.Log.log;
 public class MsoyServiceServlet extends RemoteServiceServlet
 {
     /**
-     * Returns the member id of the client that provided the supplied creds or -1 if the creds are
-     * null. Throws a session expired exception if the creds have expired.
+     * Returns the member id of the client that provided the supplied ident or -1 if the ident is
+     * null. Throws a session expired exception if the ident is expired.
      */
-    protected int getMemberId (WebCreds creds)
+    protected int getMemberId (WebIdent ident)
         throws ServiceException
     {
-        if (creds == null) {
+        if (ident == null) {
             return -1;
         }
-        Integer memberId = _members.get(creds.token);
+        Integer memberId = _members.get(ident.token);
         if (memberId != null) {
             return memberId;
         }
         throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
+    }
+
+    /**
+     * Returns the member record for the supplied ident, or null if the ident represents an expired
+     * session or is null.
+     */
+    protected MemberRecord getAuthedUser (WebIdent ident)
+        throws ServiceException
+    {
+        Integer memberId = _members.get(ident.token);
+        if (memberId != null && memberId == ident.memberId) {
+            try {
+                return MsoyServer.memberRepo.loadMember(memberId);
+            } catch (PersistenceException pe) {
+                log.log(Level.WARNING, "Failed to load member [id=" + memberId + "].", pe);
+                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            }
+        }
+        return null;
     }
 
     /**
@@ -59,21 +79,14 @@ public class MsoyServiceServlet extends RemoteServiceServlet
      *
      * @exception ServiceException thrown if the session has expired or is otherwise invalid.
      */
-    protected MemberRecord requireAuthedUser (WebCreds creds)
+    protected MemberRecord requireAuthedUser (WebIdent ident)
         throws ServiceException
     {
-        if (creds != null) {
-            Integer memberId = _members.get(creds.token);
-            if (memberId != null && memberId == creds.getMemberId()) {
-                try {
-                    return MsoyServer.memberRepo.loadMember(memberId);
-                } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to load member [id=" + memberId + "].", pe);
-                    throw new ServiceException(ServiceException.INTERNAL_ERROR);
-                }
-            }
+        MemberRecord mrec = getAuthedUser(ident);
+        if (mrec == null) {
+            throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
         }
-        throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
+        return mrec;
     }
 
     /**

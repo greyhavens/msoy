@@ -13,7 +13,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Provides digital items related services.
@@ -30,13 +30,13 @@ public interface CatalogService extends RemoteService
     /**
      * Purchases the item of the specified id and type.
      */
-    public Item purchaseItem (WebCreds creds, ItemIdent item)
+    public Item purchaseItem (WebIdent ident, ItemIdent item)
         throws ServiceException;
 
     /**
      * Lists or delists the specified item in the catalog.
      */
-    public CatalogListing listItem (WebCreds creds, ItemIdent item, String descrip, int rarity,
+    public CatalogListing listItem (WebIdent ident, ItemIdent item, String descrip, int rarity,
                                     boolean list)
         throws ServiceException;
 
@@ -44,7 +44,7 @@ public interface CatalogService extends RemoteService
      * Executes an item return, potentially for a (potentially partial) refund.
      * Returns a two-element array containing { flow refunded, gold refunded }.
      */
-    public int[] returnItem (WebCreds creds, ItemIdent item)
+    public int[] returnItem (WebIdent ident, ItemIdent item)
         throws ServiceException;
 
     /**

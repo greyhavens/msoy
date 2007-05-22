@@ -7,7 +7,7 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.Invitation;
 
 /**
@@ -41,12 +41,12 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#updateEmail}.
      */
-    public void updateEmail (WebCreds creds, String newEmail, AsyncCallback callback);
+    public void updateEmail (WebIdent ident, String newEmail, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link WebUserService#updatePassword}.
      */
-    public void updatePassword (WebCreds creds, String newPassword, AsyncCallback callback);
+    public void updatePassword (WebIdent ident, String newPassword, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link WebUserService#resetPassword}.
@@ -57,5 +57,5 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#configurePermaName}.
      */
-    public void configurePermaName (WebCreds creds, String permaName, AsyncCallback callback);
+    public void configurePermaName (WebIdent ident, String permaName, AsyncCallback callback);
 }

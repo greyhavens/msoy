@@ -25,7 +25,7 @@ import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 
 import static com.threerings.msoy.Log.log;
 
@@ -36,10 +36,10 @@ public class MailServlet extends MsoyServiceServlet
     implements MailService
 {
     // from MailService
-    public void deleteMessages (final WebCreds creds, final int folderId, final int[] msgIdArr)
+    public void deleteMessages (final WebIdent ident, final int folderId, final int[] msgIdArr)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(creds);
+        MemberRecord memrec = requireAuthedUser(ident);
         try {
             getMailRepo().deleteMessage(memrec.memberId, folderId, msgIdArr);
         } catch (PersistenceException pe) {
@@ -50,11 +50,11 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     // from MailService
-    public void deliverMessage (final WebCreds creds, final int recipientId, final String subject,
+    public void deliverMessage (final WebIdent ident, final int recipientId, final String subject,
                                 final String text, final MailPayload object)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(creds);
+        final MemberRecord memrec = requireAuthedUser(ident);
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
             "deliverMessage[" + recipientId + ", " + subject + ", " + text + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
@@ -67,11 +67,11 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     // from MailService
-    public void updatePayload (WebCreds creds, final int folderId, final int messageId,
+    public void updatePayload (WebIdent ident, final int folderId, final int messageId,
                                MailPayload payload)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(creds);
+        MemberRecord memrec = requireAuthedUser(ident);
         try {
             byte[] state = JSONMarshaller.getMarshaller(payload.getClass()).getStateBytes(payload);
             getMailRepo().setPayloadState(memrec.memberId, folderId, messageId, state);
@@ -83,10 +83,10 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     // from MailService
-    public MailFolder getFolder (WebCreds creds, final int folderId)
+    public MailFolder getFolder (WebIdent ident, final int folderId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(creds);
+        MemberRecord memrec = requireAuthedUser(ident);
         try {
             return buildFolder(getMailRepo().getFolder(memrec.memberId, folderId));
         } catch (PersistenceException pe) {
@@ -97,10 +97,10 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     // from MailService
-    public List<MailFolder> getFolders (WebCreds creds)
+    public List<MailFolder> getFolders (WebIdent ident)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(creds);
+        MemberRecord memrec = requireAuthedUser(ident);
         try {
             List<MailFolder> result = new ArrayList<MailFolder>();
             for (MailFolderRecord record : getMailRepo().getFolders(memrec.memberId)) {
@@ -114,10 +114,10 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     // from MailService
-    public List<MailHeaders> getHeaders (final WebCreds creds, final int folderId)
+    public List<MailHeaders> getHeaders (final WebIdent ident, final int folderId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(creds);
+        MemberRecord memrec = requireAuthedUser(ident);
         try {
             List<MailHeaders> result = new ArrayList<MailHeaders>();
             for (MailMessageRecord record : getMailRepo().getMessages(memrec.memberId, folderId)) {
@@ -132,10 +132,10 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     // from MailService
-    public MailMessage getMessage (final WebCreds creds, final int folderId, final int messageId)
+    public MailMessage getMessage (final WebIdent ident, final int folderId, final int messageId)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(creds);
+        final MemberRecord memrec = requireAuthedUser(ident);
         final ServletWaiter<MailMessage> waiter = new ServletWaiter<MailMessage>(
             "getMessage[" + folderId + ", " + messageId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {

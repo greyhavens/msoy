@@ -9,32 +9,32 @@ import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Defines mail services available to the GWT/AJAX web client.
  */
 public interface MailService extends RemoteService
 {
-    public MailFolder getFolder (WebCreds creds, int folderId)
+    public MailFolder getFolder (WebIdent ident, int folderId)
         throws ServiceException;
     
-    public List getFolders (WebCreds creds)
+    public List getFolders (WebIdent ident)
         throws ServiceException;
 
-    public MailMessage getMessage (WebCreds creds, int folderId, int messageId)
+    public MailMessage getMessage (WebIdent ident, int folderId, int messageId)
         throws ServiceException;
     
-    public List getHeaders (WebCreds creds, int folderId)
+    public List getHeaders (WebIdent ident, int folderId)
         throws ServiceException;
     
-    public void deliverMessage (WebCreds creds, int recipientId, String subject, String text,
+    public void deliverMessage (WebIdent ident, int recipientId, String subject, String text,
                                 MailPayload object)
         throws ServiceException;
 
-    public void updatePayload (WebCreds creds, int folderId, int messageId, MailPayload payload)
+    public void updatePayload (WebIdent ident, int folderId, int messageId, MailPayload payload)
         throws ServiceException;
 
-    public void deleteMessages (WebCreds creds, int folderId, int[] msgIdArr)
+    public void deleteMessages (WebIdent ident, int folderId, int[] msgIdArr)
         throws ServiceException;
 }

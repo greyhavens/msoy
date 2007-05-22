@@ -35,7 +35,7 @@ import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
@@ -58,11 +58,11 @@ public class MemberServlet extends MsoyServiceServlet
     implements MemberService
 {
     // from MemberService
-    public boolean getFriendStatus (WebCreds creds, final int memberId)
+    public boolean getFriendStatus (WebIdent ident, final int memberId)
         throws ServiceException
     {
         try {
-            return MsoyServer.memberRepo.getFriendStatus(getMemberId(creds), memberId);
+            return MsoyServer.memberRepo.getFriendStatus(getMemberId(ident), memberId);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "isFriend failed [memberId=" + memberId + "].", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
@@ -70,10 +70,10 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public void addFriend (final WebCreds creds, final int friendId)
+    public void addFriend (final WebIdent ident, final int friendId)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(creds);
+        final MemberRecord memrec = requireAuthedUser(ident);
         final ServletWaiter<Void> waiter =
             new ServletWaiter<Void>("acceptFriend[" + friendId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
@@ -85,10 +85,10 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public void removeFriend (final WebCreds creds, final int friendId)
+    public void removeFriend (final WebIdent ident, final int friendId)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(creds);
+        final MemberRecord memrec = requireAuthedUser(ident);
         final ServletWaiter<Void> waiter =
             new ServletWaiter<Void>("removeFriend[" + friendId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
@@ -100,15 +100,15 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from interface MemberService
-    public ArrayList loadInventory (final WebCreds creds, final byte type)
+    public ArrayList loadInventory (final WebIdent ident, final byte type)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(creds);
+        final MemberRecord memrec = requireAuthedUser(ident);
 
         // convert the string they supplied to an item enumeration
         if (Item.getClassForType(type) == null) {
             log.warning("Requested to load inventory for invalid item type " +
-                        "[who=" + creds + ", type=" + type + "].");
+                        "[who=" + ident + ", type=" + type + "].");
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
@@ -131,26 +131,29 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public String serializePopularPlaces (final WebCreds creds, final int n)
+    public String serializePopularPlaces (WebIdent ident, final int n)
         throws ServiceException
     {
+        MemberRecord mrec = getAuthedUser(ident);
+
         // if we're logged on, fetch our friends list, on the servlet thread
         final List<FriendEntry> friends;
-        if (creds != null) {
+        if (mrec != null) {
             try {
-                friends = MsoyServer.memberRepo.getFriends(creds.getMemberId());
+                friends = MsoyServer.memberRepo.getFriends(mrec.memberId);
             } catch (PersistenceException e) {
                 log.log(Level.WARNING, "Failed to list friends");
                 throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
             }
+
         } else {
             friends = new ArrayList<FriendEntry>();
         }
 
+        // then proceed to the dobj thread to get runtime state
+        final MemberName name = (mrec == null) ? null : mrec.getName();
         final ServletWaiter<String> waiter =
             new ServletWaiter<String>("serializePopularPlaces[" + n + "]");
-
-        // then proceed to the dobj thread to get runtime state
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 try {
@@ -180,7 +183,7 @@ public class MemberServlet extends MsoyServiceServlet
 
                     for (Map.Entry<PopularPlace, Set<MemberName>> entry : popSets.entrySet()) {
                         filePopularPlace(
-                            creds.name, entry.getKey(), entry.getValue(), homes, groups, games);
+                            name, entry.getKey(), entry.getValue(), homes, groups, games);
                     }
 
                     // after we've enumerated our friends, we add in the top populous places too 
@@ -190,7 +193,7 @@ public class MemberServlet extends MsoyServiceServlet
                         if (popSets.containsKey(place)) {
                             continue;
                         }
-                        filePopularPlace(creds.name, place, null, homes, groups, games);
+                        filePopularPlace(name, place, null, homes, groups, games);
                         if (--n <= 0) {
                             break;
                         }
@@ -212,10 +215,10 @@ public class MemberServlet extends MsoyServiceServlet
     }
     
     // from MemberService
-    public MemberInvites getInvitationsStatus (WebCreds creds) 
+    public MemberInvites getInvitationsStatus (WebIdent ident) 
         throws ServiceException
     {
-        int memberId = getMemberId(creds);
+        int memberId = getMemberId(ident);
 
         try {
             MemberInvites result = new MemberInvites();
@@ -236,10 +239,10 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public InvitationResults sendInvites (WebCreds creds, List addresses, String customMessage) 
+    public InvitationResults sendInvites (WebIdent ident, List addresses, String customMessage) 
         throws ServiceException
     {
-        int memberId = getMemberId(creds);
+        int memberId = getMemberId(ident);
 
         // make sure this user still has available invites
         try {

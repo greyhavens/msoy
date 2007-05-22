@@ -7,9 +7,10 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
-import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Defines general user services available to the GWT/AJAX web client.
@@ -53,13 +54,13 @@ public interface WebUserService extends RemoteService
     /**
      * Updates the email address on file for this account.
      */
-    public void updateEmail (WebCreds creds, String newEmail)
+    public void updateEmail (WebIdent ident, String newEmail)
         throws ServiceException;
 
     /**
      * Updates the password on file for this account.
      */
-    public void updatePassword (WebCreds creds, String newPassword)
+    public void updatePassword (WebIdent ident, String newPassword)
         throws ServiceException;
 
     /**
@@ -71,6 +72,6 @@ public interface WebUserService extends RemoteService
     /**
      * Configures the permaname for this account.
      */
-    public void configurePermaName (WebCreds creds, String permaName)
+    public void configurePermaName (WebIdent ident, String permaName)
         throws ServiceException;
 }

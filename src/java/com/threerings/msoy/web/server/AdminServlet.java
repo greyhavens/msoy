@@ -29,7 +29,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.client.AdminService;
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 
 import static com.threerings.msoy.Log.log;
 
@@ -40,10 +40,10 @@ public class AdminServlet extends MsoyServiceServlet
     implements AdminService
 {
     // from interface AdminService
-    public ConnectConfig loadConnectConfig (WebCreds creds)
+    public ConnectConfig loadConnectConfig (WebIdent ident)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(creds);
+        MemberRecord memrec = requireAuthedUser(ident);
         if (!memrec.isAdmin()) {
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
@@ -55,10 +55,10 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public String[] registerAndInvite (WebCreds creds, String[] emails)
+    public String[] registerAndInvite (WebIdent ident, String[] emails)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(creds);
+        MemberRecord memrec = requireAuthedUser(ident);
         if (!memrec.isSupport()) {
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
@@ -112,10 +112,10 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public void grantInvitations (WebCreds creds, int numberInvitations, Date activeSince)
+    public void grantInvitations (WebIdent ident, int numberInvitations, Date activeSince)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(creds);
+        MemberRecord memrec = requireAuthedUser(ident);
         if (!memrec.isAdmin()) {
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }

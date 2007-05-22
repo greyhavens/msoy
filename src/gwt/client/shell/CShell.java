@@ -12,6 +12,7 @@ import com.threerings.msoy.web.client.WebUserServiceAsync;
 
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Contains a reference to the various bits that we're likely to need in the web client interface.
@@ -20,6 +21,9 @@ public class CShell
 {
     /** Our credentials or null if we are not logged in. */
     public static WebCreds creds;
+
+    /** Use this to make service calls. */
+    public static WebIdent ident;
 
     /** Provides user-related services. */
     public static WebUserServiceAsync usersvc;

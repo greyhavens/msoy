@@ -21,7 +21,7 @@ import com.threerings.msoy.web.data.GroupExtras;
 import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -44,7 +44,7 @@ public class GroupServlet extends MsoyServiceServlet
     implements GroupService
 {
     // from GroupService
-    public List<Group> getGroupsList (WebCreds creds)
+    public List<Group> getGroupsList (WebIdent ident)
         throws ServiceException
     {
         try {
@@ -64,7 +64,7 @@ public class GroupServlet extends MsoyServiceServlet
      * does not distinguish between a nonexistent group and a group without members;
      * both situations yield empty collections.
      */
-    public GroupDetail getGroupDetail (WebCreds creds, int groupId)
+    public GroupDetail getGroupDetail (WebIdent ident, int groupId)
         throws ServiceException
     {
         try {
@@ -112,7 +112,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from GroupService
-    public Integer getGroupHomeId (WebCreds creds, final int groupId)
+    public Integer getGroupHomeId (WebIdent ident, final int groupId)
         throws ServiceException
     {
         final ServletWaiter<Integer> waiter =new ServletWaiter<Integer>(
@@ -126,7 +126,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
     
     // from interface GroupService
-    public List<Group> searchGroups (WebCreds creds, String searchString) 
+    public List<Group> searchGroups (WebIdent ident, String searchString) 
         throws ServiceException
     {
         try {
@@ -143,7 +143,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public List<Group> searchForTag (WebCreds creds, String tag)
+    public List<Group> searchForTag (WebIdent ident, String tag)
         throws ServiceException
     {
         try {
@@ -160,10 +160,10 @@ public class GroupServlet extends MsoyServiceServlet
 
     // from interface GroupService
     public List<GroupMembership> getMembershipGroups (
-        WebCreds creds, final int memberId, final boolean canInvite)
+        WebIdent ident, final int memberId, final boolean canInvite)
         throws ServiceException
     {
-        int requesterId = getMemberId(creds);
+        int requesterId = getMemberId(ident);
 
         try {
             List<GroupMembership> result = new ArrayList<GroupMembership>();
@@ -204,11 +204,11 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public Group createGroup (WebCreds creds, final Group group, final GroupExtras extras) 
+    public Group createGroup (WebIdent ident, final Group group, final GroupExtras extras) 
         throws ServiceException
     {
         // we'll need the MemberRec for charging for this in the future
-        MemberRecord memrec = requireAuthedUser(creds);
+        MemberRecord memrec = requireAuthedUser(ident);
 
         if(!isValidName(group.name)) {
             log.log(Level.WARNING, "invalid group name: " + group.name);
@@ -226,10 +226,10 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public void updateGroup (WebCreds creds, Group group, GroupExtras extras) 
+    public void updateGroup (WebIdent ident, Group group, GroupExtras extras) 
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(creds);
+        MemberRecord memrec = requireAuthedUser(ident);
         
         if(!isValidName(group.name)) {
             log.log(Level.WARNING, "in updateGroup, invalid group name: " + group.name);
@@ -261,10 +261,10 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public void leaveGroup (WebCreds creds, final int groupId, final int memberId)
+    public void leaveGroup (WebIdent ident, final int groupId, final int memberId)
         throws ServiceException
     {
-        requireAuthedUser(creds);
+        requireAuthedUser(ident);
 
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
             "leaveGroup[" + groupId + ", " + memberId + "]");
@@ -277,10 +277,10 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public void joinGroup (WebCreds creds, final int groupId, final int memberId)
+    public void joinGroup (WebIdent ident, final int groupId, final int memberId)
         throws ServiceException
     {
-        requireAuthedUser(creds);
+        requireAuthedUser(ident);
 
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
             "joinGroup[" + groupId + ", " + memberId + "]");
@@ -294,10 +294,10 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public void updateMemberRank (WebCreds creds, int groupId, int memberId, byte newRank) 
+    public void updateMemberRank (WebIdent ident, int groupId, int memberId, byte newRank) 
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(creds);
+        MemberRecord memrec = requireAuthedUser(ident);
 
         try {
             GroupMembershipRecord gmrec = MsoyServer.groupRepo.getMembership(groupId, 
@@ -316,7 +316,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public TagHistory tagGroup (WebCreds creds, int groupId, String tag, boolean set) 
+    public TagHistory tagGroup (WebIdent ident, int groupId, String tag, boolean set) 
         throws ServiceException
     {
         String tagName = tag.trim().toLowerCase();
@@ -325,7 +325,7 @@ public class GroupServlet extends MsoyServiceServlet
             throw new ServiceException("Invalid tag [tag=" + tagName + "]");
         }
 
-        MemberRecord memrec = requireAuthedUser(creds);
+        MemberRecord memrec = requireAuthedUser(ident);
 
         try {
             GroupMembershipRecord gmrec = MsoyServer.groupRepo.getMembership(groupId, 
@@ -360,9 +360,9 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public Collection<TagHistory> getRecentTags (WebCreds creds) throws ServiceException
+    public Collection<TagHistory> getRecentTags (WebIdent ident) throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(creds);
+        MemberRecord memrec = requireAuthedUser(ident);
         int memberId = memrec.memberId;
         try {
             MemberRecord memRec = MsoyServer.memberRepo.loadMember(memberId);
@@ -387,7 +387,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public Collection<String> getTags (WebCreds creds, int groupId) throws ServiceException
+    public Collection<String> getTags (WebIdent ident, int groupId) throws ServiceException
     {
         try {
             ArrayList<String> result = new ArrayList<String>();
@@ -403,7 +403,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public List<String> getPopularTags (WebCreds creds, int rows) throws ServiceException
+    public List<String> getPopularTags (WebIdent ident, int rows) throws ServiceException
     {
         try {
             ArrayList<String> result = new ArrayList<String>();
