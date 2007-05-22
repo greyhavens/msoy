@@ -49,6 +49,7 @@ public class RoomEditController
     public static const ACTION_PREFS :String = "Edit Preferences";
     public static const ACTION_DELETE :String = "Edit Delete";
     public static const ACTION_UNDO :String = "Edit Undo";
+    public static const ACTION_NONE :String = "Edit None";
     
     /**
      * PHASE_* constants describe the current editing phase. Each action can go through
@@ -71,12 +72,12 @@ public class RoomEditController
 
     public static const PHASEACTIONS :Array =
         [ /* init */    [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE, ACTION_PREFS,
-                              ACTION_UNDO, ACTION_ROOM ],
+                          ACTION_UNDO, ACTION_ROOM, ACTION_NONE ],
           /* acquire */ [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE, ACTION_PREFS ],
           /* modify */  [ ACTION_MOVE, ACTION_SCALE ],
           /* commit */  [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE, ACTION_PREFS ],
           /* done */    [ ACTION_MOVE, ACTION_SCALE, ACTION_DELETE, ACTION_PREFS,
-                              ACTION_UNDO, ACTION_ROOM ] ];
+                          ACTION_UNDO, ACTION_ROOM, ACTION_NONE ] ];
 
     // for debugging only
     protected static const PHASENAMES :Array = [ "init", "acquire", "modify", "commit", "done" ];
@@ -85,10 +86,6 @@ public class RoomEditController
     protected static const ACQUIRE_DANGEROUS_ACTIONS :Array = [ ACTION_DELETE ];
     protected static const ACQUIRE_STEM_ACTIONS :Array = [ ACTION_MOVE ];
 
-    /** Editing mode preferences. */
-    public var moveYAxisOnly :Boolean;
-    public var moveZAxisOnly :Boolean;
-    
     public function RoomEditController (ctx :WorldContext, panel :RoomEditPanel)
     {
         _ctx = ctx;
@@ -157,7 +154,7 @@ public class RoomEditController
     {
         (CLICKS[_currentPhase] as Function)(sprite, event);
     }
-
+    
     /** Handle click on one of the action buttons. */
     public function handleActionSelection (action :String, button :Button, def :Object) :void
     {
@@ -173,6 +170,8 @@ public class RoomEditController
             _panel.setInfoLabel (null);
             switchToPhase(PHASE_DONE);
         }
+
+        _panel.advanced.handleActionSelection(action);
     }
 
     // Helpers
@@ -200,17 +199,7 @@ public class RoomEditController
      */
     protected function handleKeyboard (event :KeyboardEvent) :void
     {
-        // this is very ad hoc right now. do we have any big plans for keyboard shortcuts?
-        if (_currentAction == ACTION_MOVE && _currentPhase == PHASE_MODIFY) {
-            if (event.type == KeyboardEvent.KEY_DOWN) {
-                moveYAxisOnly = (event.keyCode == Keyboard.SHIFT);
-                moveZAxisOnly = (event.keyCode == Keyboard.CONTROL);
-            }
-            if (event.type == KeyboardEvent.KEY_UP) {
-                moveYAxisOnly = moveYAxisOnly && !(event.keyCode == Keyboard.SHIFT);
-                moveZAxisOnly = moveZAxisOnly && !(event.keyCode == Keyboard.CONTROL);
-            }
-        }
+        _panel.advanced.handleKeyboard(_currentAction, event.type, event.keyCode);
     }
 
     /**
@@ -403,6 +392,9 @@ public class RoomEditController
     
     protected function doDone () :void
     {
+        // whatever action we were in, we're not there anymore.
+        _currentAction = ACTION_NONE;
+        
         // no phase switches here. :)
     }
 
@@ -416,24 +408,20 @@ public class RoomEditController
         if (updateFurniData) {
             target.getFurniData().loc = loc;
         }
+
+        _panel.advanced.updatePosition(loc);
     }
 
     protected function findNewFurniPosition (x :Number, y :Number) :MsoyLocation
     {
         x -= (_modOriginalMouse.x - _modOriginalHotspot.x);
         y -= (_modOriginalMouse.y - _modOriginalHotspot.y);
+
+        var direction :Vector3 = _panel.advanced.getMoveConstraintAsNormal();
         
-        var anchor :MsoyLocation = ((moveYAxisOnly || moveZAxisOnly) && _currentTarget != null) ?
-            _currentTarget.getLocation() : null;
-        
-        var direction :Vector3 = null;
-        if (moveYAxisOnly) {
-            direction = RoomMetrics.N_UP;
-        }
-        if (moveZAxisOnly) {
-            direction = RoomMetrics.N_AWAY;
-        }
-            
+        var anchor :MsoyLocation =
+            (direction != null && _currentTarget != null) ? _currentTarget.getLocation() : null;
+                
         var cloc :ClickLocation = _panel.roomView.layout.pointToFurniLocation(
             x, y, anchor, direction);
         
@@ -453,8 +441,18 @@ public class RoomEditController
         var ratioX :Number = newoffset.x / oldoffset.x;
         var ratioY :Number = newoffset.y / oldoffset.y;
 
-        furni.setMediaScaleX(ratioX * _modOriginalScale.x);
-        furni.setMediaScaleY(ratioY * _modOriginalScale.y);
+        var x :Number = ratioX * _modOriginalScale.x;
+        var y :Number = ratioY * _modOriginalScale.y;
+
+        if (_panel.advanced.proportionalScaling) {
+            var max :Number = Math.max(x, y);
+            x = y = max;
+        }
+        
+        furni.setMediaScaleX(x);
+        furni.setMediaScaleY(y);
+
+        _panel.advanced.updateScale(x, y);
     }
 
     // Item properties display

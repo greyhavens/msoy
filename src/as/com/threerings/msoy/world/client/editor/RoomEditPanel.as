@@ -19,6 +19,7 @@ import mx.controls.Spacer;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomController;
@@ -79,6 +80,12 @@ public class RoomEditPanel extends FloatingPanel
     public function get controller () :RoomEditController
     {
         return _controller;
+    }
+
+    /** Returns the advanced settings panel. */
+    public function get advanced () :AdvancedSettingsPanel
+    {
+        return _advanced;
     }
     
 
@@ -165,9 +172,13 @@ public class RoomEditPanel extends FloatingPanel
         expand.styleName = "roomEditButtonExpand";
         expand.toggle = true;
         expand.width = expand.height = 9;
-        expand.setCallback(function () :void { /* todo */ });
+        expand.setCallback(toggleAdvanced);
         labelrow.addChild(expand);
-        
+
+        // make the advanced editing panel
+
+        _advanced = new AdvancedSettingsPanel(_controller);
+        addChild(_advanced);
     }
 
 
@@ -268,6 +279,26 @@ public class RoomEditPanel extends FloatingPanel
         }    
     }
 
+    /** Toggles the visibility of advanced options sub-panel. */
+    protected function toggleAdvanced (selected :Boolean) :void {
+        if (_advanced != null) {
+            _advanced.toggleVisibility();
+
+            /*
+            // todo: maybe this will be useful...
+            if (selected) {
+                // make sure we didn't roll out to overlap with the control bar
+                var mybounds :Rectangle = this.getBounds(this.parent);
+                var placebounds :Rectangle =
+                    _ctx.getTopPanel().getPlaceContainer().getBounds(this.parent);
+                
+                if (mybounds.bottom > placebounds.bottom) {
+                    this.y = placebounds.bottom - mybounds.height;
+                }
+            }
+            */
+        }
+    }
 
     /** Constant button definitions. */
     protected static const BUTTON_DEFINITIONS :Array = [
@@ -298,7 +329,8 @@ public class RoomEditPanel extends FloatingPanel
     
     protected var _anchor :DisplayObject;
     protected var _controller :RoomEditController;
-
+    protected var _advanced :AdvancedSettingsPanel;
+    
     protected var _toggleButtons :Array = new Array();
     protected var _undoButton :Button;
 

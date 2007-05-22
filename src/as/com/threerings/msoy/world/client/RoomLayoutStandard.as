@@ -119,8 +119,9 @@ public class RoomLayoutStandard implements RoomLayout {
             // which constraint operation are we using?
             var fn :Function = null;
             switch (anchorAxis) {
-            case RoomMetrics.N_UP:   fn = _metrics.screenToYLineProjection; break;
-            case RoomMetrics.N_AWAY: fn = _metrics.screenToZLineProjection; break;
+            case RoomMetrics.N_RIGHT: fn = _metrics.screenToXLineProjection; break;
+            case RoomMetrics.N_UP:    fn = _metrics.screenToYLineProjection; break;
+            case RoomMetrics.N_AWAY:  fn = _metrics.screenToZLineProjection; break;
             default:
                 throw new ArgumentError("Unsupported anchorAxis type: " + anchorAxis);
             }

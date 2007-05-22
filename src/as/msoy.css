@@ -414,6 +414,23 @@ Window {
   selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_minus.png");
 }
 
+.roomEditAdvancedContainer { 
+  borderStyle: "none";
+  borderThickness: 0;
+  borderThicknessLeft: 0;
+  borderThicknessRight: 0;
+  borderThicknessTop: 0;
+  borderThicknessBottom: 0;
+  paddingBottom: 0;
+  paddingTop: 0;
+  paddingLeft: 3;
+  paddingRight: 3;
+  horizontalGap: 0;
+  verticalGap: 0;
+  horizontalAlign: "center";
+  verticalAlign: "middle";
+}
+
 .logonPanel {
   paddingRight: 2;
 }
