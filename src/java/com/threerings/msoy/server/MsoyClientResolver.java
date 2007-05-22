@@ -93,6 +93,8 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.setFlow(member.flow);
         userObj.setAccFlow(member.accFlow);
 
+        userObj.setLevel(member.level);
+
         userObj.setHumanity(member.humanity);
         userObj.setOwnedScenes(new DSet<SceneBookmarkEntry>(
             MsoyServer.sceneRepo.getOwnedScenes(

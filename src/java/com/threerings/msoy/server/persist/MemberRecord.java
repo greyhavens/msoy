@@ -135,11 +135,18 @@ public class MemberRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #invitingFriendId} field. */
     public static final ColumnExp INVITING_FRIEND_ID_C =
         new ColumnExp(MemberRecord.class, INVITING_FRIEND_ID);
+
+    /** The column identifier for the {@link #level} field. */
+    public static final String LEVEL = "level";
+
+    /** The qualified column identifier for the {@link #level} field. */
+    public static final ColumnExp LEVEL_C =
+        new ColumnExp(MemberRecord.class, LEVEL);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 8;
+    public static final int SCHEMA_VERSION = 9;
 
     /** A flag denoting this user as having support privileges. */
     public static final int SUPPORT_FLAG = 1 << 0;
@@ -203,6 +210,10 @@ public class MemberRecord extends PersistentRecord
     /** The memberId of the person who invited this person. */
     @Column(defaultValue="0")
     public int invitingFriendId;
+
+    /** The currently reported level of this user. */
+    @Column(defaultValue="1")
+    public int level;
 
     /** A blank constructor used when loading records from the database. */
     public MemberRecord ()

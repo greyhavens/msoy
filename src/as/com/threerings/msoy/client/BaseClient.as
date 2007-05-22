@@ -229,7 +229,7 @@ public /*abstract*/ class BaseClient extends Client
         } else {
             levels[0] = _user.flow;
             levels[1] = 0; // _user.gold;
-            levels[2] = 1; // _user.level;
+            levels[2] = _user.level;
         }
         return levels;
     }
