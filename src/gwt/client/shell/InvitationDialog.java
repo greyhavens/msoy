@@ -3,10 +3,11 @@
 
 package client.shell;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -17,11 +18,11 @@ import client.util.MsoyUI;
 
 public class InvitationDialog extends BorderedDialog 
 {
-    public static void display (String args)
+    public static void display (final StatusPanel status, String args)
     {
         CShell.membersvc.getInvitation(args, true, new AsyncCallback () {
             public void onSuccess (Object result) {
-                (new InvitationDialog(_status, (Invitation)result)).show();
+                (new InvitationDialog(status, (Invitation)result)).show();
             }
             public void onFailure (Throwable cause) {
                 MsoyUI.error(CShell.serverError(cause));
@@ -45,7 +46,6 @@ public class InvitationDialog extends BorderedDialog
         FlexCellFormatter formatter = contents.getFlexCellFormatter();
 
         int row = 0;
-
         formatter.setStyleName(row, 0, "Header");
         contents.setText(row++, 0, CShell.cmsgs.inviteIntro(invite.inviteeEmail));
 

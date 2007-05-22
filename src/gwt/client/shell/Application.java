@@ -170,13 +170,13 @@ public class Application
 
     protected boolean displayPopup (String ident, String args)
     {
-        if ("invite".equals(page)) {
-            InvitationDialog.display(args);
+        if ("invite".equals(ident)) {
+            InvitationDialog.display(_status, args);
 
-        } else if ("optout".equals(page)) {
+        } else if ("optout".equals(ident)) {
             OptOutDialog.display(args);
 
-        } else if ("resetpw".equals(page)) {
+        } else if ("resetpw".equals(ident)) {
             // TODO
 
         } else {

@@ -52,6 +52,9 @@ public class LogonPopup extends BorderedPopup
         setWidget(contents);
 
         int row = 0;
+        contents.setText(row, 0, CShell.cmsgs.logonHelp());
+        contents.getFlexCellFormatter().setColSpan(row++, 0, 2);
+
         contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.logonEmail());
         contents.setWidget(row++, 1, _email = new TextBox());

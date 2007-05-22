@@ -544,6 +544,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String sendInvitesTooMany(String arg0,  String arg1);
 
   /**
+   * Translated "Enter your account information below and press return to logon.".
+   * 
+   * @return translated "Enter your account information below and press return to logon."
+   * @gwt.key logonHelp
+   */
+  String logonHelp();
+
+  /**
    * Translated "Reenter your password to confirm it.".
    * 
    * @return translated "Reenter your password to confirm it."
