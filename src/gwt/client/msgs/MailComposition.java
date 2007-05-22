@@ -18,9 +18,8 @@ import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 
 import com.threerings.msoy.data.all.MemberName;
 
-import client.util.AlertPopup;
 import client.util.BorderedDialog;
-import client.util.InfoPopup;
+import client.util.MsoyUI;
 
 /**
  * A mail composition popup.
@@ -46,7 +45,7 @@ public class MailComposition extends BorderedDialog
     {
         setPayloadComposer(null);
     }
-    
+
     // @Override
     protected Widget createContents ()
     {
@@ -103,7 +102,7 @@ public class MailComposition extends BorderedDialog
                 if (_payloadComposer != null) {
                     String msg = _payloadComposer.okToSend();
                     if (msg != null) {
-                        showError(msg);
+                        MsoyUI.error(msg);
                         return;
                     }
                 }
@@ -137,7 +136,6 @@ public class MailComposition extends BorderedDialog
         _footer.add(buttonBox);
     }
 
-
     protected void setPayloadComposer (MailPayloadComposer composer)
     {
         _payloadComposer = composer;
@@ -148,12 +146,13 @@ public class MailComposition extends BorderedDialog
                 _payloadBox.setWidget(widget);
             }
             _attachButton.setEnabled(false);
+
         } else {
             _payloadBox.clear();
             _attachButton.setEnabled(true);
         }
     }
-    
+
     // send the message off to the backend for delivery
     protected void deliverMail ()
     {
@@ -163,11 +162,11 @@ public class MailComposition extends BorderedDialog
                     _payloadComposer.messageSent(_recipient);
                 }
                 hide();
-                new InfoPopup(CMsgs.mmsgs.messageSent()).show();
+                MsoyUI.info(CMsgs.mmsgs.messageSent());
             }
             public void onFailure (Throwable caught) {
                 // for now, just show that something went wrong and return to the composer
-                showError("Ai! The message could not be sent.");
+                MsoyUI.error("Ai! The message could not be sent.");
             }
         };
         CMsgs.mailsvc.deliverMessage(CMsgs.creds, _recipient.getMemberId(), _subjectBox.getText(),
@@ -175,19 +174,12 @@ public class MailComposition extends BorderedDialog
                                      null : _payloadComposer.getComposedPayload(), callback);
     }
 
-    protected void showError (String msg)
-    {
-        new AlertPopup(msg) {
-            public void onButton () {}
-        }.alert();
-    }
-    
     protected MemberName _recipient;
     protected VerticalPanel _panel;
     protected MailPayloadComposer _payloadComposer;
 
     protected Button _attachButton;
-    
+
     protected TextBox _subjectBox;
     protected SimplePanel _payloadBox;
     protected Label _recipientBox;

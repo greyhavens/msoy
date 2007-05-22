@@ -13,8 +13,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.Invitation;
 
-import client.util.AlertPopup;
 import client.util.BorderedDialog;
+import client.util.MsoyUI;
 
 public class OptOutDialog extends BorderedDialog
 {
@@ -42,11 +42,10 @@ public class OptOutDialog extends BorderedDialog
                 OptOutDialog.this.hide();
                 CShell.membersvc.optOut(invite, new AsyncCallback() {
                     public void onSuccess (Object result) {
-                        (new AlertPopup(CShell.cmsgs.optOutSuccessful(invite.inviteeEmail))).
-                            alert();
+                        MsoyUI.info(CShell.cmsgs.optOutSuccessful(invite.inviteeEmail));
                     }
                     public void onFailure (Throwable cause) {
-                        (new AlertPopup(CShell.serverError(cause))).alert();
+                        MsoyUI.error(CShell.serverError(cause));
                     }
                 });
             }

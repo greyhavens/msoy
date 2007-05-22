@@ -27,8 +27,7 @@ import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.InvitationDialog;
-
-import client.util.AlertPopup;
+import client.util.MsoyUI;
 
 /**
  * Our main application and entry point. This dispatches a requests to the appropriate {@link
@@ -125,29 +124,27 @@ public class Application
             page = token.substring(0, semidx);
             args = token.substring(semidx+1);
         }
-        if ("invite".equals(page)) {
-            // show the default and pop up an invitation dialog
-            displayPage("world", "");
 
+        if ("invite".equals(page)) {
             CShell.membersvc.getInvitation(args, true, new AsyncCallback () {
                 public void onSuccess (Object result) {
                     (new InvitationDialog(_status, (Invitation)result)).show();
                 }
                 public void onFailure (Throwable cause) {
-                    (new AlertPopup(CShell.serverError(cause))).alert();
+                    MsoyUI.error(CShell.serverError(cause));
                 }
             });
-        } else if ("optout".equals(page)) {
-            displayPage("world", "");
 
+        } else if ("optout".equals(page)) {
             CShell.membersvc.getInvitation(args, false, new AsyncCallback () {
                 public void onSuccess (Object result) {
                     (new OptOutDialog((Invitation)result)).show();
                 }
                 public void onFailure (Throwable cause) {
-                    (new AlertPopup(CShell.serverError(cause))).alert();
+                    MsoyUI.error(CShell.serverError(cause));
                 }
             });
+
         } else {
             displayPage(page, args);
         }

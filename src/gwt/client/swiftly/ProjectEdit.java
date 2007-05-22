@@ -32,7 +32,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import client.shell.Application;
 import client.util.BorderedDialog;
 import client.util.ClickCallback;
-import client.util.InfoPopup;
+import client.util.MsoyUI;
 import client.util.PromptPopup;
 
 /**
@@ -157,7 +157,7 @@ public class ProjectEdit extends BorderedDialog
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("getProjectCollaborators failed", caught);
-                new InfoPopup(CSwiftly.serverError(caught)).show();
+                MsoyUI.error(CSwiftly.serverError(caught));
             }
         });
     }
@@ -277,7 +277,7 @@ public class ProjectEdit extends BorderedDialog
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("Listing friends failed memberId=[" + memberId + "]", caught);
-                new InfoPopup(CSwiftly.serverError(caught)).show();
+                MsoyUI.error(CSwiftly.serverError(caught));
             }
         });
     }
@@ -297,7 +297,7 @@ public class ProjectEdit extends BorderedDialog
             public void onFailure (Throwable caught) {
                 CSwiftly.log("Failed to add collaborator [projectId=" + _project.projectId +
                            ", memberId=" + memberId + "]", caught);
-                new InfoPopup(CSwiftly.serverError(caught)).show();
+                MsoyUI.error(CSwiftly.serverError(caught));
             }
         });
     }
@@ -317,7 +317,7 @@ public class ProjectEdit extends BorderedDialog
             public void onFailure (Throwable caught) {
                 CSwiftly.log("Failed to remove collaborator [projectId=" + _project.projectId +
                              ", memberId=" + memberId + "]", caught);
-                new InfoPopup(CSwiftly.serverError(caught)).show();
+                MsoyUI.error(CSwiftly.serverError(caught));
             }
         });
     }

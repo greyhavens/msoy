@@ -27,7 +27,6 @@ import com.threerings.msoy.item.data.gwt.CatalogListing;
 
 import client.util.BorderedDialog;
 import client.util.ClickCallback;
-import client.util.InfoPopup;
 import client.util.MsoyUI;
 
 public class DoListItemPopup extends BorderedDialog
@@ -109,7 +108,7 @@ public class DoListItemPopup extends BorderedDialog
             }
             public boolean gotResult (Object result) {
                 // TODO: enhance dialog to link to catalog page to see item
-                new InfoPopup(CInventory.msgs.msgItemListed()).show();
+                MsoyUI.info(CInventory.msgs.msgItemListed());
                 hide();
                 return false;
             }

@@ -5,6 +5,7 @@ package client.util;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Contains useful user interface related methods.
@@ -53,6 +54,32 @@ public class MsoyUI
         }
         label.addClickListener(listener);
         return label;
+    }
+
+    /**
+     * Displays informational feedback to the user in a non-offensive way.
+     */
+    public static void info (String message)
+    {
+        new InfoPopup(message).show();
+    }
+
+    /**
+     * Displays informational feedback to the user next to the supplied widget in a non-offensive
+     * way.
+     */
+    public static void infoNear (String message, Widget source)
+    {
+        new InfoPopup(message).showNear(source);
+    }
+
+    /**
+     * Displays error feedback to the user in a non-offensive way.
+     */
+    public static void error (String message)
+    {
+        // TODO: style this differently than info feedback
+        new InfoPopup(message).show();
     }
 
 //     /**

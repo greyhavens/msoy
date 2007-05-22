@@ -30,7 +30,7 @@ import client.item.ItemSearchSortPanel;
 import client.item.ItemTypePanel;
 import client.item.TagCloud.TagCloudListener;
 import client.item.TagCloud;
-import client.util.InfoPopup;
+import client.util.MsoyUI;
 import client.shell.Application;
 import client.shell.Page;
 
@@ -130,7 +130,7 @@ public class CatalogPanel extends VerticalPanel
                 add(new ListingDetailPanel((ItemDetail)result, listing, CatalogPanel.this));
             }
             public void onFailure (Throwable caught) {
-                new InfoPopup(CCatalog.serverError(caught)).show();
+                MsoyUI.error(CCatalog.serverError(caught));
             }
         });
     }
@@ -234,7 +234,7 @@ public class CatalogPanel extends VerticalPanel
                         }
                         public void onFailure (Throwable caught) {
                             CCatalog.log("loadCatalog failed", caught);
-                            new InfoPopup(CCatalog.serverError(caught)).show();
+                            MsoyUI.error(CCatalog.serverError(caught));
                         }
                     });
                 }

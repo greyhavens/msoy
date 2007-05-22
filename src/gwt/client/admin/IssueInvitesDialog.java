@@ -13,8 +13,8 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import client.util.AlertPopup;
 import client.util.BorderedDialog;
+import client.util.MsoyUI;
 import client.util.NumberTextBox;
 
 /**
@@ -62,19 +62,14 @@ public class IssueInvitesDialog extends BorderedDialog
                 CAdmin.adminsvc.grantInvitations(CAdmin.creds, _numberInvites.getValue().intValue(),
                     activeSince, new AsyncCallback() {
                         public void onSuccess (Object result) {
-                            (new AlertPopup(CAdmin.msgs.invitesSuccess(_issueToSelection.
-                                getSelectedIndex() == 0 ? CAdmin.msgs.invitesToAll() : 
-                                CAdmin.msgs.invitesToActive(), 
-                                _numberInvites.getValue().toString())) {
-                                public void onButton() {
-                                    IssueInvitesDialog.this.hide();
-                                }
-                            }).alert();
+                            IssueInvitesDialog.this.hide();
+                            String msg = _issueToSelection.getSelectedIndex() == 0 ?
+                                CAdmin.msgs.invitesToAll() : CAdmin.msgs.invitesToActive();
+                            String count = _numberInvites.getValue().toString();
+                            MsoyUI.info(CAdmin.msgs.invitesSuccess(msg, count));
                         }
                         public void onFailure (Throwable cause) {
-                            (new AlertPopup(CAdmin.serverError(cause)) {
-                                public void onButton() {}
-                            }).alert();
+                            MsoyUI.error(CAdmin.serverError(cause));
                         }
                     });
             }

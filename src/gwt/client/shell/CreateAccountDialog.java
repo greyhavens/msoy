@@ -23,9 +23,9 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.Invitation;
 
-import client.util.AlertPopup;
 import client.util.BorderedDialog;
 import client.util.DateFields;
+import client.util.MsoyUI;
 
 /**
  * Displays an interface for creating a new account.
@@ -50,7 +50,7 @@ public class CreateAccountDialog extends BorderedDialog
                 }
 
                 if (new Date(thirteenYearsAgo).compareTo(_dateOfBirth.getDate()) < 0) {
-                    (new AlertPopup(CShell.cmsgs.createNotThirteen())).alert();
+                    MsoyUI.error(CShell.cmsgs.createNotThirteen());
                 } else {
                     createAccount();
                 }

@@ -23,8 +23,8 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 import client.item.BaseItemDetailPanel;
 import client.shell.Application;
 import client.util.ClickCallback;
-import client.util.InfoPopup;
 import client.util.ItemUtil;
+import client.util.MsoyUI;
 import client.util.PopupMenu;
 
 /**
@@ -68,11 +68,11 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 }
                 public boolean gotResult (Object result) {
                     if (result != null) {
-                        new InfoPopup(CCatalog.msgs.msgListingDelisted()).show();
+                        MsoyUI.info(CCatalog.msgs.msgListingDelisted());
                         _panel.itemDelisted(_listing);
                         return false; // don't reenable delist
                     } else {
-                        new InfoPopup(CCatalog.msgs.errListingNotFound()).show();
+                        MsoyUI.error(CCatalog.msgs.errListingNotFound());
                         return true;
                     }
                 }
@@ -96,7 +96,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 return true;
             }
             public boolean gotResult (Object result) {
-                new InfoPopup(CCatalog.msgs.msgListingBought()).show();
+                MsoyUI.info(CCatalog.msgs.msgListingBought());
                 return false; // don't reenable purchase
             }
         };

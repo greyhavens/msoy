@@ -18,7 +18,6 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.util.BorderedPopup;
-import client.util.InfoPopup;
 import client.util.MsoyUI;
 
 /**
@@ -141,7 +140,7 @@ public class LogonPopup extends BorderedPopup
         CShell.usersvc.sendForgotPasswordEmail(account, new AsyncCallback() {
             public void onSuccess (Object result) {
                 hide();
-                new InfoPopup(CShell.cmsgs.forgotEmailSent()).show();
+                MsoyUI.info(CShell.cmsgs.forgotEmailSent());
             }
             public void onFailure (Throwable caught) {
                 _status.setText(CShell.serverError(caught));

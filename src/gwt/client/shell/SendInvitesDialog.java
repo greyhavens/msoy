@@ -19,14 +19,13 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import client.util.BorderedDialog;
-import client.util.BorderedPopup;
-import client.util.AlertPopup;
-import client.util.InfoPopup;
-
 import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
+
+import client.util.BorderedDialog;
+import client.util.BorderedPopup;
+import client.util.MsoyUI;
 
 /**
  * Display a dialog allowing users to send out the invites that have been granted to them, as well
@@ -71,7 +70,7 @@ public class SendInvitesDialog extends BorderedDialog
                 new ClickListener() {
                     public void onClick (Widget widget) {
                         if ("".equals(_emailAddresses.getText())) {
-                            (new AlertPopup(CShell.cmsgs.sendInvitesEnterAddresses())).alert();
+                            MsoyUI.info(CShell.cmsgs.sendInvitesEnterAddresses());
                         } else {
                             checkAndSend();
                         }
@@ -100,7 +99,7 @@ public class SendInvitesDialog extends BorderedDialog
                 invLabel.setStyleName("Pending");
                 invLabel.addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
-                        (new InfoPopup(invites.serverUrl + inv.inviteId)).show();
+                        MsoyUI.info(invites.serverUrl + inv.inviteId);
                     }
                 });
                 contents.setWidget(row, col++, invLabel);
@@ -132,30 +131,31 @@ public class SendInvitesDialog extends BorderedDialog
         for (int ii = 0; ii < addresses.length; ii++) {
             if (addresses[ii].matches(EMAIL_REGEX)) {
                 if (validAddresses.contains(addresses[ii])) {
-                    (new AlertPopup(CShell.cmsgs.sendInvitesDuplicateAddress(addresses[ii]))).
-                        alert();
+                    MsoyUI.info(CShell.cmsgs.sendInvitesDuplicateAddress(addresses[ii]));
                     break;
                 }
                 validAddresses.add(addresses[ii]);
             } else {
-                (new AlertPopup(CShell.cmsgs.sendInvitesInvalidAddress(addresses[ii]))).alert();
+                MsoyUI.info(CShell.cmsgs.sendInvitesInvalidAddress(addresses[ii]));
                 break;
             }
         }
 
         if (validAddresses.size() == addresses.length) {
             if (validAddresses.size() > _invites.availableInvitations) {
-                (new AlertPopup(CShell.cmsgs.sendInvitesTooMany( "" + validAddresses.size(), 
-                    "" + _invites.availableInvitations))).alert();
+                MsoyUI.error(CShell.cmsgs.sendInvitesTooMany(
+                                 "" + validAddresses.size(), 
+                                 "" + _invites.availableInvitations));
+
             } else {
                 CShell.membersvc.sendInvites(CShell.creds, validAddresses, _customMessage.getText(),
                     new AsyncCallback () {
                         public void onSuccess (Object result) {
-                            (new ResultsPopup(validAddresses, (InvitationResults)result)).show();
+                            new ResultsPopup(validAddresses, (InvitationResults)result).show();
                             SendInvitesDialog.this.hide();
                         }
                         public void onFailure (Throwable cause) {
-                            (new AlertPopup(CShell.serverError(cause))).alert();
+                            MsoyUI.error(CShell.serverError(cause));
                         }
                     });
             }

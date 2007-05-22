@@ -22,9 +22,9 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.editem.EditorHost;
 import client.editem.ItemEditor;
+import client.util.MsoyUI;
 import client.shell.Application;
 import client.shell.Page;
-import client.util.InfoPopup;
 
 /**
  * Displays all items of a particular type in a player's inventory.
@@ -93,7 +93,7 @@ public class ItemPanel extends VerticalPanel
                 add(new ItemDetailPanel((ItemDetail)result, ItemPanel.this));
             }
             public void onFailure (Throwable caught) {
-                new InfoPopup(CInventory.serverError(caught)).show();
+                MsoyUI.error(CInventory.serverError(caught));
             }
         });
     }
@@ -184,7 +184,7 @@ public class ItemPanel extends VerticalPanel
     {
         showInventory();
         _contents.removeItem(item);
-        new InfoPopup(CInventory.msgs.msgItemDeleted()).show();
+        MsoyUI.info(CInventory.msgs.msgItemDeleted());
     }
 
     /**
@@ -194,7 +194,7 @@ public class ItemPanel extends VerticalPanel
      */
     protected void itemRemixed (Item oldItem, Item newItem)
     {
-        new InfoPopup(CInventory.msgs.msgItemRemixed()).show();
+        MsoyUI.info(CInventory.msgs.msgItemRemixed());
         loadInventory();
     }
 

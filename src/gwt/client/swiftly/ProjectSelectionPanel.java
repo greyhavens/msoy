@@ -30,7 +30,7 @@ import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.Application;
 import client.util.ClickCallback;
-import client.util.InfoPopup;
+import client.util.MsoyUI;
 
 /**
  * Displays the client interface for selecting or creating a swiftly project.
@@ -106,7 +106,7 @@ public class ProjectSelectionPanel extends FlexTable
             public boolean callService () {
                 String name = projectName.getText().trim();
                 if (name.length() == 0) {
-                    new InfoPopup(CSwiftly.msgs.pleaseEnterProjectName()).show();
+                    MsoyUI.error(CSwiftly.msgs.pleaseEnterProjectName());
                     return false;
                 }
                 CSwiftly.swiftlysvc.createProject(CSwiftly.creds, name, _selectedProjectType,

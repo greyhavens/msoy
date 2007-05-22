@@ -9,7 +9,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -42,7 +41,6 @@ import com.threerings.gwt.ui.InlineLabel;
 
 import client.shell.Application;
 import client.shell.Page;
-import client.util.AlertPopup;
 import client.util.BorderedDialog;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
@@ -326,10 +324,7 @@ public class GroupEdit extends BorderedDialog
         // check if the group name is valid.
         if (!Character.isLetter(_group.name.charAt(0)) &&
             !Character.isDigit(_group.name.charAt(0))) {
-            Window.alert(CGroup.msgs.errInvalidGroupName());
-            (new AlertPopup(CGroup.msgs.errInvalidGroupName()) {
-                public void onButton () {}
-            }).alert();
+            MsoyUI.error(CGroup.msgs.errInvalidGroupName());
             return;
         }
 
@@ -353,9 +348,7 @@ public class GroupEdit extends BorderedDialog
             CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, new AsyncCallback () {
                 public void onSuccess (Object result) {
                     if (((Collection)result).size() > 0) {
-                        (new AlertPopup(CGroup.msgs.errTagsOnExclusive()) {
-                            public void onButton () {}
-                        }).alert();
+                        MsoyUI.error(CGroup.msgs.errTagsOnExclusive());
                     } else if (_group.groupId > 0) {
                         CGroup.groupsvc.updateGroup(CGroup.creds, _group, _extras, updateCallback);
                     } else {

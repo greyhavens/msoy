@@ -32,7 +32,6 @@ import com.threerings.msoy.web.data.Profile;
 import client.msgs.MailComposition;
 import client.shell.Application;
 import client.util.ImageChooserPopup;
-import client.util.InfoPopup;
 import client.util.MsoyUI;
 
 /**
@@ -222,9 +221,9 @@ public class ProfileBlurb extends Blurb
         String name = _ename.getText().trim();
         if (name.length() < Profile.MIN_DISPLAY_NAME_LENGTH ||
             name.length() > Profile.MAX_DISPLAY_NAME_LENGTH) {
-            new InfoPopup(CProfile.msgs.displayNameInvalid(
-                              "" + Profile.MIN_DISPLAY_NAME_LENGTH,
-                              "" + Profile.MAX_DISPLAY_NAME_LENGTH)).showNear(_ename);
+            MsoyUI.infoNear(CProfile.msgs.displayNameInvalid(
+                                "" + Profile.MIN_DISPLAY_NAME_LENGTH,
+                                "" + Profile.MAX_DISPLAY_NAME_LENGTH), _ename);
             return;
         }
 

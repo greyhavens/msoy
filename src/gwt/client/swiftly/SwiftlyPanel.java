@@ -21,7 +21,7 @@ import com.threerings.msoy.web.data.SwiftlyProject;
 
 import client.shell.Application;
 import client.shell.WorldClient;
-import client.util.InfoPopup;
+import client.util.MsoyUI;
 
 /**
  * Displays the client interface for a particular swiftly project.
@@ -44,7 +44,7 @@ public class SwiftlyPanel extends FlexTable
                 loadApplet();
             }
             public void onFailure (Throwable cause) {
-                new InfoPopup(CSwiftly.serverError(cause)).show();
+                MsoyUI.error(CSwiftly.serverError(cause));
             }
         });
     }

@@ -16,7 +16,7 @@ import client.msgs.GroupInvite;
 import client.msgs.MailComposition;
 import client.shell.Application;
 import client.util.ClickCallback;
-import client.util.InfoPopup;
+import client.util.MsoyUI;
 
 /**
  * Displays a list of the groups of which a person is a member.
@@ -58,7 +58,7 @@ public class GroupsBlurb extends Blurb
                 public boolean gotResult (Object result) {
                     List inviteGroups = (List) result;
                     if (inviteGroups.size() == 0) {
-                        new InfoPopup(CProfile.msgs.haveNoGroups()).showNear(_trigger);
+                        MsoyUI.infoNear(CProfile.msgs.haveNoGroups(), _trigger);
                     } else {
                         new MailComposition(_name, "Join this group!",
                                             new GroupInvite.Composer(inviteGroups),

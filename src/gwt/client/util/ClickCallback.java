@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.shell.CShell;
-import client.util.InfoPopup;
+import client.util.MsoyUI;
 
 /**
  * Allows one to wire up a button and a service call into one concisely specified little chunk of
@@ -22,8 +22,7 @@ public abstract class ClickCallback
 {
     /**
      * Creates a callback for the supplied trigger (the constructor will automatically add this
-     * callback to the trigger as a click listener). Failure will automatically be reported via an
-     * {@link InfoPopup}.
+     * callback to the trigger as a click listener). Failure will automatically be reported.
      */
     public ClickCallback (Button trigger)
     {
@@ -61,7 +60,7 @@ public abstract class ClickCallback
     {
         CShell.log("Callback failure [for=" + _trigger.getText() + "]", cause);
         _trigger.setEnabled(true);
-        new InfoPopup(CShell.serverError(cause)).show();
+        MsoyUI.error(CShell.serverError(cause));
     }
 
     protected Button _trigger;

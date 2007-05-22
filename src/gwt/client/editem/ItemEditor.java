@@ -24,7 +24,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.util.BorderedDialog;
-import client.util.InfoPopup;
 import client.util.MsoyUI;
 
 /**
@@ -405,19 +404,19 @@ public abstract class ItemEditor extends BorderedDialog
         try {
             prepareItem();
         } catch (Exception e) {
-            new InfoPopup(e.getMessage()).show();
+            MsoyUI.error(e.getMessage());
             return;
         }
 
         AsyncCallback cb = new AsyncCallback() {
             public void onSuccess (Object result) {
-                new InfoPopup(_item.itemId == 0 ? CEditem.emsgs.msgItemCreated() :
-                              CEditem.emsgs.msgItemUpdated()).show();
+                MsoyUI.info(_item.itemId == 0 ? CEditem.emsgs.msgItemCreated() :
+                            CEditem.emsgs.msgItemUpdated());
                 _updatedItem = _item; // this will be passed to our parent in onClosed()
                 hide();
             }
             public void onFailure (Throwable caught) {
-                new InfoPopup(CEditem.serverError(caught)).show();
+                MsoyUI.error(CEditem.serverError(caught));
             }
         };
         if (_item.itemId == 0) {

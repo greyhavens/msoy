@@ -22,7 +22,6 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.MemberInvites;
 
-import client.util.AlertPopup;
 import client.util.FlashClients;
 import client.util.MsoyUI;
 
@@ -114,7 +113,7 @@ public class NaviPanel extends FlexTable
                                 _popped.hide();
                             }
                             public void onFailure (Throwable cause) {
-                                (new AlertPopup(CShell.serverError(cause))).alert();
+                                MsoyUI.error(CShell.serverError(cause));
                             }
                         });
                     }
