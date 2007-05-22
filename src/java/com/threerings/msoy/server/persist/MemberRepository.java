@@ -575,36 +575,27 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Return the InvitationRecord that cooresponds to the given unique code.
+     * Return the InvitationRecord that corresponds to the given unique code.
      */
-    public InvitationRecord loadInvite (String inviteId) 
+    public InvitationRecord loadInvite (String inviteId, boolean markViewed) 
         throws PersistenceException
     {
-        return load(InvitationRecord.class, new Where(InvitationRecord.INVITE_ID, inviteId));
-    }
-
-    /**
-     * Get the invite that was sent to this email address by this member.
-     */
-    public InvitationRecord loadInvite (String email, int memberId)
-        throws PersistenceException
-    {
-        return load(InvitationRecord.class, InvitationRecord.getKey(email, memberId));
-    }
-
-    /**
-     * returns the InvitationRecord for the given inviteId.  If the record's viewed field is null,
-     * it will fill it in with the current time.
-     */
-    public InvitationRecord viewInvite (String inviteId) 
-        throws PersistenceException
-    {
-        InvitationRecord invRec = loadInvite(inviteId);
+        InvitationRecord invRec = load(
+            InvitationRecord.class, new Where(InvitationRecord.INVITE_ID, inviteId));
         if (invRec != null && invRec.viewed == null) {
             invRec.viewed = new Timestamp((new java.util.Date()).getTime());
             update(invRec, InvitationRecord.VIEWED);
         }
         return invRec;
+    }
+
+    /**
+     * Get the invite that was sent to thsi email address by this member.
+     */
+    public InvitationRecord loadInvite (String email, int memberId)
+        throws PersistenceException
+    {
+        return load(InvitationRecord.class, InvitationRecord.getKey(email, memberId));
     }
 
     /**
@@ -633,14 +624,14 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         addOptOutEmail(invite.inviteeEmail);
-
-        InvitationRecord invRec = loadInvite(invite.inviteId);
-        invRec.inviteeId = -1;
-        update(invRec, InvitationRecord.INVITEE_ID);
+        InvitationRecord invRec = loadInvite(invite.inviteId, false);
+        if (invRec != null) {
+            invRec.inviteeId = -1;
+            update(invRec, InvitationRecord.INVITEE_ID);
+        }
     }
 
-    @Entity
-    @Computed
+    @Entity @Computed
     protected static class FriendCount extends PersistentRecord
     {
         public static final String COUNT = "count";

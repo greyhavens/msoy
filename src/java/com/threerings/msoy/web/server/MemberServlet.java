@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.web.server;
 
-import java.io.StringWriter;
 import java.net.URLEncoder;
 
 import java.util.ArrayList;
@@ -22,10 +21,8 @@ import org.json.JSONObject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
-import com.samskivert.velocity.VelocityUtil;
 
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
 
 import com.threerings.util.MessageBundle;
 
@@ -268,24 +265,14 @@ public class MemberServlet extends MsoyServiceServlet
     public Invitation getInvitation (String inviteId, boolean viewing)
         throws ServiceException
     {
-        Invitation inv;
         try {
-            InvitationRecord invRec;
-            if (viewing) {
-                invRec = MsoyServer.memberRepo.viewInvite(inviteId);
-            } else {
-                invRec = MsoyServer.memberRepo.loadInvite(inviteId);
-            }
-            if (invRec == null || invRec.inviteeId != 0) {
-                // probably someone trying to sneak in
-                throw new ServiceException(ServiceException.INTERNAL_ERROR);
-            }
-            inv = invRec.toInvitationObject();
+            InvitationRecord invRec = MsoyServer.memberRepo.loadInvite(inviteId, viewing);
+            return (invRec == null) ? null : invRec.toInvitationObject();
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getInvitation failed [inviteId=" + inviteId + "]", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
-        return inv;
     }
 
     // from MemberService
@@ -360,7 +347,7 @@ public class MemberServlet extends MsoyServiceServlet
             // find a free invite id
             String inviteId;
             int tries = 0;
-            while (MsoyServer.memberRepo.loadInvite(inviteId = randomInviteId()) != null) {
+            while (MsoyServer.memberRepo.loadInvite(inviteId = randomInviteId(), false) != null) {
                 tries++;
             }
             if (tries > 5) {
@@ -368,35 +355,19 @@ public class MemberServlet extends MsoyServiceServlet
                         "saturated, it took " + tries + " tries to find a free id");
             }
 
-            VelocityEngine ve;
-            try {
-                ve = VelocityUtil.createEngine();
-            } catch (Exception e) {
-                log.log(Level.WARNING, "Failed to create the velocity engine.", e);
-                return ServiceException.INTERNAL_ERROR;
-            }
-
-            int port = ServerConfig.getHttpPort();
-            String host = ServerConfig.serverHost + (port != 80 ? ":" + port : "");
-
             // create and send the invitation
             VelocityContext ctx = new VelocityContext();
             ctx.put("custom_message", customMessage);
-            ctx.put("server_host", host);
             ctx.put("invite_id", inviteId);
-            StringWriter sw = new StringWriter();
-            try {
-                ve.mergeTemplate("rsrc/email/memberInvite.tmpl", "UTF-8", ctx, sw);
-                String body = sw.toString();
-                int nidx = body.indexOf("\n"); // first line is the subject
-                MailUtil.deliverMail(
-                    email, INVITE_FROM, body.substring(0, nidx), body.substring(nidx+1));
+            ctx.put("server_url", ServerConfig.getServerURL());
 
+            try {
+                sendEmail(email, ServerConfig.getFromAddress(), "memberInvite", ctx);
             } catch (Exception e) {
                 return e.getMessage();
             }
 
-//             MsoyServer.memberRepo.addInvite(email, memberId, inviteId);
+            MsoyServer.memberRepo.addInvite(email, memberId, inviteId);
             return InvitationResults.SUCCESS;
 
         } catch (PersistenceException pe) {
@@ -415,7 +386,6 @@ public class MemberServlet extends MsoyServiceServlet
         return rand;
     }
 
-    protected static final String INVITE_FROM = "peas@whirled.com";
     protected static final int INVITE_ID_LENGTH = 10;
     protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
 }
