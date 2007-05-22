@@ -213,7 +213,7 @@ public class MemberRecord extends PersistentRecord
 
     /** The currently reported level of this user. */
     @Column(defaultValue="1")
-    public int level;
+    public int level = 1;
 
     /** A blank constructor used when loading records from the database. */
     public MemberRecord ()
