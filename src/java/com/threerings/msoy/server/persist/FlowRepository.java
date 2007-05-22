@@ -225,7 +225,7 @@ public class FlowRepository extends DepotRepository
     public MemberFlowRecord spendFlow (int memberId, int amount, UserAction action, String details)
         throws PersistenceException
     {
-        return updateFlow(memberId, amount, action, details, false);
+        return updateFlow(memberId, amount, action, details, false, false);
     }
 
     /**
@@ -237,7 +237,20 @@ public class FlowRepository extends DepotRepository
     public MemberFlowRecord grantFlow (int memberId, int amount, UserAction action, String details)
         throws PersistenceException
     {
-        return updateFlow(memberId, amount, action, details, true);
+        return updateFlow(memberId, amount, action, details, true, true);
+    }
+
+    /**
+     * Returns the specified amount of flow to the supplied member's record. This flow will not be
+     * credited as "accumulated" as the assumption is this flow is being granted as a result of a
+     * refunded purchase.
+     *
+     * @return the member's new flow value following the update.
+     */
+    public MemberFlowRecord refundFlow (int memberId, int amount, UserAction action, String details)
+        throws PersistenceException
+    {
+        return updateFlow(memberId, amount, action, details, true, false);
     }
 
     /**
@@ -245,8 +258,8 @@ public class FlowRepository extends DepotRepository
      *
      * @return the user's new flow value following the update.
      */
-    protected MemberFlowRecord updateFlow (
-        int memberId, int amount, UserAction action, String details, boolean grant)
+    protected MemberFlowRecord updateFlow (int memberId, int amount, UserAction action,
+                                           String details, boolean grant, boolean accumulate)
         throws PersistenceException
     {
         String type = (grant ? "grant" : " spend");
@@ -258,7 +271,7 @@ public class FlowRepository extends DepotRepository
         String op = grant ? "+" : "-";
 
         String[] fields = new String[] { MemberRecord.FLOW, MemberRecord.FLOW + op + amount };
-        if (grant) {
+        if (grant && accumulate) {
             // accumulate positive flow updates in its own field
             fields = ArrayUtil.concatenate(fields, new String[] {
                 MemberRecord.ACC_FLOW, MemberRecord.ACC_FLOW + op + amount

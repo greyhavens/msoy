@@ -88,8 +88,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         MemberFlowRecord flowRec = MsoyServer.memberRepo.getFlowRepository().logUserAction(
             memrec.memberId, action, details);
         if (flowRec != null) {
-            MemberManager.queueFlowUpdated(memrec.memberId, flowRec.flow);
-            MemberManager.queueAccFlowUpdated(memrec.memberId, flowRec.accFlow);
+            MemberManager.queueFlowUpdated(flowRec);
         }
     }
 

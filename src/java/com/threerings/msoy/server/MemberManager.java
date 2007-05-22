@@ -61,24 +61,11 @@ public class MemberManager
      * This can be called from any thread to queue an update of the member's current flow if they
      * are online.
      */
-    public static void queueFlowUpdated (final int memberId, final int newFlow)
+    public static void queueFlowUpdated (final MemberFlowRecord record)
     {
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.flowUpdated(memberId, newFlow);
-            }
-        });
-    }
-
-    /**
-     * This can be called from any thread to queue an update of the member's current accumulated
-     * flow if they are online.
-     */
-    public static void queueAccFlowUpdated (final int memberId, final int newAccFlow)
-    {
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.memberMan.accFlowUpdated(memberId, newAccFlow);
+                MsoyServer.memberMan.flowUpdated(record);
             }
         });
     }
@@ -155,23 +142,21 @@ public class MemberManager
      * Called when a member's flow is updated. If they are online we update {@link
      * MemberObject#flow}.
      */
-    public void flowUpdated (int memberId, int newFlow)
+    public void flowUpdated (MemberFlowRecord record)
     {
-        MemberObject user = MsoyServer.lookupMember(memberId);
-        if (user != null) {
-            user.setFlow(newFlow);
+        MemberObject user = MsoyServer.lookupMember(record.memberId);
+        if (user == null) {
+            return;
         }
-    }
 
-    /**
-     * Called when a member's accumulated flow is updated.  If they are online, we update {@link
-     * MemberObject#accFlow}.
-     */
-    public void accFlowUpdated (int memberId, int newAccFlow) 
-    {
-        MemberObject user = MsoyServer.lookupMember(memberId);
-        if (user != null) {
-            user.setAccFlow(newAccFlow);
+        user.startTransaction();
+        try {
+            user.setFlow(record.flow);
+            if (record.accFlow != user.accFlow) {
+                user.setAccFlow(record.accFlow);
+            }
+        } finally {
+            user.commitTransaction();
         }
     }
 
@@ -393,8 +378,7 @@ public class MemberManager
                     memberId, amount, grantAction, details);
             }
             public void handleSuccess () {
-                flowUpdated(memberId, _flowRec.flow);
-                accFlowUpdated(memberId, _flowRec.accFlow);
+                flowUpdated(_flowRec);
             }
             public void handleFailure (Exception pe) {
                 log.log(Level.WARNING, "Unable to grant flow [memberId=" + memberId +
@@ -416,18 +400,18 @@ public class MemberManager
     {
         MsoyServer.invoker.postUnit(new RepositoryUnit("spendFlow") {
             public void invokePersist () throws PersistenceException {
-                _flow = _memberRepo.getFlowRepository().spendFlow(
-                    memberId, amount, spendAction, details).flow;
+                _flowRec = _memberRepo.getFlowRepository().spendFlow(
+                    memberId, amount, spendAction, details);
             }
             public void handleSuccess () {
-                flowUpdated(memberId, _flow);
+                flowUpdated(_flowRec);
             }
             public void handleFailure (Exception pe) {
                 log.log(Level.WARNING, "Unable to spend flow [memberId=" + memberId +
                         ", action=" + spendAction + ", amount=" + amount +
                         ", details=" + details + "]", pe);
             }
-            protected int _flow;
+            protected MemberFlowRecord _flowRec;
         });
     }
 
@@ -446,8 +430,7 @@ public class MemberManager
             }
             public void handleSuccess () {
                 if (_flowRec != null) {
-                    flowUpdated(memberId, _flowRec.flow);
-                    accFlowUpdated(memberId, _flowRec.accFlow);
+                    flowUpdated(_flowRec);
                 }
             }
             public void handleFailure (Exception pe) {
