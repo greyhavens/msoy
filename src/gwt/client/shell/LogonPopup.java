@@ -120,7 +120,7 @@ public class LogonPopup extends BorderedPopup
 
         _status.setText(CShell.cmsgs.loggingOn());
         CShell.usersvc.login(
-            DeploymentConfig.version, account, md5hex(password), 1, new AsyncCallback() {
+            DeploymentConfig.version, account, CShell.md5hex(password), 1, new AsyncCallback() {
             public void onSuccess (Object result) {
                 hide();
                 _parent.didLogon((WebCreds)result);
@@ -150,10 +150,6 @@ public class LogonPopup extends BorderedPopup
             }
         });
     }
-
-    protected native String md5hex (String text) /*-{
-       return $wnd.hex_md5(text);
-    }-*/;
 
     protected StatusPanel _parent;
     protected TextBox _email;

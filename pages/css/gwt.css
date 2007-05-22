@@ -216,17 +216,17 @@ body {
   text-align: right;
 }
 
-.createAccount .Intro {
+.formDialog .Intro {
   width: 400px;
 }
 
-.createAccount .Tip {
+.formDialog .Tip {
   width: 400px;
   font-size: 12px;
   text-align: center;
 }
 
-.createAccount .Status {
+.formDialog .Status {
   width: 400px;
 }
 

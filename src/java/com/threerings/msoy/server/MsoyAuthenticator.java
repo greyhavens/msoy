@@ -125,6 +125,25 @@ public class MsoyAuthenticator extends Authenticator
          */
         public void validateAccount (Account account)
             throws ServiceException, PersistenceException;
+
+        /**
+         * Generates a secret code that can be emailed to a user and then subsequently passed to
+         * {@link #validatePasswordResetCode} to confirm that the user is in fact receiving email
+         * sent to the address via which their account is registered.
+         *
+         * @return null if no account is registered for that address, a secret code otherwise.
+         */
+        public String generatePasswordResetCode (String accountName)
+            throws ServiceException, PersistenceException;
+
+        /**
+         * Validates that the supplied password reset code is the one earlier provided by a call to
+         * {@link #generatePasswordResetCode}.
+         *
+         * @return true if the code is valid, false otherwise.
+         */
+        public boolean validatePasswordResetCode (String accountName, String code)
+            throws ServiceException, PersistenceException;
     }
 
     @Override
@@ -321,14 +340,14 @@ public class MsoyAuthenticator extends Authenticator
     /**
      * Creates a new account with the supplied credentials.
      *
-     * @param username the email address of the to-be-created account.
+     * @param email the email address of the to-be-created account.
      * @param password the MD5 encrypted password for this account.
      * @param displayName the user's initial display name.
      * @param ignoreRestrict whether to ignore the registration enabled toggle.
      *
      * @return the newly created member record.
      */
-    public MemberRecord createAccount (String username, String password, String displayName,
+    public MemberRecord createAccount (String email, String password, String displayName,
                                        boolean ignoreRestrict, int inviterId)
         throws ServiceException
     {
@@ -338,8 +357,8 @@ public class MsoyAuthenticator extends Authenticator
 
         try {
             // create and validate the new account
-            Domain domain = getDomain(username);
-            Account account = domain.createAccount(username, password);
+            Domain domain = getDomain(email);
+            Account account = domain.createAccount(email, password);
             account.firstLogon = true;
             domain.validateAccount(account);
 
@@ -347,7 +366,7 @@ public class MsoyAuthenticator extends Authenticator
             return createMember(account, displayName, inviterId);
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Error creating new account [for=" + username + "].", pe);
+            log.log(Level.WARNING, "Error creating new account [for=" + email + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
     }
@@ -356,14 +375,14 @@ public class MsoyAuthenticator extends Authenticator
      * Updates any of the supplied authentication information for the supplied account. Any of the
      * new values may be null to indicate that they are not to be updated.
      */
-    public void updateAccount (String username, String newAccountName, String newPermaName,
+    public void updateAccount (String email, String newAccountName, String newPermaName,
                                String newPassword)
         throws ServiceException
     {
         try {
-            getDomain(username).updateAccount(username, newAccountName, newPermaName, newPassword);
+            getDomain(email).updateAccount(email, newAccountName, newPermaName, newPassword);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Error updating account [for=" + username +
+            log.log(Level.WARNING, "Error updating account [for=" + email +
                     ", nan=" + newAccountName + ", npn=" + newPermaName +
                     ", npass=" + newPassword + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
@@ -371,27 +390,52 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     /**
-     * Authenticates a web sesssion, verifying the supplied username and password and loading,
+     * Generates a secret code that can be emailed to a user and then subsequently passed to {@link
+     * #validatePasswordResetCode} to confirm that the user is in fact receiving email sent to the
+     * address via which their account is registered.
+     *
+     * @return null if no account is registered for that address, a secret code otherwise.
+     */
+    public String generatePasswordResetCode (String email)
+        throws ServiceException, PersistenceException
+    {
+        return getDomain(email).generatePasswordResetCode(email);
+    }
+
+    /**
+     * Validates that the supplied password reset code is the one earlier provided by a call to
+     * {@link #generatePasswordResetCode}.
+     *
+     * @return true if the code is valid, false otherwise.
+     */
+    public boolean validatePasswordResetCode (String email, String code)
+        throws ServiceException, PersistenceException
+    {
+        return getDomain(email).validatePasswordResetCode(email, code);
+    }
+
+    /**
+     * Authenticates a web sesssion, verifying the supplied email and password and loading,
      * creating (or reusing) a member record.
      *
-     * @param username the account to be authenticated.
+     * @param email the email address identifying account to be authenticated.
      * @param password the MD5 encrypted password for this account.
      *
      * @return the user's member record.
      */
-    public MemberRecord authenticateSession (String username, String password)
+    public MemberRecord authenticateSession (String email, String password)
         throws ServiceException
     {
         try {
             // validate their account credentials; make sure they're not banned
-            Domain domain = getDomain(username);
-            Account account = domain.authenticateAccount(username, password);
+            Domain domain = getDomain(email);
+            Account account = domain.authenticateAccount(email, password);
 
             // load up their member information to get their member id
             MemberRecord mrec = MsoyServer.memberRepo.loadMember(account.accountName);
             if (mrec == null) {
                 // if this is their first logon, insert a skeleton member record
-                mrec = createMember(account, username, 0);
+                mrec = createMember(account, email, 0);
                 account.firstLogon = true;
             }
 
@@ -401,7 +445,7 @@ public class MsoyAuthenticator extends Authenticator
             return mrec;
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Error authenticating user [who=" + username + "].", pe);
+            log.log(Level.WARNING, "Error authenticating user [who=" + email + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
     }

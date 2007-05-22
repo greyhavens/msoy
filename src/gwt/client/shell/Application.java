@@ -177,7 +177,7 @@ public class Application
             OptOutDialog.display(args);
 
         } else if ("resetpw".equals(ident)) {
-            // TODO
+            ResetPasswordDialog.display(args);
 
         } else {
             return false;
@@ -188,11 +188,8 @@ public class Application
 
     /**
      * Called when the player logs on (or when our session is validated).
-     *
-     * @return true if we need a headless header Flash client, false if the page is providing a
-     * Flash client for us.
      */
-    protected boolean didLogon (WebCreds creds)
+    protected void didLogon (WebCreds creds)
     {
         CShell.creds = creds;
         _navi.didLogon(creds);
@@ -202,7 +199,6 @@ public class Application
         } else {
             _page.didLogon(creds);
         }
-        return false;
     }
 
     /**

@@ -47,7 +47,6 @@ public class OptOutDialog extends BorderedDialog
         FlexCellFormatter formatter = contents.getFlexCellFormatter();
 
         int row = 0;
-
         formatter.setStyleName(row, 0, "Header");
         contents.setText(row++, 0, CShell.cmsgs.optOutIntro(invite.inviteeEmail));
 

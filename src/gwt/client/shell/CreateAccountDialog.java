@@ -138,7 +138,7 @@ public class CreateAccountDialog extends BorderedDialog
     {
         FlexTable contents = new FlexTable();
         contents.setCellSpacing(10);
-        contents.setStyleName("createAccount");
+        contents.setStyleName("formDialog");
         return contents;
     }
 
@@ -171,11 +171,12 @@ public class CreateAccountDialog extends BorderedDialog
         String email = _email.getText().trim(), name = _name.getText().trim();
         String password = _password.getText().trim();
         _status.setText(CShell.cmsgs.creatingAccount());
-        CShell.usersvc.register(DeploymentConfig.version, email, md5hex(password), name, 
+        CShell.usersvc.register(DeploymentConfig.version, email, CShell.md5hex(password), name, 
             _dateOfBirth.getDate(), 1, _invite, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     hide();
                     // TODO: display some sort of welcome to whirled business
+                    History.newItem("world");
                     _parent.didLogon((WebCreds)result);
                 }
                 public void onFailure (Throwable caught) {
@@ -183,10 +184,6 @@ public class CreateAccountDialog extends BorderedDialog
                 }
             });
     }
-
-    protected native String md5hex (String text) /*-{
-       return $wnd.hex_md5(text);
-    }-*/;
 
     protected KeyboardListener _validator = new KeyboardListenerAdapter() {
         public void onKeyPress (Widget sender, char keyCode, int modifiers) {

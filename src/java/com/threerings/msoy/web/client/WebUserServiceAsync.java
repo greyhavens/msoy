@@ -49,6 +49,12 @@ public interface WebUserServiceAsync
     public void updatePassword (WebCreds creds, String newPassword, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link WebUserService#resetPassword}.
+     */
+    public void resetPassword (int memberId, String code, String newPassword,
+                               AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link WebUserService#configurePermaName}.
      */
     public void configurePermaName (WebCreds creds, String permaName, AsyncCallback callback);

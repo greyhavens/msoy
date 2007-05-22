@@ -5,6 +5,7 @@ package com.threerings.msoy.server;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
+import com.samskivert.util.StringUtil;
 
 import com.samskivert.servlet.user.InvalidUsernameException;
 import com.samskivert.servlet.user.Password;
@@ -163,6 +164,21 @@ public class OOOAuthenticationDomain
             throw new ServiceException(MsoyAuthCodes.BANNED);
         }
         // TODO: do we care about other badness like DEADBEAT?
+    }
+
+    // from interface MsoyAuthenticator.Domain
+    public String generatePasswordResetCode (String accountName)
+        throws ServiceException, PersistenceException
+    {
+        OOOUser user = _authrep.loadUserByEmail(accountName, false);
+        return (user == null) ? null : StringUtil.md5hex(user.username + user.password);
+    }
+
+    // from interface MsoyAuthenticator.Domain
+    public boolean validatePasswordResetCode (String accountName, String code)
+        throws ServiceException, PersistenceException
+    {
+        return code.equals(generatePasswordResetCode(accountName));
     }
 
     protected static class OOOAccount extends MsoyAuthenticator.Account

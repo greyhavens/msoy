@@ -140,7 +140,7 @@ public class EditAccountDialog extends BorderedDialog
 
     protected void updatePassword ()
     {
-        final String password = md5hex(_password.getText().trim());
+        final String password = CShell.md5hex(_password.getText().trim());
         _uppass.setEnabled(false);
         _password.setEnabled(false);
         _confirm.setEnabled(false);
@@ -245,10 +245,6 @@ public class EditAccountDialog extends BorderedDialog
     {
         return new FlexTable();
     }
-
-    protected native String md5hex (String text) /*-{
-       return $wnd.hex_md5(text);
-    }-*/;
 
     protected KeyboardListener _valemail = new KeyboardListenerAdapter() {
         public void onKeyPress (Widget sender, char keyCode, int modifiers) {

@@ -8,6 +8,8 @@ import java.util.Date;
 
 import java.util.logging.Level;
 
+import org.apache.velocity.VelocityContext;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.net.MailUtil;
@@ -16,6 +18,7 @@ import com.samskivert.util.ResultListener;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
@@ -146,12 +149,28 @@ public class WebUserServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
+            MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
+            String code = auth.generatePasswordResetCode(email);
+            if (code == null) {
+                throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
+            }
+
             MemberRecord mrec = MsoyServer.memberRepo.loadMember(email);
             if (mrec == null) {
                 throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
             }
 
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            // create and send a forgot password email
+            VelocityContext ctx = new VelocityContext();
+            ctx.put("server_url", ServerConfig.getServerURL());
+            ctx.put("email", mrec.accountName);
+            ctx.put("memberId", mrec.memberId);
+            ctx.put("code", code);
+            try {
+                sendEmail(email, ServerConfig.getFromAddress(), "forgotPassword", ctx);
+            } catch (Exception e) {
+                throw new ServiceException(e.getMessage());
+            }
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to lookup account [email=" + email + "].", pe);
@@ -191,6 +210,34 @@ public class WebUserServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser(creds);
         MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
         auth.updateAccount(mrec.accountName, null, null, newPassword);
+    }
+
+    // from interface WebUserService
+    public boolean resetPassword (int memberId, String code, String newPassword)
+        throws ServiceException
+    {
+        try {
+            MemberRecord mrec = MsoyServer.memberRepo.loadMember(memberId);
+            if (mrec == null) {
+                log.info("No such member for password reset " + memberId + ".");
+                return false;
+            }
+
+            MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
+            if (!auth.validatePasswordResetCode(mrec.accountName, code)) {
+                log.info("Code mismatch for password reset [id=" + memberId + ", code=" + code +
+                         ", actual=" + auth.generatePasswordResetCode(mrec.accountName) + "].");
+                return false;
+            }
+
+            auth.updateAccount(mrec.accountName, null, null, newPassword);
+            return true;
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to reset password [who=" + memberId +
+                    ", code=" + code + "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from interface WebUserService

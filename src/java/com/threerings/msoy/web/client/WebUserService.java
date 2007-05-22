@@ -63,6 +63,12 @@ public interface WebUserService extends RemoteService
         throws ServiceException;
 
     /**
+     * Resets the password on file for the specified account to the new value.
+     */
+    public boolean resetPassword (int memberId, String code, String newPassword)
+        throws ServiceException;
+
+    /**
      * Configures the permaname for this account.
      */
     public void configurePermaName (WebCreds creds, String permaName)

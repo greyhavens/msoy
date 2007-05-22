@@ -200,6 +200,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String sendingForgotEmail();
 
   /**
+   * Translated "Enter a new password for your account.".
+   * 
+   * @return translated "Enter a new password for your account."
+   * @gwt.key resetMissingPassword
+   */
+  String resetMissingPassword();
+
+  /**
    * Translated "Let''s Go!".
    * 
    * @return translated "Let''s Go!"
@@ -214,6 +222,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key refresh
    */
   String refresh();
+
+  /**
+   * Translated "Change".
+   * 
+   * @return translated "Change"
+   * @gwt.key resetSubmit
+   */
+  String resetSubmit();
 
   /**
    * Translated "You have been invited to join the burgeoning community of First Whirled! {0} has already discovered what a great experience Whirled can be, and would like you to join the fun.  ".
@@ -246,6 +262,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key sendInvitesPendingHeader
    */
   String sendInvitesPendingHeader();
+
+  /**
+   * Translated "Confirm:".
+   * 
+   * @return translated "Confirm:"
+   * @gwt.key resetConfirm
+   */
+  String resetConfirm();
 
   /**
    * Translated "Email Addresses:".
@@ -360,6 +384,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String noDescrip();
 
   /**
+   * Translated "Your password has been updated. Please logon above using your new password.".
+   * 
+   * @return translated "Your password has been updated. Please logon above using your new password."
+   * @gwt.key resetReset
+   */
+  String resetReset();
+
+  /**
    * Translated "Welcome, {0}".
    * 
    * @return translated "Welcome, {0}"
@@ -382,6 +414,22 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key createNotThirteen
    */
   String createNotThirteen();
+
+  /**
+   * Translated "Click "Change" below to update your password.".
+   * 
+   * @return translated "Click "Change" below to update your password."
+   * @gwt.key resetReady
+   */
+  String resetReady();
+
+  /**
+   * Translated "Password:".
+   * 
+   * @return translated "Password:"
+   * @gwt.key resetPassword
+   */
+  String resetPassword();
 
   /**
    * Translated "Logon".
@@ -486,6 +534,22 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key tagFlagCancelButton
    */
   String tagFlagCancelButton();
+
+  /**
+   * Translated "Enter and confirm a new password for your account below. Or dismiss this dialog and logon above if you don't wish to change your password.".
+   * 
+   * @return translated "Enter and confirm a new password for your account below. Or dismiss this dialog and logon above if you don't wish to change your password."
+   * @gwt.key resetIntro
+   */
+  String resetIntro();
+
+  /**
+   * Translated "The passwords you''ve entered do not match.".
+   * 
+   * @return translated "The passwords you''ve entered do not match."
+   * @gwt.key resetPasswordMismatch
+   */
+  String resetPasswordMismatch();
 
   /**
    * Translated "You must be over the age of 13 to play in Whirled.".
@@ -640,6 +704,22 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String createMissingEmail();
 
   /**
+   * Translated "The secret code from the email you received is incorrect. Please make sure that your email program did not cut off part of the URL.".
+   * 
+   * @return translated "The secret code from the email you received is incorrect. Please make sure that your email program did not cut off part of the URL."
+   * @gwt.key resetInvalid
+   */
+  String resetInvalid();
+
+  /**
+   * Translated "Reset Your Password".
+   * 
+   * @return translated "Reset Your Password"
+   * @gwt.key resetTitle
+   */
+  String resetTitle();
+
+  /**
    * Translated "Whirled - {0}".
    * 
    * @return translated "Whirled - {0}"
@@ -694,6 +774,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key sendInvitesCustomDefault
    */
   String sendInvitesCustomDefault();
+
+  /**
+   * Translated "Re-enter the password to confirm it.".
+   * 
+   * @return translated "Re-enter the password to confirm it."
+   * @gwt.key resetMissingConfirm
+   */
+  String resetMissingConfirm();
 
   /**
    * Translated "Logging on...".
