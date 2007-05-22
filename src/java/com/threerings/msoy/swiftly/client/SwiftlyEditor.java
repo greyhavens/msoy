@@ -3,16 +3,12 @@
 
 package com.threerings.msoy.swiftly.client;        
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -26,8 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 import sdoc.Gutter;
-
-import org.apache.commons.io.IOUtils;
 
 import com.samskivert.swing.HGroupLayout;
 import com.samskivert.swing.VGroupLayout;
@@ -61,6 +55,8 @@ import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyImageDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
+
+import com.threerings.msoy.swiftly.client.signed.ResultExporter;
 
 import static com.threerings.msoy.Log.log;
 
@@ -282,7 +278,10 @@ public class SwiftlyEditor extends PlacePanel
         if (_exportAction == null) {
             _exportAction = new AbstractAction(_msgs.get("m.action.export")) {
                 public void actionPerformed (ActionEvent e) {
-                    exportResult();
+                    ResultExporter exporter = new ResultExporter(
+                        _roomObj.result.getBuildResultURL(), _roomObj.project.getOutputFileName(),
+                        _ctx);
+                    exporter.exportResult();
                 }
             };
             _exportAction.setEnabled(false);
@@ -481,29 +480,6 @@ public class SwiftlyEditor extends PlacePanel
         } catch (UnsupportedEncodingException e) {
             log.warning("Failed to encode results URL [url=" + resultUrl + ", error=" + e + "].");
             _ctx.showErrorMessage(_msgs.get("e.preview_failed"));
-        }
-    }
-
-    protected void exportResult ()
-    {
-        File out = null;
-        String resultUrl = _roomObj.result.getBuildResultURL();
-        try {
-            URL url = new URL(resultUrl);
-            out = new File(System.getProperty("user.home") + File.separator + "Desktop" +
-                           File.separator + _roomObj.project.getOutputFileName());
-            FileOutputStream ostream = new FileOutputStream(out);
-            IOUtils.copy(url.openStream(), ostream);
-            ostream.close();
-            _ctx.showInfoMessage(_msgs.get("m.result_exported", out.getPath()));
-
-        } catch (MalformedURLException e) {
-            log.log(Level.WARNING, "Malformed results URL [url=" + resultUrl + "].", e);
-            _ctx.showErrorMessage(_msgs.get("e.export_failed"));
-
-        } catch (IOException e) {
-            log.log(Level.WARNING, "Failed to save build results [to=" + out + "].", e);
-            _ctx.showErrorMessage(_msgs.get("e.export_failed"));
         }
     }
 
