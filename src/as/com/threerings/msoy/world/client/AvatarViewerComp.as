@@ -261,6 +261,26 @@ class ViewerAvatarSprite extends AvatarSprite
         messageReceived(action, null, true);
     }
 
+    override public function sendMessage (
+        name :String, arg :Object, isAction :Boolean) :void
+    {
+        // route this directly through
+        messageReceived(name, arg, isAction);
+    }
+
+    override public function requestControl () :void
+    {
+        gotControl();
+    }
+
+    override protected function stoppedLoading () :void
+    {
+        super.stoppedLoading();
+
+        // fake that we got control
+        gotControl();
+    }
+
     protected var _moving :Boolean = false;
 
     protected var _state :String;

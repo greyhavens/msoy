@@ -483,7 +483,7 @@ public class MsoySprite extends MsoyMediaContainer
      * usercode.  If this succeeds, a <code>gotControl</code> notification will be dispatched when
      * we hear back from the server.
      */
-    internal function requestControl () :void
+    public function requestControl () :void
     {
         if (_ident != null && parent is RoomView) {
             (parent as RoomView).getRoomController().requestControl(_ident);
