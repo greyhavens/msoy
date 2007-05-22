@@ -80,6 +80,22 @@ public class ServerConfig
     }
 
     /**
+     * Returns a URL that can be used to make HTTP requests from this server.
+     */
+    public static String getServerURL ()
+    {
+        return "http://" + serverHost + (getHttpPort() != 80 ? ":" + getHttpPort() : "");
+    }
+
+    /**
+     * Returns the address from which automated emails are sent.
+     */
+    public static String getFromAddress ()
+    {
+        return "peas@whirled.com"; // TODO: move this to the server config
+    }
+
+    /**
      * Configures server bits when this class is resolved.
      */
     static {
