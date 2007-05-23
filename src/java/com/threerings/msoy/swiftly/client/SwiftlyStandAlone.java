@@ -124,7 +124,7 @@ public class SwiftlyStandAlone
         public URL getCodeBase ()
         {
             try {
-                return new File(System.getProperty("user.dir")).toURL();
+                return new File(System.getProperty("user.dir")).toURI().toURL();
             } catch (MalformedURLException e) {
                 System.err.println("Unable to determine the code base URL");
                 return null;
