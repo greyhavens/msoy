@@ -624,14 +624,14 @@ public class MemberManager
         // to the time (in minutes) it takes the average WoW player to get from level n-1 to level
         // n, and 3000 is the expected average flow per hour that we hope to drive our system on.
         for (int ii = fromIndex; ii < _levelForFlow.length; ii++) {
-            // this array is filled with values for levels 1 through _levelForFlow.length... the 
-            // flow requirement for level n is at array index n-1.  Also, this function will never
-            // be called before _levelForFlow has been inialized with 1+ entries.
+            // this array gets filled here with values for levels 1 through _levelForFlow.length... 
+            // the flow requirement for level n is at array index n-1.  Also, this function will 
+            // never be called before _levelForFlow has been inialized with 1+ entries.
             _levelForFlow[ii] = _levelForFlow[ii-1] + (int)((ii * 17.8 - 49) * (3000 / 60));
         }
     }
 
-    /** The required for flow for the first few levels is hard-coded */
+    /** The required flow for the first few levels is hard-coded */
     protected static final int[] BEGINNING_FLOW_LEVELS = { 0, 300, 900, 1800, 3000, 5100, 8100 };
 
     /** An interval that updates the popular places cache reference every so often. */
