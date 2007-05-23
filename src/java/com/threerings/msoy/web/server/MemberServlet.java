@@ -34,7 +34,9 @@ import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
@@ -138,31 +140,23 @@ public class MemberServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = getAuthedUser(ident);
 
-        final JSONObject result = new JSONObject();
-
-        // if we're logged on, fetch our friends and membership groups on the servlet thread
+        // if we're logged on, fetch our friends
         final List<FriendEntry> friends;
+        // and which groups we're members of
+        final Set<GroupName> memberGroups = new HashSet<GroupName>();
         if (mrec != null) {
             try {
                 friends = MsoyServer.memberRepo.getFriends(mrec.memberId);
-                JSONArray channels = new JSONArray();
+
                 for (GroupRecord gRec : MsoyServer.groupRepo.getFullMemberships(mrec.memberId)) {
-                    JSONObject channel = new JSONObject();
-                    channel.put("name", gRec.name);
-                    channel.put("id", gRec.groupId);
-                    channels.put(channel);
+                    memberGroups.add(new GroupName(gRec.name, gRec.groupId));
                 }
-                result.put("channels", channels);
-                
+
             } catch (PersistenceException e) {
                 log.log(Level.WARNING, "Failed to list friends", e);
                 throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
-                
-            } catch (JSONException e) {
-                log.log(Level.WARNING, "Failed to enumerate group channels", e);
-                throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
             }
-
+            
         } else {
             friends = Collections.EMPTY_LIST;
         }
@@ -173,7 +167,42 @@ public class MemberServlet extends MsoyServiceServlet
             new ServletWaiter<String>("serializePopularPlaces[" + n + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
+                JSONObject result = new JSONObject();
+
                 try {
+                    JSONArray channels = new JSONArray();
+                    Set<GroupName> activeGroupChannels = new HashSet<GroupName>();
+                    Iterable<ChatChannel> allChannels = MsoyServer.channelMan.getChatChannels();
+                    int desiredChannels = 8;
+                    // first add active channels we're members of
+                    for (ChatChannel channel : allChannels) {
+                        if (--desiredChannels < 0) {
+                            break;
+                        }
+                        if (channel.type == ChatChannel.GROUP_CHANNEL &&
+                            memberGroups.contains((GroupName) channel.ident)) {
+                            JSONObject cObj = new JSONObject();
+                            cObj.put("name", ((GroupName) channel.ident).getNormal());
+                            cObj.put("id", ((GroupName) channel.ident).getGroupId());
+                            channels.put(cObj);
+                        }
+                    }
+                    // then fill in with the ones we're not members of, if needed
+                    for (ChatChannel channel : allChannels) {
+                        if (--desiredChannels < 0) {
+                            break;
+                        }
+                        if (channel.type == ChatChannel.GROUP_CHANNEL &&
+                            !memberGroups.contains((GroupName) channel.ident)) {
+                            JSONObject cObj = new JSONObject();
+                            cObj.put("name", ((GroupName) channel.ident).getNormal());
+                            cObj.put("id", ((GroupName) channel.ident).getGroupId());
+                            channels.put(cObj);
+                        }
+                    }
+
+                    result.put("channels", channels);
+
                     Map<PopularPlace, Set<MemberName>> popSets =
                         new HashMap<PopularPlace, Set<MemberName>>();
                     // retrieve the location of each one of our online friends
