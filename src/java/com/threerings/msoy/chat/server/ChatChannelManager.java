@@ -149,6 +149,14 @@ public class ChatChannelManager
     }
 
     /**
+     * Enumerate all the existing active chat channels.
+     */
+    public Iterable<ChatChannel> getChatChannels ()
+    {
+        return _channels.keySet();
+    }
+    
+    /**
      * Creates a new chat channel object, registers it in the necessary places and returns it.
      */
     protected ChatChannelObject createChannel (ChatChannel channel)
