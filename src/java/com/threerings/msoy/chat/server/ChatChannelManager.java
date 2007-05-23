@@ -62,36 +62,39 @@ public class ChatChannelManager
         // ensure this member has access to this channel
         switch (channel.type) {
         case ChatChannel.GROUP_CHANNEL:
-            final GroupName gName = (GroupName) channel.ident;
             GroupMembership gm = user.groups.get((GroupName) channel.ident);
             if (gm != null) {
                 // we're already members, no need to check further
                 break;
             }
+
             // else check that the group is public
+            final GroupName gName = (GroupName) channel.ident;
             MsoyServer.invoker.postUnit(new RepositoryUnit("joinChannel") {
                 public void invokePersist () throws PersistenceException {
                     GroupRecord gRec = MsoyServer.groupRepo.loadGroup(gName.getGroupId());
-                    if (gRec.policy != Group.POLICY_PUBLIC) {
+                    _policy = (gRec == null) ? 0 : gRec.policy;
+                }
+                public void handleSuccess () {
+                    if (_policy == Group.POLICY_PUBLIC) {
+                        finishJoining(user, channel, listener);
+                    } else {
                         log.warning("Unable to join non-public channel [user=" + user +
                                     ", channel=" + channel + "]");
                         listener.requestFailed(E_ACCESS_DENIED);
-                        return;
                     }
-                }
-                public void handleSuccess () {
-                    finishJoining(user, channel, listener);
                 }
                 public void handleFailure (Exception pe) {
                     log.warning("Unable to load group [group=" + gName +
                                 ", error=" + pe + ", cause=" + pe.getCause() + "]");
                     listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
                 }
+                protected int _policy;
             });
-            throw new InvocationException(E_ACCESS_DENIED);
+            return;
 
         case ChatChannel.PRIVATE_CHANNEL:
-            // TODO
+            // TODO: access controls
             break;
 
         default:
@@ -99,6 +102,8 @@ public class ChatChannelManager
                         ", channel=" + channel + "].");
             throw new InvocationException(E_INTERNAL_ERROR);
         }
+
+        // if we made it this far, we can do our joining immediately
         finishJoining(user, channel, listener);
     }
     
