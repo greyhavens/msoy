@@ -361,7 +361,7 @@ public class Application
         var client = $doc.getElementById("asclient");
         if (client) {
             try {
-                client.openChannel(type, where, id);
+                client.openChannel(type, name, id);
                 return true;
             } catch (e) {
                 // nada
