@@ -30,6 +30,12 @@ import com.threerings.crowd.data.BodyMarshaller;
 import com.threerings.crowd.data.LocationMarshaller;
 import com.threerings.crowd.chat.data.ChatMarshaller;
 
+import com.threerings.msoy.chat.client.MsoyChatDirector;
+import com.threerings.msoy.chat.data.ChatChannel;
+
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MemberObject;
@@ -178,6 +184,7 @@ public /*abstract*/ class BaseClient extends Client
         ExternalInterface.addCallback("getFriends", externalGetFriends);
         ExternalInterface.addCallback("getLevels", externalGetLevels);
         ExternalInterface.addCallback("getMailNotification", externalGetMailNotification);
+        ExternalInterface.addCallback("openChannel", externalOpenChannel);
     }
 
     /**
@@ -244,6 +251,24 @@ public /*abstract*/ class BaseClient extends Client
             return false;
         }
         return _user.hasNewMail;
+    }
+
+    /**
+     * Exposed to JavaScript so that it may order us to open chat channels.
+     */
+    protected function externalOpenChannel (type :int, name :String, id :int) :void
+    {
+        var nameObj :Name;
+        if (type == ChatChannel.FRIEND_CHANNEL) {
+            nameObj = new MemberName(name, id);
+        } else if (type == ChatChannel.GROUP_CHANNEL) {
+            nameObj = new GroupName(name, id);
+        } else if (type == ChatChannel.PRIVATE_CHANNEL) {
+            nameObj = new ChannelName(name, id);
+        } else {
+            throw new Error("Unknown channel type: " + type);
+        }
+        (_ctx.getChatDirector() as MsoyChatDirector).openChannel(nameObj);
     }
 
     /**

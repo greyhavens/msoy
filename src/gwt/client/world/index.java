@@ -8,10 +8,10 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.MouseListenerAdapter;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
-import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.Page;
 import client.shell.WorldClient;
@@ -132,7 +132,13 @@ public class index extends Page
         CWorld.membersvc.serializePopularPlaces(CWorld.ident, 20, new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (requestEntryCount == _entryCounter) {
-                    hotSpots((String) result);
+                    HTML widget = hotSpots((String) result);
+                    scheduleReload();
+                    widget.addMouseListener(new MouseListenerAdapter() {
+                        public void onMouseMove(Widget sender, int x, int y) {
+                            scheduleReload();
+                        }
+                    });
                 }
             }
             public void onFailure (Throwable caught) {
@@ -141,33 +147,26 @@ public class index extends Page
                 }
             }
         });
-        scheduleReload();
     }
 
     protected void scheduleReload ()
     {
-        _refresher = new Timer() {
-            public void run() {
-                onHistoryChanged(getPageArgs());
-            }
-        };
+        if (_refresher == null) {
+            _refresher = new Timer() {
+                public void run() {
+                    onHistoryChanged(getPageArgs());
+                }
+            };
+        }
         _refresher.schedule(NEIGHBORHOOD_REFRESH_TIME * 1000);
     }
 
-    protected void neighborhood (String hood)
+    protected HTML hotSpots (String hotSpots)
     {
-        if (hood == null) {
-            setContent(new Label(CWorld.msgs.noSuchMember()));
-        } else {
-            setPageTitle(CWorld.msgs.neighborhoodTitle());
-            setContent(FlashClients.createNeighborhood(hood), true, false);
-        }
-    }
-
-    protected void hotSpots (String hotSpots)
-    {
+        HTML content = FlashClients.createPopularPlaces(hotSpots);
         setPageTitle(CWorld.msgs.hotSpotsTitle());
-        setContent(FlashClients.createPopularPlaces(hotSpots), true, false);
+        setContent(content, true, false);
+        return content;
     }
 
     protected int id (String token, int index)

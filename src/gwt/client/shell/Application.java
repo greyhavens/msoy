@@ -83,7 +83,7 @@ public class Application
         }
         return token;
     }
-
+    
     /**
      * Configures our current history token (normally this is done automatically as the user
      * navigates, but sometimes we want to override the current token). This does not take any
@@ -243,6 +243,15 @@ public class Application
     }
 
     /**
+     * Called when a web page component wants to request a chat channel opened in the Flash
+     * client, of the given type and name.
+     */
+    protected boolean openChannelRequest (int type, String name, int id)
+    {
+        return openChannelNative(type, name, id);
+    }
+
+    /**
      * Called when our flow, gold or other "levels" have changed.
      */
     protected void levelsUpdated ()
@@ -311,6 +320,9 @@ public class Application
        $wnd.flashDidLogon = function (displayName, memberId, token) {
            app.@client.shell.Application::didLogonFromFlash(Ljava/lang/String;ILjava/lang/String;)(displayName, memberId, token);
        };
+       $wnd.openChannel = function (type, name, id) {
+           app.@client.shell.Application::openChannelRequest(ILjava/lang/String;I)(type, name, id);
+       };
        $wnd.levelsUpdated = function () {
            app.@client.shell.Application::levelsUpdated()();
        };
@@ -341,6 +353,23 @@ public class Application
             app.@client.shell.Application::clearSeparator()();
        }
     }-*/;
+
+    /**
+     * The native complement to openChannel.
+     */
+    protected static native boolean openChannelNative (int type, String name, int id) /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            try {
+                client.openChannel(type, where, id);
+                return true;
+            } catch (e) {
+                // nada
+            }
+        }
+        return false;
+    }-*/;
+
 
     protected Page _page;
     protected HashMap _creators = new HashMap();
