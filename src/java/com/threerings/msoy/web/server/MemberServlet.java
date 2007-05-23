@@ -28,6 +28,8 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.GroupMembershipRecord;
+import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -136,18 +138,33 @@ public class MemberServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = getAuthedUser(ident);
 
-        // if we're logged on, fetch our friends list, on the servlet thread
+        final JSONObject result = new JSONObject();
+
+        // if we're logged on, fetch our friends and membership groups on the servlet thread
         final List<FriendEntry> friends;
         if (mrec != null) {
             try {
                 friends = MsoyServer.memberRepo.getFriends(mrec.memberId);
+                JSONArray channels = new JSONArray();
+                for (GroupRecord gRec : MsoyServer.groupRepo.getFullMemberships(mrec.memberId)) {
+                    JSONObject channel = new JSONObject();
+                    channel.put("name", gRec.name);
+                    channel.put("id", gRec.groupId);
+                    channels.put(channel);
+                }
+                result.put("channels", channels);
+                
             } catch (PersistenceException e) {
-                log.log(Level.WARNING, "Failed to list friends");
+                log.log(Level.WARNING, "Failed to list friends", e);
+                throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
+                
+            } catch (JSONException e) {
+                log.log(Level.WARNING, "Failed to enumerate group channels", e);
                 throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
             }
 
         } else {
-            friends = new ArrayList<FriendEntry>();
+            friends = Collections.EMPTY_LIST;
         }
 
         // then proceed to the dobj thread to get runtime state
@@ -199,12 +216,12 @@ public class MemberServlet extends MsoyServiceServlet
                         }
                     }
 
-                    JSONObject result = new JSONObject();
                     result.put("friends", homes);
                     result.put("groups", groups);
                     result.put("games", games);
                     result.put("totpop", MsoyServer.memberMan.getPPCache().getPopulationCount());
                     waiter.requestCompleted(URLEncoder.encode(result.toString(), "UTF-8"));
+
                 } catch (Exception e) {
                     waiter.requestFailed(e);
                     return;

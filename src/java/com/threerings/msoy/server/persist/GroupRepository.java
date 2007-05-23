@@ -22,6 +22,7 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
+import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
@@ -290,6 +291,17 @@ public class GroupRepository extends DepotRepository
                        new Where(GroupMembershipRecord.MEMBER_ID, memberId));
     }
 
+    /**
+     * Fetches the full records of the groups a given member belongs to.
+     */
+    public List<GroupRecord> getFullMemberships (int memberId)
+        throws PersistenceException
+    {
+        return findAll(GroupRecord.class,
+                       new Join(GroupRecord.GROUP_ID_C, GroupMembershipRecord.GROUP_ID_C),
+                       new Where(GroupMembershipRecord.MEMBER_ID, memberId));
+    }
+    
     protected void updateMemberCount (int groupId) 
         throws PersistenceException
     {
