@@ -637,9 +637,7 @@ public class MemberRepository extends DepotRepository
     public void setUserLevel (int memberId, int level) 
         throws PersistenceException
     {
-        MemberRecord memRec = loadMember(memberId);
-        memRec.level = level;
-        update(memRec, MemberRecord.LEVEL);
+        updatePartial(MemberRecord.class, memberId, MemberRecord.LEVEL, level);
     }
 
     @Entity @Computed
