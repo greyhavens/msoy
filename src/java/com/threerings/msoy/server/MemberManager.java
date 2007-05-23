@@ -489,11 +489,7 @@ public class MemberManager
                     _memberRepo.setUserLevel(member.memberName.getMemberId(), levelToSet);
                 }
                 public void handleSuccess () {
-                    MsoyServer.omgr.postRunnable(new Runnable() {
-                        public void run () {
-                            member.setLevel(levelToSet);
-                        }
-                    });
+                    member.setLevel(levelToSet);
                 }
                 public void handleFailure (Exception pe) {
                     log.warning("Unable to set user level [memberId=" + 
