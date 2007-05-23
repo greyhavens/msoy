@@ -631,6 +631,17 @@ public class MemberRepository extends DepotRepository
         }
     }
 
+    /**
+     * Sets the reported level for the given member 
+     */
+    public void setUserLevel (int memberId, int level) 
+        throws PersistenceException
+    {
+        MemberRecord memRec = loadMember(memberId);
+        memRec.level = level;
+        update(memRec, MemberRecord.LEVEL);
+    }
+
     @Entity @Computed
     protected static class FriendCount extends PersistentRecord
     {

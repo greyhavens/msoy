@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server;
 
+import java.util.Arrays;
 import java.util.List;
 
 import java.util.logging.Level;
@@ -13,7 +14,6 @@ import com.samskivert.jdbc.RepositoryListenerUnit;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.ResultListener;
-
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -68,6 +68,17 @@ public class MemberManager
                 MsoyServer.memberMan.flowUpdated(record);
             }
         });
+    }
+
+    public MemberManager ()
+    {
+        // intialize our internal array of memoized flow values per level.  Start with 256 
+        // calculated levels
+        _levelForFlow = new int[256];
+        for (int ii = 0; ii < BEGINNING_FLOW_LEVELS.length; ii++) {
+            _levelForFlow[ii] = BEGINNING_FLOW_LEVELS[ii];
+        }
+        calculateLevelsForFlow(BEGINNING_FLOW_LEVELS.length);
     }
 
     /**
@@ -447,6 +458,45 @@ public class MemberManager
      */
     protected void checkCurrentLevel (final MemberObject member)
     {
+        int level = Arrays.binarySearch(_levelForFlow, member.accFlow);
+        if (level < 0) {
+            level = -1 * level - 1;
+            int length = _levelForFlow.length;
+            // if the _levelForFlow array isn't big enough, double its size and flesh out the new
+            // half
+            if (level == length) {
+                int[] temp = new int[length*2];
+                for (int ii = 0; ii < length; ii++) {
+                    temp[ii] = _levelForFlow[ii];
+                }
+                _levelForFlow = temp;
+                calculateLevelsForFlow(length);
+                checkCurrentLevel(member);
+                return;
+            }
+            // level was equal to what would be the insertion point of accFlow, which is actually 
+            // one greater than the real level.
+            level--;
+        }
+        // the flow value at array index ii cooresponds to level ii+1
+        level++;
+
+        if (member.level != level) {
+            final int levelToSet = level;
+            MsoyServer.invoker.postUnit(new RepositoryUnit("updateLevel") {
+                public void invokePersist () throws PersistenceException {
+                    // record the new level
+                    _memberRepo.setUserLevel(member.memberName.getMemberId(), levelToSet);
+                }
+                public void handleSuccess () {
+                    member.setLevel(levelToSet);
+                }
+                public void handleFailure (Exception pe) {
+                    log.warning("Unable to set user level [memberId=" + 
+                        member.memberName.getMemberId() + ", level=" + levelToSet + "]");
+                }
+            });
+        }
     }
     
     /**
@@ -566,6 +616,24 @@ public class MemberManager
 
     }
 
+    protected void calculateLevelsForFlow (int fromIndex)
+    {
+        // This equation governs the total flow requirement for a given level (n):
+        // flow(n) = flow(n-1) + ((n-1) * 17.8 - 49) * (3000 / 60)
+        // where (n-1) * 17.8 - 49 is the equation discovered by PARC researchers that correlates
+        // to the time (in minutes) it takes the average WoW player to get from level n-1 to level
+        // n, and 3000 is the expected average flow per hour that we hope to drive our system on.
+        for (int ii = fromIndex; ii < _levelForFlow.length; ii++) {
+            // this array is filled with values for levels 1 through _levelForFlow.length... the 
+            // flow requirement for level n is at array index n-1.  Also, this function will never
+            // be called before _levelForFlow has been inialized with 1+ entries.
+            _levelForFlow[ii] = _levelForFlow[ii-1] + (int)((ii * 17.8 - 49) * (3000 / 60));
+        }
+    }
+
+    /** The required for flow for the first few levels is hard-coded */
+    protected static final int[] BEGINNING_FLOW_LEVELS = { 0, 300, 900, 1800, 3000, 5100, 8100 };
+
     /** An interval that updates the popular places cache reference every so often. */
     protected Interval _ppInvalidator;
 
@@ -577,4 +645,8 @@ public class MemberManager
     
     /** Provides access to persistent group data. */
     protected GroupRepository _groupRepo;
+
+    /** The array of memoized flow values for each level.  The first few levels are hard coded, the
+     * rest are calculated according to the equation in calculateLevelsForFlow() */
+    protected int[] _levelForFlow;
 }

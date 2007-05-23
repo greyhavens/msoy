@@ -291,7 +291,8 @@ import com.threerings.msoy.data.MemberObject;
 class LevelUpdater implements AttributeChangeListener
 {
     public function attributeChanged (event :AttributeChangedEvent) :void {
-        if (/* event.getName() == MemberObject.GOLD || */ event.getName() == MemberObject.FLOW) {
+        if (/* event.getName() == MemberObject.GOLD || */ event.getName() == MemberObject.FLOW ||
+            event.getName() == MemberObject.LEVEL) {
             BaseClient.levelsUpdated();
         } else if (event.getName() == MemberObject.HAS_NEW_MAIL) {
             BaseClient.mailNotificationUpdated();
