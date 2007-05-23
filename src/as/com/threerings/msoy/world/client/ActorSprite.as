@@ -701,7 +701,14 @@ public class ActorSprite extends MsoySprite
         callUserCode("appearanceChanged_v1", [ _loc.x, _loc.y, _loc.z ], _loc.orient, isMoving());
     }
 
+    /** A label containing the actor's name.
+     * Note that this is not a decoration, as decorations do their own seperate hit-testing
+     * and glowing, and we want the name label to be 'part' of the sprite. Also, the label
+     * was not working correctly with the "general purpose" layout code for decorations,
+     * which I believe to be the fault of the label (it was returning a negative X coordinate
+     * for its bounding rectangle, when in fact it should have started at 0). */
     protected var _label :TextField;
+
     protected var _occInfo :ActorInfo;
     protected var _walk :WalkAnimation;
 
