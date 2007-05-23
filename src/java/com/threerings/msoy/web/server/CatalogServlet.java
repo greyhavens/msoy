@@ -116,15 +116,11 @@ public class CatalogServlet extends MsoyServiceServlet
             }
 
             // create the clone row in the database
-            int cloneId = repo.insertClone(listing.item, mrec.memberId, flowCost, listing.goldCost);
+            ItemRecord newClone = repo.insertClone(
+                listing.item, mrec.memberId, flowCost, listing.goldCost);
 
             // note the new purchase for the item
             repo.nudgeListing(item.itemId, true);
-
-            // then dress the loaded item up as a clone
-            listing.item.ownerId = mrec.memberId;
-            listing.item.parentId = listing.item.itemId;
-            listing.item.itemId = cloneId;
 
             // used for logging
             String details = item.type + " " + item.itemId + " " +
@@ -148,7 +144,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 }
             }
 
-            final Item nitem = listing.item.toItem();
+            final Item nitem = newClone.toItem();
 
             // update their runtime inventory as appropriate
             MsoyServer.omgr.postRunnable(new Runnable() {
