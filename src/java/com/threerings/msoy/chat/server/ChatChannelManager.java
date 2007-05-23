@@ -5,7 +5,10 @@ package com.threerings.msoy.chat.server;
 
 import java.util.HashMap;
 
+import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.RepositoryUnit;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.SetAdapter;
@@ -19,9 +22,12 @@ import com.threerings.crowd.chat.server.SpeakDispatcher;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.ChannelName;
+import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.persist.GroupRecord;
+import com.threerings.msoy.web.data.Group;
 
 import com.threerings.msoy.chat.client.ChatChannelService;
 import com.threerings.msoy.chat.data.ChatChannel;
@@ -47,21 +53,42 @@ public class ChatChannelManager
     }
 
     // from interface ChatChannelProvider
-    public void joinChannel (ClientObject caller, ChatChannel channel,
-                             ChatChannelService.ResultListener listener)
+    public void joinChannel (ClientObject caller, final ChatChannel channel,
+                             final ChatChannelService.ResultListener listener)
         throws InvocationException
     {
-        MemberObject user = (MemberObject)caller;
+        final MemberObject user = (MemberObject)caller;
 
         // ensure this member has access to this channel
         switch (channel.type) {
         case ChatChannel.GROUP_CHANNEL:
-            if (!user.groups.containsKey((GroupName)channel.ident)) {
-                log.info("Member requested to join group channel of which they are not a member " +
-                         "[who=" + user.who() + ", channel=" + channel + "].");
-                throw new InvocationException(E_ACCESS_DENIED);
+            final GroupName gName = (GroupName) channel.ident;
+            GroupMembership gm = user.groups.get((GroupName) channel.ident);
+            if (gm != null) {
+                // we're already members, no need to check further
+                break;
             }
-            break;
+            // else check that the group is public
+            MsoyServer.invoker.postUnit(new RepositoryUnit("joinChannel") {
+                public void invokePersist () throws PersistenceException {
+                    GroupRecord gRec = MsoyServer.groupRepo.loadGroup(gName.getGroupId());
+                    if (gRec.policy != Group.POLICY_PUBLIC) {
+                        log.warning("Unable to join non-public channel [user=" + user +
+                                    ", channel=" + channel + "]");
+                        listener.requestFailed(E_ACCESS_DENIED);
+                        return;
+                    }
+                }
+                public void handleSuccess () {
+                    finishJoining(user, channel, listener);
+                }
+                public void handleFailure (Exception pe) {
+                    log.warning("Unable to load group [group=" + gName +
+                                ", error=" + pe + ", cause=" + pe.getCause() + "]");
+                    listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                }
+            });
+            throw new InvocationException(E_ACCESS_DENIED);
 
         case ChatChannel.PRIVATE_CHANNEL:
             // TODO
@@ -72,29 +99,9 @@ public class ChatChannelManager
                         ", channel=" + channel + "].");
             throw new InvocationException(E_INTERNAL_ERROR);
         }
-
-        // make sure the channel is still around
-        ChatChannelObject ccobj = _channels.get(channel);
-        if (ccobj == null) {
-            // if this is a group channel, we create them on demand
-            if (channel.type == ChatChannel.GROUP_CHANNEL) {
-                ccobj = createChannel(channel);
-            } else {
-                // otherwise the channel is gone baby gone
-                throw new InvocationException(E_NO_SUCH_CHANNEL);
-            }
-        }
-
-        // add the caller to the channel (if they're not already for some reason)
-        if (!ccobj.chatters.containsKey(user.memberName)) {
-            log.info("Adding " + user.who() + " to " + channel + ".");
-            ccobj.addToChatters(new ChatterInfo(user));
-        }
-
-        // and let them know that they're good to go
-        listener.requestProcessed(ccobj.getOid());
+        finishJoining(user, channel, listener);
     }
-
+    
     // from interface ChatChannelProvider
     public void leaveChannel (ClientObject caller, ChatChannel channel)
     {
@@ -162,6 +169,33 @@ public class ChatChannelManager
 
         return ccobj;
     }
+
+    protected void finishJoining (MemberObject user, ChatChannel channel,
+        ChatChannelService.ResultListener listener)
+    {
+        // make sure the channel is still around
+        ChatChannelObject ccobj = _channels.get(channel);
+        if (ccobj == null) {
+            // if this is a group channel, we create them on demand
+            if (channel.type == ChatChannel.GROUP_CHANNEL) {
+                ccobj = createChannel(channel);
+            } else {
+                // otherwise the channel is gone baby gone
+                listener.requestFailed(E_NO_SUCH_CHANNEL);
+                return;
+            }
+        }
+
+        // add the caller to the channel (if they're not already for some reason)
+        if (!ccobj.chatters.containsKey(user.memberName)) {
+            log.info("Adding " + user.who() + " to " + channel + ".");
+            ccobj.addToChatters(new ChatterInfo(user));
+        }
+
+        // and let them know that they're good to go
+        listener.requestProcessed(ccobj.getOid());
+    }
+
 
     /**
      * Called when the last chatter leaves a channel, cleans up and destroys the channel.
