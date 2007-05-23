@@ -254,7 +254,7 @@ public class ActorSprite extends MsoySprite
                     _idleIcon.scaleX = 1/3;
                     _idleIcon.scaleY = 1/3;
                     addDecoration(_idleIcon, {
-                        weight: Number.MAX_VALUE,
+                        weight: Number.MAX_VALUE / 2,
                         bounds: new Rectangle(0, 0, 400 * 1/3, 110)
                     });
 
@@ -473,6 +473,7 @@ public class ActorSprite extends MsoySprite
     {
         super.setHotSpot(x, y, height);
         recheckLabel();
+        arrangeDecorations();
     }
 
     override protected function updateLoadingProgress (soFar :Number, total :Number) :void
@@ -499,11 +500,12 @@ public class ActorSprite extends MsoySprite
     {
         var hotSpot :Point = getMediaHotSpot();
         // note: may overflow the media area..
-        _label.x = (getMediaScaleX() * _locScale * _fxScaleX * hotSpot.x) - (_label.width/2);
+        _label.x = Math.abs(getMediaScaleX() * _locScale * _fxScaleX) * hotSpot.x -
+            (_label.width/2);
         // if we have a configured _height use that in relation to the hot spot y position,
         // otherwise assume our label goes above our bounding box
         var baseY :Number = isNaN(_height) ? 0 :
-            (getMediaScaleY() * _locScale * _fxScaleY * (hotSpot.y - _height));
+            Math.abs(getMediaScaleY() * _locScale * _fxScaleY) * (hotSpot.y - _height);
         _label.y = baseY - _label.height;
     }
 
@@ -536,17 +538,21 @@ public class ActorSprite extends MsoySprite
             return;
         }
 
+        var hotSpot :Point = getMediaHotSpot();
+        // note: may overflow the media area..
+        var hotX :Number = Math.abs(getMediaScaleX() * _locScale * _fxScaleX) * hotSpot.x;
+        var baseY :Number = _label.y; // we depend on recheckLabel()
+
         // place the decorations over the name label, with our best guess as to their size
-        var ybase :Number = _label.y;
         for (var ii :int = 0; ii < _decorations.length; ii++) {
             var dec :DisplayObject = DisplayObject(_decorations[ii].dec);
             var rect :Rectangle = _decorations[ii]["bounds"] as Rectangle;
             if (rect == null) {
                 rect = dec.getRect(dec);
             }
-            ybase -= (rect.height + DECORATION_PAD);
-            dec.x = (getActualWidth() - rect.width) / 2 - rect.x
-            dec.y = ybase - rect.y;
+            baseY -= (rect.height + DECORATION_PAD);
+            dec.x = hotX - (rect.width/2) - rect.x;
+            dec.y = baseY - rect.y;
         }
     }
 

@@ -453,7 +453,8 @@ public class MsoySprite extends MsoyMediaContainer
 
         // update the hotspot
         if (_hotSpot == null) {
-            _hotSpot = new Point(_w / 2, _h);
+            _hotSpot = new Point(Math.min(_w, getMaxContentWidth())/2,
+                Math.min(_h, getMaxContentHeight()));
         }
 
         // we'll want to call locationUpdated() now, but it's done for us as a result of calling
