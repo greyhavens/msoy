@@ -89,26 +89,51 @@ public class BubbleGlyph extends ChatGlyph
             return;
         }
 
-        const PAD :int = ChatOverlay.PAD * 2;
-        var w :Number = txt.textWidth + TextFieldUtil.WIDTH_PAD;
-        var h :Number = txt.textHeight + TextFieldUtil.HEIGHT_PAD;
+// Commented out: too slow.
+//        // This method incrementally decreases the width of the field, 
+//        // causing it to re-layout and checking the results.
+//        const PAD :int = ChatOverlay.PAD * 2;
+//        var w :Number = txt.textWidth;
+//        var h :Number = txt.textHeight;
+//        var lastRatio :Number = (w + PAD) / (h + PAD);
+//        for (var hw :Number = w - 10; hw > 10; hw -= 10) {
+//            txt.width = hw + TextFieldUtil.WIDTH_PAD;
+//            var ratio :Number = (txt.textWidth + PAD) / (txt.textHeight + PAD);
+//            if (Math.abs(ratio - GOLDEN) <= Math.abs(lastRatio - GOLDEN)) {
+//                // we're getting closer
+//                lastRatio = ratio;
+//
+//            } else {
+//                txt.width = (hw + 10) + TextFieldUtil.WIDTH_PAD;
+//                break;
+//            }
+//        }
+
+        // This method checks the current size and makes guesses as how smaller
+        // widths will lay out, and picks the width that puts the overall bubble
+        // dimensions in the golden ratio.
+        var w :Number = txt.textWidth;
+        var h :Number = txt.textHeight;
+        const W_PAD :int = ChatOverlay.PAD * 2 + TextFieldUtil.WIDTH_PAD;
+        const H_PAD :int = ChatOverlay.PAD * 2 + TextFieldUtil.HEIGHT_PAD;
 
         var linesToUse :int = txt.numLines;
-        var lastRatio :Number = (w + PAD) / (h + PAD);
-        for (var lines :int = linesToUse + 1; true; lines++) {
-            var ratio :Number = ((w * linesToUse / lines) + PAD) / ((h / linesToUse * lines) + PAD);
+        var lastRatio :Number = (w + W_PAD) / (h + H_PAD);
+        for (var newW :Number = w - 1; newW > 1; newW -= 1) {
+            var calcH :Number = Math.ceil(w / newW) * h;
+            var ratio :Number = (newW + W_PAD) / (calcH + H_PAD);
             if (Math.abs(ratio - GOLDEN) < Math.abs(lastRatio - GOLDEN)) {
                 // we're getting closer
                 lastRatio = ratio;
 
             } else {
                 // we're getting further away, the last one was it
-                linesToUse = (lines - 1);
+                w = newW + 1;
                 break;
             }
         }
 
-        txt.width = TextFieldUtil.WIDTH_PAD + txt.textWidth * (txt.numLines / linesToUse);
+        txt.width = w + TextFieldUtil.WIDTH_PAD;
     }
 
     /** The name of the speaker. */
