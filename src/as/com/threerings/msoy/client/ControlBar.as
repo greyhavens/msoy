@@ -133,7 +133,6 @@ public class ControlBar extends HBox
         
         _chatControl = null;
         _avatarBtn = null;
-        _editBtn = null;
         _channelBtn = null;
 
         _chatControl = new ChatControl(_ctx, this.height - 4);
@@ -315,9 +314,6 @@ public class ControlBar extends HBox
     /** Receives notification whether scene editing is possible for this scene. */
     public function set sceneEditPossible (value :Boolean) :void
     {
-        if (_editBtn != null) {
-            _editBtn.enabled = value;
-        }
         if (_roomeditBtn != null) {
             _roomeditBtn.enabled = value;
         }
@@ -360,7 +356,6 @@ public class ControlBar extends HBox
     protected var _petBtn :CommandButton;
 
     /** Button for editing the current scene. */
-    protected var _editBtn :CommandButton;
     protected var _roomeditBtn :CommandButton;
 
     /** Button for selecting/creating chat channels. */
