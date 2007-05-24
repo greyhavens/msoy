@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.data;
 
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.util.ActionScript;
 
 /**
@@ -11,13 +10,17 @@ import com.threerings.util.ActionScript;
  */
 public class FriendAcceptedInvitationNotification extends Notification
 {
-    /** Friend's credentials. */
-    public MemberName friend;
+    /** Invited friend's screen name. */
+    public String inviteeDisplayName;
+
+    /** Friend's email address, to which the invitation was sent. */
+    public String invitationEmail; 
     
     /** Creates a new notification instance. */
     @ActionScript(omit=true)
-    public FriendAcceptedInvitationNotification (MemberName friend)
+    public FriendAcceptedInvitationNotification (String displayName, String email)
     {
-        this.friend = friend;
+        this.inviteeDisplayName = displayName;
+        this.invitationEmail = email;
     }
 }

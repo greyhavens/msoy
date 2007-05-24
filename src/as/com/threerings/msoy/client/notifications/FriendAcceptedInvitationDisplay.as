@@ -3,8 +3,10 @@
 
 package com.threerings.msoy.client.notifications {
 
+import mx.controls.Text;
+
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.FriendAcceptedInvitationNotification;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.FloatingPanel;
 
 public class FriendAcceptedInvitationDisplay extends NotificationDisplay
@@ -14,13 +16,14 @@ public class FriendAcceptedInvitationDisplay extends NotificationDisplay
     {
         super(n, dispatch);
 
-        _friend = n.friend;
+        _displayName = n.inviteeDisplayName;
+        _email = n.invitationEmail;
     }
 
     // from NotificationDisplay
     override public function get timeout () :Number
     {
-        return 5000;
+        return 10000; // wee bit longer than usual
     }
 
     // from TitleWindow
@@ -28,9 +31,13 @@ public class FriendAcceptedInvitationDisplay extends NotificationDisplay
     {
         super.createChildren();
 
-        // to do, so much to do... :)
-    }        
+        var label :Text = new Text();
+        label.text = Msgs.GENERAL.get("m.invite_accepted", _email, _displayName);
+        label.percentWidth = 100;
+        addChild(label);
+    }
 
-    protected var _friend :MemberName;
+    protected var _displayName :String;
+    protected var _email :String;
 }
 }

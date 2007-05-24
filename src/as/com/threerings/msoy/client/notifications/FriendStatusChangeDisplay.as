@@ -6,6 +6,7 @@ package com.threerings.msoy.client.notifications {
 import mx.containers.HBox;
 import mx.controls.Button;
 import mx.controls.Label;
+import mx.controls.Spacer;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.FriendStatusChangeNotification;
@@ -30,6 +31,7 @@ public class FriendStatusChangeDisplay extends NotificationDisplay
 
         var box :HBox = new HBox();
         box.styleName = "notificationBox";
+        box.percentWidth = 100;
         addChild(box);
         
         var label :Label = new Label();
@@ -37,10 +39,16 @@ public class FriendStatusChangeDisplay extends NotificationDisplay
                                       _friend.toString());
         box.addChild(label);
 
-        var button :Button = new Button();
-        button.label = Msgs.GENERAL.get("b.visit_friend");
-        button.height = 20;
-        box.addChild(button);
+        if (_loggedOn) {
+            var spacer :Spacer = new Spacer();
+            spacer.percentWidth = 100;
+            box.addChild(spacer);
+            
+            var button :Button = new Button();
+            button.label = Msgs.GENERAL.get("b.visit_friend");
+            button.height = 20;
+            box.addChild(button);
+        }
     }        
 
     protected var _friend :MemberName;

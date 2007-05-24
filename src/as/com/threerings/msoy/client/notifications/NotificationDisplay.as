@@ -17,6 +17,7 @@ public /* abstract */ class NotificationDisplay extends FloatingPanel
         super(dispatch.getWorldContext(), "");
         this.showCloseButton = true;
         this.styleName = "notificationDisplay";
+        this.width = 200; // all notifications have the same width, for now at least
         
         _dispatch = dispatch;
         _id = n.id;
