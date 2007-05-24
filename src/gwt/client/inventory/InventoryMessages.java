@@ -96,6 +96,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String detailEdit();
 
   /**
+   * Translated "Add item to current room: ".
+   * 
+   * @return translated "Add item to current room: "
+   * @gwt.key detailAddToRoom
+   */
+  String detailAddToRoom();
+
+  /**
    * Translated "Listing your {0}".
    * 
    * @return translated "Listing your {0}"

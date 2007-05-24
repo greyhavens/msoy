@@ -22,6 +22,7 @@ import client.editem.ItemEditor;
 import client.item.BaseItemDetailPanel;
 import client.shell.Application;
 import client.util.ClickCallback;
+import client.util.FlashClients;
 import client.util.ItemUtil;
 import client.util.PopupMenu;
 
@@ -93,6 +94,20 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 }
             };
             _details.add(button);
+        }
+
+        if (FlashClients.clientExists()) {
+            _details.add(WidgetUtil.makeShim(1, 10));
+            HorizontalPanel horz = new HorizontalPanel();
+            horz.add(new Label(CInventory.msgs.detailAddToRoom()));
+            button = new Button("-->");
+            button.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    // TODO
+                }
+            });
+            horz.add(button);
+            _details.add(horz);
         }
 
         // TODO: When catalog browsing is fully URL-friendly, browsing catalog by creator from here

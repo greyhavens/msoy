@@ -115,6 +115,14 @@ public class FlashClients
     }
 
     /**
+     * Checks if the flash client can be found on this page.
+     */
+    public static boolean clientExists ()
+    {
+        return clientExistsNative();
+    }
+
+    /**
      * Computes the height to use for our Flash clients based on the smaller of our desired client
      * height and the vertical room available minus the header and an annoying "we don't know how
      * to implement scrollbars" bullshit browser factor.
@@ -206,6 +214,14 @@ public class FlashClients
      */
     protected static native boolean getBoolean (JavaScriptObject value) /*-{
         return value;
+    }-*/;
+
+    /** 
+     * Helpy helper function.  One must wonder if all these "helpy helper function" 
+     * comments are all that useful... but this function won't rebel.  Its a comformist.
+     */
+    protected static native boolean clientExistsNative () /*-{
+        return $doc.getElementById("asclient") != null;
     }-*/;
 
     // TODO: put this in Application?
