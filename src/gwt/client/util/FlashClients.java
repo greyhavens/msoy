@@ -122,6 +122,24 @@ public class FlashClients
         return clientExistsNative();
     }
 
+    /** 
+     * Checks with the actionscript client to find out if our current scene is in fact a room.
+     */
+    public static boolean inRoom ()
+    {
+        return inRoomNative();
+    }
+
+    /**
+     * Tells the actionscript client that we'd like to add this piece of furni to the 
+     * current room.  If there is a reason that we can't do this, it is handled by the 
+     * actionscript client.
+     */
+    public static void addFurni (int itemId) 
+    {
+        addFurniNative(itemId);
+    }
+
     /**
      * Computes the height to use for our Flash clients based on the smaller of our desired client
      * height and the vertical room available minus the header and an annoying "we don't know how
@@ -181,6 +199,38 @@ public class FlashClients
         return null;
     }-*/;
 
+    /** 
+     * Does the actual <code>clientExists()</code> call.
+     */
+    protected static native boolean clientExistsNative () /*-{
+        return $doc.getElementById("asclient") != null;
+    }-*/;
+
+    /**
+     * Does the actual <code>inRoom()</code> call.
+     */
+    protected static native boolean inRoomNative () /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            try {
+                return client.inRoom();
+            } catch (e) {
+                // fall through
+            }
+        } 
+        return false;
+    }-*/;
+
+    /**
+     * Does the actual <code>addFurni()</code> call.
+     */
+    protected static native void addFurniNative (int itemId) /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            client.addFurni(itemId);
+        }
+    }-*/;
+
     /**
      * Helpy helper function.
      */
@@ -214,14 +264,6 @@ public class FlashClients
      */
     protected static native boolean getBoolean (JavaScriptObject value) /*-{
         return value;
-    }-*/;
-
-    /** 
-     * Helpy helper function.  One must wonder if all these "helpy helper function" 
-     * comments are all that useful... but this function won't rebel.  Its a comformist.
-     */
-    protected static native boolean clientExistsNative () /*-{
-        return $doc.getElementById("asclient") != null;
     }-*/;
 
     // TODO: put this in Application?

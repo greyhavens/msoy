@@ -587,6 +587,17 @@ public class RoomController extends SceneController
     }
 
     /**
+     * This is called from javascript to add a piece of furni to the room from the inventory
+     * browsing interface.
+     */
+    public function addFurni (itemId :int) :void
+    {
+        Log.getLog(this).debug("adding furni: " + itemId);
+        // TODO - this should open the room editor if it isn't already open (assuming we have
+        // the necessary permission to edit this room).
+    }
+
+    /**
      * Begin editing the room.
      */
     protected function beginRoomEditing (button :CommandButton) :void

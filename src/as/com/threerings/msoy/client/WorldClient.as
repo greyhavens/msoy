@@ -38,6 +38,8 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemList;
 import com.threerings.msoy.item.data.all.Photo;
 
+import com.threerings.msoy.world.client.RoomView;
+
 import com.threerings.msoy.world.data.PetMarshaller;
 import com.threerings.msoy.world.data.RoomConfig;
 
@@ -216,6 +218,8 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("clientGo", externalClientGo);
         ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
         ExternalInterface.addCallback("setMinimized", externalSetMinimized);
+        ExternalInterface.addCallback("inRoom", externalInRoom);
+        ExternalInterface.addCallback("addFurni", externalAddFurni);
 
         _embedded = !Boolean(ExternalInterface.call("helloWhirled"));
         dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
@@ -319,6 +323,25 @@ public class WorldClient extends BaseClient
     {
         log.info("Client was notified that its minimized status has changed: " + minimized);
         dispatchEvent(new ValueEvent(MINI_WILL_CHANGE, _minimized = minimized));
+    }
+
+    /**
+     * Exposed to javascript so that the it may determine if the current scene is a room.
+     */
+    protected function externalInRoom () :Boolean
+    {
+        return _wctx.getTopPanel().getPlaceView() is RoomView;
+    }
+
+    /**
+     * Exposed to javascript so that the it may tell us to add furni to the current room.
+     */ 
+    protected function externalAddFurni (itemId :int) :void
+    {
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        if (view != null) {
+            view.getRoomController().addFurni(itemId);
+        }
     }
 
     protected var _wctx :WorldContext;
