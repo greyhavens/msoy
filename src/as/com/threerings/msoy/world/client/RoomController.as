@@ -24,6 +24,7 @@ import mx.managers.ISystemManager;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Integer;
 import com.threerings.util.NetUtil;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.io.TypedArray;
 
@@ -46,14 +47,17 @@ import com.threerings.crowd.util.CrowdContext;
 import com.threerings.whirled.client.SceneController;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneUpdate;
+import com.threerings.whirled.util.WhirledContext;
 
 import com.threerings.ezgame.util.EZObjectMarshaller;
 
+import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.TopPanel;
+import com.threerings.msoy.client.WorldClient;
+import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
@@ -592,9 +596,30 @@ public class RoomController extends SceneController
      */
     public function addFurni (itemId :int) :void
     {
-        Log.getLog(this).debug("adding furni: " + itemId);
-        // TODO - this should open the room editor if it isn't already open (assuming we have
-        // the necessary permission to edit this room).
+        if (!isRoomEditing()) {
+            var scene :MsoyScene = _mctx.getSceneDirector().getScene() as 
+                MsoyScene;
+            if (scene != null && scene.canEdit(_mctx.getMemberObject())) {
+                // the display list has often not yet been validated when we receive this call from
+                // the javascript - if that is the case, we need to wait until the control bar is
+                // set up with valid dimensions, so that the room edit dialog pops up in the correct
+                // location.
+                var ctrlBar :ControlBar = _mctx.getTopPanel().getControlBar();
+                var btn :CommandButton = ctrlBar.roomEditBtn;
+                if (btn.x == 0) {
+                    var validListener :Function;
+                    validListener = function (evt :ValueEvent) :void {
+                        beginRoomEditing(btn);
+                        ctrlBar.removeEventListener(ControlBar.DISPLAY_LIST_VALID, validListener);
+                    };
+                    ctrlBar.addEventListener(ControlBar.DISPLAY_LIST_VALID, validListener);
+                } else {
+                    beginRoomEditing(btn);
+                }
+            } else {
+                // TODO: error dialog - no permissions for room editing
+            }
+        }
     }
 
     /**

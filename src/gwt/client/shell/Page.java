@@ -126,6 +126,16 @@ public abstract class Page
     }
 
     /**
+     * Let the currently showing client reign supreme.
+     */
+    public static void closePage ()
+    {
+        if (_closeToken != null) {
+            History.newItem(_closeToken);
+        }
+    }
+
+    /**
      * Called when the page is first resolved to initialize its bits.
      */
     public void init ()
@@ -240,7 +250,7 @@ public abstract class Page
         if (_closeToken != null) {
             _content.setWidget(0, 2, MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
                 public void onClick (Widget sender) {
-                    History.newItem(_closeToken);
+                    closePage();
                 }
             }));
             _content.setWidget(0, 3, MsoyUI.createLabel("", "Separator"));

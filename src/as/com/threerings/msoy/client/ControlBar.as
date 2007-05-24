@@ -36,10 +36,26 @@ import com.threerings.msoy.chat.client.ChatControl;
 [Style(name="backgroundSkin", type="Class", inherit="no")]
 
 /**
+ * Dispatched when the client is unminimized, and this component's display list has
+ * been validated.
+ * 
+ * @eventType com.threerings.msoy.client.ControlBar.DISPLAY_LIST_VALID
+ */
+[Event(name="displayListValid", type="com.threerings.util.ValueEvent")]
+
+/**
  * The control bar: the main menu and global UI element across all scenes.
  */
 public class ControlBar extends HBox
 {
+    /**
+     * An event dispatched when the client is unminimized, and this component's 
+     * display list has been validated.
+     *
+     * @eventType displayListValid
+     */
+    public static const DISPLAY_LIST_VALID :String = "displayListValid";
+
     /** The height of the control bar. This is fixed. */
     public static const HEIGHT :int = 24;
 
@@ -114,6 +130,14 @@ public class ControlBar extends HBox
             if (chidx >= 0) {
                 addChildAt(_channelInput = input, chidx);
             }
+        }
+    }
+
+    override protected function updateDisplayList (w :Number, h :Number) :void 
+    {
+        super.updateDisplayList(w, h);
+        if (!_isMinimized && width != 0) {
+            dispatchEvent(new ValueEvent(DISPLAY_LIST_VALID, true));
         }
     }
 
@@ -317,6 +341,16 @@ public class ControlBar extends HBox
         if (_roomeditBtn != null) {
             _roomeditBtn.enabled = value;
         }
+    }
+
+    /**
+     * This is needed by the RoomController so that it can position the room edit popup and
+     * modify this button correctly when room editing is forced by javascript pushing some
+     * furni on us.
+     */
+    public function get roomEditBtn () :CommandButton
+    {
+        return _roomeditBtn;
     }
 
     /** Our clientside context. */

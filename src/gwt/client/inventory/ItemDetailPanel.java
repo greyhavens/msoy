@@ -25,6 +25,7 @@ import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.ItemUtil;
 import client.util.PopupMenu;
+import client.shell.Page;
 
 /**
  * Displays a popup detail view of an item from the user's inventory.
@@ -110,6 +111,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 button = new Button(CInventory.msgs.detailAddToRoom());
                 button.addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
+                        Page.closePage();
                         FlashClients.addFurni(_detail.item.itemId);
                     }
                 });
