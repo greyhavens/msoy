@@ -147,9 +147,13 @@ public class MsoyClientResolver extends CrowdClientResolver
                         // if the friend is online, mark them as such
                         entry.online = true;
                         // and notify them that we're online
-                        FriendEntry oppEntry = friendObj.friends.get(user.getMemberId());
-                        oppEntry.online = true;
-                        friendObj.updateFriends(oppEntry);
+                        FriendEntry userEntry = friendObj.friends.get(user.getMemberId());
+                        // sometimes when the account is newly created, my friends won't yet know
+                        // that i exist. so let's test before we do anything
+                        if (userEntry != null) { 
+                            userEntry.online = true;
+                            friendObj.updateFriends(userEntry);
+                        }
                         friendObj.notify(
                             new FriendStatusChangeNotification(user.memberName, true));
                     }
