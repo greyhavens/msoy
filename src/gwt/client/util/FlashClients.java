@@ -133,7 +133,14 @@ public class FlashClients
      */
     protected static native JavaScriptObject getFriendsNative () /*-{
         var client = $doc.getElementById("asclient");
-        return (client) ? client.getFriends() : null;
+        if (client) {
+            try {
+                return client.getFriends();
+            } catch (e) {
+                // fall through
+            }
+        }
+        return null;
     }-*/;
 
     /**
@@ -141,7 +148,14 @@ public class FlashClients
      */
     protected static native JavaScriptObject getLevelsNative () /*-{
         var client = $doc.getElementById("asclient");
-        return (client) ? client.getLevels() : null;
+        if (client) {
+            try {
+                return client.getLevels();
+            } catch (e) {
+                // fall through
+            }
+        }
+        return null;
     }-*/;
 
     /**
@@ -149,7 +163,14 @@ public class FlashClients
      */
     protected static native JavaScriptObject getMailNotificationNative () /*-{
         var client = $doc.getElementById("asclient");
-        return (client) ? client.getMailNotification() : null;
+        if (client) {
+            try {
+                return client.getMailNotification();
+            } catch (e) {
+                // fall through
+            }
+        }
+        return null;
     }-*/;
 
     /**
