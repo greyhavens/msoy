@@ -303,6 +303,11 @@ Window {
 }
 
 .notificationDisplay { 
+  backgroundAlpha: 1;
+  borderStyle: "solid";
+  borderThickness: 1;
+  headerColors: #444444, #ffffff;
+  cornerRadius: 4;
   roundedBottomCorners: true;
   paddingLeft: 0;
   paddingRight: 0;
