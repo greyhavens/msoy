@@ -32,6 +32,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.parlor.game.data.GameObject;
 
 import com.threerings.msoy.chat.client.ChatContainer;
+import com.threerings.msoy.client.notifications.NotificationHandler;
 
 import com.threerings.msoy.game.client.FloatingTableDisplay;
 
@@ -95,6 +96,8 @@ public class TopPanel extends Canvas
         app.stage.addEventListener(Event.RESIZE, stageResized);
 
         _ctx.getClient().addEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
+
+        _notificationHandler = new NotificationHandler(ctx, this);
     }
 
     /**
@@ -514,6 +517,9 @@ public class TopPanel extends Canvas
     /** the currently active table display */
     protected var _tableDisp :FloatingTableDisplay;
 
+    /** Dispatch that displays server notifications. */
+    protected var _notificationHandler :NotificationHandler;
+    
     protected static const MIN_FLASH_VERSION :int = 9;
     protected static const MIN_FLASH_REVISION :int = 28;
 }

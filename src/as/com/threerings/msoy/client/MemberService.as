@@ -19,6 +19,9 @@ import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 public interface MemberService extends InvocationService
 {
     // from Java interface MemberService
+    function acknowledgeNotification (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
+
+    // from Java interface MemberService
     function alterFriend (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService

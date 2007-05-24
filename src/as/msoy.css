@@ -302,6 +302,28 @@ Window {
   backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/footer_right.png");
 }
 
+.notificationDisplay { 
+  roundedBottomCorners: true;
+  paddingLeft: 0;
+  paddingRight: 0;
+  paddingTop: 0;
+  paddingBottom: 0;
+}
+
+.notificationBox {
+  paddingLeft: 0;
+  paddingRight: 0;
+  paddingTop: 0;
+  paddingBottom: 0;
+}
+
+.notificationButton {
+  paddingLeft: 0;
+  paddingRight: 0;
+  paddingTop: 0;
+  paddingBottom: 0;
+}  
+
 .roomEditPanel {  
   borderStyle: "solid";
   borderThickness: 1;

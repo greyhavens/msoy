@@ -19,8 +19,21 @@ import com.threerings.presents.dobj.InvocationResponseEvent;
 public class MemberMarshaller extends InvocationMarshaller
     implements MemberService
 {
+    /** The method id used to dispatch {@link #acknowledgeNotification} requests. */
+    public static final int ACKNOWLEDGE_NOTIFICATION = 1;
+
+    // from interface MemberService
+    public void acknowledgeNotification (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, ACKNOWLEDGE_NOTIFICATION, new Object[] {
+            Integer.valueOf(arg2), listener3
+        });
+    }
+
     /** The method id used to dispatch {@link #alterFriend} requests. */
-    public static final int ALTER_FRIEND = 1;
+    public static final int ALTER_FRIEND = 2;
 
     // from interface MemberService
     public void alterFriend (Client arg1, int arg2, boolean arg3, InvocationService.ConfirmListener arg4)
@@ -33,7 +46,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getHomeId} requests. */
-    public static final int GET_HOME_ID = 2;
+    public static final int GET_HOME_ID = 3;
 
     // from interface MemberService
     public void getHomeId (Client arg1, byte arg2, int arg3, InvocationService.ResultListener arg4)
@@ -46,7 +59,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #purchaseRoom} requests. */
-    public static final int PURCHASE_ROOM = 3;
+    public static final int PURCHASE_ROOM = 4;
 
     // from interface MemberService
     public void purchaseRoom (Client arg1, InvocationService.ResultListener arg2)
@@ -59,7 +72,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setAvatar} requests. */
-    public static final int SET_AVATAR = 4;
+    public static final int SET_AVATAR = 5;
 
     // from interface MemberService
     public void setAvatar (Client arg1, int arg2, float arg3, InvocationService.InvocationListener arg4)
@@ -72,7 +85,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setDisplayName} requests. */
-    public static final int SET_DISPLAY_NAME = 5;
+    public static final int SET_DISPLAY_NAME = 6;
 
     // from interface MemberService
     public void setDisplayName (Client arg1, String arg2, InvocationService.InvocationListener arg3)

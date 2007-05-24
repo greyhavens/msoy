@@ -26,8 +26,21 @@ import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 public class MemberMarshaller extends InvocationMarshaller
     implements MemberService
 {
+    /** The method id used to dispatch {@link #acknowledgeNotification} requests. */
+    public static const ACKNOWLEDGE_NOTIFICATION :int = 1;
+
+    // from interface MemberService
+    public function acknowledgeNotification (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
+    {
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, ACKNOWLEDGE_NOTIFICATION, [
+            Integer.valueOf(arg2), listener3
+        ]);
+    }
+
     /** The method id used to dispatch {@link #alterFriend} requests. */
-    public static const ALTER_FRIEND :int = 1;
+    public static const ALTER_FRIEND :int = 2;
 
     // from interface MemberService
     public function alterFriend (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void
@@ -40,7 +53,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getHomeId} requests. */
-    public static const GET_HOME_ID :int = 2;
+    public static const GET_HOME_ID :int = 3;
 
     // from interface MemberService
     public function getHomeId (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_ResultListener) :void
@@ -53,7 +66,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #purchaseRoom} requests. */
-    public static const PURCHASE_ROOM :int = 3;
+    public static const PURCHASE_ROOM :int = 4;
 
     // from interface MemberService
     public function purchaseRoom (arg1 :Client, arg2 :InvocationService_ResultListener) :void
@@ -66,7 +79,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setAvatar} requests. */
-    public static const SET_AVATAR :int = 4;
+    public static const SET_AVATAR :int = 5;
 
     // from interface MemberService
     public function setAvatar (arg1 :Client, arg2 :int, arg3 :Number, arg4 :InvocationService_InvocationListener) :void
@@ -79,7 +92,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setDisplayName} requests. */
-    public static const SET_DISPLAY_NAME :int = 5;
+    public static const SET_DISPLAY_NAME :int = 6;
 
     // from interface MemberService
     public function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void

@@ -373,7 +373,24 @@ public class MemberManager
             protected int _newRoomId;
         });
     }
-    
+
+    // from interface MemberProvider
+    public void acknowledgeNotification (
+        ClientObject caller, int id, InvocationService.ConfirmListener listener)
+        throws InvocationException
+    {
+        MemberObject user = (MemberObject) caller;
+
+        // unlike in the potentially long db calls above, this one just modifies the transient
+        // notification DSet, so there's no need to invoke this on a separate thread.
+
+        if (user.acknowledgeNotification(id)) {
+            listener.requestProcessed();
+        } else {
+            listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+        }
+    }        
+
     /**
      * Grant a member some flow, categorized and optionally metatagged with an action type and a
      * detail String. The member's {@link MemberRecord} is updated, as is the {@link

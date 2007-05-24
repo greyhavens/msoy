@@ -90,6 +90,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>pendingGame</code> field. */
     public static const PENDING_GAME :String = "pendingGame";
+
+    /** The field name of the <code>notifications</code> field. */
+    public static const NOTIFICATIONS :String = "notifications";
     // AUTO-GENERATED: FIELDS END
 
     /** The member name and id for this user. */
@@ -151,6 +154,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The item lists owned by this user. */
     public var lists :DSet;
+
+    /** The set of notifications pending on the member. */
+    public var notifications :DSet;
 
     /**
      * Return this member's unique id.
@@ -388,6 +394,7 @@ public class MemberObject extends MsoyBodyObject
         hasNewMail = ins.readBoolean();
         pendingGame = (ins.readObject() as GameSummary);
         lists = (ins.readObject() as DSet);
+        notifications = (ins.readObject() as DSet);
     }
 }
 }

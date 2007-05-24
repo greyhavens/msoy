@@ -15,6 +15,7 @@ import com.threerings.stats.data.StatSet;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
+import com.threerings.msoy.data.FriendStatusChangeNotification;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.SceneBookmarkEntry;
 import com.threerings.msoy.person.server.persist.MailRepository;
@@ -149,6 +150,8 @@ public class MsoyClientResolver extends CrowdClientResolver
                         FriendEntry oppEntry = friendObj.friends.get(user.getMemberId());
                         oppEntry.online = true;
                         friendObj.updateFriends(oppEntry);
+                        friendObj.notify(
+                            new FriendStatusChangeNotification(user.memberName, true));
                     }
                     user.setFriends(new DSet<FriendEntry>(friends.iterator()));
                     // TODO: we currently never note that friends have logged off

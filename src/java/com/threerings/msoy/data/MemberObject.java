@@ -100,6 +100,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>lists</code> field. */
     public static final String LISTS = "lists";
+
+    /** The field name of the <code>notifications</code> field. */
+    public static final String NOTIFICATIONS = "notifications";
     // AUTO-GENERATED: FIELDS END
 
     /** The {@link #humanity} value for a fully actualized human. */
@@ -168,6 +171,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The item lists owned by this user. */
     public DSet<ItemListInfo> lists = new DSet<ItemListInfo>();
+
+    /** The set of notifications pending on the member object. */
+    public DSet<Notification> notifications = new DSet<Notification>();
 
     /** Statistics tracked for this player. */
     public transient StatSet stats;
@@ -344,6 +350,31 @@ public class MemberObject extends MsoyBodyObject
             } finally {
                 commitTransaction();
             }
+        }
+    }
+
+    /**
+     * Add the specified notification instance to the member's notification queue.
+     * The notification's id field will be modify with a unique value.
+     */
+    public void notify (Notification notification)
+    {
+        notification.id = ++_notificationCount;
+        addToNotifications(notification);
+    }
+
+    /**
+     * Processes notification acknowledgement by removing in from the user's queue.
+     * Returns true if the notification was removed successfully, false otherwise (e.g. if the
+     * notification was not present in the queue).
+     */
+    public boolean acknowledgeNotification (int id)
+    {
+        if (notifications.containsKey(id)) {
+            removeFromNotifications(id);
+            return true;
+        } else {            
+            return false;
         }
     }
 
@@ -859,7 +890,58 @@ public class MemberObject extends MsoyBodyObject
             (value == null) ? null : value.typedClone();
         this.lists = clone;
     }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>notifications</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToNotifications (Notification elem)
+    {
+        requestEntryAdd(NOTIFICATIONS, notifications, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>notifications</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromNotifications (Comparable key)
+    {
+        requestEntryRemove(NOTIFICATIONS, notifications, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>notifications</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateNotifications (Notification elem)
+    {
+        requestEntryUpdate(NOTIFICATIONS, notifications, elem);
+    }
+
+    /**
+     * Requests that the <code>notifications</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setNotifications (DSet<com.threerings.msoy.data.Notification> value)
+    {
+        requestAttributeChange(NOTIFICATIONS, value, this.notifications);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.Notification> clone =
+            (value == null) ? null : value.typedClone();
+        this.notifications = clone;
+    }
     // AUTO-GENERATED: METHODS END
 
     public static final int MAX_RECENT_SCENES = 10;
+
+    /** Used for tracking the number of notifications processed on the member object. */
+    public transient int _notificationCount = 0;
 }
