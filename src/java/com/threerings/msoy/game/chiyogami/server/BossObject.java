@@ -33,11 +33,12 @@ public class BossObject extends MsoyBodyObject
         setUsername(new Name(avatar.name));
     }
 
-    public void init (MediaDesc desc)
+    public void init (MediaDesc desc, String name)
     {
         _avatar = null;
         _ident = new ItemIdent(Item.OCCUPANT, this.getOid());
         _desc = desc;
+        setUsername(new Name(name));
     }
 
     @Override

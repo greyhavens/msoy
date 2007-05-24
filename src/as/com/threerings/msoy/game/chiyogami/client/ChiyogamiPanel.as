@@ -65,7 +65,8 @@ public class ChiyogamiPanel extends Canvas
 
     public function checkPhase () :void
     {
-        showTagEntry(_gameObj.phase == ChiyogamiObject.WAITING);
+// TODO: tag entry disabled
+//        showTagEntry(_gameObj.phase == ChiyogamiObject.WAITING);
         showMiniGame(_gameObj.phase == ChiyogamiObject.BATTLE);
     }
 

@@ -95,6 +95,9 @@ public class ChiyogamiManager extends GameManager
     {
         // TODO: intercept hacking, perhaps record all the states that
         // each player submits and go with the consensus..
+        //
+        // TODO: Wait! No! We should just have the script contain the boss states/actions.
+        // Yes? No?
 
         System.err.println("Player reported boss states: " + StringUtil.toString(states));
 
@@ -102,15 +105,15 @@ public class ChiyogamiManager extends GameManager
         setAvatarStates(_bossObj, states);
     }
 
-    /**
-     * Invoked by clients to submit tags for consideration in picking music.
-     */
-    public void submitTags (BodyObject player, String tags)
-    {
-        if (tags != null) {
-            _playerTags.put(player.getOid(), tags);
-        }
-    }
+//    /**
+//     * Invoked by clients to submit tags for consideration in picking music.
+//     */
+//    public void submitTags (BodyObject player, String tags)
+//    {
+//        if (tags != null) {
+//            _playerTags.put(player.getOid(), tags);
+//        }
+//    }
 
     /**
      * Invoked by clients to report their performance at their minigame.
@@ -150,7 +153,7 @@ public class ChiyogamiManager extends GameManager
             _gameObj.setBossHealth(health);
             if (health == 0) {
                 // the boss is dead!
-                bossSpeak("Oh! My liver! My spleen!");
+                bossSpeak(_script.deathBlowProse);
                 updateState(_bossObj, null);
                 // we'll notice that he's dead next tick
             }
@@ -268,15 +271,14 @@ public class ChiyogamiManager extends GameManager
             // wait, wait, then at #3 pick the boss and music
             // move to pre-battle once both are ready
             if (_phaseCounter == 3) {
-                pickNewBoss();
-                pickNewMusic();
+                pickNewScript();
             }
             break;
 
         case ChiyogamiObject.PRE_BATTLE:
             switch (_phaseCounter) {
             case 1:
-                bossSpeak("Mind if I take over? HAhahaha!");
+                bossSpeak(_script.trashProse);
                 break;
 
             default:
@@ -284,7 +286,7 @@ public class ChiyogamiManager extends GameManager
                 moveBodyTo(_bossObj, Math.random(), Math.random());
                 break;
 
-            case 4:
+            case 3:
                 // let's start the battle
                 startBattle();
                 break;
@@ -301,12 +303,7 @@ public class ChiyogamiManager extends GameManager
         case ChiyogamiObject.POST_BATTLE:
             switch (_phaseCounter) {
             case 1:
-                if (_bossWon) {
-                    bossSpeak("Ah ha! You were no match for me! I'm so great!");
-
-                } else {
-                    bossSpeak("I think I sprained my pinky, I've got to go...");
-                }
+                bossSpeak(_bossWon ? _script.victoryProse : _script.defeatProse);
                 break;
 
             case 2:
@@ -336,7 +333,7 @@ public class ChiyogamiManager extends GameManager
      */
     protected void checkTransitionToPreBattle ()
     {
-        if (!_gameObj.isActive() || !_musicPicked || (_bossObj == null) ||
+        if (!_gameObj.isActive() || (_bossObj == null) ||
                 !_roomObj.occupants.contains(_bossObj.getOid())) {
             return;
         }
@@ -350,8 +347,16 @@ public class ChiyogamiManager extends GameManager
     {
         setPhase(ChiyogamiObject.BATTLE);
 
-        // all player actions must be re-populated
+        // all player states must be re-populated, but keep the boss states
+        String[] bossStates = _playerStates.get(_bossObj.getOid());
         _playerStates.clear();
+        _playerStates.put(_bossObj.getOid(), bossStates);
+//        int bossOid = _bossObj.getOid();
+//        for (Interator itr = _playerStates.keys(); itr.hasNext(); ) {
+//            if (bossOid != itr.next()) {
+//                itr.remove();
+//            }
+//        }
 
         // create blank perf records for every player, and randomly assign them a side (L|R)
         _playerPerfs.clear();
@@ -361,32 +366,23 @@ public class ChiyogamiManager extends GameManager
         }
 
         // start the music playing
-        if (_music != null) {
-            _roomObj.postMessage(RoomObject.PLAY_MUSIC,
-                new Object[] { _music.audioMedia.getMediaPath() });
-        }
+        _roomObj.postMessage(RoomObject.PLAY_MUSIC, new Object[] { _script.music.getMediaPath() });
 
         // get the boss ready
-        bossSpeak("Ok... it's a dance off!");
+        bossSpeak(_script.startProse);
         moveBody(_bossObj, .5, .5, 0);
         repositionAllPlayers(System.currentTimeMillis());
         updateBossState();
 
-        // TEMP background effect
-        _effects.add(_roomMgr.addEffect(
-            new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
-                "chiyogami/FX_arrow"),
-            new MsoyLocation(.5, 0, 0, 0), RoomCodes.BACKGROUND_EFFECT_LAYER));
-        // TEMP foreground effect
-        _effects.add(_roomMgr.addEffect(
-            new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
-                "chiyogami/FallBalls"), new MsoyLocation(.5, 0, 0, 0),
-                RoomCodes.FOREGROUND_EFFECT_LAYER));
+        // add the backgrounds specified in the script
+        for (Script.EffectSpec spec : _script.effects) {
+            _effects.add(_roomMgr.addEffect(spec.media, spec.location, spec.layer));
+        }
 
         _playerTags.clear(); // clear tags until next time
 
         // and set up an interval to put the kibosh on things if it takes too long
-        _endBattle.schedule(MAX_SONG_LENGTH);
+        _endBattle.schedule(_script.battleTime * 1000L);
     }
 
     /**
@@ -437,118 +433,35 @@ public class ChiyogamiManager extends GameManager
         endBattle();
     }
 
-    /**
-     * Get all the unique tags that users have submitted.
-     */
-    protected String[] getAllUserTags ()
+//    /**
+//     * Get all the unique tags that users have submitted.
+//     */
+//    protected String[] getAllUserTags ()
+//    {
+//        HashSet<String> set = new HashSet<String>();
+//        for (String s : _playerTags.values()) {
+//            for (String tag : s.split("\\s")) {
+//                set.add(tag);
+//            }
+//        }
+//
+//        return set.toArray(new String[set.size()]);
+//    }
+
+    protected void pickNewScript ()
     {
-        HashSet<String> set = new HashSet<String>();
-        for (String s : _playerTags.values()) {
-            for (String tag : s.split("\\s")) {
-                set.add(tag);
-            }
-        }
-
-        return set.toArray(new String[set.size()]);
-    }
-
-    /**
-     * Initiate picking new music for the next battle.
-     */
-    protected void pickNewMusic ()
-    {
-        _music = null;
-        _musicPicked = false;
-        pickNewMusic(getAllUserTags());
-    }
-
-    /**
-     * Pick new music according to the specified tags, or randomly
-     * if nothing matches the tags.
-     */
-    protected void pickNewMusic (final String[] tags)
-    {
-        MsoyServer.itemMan.getRandomCatalogItem(Item.AUDIO, tags, new ResultListener<Item>() {
-            public void requestFailed (Exception cause) {
-                log.log(Level.WARNING, "Failed to pick new music", cause);
-            }
-
-            public void requestCompleted (Item music) {
-                if (music == null && tags != null && tags.length > 0) {
-                    // none of the tags worked, try again without them
-                    pickNewMusic(null);
-
-                } else {
-                    musicPicked((Audio) music);
-                }
-            }
-        });
-    }
-
-    /**
-     * Called when the music for the battle has finally been picked.
-     */
-    protected void musicPicked (Audio music)
-    {
-        _music = music;
-        _musicPicked = true; // because _music can legally be null, currently
-        if (_roomObj.isActive() && _music != null) {
-            _roomObj.postMessage(RoomObject.LOAD_MUSIC,
-                new Object[] { _music.audioMedia.getMediaPath() });
-        }
-        checkTransitionToPreBattle();
-    }
-
-    /**
-     * Pick a new boss.
-     */
-    protected void pickNewBoss ()
-    {
+        // clean up old stuff
         shutdownBoss();
         _bossWon = false;
-        pickNewBoss(getAllUserTags());
-    }
 
-    /**
-     * Pick new boss according to the specified tags, or randomly
-     * if nothing matches the tags.
-     */
-    protected void pickNewBoss (final String[] tags)
-    {
-        MsoyServer.itemMan.getRandomCatalogItem(Item.AVATAR, tags, new ResultListener<Item>() {
-            public void requestFailed (Exception cause) {
-                log.log(Level.WARNING, "Failed to pick new boss", cause);
-            }
+        // TODO: really pick from the catalog
+        _script = RandomUtil.pickRandom(_scripts);
 
-            public void requestCompleted (Item boss) {
-                if (boss == null && tags != null && tags.length > 0) {
-                    // none of the tags worked, try again without them
-                    pickNewBoss(null);
+        // tell everyone to load the music
+        _roomObj.postMessage(RoomObject.LOAD_MUSIC, new Object[] { _script.music.getMediaPath() });
 
-                } else {
-                    bossPicked((Avatar) boss);
-                }
-            }
-        });
-    }
-
-    /**
-     * Called when the boss for a battle is finally available.
-     */
-    protected void bossPicked (Avatar boss)
-    {
         _bossObj = MsoyServer.omgr.registerObject(new BossObject());
-
-       if (boss == null) {
-           // TODO: remove this old stuff
-            String hardBoss = RandomUtil.pickRandom(BOSSES);
-            _bossObj.init(new StaticMediaDesc(
-                MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.AVATAR, "chiyogami/" + hardBoss));
-            _bossObj.setUsername(new Name("Downrock"));
-
-        } else {
-            _bossObj.init(boss);
-        }
+        _bossObj.init(_script.boss, _script.bossName);
 
         // add the boss to the room
         MsoyServer.screg.sceneprov.moveTo(_bossObj, _sceneId, -1, new SceneMoveListener() {
@@ -571,12 +484,131 @@ public class ChiyogamiManager extends GameManager
         });
     }
 
+//    /**
+//     * Initiate picking new music for the next battle.
+//     */
+//    protected void pickNewMusic ()
+//    {
+//        _music = null;
+//        _musicPicked = false;
+//        pickNewMusic(getAllUserTags());
+//    }
+//
+//    /**
+//     * Pick new music according to the specified tags, or randomly
+//     * if nothing matches the tags.
+//     */
+//    protected void pickNewMusic (final String[] tags)
+//    {
+//        MsoyServer.itemMan.getRandomCatalogItem(Item.AUDIO, tags, new ResultListener<Item>() {
+//            public void requestFailed (Exception cause) {
+//                log.log(Level.WARNING, "Failed to pick new music", cause);
+//            }
+//
+//            public void requestCompleted (Item music) {
+//                if (music == null && tags != null && tags.length > 0) {
+//                    // none of the tags worked, try again without them
+//                    pickNewMusic(null);
+//
+//                } else {
+//                    musicPicked((Audio) music);
+//                }
+//            }
+//        });
+//    }
+//
+//    /**
+//     * Called when the music for the battle has finally been picked.
+//     */
+//    protected void musicPicked (Audio music)
+//    {
+//        _music = music;
+//        _musicPicked = true; // because _music can legally be null, currently
+//        if (_roomObj.isActive() && _music != null) {
+//            _roomObj.postMessage(RoomObject.LOAD_MUSIC,
+//                new Object[] { _music.audioMedia.getMediaPath() });
+//        }
+//        checkTransitionToPreBattle();
+//    }
+
+//    /**
+//     * Pick a new boss.
+//     */
+//    protected void pickNewBoss ()
+//    {
+//        shutdownBoss();
+//        _bossWon = false;
+//        pickNewBoss(getAllUserTags());
+//    }
+
+//    /**
+//     * Pick new boss according to the specified tags, or randomly
+//     * if nothing matches the tags.
+//     */
+//    protected void pickNewBoss (final String[] tags)
+//    {
+//        MsoyServer.itemMan.getRandomCatalogItem(Item.AVATAR, tags, new ResultListener<Item>() {
+//            public void requestFailed (Exception cause) {
+//                log.log(Level.WARNING, "Failed to pick new boss", cause);
+//            }
+//
+//            public void requestCompleted (Item boss) {
+//                if (boss == null && tags != null && tags.length > 0) {
+//                    // none of the tags worked, try again without them
+//                    pickNewBoss(null);
+//
+//                } else {
+//                    bossPicked((Avatar) boss);
+//                }
+//            }
+//        });
+//    }
+
+//    /**
+//     * Called when the boss for a battle is finally available.
+//     */
+//    protected void bossPicked (Avatar boss)
+//    {
+//        _bossObj = MsoyServer.omgr.registerObject(new BossObject());
+//
+//       if (boss == null) {
+//           // TODO: remove this old stuff
+//            String hardBoss = RandomUtil.pickRandom(BOSSES);
+//            _bossObj.init(new StaticMediaDesc(
+//                MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.AVATAR, "chiyogami/" + hardBoss));
+//            _bossObj.setUsername(new Name("Downrock"));
+//
+//        } else {
+//            _bossObj.init(boss);
+//        }
+//
+//        // add the boss to the room
+//        MsoyServer.screg.sceneprov.moveTo(_bossObj, _sceneId, -1, new SceneMoveListener() {
+//            public void moveSucceeded (int placeId, PlaceConfig config) {
+//                // nada: we wait to hear the oid in RoomListener
+//            }
+//            public void moveSucceededWithUpdates (
+//                int placeId, PlaceConfig config, SceneUpdate[] updates) {
+//                // nada: we wait to hear the oid in RoomListener
+//            }
+//            public void moveSucceededWithScene (
+//                int placeId, PlaceConfig config, SceneModel model) {
+//                // nada: we wait to hear the oid in RoomListener
+//            }
+//            public void requestFailed (String reason) {
+//                log.warning("Boss failed to enter scene [scene=" + _sceneId +
+//                            ", reason=" + reason + "].");
+//                // TODO: shutdown? freakout? call the Elite Beat Agents?
+//            }
+//        });
+//    }
+
     /**
      * Called once the boss is added to the room.
      */
     protected void bossAddedToRoom ()
     {
-        bossSpeak("I'm all up in your room, screwing with your furni");
+        bossSpeak(_script.enterProse);
 
         // set the new boss' health to 1
         _gameObj.startTransaction();
@@ -597,7 +629,7 @@ public class ChiyogamiManager extends GameManager
     protected void shutdownBoss ()
     {
         if (_bossObj != null) {
-            bossSpeak("I'm outta here.");
+            bossSpeak(_script.exitProse);
             MsoyServer.screg.sceneprov.leaveOccupiedScene(_bossObj);
             MsoyServer.omgr.destroyObject(_bossObj.getOid());
             _bossObj = null;
@@ -767,8 +799,10 @@ public class ChiyogamiManager extends GameManager
 
     protected void bossSpeak (String utterance)
     {
-        // TODO: translations
-        SpeakProvider.sendSpeak(_roomObj, _bossObj.username, null, utterance);
+        if (utterance != null) {
+            // TODO: translations
+            SpeakProvider.sendSpeak(_roomObj, _bossObj.username, null, utterance);
+        }
     }
 
     protected void updateBossState ()
@@ -915,13 +949,148 @@ public class ChiyogamiManager extends GameManager
         {
             if (RoomObject.MUSIC_ENDED.equals(event.getName())) {
                 String url = (String) event.getArgs()[0];
-                if (_music != null && url.equals(_music.audioMedia.getMediaPath())) {
+                if (_script != null && url.equals(_script.music.getMediaPath())) {
                     musicDidEnd();
                 }
             }
         }
 
     } // End: class RoomListener
+
+    /**
+     * TEMP?
+     * A Script for a battle.
+     *
+     * TODO: eventually we will pick a datapack from the catalog, and construct
+     * this in-memory data structure from that.
+     */
+    protected static class Script
+    {
+        /** Specifies effect details. */
+        protected static class EffectSpec
+        {
+            public MediaDesc media;
+            public byte layer;
+            public MsoyLocation location;
+
+            public EffectSpec (MediaDesc media, byte layer)
+            {
+                this(media, layer, null);
+            }
+
+            public EffectSpec (MediaDesc media, byte layer, MsoyLocation location)
+            {
+                this.media = media;
+                this.layer = layer;
+                this.location = location;
+            }
+        }
+
+        //public Avatar boss;
+        public MediaDesc boss;
+        public String bossName;
+
+        //public Audio music;
+        public MediaDesc music;
+
+        /** The maximum length of the battle, in seconds. */
+        public int battleTime;
+
+        /** Possible minigames to play. */
+        public ArrayList<MediaDesc> games = new ArrayList<MediaDesc>();
+
+        /** The effects to add during the dance. */
+        public ArrayList<EffectSpec> effects = new ArrayList<EffectSpec>();
+
+        //public ArrayList<String> bossStates = new ArrayList<String>();
+
+        /** Prose spoken upon entry. */
+        public String enterProse;
+
+        /** Prose spoken during the trash-talking phase. */
+        public String trashProse;
+
+        /** Prose spoken at the start of the battle. */
+        public String startProse;
+
+        /** Prose to speak upon receiving the 'death blow'. */
+        public String deathBlowProse;
+
+        /** Prose to have the boss speak if he wins. */
+        public String victoryProse;
+
+        /** Prose to have the boss speak if he loses. */
+        public String defeatProse;
+
+        /** Prose spoken upon exit. */
+        public String exitProse;
+
+    } // End: static class Script
+
+    /** TEMP. */
+    protected static ArrayList<Script> _scripts = new ArrayList<Script>();
+
+    static {
+        // create a few starter scripts
+
+        // Sample: Downrock
+        Script script = new Script();
+        script.boss = new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.AVATAR,
+                    "chiyogami/bboy");
+        script.bossName = "Downrock";
+        script.music = new StaticMediaDesc(MediaDesc.AUDIO_MPEG, Item.AUDIO,
+                    "chiyogami/04-Jay-R_SriLankaHigh");
+        script.battleTime = 4*60 + 28;
+        script.games.add(new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH,
+                    Item.GAME, "chiyogami/Match3"));
+        script.games.add(new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH,
+                    Item.GAME, "chiyogami/KeyJam"));
+        script.effects.add(new Script.EffectSpec(
+            new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
+            "chiyogami/FX_arrow"), RoomCodes.BACKGROUND_EFFECT_LAYER,
+            /*new MsoyLocation(.5, 0, 0, 0)*/ null));
+        script.effects.add(new Script.EffectSpec(
+            new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
+            "chiyogami/FallBalls"), RoomCodes.FOREGROUND_EFFECT_LAYER,
+            /*new MsoyLocation(.5, 0, 0, 0)*/ null));
+        script.enterProse = "I'm all up in your room, screwing with your furni";
+        script.trashProse = "Mind if I take over? Hahahaha!";
+        script.startProse = "Ok... it's a dance off!";
+        script.deathBlowProse = "Oh! My liver! My spleen!";
+        script.victoryProse = "Ah ha! You were no match for me! I'm so great!";
+        script.defeatProse = "I think I sprained my pinky, I've got to go...";
+        script.exitProse = "I'm outta here.";
+        _scripts.add(script);
+
+        // sample: Hula Girl
+        script = new Script();
+        script.boss = new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.AVATAR,
+                    "chiyogami/HulaGirl");
+        script.bossName = "Pretty Little Pyro";
+        script.music = new StaticMediaDesc(MediaDesc.AUDIO_MPEG, Item.AUDIO,
+                    "chiyogami/18-Jay-R_MyOtherCarBeatle");
+        script.battleTime = 4*60 + 52;
+        script.games.add(new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH,
+                    Item.GAME, "chiyogami/Match3"));
+        script.games.add(new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH,
+                    Item.GAME, "chiyogami/KeyJam"));
+        script.effects.add(new Script.EffectSpec(
+            new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
+            "chiyogami/FX_arrow"), RoomCodes.BACKGROUND_EFFECT_LAYER,
+            /*new MsoyLocation(.5, 0, 0, 0)*/ null));
+        script.effects.add(new Script.EffectSpec(
+            new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.FURNITURE,
+            "chiyogami/FallBalls"), RoomCodes.FOREGROUND_EFFECT_LAYER,
+            /*new MsoyLocation(.5, 0, 0, 0)*/ null));
+        script.enterProse = "Hello there..";
+        script.trashProse = "Cute place, but I'd better burn it down anyway.";
+        script.startProse = "Oh? You'll have to outdance me to stop me!";
+        script.deathBlowProse = "I feel my internal flame a'flickering...";
+        script.victoryProse = "Oh, I'm going to love redecorating.";
+        script.defeatProse = "That wasn't fair! You cheated! You... must have...";
+        script.exitProse = "Aloha!";
+        _scripts.add(script);
+    }
 
     /** Listens to the room we're boom-chikka-ing. */
     protected RoomListener _roomListener = new RoomListener();
@@ -938,12 +1107,6 @@ public class ChiyogamiManager extends GameManager
     /** The sceneId of the game. */
     protected int _sceneId;
 
-    /** The music picked for the battle. */
-    protected Audio _music;
-
-    // TEMP: currently music may be null, so this is needed
-    protected boolean _musicPicked;
-
     /** The room manager. */
     protected RoomManager _roomMgr;
 
@@ -955,6 +1118,9 @@ public class ChiyogamiManager extends GameManager
 
     /** Set after the BATTLE phase. */
     protected boolean _bossWon;
+
+    /** The script we've chosen for a battle. */
+    protected Script _script;
 
     /** The currently displayed effects. */
     protected ArrayList<EffectData> _effects = new ArrayList<EffectData>();
@@ -977,10 +1143,4 @@ public class ChiyogamiManager extends GameManager
 
     /** playerOid -> submitted tags. */
     protected HashIntMap<String> _playerTags = new HashIntMap<String>();
-
-    /** TEMP: The filenames of current boss avatars. */
-    protected static final String[] BOSSES = { "bboy", "HulaGirl" };
-
-    /** The maximum length of time we'll go before we end the song. */
-    protected static final int MAX_SONG_LENGTH = 5 * 60 * 1000;
 }
