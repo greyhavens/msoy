@@ -737,8 +737,9 @@
       <include name="com/whirled/**"/>
     </jar>
     <!-- and all of our configuration and media in another -->
-    <jar file="${deploy.dir}/${app.name}-media.jar"
-         basedir="${classes.dir}" includes="rsrc/**"/>
+    <jar file="${deploy.dir}/${app.name}-media.jar" basedir="${classes.dir}" includes="rsrc/**"/>
+    <!-- and our server-only data in yet another -->
+    <jar file="${deploy.dir}/${app.name}-data.jar" basedir="." includes="data/dictionary/**"/>
   </target>
 
   <!-- builds top-level flash applications. -->

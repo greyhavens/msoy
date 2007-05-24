@@ -159,9 +159,6 @@ public class MsoyServer extends WhirledServer
     /** Handles our cuddly little pets. */
     public static PetManager petMan = new PetManager();
 
-    /** Handles word lookup services */
-    public static DictionaryManager dictionary;
-
     /** All blocking Swiftly subversion actions must occur on this thread. */
     public static Invoker swiftlyInvoker;
 
@@ -460,13 +457,14 @@ public class MsoyServer extends WhirledServer
         petMan.init(invmgr);
         lobbyReg.init(invmgr);
         worldGameReg.init(invmgr);
+
         GameCookieManager.init(conProv, new GameCookieManager.UserIdentifier() {
             public int getUserId (ClientObject cliObj) {
                 // will return 0 for guests..
                 return ((MemberObject) cliObj).getMemberId();
             }
         });
-        dictionary.init(new File(ServerConfig.serverRoot, "data/dictionary"));
+        DictionaryManager.init("data/dictionary");
 
         sceneRepo.finishInit();
 
