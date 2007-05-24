@@ -96,18 +96,25 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(button);
         }
 
-        if (FlashClients.clientExists()) {
+        byte type = _detail.item.getType();
+        if (type != Item.DECOR && type != Item.AUDIO && FlashClients.clientExists()) {
             _details.add(WidgetUtil.makeShim(1, 10));
-            HorizontalPanel horz = new HorizontalPanel();
-            horz.add(new Label(CInventory.msgs.detailAddToRoom()));
-            button = new Button("-->");
-            button.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    // TODO
-                }
-            });
-            horz.add(button);
-            _details.add(horz);
+            if (type == Item.AVATAR) { 
+                button = new Button(CInventory.msgs.detailUseAvatar());
+                button.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        // TODO
+                    }
+                });
+            } else {
+                button = new Button(CInventory.msgs.detailAddToRoom());
+                button.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        // TODO
+                    }
+                });
+            }
+            _details.add(button);
         }
 
         // TODO: When catalog browsing is fully URL-friendly, browsing catalog by creator from here

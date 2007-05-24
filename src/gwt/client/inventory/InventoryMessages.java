@@ -72,6 +72,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String doListRarityNormal();
 
   /**
+   * Translated "Use this avatar ".
+   * 
+   * @return translated "Use this avatar "
+   * @gwt.key detailUseAvatar
+   */
+  String detailUseAvatar();
+
+  /**
    * Translated "Create new...".
    * 
    * @return translated "Create new..."
@@ -96,9 +104,9 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String detailEdit();
 
   /**
-   * Translated "Add item to current room: ".
+   * Translated "Add item to current room ".
    * 
-   * @return translated "Add item to current room: "
+   * @return translated "Add item to current room "
    * @gwt.key detailAddToRoom
    */
   String detailAddToRoom();
