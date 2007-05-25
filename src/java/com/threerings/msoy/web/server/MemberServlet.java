@@ -158,7 +158,7 @@ public class MemberServlet extends MsoyServiceServlet
             }
             
         } else {
-            friends = Collections.EMPTY_LIST;
+            friends = Collections.emptyList();
         }
 
         // then proceed to the dobj thread to get runtime state
