@@ -698,7 +698,9 @@ public class RoomController extends SceneController
         }(item);
 
         if (item.isUsed()) {
-            (new FurniUsedDialog(_mctx, addToRoomClosure)).open(true);
+            // TEMP for release
+            _mctx.displayInfo("editing", "e.furni_used");
+            //(new FurniUsedDialog(_mctx, addToRoomClosure)).open(true);
         } else {
             addToRoomClosure();
         }
