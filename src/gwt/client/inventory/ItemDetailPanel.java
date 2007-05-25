@@ -112,7 +112,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 button.addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
                         Page.closePage();
-                        FlashClients.addFurni(_detail.item.itemId);
+                        FlashClients.addFurni(_detail.item.itemId, _detail.item.getType());
                     }
                 });
             }

@@ -336,11 +336,11 @@ public class WorldClient extends BaseClient
     /**
      * Exposed to javascript so that the it may tell us to add furni to the current room.
      */ 
-    protected function externalAddFurni (itemId :int) :void
+    protected function externalAddFurni (itemId :int, itemType :int) :void
     {
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
         if (view != null) {
-            view.getRoomController().addFurni(itemId);
+            view.getRoomController().addFurni(itemId, itemType);
         }
     }
 

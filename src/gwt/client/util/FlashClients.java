@@ -135,9 +135,9 @@ public class FlashClients
      * current room.  If there is a reason that we can't do this, it is handled by the 
      * actionscript client.
      */
-    public static void addFurni (int itemId) 
+    public static void addFurni (int itemId, byte itemType) 
     {
-        addFurniNative(itemId);
+        addFurniNative(itemId, itemType);
     }
 
     /**
@@ -224,10 +224,10 @@ public class FlashClients
     /**
      * Does the actual <code>addFurni()</code> call.
      */
-    protected static native void addFurniNative (int itemId) /*-{
+    protected static native void addFurniNative (int itemId, byte itemType) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.addFurni(itemId);
+            client.addFurni(itemId, itemType);
         }
     }-*/;
 

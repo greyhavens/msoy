@@ -47,7 +47,6 @@ import com.threerings.crowd.util.CrowdContext;
 import com.threerings.whirled.client.SceneController;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneUpdate;
-import com.threerings.whirled.util.WhirledContext;
 
 import com.threerings.ezgame.util.EZObjectMarshaller;
 
@@ -62,12 +61,15 @@ import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.world.client.MsoySprite;
+import com.threerings.msoy.world.client.updates.FurniUpdateAction;
 import com.threerings.msoy.world.client.updates.UpdateAction;
 import com.threerings.msoy.world.client.updates.UpdateStack;
 import com.threerings.msoy.world.client.editor.DoorTargetEditController;
@@ -594,9 +596,11 @@ public class RoomController extends SceneController
      * This is called from javascript to add a piece of furni to the room from the inventory
      * browsing interface.
      */
-    public function addFurni (itemId :int) :void
+    public function addFurni (itemId :int, itemType :int) :void
     {
-        if (!isRoomEditing()) {
+        if (isRoomEditing()) {
+            addInsuredFurni(itemId, itemType);   
+        } else {
             var scene :MsoyScene = _mctx.getSceneDirector().getScene() as 
                 MsoyScene;
             if (scene != null && scene.canEdit(_mctx.getMemberObject())) {
@@ -611,15 +615,79 @@ public class RoomController extends SceneController
                     validListener = function (evt :ValueEvent) :void {
                         beginRoomEditing(btn);
                         ctrlBar.removeEventListener(ControlBar.DISPLAY_LIST_VALID, validListener);
+                        addInsuredFurni(itemId, itemType);
                     };
                     ctrlBar.addEventListener(ControlBar.DISPLAY_LIST_VALID, validListener);
                 } else {
                     beginRoomEditing(btn);
+                    addInsuredFurni(itemId, itemType);
                 }
             } else {
                 // TODO: error dialog - no permissions for room editing
             }
         }
+    }
+
+    /**
+     * insures that the given item type has been loaded on this user's MemberObject
+     */
+    protected function addInsuredFurni (itemId :int, itemType :int) :void
+    {
+        var member :MemberObject = _mctx.getMemberObject();
+        if (member.isInventoryLoaded(itemType)) {
+            checkAndAddFurni(itemId, member.getItems(itemType));
+        } else {
+            member.addListener(new LoadedInventoryAdapter(function () :void {
+                checkAndAddFurni(itemId, member.getItems(itemType));
+            }));
+            _mctx.getItemDirector().loadInventory(itemType);
+        }
+    }
+
+    /** 
+     * Checks to see if this furni is used elsewhere, and adds it to the scene.
+     */
+    protected function checkAndAddFurni (furniId :int, items :Array) :void
+    {
+        // when this function is called, it is gauranteed that the editor has been opened, and 
+        // this item type has been loaded on the member object
+
+        // make sure the editor is *still* open
+        if (!isRoomEditing()) {
+            return;
+        }
+        
+        var item :Item = null;
+        for (var ii :int = 0; ii < items.length; ii++) {
+            if (items[ii].itemId == furniId) {
+                item = items[ii];
+                break;
+            }
+        }
+        if (item == null) {
+            // didn't find the item
+            return;
+        }
+
+        if (item.isUsed()) {
+            // TODO: dialog giving option to remove from current location
+            return;
+        } 
+        // create a generic furniture descriptor
+        var furni :FurniData = new FurniData();
+        furni.id = _scene.getNextFurniId(0);
+        furni.itemType = item.getType();
+        furni.itemId = item.itemId;
+        furni.media = item.getFurniMedia();
+        // create it at the front of the scene, centered on the floor
+        furni.loc = new MsoyLocation(0.5, 0, 0);
+        if (item is Game) {
+            var game :Game = (item as Game);
+            furni.actionType = game.isInWorld() ?
+                FurniData.ACTION_WORLD_GAME : FurniData.ACTION_LOBBY_GAME;
+            furni.actionData = String(game.getPrototypeId()) + ":" + game.name;
+        }
+        applyUpdate(new FurniUpdateAction(_mctx, null, furni));
     }
 
     /**
@@ -1202,6 +1270,11 @@ public class RoomController extends SceneController
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
+import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
+
+import com.threerings.msoy.data.MemberObject;
+
 import com.threerings.msoy.world.client.RoomElement;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomCodes;
@@ -1261,4 +1334,23 @@ class WalkTarget extends Sprite
 
     [Embed(source="../../../../../../../rsrc/media/flyable.swf")]
     protected static const FLYTARGET :Class;
+}
+
+class LoadedInventoryAdapter 
+    implements AttributeChangeListener
+{
+    public function LoadedInventoryAdapter (callback :Function) 
+    {
+        _callback = callback;
+    }
+
+    // from AttributeChangeListener
+    public function attributeChanged (evt :AttributeChangedEvent) :void
+    {
+        if (evt.getName() == MemberObject.LOADED_INVENTORY) {
+            _callback();
+        }
+    }
+
+    protected var _callback :Function;
 }
