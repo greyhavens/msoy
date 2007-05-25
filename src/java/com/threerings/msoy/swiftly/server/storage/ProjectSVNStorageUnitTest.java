@@ -94,6 +94,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
         throws Exception
     {
         ProjectStorage storage = new ProjectSVNStorage(_project, _storageRecord);
+        assertTrue(storage != null);
     }
 
 

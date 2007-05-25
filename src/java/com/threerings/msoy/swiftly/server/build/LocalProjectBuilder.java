@@ -12,15 +12,11 @@ import com.threerings.msoy.swiftly.data.FlexCompilerOutput;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
-
-import java.util.Map;
 
 import static com.threerings.msoy.Log.log;
 

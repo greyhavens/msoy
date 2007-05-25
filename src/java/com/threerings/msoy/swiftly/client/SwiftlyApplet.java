@@ -21,7 +21,6 @@ import javax.swing.plaf.basic.BasicBorders;
 import com.samskivert.util.Config;
 import com.samskivert.util.Interval;
 import com.samskivert.util.OneLineLogFormatter;
-import com.samskivert.util.RunAnywhere;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
 import com.samskivert.swing.util.SwingUtil;

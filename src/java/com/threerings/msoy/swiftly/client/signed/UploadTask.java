@@ -20,7 +20,6 @@ import com.threerings.util.MessageBundle;
 
 import com.samskivert.swing.util.TaskAdapter;
 
-import com.threerings.msoy.swiftly.client.ProjectPanel;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;

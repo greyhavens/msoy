@@ -1,7 +1,5 @@
 package com.threerings.msoy.swiftly.client;
 
-import java.awt.Component;
-
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;

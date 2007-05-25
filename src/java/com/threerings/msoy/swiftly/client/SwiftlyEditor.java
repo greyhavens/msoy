@@ -23,6 +23,7 @@ import javax.swing.JSplitPane;
 
 import sdoc.Gutter;
 
+import com.samskivert.swing.GroupLayout;
 import com.samskivert.swing.HGroupLayout;
 import com.samskivert.swing.VGroupLayout;
 import com.samskivert.util.StringUtil;
@@ -75,12 +76,12 @@ public class SwiftlyEditor extends PlacePanel
                             "/avatarviewer.swf?avatar=";
 
         setLayout(new VGroupLayout(
-                      VGroupLayout.STRETCH, VGroupLayout.STRETCH, 5, VGroupLayout.TOP));
+                      GroupLayout.STRETCH, GroupLayout.STRETCH, 5, GroupLayout.TOP));
         // let's not jam ourselves up against the edges of the window
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // add our toolbar
-        add(_toolbar = new EditorToolBar(ctrl, _ctx, this), VGroupLayout.FIXED);
+        add(_toolbar = new EditorToolBar(ctrl, _ctx, this), GroupLayout.FIXED);
 
         // set up the left pane: the tabbed editor
         _editorTabs = new TabbedEditor(_ctx, this);
@@ -91,10 +92,10 @@ public class SwiftlyEditor extends PlacePanel
         _projectPanel.setMinimumSize(new Dimension(200, 200));
 
         JPanel chatPanel = new JPanel(
-            new HGroupLayout(HGroupLayout.STRETCH, HGroupLayout.STRETCH, 5, HGroupLayout.LEFT));
+            new HGroupLayout(GroupLayout.STRETCH, GroupLayout.STRETCH, 5, GroupLayout.LEFT));
         chatPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         OccupantList ol;
-        chatPanel.add(ol = new OccupantList(_ctx), HGroupLayout.FIXED);
+        chatPanel.add(ol = new OccupantList(_ctx), GroupLayout.FIXED);
         ol.setPreferredSize(new Dimension(50, 0));
         chatPanel.add(new ChatPanel(_ctx, false));
         chatPanel.setMinimumSize(new Dimension(0, 0));
@@ -434,7 +435,7 @@ public class SwiftlyEditor extends PlacePanel
         // TODO: if that document is still open FREAK OUT. Server is going to refcount so shouldn't
         // ever happen.
         if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
-            final int elementId = (Integer)event.getKey();
+            // final int elementId = (Integer)event.getKey();
         }
     }
 

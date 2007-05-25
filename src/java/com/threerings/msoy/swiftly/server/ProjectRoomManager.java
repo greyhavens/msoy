@@ -7,9 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -17,8 +15,6 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.SerialExecutor;
 import com.samskivert.util.HashIntMap;
-import com.threerings.util.MessageBundle;
-
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
@@ -44,14 +40,12 @@ import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
-import com.threerings.msoy.swiftly.data.SwiftlyBinaryDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.swiftly.server.build.LocalProjectBuilder;
-import com.threerings.msoy.swiftly.server.build.ProjectBuilderException;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 

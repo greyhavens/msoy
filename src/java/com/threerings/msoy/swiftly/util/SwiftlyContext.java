@@ -8,9 +8,6 @@ import java.applet.AppletContext;
 import com.threerings.crowd.util.CrowdContext;
 import com.threerings.util.MessageManager;
 
-import com.threerings.msoy.swiftly.client.PassiveNotifier;
-import com.threerings.msoy.swiftly.client.SwiftlyEditor;
-
 /**
  * Provides necessary services, and juicy goodness.
  */

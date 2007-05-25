@@ -7,8 +7,6 @@ import java.awt.Component;
 import java.awt.Font;
 
 import javax.swing.JTree;
-import javax.swing.tree.DefaultTreeCellRenderer;
-
 import org.jvnet.substance.SubstanceDefaultTreeCellRenderer;
 
 import com.threerings.msoy.swiftly.data.PathElement;

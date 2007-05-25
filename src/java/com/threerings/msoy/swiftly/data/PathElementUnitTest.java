@@ -15,7 +15,9 @@ public class PathElementUnitTest extends TestCase
     public void testGetAbsolutePath ()
     {
         PathElement root = PathElement.createRoot("Project Name");
-        PathElement parent = PathElement.createDirectory("Directory", null);
+        assertEquals("", root.getAbsolutePath());
+        
+        PathElement parent = PathElement.createDirectory("Directory", root);
         PathElement child = PathElement.createFile("File", parent, "text/plain");
         
         assertEquals("/Directory/File", child.getAbsolutePath());

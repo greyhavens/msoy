@@ -25,12 +25,9 @@ import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import com.samskivert.swing.MultiLineLabel;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Allows Swiftly to be run from the command line. Expected arguments:
@@ -47,6 +44,7 @@ public class SwiftlyStandAlone
         JFrame frame = new JFrame("Swiftly Applet Test Window");
         frame.addWindowListener (new WindowAdapter()
         {
+            @Override
             public void windowClosing (WindowEvent event)
             {
                 applet.stop();

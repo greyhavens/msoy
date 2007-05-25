@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.swiftly.server.build;
 
-import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
@@ -20,7 +19,6 @@ import junit.framework.TestCase;
 
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.CompilerOutput;
-import com.threerings.msoy.swiftly.data.FlexCompilerOutput;
 
 public class LocalProjectBuilderUnitTest extends TestCase
 {
@@ -64,12 +62,15 @@ public class LocalProjectBuilderUnitTest extends TestCase
     public void testBuild ()
         throws Exception
     {
-        BuildResult result;
-
         ProjectBuilder builder = new LocalProjectBuilder(_project, _storage,
             FLEX_SDK_DIR.getAbsoluteFile(), WHIRLED_SDK_DIR.getAbsoluteFile());
-        result = builder.build(_tempDir);
-        // XXX test the output here
+        BuildResult result = builder.build(_tempDir);
+        for (CompilerOutput output : result.getOutput()) {
+            // no output should be displayed if the build worked
+            assertEquals("", output);    
+        }
+        assertTrue(result.buildSuccessful());
+        // TODO: test broken build output
     }
 
     /** Temporary test directory. */
