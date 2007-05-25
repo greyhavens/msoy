@@ -36,6 +36,8 @@ import com.threerings.msoy.client.notifications.NotificationHandler;
 
 import com.threerings.msoy.game.client.FloatingTableDisplay;
 
+import com.threerings.msoy.world.client.RoomView;
+
 public class TopPanel extends Canvas 
     implements LocationObserver
 {
@@ -184,6 +186,7 @@ public class TopPanel extends Canvas
         removeChild(_headerBar);
         removeChild(_placeBox);
         layoutPanels();
+        updatePlaceViewChatOverlay();
         return _placeBox;
     }
 
@@ -200,6 +203,7 @@ public class TopPanel extends Canvas
         }
         addChild(_headerBar);
         addChildAt(_placeBox, 0);
+        updatePlaceViewChatOverlay();
         layoutPanels();
     }
 
@@ -217,6 +221,7 @@ public class TopPanel extends Canvas
     public function setPlaceView (view :PlaceView) :void
     {
         _placeBox.setPlaceView(view);
+        updatePlaceViewChatOverlay();
         updatePlaceViewSize();
     }
 
@@ -440,6 +445,17 @@ public class TopPanel extends Canvas
         }
 
         updatePlaceViewSize();
+    }
+
+    /**
+     * Check to see if the placeview should be using its own chat overlay.
+     */
+    protected function updatePlaceViewChatOverlay () :void
+    {
+        var pv :PlaceView = getPlaceView();
+        if (pv is RoomView) {
+            (pv as RoomView).setUseChatOverlay(_placeBox.parent == this);
+        }
     }
 
     protected function updatePlaceViewSize () :void

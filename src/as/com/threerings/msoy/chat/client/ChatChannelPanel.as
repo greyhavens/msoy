@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.chat.client {
 
+import flash.display.DisplayObject;
+
 import mx.core.mx_internal;
 
 import mx.containers.HBox;
@@ -66,13 +68,8 @@ public class ChatChannelPanel extends VBox
      */
     public function findChatDisplay (channel :ChatChannel) :ChatDisplay
     {
-        for (var ii :int = 0; ii < _tabnav.numChildren; ii++) {
-            var ctab :ChatTab = (_tabnav.getChildAt(ii) as ChatTab);
-            if (ctab is ChannelChatTab && (ctab as ChannelChatTab).channel.equals(channel)) {
-                return (ctab as ChannelChatTab).getOverlay();
-            }
-        }
-        return null;
+        var tab :ChannelChatTab = findChatTab(channel);
+        return (tab == null) ? null : tab.getOverlay();
     }
 
     /**
@@ -81,16 +78,7 @@ public class ChatChannelPanel extends VBox
     public function getChatDisplay (
         channel :ChatChannel, history :HistoryList, select :Boolean) :ChatDisplay
     {
-        var tabidx :int = -1;
-        var tab :ChannelChatTab = null;
-        for (var ii :int = 0; ii < _tabnav.numChildren; ii++) {
-            var ctab :ChatTab = (_tabnav.getChildAt(ii) as ChatTab);
-            if (ctab is ChannelChatTab && (ctab as ChannelChatTab).channel.equals(channel)) {
-                tab = (ctab as ChannelChatTab);
-                tabidx = ii;
-                break;
-            }
-        }
+        var tab :ChannelChatTab = findChatTab(channel);
 
         // create a new tab if we did not find one already in use
         if (tab == null) {
@@ -98,13 +86,12 @@ public class ChatChannelPanel extends VBox
             tab.label = channel.ident.toString();
             tab.getOverlay().setHistory(history);
             tab.init((_ctx.getChatDirector() as MsoyChatDirector).getChannelObject(channel));
-            tabidx = _tabnav.numChildren;
             _tabnav.addChild(tab);
         }
 
         // select this tab if requested
         if (select) {
-            _tabnav.selectedIndex = tabidx;
+            _tabnav.selectedChild = tab;
         }
 
         // if we're not visible, add ourselves
@@ -121,6 +108,20 @@ public class ChatChannelPanel extends VBox
         }
 
         return tab.getOverlay();
+    }
+
+    /**
+     * Find the ChannelChatTab instance being used for the specified ChatChannel.
+     */
+    protected function findChatTab (channel :ChatChannel) :ChannelChatTab
+    {
+        for (var ii :int = _tabnav.numChildren - 1; ii >= 0; ii--) {
+            var tab :ChannelChatTab = _tabnav.getChildAt(ii) as ChannelChatTab;
+            if (tab != null && tab.channel.equals(channel)) {
+                return tab;
+            }
+        }
+        return null;
     }
 
     protected function tabRemoved (event :ChildExistenceChangedEvent) :void

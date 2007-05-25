@@ -4,6 +4,7 @@
 package com.threerings.msoy.chat.client {
 
 import mx.core.Container;
+import mx.core.ScrollPolicy;
 
 import com.threerings.msoy.client.WorldContext;
 
@@ -16,6 +17,9 @@ public class ChatTab extends Container
     {
         styleName = "channelChatTab";
         _ctx = ctx;
+
+        horizontalScrollPolicy = ScrollPolicy.OFF;
+        verticalScrollPolicy = ScrollPolicy.OFF;
     }
 
     public function sendChat (message :String) :void

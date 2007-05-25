@@ -201,7 +201,7 @@ public class ChatOverlay
      */
     public function setClickableGlyphs (clickable :Boolean) :void
     {
-//        _overlay.alpha = clickable ? 1 : ALPHA;
+        //_overlay.mouseEnabled = clickable;
         _overlay.mouseChildren = clickable;
     }
 

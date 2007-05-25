@@ -64,7 +64,8 @@ public class AvatarActionHandler extends CommandHandler
 
     /**
      * Find the action in the specified array that is the best match for the supplied arg.
-     * The strings are compared case-insensitively and the 
+     * The best match is the first action containing the case-insensitive arg at the
+     * earliest position.
      */
     protected function findBestMatch (arg :String, actions :Array) :String
     {

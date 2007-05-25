@@ -189,6 +189,15 @@ public class RoomView extends AbstractRoomView
         _jumpScroll = fastCentering;
     }
 
+    /**
+     * Sets whether or not to use the chat overlay.
+     */
+    public function setUseChatOverlay (useChatOverlay :Boolean) :void
+    {
+        _useChatOverlay = useChatOverlay;
+        recheckChatOverlay();
+    }
+
     public function dimAvatars (setDim :Boolean) :void
     {
         setActive(_actors, !setDim);
@@ -465,7 +474,7 @@ public class RoomView extends AbstractRoomView
     // from interface PlaceView
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
-        // set load-all to false, as we're going to
+        // set load-all to false, as we're going to just load the decor item first.
         _loadAllMedia = false;
 
         super.willEnterPlace(plobj);
@@ -475,9 +484,7 @@ public class RoomView extends AbstractRoomView
 
         _roomObj.addListener(this);
 
-        _ctx.getChatDirector().addChatDisplay(chatOverlay);
-        chatOverlay.newPlaceEntered(this);
-        chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
+        recheckChatOverlay();
 
         addAllOccupants();
 
@@ -513,8 +520,7 @@ public class RoomView extends AbstractRoomView
 
         super.didLeavePlace(plobj);
 
-        _ctx.getChatDirector().removeChatDisplay(chatOverlay);
-        chatOverlay.setTarget(null);
+        recheckChatOverlay();
 
         setLoading(false);
     }
@@ -572,6 +578,22 @@ public class RoomView extends AbstractRoomView
             for each (var effect :EffectData in _roomObj.effects.toArray()) {
                 updateEffect(effect);
             }
+        }
+    }
+
+    /**
+     * Re-check whether we should be using our overlay.
+     */
+    protected function recheckChatOverlay () :void
+    {
+        if (_roomObj != null && _useChatOverlay) {
+            _ctx.getChatDirector().addChatDisplay(chatOverlay);
+            chatOverlay.newPlaceEntered(this);
+            chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
+
+        } else {
+            _ctx.getChatDirector().removeChatDisplay(chatOverlay);
+            chatOverlay.setTarget(null);
         }
     }
 
@@ -896,6 +918,9 @@ public class RoomView extends AbstractRoomView
 
     /** A map of bodyOid -> ActorSprite for those that we'll remove when they stop moving. */
     protected var _pendingRemovals :HashMap = new HashMap();
+
+    /** Should we be using our chat overlay? */
+    protected var _useChatOverlay :Boolean = true;
 
     /** If true, the scrolling should simply jump to the right position. */
     protected var _jumpScroll :Boolean = true;
