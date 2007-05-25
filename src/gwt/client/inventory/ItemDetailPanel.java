@@ -101,12 +101,12 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         if (type != Item.DECOR && type != Item.AUDIO && FlashClients.inRoom()) {
             _details.add(WidgetUtil.makeShim(1, 10));
             if (type == Item.AVATAR) { 
-                button = new Button(CInventory.msgs.detailUseAvatar());
+                /*button = new Button(CInventory.msgs.detailUseAvatar());
                 button.addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
                         // TODO
                     }
-                });
+                });*/
             } else {
                 button = new Button(CInventory.msgs.detailAddToRoom());
                 button.addClickListener(new ClickListener() {
