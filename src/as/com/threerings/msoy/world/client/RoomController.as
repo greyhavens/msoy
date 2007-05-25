@@ -75,6 +75,7 @@ import com.threerings.msoy.world.client.updates.UpdateStack;
 import com.threerings.msoy.world.client.editor.DoorTargetEditController;
 import com.threerings.msoy.world.client.editor.RoomEditPanel;
 import com.threerings.msoy.world.client.editor.EditorController;
+import com.threerings.msoy.world.client.editor.FurniUsedDialog;
 
 import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.EffectData;
@@ -669,25 +670,38 @@ public class RoomController extends SceneController
             return;
         }
 
+        // create a real closure, to prevent problems if the user is crazy, and decides to add
+        // more furni while the FurniUsedDialog is up
+        var addToRoomClosure :Function = function (lItem :Item) :Function {
+            return function () :void {
+                if (lItem.isUsed()) {
+                    // the user has already been warned; it will be removed from its previous 
+                    // location
+                    // TODO: best approach??
+                }
+                // create a generic furniture descriptor
+                var furni :FurniData = new FurniData();
+                furni.id = _scene.getNextFurniId(0);
+                furni.itemType = lItem.getType();
+                furni.itemId = lItem.itemId;
+                furni.media = lItem.getFurniMedia();
+                // create it at the front of the scene, centered on the floor
+                furni.loc = new MsoyLocation(0.5, 0, 0);
+                if (lItem is Game) {
+                    var game :Game = (lItem as Game);
+                    furni.actionType = game.isInWorld() ?
+                        FurniData.ACTION_WORLD_GAME : FurniData.ACTION_LOBBY_GAME;
+                    furni.actionData = String(game.getPrototypeId()) + ":" + game.name;
+                }
+                applyUpdate(new FurniUpdateAction(_mctx, null, furni));
+            }
+        }(item);
+
         if (item.isUsed()) {
-            // TODO: dialog giving option to remove from current location
-            return;
-        } 
-        // create a generic furniture descriptor
-        var furni :FurniData = new FurniData();
-        furni.id = _scene.getNextFurniId(0);
-        furni.itemType = item.getType();
-        furni.itemId = item.itemId;
-        furni.media = item.getFurniMedia();
-        // create it at the front of the scene, centered on the floor
-        furni.loc = new MsoyLocation(0.5, 0, 0);
-        if (item is Game) {
-            var game :Game = (item as Game);
-            furni.actionType = game.isInWorld() ?
-                FurniData.ACTION_WORLD_GAME : FurniData.ACTION_LOBBY_GAME;
-            furni.actionData = String(game.getPrototypeId()) + ":" + game.name;
+            (new FurniUsedDialog(_mctx, addToRoomClosure)).open(true);
+        } else {
+            addToRoomClosure();
         }
-        applyUpdate(new FurniUpdateAction(_mctx, null, furni));
     }
 
     /**
