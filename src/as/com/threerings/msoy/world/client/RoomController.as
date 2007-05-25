@@ -623,7 +623,7 @@ public class RoomController extends SceneController
                     addInsuredFurni(itemId, itemType);
                 }
             } else {
-                // TODO: error dialog - no permissions for room editing
+                _mctx.displayInfo("editing", "e.no_permission");
             }
         }
     }
