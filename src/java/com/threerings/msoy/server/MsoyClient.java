@@ -19,9 +19,11 @@ import com.threerings.whirled.server.WhirledClient;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
+import com.threerings.msoy.data.FriendStatusChangeNotification;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
 import static com.threerings.msoy.Log.log;
@@ -82,6 +84,8 @@ public class MsoyClient extends WhirledClient
             return;
         }
 
+        notifyFriendsOfLogoff();
+
         // clean up logged-on data for this member
         MsoyServer.clearMember(_memobj);
 
@@ -126,6 +130,40 @@ public class MsoyClient extends WhirledClient
             MsoyServer.worldGameReg.leaveWorldGame((MemberObject)bobj);
         } catch (InvocationException e) {
             // a warning will have already been logged
+        }
+    }
+
+    /**
+     * Notify any friends of ours that we're now offline.
+     */
+    protected void notifyFriendsOfLogoff ()
+    {
+        // Notify all friends that we're now offline
+        FriendStatusChangeNotification notification = null;
+        for (FriendEntry entry : _memobj.friends) {
+            if (entry.online) {
+                // look up online friends..
+                MemberObject friendObj = MsoyServer.lookupMember(entry.name);
+                if (friendObj == null) {
+                    log.warning("Online friend not really online? [us=" + _memobj.memberName +
+                        ", them=" + entry.name + "].");
+                    continue;
+                }
+                FriendEntry userEntry = friendObj.friends.get(_memobj.getMemberId());
+                if (userEntry == null) {
+                    log.warning("Our friend doesn't know us? [us=" + _memobj.memberName +
+                        ", them=" + entry.name + "].");
+                    continue;
+                }
+                // update their friendEntry
+                userEntry.online = false;
+                friendObj.updateFriends(userEntry);
+                // and notify them (lazy-init the notification and re-use for all friends)
+                if (notification == null) {
+                    notification = new FriendStatusChangeNotification(_memobj.memberName, false);
+                }
+                friendObj.notify(notification);
+            }
         }
     }
     
