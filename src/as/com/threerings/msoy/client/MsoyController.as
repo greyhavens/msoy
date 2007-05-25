@@ -676,8 +676,12 @@ public class MsoyController extends Controller
     {
         // TODO: ideally, we use MessageBundle.getAll(), but we can't currently
         // get all the keys from a resource bundle...
-        var numTips :int = parseInt(Msgs.GENERAL.get("n.tip_count"));
-        _ctx.displayInfo("general", "m.tip_" + int(1 + (Math.random() * numTips)));
+        try {
+            var numTips :int = StringUtil.parseInteger(Msgs.GENERAL.get("n.tip_count"));
+            _ctx.displayInfo("general", "m.tip_" + int(1 + (Math.random() * numTips)));
+        } catch (err :Error) {
+            // just omit the tip
+        }
 
         // we are now done with this timer..
         _tipTimer = null;
