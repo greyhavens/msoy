@@ -176,6 +176,11 @@ public class MsoyChatDirector extends ChatDirector
         }
     }
 
+    override protected function suppressTooManyCaps () :Boolean
+    {
+        return false;
+    }
+
     /**
      * Maps the supplied chat message to the (translatable string) name of a chat channel. Returns
      * null if the message is from the current room rather than a chat channel.
