@@ -3,10 +3,14 @@
 
 package com.threerings.msoy.world.client.editor {
 
+import flash.events.MouseEvent;
+
 import mx.core.ScrollPolicy;
 
+import mx.containers.HBox;
 import mx.containers.VBox;
 
+import mx.controls.Button;
 import mx.controls.TextArea;
 
 import com.threerings.msoy.client.Msgs;
@@ -46,6 +50,29 @@ public class FurniUsedDialog extends FloatingPanel
         content.addChild(text);
 
         // add buttons
+        var buttons :HBox = new HBox();
+        buttons.percentWidth = 100;
+        var button :Button = new Button();
+        button.label = Msgs.EDITING.get("b.furni_used_no");
+        button.addEventListener(MouseEvent.CLICK, onButton);
+        buttons.addChild(button);
+        var spacer :HBox = new HBox();
+        spacer.percentWidth = 100;
+        buttons.addChild(spacer);
+        button = new Button();
+        button.label = Msgs.EDITING.get("b.furni_used_yes");
+        button.addEventListener(MouseEvent.CLICK, onButton);
+        buttons.addChild(button);
+        content.addChild(buttons);
+    }
+
+    protected function onButton (evt :MouseEvent) :void
+    {
+        var button :Button = evt.target as Button;
+        if (button != null && button.label == Msgs.EDITING.get("b.furni_used_yes")) {
+            _yesClosure();
+        }
+        close();
     }
 
     protected var _yesClosure :Function;

@@ -599,49 +599,51 @@ public class RoomController extends SceneController
      */
     public function addFurni (itemId :int, itemType :int) :void
     {
-        if (isRoomEditing()) {
-            addInsuredFurni(itemId, itemType);   
+        var scene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
+        if (scene == null || !scene.canEdit(_mctx.getMemberObject())) {
+            _mctx.displayInfo("editing", "e.no_permission");
         } else {
-            var scene :MsoyScene = _mctx.getSceneDirector().getScene() as 
-                MsoyScene;
-            if (scene != null && scene.canEdit(_mctx.getMemberObject())) {
-                // the display list has often not yet been validated when we receive this call from
-                // the javascript - if that is the case, we need to wait until the control bar is
-                // set up with valid dimensions, so that the room edit dialog pops up in the correct
-                // location.
-                var ctrlBar :ControlBar = _mctx.getTopPanel().getControlBar();
-                var btn :CommandButton = ctrlBar.roomEditBtn;
-                if (btn.x == 0) {
-                    var validListener :Function;
-                    validListener = function (evt :ValueEvent) :void {
-                        beginRoomEditing(btn);
-                        ctrlBar.removeEventListener(ControlBar.DISPLAY_LIST_VALID, validListener);
-                        addInsuredFurni(itemId, itemType);
-                    };
-                    ctrlBar.addEventListener(ControlBar.DISPLAY_LIST_VALID, validListener);
-                } else {
-                    beginRoomEditing(btn);
-                    addInsuredFurni(itemId, itemType);
+            // function closure to check ensure that the given furni type has been loaded, and
+            // once it has, pass it along to checkAndAddFurni
+            var invLoader :Function = function (furniId :int, furniType :int) :Function {
+                return function () :void {
+                    var member :MemberObject = _mctx.getMemberObject();
+                    if (member.isInventoryLoaded(furniType)) {
+                        checkAndAddFurni(furniId, member.getItems(furniType));
+                    } else {
+                        var adapter :LoadedInventoryAdapter;
+                        adapter = new LoadedInventoryAdapter(function () :void {
+                            member.removeListener(adapter);
+                            checkAndAddFurni(furniId, member.getItems(furniType));
+                        });
+                        member.addListener(adapter);
+                        _mctx.getItemDirector().loadInventory(furniType);
+                    }
                 }
-            } else {
-                _mctx.displayInfo("editing", "e.no_permission");
-            }
-        }
-    }
+            }(itemId, itemType);
 
-    /**
-     * insures that the given item type has been loaded on this user's MemberObject
-     */
-    protected function addInsuredFurni (itemId :int, itemType :int) :void
-    {
-        var member :MemberObject = _mctx.getMemberObject();
-        if (member.isInventoryLoaded(itemType)) {
-            checkAndAddFurni(itemId, member.getItems(itemType));
-        } else {
-            member.addListener(new LoadedInventoryAdapter(function () :void {
-                checkAndAddFurni(itemId, member.getItems(itemType));
-            }));
-            _mctx.getItemDirector().loadInventory(itemType);
+            // The display list has often not yet been validated when we receive this call from the 
+            // javascript (since the display was just resized) - if that is the case, we need to 
+            // wait until the control bar is set up with valid dimensions, so that new dialogs get 
+            // popped up in the correct locations.
+            var ctrlBar :ControlBar = _mctx.getTopPanel().getControlBar();
+            var btn :CommandButton = ctrlBar.roomEditBtn;
+            if (btn.x == 0) {
+                var validListener :Function;
+                validListener = function (evt :ValueEvent) :void {
+                    ctrlBar.removeEventListener(ControlBar.DISPLAY_LIST_VALID, validListener);
+                    if (!isRoomEditing()) {
+                        beginRoomEditing(btn);
+                    }
+                    invLoader();
+                };
+                ctrlBar.addEventListener(ControlBar.DISPLAY_LIST_VALID, validListener);
+            } else {
+                if (!isRoomEditing()) {
+                    beginRoomEditing(btn);
+                }
+                invLoader();
+            }
         }
     }
 
@@ -650,10 +652,7 @@ public class RoomController extends SceneController
      */
     protected function checkAndAddFurni (furniId :int, items :Array) :void
     {
-        // when this function is called, it is gauranteed that the editor has been opened, and 
-        // this item type has been loaded on the member object
-
-        // make sure the editor is *still* open
+        // make sure the editor is still open
         if (!isRoomEditing()) {
             return;
         }
@@ -670,8 +669,8 @@ public class RoomController extends SceneController
             return;
         }
 
-        // create a real closure, to prevent problems if the user is crazy, and decides to add
-        // more furni while the FurniUsedDialog is up
+        // closure used to prevent problems if the user is crazy, and decides to add more furni 
+        // while the FurniUsedDialog is up
         var addToRoomClosure :Function = function (lItem :Item) :Function {
             return function () :void {
                 if (lItem.isUsed()) {
@@ -698,9 +697,7 @@ public class RoomController extends SceneController
         }(item);
 
         if (item.isUsed()) {
-            // TEMP for release
-            _mctx.displayInfo("editing", "e.furni_used");
-            //(new FurniUsedDialog(_mctx, addToRoomClosure)).open(true);
+            (new FurniUsedDialog(_mctx, addToRoomClosure)).open(true);
         } else {
             addToRoomClosure();
         }
