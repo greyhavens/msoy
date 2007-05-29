@@ -38,18 +38,16 @@ public class LaunchConfig
     /** The display name of this game. */
     public String name;
 
-    /** The URL relative to which game resources should be downloaded. */
-    public String resourceURL;
-
-    /** The path (relative to the reosurce URL) for the game client media (SWF
-     * or JAR). */
+    /** The path (relative to the reosurce URL) for the game client media (SWF or JAR). */
     public String gameMediaPath;
 
-    /** The server to which the game should connect (if this is a multiplayer
-     * game). */
+    /** The server to which the game should connect (if this is a multiplayer game). */
     public String server;
 
-    /** The port on which the game should connect to the server (if this is a
-     * multiplayer game). */
+    /** The port on which the game should connect to the server (if this is a multiplayer game). */
     public int port;
+
+    /** The port on which the game should connect to the server for HTTP requests (used by Java
+     * which must connect back to the game server for its game jar file). */
+    public int httpPort;
 }

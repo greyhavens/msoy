@@ -91,12 +91,11 @@ public class GameServlet extends MsoyServiceServlet
             return null;
         }
 
-        config.resourceURL = "http://" + ServerConfig.serverHost + ":" +
-            ServerConfig.getHttpPort() + "/media/"; // TODO
         config.gameMediaPath = game.gameMedia.getMediaPath();
         config.name = game.name;
         config.server = ServerConfig.serverHost;
         config.port = ServerConfig.serverPorts[0];
+        config.httpPort = ServerConfig.getHttpPort();
         return config;
     }
 }

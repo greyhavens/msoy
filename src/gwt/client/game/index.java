@@ -111,14 +111,16 @@ public class index extends Page
                 String[] args = new String[] {
                     "game_id", "" + config.gameId,
                     "game_oid", "" + gameOid,
-                    "resource_url", config.resourceURL,
                     "server", config.server,
                     "port", "" + config.port,
                     "authtoken", (CGame.ident == null) ? "" : CGame.ident.token };
+                // we have to serve game-client.jar from the server to which it will connect back
+                // due to security restrictions
+                String gameJar = "http://" + config.server + ":" + config.httpPort + "/clients/" +
+                    DeploymentConfig.version + "/game-client.jar";
                 WorldClient.displayJava(
                     WidgetUtil.createApplet(
-                        "game", "/clients/" + DeploymentConfig.version + "/game-client.jar," +
-                        config.gameMediaPath,
+                        "game", gameJar + "," + config.gameMediaPath,
                         // TODO: allow games to specify their dimensions in their config
                         "com.threerings.msoy.game.client.GameApplet", "100%", "600", args));
             }
