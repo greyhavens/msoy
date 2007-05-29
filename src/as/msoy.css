@@ -208,6 +208,8 @@ PopUpButton {
 
 ButtonBar {
   buttonStyleName: "msoyButtonBar";
+  buttonWidth: 72;
+  horizontalGap: 6;
 }
 
 TitleWindow {

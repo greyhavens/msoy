@@ -27,10 +27,10 @@ public class FloatingPanel extends TitleWindow
      *
      * Note that button ids also dictate the order in which buttons
      * are added to the button bar, so you may add new buttons with negative
-     * ids to have them placed to the left of CANCEL.
+     * ids to have them placed to the left of OK.
      */
-    public static const CANCEL_BUTTON :int = 0;
-    public static const OK_BUTTON :int = 1;
+    public static const OK_BUTTON :int = 0;
+    public static const CANCEL_BUTTON :int = 1;
 
     /**
      * Create a Floating Panel.
