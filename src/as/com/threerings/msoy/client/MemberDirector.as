@@ -66,6 +66,7 @@ public class MemberDirector extends BasicDirector
     // from interface SetListener
     public function entryUpdated (event :EntryUpdatedEvent) :void
     {
+        /*
         var name :String = event.getName();
         if (name == MemberObject.FRIENDS) {
             var entry :FriendEntry = (event.getEntry() as FriendEntry);
@@ -74,6 +75,7 @@ public class MemberDirector extends BasicDirector
                 _bctx.displayInfo("general", MessageBundle.tcompose("m.friend_online", entry.name));
             }
         }
+        */
     }
 
     // from interface SetListener
