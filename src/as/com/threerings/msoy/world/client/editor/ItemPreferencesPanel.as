@@ -187,8 +187,6 @@ public class ItemPreferencesPanel extends FloatingPanel
         }
     }
 
-    // FurniData.ACTION_NONE functions
-
     // URL functions
     
     protected function createURLPanel () :UIComponent
