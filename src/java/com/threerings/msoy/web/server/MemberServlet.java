@@ -147,7 +147,6 @@ public class MemberServlet extends MsoyServiceServlet
         if (mrec != null) {
             try {
                 friends = MsoyServer.memberRepo.getFriends(mrec.memberId);
-
                 for (GroupRecord gRec : MsoyServer.groupRepo.getFullMemberships(mrec.memberId)) {
                     memberGroups.add(new GroupName(gRec.name, gRec.groupId));
                 }
@@ -158,8 +157,9 @@ public class MemberServlet extends MsoyServiceServlet
             }
             
         } else {
-            friends = Collections.emptyList();
+            friends = new ArrayList<FriendEntry>();
         }
+        friends.add(new FriendEntry(new MemberName(mrec.name, mrec.memberId), true));
 
         // then proceed to the dobj thread to get runtime state
         final MemberName name = (mrec == null) ? null : mrec.getName();
