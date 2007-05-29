@@ -61,6 +61,7 @@ public class ItemPreferencesPanel extends FloatingPanel
             _actionTypeSelection.selectedIndex = 0;
         }
 
+        _actionPanels.visible = _actionPanels.includeInLayout = editable;
         _actionTypeSelection.visible = _actionTypeSelection.includeInLayout = editable;
         _readOnlyActionLabel.visible = _readOnlyActionLabel.includeInLayout = ! editable;
     }
@@ -185,6 +186,8 @@ public class ItemPreferencesPanel extends FloatingPanel
             _captureMouse.selected = (_furniData.actionData != "-");
         }
     }
+
+    // FurniData.ACTION_NONE functions
 
     // URL functions
     
