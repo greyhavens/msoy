@@ -182,7 +182,7 @@ public class MemberServlet extends MsoyServiceServlet
                         if (channel.type == ChatChannel.GROUP_CHANNEL &&
                             memberGroups.contains((GroupName) channel.ident)) {
                             JSONObject cObj = new JSONObject();
-                            cObj.put("name", ((GroupName) channel.ident).getNormal());
+                            cObj.put("name", ((GroupName) channel.ident).toString());
                             cObj.put("id", ((GroupName) channel.ident).getGroupId());
                             channels.put(cObj);
                         }
@@ -195,7 +195,7 @@ public class MemberServlet extends MsoyServiceServlet
                         if (channel.type == ChatChannel.GROUP_CHANNEL &&
                             !memberGroups.contains((GroupName) channel.ident)) {
                             JSONObject cObj = new JSONObject();
-                            cObj.put("name", ((GroupName) channel.ident).getNormal());
+                            cObj.put("name", ((GroupName) channel.ident).toString());
                             cObj.put("id", ((GroupName) channel.ident).getGroupId());
                             channels.put(cObj);
                         }
