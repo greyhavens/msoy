@@ -17,9 +17,9 @@ import com.threerings.msoy.ui.FloatingPanel;
 public class FriendStatusChangeDisplay extends NotificationDisplay
 {
     public function FriendStatusChangeDisplay (
-        n :FriendStatusChangeNotification, dispatch :NotificationHandler)
+        dispatch :NotificationHandler, n :FriendStatusChangeNotification)
     {
-        super(n, dispatch);
+        super(dispatch, n);
 
         _friend = n.friend;
         _loggedOn = n.loggedOn;

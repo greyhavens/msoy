@@ -5,6 +5,7 @@ package com.threerings.msoy.client.notifications {
 
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.util.ClassUtil;
+import com.threerings.util.MessageBundle;
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.PlaceBox;
@@ -31,14 +32,14 @@ public class NotificationHandler extends BasicDirector
 
         _panel = panel;
 
-        // notification -> display mapping. please note: this mapping ignores notification
-        // inheritance hierarchy. each subclass of Notification requires its own display entry.
+        // notification -> popup mapping. please note: this mapping ignores notification
+        // inheritance hierarchy. each subclass of Notification requires its own popup entry.
         _definitions = [
             { type: FriendStatusChangeNotification,
-              display: FriendStatusChangeDisplay },
+              popup: FriendStatusChangeDisplay },
             
             { type: FriendAcceptedInvitationNotification,
-              display: FriendAcceptedInvitationDisplay },
+              popup: FriendAcceptedInvitationDisplay },
             ];
     }
 
@@ -70,7 +71,7 @@ public class NotificationHandler extends BasicDirector
         if (name == MemberObject.NOTIFICATIONS) {
             var notification :Notification = event.getEntry() as Notification;
             if (notification != null) {
-                displayNotification(notification);
+                displayPopup(makePopupFromNotification(notification));
             } else {
                 Log.getLog(this).warning(
                     "Received a notification event with an invalid entry: " + event.getEntry());
@@ -90,20 +91,40 @@ public class NotificationHandler extends BasicDirector
         // no op
     }
 
-    /** Called by individual popup windows, tells the server the notification was processed,
-     *  and can be removed from the player's list. */
-    public function notificationClosed (display :NotificationDisplay) :void
+    /**
+     * Displays a new text-only popup window.
+     */
+    public function displayMessage (bundle :String, message :String) :void
     {
-        var index :int = _displays.indexOf(display);
+        var msgb :MessageBundle = getWorldContext().getMessageManager().getBundle(bundle);
+        if (msgb == null) {
+            Log.getLog(this).warning("No message bundle available to translate message " +
+                                     "[bundle=" + bundle + ", message=" + message + "].");
+        } else {
+            message = msgb.xlate(message);
+        }
+    
+        displayPopup(new ClientOnlyMessageDisplay(this, message));
+    }
+    
+    /**
+     * Called by individual popup windows after closing. Removes the display object from popup
+     * list, rearranges those still displayed and, if appropriate, informs the server.
+     */
+    public function notificationClosed (popup :NotificationDisplay) :void
+    {
+        var index :int = _popups.indexOf(popup);
         if (index != -1) {
-            _displays.splice(index, 1);
+            _popups.splice(index, 1);
         }
 
         layout();
-        
-        _msvc.acknowledgeNotification(
-            getWorldContext().getClient(), display.notificationId,
-            new ReportingListener(getWorldContext()));
+
+        if (! popup.clientOnly) {
+            _msvc.acknowledgeNotification(
+                getWorldContext().getClient(), popup.notificationId,
+                new ReportingListener(getWorldContext()));
+        }            
     }
 
     /** Retrieves this dispatch object's world context. */
@@ -112,36 +133,35 @@ public class NotificationHandler extends BasicDirector
         return _ctx as WorldContext;
     }
 
-    /** Creates and returns a new display display object for the given notification instance. */
-    protected function getDisplay (notification :Notification) :NotificationDisplay
+    /** Creates and returns a new popup display object for the given notification instance. */
+    protected function makePopupFromNotification (notification :Notification) :NotificationDisplay
     {
         var nClass :Class = ClassUtil.getClass(notification);
-        var displayClass :Class;
+        var popupClass :Class;
         _definitions.some(function (o :Object, i :*, a :*) :Boolean {
                 if (o.type == nClass) {
-                    displayClass = o.display;
+                    popupClass = o.popup;
                 }
-                return displayClass != null;
+                return popupClass != null;
             });
 
-        if (displayClass != null) {
-            return new displayClass(notification, this);
+        if (popupClass != null) {
+            return new popupClass(this, notification);
         } else {
-            Log.getLog(this).warning("Notification display not found for: " + notification);
+            Log.getLog(this).warning("Notification popup not found for: " + notification);
             return null;
         }
     }
     
     /** Creates and displays an appropriate notification UI. */
-    protected function displayNotification (notification :Notification) :void
+    protected function displayPopup (popup :NotificationDisplay) :void
     {
-        var display :NotificationDisplay = getDisplay(notification);
-        display.open();
-        _displays.push(display);
+        popup.open();
+        _popups.push(popup);
         layout();
     }
 
-    /** Updates the position of each display window. */
+    /** Updates the position of each popup window. */
     public function layout () :void
     {
         var header :HeaderBar = _panel.getHeaderBar();
@@ -150,7 +170,7 @@ public class NotificationHandler extends BasicDirector
         var right :Number = header.x + header.width;
         var y :Number = placebox.y;
         
-        for each (var item :NotificationDisplay in _displays) {
+        for each (var item :NotificationDisplay in _popups) {
             item.y = y;
             item.x = right - item.width;
             y += item.height;
@@ -162,10 +182,10 @@ public class NotificationHandler extends BasicDirector
     protected var _msvc :MemberService;
 
     /** An array of object that specify mapping from Notification classes to
-     *  display classes that can display them. */
+     *  popup classes that can display them. */
     protected var _definitions :Array;
 
-    /** Contains a list of notification displays currently being shown. */
-    protected var _displays :Array = new Array();
+    /** Contains a list of notification popups currently being shown. */
+    protected var _popups :Array = new Array();
 }
 }

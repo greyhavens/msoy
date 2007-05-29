@@ -12,9 +12,9 @@ import com.threerings.msoy.ui.FloatingPanel;
 public class FriendAcceptedInvitationDisplay extends NotificationDisplay
 {
     public function FriendAcceptedInvitationDisplay (
-        n :FriendAcceptedInvitationNotification, dispatch :NotificationHandler)
+        dispatch :NotificationHandler, n :FriendAcceptedInvitationNotification)
     {
-        super(n, dispatch);
+        super(dispatch, n);
 
         _displayName = n.inviteeDisplayName;
         _email = n.invitationEmail;

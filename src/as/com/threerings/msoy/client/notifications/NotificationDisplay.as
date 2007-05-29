@@ -7,20 +7,35 @@ import flash.display.DisplayObject;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
+import mx.core.ScrollPolicy;
+
 import com.threerings.msoy.data.Notification;
 import com.threerings.msoy.ui.FloatingPanel;
 
 public /* abstract */ class NotificationDisplay extends FloatingPanel
 {
-    public function NotificationDisplay (n :Notification, dispatch :NotificationHandler)
+    /**
+     * Constructor that creates a new display window. If /n/ contains a Notification object,
+     * the server will receive an acknowledgement of this notification after the popup window
+     * had closed. Otherwise, if /n/ is null, the popup will be assumed to only exist
+     * on this client.
+     */
+    public function NotificationDisplay (dispatch :NotificationHandler, n :Notification)
     {
         super(dispatch.getWorldContext(), "");
         this.showCloseButton = true;
         this.styleName = "notificationDisplay";
+        this.verticalScrollPolicy = this.horizontalScrollPolicy = ScrollPolicy.OFF;
         this.width = 200; // all notifications have the same width, for now at least
         
         _dispatch = dispatch;
-        _id = n.id;
+        if (n == null) {
+            _clientOnly = true;
+            _id = 0;
+        } else {
+            _clientOnly = false;
+            _id = n.id;
+        }
 
         _timer = new Timer(timeout, 1);
         _timer.addEventListener(TimerEvent.TIMER, function (event :TimerEvent) :void {
@@ -37,6 +52,14 @@ public /* abstract */ class NotificationDisplay extends FloatingPanel
         return 5000; // seems like a reasonable number
     }
 
+    /**
+     * Returns true if this notification came from the client code, rather than from the server.
+     */
+    public function get clientOnly () :Boolean
+    {
+        return _clientOnly;
+    }
+    
     /** Return the Id of the notification we're displaying. */
     public function get notificationId () :Number
     {
@@ -67,5 +90,9 @@ public /* abstract */ class NotificationDisplay extends FloatingPanel
 
     /** Timer that will cause this window to close after the given timeout. */
     protected var _timer :Timer;
+
+    /** Specifies whether this window displays a client-only message,
+     *  which does not need to be acknowledged on the server. */
+    protected var _clientOnly :Boolean;
 }
 }
