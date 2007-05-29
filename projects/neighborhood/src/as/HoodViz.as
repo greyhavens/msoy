@@ -190,8 +190,10 @@ public class HoodViz extends Sprite
             }
         }
 
+        var ii :int;
+
         // now add all the labels, which should be on top of any tiles drawn
-        for (var ii :int = 0; ii < _labels.length; ii ++) {
+        for (ii = 0; ii < _labels.length; ii ++) {
             _canvas.addChild(_labels[ii]);
         }
 
@@ -204,6 +206,15 @@ public class HoodViz extends Sprite
             addChild(tip);
             tip.x = SWF_WIDTH - tip.width/2 - 10;
             tip.y = SWF_HEIGHT - 10;
+        }
+
+        var yy :int = SWF_HEIGHT - 5;
+
+        for (ii = 0; ii < _hood.channels.length; ii ++) {
+            var button :TextButton = new TextButton(_hood.channels[ii].name, 0, 0, false, 12);
+            button.add(this, 10, yy - button.height);
+            addChatChannelClickHandler(button, _hood.channels[ii]);
+            yy -= button.height;
         }
 
         // figure a canvas scale that'll safely display all that was actually drawn
@@ -221,6 +232,14 @@ public class HoodViz extends Sprite
         _canvas.y = (SWF_HEIGHT -scale*(yBiasInTiles + _bounds.top + _bounds.bottom))/2;
     }
 
+    protected function addChatChannelClickHandler (obj: DisplayObject, channel: ChatChannel) :void
+    {
+        obj.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            if (ExternalInterface.available) {
+                ExternalInterface.call("openChannel", 2, channel.name, channel.id);
+            }
+        });
+    }
 
     protected function addBit (bitType :Object, x :Number, y :Number, update:Boolean,
                                neighbor: Neighbor) :void
