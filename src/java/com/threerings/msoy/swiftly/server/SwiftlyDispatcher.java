@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.swiftly.server;
 
+import com.threerings.msoy.swiftly.client.SwiftlyService;
 import com.threerings.msoy.swiftly.data.SwiftlyMarshaller;
+import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -25,13 +27,11 @@ public class SwiftlyDispatcher extends InvocationDispatcher
     }
 
     // from InvocationDispatcher
-    @Override
     public InvocationMarshaller createMarshaller ()
     {
         return new SwiftlyMarshaller();
     }
 
-    @Override
     @SuppressWarnings("unchecked") // from InvocationDispatcher
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)
