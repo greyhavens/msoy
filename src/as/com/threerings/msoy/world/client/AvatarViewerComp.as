@@ -25,8 +25,10 @@ import mx.controls.Label;
 import mx.events.FlexEvent;
 
 import com.threerings.flash.FPSDisplay;
+import com.threerings.flash.MediaContainer;
 import com.threerings.flex.CommandMenu;
 import com.threerings.util.ParameterUtil;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.msoy.ui.MsoyUI;
 
@@ -42,6 +44,7 @@ public class AvatarViewerComp extends Canvas
 
         var contents :VBox = new VBox();
 
+        // create an HBox to hold "walking", "facing", "talk"
         var controls: HBox = new HBox();
         controls.setStyle("verticalAlign", "middle");
         controls.addChild(MsoyUI.createLabel("Walking:"));
@@ -49,32 +52,56 @@ public class AvatarViewerComp extends Canvas
         controls.addChild(walking);
 
         controls.addChild(MsoyUI.createLabel("Facing angle:"));
-        // TODO: replace slider with custom control
-        var rotation :HSlider = new HSlider();
-        rotation.minimum = -180;
-        rotation.maximum = 180;
-        rotation.showDataTip = false;
-        rotation.snapInterval = 1;
-        rotation.liveDragging = true;
-        rotation.value = 0;
-        rotation.maxWidth = 100;
-        controls.addChild(rotation);
+
+        var canv :Canvas = new Canvas();
+        canv.width = OrientationControl.SIZE;
+        canv.height = OrientationControl.SIZE;
+        canv.rawChildren.addChild(new OrientationControl(setOrient));
+        controls.addChild(canv);
 
         var talk :Button = new Button();
         talk.label = "Talk!";
         controls.addChild(talk);
         contents.addChild(controls);
 
+        // create an HBox to hold the scaling controls
+        _scaleControls = new HBox();
+        createScaleControls();
+        contents.addChild(_scaleControls);
+
         contents.addChild(_holder = new Canvas());
         addChild(contents);
 
         // bind actions to the user interface elements
         talk.addEventListener(FlexEvent.BUTTON_DOWN, speak);
-        BindingUtils.bindSetter(setOrient, rotation, "value");
         BindingUtils.bindSetter(setMoving, walking, "selected");
 
         // finally, load our parameters and see what we should do.
         ParameterUtil.getParameters(this, gotParams);
+    }
+
+    /**
+     * Configure the scaling controls.
+     */
+    protected function createScaleControls () :void
+    {
+        _scaleReset = new Button();
+        _scaleReset.label = "Reset scale";
+        _scaleReset.addEventListener(MouseEvent.CLICK, function (... ignored) :void {
+            _scaleSlider.value = 1;
+        });
+
+        _scaleSlider = new HSlider();
+        _scaleSlider.liveDragging = true;
+        _scaleSlider.minimum = 0;
+        _scaleSlider.maximum = int.MAX_VALUE;
+        _scaleSlider.value = 1;
+        _scaleSlider.enabled = false;
+        _scaleSlider.tickValues = [ 1 ];
+        BindingUtils.bindSetter(scaleUpdated, _scaleSlider, "value");
+
+        _scaleControls.addChild(_scaleSlider);
+        _scaleControls.addChild(_scaleReset);
     }
 
     /**
@@ -86,6 +113,14 @@ public class AvatarViewerComp extends Canvas
         var scale :Number = Number(params["scale"]);
         if (isNaN(scale) || (scale == 0)) {
             scale = 1;
+        }
+        _scaleSlider.value = scale;
+
+        // see if we need to turn off the scaling controls
+        var scaling :Boolean = "true" == String(params["scaling"]);
+        if (!scaling) {
+            _scaleControls.includeInLayout = false;
+            _scaleControls.visible = false;
         }
 
         var count :int = 1;
@@ -105,6 +140,7 @@ public class AvatarViewerComp extends Canvas
             if (ii == 1) {
                 // on the last one, add a listener
                 avatar.addEventListener(MouseEvent.CLICK, handleMouseClick);
+                avatar.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
 
                 _holder.width = avatar.getMaxContentWidth();
                 _holder.height = avatar.getMaxContentHeight();
@@ -138,6 +174,26 @@ public class AvatarViewerComp extends Canvas
         }
     }
 
+    protected function handleSizeKnown (event :ValueEvent) :void
+    {
+        var width :int = int(event.value[0]);
+        var height :int = int(event.value[1]);
+
+        // the minimum scale makes things 10 pixels in a dimension
+        var minScale :Number = Math.max(10 / width, 10 / height);
+        // the maximum bumps us up against the overall maximums
+        var maxScale :Number = Math.min(ActorSprite.MAX_WIDTH / width,
+            ActorSprite.MAX_HEIGHT / height);
+
+        // but we always ensure that scale 1.0 is selectable, even if it seems it shouldn't be.
+        _scaleSlider.minimum = Math.min(1, minScale);
+        _scaleSlider.maximum = Math.max(1, maxScale);
+
+        // enable everything
+        _scaleSlider.enabled = true;
+        scaleUpdated();
+    }
+
     protected function speak (... ignored) :void
     {
         for each (var avatar :ViewerAvatarSprite in _avatars) {
@@ -154,10 +210,21 @@ public class AvatarViewerComp extends Canvas
 
     protected function setOrient (val :Number) :void
     {
-        var orient :int = int(val + 360) % 360;
+        var orient :int = int(val);
 
         for each (var avatar :ViewerAvatarSprite in _avatars) {
             avatar.setOrientation(orient);
+        }
+    }
+
+    protected function scaleUpdated (... ignored) :void
+    {
+        var scale :Number = _scaleSlider.value;
+
+        _scaleReset.enabled = (scale != 1);
+
+        for each (var avatar :ViewerAvatarSprite in _avatars) {
+            avatar.setScale(scale);
         }
     }
 
@@ -215,10 +282,24 @@ public class AvatarViewerComp extends Canvas
     /** The avatars with which we're testing. Normally contains just 1. */
     protected var _avatars :Array = [];
 
+    /** Holds scaling controls, only visible sometimes. */
+    protected var _scaleControls :HBox;
+
+    protected var _scaleSlider :HSlider;
+
+    protected var _scaleReset :Button;
+
     [Embed(source="../../../../../../../pages/images/item/detail_preview_bg.png")]
     protected static const BACKGROUND :Class;
 }
 }
+
+import flash.display.Graphics;
+import flash.display.Sprite;
+
+import flash.events.MouseEvent;
+
+import flash.geom.Point;
 
 import com.threerings.msoy.world.client.AvatarSprite;
 
@@ -240,6 +321,12 @@ class ViewerAvatarSprite extends AvatarSprite
     override public function isMoving () :Boolean
     {
         return _moving;
+    }
+
+    public function setScale (scale :Number) :void
+    {
+        _scale = scale;
+        scaleUpdated();
     }
 
     override public function getState () :String
@@ -284,4 +371,64 @@ class ViewerAvatarSprite extends AvatarSprite
     protected var _moving :Boolean = false;
 
     protected var _state :String;
+}
+
+class OrientationControl extends Sprite
+{
+    public static const SIZE :int = 30;
+
+    public function OrientationControl (orientSetter :Function)
+    {
+        _setter = orientSetter;
+
+        // draw transparent pixels to grab all mouse events
+        var g :Graphics = graphics;
+        g.beginFill(0xFFFFFF, 0);
+        g.drawRect(0, 0, SIZE, SIZE);
+        g.endFill();
+
+        // draw a circle indicating the control area
+        g.beginFill(0xCCCCCC);
+        g.drawCircle(SIZE/2, SIZE/2, SIZE/2);
+        g.endFill();
+
+        // create Mr. wee arrow sprite.
+        var arrow :Sprite = new Sprite();
+        arrow.mouseEnabled = false;
+        arrow.x = SIZE/2;
+        arrow.y = SIZE/2;
+        addChild(arrow);
+        _arrowG = arrow.graphics;
+
+        addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
+        setArrow(new Point());
+    }
+
+    protected function handleMouseMove (event :MouseEvent) :void
+    {
+        setArrow(new Point(event.localX - SIZE/2, event.localY - SIZE/2));
+    }
+
+    protected function setArrow (p :Point) :void
+    {
+        // we always want some sort of orientation, so point straight ahead if the
+        // point is 0,0
+        if (p.x == 0 && p.y == 0) {
+            p.y = 1;
+        }
+        p.normalize(SIZE/2);
+        _arrowG.clear();
+        _arrowG.lineStyle(3, 0x003333);
+        _arrowG.moveTo(0, 0);
+        _arrowG.lineTo(p.x, p.y);
+
+        var orient :Number = (360 + 90 + (180 / Math.PI * Math.atan2(-p.y, p.x))) % 360;
+        _setter(orient);
+    }
+
+    /** The setter function to use. */
+    protected var _setter :Function;
+
+    /** The graphics for drawing on the arrow sprite. */
+    protected var _arrowG :Graphics;
 }
