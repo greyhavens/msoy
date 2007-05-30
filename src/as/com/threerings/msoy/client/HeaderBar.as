@@ -7,6 +7,7 @@ import mx.containers.VBox;
 
 import mx.controls.Label;
 
+import com.threerings.flash.TextFieldUtil;
 import com.threerings.flex.CommandButton;
 
 public class HeaderBar extends HBox
@@ -32,7 +33,7 @@ public class HeaderBar extends HBox
         _loc.text = loc;
         _loc.validateNow();
         // allow text to center under the whirled logo if its not too long.
-        _loc.width = (_loc.textWidth + 5) > 124 ? _loc.textWidth + 5 : 124;
+        _loc.width = Math.max(124, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
     }
 
     public function setCloseButtonVisible (visible :Boolean) :void

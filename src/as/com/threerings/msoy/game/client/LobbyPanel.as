@@ -30,6 +30,7 @@ import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
 
 import com.threerings.flash.MediaContainer;
+import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.flex.CommandButton;
 
@@ -89,12 +90,7 @@ public class LobbyPanel extends VBox
         var game :Game = getGame();
         _title.text = game.name;
         _title.validateNow();
-        if ((_title.textWidth + 5) > 160) {
-            // for some stupid reason, setting label.width = label.textWidth doesn't actually give
-            // it enough room to display all the text, and you get the truncated version of the 
-            // text - so we have to give the width a little extra room.
-            _title.width = _title.textWidth + 5;
-        }
+        _title.width = _title.textWidth + TextFieldUtil.WIDTH_PAD;
         _about.text = Msgs.GAME.get("b.about");
         var thisLobbyPanel :LobbyPanel = this;
         _about.addEventListener(MouseEvent.CLICK, function () :void {
