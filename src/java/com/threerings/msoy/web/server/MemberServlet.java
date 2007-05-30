@@ -155,11 +155,11 @@ public class MemberServlet extends MsoyServiceServlet
                 log.log(Level.WARNING, "Failed to list friends", e);
                 throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
             }
-            
+            friends.add(new FriendEntry(new MemberName(mrec.name, mrec.memberId), true));
+
         } else {
-            friends = new ArrayList<FriendEntry>();
+            friends = Collections.emptyList();
         }
-        friends.add(new FriendEntry(new MemberName(mrec.name, mrec.memberId), true));
 
         // then proceed to the dobj thread to get runtime state
         final MemberName name = (mrec == null) ? null : mrec.getName();
@@ -171,9 +171,9 @@ public class MemberServlet extends MsoyServiceServlet
 
                 try {
                     JSONArray channels = new JSONArray();
-                    Set<GroupName> activeGroupChannels = new HashSet<GroupName>();
                     Iterable<ChatChannel> allChannels = MsoyServer.channelMan.getChatChannels();
                     int desiredChannels = 8;
+
                     // first add active channels we're members of
                     for (ChatChannel channel : allChannels) {
                         if (--desiredChannels < 0) {
