@@ -354,39 +354,7 @@ public class WorldClient extends BaseClient
      */
     protected function externalUseAvatar (avatarId :int) :void
     {
-        if (avatarId == 0) {
-            _wctx.getWorldDirector().setAvatar(0);
-        } else {
-            // closure to ensure that the avatar we've been told to add is actually one that we own
-            var avatarChecker :Function = function (thisAvatarId :int) :Function {
-                return function (avatars :Array) :void {
-                    var foundAvatar :Boolean = false;
-                    for each (var item :Item in avatars) {
-                        if (item.itemId == thisAvatarId) {
-                            _wctx.getWorldDirector().setAvatar(thisAvatarId);
-                            foundAvatar = true;
-                            break;
-                        }
-                    }
-                    if (!foundAvatar) {
-                        Log.getLog(WorldClient).warning("was asked to use an avatar that does " + 
-                            "not belong to this user [id=" + thisAvatarId + "]");
-                    }
-                };
-            }(avatarId);
-            var member :MemberObject = _wctx.getMemberObject();
-            if (member.isInventoryLoaded(Item.AVATAR)) {
-                avatarChecker(member.getItems(Item.AVATAR));
-            } else {
-                var adapter :LoadedInventoryAdapter;
-                adapter = new LoadedInventoryAdapter(function () :void {
-                    member.removeListener(adapter);
-                    avatarChecker(member.getItems(Item.AVATAR));
-                });
-                member.addListener(adapter);
-                _wctx.getItemDirector().loadInventory(Item.AVATAR);
-            }
-        }
+        _wctx.getWorldDirector().setAvatar(avatarId);
     }
 
     /**
@@ -403,28 +371,4 @@ public class WorldClient extends BaseClient
     protected var _embedded :Boolean;
     protected var _minimized :Boolean;
 }
-}
-
-import com.threerings.presents.dobj.AttributeChangeListener;
-import com.threerings.presents.dobj.AttributeChangedEvent;
-
-import com.threerings.msoy.data.MemberObject;
-
-class LoadedInventoryAdapter 
-    implements AttributeChangeListener
-{
-    public function LoadedInventoryAdapter (callback :Function) 
-    {
-        _callback = callback;
-    }
-
-    // from AttributeChangeListener
-    public function attributeChanged (evt :AttributeChangedEvent) :void
-    {
-        if (evt.getName() == MemberObject.LOADED_INVENTORY) {
-            _callback();
-        }
-    }
-
-    protected var _callback :Function;
 }
