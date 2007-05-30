@@ -72,13 +72,20 @@ public class ItemPreferencesPanel extends FloatingPanel
     {
         super.createChildren();
 
-        // generate combo box definitions, including only those actions that are
-        // mentioned in the EDITABLE array.
+        var playerIsSupportPlus :Boolean = _ctx.getMemberObject().tokens.isSupport();
+        
+        // generate combo box definitions, including only those actions whose editable flag is set,
+        // and which are available for the player's account level
         var entries :Array = new Array();
-        for each (var type :int in EDITABLE_ACTION_TYPES) {
-            var def :Object = getActionDef(type);
-            if (def != null) {
-                entries.push(def);
+        for each (var def :Object in ACTIONS) {
+            // is it editable in the first place?    
+            if (isActionTypeEditable(def.data)) {
+                // make sure the action is either available to everyone, or if it's support+ only,
+                // that the player has the credentials.
+                if (isActionTypeForAllPlayers(def.data) || playerIsSupportPlus) {
+                    trace("pushing: " + def);
+                    entries.push(def);
+                }
             }
         }
         
@@ -113,11 +120,12 @@ public class ItemPreferencesPanel extends FloatingPanel
         // this label is for support+
         _debug = new TextInput();
         _debug.editable = false;
-        if (_ctx.getMemberObject().tokens.isSupport()) {
+        _debug.enabled = false;
+        if (playerIsSupportPlus) {
             var dgrid :Grid = new Grid();
             dgrid.setStyle("color", 0xff0000);
             addChild(dgrid);
-            GridUtil.addRow(dgrid, Msgs.EDITING.get("l.action"), _debug);
+            GridUtil.addRow(dgrid, Msgs.EDITING.get("l.action_debug"), _debug);
         }
         
         addButtons(OK_BUTTON, CANCEL_BUTTON);
@@ -205,6 +213,24 @@ public class ItemPreferencesPanel extends FloatingPanel
         }
     }
 
+    // HELP_PAGE functions
+    
+    protected function createHelpTabPanel () :UIComponent
+    {
+        var grid :Grid = new Grid();
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.help_tab"), _helpTabAction = new TextInput());
+        return grid;
+    }
+
+    protected function updateHelpTabPanel () :void
+    {
+        if (_furniData != null) {
+            var url :String = _furniData.actionData;
+            // maybe validation here?
+            _helpTabAction.text = url; 
+        }
+    }
+
     // door functions
     
     protected function createPortalPanel () :UIComponent
@@ -275,6 +301,9 @@ public class ItemPreferencesPanel extends FloatingPanel
         case FurniData.ACTION_PORTAL:
             newData.actionData = DEFAULT_PORTAL_DEST;
             break;
+        case FurniData.ACTION_HELP_PAGE:
+            newData.actionData = _helpTabAction.text;
+            break;
         }
 
         if (! _furniData.equivalent(newData)) {
@@ -306,35 +335,52 @@ public class ItemPreferencesPanel extends FloatingPanel
     /** Returns true if the specified action type is available in the combo box. */
     protected function isActionTypeEditable (actionType :int) :Boolean
     {
-        return EDITABLE_ACTION_TYPES.indexOf(actionType) != -1;
+        var def :Object = getActionDef(actionType);
+        return (def != null) && Boolean(def.editable);
     }
 
-    /** List of the action types available in the combo box. */
-    protected const EDITABLE_ACTION_TYPES :Array =
-        [ FurniData.ACTION_NONE, FurniData.ACTION_PORTAL, FurniData.ACTION_URL ];
-    
+    /** Returns true if the specifies action type should be displayed to all players,
+     *  or false if it should be displayed to support+ staff only. */
+    protected function isActionTypeForAllPlayers (actionType :int) :Boolean
+    {
+        var def :Object = getActionDef(actionType);
+        return (def != null) && (! Boolean(def.supportOnly));
+    }
+
     /** Definitions of different action types and how they affect the preferences panel. */
     protected const ACTIONS :Array = [
         { data: FurniData.ACTION_NONE,
           label: Msgs.EDITING.get("l.action_none"),
+          editable: true,
           panelCreateFn: createNonePanel,
           panelUpdateFn: updateNonePanel },
 
         { data: FurniData.ACTION_PORTAL,
           label: Msgs.EDITING.get("l.action_portal"),
+          editable: true,
           panelCreateFn: createPortalPanel,
           panelUpdateFn: updatePortalPanel },
 
         { data: FurniData.ACTION_URL,
           label: Msgs.EDITING.get("l.action_url"),
+          editable: true,
           panelCreateFn: createURLPanel,
           panelUpdateFn: updateURLPanel },
 
         { data: FurniData.ACTION_LOBBY_GAME,
-          label: Msgs.EDITING.get("l.action_lobby_game") },
+          label: Msgs.EDITING.get("l.action_lobby_game"),
+          supportOnly: true },
 
         { data: FurniData.ACTION_WORLD_GAME,
-          label: Msgs.EDITING.get("l.action_world_game") }
+          label: Msgs.EDITING.get("l.action_world_game"),
+          supportOnly: true },
+
+        { data: FurniData.ACTION_HELP_PAGE,
+          label: Msgs.EDITING.get("l.action_help_page"),
+          editable: true,
+          supportOnly: true,
+          panelCreateFn: createHelpTabPanel,
+          panelUpdateFn: updateHelpTabPanel },
 
         ];
 
@@ -351,6 +397,7 @@ public class ItemPreferencesPanel extends FloatingPanel
     protected var _actionPanels :ViewStack;
     protected var _captureMouse :CheckBox;
     protected var _url :TextInput;
+    protected var _helpTabAction :TextInput;
     protected var _door :TextInput;
     protected var _debug :TextInput;
 }

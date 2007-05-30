@@ -125,6 +125,17 @@ public class MsoyChatDirector extends ChatDirector
         getHistory(channel).filterTransient();
     }
 
+    /**
+     * Displays the specified HTML page inside a tab in the chat panel. If the named tab doesn't
+     * exist, it will be created, otherwise the existing tab is pushed to the foreground. The tab
+     * display is not related to a chat channel - it's merely a display vehicle that doesn't
+     * support chatting at all.
+     */
+    public function displayPage (tabName :String, url :String) :void
+    {
+        _ccpanel.displayPageTab(tabName, url, true);
+    }
+
     // from ChatDirector
     override public function pushChatDisplay (display :ChatDisplay) :void
     {

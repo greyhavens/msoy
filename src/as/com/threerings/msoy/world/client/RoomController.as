@@ -94,6 +94,7 @@ import com.threerings.msoy.world.data.WorldMemberInfo;
 import com.threerings.msoy.world.data.WorldOccupantInfo;
 import com.threerings.msoy.world.data.WorldPetInfo;
 
+import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.chat.client.ReportingListener;
 
 /**
@@ -427,6 +428,13 @@ public class RoomController extends SceneController
             _mctx.getSpotSceneDirector().traversePortal(furni.id);
             return;
 
+        case FurniData.ACTION_HELP_PAGE:
+            actionData = furni.splitActionData();
+            var tabName :String = String(actionData[0]);
+            var url :String = String(actionData[1]);
+            (_mctx.getChatDirector() as MsoyChatDirector).displayPage(tabName, url);
+            return;
+            
         default:
             log.warning("Clicked on unhandled furni action type " +
                 "[actionType=" + furni.actionType +

@@ -89,6 +89,68 @@ public class ChatChannelPanel extends VBox
             _tabnav.addChild(tab);
         }
 
+        selectAndFocusTab(tab, true, true);
+
+        return tab.getOverlay();
+    }
+
+    /**
+     * Iterates over chat tabs, returning the first one that passes the /predicate/ function.
+     * @param predicate Function of the form: <pre>function (tab :ChatTab) :Boolean</pre>
+     */
+    protected function findAnyTab (predicate :Function) :ChatTab
+    {
+        for (var ii :int = _tabnav.numChildren - 1; ii >= 0; ii--) {
+            var tab :ChatTab = _tabnav.getChildAt(ii) as ChatTab;
+            if (predicate(tab)) {
+                return tab;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Find the ChannelChatTab instance being used for the specified ChatChannel.
+     */
+    protected function findChatTab (channel :ChatChannel) :ChannelChatTab
+    {
+        return findAnyTab(function (tab :ChatTab) :Boolean {
+                var channeltab :ChannelChatTab = tab as ChannelChatTab;
+                return (channeltab != null && channeltab.channel.equals(channel));
+            }) as ChannelChatTab;
+    }
+
+    /**
+     * Returns a named page display tab. If this named tab does not exist, it creates
+     * a new one, and fills its page with contents from the specified location.
+     */
+    public function displayPageTab (
+        tabName :String, pageSource :String, select :Boolean) :PageDisplayTab
+    {
+        var tab :PageDisplayTab = findAnyTab(function (tab :ChatTab) :Boolean {
+                var pagetab :PageDisplayTab = tab as PageDisplayTab;
+                return (pagetab != null && pagetab.tabName == tabName);
+            }) as PageDisplayTab;
+
+        // the display doesn't exist - let's create one
+        if (tab == null) {
+            tab = new PageDisplayTab(_ctx, tabName);
+            tab.label = tabName;
+            tab.init();
+            _tabnav.addChild(tab);
+        }
+
+        // start loading
+        tab.loadUrl(pageSource);
+
+        selectAndFocusTab(tab);
+
+        return tab;
+    }    
+
+    protected function selectAndFocusTab (
+        tab :ChatTab, select :Boolean = true, focus :Boolean = false) :void
+    {
         // select this tab if requested
         if (select) {
             _tabnav.selectedChild = tab;
@@ -101,29 +163,13 @@ public class ChatChannelPanel extends VBox
         }
 
         // if we're selecting the tab in question, focus the chat input as well
-        if (select) {
+        if (select && focus) {
             callLater(function () :void {
                 _input.setFocus();
             });
         }
-
-        return tab.getOverlay();
     }
-
-    /**
-     * Find the ChannelChatTab instance being used for the specified ChatChannel.
-     */
-    protected function findChatTab (channel :ChatChannel) :ChannelChatTab
-    {
-        for (var ii :int = _tabnav.numChildren - 1; ii >= 0; ii--) {
-            var tab :ChannelChatTab = _tabnav.getChildAt(ii) as ChannelChatTab;
-            if (tab != null && tab.channel.equals(channel)) {
-                return tab;
-            }
-        }
-        return null;
-    }
-
+    
     protected function tabRemoved (event :ChildExistenceChangedEvent) :void
     {
         if (event.relatedObject is ChatTab) {
@@ -137,6 +183,9 @@ public class ChatChannelPanel extends VBox
             var channel :ChatChannel = (event.relatedObject as ChannelChatTab).channel;
             (_ctx.getChatDirector() as MsoyChatDirector).closeChannel(channel);
         }
+        if (event.relatedObject is PageDisplayTab) {
+            (event.relatedObject as PageDisplayTab).shutdown();
+        }
     }
 
     protected function miniWillChange (event :ValueEvent) :void
@@ -149,16 +198,7 @@ public class ChatChannelPanel extends VBox
             _tabnav.addChildAt(_wtab, 0);
             _tabnav.setClosePolicyForTab(0, SuperTab.CLOSE_NEVER);
 
-            // select this tab if none are selected
-            if (select) {
-                _tabnav.selectedIndex = 0;
-            }
-
-            // if we're not visible, add ourselves
-            if (parent == null) {
-                _ctx.getTopPanel().setRightPanel(this);
-                _ctx.getTopPanel().getControlBar().setChannelChatInput(_inputBox);
-            }
+            selectAndFocusTab(_wtab);
 
         } else if (!minimized && _wtab != null) {
             _tabnav.removeChild(_wtab);

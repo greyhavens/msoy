@@ -37,6 +37,10 @@ public class FurniData
     /** An actionType indicating that actionData is a world game item id.
         actionData = "<gameId>:<gameName>" */
     public static const ACTION_WORLD_GAME :int = 4;
+
+    /** An actionType indicating that actionData is special page displayed in the chat panel.
+        actionData = "<tabName>:<pageURL>" */
+    public static const ACTION_HELP_PAGE :int = 5;
     
     /** The id of this piece of furni. */
     public var id :int;
