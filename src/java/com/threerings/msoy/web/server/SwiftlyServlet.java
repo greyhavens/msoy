@@ -3,10 +3,15 @@
 
 package com.threerings.msoy.web.server;
 
+import java.io.File;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
-import static com.threerings.msoy.Log.log;
 
 import com.samskivert.io.PersistenceException;
+
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -28,11 +33,7 @@ import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
 
-import java.io.File;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the server implementation of {@link SwiftlyService}.
@@ -72,8 +73,8 @@ public class SwiftlyServlet extends MsoyServiceServlet
                 MsoyServer.swiftlyRepo.getMemberships(memrec.memberId)) {
                 SwiftlyProjectRecord pRec = MsoyServer.swiftlyRepo.loadProject(cRec.projectId);
                 if (pRec == null) {
-                    throw new PersistenceException("Swiftly project not found when loading " +
-                        "users projects! [memberId=" + memrec.memberId + "]");
+                    log.warning("Swiftly project not found when loading users projects. " + 
+                        "[memberId=" + memrec.memberId + "]");
                 }
                 projects.add(pRec.toSwiftlyProject());
             }

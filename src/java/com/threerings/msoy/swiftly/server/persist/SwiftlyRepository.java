@@ -137,10 +137,7 @@ public class SwiftlyRepository extends DepotRepository
         throws PersistenceException
     {
         SwiftlyProjectRecord project = loadProject(projectId);
-        if (project == null) {
-            return null;
-        }
-        return load(SwiftlySVNStorageRecord.class, project.storageId);
+        return (project == null) ? null : load(SwiftlySVNStorageRecord.class, project.storageId);
     }
 
 

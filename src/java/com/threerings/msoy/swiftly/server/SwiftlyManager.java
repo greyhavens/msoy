@@ -104,7 +104,7 @@ public class SwiftlyManager
                     SwiftlySVNStorageRecord storageRecord =
                         MsoyServer.swiftlyRepo.loadStorageRecordForProject(projectId);
                     if (storageRecord == null) {
-                        log.warning("Failed to load project storage record [projectId=" +
+                        log.warning("Project missing storage record [projectId=" +
                             projectId + "].");
                         return false;
                     }                 
