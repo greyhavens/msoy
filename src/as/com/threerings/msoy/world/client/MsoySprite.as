@@ -120,8 +120,8 @@ public class MsoySprite extends MsoyMediaContainer
     // from RoomElement
     public function setScreenLocation (x :Number, y :Number, scale :Number) :void
     {
-        this.x = x
-        this.y = y
+        this.x = x;
+        this.y = y;
         if (scale != _locScale) {
             _locScale = scale;
             scaleUpdated();
