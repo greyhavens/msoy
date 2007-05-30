@@ -141,6 +141,25 @@ public class FlashClients
     }
 
     /**
+     * Tells the actionscript client that we'd like to use this avatar.  If 0 is passed in for the
+     * avatarId, the current avatar is simply cleared away, leaving you tofulicious.
+     */
+    public static void useAvatar (int avatarId) 
+    {
+        useAvatarNative(avatarId);
+    }
+
+    /**
+     * Fetches the currently active avatar id that is being used by the client.  If 0 is returned,
+     * the flash client is either not open (check clientExits() before calling), or we're using 
+     * the default avatar.
+     */
+    public static int getAvatarId ()
+    {
+        return getAvatarIdNative();
+    }
+
+    /**
      * Computes the height to use for our Flash clients based on the smaller of our desired client
      * height and the vertical room available minus the header and an annoying "we don't know how
      * to implement scrollbars" bullshit browser factor.
@@ -228,6 +247,28 @@ public class FlashClients
         var client = $doc.getElementById("asclient");
         if (client) {
             client.addFurni(itemId, itemType);
+        }
+    }-*/;
+
+    /**
+     * Does the actual <code>useAvatar()</code> call.
+     */
+    protected static native void useAvatarNative (int avatarId) /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            client.useAvatar(avatarId);
+        }
+    }-*/;
+
+    /**
+     * Does the actual <code>getAvatarId()</code> call.
+     */
+    protected static native int getAvatarIdNative () /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            return client.getAvatarId();
+        } else {
+            return 0;
         }
     }-*/;
 

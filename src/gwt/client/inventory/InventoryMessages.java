@@ -112,6 +112,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String detailAddToRoom();
 
   /**
+   * Translated "Stop using this avatar".
+   * 
+   * @return translated "Stop using this avatar"
+   * @gwt.key detailRemoveAvatar
+   */
+  String detailRemoveAvatar();
+
+  /**
    * Translated "Listing your {0}".
    * 
    * @return translated "Listing your {0}"

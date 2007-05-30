@@ -32,9 +32,11 @@ import com.threerings.toybox.data.ToyBoxMarshaller;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.data.ItemMarshaller;
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Document;
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemList;
 import com.threerings.msoy.item.data.all.Photo;
 
@@ -220,6 +222,8 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("setMinimized", externalSetMinimized);
         ExternalInterface.addCallback("inRoom", externalInRoom);
         ExternalInterface.addCallback("addFurni", externalAddFurni);
+        ExternalInterface.addCallback("useAvatar", externalUseAvatar);
+        ExternalInterface.addCallback("getAvatarId", externalGetAvatarId);
 
         _embedded = !Boolean(ExternalInterface.call("helloWhirled"));
         dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
@@ -334,7 +338,7 @@ public class WorldClient extends BaseClient
     }
 
     /**
-     * Exposed to javascript so that the it may tell us to add furni to the current room.
+     * Exposed to javascript so that it may tell us to add furni to the current room.
      */ 
     protected function externalAddFurni (itemId :int, itemType :int) :void
     {
@@ -344,8 +348,83 @@ public class WorldClient extends BaseClient
         }
     }
 
+    /**
+     * Exposed to javascript so that it may tell us to use this avatar.  If the avatarId of 0 is
+     * passed in, the current avatar is simply cleared away, leaving them with the default.
+     */
+    protected function externalUseAvatar (avatarId :int) :void
+    {
+        if (avatarId == 0) {
+            _wctx.getWorldDirector().setAvatar(0);
+        } else {
+            // closure to ensure that the avatar we've been told to add is actually one that we own
+            var avatarChecker :Function = function (thisAvatarId :int) :Function {
+                return function (avatars :Array) :void {
+                    var foundAvatar :Boolean = false;
+                    for each (var item :Item in avatars) {
+                        if (item.itemId == thisAvatarId) {
+                            _wctx.getWorldDirector().setAvatar(thisAvatarId);
+                            foundAvatar = true;
+                            break;
+                        }
+                    }
+                    if (!foundAvatar) {
+                        Log.getLog(WorldClient).warning("was asked to use an avatar that does " + 
+                            "not belong to this user [id=" + thisAvatarId + "]");
+                    }
+                };
+            }(avatarId);
+            var member :MemberObject = _wctx.getMemberObject();
+            if (member.isInventoryLoaded(Item.AVATAR)) {
+                avatarChecker(member.getItems(Item.AVATAR));
+            } else {
+                var adapter :LoadedInventoryAdapter;
+                adapter = new LoadedInventoryAdapter(function () :void {
+                    member.removeListener(adapter);
+                    avatarChecker(member.getItems(Item.AVATAR));
+                });
+                member.addListener(adapter);
+                _wctx.getItemDirector().loadInventory(Item.AVATAR);
+            }
+        }
+    }
+
+    /**
+     * Exposed to javascript so that it can check the avatar that its showing in the inventory 
+     * browser agains the avatar that the user is currently wearing.
+     */
+    protected function externalGetAvatarId () :int
+    {
+        var avatar :Avatar = _wctx.getMemberObject().avatar;
+        return avatar == null ? 0 : avatar.itemId;
+    }
+
     protected var _wctx :WorldContext;
     protected var _embedded :Boolean;
     protected var _minimized :Boolean;
 }
+}
+
+import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
+
+import com.threerings.msoy.data.MemberObject;
+
+class LoadedInventoryAdapter 
+    implements AttributeChangeListener
+{
+    public function LoadedInventoryAdapter (callback :Function) 
+    {
+        _callback = callback;
+    }
+
+    // from AttributeChangeListener
+    public function attributeChanged (evt :AttributeChangedEvent) :void
+    {
+        if (evt.getName() == MemberObject.LOADED_INVENTORY) {
+            _callback();
+        }
+    }
+
+    protected var _callback :Function;
 }

@@ -98,15 +98,25 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         byte type = _detail.item.getType();
+        // TODO: set decor and add background audio from here
         if (type != Item.DECOR && type != Item.AUDIO && FlashClients.inRoom()) {
             _details.add(WidgetUtil.makeShim(1, 10));
             if (type == Item.AVATAR) { 
-                /*button = new Button(CInventory.msgs.detailUseAvatar());
-                button.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        // TODO
-                    }
-                });*/
+                if (FlashClients.getAvatarId() == _detail.item.itemId) {
+                    button = new Button(CInventory.msgs.detailRemoveAvatar());
+                    button.addClickListener(new ClickListener() {
+                        public void onClick (Widget sender) {
+                            FlashClients.useAvatar(0);
+                        }
+                    });
+                } else {
+                    button = new Button(CInventory.msgs.detailUseAvatar());
+                    button.addClickListener(new ClickListener() {
+                        public void onClick (Widget sender) {
+                            FlashClients.useAvatar(_detail.item.itemId);
+                        }
+                    });
+                }
             } else {
                 button = new Button(CInventory.msgs.detailAddToRoom());
                 button.addClickListener(new ClickListener() {
@@ -114,8 +124,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                         FlashClients.addFurni(_detail.item.itemId, _detail.item.getType());
                     }
                 });
-                _details.add(button);
             }
+            _details.add(button);
         }
 
         // TODO: When catalog browsing is fully URL-friendly, browsing catalog by creator from here

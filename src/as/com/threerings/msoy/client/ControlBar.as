@@ -174,11 +174,13 @@ public class ControlBar extends HBox
         volBtn.styleName = "controlBarButtonVolume";
         addGroupChild(volBtn, [ UI_STD, UI_GUEST, UI_EDIT ]);
 
-        _avatarBtn = new CommandButton();
+        // avatar selection is now handled from GWT - however, this may be useful in embedded mode 
+        // in the future.
+        /*_avatarBtn = new CommandButton();
         _avatarBtn.toolTip = Msgs.GENERAL.get("i.avatar");
         _avatarBtn.setCommand(MsoyController.PICK_AVATAR);
         _avatarBtn.styleName = "controlBarButtonAvatar";
-        addGroupChild(_avatarBtn, [ UI_STD ]);
+        addGroupChild(_avatarBtn, [ UI_STD ]);*/
 
         _petBtn = new CommandButton();
         _petBtn.toolTip = Msgs.GENERAL.get("i.pet");
