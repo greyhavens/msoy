@@ -23,6 +23,7 @@ import com.threerings.util.ValueEvent;
 import com.threerings.flash.Animation;
 import com.threerings.flash.FilterUtil;
 import com.threerings.flash.MediaContainer;
+import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.crowd.data.OccupantInfo;
 
@@ -72,6 +73,13 @@ public class ActorSprite extends MsoySprite
         labelFormat.size = 12;
         labelFormat.bold = true;
         _label = new TextField();
+        // The label often jumps visibly when the actor is hovered over, a pixel
+        // up or down, and/or left or right. As far as I (Ray) can figure, when the glow
+        // filter is applied it's doing pixel snapping. The strange thing is that we apply
+        // our own outlining glow filter (below) so it should already be snapping.
+        // It seems that setting cacheAsBitmap makes the vertical jumpiness go away, but
+        // not the horizontal jumpiness. So, I've disabled it for now...
+        //_label.cacheAsBitmap = true;
         _label.autoSize = TextFieldAutoSize.CENTER;
         _label.defaultTextFormat = labelFormat;
         _label.filters = [ new GlowFilter(0, 1, 2, 2, 255) ];
@@ -242,8 +250,8 @@ public class ActorSprite extends MsoySprite
                 !_occInfo.username.equals(newInfo.username)) {
             _label.textColor = getStatusColor(newInfo.status);
             _label.text = newInfo.username.toString();
-            _label.width = _label.textWidth + 5; // the magic number
-            _label.height = _label.textHeight + 4;
+            _label.width = _label.textWidth + TextFieldUtil.WIDTH_PAD;
+            _label.height = _label.textHeight + TextFieldUtil.HEIGHT_PAD;
             recheckLabel();
 
             // if our idle status has changed...
