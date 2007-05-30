@@ -40,8 +40,8 @@ public class FurniUsedDialog extends FloatingPanel
 
         // display message
         var text :TextArea = new TextArea();
-        text.width = 300;
-        text.height = 50;
+        text.width = 250;
+        text.height = 75;
         text.verticalScrollPolicy = ScrollPolicy.OFF;
         text.setStyle("borderStyle", "none");
         text.editable = false;
