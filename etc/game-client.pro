@@ -8,7 +8,7 @@
     com/samskivert/Log.class,**/io/**,**/net/**,**/swing/**,**/text/**,**/util/**,
     **/servlet/user/Password.class,**/servlet/user/User.class,**/servlet/user/UserUtil.class)
 -injars ../dist/lib/getdown.jar(!META-INF/*,!**/tools/**)
--injars ../dist/lib/narya-base.jar(!META-INF/*,!**/tools/**,!**/server/**)
+-injars ../dist/lib/narya-base.jar(!META-INF/*,!**/tools/**,!**/server/**,!**/admin/**)
 -injars ../dist/lib/narya-distrib.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/nenya-rsrc.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/nenya-media.jar(!META-INF/*,!**/tools/**,!**/server/**)
@@ -19,7 +19,7 @@
 -injars ../dist/lib/whirled.jar(!META-INF/*,!**/tools/**,!**/server/**,!**/xml/**)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/IsSerializable.class)
 -injars ../dist/msoy-code.jar(
-    rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,**/msoy/item/data/all/**,
+    rsrc/i18n/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,**/msoy/item/data/all/**,
     **/msoy/world/data/WorldMemberInfo.class,**/msoy/world/data/WorldOccupantInfo.class,
     **/msoy/game/data/**,**/msoy/game/client/**)
 
