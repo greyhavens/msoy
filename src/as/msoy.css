@@ -82,7 +82,7 @@ SuperTabNavigator {
 }
 
 SuperTab { 
-  closeButtonStyleName: "msoyCloseTabButton";
+  tabCloseButtonStyleName: "msoyCloseTabButton";
 }
 
 .msoyCloseTabButton {
