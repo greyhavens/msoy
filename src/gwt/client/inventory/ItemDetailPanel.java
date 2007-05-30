@@ -102,21 +102,15 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         if (type != Item.DECOR && type != Item.AUDIO && FlashClients.inRoom()) {
             _details.add(WidgetUtil.makeShim(1, 10));
             if (type == Item.AVATAR) { 
-                if (FlashClients.getAvatarId() == _detail.item.itemId) {
-                    button = new Button(CInventory.msgs.detailRemoveAvatar());
-                    button.addClickListener(new ClickListener() {
-                        public void onClick (Widget sender) {
-                            FlashClients.useAvatar(0);
-                        }
-                    });
-                } else {
-                    button = new Button(CInventory.msgs.detailUseAvatar());
-                    button.addClickListener(new ClickListener() {
-                        public void onClick (Widget sender) {
-                            FlashClients.useAvatar(_detail.item.itemId);
-                        }
-                    });
-                }
+                boolean wearing = (FlashClients.getAvatarId() == _detail.item.itemId);
+                String label = wearing ? CInventory.msgs.detailRemoveAvatar() : 
+                    CInventory.msgs.detailUseAvatar();
+                final int itemId = wearing ? 0 : _detail.item.itemId;
+                button = new Button(label, new ClickListener() {
+                    public void onClick (Widget sender) {
+                        FlashClients.useAvatar(itemId);
+                    }
+                });
             } else {
                 button = new Button(CInventory.msgs.detailAddToRoom());
                 button.addClickListener(new ClickListener() {
