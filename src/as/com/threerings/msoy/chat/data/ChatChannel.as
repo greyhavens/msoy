@@ -83,7 +83,7 @@ public class ChatChannel extends SimpleStreamableObject
     public function equals (other :Object) :Boolean
     {
         var oc :ChatChannel = (other as ChatChannel);
-        return type == oc.type && ident.equals(oc.ident);
+        return (oc != null) && type == oc.type && ident.equals(oc.ident);
     }
 
     // from Object

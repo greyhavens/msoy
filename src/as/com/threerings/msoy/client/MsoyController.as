@@ -179,7 +179,9 @@ public class MsoyController extends Controller
         var friends :Array = new Array();
         for each (var fe :FriendEntry in _ctx.getMemberObject().getSortedEstablishedFriends()) {
             if (fe.online) {
-                friends.push({ label: fe.name.toString(), command: OPEN_CHANNEL, arg: fe.name });
+                var item :Object = { label: fe.name.toString(), command: OPEN_CHANNEL, arg: fe.name }
+                checkChatChannelOpen(fe.name, item);
+                friends.push(item);
             }
         }
         if (friends.length == 0) {
@@ -189,7 +191,9 @@ public class MsoyController extends Controller
 
         var groups :Array = _ctx.getMemberObject().groups.toArray();
         groups = groups.map(function (gm :GroupMembership, index :int, array :Array) :Object {
-            return { label: gm.group.toString(), command: OPEN_CHANNEL, arg: gm.group };
+            var item :Object = { label: gm.group.toString(), command: OPEN_CHANNEL, arg: gm.group };
+            checkChatChannelOpen(gm.group, item);
+            return item;
         });
         if (groups.length == 0) {
             groups.push({ label: Msgs.GENERAL.get("m.no_groups"),
@@ -649,6 +653,19 @@ public class MsoyController extends Controller
     public function getSceneIdString () :String
     {
         return _sceneIdString;
+    }
+
+    /**
+     * Indicate on the menu item whether or not we have the specified chat channel open
+     * or not.
+     */
+    protected function checkChatChannelOpen (name :Name, menuItem :Object) :void
+    {
+        if ((_ctx.getChatDirector() as MsoyChatDirector).hasOpenChannel(name)) {
+            // TODO: use an icon or something instead?
+            menuItem["type"] = "check";
+            menuItem["toggled"] = true;
+        }
     }
 
     /**

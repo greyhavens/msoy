@@ -71,6 +71,14 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     /**
+     * Return true if we've already got a chat channel open with the specified Name.
+     */
+    public function hasOpenChannel (name :Name) :Boolean
+    {
+        return (null != _ccpanel.findChatDisplay(makeChannel(name)));
+    }
+
+    /**
      * Opens the chat interface for the supplied friend, group or private chat channel, selecting
      * the appropriate tab if said channel is already open.
      *
@@ -78,18 +86,7 @@ public class MsoyChatDirector extends ChatDirector
      */
     public function openChannel (name :Name) :void
     {
-        var channel :ChatChannel;
-        if (name is MemberName) {
-            channel = ChatChannel.makeFriendChannel(name as MemberName);
-        } else if (name is GroupName) {
-            channel = ChatChannel.makeGroupChannel(name as GroupName);
-        } else if (name is ChannelName) {
-            channel = ChatChannel.makePrivateChannel(name as ChannelName);
-        } else {
-            log.warning("Requested to open unknown type of channel [name=" + name +
-                        ", type=" + ClassUtil.getClassName(name) + "].");
-            return;
-        }
+        var channel :ChatChannel = makeChannel(name);
 
         // if this is a friend or already open channel, open/select the UI immediately
         if (channel.type == ChatChannel.FRIEND_CHANNEL ||
@@ -179,6 +176,24 @@ public class MsoyChatDirector extends ChatDirector
     override protected function suppressTooManyCaps () :Boolean
     {
         return false;
+    }
+
+    /**
+     * Create a ChatChannel object for the specified Name.
+     */
+    protected function makeChannel (name :Name) :ChatChannel
+    {
+        if (name is MemberName) {
+            return ChatChannel.makeFriendChannel(name as MemberName);
+        } else if (name is GroupName) {
+            return ChatChannel.makeGroupChannel(name as GroupName);
+        } else if (name is ChannelName) {
+            return ChatChannel.makePrivateChannel(name as ChannelName);
+        } else {
+            log.warning("Requested to open unknown type of channel [name=" + name +
+                        ", type=" + ClassUtil.getClassName(name) + "].");
+            return null;
+        }
     }
 
     /**
