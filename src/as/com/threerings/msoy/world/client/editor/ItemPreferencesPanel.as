@@ -83,7 +83,6 @@ public class ItemPreferencesPanel extends FloatingPanel
                 // make sure the action is either available to everyone, or if it's support+ only,
                 // that the player has the credentials.
                 if (isActionTypeForAllPlayers(def.data) || playerIsSupportPlus) {
-                    trace("pushing: " + def);
                     entries.push(def);
                 }
             }
