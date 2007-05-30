@@ -115,8 +115,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                         FlashClients.addFurni(_detail.item.itemId, _detail.item.getType());
                     }
                 });
+                _details.add(button);
             }
-            _details.add(button);
         }
 
         // TODO: When catalog browsing is fully URL-friendly, browsing catalog by creator from here
