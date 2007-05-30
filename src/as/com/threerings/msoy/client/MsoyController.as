@@ -183,7 +183,8 @@ public class MsoyController extends Controller
             }
         }
         if (friends.length == 0) {
-            friends.push({ label: Msgs.GENERAL.get("m.no_friends") });
+            friends.push({ label: Msgs.GENERAL.get("m.no_friends"),
+                           enabled: false });
         }
 
         var groups :Array = _ctx.getMemberObject().groups.toArray();
@@ -191,7 +192,8 @@ public class MsoyController extends Controller
             return { label: gm.group.toString(), command: OPEN_CHANNEL, arg: gm.group };
         });
         if (groups.length == 0) {
-            groups.push({ label: Msgs.GENERAL.get("m.no_groups") });
+            groups.push({ label: Msgs.GENERAL.get("m.no_groups"),
+                          enabled : false });
         }
 
         var menuData :Array = [];
