@@ -65,14 +65,17 @@ public class HoodViz extends Sprite
         _house = new Building(getClass("house_tile"), getClass("populate_house"), soy);
         stage.addChild(_house);
         _plaqueHouse = getClass("plaque_house");
+//        _keyHouse = getClass("key_house");
 
         _group = new Building(getClass("group_tile"), getClass("populate_group"), soy);
         stage.addChild(_group);
         _plaqueGroup = getClass("plaque_group");
+//        _keyGroup = getClass("key_group");
 
         _game = new Building(getClass("game_tile"), getClass("populate_game"), soy);
         stage.addChild(_game);
         _plaqueGame = getClass("plaque_game");
+//        _keyGame = getClass("key_game");
 
         _vacant = getClass("vacant_tile");
         _roadHouse = getClass("road_house_tile");
@@ -217,6 +220,13 @@ public class HoodViz extends Sprite
             yy -= button.height;
         }
 
+        var key :DisplayObject;
+
+//        key = new _keyHouse();
+//        key.x = 10;
+//        key.y = 10;
+//        this.addChild(key);
+
         // figure a canvas scale that'll safely display all that was actually drawn
         var scale :Number = Math.min(SWF_WIDTH / (160 + _bounds.width),
                                      SWF_HEIGHT / (120 + _bounds.height));
@@ -248,14 +258,17 @@ public class HoodViz extends Sprite
         if (bitType is Class) {
             bit = new bitType();
             bit.gotoAndStop(1+_random.nextInt(bit.totalFrames));
+
         } else {
             var building :Building = (bitType as Building);
             // let's illustrate the population of a place by the square root of its
             // actual population in soy figures, lest we utterly overwhelm the map;
             // thus 1 pop -> 1 soy, 25 pop -> 5 soys, 100 pop -> 10 soys.
+
             bit = building.getPopulatedTile(
                 1+_random.nextInt(building.variationCount),
-                Math.round(Math.sqrt(neighbor.population)));
+                toSoyCount(neighbor.friends.length),
+                toSoyCount(neighbor.population - neighbor.friends.length));
         }
 
         if (neighbor is LogoHolder) {
@@ -328,7 +341,7 @@ public class HoodViz extends Sprite
                 text = new TextField();
                 text.defaultTextFormat = format;
                 text.embedFonts = true;
-                text.text = neighbor.friends.join(", ");
+                text.text = "Here: " + neighbor.friends.join(", ");
                 text.autoSize = TextFieldAutoSize.CENTER;
                 text.wordWrap = true;
                 text.width = 200;
@@ -342,6 +355,15 @@ public class HoodViz extends Sprite
             _bounds = _bounds.union(bitHolder.getBounds(_canvas));
         }
     }
+
+    protected function toSoyCount (peeps :int) :int
+    {
+        if (peeps < 4) {
+            return peeps;
+        }
+        return 4 + Math.round(Math.sqrt(peeps - 5));
+    }
+
 
     // scales the loaded logo to the dimensions of the logo holder
     protected function logoLoaded(event: Event) :void
@@ -475,7 +497,7 @@ public class HoodViz extends Sprite
                     tipContent.addChild(rule);
                 }
 
-                str = "Friends: " + group.friends.join(", ");
+                str = "Here: " + group.friends.join(", ");
                 if (group.friends.length < group.population) {
                     str += " ...";
                 }
@@ -603,6 +625,10 @@ public class HoodViz extends Sprite
     protected var _plaqueHouse :Class;
     protected var _plaqueGroup :Class;
     protected var _plaqueGame :Class;
+
+    protected var _keyHouse :Class;
+    protected var _keyGroup :Class;
+    protected var _keyGame :Class;
 
     [Embed(source="../../rsrc/creative_block_regular.ttf", fontName="hoodFont",
            fontWeight="Regular")]

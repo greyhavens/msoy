@@ -19,7 +19,7 @@ public class Neighbor
     {
         neighbor.population = JSON.pop;
         neighbor.sceneId = JSON.sceneId;
-        neighbor.friends = JSON.friends;
+        neighbor.friends = JSON.friends ? JSON.friends : [];
     }
 
     /** Return a name for this neighbour. Must be overriden. */

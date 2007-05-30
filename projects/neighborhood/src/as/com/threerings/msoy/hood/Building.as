@@ -31,18 +31,19 @@ public class Building extends Sprite
         }
     }
 
-    public function getPopulatedTile (frame :int, population :int) :MovieClip
+    public function getPopulatedTile (frame :int, friendPop :int, otherPop :int) :MovieClip
     {
         var house :MovieClip = newHouse(frame);
         var populate :MovieClip = new _populateClass();
         this.addChild(populate);
         house.gotoAndStop(frame);
         populate.gotoAndStop(frame);
-        while (--population >= 0) {
+        for (var ii :int = 0; ii < friendPop + otherPop; ii ++) {
             var p :Point = findRandomPopulatePoint(populate);
             if (p != null) {
                 var soy :MovieClip = new _soyClass();
-                soy.gotoAndPlay(1);
+                // friends are represented by the first frame, others by the second
+                soy.gotoAndStop(ii < friendPop ? 1 : 2);
                 house.addChild(soy);
                 soy.x = p.x;
                 soy.y = p.y;
