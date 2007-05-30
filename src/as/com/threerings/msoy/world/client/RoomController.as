@@ -237,6 +237,16 @@ public class RoomController extends SceneController
         super.init(ctx, config);
 
         _mctx = (ctx as WorldContext);
+        // watch for when we're un-minimized and the display list is valid, so that we can
+        // open the editor, and place things correctly when necessary
+        _mctx.getTopPanel().getControlBar().addEventListener(ControlBar.DISPLAY_LIST_VALID, 
+            function (evt :ValueEvent) :void {
+                if (_openEditor) {
+                    beginRoomEditing(_mctx.getTopPanel().getControlBar().roomEditBtn);
+                }
+                _openEditor = false;
+            }
+        );
     }
 
     // documentation inherited
@@ -613,47 +623,19 @@ public class RoomController extends SceneController
         if (scene == null || !scene.canEdit(_mctx.getMemberObject())) {
             _mctx.displayInfo("editing", "e.no_permission");
         } else {
-            // function closure to check ensure that the given furni type has been loaded, and
-            // once it has, pass it along to checkAndAddFurni
-            var invLoader :Function = function (furniId :int, furniType :int) :Function {
-                return function () :void {
-                    var member :MemberObject = _mctx.getMemberObject();
-                    if (member.isInventoryLoaded(furniType)) {
-                        checkAndAddFurni(furniId, member.getItems(furniType));
-                    } else {
-                        var adapter :LoadedInventoryAdapter;
-                        adapter = new LoadedInventoryAdapter(function () :void {
-                            member.removeListener(adapter);
-                            checkAndAddFurni(furniId, member.getItems(furniType));
-                        });
-                        member.addListener(adapter);
-                        _mctx.getItemDirector().loadInventory(furniType);
-                    }
-                }
-            }(itemId, itemType);
-
-            // The display list has often not yet been validated when we receive this call from the 
-            // javascript (since the display was just resized) - if that is the case, we need to 
-            // wait until the control bar is set up with valid dimensions, so that new dialogs get 
-            // popped up in the correct locations.
-            var ctrlBar :ControlBar = _mctx.getTopPanel().getControlBar();
-            var btn :CommandButton = ctrlBar.roomEditBtn;
-            if (btn.x == 0) {
-                var validListener :Function;
-                validListener = function (evt :ValueEvent) :void {
-                    ctrlBar.removeEventListener(ControlBar.DISPLAY_LIST_VALID, validListener);
-                    if (!isRoomEditing()) {
-                        beginRoomEditing(btn);
-                    }
-                    invLoader();
-                };
-                ctrlBar.addEventListener(ControlBar.DISPLAY_LIST_VALID, validListener);
+            var member :MemberObject = _mctx.getMemberObject();
+            if (member.isInventoryLoaded(itemType)) {
+                checkAndAddFurni(itemId, member.getItems(itemType));
             } else {
-                if (!isRoomEditing()) {
-                    beginRoomEditing(btn);
-                }
-                invLoader();
+                var adapter :LoadedInventoryAdapter;
+                adapter = new LoadedInventoryAdapter(function () :void {
+                    member.removeListener(adapter);
+                    checkAndAddFurni(itemId, member.getItems(itemType));
+                });
+                member.addListener(adapter);
+                _mctx.getItemDirector().loadInventory(itemType);
             }
+            _openEditor = true;
         }
     }
 
@@ -662,11 +644,6 @@ public class RoomController extends SceneController
      */
     protected function checkAndAddFurni (furniId :int, items :Array) :void
     {
-        // make sure the editor is still open
-        if (!isRoomEditing()) {
-            return;
-        }
-        
         var item :Item = null;
         for (var ii :int = 0; ii < items.length; ii++) {
             if (items[ii].itemId == furniId) {
@@ -1252,6 +1229,9 @@ public class RoomController extends SceneController
         super.sceneUpdated(update);
         _roomView.processUpdate(update);
     }
+    
+    /** The number of pixels we scroll the room on a keypress. */
+    protected static const ROOM_SCROLL_INCREMENT :int = 20;
 
     /** The life-force of the client. */
     protected var _mctx :WorldContext;
@@ -1299,9 +1279,9 @@ public class RoomController extends SceneController
 
     /** Stack that stores the sequence of room updates. */
     protected var _updates :UpdateStack = new UpdateStack(updateRoom);
-    
-    /** The number of pixels we scroll the room on a keypress. */
-    protected static const ROOM_SCROLL_INCREMENT :int = 20;
+
+    /** A flag to indicate that the room editor should be opened when the view is un-minimized */
+    protected var _openEditor :Boolean = false;
 }
 }
 
