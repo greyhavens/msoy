@@ -13,7 +13,7 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
- * Defines swiftly-related services available to the GWT/AJAX web client.
+ * Defines Swiftly-related services available to the GWT/AJAX web client.
  */
 public interface SwiftlyService extends RemoteService
 {

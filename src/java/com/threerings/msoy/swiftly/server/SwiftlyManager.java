@@ -94,10 +94,20 @@ public class SwiftlyManager
                 try {
                     SwiftlyProjectRecord projectRecord =
                         MsoyServer.swiftlyRepo.loadProject(projectId);
+                    if (projectRecord == null) {
+                        log.warning("Failed to load project record [projectId=" +
+                            projectId + "].");
+                        return false;
+                    }
                     _project = projectRecord.toSwiftlyProject();
 
                     SwiftlySVNStorageRecord storageRecord =
                         MsoyServer.swiftlyRepo.loadStorageRecordForProject(projectId);
+                    if (storageRecord == null) {
+                        log.warning("Failed to load project storage record [projectId=" +
+                            projectId + "].");
+                        return false;
+                    }                 
                     _storage = new ProjectSVNStorage(_project, storageRecord);
 
                     _collaborators = new ArrayIntSet();

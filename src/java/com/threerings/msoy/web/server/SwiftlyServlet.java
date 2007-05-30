@@ -7,8 +7,6 @@ import java.util.logging.Level;
 import static com.threerings.msoy.Log.log;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.RepositoryListenerUnit;
-
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -30,8 +28,6 @@ import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
 
-import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
-
 import java.io.File;
 
 import java.util.ArrayList;
@@ -48,9 +44,9 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public List getRemixableProjects (WebIdent ident)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        requireAuthedUser(ident);
+        
         ArrayList<SwiftlyProject> projects = new ArrayList<SwiftlyProject>();
-
         try {
             for (SwiftlyProjectRecord pRec :
                 MsoyServer.swiftlyRepo.findRemixableProjects()) {
@@ -69,12 +65,17 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
+        
         ArrayList<SwiftlyProject> projects = new ArrayList<SwiftlyProject>();
-
         try {
             for (SwiftlyCollaboratorsRecord cRec :
                 MsoyServer.swiftlyRepo.getMemberships(memrec.memberId)) {
-                projects.add(MsoyServer.swiftlyRepo.loadProject(cRec.projectId).toSwiftlyProject());
+                SwiftlyProjectRecord pRec = MsoyServer.swiftlyRepo.loadProject(cRec.projectId);
+                if (pRec == null) {
+                    throw new PersistenceException("Swiftly project not found when loading " +
+                        "users projects! [memberId=" + memrec.memberId + "]");
+                }
+                projects.add(pRec.toSwiftlyProject());
             }
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Getting user's projects failed.", pe);
@@ -90,6 +91,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
+        
         SwiftlyProject project;
         SwiftlyProjectRecord pRec;
         SwiftlySVNStorageRecord storeRec;
@@ -161,6 +163,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
+        requireOwner(project.projectId, memrec.memberId);
 
         // TODO Argument Validation
         /*
@@ -168,10 +171,6 @@ public class SwiftlyServlet extends MsoyServiceServlet
             throw new ServiceException("m.invalid_project_name");
         }
         */
-        // verify the user is the owner
-        if (!isOwner(project.projectId, memrec.memberId)) {
-            throw new ServiceException(SwiftlyCodes.ACCESS_DENIED);
-        }
 
         try {
             SwiftlyProjectRecord pRec = MsoyServer.swiftlyRepo.loadProject(project.projectId);
@@ -216,7 +215,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public ConnectConfig loadConnectConfig (WebIdent ident)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser(ident);
+        requireAuthedUser(ident);
 
         // create an applet config record
         ConnectConfig config = new ConnectConfig();
@@ -230,6 +229,8 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
+        requireCollaborator(projectId, memrec.memberId);
+        
         ArrayList<MemberName> members = new ArrayList<MemberName>();
 
         try {
@@ -250,6 +251,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
+        
         try {
             return MsoyServer.memberRepo.getFriends(memrec.memberId);
         } catch (PersistenceException pe) {
@@ -263,14 +265,13 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
-        // verify the user is the owner
-        if (!isOwner(projectId, memrec.memberId)) {
-            throw new ServiceException(SwiftlyCodes.ACCESS_DENIED);
-        }
+        requireOwner(projectId, memrec.memberId);
+
         // Don't let the owner remove themselves.
         if (isOwner(projectId, memberId)) {
             return;
         }
+        
         try {
             MsoyServer.swiftlyRepo.leaveCollaborators(projectId, memberId);
         } catch (PersistenceException pe) {
@@ -284,14 +285,13 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
-        // verify the user is the owner
-        if (!isOwner(projectId, memrec.memberId)) {
-            throw new ServiceException(SwiftlyCodes.ACCESS_DENIED);
-        }
+        requireOwner(projectId, memrec.memberId);
+        
         // if the user is already a collaborator, do nothing
         if (isCollaborator(projectId, memberId)) {
             return;
         }
+        
         try {
             MsoyServer.swiftlyRepo.joinCollaborators(projectId, memberId);
         } catch (PersistenceException pe) {
@@ -300,6 +300,41 @@ public class SwiftlyServlet extends MsoyServiceServlet
         }
     }
 
+    /**
+     * Verifies a member is a collaborator of a project.
+     * @param projectId the id of the project being tested
+     * @param memberId the id of the member being tested
+     * @throws ServiceException thrown if the memberId is not a collaborator.
+     */
+    protected void requireCollaborator (int projectId, int memberId)
+        throws ServiceException
+    {
+        if (!isCollaborator(projectId, memberId)) {
+            throw new ServiceException(SwiftlyCodes.ACCESS_DENIED);
+        }        
+    }
+    
+    /**
+     * Verifies a member is the owner of a project.
+     * @param projectId the id of the project being tested
+     * @param memberId the id of the member being tested
+     * @throws ServiceException thrown if the memberId is not the owner.
+     */
+    protected void requireOwner (int projectId, int memberId)
+        throws ServiceException
+    {
+        if (!isOwner(projectId, memberId)) {
+            throw new ServiceException(SwiftlyCodes.ACCESS_DENIED);
+        }        
+    }
+    
+    /**
+     * Determines if a  member is a collaborator on the supplied project.
+     * @param projectId the id of the project being tested
+     * @param memberId the id of the member being tested
+     * @return true if memberId is a collaborator, false otherwise.
+     * @throws ServiceException thrown if PersistenceException is encountered
+     */
     protected boolean isCollaborator (int projectId, int memberId)
         throws ServiceException
     {
@@ -311,6 +346,13 @@ public class SwiftlyServlet extends MsoyServiceServlet
         }
     }
 
+    /**
+     * Determines if a member is the owner of the supplied project.
+     * @param projectId the id of the project being tested
+     * @param memberId the id of the member being tested
+     * @return true if memberId is the owner, false otherwise.
+     * @throws ServiceException thrown if PersistenceException is encountered
+     */
     protected boolean isOwner (int projectId, int memberId)
         throws ServiceException
     {
