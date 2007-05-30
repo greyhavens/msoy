@@ -119,7 +119,6 @@ public class index extends Page
                 String gameServer = "http://" + config.server + ":" + config.httpPort;
                 String gameJar = gameServer + "/clients/" +
                     DeploymentConfig.version + "/game-client.jar";
-                GCame.log("Loading " + gameJar + " and " + config.gameMediaPath + "...");
                 WorldClient.displayJava(
                     WidgetUtil.createApplet(
                         "game", gameJar + "," + gameServer + config.gameMediaPath,
