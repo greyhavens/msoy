@@ -271,79 +271,22 @@ public class RoomManager extends SpotSceneManager
         if (!((MsoyScene) _scene).canEdit(user)) {
             throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
         }
+        doRoomUpdate(updates, user);
+    }
 
-        // TODO: if an item is removed from the room, remove any memories from the room object and
-        // flush any modifications to the database
-
-        ArrayIntSet scenesToId = null;
-        for (SceneUpdate update : updates) {
-            // TODO: complicated verification of changes, including verifying that the user owns
-            // the items they're adding (and that they don't add any props)
-
-            if (update instanceof SceneAttrsUpdate) {
-                SceneAttrsUpdate up = (SceneAttrsUpdate) update;
-                MsoyScene msoyScene = (MsoyScene) _scene;
-                ResultListener<Object> defaultListener =
-                    new ResultListener<Object>() {
-                    public void requestCompleted (Object result) {}
-                    public void requestFailed (Exception cause) {
-                        log.warning("Unable to update decor usage [e=" + cause + "].");
-                    }
-                };
-                                
-                // if decor was modified, we should mark new decor as used, and clear the old one
-                DecorData decorData = msoyScene.getDecorData();
-                if (decorData != null && decorData.itemId != up.decorData.itemId) { // modified?
-                    MsoyServer.itemMan.updateItemUsage(
-                        Item.DECOR, Item.USED_AS_BACKGROUND, user.getMemberId(), _scene.getId(),
-                        decorData.itemId, up.decorData.itemId, defaultListener);
-                }
-
-                // same with background audio - mark new one as used, unmark old one
-                AudioData audioData = msoyScene.getAudioData();
-                if (audioData != null && audioData.itemId != up.audioData.itemId) { // modified?
-                    MsoyServer.itemMan.updateItemUsage(
-                        Item.AUDIO, Item.USED_AS_BACKGROUND, user.getMemberId(), _scene.getId(),
-                        audioData.itemId, up.audioData.itemId, defaultListener);
-                }
+    /**
+     * reclaim an item from this room.
+     */
+    public void reclaimItem (ItemIdent item, MemberObject user)
+    {
+        for (FurniData furni : ((MsoyScene)_scene).getFurni()) {
+            if (item.equals(furni.getItemIdent())) {
+                ModifyFurniUpdate update = new ModifyFurniUpdate();
+                update.initialize(_scene.getId(), _scene.getVersion(), new FurniData[] { furni },
+                    null);
+                doRoomUpdate(new SceneUpdate[] { update }, user);
+                break;
             }
-            
-            // furniture modification updates require us to mark item usage
-            if (update instanceof ModifyFurniUpdate) {
-                ModifyFurniUpdate mfu = (ModifyFurniUpdate) update;
-                MsoyServer.itemMan.updateItemUsage(user.getMemberId(),
-                    _scene.getId(), mfu.furniRemoved, mfu.furniAdded,
-                    new ResultListener<Object>() {
-                        public void requestCompleted (Object result) {}
-                        public void requestFailed (Exception cause) {
-                            log.warning("Unable to update item usage [e=" + cause + "].");
-                        }
-                    });
-
-                // also, we locate all the scene ids named in added portals
-                if (mfu.furniAdded != null) {
-                    for (FurniData furni : mfu.furniAdded) {
-                        if (furni.actionType == FurniData.ACTION_PORTAL) {
-                            try {
-                                int sceneId = Integer.parseInt(
-                                    furni.splitActionData()[0]);
-                                if (scenesToId == null) {
-                                    scenesToId = new ArrayIntSet();
-                                }
-                                scenesToId.add(sceneId);
-                            } catch (Exception e) {
-                                // just accept it
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if (scenesToId != null) {
-            updateRoom2(user, updates, scenesToId);
-        } else {
-            finishUpdateRoom(user, updates);
         }
     }
 
@@ -490,6 +433,86 @@ public class RoomManager extends SpotSceneManager
         }
         // fallback if there is no portal
         return new SceneLocation(new MsoyLocation(.5, 0, .5, (short) 0), body.getOid());
+    }
+
+    /**
+     * performs the given updates.
+     */
+    protected void doRoomUpdate (SceneUpdate[] updates, MemberObject user)
+    {
+        // TODO: if an item is removed from the room, remove any memories from the room object and
+        // flush any modifications to the database
+
+        ArrayIntSet scenesToId = null;
+        for (SceneUpdate update : updates) {
+            // TODO: complicated verification of changes, including verifying that the user owns
+            // the items they're adding (and that they don't add any props)
+
+            if (update instanceof SceneAttrsUpdate) {
+                SceneAttrsUpdate up = (SceneAttrsUpdate) update;
+                MsoyScene msoyScene = (MsoyScene) _scene;
+                ResultListener<Object> defaultListener =
+                    new ResultListener<Object>() {
+                    public void requestCompleted (Object result) {}
+                    public void requestFailed (Exception cause) {
+                        log.warning("Unable to update decor usage [e=" + cause + "].");
+                    }
+                };
+                                
+                // if decor was modified, we should mark new decor as used, and clear the old one
+                DecorData decorData = msoyScene.getDecorData();
+                if (decorData != null && decorData.itemId != up.decorData.itemId) { // modified?
+                    MsoyServer.itemMan.updateItemUsage(
+                        Item.DECOR, Item.USED_AS_BACKGROUND, user.getMemberId(), _scene.getId(),
+                        decorData.itemId, up.decorData.itemId, defaultListener);
+                }
+
+                // same with background audio - mark new one as used, unmark old one
+                AudioData audioData = msoyScene.getAudioData();
+                if (audioData != null && audioData.itemId != up.audioData.itemId) { // modified?
+                    MsoyServer.itemMan.updateItemUsage(
+                        Item.AUDIO, Item.USED_AS_BACKGROUND, user.getMemberId(), _scene.getId(),
+                        audioData.itemId, up.audioData.itemId, defaultListener);
+                }
+            }
+            
+            // furniture modification updates require us to mark item usage
+            if (update instanceof ModifyFurniUpdate) {
+                ModifyFurniUpdate mfu = (ModifyFurniUpdate) update;
+                MsoyServer.itemMan.updateItemUsage(user.getMemberId(),
+                    _scene.getId(), mfu.furniRemoved, mfu.furniAdded,
+                    new ResultListener<Object>() {
+                        public void requestCompleted (Object result) {}
+                        public void requestFailed (Exception cause) {
+                            log.warning("Unable to update item usage [e=" + cause + "].");
+                        }
+                    });
+
+                // also, we locate all the scene ids named in added portals
+                if (mfu.furniAdded != null) {
+                    for (FurniData furni : mfu.furniAdded) {
+                        if (furni.actionType == FurniData.ACTION_PORTAL) {
+                            try {
+                                int sceneId = Integer.parseInt(
+                                    furni.splitActionData()[0]);
+                                if (scenesToId == null) {
+                                    scenesToId = new ArrayIntSet();
+                                }
+                                scenesToId.add(sceneId);
+                            } catch (Exception e) {
+                                // just accept it
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (scenesToId != null) {
+            updateRoom2(user, updates, scenesToId);
+        } else {
+            finishUpdateRoom(user, updates);
+        }
     }
 
     /**

@@ -7,9 +7,12 @@ import flash.utils.ByteArray;
 import com.threerings.util.*; // for Float, Integer, etc.
 
 import com.threerings.msoy.item.client.ItemService;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 
 /**
@@ -32,6 +35,19 @@ public class ItemMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, GET_INVENTORY, [
             Byte.valueOf(arg2), listener3
+        ]);
+    }
+
+    /** The method id used to dispatch {@link #reclaimItem} requests. */
+    public static const RECLAIM_ITEM :int = 2;
+
+    // from interface ItemService
+    public function reclaimItem (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ConfirmListener) :void
+    {
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, RECLAIM_ITEM, [
+            arg2, listener3
         ]);
     }
 }

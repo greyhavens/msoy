@@ -5,6 +5,7 @@ package com.threerings.msoy.item.server;
 
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.ItemMarshaller;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -42,6 +43,13 @@ public class ItemDispatcher extends InvocationDispatcher
             ((ItemProvider)provider).getInventory(
                 source,
                 ((Byte)args[0]).byteValue(), (InvocationService.InvocationListener)args[1]
+            );
+            return;
+
+        case ItemMarshaller.RECLAIM_ITEM:
+            ((ItemProvider)provider).reclaimItem(
+                source,
+                (ItemIdent)args[0], (InvocationService.ConfirmListener)args[1]
             );
             return;
 

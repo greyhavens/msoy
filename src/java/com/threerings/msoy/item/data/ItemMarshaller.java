@@ -4,6 +4,7 @@
 package com.threerings.msoy.item.data;
 
 import com.threerings.msoy.item.client.ItemService;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -29,6 +30,19 @@ public class ItemMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, GET_INVENTORY, new Object[] {
             Byte.valueOf(arg2), listener3
+        });
+    }
+
+    /** The method id used to dispatch {@link #reclaimItem} requests. */
+    public static final int RECLAIM_ITEM = 2;
+
+    // from interface ItemService
+    public void reclaimItem (Client arg1, ItemIdent arg2, InvocationService.ConfirmListener arg3)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, RECLAIM_ITEM, new Object[] {
+            arg2, listener3
         });
     }
 }

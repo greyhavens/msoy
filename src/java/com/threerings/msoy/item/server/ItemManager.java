@@ -26,7 +26,11 @@ import com.samskivert.util.Tuple;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
+
+import com.threerings.whirled.server.SceneManager;
+import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -39,6 +43,7 @@ import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.server.RoomManager;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
@@ -1104,6 +1109,56 @@ public class ItemManager
 
                 // we're not resolving anymore.. oops
                 user.setResolvingInventory(user.resolvingInventory & ~(1 << type));
+            }
+        });
+    }
+    
+    // from ItemProvider
+    public void reclaimItem (ClientObject caller, final ItemIdent item,
+                             final InvocationService.ConfirmListener listener)
+        throws InvocationException
+    {
+        final MemberObject user = (MemberObject) caller;
+        if (user.isGuest()) {
+            throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
+        }
+
+        if (item.type == Item.AVATAR || item.type == Item.DECOR || item.type == Item.AUDIO) {
+            log.log(Level.WARNING, "Tried to reclaim invalid item type [type=" + item.type +
+                ", id=" + item.itemId + "]");
+            throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
+        }
+
+        getItem(item, new ResultListener<Item>() {
+            public void requestCompleted (Item result) {
+                if (result.ownerId != user.getMemberId()) {
+                    listener.requestFailed(ItemCodes.E_ACCESS_DENIED);
+                    return;
+                }
+                if (result.used == Item.USED_AS_FURNITURE) {
+                    MsoyServer.screg.resolveScene(result.location, 
+                        new SceneRegistry.ResolutionListener() {
+                            public void sceneWasResolved (SceneManager scmgr) {
+                                ((RoomManager)scmgr).reclaimItem(item, user);
+                                listener.requestProcessed();
+                            }
+                            public void sceneFailedToResolve (int sceneId, Exception reason) {
+                                log.log(Level.WARNING, "Scene failed to resolve. [id=" + sceneId + 
+                                    "]", reason);
+                                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                            }
+                        });
+                } else {
+                    // TODO: decor and avatar reclamation will be possible
+                    log.log(Level.WARNING, "Tried to reclaim item not being used as furni [type=" +
+                        result.getType() + ", id=" + result.itemId + "]");
+                    listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                    return;
+                }
+            }
+            public void requestFailed (Exception cause) {
+                log.log(Level.WARNING, "Unable to retrieve item.", cause);
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });
     }

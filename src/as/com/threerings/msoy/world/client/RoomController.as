@@ -33,6 +33,7 @@ import com.threerings.flash.MenuUtil;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandMenu;
 
+import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.presents.dobj.ChangeListener;
@@ -61,6 +62,7 @@ import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 
+import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Game;
@@ -673,11 +675,6 @@ public class RoomController extends SceneController
         // while the FurniUsedDialog is up
         var addToRoomClosure :Function = function (lItem :Item) :Function {
             return function () :void {
-                if (lItem.isUsed()) {
-                    // the user has already been warned; it will be removed from its previous 
-                    // location
-                    // TODO: best approach??
-                }
                 // create a generic furniture descriptor
                 var furni :FurniData = new FurniData();
                 furni.id = _scene.getNextFurniId(0);
@@ -697,7 +694,27 @@ public class RoomController extends SceneController
         }(item);
 
         if (item.isUsed()) {
-            (new FurniUsedDialog(_mctx, addToRoomClosure)).open(true);
+            var removeFromOldRoom :Function = function (lItem :Item, 
+                addToRoom :Function) :Function {
+                    return function () :void {
+                        var confWrap :ConfirmAdapter = new ConfirmAdapter(
+                            // failure function
+                            function (cause :String) :void {
+                                Log.getLog(this).debug("Failed to remove item from its current " +
+                                    "location [id=" + lItem.itemId + ", type=" + lItem.getType() + 
+                                    ", cause=" + cause);
+                                _mctx.displayInfo("editing", "e.failed_to_remove");
+                            },
+                            // success function
+                            function () :void {
+                                addToRoom();
+                            });
+                        (_mctx.getClient().requireService(ItemService) as ItemService).reclaimItem(
+                            _mctx.getClient(), new ItemIdent(lItem.getType(), lItem.itemId),
+                            confWrap);
+                    }
+            }(item, addToRoomClosure);
+            (new FurniUsedDialog(_mctx, removeFromOldRoom)).open(true);
         } else {
             addToRoomClosure();
         }

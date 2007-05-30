@@ -46,7 +46,7 @@ public class FurniUsedDialog extends FloatingPanel
         text.setStyle("borderStyle", "none");
         text.editable = false;
         text.selectable = false;
-        text.text = Msgs.EDITING.get("m.furni_used", /* TODO */ "ITEM_LOCATION_NAME");
+        text.text = Msgs.EDITING.get("m.furni_used");
         content.addChild(text);
 
         // add buttons
