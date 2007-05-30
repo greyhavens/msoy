@@ -139,6 +139,7 @@ public class MemberServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser(ident);
+        final MemberName name = (mrec == null) ? null : mrec.getName();
 
         // if we're logged on, fetch our friends
         final List<FriendEntry> friends;
@@ -155,14 +156,13 @@ public class MemberServlet extends MsoyServiceServlet
                 log.log(Level.WARNING, "Failed to list friends", e);
                 throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
             }
-            friends.add(new FriendEntry(new MemberName(mrec.name, mrec.memberId), true));
+            friends.add(new FriendEntry(name, true));
 
         } else {
             friends = Collections.emptyList();
         }
 
         // then proceed to the dobj thread to get runtime state
-        final MemberName name = (mrec == null) ? null : mrec.getName();
         final ServletWaiter<String> waiter =
             new ServletWaiter<String>("serializePopularPlaces[" + n + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
