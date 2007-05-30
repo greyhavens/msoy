@@ -40,9 +40,12 @@ public class ServerConfig
 
     /** The local directory where dictionary files are stored. */
     public static File dictionaryDir;
-    
+
     /** The local directory into which uploaded media is stored. */
     public static File mediaDir;
+
+    /** The URL from which we instruct clients to load their media. */
+    public static String mediaURL;
 
     /** Enables S3 media storage. */
     public static boolean mediaS3Enable;
@@ -102,6 +105,7 @@ public class ServerConfig
         // fill in our standard properties
         serverRoot = new File(config.getValue("server_root", "/tmp"));
         mediaDir = new File(config.getValue("media_dir", "/tmp"));
+        mediaURL = config.getValue("media_url", "http://localhost:" + getHttpPort() + "/media");
         mediaS3Enable = config.getValue("media_s3enable", false);
         mediaS3Bucket = config.getValue("media_s3bucket", "msoy");
         mediaS3Id = config.getValue("media_s3id", "id");

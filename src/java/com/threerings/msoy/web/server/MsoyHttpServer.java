@@ -21,7 +21,6 @@ import org.mortbay.jetty.servlet.ServletHandler;
 import org.mortbay.jetty.servlet.ServletHolder;
 
 import com.threerings.msoy.server.ServerConfig;
-
 import com.threerings.msoy.web.client.DeploymentConfig;
 
 /**
@@ -30,8 +29,8 @@ import com.threerings.msoy.web.client.DeploymentConfig;
 public class MsoyHttpServer extends HttpServer
 {
     /**
-     * Creates and prepares our HTTP server for operation but does not yet
-     * start listening on the HTTP port.
+     * Creates and prepares our HTTP server for operation but does not yet start listening on the
+     * HTTP port.
      */
     public MsoyHttpServer ()
     {
@@ -41,19 +40,19 @@ public class MsoyHttpServer extends HttpServer
         context.setResourceBase(new File(ServerConfig.serverRoot, "pages").getPath());
         context.addHandler(new MsoyResourceHandler());
 
-        // wire up our GWT servlets
+        // wire up our various servlets
         ServletHandler handler = new ServletHandler();
         for (int ii = 0; ii < SERVLETS.length; ii += 2) {
             String name = SERVLETS[ii];
             handler.addServlet(name, "/msoy/" + name, SERVLETS[ii+1]);
             handler.addServlet(name, "/" + name, SERVLETS[ii+1]);
         }
-
+        handler.addServlet("remedia", DeploymentConfig.PROXY_PREFIX + "*",
+                           MediaProxyServlet.class.getName());
         context.addHandler(handler);
 
-        // tone down the default verbose logging; unfortunately some creates a
-        // new logger and logs verbosely to it before we get a chance to shut
-        // it the fuck up, but it's mostly minimal
+        // tone down the default verbose logging; unfortunately some creates a new logger and logs
+        // verbosely to it before we get a chance to shut it the fuck up, but it's mostly minimal
         LogManager logmgr = LogManager.getLogManager();
         for (Enumeration<String> iter = logmgr.getLoggerNames();
              iter.hasMoreElements(); ) {

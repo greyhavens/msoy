@@ -107,9 +107,10 @@ public class MediaDesc implements Streamable, IsSerializable
     /**
      * Get the path of the URL for the media specified.
      */
-    public static String getMediaPath (byte[] mediaHash, byte mimeType)
+    public static String getMediaPath (byte[] mediaHash, byte mimeType, boolean proxy)
     {
-        return DeploymentConfig.mediaURL + hashToString(mediaHash) + mimeTypeToSuffix(mimeType);
+        String prefix = proxy ? DeploymentConfig.PROXY_PREFIX : DeploymentConfig.mediaURL;
+        return prefix + hashToString(mediaHash) + mimeTypeToSuffix(mimeType);
     }
 
     /**
@@ -357,7 +358,16 @@ public class MediaDesc implements Streamable, IsSerializable
      */
     public String getMediaPath ()
     {
-        return getMediaPath(hash, mimeType);
+        return getMediaPath(hash, mimeType, false);
+    }
+
+    /**
+     * Returns the path of the URL that loads this media proxied through our game server so that we
+     * can work around Java applet sandbox restrictions.
+     */
+    public String getProxyMediaPath ()
+    {
+        return getMediaPath(hash, mimeType, true);
     }
 
     /**

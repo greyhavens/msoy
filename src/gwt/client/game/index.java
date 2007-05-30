@@ -115,12 +115,14 @@ public class index extends Page
                     "port", "" + config.port,
                     "authtoken", (CGame.ident == null) ? "" : CGame.ident.token };
                 // we have to serve game-client.jar from the server to which it will connect back
-                // due to security restrictions
-                String gameJar = "http://" + config.server + ":" + config.httpPort + "/clients/" +
+                // due to security restrictions and proxy the game jar through there as well
+                String gameServer = "http://" + config.server + ":" + config.httpPort;
+                String gameJar = gameServer + "/clients/" +
                     DeploymentConfig.version + "/game-client.jar";
+                GCame.log("Loading " + gameJar + " and " + config.gameMediaPath + "...");
                 WorldClient.displayJava(
                     WidgetUtil.createApplet(
-                        "game", gameJar + "," + config.gameMediaPath,
+                        "game", gameJar + "," + gameServer + config.gameMediaPath,
                         // TODO: allow games to specify their dimensions in their config
                         "com.threerings.msoy.game.client.GameApplet", "100%", "600", args));
             }

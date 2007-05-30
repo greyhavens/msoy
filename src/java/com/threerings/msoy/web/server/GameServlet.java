@@ -91,7 +91,9 @@ public class GameServlet extends MsoyServiceServlet
             return null;
         }
 
-        config.gameMediaPath = game.gameMedia.getMediaPath();
+        // we have to proxy game jar files through the game server due to the applet sandbox 
+        config.gameMediaPath = (game.gameMedia.mimeType == MediaDesc.APPLICATION_JAVA_ARCHIVE) ?
+            game.gameMedia.getProxyMediaPath() : game.gameMedia.getMediaPath();
         config.name = game.name;
         config.server = ServerConfig.serverHost;
         config.port = ServerConfig.serverPorts[0];
