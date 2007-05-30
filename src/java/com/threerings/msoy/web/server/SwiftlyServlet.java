@@ -75,6 +75,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
                 if (pRec == null) {
                     log.warning("Swiftly project not found when loading users projects. " + 
                         "[memberId=" + memrec.memberId + "]");
+                    continue;
                 }
                 projects.add(pRec.toSwiftlyProject());
             }
