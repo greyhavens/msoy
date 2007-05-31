@@ -643,10 +643,12 @@ public class RoomController extends SceneController
         if (scene == null || !scene.canEdit(_mctx.getMemberObject())) {
             _mctx.displayInfo("editing", "e.no_permission");
         } else {
-            _openEditor = true;
             if (itemId == 0) {
                 clearItem(itemType);
                 return;
+            }
+            if (itemType != Item.DECOR && itemType != Item.AUDIO) {
+                _openEditor = true;
             }
 
             (new InventoryAction(itemType, _mctx)).trigger(
