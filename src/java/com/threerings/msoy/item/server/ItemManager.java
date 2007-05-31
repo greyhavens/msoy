@@ -455,7 +455,6 @@ public class ItemManager
         final byte itemType, final byte itemUseType, final int memberId, final int locationId,
         final int oldItemId, final int newItemId, ResultListener<Object> listener)
     {
-        log.warning("itemType: " + itemType + ", locationId: " + locationId);
         if (oldItemId == newItemId) {
             listener.requestCompleted(null); // mr. no-op
             return;
