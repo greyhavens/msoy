@@ -125,7 +125,6 @@
     <mkdir dir="${deploy.dir}/tmp"/>
     <mkdir dir="${classes.dir}"/>
     <mkdir dir="${classes.dir}/rsrc"/>
-    <mkdir dir="${javadoc.dir}"/>
     <copy todir="${classes.dir}/rsrc">
       <fileset dir="rsrc">
        <include name="**/*"/>
