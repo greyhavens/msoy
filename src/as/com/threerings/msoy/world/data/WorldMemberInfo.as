@@ -61,6 +61,18 @@ public class WorldMemberInfo extends MemberInfo
         _scale = ins.readFloat();
     }
 
+    /**
+     * Update the scale.
+     *
+     * This is sorta a hack. This method currently only exists on the actionscript side.
+     * We update the scale immediately when someone is futzing with the scale in the
+     * avatarviewer.
+     */
+    public function setScale (newScale :Number) :void
+    {
+        _scale = newScale;
+    }
+
     /** The media that represents this occupant. */
     protected var _media :MediaDesc;
 
