@@ -136,20 +136,20 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String doListBlurb();
 
   /**
-   * Translated "Please logon above to view your Inventory.".
-   * 
-   * @return translated "Please logon above to view your Inventory."
-   * @gwt.key logon
-   */
-  String logon();
-
-  /**
    * Translated "The rarity you choose for an item influences its purchase price.".
    * 
    * @return translated "The rarity you choose for an item influences its purchase price."
    * @gwt.key doListRarityBlurb
    */
   String doListRarityBlurb();
+
+  /**
+   * Translated "Please logon above to view your Inventory.".
+   * 
+   * @return translated "Please logon above to view your Inventory."
+   * @gwt.key logon
+   */
+  String logon();
 
   /**
    * Translated "You can list this item in the catalog.".
@@ -246,6 +246,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key doListNeedsDescrip
    */
   String doListNeedsDescrip();
+
+  /**
+   * Translated "Stop using this decor".
+   * 
+   * @return translated "Stop using this decor"
+   * @gwt.key detailRemoveDecor
+   */
+  String detailRemoveDecor();
 
   /**
    * Translated "List it!".

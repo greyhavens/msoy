@@ -144,6 +144,15 @@ public class FlashClients
     }
 
     /**
+     * Fetches the id for the given itemType, where itemType can be type that the scene can have
+     * only one of, such as decor or audio.
+     */
+    public static int getSceneItemId (byte itemType)
+    {
+        return getSceneItemIdNative(itemType);
+    }
+
+    /**
      * Tells the actionscript client that we'd like to use this avatar.  If 0 is passed in for the
      * avatarId, the current avatar is simply cleared away, leaving you tofulicious.
      */
@@ -250,6 +259,16 @@ public class FlashClients
         var client = $doc.getElementById("asclient");
         if (client) {
             client.useItem(itemId, itemType);
+        }
+    }-*/;
+
+    /**
+     * Does the actual <code>getSceneItemId()</code> call.
+     */
+    protected static native int getSceneItemIdNative(byte itemType) /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            return client.getSceneItemId(itemType);
         }
     }-*/;
 

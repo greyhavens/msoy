@@ -98,24 +98,26 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         byte type = _detail.item.getType();
-        // TODO: set decor and add background audio from here
+        // TODO: set background audio from here
         if (type != Item.AUDIO && FlashClients.inRoom()) {
             _details.add(WidgetUtil.makeShim(1, 10));
             if (type == Item.DECOR) {
-                // TODO: remove the current decor to go back to default
-                button = new Button(CInventory.msgs.detailUseDecor(), new ClickListener() {
+                final boolean using = (FlashClients.getSceneItemId(Item.DECOR) == 
+                    _detail.item.itemId);
+                String label = using ? CInventory.msgs.detailRemoveDecor() :
+                    CInventory.msgs.detailUseDecor();
+                button = new Button(label, new ClickListener() {
                     public void onClick (Widget sender) {
-                        FlashClients.useItem(_detail.item.itemId, Item.DECOR);
+                        FlashClients.useItem(using ? 0 : _detail.item.itemId, Item.DECOR);
                     }
                 });
             } else if (type == Item.AVATAR) { 
-                boolean wearing = (FlashClients.getAvatarId() == _detail.item.itemId);
+                final boolean wearing = (FlashClients.getAvatarId() == _detail.item.itemId);
                 String label = wearing ? CInventory.msgs.detailRemoveAvatar() : 
                     CInventory.msgs.detailUseAvatar();
-                final int itemId = wearing ? 0 : _detail.item.itemId;
                 button = new Button(label, new ClickListener() {
                     public void onClick (Widget sender) {
-                        FlashClients.useAvatar(itemId);
+                        FlashClients.useAvatar(wearing ? 0 : _detail.item.itemId);
                     }
                 });
             } else {

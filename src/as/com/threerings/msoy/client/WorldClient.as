@@ -224,6 +224,7 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("getAvatarId", externalGetAvatarId);
         ExternalInterface.addCallback("updateAvatarScale", externalUpdateAvatarScale);
         ExternalInterface.addCallback("useItem", externalUseItem);
+        ExternalInterface.addCallback("getSceneItemId", externalGetSceneItemId);
 
         _embedded = !Boolean(ExternalInterface.call("helloWhirled"));
         dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
@@ -376,6 +377,20 @@ public class WorldClient extends BaseClient
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
         if (view != null) {
             view.getRoomController().useItem(itemId, itemType);
+        }
+    }
+
+    /**
+     * Exposed to javascript so that it may find out the id of some specific item types for the
+     * current room.
+     */
+    protected function externalGetSceneItemId (itemType :int) :int
+    {
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        if (view != null) {
+            return view.getRoomController().getItemId(itemType);
+        } else {
+            return 0;
         }
     }
 

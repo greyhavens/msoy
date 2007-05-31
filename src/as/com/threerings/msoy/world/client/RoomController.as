@@ -616,6 +616,23 @@ public class RoomController extends SceneController
         return null;
     }
 
+    /** 
+     * Function to get the item id for item types that there can be only one of, like decor and 
+     * audio.  If an invalid item type specified, or there is none of the type specified in this
+     * room, 0 is returned.
+     */
+    public function getItemId (itemType :int) :int
+    {
+        var scene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
+        if (itemType == Item.DECOR) {
+            return (scene.getSceneModel() as MsoySceneModel).decorData.itemId;
+        } else if (itemType == Item.AUDIO) {
+            return (scene.getSceneModel() as MsoySceneModel).audioData.itemId;
+        } else {
+            return 0;
+        }
+    }
+
     /**
      * This is called from javascript to select this room's decor, audio, or add a piece of furni.
      */
@@ -626,6 +643,11 @@ public class RoomController extends SceneController
             _mctx.displayInfo("editing", "e.no_permission");
         } else {
             _openEditor = true;
+            if (itemId == 0) {
+                clearItem(itemType);
+                return;
+            }
+
             (new InventoryAction(itemType, _mctx)).trigger(
                 function (newItemId :int, newItemType :int, oldScene :MsoyScene) :Function {
                     return function () :void {
@@ -644,7 +666,7 @@ public class RoomController extends SceneController
 
                         var useNewItem :Function = function () :void {
                             if (newItemType == Item.DECOR) {
-                                var newScene :MsoyScene = oldScene.clone();
+                                var newScene :MsoyScene = oldScene.clone() as MsoyScene;
                                 var dd :DecorData = 
                                     (newScene.getSceneModel() as MsoySceneModel).decorData;
                                 dd.itemId = item.itemId;
@@ -701,6 +723,21 @@ public class RoomController extends SceneController
                         }
                     }
                 }(itemId, itemType, scene));
+        }
+    }
+
+    // used to clear out items like decor and audio of which there can be only one in a scene
+    protected function clearItem (itemType :int) :void
+    {
+        if (itemType == Item.DECOR) {
+            var oldScene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
+            var newScene :MsoyScene = oldScene.clone() as MsoyScene;
+            var dd :DecorData = 
+                (newScene.getSceneModel() as MsoySceneModel).decorData;
+            dd.itemId = 0;
+            dd.type = Decor.IMAGE_OVERLAY;
+            dd.media = DecorData.defaultMedia;
+            applyUpdate (new SceneUpdateAction(_mctx, oldScene, newScene));
         }
     }
 
