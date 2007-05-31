@@ -661,9 +661,7 @@ public class RoomController extends SceneController
                         };
 
                         if (decor.isUsed()) {
-                            // TODO: decor reclamation doesn't work yet on the server
-                            /* TEMP */ _mctx.displayInfo(null, "This decor is used elsewhere.");
-                            /*(new FurniUsedDialog(_mctx, function () :void {
+                            (new FurniUsedDialog(_mctx, function () :void {
                                 var confWrap :ConfirmAdapter = new ConfirmAdapter(
                                     // failure function
                                     function (cause :String) :void {
@@ -679,7 +677,7 @@ public class RoomController extends SceneController
                                 (_mctx.getClient().requireService(ItemService) as ItemService).
                                     reclaimItem(_mctx.getClient(), new ItemIdent(Item.DECOR,
                                         decor.itemId), confWrap);
-                            })).open(true);*/
+                            })).open(true);
                         } else {
                             useNewDecor();
                         }

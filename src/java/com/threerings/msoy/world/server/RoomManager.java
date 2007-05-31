@@ -43,6 +43,7 @@ import com.threerings.whirled.spot.server.SpotSceneManager;
 import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -58,6 +59,7 @@ import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomMarshaller;
 import com.threerings.msoy.world.data.RoomObject;
@@ -288,6 +290,26 @@ public class RoomManager extends SpotSceneManager
                 break;
             }
         }
+    }
+
+    /**
+     * Reclaim this room's decor.
+     */
+    public void reclaimDecor (MemberObject user)
+    {
+        // replace the media with a default bitmap, but leave room dimensions intact.
+        MsoyScene scene = (MsoyScene)_scene;
+        DecorData dd = scene.getDecorData();
+        dd.itemId = 0;
+        dd.type = Decor.IMAGE_OVERLAY;
+        dd.media = DecorData.defaultMedia;
+        SceneAttrsUpdate update = new SceneAttrsUpdate();
+        update.init(scene.getId(), scene.getVersion());
+        update.name = scene.getName();
+        update.decorData = dd;
+        update.audioData = scene.getAudioData();
+        update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
+        doRoomUpdate(new SceneUpdate[] { update }, user);
     }
 
     // documentation inherited from RoomProvider

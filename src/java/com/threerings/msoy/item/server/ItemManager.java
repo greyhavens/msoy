@@ -454,6 +454,7 @@ public class ItemManager
         final byte itemType, final byte itemUseType, final int memberId, final int locationId,
         final int oldItemId, final int newItemId, ResultListener<Object> listener)
     {
+        log.warning("itemType: " + itemType + ", locationId: " + locationId);
         if (oldItemId == newItemId) {
             listener.requestCompleted(null); // mr. no-op
             return;
@@ -475,7 +476,7 @@ public class ItemManager
                         repo.markItemUsage(oldItemIds, Item.UNUSED, 0);
                     }
                     if (newItemId != 0) {
-                        repo.markItemUsage(newItemIds, itemUseType, memberId);
+                        repo.markItemUsage(newItemIds, itemUseType, locationId);
                     }
                     return null;
                 }
@@ -1123,23 +1124,27 @@ public class ItemManager
             throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
         }
 
-        if (item.type == Item.AVATAR || item.type == Item.DECOR || item.type == Item.AUDIO) {
+        if (item.type == Item.AVATAR || item.type == Item.AUDIO) {
             log.log(Level.WARNING, "Tried to reclaim invalid item type [type=" + item.type +
                 ", id=" + item.itemId + "]");
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
 
         getItem(item, new ResultListener<Item>() {
-            public void requestCompleted (Item result) {
+            public void requestCompleted (final Item result) {
                 if (result.ownerId != user.getMemberId()) {
                     listener.requestFailed(ItemCodes.E_ACCESS_DENIED);
                     return;
                 }
-                if (result.used == Item.USED_AS_FURNITURE) {
+                if (result.getType() == Item.DECOR || result.used == Item.USED_AS_FURNITURE) {
                     MsoyServer.screg.resolveScene(result.location, 
                         new SceneRegistry.ResolutionListener() {
                             public void sceneWasResolved (SceneManager scmgr) {
-                                ((RoomManager)scmgr).reclaimItem(item, user);
+                                if (result.getType() == Item.DECOR) {
+                                    ((RoomManager)scmgr).reclaimDecor(user);
+                                } else {
+                                    ((RoomManager)scmgr).reclaimItem(item, user);
+                                }
                                 listener.requestProcessed();
                             }
                             public void sceneFailedToResolve (int sceneId, Exception reason) {
@@ -1149,9 +1154,9 @@ public class ItemManager
                             }
                         });
                 } else {
-                    // TODO: decor and avatar reclamation will be possible
-                    log.log(Level.WARNING, "Tried to reclaim item not being used as furni [type=" +
-                        result.getType() + ", id=" + result.itemId + "]");
+                    // TODO: avatar reclamation will be possible
+                    log.log(Level.WARNING, "Item to be reclaimed is neither decor nor furni " + 
+                        "[type=" + result.getType() + ", id=" + result.itemId + "]");
                     listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
                     return;
                 }
