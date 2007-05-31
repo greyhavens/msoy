@@ -1163,7 +1163,7 @@ public class ItemManager
             throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
         }
 
-        if (item.type == Item.AVATAR || item.type == Item.AUDIO) {
+        if (item.type == Item.AVATAR) {
             log.log(Level.WARNING, "Tried to reclaim invalid item type [type=" + item.type +
                 ", id=" + item.itemId + "]");
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
@@ -1175,12 +1175,16 @@ public class ItemManager
                     listener.requestFailed(ItemCodes.E_ACCESS_DENIED);
                     return;
                 }
-                if (result.getType() == Item.DECOR || result.used == Item.USED_AS_FURNITURE) {
+                final byte type = result.getType();
+                if (type == Item.DECOR || type == Item.AUDIO || 
+                    result.used == Item.USED_AS_FURNITURE) {
                     MsoyServer.screg.resolveScene(result.location, 
                         new SceneRegistry.ResolutionListener() {
                             public void sceneWasResolved (SceneManager scmgr) {
-                                if (result.getType() == Item.DECOR) {
+                                if (type == Item.DECOR) {
                                     ((RoomManager)scmgr).reclaimDecor(user);
+                                } else if (type == Item.AUDIO) {
+                                    ((RoomManager)scmgr).reclaimAudio(user);
                                 } else {
                                     ((RoomManager)scmgr).reclaimItem(item, user);
                                 }

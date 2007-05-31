@@ -98,10 +98,9 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(button);
         }
 
-        byte type = _detail.item.getType();
-        // TODO: set background audio from here
-        if (type != Item.AUDIO && FlashClients.inRoom()) {
+        if (FlashClients.inRoom()) {
             _details.add(WidgetUtil.makeShim(1, 10));
+            byte type = _detail.item.getType();
             if (type == Item.DECOR) {
                 final boolean using = (FlashClients.getSceneItemId(Item.DECOR) == 
                     _detail.item.itemId);
@@ -110,6 +109,16 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 button = new Button(label, new ClickListener() {
                     public void onClick (Widget sender) {
                         FlashClients.useItem(using ? 0 : _detail.item.itemId, Item.DECOR);
+                    }
+                });
+            } else if (type == Item.AUDIO) {
+                final boolean using = (FlashClients.getSceneItemId(Item.AUDIO) ==
+                    _detail.item.itemId);
+                String label = using ? CInventory.msgs.detailRemoveAudio() :
+                    CInventory.msgs.detailUseAudio();
+                button = new Button (label, new ClickListener() {
+                    public void onClick (Widget sender) {
+                        FlashClients.useItem(using ? 0 : _detail.item.itemId, Item.AUDIO);
                     }
                 });
             } else if (type == Item.AVATAR) { 

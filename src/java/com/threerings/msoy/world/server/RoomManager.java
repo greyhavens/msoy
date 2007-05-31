@@ -312,6 +312,23 @@ public class RoomManager extends SpotSceneManager
         doRoomUpdate(new SceneUpdate[] { update }, user);
     }
 
+    /**
+     * Reclaim this room's background audio.
+     */
+    public void reclaimAudio (MemberObject user)
+    {
+        MsoyScene scene = (MsoyScene)_scene;
+        AudioData ad = scene.getAudioData();
+        ad.itemId = 0;
+        SceneAttrsUpdate update = new SceneAttrsUpdate();
+        update.init(scene.getId(), scene.getVersion());
+        update.name = scene.getName();
+        update.decorData = scene.getDecorData();
+        update.audioData = ad;
+        update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
+        doRoomUpdate(new SceneUpdate[] { update }, user);
+    }
+
     // documentation inherited from RoomProvider
     public void updateMemory (ClientObject caller, final MemoryEntry entry)
     {

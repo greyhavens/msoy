@@ -32,6 +32,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String errItemMissingName();
 
   /**
+   * Translated "Item Rarity".
+   * 
+   * @return translated "Item Rarity"
+   * @gwt.key doListRarityHeader
+   */
+  String doListRarityHeader();
+
+  /**
    * Translated "You can remix this item.".
    * 
    * @return translated "You can remix this item."
@@ -46,14 +54,6 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key doListDescripHeader
    */
   String doListDescripHeader();
-
-  /**
-   * Translated "Item Rarity".
-   * 
-   * @return translated "Item Rarity"
-   * @gwt.key doListRarityHeader
-   */
-  String doListRarityHeader();
 
   /**
    * Translated "Delete".
@@ -102,6 +102,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key detailEdit
    */
   String detailEdit();
+
+  /**
+   * Translated "Stop using this music".
+   * 
+   * @return translated "Stop using this music"
+   * @gwt.key detailRemoveAudio
+   */
+  String detailRemoveAudio();
 
   /**
    * Translated "Add item to current room ".
@@ -174,6 +182,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key dolistRarityUncommon
    */
   String dolistRarityUncommon();
+
+  /**
+   * Translated "Use this music in current room".
+   * 
+   * @return translated "Use this music in current room"
+   * @gwt.key detailUseAudio
+   */
+  String detailUseAudio();
 
   /**
    * Translated "Rarity:".
