@@ -16,6 +16,7 @@ import mx.events.ResizeEvent;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.HeaderBar;
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldContext;
 
@@ -47,6 +48,7 @@ public class PageDisplayTab extends ChatTab
         _pageLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleSecurityError);
 
         _page.addEventListener(TextEvent.LINK, handleLinkClick);
+        _page.addEventListener(Event.CHANGE, abortChangeEvent);
     }
 
     public function shutdown () :void
@@ -60,11 +62,14 @@ public class PageDisplayTab extends ChatTab
         _pageLoader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, handleSecurityError);
 
         _page.removeEventListener(TextEvent.LINK, handleLinkClick);
+        _page.removeEventListener(Event.CHANGE, abortChangeEvent);
     }
 
     /** Starts loading the specified URL. */
     public function loadUrl (url :String) :void
     {
+        trace("LOAD URL: " + url);
+        
         // shut down any operation already in progress
         try {
             _pageLoader.close();
@@ -74,7 +79,7 @@ public class PageDisplayTab extends ChatTab
             // closed. but no, that would be too easy. 
         }
 
-        trace("LOAD URL: " + url);
+        displayFeedback(Msgs.GENERAL.get("m.help_loading"));
         
         // get a new page!
         _pageLoader.load(new URLRequest(url));
@@ -105,6 +110,20 @@ public class PageDisplayTab extends ChatTab
 
     // EVENT HANDLERS
     
+    /** Prevents the Event.CHANGE event from propagating up to the parent. */
+    protected function abortChangeEvent (event :Event) :void {
+        
+        // This function is a horrible kluge around a Flex/Flexlib bug, where two events have
+        // the same string id (flash.events.Event.CHANGE and mx.events.IndexChangedEvent.CHANGE).
+        // This causes problems for this control's container (SuperTabNavigator), which tries
+        // to listen for IndexChangedEvents, but ends up getting all Event instances as well,
+        // and chokes during on the downcast at runtime.
+        //
+        // Until SuperTabNavigator is fixed, my solution is to intercept any Event.CHANGE events
+        // from the text control. I'm pretty sure no parent container will miss them anyway. :)
+        event.stopPropagation();
+    }
+
     protected function checkSizes (... ignored) :void
     {
         // only try this if the container is ready
@@ -122,7 +141,7 @@ public class PageDisplayTab extends ChatTab
 
     protected function loadStarted (event :Event) :void 
     {
-        trace("loadStarted: " + event);
+        //trace("loadStarted: " + event);
     }
 
     protected function loadComplete (event :Event) :void 
@@ -133,22 +152,33 @@ public class PageDisplayTab extends ChatTab
 
     protected function handleHttpStatusCode (event :HTTPStatusEvent) :void
     {
-        trace("handleHttpStatusCode: " + event);
+        // this isn't all that useful, since it doesn't behave the same way on all browsers.
+        // but we'll try our best.
+        
+        if (event.status >= 400) {
+            displayFeedback(
+                Msgs.GENERAL.get("m.help_httpstatus_error", this.tabName, event.status));
+        }
     }
 
     protected function handleIOError (event :IOErrorEvent) :void
     {
-        trace("handleIOError: " + event);
+        displayFeedback(Msgs.GENERAL.get("m.help_io_error", this.tabName));
     }        
     
     protected function handleSecurityError (event :SecurityErrorEvent) :void
     {
-        trace("handleSecurityError: " + event);
+        displayFeedback(Msgs.GENERAL.get("m.help_security_error", this.tabName));
     }        
     
     protected function handleLinkClick (event :TextEvent) :void
     {
         trace("handleLinkClick: " + event);
+    }
+
+    protected function displayFeedback (message :String) :void
+    {
+        _page.htmlText = "<b>" + message + "</b><br><br>" + Msgs.GENERAL.get("m.help_footnote");
     }
     
     protected var _page :Text;
