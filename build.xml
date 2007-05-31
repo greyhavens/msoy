@@ -14,10 +14,10 @@
   <property name="deploy.dir"    value="dist"/>
   <property name="classes.dir"   value="${deploy.dir}/classes"/>
   <property name="javadoc.dir"   value="${deploy.dir}/docs"/>
-  <property name="savedoc.dir"   value="docs"/>
   <property name="gwtout.dir"    value="pages"/>
   <property name="flexsdk.dir"   value="tools/extern/flex_sdk"/>
   <property name="extlibs.dir"   value="extlibs/java"/>
+  <property name="javadoc.title" value="Metasoy API"/>
 
   <!-- defines the build version (normally zero unless we're doing a package build) -->
   <property name="build_version" value="0"/>
@@ -32,8 +32,14 @@
     <include name="${gsrc.dir}/**/*.java"/>
   </fileset>
 
+  <!-- override the src fileset for the common javadoc target -->
+  <fileset dir="src" id="javadoc.src.dir">
+    <include name="java/**/*.java"/>
+    <include name="gwt/client/**/*.java"/>
+  </fileset>
+
   <!-- declare the properties files. -->
-  <property name="props.list"     value="server.properties"/>
+  <property name="props.list" value="server.properties"/>
 
   <!-- declare the files from bin needed in the package -->
   <property name="bin.list" value="msoy,msoyrespawn,msoyserver,msoyjava,runmsoy,mysql"/>
@@ -684,19 +690,7 @@
   </target>
 
   <!-- builds the javadoc documentation -->
-  <target name="javadoc" depends="prepare">
-    <property name="copy.holder"  value="Three Rings Design, Inc."/>
-    <javadoc windowtitle="${app.name} API" doctitle="${app.name} API"
-             bottom="Copyright &#169; 2006-2007 ${copy.holder}. All Rights Reserved."
-             destdir="${javadoc.dir}" additionalparam="-breakiterator">
-      <classpath refid="classpath"/>
-      <link href="http://java.sun.com/j2se/1.5/docs/api/"/>
-      <link href="http://samskivert.com/code/samskivert/samskivert/docs/api"/>
-      <fileset dir="${src.dir}" includes="**/*.java"/>
-      <fileset dir="${gsrc.dir}" includes="client/**/*.java"/>
-      <tag name="gwt.key" enabled="false"/>
-    </javadoc>
-  </target>
+  <target name="javadoc" depends="prepare,common-javadoc"/>
 
   <!-- builds the javadocs and stuffs them in a directory where they -->
   <!-- won't be blown away when we do "clean" next time -->
