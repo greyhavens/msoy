@@ -79,7 +79,7 @@ import com.threerings.msoy.world.client.updates.UpdateStack;
 import com.threerings.msoy.world.client.editor.DoorTargetEditController;
 import com.threerings.msoy.world.client.editor.RoomEditPanel;
 import com.threerings.msoy.world.client.editor.EditorController;
-import com.threerings.msoy.world.client.editor.FurniUsedDialog;
+import com.threerings.msoy.world.client.editor.ItemUsedDialog;
 
 import com.threerings.msoy.world.data.AudioData;
 import com.threerings.msoy.world.data.DecorData;
@@ -661,23 +661,25 @@ public class RoomController extends SceneController
                         };
 
                         if (decor.isUsed()) {
-                            (new FurniUsedDialog(_mctx, function () :void {
-                                var confWrap :ConfirmAdapter = new ConfirmAdapter(
-                                    // failure function
-                                    function (cause :String) :void {
-                                        Log.getLog(this).debug(
-                                            "Failed to remove decor from its current location " +
-                                            "[id=" + decor.itemId +", cause=" + cause + "]");
-                                        _mctx.displayInfo("editing", "e.failed_to_remove");
-                                    },
-                                    // success function
-                                    function () :void {
-                                        useNewDecor();
-                                    });
-                                (_mctx.getClient().requireService(ItemService) as ItemService).
-                                    reclaimItem(_mctx.getClient(), new ItemIdent(Item.DECOR,
-                                        decor.itemId), confWrap);
-                            })).open(true);
+                            (new ItemUsedDialog(_mctx, Msgs.EDITING.get("l.decor"), 
+                                function () :void {
+                                    var confWrap :ConfirmAdapter = new ConfirmAdapter(
+                                        // failure function
+                                        function (cause :String) :void {
+                                            Log.getLog(this).debug(
+                                                "Failed to remove decor from its current " + 
+                                                "location [id=" + decor.itemId +", cause=" + 
+                                                cause + "]");
+                                            _mctx.displayInfo("editing", "e.failed_to_remove");
+                                        },
+                                        // success function
+                                        function () :void {
+                                            useNewDecor();
+                                        });
+                                    (_mctx.getClient().requireService(ItemService) as ItemService).
+                                        reclaimItem(_mctx.getClient(), new ItemIdent(Item.DECOR,
+                                            decor.itemId), confWrap);
+                                })).open(true);
                         } else {
                             useNewDecor();
                         }
@@ -734,24 +736,25 @@ public class RoomController extends SceneController
                         };
 
                         if (item.isUsed()) {
-                            (new FurniUsedDialog(_mctx, function () :void {
-                                var confWrap :ConfirmAdapter = new ConfirmAdapter(
-                                    // failure function
-                                    function (cause :String) :void {
-                                        Log.getLog(this).debug(
-                                            "Failed to remove item from its current location [id=" +
-                                            item.itemId + ", type=" + item.getType() + 
-                                            ", cause=" + cause + "]");
-                                        _mctx.displayInfo("editing", "e.failed_to_remove");
-                                    },
-                                    // success function
-                                    function () :void {
-                                        addToRoom();
-                                    });
-                                (_mctx.getClient().requireService(ItemService) as ItemService).
-                                    reclaimItem(_mctx.getClient(), new ItemIdent(item.getType(), 
-                                        item.itemId), confWrap);
-                            })).open(true);
+                            (new ItemUsedDialog(_mctx, Msgs.EDITING.get("l.furni"), 
+                                function () :void {
+                                    var confWrap :ConfirmAdapter = new ConfirmAdapter(
+                                        // failure function
+                                        function (cause :String) :void {
+                                            Log.getLog(this).debug(
+                                                "Failed to remove item from its current location " +
+                                                "[id=" + item.itemId + ", type=" + item.getType() + 
+                                                ", cause=" + cause + "]");
+                                            _mctx.displayInfo("editing", "e.failed_to_remove");
+                                        },
+                                        // success function
+                                        function () :void {
+                                            addToRoom();
+                                        });
+                                    (_mctx.getClient().requireService(ItemService) as ItemService).
+                                        reclaimItem(_mctx.getClient(), new ItemIdent(item.getType(), 
+                                            item.itemId), confWrap);
+                                })).open(true);
                         } else {
                             addToRoom();
                         }
