@@ -13,7 +13,6 @@
   <property name="asrc.dir"      value="src/as"/>
   <property name="deploy.dir"    value="dist"/>
   <property name="classes.dir"   value="${deploy.dir}/classes"/>
-  <property name="javadoc.dir"   value="${deploy.dir}/docs"/>
   <property name="gwtout.dir"    value="pages"/>
   <property name="flexsdk.dir"   value="tools/extern/flex_sdk"/>
   <property name="extlibs.dir"   value="extlibs/java"/>
@@ -691,15 +690,6 @@
 
   <!-- builds the javadoc documentation -->
   <target name="javadoc" depends="prepare,common-javadoc"/>
-
-  <!-- builds the javadocs and stuffs them in a directory where they -->
-  <!-- won't be blown away when we do "clean" next time -->
-  <target name="savedoc" depends="javadoc">
-    <delete dir="${savedoc.dir}/api"/>
-    <copy todir="${savedoc.dir}/api">
-      <fileset dir="${javadoc.dir}" includes="**/*"/>
-    </copy>
-  </target>
 
   <!-- convenience targets that build specific projects and copy the results -->
   <target name="toybox">
