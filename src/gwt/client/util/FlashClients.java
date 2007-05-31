@@ -156,9 +156,9 @@ public class FlashClients
      * Tells the actionscript client that we'd like to use this avatar.  If 0 is passed in for the
      * avatarId, the current avatar is simply cleared away, leaving you tofulicious.
      */
-    public static void useAvatar (int avatarId) 
+    public static void useAvatar (int avatarId, float scale)
     {
-        useAvatarNative(avatarId);
+        useAvatarNative(avatarId, scale);
     }
 
     /**
@@ -275,10 +275,10 @@ public class FlashClients
     /**
      * Does the actual <code>useAvatar()</code> call.
      */
-    protected static native void useAvatarNative (int avatarId) /*-{
+    protected static native void useAvatarNative (int avatarId, float scale) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.useAvatar(avatarId);
+            client.useAvatar(avatarId, scale);
         }
     }-*/;
 

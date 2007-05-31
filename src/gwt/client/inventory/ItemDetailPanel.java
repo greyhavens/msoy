@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
@@ -117,7 +118,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                     CInventory.msgs.detailUseAvatar();
                 button = new Button(label, new ClickListener() {
                     public void onClick (Widget sender) {
-                        FlashClients.useAvatar(wearing ? 0 : _detail.item.itemId);
+                        FlashClients.useAvatar(wearing ? 0 : _detail.item.itemId,
+                            wearing ? 0 : ((Avatar) _detail.item).scale);
                     }
                 });
             } else {
