@@ -224,6 +224,7 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("addFurni", externalAddFurni);
         ExternalInterface.addCallback("useAvatar", externalUseAvatar);
         ExternalInterface.addCallback("getAvatarId", externalGetAvatarId);
+        ExternalInterface.addCallback("updateAvatarScale", externalUpdateAvatarScale);
         ExternalInterface.addCallback("useDecor", externalUseDecor);
 
         _embedded = !Boolean(ExternalInterface.call("helloWhirled"));
@@ -366,6 +367,18 @@ public class WorldClient extends BaseClient
     {
         var avatar :Avatar = _wctx.getMemberObject().avatar;
         return avatar == null ? 0 : avatar.itemId;
+    }
+
+    /**
+     * Exposed to javascript so that the avatarviewer may update the scale of an avatar
+     * in real-time.
+     */
+    protected function externalUpdateAvatarScale (avatarId :int, newScale :Number) :void
+    {
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        if (view != null) {
+            view.updateAvatarScale(avatarId, newScale);
+        }
     }
 
     /**

@@ -52,6 +52,7 @@ import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.threerings.ezgame.util.EZObjectMarshaller;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
@@ -85,6 +86,7 @@ import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 import com.threerings.msoy.world.data.WorldPetInfo;
+import com.threerings.msoy.world.data.WorldMemberInfo;
 
 /**
  * Displays a room or scene in the virtual world.
@@ -123,6 +125,23 @@ public class RoomView extends AbstractRoomView
 
         // set the top of the history to the back wall/floor corner
         chatOverlay.setSubtitlePercentage(_layout.recommendedChatHeight());
+    }
+
+    /**
+     * Update the 'my' user's specified avatar's scale, non-permanently.
+     * This is called via the avatarviewer, so that scale changes they make are instantly
+     * viewable in the world.
+     */
+    public function updateAvatarScale (avatarId :int, newScale :Number) :void
+    {
+        var avatar :AvatarSprite = getMyAvatar();
+        if (avatar != null) {
+            var occInfo :WorldMemberInfo = avatar.getActorInfo() as WorldMemberInfo;
+            if (occInfo.getItemIdent().equals(new ItemIdent(Item.AVATAR, avatarId))) {
+                occInfo.setScale(newScale);
+                avatar.setActorInfo(occInfo);
+            }
+        }
     }
 
     // from LoadingWatcher

@@ -154,5 +154,11 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         _parent.requestClearDetail();
     }
 
+    // @Override // BaseItemDetailPanel
+    protected boolean allowAvatarScaleEditing ()
+    {
+        return true;
+    }
+
     protected ItemPanel _parent;
 }

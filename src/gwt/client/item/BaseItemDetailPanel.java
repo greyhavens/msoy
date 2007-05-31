@@ -117,6 +117,8 @@ public abstract class BaseItemDetailPanel extends FlexTable
             }
             public void addMenuItems (String tag, PopupMenu menu) { }
         }));
+
+        configureCallbacks(this);
     }
 
     protected Widget createPreview (Item item)
@@ -125,7 +127,8 @@ public abstract class BaseItemDetailPanel extends FlexTable
         if (item instanceof Avatar) {
             // special avatar viewer: TODO: only display in catalog / inventory
             // and not for 3rd parties?
-            return FlashClients.createAvatarViewer(preview.getMediaPath(), ((Avatar) item).scale);
+            return FlashClients.createAvatarViewer(preview.getMediaPath(), ((Avatar) item).scale,
+                allowAvatarScaleEditing());
 
         } else if (preview.isVideo()) {
             return FlashClients.createVideoViewer(preview.getMediaPath());
@@ -147,10 +150,57 @@ public abstract class BaseItemDetailPanel extends FlexTable
     }
 
     /**
+     * Overrideable by subclasses to enable avatar scale editing.
+     */
+    protected boolean allowAvatarScaleEditing ()
+    {
+        return false;
+    }
+
+    /**
+     * Called from the avatarviewer to effect a scale change.
+     */
+    protected void updateAvatarScale (float newScale)
+    {
+        if (!(_item instanceof Avatar)) {
+            return;
+        }
+
+        Avatar av = (Avatar) _item;
+        if (av.scale != newScale) {
+            // stash the new scale in the item
+            av.scale = newScale;
+            _scaleUpdated = true;
+
+            // try immediately updating in the whirled client
+            sendAvatarScaleToWorld(av.itemId, newScale);
+        }
+    }
+
+    /**
      * Called when the user clicks the "up arrow" button next to the name to return to their
      * inventory or catalog listing.
      */
     protected abstract void returnToList ();
+
+    /**
+     * Sends the new avatar scale to the whirled client.
+     */
+    protected static native void sendAvatarScaleToWorld (int avatarId, float newScale) /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            client.updateAvatarScale(avatarId, newScale);
+        }
+    }-*/;
+
+    /**
+     * Configures interface to be called by the avatarviewer.
+     */
+    protected static native void configureCallbacks (BaseItemDetailPanel panel) /*-{
+        $wnd.updateAvatarScale = function (newScale) {
+            panel.@client.item.BaseItemDetailPanel::updateAvatarScale(F)(newScale);
+        }
+    }-*/;
 
     protected Item _item;
     protected ItemDetail _detail;
@@ -161,4 +211,7 @@ public abstract class BaseItemDetailPanel extends FlexTable
 
     protected Label _description;
     protected CreatorLabel _creator;
+
+    /** Have we updated the scale (of an avatar?) */
+    protected boolean _scaleUpdated;
 }

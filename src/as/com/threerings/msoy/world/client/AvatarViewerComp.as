@@ -6,6 +6,8 @@ package com.threerings.msoy.world.client {
 import flash.display.Bitmap;
 import flash.display.Sprite;
 
+import flash.external.ExternalInterface;
+
 import flash.events.MouseEvent;
 
 import flash.text.TextField;
@@ -225,6 +227,14 @@ public class AvatarViewerComp extends Canvas
 
         for each (var avatar :ViewerAvatarSprite in _avatars) {
             avatar.setScale(scale);
+        }
+
+        if (ExternalInterface.available) {
+            try {
+                ExternalInterface.call("updateAvatarScale", scale);
+            } catch (e :Error) {
+                trace(e);
+            }
         }
     }
 
