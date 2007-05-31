@@ -177,6 +177,25 @@ public abstract class BaseItemDetailPanel extends FlexTable
         }
     }
 
+    // @Override // Panel
+    protected void onDetach ()
+    {
+        super.onDetach();
+
+        // persist our new scale to the server
+        if (_scaleUpdated) {
+            CItem.itemsvc.scaleAvatar(CItem.ident, _item.itemId, ((Avatar) _item).scale,
+                new AsyncCallback () {
+                    public void onSuccess (Object result) {
+                        // nada
+                    }
+                    public void onFailure (Throwable caught) {
+                        CItem.log("Failed to update scale [item=" + _item.getIdent() + "]", caught);
+                    }
+                });
+        }
+    }
+
     /**
      * Called when the user clicks the "up arrow" button next to the name to return to their
      * inventory or catalog listing.

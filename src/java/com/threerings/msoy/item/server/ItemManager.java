@@ -54,6 +54,7 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 import com.threerings.msoy.item.data.ItemCodes;
 
 import com.threerings.msoy.item.server.persist.AudioRepository;
+import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
@@ -604,6 +605,45 @@ public class ItemManager
                             item.lastTouched = lastTouched;
                         }
                     }, false);
+                }
+            }
+        });
+    }
+
+    /**
+     * Request to scale the specified avatar, as long as the owner matches.
+     */
+    public void scaleAvatar (
+        final int ownerId, final int avatarId, final float newScale,
+        ResultListener<Avatar> listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Avatar>(listener) {
+            public Avatar invokePersistResult () throws Exception {
+                // load it out, which we need to do anyway
+                AvatarRecord avatar = _avatarRepo.loadItem(avatarId);
+                // verify that it exists and the user owns it
+                if (avatar == null || avatar.ownerId != ownerId) {
+                    throw new Exception("Not in inventory");
+                }
+
+                // update the scale
+                avatar.scale = newScale;
+                _avatarRepo.updateScale(avatarId, newScale);
+
+                return (Avatar) avatar.toItem();
+            }
+
+            public void handleSuccess () {
+                super.handleSuccess();
+
+                // update the user's cache
+                MemberObject user = updateUserCache(null, _result);
+                // and, if the user is wearing that particular avatar right now, update them
+                if (user != null) {
+                    if (_result.equals(user.avatar)) {
+                        user.setAvatar(_result);
+                        MsoyServer.memberMan.updateOccupantInfo(user);
+                    }
                 }
             }
         });
@@ -1204,7 +1244,7 @@ public class ItemManager
     /**
      * Internal cache-updatey method that takes a record or an item.
      */
-    protected void updateUserCache (ItemRecord rec, Item item)
+    protected MemberObject updateUserCache (ItemRecord rec, Item item)
     {
         // first locate the owner
         int ownerId;
@@ -1231,13 +1271,15 @@ public class ItemManager
                 memObj.addToInventory(item);
             }
         }
+
+        return memObj;
     }
 
     /**
      * Update changed items that are already loaded in a user's inventory.
      */
-    protected void updateUserCache (int ownerId, byte type, int[] ids, ItemUpdateOp op,
-                                    boolean warnIfMissing)
+    protected MemberObject updateUserCache (
+        int ownerId, byte type, int[] ids, ItemUpdateOp op, boolean warnIfMissing)
     {
         MemberObject memObj = MsoyServer.lookupMember(ownerId);
         if (memObj != null && memObj.isInventoryLoaded(type)) {
@@ -1260,6 +1302,8 @@ public class ItemManager
                 memObj.commitTransaction();
             }
         }
+
+        return memObj;
     }
 
     /**

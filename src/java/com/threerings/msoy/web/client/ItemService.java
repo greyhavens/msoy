@@ -56,6 +56,12 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
+     * Update the persisted scale of an avatar.
+     */
+    public void scaleAvatar (WebIdent ident, int avatarId, float newScale)
+        throws ServiceException;
+
+    /**
      * Remixes a cloned item into a mutable original item.
      */
     public Item remixItem (WebIdent ident, ItemIdent item)

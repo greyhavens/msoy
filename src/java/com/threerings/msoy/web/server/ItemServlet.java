@@ -21,6 +21,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
@@ -127,6 +128,21 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
+    public void scaleAvatar (WebIdent ident, final int avatarId, final float newScale)
+        throws ServiceException
+    {
+        final MemberRecord memrec = requireAuthedUser(ident);
+        final ServletWaiter<Avatar> waiter = new ServletWaiter<Avatar>(
+            "scaleAvatar[" + avatarId + ", " + newScale + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.scaleAvatar(memrec.memberId, avatarId, newScale, waiter);
+            }
+        });
+        waiter.waitForResult();
+    }
+
+    // from interface ItemService
     public Item remixItem (WebIdent ident, final ItemIdent item)
         throws ServiceException
     {
@@ -147,7 +163,7 @@ public class ItemServlet extends MsoyServiceServlet
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>("deleteItem[" + item + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.deleteItemFor (memrec.memberId, item, waiter);
+                MsoyServer.itemMan.deleteItemFor(memrec.memberId, item, waiter);
             }
         });
         waiter.waitForResult();
