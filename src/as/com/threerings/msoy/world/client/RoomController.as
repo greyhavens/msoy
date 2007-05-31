@@ -617,82 +617,9 @@ public class RoomController extends SceneController
     }
 
     /**
-     * This is called from javascript to select this room's decor item.
+     * This is called from javascript to select this room's decor, audio, or add a piece of furni.
      */
-    public function useDecor (itemId :int) :void
-    {
-        var scene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
-        if (scene == null || !scene.canEdit(_mctx.getMemberObject())) {
-            _mctx.displayInfo("editing", "e.no_permission");
-        } else {
-            _openEditor = true;
-            (new InventoryAction(Item.DECOR, _mctx)).trigger(
-                // closure to use the new decore once decors have been loaded on this
-                // user's MemberObject
-                function (decorId :int, oldScene :MsoyScene) :Function {
-                    return function () :void {
-                        var decor :Decor = null;
-                        for each (var checkDecor :Decor in 
-                            _mctx.getMemberObject().getItems(Item.DECOR)) {
-                            if (checkDecor.itemId == decorId) {
-                                decor = checkDecor;
-                                break;
-                            }
-                        }
-                        if (decor == null) {
-                            // didn't find decor
-                            return;
-                        }
-
-                        var useNewDecor :Function = function () :void {
-                            var newScene :MsoyScene = oldScene.clone();
-
-                            var dd :DecorData = 
-                                (newScene.getSceneModel() as MsoySceneModel).decorData;
-                            dd.itemId = decor.itemId;
-                            dd.media = decor.furniMedia;
-                            dd.type = decor.type;
-                            dd.height = decor.height;
-                            dd.width = decor.width;
-                            dd.depth = decor.depth;
-                            dd.horizon = decor.horizon;
-
-                            applyUpdate (new SceneUpdateAction(_mctx, oldScene, newScene));
-                        };
-
-                        if (decor.isUsed()) {
-                            (new ItemUsedDialog(_mctx, Msgs.EDITING.get("l.decor"), 
-                                function () :void {
-                                    var confWrap :ConfirmAdapter = new ConfirmAdapter(
-                                        // failure function
-                                        function (cause :String) :void {
-                                            Log.getLog(this).debug(
-                                                "Failed to remove decor from its current " + 
-                                                "location [id=" + decor.itemId +", cause=" + 
-                                                cause + "]");
-                                            _mctx.displayInfo("editing", "e.failed_to_remove");
-                                        },
-                                        // success function
-                                        function () :void {
-                                            useNewDecor();
-                                        });
-                                    (_mctx.getClient().requireService(ItemService) as ItemService).
-                                        reclaimItem(_mctx.getClient(), new ItemIdent(Item.DECOR,
-                                            decor.itemId), confWrap);
-                                })).open(true);
-                        } else {
-                            useNewDecor();
-                        }
-                    }
-                }(itemId, scene));
-        }
-    }
-
-    /**
-     * This is called from javascript to add a piece of furni to the room from the inventory
-     * browsing interface.
-     */
-    public function addFurni (itemId :int, itemType :int) :void
+    public function useItem (itemId :int, itemType :int) :void
     {
         var scene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
         if (scene == null || !scene.canEdit(_mctx.getMemberObject())) {
@@ -700,66 +627,80 @@ public class RoomController extends SceneController
         } else {
             _openEditor = true;
             (new InventoryAction(itemType, _mctx)).trigger(
-                // closure to add the new furni once this item type has been loaded on this
-                // user's MemberObject
-                function (furniId :int, furniType :int) :Function {
+                function (newItemId :int, newItemType :int, oldScene :MsoyScene) :Function {
                     return function () :void {
                         var item :Item = null;
                         for each (var checkItem :Item in 
-                            _mctx.getMemberObject().getItems(furniType)) {
-                            if (checkItem.itemId == furniId) {
+                            _mctx.getMemberObject().getItems(newItemType)) {
+                            if (checkItem.itemId == newItemId) {
                                 item = checkItem;
                                 break;
                             }
                         }
                         if (item == null) {
-                            // didn't find the item
+                            // didn't find item
                             return;
                         }
-                
-                        var addToRoom :Function = function () :void {
-                            // create a generic furniture descriptor
-                            var furni :FurniData = new FurniData();
-                            furni.id = _scene.getNextFurniId(0);
-                            furni.itemType = item.getType();
-                            furni.itemId = item.itemId;
-                            furni.media = item.getFurniMedia();
-                            // create it at the front of the scene, centered on the floor
-                            furni.loc = new MsoyLocation(0.5, 0, 0);
-                            if (item is Game) {
-                                var game :Game = (item as Game);
-                                furni.actionType = game.isInWorld() ?
-                                    FurniData.ACTION_WORLD_GAME : FurniData.ACTION_LOBBY_GAME;
-                                furni.actionData = String(game.getPrototypeId()) + ":" + game.name;
+
+                        var useNewItem :Function = function () :void {
+                            if (newItemType == Item.DECOR) {
+                                var newScene :MsoyScene = oldScene.clone();
+                                var dd :DecorData = 
+                                    (newScene.getSceneModel() as MsoySceneModel).decorData;
+                                dd.itemId = item.itemId;
+                                dd.media = item.furniMedia;
+                                dd.type = item.type;
+                                dd.height = item.height;
+                                dd.width = item.width;
+                                dd.depth = item.depth;
+                                dd.horizon = item.horizon;
+                                applyUpdate (new SceneUpdateAction(_mctx, oldScene, newScene));
+                            } else {
+                                // create a generic furniture descriptor
+                                var furni :FurniData = new FurniData();
+                                furni.id = _scene.getNextFurniId(0);
+                                furni.itemType = item.getType();
+                                furni.itemId = item.itemId;
+                                furni.media = item.getFurniMedia();
+                                // create it at the front of the scene, centered on the floor
+                                furni.loc = new MsoyLocation(0.5, 0, 0);
+                                if (item is Game) {
+                                    var game :Game = (item as Game);
+                                    furni.actionType = game.isInWorld() ?
+                                        FurniData.ACTION_WORLD_GAME : FurniData.ACTION_LOBBY_GAME;
+                                    furni.actionData = String(game.getPrototypeId()) + ":" + 
+                                        game.name;
+                                }
+                                applyUpdate(new FurniUpdateAction(_mctx, null, furni));
                             }
-                            applyUpdate(new FurniUpdateAction(_mctx, null, furni));
                         };
 
                         if (item.isUsed()) {
-                            (new ItemUsedDialog(_mctx, Msgs.EDITING.get("l.furni"), 
+                            var msg :String = newItemType == Item.DECOR ? "l.decor" : "l.furni";
+                            (new ItemUsedDialog(_mctx, Msgs.EDITING.get(msg), 
                                 function () :void {
                                     var confWrap :ConfirmAdapter = new ConfirmAdapter(
                                         // failure function
                                         function (cause :String) :void {
                                             Log.getLog(this).debug(
-                                                "Failed to remove item from its current location " +
-                                                "[id=" + item.itemId + ", type=" + item.getType() + 
-                                                ", cause=" + cause + "]");
+                                                "Failed to remove item from its current " + 
+                                                "location [id=" + item.itemId + ", type=" + 
+                                                item.getType() + ", cause=" + cause + "]");
                                             _mctx.displayInfo("editing", "e.failed_to_remove");
                                         },
                                         // success function
                                         function () :void {
-                                            addToRoom();
+                                            useNewItem();
                                         });
                                     (_mctx.getClient().requireService(ItemService) as ItemService).
-                                        reclaimItem(_mctx.getClient(), new ItemIdent(item.getType(), 
+                                        reclaimItem(_mctx.getClient(), new ItemIdent(newItemType, 
                                             item.itemId), confWrap);
                                 })).open(true);
                         } else {
-                            addToRoom();
+                            useNewItem();
                         }
                     }
-                }(itemId, itemType));
+                }(itemId, itemType, scene));
         }
     }
 

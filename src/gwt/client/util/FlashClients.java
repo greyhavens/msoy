@@ -135,13 +135,12 @@ public class FlashClients
     }
 
     /**
-     * Tells the actionscript client that we'd like to add this piece of furni to the 
-     * current room.  If there is a reason that we can't do this, it is handled by the 
-     * actionscript client.
+     * Tells the actionscript client that we'd like to use this item in the current room.  This can
+     * be used to add furni, or set the background audio or decor.
      */
-    public static void addFurni (int itemId, byte itemType) 
+    public static void useItem (int itemId, byte itemType) 
     {
-        addFurniNative(itemId, itemType);
+        useItemNative(itemId, itemType);
     }
 
     /**
@@ -161,14 +160,6 @@ public class FlashClients
     public static int getAvatarId ()
     {
         return getAvatarIdNative();
-    }
-
-    /**
-     * Tells the actionscript client that we'd like to use this decor in the current room. 
-     */
-    public static void useDecor (int decorId) 
-    {
-        useDecorNative(decorId);
     }
 
     /**
@@ -253,12 +244,12 @@ public class FlashClients
     }-*/;
 
     /**
-     * Does the actual <code>addFurni()</code> call.
+     * Does the actual <code>useItem()</code> call.
      */
-    protected static native void addFurniNative (int itemId, byte itemType) /*-{
+    protected static native void useItemNative (int itemId, byte itemType) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.addFurni(itemId, itemType);
+            client.useItem(itemId, itemType);
         }
     }-*/;
 
@@ -282,16 +273,6 @@ public class FlashClients
         } else {
             return 0;
         }
-    }-*/;
-
-    /**
-     * Does the actual <code>useDecor()</code> call.
-     */
-    protected static native void useDecorNative (int decorId) /*-{
-        var client = $doc.getElementById("asclient");
-        if (client) {
-            client.useDecor(decorId);
-        } 
     }-*/;
 
     /**

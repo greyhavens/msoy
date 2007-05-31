@@ -36,7 +36,6 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Document;
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemList;
 import com.threerings.msoy.item.data.all.Photo;
 
@@ -221,11 +220,10 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
         ExternalInterface.addCallback("setMinimized", externalSetMinimized);
         ExternalInterface.addCallback("inRoom", externalInRoom);
-        ExternalInterface.addCallback("addFurni", externalAddFurni);
         ExternalInterface.addCallback("useAvatar", externalUseAvatar);
         ExternalInterface.addCallback("getAvatarId", externalGetAvatarId);
         ExternalInterface.addCallback("updateAvatarScale", externalUpdateAvatarScale);
-        ExternalInterface.addCallback("useDecor", externalUseDecor);
+        ExternalInterface.addCallback("useItem", externalUseItem);
 
         _embedded = !Boolean(ExternalInterface.call("helloWhirled"));
         dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
@@ -340,17 +338,6 @@ public class WorldClient extends BaseClient
     }
 
     /**
-     * Exposed to javascript so that it may tell us to add furni to the current room.
-     */ 
-    protected function externalAddFurni (itemId :int, itemType :int) :void
-    {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        if (view != null) {
-            view.getRoomController().addFurni(itemId, itemType);
-        }
-    }
-
-    /**
      * Exposed to javascript so that it may tell us to use this avatar.  If the avatarId of 0 is
      * passed in, the current avatar is simply cleared away, leaving them with the default.
      */
@@ -382,13 +369,13 @@ public class WorldClient extends BaseClient
     }
 
     /**
-     * Exposed to javascript so that it can tell us to use this decor in this room.
-     */
-    protected function externalUseDecor (decorId :int) :void
+     * Exposed to javascript so that it may tell us to add furni to the current room.
+     */ 
+    protected function externalUseItem (itemId :int, itemType :int) :void
     {
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
         if (view != null) {
-            view.getRoomController().useDecor(decorId);
+            view.getRoomController().useItem(itemId, itemType);
         }
     }
 

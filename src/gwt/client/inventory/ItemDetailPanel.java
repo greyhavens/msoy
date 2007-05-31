@@ -105,7 +105,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 // TODO: remove the current decor to go back to default
                 button = new Button(CInventory.msgs.detailUseDecor(), new ClickListener() {
                     public void onClick (Widget sender) {
-                        FlashClients.useDecor(_detail.item.itemId);
+                        FlashClients.useItem(_detail.item.itemId, Item.DECOR);
                     }
                 });
             } else if (type == Item.AVATAR) { 
@@ -122,7 +122,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 button = new Button(CInventory.msgs.detailAddToRoom());
                 button.addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
-                        FlashClients.addFurni(_detail.item.itemId, _detail.item.getType());
+                        FlashClients.useItem(_detail.item.itemId, _detail.item.getType());
                     }
                 });
             }
