@@ -623,85 +623,67 @@ public class RoomController extends SceneController
         if (scene == null || !scene.canEdit(_mctx.getMemberObject())) {
             _mctx.displayInfo("editing", "e.no_permission");
         } else {
-            var member :MemberObject = _mctx.getMemberObject();
-            if (member.isInventoryLoaded(itemType)) {
-                checkAndAddFurni(itemId, member.getItems(itemType));
-            } else {
-                var adapter :LoadedInventoryAdapter;
-                adapter = new LoadedInventoryAdapter(function () :void {
-                    member.removeListener(adapter);
-                    checkAndAddFurni(itemId, member.getItems(itemType));
-                });
-                member.addListener(adapter);
-                _mctx.getItemDirector().loadInventory(itemType);
-            }
             _openEditor = true;
-        }
-    }
-
-    /** 
-     * Checks to see if this furni is used elsewhere, and adds it to the scene.
-     */
-    protected function checkAndAddFurni (furniId :int, items :Array) :void
-    {
-        var item :Item = null;
-        for (var ii :int = 0; ii < items.length; ii++) {
-            if (items[ii].itemId == furniId) {
-                item = items[ii];
-                break;
-            }
-        }
-        if (item == null) {
-            // didn't find the item
-            return;
-        }
-
-        // closure used to prevent problems if the user is crazy, and decides to add more furni 
-        // while the FurniUsedDialog is up
-        var addToRoomClosure :Function = function (lItem :Item) :Function {
-            return function () :void {
-                // create a generic furniture descriptor
-                var furni :FurniData = new FurniData();
-                furni.id = _scene.getNextFurniId(0);
-                furni.itemType = lItem.getType();
-                furni.itemId = lItem.itemId;
-                furni.media = lItem.getFurniMedia();
-                // create it at the front of the scene, centered on the floor
-                furni.loc = new MsoyLocation(0.5, 0, 0);
-                if (lItem is Game) {
-                    var game :Game = (lItem as Game);
-                    furni.actionType = game.isInWorld() ?
-                        FurniData.ACTION_WORLD_GAME : FurniData.ACTION_LOBBY_GAME;
-                    furni.actionData = String(game.getPrototypeId()) + ":" + game.name;
-                }
-                applyUpdate(new FurniUpdateAction(_mctx, null, furni));
-            }
-        }(item);
-
-        if (item.isUsed()) {
-            var removeFromOldRoom :Function = function (lItem :Item, 
-                addToRoom :Function) :Function {
+            (new InventoryAction(itemType, _mctx)).trigger(
+                // closure to add the new furni once this item type has been loaded on this
+                // user's MemberObject
+                function (furniId :int, furniType :int) :Function {
                     return function () :void {
-                        var confWrap :ConfirmAdapter = new ConfirmAdapter(
-                            // failure function
-                            function (cause :String) :void {
-                                Log.getLog(this).debug("Failed to remove item from its current " +
-                                    "location [id=" + lItem.itemId + ", type=" + lItem.getType() + 
-                                    ", cause=" + cause);
-                                _mctx.displayInfo("editing", "e.failed_to_remove");
-                            },
-                            // success function
-                            function () :void {
-                                addToRoom();
-                            });
-                        (_mctx.getClient().requireService(ItemService) as ItemService).reclaimItem(
-                            _mctx.getClient(), new ItemIdent(lItem.getType(), lItem.itemId),
-                            confWrap);
+                        var item :Item = null;
+                        for each (var checkItem :Item in 
+                            _mctx.getMemberObject().getItems(furniType)) {
+                            if (checkItem.itemId == furniId) {
+                                item = checkItem;
+                                break;
+                            }
+                        }
+                        if (item == null) {
+                            // didn't find the item
+                            return;
+                        }
+                
+                        var addToRoom :Function = function () :void {
+                            // create a generic furniture descriptor
+                            var furni :FurniData = new FurniData();
+                            furni.id = _scene.getNextFurniId(0);
+                            furni.itemType = item.getType();
+                            furni.itemId = item.itemId;
+                            furni.media = item.getFurniMedia();
+                            // create it at the front of the scene, centered on the floor
+                            furni.loc = new MsoyLocation(0.5, 0, 0);
+                            if (item is Game) {
+                                var game :Game = (item as Game);
+                                furni.actionType = game.isInWorld() ?
+                                    FurniData.ACTION_WORLD_GAME : FurniData.ACTION_LOBBY_GAME;
+                                furni.actionData = String(game.getPrototypeId()) + ":" + game.name;
+                            }
+                            applyUpdate(new FurniUpdateAction(_mctx, null, furni));
+                        };
+
+                        if (item.isUsed()) {
+                            (new FurniUsedDialog(_mctx, function () :void {
+                                var confWrap :ConfirmAdapter = new ConfirmAdapter(
+                                    // failure function
+                                    function (cause :String) :void {
+                                        Log.getLog(this).debug(
+                                            "Failed to remove item from its current location [id=" +
+                                            item.itemId + ", type=" + item.getType() + 
+                                            ", cause=" + cause);
+                                        _mctx.displayInfo("editing", "e.failed_to_remove");
+                                    },
+                                    // success function
+                                    function () :void {
+                                        addToRoom();
+                                    });
+                                (_mctx.getClient().requireService(ItemService) as ItemService).
+                                    reclaimItem(_mctx.getClient(), new ItemIdent(item.getType(), 
+                                        item.itemId), confWrap);
+                            })).open(true);
+                        } else {
+                            addToRoom();
+                        }
                     }
-            }(item, addToRoomClosure);
-            (new FurniUsedDialog(_mctx, removeFromOldRoom)).open(true);
-        } else {
-            addToRoomClosure();
+                }(itemId, itemType));
         }
     }
 
@@ -1291,6 +1273,8 @@ import flash.display.Sprite;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 
+import com.threerings.msoy.client.WorldContext;
+
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.world.client.RoomElement;
@@ -1354,21 +1338,38 @@ class WalkTarget extends Sprite
     protected static const FLYTARGET :Class;
 }
 
-class LoadedInventoryAdapter 
+class InventoryAction 
     implements AttributeChangeListener
 {
-    public function LoadedInventoryAdapter (callback :Function) 
+    public function InventoryAction (itemType :int, mctx :WorldContext) 
+    {
+        _itemType = itemType;
+        _mctx = mctx;
+    }
+
+    public function trigger (callback :Function) :void
     {
         _callback = callback;
+        var member :MemberObject = _mctx.getMemberObject();
+        if (member.isInventoryLoaded(_itemType)) {
+            _callback();
+        } else {
+            member.addListener(this);
+            _mctx.getItemDirector().loadInventory(_itemType);
+        }
     }
 
     // from AttributeChangeListener
     public function attributeChanged (evt :AttributeChangedEvent) :void
     {
-        if (evt.getName() == MemberObject.LOADED_INVENTORY) {
+        var member :MemberObject = _mctx.getMemberObject();
+        if (evt.getName() == MemberObject.LOADED_INVENTORY && member.isInventoryLoaded(_itemType)) {
+            member.removeListener(this);
             _callback();
         }
     }
 
+    protected var _mctx :WorldContext;
+    protected var _itemType :int;
     protected var _callback :Function;
 }
