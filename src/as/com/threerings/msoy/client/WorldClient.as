@@ -224,6 +224,7 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("addFurni", externalAddFurni);
         ExternalInterface.addCallback("useAvatar", externalUseAvatar);
         ExternalInterface.addCallback("getAvatarId", externalGetAvatarId);
+        ExternalInterface.addCallback("useDecor", externalUseDecor);
 
         _embedded = !Boolean(ExternalInterface.call("helloWhirled"));
         dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
@@ -365,6 +366,17 @@ public class WorldClient extends BaseClient
     {
         var avatar :Avatar = _wctx.getMemberObject().avatar;
         return avatar == null ? 0 : avatar.itemId;
+    }
+
+    /**
+     * Exposed to javascript so that it can tell us to use this decor in this room.
+     */
+    protected function externalUseDecor (decorId :int) :void
+    {
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        if (view != null) {
+            view.getRoomController().useDecor(decorId);
+        }
     }
 
     protected var _wctx :WorldContext;

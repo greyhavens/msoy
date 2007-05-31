@@ -63,6 +63,7 @@ import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.client.ItemService;
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Game;
@@ -72,6 +73,7 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
+import com.threerings.msoy.world.client.updates.SceneUpdateAction;
 import com.threerings.msoy.world.client.updates.UpdateAction;
 import com.threerings.msoy.world.client.updates.UpdateStack;
 import com.threerings.msoy.world.client.editor.DoorTargetEditController;
@@ -80,6 +82,7 @@ import com.threerings.msoy.world.client.editor.EditorController;
 import com.threerings.msoy.world.client.editor.FurniUsedDialog;
 
 import com.threerings.msoy.world.data.AudioData;
+import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
@@ -614,6 +617,78 @@ public class RoomController extends SceneController
     }
 
     /**
+     * This is called from javascript to select this room's decor item.
+     */
+    public function useDecor (itemId :int) :void
+    {
+        var scene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
+        if (scene == null || !scene.canEdit(_mctx.getMemberObject())) {
+            _mctx.displayInfo("editing", "e.no_permission");
+        } else {
+            _openEditor = true;
+            (new InventoryAction(Item.DECOR, _mctx)).trigger(
+                // closure to use the new decore once decors have been loaded on this
+                // user's MemberObject
+                function (decorId :int, oldScene :MsoyScene) :Function {
+                    return function () :void {
+                        var decor :Decor = null;
+                        for each (var checkDecor :Decor in 
+                            _mctx.getMemberObject().getItems(Item.DECOR)) {
+                            if (checkDecor.itemId == decorId) {
+                                decor = checkDecor;
+                                break;
+                            }
+                        }
+                        if (decor == null) {
+                            // didn't find decor
+                            return;
+                        }
+
+                        var useNewDecor :Function = function () :void {
+                            var newScene :MsoyScene = oldScene.clone();
+
+                            var dd :DecorData = 
+                                (newScene.getSceneModel() as MsoySceneModel).decorData;
+                            dd.itemId = decor.itemId;
+                            dd.media = decor.furniMedia;
+                            dd.type = decor.type;
+                            dd.height = decor.height;
+                            dd.width = decor.width;
+                            dd.depth = decor.depth;
+                            dd.horizon = decor.horizon;
+
+                            applyUpdate (new SceneUpdateAction(_mctx, oldScene, newScene));
+                        };
+
+                        if (decor.isUsed()) {
+                            // TODO: decor reclamation doesn't work yet on the server
+                            /* TEMP */ _mctx.displayInfo(null, "This decor is used elsewhere.");
+                            /*(new FurniUsedDialog(_mctx, function () :void {
+                                var confWrap :ConfirmAdapter = new ConfirmAdapter(
+                                    // failure function
+                                    function (cause :String) :void {
+                                        Log.getLog(this).debug(
+                                            "Failed to remove decor from its current location " +
+                                            "[id=" + decor.itemId +", cause=" + cause + "]");
+                                        _mctx.displayInfo("editing", "e.failed_to_remove");
+                                    },
+                                    // success function
+                                    function () :void {
+                                        useNewDecor();
+                                    });
+                                (_mctx.getClient().requireService(ItemService) as ItemService).
+                                    reclaimItem(_mctx.getClient(), new ItemIdent(Item.DECOR,
+                                        decor.itemId), confWrap);
+                            })).open(true);*/
+                        } else {
+                            useNewDecor();
+                        }
+                    }
+                }(itemId, scene));
+        }
+    }
+
+    /**
      * This is called from javascript to add a piece of furni to the room from the inventory
      * browsing interface.
      */
@@ -668,7 +743,7 @@ public class RoomController extends SceneController
                                         Log.getLog(this).debug(
                                             "Failed to remove item from its current location [id=" +
                                             item.itemId + ", type=" + item.getType() + 
-                                            ", cause=" + cause);
+                                            ", cause=" + cause + "]");
                                         _mctx.displayInfo("editing", "e.failed_to_remove");
                                     },
                                     // success function

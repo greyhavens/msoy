@@ -160,6 +160,14 @@ public class FlashClients
     }
 
     /**
+     * Tells the actionscript client that we'd like to use this decor in the current room. 
+     */
+    public static void useDecor (int decorId) 
+    {
+        useDecorNative(decorId);
+    }
+
+    /**
      * Computes the height to use for our Flash clients based on the smaller of our desired client
      * height and the vertical room available minus the header and an annoying "we don't know how
      * to implement scrollbars" bullshit browser factor.
@@ -270,6 +278,16 @@ public class FlashClients
         } else {
             return 0;
         }
+    }-*/;
+
+    /**
+     * Does the actual <code>useDecor()</code> call.
+     */
+    protected static native void useDecorNative (int decorId) /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            client.useDecor(decorId);
+        } 
     }-*/;
 
     /**

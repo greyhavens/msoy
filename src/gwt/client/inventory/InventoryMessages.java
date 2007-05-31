@@ -224,6 +224,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String msgItemListed();
 
   /**
+   * Translated "Use this decor in current room".
+   * 
+   * @return translated "Use this decor in current room"
+   * @gwt.key detailUseDecor
+   */
+  String detailUseDecor();
+
+  /**
    * Translated "Remix...".
    * 
    * @return translated "Remix..."
