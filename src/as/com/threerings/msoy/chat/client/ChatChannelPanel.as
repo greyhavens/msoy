@@ -19,6 +19,7 @@ import flexlib.containers.SuperTabNavigator;
 import flexlib.controls.tabBarClasses.SuperTab;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.util.CommandEvent;
 import com.threerings.util.HashMap;
 import com.threerings.util.ValueEvent;
 
@@ -141,7 +142,7 @@ public class ChatChannelPanel extends VBox
         }
 
         // start loading
-        tab.loadUrl(pageSource);
+        CommandEvent.dispatch(tab, PageDisplayController.HELP_PAGE_DISPLAY_COMMAND, pageSource);
 
         selectAndFocusTab(tab);
 
