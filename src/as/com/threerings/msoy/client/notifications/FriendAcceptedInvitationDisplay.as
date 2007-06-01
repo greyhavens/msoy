@@ -23,7 +23,7 @@ public class FriendAcceptedInvitationDisplay extends NotificationDisplay
     // from NotificationDisplay
     override public function get timeout () :Number
     {
-        return 10000; // wee bit longer than usual
+        return 30000; // wee bit longer than usual
     }
 
     // from TitleWindow

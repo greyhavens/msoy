@@ -49,7 +49,7 @@ public /* abstract */ class NotificationDisplay extends FloatingPanel
      */
     public function get timeout () :Number
     {
-        return 5000; // seems like a reasonable number
+        return 15000; // seems like a reasonable number
     }
 
     /**
