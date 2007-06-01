@@ -13,7 +13,7 @@ public class FriendStatusChangeNotification extends Notification
 {
     /** Friend's credentials. */
     public MemberName friend;
-    
+
     /** True if the friend just logged on, false if the friend just logged off. */
     public boolean loggedOn;
 
