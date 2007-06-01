@@ -51,7 +51,7 @@ public class PageDisplayTab extends ChatTab
     public function displayHTML (source :String) :void
     {
         // perhaps validate here?
-        callLater(function () :void { _textbox.htmlText = source; });
+        _textbox.htmlText = source;
     }
 
     // from ChatTab
