@@ -410,8 +410,12 @@ public abstract class ItemEditor extends BorderedDialog
 
         AsyncCallback cb = new AsyncCallback() {
             public void onSuccess (Object result) {
-                MsoyUI.info(_item.itemId == 0 ? CEditem.emsgs.msgItemCreated() :
-                            CEditem.emsgs.msgItemUpdated());
+                if (_item.itemId == 0) {
+                    MsoyUI.info(CEditem.emsgs.msgItemCreated());
+                    _item.itemId = ((Integer)result).intValue();
+                } else {
+                    MsoyUI.info(CEditem.emsgs.msgItemUpdated());
+                }
                 _updatedItem = _item; // this will be passed to our parent in onClosed()
                 hide();
             }
