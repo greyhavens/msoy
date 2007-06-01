@@ -24,4 +24,9 @@ public class FriendStatusChangeNotification extends Notification
         this.friend = friend;
         this.loggedOn = loggedOn;
     }
+
+    /** A blank constructor used during unserialization. */
+    public FriendStatusChangeNotification ()
+    {
+    }
 }
