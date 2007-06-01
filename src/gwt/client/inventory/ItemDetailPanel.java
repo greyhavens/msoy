@@ -102,35 +102,30 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(WidgetUtil.makeShim(1, 10));
             byte type = _detail.item.getType();
             if (type == Item.DECOR) {
-                final boolean using = (FlashClients.getSceneItemId(Item.DECOR) == 
-                    _detail.item.itemId);
-                String label = using ? CInventory.msgs.detailRemoveDecor() :
-                    CInventory.msgs.detailUseDecor();
-                button = new Button(label, new ClickListener() {
-                    public void onClick (Widget sender) {
-                        FlashClients.useItem(using ? 0 : _detail.item.itemId, Item.DECOR);
+                boolean using = (FlashClients.getSceneItemId(Item.DECOR) == _detail.item.itemId);
+                button = new UpdateFlashButton(using, CInventory.msgs.detailRemoveDecor(),
+                    CInventory.msgs.detailUseDecor()) {
+                    public void onClick () {
+                        FlashClients.useItem(_active ? 0 : _detail.item.itemId, Item.DECOR);
                     }
-                });
+                };
             } else if (type == Item.AUDIO) {
-                final boolean using = (FlashClients.getSceneItemId(Item.AUDIO) ==
-                    _detail.item.itemId);
-                String label = using ? CInventory.msgs.detailRemoveAudio() :
-                    CInventory.msgs.detailUseAudio();
-                button = new Button (label, new ClickListener() {
-                    public void onClick (Widget sender) {
-                        FlashClients.useItem(using ? 0 : _detail.item.itemId, Item.AUDIO);
+                boolean using = (FlashClients.getSceneItemId(Item.AUDIO) == _detail.item.itemId);
+                button = new UpdateFlashButton(using, CInventory.msgs.detailRemoveAudio(),
+                    CInventory.msgs.detailUseAudio()) {
+                    public void onClick () {
+                        FlashClients.useItem(_active ? 0 : _detail.item.itemId, Item.AUDIO);
                     }
-                });
+                };
             } else if (type == Item.AVATAR) { 
-                final boolean wearing = (FlashClients.getAvatarId() == _detail.item.itemId);
-                String label = wearing ? CInventory.msgs.detailRemoveAvatar() : 
-                    CInventory.msgs.detailUseAvatar();
-                button = new Button(label, new ClickListener() {
-                    public void onClick (Widget sender) {
-                        FlashClients.useAvatar(wearing ? 0 : _detail.item.itemId,
-                            wearing ? 0 : ((Avatar) _detail.item).scale);
+                boolean wearing = (FlashClients.getAvatarId() == _detail.item.itemId);
+                button = new UpdateFlashButton(wearing, CInventory.msgs.detailRemoveAvatar(),
+                    CInventory.msgs.detailUseAvatar()) {
+                    public void onClick () {
+                        FlashClients.useAvatar(_active ? 0 : _detail.item.itemId,
+                            _active ? 0 : ((Avatar) _detail.item).scale);
                     }
-                });
+                };
             } else {
                 button = new Button(CInventory.msgs.detailAddToRoom());
                 button.addClickListener(new ClickListener() {
@@ -174,4 +169,29 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     }
 
     protected ItemPanel _parent;
+
+    protected abstract class UpdateFlashButton extends Button 
+    {
+        public UpdateFlashButton (boolean active, String activeLabel, String inactiveLabel)
+        {
+            super(active ? activeLabel : inactiveLabel);
+            addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    UpdateFlashButton.this.onClick();
+                    _active = !_active;
+                    setText(_active ? _activeLabel : _inactiveLabel);
+                }
+            });
+
+            _active = active;
+            _activeLabel = activeLabel;
+            _inactiveLabel = inactiveLabel;
+        }
+
+        public abstract void onClick ();
+
+        protected boolean _active;
+        protected String _activeLabel;
+        protected String _inactiveLabel;
+    }
 }
