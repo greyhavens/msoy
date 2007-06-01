@@ -16,4 +16,7 @@ public class ConnectConfig
 
     /** The port on which the applet should connect to the server. */
     public int port;
+
+    /** The HTTP port from which the applet should be downloaded. */
+    public int httpPort;
 }
