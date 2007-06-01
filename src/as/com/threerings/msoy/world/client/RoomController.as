@@ -673,7 +673,7 @@ public class RoomController extends SceneController
                                 var dd :DecorData = 
                                     (newScene.getSceneModel() as MsoySceneModel).decorData;
                                 var decor :Decor = item as Decor;
-                                dd.decorId = decor.decorId;
+                                dd.itemId = decor.itemId;
                                 dd.media = decor.furniMedia;
                                 dd.type = decor.type;
                                 dd.height = decor.height;
