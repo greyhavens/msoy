@@ -31,11 +31,17 @@
     <include name="${gsrc.dir}/**/*.java"/>
   </fileset>
 
-  <!-- override the src fileset for the common javadoc target -->
-  <fileset dir="src" id="javadoc.src.dir">
-    <include name="java/**/*.java"/>
-    <include name="gwt/client/**/*.java"/>
-  </fileset>
+  <!-- override the src dirset and package names for the common javadoc target -->
+  <property name="javadoc.pkg.names" value="client.*,com.threerings.*"/>
+  <path id="javadoc.src.path">
+    <!-- TODO make this only look for bits inside of client/ -->
+    <dirset dir="${gsrc.dir}">
+      <exclude name="**/.svn"/>
+    </dirset>
+    <dirset dir="${src.dir}">
+      <exclude name="**/.svn"/>
+    </dirset>
+  </path>
 
   <!-- declare the properties files. -->
   <property name="props.list" value="server.properties"/>
