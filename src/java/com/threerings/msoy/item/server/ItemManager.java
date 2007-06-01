@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.server;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -818,7 +819,6 @@ public class ItemManager
                 item.parentId = 0;
                 item.used = Item.UNUSED;
                 item.location = 0;
-                item.lastTouched = null;
                 // insert it as a genuinely new item
                 item.itemId = 0;
                 repo.insertOriginalItem(item);

@@ -219,7 +219,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public int location;
 
     /** The timestamp at which this item was last touched. */
-    @Column(columnDefinition="lastTouched TIMESTAMP NOT NULL")
+    @Column(columnDefinition="lastTouched DATETIME NOT NULL")
     public Timestamp lastTouched;
 
     /** A user supplied name for this item. */
@@ -267,9 +267,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         flags = item.flags;
         used = item.used;
         location = item.location;
-        // we intentially null the lastTouched field so that it gets filled in with a new timestmap
-        lastTouched = null;
-        //lastTouched = new Timestamp((long) item.lastTouched);
+        lastTouched = new Timestamp(System.currentTimeMillis());
         name = (item.name == null) ? "" : item.name;
         description = (item.description == null) ? "" : item.description;
         if (item.thumbMedia != null) {
@@ -360,11 +358,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         item.rating = rating;
         item.used = used;
         item.location = location;
-        // If lastTouched is null, it means that this record was not loaded from the db,
-        // but rather was created from an item and is now being turned back into an item.
-        // Probably we were just saved to the db, so lastTouched is now..
-        item.lastTouched = (double) ((lastTouched == null) ? System.currentTimeMillis()
-                                                           : lastTouched.getTime());
+        item.lastTouched = (double) lastTouched.getTime();
         item.name = name;
         item.description = description;
         item.creatorId = creatorId;

@@ -235,10 +235,12 @@ public abstract class ItemRepository<
             int result;
             if (itemId > 0) {
                 result = updatePartial(
-                    iclass, itemId, ItemRecord.USED, usageType, ItemRecord.LOCATION, location);
+                    iclass, itemId, ItemRecord.USED, usageType, ItemRecord.LOCATION, location,
+                    ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
             } else {
                 result = updatePartial(
-                    cclass, itemId, ItemRecord.USED, usageType, ItemRecord.LOCATION, location);
+                    cclass, itemId, ItemRecord.USED, usageType, ItemRecord.LOCATION, location,
+                    ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
             }
             // if the item didn't update, freak out.
             if (0 == result) {
@@ -313,7 +315,7 @@ public abstract class ItemRepository<
      *       the Item vs Catalog class hierarchies). 
      */
     public List<CAT> loadCatalog (byte sortBy, boolean mature, String search, int tag,
-                                        int creator, int offset, int rows)
+                                  int creator, int offset, int rows)
         throws PersistenceException
     {
         OrderBy sortExp;
@@ -454,8 +456,8 @@ public abstract class ItemRepository<
     }
 
     /**
-     * Inserts the supplied item into the database. {@link Item#itemId} will be filled in as a
-     * result of this call.
+     * Inserts the supplied item into the database. The {@link ItemRecord#itemId} and the
+     * {@link ItemRecord#lastTouched) fields will be filled in as a result of this call.
      */
     public void insertOriginalItem (T item)
         throws PersistenceException
@@ -463,24 +465,24 @@ public abstract class ItemRepository<
         if (item.itemId != 0) {
             throw new PersistenceException("Can't insert item with existing key: " + item);
         }
+        item.lastTouched = new Timestamp(System.currentTimeMillis());
         insert(item);
     }
 
     /**
-     * Updates the supplied item in the database.
+     * Updates the supplied item in the database. The {@link ItemRecord#lastTouched) field
+     * will be filled in as a result of this call.
      */
     public void updateOriginalItem (T item)
         throws PersistenceException
     {
+        item.lastTouched = new Timestamp(System.currentTimeMillis());
         update(item);
     }
 
     /**
-     * Perform the low level operations involved with listing an item in the catalog: create a row
-     * in the item table for a new, immutable version of the item, then an associated row in the
-     * catalog table.
-     *
-     * TODO: this method modifies the input value, totally unintuitive!
+     * Create a row in our catalog table corresponding to the given item record, which should
+     * be of the immutable variety.
      */
     public CatalogRecord insertListing (ItemRecord listItem, int rarity, long listingTime)
         throws PersistenceException
@@ -518,8 +520,10 @@ public abstract class ItemRepository<
     }
 
     /**
-     * Insert an item clone into the database with the given owner.  This fills itemId with the
-     * next available unique ID and ownerId with the supplied value for the new owner.
+     * Inserts an item clone into the database with the given owner and purchase data. Also fills
+     * (@link CloneRecord#itemId) with the next available ID and {@link CloneRecord#ownerId)
+     * with the new owner. Finally, updates {@link CloneRecord#lastTouched) and
+     * {@link CloneRecord#purchaseTime).
      */
     public ItemRecord insertClone (ItemRecord parent, int newOwnerId, int flowPaid, int goldPaid)
         throws PersistenceException
@@ -634,7 +638,8 @@ public abstract class ItemRepository<
                                       itemId)));
         float newRating = (float) ((average.count == 0) ? 0.0 : average.sum/average.count);
         // and then smack the new value into the item using yummy depot code
-        updatePartial(getItemClass(), itemId, new Object[] { ItemRecord.RATING, newRating });
+        updatePartial(getItemClass(), itemId, ItemRecord.RATING, newRating,
+                      ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
         return newRating;
     }
 
@@ -651,7 +656,9 @@ public abstract class ItemRepository<
             item.itemId < 0 ? getCloneClass() : getItemClass(),
             new Where(ItemRecord.ITEM_ID, item.itemId,
                       ItemRecord.OWNER_ID, item.ownerId),
-            key, ItemRecord.OWNER_ID, newOwnerId);
+            key,
+            ItemRecord.OWNER_ID, newOwnerId,
+            ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
         if (modifiedRows == 0) {
             throw new PersistenceException(
                 "Failed to safely update ownerId [item=" + item + ", newOwnerId=" + newOwnerId + "]"); 

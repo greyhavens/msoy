@@ -112,7 +112,7 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
     public int location;
 
     /** The timestamp at which this item was last used or modified. */
-    @Column(columnDefinition="lastTouched TIMESTAMP NOT NULL")
+    @Column(columnDefinition="lastTouched DATETIME NOT NULL")
     public Timestamp lastTouched;
 
     /**
@@ -120,11 +120,12 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
      */
     public void initialize (ItemRecord parent, int newOwnerId, int flowPaid, int goldPaid)
     {
+        long now = System.currentTimeMillis();
         this.originalItemId = parent.itemId;
         this.ownerId = newOwnerId;
         this.flowPaid = flowPaid;
         this.goldPaid = goldPaid;
-        this.purchaseTime = new Timestamp(System.currentTimeMillis());
-        this.lastTouched = null;
+        this.purchaseTime = new Timestamp(now);
+        this.lastTouched = new Timestamp(now);
     }
 }

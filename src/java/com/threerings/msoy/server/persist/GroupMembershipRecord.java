@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Table;
@@ -71,6 +72,7 @@ public class GroupMembershipRecord extends PersistentRecord
     public byte rank;
 
     /** The date that this rank was assigned on.  Used to decide rank seniority. */
+    @Column(columnDefinition="rankAssigned DATETIME NOT NULL")
     public Timestamp rankAssigned;
 
     /** 

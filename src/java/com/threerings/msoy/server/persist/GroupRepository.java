@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 import com.samskivert.io.PersistenceException;
 
@@ -201,7 +202,6 @@ public class GroupRepository extends DepotRepository
     /**
      * Makes a given person a member of a given group.
      */
-
     public GroupMembershipRecord joinGroup (int groupId, int memberId, byte rank)
         throws PersistenceException
     {
@@ -209,6 +209,7 @@ public class GroupRepository extends DepotRepository
         record.groupId = groupId;
         record.memberId = memberId;
         record.rank = rank;
+        record.rankAssigned = new Timestamp(System.currentTimeMillis());
         insert(record);
         updateMemberCount(groupId);
         return record;
@@ -221,8 +222,10 @@ public class GroupRepository extends DepotRepository
         throws PersistenceException
     {
         Key key = GroupMembershipRecord.getKey(memberId, groupId);
-        int rows = updatePartial(GroupMembershipRecord.class, key, key,
-                                 GroupMembershipRecord.RANK, newRank);
+        int rows = updatePartial(
+            GroupMembershipRecord.class, key, key,
+            GroupMembershipRecord.RANK, newRank,
+            GroupMembershipRecord.RANK_ASSIGNED, new Timestamp(System.currentTimeMillis()));
         if (rows == 0) {
             throw new PersistenceException(
                 "Couldn't find group membership to modify [groupId=" + groupId +
