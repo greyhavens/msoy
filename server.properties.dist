@@ -6,7 +6,7 @@
 #
 # The public URL that should be used to access this Whirled installation
 
-server_url = http://first.whirled.com
+# server_url = http://first.whirled.com
 
 #
 # The hostname used by the client to connect to the game server
