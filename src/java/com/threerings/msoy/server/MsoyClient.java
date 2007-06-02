@@ -141,32 +141,44 @@ public class MsoyClient extends WhirledClient
         // Notify all friends that we're now offline
         FriendStatusChangeNotification notification = null;
         for (FriendEntry entry : _memobj.friends) {
-            if (entry.online) {
-                // look up online friends..
-                MemberObject friendObj = MsoyServer.lookupMember(entry.name);
-                if (friendObj == null) {
-                    log.warning("Online friend not really online? [us=" + _memobj.memberName +
-                        ", them=" + entry.name + "].");
-                    continue;
-                }
-                FriendEntry userEntry = friendObj.friends.get(_memobj.getMemberId());
-                if (userEntry == null) {
-                    log.warning("Our friend doesn't know us? [us=" + _memobj.memberName +
-                        ", them=" + entry.name + "].");
-                    continue;
-                }
-                // update their friendEntry
+            // TEMP: sanity check
+            if (entry.name.equals(_memobj.memberName)) {
+                log.warning("Why am I mine own friend? [user=" + _memobj.memberName + "].");
+                continue;
+            }
+            // END TEMP
+
+            if (!entry.online) {
+                continue;
+            }
+
+            // look up online friends..
+            MemberObject friendObj = MsoyServer.lookupMember(entry.name);
+            if (friendObj == null) {
+                log.warning("Online friend not really online? [us=" + _memobj.memberName +
+                            ", them=" + entry.name + "].");
+                continue;
+            }
+            FriendEntry userEntry = friendObj.friends.get(_memobj.getMemberId());
+            if (userEntry == null) {
+                log.warning("Our friend doesn't know us? [us=" + _memobj.memberName +
+                            ", them=" + entry.name + "].");
+                continue;
+            }
+
+            friendObj.startTransaction();
+            try {
+                // update their friend entry
                 userEntry.online = false;
                 friendObj.updateFriends(userEntry);
-                // and notify them (lazy-init the notification and re-use for all friends)
-                if (notification == null) {
-                    notification = new FriendStatusChangeNotification(_memobj.memberName, false);
-                }
-                friendObj.notify(notification);
+                // and notify them
+                friendObj.notify(new FriendStatusChangeNotification(_memobj.memberName, false));
+            } finally {
+                friendObj.commitTransaction();
             }
         }
     }
-    
+
     /** A casted reference to the userobject. */
     protected MemberObject _memobj;
 }
