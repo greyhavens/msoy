@@ -57,7 +57,6 @@ public class MediaProxyServlet extends HttpServlet
         throws ServletException, IOException
     {
         InputStream in = null;
-        OutputStream out = null;
 
         try {
             // determine the path to the media they requested
@@ -66,21 +65,19 @@ public class MediaProxyServlet extends HttpServlet
 
             // reroute the URL to our media server
             URL url = new URL(ServerConfig.mediaURL + rsrc);
-            log.info("Proxying " + url + ".");
 
             // open the connection and copy the request data
             HttpURLConnection conn = (HttpURLConnection)url.openConnection();
             conn.setRequestMethod(method);
-            conn.setDoOutput(true);
             conn.addRequestProperty("Content-type", req.getContentType());
-            IOUtils.copy(req.getInputStream(), out = conn.getOutputStream());
 
             // convey the response back to the requester
             int rcode = conn.getResponseCode();
             if (rcode == HttpServletResponse.SC_OK) {
                 IOUtils.copy(in = conn.getInputStream(), rsp.getOutputStream());
             } else {
-                log.info("Proxy failed " + rcode + " " + conn.getResponseMessage() + ".");
+                log.warning("Proxy failed [url=" + url + ", rcode=" + rcode +
+                            ", rmsg=" + conn.getResponseMessage() + "].");
                 rsp.sendError(rcode, conn.getResponseMessage());
             }
 
@@ -88,7 +85,6 @@ public class MediaProxyServlet extends HttpServlet
             throw new IOException("Failed to create proxy URL: " + mue);
 
         } finally {
-            StreamUtil.close(out);
             StreamUtil.close(in);
         }
     }
