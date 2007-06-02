@@ -139,7 +139,6 @@ public class MsoyClient extends WhirledClient
     protected void notifyFriendsOfLogoff ()
     {
         // Notify all friends that we're now offline
-        FriendStatusChangeNotification notification = null;
         for (FriendEntry entry : _memobj.friends) {
             // TEMP: sanity check
             if (entry.name.equals(_memobj.memberName)) {
