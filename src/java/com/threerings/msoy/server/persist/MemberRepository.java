@@ -86,17 +86,16 @@ public class MemberRepository extends DepotRepository
                     stmt.close();
                 }
             }
-            
+
         });
 
         // added 4-27-2007
-        _ctx.registerMigration(MemberRecord.class, new EntityMigration.Rename(8, "inviterId", 
+        _ctx.registerMigration(MemberRecord.class, new EntityMigration.Rename(8, "inviterId",
             MemberRecord.INVITING_FRIEND_ID));
 
         // added 4-30-2007
         _ctx.registerMigration(InvitationRecord.class, new EntityMigration.Retype(2, "issued"));
         _ctx.registerMigration(InvitationRecord.class, new EntityMigration.Retype(2, "viewed"));
-            
         // END TEMP
 
         _flowRepo = new FlowRepository(_ctx);
@@ -151,7 +150,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Calculate a count of the active member population, currently defined as anybody
      * whose last session is within the past 60 days.
-     * 
+     *
      * TODO: Cache this!
      */
     public int getActivePopulationCount ()
@@ -465,7 +464,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Grants the given number of invites to the given memberId
      */
-    public void grantInvites (int number, int memberId) 
+    public void grantInvites (int number, int memberId)
         throws PersistenceException
     {
         InviterRecord inviterRec = load(InviterRecord.class, memberId);
@@ -480,9 +479,9 @@ public class MemberRepository extends DepotRepository
         }
     }
 
-    /** 
+    /**
      * Grants the given number of invites to all users who's last session expired after the given
-     * Timestamp.  
+     * Timestamp.
      *
      * @param lastSession Anybody who's been logged in since this timestamp will get the invites.
      *                    If this parameter is null, everybody will get the invites.
@@ -513,10 +512,10 @@ public class MemberRepository extends DepotRepository
         return inviter != null ? inviter.invitesGranted : 0;
     }
 
-    /** 
+    /**
      * get the total number of invites that this user has sent
      */
-    public int getInvitesSent (int memberId) 
+    public int getInvitesSent (int memberId)
         throws PersistenceException
     {
         InviterRecord inviter = load(InviterRecord.class, memberId);
@@ -531,7 +530,7 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         insert(new InvitationRecord(inviteeEmail, inviterId, inviteId));
-        
+
         InviterRecord inviterRec = load(InviterRecord.class, inviterId);
         inviterRec.invitesGranted--;
         inviterRec.invitesSent++;
@@ -577,7 +576,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Return the InvitationRecord that corresponds to the given unique code.
      */
-    public InvitationRecord loadInvite (String inviteId, boolean markViewed) 
+    public InvitationRecord loadInvite (String inviteId, boolean markViewed)
         throws PersistenceException
     {
         InvitationRecord invRec = load(
@@ -616,11 +615,11 @@ public class MemberRepository extends DepotRepository
         return load(OptOutRecord.class, email) != null;
     }
 
-    /** 
+    /**
      * Adds the invitee's email address to the opt-out list, and sets this invitation's inviteeId
      * to -1, indicating that it is no longer available, and the invitee chose to opt-out.
      */
-    public void optOutInvite (Invitation invite) 
+    public void optOutInvite (Invitation invite)
         throws PersistenceException
     {
         addOptOutEmail(invite.inviteeEmail);
@@ -632,9 +631,9 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Sets the reported level for the given member 
+     * Sets the reported level for the given member
      */
-    public void setUserLevel (int memberId, int level) 
+    public void setUserLevel (int memberId, int level)
         throws PersistenceException
     {
         updatePartial(MemberRecord.class, memberId, MemberRecord.LEVEL, level);
