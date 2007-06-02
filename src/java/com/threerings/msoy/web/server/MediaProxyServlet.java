@@ -69,7 +69,6 @@ public class MediaProxyServlet extends HttpServlet
             // open the connection and copy the request data
             HttpURLConnection conn = (HttpURLConnection)url.openConnection();
             conn.setRequestMethod(method);
-            conn.addRequestProperty("Content-type", req.getContentType());
 
             // convey the response back to the requester
             int rcode = conn.getResponseCode();
