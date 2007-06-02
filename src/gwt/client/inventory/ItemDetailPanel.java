@@ -24,8 +24,11 @@ import client.item.BaseItemDetailPanel;
 import client.shell.Application;
 import client.util.ClickCallback;
 import client.util.FlashClients;
+import client.util.FlashEvents;
 import client.util.ItemUtil;
 import client.util.PopupMenu;
+import client.util.events.AvatarChangedListener;
+import client.util.events.FlashEventListener;
 import client.shell.Page;
 
 /**
@@ -119,13 +122,24 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 };
             } else if (type == Item.AVATAR) { 
                 boolean wearing = (FlashClients.getAvatarId() == _detail.item.itemId);
-                button = new UpdateFlashButton(wearing, CInventory.msgs.detailRemoveAvatar(),
-                    CInventory.msgs.detailUseAvatar()) {
+                final UpdateFlashButton ufb = new UpdateFlashButton(wearing, 
+                    CInventory.msgs.detailRemoveAvatar(), CInventory.msgs.detailUseAvatar()) {
                     public void onClick () {
                         FlashClients.useAvatar(_active ? 0 : _detail.item.itemId,
                             _active ? 0 : ((Avatar) _detail.item).scale);
                     }
                 };
+                FlashEvents.addEventListener(_listener = new AvatarChangedListener() {
+                    public void avatarChanged (int newAvatarId, int oldAvatarId) {
+                        CInventory.log("new: " + newAvatarId + ", old: " + oldAvatarId);
+                        if (newAvatarId == _detail.item.itemId) {
+                            ufb.setActive(true);
+                        } else if (oldAvatarId == _detail.item.itemId) {
+                            ufb.setActive(false);
+                        }
+                    }
+                });
+                button = ufb;
             } else {
                 button = new Button(CInventory.msgs.detailAddToRoom());
                 button.addClickListener(new ClickListener() {
@@ -156,6 +170,16 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         });*/
     }
 
+    // @Override // Panel
+    protected void onDetach ()
+    {
+        super.onDetach();
+
+        if (_listener != null) {
+            FlashEvents.removeEventListener(_listener);
+        }
+    }
+
     // @Override // BaseItemDetailPanel
     protected void returnToList ()
     {
@@ -170,6 +194,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
     protected ItemPanel _parent;
 
+    protected FlashEventListener _listener;
+
     protected abstract class UpdateFlashButton extends Button 
     {
         public UpdateFlashButton (boolean active, String activeLabel, String inactiveLabel)
@@ -178,8 +204,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
                     UpdateFlashButton.this.onClick();
-                    _active = !_active;
-                    setText(_active ? _activeLabel : _inactiveLabel);
                 }
             });
 
@@ -189,6 +213,12 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         public abstract void onClick ();
+
+        public void setActive (boolean active) 
+        {
+            _active = active;
+            setText(_active ? _activeLabel : _inactiveLabel);
+        }
 
         protected boolean _active;
         protected String _activeLabel;

@@ -186,6 +186,41 @@ public class FlashClients
     }
 
     /**
+     * Helpy helper function.
+     */
+    public static native int getLength (JavaScriptObject array) /*-{
+        return array.length;
+    }-*/;
+
+    /**
+     * Helpy helper function.
+     */
+    public static native String getStringElement (JavaScriptObject array, int index) /*-{
+        return array[index];
+    }-*/;
+
+    /**
+     * Helpy helper function.
+     */
+    public static native int getIntElement (JavaScriptObject array, int index) /*-{
+        return array[index];
+    }-*/;
+
+    /**
+     * Helpy helper function.
+     */
+    public static native boolean getBooleanElement (JavaScriptObject array, int index) /*-{
+        return array[index];
+    }-*/;
+
+    /**
+     * Helpy helper function.
+     */
+    public static native boolean getBoolean (JavaScriptObject value) /*-{
+        return value;
+    }-*/;
+
+    /**
      * Does the actual JavaScript <code>getFriends</code> call.
      */
     protected static native JavaScriptObject getFriendsNative () /*-{
@@ -292,41 +327,6 @@ public class FlashClients
         } else {
             return 0;
         }
-    }-*/;
-
-    /**
-     * Helpy helper function.
-     */
-    protected static native int getLength (JavaScriptObject array) /*-{
-        return array.length;
-    }-*/;
-
-    /**
-     * Helpy helper function.
-     */
-    protected static native String getStringElement (JavaScriptObject array, int index) /*-{
-        return array[index];
-    }-*/;
-
-    /**
-     * Helpy helper function.
-     */
-    protected static native int getIntElement (JavaScriptObject array, int index) /*-{
-        return array[index];
-    }-*/;
-
-    /**
-     * Helpy helper function.
-     */
-    protected static native boolean getBooleanElement (JavaScriptObject array, int index) /*-{
-        return array[index];
-    }-*/;
-
-    /**
-     * Helpy helper function.
-     */
-    protected static native boolean getBoolean (JavaScriptObject value) /*-{
-        return value;
     }-*/;
 
     // TODO: put this in Application?

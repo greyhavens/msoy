@@ -345,6 +345,14 @@ public class WorldClient extends BaseClient
     protected function externalUseAvatar (avatarId :int, scale :Number) :void
     {
         _wctx.getWorldDirector().setAvatar(avatarId, scale);
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.call("triggerFlashEvent", "avatarChanged", 
+                    [ avatarId, avatarId + 5 ]);
+            }
+        } catch (err :Error) {
+            log.warning("triggerFlashEvent failed: " + err);
+        }
     }
 
     /**
