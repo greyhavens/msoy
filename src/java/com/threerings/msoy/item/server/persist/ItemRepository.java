@@ -330,7 +330,7 @@ public abstract class ItemRepository<
             break;
         case CatalogListing.SORT_BY_RATING:
             sortExp = OrderBy.descending(
-                new Div(new FunctionExp("floor", getItemColumn(ItemRecord.RATING)), 2));
+                new FunctionExp("floor", getItemColumn(ItemRecord.RATING)));
             break;
         case CatalogListing.SORT_BY_PRICE_ASC:
         case CatalogListing.SORT_BY_PRICE_DESC:
@@ -338,7 +338,7 @@ public abstract class ItemRepository<
                 new Add(new ColumnExp(getCatalogClass(), CatalogRecord.FLOW_COST),
                         new Mul(new ColumnExp(getCatalogClass(), CatalogRecord.GOLD_COST),
                                 FLOW_FOR_GOLD));
-            sortExp = sortBy == CatalogListing.SORT_BY_PRICE_ASC ?
+            sortExp = (sortBy == CatalogListing.SORT_BY_PRICE_ASC) ?
                 OrderBy.ascending(bit) : OrderBy.descending(bit);
             break;
         default:
