@@ -689,8 +689,7 @@ public class MemberRepository extends DepotRepository
                 try {
                     ResultSet rs = stmt.executeQuery(query);
                     while (rs.next()) {
-                        MemberName name = new MemberName(
-                            rs.getString(1), rs.getInt(2));
+                        MemberName name = new MemberName(rs.getString(1), rs.getInt(2));
                         list.add(new FriendEntry(name, false));
                     }
                     return list;

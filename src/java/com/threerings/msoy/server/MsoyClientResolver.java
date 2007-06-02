@@ -138,27 +138,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             MsoyServer.memberMan.loadFriends(user.getMemberId(),
                 new ResultListener<List<FriendEntry>>() {
                 public void requestCompleted (List<FriendEntry> friends) {
-                    for (FriendEntry entry : friends) {
-                        MemberObject friendObj =
-                            MsoyServer.lookupMember(entry.name);
-                        if (friendObj == null) {
-                            continue;
-                        }
-                        // if the friend is online, mark them as such
-                        entry.online = true;
-                        // and notify them that we're online
-                        FriendEntry userEntry = friendObj.friends.get(user.getMemberId());
-                        // sometimes when the account is newly created, my friends won't yet know
-                        // that i exist. so let's test before we do anything
-                        if (userEntry != null) { 
-                            userEntry.online = true;
-                            friendObj.updateFriends(userEntry);
-                        }
-                        friendObj.notify(
-                            new FriendStatusChangeNotification(user.memberName, true));
-                    }
-                    user.setFriends(new DSet<FriendEntry>(friends.iterator()));
-                    // TODO: we currently never note that friends have logged off
+                    finishInitFriends(user, friends);
                 }
                 public void requestFailed (Exception cause) {
                     log.warning("Failed to load member's friend info [who=" + user.who() +
@@ -180,6 +160,31 @@ public class MsoyClientResolver extends CrowdClientResolver
                 });
             }
         }
+    }
+
+    /**
+     * Called from {@link #finishResolution} once our friends have been loaded.
+     */
+    protected void finishInitFriends (MemberObject user, List<FriendEntry> friends)
+    {
+        for (FriendEntry entry : friends) {
+            MemberObject friendObj = MsoyServer.lookupMember(entry.name);
+            if (friendObj == null) {
+                continue;
+            }
+            // this friend is online, mark them as such
+            entry.online = true;
+            // and notify them that we're online
+            FriendEntry userEntry = friendObj.friends.get(user.getMemberId());
+            // when the account is newly created, my friends won't yet know that i exist
+            if (userEntry != null) { 
+                userEntry.online = true;
+                friendObj.updateFriends(userEntry);
+            }
+            friendObj.notify(new FriendStatusChangeNotification(user.memberName, true));
+        }
+        user.setFriends(new DSet<FriendEntry>(friends.iterator()));
+        // TODO: we currently never note that friends have logged off
     }
 
     /**
