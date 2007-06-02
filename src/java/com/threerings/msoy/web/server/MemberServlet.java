@@ -274,9 +274,7 @@ public class MemberServlet extends MsoyServiceServlet
                 pending.add(iRec.toInvitationObject());
             }
             result.pendingInvitations = pending;
-            int port = ServerConfig.getHttpPort();
-            result.serverUrl = "http://" + ServerConfig.serverHost + 
-                (port != 80 ? ":" + port : "") + "/#invite-";
+            result.serverUrl = ServerConfig.getServerURL() + "/#invite-";
             return result;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getInvitationsStatus failed [id=" + memberId +"]", pe);

@@ -87,7 +87,8 @@ public class ServerConfig
      */
     public static String getServerURL ()
     {
-        return "http://" + serverHost + (getHttpPort() != 80 ? ":" + getHttpPort() : "");
+        String defurl = "http://" + serverHost + (getHttpPort() != 80 ? ":" + getHttpPort() : "");
+        return config.getValue("server_url", defurl);
     }
 
     /**

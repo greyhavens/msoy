@@ -4,6 +4,11 @@
 # Configuration for a MetaSOY! server installation
 
 #
+# The public URL that should be used to access this Whirled installation
+
+server_url = http://first.whirled.com
+
+#
 # The hostname used by the client to connect to the game server
 
 server_host = game.metasoy.com
