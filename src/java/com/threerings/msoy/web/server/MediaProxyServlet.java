@@ -18,8 +18,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 
 import com.samskivert.io.StreamUtil;
+
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.client.DeploymentConfig;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Proxies downloads of Java game jar files so that we can work around an infuriatingly annoying
@@ -63,6 +66,7 @@ public class MediaProxyServlet extends HttpServlet
 
             // reroute the URL to our media server
             URL url = new URL(ServerConfig.mediaURL + rsrc);
+            log.info("Proxying " + url + ".");
 
             // open the connection and copy the request data
             HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -76,6 +80,7 @@ public class MediaProxyServlet extends HttpServlet
             if (rcode == HttpServletResponse.SC_OK) {
                 IOUtils.copy(in = conn.getInputStream(), rsp.getOutputStream());
             } else {
+                log.info("Proxy failed " + rcode + " " + conn.getResponseMessage() + ".");
                 rsp.sendError(rcode, conn.getResponseMessage());
             }
 
