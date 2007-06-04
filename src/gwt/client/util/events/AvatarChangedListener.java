@@ -12,7 +12,7 @@ public abstract class AvatarChangedListener extends FlashEventListener
     // @Override FlashEventListener
     public String getEventName ()
     {
-        // defined in ???
+        // defined in WorldClient.as
         return "avatarChanged";
     }
 

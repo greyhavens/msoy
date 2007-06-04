@@ -29,6 +29,7 @@ import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.parlor.data.ParlorMarshaller;
 import com.threerings.toybox.data.ToyBoxMarshaller;
 
+import com.threerings.presents.data.ClientObject;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.data.ItemMarshaller;
@@ -204,6 +205,16 @@ public class WorldClient extends BaseClient
         }
     }
 
+    // from Client
+    override public function gotClientObject (clobj :ClientObject) :void
+    {
+        super.gotClientObject(clobj);
+        if (clobj is MemberObject) {
+            var member :MemberObject = clobj as MemberObject;
+            member.addListener(new AvatarUpdateNotifier());
+        }
+    }
+
     // from BaseClient
     override protected function createContext () :BaseContext
     {
@@ -345,14 +356,6 @@ public class WorldClient extends BaseClient
     protected function externalUseAvatar (avatarId :int, scale :Number) :void
     {
         _wctx.getWorldDirector().setAvatar(avatarId, scale);
-        try {
-            if (ExternalInterface.available) {
-                ExternalInterface.call("triggerFlashEvent", "avatarChanged", 
-                    [ avatarId, avatarId + 5 ]);
-            }
-        } catch (err :Error) {
-            log.warning("triggerFlashEvent failed: " + err);
-        }
     }
 
     /**
@@ -406,4 +409,40 @@ public class WorldClient extends BaseClient
     protected var _embedded :Boolean;
     protected var _minimized :Boolean;
 }
+}
+
+import flash.external.ExternalInterface;
+
+import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.AttributeChangeListener;
+
+import com.threerings.msoy.data.MemberObject;
+
+import com.threerings.msoy.item.data.all.Avatar;
+
+class AvatarUpdateNotifier implements AttributeChangeListener
+{
+    public function attributeChanged (event :AttributeChangedEvent) :void
+    {
+        if (MemberObject.AVATAR == event.getName()) {
+            try {
+                if (ExternalInterface.available) {
+                    var newId :int;
+                    var oldId :int;
+                    var value :Object = event.getValue();
+                    if (value is Avatar) {
+                        newId = (value as Avatar).itemId;
+                    }
+                    value = event.getOldValue();
+                    if (value is Avatar) {
+                        oldId = (value as Avatar).itemId;
+                    }
+                    ExternalInterface.call("triggerFlashEvent", "avatarChanged", 
+                        [ newId, oldId ]);
+                }
+            } catch (err :Error) {
+                Log.getLog(this).warning("triggerFlashEvent failed: " + err);
+            }
+        }
+    }
 }
