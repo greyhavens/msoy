@@ -220,6 +220,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             setText(_active ? _activeLabel : _inactiveLabel);
         }
 
+        protected boolean _active;
         protected String _activeLabel;
         protected String _inactiveLabel;
     }
