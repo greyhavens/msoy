@@ -11,7 +11,10 @@ import java.util.Map;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
+import client.util.events.AvatarChangedEvent;
+import client.util.events.AvatarChangeListener;
 import client.util.events.FlashEventListener;
+import client.util.events.FlashEvent;
 
 /**
  * Utility class for listening to events from the Flash client.
@@ -22,23 +25,26 @@ public class FlashEvents
         configureEventCallback();
     }
 
-    public static void addEventListener (FlashEventListener listener)
+    public static void addListener (FlashEventListener listener)
     {
-        List listeners = (List)_eventListeners.get(listener.getEventName());
-        if (listeners == null) {
-            listeners = new ArrayList();
-            _eventListeners.put(listener.getEventName(), listeners);
+        String name = nameForListener(listener);
+        if (name != null) {
+            List listeners = (List)_eventListeners.get(name);
+            if (listeners == null) {
+                listeners = new ArrayList();
+                _eventListeners.put(name, listeners);
+            }
+            listeners.add(listener);
         }
-        listeners.add(listener);
     }
 
-    public static void removeEventListener (FlashEventListener listener)
+    public static void removeListener (FlashEventListener listener)
     {
-        List listeners = (List)_eventListeners.get(listener.getEventName());
-        if (listeners != null) {
-            listeners.remove(listener);
-            if (listeners.size() == 0) {
-                _eventListeners.remove(listener.getEventName());
+        String name = nameForListener(listener);
+        if (name != null) {
+            List listeners = (List)_eventListeners.get(name);
+            if (listeners != null) {
+                listeners.remove(listener);
             }
         }
     }
@@ -47,10 +53,32 @@ public class FlashEvents
     {
         List listeners = (List)_eventListeners.get(eventName);
         if (listeners != null) {
-            Iterator iter = listeners.iterator();
-            while (iter.hasNext()) {
-                ((FlashEventListener)iter.next()).trigger(args);
+            FlashEvent event = eventForName(eventName);
+            if (event != null) {
+                event.readFlashArgs(args);
+                Iterator iter = listeners.iterator();
+                while (iter.hasNext()) {
+                    event.notifyListener((FlashEventListener) iter.next());
+                }
             }
+        }
+    }
+
+    protected static String nameForListener (FlashEventListener listener)
+    {
+        if (listener instanceof AvatarChangeListener) {
+            return AVATAR_CHANGED_EVENT;
+        } else {
+            return null;
+        }
+    }
+
+    protected static FlashEvent eventForName (String eventName)
+    {
+        if (AVATAR_CHANGED_EVENT.equals(eventName)) {
+            return new AvatarChangedEvent();
+        } else {
+            return null;
         }
     }
 
@@ -59,6 +87,9 @@ public class FlashEvents
             @client.util.FlashEvents::triggerEvent(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(eventName, args);
         }
     }-*/;
+
+    // defined in WorldClient.as
+    protected static final String AVATAR_CHANGED_EVENT = "avatarChanged";
 
     protected static Map _eventListeners = new HashMap();
 }

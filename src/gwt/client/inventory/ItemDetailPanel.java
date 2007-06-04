@@ -27,7 +27,8 @@ import client.util.FlashClients;
 import client.util.FlashEvents;
 import client.util.ItemUtil;
 import client.util.PopupMenu;
-import client.util.events.AvatarChangedListener;
+import client.util.events.AvatarChangeListener;
+import client.util.events.AvatarChangedEvent;
 import client.util.events.FlashEventListener;
 import client.shell.Page;
 
@@ -129,12 +130,13 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                             _active ? 0 : ((Avatar) _detail.item).scale);
                     }
                 };
-                FlashEvents.addEventListener(_listener = new AvatarChangedListener() {
-                    public void avatarChanged (int newAvatarId, int oldAvatarId) {
-                        CInventory.log("new: " + newAvatarId + ", old: " + oldAvatarId);
-                        if (newAvatarId == _detail.item.itemId) {
+                FlashEvents.addListener(_listener = new AvatarChangeListener() {
+                    public void avatarChanged (AvatarChangedEvent event) {
+                        CInventory.log("new: " + event.getAvatarId() + ", old: " + 
+                            event.getOldAvatarId());
+                        if (event.getAvatarId() == _detail.item.itemId) {
                             ufb.setActive(true);
-                        } else if (oldAvatarId == _detail.item.itemId) {
+                        } else if (event.getOldAvatarId() == _detail.item.itemId) {
                             ufb.setActive(false);
                         }
                     }
@@ -176,7 +178,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         super.onDetach();
 
         if (_listener != null) {
-            FlashEvents.removeEventListener(_listener);
+            FlashEvents.removeListener(_listener);
         }
     }
 
