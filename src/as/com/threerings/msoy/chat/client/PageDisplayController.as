@@ -21,6 +21,7 @@ import com.threerings.util.Controller;
 public class PageDisplayController extends Controller
 {
     public static const HELP_PAGE_DISPLAY_COMMAND :String = "help";
+    public static const HELP_PAGE_SET_STYLE_COMMAND :String = "setcss";
     
     public function PageDisplayController (ctx :WorldContext, tab :PageDisplayTab) :void
     {
@@ -29,30 +30,41 @@ public class PageDisplayController extends Controller
 
         setControlledPanel(tab);
 
-        _loader = new URLLoader();
+        _pageLoader = new URLLoader();
+        _cssLoader = new URLLoader();
     }
 
     public function init () :void
     {
-        _loader.addEventListener(Event.OPEN, loadStarted);
-        _loader.addEventListener(Event.COMPLETE, loadComplete);
-        _loader.addEventListener(HTTPStatusEvent.HTTP_STATUS, handleHttpStatusCode);
-        _loader.addEventListener(IOErrorEvent.IO_ERROR, handleIOError);
-        _loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleSecurityError);
+        _pageLoader.addEventListener(Event.OPEN, pageLoadStarted);
+        _pageLoader.addEventListener(Event.COMPLETE, pageLoadComplete);
+        _pageLoader.addEventListener(HTTPStatusEvent.HTTP_STATUS, handleHttpStatusCode);
+        _pageLoader.addEventListener(IOErrorEvent.IO_ERROR, handleIOError);
+        _pageLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleSecurityError);
 
+        // we don't care about so many events for the css loader
+        _cssLoader.addEventListener(Event.COMPLETE, cssLoadComplete);
+        _cssLoader.addEventListener(IOErrorEvent.IO_ERROR, handleCSSError);
+        _cssLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleCSSError);
     }
 
     public function shutdown () :void
     {
-        _loader.removeEventListener(Event.OPEN, loadStarted);
-        _loader.removeEventListener(Event.COMPLETE, loadComplete);
-        _loader.removeEventListener(HTTPStatusEvent.HTTP_STATUS, handleHttpStatusCode);
-        _loader.removeEventListener(IOErrorEvent.IO_ERROR, handleIOError);
-        _loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, handleSecurityError);
+        _pageLoader.removeEventListener(Event.OPEN, pageLoadStarted);
+        _pageLoader.removeEventListener(Event.COMPLETE, pageLoadComplete);
+        _pageLoader.removeEventListener(HTTPStatusEvent.HTTP_STATUS, handleHttpStatusCode);
+        _pageLoader.removeEventListener(IOErrorEvent.IO_ERROR, handleIOError);
+        _pageLoader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, handleSecurityError);
 
+        _cssLoader.removeEventListener(Event.COMPLETE, cssLoadComplete);
+        _cssLoader.removeEventListener(IOErrorEvent.IO_ERROR, handleCSSError);
+        _cssLoader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, handleCSSError);
     }
     
-    /** Handles the HELP_PAGE_DISPLAY_COMMAND action. */
+    /**
+     * Handles the HELP_PAGE_DISPLAY_COMMAND action. Starts loading an HTML page from the specified
+     * URL and, when ready, displays it in the PageDisplayTab.
+     */
     public function help (url :String) :void
     {
         // if this is an absolute url, warn the developer (but try anyway)
@@ -60,15 +72,25 @@ public class PageDisplayController extends Controller
             Log.getLog(this).warning("Help page url should be relative: " + url);
         }
         
-        startLoading(url);
+        startLoading(_pageLoader, url);
+    }
+
+    /**
+     * Handles the HELP_PAGE_SET_STYLE_COMMAND action. Starts loading a CSS file from the specified
+     * URL and, when ready, applies it to the PageDisplayTab (i.e. the styles will be applied to
+     * the currently displayed page, and all future pages, until set to a different style.)
+     */
+    public function setcss (url :String) :void
+    {
+        startLoading(_cssLoader, url);
     }
     
     /** Starts loading the specified URL. */
-    protected function startLoading (url :String) :void
+    protected function startLoading (loader :URLLoader, url :String) :void
     {
         // shut down any operation already in progress
         try {
-            _loader.close();
+            loader.close();
         } catch (e: Error) {
             // no op. i'm just catching errors caused by closing an already closed stream.
             // this wouldn't be necessary if I could just ask the loader's stream was already
@@ -76,19 +98,30 @@ public class PageDisplayController extends Controller
         }
 
         // get a new page!
-        _loader.load(new URLRequest(url));
+        loader.load(new URLRequest(url));
+    }
+
+    protected function cssLoadComplete (event :Event) :void
+    {
+        _tab.setStyleSheet(String(_cssLoader.data));
     }
     
-    protected function loadStarted (event :Event) :void 
+    protected function pageLoadStarted (event :Event) :void 
     {
         messageDisplay(Msgs.GENERAL.get("m.help_loading"));
     }
 
-    protected function loadComplete (event :Event) :void 
+    protected function pageLoadComplete (event :Event) :void 
     {
-        rawDisplay(String(_loader.data));
+        rawDisplay(String(_pageLoader.data));
     }
 
+    protected function handleCSSError (event :Event) :void
+    {
+        // for errors loading the style sheet, let the developer know, but otherwise ignore them
+        Log.getLog(this).warning("Error loading style sheet: " + event);
+    }
+    
     protected function handleHttpStatusCode (event :HTTPStatusEvent) :void
     {
         // this isn't all that useful, since it doesn't behave the same way on all browsers.
@@ -102,6 +135,9 @@ public class PageDisplayController extends Controller
 
     protected function handleIOError (event :IOErrorEvent) :void
     {
+        // let the developer know
+        Log.getLog(this).warning("Error loading page: " + event);
+
         messageDisplay(Msgs.GENERAL.get("m.help_io_error", _tab.tabName));
     }        
     
@@ -122,6 +158,7 @@ public class PageDisplayController extends Controller
 
     protected var _ctx :WorldContext;
     protected var _tab :PageDisplayTab;
-    protected var _loader :URLLoader;
+    protected var _pageLoader :URLLoader;
+    protected var _cssLoader :URLLoader;
 }
 }

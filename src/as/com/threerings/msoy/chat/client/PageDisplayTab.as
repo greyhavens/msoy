@@ -5,7 +5,6 @@ package com.threerings.msoy.chat.client {
 
 import flash.events.Event;
 
-import mx.controls.Text;
 import mx.events.ResizeEvent;
 
 import com.threerings.msoy.client.ControlBar;
@@ -26,7 +25,7 @@ public class PageDisplayTab extends ChatTab
         this.tabName = tabName;
 
         _controller = new PageDisplayController(ctx, this);
-        _textbox = new Text();
+        _textbox = new TextWithStyle();
     }
 
     public function getController () :PageDisplayController
@@ -52,6 +51,11 @@ public class PageDisplayTab extends ChatTab
     {
         // perhaps validate here?
         _textbox.htmlText = source;
+    }
+
+    public function setStyleSheet (cssText :String) :void
+    {
+        _textbox.setStyleSheet(cssText);
     }
 
     // from ChatTab
@@ -108,7 +112,26 @@ public class PageDisplayTab extends ChatTab
         }
     }
 
-    protected var _textbox :Text;
+    protected var _textbox :TextWithStyle;
     protected var _controller :PageDisplayController;
 }
 }
+
+
+import flash.text.StyleSheet;
+import mx.controls.Text;
+
+/**
+ * Flex controls in general don't support setting style sheets at runtime. But Text's internal
+ * TextField instance does, so we just expose it. 
+ */
+internal class TextWithStyle extends Text
+{
+    public function setStyleSheet (cssDefinition :String) :void
+    {
+        var style :StyleSheet = new StyleSheet();
+        style.parseCSS(cssDefinition);
+        this.textField.styleSheet = style;
+    }
+}
+

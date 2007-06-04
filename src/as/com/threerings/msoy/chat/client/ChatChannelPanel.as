@@ -126,8 +126,9 @@ public class ChatChannelPanel extends VBox
      * a new one, and fills its page with contents from the specified location.
      */
     public function displayPageTab (
-        tabName :String, pageSource :String, select :Boolean) :PageDisplayTab
+        tabName :String, pageUrl :String, select :Boolean = true) :PageDisplayTab
     {
+        // find the tab
         var tab :PageDisplayTab = findAnyTab(function (tab :ChatTab) :Boolean {
                 var pagetab :PageDisplayTab = tab as PageDisplayTab;
                 return (pagetab != null && pagetab.tabName == tabName);
@@ -140,10 +141,17 @@ public class ChatChannelPanel extends VBox
             tab.init();
             _tabnav.addChild(tab);
         }
+        
+        // start loading the page
+        CommandEvent.dispatch(tab, PageDisplayController.HELP_PAGE_DISPLAY_COMMAND, pageUrl);
 
-        // start loading
-        CommandEvent.dispatch(tab, PageDisplayController.HELP_PAGE_DISPLAY_COMMAND, pageSource);
-
+        // try to guess a css url from the page url, and maybe start loading it
+        var segments :Array = pageUrl.split(/(.+)\.html$/);
+        if (segments.length == 3) {
+            var cssUrl :String = String(segments[1] + ".css");
+            CommandEvent.dispatch(tab, PageDisplayController.HELP_PAGE_SET_STYLE_COMMAND, cssUrl);
+        }
+        
         selectAndFocusTab(tab);
 
         return tab;
