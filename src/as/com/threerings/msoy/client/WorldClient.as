@@ -205,6 +205,17 @@ public class WorldClient extends BaseClient
         }
     }
 
+    public function dispatchEventToGWT (eventName :String, eventArgs :Array) :void
+    {
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.call("triggerFlashEvent", eventName, eventArgs);
+            }
+        } catch (err :Error) {
+            Log.getLog(this).warning("triggerFlashEvent failed: " + err);
+        }
+    }
+
     // from Client
     override public function gotClientObject (clobj :ClientObject) :void
     {

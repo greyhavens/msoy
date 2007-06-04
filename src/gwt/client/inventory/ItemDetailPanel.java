@@ -27,9 +27,13 @@ import client.util.FlashClients;
 import client.util.FlashEvents;
 import client.util.ItemUtil;
 import client.util.PopupMenu;
-import client.util.events.AvatarChangeListener;
 import client.util.events.AvatarChangedEvent;
+import client.util.events.AvatarChangeListener;
+import client.util.events.DecorChangedEvent;
+import client.util.events.DecorChangeListener;
 import client.util.events.FlashEventListener;
+import client.util.events.RoomAudioChangedEvent;
+import client.util.events.RoomAudioChangeListener;
 import client.shell.Page;
 
 /**
@@ -102,25 +106,48 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(button);
         }
 
+        // TODO: this is a repetitive mess that should be written better... but it will soon
+        // go away because we're moving this functionality to the item list... it will no 
+        // longer be needed here.
         if (FlashClients.inRoom()) {
             _details.add(WidgetUtil.makeShim(1, 10));
             byte type = _detail.item.getType();
             if (type == Item.DECOR) {
                 boolean using = (FlashClients.getSceneItemId(Item.DECOR) == _detail.item.itemId);
-                button = new UpdateFlashButton(using, CInventory.msgs.detailRemoveDecor(),
-                    CInventory.msgs.detailUseDecor()) {
+                final UpdateFlashButton ufb = new UpdateFlashButton(using, 
+                    CInventory.msgs.detailRemoveDecor(), CInventory.msgs.detailUseDecor()) {
                     public void onClick () {
                         FlashClients.useItem(_active ? 0 : _detail.item.itemId, Item.DECOR);
                     }
                 };
+                FlashEvents.addListener(_listener = new DecorChangeListener() {
+                    public void decorChanged (DecorChangedEvent event) {
+                        if (event.getDecorId() == _detail.item.itemId) {
+                            ufb.setActive(true);
+                        } else if (event.getOldDecorId() == _detail.item.itemId) {
+                            ufb.setActive(false);
+                        }
+                    }
+                });
+                button = ufb;
             } else if (type == Item.AUDIO) {
                 boolean using = (FlashClients.getSceneItemId(Item.AUDIO) == _detail.item.itemId);
-                button = new UpdateFlashButton(using, CInventory.msgs.detailRemoveAudio(),
-                    CInventory.msgs.detailUseAudio()) {
+                final UpdateFlashButton ufb = new UpdateFlashButton(using,
+                    CInventory.msgs.detailRemoveAudio(), CInventory.msgs.detailUseAudio()) {
                     public void onClick () {
                         FlashClients.useItem(_active ? 0 : _detail.item.itemId, Item.AUDIO);
                     }
                 };
+                FlashEvents.addListener(_listener = new RoomAudioChangeListener() {
+                    public void audioChanged (RoomAudioChangedEvent event) {
+                        if (event.getAudioId() == _detail.item.itemId) {
+                            ufb.setActive(true);
+                        } else if (event.getOldAudioId() == _detail.item.itemId) {
+                            ufb.setActive(false);
+                        }
+                    }
+                });
+                button = ufb;
             } else if (type == Item.AVATAR) { 
                 boolean wearing = (FlashClients.getAvatarId() == _detail.item.itemId);
                 final UpdateFlashButton ufb = new UpdateFlashButton(wearing, 
