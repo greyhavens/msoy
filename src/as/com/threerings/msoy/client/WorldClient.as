@@ -427,8 +427,8 @@ class AvatarUpdateNotifier implements AttributeChangeListener
         if (MemberObject.AVATAR == event.getName()) {
             try {
                 if (ExternalInterface.available) {
-                    var newId :int;
-                    var oldId :int;
+                    var newId :int = 0;
+                    var oldId :int = 0;
                     var value :Object = event.getValue();
                     if (value is Avatar) {
                         newId = (value as Avatar).itemId;

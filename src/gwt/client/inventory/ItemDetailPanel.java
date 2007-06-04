@@ -132,8 +132,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 };
                 FlashEvents.addListener(_listener = new AvatarChangeListener() {
                     public void avatarChanged (AvatarChangedEvent event) {
-                        CInventory.log("new: " + event.getAvatarId() + ", old: " + 
-                            event.getOldAvatarId());
                         if (event.getAvatarId() == _detail.item.itemId) {
                             ufb.setActive(true);
                         } else if (event.getOldAvatarId() == _detail.item.itemId) {
@@ -222,7 +220,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             setText(_active ? _activeLabel : _inactiveLabel);
         }
 
-        protected boolean _active;
         protected String _activeLabel;
         protected String _inactiveLabel;
     }
