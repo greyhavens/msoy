@@ -67,64 +67,76 @@ public class ItemContainer extends FlexTable
         label.addClickListener(_clicker);
         setWidget(1, 1, label);
 
-        if (FlashClients.clientExists()) {
-            if (_item instanceof Avatar) {
-                setWidget(1, 0, generateActionLabel(FlashClients.getAvatarId() == _item.itemId));
-                clearListener();
-                FlashEvents.addListener(_listener = new AvatarChangeListener() {
-                    public void avatarChanged (AvatarChangedEvent event) {
-                        if (event.getAvatarId() == _item.itemId) {
-                            setWidget(1, 0, generateActionLabel(true));
-                        } else if (event.getOldAvatarId() == _item.itemId) {
-                            setWidget(1, 0, generateActionLabel(false));
-                        }
-                    }
-                });
-            } else if (_item instanceof Decor) {
-                setWidget(1, 0, generateActionLabel(FlashClients.getSceneItemId(Item.DECOR) == 
-                    _item.itemId));
-                clearListener();
-                FlashEvents.addListener(_listener = new DecorChangeListener() {
-                    public void decorChanged (DecorChangedEvent event) {
-                        if (event.getDecorId() == _item.itemId) {
-                            setWidget(1, 0, generateActionLabel(true));
-                        } else if (event.getOldDecorId() == _item.itemId) {
-                            setWidget(1, 0, generateActionLabel(false));
-                        }
-                    }
-                });
-            } else if (_item instanceof Audio) {
-                setWidget(1, 0, generateActionLabel(FlashClients.getSceneItemId(Item.AUDIO) == 
-                    _item.itemId));
-                clearListener();
-                FlashEvents.addListener(_listener = new RoomAudioChangeListener() {
-                    public void audioChanged (RoomAudioChangedEvent event) {
-                        if (event.getAudioId() == _item.itemId) {
-                            setWidget(1, 0, generateActionLabel(true));
-                        } else if (event.getOldAudioId() == _item.itemId) {
-                            setWidget(1, 0, generateActionLabel(false));
-                        }
-                    }
-                });
-            }
-        }
+        addListener();
     }
 
     // @Override // from Panel
     public void clear ()
     {
         super.clear();
-        clearListener();
+        removeListener();
     }
 
     // @Override // from Panel
     protected void onDetach ()
     {
         super.onDetach();
-        clearListener();
+        removeListener();
     }
 
-    protected void clearListener ()
+    // @Override // from Panel
+    protected void onAttach ()
+    {
+        super.onAttach();
+        addListener();
+    }
+
+    protected void addListener ()
+    {
+        if (_listener == null) {
+            if (FlashClients.clientExists()) {
+                if (_item instanceof Avatar) {
+                    setWidget(1, 0, generateActionLabel(FlashClients.getAvatarId() == 
+                        _item.itemId));
+                    FlashEvents.addListener(_listener = new AvatarChangeListener() {
+                        public void avatarChanged (AvatarChangedEvent event) {
+                            if (event.getAvatarId() == _item.itemId) {
+                                setWidget(1, 0, generateActionLabel(true));
+                            } else if (event.getOldAvatarId() == _item.itemId) {
+                                setWidget(1, 0, generateActionLabel(false));
+                            }
+                        }
+                    });
+                } else if (_item instanceof Decor) {
+                    setWidget(1, 0, generateActionLabel(FlashClients.getSceneItemId(Item.DECOR) == 
+                        _item.itemId));
+                    FlashEvents.addListener(_listener = new DecorChangeListener() {
+                        public void decorChanged (DecorChangedEvent event) {
+                            if (event.getDecorId() == _item.itemId) {
+                                setWidget(1, 0, generateActionLabel(true));
+                            } else if (event.getOldDecorId() == _item.itemId) {
+                                setWidget(1, 0, generateActionLabel(false));
+                            }
+                        }
+                    });
+                } else if (_item instanceof Audio) {
+                    setWidget(1, 0, generateActionLabel(FlashClients.getSceneItemId(Item.AUDIO) == 
+                        _item.itemId));
+                    FlashEvents.addListener(_listener = new RoomAudioChangeListener() {
+                        public void audioChanged (RoomAudioChangedEvent event) {
+                            if (event.getAudioId() == _item.itemId) {
+                                setWidget(1, 0, generateActionLabel(true));
+                            } else if (event.getOldAudioId() == _item.itemId) {
+                                setWidget(1, 0, generateActionLabel(false));
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    protected void removeListener ()
     {
         if (_listener != null) {
             FlashEvents.removeListener(_listener);
