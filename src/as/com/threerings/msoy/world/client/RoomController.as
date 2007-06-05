@@ -1286,17 +1286,17 @@ public class RoomController extends SceneController
     {
         if (update is SceneAttrsUpdate) {
             var attrsUpdate :SceneAttrsUpdate = update as SceneAttrsUpdate;
-            var previousDecor :int = _scene.getDecorData().itemId;
-            var newDecor :int = attrsUpdate.decorData.itemId;
-            if (previousDecor != newDecor) {
-                _mctx.getWorldClient().dispatchEventToGWT(DECOR_CHANGED_EVENT, 
-                    [ newDecor, previousDecor ]);
+            var newId :int = attrsUpdate.decorData.itemId;
+            var oldId :int = _scene.getDecorData().itemId;
+            if (newId != oldId) {
+                _mctx.getWorldClient().dispatchEventToGWT(BACKGROUND_CHANGED_EVENT, 
+                    [ Item.DECOR, newId, oldId ]);
             }
-            var previousAudio :int = _scene.getAudioData().itemId;
-            var newAudio :int = attrsUpdate.audioData.itemId;
-            if (previousAudio != newAudio) {
-                _mctx.getWorldClient().dispatchEventToGWT(ROOM_AUDIO_CHANGED_EVENT,
-                    [ newAudio, previousAudio ]);
+            newId = attrsUpdate.audioData.itemId;
+            oldId = _scene.getAudioData().itemId;
+            if (newId != oldId) {
+                _mctx.getWorldClient().dispatchEventToGWT(BACKGROUND_CHANGED_EVENT,
+                    [ Item.AUDIO, newId, oldId ]);
             }
         }
 
@@ -1308,10 +1308,7 @@ public class RoomController extends SceneController
     protected static const ROOM_SCROLL_INCREMENT :int = 20;
 
     /** The event to send to GWT when our decor changed. */
-    protected static const DECOR_CHANGED_EVENT :String = "decorChanged";
-
-    /** The event to send to GWT when our background audio changed. */
-    protected static const ROOM_AUDIO_CHANGED_EVENT :String = "roomAudioChanged";
+    protected static const BACKGROUND_CHANGED_EVENT :String = "backgroundChanged";
 
     /** The life-force of the client. */
     protected var _mctx :WorldContext;

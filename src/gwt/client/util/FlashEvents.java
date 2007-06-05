@@ -13,12 +13,10 @@ import com.google.gwt.core.client.JavaScriptObject;
 
 import client.util.events.AvatarChangedEvent;
 import client.util.events.AvatarChangeListener;
-import client.util.events.DecorChangedEvent;
-import client.util.events.DecorChangeListener;
+import client.util.events.BackgroundChangedEvent;
+import client.util.events.BackgroundChangeListener;
 import client.util.events.FlashEvent;
 import client.util.events.FlashEventListener;
-import client.util.events.RoomAudioChangedEvent;
-import client.util.events.RoomAudioChangeListener;
 
 /**
  * Utility class for listening to events from the Flash client.
@@ -72,10 +70,8 @@ public class FlashEvents
     {
         if (listener instanceof AvatarChangeListener) {
             return AVATAR_CHANGED_EVENT;
-        } else if (listener instanceof DecorChangeListener) {
-            return DECOR_CHANGED_EVENT;
-        } else if (listener instanceof RoomAudioChangeListener) {
-            return ROOM_AUDIO_CHANGED_EVENT;
+        } else if (listener instanceof BackgroundChangeListener) {
+            return BACKGROUND_CHANGED_EVENT;
         } else {
             return null;
         }
@@ -85,10 +81,8 @@ public class FlashEvents
     {
         if (AVATAR_CHANGED_EVENT.equals(eventName)) {
             return new AvatarChangedEvent();
-        } else if (DECOR_CHANGED_EVENT.equals(eventName)) {
-            return new DecorChangedEvent();
-        } else if (ROOM_AUDIO_CHANGED_EVENT.equals(eventName)) {
-            return new RoomAudioChangedEvent();
+        } else if (BACKGROUND_CHANGED_EVENT.equals(eventName)) {
+            return new BackgroundChangedEvent();
         } else {
             return null;
         }
@@ -104,10 +98,7 @@ public class FlashEvents
     protected static final String AVATAR_CHANGED_EVENT = "avatarChanged";
 
     // defined in RoomController.as
-    protected static final String DECOR_CHANGED_EVENT = "decorChanged";
-
-    // defined in RoomController.as
-    protected static final String ROOM_AUDIO_CHANGED_EVENT = "roomAudioChanged";
+    protected static final String BACKGROUND_CHANGED_EVENT = "backgroundChanged";
 
     protected static Map _eventListeners = new HashMap();
 }

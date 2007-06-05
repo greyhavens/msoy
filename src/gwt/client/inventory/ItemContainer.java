@@ -22,10 +22,8 @@ import client.util.MediaUtil;
 import client.util.MsoyUI;
 import client.util.events.AvatarChangedEvent;
 import client.util.events.AvatarChangeListener;
-import client.util.events.DecorChangedEvent;
-import client.util.events.DecorChangeListener;
-import client.util.events.RoomAudioChangedEvent;
-import client.util.events.RoomAudioChangeListener;
+import client.util.events.BackgroundChangedEvent;
+import client.util.events.BackgroundChangeListener;
 import client.util.events.FlashEventListener;
 
 /**
@@ -107,27 +105,17 @@ public class ItemContainer extends FlexTable
                             }
                         }
                     });
-                } else if (_item instanceof Decor) {
-                    setWidget(1, 0, generateActionLabel(FlashClients.getSceneItemId(Item.DECOR) == 
-                        _item.itemId));
-                    FlashEvents.addListener(_listener = new DecorChangeListener() {
-                        public void decorChanged (DecorChangedEvent event) {
-                            if (event.getDecorId() == _item.itemId) {
-                                setWidget(1, 0, generateActionLabel(true));
-                            } else if (event.getOldDecorId() == _item.itemId) {
-                                setWidget(1, 0, generateActionLabel(false));
-                            }
-                        }
-                    });
-                } else if (_item instanceof Audio) {
-                    setWidget(1, 0, generateActionLabel(FlashClients.getSceneItemId(Item.AUDIO) == 
-                        _item.itemId));
-                    FlashEvents.addListener(_listener = new RoomAudioChangeListener() {
-                        public void audioChanged (RoomAudioChangedEvent event) {
-                            if (event.getAudioId() == _item.itemId) {
-                                setWidget(1, 0, generateActionLabel(true));
-                            } else if (event.getOldAudioId() == _item.itemId) {
-                                setWidget(1, 0, generateActionLabel(false));
+                } else if (_item instanceof Decor || _item instanceof Audio) {
+                    setWidget(1, 0, generateActionLabel(
+                        FlashClients.getSceneItemId(_item.getType()) == _item.itemId));
+                    FlashEvents.addListener(_listener = new BackgroundChangeListener() {
+                        public void backgroundChanged (BackgroundChangedEvent event) {
+                            if (event.getType() == _item.getType()) {
+                                if (event.getBackgroundId() == _item.itemId) {
+                                    setWidget(1, 0, generateActionLabel(true));
+                                } else if (event.getOldBackgroundId() == _item.itemId) {
+                                    setWidget(1, 0, generateActionLabel(false));
+                                }
                             }
                         }
                     });

@@ -24,16 +24,8 @@ import client.item.BaseItemDetailPanel;
 import client.shell.Application;
 import client.util.ClickCallback;
 import client.util.FlashClients;
-import client.util.FlashEvents;
 import client.util.ItemUtil;
 import client.util.PopupMenu;
-import client.util.events.AvatarChangedEvent;
-import client.util.events.AvatarChangeListener;
-import client.util.events.DecorChangedEvent;
-import client.util.events.DecorChangeListener;
-import client.util.events.FlashEventListener;
-import client.util.events.RoomAudioChangedEvent;
-import client.util.events.RoomAudioChangeListener;
 import client.shell.Page;
 
 /**
@@ -139,16 +131,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         });*/
     }
 
-    // @Override // Panel
-    protected void onDetach ()
-    {
-        super.onDetach();
-
-        if (_listener != null) {
-            FlashEvents.removeListener(_listener);
-        }
-    }
-
     // @Override // BaseItemDetailPanel
     protected void returnToList ()
     {
@@ -162,35 +144,4 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     }
 
     protected ItemPanel _parent;
-
-    protected FlashEventListener _listener;
-
-    protected abstract class UpdateFlashButton extends Button 
-    {
-        public UpdateFlashButton (boolean active, String activeLabel, String inactiveLabel)
-        {
-            super(active ? activeLabel : inactiveLabel);
-            addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    UpdateFlashButton.this.onClick();
-                }
-            });
-
-            _active = active;
-            _activeLabel = activeLabel;
-            _inactiveLabel = inactiveLabel;
-        }
-
-        public abstract void onClick ();
-
-        public void setActive (boolean active) 
-        {
-            _active = active;
-            setText(_active ? _activeLabel : _inactiveLabel);
-        }
-
-        protected boolean _active;
-        protected String _activeLabel;
-        protected String _inactiveLabel;
-    }
 }
