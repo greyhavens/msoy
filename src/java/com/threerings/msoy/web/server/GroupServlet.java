@@ -32,8 +32,6 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
-import com.threerings.presents.data.InvocationCodes;
-import com.threerings.presents.server.InvocationException;
 
 import static com.threerings.msoy.Log.log;
 
@@ -212,7 +210,7 @@ public class GroupServlet extends MsoyServiceServlet
 
         if(!isValidName(group.name)) {
             log.log(Level.WARNING, "invalid group name: " + group.name);
-            throw new ServiceException("m.invalid_group_name");
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
         final ServletWaiter<Group> waiter = new ServletWaiter<Group>("createGroup[" + group + "]");
@@ -233,7 +231,7 @@ public class GroupServlet extends MsoyServiceServlet
         
         if(!isValidName(group.name)) {
             log.log(Level.WARNING, "in updateGroup, invalid group name: " + group.name);
-            throw new ServiceException("m.invalid_group_name");
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
         try {
@@ -304,7 +302,7 @@ public class GroupServlet extends MsoyServiceServlet
                 memrec.memberId);
             if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
                 log.log(Level.WARNING, "in updateMemberRank, invalid permissions");
-                throw new ServiceException("m.invalid_permissions");
+                throw new ServiceException(ServiceException.INTERNAL_ERROR);
             }
 
             MsoyServer.groupRepo.setRank(groupId, memberId, newRank);
@@ -322,7 +320,7 @@ public class GroupServlet extends MsoyServiceServlet
         String tagName = tag.trim().toLowerCase();
         if (!TagNameRecord.VALID_TAG.matcher(tagName).matches()) {
             log.log(Level.WARNING, "in tagGroup, invalid tag: " + tagName);
-            throw new ServiceException("Invalid tag [tag=" + tagName + "]");
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
         MemberRecord memrec = requireAuthedUser(ident);
@@ -332,7 +330,7 @@ public class GroupServlet extends MsoyServiceServlet
                 memrec.memberId);
             if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
                 log.log(Level.WARNING, "in tagGroup, invalid permissions");
-                throw new ServiceException("m.invalid_permissions");
+                throw new ServiceException(ServiceException.INTERNAL_ERROR);
             }
 
             long now = System.currentTimeMillis();
