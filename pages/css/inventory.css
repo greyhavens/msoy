@@ -31,6 +31,17 @@
   font-size: small;
 }
 
+.itemContainer .AvatarActive, .itemContainer .AvatarInactive {
+  background-image: url(/images/ui/checkbox_avatar_active.png);
+  margin-top: 4px;
+  width: 18px;
+  height: 18px;
+}
+
+.itemContainer .AvatarInactive {
+  background-image: url(/images/ui/checkbox_avatar_inactive.png);
+}
+
 .mediaUploader {
 }
 
