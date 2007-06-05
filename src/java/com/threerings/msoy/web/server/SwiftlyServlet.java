@@ -101,12 +101,13 @@ public class SwiftlyServlet extends MsoyServiceServlet
         // TODO Argument Validation
         /*
         if (!isValidName(project.name)) {
-            throw new ServiceException("m.invalid_project_name");
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
         */
 
         if (!SwiftlyProject.isValidProjectType(projectType)) {
-            throw new ServiceException("m.invalid_project_type");
+            log.warning("Failed to create project. Invalid project type. [type=" + projectType + "]");
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
         // Initialize the project storage.
@@ -170,7 +171,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         // TODO Argument Validation
         /*
         if (!isValidName(project.name)) {
-            throw new ServiceException("m.invalid_project_name");
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
         */
 
