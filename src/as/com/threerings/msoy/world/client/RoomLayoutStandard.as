@@ -24,7 +24,10 @@ import com.threerings.msoy.world.data.RoomCodes;
  * This class factors out room layout math that converts between 3D room coordinate space
  * and screen coordinates.
  */
-public class RoomLayoutStandard implements RoomLayout {
+public class RoomLayoutStandard implements RoomLayout
+{
+    /** Chat history should be at least 50px tall, even in rooms with low horizon. */
+    public static const MIN_CHAT_HEIGHT :Number = 50;
 
     /** Constructor. */
     public function RoomLayoutStandard (view :AbstractRoomView)
@@ -74,10 +77,9 @@ public class RoomLayoutStandard implements RoomLayout {
         var anchor :Vector3 = new Vector3(0, 0, depth);
 
         // find the intersection of the line of sight with the plane
-        var loc :Vector3 = _metrics.screenToPlaneProjection(
-            p.x, p.y, anchor, RoomMetrics.N_NEAR);
+        var cloc :ClickLocation = _metrics.screenToPlaneProjection(p.x, p.y, anchor);
         
-        return (loc != Vector3.INFINITE) ? _metrics.toMsoyLocation(loc) : null;
+        return (cloc != null) ? cloc.loc : null;
     }
     
     /**
@@ -107,11 +109,11 @@ public class RoomLayoutStandard implements RoomLayout {
                     _metrics.screenToInnerWallsProjection(pp.x, pp.y);
                 
                 anchorLocation = _metrics.toVector3(constLocation.loc);
-                
+
             } else if (anchorPoint is MsoyLocation) {
                 // the constraint is a room location - we're ready to go!
                 anchorLocation = _metrics.toVector3(anchorPoint as MsoyLocation);
-                
+
             } else {
                 throw new ArgumentError("Invalid constraint argument type");
             }
@@ -235,7 +237,8 @@ public class RoomLayoutStandard implements RoomLayout {
     // from interface RoomLayout
     public function recommendedChatHeight () :Number
     {
-        return _metrics.positionOnFrontWall(RoomMetrics.LEFT_BOTTOM_FAR).y;
+        return Math.min(MIN_CHAT_HEIGHT,
+                        _metrics.roomToScreen(0, RoomMetrics.LEFT_BOTTOM_FAR.y, 0).y);
     }
 
     // from interface RoomLayout
