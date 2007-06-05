@@ -125,6 +125,8 @@ public class ItemPanel extends VerticalPanel
         _create.setEnabled(true);
 
         if (item != null) {
+            // indicate that we need to refresh the loaded inventory list
+            _contentsModelDirty = true;
             // refresh the detail view
             showDetail(new ItemIdent(item.getType(), item.itemId));
         }
@@ -134,6 +136,7 @@ public class ItemPanel extends VerticalPanel
     {
         CInventory.membersvc.loadInventory(CInventory.ident, _type, new AsyncCallback() {
             public void onSuccess (Object result) {
+                _contentsModelDirty = false;
                 _furniList = FlashClients.getFurniList();
                 _contents.setModel(new SimpleDataModel((List)result), _startPage);
             }
@@ -172,7 +175,7 @@ public class ItemPanel extends VerticalPanel
         }
 
         // trigger the loading of our inventory the first time we're displayed
-        if (!_contents.hasModel()) {
+        if (!_contents.hasModel() || _contentsModelDirty) {
             loadInventory();
         }
     }
@@ -200,6 +203,9 @@ public class ItemPanel extends VerticalPanel
     }
 
     protected PagedGrid _contents;
+    /** A flag to indicate that the next time we display this item panel, the data needs to be 
+     * refetched from the server. */
+    protected boolean _contentsModelDirty = false;
     protected Button _create, _next, _prev;
 
     protected byte _type;
