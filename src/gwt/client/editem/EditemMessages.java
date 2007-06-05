@@ -472,12 +472,12 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String avatarMainTab();
 
   /**
-   * Translated "Upload".
+   * Translated "Create".
    * 
-   * @return translated "Upload"
-   * @gwt.key editorUpload
+   * @return translated "Create"
+   * @gwt.key editorCreate
    */
-  String editorUpload();
+  String editorCreate();
 
   /**
    * Translated "Main Document media".
