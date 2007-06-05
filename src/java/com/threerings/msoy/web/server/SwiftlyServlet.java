@@ -106,7 +106,8 @@ public class SwiftlyServlet extends MsoyServiceServlet
         */
 
         if (!SwiftlyProject.isValidProjectType(projectType)) {
-            log.warning("Failed to create project. Invalid project type. [type=" + projectType + "]");
+            log.warning("Failed to create project. Invalid project type. [type=" +
+                projectType + "]");
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
@@ -272,7 +273,8 @@ public class SwiftlyServlet extends MsoyServiceServlet
 
         // Don't let the owner remove themselves.
         if (isOwner(projectId, memberId)) {
-            log.warning("Refusing to remove the project owner from collaborators. [projectId=" + projectId + "]");
+            log.warning("Refusing to remove the project owner from collaborators. [projectId=" + 
+                projectId + "]");
             return;
         }
         
@@ -293,8 +295,8 @@ public class SwiftlyServlet extends MsoyServiceServlet
         
         // if the user is already a collaborator, do nothing
         if (isCollaborator(projectId, memberId)) {
-            log.warning("Refusing to add an existing collaborator to project. [projectId=" + projectId +
-                " memberId=" + memberId + "]");
+            log.warning("Refusing to add an existing collaborator to project. [projectId=" + 
+                projectId + ", memberId=" + memberId + "]");
             return;
         }
         
