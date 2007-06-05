@@ -236,7 +236,7 @@ public class UploadServlet extends HttpServlet
             info = tinfo;
             tinfo = null;
             if (!output.delete()) {
-                log.warning("Unable to delete unscaled thumnail image '" + output + "'.");
+                log.warning("Unable to delete unscaled thumbnail image '" + output + "'.");
             }
 
         } else {
@@ -326,6 +326,10 @@ public class UploadServlet extends HttpServlet
         throws IOException
     {
         BufferedImage image = ImageIO.read(output);
+        // TODO: send JavaScript that communicates a friendly error
+        if (image == null) {
+            throw new IOException("Invalid image data. Unable to complete upload.");
+        }
 
         // determine whether this image is width or height constrained
         info.width = image.getWidth();
