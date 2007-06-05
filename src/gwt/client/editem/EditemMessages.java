@@ -312,14 +312,6 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String avatarMainTitle();
 
   /**
-   * Translated "Update".
-   * 
-   * @return translated "Update"
-   * @gwt.key editorUpdate
-   */
-  String editorUpdate();
-
-  /**
    * Translated "Item updated.".
    * 
    * @return translated "Item updated."
@@ -472,12 +464,12 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String avatarMainTab();
 
   /**
-   * Translated "Create".
+   * Translated "Save".
    * 
-   * @return translated "Create"
-   * @gwt.key editorCreate
+   * @return translated "Save"
+   * @gwt.key editorSave
    */
-  String editorCreate();
+  String editorSave();
 
   /**
    * Translated "Main Document media".

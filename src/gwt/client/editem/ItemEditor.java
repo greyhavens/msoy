@@ -156,8 +156,7 @@ public abstract class ItemEditor extends BorderedDialog
         _item = item;
         _etitle.setText((item.itemId <= 0) ?
                         CEditem.emsgs.editorUploadTitle() : CEditem.emsgs.editorEditTitle());
-        _esubmit.setText((item.itemId <= 0) ?
-                         CEditem.emsgs.editorCreate() : CEditem.emsgs.editorUpdate());
+        _esubmit.setText(CEditem.emsgs.editorSave());
 
         if (_item.name != null) {
             _name.setText(_item.name);
