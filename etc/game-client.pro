@@ -3,9 +3,11 @@
 #
 # Proguard configuration file for the Java game client
 
+-injars ../dist/lib/commons-collections.jar(!META-INF/*)
 -injars ../dist/lib/commons-io.jar(!META-INF/*)
+-injars ../dist/lib/commons-digester.jar(!META-INF/*)
 -injars ../dist/lib/samskivert.jar(
-    com/samskivert/Log.class,**/io/**,**/net/**,**/swing/**,**/text/**,**/util/**,
+    com/samskivert/Log.class,**/io/**,**/net/**,**/swing/**,**/text/**,**/util/**,**/xml/**,
     **/servlet/user/Password.class,**/servlet/user/User.class,**/servlet/user/UserUtil.class)
 -injars ../dist/lib/getdown.jar(!META-INF/*,!**/tools/**)
 -injars ../dist/lib/narya-base.jar(!META-INF/*,!**/tools/**,!**/server/**,!**/admin/**)
