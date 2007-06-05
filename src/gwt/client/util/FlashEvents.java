@@ -15,6 +15,8 @@ import client.util.events.AvatarChangedEvent;
 import client.util.events.AvatarChangeListener;
 import client.util.events.BackgroundChangedEvent;
 import client.util.events.BackgroundChangeListener;
+import client.util.events.FurniChangedEvent;
+import client.util.events.FurniChangeListener;
 import client.util.events.FlashEvent;
 import client.util.events.FlashEventListener;
 
@@ -72,6 +74,8 @@ public class FlashEvents
             return AVATAR_CHANGED_EVENT;
         } else if (listener instanceof BackgroundChangeListener) {
             return BACKGROUND_CHANGED_EVENT;
+        } else if (listener instanceof FurniChangeListener) {
+            return FURNI_CHANGED_EVENT;
         } else {
             return null;
         }
@@ -83,6 +87,8 @@ public class FlashEvents
             return new AvatarChangedEvent();
         } else if (BACKGROUND_CHANGED_EVENT.equals(eventName)) {
             return new BackgroundChangedEvent();
+        } else if (FURNI_CHANGED_EVENT.equals(eventName)) {
+            return new FurniChangedEvent();
         } else {
             return null;
         }
@@ -99,6 +105,9 @@ public class FlashEvents
 
     // defined in RoomController.as
     protected static final String BACKGROUND_CHANGED_EVENT = "backgroundChanged";
+
+    // defined in RoomController.as
+    protected static final String FURNI_CHANGED_EVENT = "furniChanged";
 
     protected static Map _eventListeners = new HashMap();
 }

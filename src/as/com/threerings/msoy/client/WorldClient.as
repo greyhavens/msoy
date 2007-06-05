@@ -246,7 +246,9 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("getAvatarId", externalGetAvatarId);
         ExternalInterface.addCallback("updateAvatarScale", externalUpdateAvatarScale);
         ExternalInterface.addCallback("useItem", externalUseItem);
+        ExternalInterface.addCallback("removeFurni", externalRemoveFurni);
         ExternalInterface.addCallback("getSceneItemId", externalGetSceneItemId);
+        ExternalInterface.addCallback("getFurniList", externalGetFurniList);
 
         _embedded = !Boolean(ExternalInterface.call("helloWhirled"));
         dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
@@ -392,13 +394,25 @@ public class WorldClient extends BaseClient
     }
 
     /**
-     * Exposed to javascript so that it may tell us to add furni to the current room.
+     * Exposed to javascript so that it may tell us to use items in the current room, either as
+     * background items, or as furni as apporpriate.
      */ 
     protected function externalUseItem (itemId :int, itemType :int) :void
     {
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
         if (view != null) {
             view.getRoomController().useItem(itemId, itemType);
+        }
+    }
+
+    /**
+     * Exposed to javascript so that it may tell us to remove furni from the current room.
+     */
+    protected function externalRemoveFurni (itemId :int, itemType :int) :void
+    {
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        if (view != null) {
+            view.getRoomController().removeFurni(itemId, itemType);
         }
     }
 
@@ -413,6 +427,16 @@ public class WorldClient extends BaseClient
             return view.getRoomController().getItemId(itemType);
         } else {
             return 0;
+        }
+    }
+
+    protected function externalGetFurniList () :Array 
+    {
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        if (view != null) {
+            return view.getRoomController().getFurniList();
+        } else {
+            return [];
         }
     }
 

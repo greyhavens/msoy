@@ -23,7 +23,6 @@ import client.editem.ItemEditor;
 import client.item.BaseItemDetailPanel;
 import client.shell.Application;
 import client.util.ClickCallback;
-import client.util.FlashClients;
 import client.util.ItemUtil;
 import client.util.PopupMenu;
 import client.shell.Page;
@@ -95,20 +94,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                     return false;
                 }
             };
-            _details.add(button);
-        }
-
-        // TODO: this currently lets you add anything as furni - obviously not right.. will be 
-        // fixed soon
-        if (FlashClients.inRoom()) {
-            _details.add(WidgetUtil.makeShim(1, 10));
-            byte type = _detail.item.getType();
-            button = new Button(CInventory.msgs.detailAddToRoom());
-            button.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    FlashClients.useItem(_detail.item.itemId, _detail.item.getType());
-                }
-            });
             _details.add(button);
         }
 

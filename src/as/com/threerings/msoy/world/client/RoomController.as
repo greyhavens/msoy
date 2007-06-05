@@ -742,24 +742,43 @@ public class RoomController extends SceneController
         }
     }
 
+    public function removeFurni (itemId :int, itemType :int) :void
+    {
+        for each (var furni :FurniData in _scene.getFurni()) {
+            if (furni.itemId == itemId && furni.itemType == itemType) { 
+                applyUpdate(new FurniUpdateAction(_mctx, furni, null));
+                break;
+            }
+        }
+    }
+
+    /**
+     * Called over the GWT bridge so that the item browser can know which items are in the current
+     * room.
+     */
+    public function getFurniList () :Array
+    {
+        var furnis :Array = [];
+        for each (var furni :FurniData in _scene.getFurni()) {
+            furnis.push([ furni.itemType, furni.itemId ]);
+        }
+        return furnis;
+    }
+
     // used to clear out items like decor and audio of which there can be only one in a scene
     protected function clearItem (itemType :int) :void
     {
         var oldScene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
         var newScene :MsoyScene = oldScene.clone() as MsoyScene;
-        var updateValid :Boolean = false;
         if (itemType == Item.DECOR) {
             var dd :DecorData = (newScene.getSceneModel() as MsoySceneModel).decorData;
             dd.itemId = 0;
             dd.type = Decor.IMAGE_OVERLAY;
             dd.media = DecorData.defaultMedia;
-            updateValid = true;
+            applyUpdate(new SceneUpdateAction(_mctx, oldScene, newScene));
         } else if (itemType == Item.AUDIO) {
             (newScene.getSceneModel() as MsoySceneModel).audioData.itemId = 0;
-            updateValid = true;
-        }
-        if (updateValid) {
-            applyUpdate (new SceneUpdateAction(_mctx, oldScene, newScene));
+            applyUpdate(new SceneUpdateAction(_mctx, oldScene, newScene));
         }
     }
 
@@ -1298,6 +1317,16 @@ public class RoomController extends SceneController
                 _mctx.getWorldClient().dispatchEventToGWT(BACKGROUND_CHANGED_EVENT,
                     [ Item.AUDIO, newId, oldId ]);
             }
+        } else if (update is ModifyFurniUpdate) {
+            var args :Array = [ [], [] ];
+            var updates :Array = [ (update as ModifyFurniUpdate).furniAdded, 
+                (update as ModifyFurniUpdate).furniRemoved ];
+            for (var ii :int = 0; ii < updates.length; ii++) {
+                for each (var furni :FurniData in updates[ii]) {
+                    args[ii].push([ furni.itemType, furni.itemId ]);
+                }
+            }
+            _mctx.getWorldClient().dispatchEventToGWT(FURNI_CHANGED_EVENT, args);
         }
 
         super.sceneUpdated(update);
@@ -1307,8 +1336,11 @@ public class RoomController extends SceneController
     /** The number of pixels we scroll the room on a keypress. */
     protected static const ROOM_SCROLL_INCREMENT :int = 20;
 
-    /** The event to send to GWT when our decor changed. */
+    /** The event to send to GWT when a background property has changed. */
     protected static const BACKGROUND_CHANGED_EVENT :String = "backgroundChanged";
+
+    /** The event to send to GWT when furni has been added or removed. */
+    protected static const FURNI_CHANGED_EVENT :String = "furniChanged";
 
     /** The life-force of the client. */
     protected var _mctx :WorldContext;

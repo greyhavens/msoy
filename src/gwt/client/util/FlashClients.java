@@ -3,6 +3,9 @@
 
 package client.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
@@ -13,6 +16,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * Utility methods for generating flash clients.
@@ -144,6 +148,29 @@ public class FlashClients
     }
 
     /**
+     * Tells the actionscript client to remove the given item from the current room. 
+     */
+    public static void removeFurni (int itemId, byte itemType)
+    {
+        removeFurniNative(itemId, itemType);
+    }
+
+    /**
+     * Gets the item list of items being used as furni in the current room.
+     */
+    public static List getFurniList () 
+    {
+        JavaScriptObject items = getFurniListNative();
+        List furnis = new ArrayList();
+        for (int ii = 0; ii < FlashClients.getLength(items); ii++) {
+            JavaScriptObject furni = FlashClients.getJavaScriptElement(items, ii);
+            furnis.add(new ItemIdent(FlashClients.getByteElement(furni, 0),
+                FlashClients.getIntElement(furni, 1)));
+        }
+        return furnis;
+    }
+
+    /**
      * Fetches the id for the given itemType, where itemType can be type that the scene can have
      * only one of, such as decor or audio.
      */
@@ -193,6 +220,15 @@ public class FlashClients
     }-*/;
 
     /**
+     * Helpy helper function.  Makes it possible to retrieve objects from arrays that are members
+     * of arrays.
+     */
+    public static native JavaScriptObject getJavaScriptElement (JavaScriptObject array, 
+        int index) /*-{
+        return array[index];
+    }-*/;
+
+    /**
      * Helpy helper function.
      */
     public static native String getStringElement (JavaScriptObject array, int index) /*-{
@@ -203,6 +239,13 @@ public class FlashClients
      * Helpy helper function.
      */
     public static native int getIntElement (JavaScriptObject array, int index) /*-{
+        return array[index];
+    }-*/;
+
+    /**
+     * Helpy helper function.
+     */
+    public static native byte getByteElement (JavaScriptObject array, int index) /*-{
         return array[index];
     }-*/;
 
@@ -294,6 +337,28 @@ public class FlashClients
         var client = $doc.getElementById("asclient");
         if (client) {
             client.useItem(itemId, itemType);
+        }
+    }-*/;
+
+    /**
+     * Does the actual <code>removeFurni()</code> call.
+     */
+    protected static native void removeFurniNative (int itemId, byte itemType) /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            client.removeFurni(itemId, itemType);
+        }
+    }-*/;
+
+    /**
+     * Does the actual <code>getFurniList()</code> call.
+     */
+    protected static native JavaScriptObject getFurniListNative () /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            return client.getFurniList();
+        } else {
+            return [];
         }
     }-*/;
 

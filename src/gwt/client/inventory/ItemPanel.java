@@ -22,6 +22,7 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.editem.EditorHost;
 import client.editem.ItemEditor;
+import client.util.FlashClients;
 import client.util.MsoyUI;
 import client.shell.Application;
 import client.shell.Page;
@@ -50,7 +51,7 @@ public class ItemPanel extends VerticalPanel
                 History.newItem(Application.createLinkToken("inventory", args));
             }
             protected Widget createWidget (Object item) {
-                return new ItemContainer(ItemPanel.this, (Item)item);
+                return new ItemContainer(ItemPanel.this, (Item)item, _furniList);
             }
             protected String getEmptyMessage () {
                 return CInventory.msgs.panelNoItems(Item.getTypeName(_type));
@@ -133,6 +134,7 @@ public class ItemPanel extends VerticalPanel
     {
         CInventory.membersvc.loadInventory(CInventory.ident, _type, new AsyncCallback() {
             public void onSuccess (Object result) {
+                _furniList = FlashClients.getFurniList();
                 _contents.setModel(new SimpleDataModel((List)result), _startPage);
             }
             public void onFailure (Throwable caught) {
@@ -202,4 +204,7 @@ public class ItemPanel extends VerticalPanel
 
     protected byte _type;
     protected int _startPage;
+
+    /** Only get the furni list for the current room once, and feed it to each ItemContainer */
+    protected List _furniList;
 }

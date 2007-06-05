@@ -3,16 +3,17 @@
 
 package client.inventory;
 
+import java.util.List;
+
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.util.ItemUtil;
@@ -24,6 +25,8 @@ import client.util.events.AvatarChangedEvent;
 import client.util.events.AvatarChangeListener;
 import client.util.events.BackgroundChangedEvent;
 import client.util.events.BackgroundChangeListener;
+import client.util.events.FurniChangedEvent;
+import client.util.events.FurniChangeListener;
 import client.util.events.FlashEventListener;
 
 /**
@@ -31,11 +34,12 @@ import client.util.events.FlashEventListener;
  */
 public class ItemContainer extends FlexTable
 {
-    public ItemContainer (ItemPanel panel, Item item)
+    public ItemContainer (ItemPanel panel, Item item, List furniList)
     {
         setCellPadding(0);
         setCellSpacing(0);
         _panel = panel;
+        _furniList = furniList;
         setStyleName("itemContainer");
         setItem(item);
     }
@@ -93,7 +97,8 @@ public class ItemContainer extends FlexTable
     {
         if (_listener == null) {
             if (FlashClients.clientExists()) {
-                if (_item instanceof Avatar) {
+                byte type = _item.getType();
+                if (type == Item.AVATAR) { 
                     setWidget(1, 0, generateActionLabel(FlashClients.getAvatarId() == 
                         _item.itemId));
                     FlashEvents.addListener(_listener = new AvatarChangeListener() {
@@ -105,7 +110,7 @@ public class ItemContainer extends FlexTable
                             }
                         }
                     });
-                } else if (_item instanceof Decor || _item instanceof Audio) {
+                } else if (type == Item.DECOR || type == Item.AUDIO) {
                     setWidget(1, 0, generateActionLabel(
                         FlashClients.getSceneItemId(_item.getType()) == _item.itemId));
                     FlashEvents.addListener(_listener = new BackgroundChangeListener() {
@@ -116,6 +121,18 @@ public class ItemContainer extends FlexTable
                                 } else if (event.getOldBackgroundId() == _item.itemId) {
                                     setWidget(1, 0, generateActionLabel(false));
                                 }
+                            }
+                        }
+                    });
+                } else if (type == Item.FURNITURE || type == Item.GAME || type == Item.PHOTO) {
+                    final ItemIdent ident = new ItemIdent(type, _item.itemId);
+                    setWidget(1, 0, generateActionLabel(_furniList.contains(ident)));
+                    FlashEvents.addListener(_listener = new FurniChangeListener() {
+                        public void furniChanged (FurniChangedEvent event) {
+                            if (event.getAddedFurni().contains(ident)) {
+                                setWidget(1, 0, generateActionLabel(true));
+                            } else if (event.getRemovedFurni().contains(ident)) {
+                                setWidget(1, 0, generateActionLabel(false));
                             }
                         }
                     });
@@ -134,7 +151,8 @@ public class ItemContainer extends FlexTable
 
     protected Widget generateActionLabel (final boolean active)
     {
-        if (_item instanceof Avatar) {
+        byte type = _item.getType();
+        if (type == Item.AVATAR) {
             return MsoyUI.createActionLabel("", "Avatar" + (active ? "Active" : "Inactive"), 
                 new ClickListener () {
                     public void onClick (Widget sender) {
@@ -143,11 +161,23 @@ public class ItemContainer extends FlexTable
                     }
                 }
             );
-        } else if (_item instanceof Decor || _item instanceof Audio) {
+        } else if (type == Item.DECOR || type == Item.AUDIO) {
             return MsoyUI.createActionLabel("", "Room" + (active ? "Active" : "Inactive"),
                 new ClickListener () {
                     public void onClick (Widget sender) {
                         FlashClients.useItem(active ? 0 : _item.itemId, _item.getType());
+                    }
+                }
+            );
+        } else if (type != Item.PET) {
+            return MsoyUI.createActionLabel("", "Room" + (active ? "Active" : "Inactive"),
+                new ClickListener () {
+                    public void onClick (Widget sender) {
+                        if (active) {
+                            FlashClients.removeFurni(_item.itemId, _item.getType());
+                        } else {
+                            FlashClients.useItem(_item.itemId, _item.getType());
+                        }
                     }
                 }
             );
@@ -167,4 +197,5 @@ public class ItemContainer extends FlexTable
     protected Item _item;
 
     protected FlashEventListener _listener;
+    protected List _furniList;
 }
