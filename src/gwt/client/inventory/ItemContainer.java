@@ -9,7 +9,9 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
@@ -20,6 +22,10 @@ import client.util.MediaUtil;
 import client.util.MsoyUI;
 import client.util.events.AvatarChangedEvent;
 import client.util.events.AvatarChangeListener;
+import client.util.events.DecorChangedEvent;
+import client.util.events.DecorChangeListener;
+import client.util.events.RoomAudioChangedEvent;
+import client.util.events.RoomAudioChangeListener;
 import client.util.events.FlashEventListener;
 
 /**
@@ -74,6 +80,32 @@ public class ItemContainer extends FlexTable
                         }
                     }
                 });
+            } else if (_item instanceof Decor) {
+                setWidget(1, 0, generateActionLabel(FlashClients.getSceneItemId(Item.DECOR) == 
+                    _item.itemId));
+                clearListener();
+                FlashEvents.addListener(_listener = new DecorChangeListener() {
+                    public void decorChanged (DecorChangedEvent event) {
+                        if (event.getDecorId() == _item.itemId) {
+                            setWidget(1, 0, generateActionLabel(true));
+                        } else if (event.getOldDecorId() == _item.itemId) {
+                            setWidget(1, 0, generateActionLabel(false));
+                        }
+                    }
+                });
+            } else if (_item instanceof Audio) {
+                setWidget(1, 0, generateActionLabel(FlashClients.getSceneItemId(Item.AUDIO) == 
+                    _item.itemId));
+                clearListener();
+                FlashEvents.addListener(_listener = new RoomAudioChangeListener() {
+                    public void audioChanged (RoomAudioChangedEvent event) {
+                        if (event.getAudioId() == _item.itemId) {
+                            setWidget(1, 0, generateActionLabel(true));
+                        } else if (event.getOldAudioId() == _item.itemId) {
+                            setWidget(1, 0, generateActionLabel(false));
+                        }
+                    }
+                });
             }
         }
     }
@@ -108,6 +140,14 @@ public class ItemContainer extends FlexTable
                     public void onClick (Widget sender) {
                         FlashClients.useAvatar(active ? 0 : _item.itemId,
                             active ? 0 : ((Avatar) _item).scale);
+                    }
+                }
+            );
+        } else if (_item instanceof Decor || _item instanceof Audio) {
+            return MsoyUI.createActionLabel("", "Room" + (active ? "Active" : "Inactive"),
+                new ClickListener () {
+                    public void onClick (Widget sender) {
+                        FlashClients.useItem(active ? 0 : _item.itemId, _item.getType());
                     }
                 }
             );

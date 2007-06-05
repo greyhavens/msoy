@@ -42,6 +42,17 @@
   background-image: url(/images/ui/checkbox_avatar_inactive.png);
 }
 
+.itemContainer .RoomActive, .itemContainer .RoomInactive {
+  background-image: url(/images/ui/checkbox_room_active.png);
+  margin-top: 4px;
+  width: 18px;
+  height: 18px;
+}
+
+.itemContainer .RoomInactive {
+  background-image: url(/images/ui/checkbox_room_inactive.png);
+}
+
 .mediaUploader {
 }
 

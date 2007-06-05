@@ -106,75 +106,17 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(button);
         }
 
-        // TODO: this is a repetitive mess that should be written better... but it will soon
-        // go away because we're moving this functionality to the item list... it will no 
-        // longer be needed here.
+        // TODO: this currently lets you add anything as furni - obviously not right.. will be 
+        // fixed soon
         if (FlashClients.inRoom()) {
             _details.add(WidgetUtil.makeShim(1, 10));
             byte type = _detail.item.getType();
-            if (type == Item.DECOR) {
-                boolean using = (FlashClients.getSceneItemId(Item.DECOR) == _detail.item.itemId);
-                final UpdateFlashButton ufb = new UpdateFlashButton(using, 
-                    CInventory.msgs.detailRemoveDecor(), CInventory.msgs.detailUseDecor()) {
-                    public void onClick () {
-                        FlashClients.useItem(_active ? 0 : _detail.item.itemId, Item.DECOR);
-                    }
-                };
-                FlashEvents.addListener(_listener = new DecorChangeListener() {
-                    public void decorChanged (DecorChangedEvent event) {
-                        if (event.getDecorId() == _detail.item.itemId) {
-                            ufb.setActive(true);
-                        } else if (event.getOldDecorId() == _detail.item.itemId) {
-                            ufb.setActive(false);
-                        }
-                    }
-                });
-                button = ufb;
-            } else if (type == Item.AUDIO) {
-                boolean using = (FlashClients.getSceneItemId(Item.AUDIO) == _detail.item.itemId);
-                final UpdateFlashButton ufb = new UpdateFlashButton(using,
-                    CInventory.msgs.detailRemoveAudio(), CInventory.msgs.detailUseAudio()) {
-                    public void onClick () {
-                        FlashClients.useItem(_active ? 0 : _detail.item.itemId, Item.AUDIO);
-                    }
-                };
-                FlashEvents.addListener(_listener = new RoomAudioChangeListener() {
-                    public void audioChanged (RoomAudioChangedEvent event) {
-                        if (event.getAudioId() == _detail.item.itemId) {
-                            ufb.setActive(true);
-                        } else if (event.getOldAudioId() == _detail.item.itemId) {
-                            ufb.setActive(false);
-                        }
-                    }
-                });
-                button = ufb;
-            } else if (type == Item.AVATAR) { 
-                boolean wearing = (FlashClients.getAvatarId() == _detail.item.itemId);
-                final UpdateFlashButton ufb = new UpdateFlashButton(wearing, 
-                    CInventory.msgs.detailRemoveAvatar(), CInventory.msgs.detailUseAvatar()) {
-                    public void onClick () {
-                        FlashClients.useAvatar(_active ? 0 : _detail.item.itemId,
-                            _active ? 0 : ((Avatar) _detail.item).scale);
-                    }
-                };
-                FlashEvents.addListener(_listener = new AvatarChangeListener() {
-                    public void avatarChanged (AvatarChangedEvent event) {
-                        if (event.getAvatarId() == _detail.item.itemId) {
-                            ufb.setActive(true);
-                        } else if (event.getOldAvatarId() == _detail.item.itemId) {
-                            ufb.setActive(false);
-                        }
-                    }
-                });
-                button = ufb;
-            } else {
-                button = new Button(CInventory.msgs.detailAddToRoom());
-                button.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        FlashClients.useItem(_detail.item.itemId, _detail.item.getType());
-                    }
-                });
-            }
+            button = new Button(CInventory.msgs.detailAddToRoom());
+            button.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    FlashClients.useItem(_detail.item.itemId, _detail.item.getType());
+                }
+            });
             _details.add(button);
         }
 
