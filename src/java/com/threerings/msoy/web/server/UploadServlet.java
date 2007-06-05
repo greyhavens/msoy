@@ -227,7 +227,12 @@ public class UploadServlet extends HttpServlet
 
         // if this is an image, determine its constraints and generate a thumbnail
         if (MediaDesc.isImage(info.mimeType)) {
-            tinfo = processImage(output, digest, info);
+            try {
+                tinfo = processImage(output, digest, info);
+            } catch (IOException ioe) {
+                output.delete();
+                throw ioe;
+            }
         }
 
         // if the user is uploading a thumbnail image, we want to use the scaled version and
@@ -328,6 +333,7 @@ public class UploadServlet extends HttpServlet
         BufferedImage image = ImageIO.read(output);
         // TODO: send JavaScript that communicates a friendly error
         if (image == null) {
+            log.warning("Invalid image data encountered. Aborting upload.");
             throw new IOException("Invalid image data. Unable to complete upload.");
         }
 
