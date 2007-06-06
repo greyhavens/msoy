@@ -140,6 +140,10 @@ public class TableRenderer extends HBox
         }
 
         if (!_popup) {
+            //TODO: table.playerCount is not getting set... I'm not sure why TableManager isn't
+            // doing this, but I don't want to mess with that, in case one of the other games 
+            // is relying on the current behavior.  
+            //_watcherCount = table.watcherCount - table.playerCount;
             _watcherCount = table.watcherCount;
         }
 
@@ -238,7 +242,14 @@ public class TableRenderer extends HBox
         while (_labelsBox.numChildren > 0) {
             _labelsBox.removeChild(_labelsBox.getChildAt(0));
         }
-        _labelsBox.addChild(getConfigRow(ctx.xlate("game", "l.watchers"), String(_watcherCount)));
+        if (table.config.getMatchType() == GameConfig.PARTY) {
+            _labelsBox.addChild(getConfigRow(ctx.xlate("game", "l.players"),
+                String(_watcherCount)));
+        } else if (!(_gameDef.match as MsoyMatchConfig).unwatchable && 
+            !table.tconfig.privateTable) {
+            _labelsBox.addChild(getConfigRow(ctx.xlate("game", "l.watchers"), 
+                String(_watcherCount)));
+        }
 
         if (table.config is EZGameConfig) {
             var params :Array = (table.config as EZGameConfig).getGameDefinition().params;
@@ -260,7 +271,7 @@ public class TableRenderer extends HBox
         var row :HBox = new HBox();
         row.setStyle("horizontalGap", 2);
         row.percentWidth = 100;
-        row.height = 12;
+        row.height = 14;
         var lbl :Label = new Label();
         lbl.text = name + ":";
         lbl.styleName = "lobbyLabel";
