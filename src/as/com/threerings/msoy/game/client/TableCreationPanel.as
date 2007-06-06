@@ -66,8 +66,8 @@ public class TableCreationPanel extends HBox
         case GameConfig.SEATED_GAME:
             // using min_seats for start_seats until we put start_seats in the configuration
             tconfigger = new DefaultFlexTableConfigurator(
-                match.minSeats, match.minSeats, match.maxSeats, true,
-                Msgs.GAME.get("l.players"), Msgs.GAME.get("l.private"));
+                match.minSeats, match.minSeats, match.maxSeats, !match.unwatchable,
+                Msgs.GAME.get("l.players"), Msgs.GAME.get("l.watchable"));
             break;
 
         default:

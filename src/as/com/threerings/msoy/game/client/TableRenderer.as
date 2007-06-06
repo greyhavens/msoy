@@ -209,7 +209,8 @@ public class TableRenderer extends HBox
                 break;
 
             default:
-                if (!(_gameDef.match as MsoyMatchConfig).unwatchable) {
+                if (!(_gameDef.match as MsoyMatchConfig).unwatchable && 
+                    !table.tconfig.privateTable) {
                     key = "b.watch";
                 }
                 break;
