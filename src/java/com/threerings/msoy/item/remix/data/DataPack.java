@@ -45,6 +45,7 @@ public class DataPack extends com.whirled.DataPack
         File file = new File(filename);
         FileInputStream fis = new FileInputStream(file);
         byte[] data = new byte[fis.available()];
+        fis.read(data);
         addFile(file.getName(), data);
     }
 
