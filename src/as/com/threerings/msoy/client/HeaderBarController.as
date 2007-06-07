@@ -27,9 +27,6 @@ import com.threerings.msoy.game.data.MsoyGameConfig;
 
 public class HeaderBarController extends Controller
 {
-    /** Command to close out the minimized flash client */
-    public static const CLOSE_CLIENT :String = "CloseClient";
-
     /** Commant to show a popup box with HTML to copy to your blog to embed the current scene. */
     public static const SHOW_EMBED_HTML :String = "ShowEmbedHtml";
 
@@ -42,15 +39,6 @@ public class HeaderBarController extends Controller
         
         _ctx.getLocationDirector().addLocationObserver(new LocationAdapter(null, 
             this.locationChanged, null));
-
-        Application.application.stage.addEventListener(Event.RESIZE, function (evt :Event) :void {
-            _headerBar.setCloseButtonVisible(_ctx.getWorldClient().isMinimized());
-        });
-    }
-
-    public function handleCloseClient () :void
-    {
-        _ctx.getWorldClient().closeClient();
     }
 
     public function handleShowEmbedHtml () :void

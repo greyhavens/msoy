@@ -33,12 +33,7 @@ public class HeaderBar extends HBox
         _loc.text = loc;
         _loc.validateNow();
         // allow text to center under the whirled logo if its not too long.
-        _loc.width = Math.max(124, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
-    }
-
-    public function setCloseButtonVisible (visible :Boolean) :void
-    {
-        _closeBtn.includeInLayout = _closeBtn.visible = visible;
+        _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
     }
 
     public function setEmbedLinkButtonVisible (visible :Boolean) :void
@@ -52,7 +47,7 @@ public class HeaderBar extends HBox
 
         _loc = new Label();
         _loc.styleName = "locationName";
-        _loc.width = 124;
+        _loc.width = WHIRLED_LOGO_WIDTH;
         addChild(_loc);
 
         var padding :HBox = new HBox();
@@ -68,23 +63,15 @@ public class HeaderBar extends HBox
         _embedLinkButton.toolTip = Msgs.GENERAL.get("b.embed");
         embedButtonBox.addChild(_embedLinkButton);
         setEmbedLinkButtonVisible(false);
-
-        var closeButtonBox :VBox = new VBox();
-        closeButtonBox.styleName = "headerCloseBox";
-        closeButtonBox.percentHeight = 100;
-        addChild(closeButtonBox);
-        _closeBtn = new CommandButton(HeaderBarController.CLOSE_CLIENT);
-        _closeBtn.styleName = "closeButton";
-        closeButtonBox.addChild(_closeBtn);
-        setCloseButtonVisible(false);
     }
+
+    protected static const WHIRLED_LOGO_WIDTH :int = 124;
 
     protected var _ctx :WorldContext;
 
     protected var _controller :HeaderBarController;
 
     protected var _loc :Label;
-    protected var _closeBtn :CommandButton;
     protected var _embedLinkButton :CommandButton;
 }
 }
