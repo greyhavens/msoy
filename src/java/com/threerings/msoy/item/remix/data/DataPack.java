@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.remix.data;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -34,25 +36,35 @@ public class DataPack extends com.whirled.DataPack
         });
     }
 
+    /**
+     * Add a new file to this DataPack.
+     */
+    public void addFile (String filename)
+        throws IOException
+    {
+        File file = new File(filename);
+        FileInputStream fis = new FileInputStream(file);
+        byte[] data = new byte[fis.available()];
+        addFile(file.getName(), data);
+    }
+
+    /**
+     * Add a new file to this DataPack.
+     */
     public void addFile (String filename, byte[] data)
     {
         _files.put(filename, data);
     }
 
-    public void write (String filename)
+    public void writeTo (String filename)
+        throws IOException
     {
-        try {
-            FileOutputStream fos = new FileOutputStream(filename);
-            write(fos);
-            fos.close();
-
-        } catch (IOException ioe) {
-            System.err.println("ioe: " + ioe);
-            ioe.printStackTrace();
-        }
+        FileOutputStream fos = new FileOutputStream(filename);
+        writeTo(fos);
+        fos.close();
     }
 
-    protected void write (OutputStream out)
+    protected void writeTo (OutputStream out)
         throws IOException
     {
         ZipOutputStream zos = new ZipOutputStream(out);
@@ -91,7 +103,14 @@ public class DataPack extends com.whirled.DataPack
             new ResultListener<DataPack>() {
                 public void requestCompleted (DataPack pack)
                 {
-                    pack.write("/export/msoy/pages/ClockPack.jpk");
+                    try {
+                        pack.addFile("/export/msoy/pages/crossdomain.xml");
+                        pack.writeTo("/export/msoy/pages/ClockPack.jpk");
+
+                    } catch (IOException ioe) {
+                        System.err.println("ioe: " + ioe);
+                        ioe.printStackTrace();
+                    }
                 }
 
                 public void requestFailed (Exception cause)
