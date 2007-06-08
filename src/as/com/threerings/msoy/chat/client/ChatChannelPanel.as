@@ -90,7 +90,7 @@ public class ChatChannelPanel extends VBox
             _tabnav.addChild(tab);
         }
 
-        selectAndFocusTab(tab, true, true);
+        selectAndFocusTab(tab, true);
 
         return tab.getOverlay();
     }
@@ -157,8 +157,7 @@ public class ChatChannelPanel extends VBox
         return tab;
     }    
 
-    protected function selectAndFocusTab (
-        tab :ChatTab, select :Boolean = true, focus :Boolean = false) :void
+    protected function selectAndFocusTab (tab :ChatTab, select :Boolean = true) :void
     {
         // select this tab if requested
         if (select) {
@@ -169,13 +168,6 @@ public class ChatChannelPanel extends VBox
         if (parent == null) {
             _ctx.getTopPanel().setRightPanel(this);
             _ctx.getTopPanel().getControlBar().setChannelChatInput(_inputBox);
-        }
-
-        // if we're selecting the tab in question, focus the chat input as well
-        if (select && focus) {
-            callLater(function () :void {
-                _input.setFocus();
-            });
         }
     }
     
