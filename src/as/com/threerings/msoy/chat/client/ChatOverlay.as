@@ -699,7 +699,10 @@ public class ChatOverlay
         var localtype :String = msg.localtype;
 
         if (msg is TellFeedbackMessage) {
-            return (history || isApprovedLocalType(localtype)) ? TELLFEEDBACK : IGNORECHAT;
+            if (history || isApprovedLocalType(localtype)) {
+                return (msg as TellFeedbackMessage).isFailure() ? FEEDBACK : TELLFEEDBACK;
+            }
+            return IGNORECHAT;
 
         } else if (msg is UserMessage) {
             var type :int = (ChatCodes.USER_CHAT_TYPE == localtype) ? TELL : PLACE;
