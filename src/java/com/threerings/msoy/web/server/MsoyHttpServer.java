@@ -18,7 +18,6 @@ import org.mortbay.http.HttpResponse;
 import org.mortbay.http.HttpServer;
 import org.mortbay.http.handler.ResourceHandler;
 import org.mortbay.jetty.servlet.ServletHandler;
-import org.mortbay.jetty.servlet.ServletHolder;
 
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.client.DeploymentConfig;

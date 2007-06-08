@@ -386,6 +386,24 @@ public abstract class ItemEditor extends BorderedDialog
     }
 
     /**
+     * This is called from our magical JavaScript method by JavaScript code received from the
+     * server to display an internal error message to the user.
+     */
+    protected static void uploadError ()
+    {
+        MsoyUI.error(CEditem.emsgs.errUploadError());
+    }
+    
+    /**
+     * This is called from our magical JavaScript method by JavaScript code received from the
+     * server to display a friendly message to the user that the upload was too large.
+     */
+    protected static void uploadTooLarge ()
+    {
+        MsoyUI.error(CEditem.emsgs.errUploadTooLarge());
+    }
+
+    /**
      * Editors should call this method when something changes that might render an item consistent
      * or inconsistent. It will update the enabled status of the submit button.
      */
@@ -395,8 +413,7 @@ public abstract class ItemEditor extends BorderedDialog
     }
 
     /**
-     * Called when the user has clicked the "update" or "create" button to commit their edits or
-     * create a new item, respectively.
+     * Called when the user clicks the "save" button to commit their edits or create a new item.
      */
     protected void commitEdit ()
     {
@@ -481,6 +498,12 @@ public abstract class ItemEditor extends BorderedDialog
     protected static native void configureBridge () /*-{
         $wnd.setHash = function (id, hash, type, constraint, width, height, thash, ttype, tconstraint) {
            @client.editem.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;IIIILjava/lang/String;II)(id, hash, type, constraint, width, height, thash, ttype, tconstraint);
+        };
+        $wnd.uploadError = function () {
+           @client.editem.ItemEditor::uploadError()();
+        };
+        $wnd.uploadTooLarge = function () {
+           @client.editem.ItemEditor::uploadTooLarge()();
         };
     }-*/;
 

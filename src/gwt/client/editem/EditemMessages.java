@@ -96,6 +96,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String errVideoNotVideo();
 
   /**
+   * Translated "An unrecoverable error occurred during the upload.".
+   * 
+   * @return translated "An unrecoverable error occurred during the upload."
+   * @gwt.key errUploadError
+   */
+  String errUploadError();
+
+  /**
    * Translated "Game Media".
    * 
    * @return translated "Game Media"
@@ -312,6 +320,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String avatarMainTitle();
 
   /**
+   * Translated "Save".
+   * 
+   * @return translated "Save"
+   * @gwt.key editorSave
+   */
+  String editorSave();
+
+  /**
    * Translated "Item updated.".
    * 
    * @return translated "Item updated."
@@ -344,20 +360,20 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String decorType_Fixed();
 
   /**
-   * Translated "Edit an Item".
-   * 
-   * @return translated "Edit an Item"
-   * @gwt.key editorEditTitle
-   */
-  String editorEditTitle();
-
-  /**
    * Translated "Upload your video.".
    * 
    * @return translated "Upload your video."
    * @gwt.key videoMainTitle
    */
   String videoMainTitle();
+
+  /**
+   * Translated "Edit an Item".
+   * 
+   * @return translated "Edit an Item"
+   * @gwt.key editorEditTitle
+   */
+  String editorEditTitle();
 
   /**
    * Translated "Image show in a Game Lobby".
@@ -448,6 +464,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameDefinitionError(String arg0);
 
   /**
+   * Translated "The file you are uploading is too large.".
+   * 
+   * @return translated "The file you are uploading is too large."
+   * @gwt.key errUploadTooLarge
+   */
+  String errUploadTooLarge();
+
+  /**
    * Translated "Game Type".
    * 
    * @return translated "Game Type"
@@ -462,14 +486,6 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key avatarMainTab
    */
   String avatarMainTab();
-
-  /**
-   * Translated "Save".
-   * 
-   * @return translated "Save"
-   * @gwt.key editorSave
-   */
-  String editorSave();
 
   /**
    * Translated "Main Document media".

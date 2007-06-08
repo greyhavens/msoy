@@ -14,6 +14,9 @@ import com.threerings.msoy.web.client.DeploymentConfig;
  */
 public class MediaDesc implements Streamable, IsSerializable
 {
+    /** The unsupported MIME types. */
+    public static final byte INVALID_MIME_TYPE = -1;
+    
     /** The MIME type for plain UTF-8 text. */
     public static final byte TEXT_PLAIN = 0;
 
@@ -189,7 +192,7 @@ public class MediaDesc implements Streamable, IsSerializable
         } else if (mimeType.equals("application/java-archive")) {
             return APPLICATION_JAVA_ARCHIVE;
         } else {
-            return -1;
+            return INVALID_MIME_TYPE;
         }
     }
 
@@ -227,7 +230,7 @@ public class MediaDesc implements Streamable, IsSerializable
         } else if (filename.endsWith(".jar")) {
             return APPLICATION_JAVA_ARCHIVE;
         } else {
-            return -1;
+            return INVALID_MIME_TYPE;
         }
     }
 
