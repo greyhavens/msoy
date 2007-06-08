@@ -1,5 +1,7 @@
 package com.threerings.msoy.client {
 
+import flash.events.MouseEvent;
+
 import mx.core.ScrollPolicy;
 
 import mx.containers.HBox;
@@ -9,6 +11,8 @@ import mx.controls.Label;
 
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.flex.CommandButton;
+
+import com.threerings.util.CommandEvent;
 
 public class HeaderBar extends HBox
 {
@@ -36,6 +40,31 @@ public class HeaderBar extends HBox
         _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
     }
 
+    public function setOwnerLink (owner :String, onClick :Function = null) :void 
+    {
+        while (_owner.numChildren > 0) {
+            _owner.removeChildAt(0);
+        }
+        if (owner != "") {
+            var nameLabel :Label = new Label();
+            nameLabel.styleName = "ownerName";
+            nameLabel.text = Msgs.GENERAL.get("l.room_owner");
+            _owner.addChild(nameLabel);
+            nameLabel = new Label();
+            nameLabel.styleName = "ownerName";
+            nameLabel.text = owner;
+            nameLabel.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+                if (onClick != null) {
+                    onClick();
+                }
+            });
+            nameLabel.buttonMode = true;
+            nameLabel.useHandCursor = true;
+            nameLabel.mouseChildren = false;
+            _owner.addChild(nameLabel);
+        }
+    }
+
     public function setEmbedLinkButtonVisible (visible :Boolean) :void
     {
         _embedLinkButton.includeInLayout = _embedLinkButton.visible = visible;
@@ -49,6 +78,12 @@ public class HeaderBar extends HBox
         _loc.styleName = "locationName";
         _loc.width = WHIRLED_LOGO_WIDTH;
         addChild(_loc);
+
+        _owner = new HBox();
+        _owner.percentHeight = 100;
+        _owner.setStyle("verticalAlign", "bottom");
+        _owner.setStyle("horizontalGap", 0);
+        addChild(_owner);
 
         var padding :HBox = new HBox();
         padding.percentWidth = 100;
@@ -72,6 +107,7 @@ public class HeaderBar extends HBox
     protected var _controller :HeaderBarController;
 
     protected var _loc :Label;
+    protected var _owner :HBox;
     protected var _embedLinkButton :CommandButton;
 }
 }

@@ -26,12 +26,23 @@ public interface MemberService extends InvocationService
      *
      * @param newScale a new scale for the avatar, or 0 to use the last scale.
      */
-    public void setAvatar (Client client, int avatarId, float newScale, InvocationListener listener);
+    public void setAvatar (Client client, int avatarId, float newScale, 
+        InvocationListener listener);
 
     /**
      * Set the display name for this user.
      */
     public void setDisplayName (Client client, String name, InvocationListener listener);
+
+    /**
+     * Get the display name for the indicated user.  
+     */
+    public void getDisplayName (Client client, int memberId, ResultListener listener);
+
+    /**
+     * Get the name of the indicated group.
+     */
+    public void getGroupName (Client client, int groupId, ResultListener listener);
 
     /**
      * Request to purchase a new room.

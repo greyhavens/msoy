@@ -52,6 +52,20 @@ public class MemberDispatcher extends InvocationDispatcher
             );
             return;
 
+        case MemberMarshaller.GET_DISPLAY_NAME:
+            ((MemberProvider)provider).getDisplayName(
+                source,
+                ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+            );
+            return;
+
+        case MemberMarshaller.GET_GROUP_NAME:
+            ((MemberProvider)provider).getGroupName(
+                source,
+                ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+            );
+            return;
+
         case MemberMarshaller.GET_HOME_ID:
             ((MemberProvider)provider).getHomeId(
                 source,

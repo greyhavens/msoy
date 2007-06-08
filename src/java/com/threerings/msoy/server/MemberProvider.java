@@ -28,6 +28,18 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link MemberService#getDisplayName} request.
+     */
+    public void getDisplayName (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link MemberService#getGroupName} request.
+     */
+    public void getGroupName (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+        throws InvocationException;
+
+    /**
      * Handles a {@link MemberService#getHomeId} request.
      */
     public void getHomeId (ClientObject caller, byte arg1, int arg2, InvocationService.ResultListener arg3)

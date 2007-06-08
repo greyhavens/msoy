@@ -131,6 +131,9 @@ public class MsoyController extends Controller
     /** Command to view a member's profile, arg is [ memberId ] */
     public static const VIEW_MEMBER :String = "ViewMember";
 
+    /** Command to view a groups's page, arg is [ groupId ] */
+    public static const VIEW_GROUP :String = "ViewGroup";
+
     /** Command to view the app in full-screen mode. */
     public static const TOGGLE_FULLSCREEN :String = "ToggleFullscreen";
 
@@ -343,6 +346,14 @@ public class MsoyController extends Controller
     public function handleViewMember (memberId :int) :void
     {
         handleInternalGo("profile", "" + memberId);
+    }
+
+    /**
+     * Handle the VIEW_GROUP command.
+     */
+    public function handleViewGroup (groupId :int) :void
+    {
+        handleInternalGo("group", "" + groupId);
     }
 
     /**

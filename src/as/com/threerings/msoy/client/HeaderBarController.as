@@ -1,8 +1,5 @@
 package com.threerings.msoy.client {
 
-import flash.events.Event;
-import flash.events.MouseEvent;
-
 import mx.containers.TitleWindow;
 
 import mx.controls.Button;
@@ -19,11 +16,17 @@ import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.client.PlaceController;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.presents.client.ResultWrapper;
+
 import com.threerings.whirled.data.Scene;
+
+import com.threerings.msoy.client.MemberService;
+
+import com.threerings.msoy.game.data.MsoyGameConfig;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
-import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.world.data.MsoySceneModel;
 
 public class HeaderBarController extends Controller
 {
@@ -79,6 +82,38 @@ public class HeaderBarController extends Controller
             // we are embedded or not.
             _headerBar.setEmbedLinkButtonVisible(!_ctx.getWorldClient().isEmbedded());
 
+            var model :MsoySceneModel = scene.getSceneModel() as MsoySceneModel;
+            if (model != null) {
+                var svc :MemberService = 
+                    _ctx.getClient().requireService(MemberService) as MemberService;
+                if (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
+                    svc.getDisplayName(_ctx.getClient(), model.ownerId, new ResultWrapper(
+                        function (cause :String) :void {
+                            Log.getLog(this).debug("failed to retrieve member owner name: " + 
+                                cause);
+                            _headerBar.setOwnerLink("");
+                        },
+                        function (res :Object) :void {
+                            _headerBar.setOwnerLink(res as String, function () :void {
+                                _ctx.getMsoyController().handleViewMember(model.ownerId);
+                            });
+                        }));
+                } else if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+                    svc.getGroupName(_ctx.getClient(), model.ownerId, new ResultWrapper(
+                        function (cause :String) :void {
+                            Log.getLog(this).debug("failed to retrieve group owner name: " + 
+                                cause);
+                            _headerBar.setOwnerLink("");
+                        },
+                        function (res :Object) :void {
+                            _headerBar.setOwnerLink(res as String, function () :void {
+                                _ctx.getMsoyController().handleViewGroup(model.ownerId);
+                            });
+                        }));
+                } else {
+                    _headerBar.setOwnerLink("");
+                }
+            }
         } else {
             // For now we can embed scenes with game lobbies attached, but not game instances -
             // when we have a unique URL for game instance locations, then we can embed those
@@ -88,6 +123,7 @@ public class HeaderBarController extends Controller
             var ctrl :PlaceController = _ctx.getLocationDirector().getPlaceController();
             if (ctrl != null && ctrl.getPlaceConfig() is MsoyGameConfig) {
                 _headerBar.setLocationText((ctrl.getPlaceConfig() as MsoyGameConfig).name);
+                _headerBar.setOwnerLink("");
             }
         }
     }

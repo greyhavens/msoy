@@ -43,6 +43,7 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
+import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
@@ -330,6 +331,49 @@ public class MemberManager
                             ", name='" + name + "', error=" + pe + "].");
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
+        });
+    }
+
+    // from interface MemberProvider
+    public void getDisplayName (ClientObject caller, final int memberId, 
+                                final InvocationService.ResultListener listener)
+        throws InvocationException
+    {
+        MsoyServer.invoker.postUnit(new RepositoryUnit("getDisplayName") {
+            public void invokePersist () throws PersistenceException {
+                MemberNameRecord rec = _memberRepo.loadMemberName(memberId);
+                _displayName = rec == null ? "" : rec.name;
+            }
+            public void handleSuccess () {
+                listener.requestProcessed(_displayName);
+            }
+            public void handleFailure (Exception pe) {
+                log.warning("Unable to get display name [memberId=" + memberId +", error=" + pe +
+                    "]");
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+            protected String _displayName;
+        });
+    }
+
+    // from interface MemberProvider
+    public void getGroupName (ClientObject caller, final int groupId,
+                              final InvocationService.ResultListener listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryUnit("getGroupName") {
+            public void invokePersist () throws PersistenceException {
+                GroupRecord rec = _groupRepo.loadGroup(groupId);
+                _groupName = rec == null ? "" : rec.name;
+            }
+            public void handleSuccess () {
+                listener.requestProcessed(_groupName);
+            }
+            public void handleFailure (Exception pe) {
+                log.warning("Unable to get group name [groupId=" + groupId + ", error=" + pe +
+                    "]");
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+            protected String _groupName;
         });
     }
 

@@ -504,6 +504,11 @@ Window {
   textAlign: center;
 }
 
+.ownerName {
+  fontSize: 10px;
+  color: #AAB5B9;
+}
+
 .editButton {
   paddingLeft: 0;
   paddingRight: 0;
