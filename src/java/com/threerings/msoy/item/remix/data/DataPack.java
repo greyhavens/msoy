@@ -39,24 +39,49 @@ public class DataPack extends com.whirled.DataPack
     /**
      * Add a new file to this DataPack.
      */
-    public void addFile (String filename)
+    public void addFile (String filename, String name, String type, boolean optional)
         throws IOException
     {
         File file = new File(filename);
         FileInputStream fis = new FileInputStream(file);
-        byte[] data = new byte[fis.available()];
+        byte[] data = new byte[fis.available()]; // the whole file should be available
         fis.read(data);
-        addFile(file.getName(), data);
+        addFile(file.getName(), data, name, type, optional);
+    }
+
+    /**
+     * Add a data parameter.
+     */
+    public void addData (String name, String type, String value, boolean optional)
+    {
+        DataEntry entry = new DataEntry();
+        entry.name = name;
+        entry.type = type;
+        entry.value = value;
+        entry.optional = optional;
+
+        _metadata.datas.put(name, entry);
     }
 
     /**
      * Add a new file to this DataPack.
      */
-    public void addFile (String filename, byte[] data)
+    public void addFile (String filename, byte[] data, String name, String type, boolean optional)
     {
         _files.put(filename, data);
+
+        FileEntry entry = new FileEntry();
+        entry.name = name;
+        entry.type = type;
+        entry.value = filename;
+        entry.optional = optional;
+
+        _metadata.files.put(name, entry);
     }
 
+    /**
+     * Write this datapack out to the specified filename.
+     */
     public void writeTo (String filename)
         throws IOException
     {
@@ -65,6 +90,9 @@ public class DataPack extends com.whirled.DataPack
         fos.close();
     }
 
+    /**
+     * Write the DataPack to the specified stream.
+     */
     protected void writeTo (OutputStream out)
         throws IOException
     {
@@ -105,7 +133,8 @@ public class DataPack extends com.whirled.DataPack
                 public void requestCompleted (DataPack pack)
                 {
                     try {
-                        pack.addFile("/export/msoy/pages/crossdomain.xml");
+                        //pack.addFile("/export/msoy/pages/crossdomain.xml");
+                        //pack.addFile("/home/ray/media/mp3/tarzan and jane - Tarzan & Jane.mp3");
                         pack.writeTo("/export/msoy/pages/ClockPack.jpk");
 
                     } catch (IOException ioe) {
