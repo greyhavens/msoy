@@ -133,7 +133,6 @@ public class DataPack extends com.whirled.DataPack
                 public void requestCompleted (DataPack pack)
                 {
                     try {
-                        //pack.addFile("/export/msoy/pages/crossdomain.xml");
                         //pack.addFile("/home/ray/media/mp3/tarzan and jane - Tarzan & Jane.mp3");
                         pack.writeTo("/export/msoy/pages/ClockPack.jpk");
 
