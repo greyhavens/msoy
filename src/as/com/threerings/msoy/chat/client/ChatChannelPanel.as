@@ -90,7 +90,7 @@ public class ChatChannelPanel extends VBox
             _tabnav.addChild(tab);
         }
 
-        selectAndFocusTab(tab, true);
+        selectTab(tab, select);
 
         return tab.getOverlay();
     }
@@ -152,12 +152,12 @@ public class ChatChannelPanel extends VBox
             CommandEvent.dispatch(tab, PageDisplayController.HELP_PAGE_SET_STYLE_COMMAND, cssUrl);
         }
         
-        selectAndFocusTab(tab);
+        selectTab(tab, select);
 
         return tab;
     }    
 
-    protected function selectAndFocusTab (tab :ChatTab, select :Boolean = true) :void
+    protected function selectTab (tab :ChatTab, select :Boolean = true) :void
     {
         // select this tab if requested
         if (select) {
@@ -199,7 +199,7 @@ public class ChatChannelPanel extends VBox
             _tabnav.addChildAt(_wtab, 0);
             _tabnav.setClosePolicyForTab(0, SuperTab.CLOSE_NEVER);
 
-            selectAndFocusTab(_wtab);
+            selectTab(_wtab);
 
         } else if (!minimized && _wtab != null) {
             _tabnav.removeChild(_wtab);
