@@ -352,6 +352,11 @@ public class Application
        $wnd.clearSeparator = function () {
             app.@client.shell.Application::clearSeparator()();
        }
+       $wnd.setWindowTitle = function (title) {
+            var xlater = @client.shell.CShell::cmsgs;
+            var msg = xlater.@client.shell.ShellMessages::windowTitle(Ljava/lang/String;)(title);
+            @com.google.gwt.user.client.Window::setTitle(Ljava/lang/String;)(msg);
+       }
     }-*/;
 
     /**
@@ -369,7 +374,6 @@ public class Application
         }
         return false;
     }-*/;
-
 
     protected Page _page;
     protected HashMap _creators = new HashMap();

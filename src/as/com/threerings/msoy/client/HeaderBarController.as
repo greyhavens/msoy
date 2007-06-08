@@ -1,5 +1,7 @@
 package com.threerings.msoy.client {
 
+import flash.events.Event;
+
 import mx.containers.TitleWindow;
 
 import mx.controls.Button;
@@ -42,6 +44,13 @@ public class HeaderBarController extends Controller
         
         _ctx.getLocationDirector().addLocationObserver(new LocationAdapter(null, 
             this.locationChanged, null));
+
+        Application.application.stage.addEventListener(Event.RESIZE, function (evt :Event) :void {
+            var client :WorldClient = _ctx.getWorldClient();
+            if (!client.isMinimized()) {
+                client.setWindowTitle(_headerBar.getLocationText());
+            }
+        });
     }
 
     public function handleShowEmbedHtml () :void
@@ -77,6 +86,7 @@ public class HeaderBarController extends Controller
     {
         var scene :Scene = _ctx.getSceneDirector().getScene();
         if (scene != null) {
+            _ctx.getWorldClient().setWindowTitle(scene.getName());
             _headerBar.setLocationText(scene.getName());
             // we know the WorldClient is initialized at this point, so it is safe to check whether
             // we are embedded or not.
@@ -122,7 +132,9 @@ public class HeaderBarController extends Controller
             _headerBar.setEmbedLinkButtonVisible(false);
             var ctrl :PlaceController = _ctx.getLocationDirector().getPlaceController();
             if (ctrl != null && ctrl.getPlaceConfig() is MsoyGameConfig) {
-                _headerBar.setLocationText((ctrl.getPlaceConfig() as MsoyGameConfig).name);
+                var name :String = (ctrl.getPlaceConfig() as MsoyGameConfig).name;
+                _ctx.getWorldClient().setWindowTitle(name);
+                _headerBar.setLocationText(name);
                 _headerBar.setOwnerLink("");
             }
         }

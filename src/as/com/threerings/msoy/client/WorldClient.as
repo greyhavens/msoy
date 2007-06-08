@@ -216,6 +216,20 @@ public class WorldClient extends BaseClient
         }
     }
 
+    /**
+     * Requests that GWT set the window title.
+     */
+    public function setWindowTitle (title :String) :void
+    {
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.call("setWindowTitle", title);
+            }
+        } catch (err :Error) {
+            Log.getLog(this).warning("setWindowTitle failed: " + err);
+        }
+    }
+
     // from Client
     override public function gotClientObject (clobj :ClientObject) :void
     {

@@ -32,6 +32,11 @@ public class HeaderBar extends HBox
         _controller = new HeaderBarController(ctx, this);
     }
 
+    public function getLocationText () :String
+    {
+        return _loc.text;
+    }
+
     public function setLocationText (loc :String) :void
     {
         _loc.text = loc;
