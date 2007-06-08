@@ -67,6 +67,17 @@ public /*abstract*/ class BaseClient extends Client
         }
     }
 
+    public function dispatchEventToGWT (eventName :String, eventArgs :Array) :void
+    {
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.call("triggerFlashEvent", eventName, eventArgs);
+            }
+        } catch (err :Error) {
+            Log.getLog(this).warning("triggerFlashEvent failed: " + err);
+        }
+    }
+
     /**
      * Notifies our JavaScript shell that our mail notification has changed.
      */
@@ -168,7 +179,7 @@ public /*abstract*/ class BaseClient extends Client
 
         // listen for flow and gold updates
         _user = (clobj as MemberObject);
-        _user.addListener(new LevelUpdater());
+        _user.addListener(new LevelUpdater(this));
         // configure our levels to start
         levelsUpdated();
         // and our mail notification
@@ -315,12 +326,27 @@ import com.threerings.msoy.data.MemberObject;
 
 class LevelUpdater implements AttributeChangeListener
 {
+    public function LevelUpdater (client :BaseClient) {
+        _client = client;
+    }
+
     public function attributeChanged (event :AttributeChangedEvent) :void {
         if (/* event.getName() == MemberObject.GOLD || */ event.getName() == MemberObject.FLOW ||
             event.getName() == MemberObject.LEVEL) {
             BaseClient.levelsUpdated();
+            if (event.getName() == MemberObject.LEVEL) {
+                // TODO this is repetitive... switch all level notification to events.  For now,
+                // this gets the bling to show up in the corner.
+                _client.dispatchEventToGWT(LEVELED_UP_EVENT, 
+                    [ event.getValue(), event.getOldValue() ]);
+            }
         } else if (event.getName() == MemberObject.HAS_NEW_MAIL) {
             BaseClient.mailNotificationUpdated();
         }
     }
+
+    /** Event dispatched to GWT when we've leveled up */
+    protected static const LEVELED_UP_EVENT :String = "leveledUp";
+
+    protected var _client :BaseClient;
 }

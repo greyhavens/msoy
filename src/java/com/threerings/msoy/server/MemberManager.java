@@ -222,7 +222,6 @@ public class MemberManager
      */
     public void registerMember (final MemberObject member)
     {
-        checkCurrentLevel(member);
         member.addListener(new AttributeChangeListener() {
             public void attributeChanged (AttributeChangedEvent event) {
                 if (MemberObject.ACC_FLOW.equals(event.getName())) {
@@ -517,7 +516,7 @@ public class MemberManager
      * Check if the member's accumulated flow level matches up with their current level, and update
      * their current level if necessary
      */
-    protected void checkCurrentLevel (final MemberObject member)
+    public void checkCurrentLevel (final MemberObject member)
     {
         int level = Arrays.binarySearch(_levelForFlow, member.accFlow);
         if (level < 0) {

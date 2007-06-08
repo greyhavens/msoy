@@ -3,6 +3,8 @@
 
 package client.shell;
 
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -14,16 +16,21 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.util.FlashClients;
+import client.util.FlashEvents;
 import client.util.MsoyUI;
+import client.util.events.LevelUpEvent;
+import client.util.events.LevelUpListener;
 
 /**
  * Displays basic player status (name, flow count) and handles logging on and logging off.
@@ -41,6 +48,14 @@ public class StatusPanel extends FlexTable
         String mailImg = "<img class='MailNotification' src='/images/mail/button_mail.png'/>";
         _mailNotifier = new HTML(Application.createLinkHtml(mailImg, "mail", ""));
         _mailNotifier.setWidth("20px");
+
+        FlashEvents.addListener(new LevelUpListener() {
+            public void leveledUp (LevelUpEvent event) {
+                // TODO: all new level notifications should probably be eventified, for now the 
+                // level change is still handled through the direct call back in LevelsDisplay
+                _levels.showLevelUpPopup();
+            }
+        });
     }
 
     /**
@@ -220,6 +235,15 @@ public class StatusPanel extends FlexTable
             setText(0, _flowIdx, String.valueOf(levels[0]));
             setText(0, _goldIdx, String.valueOf(levels[1]));
             setText(0, _levelIdx, String.valueOf(levels[2]));
+        }
+
+        public void showLevelUpPopup () {
+            PopupPanel bling = new PopupPanel(true);
+            bling.add(WidgetUtil.createTransparentFlashContainer("levelBling", 
+                "/media/static/levelbling.swf", 60, 60, null));
+            Element cell = getFlexCellFormatter().getElement(0, _levelIdx);
+            bling.setPopupPosition(DOM.getAbsoluteLeft(cell) - 30, DOM.getAbsoluteTop(cell) - 23);
+            bling.show();
         }
 
         protected int _flowIdx, _goldIdx, _levelIdx;

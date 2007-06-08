@@ -19,6 +19,8 @@ import client.util.events.FurniChangedEvent;
 import client.util.events.FurniChangeListener;
 import client.util.events.FlashEvent;
 import client.util.events.FlashEventListener;
+import client.util.events.LevelUpEvent;
+import client.util.events.LevelUpListener;
 
 /**
  * Utility class for listening to events from the Flash client.
@@ -76,6 +78,8 @@ public class FlashEvents
             return BACKGROUND_CHANGED_EVENT;
         } else if (listener instanceof FurniChangeListener) {
             return FURNI_CHANGED_EVENT;
+        } else if (listener instanceof LevelUpListener) {
+            return LEVELED_UP_EVENT;
         } else {
             return null;
         }
@@ -89,6 +93,8 @@ public class FlashEvents
             return new BackgroundChangedEvent();
         } else if (FURNI_CHANGED_EVENT.equals(eventName)) {
             return new FurniChangedEvent();
+        } else if (LEVELED_UP_EVENT.equals(eventName)) {
+            return new LevelUpEvent();
         } else {
             return null;
         }
@@ -108,6 +114,9 @@ public class FlashEvents
 
     // defined in RoomController.as
     protected static final String FURNI_CHANGED_EVENT = "furniChanged";
+
+    // defined in BaseClient.as
+    protected static final String LEVELED_UP_EVENT = "leveledUp";
 
     protected static Map _eventListeners = new HashMap();
 }

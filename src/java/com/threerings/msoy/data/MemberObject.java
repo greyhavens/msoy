@@ -10,6 +10,7 @@ import com.samskivert.util.Predicate;
 import com.threerings.io.Streamable;
 import com.threerings.parlor.game.data.GameObject;
 import com.threerings.presents.dobj.DSet;
+import com.threerings.presents.dobj.Subscriber;
 import com.threerings.util.Name;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -17,6 +18,8 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.stats.data.StatSet;
+
+import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.data.all.MemberName;
 
@@ -34,6 +37,8 @@ import com.threerings.msoy.data.all.GroupName;
 
 import com.threerings.msoy.game.data.GameMemberInfo;
 import com.threerings.msoy.game.data.GameSummary;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Represents a connected msoy user.
@@ -238,6 +243,17 @@ public class MemberObject extends MsoyBodyObject
     public Name getVisibleName ()
     {
         return memberName;
+    }
+
+    @Override // from DObject
+    public void addSubscriber (Subscriber sub)
+    {
+        super.addSubscriber(sub);
+
+        // we wait until the client has this object before checking levels, so that the 
+        // client receives an AttributeChangedEvent in the case where they earned a new
+        // level while offline
+        MsoyServer.memberMan.checkCurrentLevel(this);
     }
 
     /**
