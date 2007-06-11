@@ -95,49 +95,50 @@ public class ItemContainer extends FlexTable
 
     protected void addListener ()
     {
-        if (_listener == null) {
-            if (FlashClients.clientExists()) {
-                byte type = _item.getType();
-                if (type == Item.AVATAR) { 
-                    setWidget(1, 0, generateActionLabel(FlashClients.getAvatarId() == 
-                        _item.itemId));
-                    FlashEvents.addListener(_listener = new AvatarChangeListener() {
-                        public void avatarChanged (AvatarChangedEvent event) {
-                            if (event.getAvatarId() == _item.itemId) {
-                                setWidget(1, 0, generateActionLabel(true));
-                            } else if (event.getOldAvatarId() == _item.itemId) {
-                                setWidget(1, 0, generateActionLabel(false));
-                            }
-                        }
-                    });
-                } else if (type == Item.DECOR || type == Item.AUDIO) {
-                    setWidget(1, 0, generateActionLabel(
-                        FlashClients.getSceneItemId(_item.getType()) == _item.itemId));
-                    FlashEvents.addListener(_listener = new BackgroundChangeListener() {
-                        public void backgroundChanged (BackgroundChangedEvent event) {
-                            if (event.getType() == _item.getType()) {
-                                if (event.getBackgroundId() == _item.itemId) {
-                                    setWidget(1, 0, generateActionLabel(true));
-                                } else if (event.getOldBackgroundId() == _item.itemId) {
-                                    setWidget(1, 0, generateActionLabel(false));
-                                }
-                            }
-                        }
-                    });
-                } else if (type == Item.FURNITURE || type == Item.GAME || type == Item.PHOTO) {
-                    final ItemIdent ident = new ItemIdent(type, _item.itemId);
-                    setWidget(1, 0, generateActionLabel(_furniList.contains(ident)));
-                    FlashEvents.addListener(_listener = new FurniChangeListener() {
-                        public void furniChanged (FurniChangedEvent event) {
-                            if (event.getAddedFurni().contains(ident)) {
-                                setWidget(1, 0, generateActionLabel(true));
-                            } else if (event.getRemovedFurni().contains(ident)) {
-                                setWidget(1, 0, generateActionLabel(false));
-                            }
-                        }
-                    });
+        if (_listener != null || !FlashClients.clientExists()) {
+            return;
+        }
+
+        byte type = _item.getType();
+        if (type == Item.AVATAR) { 
+            setWidget(1, 0, generateActionLabel(FlashClients.getAvatarId() == _item.itemId));
+            FlashEvents.addListener(_listener = new AvatarChangeListener() {
+                public void avatarChanged (AvatarChangedEvent event) {
+                    if (event.getAvatarId() == _item.itemId) {
+                        setWidget(1, 0, generateActionLabel(true));
+                    } else if (event.getOldAvatarId() == _item.itemId) {
+                        setWidget(1, 0, generateActionLabel(false));
+                    }
                 }
-            }
+            });
+
+        } else if (type == Item.DECOR || type == Item.AUDIO) {
+            setWidget(1, 0, generateActionLabel(
+                          FlashClients.getSceneItemId(_item.getType()) == _item.itemId));
+            FlashEvents.addListener(_listener = new BackgroundChangeListener() {
+                public void backgroundChanged (BackgroundChangedEvent event) {
+                    if (event.getType() == _item.getType()) {
+                        if (event.getBackgroundId() == _item.itemId) {
+                            setWidget(1, 0, generateActionLabel(true));
+                        } else if (event.getOldBackgroundId() == _item.itemId) {
+                            setWidget(1, 0, generateActionLabel(false));
+                        }
+                    }
+                }
+            });
+
+        } else if (type == Item.FURNITURE || type == Item.GAME || type == Item.PHOTO) {
+            final ItemIdent ident = new ItemIdent(type, _item.itemId);
+            setWidget(1, 0, generateActionLabel(_furniList.contains(ident)));
+            FlashEvents.addListener(_listener = new FurniChangeListener() {
+                public void furniChanged (FurniChangedEvent event) {
+                    if (event.getAddedFurni().contains(ident)) {
+                        setWidget(1, 0, generateActionLabel(true));
+                    } else if (event.getRemovedFurni().contains(ident)) {
+                        setWidget(1, 0, generateActionLabel(false));
+                    }
+                }
+            });
         }
     }
 
@@ -152,35 +153,36 @@ public class ItemContainer extends FlexTable
     protected Widget generateActionLabel (final boolean active)
     {
         byte type = _item.getType();
+        String lbl;
         if (type == Item.AVATAR) {
-            return MsoyUI.createActionLabel("", "Avatar" + (active ? "Active" : "Inactive"), 
-                new ClickListener () {
-                    public void onClick (Widget sender) {
-                        FlashClients.useAvatar(active ? 0 : _item.itemId,
-                            active ? 0 : ((Avatar) _item).scale);
-                    }
+            lbl = "Avatar" + (active ? "Active" : "Inactive"); // TODO: i18n
+            return MsoyUI.createActionLabel("", lbl, new ClickListener () {
+                public void onClick (Widget sender) {
+                    FlashClients.useAvatar(active ? 0 : _item.itemId,
+                                           active ? 0 : ((Avatar) _item).scale);
                 }
-            );
+            });
+
         } else if (type == Item.DECOR || type == Item.AUDIO) {
-            return MsoyUI.createActionLabel("", "Room" + (active ? "Active" : "Inactive"),
-                new ClickListener () {
-                    public void onClick (Widget sender) {
-                        FlashClients.useItem(active ? 0 : _item.itemId, _item.getType());
-                    }
+            lbl = "Room" + (active ? "Active" : "Inactive"); // TODO: i18n
+            return MsoyUI.createActionLabel("", lbl, new ClickListener () {
+                public void onClick (Widget sender) {
+                    FlashClients.useItem(active ? 0 : _item.itemId, _item.getType());
                 }
-            );
+            });
+
         } else if (type != Item.PET) {
-            return MsoyUI.createActionLabel("", "Room" + (active ? "Active" : "Inactive"),
-                new ClickListener () {
-                    public void onClick (Widget sender) {
-                        if (active) {
-                            FlashClients.removeFurni(_item.itemId, _item.getType());
-                        } else {
-                            FlashClients.useItem(_item.itemId, _item.getType());
-                        }
+            lbl = "Room" + (active ? "Active" : "Inactive"); // TODO: i18n
+            return MsoyUI.createActionLabel("", lbl, new ClickListener () {
+                public void onClick (Widget sender) {
+                    if (active) {
+                        FlashClients.removeFurni(_item.itemId, _item.getType());
+                    } else {
+                        FlashClients.useItem(_item.itemId, _item.getType());
                     }
                 }
-            );
+            });
+
         } else {
             return null;
         }
