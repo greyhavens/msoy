@@ -56,6 +56,14 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewDelete();
 
   /**
+   * Translated "Invitation functions:".
+   * 
+   * @return translated "Invitation functions:"
+   * @gwt.key inviteControls
+   */
+  String inviteControls();
+
+  /**
    * Translated "Enter the email addresses you would like to invite. Accounts will be created for these addresses and an invitation email will be sent.".
    * 
    * @return translated "Enter the email addresses you would like to invite. Accounts will be created for these addresses and an invitation email will be sent."
@@ -184,14 +192,6 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String invitesSuccess(String arg0,  String arg1);
 
   /**
-   * Translated "Admin functions:".
-   * 
-   * @return translated "Admin functions:"
-   * @gwt.key controls
-   */
-  String controls();
-
-  /**
    * Translated "To delete this item, enter a message to be sent to the item''s creator:".
    * 
    * @return translated "To delete this item, enter a message to be sent to the item''s creator:"
@@ -272,6 +272,14 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewErrDeletionFailed(String arg0);
 
   /**
+   * Translated "Admin functions:".
+   * 
+   * @return translated "Admin functions:"
+   * @gwt.key adminControls
+   */
+  String adminControls();
+
+  /**
    * Translated "Issue Invitations".
    * 
    * @return translated "Issue Invitations"
@@ -326,4 +334,12 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key reviewDeletionDo
    */
   String reviewDeletionDo();
+
+  /**
+   * Translated "Player Browser".
+   * 
+   * @return translated "Player Browser"
+   * @gwt.key browserPlayers
+   */
+  String browserPlayers();
 }

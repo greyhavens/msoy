@@ -3,6 +3,7 @@
 
 package client.admin;
 
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -16,6 +17,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.ConnectConfig;
 
+import client.shell.Application;
 import client.shell.Page;
 import client.shell.WorldClient;
 import client.util.MsoyUI;
@@ -38,12 +40,17 @@ public class DashboardPanel extends FlexTable
         controls.setSpacing(10);
         setWidget(row++, 0, controls);
 
-        controls.add(new Label(CAdmin.msgs.controls()));
+        controls.add(new Label(CAdmin.msgs.adminControls()));
         if (CAdmin.isAdmin()) {
             controls.add(new Button(CAdmin.msgs.displayDashboard(), new ClickListener() {
                 public void onClick (Widget sender) {
                     ((Button)sender).setEnabled(false);
                     displayDashboard();
+                }
+            }));
+            controls.add(new Button(CAdmin.msgs.browserPlayers(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    History.newItem(Application.createLinkToken("admin", "browser"));
                 }
             }));
         }
@@ -52,6 +59,11 @@ public class DashboardPanel extends FlexTable
                 new ReviewPopup().show();
             }
         }));
+
+        controls = new HorizontalPanel();
+        controls.setSpacing(10);
+        setWidget(row++, 0, controls);
+        controls.add(new Label(CAdmin.msgs.inviteControls()));
         if (CAdmin.creds.isSupport) {
             controls.add(new Button(CAdmin.msgs.invitePlayers(), new ClickListener() {
                 public void onClick (Widget sender) {
