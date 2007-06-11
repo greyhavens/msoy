@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.client;
 
 import java.util.Date;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -29,4 +30,9 @@ public interface AdminServiceAsync
      */
     public void grantInvitations (WebIdent ident, int numberInvitations, Date activeSince,
                                   AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link getPlayerList}.
+     */
+    public void getPlayerList (WebIdent ident, int inviterId, AsyncCallback callback);
 }

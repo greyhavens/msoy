@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.client;
 
 import java.util.Date;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
@@ -35,5 +36,11 @@ public interface AdminService extends RemoteService
      * @param activeSince If null, all users will receive invitations
      */
     public void grantInvitations (WebIdent ident, int numberInvitations, Date activeSince)
+        throws ServiceException;
+
+    /**
+     * Fetches a list of players who were invited by inviterId. 
+     */
+    public List getPlayerList (WebIdent ident, int inviterId)
         throws ServiceException;
 }

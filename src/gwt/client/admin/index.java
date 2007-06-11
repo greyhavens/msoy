@@ -37,6 +37,8 @@ public class index extends EditemEntryPoint
     {
         if (CAdmin.ident == null) {
             setContent(MsoyUI.createLabel(CAdmin.msgs.indexLogon(), "infoLabel"));
+        } else if ("browser".equals(token) && CAdmin.isAdmin()) {
+            displayPlayerBrowser();
         } else {
             displayDashboard();
         }
@@ -69,5 +71,11 @@ public class index extends EditemEntryPoint
         } else {
             setContent(MsoyUI.createLabel(CAdmin.msgs.lackPrivileges(), "infoLabel"));
         }
+    }
+
+    protected void displayPlayerBrowser ()
+    {
+        setPageTitle(CAdmin.msgs.browserTitle());
+        setContent(new PlayerBrowserPanel());
     }
 }

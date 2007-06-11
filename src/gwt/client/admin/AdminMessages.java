@@ -120,6 +120,14 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String invitePlayers();
 
   /**
+   * Translated "Players invited by {0}".
+   * 
+   * @return translated "Players invited by {0}"
+   * @gwt.key browserInvitedBy
+   */
+  String browserInvitedBy(String arg0);
+
+  /**
    * Translated "Your account does not have the necessary privileges to view this page.".
    * 
    * @return translated "Your account does not have the necessary privileges to view this page."
@@ -248,14 +256,6 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String invitesToAll();
 
   /**
-   * Translated "Review Flagged Items".
-   * 
-   * @return translated "Review Flagged Items"
-   * @gwt.key reviewTitle
-   */
-  String reviewTitle();
-
-  /**
    * Translated "Mark Mature".
    * 
    * @return translated "Mark Mature"
@@ -264,12 +264,28 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewMark();
 
   /**
+   * Translated "Review Flagged Items".
+   * 
+   * @return translated "Review Flagged Items"
+   * @gwt.key reviewTitle
+   */
+  String reviewTitle();
+
+  /**
    * Translated "Failed to delete messages and/or notify owners: {0}".
    * 
    * @return translated "Failed to delete messages and/or notify owners: {0}"
    * @gwt.key reviewErrDeletionFailed
    */
   String reviewErrDeletionFailed(String arg0);
+
+  /**
+   * Translated "Player Browser".
+   * 
+   * @return translated "Player Browser"
+   * @gwt.key browserTitle
+   */
+  String browserTitle();
 
   /**
    * Translated "Admin functions:".
@@ -294,6 +310,14 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key reviewDismiss
    */
   String reviewDismiss();
+
+  /**
+   * Translated "Players with no inviter".
+   * 
+   * @return translated "Players with no inviter"
+   * @gwt.key browserNoInviter
+   */
+  String browserNoInviter();
 
   /**
    * Translated "Cancel".

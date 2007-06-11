@@ -5,8 +5,10 @@ package com.threerings.msoy.web.server;
 
 import java.io.StringWriter;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
@@ -129,6 +131,26 @@ public class AdminServlet extends MsoyServiceServlet
                 ", activeSince=" + activeSince + "]", pe);
             throw new ServiceException(pe.getMessage());
         }
+    }
+
+    // from interface AdminService
+    public List getPlayerList (WebIdent ident, int inviterId)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(ident);
+        if (!memrec.isAdmin()) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
+
+        /*try {
+            // TODO - needs some magic love from samskivert for returning multiply-inherited 
+            // @Computed record classes from left joins.
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "getPlayerList failed [inviterId=" + inviterId + "]", pe);
+            throw new ServiceException(pe.getMessage());
+        }*/
+
+        return new ArrayList();
     }
 
     protected static String createTempPassword ()
