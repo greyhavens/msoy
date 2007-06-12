@@ -260,6 +260,7 @@ Window {
   upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_pet.png");
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_pet_over.png");
   downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_pet_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_pet.png");
 }
 
 .controlBarButtonChat {
