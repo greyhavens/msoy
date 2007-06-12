@@ -42,16 +42,14 @@ public class index extends MsgsEntryPoint
             return;
         }
 
-        if (token != null && token.length() > 0) {
+        if (token != null && token.startsWith("search")) {
+            setContent(MsoyUI.createLabel("Profile search coming soon...", "infoLabel"));
+        } else if (token != null && token.length() > 0) {
             try {
                 displayMemberPage(Integer.parseInt(token));
             } catch (Exception e) {
                 // TODO: display error
             }
-
-        } else {
-            // TODO: display member search interface
-            setContent(MsoyUI.createLabel("Profile search coming soon...", "infoLabel"));
         }
     }
 

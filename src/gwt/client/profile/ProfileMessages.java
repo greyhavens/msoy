@@ -64,6 +64,30 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String inviteToGroup();
 
   /**
+   * Translated "Search for a Friend".
+   * 
+   * @return translated "Search for a Friend"
+   * @gwt.key searchTitle
+   */
+  String searchTitle();
+
+  /**
+   * Translated "Search".
+   * 
+   * @return translated "Search"
+   * @gwt.key searchGo
+   */
+  String searchGo();
+
+  /**
+   * Translated "No profiles found matching your search criteria.".
+   * 
+   * @return translated "No profiles found matching your search criteria."
+   * @gwt.key gridNoProfiles
+   */
+  String gridNoProfiles();
+
+  /**
    * Translated "Permaname: {0}".
    * 
    * @return translated "Permaname: {0}"

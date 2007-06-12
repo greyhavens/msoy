@@ -24,6 +24,7 @@ import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.MemberInvites;
 
+import client.profile.SearchProfileDialog;
 import client.util.FlashClients;
 import client.util.MsoyUI;
 
@@ -101,7 +102,12 @@ public class NaviPanel extends FlexTable
         setMenu(menuidx++, "People", CShell.cmsgs.menuPeople(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 MenuBar fmenu = new MenuBar(true);
-                addLink(fmenu, "Search Profiles", "profile", "");
+                menu.addItem("Search Profiles", true, new Command() {
+                    public void execute () {
+                        (new SearchProfileDialog()).show();
+                        _popped.hide();
+                    }
+                });
                 FriendEntry[] friends = FlashClients.getFriends();
                 if (friends.length > 0) {
                     for (int ii = 0; ii < friends.length; ii++) {

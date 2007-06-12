@@ -64,9 +64,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editTip();
 
   /**
-   * Translated "Your real name will never be displayed in Whirled, and is used for searching purposes only.".
+   * Translated "Your real name is not required, and will never be displayed in Whirled. It is used for searching purposes only.".
    * 
-   * @return translated "Your real name will never be displayed in Whirled, and is used for searching purposes only."
+   * @return translated "Your real name is not required, and will never be displayed in Whirled. It is used for searching purposes only."
    * @gwt.key createRealNameTip
    */
   String createRealNameTip();
