@@ -512,6 +512,13 @@ Window {
   textAlign: center;
 }
 
+.ownerNameBox {
+  paddingBottom: 2px;
+  paddingLeft: 5px;
+  verticalAlign: bottom;
+  horizontalGap: 0px;
+}
+
 .ownerName {
   fontSize: 10px;
   color: #AAB5B9;

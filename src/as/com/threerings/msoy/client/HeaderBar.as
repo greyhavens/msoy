@@ -85,9 +85,8 @@ public class HeaderBar extends HBox
         addChild(_loc);
 
         _owner = new HBox();
+        _owner.styleName = "ownerNameBox";
         _owner.percentHeight = 100;
-        _owner.setStyle("verticalAlign", "bottom");
-        _owner.setStyle("horizontalGap", 0);
         addChild(_owner);
 
         var padding :HBox = new HBox();
