@@ -16,6 +16,7 @@ import org.mortbay.http.HttpException;
 import org.mortbay.http.HttpRequest;
 import org.mortbay.http.HttpResponse;
 import org.mortbay.http.HttpServer;
+import org.mortbay.http.NCSARequestLog;
 import org.mortbay.http.handler.ResourceHandler;
 import org.mortbay.jetty.servlet.ServletHandler;
 
@@ -31,8 +32,12 @@ public class MsoyHttpServer extends HttpServer
      * Creates and prepares our HTTP server for operation but does not yet start listening on the
      * HTTP port.
      */
-    public MsoyHttpServer ()
+    public MsoyHttpServer (File logdir)
+        throws IOException
     {
+        // wire up logging
+        setRequestLog(new NCSARequestLog(new File(logdir, "access.log").getPath()));
+
         // wire up serving of static content (for testing)
         HttpContext context = getContext("/");
         context.setWelcomeFiles(new String[] { "index.html" });

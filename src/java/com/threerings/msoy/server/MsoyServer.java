@@ -469,7 +469,7 @@ public class MsoyServer extends WhirledServer
         sceneRepo.finishInit();
 
         // create and start up our HTTP server
-        httpServer = new MsoyHttpServer();
+        httpServer = new MsoyHttpServer(_logdir);
         httpServer.init();
 
         // start up an interval that checks to see if our code has changed and auto-restarts the
