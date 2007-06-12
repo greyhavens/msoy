@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.MemberInvites;
 
@@ -57,8 +58,15 @@ public class NaviPanel extends FlexTable
                 }
                 menu.addItem("Account", true, new Command() {
                     public void execute () {
-                        new EditAccountDialog().show();
-                        _popped.hide();
+                        CShell.usersvc.getAccountInfo(CShell.ident, new AsyncCallback() {
+                            public void onSuccess (Object result) {
+                                new EditAccountDialog((AccountInfo) result).show();
+                                _popped.hide();
+                            }
+                            public void onFailure (Throwable cause) {
+                                MsoyUI.error(CShell.serverError(cause));
+                            }
+                        });
                     }
                 });
                 menu.addItem("Logoff", true, new Command() {

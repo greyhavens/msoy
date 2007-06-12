@@ -7,6 +7,7 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
@@ -73,5 +74,11 @@ public interface WebUserService extends RemoteService
      * Configures the permaname for this account.
      */
     public void configurePermaName (WebIdent ident, String permaName)
+        throws ServiceException;
+
+    /**
+     * fetches the user's account info.
+     */
+    public AccountInfo getAccountInfo (WebIdent ident)
         throws ServiceException;
 }

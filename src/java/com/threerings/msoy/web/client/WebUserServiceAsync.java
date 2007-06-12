@@ -58,4 +58,9 @@ public interface WebUserServiceAsync
      * The asynchronous version of {@link WebUserService#configurePermaName}.
      */
     public void configurePermaName (WebIdent ident, String permaName, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link WebUserService#getAccountInfo}.
+     */
+    public void getAccountInfo (WebIdent ident, AsyncCallback callback);
 }

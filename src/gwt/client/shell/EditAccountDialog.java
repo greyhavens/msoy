@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.EnterClickAdapter;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.data.AccountInfo;
 
 import client.util.BorderedDialog;
 
@@ -27,10 +28,11 @@ import client.util.BorderedDialog;
  */
 public class EditAccountDialog extends BorderedDialog
 {
-    public EditAccountDialog ()
+    public EditAccountDialog (AccountInfo accountInfo)
     {
         _header.add(createTitleLabel(CShell.cmsgs.editTitle(), null));
 
+        _accountInfo = accountInfo;
         FlexTable contents = (FlexTable)_contents;
         contents.setCellSpacing(10);
         contents.setStyleName("editAccount");
@@ -64,6 +66,28 @@ public class EditAccountDialog extends BorderedDialog
             contents.getFlexCellFormatter().setStyleName(row, 1, "PermaName");
             contents.setText(row++, 1, CShell.creds.permaName);
         }
+
+        contents.getFlexCellFormatter().setStyleName(row, 0, "Header");
+        contents.getFlexCellFormatter().setColSpan(row, 0, 3);
+        contents.setText(row++, 0, CShell.cmsgs.editRealNameHeader());
+        
+        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+        contents.setText(row, 0, CShell.cmsgs.editFirstName());
+        contents.setWidget(row++, 1, _fname = new TextBox());
+        _fname.setText(_accountInfo.firstName);
+        _fname.addKeyboardListener(_valrname);
+        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+        contents.setText(row, 0, CShell.cmsgs.editLastName());
+        contents.setWidget(row, 1, _lname = new TextBox());
+        _lname.setText(_accountInfo.lastName);
+        _lname.addKeyboardListener(_valrname);
+        _uprname = new Button(CShell.cmsgs.update(), new ClickListener() {
+            public void onClick (Widget widget) {
+                updateRealName();
+            }
+        });
+        _uprname.setEnabled(false);
+        contents.setWidget(row++, 2, _uprname);
 
         contents.getFlexCellFormatter().setStyleName(row, 0, "Header");
         contents.getFlexCellFormatter().setColSpan(row, 0, 3);
@@ -117,6 +141,34 @@ public class EditAccountDialog extends BorderedDialog
                 hide();
             }
         }));
+    }
+
+    protected void updateRealName ()
+    {
+        final String oldFirstName = _accountInfo.firstName;
+        _accountInfo.firstName = _fname.getText().trim();
+        final String oldLastName = _accountInfo.lastName;
+        _accountInfo.lastName = _lname.getText().trim();
+        _uprname.setEnabled(false);
+        _fname.setEnabled(false);
+        _lname.setEnabled(false);
+        // TODO
+        /*CShell.usersvc.updateAccountInfo(CShell.ident, _accountInfo, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _fname.setEnabled(true);
+                _lname.setEnabled(true);
+                _uprname.setEnabled(true);
+                _status.setText(CShell.cmsgs.realNameUpdated());
+            }
+            public void onFailure (Throwable cause) {
+                _fname.setText(_accountInfo.firstName = oldFirstName);
+                _fname.setEnabled(true);
+                _lname.setText(_accountInfo.lastName = oldLastName);
+                _lname.setEnabled(true);
+                _uprname.setEnabled(true);
+                _status.setText(CShell.serverError(cause));
+            }
+        });*/
     }
 
     protected void updateEmail ()
@@ -184,6 +236,20 @@ public class EditAccountDialog extends BorderedDialog
         });
     }
 
+    protected void validateRealName ()
+    {
+        String firstName = _fname.getText().trim();
+        String lastName = _lname.getText().trim();
+        boolean valid = false;
+        if (!_accountInfo.firstName.equals(firstName) || !_accountInfo.lastName.equals(lastName)) {
+            _status.setText(CShell.cmsgs.editNameReady());
+            valid = true;
+        } else {
+            _status.setText("");
+        }
+        _uprname.setEnabled(valid);
+    }
+
     protected void validateEmail ()
     {
         String email = _email.getText().trim();
@@ -246,6 +312,17 @@ public class EditAccountDialog extends BorderedDialog
         return new FlexTable();
     }
 
+    protected KeyboardListener _valrname = new KeyboardListenerAdapter() {
+        public void onKeyPress (Widget sender, char keyCode, int modifiers) {
+            // let the keypress go through, then validate our data
+            DeferredCommand.add(new Command() {
+                public void execute () {
+                    validateRealName();
+                }
+            });
+        }
+    };
+
     protected KeyboardListener _valemail = new KeyboardListenerAdapter() {
         public void onKeyPress (Widget sender, char keyCode, int modifiers) {
             // let the keypress go through, then validate our data
@@ -279,9 +356,10 @@ public class EditAccountDialog extends BorderedDialog
         }
     };
 
-    protected TextBox _email, _pname;
+    protected TextBox _email, _pname, _fname, _lname;
     protected PasswordTextBox _password, _confirm;
-    protected Button _upemail, _uppass, _uppname;
+    protected Button _upemail, _uppass, _uppname, _uprname;
     protected int _permaRow;
     protected Label _status;
+    protected AccountInfo _accountInfo;
 }

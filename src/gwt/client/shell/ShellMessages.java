@@ -88,20 +88,20 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String cancel();
 
   /**
-   * Translated "Enter a password for your account.".
-   * 
-   * @return translated "Enter a password for your account."
-   * @gwt.key createMissingPassword
-   */
-  String createMissingPassword();
-
-  /**
    * Translated "Please enter at least 1 address to send an invitation".
    * 
    * @return translated "Please enter at least 1 address to send an invitation"
    * @gwt.key sendInvitesEnterAddresses
    */
   String sendInvitesEnterAddresses();
+
+  /**
+   * Translated "Enter a password for your account.".
+   * 
+   * @return translated "Enter a password for your account."
+   * @gwt.key createMissingPassword
+   */
+  String createMissingPassword();
 
   /**
    * Translated "Your Permaname cannot be more than twelve characters long.".
@@ -160,20 +160,20 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editEmailHeader();
 
   /**
-   * Translated "Email address:".
-   * 
-   * @return translated "Email address:"
-   * @gwt.key editEmail
-   */
-  String editEmail();
-
-  /**
    * Translated "Sent invite to: {0}".
    * 
    * @return translated "Sent invite to: {0}"
    * @gwt.key sendInvitesResultsSuccessful
    */
   String sendInvitesResultsSuccessful(String arg0);
+
+  /**
+   * Translated "Email address:".
+   * 
+   * @return translated "Email address:"
+   * @gwt.key editEmail
+   */
+  String editEmail();
 
   /**
    * Translated "Please enter your date of birth.".
@@ -352,6 +352,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editEmailReady();
 
   /**
+   * Translated "Last Name;".
+   * 
+   * @return translated "Last Name;"
+   * @gwt.key editLastName
+   */
+  String editLastName();
+
+  /**
    * Translated "Email address updated. Remember, this new address must be used next time you log into Whirled.".
    * 
    * @return translated "Email address updated. Remember, this new address must be used next time you log into Whirled."
@@ -448,6 +456,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editConfirm();
 
   /**
+   * Translated "Real Name is for searching purposes only.  It will never be displayed.".
+   * 
+   * @return translated "Real Name is for searching purposes only.  It will never be displayed."
+   * @gwt.key editRealNameTip
+   */
+  String editRealNameTip();
+
+  /**
    * Translated "Failed for {0}: {1}".
    * 
    * @return translated "Failed for {0}: {1}"
@@ -464,20 +480,20 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String inviteAccept();
 
   /**
-   * Translated "Custom Message:".
-   * 
-   * @return translated "Custom Message:"
-   * @gwt.key sendInvitesCustomMessage
-   */
-  String sendInvitesCustomMessage();
-
-  /**
    * Translated "Invalid email addresses found: {0}".
    * 
    * @return translated "Invalid email addresses found: {0}"
    * @gwt.key sendInvitesInvalidAddress
    */
   String sendInvitesInvalidAddress(String arg0);
+
+  /**
+   * Translated "Custom Message:".
+   * 
+   * @return translated "Custom Message:"
+   * @gwt.key sendInvitesCustomMessage
+   */
+  String sendInvitesCustomMessage();
 
   /**
    * Translated "Play!".
@@ -592,20 +608,20 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String createMissingName();
 
   /**
-   * Translated "Copyright Violation".
-   * 
-   * @return translated "Copyright Violation"
-   * @gwt.key tagCopyrightFlag
-   */
-  String tagCopyrightFlag();
-
-  /**
    * Translated "Too many addresses ({0}): you have {1} invitations available".
    * 
    * @return translated "Too many addresses ({0}): you have {1} invitations available"
    * @gwt.key sendInvitesTooMany
    */
   String sendInvitesTooMany(String arg0,  String arg1);
+
+  /**
+   * Translated "Copyright Violation".
+   * 
+   * @return translated "Copyright Violation"
+   * @gwt.key tagCopyrightFlag
+   */
+  String tagCopyrightFlag();
 
   /**
    * Translated "Enter your account information below and press return to logon.".
@@ -696,6 +712,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editPermaInvalid();
 
   /**
+   * Translated "Real Name updated.  ".
+   * 
+   * @return translated "Real Name updated.  "
+   * @gwt.key realNameUpdated
+   */
+  String realNameUpdated();
+
+  /**
    * Translated "Enter your email address.".
    * 
    * @return translated "Enter your email address."
@@ -734,6 +758,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key tagRemoveConfirm
    */
   String tagRemoveConfirm(String arg0);
+
+  /**
+   * Translated "Update Real Name".
+   * 
+   * @return translated "Update Real Name"
+   * @gwt.key editRealNameHeader
+   */
+  String editRealNameHeader();
 
   /**
    * Translated "New password:".
@@ -966,6 +998,22 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key menuPlaces
    */
   String menuPlaces();
+
+  /**
+   * Translated "First Name:".
+   * 
+   * @return translated "First Name:"
+   * @gwt.key editFirstName
+   */
+  String editFirstName();
+
+  /**
+   * Translated "Click ''Update'' to update your real name.".
+   * 
+   * @return translated "Click ''Update'' to update your real name."
+   * @gwt.key editNameReady
+   */
+  String editNameReady();
 
   /**
    * Translated "Click ''Update'' to update your password.".

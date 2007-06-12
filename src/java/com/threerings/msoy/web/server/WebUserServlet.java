@@ -22,10 +22,12 @@ import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
@@ -278,6 +280,25 @@ public class WebUserServlet extends MsoyServiceServlet
         // let the authenticator know that we updated our permaname
         MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
         auth.updateAccount(mrec.accountName, null, permaName, null);
+    }
+
+    // from interface WebUserService
+    public AccountInfo getAccountInfo (WebIdent ident) 
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+
+        try {
+            ProfileRecord prec = MsoyServer.profileRepo.loadProfile(mrec.memberId);
+            AccountInfo accountInfo = new AccountInfo();
+            accountInfo.firstName = prec.firstName;
+            accountInfo.lastName = prec.lastName;
+            return accountInfo;
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to fetch account info [who=" + mrec.memberId + 
+                "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     protected void checkClientVersion (long clientVersion, String who)
