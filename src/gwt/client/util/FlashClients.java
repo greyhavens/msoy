@@ -80,7 +80,7 @@ public class FlashClients
     {
         return WidgetUtil.createFlashContainer(
             "decorViewer", "/clients/" + DeploymentConfig.version + "/decorviewer.swf",
-            300, 300, "");
+            600, 400, "");
     }
 
     /**
