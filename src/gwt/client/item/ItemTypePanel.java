@@ -80,14 +80,9 @@ public class ItemTypePanel extends FlexTable
         clear();
         _column = 0;
         _rightBit = null;
-        addTab(Item.AVATAR);
-        addTab(Item.FURNITURE);
-        addTab(Item.DECOR);
-        addTab(Item.PET);
-        addTab(Item.GAME);
-        addTab(Item.PHOTO);
-        addTab(Item.AUDIO);
-        // addTab(Item.VIDEO);
+        for (int ii = 0; ii < Item.TYPES.length; ii++) {
+            addTab(Item.TYPES[ii]);
+        }
         getFlexCellFormatter().setStyleName(0, _column++, _rightBit);
         setVisible(true);
     }

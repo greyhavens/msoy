@@ -36,6 +36,11 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     // Note: If the number of item types surpasses 31, we need to change the loadedInventory field
     // of MemberObject to be a BitSet or something.
 
+    /** A canonical ordering of our item types for use in the catalog, inventory, etc. */
+    public static final byte[] TYPES = {
+        AVATAR, FURNITURE, DECOR, PET, GAME, PHOTO, AUDIO/*, VIDEO */
+    };
+
     /** A 'used' constant value to indicate that the item is unused. */
     public static final byte UNUSED = (byte) 0;
 

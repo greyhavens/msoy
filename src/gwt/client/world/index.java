@@ -73,13 +73,9 @@ public class index extends Page
                 // go to a specific member's home
                 WorldClient.displayFlash("location=" + id(token, 1));
 
-            } else if (token.startsWith("p")) {
-                // display popular places by request
+            } else if (token.startsWith("p") || CWorld.ident != null) {
+                // display popular places by request or if we're logged in
                 displayHotSpots(_entryCounter);
-
-            } else if (CWorld.ident != null) {
-                // we're logged in, go to our home
-                WorldClient.displayFlash(null);
 
             } else {
                 // we're not logged in, show popular places

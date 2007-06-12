@@ -49,13 +49,9 @@ public class index extends MsgsEntryPoint
                 // TODO: display error
             }
 
-        } else if (CProfile.ident != null) {
-            // display our own profile if we're logged in
-            displayMemberPage(CProfile.getMemberId());
-
         } else {
             // TODO: display member search interface
-            setContent(MsoyUI.createLabel(CProfile.msgs.indexLogon(), "infoLabel"));
+            setContent(MsoyUI.createLabel("Profile search coming soon...", "infoLabel"));
         }
     }
 
