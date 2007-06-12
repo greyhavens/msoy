@@ -46,8 +46,7 @@ public class index extends Page
     {
         setPageTitle(title);
         Frame frame = new Frame(url);
-        frame.setWidth("99%");
-        frame.setHeight("100%");
+        frame.setStyleName("wrappedFrame");
         setContent(frame);
         setContentStretchHeight(true);
     }
