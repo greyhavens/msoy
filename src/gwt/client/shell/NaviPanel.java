@@ -119,7 +119,7 @@ public class NaviPanel extends FlexTable
                 }
                 menu.addItem("Profiles", fmenu);
                 addLink(menu, "Groups", "group", "");
-                addExternalLink(menu, "Forums", "http://forums.whirled.com/");
+                addLink(menu, "Forums", "wrap", "f");
                 menu.addItem("Invitations", true, new Command() {
                     public void execute () {
                         CShell.membersvc.getInvitationsStatus(CShell.ident, new AsyncCallback() {
@@ -153,7 +153,7 @@ public class NaviPanel extends FlexTable
                             "catalog", "" + type);
                 }
                 menu.addItem("Catalog", cmenu);
-                addExternalLink(menu, "Wiki", "http://wiki.whirled.com/");
+                addLink(menu, "Wiki", "wrap", "w");
                 addLink(menu, "Projects", "swiftly", "");
                 // TODO: bank/alchemist
             }
@@ -216,15 +216,6 @@ public class NaviPanel extends FlexTable
         menu.addItem(text, false, new Command() {
             public void execute () {
                 History.newItem(Application.createLinkToken(page, args));
-                _popped.hide();
-            }
-        });
-    }
-
-    protected void addExternalLink (MenuBar menu, String text, String href)
-    {
-        menu.addItem("<a href=\"" + href + "\">" + text + "</a>", true, new Command() {
-            public void execute () {
                 _popped.hide();
             }
         });

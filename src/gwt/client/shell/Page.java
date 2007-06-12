@@ -246,6 +246,7 @@ public abstract class Page
         _content.getFlexCellFormatter().setStyleName(0, 2, "pageHeaderClose");
         _content.getFlexCellFormatter().setStyleName(0, 3, "pageHeaderSep");
         _content.getFlexCellFormatter().setColSpan(1, 0, 4);
+        _content.getFlexCellFormatter().setHeight(1, 0, "100%");
 
         if (_closeToken != null) {
             _content.setWidget(0, 2, MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
