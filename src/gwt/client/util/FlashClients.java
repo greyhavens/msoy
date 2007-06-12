@@ -336,7 +336,11 @@ public class FlashClients
     protected static native void useItemNative (int itemId, byte itemType) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.useItem(itemId, itemType);
+            try {
+                client.useItem(itemId, itemType);
+            } catch (e) {
+                // fall through
+            }
         }
     }-*/;
 
@@ -346,7 +350,11 @@ public class FlashClients
     protected static native void removeFurniNative (int itemId, byte itemType) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.removeFurni(itemId, itemType);
+            try {
+                client.removeFurni(itemId, itemType);
+            } catch (e) {
+                // fall through
+            }
         }
     }-*/;
 
@@ -356,10 +364,13 @@ public class FlashClients
     protected static native JavaScriptObject getFurniListNative () /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            return client.getFurniList();
-        } else {
-            return [];
+            try {
+                return client.getFurniList();
+            } catch (e) {
+                // fall through
+            }
         }
+        return [];
     }-*/;
 
     /**
@@ -368,8 +379,13 @@ public class FlashClients
     protected static native int getSceneItemIdNative(byte itemType) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            return client.getSceneItemId(itemType);
+            try {
+                return client.getSceneItemId(itemType);
+            } catch (e) {
+                // fall through
+            }
         }
+        return 0;
     }-*/;
 
     /**
@@ -378,7 +394,11 @@ public class FlashClients
     protected static native void useAvatarNative (int avatarId, float scale) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            client.useAvatar(avatarId, scale);
+            try {
+                client.useAvatar(avatarId, scale);
+            } catch (e) {
+                // fall through
+            }
         }
     }-*/;
 
@@ -388,10 +408,13 @@ public class FlashClients
     protected static native int getAvatarIdNative () /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            return client.getAvatarId();
-        } else {
-            return 0;
+            try {
+                return client.getAvatarId();
+            } catch (e) {
+                // fall through
+            }
         }
+        return 0;
     }-*/;
 
     // TODO: put this in Application?
