@@ -258,12 +258,9 @@ public class ActorSprite extends MsoySprite
             if ((newInfo.status == OccupantInfo.IDLE) == (_idleIcon == null)) {
                 if (_idleIcon == null) {
                     _idleIcon = (new IDLE_ICON() as DisplayObject);
-                    // TODO: unhack this scaling when we have final artwork
-                    _idleIcon.scaleX = 1/3;
-                    _idleIcon.scaleY = 1/3;
                     addDecoration(_idleIcon, {
                         weight: Number.MAX_VALUE / 2,
-                        bounds: new Rectangle(0, 0, 400 * 1/3, 110)
+                        bounds: new Rectangle(0, 0, 50, 80)
                     });
 
                 } else {
