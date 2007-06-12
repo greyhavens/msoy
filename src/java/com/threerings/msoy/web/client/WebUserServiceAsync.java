@@ -7,6 +7,7 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.Invitation;
 
@@ -63,4 +64,9 @@ public interface WebUserServiceAsync
      * The asynchronous version of {@link WebUserService#getAccountInfo}.
      */
     public void getAccountInfo (WebIdent ident, AsyncCallback callback);
+
+    /**
+     * The asyncrhonous version of {@link WebUserService#updateAccountInfo}.
+     */
+    public void updateAccountInfo (WebIdent ident, AccountInfo info, AsyncCallback callback);
 }

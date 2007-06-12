@@ -152,12 +152,11 @@ public class EditAccountDialog extends BorderedDialog
         _uprname.setEnabled(false);
         _fname.setEnabled(false);
         _lname.setEnabled(false);
-        // TODO
-        /*CShell.usersvc.updateAccountInfo(CShell.ident, _accountInfo, new AsyncCallback() {
+        CShell.usersvc.updateAccountInfo(CShell.ident, _accountInfo, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _fname.setEnabled(true);
                 _lname.setEnabled(true);
-                _uprname.setEnabled(true);
+                _uprname.setEnabled(false);
                 _status.setText(CShell.cmsgs.realNameUpdated());
             }
             public void onFailure (Throwable cause) {
@@ -168,7 +167,7 @@ public class EditAccountDialog extends BorderedDialog
                 _uprname.setEnabled(true);
                 _status.setText(CShell.serverError(cause));
             }
-        });*/
+        });
     }
 
     protected void updateEmail ()

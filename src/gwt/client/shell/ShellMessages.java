@@ -352,9 +352,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editEmailReady();
 
   /**
-   * Translated "Last Name;".
+   * Translated "Last Name:".
    * 
-   * @return translated "Last Name;"
+   * @return translated "Last Name:"
    * @gwt.key editLastName
    */
   String editLastName();

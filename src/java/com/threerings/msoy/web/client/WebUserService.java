@@ -81,4 +81,10 @@ public interface WebUserService extends RemoteService
      */
     public AccountInfo getAccountInfo (WebIdent ident)
         throws ServiceException;
+
+    /**
+     * Updates the user's account info to match the AccountInfo object.
+     */
+    public void updateAccountInfo (WebIdent ident, AccountInfo info)
+        throws ServiceException;
 }

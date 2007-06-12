@@ -301,6 +301,24 @@ public class WebUserServlet extends MsoyServiceServlet
         }
     }
 
+    // from interface WebUserService
+    public void updateAccountInfo (WebIdent ident, AccountInfo info) 
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser(ident);
+
+        try {
+            ProfileRecord prec = MsoyServer.profileRepo.loadProfile(mrec.memberId);
+            prec.firstName = info.firstName;
+            prec.lastName = info.lastName;
+            MsoyServer.profileRepo.storeProfile(prec);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to update user account info [who=" + mrec.memberId +
+                "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+    }
+
     protected void checkClientVersion (long clientVersion, String who)
         throws ServiceException
     {
