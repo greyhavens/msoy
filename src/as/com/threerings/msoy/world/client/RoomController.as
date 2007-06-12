@@ -1060,6 +1060,7 @@ public class RoomController extends SceneController
                 } else {
                     _shiftDownSpot = null;
                 }
+                return;
             }
 
             if (keyDown) {
