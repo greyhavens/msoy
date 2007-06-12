@@ -216,6 +216,13 @@ public class ControlBar extends HBox
         footerRight.styleName = "controlBarFooterRight";
         addGroupChild(footerRight, [ UI_STD, UI_GUEST ]);
 
+        _backBtn = new CommandButton();
+        _backBtn.toolTip = Msgs.GENERAL.get("i.goBack");
+        _backBtn.setCommand(ControlBarController.MOVE_BACK, _backBtn);
+        _backBtn.styleName = "controlBarButtonBack";
+        _backBtn.enabled = false;
+        addGroupChild(_backBtn, [ UI_STD ]);
+
         _channelBtn = new CommandButton();
         _channelBtn.toolTip = Msgs.GENERAL.get("i.channel");
         _channelBtn.setCommand(MsoyController.POP_CHANNEL_MENU, _channelBtn);
@@ -326,16 +333,17 @@ public class ControlBar extends HBox
         visible :Boolean, name :String, backEnabled :Boolean) :void
     {
         // don't do navigation here for now...
-        /*const maxLen :int = 25;
-        _loc.includeInLayout = _goback.includeInLayout = _bookend.includeInLayout =
-            _loc.visible = _goback.visible = _bookend.visible = visible;
-        _goback.enabled = backEnabled;
-        _goback.toolTip = backEnabled ? Msgs.GENERAL.get("i.goBack") : null;
-        if (name != null) {
-            _loc.text = name.length < maxLen ? name : (name.substr(0, maxLen) + "...");
-        } else {
-            _loc.text = "";
-        }*/
+//         _loc.includeInLayout = _bookend.includeInLayout =
+//             _loc.visible = _bookend.visible = visible;
+        if (_backBtn != null) {
+            _backBtn.enabled = backEnabled;
+        }
+//         const maxLen :int = 25;
+//         if (name != null) {
+//             _loc.text = name.length < maxLen ? name : (name.substr(0, maxLen) + "...");
+//         } else {
+//             _loc.text = "";
+//         }
     }
 
     /** Receives notification whether scene editing is possible for this scene. */
@@ -373,9 +381,6 @@ public class ControlBar extends HBox
     /** Are we in room editing mode? */
     protected var _isEditing :Boolean;
 
-    /** The back-movement button. */
-    protected var _goback :CommandButton;
-
     /** Object that contains all the different groups of UI elements. */
     protected var _groups :Object = new Object();
 
@@ -387,6 +392,9 @@ public class ControlBar extends HBox
 
     /** Our logon panel (if shown). */
     protected var _logonPanel :LogonPanel;
+
+    /** The back-movement button. */
+    protected var _backBtn :CommandButton;
 
     /** Button for changing your avatar. */
     protected var _avatarBtn :CommandButton;
