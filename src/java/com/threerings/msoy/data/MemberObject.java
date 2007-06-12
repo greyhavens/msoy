@@ -19,8 +19,6 @@ import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.stats.data.StatSet;
 
-import com.threerings.msoy.server.MsoyServer;
-
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Avatar;
@@ -243,17 +241,6 @@ public class MemberObject extends MsoyBodyObject
     public Name getVisibleName ()
     {
         return memberName;
-    }
-
-    @Override // from DObject
-    public void addSubscriber (Subscriber sub)
-    {
-        super.addSubscriber(sub);
-
-        // we wait until the client has this object before checking levels, so that the 
-        // client receives an AttributeChangedEvent in the case where they earned a new
-        // level while offline
-        MsoyServer.memberMan.checkCurrentLevel(this);
     }
 
     /**
