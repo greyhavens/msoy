@@ -216,12 +216,12 @@ public class MemberManager
     }
 
     /** 
-     * Called by MsoyServer to indicate that a user has logged on.  It is used to listen on the
-     * member object for changes to accumulated flow so that the member's level can be updated
-     * as necessary.
+     * Called by MsoyServer to indicate that a user has logged on.
      */
     public void registerMember (final MemberObject member)
     {
+        //  add a listener for changes to accumulated flow so that the member's level can be
+        // updated as necessary
         member.addListener(new AttributeChangeListener() {
             public void attributeChanged (AttributeChangedEvent event) {
                 if (MemberObject.ACC_FLOW.equals(event.getName())) {
@@ -229,6 +229,9 @@ public class MemberManager
                 }
             }
         });
+
+        // check their current level now in case they got flow while they were offline
+        checkCurrentLevel(member);
     }
 
     // from interface MemberProvider
@@ -550,6 +553,8 @@ public class MemberManager
                 }
                 public void handleSuccess () {
                     member.setLevel(levelToSet);
+                    // TODO: generate a notification letting them know that they've gone up a level
+                    // which we can display with pomp, circumstance and fanfare
                 }
                 public void handleFailure (Exception pe) {
                     log.warning("Unable to set user level [memberId=" + 
