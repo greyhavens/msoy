@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.Invitation;
 
@@ -114,6 +115,16 @@ public class CreateAccountDialog extends BorderedDialog
         contents.setText(row++, 0, CShell.cmsgs.createDisplayNameTip());
 
         contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+        contents.setText(row, 0, CShell.cmsgs.createFirstName());
+        contents.setWidget(row++, 1, _fname = new TextBox());
+        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+        contents.setText(row, 0, CShell.cmsgs.createLastName());
+        contents.setWidget(row++, 1, _lname = new TextBox());
+        contents.getFlexCellFormatter().setColSpan(row, 0, 2);
+        contents.getFlexCellFormatter().setStyleName(row, 0, "Tip");
+        contents.setText(row++, 0, CShell.cmsgs.createRealNameTip());
+
+        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.createDateOfBirth());
         contents.setWidget(row++, 1, _dateOfBirth = new DateFields());
         _dateOfBirth.addKeyboardListenerToFields(_validator);
@@ -156,7 +167,7 @@ public class CreateAccountDialog extends BorderedDialog
             _status.setText(CShell.cmsgs.createMissingConfirm());
         } else if (!password.equals(confirm)) {
             _status.setText(CShell.cmsgs.createPasswordMismatch());
-        } else if (name.length() == 0){
+        } else if (name.length() == 0) {
             _status.setText(CShell.cmsgs.createMissingName());
         } else if (_dateOfBirth.getDate() == null) {
             _status.setText(CShell.cmsgs.createMissingDoB());
@@ -171,9 +182,12 @@ public class CreateAccountDialog extends BorderedDialog
     {
         String email = _email.getText().trim(), name = _name.getText().trim();
         String password = _password.getText().trim();
+        AccountInfo info = new AccountInfo();
+        info.firstName = _fname.getText().trim();
+        info.lastName = _lname.getText().trim();
         _status.setText(CShell.cmsgs.creatingAccount());
         CShell.usersvc.register(DeploymentConfig.version, email, CShell.md5hex(password), name, 
-            _dateOfBirth.getDate(), 1, _invite, new AsyncCallback() {
+            _dateOfBirth.getDate(), info, 1, _invite, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     hide();
                     // override the dialog token with the world
@@ -200,7 +214,7 @@ public class CreateAccountDialog extends BorderedDialog
 
     protected StatusPanel _parent;
     protected Invitation _invite;
-    protected TextBox _email, _name;
+    protected TextBox _email, _name, _fname, _lname;
     protected PasswordTextBox _password, _confirm;
     protected DateFields _dateOfBirth;
     protected Button _go;

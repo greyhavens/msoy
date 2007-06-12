@@ -36,7 +36,7 @@ public interface WebUserService extends RemoteService
      * subsequent remote service calls that require authentication.
      */
     public WebCreds register (long clientVersion, String email, String password, String displayName,
-                              Date birthday, int expireDays, Invitation invite)
+                              Date birthday, AccountInfo info, int expireDays, Invitation invite)
         throws ServiceException;
 
     /**

@@ -54,8 +54,8 @@ public class WebUserServlet extends MsoyServiceServlet
 
     // from interface WebUserService
     public WebCreds register (long clientVersion, String username, String password, 
-                              final String displayName, Date birthday, int expireDays, 
-                              final Invitation invite)
+                              final String displayName, Date birthday, AccountInfo info, 
+                              int expireDays, final Invitation invite)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);
@@ -89,7 +89,12 @@ public class WebUserServlet extends MsoyServiceServlet
         final MemberRecord newAccount = auth.createAccount(username, password, displayName, 
             ignoreRestrict, invite != null ? invite.inviter.getMemberId() : 0);
         try {
-            MsoyServer.profileRepo.setBirthday(newAccount.memberId, birthday);
+            ProfileRecord prec = new ProfileRecord();
+            prec.memberId = newAccount.memberId;
+            prec.birthday = new java.sql.Date(birthday.getTime());
+            prec.firstName = info.firstName;
+            prec.lastName = info.lastName;
+            MsoyServer.profileRepo.storeProfile(prec);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "failed to set birthday on new account's profile [memberId=" +
                 newAccount.memberId + ", birthday=" + birthday + "]", pe);

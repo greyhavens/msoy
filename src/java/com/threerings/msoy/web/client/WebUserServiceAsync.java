@@ -26,7 +26,8 @@ public interface WebUserServiceAsync
      * The asynchronous version of {@link WebUserService#register}.
      */
     public void register (long clientVersion, String username, String password, String displayName,
-                          Date birthday, int expireDays, Invitation invite, AsyncCallback callback);
+                          Date birthday, AccountInfo info, int expireDays, Invitation invite, 
+                          AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link WebUserService#validateSession}.

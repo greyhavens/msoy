@@ -8,6 +8,14 @@ package client.shell;
 public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
+   * Translated "Last name:".
+   * 
+   * @return translated "Last name:"
+   * @gwt.key createLastName
+   */
+  String createLastName();
+
+  /**
    * Translated "Display name:".
    * 
    * @return translated "Display name:"
@@ -54,6 +62,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key editTip
    */
   String editTip();
+
+  /**
+   * Translated "Your real name will never be displayed in Whirled, and is used for searching purposes only.".
+   * 
+   * @return translated "Your real name will never be displayed in Whirled, and is used for searching purposes only."
+   * @gwt.key createRealNameTip
+   */
+  String createRealNameTip();
 
   /**
    * Translated "Email address:".
@@ -192,6 +208,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String tagQuickAdd();
 
   /**
+   * Translated "First name:".
+   * 
+   * @return translated "First name:"
+   * @gwt.key createFirstName
+   */
+  String createFirstName();
+
+  /**
    * Translated "Sending email...".
    * 
    * @return translated "Sending email..."
@@ -288,20 +312,20 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String optOutSuccessful(String arg0);
 
   /**
-   * Translated "Mature".
-   * 
-   * @return translated "Mature"
-   * @gwt.key tagMatureFlag
-   */
-  String tagMatureFlag();
-
-  /**
    * Translated "Confirm:".
    * 
    * @return translated "Confirm:"
    * @gwt.key createConfirm
    */
   String createConfirm();
+
+  /**
+   * Translated "Mature".
+   * 
+   * @return translated "Mature"
+   * @gwt.key tagMatureFlag
+   */
+  String tagMatureFlag();
 
   /**
    * Translated "Send Invitations to Whirled".

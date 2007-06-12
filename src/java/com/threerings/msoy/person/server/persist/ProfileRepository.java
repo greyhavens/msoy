@@ -5,8 +5,6 @@ package com.threerings.msoy.person.server.persist;
 
 import java.util.List;
 
-import java.sql.Date;
-
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntListUtil;
 
@@ -58,20 +56,5 @@ public class ProfileRepository extends DepotRepository
         throws PersistenceException
     {
         return store(record);
-    }
-
-    /**
-     * Sets the birthday for the given member id, creating a ProfileRecord if necessary.
-     */
-    public void setBirthday (int memberId, java.util.Date birthday)
-        throws PersistenceException
-    {
-        ProfileRecord profRec = load(ProfileRecord.class, memberId);
-        if (profRec == null) {
-            profRec = new ProfileRecord();
-            profRec.memberId = memberId;
-        }
-        profRec.birthday = new Date(birthday.getTime());
-        storeProfile(profRec);
     }
 }
