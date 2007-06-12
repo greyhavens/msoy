@@ -23,6 +23,8 @@ import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.chat.client.CurseFilter;
+
 /**
  * Provides services shared by all clients.
  */
