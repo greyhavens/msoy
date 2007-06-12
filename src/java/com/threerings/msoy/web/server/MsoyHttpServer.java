@@ -36,7 +36,7 @@ public class MsoyHttpServer extends HttpServer
         throws IOException
     {
         // wire up logging
-        setRequestLog(new NCSARequestLog(new File(logdir, "access.log").getPath()));
+        setRequestLog(new NCSARequestLog(new File(logdir, "access.log.yyyy_mm_dd").getPath()));
 
         // wire up serving of static content (for testing)
         HttpContext context = getContext("/");
