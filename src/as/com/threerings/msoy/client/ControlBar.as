@@ -38,7 +38,7 @@ import com.threerings.msoy.chat.client.ChatControl;
 /**
  * Dispatched when the client is unminimized, and this component's display list has
  * been validated.
- * 
+ *
  * @eventType com.threerings.msoy.client.ControlBar.DISPLAY_LIST_VALID
  */
 [Event(name="displayListValid", type="com.threerings.util.ValueEvent")]
@@ -49,7 +49,7 @@ import com.threerings.msoy.chat.client.ChatControl;
 public class ControlBar extends HBox
 {
     /**
-     * An event dispatched when the client is unminimized, and this component's 
+     * An event dispatched when the client is unminimized, and this component's
      * display list has been validated.
      *
      * @eventType displayListValid
@@ -67,7 +67,7 @@ public class ControlBar extends HBox
     public static const UI_GUEST :String = "Guest UI";
 
     public static const ALL_UI_GROUPS :Array = [ UI_ALL, UI_STD, UI_MINI, UI_EDIT, UI_GUEST ];
-    
+
     public function ControlBar (ctx :WorldContext, top :TopPanel)
     {
         _ctx = ctx;
@@ -133,7 +133,7 @@ public class ControlBar extends HBox
         }
     }
 
-    override protected function updateDisplayList (w :Number, h :Number) :void 
+    override protected function updateDisplayList (w :Number, h :Number) :void
     {
         super.updateDisplayList(w, h);
         if (!_isMinimized && width != 0) {
@@ -154,14 +154,14 @@ public class ControlBar extends HBox
 
         removeAllChildren();
         clearAllGroups();
-        
+
         _chatControl = null;
         _avatarBtn = null;
         _channelBtn = null;
 
         _chatControl = new ChatControl(_ctx, this.height - 4);
         addGroupChild(_chatControl, [ UI_STD, UI_EDIT ]);
-        
+
         var chatBtn :CommandButton = new CommandButton();
         chatBtn.toolTip = Msgs.GENERAL.get("i.chatPrefs");
         chatBtn.setCommand(MsoyController.CHAT_PREFS);
@@ -174,7 +174,7 @@ public class ControlBar extends HBox
         volBtn.styleName = "controlBarButtonVolume";
         addGroupChild(volBtn, [ UI_STD, UI_GUEST, UI_EDIT ]);
 
-        // avatar selection is now handled from GWT - however, this may be useful in embedded mode 
+        // avatar selection is now handled from GWT - however, this may be useful in embedded mode
         // in the future.
         /*_avatarBtn = new CommandButton();
         _avatarBtn.toolTip = Msgs.GENERAL.get("i.avatar");
@@ -186,6 +186,7 @@ public class ControlBar extends HBox
         _petBtn.toolTip = Msgs.GENERAL.get("i.pet");
         _petBtn.setCommand(MsoyController.SHOW_PETS);
         _petBtn.styleName = "controlBarButtonPet";
+        _petBtn.enabled = false;
         addGroupChild(_petBtn, [ UI_STD ]);
 
         _roomeditBtn = new CommandButton();
@@ -194,7 +195,7 @@ public class ControlBar extends HBox
         _roomeditBtn.styleName = "controlBarButtonEdit";
         _roomeditBtn.enabled = false;
         addGroupChild(_roomeditBtn, [ UI_STD ]);
-        
+
         if (_ctx.getWorldClient().isEmbedded()) {
             _logonPanel = new LogonPanel(_ctx, this.height - 4);
             addGroupChild(_logonPanel, [ UI_GUEST ]);
@@ -227,7 +228,7 @@ public class ControlBar extends HBox
         _isEditing = false;
 
         updateUI();
-        
+
         recheckAvatarControl();
     }
 
@@ -276,8 +277,8 @@ public class ControlBar extends HBox
         } else {
             updateGroup(UI_GUEST, true);
         }
-    }   
-    
+    }
+
     protected function embeddedStateKnown (event :ValueEvent) :void
     {
         var embedded :Boolean = (event.value as Boolean);
@@ -343,12 +344,14 @@ public class ControlBar extends HBox
         if (_roomeditBtn != null) {
             _roomeditBtn.enabled = value;
         }
+        if (_petBtn != null) {
+            _petBtn.enabled = value;
+        }
     }
 
     /**
-     * This is needed by the RoomController so that it can position the room edit popup and
-     * modify this button correctly when room editing is forced by javascript pushing some
-     * furni on us.
+     * This is needed by the RoomController so that it can position the room edit popup and modify
+     * this button correctly when room editing is forced by javascript pushing some furni on us.
      */
     public function get roomEditBtn () :CommandButton
     {
@@ -369,13 +372,13 @@ public class ControlBar extends HBox
 
     /** Are we in room editing mode? */
     protected var _isEditing :Boolean;
-    
+
     /** The back-movement button. */
     protected var _goback :CommandButton;
 
     /** Object that contains all the different groups of UI elements. */
     protected var _groups :Object = new Object();
-    
+
     /** A list of children that can be hidden when we are minimized. */
     //protected var _hiders :Array = new Array();
 
