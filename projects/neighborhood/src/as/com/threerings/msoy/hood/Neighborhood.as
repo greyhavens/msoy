@@ -34,7 +34,7 @@ public class Neighborhood
      * Instantiate and populate a {@link Neighborhood} from JSON configuration
      * extracted from the LoaderInfo FlashVars parameter 'neighborhood'.
      */
-    public static function fromParameters(params :Object) :Neighborhood
+    public static function fromParameters (params :Object) :Neighborhood
     {
         return fromJSON(new JSONDecoder(params.neighborhood).getValue());
     }
@@ -42,47 +42,47 @@ public class Neighborhood
     /**
      * Instantiate and populate a {@link Neighborhood} given a JSON configuration.
      */
-    public static function fromJSON(JSON: Object) :Neighborhood
+    public static function fromJSON (json: Object) :Neighborhood
     {
         var hood:Neighborhood = new Neighborhood();
         var i :int;
 
-        if (JSON.member != null) {
-            hood.centralMember = NeighborMember.fromJSON(JSON.member);
+        if (json.member != null) {
+            hood.centralMember = NeighborMember.fromJSON(json.member);
         }
-        if (JSON.group != null) {
-            hood.centralGroup = NeighborGroup.fromJSON(JSON.group);
+        if (json.group != null) {
+            hood.centralGroup = NeighborGroup.fromJSON(json.group);
         }
 
         hood.channels = new Array();
-//         if (JSON.channels != null) {
-//             for (i = 0; i < JSON.channels.length; i ++) {
-//                 hood.channels[i] = ChatChannel.fromJSON(JSON.channels[i]);
+//         if (json.channels != null) {
+//             for (i = 0; i < json.channels.length; i ++) {
+//                 hood.channels[i] = ChatChannel.fromJSON(json.channels[i]);
 //             }
 //         }            
 
         hood.houses = new Array();
-        if (JSON.friends != null) {
-            for (i = 0; i < JSON.friends.length; i ++) {
-                hood.houses[i] = NeighborMember.fromJSON(JSON.friends[i]);
+        if (json.friends != null) {
+            for (i = 0; i < json.friends.length; i ++) {
+                hood.houses[i] = NeighborMember.fromJSON(json.friends[i]);
             }
         }
 
         hood.groups = new Array();
-        if (JSON.groups != null) {
-            for (i = 0; i < JSON.groups.length; i ++) {
-                hood.groups[i] = NeighborGroup.fromJSON(JSON.groups[i]);
+        if (json.groups != null) {
+            for (i = 0; i < json.groups.length; i ++) {
+                hood.groups[i] = NeighborGroup.fromJSON(json.groups[i]);
             }
         }
 
         hood.games = new Array();
-        if (JSON.games != null) {
-            for (i = 0; i < JSON.games.length; i ++) {
-                hood.games[i] = NeighborGame.fromJSON(JSON.games[i]);
+        if (json.games != null) {
+            for (i = 0; i < json.games.length; i ++) {
+                hood.games[i] = NeighborGame.fromJSON(json.games[i]);
             }
         }
-        if (JSON.totpop != undefined) {
-            hood.totalPop = JSON.totpop;
+        if (json.totpop != undefined) {
+            hood.totalPop = json.totpop;
         }
         return hood;
     }
