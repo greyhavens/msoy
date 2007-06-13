@@ -733,6 +733,8 @@
   <!-- builds top-level flash applications. -->
   <target name="flashapps" depends="avatarviewer,videoviewer,decorviewer">
     <antcall target="asclient"><param name="type" value="world"/></antcall>
+    <ant dir="projects/neighborhood" target="dist" inheritAll="false"/>
+    <copy file="dist/neighborhood.swf" todir="pages/clients/${build_version}"/>
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
@@ -777,10 +779,11 @@
     </for>
   </target>
 
-  <!-- fully cleans out the application -->
+  <!-- fully cleans out all build results -->
   <target name="distclean" depends="clean,asclean,gclean">
     <delete dir="${deploy.dir}"/>
     <delete dir="pages/clients"/>
+    <ant dir="projects/neighborhood" target="clean" inheritAll="false"/>
   </target>
 
   <!-- cleans out the application and all subprojects -->

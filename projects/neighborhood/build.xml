@@ -2,9 +2,9 @@
 <project name="neighborhood" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name"         value="HoodViz"/>
-  <property name="root.path"        value="../.."/>
-  <property name="flex.path"        value="${root.path}/tools/extern/flex_sdk"/>
+  <property name="app.name"  value="neighborhood"/>
+  <property name="root.path" value="../.."/>
+  <property name="flex.path" value="${root.path}/tools/extern/flex_sdk"/>
 
   <target name="checklib">
     <uptodate property="lib_is_up_to_date" targetfile="neighborhood.swc">
@@ -23,7 +23,7 @@
       <arg value="-compiler.source-path=src/as/"/>
       <arg value="-include-sources=src/as/com/"/>
       <arg value="-output"/>
-      <arg value="neighborhood.swc"/>
+      <arg value="${app.name}.swc"/>
     </java>
   </target>
 
@@ -36,9 +36,9 @@
       <arg value="-compiler.source-path=src/as"/>
       <arg value="-externs"/>
       <arg value="-file-specs"/>
-      <arg value="src/as/${app.name}.as"/>
+      <arg value="src/as/HoodViz.as"/>
       <arg value="-output"/>
-      <arg value="HoodViz.swf"/>
+      <arg value="${app.name}.swf"/>
     </java>
   </target>
 
@@ -46,12 +46,13 @@
   <target name="clean">
     <delete>
        <fileset file="${app.name}.swf"/>
+       <fileset file="${app.name}.swc"/>
     </delete>
   </target>
 
+  <!-- builds our swf and plops it up at the top level -->
   <target name="dist" depends="compile">
-    <copy file="HoodViz.swf" todir="/export/msoy/pages/media/static/"/>
+    <copy file="${app.name}.swf" todir="${root.path}/dist"/>
   </target>
-
 
 </project>

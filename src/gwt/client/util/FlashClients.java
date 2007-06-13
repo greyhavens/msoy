@@ -47,14 +47,15 @@ public class FlashClients
     public static HTML createNeighborhood (String hoodData, String width, String height)
     {
         return WidgetUtil.createFlashContainer(
-            "hood","/media/static/HoodViz.swf", width, height,
+            "hood", "/clients/" + DeploymentConfig.version + "/neighborhood.swf", width, height,
             "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hoodData);
     }
 
     public static HTML createPopularPlaces (String hotspotData)
     {
         return WidgetUtil.createFlashContainer(
-            "hotspots","/media/static/HoodViz.swf", "100%", getClientHeight(true),
+            "hotspots", "/clients/" + DeploymentConfig.version + "/neighborhood.swf",
+            "100%", getClientHeight(true),
             "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hotspotData);
     }
 
