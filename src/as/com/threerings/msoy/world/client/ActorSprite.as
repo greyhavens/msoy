@@ -246,10 +246,15 @@ public class ActorSprite extends MsoySprite
             }
         }
 
+        // See if we need to update the name label or the status.
+        // Note that we need to compare the String versions of the names, because that's
+        // the difference we care about here. MemberNames compare as the same if the memberId
+        // is the same...
+        var newName :String = newInfo.username.toString();
         if (_occInfo == null || (_occInfo.status != newInfo.status) ||
-                !_occInfo.username.equals(newInfo.username)) {
+                (_occInfo.username.toString() !== newName)) {
             _label.textColor = getStatusColor(newInfo.status);
-            _label.text = newInfo.username.toString();
+            _label.text = newName;
             _label.width = _label.textWidth + TextFieldUtil.WIDTH_PAD;
             _label.height = _label.textHeight + TextFieldUtil.HEIGHT_PAD;
             recheckLabel();
