@@ -75,15 +75,15 @@ public class RoomMetrics
     protected var walldefs :Array; 
 
 
-    /** Read and update metrics from decor data. */
-    public function update (data :DecorData) :void
+    /** Read and update metrics. */
+    public function update (width :int, height :int, depth :int, horizon :Number) :void
     {
         // I'm using 'this' to make clear which assignments are for public props
         this.focal = DEFAULT_FOCAL;   // nb: focal length must not be zero
-        this.sceneDepth = data.depth; // nb: scene depth must not be zero
-        this.sceneWidth = data.width;
-        this.sceneHeight = data.height;
-        this.sceneHorizon = data.horizon;
+        this.sceneDepth = depth; // nb: scene depth must not be zero
+        this.sceneWidth = width;
+        this.sceneHeight = height;
+        this.sceneHorizon = horizon;
         this.camera = new Vector3 (0.5, 0.5, - focal / sceneDepth);
 
         // floor and ceiling:

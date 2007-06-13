@@ -56,6 +56,27 @@ public class DecorRecord extends ItemRecord
     /** The qualified column identifier for the {@link #horizon} field. */
     public static final ColumnExp HORIZON_C =
         new ColumnExp(DecorRecord.class, HORIZON);
+
+    /** The column identifier for the {@link #hideWalls} field. */
+    public static final String HIDE_WALLS = "hideWalls";
+
+    /** The qualified column identifier for the {@link #hideWalls} field. */
+    public static final ColumnExp HIDE_WALLS_C =
+        new ColumnExp(DecorRecord.class, HIDE_WALLS);
+
+    /** The column identifier for the {@link #offsetX} field. */
+    public static final String OFFSET_X = "offsetX";
+
+    /** The qualified column identifier for the {@link #offsetX} field. */
+    public static final ColumnExp OFFSET_X_C =
+        new ColumnExp(DecorRecord.class, OFFSET_X);
+
+    /** The column identifier for the {@link #offsetY} field. */
+    public static final String OFFSET_Y = "offsetY";
+
+    /** The qualified column identifier for the {@link #offsetY} field. */
+    public static final ColumnExp OFFSET_Y_C =
+        new ColumnExp(DecorRecord.class, OFFSET_Y);
     // AUTO-GENERATED: FIELDS END
 
     /** Room type. Controls how the background wallpaper image is handled. */
@@ -73,7 +94,16 @@ public class DecorRecord extends ItemRecord
     /** Horizon position, in [0, 1]. */
     public float horizon;
 
-    public static final int SCHEMA_VERSION = 1 +
+    /** Specifies whether side walls should be displayed. */
+    public boolean hideWalls;
+
+    /** Bitmap offset along the x axis, in room units. */
+    public float offsetX;
+
+    /** Bitmap offset along the y axis, in room units. */
+    public float offsetY;
+
+    public static final int SCHEMA_VERSION = 2 +
         BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     public DecorRecord ()
@@ -90,6 +120,9 @@ public class DecorRecord extends ItemRecord
         width = decor.width;
         depth = decor.depth;
         horizon = decor.horizon;
+        hideWalls = decor.hideWalls;
+        offsetX = decor.offsetX;
+        offsetY = decor.offsetY;
     }
 
     @Override // from Item
@@ -107,6 +140,9 @@ public class DecorRecord extends ItemRecord
         object.width = width;
         object.depth = depth;
         object.horizon = horizon;
+        object.hideWalls = hideWalls;
+        object.offsetX = offsetX;
+        object.offsetY = offsetY;
         return object;
     }
 

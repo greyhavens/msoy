@@ -9,8 +9,9 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.util.FlashClients;
 
@@ -24,11 +25,15 @@ public class DecorEditor extends ItemEditor
     public Item createBlankItem ()
     {
         Decor d = new Decor();
+        // some sample values. dimensions will be overwritten once a new image gets uploaded.
         d.type = Decor.IMAGE_OVERLAY;
         d.width = 800;
-        d.height = 494; // magic number: (short) Math.round(800 / ((1 + Math.sqrt(5)) / 2)); 
+        d.height = 400; 
         d.depth = 400;
         d.horizon = 0.5f;
+        d.offsetX = 0;
+        d.offsetY = 0;
+        d.hideWalls = false;
         return d;
     }
 
@@ -38,12 +43,36 @@ public class DecorEditor extends ItemEditor
         super.createInterface(contents, tabs);
 
         VerticalPanel bits = new VerticalPanel();
-        tabs.add(bits, CEditem.emsgs.decorConfigTab());
-
         bits.add(_viewer = FlashClients.createDecorViewer());
         bits.add(_label = new HTML());
-        
+        tabs.add(bits, CEditem.emsgs.decorConfigTab());
+
         configureCallbacks(this);
+    }
+
+    // @Override from ItemEditor
+    protected void createFurniUploader (TabPanel tabs)
+    {
+        String title = CEditem.emsgs.decorMainTitle();
+        _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
+            public String updateMedia (MediaDesc desc, int width, int height) {
+                if (!desc.hasFlashVisual()) {
+                    return CEditem.emsgs.errFurniNotFlash();
+                }
+                _item.furniMedia = desc;
+                if (width > 0 && height > 0) {
+                    // set dimensions
+                    _decor.width = (short) width; 
+                    _decor.height = (short) height;
+                    _decor.depth = (short) height;
+                    // clear offsets
+                    _decor.offsetX = _decor.offsetY = 0;
+                    updateUIFromDecor();
+                }
+                return null;
+            }
+        });
+        tabs.add(_furniUploader, CEditem.emsgs.decorMainTab());
     }
 
     // @Override from ItemEditor
@@ -74,7 +103,8 @@ public class DecorEditor extends ItemEditor
         _label.setHTML(
             CEditem.emsgs.decorDimensions() + " " + _decor.width + " x " +
             _decor.height + " x " + _decor.depth + "<br/>" +
-            CEditem.emsgs.decorHorizon() + " " + horizon + "<br/>" +
+            CEditem.emsgs.decorHorizon() + " " + horizon + " / " +
+            _decor.offsetX + ", " + _decor.offsetY + ", " + _decor.hideWalls + "<br/>" +
             CEditem.emsgs.decorType() + " " + typelabel);
     }
     
@@ -85,8 +115,11 @@ public class DecorEditor extends ItemEditor
         $wnd.updateDecorInit = function () {
             editor.@client.editem.DecorEditor::sendDecorUpdateToFlash()();
         };
-        $wnd.updateDecor = function (width, height, depth, horizon, type) {
-            editor.@client.editem.DecorEditor::updateDecorFromFlash(SSSFB)(width, height, depth, horizon, type);
+        $wnd.updateDecor = function (width, height, depth, horizon, 
+                                     type, offsetX, offsetY, hideWalls) 
+        {
+            editor.@client.editem.DecorEditor::updateDecorFromFlash(SSSFBFFZ)(
+                width, height, depth, horizon, type, offsetX, offsetY, hideWalls);
         };
     }-*/;
 
@@ -94,13 +127,17 @@ public class DecorEditor extends ItemEditor
      * Receives a number of values from DecorViewer, and updates the Decor item accordingly.
      */
     protected void updateDecorFromFlash (
-        short width, short height, short depth, float horizon, byte type)
+        short width, short height, short depth, float horizon,
+        byte type, float offsetX, float offsetY, boolean hideWalls)
     {
         _decor.width = width;
         _decor.height = height;
         _decor.depth = depth;
         _decor.horizon = horizon;
         _decor.type = type;
+        _decor.offsetX = offsetX;
+        _decor.offsetY = offsetY;
+        _decor.hideWalls = hideWalls;
         updateUIFromDecor();
     }
 
@@ -112,14 +149,17 @@ public class DecorEditor extends ItemEditor
         if (_decor.furniMedia != null) {
             mediaUpdateHelper(_decor.furniMedia.getMediaPath());
         }
-        decorUpdateHelper(_decor.width, _decor.height, _decor.depth, _decor.horizon, _decor.type);
+        decorUpdateHelper(_decor.width, _decor.height, _decor.depth, _decor.horizon, _decor.type,
+                          _decor.offsetX, _decor.offsetY, _decor.hideWalls);
     }
 
     protected static native void decorUpdateHelper (
-        int width, int height, int depth, float horizon, byte type) /*-{
+        int width, int height, int depth, float horizon, byte type,
+        float offsetX, float offsetY, boolean hideWalls) /*-{
         var viewer = $doc.getElementById("decorViewer");
         if (viewer) {
-            viewer.updateParameters(width, height, depth, horizon, type);
+            viewer.updateParameters(
+                width, height, depth, horizon, type, offsetX, offsetY, hideWalls);
         }
     }-*/;
 
@@ -129,7 +169,7 @@ public class DecorEditor extends ItemEditor
             viewer.updateMedia(mediaPath);
         }
     }-*/;
-        
+
     protected Decor _decor;
     protected HTML _viewer;
     protected HTML _label;

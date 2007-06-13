@@ -41,6 +41,16 @@ public class Decor extends Item
     /** Horizon position, in [0, 1]. */
     public var horizon :Number;
 
+    /** Specifies whether side walls should be displayed. */
+    public var hideWalls :Boolean;
+
+    /** Bitmap offset along the x axis, in room units. */
+    public var offsetX :Number;
+
+    /** Bitmap offset along the y axis, in room units. */
+    public var offsetY :Number;
+
+    
     public function Decor ()
     {
     }
@@ -74,6 +84,9 @@ public class Decor extends Item
         width = ins.readShort();
         depth = ins.readShort();
         horizon = ins.readFloat();
+        hideWalls = ins.readBoolean();
+        offsetX = ins.readFloat();
+        offsetY = ins.readFloat();
     }
 
     // from interface Streamable
@@ -85,6 +98,9 @@ public class Decor extends Item
         out.writeShort(width);
         out.writeShort(depth);
         out.writeFloat(horizon);
+        out.writeBoolean(hideWalls);
+        out.writeFloat(offsetX);
+        out.writeFloat(offsetY);
     }
 
     // from Item

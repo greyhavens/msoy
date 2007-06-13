@@ -248,9 +248,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String editorFurniTitle();
 
   /**
-   * Translated "Main Room Decor media".
+   * Translated "Image that will be used as the room background.".
    * 
-   * @return translated "Main Room Decor media"
+   * @return translated "Image that will be used as the room background."
    * @gwt.key decorMainTitle
    */
   String decorMainTitle();
@@ -448,9 +448,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String decorType_None();
 
   /**
-   * Translated "Room Decor Media".
+   * Translated "Room Background".
    * 
-   * @return translated "Room Decor Media"
+   * @return translated "Room Background"
    * @gwt.key decorMainTab
    */
   String decorMainTab();

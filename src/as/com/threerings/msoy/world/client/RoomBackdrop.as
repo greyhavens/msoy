@@ -15,12 +15,25 @@ import com.threerings.msoy.world.data.DecorData;
  */
 public class RoomBackdrop
 {
-    /** Refresh room metrics. */
-    public function setRoom (data :DecorData) :void
+    /** Refresh room metrics from a Decor object. */
+    public function setRoomFromDecor (decor :Decor) :void
     {
-        _metrics.update(data);
-        _roomType = data.type;
+        setRoom(decor.width, decor.height, decor.depth, decor.horizon, decor.type);
     }
+
+    /** Refresh room metrics from a DecorData object. */
+    // FIXME ROBERT: this function is just scaffolding while I separate out decor data usage.
+    public function setRoomFromDecorData (decor :DecorData) :void
+    {
+        setRoom(decor.width, decor.height, decor.depth, decor.horizon, decor.type);
+    }
+
+    /** Refresh room metrics. */
+    public function setRoom (width :int, height :int, depth :int, horizon :Number, type :int) :void
+    {
+        _metrics.update(width, height, depth, horizon);
+        _roomType = type;
+    }        
 
     /**
      * Draws the room backdrop on the specified graphics, with specified unscaled parameters.

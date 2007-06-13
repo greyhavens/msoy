@@ -32,8 +32,6 @@ import com.threerings.flex.GridUtil;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.util.MessageManager;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.world.data.DecorData;
-
 
  
 public class DecorViewerComp extends Canvas
@@ -123,6 +121,7 @@ public class DecorViewerComp extends Canvas
         _offsetMode = new CheckBox();
         _offsetMode.label = Msgs.EDITING.get("b.move_offset");
         _offsetMode.addEventListener(MouseEvent.CLICK, offsetModeSelectionHandler);
+        _offsetMode.enabled = false; // for now :)
 
         GridUtil.addRow(mouseopts, Msgs.EDITING.get("l.move_selection"),
                         _horizonMode, _offsetMode);
@@ -149,8 +148,13 @@ public class DecorViewerComp extends Canvas
         _depthSlider.liveDragging = true;
         _depthSlider.addEventListener(SliderEvent.CHANGE, regularOptionsChanged);
 
+        _hideWallsBox = new CheckBox();
+        _hideWallsBox.label = Msgs.EDITING.get("l.hide_walls");
+        _hideWallsBox.addEventListener(Event.CHANGE, regularOptionsChanged);
+        _hideWallsBox.enabled = false;
+            
         GridUtil.addRow(standard, Msgs.EDITING.get("l.scene_type"), _types,
-                        Msgs.EDITING.get("l.scene_depth"), _depthSlider);
+                        Msgs.EDITING.get("l.scene_depth"), _depthSlider, _hideWallsBox);
 
         
         // container for advanced options
@@ -165,11 +169,11 @@ public class DecorViewerComp extends Canvas
         
         for each (var input :TextInput in
                   [ _widthBox, _heightBox, _depthBox, _horizonXBox, _horizonYBox ]) {
-                input.width = 40;
-                input.addEventListener(Event.CHANGE, advancedOptionsChanged);
-            }
-        
-        
+            input.width = 40;
+            input.addEventListener(Event.CHANGE, advancedOptionsChanged);
+        }
+
+        _horizonXBox.visible = _horizonXBox.includeInLayout = false; // for now
         
         // init pointer resources. produces a tree of the same topology as POINTERS,
         // only containing references to initialized Image objects.
@@ -218,6 +222,7 @@ public class DecorViewerComp extends Canvas
         // update data from sliders
         _data.depth = _depthSlider.value;
         _data.type = _types.selectedIndex;
+        _data.hideWalls = _hideWallsBox.selected;
 
         refreshAdvancedUI();
         refreshPreview();
@@ -231,10 +236,10 @@ public class DecorViewerComp extends Canvas
     protected function advancedOptionsChanged (event :Event) :void
     {
         // update data from text boxes
-        _data.width = int(_widthBox.text);
-        _data.height = int(_heightBox.text);
-        _data.depth = int(_depthBox.text);
-        _data.horizon = Number(_horizonYBox.text);
+        _data.width = norm(int(_widthBox.text), 1);
+        _data.height = norm(int(_heightBox.text), 1);
+        _data.depth = norm(int(_depthBox.text), 1);
+        _data.horizon = norm(Number(_horizonYBox.text), 0);
 
         refreshStandardUI();
         refreshPreview();
@@ -246,7 +251,8 @@ public class DecorViewerComp extends Canvas
      * Called from JavaScript, updates this viewer's internal parameters (width, height, etc.)
      */
     public function updateParameters (
-        width :int, height :int, depth :int, horizon :Number, type :int) :void
+        width :int, height :int, depth :int, horizon :Number, type :int,
+        offsetX :Number, offsetY :Number, hideWalls :Boolean) :void
     {
         // update storage
         _data.width = width;
@@ -254,6 +260,9 @@ public class DecorViewerComp extends Canvas
         _data.depth = depth;
         _data.type = type;
         _data.horizon = horizon;
+        _data.offsetX = offsetX;
+        _data.offsetY = offsetY;
+        _data.hideWalls = hideWalls;
 
         refreshStandardUI();
         refreshAdvancedUI();
@@ -278,6 +287,7 @@ public class DecorViewerComp extends Canvas
     {
         _depthSlider.value = _data.depth;
         _types.selectedIndex = _data.type;
+        _hideWallsBox.selected = _data.hideWalls;
     }
 
     /**
@@ -297,7 +307,7 @@ public class DecorViewerComp extends Canvas
     public function refreshPreview () :void
     {
         // redraw the room backdrop
-        _backdrop.setRoom(_data);
+        _backdrop.setRoom(_data.width, _data.height, _data.depth, _data.horizon, _data.type);
         _backdrop.drawRoom(
             _backdropCanvas.graphics, _backdropCanvas.width, _backdropCanvas.height, true, false);
 
@@ -329,8 +339,8 @@ public class DecorViewerComp extends Canvas
         if (ExternalInterface.available) {
             try {
                 ExternalInterface.call(
-                    "updateDecor", _data.width, _data.height,
-                    _data.depth, _data.horizon, _data.type);
+                    "updateDecor", _data.width, _data.height, _data.depth, _data.horizon,
+                    _data.type, _data.offsetX, _data.offsetY, _data.hideWalls);
             } catch (e :Error) {
                 log.warning("Unable to send update to Javascript: " + e);
             }
@@ -458,11 +468,16 @@ public class DecorViewerComp extends Canvas
 
     
     // TEMP: helper function
-    public function dlog (message :String) :void
+    protected function dlog (message :String) :void
     {
         if (_testing) {
             _results.text = message;
         }
+    }
+
+    /** Helper function - converts any NaN values into defaults */
+    protected function norm (value :*, defaultValue :*) :* {
+        return isNaN(value) ? defaultValue : value;
     }
 
     protected static const PREVIEW_BOX_WIDTH :Number = 550;
@@ -471,20 +486,19 @@ public class DecorViewerComp extends Canvas
     protected static const MOUSE_MODE_DEFAULT :int = 0;
     protected static const MOUSE_MODE_OFFSET :int = 1;
     protected static const MOUSE_MODE_HORIZON :int = 2;
-    
+
     protected var _testing :Boolean = true;
     
     protected var _results :Label;
     protected var _scaleLabel :Label;
-    //protected var _horizonSlider :VSlider;
     protected var _depthSlider :HSlider;
-    //protected var _widthSlider :HSlider;
     protected var _types :ComboBox;
     protected var _widthBox :TextInput;
     protected var _heightBox :TextInput;
     protected var _depthBox :TextInput;
     protected var _horizonYBox :TextInput;
     protected var _horizonXBox :TextInput;
+    protected var _hideWallsBox :CheckBox;
     protected var _offsetMode :CheckBox;
     protected var _horizonMode :CheckBox;
     
@@ -496,7 +510,7 @@ public class DecorViewerComp extends Canvas
     protected var _mouseMode :int = MOUSE_MODE_DEFAULT;
     protected var _mouseDownAnchor :Point;
 
-    protected var _data :DecorData = new DecorData();
+    protected var _data :DecorStorage = new DecorStorage();
     protected var _backdrop :RoomBackdrop = new RoomBackdrop();
     protected var _pointer :Image;
 
@@ -539,5 +553,20 @@ internal class DecorMediaContainer extends MediaContainer
     }
 
     public var _viewer :DecorViewerComp;
+}
+
+/**
+ * Helper class, encapsulates relevant Decor parameters.
+ */
+internal class DecorStorage
+{
+    public var width :int;
+    public var height :int;
+    public var depth :int;
+    public var horizon :Number;
+    public var type :int;
+    public var offsetX :Number;
+    public var offsetY :Number;
+    public var hideWalls :Boolean;
 }
 

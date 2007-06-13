@@ -261,7 +261,7 @@ public class AbstractRoomView extends Sprite
     {
         _scene = scene;
         _layout.update(scene.getDecorData());
-        _backdrop.setRoom(scene.getDecorData());
+        _backdrop.setRoomFromDecorData(scene.getDecorData());
         updateEditingOverlay();
         relayout();
     }

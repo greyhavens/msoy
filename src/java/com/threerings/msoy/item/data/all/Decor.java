@@ -38,6 +38,16 @@ public class Decor extends Item
     /** Horizon position, in [0, 1]. */
     public float horizon;
 
+    /** Specifies whether side walls should be displayed. */
+    public boolean hideWalls;
+
+    /** Bitmap offset along the x axis, in room units. */
+    public float offsetX;
+
+    /** Bitmap offset along the y axis, in room units. */
+    public float offsetY;
+
+    
     // @Override from Item
     public byte getType ()
     {
