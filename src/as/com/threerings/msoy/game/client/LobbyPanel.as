@@ -96,12 +96,18 @@ public class LobbyPanel extends VBox
         _about.addEventListener(MouseEvent.CLICK, function () :void {
             CommandEvent.dispatch(thisLobbyPanel, MsoyController.VIEW_ITEM, game.getIdent());
         });
+        _about.buttonMode = true;
+        _about.useHandCursor = true;
+        _about.mouseChildren = false;
         // if ownerId = 0, we were pushed to the catalog's copy, so this is buyable
         if (game.ownerId == 0) {
             _buy.text = Msgs.GAME.get("b.buy");
             _buy.addEventListener(MouseEvent.CLICK, function () :void {
                 CommandEvent.dispatch(thisLobbyPanel, MsoyController.VIEW_ITEM, game.getIdent());
             });
+            _buy.buttonMode = true;
+            _buy.useHandCursor = true;
+            _buy.mouseChildren = false;
         } else {
             _buy.parent.removeChild(_buy);
         }
@@ -270,22 +276,29 @@ public class LobbyPanel extends VBox
         padding.percentWidth = 100;
         padding.percentHeight = 100;
         titleBox.addChild(padding);
+
+        var embedBtnBox :HBox = new HBox();
         _about = new Label();
-        _about.styleName = "lobbyLink";
-        titleBox.addChild(_about);
+        _about.styleName = "embedButton";
+        embedBtnBox.addChild(_about);
         _buy = new Label();
-        _buy.styleName = "lobbyLink";
-        titleBox.addChild(_buy);
-        /****** TEMP - shows the same Embed button as the TopPanel for more usable usability ***/
-        var embedBtnBox :VBox = new VBox();
+        _buy.styleName = "embedButton";
+        embedBtnBox.addChild(_buy);
         embedBtnBox.styleName = "headerEmbedBox";
         embedBtnBox.percentHeight = 100;
         titleBox.addChild(embedBtnBox);
-        var embedBtn :CommandButton = new CommandButton(HeaderBarController.SHOW_EMBED_HTML);
+        var embedBtn :Label = new Label();
         embedBtn.styleName = "embedButton";
-        embedBtn.toolTip = Msgs.GENERAL.get("b.embed");
+        embedBtn.text = Msgs.GENERAL.get("l.share");
+        var thisLobbyPanel :LobbyPanel = this;
+        embedBtn.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            CommandEvent.dispatch(thisLobbyPanel, HeaderBarController.SHOW_EMBED_HTML);
+        });
+        embedBtn.buttonMode = true;
+        embedBtn.useHandCursor = true;
+        embedBtn.mouseChildren = false;
         embedBtnBox.addChild(embedBtn);
-        /****** END TEMP ***/
+        
         var leaveBtnBox :VBox = new VBox();
         leaveBtnBox.styleName = "lobbyCloseBox";
         leaveBtnBox.percentHeight = 100;
