@@ -48,27 +48,36 @@ public abstract class PopularPlace extends SimpleStreamableObject
     {
         protected PopularScenePlace (MsoyScene scene)
         {
-            _scene = scene;
+            this(((MsoySceneModel)scene.getSceneModel()).ownerId, scene.getName(), scene.getId());
+        }
+
+        protected PopularScenePlace (int placeId, String name, int sceneId)
+        {
+            _placeId = placeId;
+            _name = name;
+            _sceneId = sceneId;
         }
 
         @Override
         public int getId ()
         {
-            return ((MsoySceneModel )_scene.getSceneModel()).ownerId;
+            return _placeId;
         }
 
         @Override
         public String getName()
         {
-            return _scene.getName();
+            return _name;
         }
-        
+
         public int getSceneId ()
         {
-            return _scene.getId();
+            return _sceneId;
         }
-        
-        protected Scene _scene;
+
+        protected int _placeId;
+        protected String _name;
+        protected int _sceneId;
     }
 
     public static class PopularGamePlace extends PopularPlace
@@ -95,19 +104,24 @@ public abstract class PopularPlace extends SimpleStreamableObject
         protected int _id;
     }
 
+    public static class PopularGroupPlace extends PopularScenePlace
+    {
+        public PopularGroupPlace (MsoyScene scene)
+        {
+            super(scene);
+        }
+    }
+
     public static class PopularMemberPlace extends PopularScenePlace
     {
         public PopularMemberPlace (MsoyScene scene)
         {
             super(scene);
         }
-    }
 
-    public static class PopularGroupPlace extends PopularScenePlace
-    {
-        public PopularGroupPlace (MsoyScene scene)
+        public PopularMemberPlace (int memberId, int homeSceneId)
         {
-            super(scene);
+            super(memberId, null, homeSceneId);
         }
     }
 

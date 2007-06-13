@@ -135,7 +135,7 @@ public class MemberServlet extends MsoyServiceServlet
     public String serializePopularPlaces (WebIdent ident, final int n)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        final MemberRecord mrec = getAuthedUser(ident);
         final MemberName name = (mrec == null) ? null : mrec.getName();
 
         // if we're logged on, fetch our friends
@@ -219,29 +219,52 @@ public class MemberServlet extends MsoyServiceServlet
                         }
                         set.add(friend.memberName);
                     }
-                    
+
                     JSONArray homes = new JSONArray();
                     JSONArray groups = new JSONArray();
                     JSONArray games = new JSONArray();
 
-                    for (Map.Entry<PopularPlace, Set<MemberName>> entry : popSets.entrySet()) {
-                        filePopularPlace(
-                            name, entry.getKey(), entry.getValue(), homes, groups, games);
-                    }
-
-                    // after we've enumerated our friends, we add in the top populous places too 
+                    // after we've enumerated our friends, we add in the top populous places too
                     int n = 3; // TODO: totally ad-hoc
                     for (PopularPlace place : MsoyServer.memberMan.getPPCache().getTopPlaces()) {
                         // make sure we didn't already include this place in the code above
                         if (popSets.containsKey(place)) {
                             continue;
                         }
-                        filePopularPlace(name, place, null, homes, groups, games);
+                        popSets.put(place, null);
                         if (--n <= 0) {
                             break;
                         }
                     }
 
+                    // if we're logged in and our home has people in it, pull it out so that we can
+                    // set it as the "central" location; otherwise create a place for our home
+                    PopularPlace home = null;
+                    Set<MemberName> hfriends = null;
+                    if (mrec != null) {
+                        home = new PopularMemberPlace(mrec.memberId, mrec.homeSceneId);
+                        hfriends = popSets.remove(home);
+                    }
+
+                    // now convert all these popular places into JSON bits
+                    for (Map.Entry<PopularPlace, Set<MemberName>> entry : popSets.entrySet()) {
+                        PopularPlace place = entry.getKey();
+                        JSONObject obj = placeToJSON(name, place, entry.getValue());
+                        if (place instanceof PopularGamePlace) {
+                            games.put(obj);
+                        } else if (place instanceof PopularScenePlace) {
+                            obj.put("sceneId", ((PopularScenePlace)place).getSceneId());
+                            if (place instanceof PopularMemberPlace) {
+                                homes.put(obj);
+                            } else {
+                                groups.put(obj);
+                            }
+                        }
+                    }
+
+                    if (home != null) {
+                        result.put("member", placeToJSON(name, home, hfriends));
+                    }
                     result.put("friends", homes);
                     result.put("groups", groups);
                     result.put("games", games);
@@ -256,9 +279,9 @@ public class MemberServlet extends MsoyServiceServlet
         });
         return waiter.waitForResult();
     }
-    
+
     // from MemberService
-    public MemberInvites getInvitationsStatus (WebIdent ident) 
+    public MemberInvites getInvitationsStatus (WebIdent ident)
         throws ServiceException
     {
         int memberId = getMemberId(ident);
@@ -280,7 +303,7 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public InvitationResults sendInvites (WebIdent ident, List addresses, String customMessage) 
+    public InvitationResults sendInvites (WebIdent ident, List addresses, String customMessage)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser(ident);
@@ -320,7 +343,7 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
-    public void optOut (Invitation invite) 
+    public void optOut (Invitation invite)
         throws ServiceException
     {
         try {
@@ -335,8 +358,7 @@ public class MemberServlet extends MsoyServiceServlet
         }
     }
 
-    protected void filePopularPlace (MemberName who, PopularPlace place, Set<MemberName> friends,
-                                     JSONArray homes, JSONArray groups, JSONArray games)
+    protected JSONObject placeToJSON (MemberName who, PopularPlace place, Set<MemberName> friends)
         throws JSONException
     {
         JSONObject obj = new JSONObject();
@@ -350,16 +372,7 @@ public class MemberServlet extends MsoyServiceServlet
             }
             obj.put("friends", arr);
         }
-        if (place instanceof PopularGamePlace) {
-            games.put(obj);
-        } else {
-            obj.put("sceneId", ((PopularScenePlace) place).getSceneId());
-            if (place instanceof PopularMemberPlace) {
-                homes.put(obj);
-            } else {
-                groups.put(obj);
-            }
-        }
+        return obj;
     }
 
     /**
@@ -424,7 +437,7 @@ public class MemberServlet extends MsoyServiceServlet
     {
         String rand = "";
         for (int ii = 0; ii < INVITE_ID_LENGTH; ii++) {
-            rand += INVITE_ID_CHARACTERS.charAt((int)(Math.random() * 
+            rand += INVITE_ID_CHARACTERS.charAt((int)(Math.random() *
                 INVITE_ID_CHARACTERS.length()));
         }
         return rand;

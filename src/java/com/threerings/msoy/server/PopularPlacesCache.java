@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.threerings.msoy.server;
 
@@ -26,11 +26,11 @@ public class PopularPlacesCache
     /**
      * Look up and return the population of a given {@link PopularPlace}.
      */
-    public int getPopulation(PopularPlace place)
+    public int getPopulation (PopularPlace place)
     {
         return _population.getCount(place);
     }
-    
+
     /**
      * Return a list of the most populous places in the whirled, sorted by population.
      */
@@ -38,7 +38,7 @@ public class PopularPlacesCache
     {
         return _topPlaces;
     }
-    
+
     /**
      * Return the total population count in the whirled.
      */
@@ -50,7 +50,7 @@ public class PopularPlacesCache
     /**
      * Iterates over all the lobbies and the scenes in the world at the moment, finds out the
      * n most populated ones and sorts all scenes by owner, caching the values.
-     * 
+     *
      * This must be called on the dobj thread.
      */
     protected PopularPlacesCache ()
@@ -84,13 +84,13 @@ public class PopularPlacesCache
         i = MsoyServer.lobbyReg.enumerateLobbyManagers();
         while (i.hasNext()) {
             LobbyObject lObj = ((LobbyManager) i.next()).getLobbyObject();
-            
+
             // then add up the population count for each table being formed in this lobby
             int count = 0;
             for (Table table : lObj.tables) {
                 count += table.getOccupiedCount();
             }
-            
+
             // we skip empty lobbies, obviously
             if (count == 0) {
                 continue;
@@ -121,7 +121,7 @@ public class PopularPlacesCache
 
     /** A mapping of popular places to population counts. */
     protected CountHashMap<PopularPlace> _population;
-    
+
     /** A list of every place (lobby or scene) in the world, sorted by population. */
     protected List<PopularPlace> _topPlaces;
 
