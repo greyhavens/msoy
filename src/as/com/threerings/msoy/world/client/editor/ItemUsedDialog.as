@@ -54,14 +54,14 @@ public class ItemUsedDialog extends FloatingPanel
         var buttons :HBox = new HBox();
         buttons.percentWidth = 100;
         var button :Button = new Button();
-        button.label = Msgs.EDITING.get("b.item_used_no");
+        button.label = Msgs.EDITING.get("b.item_used_yes");
         button.addEventListener(MouseEvent.CLICK, onButton);
         buttons.addChild(button);
         var spacer :HBox = new HBox();
         spacer.percentWidth = 100;
         buttons.addChild(spacer);
         button = new Button();
-        button.label = Msgs.EDITING.get("b.item_used_yes");
+        button.label = Msgs.EDITING.get("b.item_used_no");
         button.addEventListener(MouseEvent.CLICK, onButton);
         buttons.addChild(button);
         content.addChild(buttons);
