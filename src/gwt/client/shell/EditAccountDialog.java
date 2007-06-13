@@ -89,6 +89,10 @@ public class EditAccountDialog extends BorderedDialog
         _uprname.setEnabled(false);
         contents.setWidget(row++, 2, _uprname);
 
+        contents.getFlexCellFormatter().setStyleName(row, 0, "Tip");
+        contents.getFlexCellFormatter().setColSpan(row, 0, 3);
+        contents.setHTML(row++, 0, CShell.cmsgs.editRealNameTip());
+
         contents.getFlexCellFormatter().setStyleName(row, 0, "Header");
         contents.getFlexCellFormatter().setColSpan(row, 0, 3);
         contents.setText(row++, 0, CShell.cmsgs.editEmailHeader());
