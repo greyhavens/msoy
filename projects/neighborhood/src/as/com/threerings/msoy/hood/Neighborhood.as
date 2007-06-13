@@ -36,7 +36,7 @@ public class Neighborhood
      */
     public static function fromParameters(params :Object) :Neighborhood
     {
-        return fromJSON(new JSONDecoder(params.neighborhood).getObject());
+        return fromJSON(new JSONDecoder(params.neighborhood).getValue());
     }
 
     /**
@@ -55,11 +55,11 @@ public class Neighborhood
         }
 
         hood.channels = new Array();
-        if (JSON.channels != null) {
-            for (i = 0; i < JSON.channels.length; i ++) {
-                hood.channels[i] = ChatChannel.fromJSON(JSON.channels[i]);
-            }
-        }            
+//         if (JSON.channels != null) {
+//             for (i = 0; i < JSON.channels.length; i ++) {
+//                 hood.channels[i] = ChatChannel.fromJSON(JSON.channels[i]);
+//             }
+//         }            
 
         hood.houses = new Array();
         if (JSON.friends != null) {

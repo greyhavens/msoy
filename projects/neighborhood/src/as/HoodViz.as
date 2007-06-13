@@ -213,12 +213,12 @@ public class HoodViz extends Sprite
 
         var yy :int = SWF_HEIGHT - 5;
 
-        for (ii = 0; ii < _hood.channels.length; ii ++) {
-            var button :TextButton = new TextButton(_hood.channels[ii].name, 0, 0, false, 12);
-            button.add(this, 10, yy - button.height);
-            addChatChannelClickHandler(button, _hood.channels[ii]);
-            yy -= button.height;
-        }
+//         for (ii = 0; ii < _hood.channels.length; ii ++) {
+//             var button :TextButton = new TextButton(_hood.channels[ii].name, 0, 0, false, 12);
+//             button.add(this, 10, yy - button.height);
+//             addChatChannelClickHandler(button, _hood.channels[ii]);
+//             yy -= button.height;
+//         }
 
         var key :DisplayObject;
 
@@ -242,14 +242,14 @@ public class HoodViz extends Sprite
         _canvas.y = (SWF_HEIGHT -scale*(yBiasInTiles + _bounds.top + _bounds.bottom))/2;
     }
 
-    protected function addChatChannelClickHandler (obj: DisplayObject, channel: ChatChannel) :void
-    {
-        obj.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            if (ExternalInterface.available) {
-                ExternalInterface.call("openChannel", 2, channel.name, channel.id);
-            }
-        });
-    }
+//     protected function addChatChannelClickHandler (obj: DisplayObject, channel: ChatChannel) :void
+//     {
+//         obj.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+//             if (ExternalInterface.available) {
+//                 ExternalInterface.call("openChannel", 2, channel.name, channel.id);
+//             }
+//         });
+//     }
 
     protected function addBit (bitType :Object, x :Number, y :Number, update:Boolean,
                                neighbor: Neighbor) :void
