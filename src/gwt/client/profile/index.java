@@ -114,6 +114,7 @@ public class index extends MsgsEntryPoint
                 !search.equals(_searchString)) {
                 CProfile.profilesvc.findProfiles(type, search, new AsyncCallback() {
                     public void onSuccess (Object result) {
+                        setPageTitle(CProfile.msgs.profileSearchTitle());
                         setContent(_searchResults = new SearchResultsPanel((List)result, page));
                     }
                     public void onFailure (Throwable cause) {
