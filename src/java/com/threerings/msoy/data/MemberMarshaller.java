@@ -45,8 +45,21 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #getCurrentSceneId} requests. */
+    public static final int GET_CURRENT_SCENE_ID = 3;
+
+    // from interface MemberService
+    public void getCurrentSceneId (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    {
+        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, GET_CURRENT_SCENE_ID, new Object[] {
+            Integer.valueOf(arg2), listener3
+        });
+    }
+
     /** The method id used to dispatch {@link #getDisplayName} requests. */
-    public static final int GET_DISPLAY_NAME = 3;
+    public static final int GET_DISPLAY_NAME = 4;
 
     // from interface MemberService
     public void getDisplayName (Client arg1, int arg2, InvocationService.ResultListener arg3)
@@ -59,7 +72,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getGroupName} requests. */
-    public static final int GET_GROUP_NAME = 4;
+    public static final int GET_GROUP_NAME = 5;
 
     // from interface MemberService
     public void getGroupName (Client arg1, int arg2, InvocationService.ResultListener arg3)
@@ -72,7 +85,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getHomeId} requests. */
-    public static final int GET_HOME_ID = 5;
+    public static final int GET_HOME_ID = 6;
 
     // from interface MemberService
     public void getHomeId (Client arg1, byte arg2, int arg3, InvocationService.ResultListener arg4)
@@ -85,7 +98,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #purchaseRoom} requests. */
-    public static final int PURCHASE_ROOM = 6;
+    public static final int PURCHASE_ROOM = 7;
 
     // from interface MemberService
     public void purchaseRoom (Client arg1, InvocationService.ResultListener arg2)
@@ -98,7 +111,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setAvatar} requests. */
-    public static final int SET_AVATAR = 7;
+    public static final int SET_AVATAR = 8;
 
     // from interface MemberService
     public void setAvatar (Client arg1, int arg2, float arg3, InvocationService.InvocationListener arg4)
@@ -111,7 +124,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setDisplayName} requests. */
-    public static final int SET_DISPLAY_NAME = 8;
+    public static final int SET_DISPLAY_NAME = 9;
 
     // from interface MemberService
     public void setDisplayName (Client arg1, String arg2, InvocationService.InvocationListener arg3)

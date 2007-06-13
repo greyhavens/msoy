@@ -8,11 +8,16 @@ import mx.controls.Label;
 import mx.controls.Spacer;
 
 import com.threerings.flex.CommandButton;
+
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyController;
+
 import com.threerings.msoy.data.FriendStatusChangeNotification;
-import com.threerings.msoy.world.client.WorldDirector;
 import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.ui.FloatingPanel;
+
+import com.threerings.msoy.world.client.WorldDirector;
 
 public class FriendStatusChangeDisplay extends NotificationDisplay
 {
@@ -45,20 +50,14 @@ public class FriendStatusChangeDisplay extends NotificationDisplay
             spacer.percentWidth = 100;
             box.addChild(spacer);
             
-            var button :CommandButton = new CommandButton();
+            var button :CommandButton = new CommandButton(
+                MsoyController.GO_MEMBER_SCENE, _friend.getMemberId());
             button.label = Msgs.GENERAL.get("b.visit_friend");
             button.height = 20;
-            button.setCallback(visit);
             box.addChild(button);
         }
     }
 
-    protected function visit () :void
-    {
-        var world :WorldDirector = _dispatch.getWorldContext().getWorldDirector();
-        world.goToMemberHome(_friend.getMemberId());
-    }
-    
     protected var _friend :MemberName;
     protected var _loggedOn :Boolean;
 }

@@ -52,6 +52,13 @@ public class MemberDispatcher extends InvocationDispatcher
             );
             return;
 
+        case MemberMarshaller.GET_CURRENT_SCENE_ID:
+            ((MemberProvider)provider).getCurrentSceneId(
+                source,
+                ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+            );
+            return;
+
         case MemberMarshaller.GET_DISPLAY_NAME:
             ((MemberProvider)provider).getDisplayName(
                 source,

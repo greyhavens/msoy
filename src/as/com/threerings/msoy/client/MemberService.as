@@ -25,6 +25,9 @@ public interface MemberService extends InvocationService
     function alterFriend (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
+    function getCurrentSceneId (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+
+    // from Java interface MemberService
     function getDisplayName (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService

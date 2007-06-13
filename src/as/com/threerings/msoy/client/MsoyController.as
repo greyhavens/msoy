@@ -101,6 +101,9 @@ public class MsoyController extends Controller
     /** Command to go to a group's home scene. */
     public static const GO_GROUP_HOME :String = "GoGroupHome";
 
+    /** Command to go to a member's current scene. */
+    public static const GO_MEMBER_SCENE :String = "GoMemberScene";
+
     /** Command to go to a running game (gameId + placeOid). */
     public static const GO_GAME :String = "GoGame";
 
@@ -121,9 +124,6 @@ public class MsoyController extends Controller
 
     /** Command to edit preferences. */
     public static const CHAT_PREFS :String = "ChatPrefs";
-
-    /** Command to select a different avatar. */
-    public static const PICK_AVATAR :String = "PickAvatar";
 
     /** Command to view an item, arg is [ itemTypeId, itemId ] */
     public static const VIEW_ITEM :String = "ViewItem";
@@ -373,6 +373,14 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Handle the GO_MEMBER_SCENE command.
+     */
+    public function handleGoMemberScene (memberId :int) :void
+    {
+        _ctx.getWorldDirector().goToMemberScene(memberId);
+    }
+
+    /**
      * Handle the GO_GROUP_HOME command.
      */
     public function handleGoGroupHome (groupId :int, direct :Boolean = false) :void
@@ -466,14 +474,6 @@ public class MsoyController extends Controller
     public function handleChatPrefs () :void
     {
         new ChatPrefsDialog(_ctx);
-    }
-
-    /**
-     * Handles PICK_AVATAR.
-     */
-    public function handlePickAvatar () :void
-    {
-        new AvatarSelectionDialog(_ctx);
     }
 
     /**

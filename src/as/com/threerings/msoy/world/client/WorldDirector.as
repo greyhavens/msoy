@@ -45,6 +45,25 @@ public class WorldDirector extends BasicDirector
     }
 
     /**
+     * Request to move to the specified member's current scene.
+     *
+     * Note: presently the member must be a friend.
+     */
+    public function goToMemberScene (memberId :int) :void
+    {
+        _msvc.getCurrentSceneId(_mctx.getClient(), memberId, new ResultWrapper(
+            function (cause :String) :void {
+                _mctx.displayFeedback(null, cause);
+            }, 
+            function (sceneId :int) :void {
+                if (sceneId != 0) {
+                    _mctx.getSceneDirector().moveTo(sceneId);
+                } else {
+                }
+            }));
+    }
+
+    /**
      * Request a change to our avatar.
      *
      * @param newScale a new scale to use, or 0 to retain the avatar's last scale.

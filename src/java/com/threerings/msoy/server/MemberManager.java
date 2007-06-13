@@ -143,7 +143,7 @@ public class MemberManager
      */
     public void displayNameChanged (MemberName name)
     {
-        MemberObject user = MsoyServer.lookupMember(name.getMemberId());
+        MemberObject user = MsoyServer.lookupMember(name);
         if (user != null) {
             user.setMemberName(name);
             updateOccupantInfo(user);
@@ -260,8 +260,9 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void getHomeId (ClientObject caller, byte ownerType, int ownerId,
-                          final InvocationService.ResultListener listener)
+    public void getHomeId (
+        ClientObject caller, byte ownerType, int ownerId,
+        final InvocationService.ResultListener listener)
         throws InvocationException
     {
         ResultListener<Integer> rl = new ResultListener<Integer>() {
@@ -273,6 +274,31 @@ public class MemberManager
             }
         };
         getHomeId(ownerType, ownerId, rl);
+    }
+
+    // from interface MemberProvider
+    public void getCurrentSceneId (
+        ClientObject caller, int memberId, InvocationService.ResultListener listener)
+        throws InvocationException
+    {
+        MemberObject user = (MemberObject) caller;
+
+        // ensure that the other member is a full friend
+        if (null == user.friends.get(memberId)) {
+            throw new InvocationException("e.not_a_friend");
+        }
+
+        MemberObject other = MsoyServer.lookupMember(memberId);
+        if (other == null) {
+            throw new InvocationException("m.user_not_online");
+        }
+
+        int sceneId = other.getSceneId();
+        if (sceneId == 0) {
+            throw new InvocationException("e.not_in_room");
+        }
+
+        listener.requestProcessed(sceneId);
     }
 
     // from interface MemberProvider

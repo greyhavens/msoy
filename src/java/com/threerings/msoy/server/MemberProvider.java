@@ -28,6 +28,12 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link MemberService#getCurrentSceneId} request.
+     */
+    public void getCurrentSceneId (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+        throws InvocationException;
+
+    /**
      * Handles a {@link MemberService#getDisplayName} request.
      */
     public void getDisplayName (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
