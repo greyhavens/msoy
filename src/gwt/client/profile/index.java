@@ -4,8 +4,10 @@
 package client.profile;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 
@@ -43,7 +45,7 @@ public class index extends MsgsEntryPoint
         }
 
         if (token != null && token.startsWith("search")) {
-            setContent(MsoyUI.createLabel("Profile search coming soon...", "infoLabel"));
+            performSearch(token.substring(7)); // strip off "search_"
         } else if (token != null && token.length() > 0) {
             try {
                 displayMemberPage(Integer.parseInt(token));
@@ -95,5 +97,39 @@ public class index extends MsgsEntryPoint
         });
     }
 
+    protected void performSearch (String args) 
+    {
+        String[] argArray = args.split("_", 3);
+        if (argArray.length < 3) {
+            setContent(new Label(CProfile.msgs.searchParseParamsError()));
+            return;
+        }
+
+        try {
+            String type = argArray[0];
+            final int page = Integer.parseInt(argArray[1]);
+            String search = URL.decodeComponent(argArray[2]);
+
+            if (_searchResults == null || !type.equals(_searchType) || 
+                !search.equals(_searchString)) {
+                CProfile.profilesvc.findProfiles(type, search, new AsyncCallback() {
+                    public void onSuccess (Object result) {
+                        setContent(_searchResults = new SearchResultsPanel((List)result, page));
+                    }
+                    public void onFailure (Throwable cause) {
+                        setContent(new Label(CProfile.serverError(cause)));
+                        CProfile.log("Failed to load search", cause);
+                    }
+                });
+            } else {
+                _searchResults.displayPage(page);
+            }
+        } catch (NumberFormatException nfe) {
+            setContent(new Label(CProfile.msgs.searchParseParamsError()));
+        }
+    }
+
     protected int _memberId = -1;
+    protected String _searchType, _searchString;
+    protected SearchResultsPanel _searchResults;
 }

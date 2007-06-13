@@ -109,17 +109,33 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public ArrayList findProfiles (String search)
+    public ArrayList findProfiles (String type, String search)
         throws ServiceException
     {
         try {
             // locate the members that match the supplied search
             HashIntMap<MemberCard> cards = new HashIntMap<MemberCard>();
-            for (MemberNameRecord mname :
-                     MsoyServer.memberRepo.findMemberNames(search, MAX_PROFILE_MATCHES)) {
-                MemberCard card = new MemberCard();
-                card.name = new MemberName(mname.name, mname.memberId);
-                cards.put(mname.memberId, card);
+            if ("email".equals(type)) {
+                MemberRecord memrec = MsoyServer.memberRepo.loadMember(search);
+                if (memrec != null) {
+                    MemberCard card = new MemberCard();
+                    card.name = new MemberName(memrec.name, memrec.memberId);
+                    cards.put(memrec.memberId, card);
+                }
+            } else {
+                List<MemberNameRecord> names = null;
+                if ("display".equals(type)) {
+                    names = MsoyServer.memberRepo.findMemberNames(search, MAX_PROFILE_MATCHES);
+                } else if ("name".equals(type)) {
+                    names = MsoyServer.profileRepo.findMemberNames(search, MAX_PROFILE_MATCHES);
+                }
+                if (names != null) {
+                    for (MemberNameRecord mname : names) {
+                        MemberCard card = new MemberCard();
+                        card.name = new MemberName(mname.name, mname.memberId);
+                        cards.put(mname.memberId, card);
+                    }
+                }
             }
 
             // load up their profile photo data
@@ -132,7 +148,6 @@ public class ProfileServlet extends MsoyServiceServlet
                 }
             }
 
-            // TODO: sort by match quality?
             ArrayList<Object> results = new ArrayList<Object>();
             results.addAll(cards.values());
             return results;

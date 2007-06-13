@@ -102,12 +102,12 @@ public class NaviPanel extends FlexTable
         setMenu(menuidx++, "People", CShell.cmsgs.menuPeople(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 MenuBar fmenu = new MenuBar(true);
-                /*menu.addItem("Search Profiles", true, new Command() {
+                menu.addItem("Search Profiles", true, new Command() {
                     public void execute () {
                         (new SearchProfileDialog()).show();
                         _popped.hide();
                     }
-                });*/
+                });
                 FriendEntry[] friends = FlashClients.getFriends();
                 if (friends.length > 0) {
                     for (int ii = 0; ii < friends.length; ii++) {

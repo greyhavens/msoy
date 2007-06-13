@@ -38,6 +38,7 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
+import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
@@ -194,16 +195,16 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Returns name information for all members that match the supplied search string. Currently
-     * display name and email address are searched.
+     * Returns name information for all members that match the supplied search string. 
+     * Display names are searched for exact matches.
      */
     public List<MemberNameRecord> findMemberNames (String search, int limit)
         throws PersistenceException
     {
         return findAll(MemberNameRecord.class,
                        new FromOverride(MemberRecord.class),
-                       new Where(new Or(new Like(MemberRecord.NAME_C, "%"+search+"%"),
-                                        new Like(MemberRecord.ACCOUNT_NAME_C, "%"+search+"%"))));
+                       new Where(new Equals(MemberRecord.NAME_C, search)),
+                       new Limit(0, limit));
     }
 
     /**

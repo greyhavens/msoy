@@ -16,6 +16,30 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String search();
 
   /**
+   * Translated "Display Name".
+   * 
+   * @return translated "Display Name"
+   * @gwt.key searchRadioDisplayName
+   */
+  String searchRadioDisplayName();
+
+  /**
+   * Translated "Perform a search in order to find your friends in Whirled.".
+   * 
+   * @return translated "Perform a search in order to find your friends in Whirled."
+   * @gwt.key searchIntro
+   */
+  String searchIntro();
+
+  /**
+   * Translated "There was an error parsing the page parameters.".
+   * 
+   * @return translated "There was an error parsing the page parameters."
+   * @gwt.key searchParseParamsError
+   */
+  String searchParseParamsError();
+
+  /**
    * Translated "Last online: {0}".
    * 
    * @return translated "Last online: {0}"
@@ -32,6 +56,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String groupsTitle();
 
   /**
+   * Translated "Email".
+   * 
+   * @return translated "Email"
+   * @gwt.key searchRadioEmail
+   */
+  String searchRadioEmail();
+
+  /**
    * Translated "Home Page".
    * 
    * @return translated "Home Page"
@@ -40,9 +72,9 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String homepage();
 
   /**
-   * Translated "Sorry parder. You don't have invite privileges for any groups.".
+   * Translated "Sorry pardner. You don't have invite privileges for any groups.".
    * 
-   * @return translated "Sorry parder. You don't have invite privileges for any groups."
+   * @return translated "Sorry pardner. You don't have invite privileges for any groups."
    * @gwt.key haveNoGroups
    */
   String haveNoGroups();
@@ -72,6 +104,22 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String searchTitle();
 
   /**
+   * Translated "Name".
+   * 
+   * @return translated "Name"
+   * @gwt.key searchRadioName
+   */
+  String searchRadioName();
+
+  /**
+   * Translated "Search Type:".
+   * 
+   * @return translated "Search Type:"
+   * @gwt.key searchType
+   */
+  String searchType();
+
+  /**
    * Translated "Search".
    * 
    * @return translated "Search"
@@ -80,9 +128,9 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String searchGo();
 
   /**
-   * Translated "No profiles found matching your search criteria.".
+   * Translated "No profiles were found matching your search criteria.".
    * 
-   * @return translated "No profiles found matching your search criteria."
+   * @return translated "No profiles were found matching your search criteria."
    * @gwt.key gridNoProfiles
    */
   String gridNoProfiles();

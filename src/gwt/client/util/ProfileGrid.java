@@ -3,14 +3,21 @@
 
 package client.util;
 
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.data.Profile;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.web.data.MemberCard;
 
 import com.threerings.gwt.ui.PagedGrid;
 
 import client.profile.CProfile;
+import client.shell.Application;
+import client.util.MediaUtil;
 
 /**
  * A Grid of profiles.  This is useful for profile searching, or displaying collections of profiles
@@ -24,7 +31,7 @@ public class ProfileGrid extends PagedGrid
     }
 
     protected Widget createWidget (Object item) {
-        return new ProfileWidget((Profile)item);
+        return new ProfileWidget((MemberCard)item);
     }
     protected String getEmptyMessage () {
         return CProfile.msgs.gridNoProfiles();
@@ -32,8 +39,23 @@ public class ProfileGrid extends PagedGrid
 
     protected class ProfileWidget extends FlexTable
     {
-        public ProfileWidget (Profile profile) 
+        public ProfileWidget (final MemberCard card) 
         {
+            int row = 0;
+            ClickListener profileClick = new ClickListener() {
+                public void onClick (Widget sender) {
+                    History.newItem(Application.createLinkToken("profile", "" + 
+                        card.name.getMemberId()));
+                }
+            };
+            Widget photo = MediaUtil.createMediaView(card.photo, MediaDesc.HALF_THUMBNAIL_SIZE);
+            if (photo instanceof Image) {
+                ((Image) photo).addClickListener(profileClick);
+            }
+            setWidget(row, 0, photo);
+            Label nameLabel =  new Label(card.name.toString());
+            nameLabel.addClickListener(profileClick);
+            setWidget(row, 1, nameLabel);
         }
     }
 }

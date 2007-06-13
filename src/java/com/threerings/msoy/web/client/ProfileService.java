@@ -34,5 +34,5 @@ public interface ProfileService extends RemoteService
      * Looks for profiles that match the specified search term. We'll aim to be smart about what we
      * search. Returns a (possibly empty) list of {@link MemberCard} records.
      */
-    public ArrayList findProfiles (String search) throws ServiceException;
+    public ArrayList findProfiles (String type, String search) throws ServiceException;
 }
