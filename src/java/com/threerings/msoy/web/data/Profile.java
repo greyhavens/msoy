@@ -16,7 +16,9 @@ public class Profile implements IsSerializable
 {
     /** The default profile photo. */
     public static final MediaDesc DEFAULT_PHOTO =
-        new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "profile_photo");
+        new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "profile_photo",
+                            // we know that we're 120x127
+                            MediaDesc.HALF_VERTICALLY_CONSTRAINED);
 
     /** The minimum length for a display name. */
     public static final int MIN_DISPLAY_NAME_LENGTH = 4;

@@ -41,6 +41,8 @@ public class ProfileGrid extends PagedGrid
     {
         public ProfileWidget (final MemberCard card) 
         {
+            setStyleName("ProfileWidget");
+
             int row = 0;
             ClickListener profileClick = new ClickListener() {
                 public void onClick (Widget sender) {
@@ -52,6 +54,7 @@ public class ProfileGrid extends PagedGrid
             if (photo instanceof Image) {
                 ((Image) photo).addClickListener(profileClick);
             }
+            getFlexCellFormatter().setStyleName(row, 0, "Photo");
             setWidget(row, 0, photo);
             Label nameLabel =  new Label(card.name.toString());
             nameLabel.addClickListener(profileClick);
