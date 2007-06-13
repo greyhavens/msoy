@@ -322,7 +322,7 @@ public class HoodViz extends Sprite
             var text :TextField = new TextField();
             text.defaultTextFormat = format;
             text.embedFonts = true;
-            text.text = neighbor.getName() + ": " + neighbor.population;
+            text.text = toPlaceName(neighbor.getName()) + ": " + neighbor.population;
             text.filters = [ new GlowFilter(0x660000, 1, 3, 3, 255) ];
             text.autoSize = TextFieldAutoSize.CENTER;
             text.wordWrap = true;
@@ -356,6 +356,12 @@ public class HoodViz extends Sprite
         }
     }
 
+    protected function toPlaceName (text :String) :String
+    {
+        // null means my own home, TODO: localize
+        return (text == null) ? "My Home" : text;
+    }
+
     protected function toSoyCount (peeps :int) :int
     {
         if (peeps < 4) {
@@ -363,7 +369,6 @@ public class HoodViz extends Sprite
         }
         return 4 + Math.round(Math.sqrt(peeps - 5));
     }
-
 
     // scales the loaded logo to the dimensions of the logo holder
     protected function logoLoaded(event: Event) :void
@@ -431,7 +436,7 @@ public class HoodViz extends Sprite
 
             tip = new _plaqueHouse();
 
-            obj = getTextField(house.memberName, true);
+            obj = getTextField(toPlaceName(house.memberName), true);
             obj.y = tipHeight; tipHeight += obj.height;
             tipContent.addChild(obj);
 
