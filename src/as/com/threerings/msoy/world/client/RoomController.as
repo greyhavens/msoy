@@ -473,6 +473,10 @@ public class RoomController extends SceneController
         var menuItems :Array = [];
         if (occInfo.bodyOid == us.getOid()) {
             if (_mctx.worldProps.userControlsAvatar) {
+                // add a menu item for changing their avatar
+                menuItems.push({ label: Msgs.GENERAL.get("b.change_avatar"),
+                    command: MsoyController.VIEW_MY_AVATARS });
+
                 // create a menu for clicking on ourselves
                 var actions :Array = avatar.getAvatarActions();
                 if (actions.length > 0) {

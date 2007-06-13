@@ -57,6 +57,7 @@ import com.threerings.msoy.chat.client.ChatControl;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.chat.client.ReportingListener;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.game.client.FloatingTableDisplay;
@@ -133,6 +134,9 @@ public class MsoyController extends Controller
 
     /** Command to view a groups's page, arg is [ groupId ] */
     public static const VIEW_GROUP :String = "ViewGroup";
+
+    /** Command to view the "my avatars" page. */
+    public static const VIEW_MY_AVATARS :String= "ViewMyAvatars";
 
     /** Command to view the app in full-screen mode. */
     public static const TOGGLE_FULLSCREEN :String = "ToggleFullscreen";
@@ -357,6 +361,14 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Handle the VIEW_MY_AVATARS command.
+     */
+    public function handleViewMyAvatars () :void
+    {
+        handleInternalGo("inventory", "" + Item.AVATAR);
+    }
+
+    /**
      * Handle the GO_SCENE command.
      */
     public function handleGoScene (sceneId :int) :void
@@ -513,6 +525,9 @@ public class MsoyController extends Controller
 
         } else if (null != params["groupHome"]) {
             handleGoGroupHome(int(params["groupHome"]), true);
+
+        } else if (null != params["memberScene"]) {
+            handleGoMemberScene(int(params["memberScene"]));
 
         } else if (null != params["location"]) {
             _ctx.getLocationDirector().moveTo(int(params["location"]));
