@@ -5,15 +5,18 @@ package client.util;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.MemberCard;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import client.profile.CProfile;
 import client.shell.Application;
@@ -31,19 +34,19 @@ public class ProfileGrid extends PagedGrid
     }
 
     protected Widget createWidget (Object item) {
-        return new ProfileWidget((MemberCard)item);
+        return new ProfileWidget((MemberCard) item);
     }
     protected String getEmptyMessage () {
         return CProfile.msgs.gridNoProfiles();
     }
 
-    protected class ProfileWidget extends FlexTable
+    protected class ProfileWidget extends HorizontalPanel
     {
         public ProfileWidget (final MemberCard card) 
         {
             setStyleName("ProfileWidget");
+            setSpacing(10);
 
-            int row = 0;
             ClickListener profileClick = new ClickListener() {
                 public void onClick (Widget sender) {
                     History.newItem(Application.createLinkToken("profile", "" + 
@@ -54,11 +57,20 @@ public class ProfileGrid extends PagedGrid
             if (photo instanceof Image) {
                 ((Image) photo).addClickListener(profileClick);
             }
-            getFlexCellFormatter().setStyleName(row, 0, "Photo");
-            setWidget(row, 0, photo);
+            SimplePanel photoPanel = new SimplePanel();
+            photoPanel.add(photo);
+            photoPanel.setStyleName("Photo");
+            add(photoPanel);
+
+            VerticalPanel text = new VerticalPanel();
             Label nameLabel =  new Label(card.name.toString());
+            nameLabel.setStyleName("memberCardName");
             nameLabel.addClickListener(profileClick);
-            setWidget(row, 1, nameLabel);
+            text.add(nameLabel);
+            Label headlineLabel = new Label(card.headline);
+            headlineLabel.setStyleName("memberCardHeadline");
+            text.add(headlineLabel);
+            add(text);
         }
     }
 }

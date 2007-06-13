@@ -46,15 +46,14 @@ public class ProfileRepository extends DepotRepository
     /**
      * Loads the profile photos for all of the specified members.
      */
-    public List<ProfilePhotoRecord> loadProfilePhotos (int[] memberIds)
+    public List<ProfileRecord> loadProfiles (int[] memberIds)
         throws PersistenceException
     {
         // In() requires at least one value
         if (memberIds == null || memberIds.length == 0) {
-            return new ArrayList<ProfilePhotoRecord>();
+            return new ArrayList<ProfileRecord>();
         }
-        return findAll(ProfilePhotoRecord.class,
-                       new FromOverride(ProfileRecord.class),
+        return findAll(ProfileRecord.class,
                        new Where(new In(ProfileRecord.MEMBER_ID_C, IntListUtil.box(memberIds))));
     }
 

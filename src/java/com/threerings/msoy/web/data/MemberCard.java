@@ -21,5 +21,6 @@ public class MemberCard
     /** The member's profile photo (or the default). */
     public MediaDesc photo = Profile.DEFAULT_PHOTO;
 
-    // TODO: anything else
+    /** The member's blurb */
+    public String headline;
 }

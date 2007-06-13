@@ -16,18 +16,18 @@ import client.util.ProfileGrid;
 public class SearchResultsPanel extends VerticalPanel
 {
     /** The number of columns of items to display. */
-    public static final int COLUMNS = 2;
+    public static final int COLUMNS = 3;
 
     /** The number of rows of items to display. */
     public static final int ROWS = 3;
 
-    public SearchResultsPanel (List profiles, int page)
+    public SearchResultsPanel (List cards, int page)
     {
         setStyleName("searchResultsPanel");
         setWidth("100%");
 
         add(_profiles = new ProfileGrid(ROWS, COLUMNS));
-        _profiles.setModel(new SimpleDataModel(profiles), page);
+        _profiles.setModel(new SimpleDataModel(cards), page);
     }
 
     public void displayPage (int page) 

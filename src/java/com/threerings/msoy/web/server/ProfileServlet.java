@@ -20,7 +20,6 @@ import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.person.server.persist.ProfilePhotoRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.web.client.ProfileService;
@@ -58,6 +57,8 @@ public class ProfileServlet extends MsoyServiceServlet
             ProfileRecord nrec = new ProfileRecord(memrec.memberId, profile);
             nrec.modifications = oprof.modifications+1;
             nrec.birthday = oprof.birthday;
+            nrec.firstName = oprof.firstName;
+            nrec.lastName = oprof.lastName;
             MsoyServer.profileRepo.storeProfile(nrec);
 
             // record that the user updated their profile
@@ -138,13 +139,14 @@ public class ProfileServlet extends MsoyServiceServlet
                 }
             }
 
-            // load up their profile photo data
-            for (ProfilePhotoRecord photo :
-                     MsoyServer.profileRepo.loadProfilePhotos(cards.intKeySet().toIntArray())) {
-                MemberCard card = cards.get(photo.memberId);
-                if (photo.photoHash != null) {
-                    card.photo = new MediaDesc(photo.photoHash, photo.photoMimeType,
-                                               photo.photoConstraint);
+            // load up their profile data
+            for (ProfileRecord profile :
+                     MsoyServer.profileRepo.loadProfiles(cards.intKeySet().toIntArray())) {
+                MemberCard card = cards.get(profile.memberId);
+                if (profile.photoHash != null) {
+                    card.photo = new MediaDesc(profile.photoHash, profile.photoMimeType,
+                                               profile.photoConstraint);
+                    card.headline = profile.headline;
                 }
             }
 
