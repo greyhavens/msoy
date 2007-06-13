@@ -108,7 +108,7 @@ public class index extends MsgsEntryPoint
         try {
             String type = argArray[0];
             final int page = Integer.parseInt(argArray[1]);
-            String search = URL.decodeComponent(argArray[2]);
+            String search = argArray[2];
 
             if (_searchResults == null || !type.equals(_searchType) || 
                 !search.equals(_searchString)) {
