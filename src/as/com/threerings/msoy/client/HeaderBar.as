@@ -10,7 +10,6 @@ import mx.containers.VBox;
 import mx.controls.Label;
 
 import com.threerings.flash.TextFieldUtil;
-import com.threerings.flex.CommandButton;
 
 import com.threerings.util.CommandEvent;
 
@@ -97,9 +96,15 @@ public class HeaderBar extends HBox
         embedButtonBox.styleName = "headerEmbedBox";
         embedButtonBox.percentHeight = 100;
         addChild(embedButtonBox);
-        _embedLinkButton = new CommandButton(HeaderBarController.SHOW_EMBED_HTML);
+        _embedLinkButton = new Label();
         _embedLinkButton.styleName = "embedButton";
-        _embedLinkButton.toolTip = Msgs.GENERAL.get("b.embed");
+        _embedLinkButton.text = Msgs.GENERAL.get("l.share");
+        _embedLinkButton.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            _controller.handleShowEmbedHtml();
+        });
+        _embedLinkButton.buttonMode = true;
+        _embedLinkButton.useHandCursor = true;
+        _embedLinkButton.mouseChildren = false;
         embedButtonBox.addChild(_embedLinkButton);
         setEmbedLinkButtonVisible(false);
     }
@@ -112,6 +117,6 @@ public class HeaderBar extends HBox
 
     protected var _loc :Label;
     protected var _owner :HBox;
-    protected var _embedLinkButton :CommandButton;
+    protected var _embedLinkButton :Label;
 }
 }

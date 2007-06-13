@@ -512,14 +512,14 @@ Window {
   textAlign: center;
 }
 
-.ownerNameBox {
+.ownerNameBox, .headerEmbedBox {
   paddingBottom: 2px;
   paddingLeft: 5px;
   verticalAlign: bottom;
   horizontalGap: 0px;
 }
 
-.ownerName {
+.ownerName, .embedButton {
   fontSize: 10px;
   color: #AAB5B9;
 }
@@ -716,12 +716,6 @@ Tree {
   selectedDisabledSkin: Embed(source="../../pages/images/ui/close.png");
   selectedDownSkin: Embed(source="../../pages/images/ui/close_down.png");
   selectedUpSkin: Embed(source="../../pages/images/ui/close.png");
-}
-
-.headerEmbedBox {
-  paddingLeft: 3px;
-  paddingTop: 4px;
-  paddingRight: 3px;
 }
 
 .embedButton {
