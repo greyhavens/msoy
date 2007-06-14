@@ -287,16 +287,6 @@ public class FurniSprite extends MsoySprite
         scaleUpdated();
     }
 
-    override public function getMaxContentWidth () :int
-    {
-        return 2000;
-    }
-
-    override public function getMaxContentHeight () :int
-    {
-        return 1000;
-    }
-
     // documentation inherited
     override public function hasAction () :Boolean
     {
