@@ -121,7 +121,6 @@ public class DecorViewerComp extends Canvas
         _offsetMode = new CheckBox();
         _offsetMode.label = Msgs.EDITING.get("b.move_offset");
         _offsetMode.addEventListener(MouseEvent.CLICK, offsetModeSelectionHandler);
-        _offsetMode.enabled = false; // for now :)
 
         GridUtil.addRow(mouseopts, Msgs.EDITING.get("l.move_selection"),
                         _horizonMode, _offsetMode);
@@ -165,10 +164,13 @@ public class DecorViewerComp extends Canvas
         GridUtil.addRow(advanced, Msgs.EDITING.get("l.scene_dimensions"),
                         _widthBox = new TextInput(), _heightBox = new TextInput(),
                         _depthBox = new TextInput(), Msgs.EDITING.get("l.horizon"),
-                        _horizonXBox = new TextInput(), _horizonYBox = new TextInput());
+                        _horizonXBox = new TextInput(), _horizonYBox = new TextInput(),
+                        Msgs.EDITING.get("l.offset"), _offsetXBox = new TextInput(),
+                        _offsetYBox = new TextInput());
         
-        for each (var input :TextInput in
-                  [ _widthBox, _heightBox, _depthBox, _horizonXBox, _horizonYBox ]) {
+        for each (var input :TextInput in [ _widthBox, _heightBox, _depthBox, _horizonXBox,
+                                            _horizonYBox, _offsetXBox, _offsetYBox ])
+        {
             input.width = 40;
             input.addEventListener(Event.CHANGE, advancedOptionsChanged);
         }
@@ -188,9 +190,9 @@ public class DecorViewerComp extends Canvas
                 } else {
                     pointer.push(null);
                 }
-                }
-            _pointers.push(pointer);
             }
+            _pointers.push(pointer);
+        }
         
         // send an initialization request to GWT
         if (ExternalInterface.available) {
@@ -211,7 +213,6 @@ public class DecorViewerComp extends Canvas
         _preview.addEventListener(MouseEvent.ROLL_OVER, rollOverHandler);
         _preview.addEventListener(MouseEvent.ROLL_OUT, rollOutHandler);
     }
-
       
             
     /**
@@ -240,7 +241,9 @@ public class DecorViewerComp extends Canvas
         _data.height = norm(int(_heightBox.text), 1);
         _data.depth = norm(int(_depthBox.text), 1);
         _data.horizon = norm(Number(_horizonYBox.text), 0);
-
+        _data.offsetX = norm(Number(_offsetXBox.text), 0);
+        _data.offsetY = norm(Number(_offsetYBox.text), 0);
+        
         refreshStandardUI();
         refreshPreview();
         
@@ -299,6 +302,8 @@ public class DecorViewerComp extends Canvas
         _heightBox.text = String(_data.height);
         _depthBox.text = String(_data.depth);
         _horizonYBox.text = String(_data.horizon);
+        _offsetXBox.text = String(_data.offsetX);
+        _offsetYBox.text = String(_data.offsetY);
     }
     
     /**
@@ -322,9 +327,12 @@ public class DecorViewerComp extends Canvas
         _backdropCanvas.scaleX = _backdropCanvas.scaleY = scale;
         _wrapper.scaleX = _wrapper.scaleY = scale;
 
-        // center the bitmap horizontally, and align vertically with the bottom of the room
-        _media.x = (_data.width - _media.width) / 2;
-        _media.y = _data.height - _media.height;
+        // center the bitmap horizontally, and align vertically with the bottom of the room,
+        // taking offsets into account
+        var pixelOffsetX :Number = (_data.offsetX + _data.deltaX) * _media.width;
+        var pixelOffsetY :Number = (_data.offsetY + _data.deltaY) * _media.height;
+        _media.x = (_data.width - _media.width) / 2 + pixelOffsetX;
+        _media.y = _data.height - _media.height - pixelOffsetY; 
 
         // update the text widget
         _scaleLabel.text = Msgs.EDITING.get("l.preview_scale", String(int(scale * 100)))
@@ -418,12 +426,6 @@ public class DecorViewerComp extends Canvas
         updatePointerImage(false);
     }
     
-    protected function mouseUpHandler (event :MouseEvent) :void
-    {
-        _mouseDownAnchor = null;
-        updatePointerImage(true);
-    }
-
     protected function mouseMoveHandler (event :MouseEvent) :void
     {
         updatePointerPosition();
@@ -434,11 +436,15 @@ public class DecorViewerComp extends Canvas
         case MOUSE_MODE_OFFSET:
             if (_mouseDownAnchor != null) {
                 // get the mouse position delta in decor pixels
-                var deltaPx :Point = new Point(
-                    _mouseDownAnchor.x - _wrapper.mouseX, _mouseDownAnchor.y - _wrapper.mouseY);
-                // normalize the delta
-                var delta :Point = new Point(deltaPx.x / _data.width, deltaPx.y / _data.height);
-                // dlog("D: " + delta); // todo
+                var deltaPx :Point = new Point(_wrapper.mouseX - _mouseDownAnchor.x,
+                                               _wrapper.mouseY - _mouseDownAnchor.y);
+                // convert delta to be in room coordinates (normalize + vertical flip)
+                _data.deltaX =   deltaPx.x / _data.width;
+                _data.deltaY = - deltaPx.y / _data.height;   
+                _offsetXBox.text = String(MathUtil.clamp(_data.offsetX + _data.deltaX, -1, 1));
+                _offsetYBox.text = String(MathUtil.clamp(_data.offsetY + _data.deltaY, -1, 1));
+
+                refreshPreview();
             }
             break;
             
@@ -452,6 +458,19 @@ public class DecorViewerComp extends Canvas
             }
             break;
         }
+    }
+
+    protected function mouseUpHandler (event :MouseEvent) :void
+    {
+        _mouseDownAnchor = null;
+        
+        if (_mouseMode == MOUSE_MODE_OFFSET) {
+            // update the decor offset
+            _data.deltaX = _data.deltaY = 0;
+            advancedOptionsChanged(null);
+        }
+        
+        updatePointerImage(true);
     }
 
     protected function horizonModeSelectionHandler (event :MouseEvent) :void
@@ -493,14 +512,17 @@ public class DecorViewerComp extends Canvas
     protected var _scaleLabel :Label;
     protected var _depthSlider :HSlider;
     protected var _types :ComboBox;
+    protected var _offsetMode :CheckBox;
+    protected var _horizonMode :CheckBox;
+
     protected var _widthBox :TextInput;
     protected var _heightBox :TextInput;
     protected var _depthBox :TextInput;
     protected var _horizonYBox :TextInput;
     protected var _horizonXBox :TextInput;
+    protected var _offsetXBox :TextInput;
+    protected var _offsetYBox :TextInput;
     protected var _hideWallsBox :CheckBox;
-    protected var _offsetMode :CheckBox;
-    protected var _horizonMode :CheckBox;
     
     protected var _preview :Canvas;
     protected var _mediaPath :String;
@@ -560,13 +582,18 @@ internal class DecorMediaContainer extends MediaContainer
  */
 internal class DecorStorage
 {
-    public var width :int;
-    public var height :int;
-    public var depth :int;
-    public var horizon :Number;
-    public var type :int;
-    public var offsetX :Number;
-    public var offsetY :Number;
-    public var hideWalls :Boolean;
+    // these correspond to decor item parameters
+    public var width :int = 1;
+    public var height :int = 1;
+    public var depth :int = 1;
+    public var horizon :Number = 0;
+    public var type :int = 1;
+    public var offsetX :Number = 0;
+    public var offsetY :Number = 0;
+    public var hideWalls :Boolean = false;
+
+    // temporary display-only values, used while dragging the background
+    public var deltaX :Number = 0;
+    public var deltaY :Number = 0;
 }
 
