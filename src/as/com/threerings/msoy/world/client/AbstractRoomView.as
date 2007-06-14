@@ -36,6 +36,8 @@ import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.world.client.layout.RoomLayout;
+import com.threerings.msoy.world.client.layout.RoomLayoutFactory;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -48,7 +50,7 @@ public class AbstractRoomView extends Sprite
     public function AbstractRoomView (ctx :WorldContext)
     {
         _ctx = ctx;
-        _layout = new RoomLayoutStandard(this); // todo: layout switching
+        _layout = RoomLayoutFactory.createLayout(null, this);
     }
 
     /**
@@ -257,12 +259,24 @@ public class AbstractRoomView extends Sprite
     public function setScene (scene :MsoyScene) :void
     {
         _scene = scene;
-        _layout.update(scene.getDecor());
+        updateLayout(scene.getDecor());
         _backdrop.update(scene.getDecor());
         updateEditingOverlay();
         relayout();
     }
 
+    /**
+     * Updates the layout object, creating a new one if necessary.
+     */
+    protected function updateLayout (decor :Decor) :void
+    {
+        if (! (RoomLayoutFactory.isDecorSupported(_layout, decor))) {
+            _layout = RoomLayoutFactory.createLayout(decor, this);
+        }
+        
+        _layout.update(decor);
+    }
+    
     /**
      * Updates the background sprite, in case background data had changed.
      */

@@ -1,13 +1,16 @@
 //
 // $Id$
 
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.world.client.layout {
 
 import flash.display.DisplayObject;
 
 import flash.geom.Point;
 
 import com.threerings.flash.Vector3;
+import com.threerings.msoy.world.client.AbstractRoomView;
+import com.threerings.msoy.world.client.ClickLocation;
+import com.threerings.msoy.world.client.RoomElement;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 
@@ -49,10 +52,9 @@ public class RoomLayoutFlatworld extends RoomLayoutStandard {
         // this version drops everything onto the front plane, completely ignoring constraints.
         // there's no depth at all.
         var p :Point = _parentView.globalToLocal(new Point(stageX, stageY));
-        var v :Vector3 = _metrics.screenToWallProjection(p.x, p.y, ClickLocation.FRONT_WALL);
-
         var cloc :ClickLocation =
-            new ClickLocation(ClickLocation.FRONT_WALL, _metrics.toMsoyLocation(v));
+            _metrics.screenToWallProjection(p.x, p.y, ClickLocation.FRONT_WALL);
+
         clampClickLocation(cloc);
         return cloc;
     }

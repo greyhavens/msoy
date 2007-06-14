@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.world.client.layout {
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -15,6 +15,10 @@ import flash.geom.Rectangle;
 
 import com.threerings.flash.Vector3;
 import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.world.client.AbstractRoomView;
+import com.threerings.msoy.world.client.ClickLocation;
+import com.threerings.msoy.world.client.RoomElement;
+import com.threerings.msoy.world.client.RoomMetrics;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomCodes;

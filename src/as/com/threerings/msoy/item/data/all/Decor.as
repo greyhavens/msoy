@@ -11,22 +11,24 @@ import com.threerings.io.ObjectOutputStream;
  */
 public class Decor extends Item
 {
-    /** A type constant indicating a normal room where defaultly
-     * draw some walls. */
-    public static const DRAWN_ROOM :int = 0;
+    /** Type constant for a room with no background, just bare walls. This constant is deprecated,
+     *  please do not use. Legacy decor of this type will be drawn using default type. */
+    public static const DRAWN_ROOM_DEPRECATED :int = 0;
 
-    /** A type constant indicating a room where the background image should
-     * be drawn covering everything, but layered behind everything else such
-     * that the background image IS the scene to the viewer. */
+    /** Type constant for a standard room. The room will use standard layout, and its background
+     *  image will be drawn behind all furniture. */
     public static const IMAGE_OVERLAY :int = 1;
 
-    /** A type constant indicating a image that does not scroll. */
+    /** Type constant for a room whose background is fixed to the viewport, instead of scene. */
     public static const FIXED_IMAGE :int = 2;
 
+    /** Type constant for a room with non-standard, flat layout. */
+    public static const FLAT_LAYOUT :int = 3;
+    
     /** The number of type constants. */
-    public static const TYPE_COUNT :int = 3;
+    public static const TYPE_COUNT :int = 4;
 
-    /** Room type. Controls how the background wallpaper image is handled. */
+    /** Room type. Specifies how the background wallpaper and layout are handled. */
     public var type :int;
 
     /** Room height, in pixels. */
