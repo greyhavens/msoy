@@ -24,7 +24,6 @@ import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.editor.SingleItemSelector;
 import com.threerings.msoy.world.data.AudioData;
-import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
@@ -121,7 +120,7 @@ public class SettingsPanel extends FloatingPanel
     protected function updateInitialDecorSelection (event :Event) :void
     {
         pickItemInSelector (
-            Item.DECOR, _sceneModel.decorData != null ? _sceneModel.decorData.itemId : 0,
+            Item.DECOR, _sceneModel.decor != null ? _sceneModel.decor.itemId : 0,
             updateInitialDecorSelection, _decorSelector);
     }
 
@@ -165,32 +164,13 @@ public class SettingsPanel extends FloatingPanel
     
     protected function newBackgroundImageSelected () :void
     {
-        var bgItem :Item = _decorSelector.getSelectedItem();
+        var decor :Decor = (_decorSelector.getSelectedItem()) as Decor;
 
-        var decor :Decor = bgItem as Decor;
-        var dd :DecorData = _sceneModel.decorData;
-
-        if (decor != null) {
-            // populate furni attributes
-            dd.itemId = decor.itemId;
-            dd.media = decor.furniMedia;
-            
-            // populate decor attributes
-            dd.type = decor.type;
-            dd.height = decor.height;
-            dd.width = decor.width;
-            dd.depth = decor.depth;
-            dd.horizon = decor.horizon;
-
-        } else {
-            // user cleared the decor - replace the media with a default bitmap,
-            // but leave room dimensions intact.
-            dd.itemId = 0;
-            dd.type = Decor.IMAGE_OVERLAY;
-            dd.media = DecorData.defaultMedia;
+        if (decor == null) {
+            decor = MsoySceneModel.defaultMsoySceneModelDecor();
         }
 
-        _ctrl.setBackground(dd);
+        _ctrl.setBackground(decor);
     }
 
     protected function newBackgroundAudioSelected () :void

@@ -8,7 +8,6 @@ import flash.display.Graphics;
 import flash.geom.Point;
 
 import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.world.data.DecorData;
 
 /**
  * Helper class that draws a room backdrop with four walls, floor, and ceiling.
@@ -17,13 +16,6 @@ public class RoomBackdrop
 {
     /** Refresh room metrics from a Decor object. */
     public function setRoomFromDecor (decor :Decor) :void
-    {
-        setRoom(decor.width, decor.height, decor.depth, decor.horizon, decor.type);
-    }
-
-    /** Refresh room metrics from a DecorData object. */
-    // FIXME ROBERT: this function is just scaffolding while I separate out decor data usage.
-    public function setRoomFromDecorData (decor :DecorData) :void
     {
         setRoom(decor.width, decor.height, decor.depth, decor.horizon, decor.type);
     }

@@ -73,7 +73,6 @@ import com.threerings.msoy.chat.client.ComicOverlay;
 
 import com.threerings.msoy.world.client.editor.DoorTargetEditController;
 import com.threerings.msoy.world.data.AudioData;
-import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.FurniData;
@@ -517,7 +516,7 @@ public class RoomView extends AbstractRoomView
         portalTraversed(getMyCurrentLocation(), true);
 
         // load the background image first
-        setBackground(_scene.getDecorData());
+        setBackground(_scene.getDecor());
         // load the decor data we have, even if it's just default values.
         _bg.setLoadedCallback(backgroundFinishedLoading);
 

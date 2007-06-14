@@ -14,7 +14,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import com.threerings.flash.Vector3;
-import com.threerings.msoy.world.data.DecorData;
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomCodes;
@@ -37,7 +37,7 @@ public class RoomLayoutStandard implements RoomLayout
     }
 
     // from interface RoomLayout
-    public function update (data :DecorData) :void
+    public function update (data :Decor) :void
     {
         _metrics.update(data.width, data.height, data.depth, data.horizon);
     }

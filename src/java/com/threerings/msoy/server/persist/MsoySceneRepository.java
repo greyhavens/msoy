@@ -39,9 +39,9 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
 import com.threerings.msoy.item.server.persist.DecorRecord;
+import com.threerings.msoy.item.server.persist.DecorRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.world.data.AudioData;
-import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -107,12 +107,6 @@ public class MsoySceneRepository extends SimpleRepository
         }
         // END: temp
         
-        // TEMP: can be removed after all servers past 2006-12-06
-        if (JDBCUtil.tableContainsColumn(conn, "SCENES", "TYPE")) {
-            JDBCUtil.changeColumn(conn, "SCENES", "TYPE", "SCENE_TYPE tinyint not null");
-        }
-        // END: temp
-
         // TEMP: can be removed after all servers past 2006-12-07
         if (true) {
             Statement stmt = conn.createStatement();
@@ -152,46 +146,14 @@ public class MsoySceneRepository extends SimpleRepository
                 }
             });
         // END: temp
-
-        
-        // TEMP: decor additions. removable after all servers are past April 1 2007
-        if (!JDBCUtil.tableContainsColumn(conn, "SCENES", "DECOR_ID")) {
-            // add decor data columns
-            JDBCUtil.addColumn(conn, "SCENES", "DECOR_ID", "int not null", "SCENE_TYPE");
-            JDBCUtil.addColumn(conn, "SCENES", "DECOR_MEDIA_TYPE", "tinyint not null", "DECOR_ID");
-            JDBCUtil.addColumn(conn, "SCENES", "DECOR_MEDIA_HASH", "tinyblob not null", "DECOR_ID");
-        }
-        // second round of decor additions
-        if (!JDBCUtil.tableContainsColumn(conn, "SCENES", "HEIGHT")) {
-
-            // add the height column
-            JDBCUtil.addColumn(conn, "SCENES", "HEIGHT", "integer not null", "WIDTH");
-
-            // insert default height values
-            Statement stmt = conn.createStatement();
-            try { 
-                stmt.executeUpdate("update SCENES set HEIGHT=494");
-            } finally {
-                JDBCUtil.close(stmt);
-            }
-            
-            Statement deletestmt = conn.createStatement();
-            try { // separately, try to delete any new stale updates
-                deletestmt.executeUpdate("delete from SCENE_UPDATES");
-            } finally {
-                JDBCUtil.close(deletestmt);
-            }
-        }
-        // END: temp
-
         
         // TEMP: background audio additions. removable after all servers are past April 30 2007
         if (!JDBCUtil.tableContainsColumn(conn, "SCENES", "AUDIO_ID")) {
             // add background audio columns
-            JDBCUtil.addColumn(conn, "SCENES", "AUDIO_VOLUME", "float not null", "HORIZON");
-            JDBCUtil.addColumn(conn, "SCENES", "AUDIO_MEDIA_TYPE", "tinyint not null", "HORIZON");
-            JDBCUtil.addColumn(conn, "SCENES", "AUDIO_MEDIA_HASH", "tinyblob not null", "HORIZON");
-            JDBCUtil.addColumn(conn, "SCENES", "AUDIO_ID", "int not null", "HORIZON");
+            JDBCUtil.addColumn(conn, "SCENES", "AUDIO_VOLUME", "float not null", null);
+            JDBCUtil.addColumn(conn, "SCENES", "AUDIO_MEDIA_TYPE", "tinyint not null", null);
+            JDBCUtil.addColumn(conn, "SCENES", "AUDIO_MEDIA_HASH", "tinyblob not null", null);
+            JDBCUtil.addColumn(conn, "SCENES", "AUDIO_ID", "int not null", null);
             // insert default volume values
             Statement stmt = conn.createStatement();
             try { 
@@ -208,156 +170,39 @@ public class MsoySceneRepository extends SimpleRepository
             }
         }
         // END TEMP
+
+        // TEMP: removing redundant decor data from scenes;
+        // all of this info now comes from DecorRecords.
+        // removable after all servers are past July 1, 2007
+        if (JDBCUtil.tableContainsColumn(conn, "SCENES", "SCENE_TYPE")) {
+            // dropping old DecorData columns
+            JDBCUtil.dropColumn(conn, "SCENES", "SCENE_TYPE");
+            JDBCUtil.dropColumn(conn, "SCENES", "DECOR_MEDIA_HASH");
+            JDBCUtil.dropColumn(conn, "SCENES", "DECOR_MEDIA_TYPE");
+            JDBCUtil.dropColumn(conn, "SCENES", "DEPTH");
+            JDBCUtil.dropColumn(conn, "SCENES", "WIDTH");
+            JDBCUtil.dropColumn(conn, "SCENES", "HEIGHT");
+            JDBCUtil.dropColumn(conn, "SCENES", "HORIZON");
+
+            // finally, delete any stale updates
+            Statement deletestmt = conn.createStatement();
+            try {
+                deletestmt.executeUpdate("delete from SCENE_UPDATES");
+            } finally {
+                JDBCUtil.close(deletestmt);
+            }
+        }
+            
     }
 
     /**
      * Provides any additional initialization that needs to happen after runtime
      * configuration had been loaded, and other services initialized.
      */
-    public void finishInit ()
+    public void finishInit (DecorRepository decorRepo)
     {
-        // TEMP: decor migration. removable after all servers are past April 15 2007 (?)
-        // FIXME ROBERT
-        Statement getData = null, getMax = null;
-        
-        try {
-                Connection conn = _provider.getConnection(_dbident, false);
-
-                getData = conn.createStatement();
-                getMax = conn.createStatement();
-            
-                // find the next acceptable primary key for decor records
-                ResultSet decorMax = getMax.executeQuery("select max(itemId) from DecorRecord");
-                int newDecorId = decorMax.first() ? decorMax.getInt(1) : 0;
-
-                // pull out all scenes that use a background furni, and no decor
-                ResultSet results = getData.executeQuery(
-                    "select * from SCENES left join FURNI on SCENES.SCENE_ID = FURNI.SCENE_ID " +
-                    "where FURNI.ACTION_TYPE = -1 AND DECOR_ID = 0");
-
-                int count = results.last() ? results.getRow() : 0;
-                if (count > 0) {
-                    log.info("*** DECOR MIGRATION");
-                    log.info("Found: " + count + " scene(s) with background furnis");
-                    
-                    results.first();
-                    do {
-
-                        // pull out all relevant scene info...
-                        int sceneId = results.getInt("SCENES.SCENE_ID");
-                        short furniId = results.getShort("FURNI_ID");
-                        int itemId = results.getInt("ITEM_ID");
-                        byte itemType = results.getByte("ITEM_TYPE");
-                        int ownerId = results.getInt("OWNER_ID");
-                        String sceneName = results.getString("NAME");
-                        int width = results.getInt("WIDTH");
-                        int height = results.getInt("HEIGHT");
-                        int depth = results.getInt("DEPTH");
-                        float horizon = results.getFloat("HORIZON");
-                        
-                        // ...and furni info
-                        byte mediaType = results.getByte("MEDIA_TYPE");
-                        byte[] mediaHash = results.getBytes("MEDIA_HASH");
-                        MediaDesc media = createMediaDesc(mediaHash, mediaType);
-                        log.info("Scene: " + sceneId + " - " + sceneName + ", " +
-                                 width + "x" + height + "x" + depth + ":" + horizon);
-                        log.info("       background media: " + media);
-                        
-                        // create a new decor item (without going through the item repository;
-                        // we don't have access to that here)
-                        PreparedStatement ins = conn.prepareStatement(
-                            "insert into DecorRecord (itemId, height, width, depth, " +
-                            " horizon, creatorId, ownerId, used, " +
-                            " location, name, thumbMediaHash, thumbMimeType, " +
-                            " thumbConstraint, furniMediaHash, furniMimeType, furniConstraint, " +
-                            " type) " +
-                            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                        ins.setInt(1, ++newDecorId);
-                        ins.setShort(2, (short) height);
-                        ins.setShort(3, (short) width);
-                        ins.setShort(4, (short) depth);
-                        ins.setFloat(5, horizon);
-                        ins.setInt(6, ownerId);
-                        ins.setInt(7, ownerId);
-                        ins.setByte(8, Item.USED_AS_BACKGROUND);
-                        ins.setInt(9, sceneId);
-                        ins.setString(10, (sceneName != "" ? sceneName : "new") + " decor");
-                        ins.setBytes(11, mediaHash);
-                        ins.setByte(12, mediaType);
-                        ins.setByte(13, MediaDesc.HORIZONTALLY_CONSTRAINED); 
-                        ins.setBytes(14, mediaHash);
-                        ins.setByte(15, mediaType);
-                        ins.setByte(16, MediaDesc.HORIZONTALLY_CONSTRAINED);
-                        ins.setByte(17, Decor.IMAGE_OVERLAY);
-
-                        // update the scene to use this decor
-                        PreparedStatement scene = conn.prepareStatement(
-                            "update SCENES set DECOR_ID=?, DECOR_MEDIA_HASH=?, " +
-                            "DECOR_MEDIA_TYPE=? where SCENE_ID=" + sceneId);
-                        scene.setInt(1, newDecorId);
-                        scene.setBytes(2, mediaHash);
-                        scene.setByte(3, mediaType);
-
-                        // remove the background furni from the scene
-                        PreparedStatement deleteFurni = conn.prepareStatement(
-                            "delete from FURNI where SCENE_ID = ? and FURNI_ID = ?");
-                        deleteFurni.setInt(1, sceneId);
-                        deleteFurni.setShort(2, furniId);
-
-                        // and finally, if this furni was an Item, mark it as no longer used.
-                        PreparedStatement unused = null;
-                        if (itemId != 0 && itemType > 0 && itemType < Item.VIDEO) {
-                            final String[] tables =
-                                new String[] { null, "Photo", "Document", "Furniture",
-                                               "Game", "Avatar", "Pet", "Audio" };
-                            String table = tables[itemType];
-                            if (table != null) {
-                                table += "Record";  // fix up the table name
-                                unused = conn.prepareStatement(
-                                    "update " + table +
-                                    " set USED = ?, LOCATION = ? where itemId = ?");
-                                unused.setByte(1, (byte) 0);
-                                unused.setInt(2, 0);
-                                unused.setInt(3, itemId);
-                            }                                
-                        }
-                        
-                        // now run those queries!
-                        try {
-                            JDBCUtil.checkedUpdate(ins, 1);
-                            JDBCUtil.checkedUpdate(scene, 1);
-                            JDBCUtil.checkedUpdate(deleteFurni, 1);
-                            int unusedcount = (unused != null ? unused.executeUpdate() : 0);
-                            log.info("moved to decor #" + newDecorId);
-                            log.info("marked " + unusedcount + " item(s) as unused.");
-                        } finally {
-                            JDBCUtil.close(ins);
-                            JDBCUtil.close(scene);
-                            JDBCUtil.close(deleteFurni);
-                            if (unused != null) {
-                                JDBCUtil.close(unused);
-                            }
-                        }
-                    } while (results.next());
-                    
-                    log.info("Decor migration done.\n");
-                }
-                
-                JDBCUtil.close(getMax);
-                JDBCUtil.close(getData);
-                
-                // just for good measure, delete any new stale scene updates
-                Statement deletestmt = conn.createStatement();
-                try { 
-                    deletestmt.executeUpdate("delete from SCENE_UPDATES");
-                } finally {
-                    JDBCUtil.close(deletestmt);
-                }
-        } catch (Exception ex) {
-            log.warning("Failed finishInit(): " + ex.toString());
-        }
-        
-        // END TEMP
+        // keep a pointer to the decor repository
+        _decorRepo = decorRepo;
     }
         
     /**
@@ -528,9 +373,7 @@ public class MsoySceneRepository extends SimpleRepository
                     ResultSet rs = stmt.executeQuery(
                         "select OWNER_TYPE, OWNER_ID, VERSION, NAME, " +
                         "AUDIO_ID, AUDIO_MEDIA_HASH, AUDIO_MEDIA_TYPE, AUDIO_VOLUME, " +
-                        "ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z, SCENE_TYPE, " +
-                        "DEPTH, WIDTH, HEIGHT, HORIZON,  " +
-                        "DECOR_ID, DECOR_MEDIA_HASH, DECOR_MEDIA_TYPE " +
+                        "ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z, DECOR_ID " +
                         "from SCENES where SCENE_ID=" + sceneId);
                     if (rs.next()) {
                         model.ownerType = rs.getByte(1);
@@ -549,16 +392,12 @@ public class MsoySceneRepository extends SimpleRepository
                             rs.getFloat(9), rs.getFloat(10), rs.getFloat(11),
                             180);
 
-                        DecorData d = model.decorData;
-                        d.type = rs.getByte(12);
-                        d.depth = rs.getShort(13);
-                        d.width = rs.getShort(14);
-                        d.height = rs.getShort(15); 
-                        d.horizon = rs.getFloat(16);
-                        d.itemId = rs.getInt(17);
-                        if (d.itemId != 0) { // only clobber media if the decor item exists
-                            d.media = createMediaDesc(rs.getBytes(18), rs.getByte(19));
-                        }
+                        // create an empty Decor item with just the id. just saving this id
+                        // by itself doesn't do anything - we'll have to update Decor item
+                        // from the database once we're done with this invocation.
+                        model.decor = new Decor();
+                        model.decor.itemId = rs.getInt(12);
+
                     } else {
                         return Boolean.FALSE; // no scene found
                     }
@@ -600,6 +439,21 @@ public class MsoySceneRepository extends SimpleRepository
             throw new NoSuchSceneException(sceneId);
         }
 
+        int decorId = model.decor.itemId;
+        
+        // now that we've got the model, try to load the decor
+        if (decorId != 0) {
+            DecorRecord record = _decorRepo.loadItem(decorId);
+            if (record != null) {
+                model.decor = (Decor) record.toItem();
+            }
+        } 
+
+        if (decorId == 0) {
+            // the scene specified no decor, or an invalid decor. just load up the default.
+            model.decor = MsoySceneModel.defaultMsoySceneModelDecor();
+        }
+
         return model;
     }
 
@@ -639,29 +493,21 @@ public class MsoySceneRepository extends SimpleRepository
                 throws SQLException, PersistenceException
             {
                 PreparedStatement stmt = conn.prepareStatement(
-                    "update SCENES set NAME=?, SCENE_TYPE=?, DECOR_ID=?, DECOR_MEDIA_HASH=?, " +
-                    "DECOR_MEDIA_TYPE=?, DEPTH=?, WIDTH=?, HEIGHT=?," +
-                    "HORIZON=?, AUDIO_ID=?, AUDIO_MEDIA_HASH=?, AUDIO_MEDIA_TYPE=?, " +
-                    "AUDIO_VOLUME=?, ENTRANCE_X=?, ENTRANCE_Y=?, ENTRANCE_Z=? " +
+                    "update SCENES set NAME=?, DECOR_ID=?, AUDIO_ID=?, AUDIO_MEDIA_HASH=?, " +
+                    "AUDIO_MEDIA_TYPE=?, AUDIO_VOLUME=?, ENTRANCE_X=?, ENTRANCE_Y=?, " +
+                    "ENTRANCE_Z=? " +
                     "where SCENE_ID=" + mmodel.sceneId);
                 try {
                     stmt.setString(1, update.name);
-                    stmt.setByte(2, update.decorData.type);
-                    stmt.setInt(3, update.decorData.itemId);
-                    stmt.setBytes(4, flattenMediaDesc(update.decorData.media));
-                    stmt.setByte(5, update.decorData.media.mimeType);
-                    stmt.setInt(6, update.decorData.depth);
-                    stmt.setInt(7, update.decorData.width);
-                    stmt.setInt(8, update.decorData.height);
-                    stmt.setFloat(9, update.decorData.horizon);
-                    stmt.setInt(10, update.audioData.itemId);
-                    stmt.setBytes(11, flattenMediaDesc(update.audioData.media));
-                    stmt.setByte(12, update.audioData.media.mimeType);
-                    stmt.setFloat(13, update.audioData.volume);
-                    stmt.setFloat(14, update.entrance.x);
-                    stmt.setFloat(15, update.entrance.y);
-                    stmt.setFloat(16, update.entrance.z);
-
+                    stmt.setInt(2, update.decor.itemId);
+                    stmt.setInt(3, update.audioData.itemId);
+                    stmt.setBytes(4, flattenMediaDesc(update.audioData.media));
+                    stmt.setByte(5, update.audioData.media.mimeType);
+                    stmt.setFloat(6, update.audioData.volume);
+                    stmt.setFloat(7, update.entrance.x);
+                    stmt.setFloat(8, update.entrance.y);
+                    stmt.setFloat(9, update.entrance.z);
+                    
                     JDBCUtil.checkedUpdate(stmt, 1);
                 } finally {
                     JDBCUtil.close(stmt);
@@ -740,31 +586,22 @@ public class MsoySceneRepository extends SimpleRepository
         PreparedStatement stmt = conn.prepareStatement(
             "insert into SCENES " +
             "(OWNER_TYPE, OWNER_ID, VERSION, NAME, " +
-            "SCENE_TYPE, DECOR_ID, DECOR_MEDIA_HASH, DECOR_MEDIA_TYPE, " +
-            "DEPTH, WIDTH, HEIGHT, HORIZON, " +
-            "AUDIO_ID, AUDIO_MEDIA_HASH, AUDIO_MEDIA_TYPE, AUDIO_VOLUME, " +
-            "ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z) " +
-            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            "DECOR_ID, AUDIO_ID, AUDIO_MEDIA_HASH, AUDIO_MEDIA_TYPE, " +
+            "AUDIO_VOLUME, ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z) " +
+            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         try {
             stmt.setByte(1, model.ownerType);
             stmt.setInt(2, model.ownerId);
             stmt.setInt(3, model.version);
             stmt.setString(4, model.name);
-            stmt.setByte(5, model.decorData.type);
-            stmt.setInt(6, model.decorData.itemId);
-            stmt.setBytes(7, flattenMediaDesc(model.decorData.media));
-            stmt.setByte(8, model.decorData.media.mimeType);
-            stmt.setShort(9, model.decorData.depth);
-            stmt.setShort(10, model.decorData.width);
-            stmt.setShort(11, model.decorData.height);
-            stmt.setFloat(12, model.decorData.horizon);
-            stmt.setInt(13, model.audioData.itemId);
-            stmt.setBytes(14, flattenMediaDesc(model.audioData.media));
-            stmt.setByte(15, model.audioData.media.mimeType);
-            stmt.setFloat(16, model.audioData.volume);
-            stmt.setFloat(17, model.entrance.x);
-            stmt.setFloat(18, model.entrance.y);
-            stmt.setFloat(19, model.entrance.z);
+            stmt.setInt(5, model.decor.itemId);
+            stmt.setInt(6, model.audioData.itemId);
+            stmt.setBytes(7, flattenMediaDesc(model.audioData.media));
+            stmt.setByte(8, model.audioData.media.mimeType);
+            stmt.setFloat(9, model.audioData.volume);
+            stmt.setFloat(10, model.entrance.x);
+            stmt.setFloat(11, model.entrance.y);
+            stmt.setFloat(12, model.entrance.z);
             JDBCUtil.checkedUpdate(stmt, 1);
             return liaison.lastInsertedId(conn);
         } finally {
@@ -936,14 +773,7 @@ public class MsoySceneRepository extends SimpleRepository
             "OWNER_ID integer not null",
             "VERSION integer not null",
             "NAME varchar(255) not null",
-            "SCENE_TYPE tinyint not null",
             "DECOR_ID int not null",
-            "DECOR_MEDIA_HASH tinyblob not null",
-            "DECOR_MEDIA_TYPE tinyint not null",
-            "DEPTH integer not null",
-            "WIDTH integer not null",
-            "HEIGHT integer not null",
-            "HORIZON float not null",
             "AUDIO_ID int not null",
             "AUDIO_MEDIA_HASH tinyblob not null",
             "AUDIO_MEDIA_TYPE tinyint not null",
@@ -985,8 +815,11 @@ public class MsoySceneRepository extends SimpleRepository
      */
     protected MsoySceneModel createSampleScene (int sceneId)
     {
-        // TODO: this probably doesn't work well without decor. all this needs
-        // cleaning up once we've migrated background furniture over.
+        // TODO: now that decor comes from a separate table, we need to rethink how we're seeding
+        // a new server's room set. the decor table should probably be filled in separately.
+        // let's comment out the old settings for reference, and just leave each room with the
+        // default empty decor.
+
         MsoySceneModel model = MsoySceneModel.blankMsoySceneModel();
         model.sceneId = sceneId;
         model.version = 1;
@@ -998,14 +831,14 @@ public class MsoySceneRepository extends SimpleRepository
         FurniData p2;
         FurniData furn;
 
-        DecorData decorData = model.decorData;
-        decorData.type = Decor.IMAGE_OVERLAY;
+        //DecorData decorData = model.decorData;
+        //decorData.type = Decor.IMAGE_OVERLAY;
 
         if (sceneId == 1) {
             // crayon room
-            decorData.width = 1600;
-            decorData.media = new MediaDesc( // crayon room
-                "b3084c929b49cce36a6708fb8f47a45c59e1d400.png");
+            //decorData.width = 1600;
+            //decorData.media = new MediaDesc( // crayon room
+            //    "b3084c929b49cce36a6708fb8f47a45c59e1d400.png");
 
             portal.loc = new MsoyLocation(0, 0, .3, 0);
             portal.actionData = "2:51";
@@ -1092,8 +925,8 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 2) {
             // alley
-            decorData.media = new MediaDesc( // alley
-                "13fd51be845d51b1571424cf459ce4fd78472ec2.png");
+            //decorData.media = new MediaDesc( // alley
+            //    "13fd51be845d51b1571424cf459ce4fd78472ec2.png");
 
             portal.loc = new MsoyLocation(0, .1, .53, 180);
             portal.actionData = "1:-1";
@@ -1109,9 +942,9 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 3) {
             // cliff
-            decorData.width = 800;
-            decorData.media = new MediaDesc( // cliff background
-                "974259e79d58c34beffe67fb781832183309fe57.swf");
+            //decorData.width = 800;
+            //decorData.media = new MediaDesc( // cliff background
+            //    "974259e79d58c34beffe67fb781832183309fe57.swf");
 
             portal.loc = new MsoyLocation(.5, 0, .5, 0);
             portal.actionData = "6:52";
@@ -1134,9 +967,9 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 4) {
             // fans
-            decorData.width = 800;
-            decorData.media = new MediaDesc( // fancy room
-                "95101b275b607c5c02a8a411a09082ef2e9b98a7.png");
+            //decorData.width = 800;
+            //decorData.media = new MediaDesc( // fancy room
+            //    "95101b275b607c5c02a8a411a09082ef2e9b98a7.png");
 
             portal.loc = new MsoyLocation(0, 0, .8, 0);
             portal.actionData = "1:53";
@@ -1192,9 +1025,9 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 5) {
             // faucet
-            decorData.width = 1600;
-            decorData.media = new MediaDesc( // faucet forest
-                "05164b5141659e18687bea9e7dbd781833cbf28c.png");
+            //decorData.width = 1600;
+            //decorData.media = new MediaDesc( // faucet forest
+            //    "05164b5141659e18687bea9e7dbd781833cbf28c.png");
 
             portal.loc = new MsoyLocation(.3125, .71, 0, 0);
             portal.actionData = "1:54";
@@ -1203,9 +1036,9 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 6) {
             // comic
-            decorData.width = 1600;
-            decorData.media = new MediaDesc( // comic room
-                "3b9a430a4d2fe6473b2ab71251162a2494843772.png");
+            //decorData.width = 1600;
+            //decorData.media = new MediaDesc( // comic room
+            //    "3b9a430a4d2fe6473b2ab71251162a2494843772.png");
 
             portal.loc = new MsoyLocation(0, 0, .5, 0);
             portal.actionData = "1:52";
@@ -1230,7 +1063,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 7) {
             // game room background
-            decorData.width = 800;
+            //decorData.width = 800;
 
             furn = new FurniData();
             furn.id = 1;
@@ -1268,4 +1101,7 @@ public class MsoySceneRepository extends SimpleRepository
 
     /** The maximum number of updates to store for each scene. */
     protected static final int MAX_UPDATES_PER_SCENE = 16;
+
+    /** Internal reference to the decor repository, used to load up decor for each scene. */
+    protected DecorRepository _decorRepo;
 }

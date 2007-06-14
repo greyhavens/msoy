@@ -36,7 +36,6 @@ import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -212,18 +211,16 @@ public class AbstractRoomView extends Sprite
 
     /**
      * Sets the background sprite. If the data value is null, simply removes the old one.
-     * Note: this
      */
-    public function setBackground (decordata :DecorData) :void
+    public function setBackground (decor :Decor) :void
     {
         if (_bg != null) {
             removeSprite(_bg);
             _bg = null;
         }
-        if (decordata != null) {
-            _bg = _ctx.getMediaDirector().getDecor(decordata);
+        if (decor != null) {
+            _bg = _ctx.getMediaDirector().getDecor(decor);
             addChildAt(_bg, 0);
-            _bg.setLocation(new MsoyLocation(.5, 0, 0)); // center, up front
             _bg.setEditing(_editing);
         }
     }
@@ -260,8 +257,8 @@ public class AbstractRoomView extends Sprite
     public function setScene (scene :MsoyScene) :void
     {
         _scene = scene;
-        _layout.update(scene.getDecorData());
-        _backdrop.setRoomFromDecorData(scene.getDecorData());
+        _layout.update(scene.getDecor());
+        _backdrop.setRoomFromDecor(scene.getDecor());
         updateEditingOverlay();
         relayout();
     }
@@ -271,9 +268,9 @@ public class AbstractRoomView extends Sprite
      */
     public function updateBackground () :void
     {
-        var data :DecorData = _scene.getDecorData();
-        if (_bg != null && data != null) {
-            _bg.update(data);
+        var decor :Decor = _scene.getDecor();
+        if (_bg != null && decor != null) {
+            _bg.updateFromDecor(decor);
         }
     }
 

@@ -16,6 +16,7 @@ import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotScene;
 
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 public class MsoyScene extends SceneImpl
@@ -63,7 +64,7 @@ public class MsoyScene extends SceneImpl
      */
     public function getSceneType () :int
     {
-        return _msoyModel.decorData.type;
+        return _msoyModel.decor.type;
     }
 
     /**
@@ -71,7 +72,7 @@ public class MsoyScene extends SceneImpl
      */
     public function getDepth () :int
     {
-        return _msoyModel.decorData.depth;
+        return _msoyModel.decor.depth;
     }
 
     /**
@@ -79,12 +80,12 @@ public class MsoyScene extends SceneImpl
      */
     public function getWidth () :int
     {
-        return _msoyModel.decorData.width;
+        return _msoyModel.decor.width;
     }
 
     public function getHeight () :int
     {
-        return _msoyModel.decorData.height;
+        return _msoyModel.decor.height;
     }
 
     /**
@@ -93,15 +94,15 @@ public class MsoyScene extends SceneImpl
      */
     public function getHorizon () :Number
     {
-        return _msoyModel.decorData.horizon;
+        return _msoyModel.decor.horizon;
     }
 
     /**
      * Retrieve the room decor.
      */
-    public function getDecorData () :DecorData
+    public function getDecor () :Decor
     {
-        return _msoyModel.decorData;
+        return _msoyModel.decor;
     }
 
     /**

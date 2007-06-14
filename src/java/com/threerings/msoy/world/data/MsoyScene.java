@@ -8,6 +8,7 @@ import java.util.Iterator;
 import com.threerings.crowd.data.PlaceConfig;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.whirled.data.Scene;
@@ -65,7 +66,7 @@ public class MsoyScene extends SceneImpl
      */
     public byte getSceneType ()
     {
-        return _model.decorData.type;
+        return _model.decor.type;
     }
 
     /**
@@ -73,7 +74,7 @@ public class MsoyScene extends SceneImpl
      */
     public short getDepth ()
     {
-        return _model.decorData.depth;
+        return _model.decor.depth;
     }
 
     /**
@@ -81,7 +82,7 @@ public class MsoyScene extends SceneImpl
      */
     public short getWidth ()
     {
-        return _model.decorData.width;
+        return _model.decor.width;
     }
 
     /**
@@ -90,15 +91,15 @@ public class MsoyScene extends SceneImpl
      */
     public float getHorizon ()
     {
-        return _model.decorData.horizon;
+        return _model.decor.horizon;
     }
 
     /**
      * Retrieve the room decor.
      */
-    public DecorData getDecorData ()
+    public Decor getDecor ()
     {
-        return _model.decorData;
+        return _model.decor;
     }
 
     /**

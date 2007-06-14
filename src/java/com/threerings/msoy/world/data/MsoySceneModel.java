@@ -9,6 +9,7 @@ import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.ListUtil;
 
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
@@ -40,16 +41,15 @@ public class MsoySceneModel extends SceneModel
     /** The entrance location. */
     public MsoyLocation entrance;
 
-    /** Decor data representation. */
-    public DecorData decorData;
-
+    /** Decor item reference. */
+    public Decor decor;
+    
     /** Audio data representation. */
     public AudioData audioData;
 
     /** Constructor. */
     public MsoySceneModel ()
     {
-        decorData = new DecorData();
         audioData = new AudioData();
     }
     
@@ -206,7 +206,7 @@ public class MsoySceneModel extends SceneModel
         MsoySceneModel model = (MsoySceneModel) super.clone();
         model.furnis = furnis.clone();
         model.entrance = (MsoyLocation) entrance.clone();
-        model.decorData = (decorData == null) ? null : (DecorData) decorData.clone();
+        model.decor = decor; // note: decor is a read-only structure, so just copy the reference
         model.audioData = (audioData == null) ? null : (AudioData) audioData.clone();
         model.invalidatePortalInfo();
         return model;
@@ -219,8 +219,29 @@ public class MsoySceneModel extends SceneModel
     {
         MsoySceneModel model = new MsoySceneModel();
         model.entrance = new MsoyLocation(.5, 0, .5, 180);
+        model.decor = defaultMsoySceneModelDecor();
         populateBlankMsoySceneModel(model);
         return model;
+    }
+
+    /**
+     * Create a default decor for a blank scene. The decor will not be completely filled in,
+     * because it doesn't correspond to an entity inside the database, but it has enough
+     * to be displayed inside the room.
+     */
+    public static Decor defaultMsoySceneModelDecor ()
+    {
+        Decor decor = new Decor();
+        decor.itemId = 0; // doesn't correspond to an object
+        decor.furniMedia = new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.DECOR, Item.FURNI_MEDIA);
+        decor.depth = 400;
+        decor.width = 800;
+        decor.height = 494;
+        decor.horizon = .5f;
+        decor.offsetX = 0;
+        decor.offsetY = 0;
+        decor.hideWalls = false;
+        return decor;
     }
 
     protected static void populateBlankMsoySceneModel (MsoySceneModel model)

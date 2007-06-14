@@ -6,8 +6,8 @@ package com.threerings.msoy.world.client.editor {
 import flash.events.Event;
 
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.world.data.AudioData;
-import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.util.Controller;
@@ -54,7 +54,7 @@ public class SettingsController extends Controller
 
             var samename :Boolean = Util.equals(_editModel.name, origModel.name);
             var sameaudio :Boolean = Util.equals(_editModel.audioData, origModel.audioData);
-            var samedecor :Boolean = Util.equals(_editModel.decorData, origModel.decorData);
+            var samedecor :Boolean = Util.equals(_editModel.decor.itemId, origModel.decor.itemId);
             
             // configure an update, if needed
             if (saveSettings) {
@@ -65,7 +65,7 @@ public class SettingsController extends Controller
                 
             } else {
                 if (! samedecor) {
-                    setBackground(origModel.decorData);
+                    setBackground(origModel.decor);
                 }
                 if (! sameaudio) {
                     setBackgroundMusic(origModel.audioData);
@@ -104,10 +104,10 @@ public class SettingsController extends Controller
     /**
      * Called by the panel to specify a new background sprite for preview.
      */
-    public function setBackground (decordata :DecorData) :void
+    public function setBackground (decor :Decor) :void
     {
         _ctrl.roomView.setScene(_editScene);
-        _ctrl.roomView.setBackground(decordata);
+        _ctrl.roomView.setBackground(decor);
     }
 
     /**

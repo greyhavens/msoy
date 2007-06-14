@@ -83,7 +83,6 @@ import com.threerings.msoy.world.client.editor.EditorController;
 import com.threerings.msoy.world.client.editor.ItemUsedDialog;
 
 import com.threerings.msoy.world.data.AudioData;
-import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
@@ -630,7 +629,7 @@ public class RoomController extends SceneController
     {
         var scene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
         if (itemType == Item.DECOR) {
-            return (scene.getSceneModel() as MsoySceneModel).decorData.itemId;
+            return (scene.getSceneModel() as MsoySceneModel).decor.itemId;
         } else if (itemType == Item.AUDIO) {
             return (scene.getSceneModel() as MsoySceneModel).audioData.itemId;
         } else {
@@ -674,16 +673,9 @@ public class RoomController extends SceneController
                         var useNewItem :Function = function () :void {
                             if (newItemType == Item.DECOR) {
                                 var newScene :MsoyScene = oldScene.clone() as MsoyScene;
-                                var dd :DecorData = 
-                                    (newScene.getSceneModel() as MsoySceneModel).decorData;
-                                var decor :Decor = item as Decor;
-                                dd.itemId = decor.itemId;
-                                dd.media = decor.furniMedia;
-                                dd.type = decor.type;
-                                dd.height = decor.height;
-                                dd.width = decor.width;
-                                dd.depth = decor.depth;
-                                dd.horizon = decor.horizon;
+                                var newSceneModel :MsoySceneModel =
+                                    (newScene.getSceneModel() as MsoySceneModel);
+                                newSceneModel.decor = item as Decor;
                                 applyUpdate(new SceneUpdateAction(_mctx, oldScene, newScene));
                             } else if (newItemType == Item.AUDIO) {
                                 newScene = oldScene.clone() as MsoyScene;
@@ -775,10 +767,8 @@ public class RoomController extends SceneController
         var oldScene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
         var newScene :MsoyScene = oldScene.clone() as MsoyScene;
         if (itemType == Item.DECOR) {
-            var dd :DecorData = (newScene.getSceneModel() as MsoySceneModel).decorData;
-            dd.itemId = 0;
-            dd.type = Decor.IMAGE_OVERLAY;
-            dd.media = DecorData.defaultMedia;
+            var newSceneModel :MsoySceneModel = (newScene.getSceneModel() as MsoySceneModel);
+            newSceneModel.decor = MsoySceneModel.defaultMsoySceneModelDecor();
             applyUpdate(new SceneUpdateAction(_mctx, oldScene, newScene));
         } else if (itemType == Item.AUDIO) {
             (newScene.getSceneModel() as MsoySceneModel).audioData.itemId = 0;
@@ -1310,8 +1300,8 @@ public class RoomController extends SceneController
     {
         if (update is SceneAttrsUpdate) {
             var attrsUpdate :SceneAttrsUpdate = update as SceneAttrsUpdate;
-            var newId :int = attrsUpdate.decorData.itemId;
-            var oldId :int = _scene.getDecorData().itemId;
+            var newId :int = attrsUpdate.decor.itemId;
+            var oldId :int = _scene.getDecor().itemId;
             if (newId != oldId) {
                 _mctx.getWorldClient().dispatchEventToGWT(BACKGROUND_CHANGED_EVENT, 
                     [ Item.DECOR, newId, oldId ]);

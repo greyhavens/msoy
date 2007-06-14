@@ -34,18 +34,6 @@ public class DecorRepository extends ItemRepository<
     public DecorRepository (ConnectionProvider provider)
     {
         super(provider);
-        
-        // force the creation of appropriate db table. this will be used by MsoySceneRepository
-        // decor migration code.
-        //
-        // FIXME ROBERT: this can be removed at the same time as Decor migration code,
-        // after April 15 2007
-        try {
-            _ctx.getMarshaller(getItemClass());
-        } catch (PersistenceException e) {
-            // nada
-        }
-        // end fixme
     }
 
     @Override

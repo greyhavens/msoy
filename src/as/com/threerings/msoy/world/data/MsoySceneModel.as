@@ -14,7 +14,10 @@ import com.threerings.whirled.data.SceneModel;
 
 import com.threerings.whirled.spot.data.Portal;
 
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 public class MsoySceneModel extends SceneModel
 {
@@ -36,16 +39,15 @@ public class MsoySceneModel extends SceneModel
     /** The entrance location. */
     public var entrance :MsoyLocation;
 
-    /** Decor data representation. */
-    public var decorData :DecorData;
-
+    /** Decor item reference. */
+    public var decor :Decor;
+    
     /** Audio data representation. */
     public var audioData :AudioData;
 
     /** Constructor. */
     public function MsoySceneModel ()
     {
-        decorData = new DecorData();
         audioData = new AudioData();
     }
 
@@ -188,7 +190,7 @@ public class MsoySceneModel extends SceneModel
         model.ownerId = ownerId;
         model.furnis = (furnis.clone() as TypedArray);
         model.entrance = (entrance.clone() as MsoyLocation);
-        model.decorData = (decorData == null) ? null : (decorData.clone() as DecorData);
+        model.decor = decor; // note: decor is a read-only structure, so just copy the reference
         model.audioData = (audioData == null) ? null : (audioData.clone() as AudioData);
         return model;
     }
@@ -202,7 +204,7 @@ public class MsoySceneModel extends SceneModel
         out.writeInt(ownerId);
         out.writeObject(furnis);
         out.writeObject(entrance);
-        out.writeObject(decorData);
+        out.writeObject(decor);
         out.writeObject(audioData);
     }
 
@@ -215,17 +217,37 @@ public class MsoySceneModel extends SceneModel
         ownerId = ins.readInt();
         furnis = (ins.readObject() as TypedArray);
         entrance = (ins.readObject() as MsoyLocation);
-        decorData = (ins.readObject() as DecorData);
+        decor = (ins.readObject() as Decor);
         audioData = (ins.readObject() as AudioData);
     }
 
     override public function toString () :String
     {
         return "MsoySceneModel[\"" + name + "\" (" + sceneId + ")" +
-            ", version=" + version + ", sceneType=" + decorData.type +
-            ", decor=" + decorData.itemId + ", audio=" + audioData.itemId + "]";
+            ", version=" + version + ", sceneType=" + decor.type +
+            ", decorId=" + decor.itemId + ", audio=" + audioData.itemId + "]";
     }
 
+    /**
+     * Create a default decor for a blank scene. The decor will not be completely filled in,
+     * because it doesn't correspond to an entity inside the database, but it has enough
+     * to be displayed inside the room.
+     */
+    public static function defaultMsoySceneModelDecor () :Decor
+    {
+        var decor :Decor = new Decor();
+        decor.itemId = 0; // doesn't correspond to an object
+        decor.furniMedia = new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.DECOR, Item.FURNI_MEDIA);
+        decor.depth = 400;
+        decor.width = 800;
+        decor.height = 494;
+        decor.horizon = 0.5;
+        decor.offsetX = 0;
+        decor.offsetY = 0;
+        decor.hideWalls = false;
+        return decor;
+    }
+    
     /** Cached portal info. Not streamed. */
     protected var _portalInfo :HashMap;
 }

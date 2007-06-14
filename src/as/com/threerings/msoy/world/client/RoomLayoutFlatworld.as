@@ -8,7 +8,6 @@ import flash.display.DisplayObject;
 import flash.geom.Point;
 
 import com.threerings.flash.Vector3;
-import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 

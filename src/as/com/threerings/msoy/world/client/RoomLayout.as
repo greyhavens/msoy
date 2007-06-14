@@ -6,8 +6,8 @@ package com.threerings.msoy.world.client {
 import flash.geom.Point;
     
 import com.threerings.flash.Vector3;
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.world.client.ClickLocation;
-import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.MsoyLocation;
 
 
@@ -19,7 +19,7 @@ public interface RoomLayout {
     /**
      * Updates the room layout object with fresh data.
      */
-    function update (data :DecorData) :void;
+    function update (data :Decor) :void;
 
     /**
      * Get the room metrics used in the layout.

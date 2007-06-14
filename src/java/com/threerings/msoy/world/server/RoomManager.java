@@ -51,7 +51,6 @@ import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.AudioData;
-import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
@@ -297,16 +296,12 @@ public class RoomManager extends SpotSceneManager
      */
     public void reclaimDecor (MemberObject user)
     {
-        // replace the media with a default bitmap, but leave room dimensions intact.
+        // replace the decor with defaults 
         MsoyScene scene = (MsoyScene)_scene;
-        DecorData dd = scene.getDecorData();
-        dd.itemId = 0;
-        dd.type = Decor.IMAGE_OVERLAY;
-        dd.media = DecorData.defaultMedia;
         SceneAttrsUpdate update = new SceneAttrsUpdate();
         update.init(scene.getId(), scene.getVersion());
         update.name = scene.getName();
-        update.decorData = dd;
+        update.decor = MsoySceneModel.defaultMsoySceneModelDecor();
         update.audioData = scene.getAudioData();
         update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
         doRoomUpdate(new SceneUpdate[] { update }, user);
@@ -323,7 +318,7 @@ public class RoomManager extends SpotSceneManager
         SceneAttrsUpdate update = new SceneAttrsUpdate();
         update.init(scene.getId(), scene.getVersion());
         update.name = scene.getName();
-        update.decorData = scene.getDecorData();
+        update.decor = scene.getDecor();
         update.audioData = ad;
         update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
         doRoomUpdate(new SceneUpdate[] { update }, user);
@@ -499,11 +494,11 @@ public class RoomManager extends SpotSceneManager
                 };
                                 
                 // if decor was modified, we should mark new decor as used, and clear the old one
-                DecorData decorData = msoyScene.getDecorData();
-                if (decorData != null && decorData.itemId != up.decorData.itemId) { // modified?
+                Decor decor = msoyScene.getDecor();
+                if (decor != null && decor.itemId != up.decor.itemId) { // modified?
                     MsoyServer.itemMan.updateItemUsage(
                         Item.DECOR, Item.USED_AS_BACKGROUND, user.getMemberId(), _scene.getId(),
-                        decorData.itemId, up.decorData.itemId, defaultListener);
+                        decor.itemId, up.decor.itemId, defaultListener);
                 }
 
                 // same with background audio - mark new one as used, unmark old one

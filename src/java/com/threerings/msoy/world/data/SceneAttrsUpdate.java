@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.world.data;
 
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 
@@ -18,7 +19,7 @@ public class SceneAttrsUpdate extends SceneUpdate
     public String name;
 
     /** Full description of the new decor. */
-    public DecorData decorData;
+    public Decor decor;
 
     /** Background audio parameters. */
     public AudioData audioData;
@@ -33,7 +34,7 @@ public class SceneAttrsUpdate extends SceneUpdate
 
         MsoySceneModel mmodel = (MsoySceneModel) model;
         mmodel.name = name;
-        mmodel.decorData = (DecorData) decorData.clone();
+        mmodel.decor = decor;
         mmodel.audioData = (AudioData) audioData.clone();
         mmodel.entrance = entrance;
     }
@@ -43,7 +44,6 @@ public class SceneAttrsUpdate extends SceneUpdate
         throws IllegalStateException
     {
         super.validate(model);
-        // FIXME ROBERT: we should validate this update's decor data here, on the server side
     }
 
 }

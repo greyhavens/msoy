@@ -6,7 +6,7 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.Decor;
 
 /**
  * Encodes a scene update that updates the attributes in the MsoySceneModel.
@@ -20,11 +20,11 @@ public class SceneAttrsUpdate extends SceneUpdate
     public var name :String;
 
     /** Full description of the new decor. */
-    public var decorData :DecorData;
+    public var decor :Decor;
     
     /** Background audio parameters. */
     public var audioData :AudioData;
-    
+
     /** The new entrance location. */
     public var entrance :MsoyLocation;
 
@@ -34,7 +34,7 @@ public class SceneAttrsUpdate extends SceneUpdate
 
         var mmodel :MsoySceneModel = (model as MsoySceneModel);
         mmodel.name = name;
-        mmodel.decorData = (decorData.clone() as DecorData);
+        mmodel.decor = decor;
         mmodel.audioData = (audioData.clone() as AudioData);
         mmodel.entrance = entrance;
     }
@@ -44,7 +44,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         super.writeObject(out);
 
         out.writeField(name);
-        out.writeObject(decorData);
+        out.writeObject(decor);
         out.writeObject(audioData);
         out.writeObject(entrance);
     }
@@ -54,7 +54,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         super.readObject(ins);
 
         name = (ins.readField(String) as String);
-        decorData = (ins.readObject() as DecorData);
+        decor = (ins.readObject() as Decor);
         audioData = (ins.readObject() as AudioData);
         entrance = (ins.readObject() as MsoyLocation);
     }

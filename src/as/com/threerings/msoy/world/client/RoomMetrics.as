@@ -3,7 +3,6 @@ package com.threerings.msoy.world.client {
 import flash.geom.Point;
 
 import com.threerings.flash.Vector3;
-import com.threerings.msoy.world.data.DecorData;
 import com.threerings.msoy.world.data.MsoyLocation;
 
 /**

@@ -466,7 +466,7 @@ public class MsoyServer extends WhirledServer
         });
         DictionaryManager.init("data/dictionary");
 
-        sceneRepo.finishInit();
+        sceneRepo.finishInit(itemMan.getDecorRepository());
 
         // create and start up our HTTP server
         httpServer = new MsoyHttpServer(_logdir);

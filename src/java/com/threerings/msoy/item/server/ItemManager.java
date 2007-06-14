@@ -123,7 +123,7 @@ public class ItemManager
         _repos.put(Item.PHOTO, repo);
         repo = new VideoRepository(conProv);
         _repos.put(Item.VIDEO, repo);
-        repo = new DecorRepository(conProv);
+        repo = (_decorRepo = new DecorRepository(conProv));
         _repos.put(Item.DECOR, repo);
 
         _listRepo = new ItemListRepository(conProv);
@@ -155,6 +155,14 @@ public class ItemManager
     public AvatarRepository getAvatarRepository ()
     {
         return _avatarRepo;
+    }
+
+    /**
+     * Provides a reference to the {@link DecorRepository} which is used to load room decor.
+     */
+    public DecorRepository getDecorRepository ()
+    {
+        return _decorRepo;
     }
 
     /**
@@ -1479,6 +1487,9 @@ public class ItemManager
 
     /** Contains a reference to our avatar repository. See {@link #_gameRepository} for complaint. */
     protected AvatarRepository _avatarRepo;
+
+    /** Contains a reference to our decor repository. See {@link #_gameRepository} for complaint. */
+    protected DecorRepository _decorRepo;
 
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord, ?, ?, ?>> _repos =

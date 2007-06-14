@@ -44,6 +44,12 @@ public class SceneUpdateAction
     protected function copySceneAttributes (from :Object, to :Object) :void
     {
         for each (var attribute :String in ATTRS_TO_COPY) {
+            // sanity check, since we're circumventing model definitions 
+            if (! from.hasOwnProperty(attribute)) {
+                Log.getLog(this).warning("UpdateAction: trying to copy absent attribute " +
+                                         "[attribute=" + attribute + "]");
+            }
+                                         
             to[attribute] = from[attribute];
         }
     }
@@ -60,7 +66,7 @@ public class SceneUpdateAction
     }
 
     /** Names of scene attributes that will be updated during an update. */
-    protected static const ATTRS_TO_COPY :Array = [ "name", "decorData", "audioData", "entrance" ];
+    protected static const ATTRS_TO_COPY :Array = [ "name", "decor", "audioData", "entrance" ];
 
     protected var _oldSceneData :Object;
     protected var _newSceneData :Object;

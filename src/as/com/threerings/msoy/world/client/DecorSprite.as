@@ -1,7 +1,9 @@
 package com.threerings.msoy.world.client {
 
-import com.threerings.msoy.world.data.DecorData;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomCodes;
 
 public class DecorSprite extends FurniSprite
@@ -9,9 +11,11 @@ public class DecorSprite extends FurniSprite
     /**
      * Construct a new DecorSprite.
      */
-    public function DecorSprite (decor :DecorData)
+    public function DecorSprite (decor :Decor)
     {
-        super(decor);
+        var furniData :FurniData = makeFurniData(decor);
+        super(furniData);
+        setLocation(furniData.loc);
     }
     
     override public function getRoomLayer () :int
@@ -19,14 +23,14 @@ public class DecorSprite extends FurniSprite
         return RoomCodes.DECOR_LAYER;
     }
 
-    public function getDecorData () :DecorData
+    public function updateFromDecor (decor :Decor) :void
     {
-        return _furni as DecorData;
+        super.update(makeFurniData(decor));
     }
 
     override public function update (furni :FurniData) :void
     {
-        super.update(furni);
+        Log.getLog(this).warning("Cannot update a decor sprite from furni data!");
     }
 
     override public function getDesc () :String
@@ -56,19 +60,31 @@ public class DecorSprite extends FurniSprite
     override public function hitTestPoint (
         x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
     {
-        return false; // decor never captures mouse clicks.
+        return false; // decor does not capture mouse clicks
     }
 
     override public function toString () :String
     {
-        var decor :DecorData = getDecorData();
-        if (decor != null) {
-            return "DecorSprite[" + decor.itemType + ":" + decor.itemId + ":"
-                + decor.width + "x" + decor.depth + "/" + decor.media.getMediaPath() + "]";
+        if (_furni != null) {
+            return "DecorSprite[type=" + _furni.itemType + ", id=" + _furni.itemId +
+                ", loc=" + _furni.loc + ", media=" + _furni.media.getMediaPath() + "]";
         } else {
             return "DecorSprite[null]";
         }
     }
 
+    /** Creates a transient furni data object, to feed to the superclass. */
+    protected function makeFurniData (decor :Decor) :FurniData
+    {
+        var furniData :FurniData = new FurniData();
+        furniData.itemType = Item.DECOR;
+        furniData.itemId = decor.itemId;
+        furniData.media = decor.furniMedia;
+
+        // sprite location: center and up-front, but shifted by specified offset
+        furniData.loc = new MsoyLocation(0.5 + decor.offsetX, 0 + decor.offsetY, 0);
+        
+        return furniData;
+    }
 }
 }
