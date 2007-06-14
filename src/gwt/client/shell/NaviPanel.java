@@ -181,7 +181,7 @@ public class NaviPanel extends FlexTable
         });
         setMenu(menuidx++, "Places", CShell.cmsgs.menuPlaces(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "Popular Spots", "world", "p");
+                addLink(menu, "My Whirled", "world", "p");
             }
         });
         setMenu(menuidx++, "People", CShell.cmsgs.menuPeople(), new MenuPopper() {
