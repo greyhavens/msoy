@@ -471,35 +471,37 @@ public class RoomController extends SceneController
         var us :MemberObject = _mctx.getMemberObject();
         var menuItems :Array = [];
         if (occInfo.bodyOid == us.getOid()) {
-            if (_mctx.worldProps.userControlsAvatar) {
-                // add a menu item for changing their avatar
-                menuItems.push({ label: Msgs.GENERAL.get("b.change_avatar"),
-                    command: MsoyController.VIEW_MY_AVATARS });
+            // see if we can control our own avatar right now...
+            var canControl :Boolean = _mctx.worldProps.userControlsAvatar;
 
-                // create a menu for clicking on ourselves
-                var actions :Array = avatar.getAvatarActions();
-                if (actions.length > 0) {
-                    var worldActions :Array = [];
-                    for each (var act :String in actions) {
-                        worldActions.push({ label: act,
-                            callback: doAvatarAction, arg: act });
-                    }
+            // add a menu item for changing their avatar
+            menuItems.push({ label: Msgs.GENERAL.get("b.change_avatar"),
+                command: MsoyController.VIEW_MY_AVATARS, enabled: canControl });
 
-                    menuItems.push({ label: Msgs.GENERAL.get("l.avAction"),
-                        children: worldActions });
+            // create a sub-menu for playing avatar actions 
+            var actions :Array = avatar.getAvatarActions();
+            if (actions.length > 0) {
+                var worldActions :Array = [];
+                for each (var act :String in actions) {
+                    worldActions.push({ label: act,
+                        callback: doAvatarAction, arg: act });
                 }
 
-                var states :Array = avatar.getAvatarStates();
-                if (states.length > 0) {
-                    var worldStates :Array = [];
-                    for each (var state :String in states) {
-                        worldStates.push({ label: state,
-                            callback: doAvatarState, arg :state });
-                    }
+                menuItems.push({ label: Msgs.GENERAL.get("l.avAction"),
+                    children: worldActions, enabled: canControl });
+            }
 
-                    menuItems.push({ label: Msgs.GENERAL.get("l.avStates"),
-                        children: worldStates });
+            // create a sub-menu for changing avatar states
+            var states :Array = avatar.getAvatarStates();
+            if (states.length > 0) {
+                var worldStates :Array = [];
+                for each (var state :String in states) {
+                    worldStates.push({ label: state,
+                        callback: doAvatarState, arg :state });
                 }
+
+                menuItems.push({ label: Msgs.GENERAL.get("l.avStates"),
+                    children: worldStates, enabled: canControl });
             }
 
         } else {
