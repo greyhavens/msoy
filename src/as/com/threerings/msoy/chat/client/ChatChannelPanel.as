@@ -60,8 +60,6 @@ public class ChatChannelPanel extends VBox
         send.setCallback(sendChat);
         send.height = ControlBar.HEIGHT-4;
         _inputBox.addChild(send);
-
-        _ctx.getClient().addEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
     }
 
     /**
@@ -212,16 +210,6 @@ public class ChatChannelPanel extends VBox
         if (event.relatedObject is PageDisplayTab) {
             (event.relatedObject as PageDisplayTab).shutdown();
         }
-    }
-
-    protected function miniWillChange (event :ValueEvent) :void
-    {
-        /*var minimized :Boolean = (event.value as Boolean);
-        if (minimized && _wtab == null) {
-            sendRoomToTab();
-        } else if (!minimized && _wtab != null) {
-            removeRoomTab();
-        }*/
     }
 
     /**
