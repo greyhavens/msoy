@@ -87,6 +87,7 @@ public class LobbyController extends Controller implements Subscriber
             setControlledPanel(tableDisplay.getRenderer());
             _mctx.getTopPanel().setTableDisplay(tableDisplay);
             _mctx.getMsoyController().gameLobbyCleared(_lobj.game.itemId, _playerInitiatedClose);
+            _playerInitiatedClose = false;
 
         } else {
             shutdown();
