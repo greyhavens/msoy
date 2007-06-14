@@ -640,104 +640,112 @@ public class RoomController extends SceneController
     }
 
     /**
-     * This is called from javascript to select this room's decor, audio, or add a piece of furni.
+     * Returns true if the local client is allowed to edit the current scene.
+     */
+    public function canEditRoom () : Boolean
+    {
+        var scene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
+        return (scene != null && scene.canEdit(_mctx.getMemberObject()));
+    }
+
+    /**
+     * This is called from JavaScript to select this room's decor, audio, or add a piece of furni.
      */
     public function useItem (itemId :int, itemType :int) :void
     {
-        var scene :MsoyScene = _mctx.getSceneDirector().getScene() as MsoyScene;
-        if (scene == null || !scene.canEdit(_mctx.getMemberObject())) {
+        if (!canEditRoom()) {
             _mctx.displayInfo("editing", "e.no_permission");
-        } else {
-            if (itemId == 0) {
-                clearItem(itemType);
-                return;
-            }
-            if (itemType != Item.DECOR && itemType != Item.AUDIO) {
-                _openEditor = true;
-            }
-
-            (new InventoryAction(itemType, _mctx)).trigger(
-                function (newItemId :int, newItemType :int, oldScene :MsoyScene) :Function {
-                    return function () :void {
-                        var item :Item = null;
-                        for each (var checkItem :Item in 
-                            _mctx.getMemberObject().getItems(newItemType)) {
-                            if (checkItem.itemId == newItemId) {
-                                item = checkItem;
-                                break;
-                            }
-                        }
-                        if (item == null) {
-                            // didn't find item
-                            return;
-                        }
-
-                        var useNewItem :Function = function () :void {
-                            if (newItemType == Item.DECOR) {
-                                var newScene :MsoyScene = oldScene.clone() as MsoyScene;
-                                var newSceneModel :MsoySceneModel =
-                                    (newScene.getSceneModel() as MsoySceneModel);
-                                newSceneModel.decor = item as Decor;
-                                applyUpdate(new SceneUpdateAction(_mctx, oldScene, newScene));
-                            } else if (newItemType == Item.AUDIO) {
-                                newScene = oldScene.clone() as MsoyScene;
-                                var ad :AudioData = 
-                                    (newScene.getSceneModel() as MsoySceneModel).audioData;
-                                var audio :Audio = item as Audio;
-                                ad.itemId = audio.itemId;
-                                ad.media = audio.audioMedia;
-                                applyUpdate(new SceneUpdateAction(_mctx, oldScene, newScene));
-                            } else {
-                                // create a generic furniture descriptor
-                                var furni :FurniData = new FurniData();
-                                furni.id = _scene.getNextFurniId(0);
-                                furni.itemType = item.getType();
-                                furni.itemId = item.itemId;
-                                furni.media = item.getFurniMedia();
-                                // create it at the front of the scene, centered on the floor
-                                furni.loc = new MsoyLocation(0.5, 0, 0);
-                                if (item is Game) {
-                                    var game :Game = (item as Game);
-                                    furni.actionType = game.isInWorld() ?
-                                        FurniData.ACTION_WORLD_GAME : FurniData.ACTION_LOBBY_GAME;
-                                    furni.actionData = String(game.getPrototypeId()) + ":" + 
-                                        game.name;
-                                }
-                                applyUpdate(new FurniUpdateAction(_mctx, null, furni));
-                            }
-                        };
-
-                        if (item.isUsed()) {
-                            // TODO: add a method to Item so that each item returns a translatable
-                            // string (or translated), and we can use that here instead of this
-                            // business
-                            var msg :String = newItemType == Item.DECOR ? "l.decor" : 
-                                (newItemType == Item.AUDIO ? "l.audio" : "l.furni");
-                            (new ItemUsedDialog(_mctx, Msgs.EDITING.get(msg), 
-                                function () :void {
-                                    var confWrap :ConfirmAdapter = new ConfirmAdapter(
-                                        // failure function
-                                        function (cause :String) :void {
-                                            Log.getLog(this).debug(
-                                                "Failed to remove item from its current " + 
-                                                "location [id=" + item.itemId + ", type=" + 
-                                                item.getType() + ", cause=" + cause + "]");
-                                            _mctx.displayInfo("editing", "e.failed_to_remove");
-                                        },
-                                        // success function
-                                        function () :void {
-                                            useNewItem();
-                                        });
-                                    (_mctx.getClient().requireService(ItemService) as ItemService).
-                                        reclaimItem(_mctx.getClient(), new ItemIdent(newItemType, 
-                                            item.itemId), confWrap);
-                                })).open(true);
-                        } else {
-                            useNewItem();
-                        }
-                    }
-                }(itemId, itemType, scene));
+            return;
         }
+
+        if (itemId == 0) {
+            clearItem(itemType);
+            return;
+        }
+
+        if (itemType != Item.DECOR && itemType != Item.AUDIO) {
+            _openEditor = true;
+        }
+
+        (new InventoryAction(itemType, _mctx)).trigger(
+            function (newItemId :int, newItemType :int, oldScene :MsoyScene) :Function {
+            return function () :void {
+                var item :Item = null;
+                for each (var checkItem :Item in 
+                          _mctx.getMemberObject().getItems(newItemType)) {
+                    if (checkItem.itemId == newItemId) {
+                        item = checkItem;
+                        break;
+                    }
+                }
+                if (item == null) {
+                    // didn't find item
+                    return;
+                }
+
+                var useNewItem :Function = function () :void {
+                    if (newItemType == Item.DECOR) {
+                        var newScene :MsoyScene = oldScene.clone() as MsoyScene;
+                        var newSceneModel :MsoySceneModel =
+                        (newScene.getSceneModel() as MsoySceneModel);
+                        newSceneModel.decor = item as Decor;
+                        applyUpdate(new SceneUpdateAction(_mctx, oldScene, newScene));
+
+                    } else if (newItemType == Item.AUDIO) {
+                        newScene = oldScene.clone() as MsoyScene;
+                        var ad :AudioData = 
+                        (newScene.getSceneModel() as MsoySceneModel).audioData;
+                        var audio :Audio = item as Audio;
+                        ad.itemId = audio.itemId;
+                        ad.media = audio.audioMedia;
+                        applyUpdate(new SceneUpdateAction(_mctx, oldScene, newScene));
+
+                    } else {
+                        // create a generic furniture descriptor
+                        var furni :FurniData = new FurniData();
+                        furni.id = _scene.getNextFurniId(0);
+                        furni.itemType = item.getType();
+                        furni.itemId = item.itemId;
+                        furni.media = item.getFurniMedia();
+                        // create it at the front of the scene, centered on the floor
+                        furni.loc = new MsoyLocation(0.5, 0, 0);
+                        if (item is Game) {
+                            var game :Game = (item as Game);
+                            furni.actionType = game.isInWorld() ?
+                                FurniData.ACTION_WORLD_GAME : FurniData.ACTION_LOBBY_GAME;
+                            furni.actionData = String(game.getPrototypeId()) + ":" + game.name;
+                        }
+                        applyUpdate(new FurniUpdateAction(_mctx, null, furni));
+                    }
+                };
+
+                if (item.isUsed()) {
+                    // TODO: add a method to Item so that each item returns a translatable string
+                    // (or translated), and we can use that here instead of this business
+                    var msg :String = newItemType == Item.DECOR ? "l.decor" : 
+                        (newItemType == Item.AUDIO ? "l.audio" : "l.furni");
+                    (new ItemUsedDialog(_mctx, Msgs.EDITING.get(msg), function () :void {
+                        var confWrap :ConfirmAdapter = new ConfirmAdapter(
+                            // failure function
+                            function (cause :String) :void {
+                                Log.getLog(this).debug(
+                                    "Failed to remove item from its current location " +
+                                    "[id=" + item.itemId + ", type=" + item.getType() +
+                                    ", cause=" + cause + "]");
+                                _mctx.displayInfo("editing", "e.failed_to_remove");
+                            },
+                            // success function
+                            function () :void {
+                                useNewItem();
+                            });
+                        (_mctx.getClient().requireService(ItemService) as ItemService).reclaimItem(
+                            _mctx.getClient(), new ItemIdent(newItemType, item.itemId), confWrap);
+                    })).open(true);
+                } else {
+                    useNewItem();
+                }
+            }
+        }(itemId, itemType, _mctx.getSceneDirector().getScene() as MsoyScene));
     }
 
     public function removeFurni (itemId :int, itemType :int) :void

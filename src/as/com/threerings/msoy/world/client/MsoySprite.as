@@ -562,6 +562,15 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     /**
+     * Returns true if this client has edit privileges in the current room. Called by our backend
+     * in response to a request from usercode.
+     */
+    internal function canEditRoom () :Boolean
+    {
+        return (parent as RoomView).getRoomController().canEditRoom();
+    }
+
+    /**
      * Update the sprite's hotspot. Called by our backend in response to a request from usercode.
      * Should be *internal* but needs to be overridable. Fucking flash!
      */
@@ -616,7 +625,7 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     /** The current logical coordinate of this media. */
-    public const _loc :MsoyLocation = new MsoyLocation();
+    protected const _loc :MsoyLocation = new MsoyLocation();
 
     /** Identifies the item we are visualizing. All furniture will have an ident, but only our
      * avatar sprite will know its ident (and only we can update our avatar's memory, etc.).  */

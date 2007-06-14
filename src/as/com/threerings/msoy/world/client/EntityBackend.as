@@ -37,6 +37,7 @@ public class EntityBackend extends ControlBackend
         o["setHotSpot_v1"] = setHotSpot_v1;
         o["sendMessage_v1"] = sendMessage_v1;
         o["getRoomBounds_v1"] = getRoomBounds_v1;
+        o["canEditRoom_v1"] = canEditRoom_v1;
 
         // deprecated methods
         o["triggerEvent_v1"] = triggerEvent_v1;
@@ -83,6 +84,11 @@ public class EntityBackend extends ControlBackend
     protected function getRoomBounds_v1 () :Array
     {
         return _sprite.getRoomBounds();
+    }
+
+    protected function canEditRoom_v1 () :Boolean
+    {
+        return _sprite.canEditRoom();
     }
 
     // Deprecated on 2007-03-12
