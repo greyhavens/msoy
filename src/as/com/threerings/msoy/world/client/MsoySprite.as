@@ -293,9 +293,15 @@ public class MsoySprite extends MsoyMediaContainer
         if (glow) {
             _glow = new GlowFilter(getHoverColor(), 1, 32, 32);
             FilterUtil.addFilter(_media, _glow);
+            if (_media.mask != null) {
+                FilterUtil.addFilter(_media.mask, _glow);
+            }
 
         } else {
             FilterUtil.removeFilter(_media, _glow);
+            if (_media.mask != null) {
+                FilterUtil.addFilter(_media.mask, _glow);
+            }
             _glow = null;
         }
     }
