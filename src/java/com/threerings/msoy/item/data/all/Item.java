@@ -38,7 +38,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
 
     /** A canonical ordering of our item types for use in the catalog, inventory, etc. */
     public static final byte[] TYPES = {
-        AVATAR, FURNITURE, DECOR, PET, GAME, PHOTO, AUDIO/*, VIDEO */
+        AVATAR, FURNITURE, DECOR, PET, GAME, PHOTO, AUDIO, VIDEO
     };
 
     /** A 'used' constant value to indicate that the item is unused. */

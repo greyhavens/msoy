@@ -22,6 +22,10 @@ import com.samskivert.util.ResultListener;
  */
 public class DataPack extends com.whirled.DataPack
 {
+    public DataPack ()
+    {
+    }
+
     public DataPack (String url, final ResultListener<DataPack> listener)
     {
         super(url, new ResultListener<com.whirled.DataPack>() {

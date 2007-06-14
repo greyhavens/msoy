@@ -382,6 +382,16 @@ public class MsoySprite extends MsoyMediaContainer
         _backend.setSprite(this);
     }
 
+    override protected function configureMask (ww :int, hh :int) :void
+    {
+        if (_desc.mimeType == MediaDesc.VIDEO_YOUTUBE) {
+            // do not mask!
+            return;
+        }
+
+        super.configureMask(ww, hh);
+    }
+
     /**
      * Post a command event when we're clicked.
      */
@@ -394,7 +404,7 @@ public class MsoySprite extends MsoyMediaContainer
     {
         var active :Boolean = isActive();
         mouseChildren = active && !_editing && !hasAction() && capturesMouse();
-        mouseEnabled = active;
+        mouseEnabled = active && !_editing;
     }
 
     /**

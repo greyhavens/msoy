@@ -127,7 +127,8 @@ public class ItemContainer extends FlexTable
                 }
             });
 
-        } else if (type == Item.FURNITURE || type == Item.GAME || type == Item.PHOTO) {
+        } else if (type == Item.FURNITURE || type == Item.GAME || type == Item.PHOTO ||
+                type == Item.VIDEO) {
             final ItemIdent ident = new ItemIdent(type, _item.itemId);
             setWidget(1, 0, generateActionLabel(_furniList.contains(ident)));
             FlashEvents.addListener(_listener = new FurniChangeListener() {

@@ -50,5 +50,16 @@ public class Video extends Item
         super.writeObject(out);
         out.writeObject(videoMedia);
     }
+
+    // from Item
+    override protected function getDefaultFurniMedia () :MediaDesc
+    {
+        if (videoMedia != null && videoMedia.isExternalVideo()) {
+            return videoMedia;
+        }
+
+        // else: TODO
+        return super.getDefaultFurniMedia();
+    }
 }
 }

@@ -50,6 +50,9 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The MIME type for AVI video data. */
     public static final byte VIDEO_MSVIDEO = 33;
 
+    /** The MIME type for a youtube video. */
+    public static final byte VIDEO_YOUTUBE = 34;
+
     /** The MIME type for Flash SWF files. */
     public static final byte APPLICATION_SHOCKWAVE_FLASH = 40;
 
@@ -112,8 +115,46 @@ public class MediaDesc implements Streamable, IsSerializable
      */
     public static String getMediaPath (byte[] mediaHash, byte mimeType, boolean proxy)
     {
-        String prefix = proxy ? DeploymentConfig.PROXY_PREFIX : DeploymentConfig.mediaURL;
-        return prefix + hashToString(mediaHash) + mimeTypeToSuffix(mimeType);
+        switch (mimeType) {
+        case VIDEO_YOUTUBE:
+            return "http://www.youtube.com/v/" + bytesToString(mediaHash);
+
+        default:
+            String prefix = proxy ? DeploymentConfig.PROXY_PREFIX : DeploymentConfig.mediaURL;
+            return prefix + hashToString(mediaHash) + mimeTypeToSuffix(mimeType);
+        }
+    }
+
+    /**
+     * Convert the specified byte array directly into a String.
+     */
+    public static String bytesToString (byte[] bytes)
+    {
+        if (bytes == null) {
+            return "";
+        }
+
+        char[] chars = new char[bytes.length];
+        for (int ii = 0; ii < bytes.length; ii++) {
+            chars[ii] = (char) bytes[ii];
+        }
+        return new String(chars);
+    }
+
+    /**
+     * Convert the (assumed-ascii) String into a byte array.
+     */
+    public static byte[] stringToBytes (String s)
+    {
+        if (s == null) {
+            return null;
+        }
+
+        byte[] bytes = new byte[s.length()];
+        for (int ii = 0; ii < bytes.length; ii++) {
+            bytes[ii] = (byte) s.charAt(ii);
+        }
+        return bytes;
     }
 
     /**
@@ -124,7 +165,7 @@ public class MediaDesc implements Streamable, IsSerializable
         if (hash == null) {
             return "";
         }
-        char[] chars= new char[hash.length * 2];
+        char[] chars = new char[hash.length * 2];
         for (int ii = 0; ii < hash.length; ii++) {
             int val = hash[ii];
             if (val < 0) {
@@ -347,6 +388,27 @@ public class MediaDesc implements Streamable, IsSerializable
     }
 
     /**
+     * Create a media descriptor from the specified info. Note
+     * that the String will be turned into a byte[] differently
+     * depending on the mimeType.
+     */
+    public MediaDesc (String s, byte mimeType, byte constraint)
+    {
+        this.mimeType = mimeType;
+        this.constraint = constraint;
+
+        switch (mimeType) {
+        case VIDEO_YOUTUBE:
+            this.hash = stringToBytes(s);
+            break;
+
+        default:
+            this.hash = stringToHash(s);
+            break;
+        }
+    }
+
+    /**
      * TEMPORARY CONSTRUCTOR, for making it easy for me to
      * pre-initialize some media...
      */
@@ -384,6 +446,7 @@ public class MediaDesc implements Streamable, IsSerializable
         case IMAGE_JPEG:
         case IMAGE_GIF:
         case VIDEO_FLASH:
+        case VIDEO_YOUTUBE:
         case APPLICATION_SHOCKWAVE_FLASH:
             return true;
 
@@ -416,9 +479,9 @@ public class MediaDesc implements Streamable, IsSerializable
     }
 
     /**
-     * Is this media video?
+     * Is this video that we host?
      */
-    public boolean isVideo ()
+    public boolean isWhirledVideo ()
     {
         switch (mimeType) {
         case VIDEO_FLASH:
@@ -430,6 +493,28 @@ public class MediaDesc implements Streamable, IsSerializable
         default:
             return false;
         }
+    }
+
+    /**
+     * Is this video hosted externally?
+     */
+    public boolean isExternalVideo ()
+    {
+        switch (mimeType) {
+        case VIDEO_YOUTUBE:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * Is this media video?
+     */
+    public boolean isVideo ()
+    {
+        return isWhirledVideo() || isExternalVideo();
     }
 
     // @Override // from Object

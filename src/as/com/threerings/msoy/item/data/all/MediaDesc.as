@@ -56,6 +56,9 @@ public class MediaDesc
     /** The MIME type for AVI video data. */
     public static const VIDEO_MSVIDEO :int = 33;
 
+    /** The MIME type for a youtube video. */
+    public static const VIDEO_YOUTUBE :int = 34;
+
     /** The MIME type for Flash SWF files. */
     public static const APPLICATION_SHOCKWAVE_FLASH :int = 40;
 
@@ -287,7 +290,13 @@ public class MediaDesc
      */
     public function getMediaPath () :String
     {
-        return DeploymentConfig.mediaURL + hashToString(hash) + mimeTypeToSuffix(mimeType);
+        switch (mimeType) {
+        case VIDEO_YOUTUBE:
+            return "http://www.youtube.com/v/" + StringUtil.fromBytes(hash);
+
+        default:
+            return DeploymentConfig.mediaURL + hashToString(hash) + mimeTypeToSuffix(mimeType);
+        }
     }
 
     /**
@@ -317,7 +326,39 @@ public class MediaDesc
         case IMAGE_JPEG:
         case IMAGE_GIF:
         case VIDEO_FLASH:
+        case VIDEO_YOUTUBE:
         case APPLICATION_SHOCKWAVE_FLASH:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * Is this video that we host?
+     */
+     public function isWhirledVideo () :Boolean
+     {
+        switch (mimeType) {
+        case VIDEO_FLASH:
+        case VIDEO_MPEG:
+        case VIDEO_QUICKTIME:
+        case VIDEO_MSVIDEO:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * Is this video hosted externally?
+     */
+     public function isExternalVideo () :Boolean
+     {
+        switch (mimeType) {
+        case VIDEO_YOUTUBE:
             return true;
 
         default:
@@ -330,16 +371,7 @@ public class MediaDesc
      */
     public function isVideo () :Boolean
     {
-        switch (mimeType) {
-        case VIDEO_FLASH:
-        case VIDEO_MPEG:
-        case VIDEO_QUICKTIME:
-        case VIDEO_MSVIDEO:
-            return true;
-
-        default:
-            return false;
-        }
+        return isWhirledVideo() || isExternalVideo();
     }
 
     // documentation inherited from Hashable
@@ -391,7 +423,13 @@ public class MediaDesc
      */
     public function getMediaId () :String
     {
-        return hashToString(hash);
+        switch (mimeType) {
+        case VIDEO_YOUTUBE:
+            return "_" + mimeType + ":" + StringUtil.fromBytes(hash);
+
+        default:
+            return hashToString(hash);
+        }
     }
 
     /**
@@ -402,6 +440,7 @@ public class MediaDesc
         // TODO: this may need to be more complicated in the future
         switch (mimeType) {
         case APPLICATION_SHOCKWAVE_FLASH:
+        case VIDEO_YOUTUBE:
             return true;
 
         default:
@@ -416,8 +455,5 @@ public class MediaDesc
     {
         throw new Error("Unimplemented");
     }
-
-    /** Hexidecimal digits. */
-    protected static const HEX :String = "0123456789abcdef";
 }
 }

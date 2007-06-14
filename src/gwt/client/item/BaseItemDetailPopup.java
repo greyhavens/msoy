@@ -123,7 +123,7 @@ public class BaseItemDetailPopup extends BorderedDialog
             return FlashClients.createAvatarViewer(
                 preview.getMediaPath(), ((Avatar) item).scale, false);
 
-        } else if (preview.isVideo()) {
+        } else if (preview.isWhirledVideo()) {
             return FlashClients.createVideoViewer(preview.getMediaPath());
          
         } else {

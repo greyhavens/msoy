@@ -27,6 +27,20 @@ public class Video extends Item
     // @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
+        if (videoMedia != null && videoMedia.isExternalVideo()) {
+            return videoMedia;
+        }
         return getThumbnailMedia(); // TODO: support preview image
+    }
+
+    // @Override // from Item
+    protected MediaDesc getDefaultFurniMedia ()
+    {
+        if (videoMedia != null && videoMedia.isExternalVideo()) {
+            return videoMedia;
+        }
+
+        // else: TODO
+        return super.getDefaultFurniMedia();
     }
 }

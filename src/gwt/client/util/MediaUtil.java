@@ -40,7 +40,8 @@ public class MediaUtil
         String path = desc.getMediaPath();
         Widget view;
 
-        switch (MediaDesc.suffixToMimeType(path)) {
+        switch (desc.mimeType) {
+        case MediaDesc.VIDEO_YOUTUBE:
         case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
             view = WidgetUtil.createFlashContainer("", path, width, height, null);
             break;

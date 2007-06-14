@@ -130,7 +130,7 @@ public abstract class BaseItemDetailPanel extends FlexTable
             return FlashClients.createAvatarViewer(preview.getMediaPath(), ((Avatar) item).scale,
                 allowAvatarScaleEditing());
 
-        } else if (preview.isVideo()) {
+        } else if (preview.isWhirledVideo()) {
             return FlashClients.createVideoViewer(preview.getMediaPath());
          
         } else {

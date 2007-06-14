@@ -328,14 +328,14 @@ public abstract class ItemEditor extends BorderedDialog
         }
 
         // set the new media in preview and in the item
-        mu.setUploadedMedia(new MediaDesc(MediaDesc.stringToHash(mediaHash), (byte)mimeType,
-                                          (byte)constraint), width, height);
+        mu.setUploadedMedia(new MediaDesc(mediaHash, (byte)mimeType, (byte)constraint),
+            width, height);
 
         // if we got thumbnail media back from this upload, use that as well
         // TODO: avoid overwriting custom thumbnail, sigh
         if (thumbMediaHash.length() > 0) {
             _item.thumbMedia = new MediaDesc(
-                MediaDesc.stringToHash(thumbMediaHash), (byte)thumbMimeType, (byte)thumbConstraint);
+                thumbMediaHash, (byte)thumbMimeType, (byte)thumbConstraint);
         }
 
         // have the item re-validate that no media ids are duplicated unnecessarily
