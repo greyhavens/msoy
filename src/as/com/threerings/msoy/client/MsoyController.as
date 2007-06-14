@@ -186,7 +186,8 @@ public class MsoyController extends Controller
         var friends :Array = new Array();
         for each (var fe :FriendEntry in _ctx.getMemberObject().getSortedEstablishedFriends()) {
             if (fe.online) {
-                var item :Object = { label: fe.name.toString(), command: OPEN_CHANNEL, arg: fe.name }
+                var item :Object = {
+                    label: fe.name.toString(), command: OPEN_CHANNEL, arg: fe.name }
                 checkChatChannelOpen(fe.name, item);
                 friends.push(item);
             }
