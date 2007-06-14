@@ -94,24 +94,17 @@ public class ProfileRecord extends PersistentRecord
     public static final ColumnExp LOCATION_C =
         new ColumnExp(ProfileRecord.class, LOCATION);
 
-    /** The column identifier for the {@link #firstName} field. */
-    public static final String FIRST_NAME = "firstName";
+    /** The column identifier for the {@link #realName} field. */
+    public static final String REAL_NAME = "realName";
 
-    /** The qualified column identifier for the {@link #firstName} field. */
-    public static final ColumnExp FIRST_NAME_C =
-        new ColumnExp(ProfileRecord.class, FIRST_NAME);
-
-    /** The column identifier for the {@link #lastName} field. */
-    public static final String LAST_NAME = "lastName";
-
-    /** The qualified column identifier for the {@link #lastName} field. */
-    public static final ColumnExp LAST_NAME_C =
-        new ColumnExp(ProfileRecord.class, LAST_NAME);
+    /** The qualified column identifier for the {@link #realName} field. */
+    public static final ColumnExp REAL_NAME_C =
+        new ColumnExp(ProfileRecord.class, REAL_NAME);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 4;
+    public static final int SCHEMA_VERSION = 5;
 
     /** The unique id of the memory with whom this profile is associated. */
     @Id public int memberId;
@@ -146,11 +139,8 @@ public class ProfileRecord extends PersistentRecord
     /** The locale from which the member claims to hail (maxlen: 255). */
     public String location = "";
 
-    /** The user's first name.  Used for searching only. */
-    public String firstName = "";
-
-    /** The user's last name.  Used for searching only. */
-    public String lastName = "";
+    /** The user's real name.  Used for searching only. */
+    public String realName = "";
 
     public ProfileRecord ()
     {

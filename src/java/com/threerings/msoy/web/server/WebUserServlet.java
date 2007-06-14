@@ -92,8 +92,7 @@ public class WebUserServlet extends MsoyServiceServlet
             ProfileRecord prec = new ProfileRecord();
             prec.memberId = newAccount.memberId;
             prec.birthday = new java.sql.Date(birthday.getTime());
-            prec.firstName = info.firstName;
-            prec.lastName = info.lastName;
+            prec.realName = info.realName;
             MsoyServer.profileRepo.storeProfile(prec);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "failed to set birthday on new account's profile [memberId=" +
@@ -296,8 +295,7 @@ public class WebUserServlet extends MsoyServiceServlet
         try {
             ProfileRecord prec = MsoyServer.profileRepo.loadProfile(mrec.memberId);
             AccountInfo accountInfo = new AccountInfo();
-            accountInfo.firstName = prec.firstName;
-            accountInfo.lastName = prec.lastName;
+            accountInfo.realName = prec.realName;
             return accountInfo;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to fetch account info [who=" + mrec.memberId + 
@@ -314,8 +312,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
         try {
             ProfileRecord prec = MsoyServer.profileRepo.loadProfile(mrec.memberId);
-            prec.firstName = info.firstName;
-            prec.lastName = info.lastName;
+            prec.realName = info.realName;
             MsoyServer.profileRepo.storeProfile(prec);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to update user account info [who=" + mrec.memberId +

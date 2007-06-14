@@ -115,11 +115,8 @@ public class CreateAccountDialog extends BorderedDialog
         contents.setText(row++, 0, CShell.cmsgs.createDisplayNameTip());
 
         contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        contents.setText(row, 0, CShell.cmsgs.createFirstName());
-        contents.setWidget(row++, 1, _fname = new TextBox());
-        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        contents.setText(row, 0, CShell.cmsgs.createLastName());
-        contents.setWidget(row++, 1, _lname = new TextBox());
+        contents.setText(row, 0, CShell.cmsgs.createRealName());
+        contents.setWidget(row++, 1, _rname = new TextBox());
         contents.getFlexCellFormatter().setColSpan(row, 0, 2);
         contents.getFlexCellFormatter().setStyleName(row, 0, "Tip");
         contents.setText(row++, 0, CShell.cmsgs.createRealNameTip());
@@ -183,8 +180,7 @@ public class CreateAccountDialog extends BorderedDialog
         String email = _email.getText().trim(), name = _name.getText().trim();
         String password = _password.getText().trim();
         AccountInfo info = new AccountInfo();
-        info.firstName = _fname.getText().trim();
-        info.lastName = _lname.getText().trim();
+        info.realName = _rname.getText().trim();
         _status.setText(CShell.cmsgs.creatingAccount());
         CShell.usersvc.register(DeploymentConfig.version, email, CShell.md5hex(password), name, 
             _dateOfBirth.getDate(), info, 1, _invite, new AsyncCallback() {
@@ -214,7 +210,7 @@ public class CreateAccountDialog extends BorderedDialog
 
     protected StatusPanel _parent;
     protected Invitation _invite;
-    protected TextBox _email, _name, _fname, _lname;
+    protected TextBox _email, _name, _rname;
     protected PasswordTextBox _password, _confirm;
     protected DateFields _dateOfBirth;
     protected Button _go;

@@ -6,11 +6,17 @@ package com.threerings.msoy.person.server.persist;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntListUtil;
 
 import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
@@ -18,10 +24,13 @@ import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Conditionals.In;
+import com.samskivert.jdbc.depot.operator.Conditionals.Like;
 import com.samskivert.jdbc.depot.operator.Logic.And;
 
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages the persistent store of profile profile data.
@@ -31,6 +40,40 @@ public class ProfileRepository extends DepotRepository
     public ProfileRepository (ConnectionProvider conprov)
     {
         super(conprov);
+
+        // TEMP - added 6-14-2007
+        _ctx.registerMigration(ProfileRecord.class, new EntityMigration(5) {
+            public boolean runBeforeDefault () {
+                return false;
+            }
+            public int invoke (Connection conn) throws SQLException {
+                if (!JDBCUtil.tableContainsColumn(conn, _tableName, "firstName")) {
+                    log.warning(_tableName + ".firstName already dropped.");
+                    return 0;
+                }
+                if (!JDBCUtil.tableContainsColumn(conn, _tableName, "lastName")) {
+                    log.warning(_tableName + ".lastName already dropped.");
+                    return 0;
+                }
+                if (!JDBCUtil.tableContainsColumn(conn, _tableName, "realName")) {
+                    log.warning(_tableName + ".realName has not yet been created.");
+                    return 0;
+                }
+
+                Statement stmt = conn.createStatement();
+                try {
+                    log.info("Merging firstName and lastName into realName in " + _tableName);
+                    int n = stmt.executeUpdate(
+                        "update " + _tableName + " set realName=concat(firstName,\" \",lastName)");
+                    n += stmt.executeUpdate("alter table " + _tableName + " drop column firstName");
+                    n += stmt.executeUpdate("alter table " + _tableName + " drop column lastName");
+                    return n;
+                } finally {
+                    stmt.close();
+                }
+            }
+        });
+        // END TEMP
     }
 
     /**
@@ -81,17 +124,10 @@ public class ProfileRepository extends DepotRepository
             return new ArrayList<MemberNameRecord>();
         }
 
-        String[] names = search.split(" ");
-        if (names.length < 2) {
-            return new ArrayList<MemberNameRecord>();
-        }
-
         return findAll(MemberNameRecord.class,
                        new FromOverride(MemberRecord.class),
                        new Join(MemberRecord.MEMBER_ID_C, ProfileRecord.MEMBER_ID_C),
-                       new Where(new And(new Equals(ProfileRecord.FIRST_NAME, names[0]),
-                                         new Equals(ProfileRecord.LAST_NAME, 
-                                                    names[names.length-1]))),
+                       new Where(new Like(ProfileRecord.REAL_NAME_C, "%" + search + "%")),
                        new Limit(0, maxRecords));
     }
 }

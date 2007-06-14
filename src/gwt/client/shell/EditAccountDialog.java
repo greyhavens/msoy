@@ -72,15 +72,10 @@ public class EditAccountDialog extends BorderedDialog
         contents.setText(row++, 0, CShell.cmsgs.editRealNameHeader());
         
         contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        contents.setText(row, 0, CShell.cmsgs.editFirstName());
-        contents.setWidget(row++, 1, _fname = new TextBox());
-        _fname.setText(_accountInfo.firstName);
-        _fname.addKeyboardListener(_valrname);
-        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        contents.setText(row, 0, CShell.cmsgs.editLastName());
-        contents.setWidget(row, 1, _lname = new TextBox());
-        _lname.setText(_accountInfo.lastName);
-        _lname.addKeyboardListener(_valrname);
+        contents.setText(row, 0, CShell.cmsgs.editRealName());
+        contents.setWidget(row++, 1, _rname = new TextBox());
+        _rname.setText(_accountInfo.realName);
+        _rname.addKeyboardListener(_valrname);
         _uprname = new Button(CShell.cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
                 updateRealName();
@@ -149,25 +144,19 @@ public class EditAccountDialog extends BorderedDialog
 
     protected void updateRealName ()
     {
-        final String oldFirstName = _accountInfo.firstName;
-        _accountInfo.firstName = _fname.getText().trim();
-        final String oldLastName = _accountInfo.lastName;
-        _accountInfo.lastName = _lname.getText().trim();
+        final String oldRealName = _accountInfo.realName;
+        _accountInfo.realName = _rname.getText().trim();
         _uprname.setEnabled(false);
-        _fname.setEnabled(false);
-        _lname.setEnabled(false);
+        _rname.setEnabled(false);
         CShell.usersvc.updateAccountInfo(CShell.ident, _accountInfo, new AsyncCallback() {
             public void onSuccess (Object result) {
-                _fname.setEnabled(true);
-                _lname.setEnabled(true);
+                _rname.setEnabled(true);
                 _uprname.setEnabled(false);
                 _status.setText(CShell.cmsgs.realNameUpdated());
             }
             public void onFailure (Throwable cause) {
-                _fname.setText(_accountInfo.firstName = oldFirstName);
-                _fname.setEnabled(true);
-                _lname.setText(_accountInfo.lastName = oldLastName);
-                _lname.setEnabled(true);
+                _rname.setText(_accountInfo.realName = oldRealName);
+                _rname.setEnabled(true);
                 _uprname.setEnabled(true);
                 _status.setText(CShell.serverError(cause));
             }
@@ -241,10 +230,9 @@ public class EditAccountDialog extends BorderedDialog
 
     protected void validateRealName ()
     {
-        String firstName = _fname.getText().trim();
-        String lastName = _lname.getText().trim();
+        String realName = _rname.getText().trim();
         boolean valid = false;
-        if (!_accountInfo.firstName.equals(firstName) || !_accountInfo.lastName.equals(lastName)) {
+        if (!_accountInfo.realName.equals(realName)) {
             _status.setText(CShell.cmsgs.editNameReady());
             valid = true;
         } else {
@@ -359,7 +347,7 @@ public class EditAccountDialog extends BorderedDialog
         }
     };
 
-    protected TextBox _email, _pname, _fname, _lname;
+    protected TextBox _email, _pname, _rname;
     protected PasswordTextBox _password, _confirm;
     protected Button _upemail, _uppass, _uppname, _uprname;
     protected int _permaRow;

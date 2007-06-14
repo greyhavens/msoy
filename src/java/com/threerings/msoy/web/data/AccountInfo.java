@@ -10,9 +10,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 public class AccountInfo implements IsSerializable
 {
-    /** The user's real first name.  Used for searching only. */
-    public String firstName = "";
-
-    /** The user's real last name. Used for searching only. */
-    public String lastName = "";
+    /** The user's real name.  Used for searching only. */
+    public String realName = "";
 }

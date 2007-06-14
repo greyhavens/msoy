@@ -8,14 +8,6 @@ package client.shell;
 public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "Last name:".
-   * 
-   * @return translated "Last name:"
-   * @gwt.key createLastName
-   */
-  String createLastName();
-
-  /**
    * Translated "Display name:".
    * 
    * @return translated "Display name:"
@@ -208,20 +200,20 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String tagQuickAdd();
 
   /**
-   * Translated "First name:".
-   * 
-   * @return translated "First name:"
-   * @gwt.key createFirstName
-   */
-  String createFirstName();
-
-  /**
    * Translated "Sending email...".
    * 
    * @return translated "Sending email..."
    * @gwt.key sendingForgotEmail
    */
   String sendingForgotEmail();
+
+  /**
+   * Translated "Real Name:".
+   * 
+   * @return translated "Real Name:"
+   * @gwt.key createRealName
+   */
+  String createRealName();
 
   /**
    * Translated "Enter a new password for your account.".
@@ -376,14 +368,6 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editEmailReady();
 
   /**
-   * Translated "Last Name:".
-   * 
-   * @return translated "Last Name:"
-   * @gwt.key editLastName
-   */
-  String editLastName();
-
-  /**
    * Translated "Email address updated. Remember, this new address must be used next time you log into Whirled.".
    * 
    * @return translated "Email address updated. Remember, this new address must be used next time you log into Whirled."
@@ -446,6 +430,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key createNotThirteen
    */
   String createNotThirteen();
+
+  /**
+   * Translated "Real Name:".
+   * 
+   * @return translated "Real Name:"
+   * @gwt.key editRealName
+   */
+  String editRealName();
 
   /**
    * Translated "Click "Change" below to update your password.".
@@ -1022,14 +1014,6 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key menuPlaces
    */
   String menuPlaces();
-
-  /**
-   * Translated "First Name:".
-   * 
-   * @return translated "First Name:"
-   * @gwt.key editFirstName
-   */
-  String editFirstName();
 
   /**
    * Translated "Click ''Update'' to update your real name.".
