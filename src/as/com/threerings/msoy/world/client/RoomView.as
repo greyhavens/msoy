@@ -70,6 +70,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.chat.client.ChatInfoProvider;
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.ComicOverlay;
+import com.threerings.msoy.chat.client.MsoyChatDirector;
 
 import com.threerings.msoy.world.client.editor.DoorTargetEditController;
 import com.threerings.msoy.world.data.AudioData;
@@ -636,7 +637,7 @@ public class RoomView extends AbstractRoomView
     override protected function computeScale () :Number
     {
         // when minimized, use a TV aspect ratio with a target size of 300x240
-        if ((_ctx.getClient() as WorldClient).isMinimized()) {
+        if ((_ctx.getChatDirector() as MsoyChatDirector).containsRoomTab()) {
             return (4 * TopPanel.RIGHT_SIDEBAR_WIDTH / 5) / _actualHeight;
         } else {
             return super.computeScale();

@@ -157,6 +157,31 @@ public class ChatChannelPanel extends VBox
         return tab;
     }    
 
+    public function sendRoomToTab () :void
+    {
+        _wtab = new WorldChatTab(_ctx);
+        _wtab.label = Msgs.CHAT.xlate("l.world_channel");
+        _tabnav.addChildAt(_wtab, 0);
+        _tabnav.setClosePolicyForTab(0, SuperTab.CLOSE_NEVER);
+        selectTab(_wtab);
+        _ctx.getTopPanel().getControlBar().setTabMode(true);
+    }
+
+    public function removeRoomTab () :void
+    {
+        if (_wtab != null) {
+            _ctx.getTopPanel().getControlBar().setTabMode(false);
+            _tabnav.removeChild(_wtab);
+            _wtab.shutdown();
+            _wtab = null;
+        }
+    }
+
+    public function containsRoomTab () :Boolean
+    {
+        return _wtab != null;
+    }
+
     protected function selectTab (tab :ChatTab, select :Boolean = true) :void
     {
         // select this tab if requested
@@ -191,21 +216,12 @@ public class ChatChannelPanel extends VBox
 
     protected function miniWillChange (event :ValueEvent) :void
     {
-        var minimized :Boolean = (event.value as Boolean);
+        /*var minimized :Boolean = (event.value as Boolean);
         if (minimized && _wtab == null) {
-            var select :Boolean = (_tabnav.numChildren == 0);
-            _wtab = new WorldChatTab(_ctx);
-            _wtab.label = Msgs.CHAT.xlate("l.world_channel");
-            _tabnav.addChildAt(_wtab, 0);
-            _tabnav.setClosePolicyForTab(0, SuperTab.CLOSE_NEVER);
-
-            selectTab(_wtab);
-
+            sendRoomToTab();
         } else if (!minimized && _wtab != null) {
-            _tabnav.removeChild(_wtab);
-            _wtab.shutdown();
-            _wtab = null;
-        }
+            removeRoomTab();
+        }*/
     }
 
     /**

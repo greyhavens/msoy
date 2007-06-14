@@ -92,7 +92,6 @@ public class ControlBar extends HBox
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
         addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
 
-        _ctx.getClient().addEventListener(WorldClient.MINI_WILL_CHANGE, miniWillChange);
         _ctx.getClient().addEventListener(WorldClient.EMBEDDED_STATE_KNOWN, embeddedStateKnown);
 
         checkControls();
@@ -132,6 +131,14 @@ public class ControlBar extends HBox
             }
         }
     }
+
+    public function setTabMode (tabbed :Boolean) :void
+    {
+        _isMinimized = tabbed;
+        _isEditing = (_isEditing && ! _isMinimized);
+        updateUI();
+    }
+
 
     override protected function updateDisplayList (w :Number, h :Number) :void
     {
@@ -293,13 +300,6 @@ public class ControlBar extends HBox
         if (!embedded && _logonPanel != null) {
             removeChild(_logonPanel);
         }
-    }
-
-    protected function miniWillChange (event :ValueEvent) :void
-    {
-        _isMinimized = (event.value as Boolean);
-        _isEditing = (_isEditing && ! _isMinimized);
-        updateUI();
     }
 
     protected function handleAddRemove (event :Event) :void

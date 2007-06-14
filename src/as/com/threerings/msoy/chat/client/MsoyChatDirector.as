@@ -141,6 +141,30 @@ public class MsoyChatDirector extends ChatDirector
         _ccpanel.displayPageTab(tabName, url, true);
     }
 
+    /**
+     * Tells the chat panel to grab the room display and put it into a tab.
+     */
+    public function sendRoomToTab () :void
+    {
+        _ccpanel.sendRoomToTab();
+    }
+
+    /**
+     * Tells the chat panel to remove its room tab (giving the display back to the top panel.
+     */
+    public function removeRoomTab () :void
+    {
+        _ccpanel.removeRoomTab();
+    }
+
+    /**
+     * Returns true of the room view is currently contained within a chat tab.
+     */
+    public function containsRoomTab () :Boolean
+    {
+        return _ccpanel.containsRoomTab();
+    }
+
     // from ChatDirector
     override public function pushChatDisplay (display :ChatDisplay) :void
     {

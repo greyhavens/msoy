@@ -31,7 +31,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.game.data.GameObject;
 
-import com.threerings.msoy.chat.client.ChatContainer;
+import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.client.notifications.NotificationHandler;
 
 import com.threerings.msoy.game.client.FloatingTableDisplay;
@@ -180,6 +180,7 @@ public class TopPanel extends Canvas
      */
     public function takePlaceContainer () :PlaceBox
     {
+        Log.getLog(this).debug("takePlaceContainer");
         if (_placeBox.parent != this) {
             return null;
         }
@@ -197,6 +198,7 @@ public class TopPanel extends Canvas
      */
     public function restorePlaceContainer () :void
     {
+        Log.getLog(this).debug("restorePlaceContainer");
         if (_placeBox.parent != null) {
             Log.getLog(this).warning("Requested to restore PlaceBox but it's still added.");
             _placeBox.parent.removeChild(_placeBox);
@@ -266,6 +268,8 @@ public class TopPanel extends Canvas
         _ctx.getWorldClient().setSeparator(side.width - 1);
         addChild(_leftPanel); // add to end
         layoutPanels();
+
+        (_ctx.getChatDirector() as MsoyChatDirector).sendRoomToTab();
     }
 
     /**
@@ -286,14 +290,17 @@ public class TopPanel extends Canvas
             _leftPanel = null;
 
             layoutPanels();
+
+            (_ctx.getChatDirector() as MsoyChatDirector).removeRoomTab();
         }
     }
 
     /**
-     * Configures our riht side panel. Any previous right side panel will be cleared.
+     * Configures our right side panel. Any previous right side panel will be cleared.
      */
     public function setRightPanel (side :UIComponent) :void
     {
+        Log.getLog(this).debug("setRightPanel");
         clearRightPanel(null);
         _rightPanel = side;
         _rightPanel.includeInLayout = false;
@@ -409,6 +416,11 @@ public class TopPanel extends Canvas
         // clear out our left panel if we are about to be minimized
         if (event.value as Boolean) {
             clearLeftPanel(null);
+            (_ctx.getChatDirector() as MsoyChatDirector).sendRoomToTab();
+        } else if (_leftPanel == null) {
+            // if we are not minimized, and we don't have a left panel, restore the room to its
+            // previous glory
+            (_ctx.getChatDirector() as MsoyChatDirector).removeRoomTab();
         }
     }
 
@@ -432,9 +444,9 @@ public class TopPanel extends Canvas
                 "bottom", getBottomPanelHeight() + ControlBar.HEIGHT + DECORATIVE_MARGIN_HEIGHT);
             _headerBar.setStyle("right", _rightPanel.width);
 
-            // if we have no place view currently, stretch the right panel all the way to the left,
-            // otherwise let it be as wide as it wants to be
-            if (_placeBox.parent == this) {
+            // if we have no place view currently and we have no left panel, stretch it all the 
+            // way to the left.  Otherwise, let it be as wide as it wants to be.
+            if (_placeBox.parent == this || _leftPanel != null) {
                 _rightPanel.clearStyle("left");
             } else {
                 _rightPanel.setStyle("left", 0);
