@@ -67,7 +67,7 @@ public class DecorEditor extends ItemEditor
                     _decor.depth = (short) height;
                     // clear offsets
                     _decor.offsetX = _decor.offsetY = 0;
-                    updateUIFromDecor();
+                    updateDebuggingLabel();
                 }
                 return null;
             }
@@ -81,15 +81,18 @@ public class DecorEditor extends ItemEditor
         super.setItem(item);
         _decor = (Decor)item;
 
-        updateUIFromDecor();
+        updateDebuggingLabel();
         sendDecorUpdateToFlash();
     }
 
     /**
      * When the decor item had changed, updates numeric values being displayed.
      */
-    protected void updateUIFromDecor()
+    protected void updateDebuggingLabel()
     {
+        // the following is useful while debugging gwt/flash interop
+        
+        /*
         String typelabel = CEditem.emsgs.decorType_None();
         switch (_decor.type) {
         case Decor.IMAGE_OVERLAY: typelabel = CEditem.emsgs.decorType_Standard(); break;
@@ -106,6 +109,7 @@ public class DecorEditor extends ItemEditor
             CEditem.emsgs.decorHorizon() + " " + horizon + " / " +
             _decor.offsetX + ", " + _decor.offsetY + ", " + _decor.hideWalls + "<br/>" +
             CEditem.emsgs.decorType() + " " + typelabel);
+        */
     }
     
     /**
@@ -138,7 +142,7 @@ public class DecorEditor extends ItemEditor
         _decor.offsetX = offsetX;
         _decor.offsetY = offsetY;
         _decor.hideWalls = hideWalls;
-        updateUIFromDecor();
+        updateDebuggingLabel();
     }
 
     /**
