@@ -422,6 +422,21 @@ public class TopPanel extends Canvas
 
     protected function layoutPanels () :void
     {
+        if (_leftPanel != null) {
+            _leftPanel.setStyle("top", 0);
+            _leftPanel.setStyle("bottom", getBottomPanelHeight());
+            _leftPanel.setStyle("left", 0);
+            _controlBar.setStyle("left", _leftPanel.width);
+            _headerBar.setStyle("left", _leftPanel.width);
+            if (_rightPanel != null) {
+                _leftPanel.width = width - _rightPanel.width;
+            }
+            _ctx.getWorldClient().setSeparator(_leftPanel.width - 1);
+        } else {
+            _controlBar.setStyle("left", 0);
+            _headerBar.setStyle("left", 0);
+        }
+
         if (_rightPanel != null) {
             _rightPanel.setStyle("top", 0);
             _rightPanel.setStyle("right", 0);
@@ -432,8 +447,6 @@ public class TopPanel extends Canvas
             // if we have no place view currently and we have no left panel, stretch it all the 
             // way to the left.  Otherwise, let it be as wide as it wants to be.
             if (_placeBox.parent == this || _leftPanel != null) {
-                _leftPanel.width = width - _rightPanel.width;
-                _ctx.getWorldClient().setSeparator(_leftPanel.width - 1);
                 _rightPanel.clearStyle("left");
             } else {
                 _rightPanel.setStyle("left", 0);
@@ -441,17 +454,6 @@ public class TopPanel extends Canvas
 
         } else {
             _headerBar.setStyle("right", 0);
-        }
-
-        if (_leftPanel != null) {
-            _leftPanel.setStyle("top", 0);
-            _leftPanel.setStyle("bottom", getBottomPanelHeight());
-            _leftPanel.setStyle("left", 0);
-            _controlBar.setStyle("left", _leftPanel.width);
-            _headerBar.setStyle("left", _leftPanel.width);
-        } else {
-            _controlBar.setStyle("left", 0);
-            _headerBar.setStyle("left", 0);
         }
 
         updatePlaceViewSize();
