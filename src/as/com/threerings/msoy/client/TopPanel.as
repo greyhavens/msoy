@@ -180,7 +180,6 @@ public class TopPanel extends Canvas
      */
     public function takePlaceContainer () :PlaceBox
     {
-        Log.getLog(this).debug("takePlaceContainer");
         if (_placeBox.parent != this) {
             return null;
         }
@@ -198,7 +197,6 @@ public class TopPanel extends Canvas
      */
     public function restorePlaceContainer () :void
     {
-        Log.getLog(this).debug("restorePlaceContainer");
         if (_placeBox.parent != null) {
             Log.getLog(this).warning("Requested to restore PlaceBox but it's still added.");
             _placeBox.parent.removeChild(_placeBox);
@@ -300,7 +298,6 @@ public class TopPanel extends Canvas
      */
     public function setRightPanel (side :UIComponent) :void
     {
-        Log.getLog(this).debug("setRightPanel");
         clearRightPanel(null);
         _rightPanel = side;
         _rightPanel.includeInLayout = false;

@@ -146,7 +146,9 @@ public class MsoyChatDirector extends ChatDirector
      */
     public function sendRoomToTab () :void
     {
-        _ccpanel.sendRoomToTab();
+        if (!_ccpanel.containsRoomTab()) {
+            _ccpanel.sendRoomToTab();
+        }
     }
 
     /**

@@ -5,6 +5,8 @@ package com.threerings.msoy.chat.client {
 
 import flash.display.DisplayObject;
 
+import flash.events.Event;
+
 import mx.core.mx_internal;
 
 import mx.containers.HBox;
@@ -184,7 +186,15 @@ public class ChatChannelPanel extends VBox
     {
         // select this tab if requested
         if (select) {
-            _tabnav.selectedChild = tab;
+            // We need to defer the action of selecting a tab for one frame.  If the tab is newly
+            // added, attempting to select it immediately does not work, for some wacky reason.
+            var thisPanel :ChatChannelPanel = this;
+            var frameListener :Function;
+            frameListener = function (event :Event) :void {
+                _tabnav.selectedChild = tab;
+                thisPanel.removeEventListener(Event.ENTER_FRAME, frameListener);
+            }
+            thisPanel.addEventListener(Event.ENTER_FRAME, frameListener);
         }
 
         // if we're not visible, add ourselves
