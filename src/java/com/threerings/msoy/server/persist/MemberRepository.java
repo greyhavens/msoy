@@ -71,18 +71,15 @@ public class MemberRepository extends DepotRepository
 
         _ctx.registerMigration(FriendRecord.class, new EntityMigration(2) {
             public int invoke (Connection conn) throws SQLException {
-                if (!JDBCUtil.tableContainsColumn(conn, _tableName, "firstName")) {
-                    log.warning(_tableName + ".firstName already dropped.");
-                    return 0;
-                }
-                if (!JDBCUtil.tableContainsColumn(conn, _tableName, "lastName")) {
-                    log.warning(_tableName + ".lastName already dropped.");
+                if (!JDBCUtil.tableContainsColumn(conn, _tableName, "status")) {
+                    // we'll accept this inconsistency
+                    log.warning(_tableName + ".status already dropped.");
                     return 0;
                 }
 
                 Statement stmt = conn.createStatement();
                 try {
-                    log.info("Merging firstName and lastName into realName in " + _tableName);
+                    log.info("Deleting pending friends and dropping 'status' from " + _tableName);
                     int n = stmt.executeUpdate("delete from " + _tableName + " where status = 0");
                     n += stmt.executeUpdate("alter table " + _tableName + " drop column status");
                     return n;
