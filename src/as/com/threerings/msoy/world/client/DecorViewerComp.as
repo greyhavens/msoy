@@ -150,7 +150,6 @@ public class DecorViewerComp extends Canvas
         _hideWallsBox = new CheckBox();
         _hideWallsBox.label = Msgs.EDITING.get("l.hide_walls");
         _hideWallsBox.addEventListener(Event.CHANGE, regularOptionsChanged);
-        _hideWallsBox.enabled = false;
             
         GridUtil.addRow(standard, Msgs.EDITING.get("l.scene_type"), _types,
                         Msgs.EDITING.get("l.scene_depth"), _depthSlider, _hideWallsBox);
@@ -221,9 +220,9 @@ public class DecorViewerComp extends Canvas
     protected function regularOptionsChanged (event :Event) :void
     {
         // update data from sliders
-        _data.depth = _depthSlider.value;
-        _data.type = _types.selectedIndex;
-        _data.hideWalls = _hideWallsBox.selected;
+        _decor.depth = _depthSlider.value;
+        _decor.type = _types.selectedIndex;
+        _decor.hideWalls = _hideWallsBox.selected;
 
         refreshAdvancedUI();
         refreshPreview();
@@ -237,12 +236,12 @@ public class DecorViewerComp extends Canvas
     protected function advancedOptionsChanged (event :Event) :void
     {
         // update data from text boxes
-        _data.width = norm(int(_widthBox.text), 1);
-        _data.height = norm(int(_heightBox.text), 1);
-        _data.depth = norm(int(_depthBox.text), 1);
-        _data.horizon = norm(Number(_horizonYBox.text), 0);
-        _data.offsetX = norm(Number(_offsetXBox.text), 0);
-        _data.offsetY = norm(Number(_offsetYBox.text), 0);
+        _decor.width = norm(int(_widthBox.text), 1);
+        _decor.height = norm(int(_heightBox.text), 1);
+        _decor.depth = norm(int(_depthBox.text), 1);
+        _decor.horizon = norm(Number(_horizonYBox.text), 0);
+        _decor.offsetX = norm(Number(_offsetXBox.text), 0);
+        _decor.offsetY = norm(Number(_offsetYBox.text), 0);
         
         refreshStandardUI();
         refreshPreview();
@@ -258,14 +257,14 @@ public class DecorViewerComp extends Canvas
         offsetX :Number, offsetY :Number, hideWalls :Boolean) :void
     {
         // update storage
-        _data.width = width;
-        _data.height = height;
-        _data.depth = depth;
-        _data.type = type;
-        _data.horizon = horizon;
-        _data.offsetX = offsetX;
-        _data.offsetY = offsetY;
-        _data.hideWalls = hideWalls;
+        _decor.width = width;
+        _decor.height = height;
+        _decor.depth = depth;
+        _decor.type = type;
+        _decor.horizon = horizon;
+        _decor.offsetX = offsetX;
+        _decor.offsetY = offsetY;
+        _decor.hideWalls = hideWalls;
 
         refreshStandardUI();
         refreshAdvancedUI();
@@ -288,9 +287,9 @@ public class DecorViewerComp extends Canvas
      */
     protected function refreshStandardUI () :void
     {
-        _depthSlider.value = _data.depth;
-        _types.selectedIndex = _data.type;
-        _hideWallsBox.selected = _data.hideWalls;
+        _depthSlider.value = _decor.depth;
+        _types.selectedIndex = _decor.type;
+        _hideWallsBox.selected = _decor.hideWalls;
     }
 
     /**
@@ -298,12 +297,12 @@ public class DecorViewerComp extends Canvas
      */
     protected function refreshAdvancedUI () :void
     {
-        _widthBox.text = String(_data.width);
-        _heightBox.text = String(_data.height);
-        _depthBox.text = String(_data.depth);
-        _horizonYBox.text = String(_data.horizon);
-        _offsetXBox.text = String(_data.offsetX);
-        _offsetYBox.text = String(_data.offsetY);
+        _widthBox.text = String(_decor.width);
+        _heightBox.text = String(_decor.height);
+        _depthBox.text = String(_decor.depth);
+        _horizonYBox.text = String(_decor.horizon);
+        _offsetXBox.text = String(_decor.offsetX);
+        _offsetYBox.text = String(_decor.offsetY);
     }
     
     /**
@@ -312,15 +311,18 @@ public class DecorViewerComp extends Canvas
     public function refreshPreview () :void
     {
         // redraw the room backdrop
-        _backdrop.setRoom(_data.width, _data.height, _data.depth, _data.horizon, _data.type);
+        _backdrop.update(_decor);
         _backdrop.drawRoom(
             _backdropCanvas.graphics, _backdropCanvas.width, _backdropCanvas.height, true, false);
 
         // scale the preview box. ideally, we want a 50% scaling factor, but if that's too big,
         // just shrink the whole thing to fit.
         var scale :Number = 0.5;
-        if (_data.width * scale > PREVIEW_BOX_WIDTH || _data.height * scale > PREVIEW_BOX_HEIGHT) {
-            scale = Math.min (PREVIEW_BOX_WIDTH / _data.width, PREVIEW_BOX_HEIGHT / _data.height);
+        if (_decor.width * scale > PREVIEW_BOX_WIDTH ||
+            _decor.height * scale > PREVIEW_BOX_HEIGHT)
+        {
+            scale = Math.min (
+                PREVIEW_BOX_WIDTH / _decor.width, PREVIEW_BOX_HEIGHT / _decor.height);
         }
         
         // scale the bitmap container and the backdrop canvas
@@ -329,10 +331,10 @@ public class DecorViewerComp extends Canvas
 
         // center the bitmap horizontally, and align vertically with the bottom of the room,
         // taking offsets into account
-        var pixelOffsetX :Number = (_data.offsetX + _data.deltaX) * _media.width;
-        var pixelOffsetY :Number = (_data.offsetY + _data.deltaY) * _media.height;
-        _media.x = (_data.width - _media.width) / 2 + pixelOffsetX;
-        _media.y = _data.height - _media.height - pixelOffsetY; 
+        var pixelOffsetX :Number = (_decor.offsetX + _deltaX) * _media.width;
+        var pixelOffsetY :Number = (_decor.offsetY + _deltaY) * _media.height;
+        _media.x = (_decor.width - _media.width) / 2 + pixelOffsetX;
+        _media.y = _decor.height - _media.height - pixelOffsetY; 
 
         // update the text widget
         _scaleLabel.text = Msgs.EDITING.get("l.preview_scale", String(int(scale * 100)))
@@ -347,8 +349,8 @@ public class DecorViewerComp extends Canvas
         if (ExternalInterface.available) {
             try {
                 ExternalInterface.call(
-                    "updateDecor", _data.width, _data.height, _data.depth, _data.horizon,
-                    _data.type, _data.offsetX, _data.offsetY, _data.hideWalls);
+                    "updateDecor", _decor.width, _decor.height, _decor.depth, _decor.horizon,
+                    _decor.type, _decor.offsetX, _decor.offsetY, _decor.hideWalls);
             } catch (e :Error) {
                 log.warning("Unable to send update to Javascript: " + e);
             }
@@ -439,10 +441,10 @@ public class DecorViewerComp extends Canvas
                 var deltaPx :Point = new Point(_wrapper.mouseX - _mouseDownAnchor.x,
                                                _wrapper.mouseY - _mouseDownAnchor.y);
                 // convert delta to be in room coordinates (normalize + vertical flip)
-                _data.deltaX =   deltaPx.x / _data.width;
-                _data.deltaY = - deltaPx.y / _data.height;   
-                _offsetXBox.text = String(MathUtil.clamp(_data.offsetX + _data.deltaX, -1, 1));
-                _offsetYBox.text = String(MathUtil.clamp(_data.offsetY + _data.deltaY, -1, 1));
+                _deltaX =   deltaPx.x / _decor.width;
+                _deltaY = - deltaPx.y / _decor.height;   
+                _offsetXBox.text = String(MathUtil.clamp(_decor.offsetX + _deltaX, -1, 1));
+                _offsetYBox.text = String(MathUtil.clamp(_decor.offsetY + _deltaY, -1, 1));
 
                 refreshPreview();
             }
@@ -452,7 +454,7 @@ public class DecorViewerComp extends Canvas
             if (event.buttonDown) {
                 // set horizon level to the normalized mouse position
                 _horizonYBox.text =
-                    String(1 - MathUtil.clamp(_wrapper.mouseY / _data.height, 0, 1));
+                    String(1 - MathUtil.clamp(_wrapper.mouseY / _decor.height, 0, 1));
                 
                 advancedOptionsChanged(null);
             }
@@ -466,7 +468,7 @@ public class DecorViewerComp extends Canvas
         
         if (_mouseMode == MOUSE_MODE_OFFSET) {
             // update the decor offset
-            _data.deltaX = _data.deltaY = 0;
+            _deltaX = _deltaY = 0;
             advancedOptionsChanged(null);
         }
         
@@ -507,7 +509,8 @@ public class DecorViewerComp extends Canvas
     protected static const MOUSE_MODE_HORIZON :int = 2;
 
     protected var _testing :Boolean = true;
-    
+
+    // standard options
     protected var _results :Label;
     protected var _scaleLabel :Label;
     protected var _depthSlider :HSlider;
@@ -515,6 +518,7 @@ public class DecorViewerComp extends Canvas
     protected var _offsetMode :CheckBox;
     protected var _horizonMode :CheckBox;
 
+    // advanced options
     protected var _widthBox :TextInput;
     protected var _heightBox :TextInput;
     protected var _depthBox :TextInput;
@@ -523,7 +527,8 @@ public class DecorViewerComp extends Canvas
     protected var _offsetXBox :TextInput;
     protected var _offsetYBox :TextInput;
     protected var _hideWallsBox :CheckBox;
-    
+
+    // room preview
     protected var _preview :Canvas;
     protected var _mediaPath :String;
     protected var _media :DecorMediaContainer;
@@ -532,11 +537,15 @@ public class DecorViewerComp extends Canvas
     protected var _mouseMode :int = MOUSE_MODE_DEFAULT;
     protected var _mouseDownAnchor :Point;
 
-    protected var _data :DecorStorage = new DecorStorage();
+    // misc
+    protected var _decor :Decor = new Decor();
     protected var _backdrop :RoomBackdrop = new RoomBackdrop();
     protected var _pointer :Image;
-
     protected var _pointers :Array; // of Array[2] of Image, built from POINTERS definitions
+
+    // temporary display-only values, used while dragging the background
+    protected var _deltaX :Number = 0;
+    protected var _deltaY :Number = 0;
         
     [Embed(source="../../../../../../../rsrc/media/mouse_pointers/hand_open.png")]
     protected static const HAND_OPEN :Class;
@@ -577,23 +586,4 @@ internal class DecorMediaContainer extends MediaContainer
     public var _viewer :DecorViewerComp;
 }
 
-/**
- * Helper class, encapsulates relevant Decor parameters.
- */
-internal class DecorStorage
-{
-    // these correspond to decor item parameters
-    public var width :int = 1;
-    public var height :int = 1;
-    public var depth :int = 1;
-    public var horizon :Number = 0;
-    public var type :int = 1;
-    public var offsetX :Number = 0;
-    public var offsetY :Number = 0;
-    public var hideWalls :Boolean = false;
-
-    // temporary display-only values, used while dragging the background
-    public var deltaX :Number = 0;
-    public var deltaY :Number = 0;
-}
 

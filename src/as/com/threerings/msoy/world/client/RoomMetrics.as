@@ -3,6 +3,7 @@ package com.threerings.msoy.world.client {
 import flash.geom.Point;
 
 import com.threerings.flash.Vector3;
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.world.data.MsoyLocation;
 
 /**
@@ -75,14 +76,15 @@ public class RoomMetrics
 
 
     /** Read and update metrics. */
-    public function update (width :int, height :int, depth :int, horizon :Number) :void
+    public function update (decor :Decor) :void
     {
         // I'm using 'this' to make clear which assignments are for public props
-        this.focal = DEFAULT_FOCAL;   // nb: focal length must not be zero
-        this.sceneDepth = depth; // nb: scene depth must not be zero
-        this.sceneWidth = width;
-        this.sceneHeight = height;
-        this.sceneHorizon = horizon;
+        this.focal = Math.max(1, DEFAULT_FOCAL);    // nb: focal length must not be zero
+        this.sceneDepth = Math.max(1, decor.depth); // nb: scene depth must not be zero
+        this.sceneWidth = decor.width;
+        this.sceneHeight = decor.height;
+        this.sceneHorizon = decor.horizon;
+        this.trapezoidalTransform = decor.hideWalls;
         this.camera = new Vector3 (0.5, 0.5, - focal / sceneDepth);
 
         // floor and ceiling:

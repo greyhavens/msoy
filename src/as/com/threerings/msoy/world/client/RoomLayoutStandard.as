@@ -39,7 +39,7 @@ public class RoomLayoutStandard implements RoomLayout
     // from interface RoomLayout
     public function update (data :Decor) :void
     {
-        _metrics.update(data.width, data.height, data.depth, data.horizon);
+        _metrics.update(data);
     }
     
     // from interface RoomLayout

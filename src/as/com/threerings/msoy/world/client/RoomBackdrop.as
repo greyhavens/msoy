@@ -14,18 +14,11 @@ import com.threerings.msoy.item.data.all.Decor;
  */
 public class RoomBackdrop
 {
-    /** Refresh room metrics from a Decor object. */
-    public function setRoomFromDecor (decor :Decor) :void
-    {
-        setRoom(decor.width, decor.height, decor.depth, decor.horizon, decor.type);
-    }
-
     /** Refresh room metrics. */
-    public function setRoom (width :int, height :int, depth :int, horizon :Number, type :int) :void
+    public function update (decor :Decor) :void
     {
-        _metrics.update(width, height, depth, horizon);
-        _roomType = type;
-    }        
+        _metrics.update(decor);
+    }
 
     /**
      * Draws the room backdrop on the specified graphics, with specified unscaled parameters.
@@ -126,8 +119,5 @@ public class RoomBackdrop
 
     /** The RoomMetrics for doing our layout. */
     protected var _metrics :RoomMetrics = new RoomMetrics();
-
-    /** One of the Decor.* enum values that describe different room types. */
-    protected var _roomType :int;
 }
 }
