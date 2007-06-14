@@ -162,7 +162,14 @@ public class ChatChannelPanel extends VBox
         _wtab = new WorldChatTab(_ctx);
         _wtab.label = Msgs.CHAT.xlate("l.world_channel");
         _tabnav.addChildAt(_wtab, 0);
-        _tabnav.setClosePolicyForTab(0, SuperTab.CLOSE_NEVER);
+        // another action that seems to need to be deferred.
+        var thisPanel :ChatChannelPanel = this;
+        var frameListener :Function;
+        frameListener = function (event :Event) :void {
+            _tabnav.setClosePolicyForTab(0, SuperTab.CLOSE_NEVER);
+            thisPanel.removeEventListener(Event.ENTER_FRAME, frameListener);
+        }
+        thisPanel.addEventListener(Event.ENTER_FRAME, frameListener);
         selectTab(_wtab);
         _ctx.getTopPanel().getControlBar().setTabMode(true);
     }
