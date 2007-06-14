@@ -234,6 +234,7 @@ public class MsoySceneModel extends SceneModel
         Decor decor = new Decor();
         decor.itemId = 0; // doesn't correspond to an object
         decor.furniMedia = new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.DECOR, Item.FURNI_MEDIA);
+        decor.type = Decor.IMAGE_OVERLAY;
         decor.depth = 400;
         decor.width = 800;
         decor.height = 494;
