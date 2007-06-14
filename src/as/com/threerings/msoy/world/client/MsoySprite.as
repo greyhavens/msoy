@@ -393,7 +393,7 @@ public class MsoySprite extends MsoyMediaContainer
 
     override protected function configureMask (ww :int, hh :int) :void
     {
-        if (_desc.mimeType == MediaDesc.VIDEO_YOUTUBE) {
+        if (_desc != null && _desc.mimeType == MediaDesc.VIDEO_YOUTUBE) {
             // do not mask!
             return;
         }
