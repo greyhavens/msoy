@@ -163,13 +163,9 @@ public class ChatChannelPanel extends VBox
         _wtab.label = Msgs.CHAT.xlate("l.world_channel");
         _tabnav.addChildAt(_wtab, 0);
         // another action that seems to need to be deferred.
-        var thisPanel :ChatChannelPanel = this;
-        var frameListener :Function;
-        frameListener = function (event :Event) :void {
+        callLater(function () :void {
             _tabnav.setClosePolicyForTab(0, SuperTab.CLOSE_NEVER);
-            thisPanel.removeEventListener(Event.ENTER_FRAME, frameListener);
-        }
-        thisPanel.addEventListener(Event.ENTER_FRAME, frameListener);
+        });
         selectTab(_wtab);
         _ctx.getTopPanel().getControlBar().setTabMode(true);
     }
@@ -193,15 +189,11 @@ public class ChatChannelPanel extends VBox
     {
         // select this tab if requested
         if (select) {
-            // We need to defer the action of selecting a tab for one frame.  If the tab is newly
-            // added, attempting to select it immediately does not work, for some wacky reason.
-            var thisPanel :ChatChannelPanel = this;
-            var frameListener :Function;
-            frameListener = function (event :Event) :void {
+            // We need to defer the action of selecting a tab.  If the tab is newly added, 
+            // attempting to select it immediately does not work, for some wacky reason.
+            callLater(function () :void {
                 _tabnav.selectedChild = tab;
-                thisPanel.removeEventListener(Event.ENTER_FRAME, frameListener);
-            }
-            thisPanel.addEventListener(Event.ENTER_FRAME, frameListener);
+            });
         }
 
         // if we're not visible, add ourselves
