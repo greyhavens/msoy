@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.game.client {
 
+import mx.core.Container;
 import mx.core.ScrollPolicy;
 
 import mx.containers.HBox;
@@ -97,7 +98,15 @@ public class TableCreationPanel extends HBox
         btnBox.addChild(_createBtn);
         gconf.getContainer().addChild(btnBox);
 
-        addChild(gconf.getContainer());
+        _cont = gconf.getContainer();
+        _cont.styleName = "seatsGrid";
+        addChild(_cont);
+    }
+
+    public override function set width (w :Number) :void
+    {
+        super.width = w;
+        _cont.width = w - 20;
     }
 
     protected var _ctx :WorldContext;
@@ -112,5 +121,7 @@ public class TableCreationPanel extends HBox
     protected var _panel :LobbyPanel;
 
     protected var _createBtn :CommandButton;
+
+    protected var _cont :Container;
 }
 }

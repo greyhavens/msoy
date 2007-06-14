@@ -64,11 +64,12 @@ public class TableRenderer extends HBox
         recheckTable();
     }
 
-    override public function set width (width :Number) :void
+    override public function set width (w:Number) :void
     {
-        super.width = width;
+        Log.getLog(this).debug("set width = " + w);
+        super.width = w;
         if (_popup && _seatsGrid != null) {
-            _seatsGrid.width = width;
+            _seatsGrid.width = w;
         }
     }
 
@@ -130,6 +131,9 @@ public class TableRenderer extends HBox
             } 
             removeChildren();
             addChild(_creationPanel);
+            if (parent.width != 0) {
+                _creationPanel.width = parent.width;
+            }
             panel.setCreateButton(_creationPanel.getCreateButton());
             return;
 
