@@ -263,7 +263,6 @@ public class TopPanel extends Canvas
             _tableDisp.x += _leftPanel.width;
         }
 
-        _ctx.getWorldClient().setSeparator(side.width - 1);
         addChild(_leftPanel); // add to end
         layoutPanels();
 
@@ -434,6 +433,7 @@ public class TopPanel extends Canvas
             // way to the left.  Otherwise, let it be as wide as it wants to be.
             if (_placeBox.parent == this || _leftPanel != null) {
                 _leftPanel.width = width - _rightPanel.width;
+                _ctx.getWorldClient().setSeparator(_leftPanel.width - 1);
                 _rightPanel.clearStyle("left");
             } else {
                 _rightPanel.setStyle("left", 0);
