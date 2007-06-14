@@ -1,6 +1,7 @@
-package com.threerings.msoy.world.client {
+//
+// $Id$
 
-import com.threerings.msoy.world.data.MsoyLocation;
+package com.threerings.msoy.world.client {
 
 public class ActorBackend extends EntityBackend
 {
@@ -13,7 +14,6 @@ public class ActorBackend extends EntityBackend
         o["setOrientation_v1"] = setOrientation_v1;
         o["setState_v1"] = setState_v1;
         o["getState_v1"] = getState_v1;
-        o["getRoomBounds_v1"] = getRoomBounds_v1;
 
         // oldness (used for a very short time), deprecated 2007-04-24
         o["setWalkSpeed_v1"] = function (num :Number) :void {
@@ -25,11 +25,8 @@ public class ActorBackend extends EntityBackend
     {
         super.populateControlInitProperties(o);
 
-        var sprite :ActorSprite = (_sprite as ActorSprite);
-        var loc :MsoyLocation = sprite.getLocation();
-        o["location"] = [ loc.x, loc.y, loc.z ];
-        o["orient"] = loc.orient;
-        o["isMoving"] = sprite.isMoving();
+        o["orient"] = _sprite.getLocation().orient;
+        o["isMoving"] = (_sprite as ActorSprite).isMoving();
     }
 
     /**
@@ -54,14 +51,6 @@ public class ActorBackend extends EntityBackend
     protected function setOrientation_v1 (orient :Number) :void
     {
         (_sprite as ActorSprite).setOrientationFromUser(orient);
-    }
-
-    /**
-     * Called by user code to determine the current room's boundaries.
-     */
-    protected function getRoomBounds_v1 () :Array
-    {
-        return (_sprite as ActorSprite).getRoomBounds();
     }
 
     /**

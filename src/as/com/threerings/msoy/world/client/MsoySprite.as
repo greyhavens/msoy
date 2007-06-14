@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.world.client {
 
 import flash.display.BlendMode;
@@ -58,16 +61,15 @@ import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomObject;
 
-
 /**
- * A base sprite that concerns itself with the mundane details of
- * loading and communication with the loaded media content.
+ * A base sprite that concerns itself with the mundane details of loading and communication with
+ * the loaded media content.
  */
 public class MsoySprite extends MsoyMediaContainer
     implements RoomElement
 {
-    /** The type of a ValueEvent that is dispatched when the location is updated,
-     * but ONLY if the parent is not an AbstractRoomView. */
+    /** The type of a ValueEvent that is dispatched when the location is updated, but ONLY if the
+     * parent is not an AbstractRoomView. */
     public static const LOCATION_UPDATED :String = "locationUpdated";
 
     /** Hover colors. */
@@ -153,8 +155,7 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     /**
-     * Get the screen width of this sprite, taking into account both
-     * horizontal scales.
+     * Get the screen width of this sprite, taking into account both horizontal scales.
      */
     public function getActualWidth () :Number
     {
@@ -162,8 +163,7 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     /**
-     * Get the screen height of this sprite, taking into account both
-     * vertical scales.
+     * Get the screen height of this sprite, taking into account both vertical scales.
      */
     public function getActualHeight () :Number
     {
@@ -171,8 +171,8 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     /**
-     * Get the stage-coordinate rectangle of the bounds of this sprite, including any
-     * non-media content like decorations.
+     * Get the stage-coordinate rectangle of the bounds of this sprite, including any non-media
+     * content like decorations.
      */
     public function getStageRect () :Rectangle
     {
@@ -181,6 +181,18 @@ public class MsoySprite extends MsoyMediaContainer
         r.topLeft = localToGlobal(new Point(0, 0));
         r.bottomRight = localToGlobal(botRight);
         return r;
+    }
+
+    /**
+     * Returns the room bounds. Called by user code.
+     */
+    public function getRoomBounds () :Array
+    {
+        if (!(parent is RoomView)) {
+            return null;
+        }
+        var metrics :RoomMetrics = RoomView(parent).layout.metrics;
+        return [ metrics.sceneWidth, metrics.sceneHeight, metrics.sceneDepth];
     }
 
     public function hasAction () :Boolean
@@ -208,8 +220,8 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     /**
-     * Get the basic hotspot that is the registration point on the media.
-     * This point is not scaled.
+     * Get the basic hotspot that is the registration point on the media.  This point is not
+     * scaled.
      */
     public function getMediaHotSpot () :Point
     {
@@ -218,15 +230,14 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     /**
-     * Get the hotspot to use for layout purposes. This point is
-     * adjusted for scale and any perspectivization.
+     * Get the hotspot to use for layout purposes. This point is adjusted for scale and any
+     * perspectivization.
      */
     public function getLayoutHotSpot () :Point
     {
         var p :Point = getMediaHotSpot();
-        return new Point(
-            Math.abs(p.x * getMediaScaleX() * _locScale * _fxScaleX),
-            Math.abs(p.y * getMediaScaleY() * _locScale * _fxScaleY));
+        return new Point(Math.abs(p.x * getMediaScaleX() * _locScale * _fxScaleX),
+                         Math.abs(p.y * getMediaScaleY() * _locScale * _fxScaleY));
     }
 
     public function setActive (active :Boolean) :void
@@ -309,9 +320,8 @@ public class MsoySprite extends MsoyMediaContainer
         callUserCode("messageReceived_v1", name, arg, isAction);
 
         // TODO: remove someday
-        // TEMP: dispatch a backwards compatible event to older style
-        // entities. This older method was deprecated 2007-03-12, so hopefully
-        // we don't have to keep this around too long.
+        // TEMP: dispatch a backwards compatible event to older style entities. This older method
+        // was deprecated 2007-03-12, so hopefully we don't have to keep this around too long.
         if (isAction) {
             callUserCode("eventTriggered_v1", name, arg);
         }
@@ -336,8 +346,8 @@ public class MsoySprite extends MsoyMediaContainer
     /**
      * Unload the media we're displaying, clean up any resources.
      *
-     * @param completely if true, we're going away and should stop
-     * everything. Otherwise, we're just loading up new media.
+     * @param completely if true, we're going away and should stop everything. Otherwise, we're
+     * just loading up new media.
      */
     override public function shutdown (completely :Boolean = true) :void
     {
@@ -355,9 +365,8 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     /**
-     * This method should be used by MsoySprite and subclasses to set
-     * the media being shown, instead of the various public superclass
-     * methods like setMediaDesc() and setMedia().
+     * This method should be used by MsoySprite and subclasses to set the media being shown,
+     * instead of the various public superclass methods like setMediaDesc() and setMedia().
      */
     protected function setup (desc :MediaDesc, ident :ItemIdent) :void
     {
@@ -446,8 +455,7 @@ public class MsoySprite extends MsoyMediaContainer
      */
     protected function updateMediaPosition () :void
     {
-        // if scale is negative, the image is flipped and we need to move
-        // the origin
+        // if scale is negative, the image is flipped and we need to move the origin
         var xscale :Number = _locScale * getMediaScaleX() * _fxScaleX;
         var yscale :Number = _locScale * getMediaScaleY() * _fxScaleY;
         _media.x = (xscale >= 0) ? 0 : Math.abs(Math.min(_w, getMaxContentWidth()) * xscale);
@@ -464,7 +472,7 @@ public class MsoySprite extends MsoyMediaContainer
         // update the hotspot
         if (_hotSpot == null) {
             _hotSpot = new Point(Math.min(_w, getMaxContentWidth())/2,
-                Math.min(_h, getMaxContentHeight()));
+                                 Math.min(_h, getMaxContentHeight()));
         }
 
         // we'll want to call locationUpdated() now, but it's done for us as a result of calling
@@ -491,7 +499,7 @@ public class MsoySprite extends MsoyMediaContainer
 
     /**
      * Request control of this entity. Called by our backend in response to a request from
-     * usercode.  If this succeeds, a <code>gotControl</code> notification will be dispatched when
+     * usercode. If this succeeds, a <code>gotControl</code> notification will be dispatched when
      * we hear back from the server.
      */
     public function requestControl () :void
@@ -576,8 +584,8 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     /**
-     * Validate that the user message is kosher prior to sending it.
-     * This method is used to validate all states/actions/messages.
+     * Validate that the user message is kosher prior to sending it.  This method is used to
+     * validate all states/actions/messages.
      *
      * Note: name is taken as an Object, some methods accept an array from users and we verify
      * Stringliness too.
@@ -626,8 +634,8 @@ public class MsoySprite extends MsoyMediaContainer
     protected var _fxScaleX :Number = 1;
     protected var _fxScaleY :Number = 1;
 
-    /** The 'location' scale of the media: the scaling that is the result of
-     * emulating perspective while we move around the room. */
+    /** The 'location' scale of the media: the scaling that is the result of emulating perspective
+     * while we move around the room. */
     protected var _locScale :Number = 1;
 
     /** Are we being edited? */

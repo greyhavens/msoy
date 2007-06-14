@@ -1,6 +1,10 @@
+//
+// $Id$
+
 package com.threerings.msoy.world.client {
 
 import com.threerings.msoy.client.ControlBackend;
+import com.threerings.msoy.world.data.MsoyLocation;
 
 public class EntityBackend extends ControlBackend
 {
@@ -16,8 +20,7 @@ public class EntityBackend extends ControlBackend
     {
         super.shutdown();
 
-        // disconnect the sprite so that badly-behaved usercode cannot
-        // touch it anymore
+        // disconnect the sprite so that badly-behaved usercode cannot touch it anymore
         _sprite = null;
     }
 
@@ -25,18 +28,26 @@ public class EntityBackend extends ControlBackend
     {
         super.populateControlProperties(o);
 
-        // we give usercode functions in the backend
-        // (instead of connecting them directly) so that we can easily
-        // disconnect the sprite from the usercode
+        // we give usercode functions in the backend (instead of connecting them directly) so that
+        // we can easily disconnect the sprite from the usercode
         o["requestControl_v1"] = requestControl_v1;
         o["lookupMemory_v1"] = lookupMemory_v1;
         o["updateMemory_v1"] = updateMemory_v1;
         o["getInstanceId_v1"] = getInstanceId_v1;
         o["setHotSpot_v1"] = setHotSpot_v1;
         o["sendMessage_v1"] = sendMessage_v1;
+        o["getRoomBounds_v1"] = getRoomBounds_v1;
 
         // deprecated methods
         o["triggerEvent_v1"] = triggerEvent_v1;
+    }
+
+    override protected function populateControlInitProperties (o :Object) :void
+    {
+        super.populateControlInitProperties(o);
+
+        var loc :MsoyLocation = _sprite.getLocation();
+        o["location"] = [ loc.x, loc.y, loc.z ];
     }
 
     protected function requestControl_v1 () :void
@@ -67,6 +78,11 @@ public class EntityBackend extends ControlBackend
     protected function sendMessage_v1 (name :String, arg :Object, isAction :Boolean) :void
     {
         _sprite.sendMessage(name, arg, isAction);
+    }
+
+    protected function getRoomBounds_v1 () :Array
+    {
+        return _sprite.getRoomBounds();
     }
 
     // Deprecated on 2007-03-12
