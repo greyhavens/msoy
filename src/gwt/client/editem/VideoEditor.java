@@ -87,6 +87,12 @@ public class VideoEditor extends ItemEditor
                 if (text.length() == YOUTUBE_ID_LENGTH) {
                     setHash(Item.MAIN_MEDIA, text, MediaDesc.VIDEO_YOUTUBE,
                         MediaDesc.NOT_CONSTRAINED, 425, 350, "", 0, 0);
+                    // NOTE: it appears that youtube videos have a thumbnail of sorts hosted in
+                    // a predictable and accessible way.
+                    //    http://img.youtube.com/vi/VIDEO_ID/0.jpg
+                    // Perhaps we should have an 'external image' mime type and ... murrgh
+                    // it'd actually have to be a 'youtube thumbnail' mime type.
+                    // Something to consider.
                 }
             }
         });
