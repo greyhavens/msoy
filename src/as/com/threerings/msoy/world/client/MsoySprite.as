@@ -32,14 +32,16 @@ import flash.geom.Rectangle;
 import flash.net.LocalConnection;
 import flash.net.NetConnection;
 import flash.net.NetStream;
+import flash.net.URLRequest;
 
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.system.SecurityDomain;
 
-import flash.net.URLRequest;
+import flash.utils.getTimer;
 
 import com.threerings.util.CommandEvent;
+import com.threerings.util.MethodQueue;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.FilterUtil;
@@ -300,7 +302,7 @@ public class MsoySprite extends MsoyMediaContainer
         } else {
             FilterUtil.removeFilter(_media, _glow);
             if (_media.mask != null) {
-                FilterUtil.addFilter(_media.mask, _glow);
+                FilterUtil.removeFilter(_media.mask, _glow);
             }
             _glow = null;
         }
