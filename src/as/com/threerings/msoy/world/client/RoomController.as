@@ -372,19 +372,18 @@ public class RoomController extends SceneController
      */
     public function handleRoomEdit (button :CommandButton) :void
     {
-        _roomObj.roomService.editRoom(
-            _mctx.getClient(), new ResultWrapper(
-                function (cause :String) :void {
-                    _mctx.displayFeedback("general", cause);
-                },
-                function (result :Object) :void {
-                    // if we're editing, let's finish, otherwise let's start!
-                    if (isRoomEditing()) {
-                        cancelRoomEditing();
-                    } else {
-                        beginRoomEditing(button);
-                    }
-                }));
+        _roomObj.roomService.editRoom(_mctx.getClient(), new ResultWrapper(
+            function (cause :String) :void {
+                _mctx.displayFeedback("general", cause);
+            },
+            function (result :Object) :void {
+                // if we're editing, let's finish, otherwise let's start!
+                if (isRoomEditing()) {
+                    cancelRoomEditing();
+                } else {
+                    beginRoomEditing(button);
+                }
+            }));
     }
 
     /**
