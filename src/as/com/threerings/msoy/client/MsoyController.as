@@ -562,7 +562,6 @@ public class MsoyController extends Controller
                     sceneId = 1; // for "packwards combatability"
                 }
             }
-            Log.getLog(this).debug("sceneIdString: " + sceneIdString);
             _ctx.getSceneDirector().moveTo(sceneId);
         }
 
@@ -579,7 +578,6 @@ public class MsoyController extends Controller
     {
         // this will result in another request to move to the scene we're already in, but we'll
         // ignore it because we're already there
-        Log.getLog(this).debug("went to scene: " + sceneId + ", " + _gameId);
         handleInternalGo("world", "s" + sceneId + (_gameId != -1 ? "g" + _gameId : ""));
     }
 
