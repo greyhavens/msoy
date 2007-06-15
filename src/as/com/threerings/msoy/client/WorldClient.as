@@ -15,6 +15,7 @@ import flash.ui.ContextMenu;
 import mx.core.Application;
 import mx.resources.ResourceBundle;
 
+import com.threerings.util.CommandEvent;
 import com.threerings.util.Name;
 import com.threerings.util.ResultAdapter;
 import com.threerings.util.StringUtil;
@@ -40,10 +41,13 @@ import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemList;
+import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.Photo;
 
+import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.PetService;
+import com.threerings.msoy.world.client.PetSprite;
 
 import com.threerings.msoy.world.data.PetMarshaller;
 import com.threerings.msoy.world.data.RoomConfig;
@@ -258,6 +262,8 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("getSceneItemId", externalGetSceneItemId);
         ExternalInterface.addCallback("getFurniList", externalGetFurniList);
         ExternalInterface.addCallback("usePet", externalUsePet);
+        ExternalInterface.addCallback("removePet", externalRemovePet);
+        ExternalInterface.addCallback("getPets", externalGetPets);
 
         _embedded = !Boolean(ExternalInterface.call("helloWhirled"));
         dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
@@ -460,6 +466,34 @@ public class WorldClient extends BaseClient
             };
         }(petId));
         petLoader.start();
+    }
+
+    protected function externalRemovePet (petId :int) :void
+    {
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        if (view != null) {
+            // ensure this pet really is in this room
+            for each (var pet :PetSprite in view.getPets()) {
+                if (pet.getItemIdent().itemId == petId) {
+                    CommandEvent.dispatch(view, RoomController.ORDER_PET, [petId, Pet.ORDER_SLEEP]);
+                    break;
+                }
+            }
+        }
+    }
+
+    protected function externalGetPets () :Array
+    {
+        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        if (view != null) {
+            var petIds :Array = [];
+            for each (var pet :PetSprite in view.getPets()) {
+                petIds.push(pet.getItemIdent().itemId);
+            }
+            return petIds;
+        } else {
+            return [];
+        }
     }
 
     protected var _wctx :WorldContext;

@@ -16,6 +16,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
@@ -163,12 +164,21 @@ public class FlashClients
     {
         JavaScriptObject items = getFurniListNative();
         List furnis = new ArrayList();
-        for (int ii = 0; ii < FlashClients.getLength(items); ii++) {
-            JavaScriptObject furni = FlashClients.getJavaScriptElement(items, ii);
-            furnis.add(new ItemIdent(FlashClients.getByteElement(furni, 0),
-                FlashClients.getIntElement(furni, 1)));
+        for (int ii = 0; ii < getLength(items); ii++) {
+            JavaScriptObject furni = getJavaScriptElement(items, ii);
+            furnis.add(new ItemIdent(getByteElement(furni, 0), getIntElement(furni, 1)));
         }
         return furnis;
+    }
+
+    public static List getPetList ()
+    {
+        JavaScriptObject petIds = getPetsNative();
+        List pets = new ArrayList();
+        for (int ii = 0; ii < getLength(petIds); ii++) {
+            pets.add(new ItemIdent(Item.PET, getIntElement(petIds, ii)));
+        }
+        return pets;
     }
 
     /**
@@ -449,9 +459,22 @@ public class FlashClients
         var client = $doc.getElementById("asclient");
         if (client) {
             try {
-                client.usePet(petId);
+                client.removePet(petId);
             } catch (e) {
                 // fall through
+            }
+        }
+    }-*/;
+
+    /**
+     * Does the actual <code>getPets()</code> call.
+     */
+    protected static native JavaScriptObject getPetsNative () /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            try {
+                return client.getPets();
+            } catch (e) {
             }
         }
     }-*/;

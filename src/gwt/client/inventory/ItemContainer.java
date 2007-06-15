@@ -36,12 +36,12 @@ import client.util.events.PetListener;
  */
 public class ItemContainer extends FlexTable
 {
-    public ItemContainer (ItemPanel panel, Item item, List furniList)
+    public ItemContainer (ItemPanel panel, Item item, List itemList)
     {
         setCellPadding(0);
         setCellSpacing(0);
         _panel = panel;
-        _furniList = furniList;
+        _itemList = itemList;
         setStyleName("itemContainer");
         setItem(item);
     }
@@ -132,7 +132,7 @@ public class ItemContainer extends FlexTable
         } else if (type == Item.FURNITURE || type == Item.GAME || type == Item.PHOTO ||
                 type == Item.VIDEO) {
             final ItemIdent ident = new ItemIdent(type, _item.itemId);
-            setWidget(1, 0, generateActionLabel(_furniList.contains(ident)));
+            setWidget(1, 0, generateActionLabel(_itemList.contains(ident)));
             FlashEvents.addListener(_listener = new FurniChangeListener() {
                 public void furniChanged (FurniChangedEvent event) {
                     if (event.getAddedFurni().contains(ident)) {
@@ -143,7 +143,8 @@ public class ItemContainer extends FlexTable
                 }
             });
         } else if (type == Item.PET) {
-            setWidget(1, 0, generateActionLabel(false));
+            setWidget(1, 0, generateActionLabel(_itemList.contains(
+                new ItemIdent(type, _item.itemId))));
             FlashEvents.addListener(_listener = new PetListener() {
                 public void petUpdated (PetEvent event) {
                     if (event.getPetId() == _item.itemId) {
@@ -225,5 +226,5 @@ public class ItemContainer extends FlexTable
     protected Item _item;
 
     protected FlashEventListener _listener;
-    protected List _furniList;
+    protected List _itemList;
 }

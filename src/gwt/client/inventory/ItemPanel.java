@@ -52,7 +52,7 @@ public class ItemPanel extends VerticalPanel
                 History.newItem(Application.createLinkToken("inventory", args));
             }
             protected Widget createWidget (Object item) {
-                return new ItemContainer(ItemPanel.this, (Item)item, _furniList);
+                return new ItemContainer(ItemPanel.this, (Item)item, _itemList);
             }
             protected String getEmptyMessage () {
                 return CInventory.msgs.panelNoItems(Item.getTypeName(_type));
@@ -168,7 +168,11 @@ public class ItemPanel extends VerticalPanel
         CInventory.membersvc.loadInventory(CInventory.ident, _type, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _contentsModelDirty = false;
-                _furniList = FlashClients.getFurniList();
+                if (_type == Item.PET) {
+                    _itemList = FlashClients.getPetList();
+                } else {
+                    _itemList = FlashClients.getFurniList();
+                }
                 _contents.setModel(new SimpleDataModel((List)result), _startPage);
             }
             public void onFailure (Throwable caught) {
@@ -245,5 +249,5 @@ public class ItemPanel extends VerticalPanel
     protected boolean _contentsModelDirty = false;
 
     /** Only get the furni list for the current room once, and feed it to each ItemContainer */
-    protected List _furniList;
+    protected List _itemList;
 }
