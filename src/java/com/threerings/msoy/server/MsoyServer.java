@@ -38,6 +38,7 @@ import com.threerings.admin.server.DatabaseConfigRegistry;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceConfig;
+import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.ezgame.server.DictionaryManager;
@@ -350,6 +351,11 @@ public class MsoyServer extends WhirledServer
     {
         super.shutdown();
 
+        // shut down all active games and rooms
+        for (Iterator<PlaceManager> iter = plreg.enumeratePlaceManagers(); iter.hasNext(); ) {
+            iter.next().shutdown();
+        }
+
         // shutdown our peer manager and logoff of our peer nodes
         if (peerMan != null) {
             peerMan.shutdown();
@@ -361,14 +367,6 @@ public class MsoyServer extends WhirledServer
         } catch (InterruptedException ie) {
             log.log(Level.WARNING, "Failed to stop http server.", ie);
         }
-
-        // shutdown the ehcache manager
-        CacheManager.getInstance().shutdown();
-
-        // close our audit logs
-        _glog.close();
-        _ilog.close();
-        _stlog.close();
     }
 
     @Override
@@ -492,6 +490,20 @@ public class MsoyServer extends WhirledServer
         }
 
         log.info("Msoy server initialized.");
+    }
+
+    @Override // from PresentsServer
+    protected void invokerDidShutdown ()
+    {
+        super.invokerDidShutdown();
+
+        // shutdown the ehcache manager
+        CacheManager.getInstance().shutdown();
+
+        // close our audit logs
+        _glog.close();
+        _ilog.close();
+        _stlog.close();
     }
 
     /**
