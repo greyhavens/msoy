@@ -136,6 +136,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String gameMaxPlayers();
 
   /**
+   * Translated "Enter a google video id:".
+   * 
+   * @return translated "Enter a google video id:"
+   * @gwt.key videoPromptGoogle
+   */
+  String videoPromptGoogle();
+
+  /**
    * Translated "Upload your audio.".
    * 
    * @return translated "Upload your audio."
@@ -152,6 +160,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String videoMainTab();
 
   /**
+   * Translated "Or use an embeddable google video.".
+   * 
+   * @return translated "Or use an embeddable google video."
+   * @gwt.key videoOptionGoogle
+   */
+  String videoOptionGoogle();
+
+  /**
    * Translated "Upload a New Item".
    * 
    * @return translated "Upload a New Item"
@@ -166,6 +182,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key editorThumbTab
    */
   String editorThumbTab();
+
+  /**
+   * Translated "Enter a youtube video id:".
+   * 
+   * @return translated "Enter a youtube video id:"
+   * @gwt.key videoPromptYoutube
+   */
+  String videoPromptYoutube();
 
   /**
    * Translated "Document Media".
@@ -288,6 +312,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String audioMainTab();
 
   /**
+   * Translated "Or use an embeddable youtube video.".
+   * 
+   * @return translated "Or use an embeddable youtube video."
+   * @gwt.key videoOptionYoutube
+   */
+  String videoOptionYoutube();
+
+  /**
    * Translated "Head Shot Media".
    * 
    * @return translated "Head Shot Media"
@@ -366,38 +398,6 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key videoMainTitle
    */
   String videoMainTitle();
-
-  /**
-   * Translatd as "Or use an embeddable youtube video"
-   *
-   * @return translated "Or use an embeddable youtube video."
-   * @gwt.key videoOptionYoutube
-   */
-  String videoOptionYoutube();
-
-  /**
-   * Translatd as "Or use an embeddable google video"
-   *
-   * @return translated "Or use an embeddable google video."
-   * @gwt.key videoOptionGoogle
-   */
-  String videoOptionGoogle();
-
-  /**
-   * Translated "Enter a youtube video id".
-   *
-   * @return translated "Enter a youtube video id"
-   * @gwt.key videoPromptYoutube
-   */
-  String videoPromptYoutube();
-
-  /**
-   * Translated "Enter a google video id".
-   *
-   * @return translated "Enter a google video id"
-   * @gwt.key videoPromptGoogle
-   */
-  String videoPromptGoogle();
 
   /**
    * Translated "Edit an Item".
