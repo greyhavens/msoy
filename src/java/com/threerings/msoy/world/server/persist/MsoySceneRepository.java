@@ -115,8 +115,7 @@ public class MsoySceneRepository extends DepotRepository
         // TODO: check and populate
 //         // populate some starting scenes
 //         for (int sceneId = 1; sceneId < 8; sceneId++) {
-//             if (sceneId !=
-//                     insertScene(conn, liaison, createSampleScene(sceneId))) {
+//             if (sceneId != insertScene(conn, liaison, createSampleScene(sceneId))) {
 //                 throw new RuntimeException("It's not quite right!");
 //             }
 //         }
@@ -265,7 +264,7 @@ public class MsoySceneRepository extends DepotRepository
                 model.decor = (Decor) record.toItem();
             }
         }
-        if (model.decor == null) {
+        if (model.decor.itemId == 0) { // still the default?
             // the scene specified no or an invalid decor, just load up the default
             model.decor = MsoySceneModel.defaultMsoySceneModelDecor();
         }
