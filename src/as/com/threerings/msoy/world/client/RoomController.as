@@ -117,9 +117,8 @@ public class RoomController extends SceneController
     public static const ORDER_PET :String = "OrderPet";
 
     /**
-     * Get the instanceId of all the entity instances in the room.
-     * This is used so that two instances of a pet can negotiate which
-     * client will control it, for example.
+     * Get the instanceId of all the entity instances in the room.  This is used so that two
+     * instances of a pet can negotiate which client will control it, for example.
      */
     public function getEntityInstanceId () :int
     {
@@ -148,8 +147,8 @@ public class RoomController extends SceneController
         }
 
         var result :Object = hasEntityControl(ident);
-        // side-effect of calling hasEntityControl: the sprite
-        // will be notified (possibly again) that it has control if it does
+        // side-effect of calling hasEntityControl: the sprite will be notified (possibly again)
+        // that it has control if it does
         if (result == null) {
             // only if nobody currently has control do we issue the request
             _roomObj.roomService.requestControl(_mctx.getClient(), ident);
@@ -197,12 +196,11 @@ public class RoomController extends SceneController
     {
         var svc :PetService = (_mctx.getClient().requireService(PetService) as PetService);
         if (checkCanRequest(info.getItemIdent(), "PetService")) {
-            svc.sendChat(
-                _mctx.getClient(), info.bodyOid, _scene.getId(), msg,
-                new ReportingListener(_mctx));
+            svc.sendChat(_mctx.getClient(), info.bodyOid, _scene.getId(), msg,
+                         new ReportingListener(_mctx));
         }
     }
-    
+
     /**
      * Handles a request by an item in our room to update its memory.
      */
@@ -243,7 +241,7 @@ public class RoomController extends SceneController
         _mctx = (ctx as WorldContext);
         // watch for when we're un-minimized and the display list is valid, so that we can
         // open the editor, and place things correctly when necessary
-        _mctx.getTopPanel().getControlBar().addEventListener(ControlBar.DISPLAY_LIST_VALID, 
+        _mctx.getTopPanel().getControlBar().addEventListener(ControlBar.DISPLAY_LIST_VALID,
             function (evt :ValueEvent) :void {
                 if (_openEditor && !isRoomEditing()) {
                     beginRoomEditing(_mctx.getTopPanel().getControlBar().roomEditBtn);
@@ -315,8 +313,7 @@ public class RoomController extends SceneController
      */
     public function doAvatarAction (action :String) :void
     {
-        sendSpriteMessage(_roomView.getMyAvatar().getItemIdent(),
-            action, null, true);
+        sendSpriteMessage(_roomView.getMyAvatar().getItemIdent(), action, null, true);
     }
 
     /**
@@ -342,7 +339,6 @@ public class RoomController extends SceneController
             _loadingMusic.close();
             _loadingMusic = null;
         }
-
         if (resumeBackground && _music == null) {
             setBackgroundMusic(_scene.getAudioData());
         }
@@ -357,14 +353,13 @@ public class RoomController extends SceneController
             cancelRoomEditing();
         }
 
-        _roomObj.roomService.editRoom(
-            _mctx.getClient(), new ResultWrapper(
-                function (cause :String) :void {
-                    _mctx.displayFeedback("general", cause);
-                },
-                function (result :Object) :void {
-                    DoorTargetEditController.start(furniData, _mctx);
-                }));
+        _roomObj.roomService.editRoom(_mctx.getClient(), new ResultWrapper(
+            function (cause :String) :void {
+                _mctx.displayFeedback("general", cause);
+            },
+            function (result :Object) :void {
+                DoorTargetEditController.start(furniData, _mctx);
+            }));
     }
 
     /**
@@ -436,7 +431,7 @@ public class RoomController extends SceneController
             postAction(furni.actionType == FurniData.ACTION_LOBBY_GAME ?
                 MsoyController.JOIN_GAME_LOBBY : MsoyController.JOIN_WORLD_GAME, gameId);
             return;
-            
+
         case FurniData.ACTION_PORTAL:
             _mctx.getSpotSceneDirector().traversePortal(furni.id);
             return;
@@ -447,11 +442,10 @@ public class RoomController extends SceneController
             var url :String = String(actionData[1]);
             (_mctx.getChatDirector() as MsoyChatDirector).displayPage(tabName, url);
             return;
-            
+
         default:
-            log.warning("Clicked on unhandled furni action type " +
-                "[actionType=" + furni.actionType +
-                ", actionData=" + furni.actionData + "].");
+            log.warning("Clicked on unhandled furni action type [actionType=" + furni.actionType +
+                        ", actionData=" + furni.actionData + "].");
             return;
         }
     }
@@ -463,8 +457,7 @@ public class RoomController extends SceneController
     {
         var occInfo :MemberInfo = (avatar.getActorInfo() as MemberInfo);
         if (occInfo == null) {
-            log.info("Clicked on non-MemberInfo sprite " +
-                "[info=" + avatar.getActorInfo() + "].");
+            log.info("Clicked on non-MemberInfo sprite [info=" + avatar.getActorInfo() + "].");
             return;
         }
 
@@ -478,13 +471,12 @@ public class RoomController extends SceneController
             menuItems.push({ label: Msgs.GENERAL.get("b.change_avatar"),
                 command: MsoyController.VIEW_MY_AVATARS, enabled: canControl });
 
-            // create a sub-menu for playing avatar actions 
+            // create a sub-menu for playing avatar actions
             var actions :Array = avatar.getAvatarActions();
             if (actions.length > 0) {
                 var worldActions :Array = [];
                 for each (var act :String in actions) {
-                    worldActions.push({ label: act,
-                        callback: doAvatarAction, arg: act });
+                    worldActions.push({ label: act, callback: doAvatarAction, arg: act });
                 }
 
                 menuItems.push({ label: Msgs.GENERAL.get("l.avAction"),
@@ -496,8 +488,7 @@ public class RoomController extends SceneController
             if (states.length > 0) {
                 var worldStates :Array = [];
                 for each (var state :String in states) {
-                    worldStates.push({ label: state,
-                        callback: doAvatarState, arg :state });
+                    worldStates.push({ label: state, callback: doAvatarState, arg :state });
                 }
 
                 menuItems.push({ label: Msgs.GENERAL.get("l.avStates"),
@@ -515,15 +506,12 @@ public class RoomController extends SceneController
             if (!isGuest) {
                 menuItems.push(
                     { label: Msgs.GENERAL.get("b.visit_home"),
-                      command: MsoyController.GO_MEMBER_HOME,
-                      arg: memId },
+                      command: MsoyController.GO_MEMBER_HOME, arg: memId },
                     { label: Msgs.GENERAL.get("b.view_member"),
-                      command: MsoyController.VIEW_MEMBER,
-                      arg: memId },
+                      command: MsoyController.VIEW_MEMBER, arg: memId },
                     { label: Msgs.GENERAL.get(isFriend ? "b.removeAsFriend"
                                                        : "b.addAsFriend"),
-                      command: MsoyController.ALTER_FRIEND,
-                      arg: [memId, !isFriend] });
+                      command: MsoyController.ALTER_FRIEND, arg: [memId, !isFriend] });
             }
         }
 
@@ -580,13 +568,12 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Get the top-most sprite mouse-capturing sprite with a non-transparent
-     * pixel at the specified location.
+     * Get the top-most sprite mouse-capturing sprite with a non-transparent pixel at the specified
+     * location.
      *
      * @return undefined if the mouse isn't in our bounds, or null, or an MsoySprite.
      */
-    public function getHitSprite (
-        stageX :Number, stageY :Number, all :Boolean = false) :*
+    public function getHitSprite (stageX :Number, stageY :Number, all :Boolean = false) :*
     {
         var smgr :ISystemManager = Application.application.systemManager as ISystemManager;
         var ii :int;
@@ -622,8 +609,8 @@ public class RoomController extends SceneController
         return null;
     }
 
-    /** 
-     * Function to get the item id for item types that there can be only one of, like decor and 
+    /**
+     * Function to get the item id for item types that there can be only one of, like decor and
      * audio.  If an invalid item type specified, or there is none of the type specified in this
      * room, 0 is returned.
      */
@@ -672,8 +659,7 @@ public class RoomController extends SceneController
             function (newItemId :int, newItemType :int, oldScene :MsoyScene) :Function {
             return function () :void {
                 var item :Item = null;
-                for each (var checkItem :Item in 
-                          _mctx.getMemberObject().getItems(newItemType)) {
+                for each (var checkItem :Item in _mctx.getMemberObject().getItems(newItemType)) {
                     if (checkItem.itemId == newItemId) {
                         item = checkItem;
                         break;
@@ -694,7 +680,7 @@ public class RoomController extends SceneController
 
                     } else if (newItemType == Item.AUDIO) {
                         newScene = oldScene.clone() as MsoyScene;
-                        var ad :AudioData = 
+                        var ad :AudioData =
                         (newScene.getSceneModel() as MsoySceneModel).audioData;
                         var audio :Audio = item as Audio;
                         ad.itemId = audio.itemId;
@@ -723,7 +709,7 @@ public class RoomController extends SceneController
                 if (item.isUsed()) {
                     // TODO: add a method to Item so that each item returns a translatable string
                     // (or translated), and we can use that here instead of this business
-                    var msg :String = newItemType == Item.DECOR ? "l.decor" : 
+                    var msg :String = newItemType == Item.DECOR ? "l.decor" :
                         (newItemType == Item.AUDIO ? "l.audio" : "l.furni");
                     (new ItemUsedDialog(_mctx, Msgs.EDITING.get(msg), function () :void {
                         var confWrap :ConfirmAdapter = new ConfirmAdapter(
@@ -753,7 +739,7 @@ public class RoomController extends SceneController
     public function removeFurni (itemId :int, itemType :int) :void
     {
         for each (var furni :FurniData in _scene.getFurni()) {
-            if (furni.itemId == itemId && furni.itemType == itemType) { 
+            if (furni.itemId == itemId && furni.itemType == itemType) {
                 applyUpdate(new FurniUpdateAction(_mctx, furni, null));
                 break;
             }
@@ -814,7 +800,7 @@ public class RoomController extends SceneController
             _music = null;
             _musicIsBackground = true;
         }
-        
+
         _roomEditPanel = new RoomEditPanel(_mctx, button, _roomView, wrapupFn);
         _roomEditPanel.open(false, null, button);
         _roomEditPanel.updateUndoButton(_updates.length != 0);
@@ -856,11 +842,9 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Handle ENTER_FRAME and see if the mouse is now over anything.
-     * Normally the flash player will dispatch mouseOver/mouseLeft
-     * for an object even if the mouse isn't moving: the sprite could move.
-     * Since we're hacking in our own mouseOver handling, we emulate that.
-     * Gah.
+     * Handle ENTER_FRAME and see if the mouse is now over anything.  Normally the flash player
+     * will dispatch mouseOver/mouseLeft for an object even if the mouse isn't moving: the sprite
+     * could move.  Since we're hacking in our own mouseOver handling, we emulate that.  Gah.
      */
     protected function checkMouse (event :Event) :void
     {
@@ -869,11 +853,11 @@ public class RoomController extends SceneController
         var showWalkTarget :Boolean = false;
         var showFlyTarget :Boolean = false;
         var hoverTarget :MsoySprite = null;
-        
+
         if (isRoomEditing()) {
             _roomEditPanel.controller.mouseMove(sx, sy);
         }
-        
+
         // if shift is being held down, we're looking for locations only, so
         // skip looking for hitSprites.
         var hit :* = (_shiftDownSpot == null) ? getHitSprite(sx, sy, isRoomEditing()) : null;
@@ -884,7 +868,7 @@ public class RoomController extends SceneController
             if (hitter == null) {
                 var cloc :ClickLocation = _roomView.layout.pointToAvatarLocation(
                     sx, sy, _shiftDownSpot, RoomMetrics.N_UP);
-                
+
                 if (cloc != null && _mctx.worldProps.userControlsAvatar) {
                     addAvatarYOffset(cloc);
                     if (cloc.loc.y != 0) {
@@ -911,17 +895,17 @@ public class RoomController extends SceneController
                 // have any action, so we don't hover it.
                 hoverTarget = null;
             }
-            
+
             // if we're editing the room, don't highlight any furni at all,
             if (isRoomEditing()) {
                 hoverTarget = null;
-                
+
                 // let the editor override our decision to display walk targets
                 showWalkTarget = (showWalkTarget && _roomEditPanel.isMovementEnabled);
                 showFlyTarget = (showFlyTarget && _roomEditPanel.isMovementEnabled);
-                
+
                 // and tell the editor which sprite was being hovered (whether highlighted or not)
-                _roomEditPanel.controller.mouseOverSprite(hitter); 
+                _roomEditPanel.controller.mouseOverSprite(hitter);
             }
         }
 
@@ -997,13 +981,13 @@ public class RoomController extends SceneController
         // skip looking for hitSprites.
         var hit :* = (_shiftDownSpot == null) ?
             getHitSprite(event.stageX, event.stageY, isRoomEditing()) : null;
-        
+
         if (hit === undefined) {
             return;
         }
 
         var hitter :MsoySprite = (hit as MsoySprite);
-        
+
         // deal with the target
         if (hitter != null) {
             // let the sprite decide what to do with it
@@ -1017,7 +1001,7 @@ public class RoomController extends SceneController
             // calculate where the location is
             var cloc :ClickLocation = _roomView.layout.pointToAvatarLocation(
                 event.stageX, event.stageY, _shiftDownSpot, RoomMetrics.N_UP);
-            
+
             if (cloc != null &&
                 cloc.loc.z >= 0) { // disallow clicking in "front" of the scene when minimized
                 // orient the location as appropriate
@@ -1096,7 +1080,7 @@ public class RoomController extends SceneController
         if (_shiftDownSpot != null) {
             return;
         }
-        
+
         var av :AvatarSprite = _roomView.getMyAvatar();
         if (av != null) {
             var prefY :Number = av.getPreferredY() / _roomView.layout.metrics.sceneHeight;
@@ -1170,7 +1154,7 @@ public class RoomController extends SceneController
 
         var isPathValid :Boolean = data.isInitialized() && data.media != null;
         var path :String = isPathValid ? data.media.getMediaPath() : null;
-        
+
         // maybe shutdown old music
         // if _music is playing the right thing, let it keep on playing
         if (_music != null && _music.getURL() != path) {
@@ -1315,7 +1299,7 @@ public class RoomController extends SceneController
             var newId :int = attrsUpdate.decor.itemId;
             var oldId :int = _scene.getDecor().itemId;
             if (newId != oldId) {
-                _mctx.getWorldClient().dispatchEventToGWT(BACKGROUND_CHANGED_EVENT, 
+                _mctx.getWorldClient().dispatchEventToGWT(BACKGROUND_CHANGED_EVENT,
                     [ Item.DECOR, newId, oldId ]);
             }
             newId = attrsUpdate.audioData.itemId;
@@ -1326,7 +1310,7 @@ public class RoomController extends SceneController
             }
         } else if (update is ModifyFurniUpdate) {
             var args :Array = [ [], [] ];
-            var updates :Array = [ (update as ModifyFurniUpdate).furniAdded, 
+            var updates :Array = [ (update as ModifyFurniUpdate).furniAdded,
                 (update as ModifyFurniUpdate).furniRemoved ];
             for (var ii :int = 0; ii < updates.length; ii++) {
                 for each (var furni :FurniData in updates[ii]) {
@@ -1339,7 +1323,7 @@ public class RoomController extends SceneController
         super.sceneUpdated(update);
         _roomView.processUpdate(update);
     }
-    
+
     /** The number of pixels we scroll the room on a keypress. */
     protected static const ROOM_SCROLL_INCREMENT :int = 20;
 
@@ -1391,7 +1375,7 @@ public class RoomController extends SceneController
     protected var _flyTarget :WalkTarget = new WalkTarget(true);
 
     /** Panel for in-room furni editing. */
-    protected var _roomEditPanel :RoomEditPanel; 
+    protected var _roomEditPanel :RoomEditPanel;
 
     /** Stack that stores the sequence of room updates. */
     protected var _updates :UpdateStack = new UpdateStack(updateRoom);
