@@ -63,6 +63,7 @@ import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.client.ItemService;
+import com.threerings.msoy.item.client.InventoryLoader;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
@@ -667,7 +668,8 @@ public class RoomController extends SceneController
             _openEditor = true;
         }
 
-        (new InventoryAction(itemType, _mctx)).trigger(
+        var loader :InventoryLoader = new InventoryLoader(_mctx, itemType);
+        loader.addEventListener(InventoryLoader.SUCCESS,
             function (newItemId :int, newItemType :int, oldScene :MsoyScene) :Function {
             return function () :void {
                 var item :Item = null;
@@ -746,6 +748,7 @@ public class RoomController extends SceneController
                 }
             }
         }(itemId, itemType, _mctx.getSceneDirector().getScene() as MsoyScene));
+        loader.start();
     }
 
     public function removeFurni (itemId :int, itemType :int) :void
@@ -1402,13 +1405,6 @@ public class RoomController extends SceneController
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
-import com.threerings.presents.dobj.AttributeChangeListener;
-import com.threerings.presents.dobj.AttributeChangedEvent;
-
-import com.threerings.msoy.client.WorldContext;
-
-import com.threerings.msoy.data.MemberObject;
-
 import com.threerings.msoy.world.client.RoomElement;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomCodes;
@@ -1468,40 +1464,4 @@ class WalkTarget extends Sprite
 
     [Embed(source="../../../../../../../rsrc/media/flyable.swf")]
     protected static const FLYTARGET :Class;
-}
-
-class InventoryAction 
-    implements AttributeChangeListener
-{
-    public function InventoryAction (itemType :int, mctx :WorldContext) 
-    {
-        _itemType = itemType;
-        _mctx = mctx;
-    }
-
-    public function trigger (callback :Function) :void
-    {
-        _callback = callback;
-        var member :MemberObject = _mctx.getMemberObject();
-        if (member.isInventoryLoaded(_itemType)) {
-            _callback();
-        } else {
-            member.addListener(this);
-            _mctx.getItemDirector().loadInventory(_itemType);
-        }
-    }
-
-    // from AttributeChangeListener
-    public function attributeChanged (evt :AttributeChangedEvent) :void
-    {
-        var member :MemberObject = _mctx.getMemberObject();
-        if (evt.getName() == MemberObject.LOADED_INVENTORY && member.isInventoryLoaded(_itemType)) {
-            member.removeListener(this);
-            _callback();
-        }
-    }
-
-    protected var _mctx :WorldContext;
-    protected var _itemType :int;
-    protected var _callback :Function;
 }
