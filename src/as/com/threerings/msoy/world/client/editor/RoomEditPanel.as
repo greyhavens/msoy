@@ -18,15 +18,16 @@ import mx.controls.Label;
 import mx.controls.Spacer;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
-import com.threerings.msoy.ui.FloatingPanel;
 
 
 /**
@@ -54,11 +55,13 @@ public class RoomEditPanel extends FloatingPanel
         super.open(modal, parent, avoid);
 
         var anchorRect :Rectangle = _anchor.getBounds(this);
-        this.x = anchorRect.x;
-        this.y = anchorRect.y - this.height;
+// MDB: this always pops up over what I'm trying to edit
+//         this.x = anchorRect.x;
+//         this.y = anchorRect.y - this.height;
+        this.x = 5;
+        this.y = HeaderBar.HEIGHT + 5;
 
         _controller.init();
-
     }
 
     // from FloatingPanel
