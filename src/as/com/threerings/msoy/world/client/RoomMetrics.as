@@ -20,7 +20,7 @@ import com.threerings.msoy.world.data.MsoyLocation;
  *
  * World space is intermediate between room and screen; in a standard room, all room positions
  * are the same as world positions. However, horizon value can skew the room by shifting the back
- * wall up or down. This modifies how room x and y values map to world position. 
+ * wall up or down. This modifies how room x and y values map to world position.
  *
  * In pixel space, the room has a specific height, width, and depth, with origin at upper left.
  * Because the front wall serves as the viewport, and the view is always axis-aligned
@@ -63,7 +63,7 @@ public class RoomMetrics
      * fill the player's viewport; otherwise the room will be displayed in perspective.
      */
     public var trapezoidalTransform :Boolean;
-    
+
     /**
      * Vertical skew factor, in world coordinates. Horizon changes skews the room, as if raising or
      * lowering the room's back wall; this is the skew value as the vertical distance between
@@ -72,7 +72,7 @@ public class RoomMetrics
     protected var vSkewOffset :Number;
 
     /** Wall definition objects, mapping from wall type IDs to anchor points and normals. */
-    protected var walldefs :Array; 
+    protected var walldefs :Array;
 
 
     /** Read and update metrics. */
@@ -88,16 +88,16 @@ public class RoomMetrics
         this.camera = new Vector3 (0.5, 0.5, - focal / sceneDepth);
 
         // floor and ceiling:
-        
+
         // calculate floor vectors for maximally and minimally skewed floor, and current skew
         var upSkew :Vector3   = new Vector3(0,  0.5, focal / sceneDepth); // at horizon = 1
         var downSkew :Vector3 = new Vector3(0, -0.5, focal / sceneDepth); // at horizon = 0
         var skew :Vector3     = Vector3.interpolate(downSkew, upSkew, sceneHorizon).normalize();
 
         // make the skew vector stretch from near to far wall, and remember its y-value
-        var nskew :Vector3 = skew.multiply(1 / skew.z); 
+        var nskew :Vector3 = skew.multiply(1 / skew.z);
         this.vSkewOffset = nskew.y;
-        
+
         // save its normals: one of the skewed floor pointing up, the other pointing down
         var nfloor :Vector3 = new Vector3(nskew.x, nskew.z, -nskew.y).normalize();
         var nceiling :Vector3 = nfloor.multiply(-1);
@@ -105,7 +105,7 @@ public class RoomMetrics
         // left and right walls:
 
         // default wall normals point towards the center of the room
-        var nleft :Vector3 = N_RIGHT; 
+        var nleft :Vector3 = N_RIGHT;
         var nright :Vector3 = N_LEFT;
 
         if (trapezoidalTransform) {
@@ -141,7 +141,7 @@ public class RoomMetrics
     {
         var roomPosition :RoomVector = new RoomVector(new Vector3(x, y, z));
         var worldPosition :WorldVector = roomToWorld(roomPosition);
-        
+
         // draw a ray from the camera, and see where it falls on the front wall
         var w :WorldVector = new WorldVector(
             worldPosition.v.subtract(camera).intersection(camera, LEFT_BOTTOM_NEAR, N_NEAR));
@@ -155,8 +155,7 @@ public class RoomMetrics
     /**
      * Given a screen location, draws a line of sight vector and tries to find the closest
      * intersection with any of the walls within the unit cube. Returns a location in room
-     * coordinates, with "back wall" as the default click target if no other intersection exists,
-     * or null if no valid location was found.
+     * coordinates, with "back wall" as the default click target if no other intersection exists.
      */
     public function screenToInnerWallsProjection (x :Number, y :Number) :ClickLocation
     {
@@ -165,24 +164,24 @@ public class RoomMetrics
         var mindistance :Number = Infinity;
         var minpoint :WorldVector = null;
         var minwall :int = ClickLocation.BACK_WALL;
-        
+
         // intersect with the five walls (except for the near wall :)
         for each (var def :Object in walldefs) {
-                if (def.type != ClickLocation.FRONT_WALL) {
-                    var pos :WorldVector = lineOfSightToPlaneProjection(
-                        l, def.worldpoint, def.worldnormal);
-                
-                    if (pos != null && pos.v.length() < mindistance) {
-                        minpoint = pos;
-                        mindistance = pos.v.length();
-                        minwall = def.type;
-                    }
+            if (def.type != ClickLocation.FRONT_WALL) {
+                var pos :WorldVector = lineOfSightToPlaneProjection(
+                    l, def.worldpoint, def.worldnormal);
+
+                if (pos != null && pos.v.length() < mindistance) {
+                    minpoint = pos;
+                    mindistance = pos.v.length();
+                    minwall = def.type;
                 }
             }
+        }
 
-        return (minpoint != null) ?
-            new ClickLocation(minwall, toMsoyLocation(worldToRoom(minpoint).v)) :
-            null;
+        return new ClickLocation(minwall, (minpoint != null) ?
+                                 toMsoyLocation(worldToRoom(minpoint).v) :
+                                 new MsoyLocation());
     }
 
     /**
@@ -190,7 +189,7 @@ public class RoomMetrics
      * of sight vector, and tries to intersect it with that wall. Returns a point of intersection
      * in room coordinates in the z >= 0 half-space, or null if the intersection is invalid (the
      * wall is parallel, or point of intersection lies behind the front wall (in z < 0
-     * half-space)). 
+     * half-space)).
      */
     public function screenToWallProjection (x :Number, y :Number, wall :int) :ClickLocation
     {
@@ -237,7 +236,7 @@ public class RoomMetrics
     /**
      * Given a screen location x, y, and an anchor point p in room coordinates, finds a location on
      * the x-axis-aligned line passing through p, that corresponds to the screen location. Returns
-     * the new location in room coordinates. 
+     * the new location in room coordinates.
      */
     public function screenToXLineProjection (x :Number, y :Number, p :Vector3) :Vector3
     {
@@ -247,17 +246,17 @@ public class RoomMetrics
     /**
      * Given a screen location x, y, and an anchor point p in room coordinates, finds a location on
      * the y-axis-aligned line passing through p, that corresponds to the screen location. Returns
-     * the new location in room coordinates. 
+     * the new location in room coordinates.
      */
     public function screenToYLineProjection (x :Number, y :Number, p :Vector3) :Vector3
     {
         return screenSweepingProjection(x, y, p, N_UP, false);
-    }        
+    }
 
     /**
      * Given a screen location x, y, and an anchor point p in room coordinates, finds a location on
      * the z-axis-aligned line passing through p, that corresponds to the screen location. Returns
-     * the new location in room coordinates. 
+     * the new location in room coordinates.
      */
     public function screenToZLineProjection (x :Number, y :Number, p :Vector3) :Vector3
     {
@@ -289,7 +288,7 @@ public class RoomMetrics
     /**
      * Given z position in room coordinates it returns a scaling factor, which converts
      * item height at z distance to item height at the front plane. This can be used immediately
-     * to scale media displayed on screen. 
+     * to scale media displayed on screen.
      *
      * Scaling factor at the front wall is 1.0, and decreases as the z distance grows.
      */
@@ -322,7 +321,7 @@ public class RoomMetrics
     }
 
     // IMPLEMENTATION DETAILS
-    
+
     /** Accessor that converts position from room space to world space. */
     protected function roomToWorld (r :RoomVector) :WorldVector
     {
@@ -334,7 +333,7 @@ public class RoomMetrics
     {
         return new RoomVector(roomWorldConversion(w.v, false));
     }
-        
+
     /**
      * Apply skewing factor to the vector. Boolean specifies whether the projection is
      * from room to world coordinate space, or vice versa.
@@ -344,16 +343,16 @@ public class RoomMetrics
         var processingCamera :Boolean = (v == camera);
         var yoffset :Number = interpolate(0, toWorld ? vSkewOffset : -vSkewOffset, v.z);
         var xoffset :Number = 0;
-        
+
         var v :Vector3 = new Vector3 (v.x + xoffset, v.y + yoffset, v.z);
         if (Math.abs(v.y) < 0.001) {
             v.y = 0;  // remove any loss of precision artifacts
         }
-        
+
         if (trapezoidalTransform && ! processingCamera) {
             // figure out how to adjust the x position. we want to stretch the back wall so that
             // the scene completely fills the player's view cone (in other words, make the side
-            // walls be parallel to the player's line of sight at the edges of the screen). 
+            // walls be parallel to the player's line of sight at the edges of the screen).
 
             // get the scale factor for the far wall (it's the same as the proportion between
             // distances to the far wall vs the near wall), and then adjust it for our z position.
@@ -375,7 +374,7 @@ public class RoomMetrics
      * wall. Returns a point of intersection in *world* coordinates in the z >= 0 half-space, or
      * null if the intersection is invalid (the wall is parallel, or point of intersection lies
      * behind the front wall (in z < 0 half-space)). The resulting location's /click/ parameter is
-     * not meaningful.  
+     * not meaningful.
      */
     protected function screenToPlane (
         x :Number, y :Number, point :WorldVector, normal :WorldVector) :WorldVector
@@ -386,7 +385,7 @@ public class RoomMetrics
     /**
      * Given a screen position, in pixels from upper-left corner, returns a vector in world
      * coordinates from the camera through that pixel position on the front wall, whose z-length
-     * extends all the way to the back wall. 
+     * extends all the way to the back wall.
      */
     protected function screenToLineOfSight (x :Number, y :Number) :WorldVector
     {
@@ -423,7 +422,7 @@ public class RoomMetrics
      * 2. the intersection point of the sweeping plane with a line defined by /anchor/ and /axis/
      * When the isVertical flag is set, the sweeping plane will be parallel to the +y axis,
      * otherwise it will be parallel to the +x axis. The function returns the intersection
-     * point in room coordinates, or Vector.INFINITE if no valid intersection point was found. 
+     * point in room coordinates, or Vector.INFINITE if no valid intersection point was found.
      */
     protected function screenSweepingProjection (
         x :Number, y :Number, anchor :Vector3, axis :Vector3, isVertical :Boolean) :Vector3
@@ -431,32 +430,32 @@ public class RoomMetrics
         var d :Vector3 = isVertical ? N_UP : N_LEFT;
         var sweepNormal :Vector3 = null;
         var sweepAnchor :Vector3 = null;
-        
+
         // find where the cursor is pointing
         var worldTarget :WorldVector = new WorldVector(camera.add(screenToLineOfSight(x, y).v));
         var roomTarget :RoomVector = worldToRoom(worldTarget);
-        
+
         if (trapezoidalTransform && isVertical) {
             // the sweeping plane shouldn't be anchored at the camera - it's parallel to the
             // +z axis because of the trapezoidal skew of the room coordinate space
             sweepAnchor = roomTarget.v;
             sweepNormal = N_AWAY.cross(d).normalize();
-            
+
         } else {
             // this is the standard approach - create a sweeping plane anchored at the camera
             var roomCamera :RoomVector = worldToRoom(new WorldVector(camera));
             var roomLOS :Vector3 = roomTarget.v.subtract(roomCamera.v);
             sweepAnchor = roomCamera.v;
-            sweepNormal = roomLOS.cross(d).normalize(); 
+            sweepNormal = roomLOS.cross(d).normalize();
         }
-        
+
         // find where this plane intersects with the constraint line
         return axis.intersection(anchor, sweepAnchor, sweepNormal);
-    }    
+    }
 
 
     /** Initial focal length of our perspective rendering. */
-    public static const DEFAULT_FOCAL :Number = 488; 
+    public static const DEFAULT_FOCAL :Number = 488;
 
     /** Convenience position vectors, in room coordinates. */
     public static const LEFT_BOTTOM_NEAR :Vector3  = new Vector3( 0, 0, 0);
@@ -480,16 +479,16 @@ import com.threerings.flash.Vector3;
 // These internal wrapper classes specify the vector's coordinate space. This let us use the
 // compiler to catch coordinate space conversion mistakes at compile time.
 
-internal class RoomVector 
+internal class RoomVector
 {
     public var v :Vector3;
-    public function RoomVector (v :Vector3) 
+    public function RoomVector (v :Vector3)
     {
         this.v = v;
     }
 }
 
-internal class WorldVector 
+internal class WorldVector
 {
     public var v :Vector3;
     public function WorldVector (v :Vector3)
