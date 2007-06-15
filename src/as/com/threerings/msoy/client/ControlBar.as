@@ -189,12 +189,12 @@ public class ControlBar extends HBox
         _avatarBtn.styleName = "controlBarButtonAvatar";
         addGroupChild(_avatarBtn, [ UI_STD ]);*/
 
-        _petBtn = new CommandButton();
+        /*_petBtn = new CommandButton();
         _petBtn.toolTip = Msgs.GENERAL.get("i.pet");
         _petBtn.setCommand(MsoyController.SHOW_PETS);
         _petBtn.styleName = "controlBarButtonPet";
         _petBtn.enabled = false;
-        addGroupChild(_petBtn, [ UI_STD ]);
+        addGroupChild(_petBtn, [ UI_STD ]);*/
 
         _roomeditBtn = new CommandButton();
         _roomeditBtn.toolTip = Msgs.GENERAL.get("i.editScene");
