@@ -38,10 +38,7 @@ import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.system.SecurityDomain;
 
-import flash.utils.getTimer;
-
 import com.threerings.util.CommandEvent;
-import com.threerings.util.MethodQueue;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.FilterUtil;
