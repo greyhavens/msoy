@@ -140,6 +140,8 @@ public class ItemContainer extends FlexTable
                     }
                 }
             });
+        } else if (type == Item.PET) {
+            setWidget(1, 0, generateActionLabel(false));
         }
     }
 
@@ -154,9 +156,10 @@ public class ItemContainer extends FlexTable
     protected Widget generateActionLabel (final boolean active)
     {
         byte type = _item.getType();
+        // This is a style label, not text to be displayed.  Therefore, it does not require i18n.
         String lbl;
         if (type == Item.AVATAR) {
-            lbl = "Avatar" + (active ? "Active" : "Inactive"); // TODO: i18n
+            lbl = "Avatar" + (active ? "Active" : "Inactive");
             return MsoyUI.createActionLabel("", lbl, new ClickListener () {
                 public void onClick (Widget sender) {
                     FlashClients.useAvatar(active ? 0 : _item.itemId,
@@ -165,7 +168,7 @@ public class ItemContainer extends FlexTable
             });
 
         } else if (type == Item.DECOR || type == Item.AUDIO) {
-            lbl = "Room" + (active ? "Active" : "Inactive"); // TODO: i18n
+            lbl = "Room" + (active ? "Active" : "Inactive");
             return MsoyUI.createActionLabel("", lbl, new ClickListener () {
                 public void onClick (Widget sender) {
                     FlashClients.useItem(active ? 0 : _item.itemId, _item.getType());
@@ -173,7 +176,7 @@ public class ItemContainer extends FlexTable
             });
 
         } else if (type != Item.PET) {
-            lbl = "Room" + (active ? "Active" : "Inactive"); // TODO: i18n
+            lbl = "Room" + (active ? "Active" : "Inactive");
             return MsoyUI.createActionLabel("", lbl, new ClickListener () {
                 public void onClick (Widget sender) {
                     if (active) {
@@ -185,7 +188,16 @@ public class ItemContainer extends FlexTable
             });
 
         } else {
-            return null;
+            lbl = "Room" + (active ? "Active" : "Inactive"); 
+            return MsoyUI.createActionLabel("", lbl, new ClickListener () {
+                public void onClick (Widget sender) {
+                    if (active) {
+                        FlashClients.removePet(_item.itemId);
+                    } else {
+                        FlashClients.usePet(_item.itemId);
+                    }
+                }
+            });
         }
     }
 

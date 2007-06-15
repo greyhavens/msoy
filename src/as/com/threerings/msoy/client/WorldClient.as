@@ -37,10 +37,12 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Document;
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemList;
 import com.threerings.msoy.item.data.all.Photo;
 
 import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.client.PetService;
 
 import com.threerings.msoy.world.data.PetMarshaller;
 import com.threerings.msoy.world.data.RoomConfig;
@@ -51,6 +53,8 @@ import com.threerings.msoy.game.data.WorldGameConfig;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
 
 import com.threerings.msoy.game.chiyogami.client.ChiyogamiController;
+
+import com.threerings.msoy.chat.client.ReportingListener;
 
 /**
  * Dispatched when the client is minimized or unminimized.
@@ -252,6 +256,7 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("removeFurni", externalRemoveFurni);
         ExternalInterface.addCallback("getSceneItemId", externalGetSceneItemId);
         ExternalInterface.addCallback("getFurniList", externalGetFurniList);
+        ExternalInterface.addCallback("usePet", externalUsePet);
 
         _embedded = !Boolean(ExternalInterface.call("helloWhirled"));
         dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
@@ -443,6 +448,17 @@ public class WorldClient extends BaseClient
         }
     }
 
+    protected function externalUsePet (petId :int) :void
+    {
+        (new InventoryAction(Item.PET, _wctx)).trigger(function (newPetId :int) :Function {
+            return function () :void {
+                var svc :PetService = _ctx.getClient().requireService(PetService) as PetService;
+                svc.callPet(_wctx.getClient(), newPetId, 
+                    new ReportingListener(_wctx, "general", null, "m.pet_called"));
+            };
+        }(petId));
+    }
+
     protected var _wctx :WorldContext;
     protected var _embedded :Boolean;
     protected var _minimized :Boolean;
@@ -457,6 +473,8 @@ import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.data.all.Avatar;
+
+import com.threerings.msoy.client.WorldContext;
 
 class AvatarUpdateNotifier implements AttributeChangeListener
 {
@@ -483,4 +501,40 @@ class AvatarUpdateNotifier implements AttributeChangeListener
             }
         }
     }
+}
+
+class InventoryAction 
+    implements AttributeChangeListener
+{
+    public function InventoryAction (itemType :int, mctx :WorldContext) 
+    {
+        _itemType = itemType;
+        _mctx = mctx;
+    }
+
+    public function trigger (callback :Function) :void
+    {
+        _callback = callback;
+        var member :MemberObject = _mctx.getMemberObject();
+        if (member.isInventoryLoaded(_itemType)) {
+            _callback();
+        } else {
+            member.addListener(this);
+            _mctx.getItemDirector().loadInventory(_itemType);
+        }
+    }
+
+    // from AttributeChangeListener
+    public function attributeChanged (evt :AttributeChangedEvent) :void
+    {
+        var member :MemberObject = _mctx.getMemberObject();
+        if (evt.getName() == MemberObject.LOADED_INVENTORY && member.isInventoryLoaded(_itemType)) {
+            member.removeListener(this);
+            _callback();
+        }
+    }
+
+    protected var _mctx :WorldContext;
+    protected var _itemType :int;
+    protected var _callback :Function;
 }

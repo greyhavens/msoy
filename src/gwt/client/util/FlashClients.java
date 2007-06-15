@@ -199,6 +199,16 @@ public class FlashClients
         return getAvatarIdNative();
     }
 
+    public static void usePet (int petId)
+    {
+        usePetNative(petId);
+    }
+
+    public static void removePet (int petId)
+    {
+        removePetNative(petId);
+    }
+
     /**
      * Computes the height to use for our Flash clients based on the smaller of our desired client
      * height and the vertical room available minus the header and an annoying "we don't know how
@@ -416,6 +426,34 @@ public class FlashClients
             }
         }
         return 0;
+    }-*/;
+
+    /**
+     * Does the actual <code>usePet()</code> call.
+     */
+    protected static native void usePetNative (int petId) /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            try {
+                client.usePet(petId);
+            } catch (e) {
+                // fall through
+            }
+        }
+    }-*/;
+
+    /**
+     * Does the actual <code>removePet()</code> call.
+     */
+    protected static native void removePetNative (int petId) /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            try {
+                client.usePet(petId);
+            } catch (e) {
+                // fall through
+            }
+        }
     }-*/;
 
     // TODO: put this in Application?
