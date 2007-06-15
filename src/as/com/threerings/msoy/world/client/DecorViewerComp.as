@@ -407,19 +407,17 @@ public class DecorViewerComp extends Canvas
 
     protected function rollOutHandler (event :MouseEvent) :void
     {
-        if (! (event.relatedObject is Application)) {
-            // ignore any phantom rollouts that happen when the mouse lands on a loader or
-            // other piece of media the mx framework doesn't like. we only care about
-            // rollouts back to the application background.
-            return;
+        // fake rollouts can happen when the mouse lands on a loader or some other piece of media
+        // that the mx framework doesn't like. we sort these out in a painful, manual way. :)
+        
+        if (event.relatedObject is Application || event.relatedObject is UIComponent) {
+            // it's a real rollout. hide the custom pointer and show the standard one.
+            _mouseDownAnchor = null;
+            if (_pointer != null) {
+                _pointer.visible = false;
+            }
+            Mouse.show();
         }
-
-        // it's a real rollout. hide the custom pointer and show the standard one.
-        _mouseDownAnchor = null;
-        if (_pointer != null) {
-            _pointer.visible = false;
-        }
-        Mouse.show();
     }
 
     protected function mouseDownHandler (event :MouseEvent) :void
