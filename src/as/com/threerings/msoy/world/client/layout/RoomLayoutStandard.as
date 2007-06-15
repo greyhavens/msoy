@@ -45,13 +45,13 @@ public class RoomLayoutStandard implements RoomLayout
     {
         _metrics.update(data);
     }
-    
+
     // from interface RoomLayout
     public function get metrics () :RoomMetrics
     {
         return _metrics;
     }
-    
+
     // from interface RoomLayout
     public function pointToAvatarLocation (
         stageX :Number, stageY :Number, anchorPoint :Object = null, anchorAxis :Vector3 = null)
@@ -60,7 +60,7 @@ public class RoomLayoutStandard implements RoomLayout
         var loc :ClickLocation = pointToLocation(stageX, stageY, anchorPoint, anchorAxis);
         return (loc.click == ClickLocation.FLOOR) ? loc : null;
     }
-    
+
     // from interface RoomLayout
     public function pointToFurniLocation (
         stageX :Number, stageY :Number, anchorPoint :Object = null, anchorAxis :Vector3 = null)
@@ -82,10 +82,10 @@ public class RoomLayoutStandard implements RoomLayout
 
         // find the intersection of the line of sight with the plane
         var cloc :ClickLocation = _metrics.screenToPlaneProjection(p.x, p.y, anchor);
-        
+
         return (cloc != null) ? cloc.loc : null;
     }
-    
+
     /**
      * Turn the screen coordinate into an MsoyLocation, with the orient field set to 0.
      */
@@ -99,10 +99,9 @@ public class RoomLayoutStandard implements RoomLayout
 
         var cloc :ClickLocation;
         if (anchorPoint == null) {
-
             // find the intersection of the line of sight with the first available wall.
             cloc = _metrics.screenToInnerWallsProjection(p.x, p.y);
-            
+
         } else {
             var anchorLocation :Vector3;
 
@@ -111,7 +110,7 @@ public class RoomLayoutStandard implements RoomLayout
                 var pp :Point = _parentView.globalToLocal(anchorPoint as Point);
                 var constLocation :ClickLocation =
                     _metrics.screenToInnerWallsProjection(pp.x, pp.y);
-                
+
                 anchorLocation = _metrics.toVector3(constLocation.loc);
 
             } else if (anchorPoint is MsoyLocation) {
@@ -131,7 +130,7 @@ public class RoomLayoutStandard implements RoomLayout
             default:
                 throw new ArgumentError("Unsupported anchorAxis type: " + anchorAxis);
             }
-            
+
             // now find a point on the constraint line pointed to by the mouse
             var yLocation :Vector3 = fn(p.x, p.y, anchorLocation).clampToUnitBox();
 
@@ -140,7 +139,7 @@ public class RoomLayoutStandard implements RoomLayout
         }
 
         clampClickLocation(cloc);
-        
+
         return cloc;
     }
 
@@ -152,11 +151,11 @@ public class RoomLayoutStandard implements RoomLayout
         cloc.loc.z = Math.min(Math.max(cloc.loc.z, 0), 1);
     }
 
-    
+
     // Perspectivization
     // Disabled for now, until we settle on new room layout logic
     // getPerspInfo comes from FurniSprite, checkPerspective() and updatePerspective()
-    
+
     /**
      * Calculate the info needed to perspectivize a piece of furni.
      */
@@ -349,4 +348,4 @@ public class RoomLayoutStandard implements RoomLayout
     protected static const NO_OFFSET :Point = new Point(0, 0);
 }
 }
-    
+
