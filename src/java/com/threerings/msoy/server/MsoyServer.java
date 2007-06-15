@@ -74,9 +74,9 @@ import com.threerings.msoy.world.server.PetManager;
 
 import com.threerings.msoy.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.server.persist.MsoySceneRepository;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 import com.threerings.msoy.world.server.persist.MemoryRepository;
+import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -353,7 +353,13 @@ public class MsoyServer extends WhirledServer
 
         // shut down all active games and rooms
         for (Iterator<PlaceManager> iter = plreg.enumeratePlaceManagers(); iter.hasNext(); ) {
-            iter.next().shutdown();
+            PlaceManager pmgr = iter.next();
+            try {
+                pmgr.shutdown();
+            } catch (Exception e) {
+                log.log(Level.WARNING, "Place manager failed shutting down [where=" +
+                        pmgr.where() + "].", e);
+            }
         }
 
         // shutdown our peer manager and logoff of our peer nodes

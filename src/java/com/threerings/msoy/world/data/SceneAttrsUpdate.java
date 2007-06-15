@@ -8,10 +8,9 @@ import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 
 /**
- * Encodes a scene update that updates the attributes in the MsoySceneModel.
- * Note that this contains all attributes, even ones that have not changed.
- * In other words, a field being null doesn't mean that the field
- * isn't updated, it means the new value should be null.
+ * Encodes a scene update that updates the attributes in the MsoySceneModel.  Note that this
+ * contains all attributes, even ones that have not changed.  In other words, a field being null
+ * doesn't mean that the field isn't updated, it means the new value should be null.
  */
 public class SceneAttrsUpdate extends SceneUpdate
 {

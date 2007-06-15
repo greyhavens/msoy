@@ -20,9 +20,7 @@ public class ModifyFurniUpdate extends SceneUpdate
     /**
      * Initialize the update with all necessary data.
      */
-    public void initialize (
-            int targetId, int targetVersion,
-            FurniData[] removed, FurniData[] added)
+    public void initialize (int targetId, int targetVersion, FurniData[] removed, FurniData[] added)
     {
         init(targetId, targetVersion);
 
