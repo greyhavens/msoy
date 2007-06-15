@@ -46,12 +46,19 @@ public class index extends MsgsEntryPoint
 
         if (token != null && token.startsWith("search")) {
             performSearch(token.substring(7)); // strip off "search_"
+
         } else if (token != null && token.length() > 0) {
             try {
                 displayMemberPage(Integer.parseInt(token));
             } catch (Exception e) {
                 // TODO: display error
             }
+
+        } else if (CProfile.ident != null) {
+            displayMemberPage(CProfile.getMemberId());
+
+        } else {
+            // TODO: display something...
         }
     }
 

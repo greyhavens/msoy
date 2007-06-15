@@ -33,4 +33,49 @@ public interface DynamicMessages extends ConstantsWithLookup
     public String pItemType7 ();
     public String pItemType8 ();
     public String pItemType9 ();
+
+    public String itemUploadTitle1 ();
+    public String itemUploadPitch1a ();
+    public String itemUploadPitch1b ();
+    public String itemUploadPitch1c ();
+
+    public String itemUploadTitle2 ();
+    public String itemUploadPitch2a ();
+    public String itemUploadPitch2b ();
+    public String itemUploadPitch2c ();
+
+    public String itemUploadTitle3 ();
+    public String itemUploadPitch3a ();
+    public String itemUploadPitch3b ();
+    public String itemUploadPitch3c ();
+
+    public String itemUploadTitle4 ();
+    public String itemUploadPitch4a ();
+    public String itemUploadPitch4b ();
+    public String itemUploadPitch4c ();
+
+    public String itemUploadTitle5 ();
+    public String itemUploadPitch5a ();
+    public String itemUploadPitch5b ();
+    public String itemUploadPitch5c ();
+
+    public String itemUploadTitle6 ();
+    public String itemUploadPitch6a ();
+    public String itemUploadPitch6b ();
+    public String itemUploadPitch6c ();
+
+    public String itemUploadTitle7 ();
+    public String itemUploadPitch7a ();
+    public String itemUploadPitch7b ();
+    public String itemUploadPitch7c ();
+
+    public String itemUploadTitle8 ();
+    public String itemUploadPitch8a ();
+    public String itemUploadPitch8b ();
+    public String itemUploadPitch8c ();
+
+    public String itemUploadTitle9 ();
+    public String itemUploadPitch9a ();
+    public String itemUploadPitch9b ();
+    public String itemUploadPitch9c ();
 }

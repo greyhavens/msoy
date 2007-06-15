@@ -113,3 +113,47 @@
 .doListItem .Status {
   padding-top: 5px;
 }
+
+.uploadBlurb {
+  padding-left: 10px;
+}
+
+.uploadBlurb .TitleLeft {
+  background-image: url(/images/ui/popup/header_star_left.png);
+  width: 50px;
+  height: 33px;
+}
+
+.uploadBlurb .TitleRight {
+  background-image: url(/images/ui/popup/header_star_right.png);
+  width: 50px;
+  height: 33px;
+}
+
+.uploadBlurb .TitleCenter {
+  background-image: url(/images/ui/popup/header_text_tile.png);
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: bold;
+  font-style: italic;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.uploadBlurb .Contents {
+  background: url(/images/item/blue_diagonals.png) repeat;
+}
+
+.uploadBlurb .Contents .Table {
+  background: url(/images/item/upload_swirl.png) no-repeat right;
+}
+
+.uploadBlurb .Contents .Table .Pitch {
+  padding: 10px;
+  padding-left: 20px;
+  font-size: 14px;
+}
+
+.uploadBlurb .Contents .Table .Upload {
+  padding-right: 20px;
+}

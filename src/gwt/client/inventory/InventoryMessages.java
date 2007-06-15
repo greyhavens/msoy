@@ -80,9 +80,9 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String detailUseAvatar();
 
   /**
-   * Translated "Create new...".
+   * Translated "Upload...".
    * 
-   * @return translated "Create new..."
+   * @return translated "Upload..."
    * @gwt.key panelCreateNew
    */
   String panelCreateNew();

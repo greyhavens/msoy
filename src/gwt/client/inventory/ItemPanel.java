@@ -9,6 +9,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -60,12 +61,42 @@ public class ItemPanel extends VerticalPanel
         _contents.setStyleName("inventoryContents");
 
         // this will allow us to create new items
+        _upload = new FlexTable();
+        _upload.setStyleName("uploadBlurb");
+        _upload.setCellSpacing(0);
+        _upload.setCellPadding(0);
+
+        _upload.getFlexCellFormatter().setStyleName(0, 0, "TitleLeft");
+        _upload.getFlexCellFormatter().setStyleName(0, 1, "TitleCenter");
+        _upload.getFlexCellFormatter().setStyleName(0, 2, "TitleRight");
+        _upload.setText(0, 1, CInventory.dmsgs.getString("itemUploadTitle" + type));
+
+        _upload.getFlexCellFormatter().setColSpan(1, 0, 3);
+        _upload.getFlexCellFormatter().setStyleName(1, 0, "Contents");
+        FlexTable contents = new FlexTable(); // yay for non-tabular UI designs!
+        _upload.setWidget(1, 0, contents);
+
+        contents.setStyleName("Table");
+        contents.setCellSpacing(0);
+        contents.setCellPadding(0);
+        contents.getFlexCellFormatter().setStyleName(0, 0, "Pitch");
+        contents.getFlexCellFormatter().setStyleName(0, 1, "Upload");
+        contents.getFlexCellFormatter().setHorizontalAlignment(0, 1, ALIGN_RIGHT);
+        contents.getFlexCellFormatter().setVerticalAlignment(0, 1, ALIGN_MIDDLE);
+
+        // add the various "why to upload" pitches
+        contents.setHTML(0, 0, CInventory.dmsgs.getString("itemUploadPitch" + type + "a") + "<br>" +
+                         CInventory.dmsgs.getString("itemUploadPitch" + type + "b") + "<br>" +
+                         CInventory.dmsgs.getString("itemUploadPitch" + type + "c"));
+
+        // add the create button
         _create = new Button(CInventory.msgs.panelCreateNew());
         _create.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 createNewItem();
             }
         });
+        contents.setWidget(0, 1, _create);
     }
 
     /**
@@ -171,7 +202,7 @@ public class ItemPanel extends VerticalPanel
         if (!_contents.isAttached()) {
             clear();
             add(_contents);
-            add(_create);
+            add(_upload);
         }
 
         // trigger the loading of our inventory the first time we're displayed
@@ -203,13 +234,15 @@ public class ItemPanel extends VerticalPanel
     }
 
     protected PagedGrid _contents;
-    /** A flag to indicate that the next time we display this item panel, the data needs to be 
-     * refetched from the server. */
-    protected boolean _contentsModelDirty = false;
     protected Button _create, _next, _prev;
+    protected FlexTable _upload;
 
     protected byte _type;
     protected int _startPage;
+
+    /** A flag to indicate that the next time we display this item panel, the data needs to be
+     * refetched from the server. */
+    protected boolean _contentsModelDirty = false;
 
     /** Only get the furni list for the current room once, and feed it to each ItemContainer */
     protected List _furniList;
