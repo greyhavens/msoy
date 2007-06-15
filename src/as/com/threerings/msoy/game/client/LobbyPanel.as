@@ -42,6 +42,7 @@ import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.ezgame.data.GameDefinition;
 
+import com.threerings.msoy.client.EmbedDialog;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.WorldContext;
@@ -292,7 +293,7 @@ public class LobbyPanel extends VBox
         embedBtn.text = Msgs.GENERAL.get("l.share");
         var thisLobbyPanel :LobbyPanel = this;
         embedBtn.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            CommandEvent.dispatch(thisLobbyPanel, HeaderBarController.SHOW_EMBED_HTML);
+            new EmbedDialog(_ctx);
         });
         embedBtn.buttonMode = true;
         embedBtn.useHandCursor = true;

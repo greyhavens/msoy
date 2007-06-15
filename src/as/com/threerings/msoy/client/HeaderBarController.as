@@ -32,9 +32,6 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 
 public class HeaderBarController extends Controller
 {
-    /** Commant to show a popup box with HTML to copy to your blog to embed the current scene. */
-    public static const SHOW_EMBED_HTML :String = "ShowEmbedHtml";
-
     public function HeaderBarController (ctx :WorldContext, headerBar :HeaderBar)
     {
         _ctx = ctx;
@@ -51,35 +48,6 @@ public class HeaderBarController extends Controller
                 client.setWindowTitle(_headerBar.getLocationText());
             }
         });
-    }
-
-    public function handleShowEmbedHtml () :void
-    {
-        var window :FloatingPanel = new FloatingPanel(
-            _ctx, Msgs.GENERAL.get("t.embed_link_window"));
-        window.setStyle("horizontalAlign", "center");
-        var instruction :Text = new Text();
-        instruction.width = 300;
-        instruction.text = Msgs.GENERAL.get("l.embed_instruction");
-        instruction.selectable = false;
-        window.addChild(instruction);
-        var html :TextArea = new TextArea();
-        html.minHeight = 100;
-        html.width = 300;
-        html.editable = false;
-        var url :String = _headerBar.root.loaderInfo.loaderURL;
-        url = url.replace(/(http:\/\/[^\/]*).*/, "$1/clients/world-client.swf");
-        if (_ctx.getMemberObject().tokens.isSupport()) {
-            html.text = Msgs.GENERAL.get("m.embed",
-                _ctx.getMsoyController().getSceneIdString(), url);
-
-        } else {
-            html.text = Msgs.GENERAL.get("m.embed_disabled");
-        }
-        window.addChild(html);
-        window.addButtons(FloatingPanel.OK_BUTTON);
-
-        window.open(true, _ctx.getTopPanel());
     }
 
     protected function locationChanged (place :PlaceObject) :void

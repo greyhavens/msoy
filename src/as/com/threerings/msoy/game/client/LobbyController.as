@@ -162,15 +162,6 @@ public class LobbyController extends Controller implements Subscriber
     }
 
     /**
-     * TEMP: Forwards on HeaderBarController.SHOW_EMBED_HTML
-     */
-    public function handleShowEmbedHtml () :void
-    {
-        CommandEvent.dispatch(_mctx.getTopPanel().getHeaderBar(), 
-            HeaderBarController.SHOW_EMBED_HTML);
-    }
-
-    /**
      * Clean up our references, and notify those that care that we're all done here.
      */
     protected function shutdown () :void

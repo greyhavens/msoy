@@ -13,6 +13,8 @@ import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.util.CommandEvent;
 
+import com.threerings.msoy.client.EmbedDialog;
+
 public class HeaderBar extends HBox
 {
     public static const HEIGHT :int = 20;
@@ -29,6 +31,11 @@ public class HeaderBar extends HBox
         height = HEIGHT;
 
         _controller = new HeaderBarController(ctx, this);
+    }
+
+    public function getController () :HeaderBarController
+    {
+        return _controller;
     }
 
     public function getLocationText () :String
@@ -96,7 +103,7 @@ public class HeaderBar extends HBox
         _embedLinkButton.styleName = "embedButton";
         _embedLinkButton.text = Msgs.GENERAL.get("l.share");
         _embedLinkButton.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            _controller.handleShowEmbedHtml();
+            new EmbedDialog(_ctx);
         });
         _embedLinkButton.buttonMode = true;
         _embedLinkButton.useHandCursor = true;
