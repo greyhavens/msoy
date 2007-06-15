@@ -21,6 +21,8 @@ import client.util.events.FlashEvent;
 import client.util.events.FlashEventListener;
 import client.util.events.LevelUpEvent;
 import client.util.events.LevelUpListener;
+import client.util.events.PetEvent;
+import client.util.events.PetListener;
 
 /**
  * Utility class for listening to events from the Flash client.
@@ -80,6 +82,8 @@ public class FlashEvents
             return FURNI_CHANGED_EVENT;
         } else if (listener instanceof LevelUpListener) {
             return LEVELED_UP_EVENT;
+        } else if (listener instanceof PetListener) {
+            return PET_EVENT;
         } else {
             return null;
         }
@@ -95,6 +99,8 @@ public class FlashEvents
             return new FurniChangedEvent();
         } else if (LEVELED_UP_EVENT.equals(eventName)) {
             return new LevelUpEvent();
+        } else if (PET_EVENT.equals(eventName)) {
+            return new PetEvent();
         } else {
             return null;
         }
@@ -117,6 +123,9 @@ public class FlashEvents
 
     // defined in BaseClient.as
     protected static final String LEVELED_UP_EVENT = "leveledUp";
+
+    // defined in RoomView.as
+    protected static final String PET_EVENT = "pet";
 
     protected static Map _eventListeners = new HashMap();
 }

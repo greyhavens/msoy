@@ -747,6 +747,12 @@ public class RoomView extends AbstractRoomView
 
         // map the actor sprite in the entities table
         _entities.put(occInfo.getItemIdent(), actor);
+
+        // if this actor is a pet, notify GWT that we've got a new pet in the room.
+        if (actor is PetSprite) {
+            (_ctx.getClient() as WorldClient).dispatchEventToGWT(PET_EVENT, 
+                [true, actor.getItemIdent().itemId]);
+        }
     }
 
     protected function removeBody (bodyOid :int) :void
@@ -757,6 +763,12 @@ public class RoomView extends AbstractRoomView
                 _pendingRemovals.put(bodyOid, actor);
             } else {
                 removeSprite(actor);
+            }
+
+            // if this actor is a pet, notify GWT that we've removed a pet from the room.
+            if (actor is PetSprite) {
+                (_ctx.getClient() as WorldClient).dispatchEventToGWT(PET_EVENT, 
+                    [false, actor.getItemIdent().itemId]);
             }
         }
     }
@@ -915,6 +927,9 @@ public class RoomView extends AbstractRoomView
         }
         _entities.remove(furni.getItemIdent());
     }
+
+    /** Event specific constants for notifying GWT */
+    protected static const PET_EVENT :String = "pet";
 
     /** Our controller. */
     protected var _ctrl :RoomController;

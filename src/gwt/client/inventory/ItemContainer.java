@@ -28,6 +28,8 @@ import client.util.events.BackgroundChangeListener;
 import client.util.events.FurniChangedEvent;
 import client.util.events.FurniChangeListener;
 import client.util.events.FlashEventListener;
+import client.util.events.PetEvent;
+import client.util.events.PetListener;
 
 /**
  * Displays a thumbnail version of an item.
@@ -142,6 +144,17 @@ public class ItemContainer extends FlexTable
             });
         } else if (type == Item.PET) {
             setWidget(1, 0, generateActionLabel(false));
+            FlashEvents.addListener(_listener = new PetListener() {
+                public void petUpdated (PetEvent event) {
+                    if (event.getPetId() == _item.itemId) {
+                        if (event.addedToRoom()) {
+                            setWidget(1, 0, generateActionLabel(true));
+                        } else {
+                            setWidget(1, 0, generateActionLabel(false));
+                        }
+                    }
+                }
+            });
         }
     }
 
