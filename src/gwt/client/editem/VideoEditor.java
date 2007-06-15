@@ -4,8 +4,11 @@
 package client.editem;
 
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -27,6 +30,7 @@ public class VideoEditor extends ItemEditor
         super.setItem(item);
         _video = (Video)item;
         _mainUploader.setMedia(_video.videoMedia);
+        updateAlternateSources(_video.videoMedia);
     }
 
     // @Override from ItemEditor
@@ -45,14 +49,19 @@ public class VideoEditor extends ItemEditor
                     return CEditem.emsgs.errVideoNotVideo();
                 }
                 _video.videoMedia = desc;
+                updateAlternateSources(desc);
                 return null;
             }
         });
 
         VerticalPanel pan = new VerticalPanel();
         pan.add(mainUploader);
-        pan.add(new Label("OR")); // TODO: i18n
+        pan.add(new HTML("<hr>"));
+        pan.add(new Label(CEditem.emsgs.videoOptionYoutube()));
         pan.add(createYouTubeUploader());
+//        pan.add(new HTML("<hr>"));
+//        pan.add(new Label(CEditem.emsgs.videoOptionGoogle()));
+//        pan.add(createGoogleUploader());
 
         tabs.add(pan, CEditem.emsgs.videoMainTab());
 
@@ -64,30 +73,91 @@ public class VideoEditor extends ItemEditor
      */
     protected Widget createYouTubeUploader ()
     {
-//        FormPanel form = new FormPanel();
-//        form.setWidget(panel);
+        _youtubeIdBox = new TextBox();
+        _youtubeIdBox.setMaxLength(YOUTUBE_ID_LENGTH);
 
-        final TextBox youtubeIdBox = new TextBox();
-        youtubeIdBox.setMaxLength(11); // TODO: might youtube use larger ids someday???
-
-        Button submit = new Button("Submit"); // TODO: i18n
+        // TODO: ideally, the Button is disabled until a valid-lengthed string is entered
+        // into the ID box. However, the ChangeEvent on a TextBox only gets fired when it loses
+        // focus, and the KeyboardListener is cumbersome and I'm not sure it reacts to pastes.
+        Button submit = new Button(CEditem.cmsgs.update());
+        submit.setStyleName("mediaUploader");
         submit.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
-                String text = youtubeIdBox.getText();
-                if (text.length() == 11) {
+                String text = _youtubeIdBox.getText();
+                if (text.length() == YOUTUBE_ID_LENGTH) {
                     setHash(Item.MAIN_MEDIA, text, MediaDesc.VIDEO_YOUTUBE,
                         MediaDesc.NOT_CONSTRAINED, 425, 350, "", 0, 0);
                 }
             }
         });
-           
-        HorizontalPanel panel = new HorizontalPanel();
-        panel.add(new Label("Enter a youtube video id")); // TODO: i18n
-        panel.add(youtubeIdBox);
-        panel.add(submit);
 
-        return panel;
+        HorizontalPanel row = new HorizontalPanel();
+        row.setSpacing(10);
+        row.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+        row.add(new Label(CEditem.emsgs.videoPromptYoutube()));
+        row.add(_youtubeIdBox);
+        row.add(submit);
+
+        return row;
+    }
+
+//    /**
+//     * Create the special google uploader.
+//     */
+//    protected Widget createGoogleUploader ()
+//    {
+//        _googleIdBox = new TextBox();
+//        _googleIdBox.setMaxLength(GOOGLE_ID_LENGTH);
+//
+//        // TODO: ideally, the Button is disabled until a valid-lengthed string is entered
+//        // into the ID box. However, the ChangeEvent on a TextBox only gets fired when it loses
+//        // focus, and the KeyboardListener is cumbersome and I'm not sure it reacts to pastes.
+//        Button submit = new Button(CEditem.cmsgs.update());
+//        submit.setStyleName("mediaUploader");
+//        submit.addClickListener(new ClickListener() {
+//            public void onClick (Widget widget) {
+//                String text = _googleIdBox.getText();
+//                if (text.length() == GOOGLE_ID_LENGTH) {
+//                    setHash(Item.MAIN_MEDIA, text, MediaDesc.VIDEO_GOOGLE,
+//                        MediaDesc.NOT_CONSTRAINED, 400, 326, "", 0, 0);
+//                }
+//            }
+//        });
+//           
+//        HorizontalPanel row = new HorizontalPanel();
+//        row.setSpacing(10);
+//        row.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+//        row.add(new Label(CEditem.emsgs.videoPromptGoogle()));
+//        row.add(_googleIdBox);
+//        row.add(submit);
+//
+//        return row;
+//    }
+
+    /**
+     * Update the alternate video sources if the video ultimately came from one
+     * of them.
+     */
+    protected void updateAlternateSources (MediaDesc video)
+    {
+        String id = ((video != null) && video.isExternalVideo()) ?
+            MediaDesc.bytesToString(video.hash) : "";
+
+        if (_youtubeIdBox != null) {
+            _youtubeIdBox.setText(video != null && video.mimeType == MediaDesc.VIDEO_YOUTUBE ? id
+                : "");
+        }
+        if (_googleIdBox != null) {
+            _googleIdBox.setText(video != null && video.mimeType == MediaDesc.VIDEO_GOOGLE ? id
+                : "");
+        }
     }
 
     protected Video _video;
+
+    protected TextBox _youtubeIdBox;
+    protected TextBox _googleIdBox;
+
+    protected static final int YOUTUBE_ID_LENGTH = 11; // Can these change?
+    protected static final int GOOGLE_ID_LENGTH = 19; // Can these change?
 }

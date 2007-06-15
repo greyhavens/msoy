@@ -726,7 +726,7 @@ public class MsoySceneRepository extends SimpleRepository
      */
     protected MediaDesc createMediaDesc (byte[] mediaHash, byte mimeType)
     {
-        if (mediaHash.length == 4 || mediaHash.length == 8) {
+        if (mediaHash.length != 20 && !MediaDesc.isExternalMimeType(mimeType)) {
             // note: 8-byte descriptors are no longer supported
             // only the itemType int is used, and the media type is always assumed to be Furni
             byte itemType = (byte)ByteBuffer.wrap(mediaHash).asIntBuffer().get();

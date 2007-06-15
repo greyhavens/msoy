@@ -59,6 +59,9 @@ public class MediaDesc
     /** The MIME type for a youtube video. */
     public static const VIDEO_YOUTUBE :int = 34;
 
+    /** The MIME type for a google video. */
+    public static const VIDEO_GOOGLE :int = 35; // NOTE: does not actually work in-whirled
+
     /** The MIME type for Flash SWF files. */
     public static const APPLICATION_SHOCKWAVE_FLASH :int = 40;
 
@@ -123,6 +126,21 @@ public class MediaDesc
     public static function stringToHash (arg1 :String) :ByteArray
     {
         throw new Error("Unimplemented");
+    }
+
+    /**
+     * Is the specified mimetype 'external'?
+     */
+    public static function isExternalMimeType (mimeType :int) :Boolean
+    {
+        switch (mimeType) {
+        case VIDEO_YOUTUBE:
+        case VIDEO_GOOGLE:
+            return true;
+
+        default:
+            return false;
+        }
     }
 
     /**
@@ -294,6 +312,9 @@ public class MediaDesc
         case VIDEO_YOUTUBE:
             return "http://www.youtube.com/v/" + StringUtil.fromBytes(hash);
 
+        case VIDEO_GOOGLE:
+            return "http://video.google.com/googleplayer.swf?docId=" + StringUtil.fromBytes(hash);
+
         default:
             return DeploymentConfig.mediaURL + hashToString(hash) + mimeTypeToSuffix(mimeType);
         }
@@ -327,6 +348,7 @@ public class MediaDesc
         case IMAGE_GIF:
         case VIDEO_FLASH:
         case VIDEO_YOUTUBE:
+        case VIDEO_GOOGLE:
         case APPLICATION_SHOCKWAVE_FLASH:
             return true;
 
@@ -359,6 +381,7 @@ public class MediaDesc
      {
         switch (mimeType) {
         case VIDEO_YOUTUBE:
+        case VIDEO_GOOGLE:
             return true;
 
         default:
@@ -425,6 +448,7 @@ public class MediaDesc
     {
         switch (mimeType) {
         case VIDEO_YOUTUBE:
+        case VIDEO_GOOGLE:
             return "_" + mimeType + ":" + StringUtil.fromBytes(hash);
 
         default:
@@ -441,6 +465,7 @@ public class MediaDesc
         switch (mimeType) {
         case APPLICATION_SHOCKWAVE_FLASH:
         case VIDEO_YOUTUBE:
+        case VIDEO_GOOGLE:
             return true;
 
         default:

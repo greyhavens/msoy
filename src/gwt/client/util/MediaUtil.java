@@ -42,6 +42,7 @@ public class MediaUtil
 
         switch (desc.mimeType) {
         case MediaDesc.VIDEO_YOUTUBE:
+        case MediaDesc.VIDEO_GOOGLE:
         case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
             view = WidgetUtil.createFlashContainer("", path, width, height, null);
             break;
