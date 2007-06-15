@@ -93,15 +93,15 @@ EXIT_CODE=$?
 
 # Mail out some reports
 HOSTNAME=`hostname`
-# cat $LOGFILE | $MSOY_HOME/projects/tools/bin/sum_invokers | \
+# cat $LOGFILE | $MSOY_HOME/tools/bin/sum_invokers | \
 #     $MAIL -s "$HOSTNAME: $MSOY_HOME invoker summary" $LOG_EMAIL
-# cat $LOGFILE | $MSOY_HOME/projects/tools/bin/lfilter | \
+# cat $LOGFILE | $MSOY_HOME/tools/bin/lfilter | \
 #     grep -v "Invoker unit" | grep ' ! ' | cut -c 25-80 | sort | uniq -c | \
 #     sort -nr | $MAIL -s "$HOSTNAME: $MSOY_HOME error summary" $LOG_EMAIL
 
 # Mail out warnings from the logs
 FILTLOG=/tmp/msoyfiltered.log
-cat $LOGFILE | $MSOY_HOME/projects/tools/bin/lfilter > $FILTLOG
+cat $LOGFILE | $MSOY_HOME/tools/bin/lfilter > $FILTLOG
 if [ -s $FILTLOG ]; then
     cat $FILTLOG | $MAIL -s "$HOSTNAME: $MSOY_HOME filtered log" $LOG_EMAIL
 fi
