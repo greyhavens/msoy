@@ -581,11 +581,10 @@ public class MsoyController extends Controller
         // this will result in another request to move to the scene we're already in, but we'll
         // ignore it because we're already there
         var scene :String = sceneId + (_gameId != -1 ? "g" + _gameId : "");
-        if (_sceneIdString == null) {
-            _sceneIdString = scene;
-        } else {
+        if (_sceneIdString != null) {
             handleInternalGo("world", "s" + scene);
         }
+        _sceneIdString = scene;
     }
 
     // from ClientObserver
