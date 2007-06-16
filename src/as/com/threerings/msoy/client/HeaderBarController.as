@@ -42,11 +42,8 @@ public class HeaderBarController extends Controller
         _ctx.getLocationDirector().addLocationObserver(new LocationAdapter(null, 
             this.locationChanged, null));
 
-        Application.application.stage.addEventListener(Event.RESIZE, function (evt :Event) :void {
-            var client :WorldClient = _ctx.getWorldClient();
-            if (!client.isMinimized()) {
-                client.setWindowTitle(_headerBar.getLocationText());
-            }
+        _headerBar.addEventListener(Event.ADDED_TO_STAGE, function (evt :Event) :void {
+            _ctx.getWorldClient().setWindowTitle(_headerBar.getLocationText());
         });
     }
 

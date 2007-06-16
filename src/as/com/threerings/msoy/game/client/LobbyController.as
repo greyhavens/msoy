@@ -56,6 +56,7 @@ public class LobbyController extends Controller implements Subscriber
 
         _panel = new LobbyPanel(_mctx, this);
         _panel.addEventListener(Event.REMOVED_FROM_STAGE, handleRemovedFromStage);
+        _panel.addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
         setControlledPanel(_panel);
         _panelIsVisible = true;
         _mctx.getTopPanel().setLeftPanel(_panel);
@@ -71,6 +72,19 @@ public class LobbyController extends Controller implements Subscriber
         _tableDir.setTableObject(obj);
         _tableDir.addTableObserver(_panel);
         _tableDir.addSeatednessObserver(_panel);
+
+        _mctx.getWorldClient().setWindowTitle(_lobj.game.name);
+    }
+
+
+    /**
+     * Event handler for Event.ADDED_TO_STAGE
+     */
+    public function handleAddedToStage (evt :Event) :void
+    {
+        if (_lobj != null) {
+            _mctx.getWorldClient().setWindowTitle(_lobj.game.name);
+        }
     }
 
     /**
