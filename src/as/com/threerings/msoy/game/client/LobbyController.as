@@ -76,7 +76,6 @@ public class LobbyController extends Controller implements Subscriber
         _mctx.getWorldClient().setWindowTitle(_lobj.game.name);
     }
 
-
     /**
      * Event handler for Event.ADDED_TO_STAGE
      */
