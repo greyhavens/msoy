@@ -512,8 +512,6 @@ public class MsoyController extends Controller
      */
     public function goToPlace (params :Object) :void
     {
-        _sceneIdString = params["sceneId"];
-
         // check for gameLobby first, so that the handleInternalGo call resulting from moveTo
         // adds the correct parameters to the external URL
         if (null != params["gameLobby"]) {
@@ -522,15 +520,19 @@ public class MsoyController extends Controller
 
         // first, see if we should hit a specific scene
         if (null != params["memberHome"]) {
+            _sceneIdString = null;
             handleGoMemberHome(int(params["memberHome"]), true);
 
         } else if (null != params["groupHome"]) {
+            _sceneIdString = null;
             handleGoGroupHome(int(params["groupHome"]), true);
 
         } else if (null != params["memberScene"]) {
+            _sceneIdString = null;
             handleGoMemberScene(int(params["memberScene"]));
 
         } else if (null != params["location"]) {
+            _sceneIdString = null;
             _ctx.getLocationDirector().moveTo(int(params["location"]));
 
         } else if (null != params["noplace"]) {
@@ -578,7 +580,12 @@ public class MsoyController extends Controller
     {
         // this will result in another request to move to the scene we're already in, but we'll
         // ignore it because we're already there
-        handleInternalGo("world", "s" + sceneId + (_gameId != -1 ? "g" + _gameId : ""));
+        var scene :String = sceneId + (_gameId != -1 ? "g" + _gameId : "");
+        if (_sceneIdString == null) {
+            _sceneIdString = scene;
+        } else {
+            handleInternalGo("world", "s" + scene);
+        }
     }
 
     // from ClientObserver
