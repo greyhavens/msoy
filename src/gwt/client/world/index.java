@@ -162,6 +162,7 @@ public class index extends Page
         HTML content = FlashClients.createPopularPlaces(hotSpots);
         setPageTitle(CWorld.msgs.hotSpotsTitle());
         setContent(content, true, false);
+        setCloseButton();
         return content;
     }
 

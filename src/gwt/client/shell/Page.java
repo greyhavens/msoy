@@ -182,6 +182,18 @@ public abstract class Page
         }
     }
 
+    protected void setCloseButton ()
+    {
+        if (_closeToken != null) {
+            _content.setWidget(0, 2, MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
+                public void onClick (Widget sender) {
+                    closePage();
+                }
+            }));
+            _content.setWidget(0, 3, MsoyUI.createLabel("", "Separator"));
+        }
+    }
+
     /**
      * Called during initialization to give our entry point and derived classes a chance to
      * initialize their respective context classes.
@@ -248,14 +260,7 @@ public abstract class Page
         _content.getFlexCellFormatter().setColSpan(1, 0, 4);
         _content.getFlexCellFormatter().setHeight(1, 0, "100%");
 
-        if (_closeToken != null) {
-            _content.setWidget(0, 2, MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
-                public void onClick (Widget sender) {
-                    closePage();
-                }
-            }));
-            _content.setWidget(0, 3, MsoyUI.createLabel("", "Separator"));
-        }
+        setCloseButton();
     }
 
     protected void setPageTitle (String title)
