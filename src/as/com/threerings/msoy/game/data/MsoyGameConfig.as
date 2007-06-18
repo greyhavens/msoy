@@ -6,8 +6,6 @@ package com.threerings.msoy.game.data {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
-import com.threerings.util.ClassUtil;
-
 import com.threerings.crowd.client.PlaceController;
 
 import com.threerings.ezgame.data.GameDefinition;
@@ -40,17 +38,6 @@ public class MsoyGameConfig extends ToyBoxGameConfig
         _gameDef = gameDef;
     }
 
-    // from PlaceConfig
-    override public function createController () :PlaceController
-    {
-        var controller :String = getGameDefinition().controller;
-        if (controller == null) {
-            return new MsoyGameController();
-        }
-        var c :Class = ClassUtil.getClassByName(controller);
-        return (new c() as PlaceController);
-    }
-
     // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
@@ -63,6 +50,12 @@ public class MsoyGameConfig extends ToyBoxGameConfig
     {
         super.writeObject(out);
         out.writeField(name);
+    }
+
+    // from EZGameConfig
+    override protected function createDefaultController () :PlaceController
+    {
+        return new MsoyGameController();
     }
 }
 }
