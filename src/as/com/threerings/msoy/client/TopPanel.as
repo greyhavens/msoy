@@ -4,6 +4,7 @@
 package com.threerings.msoy.client {
 
 import flash.events.Event;
+import flash.geom.Rectangle;
 import flash.system.Capabilities;
 
 import mx.core.Application;
@@ -231,6 +232,25 @@ public class TopPanel extends Canvas
     public function clearPlaceView (view :PlaceView) :void
     {
         _placeBox.clearPlaceView(view);
+    }
+
+    /**
+     * Returns the location and dimensions of the place view in relation to the entire stage.
+     */
+    public function getPlaceViewBounds () :Rectangle
+    {
+        var bounds :Rectangle = new Rectangle();
+        bounds.x = getLeftPanelWidth();
+        bounds.y = HeaderBar.HEIGHT;
+        bounds.width = stage.stageWidth - getLeftPanelWidth() - getRightPanelWidth();
+        bounds.height = stage.stageHeight - ControlBar.HEIGHT - getBottomPanelHeight() -
+            HeaderBar.HEIGHT;
+        // for real scenes, we put a small space above and below the view
+        if (_placeBox.getPlaceView() is MsoyPlaceView) {
+            bounds.y += DECORATIVE_MARGIN_HEIGHT;
+            bounds.height -= DECORATIVE_MARGIN_HEIGHT * 2;
+        }
+        return bounds;
     }
 
     /**

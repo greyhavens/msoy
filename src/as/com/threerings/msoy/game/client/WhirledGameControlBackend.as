@@ -1,6 +1,10 @@
+//
+// $Id$
+
 package com.threerings.msoy.game.client {
 
 import flash.display.Loader;
+import flash.geom.Rectangle;
 import flash.net.URLRequest;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
@@ -32,7 +36,9 @@ public class WhirledGameControlBackend extends GameControlBackend
         o["getAvailableFlow_v1"] = ctrl.getAvailableFlow_v1;
         o["awardFlow_v1"] = ctrl.awardFlow_v1;
         o["setChatEnabled_v1"] = ctrl.setChatEnabled_v1;
+        o["setChatBounds_v1"] = ctrl.setChatBounds_v1;
         o["getHeadShot_v1"] = getHeadShot_v1;
+        o["getStageBounds_v1"] = getStageBounds_v1;
     }
 
     protected function getHeadShot_v1 (occupant :int, callback :Function) :void
@@ -48,6 +54,11 @@ public class WhirledGameControlBackend extends GameControlBackend
             return;
         }
         throw new Error("Failed to find occupant: " + occupant);
+    }
+
+    protected function getStageBounds_v1 () :Rectangle
+    {
+        return (_ctx as WorldContext).getTopPanel().getPlaceViewBounds();
     }
 
     /** A cache of loaded avatar headshots, indexed by occupant id. */

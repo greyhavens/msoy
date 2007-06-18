@@ -102,7 +102,8 @@ public class ChatOverlay
     }
 
     /**
-     * Set the target container where this chat should add its overlay.
+     * Set the target container where this chat should add its overlay. This resets any custom
+     * target bounds previously set via {@link #setTargetBounds}.
      *
      * @param target the container to which a chat overlay should be added; or null to release
      * references and internal resources associated with the previous target.
@@ -128,7 +129,7 @@ public class ChatOverlay
         }
 
         _target = target;
-        _targetWidth = targetWidth;
+
         if (_target != null) {
             // adding to the new
             _overlay.x = 0;
@@ -141,9 +142,20 @@ public class ChatOverlay
             // resume listening to our chat history
             _history.addChatOverlay(this);
 
+            layout(null, targetWidth);
             setHistoryEnabled(Prefs.getShowingChatHistory());
-            layout();
         }
+    }
+
+    /**
+     * Configures the region of our target over which we will render. This overrides our natural
+     * calculations based on the target's reported width and the percentage of the target's height
+     * to use for chat.
+     */
+    public function setTargetBounds (bounds :Rectangle) :void
+    {
+        log.info("Setting chat bounds " + bounds);
+        layout(bounds, -1);
     }
 
     /**
@@ -214,7 +226,7 @@ public class ChatOverlay
         if (_subtitlePercentage != perc) {
             _subtitlePercentage = perc;
             if (_target) {
-                layout();
+                layout(null, -1);
             }
         }
     }
@@ -245,16 +257,22 @@ public class ChatOverlay
     /**
      * Layout.
      */
-    protected function layout () :void
+    protected function layout (bounds :Rectangle, targetWidth :int) :void
     {
         clearGlyphs(_subtitles);
 
-        // figure out the height of the subtitles
-        _subtitleHeight = (_target.height * _subtitlePercentage);
+        // if special bounds were provided, use them, otherwise compute them
+        if (bounds == null) {
+            var height :int = _target.height * _subtitlePercentage;
+            _targetBounds = new Rectangle(0, _target.height - height,
+                                          targetWidth == -1 ? _target.width : targetWidth, height);
+        } else {
+            _targetBounds = bounds;
+        }
 
         // make a guess as to the extent of the history (how many avg sized subtitles will fit in
         // the subtitle area
-        _historyExtent = (_subtitleHeight - PAD) / SUBTITLE_HEIGHT_GUESS;
+        _historyExtent = (_targetBounds.height - PAD) / SUBTITLE_HEIGHT_GUESS;
 
         var msg :ChatMessage;
         var now :int = getTimer();
@@ -371,8 +389,8 @@ public class ChatOverlay
     protected function addSubtitle (glyph :SubtitleGlyph) :void
     {
         var height :int = int(glyph.height);
-        glyph.x = PAD;
-        glyph.y = getTargetHeight() - height - PAD;
+        glyph.x = _targetBounds.x + PAD;
+        glyph.y = _targetBounds.bottom - height - PAD;
         scrollUpSubtitles(height + getSubtitleSpacing(glyph.getType()));
         _subtitles.push(glyph);
         _overlay.addChild(glyph);
@@ -778,7 +796,7 @@ public class ChatOverlay
      */
     protected function scrollUpSubtitles (dy :int) :void
     {
-        var minY :int = getTargetHeight() - _subtitleHeight;
+        var minY :int = _targetBounds.y;
         for (var ii :int = 0; ii < _subtitles.length; ii++) {
             var glyph :ChatGlyph = (_subtitles[ii] as ChatGlyph);
             var newY :int = int(glyph.y) - dy;
@@ -877,8 +895,8 @@ public class ChatOverlay
         var p :Point = new Point(event.stageX, event.stageY);
         p = _target.globalToLocal(p);
 
-        var subtitleY :Number = p.y - (_target.height - _subtitleHeight);
-        if (subtitleY >= 0 && subtitleY < _subtitleHeight) {
+        var subtitleY :Number = p.y - _targetBounds.y;
+        if (subtitleY >= 0 && subtitleY < _targetBounds.height) {
             // The delta factor is configurable per OS, and so may range from 1-3 or even
             // higher. We normalize this based on observed values so that a single click of the
             // mouse wheel always scrolls one line.
@@ -909,7 +927,7 @@ public class ChatOverlay
      */
     protected function handleContainerResize (event :ResizeEvent) :void
     {
-        layout();
+        layout(null, -1);
     }
 
     /**
@@ -929,9 +947,11 @@ public class ChatOverlay
      */
     protected function configureHistoryBarSize () :void
     {
-        _historyBar.height = _subtitleHeight;
-        _historyBar.move(_target.width - ScrollBar.THICKNESS + 1, //_historyBar.width;
-                         _target.height - _subtitleHeight);
+        if (_targetBounds != null) {
+            _historyBar.height = _targetBounds.height;
+            _historyBar.move(_targetBounds.x + _targetBounds.width - ScrollBar.THICKNESS + 1,
+                             _targetBounds.y);
+        }
     }
 
     /**
@@ -941,9 +961,7 @@ public class ChatOverlay
     {
         _popping = true;
         try {
-            _target.rawChildren.setChildIndex(
-                _overlay, _target.rawChildren.numChildren - 1);
-
+            _target.rawChildren.setChildIndex(_overlay, _target.rawChildren.numChildren - 1);
         } finally {
             _popping = false;
         }
@@ -956,14 +974,13 @@ public class ChatOverlay
      */
     protected function figureHistoryOffset () :void
     {
-        if (_target == null) {
+        if (_target == null || _targetBounds == null) {
             return;
         }
 
         var hsize :int = _history.size();
-        var targHeight :int = getTargetHeight();
-        var ypos :int = targHeight - PAD;
-        var min :int = (targHeight - _subtitleHeight);
+        var ypos :int = _targetBounds.bottom - PAD;
+        var min :int = _targetBounds.y;
         for (var ii :int = 0; ii < hsize; ii++) {
             var glyph :ChatGlyph = getHistorySubtitle(ii);
             ypos -= int(glyph.height);
@@ -996,9 +1013,8 @@ public class ChatOverlay
 
         if (_history.size() > 0) {
             // start from the bottom...
-            var targHeight :int = getTargetHeight();
-            var ypos :int = targHeight - PAD;
-            var min :int = (targHeight - _subtitleHeight);
+            var ypos :int = _targetBounds.bottom - PAD;
+            var min :int = _targetBounds.y;
             for (ii = first; ii >= 0; ii--, count++) {
                 glyph = getHistorySubtitle(ii);
 
@@ -1009,7 +1025,7 @@ public class ChatOverlay
                 }
 
                 // position it
-                glyph.x = PAD;
+                glyph.x = _targetBounds.x + PAD;
                 glyph.y = ypos;
                 ypos -= getHistorySubtitleSpacing(ii);
             }
@@ -1066,14 +1082,9 @@ public class ChatOverlay
         return createSubtitle(msg, getType(msg, true), false);
     }
 
-    internal function getTargetHeight () :int
-    {
-        return _target.height;
-    }
-
     internal function getTargetTextWidth () :int
     {
-        var w :int = (_targetWidth == -1) ? _target.width : _targetWidth;
+        var w :int = _targetBounds.width;
         if (_historyBar != null) {
             w -= ScrollBar.THICKNESS;
         }
@@ -1092,8 +1103,8 @@ public class ChatOverlay
     /** The target container over which we're overlaying chat. */
     protected var _target :Container;
 
-    /** An override for the width of our target container. */
-    protected var _targetWidth :int = -1;
+    /** The region of our target over which we render. */
+    protected var _targetBounds :Rectangle;
 
     /** The stage of our target, while tracking mouseWheel in history mode. */
     protected var _stage :Stage;
@@ -1103,9 +1114,6 @@ public class ChatOverlay
 
     /** The currently displayed subtitles in history mode. */
     protected var _showingHistory :Array = [];
-
-    /** The height of the subtitle area, without any padding. */
-    protected var _subtitleHeight :int = SUBTITLE_HEIGHT_GUESS * 5;
 
     /** The percent of the bottom of the screen to use for subtitles. */
     protected var _subtitlePercentage :Number = 1;

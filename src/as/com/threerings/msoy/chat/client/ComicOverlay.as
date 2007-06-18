@@ -65,10 +65,10 @@ public class ComicOverlay extends ChatOverlay
         clearBubbles(false);
     }
 
-    override protected function layout () :void
+    override protected function layout (bounds :Rectangle, targetWidth :int) :void
     {
         clearBubbles(true); // these will get repopulated from the history
-        super.layout();
+        super.layout(bounds, targetWidth);
     }
 
     override public function setTarget (target :Container, targetWidth :int = -1) :void
@@ -271,8 +271,7 @@ public class ComicOverlay extends ChatOverlay
 
         // then look for a place nearby where it will fit (making sure we only put it in the area
         // above the subtitles)
-        var vbounds :Rectangle = new Rectangle(
-            0, 0, _target.width, _target.height - _subtitleHeight);
+        var vbounds :Rectangle = new Rectangle(0, 0, _target.width, _targetBounds.y);
         if (!DisplayUtil.positionRect(placer, vbounds, getAvoidList(speaker))) {
             // we couldn't fit the bubble!
             return false;

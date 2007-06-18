@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.geom.Rectangle;
 import flash.utils.getTimer; // function import
 
 import com.threerings.presents.client.InvocationAdapter;
@@ -77,6 +78,15 @@ public class MsoyGameController extends EZGameController
     {
         _panel.backend.validateConnected();
         (_view as MsoyGamePanel).setChatEnabled(enabled);
+    }
+
+    /**
+     * This method is used by the WhirledGameControlBackend.
+     */
+    public function setChatBounds_v1 (bounds :Rectangle) :void
+    {
+        _panel.backend.validateConnected();
+        (_view as MsoyGamePanel).setChatBounds(bounds);
     }
 
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView

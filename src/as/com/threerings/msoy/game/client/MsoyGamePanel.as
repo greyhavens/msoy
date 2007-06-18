@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.geom.Rectangle;
+
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.ezgame.client.EZGamePanel;
@@ -39,6 +41,14 @@ public class MsoyGamePanel extends EZGamePanel
         }
         _chatOverlay.setTarget(enabled ? this : null);
         (_ctx as WorldContext).getTopPanel().getControlBar().setChatEnabled(enabled);
+    }
+
+    /**
+     * Relocates and resizes the chat overlay.
+     */
+    public function setChatBounds (bounds :Rectangle) :void
+    {
+        _chatOverlay.setTargetBounds(bounds);
     }
 
     override public function willEnterPlace (plobj :PlaceObject) :void
