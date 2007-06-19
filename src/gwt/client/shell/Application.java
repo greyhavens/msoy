@@ -251,22 +251,6 @@ public class Application
         return openChannelNative(type, name, id);
     }
 
-    /**
-     * Called when our flow, gold or other "levels" have changed.
-     */
-    protected void levelsUpdated ()
-    {
-        _status.refreshLevels();
-    }
-
-    /**
-     * Called when our mail notification status has changed.
-     */
-    protected void mailNotificationUpdated ()
-    {
-        _status.refreshMailNotification();
-    }
-
     protected void clearClient (boolean deferred)
     {
         if (deferred) {
@@ -323,12 +307,6 @@ public class Application
        };
        $wnd.openChannel = function (type, name, id) {
            app.@client.shell.Application::openChannelRequest(ILjava/lang/String;I)(type, name, id);
-       };
-       $wnd.levelsUpdated = function () {
-           app.@client.shell.Application::levelsUpdated()();
-       };
-       $wnd.mailNotificationUpdated = function () {
-           app.@client.shell.Application::mailNotificationUpdated()();
        };
        $wnd.onunload = function (event) {
            var client = $doc.getElementById("asclient");

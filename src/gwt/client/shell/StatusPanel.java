@@ -26,11 +26,10 @@ import com.threerings.gwt.util.CookieUtil;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.util.FlashClients;
-import client.util.FlashEvents;
 import client.util.MsoyUI;
-import client.util.events.LevelUpEvent;
-import client.util.events.LevelUpListener;
+import client.util.events.FlashEvents;
+import client.util.events.LevelUpdateEvent;
+import client.util.events.LevelsListener;
 
 /**
  * Displays basic player status (name, flow count) and handles logging on and logging off.
@@ -49,11 +48,32 @@ public class StatusPanel extends FlexTable
         _mailNotifier = new HTML(Application.createLinkHtml(mailImg, "mail", ""));
         _mailNotifier.setWidth("20px");
 
-        FlashEvents.addListener(new LevelUpListener() {
-            public void leveledUp (LevelUpEvent event) {
-                // TODO: all new level notifications should probably be eventified, for now the 
-                // level change is still handled through the direct call back in LevelsDisplay
-                _levels.showLevelUpPopup();
+        FlashEvents.addListener(new LevelsListener() {
+            public void levelUpdated (LevelUpdateEvent event) {
+                switch(event.getType()) {
+                case LevelUpdateEvent.LEVEL:
+                    int newLevel = event.getValue();
+                    int oldLevel = event.getOldValue();
+                    _levels.setLevel(newLevel);
+                    // a user's level is never 0, so 0 is used to indicate that this is the first 
+                    // update, and the new level popup should not be shown.
+                    if (oldLevel != 0 && oldLevel != newLevel) {
+                        _levels.showLevelUpPopup();
+                    }
+                    _levels.setVisible(true);
+                    break;
+                case LevelUpdateEvent.FLOW:
+                    _levels.setFlow(event.getValue());
+                    _levels.setVisible(true);
+                    break;
+                case LevelUpdateEvent.GOLD:
+                    _levels.setGold(event.getValue());
+                    _levels.setVisible(true);
+                    break;
+                case LevelUpdateEvent.MAIL:
+                    _mailNotifier.setVisible(event.getValue() > 0);
+                    break;
+                }
             }
         });
     }
@@ -92,31 +112,6 @@ public class StatusPanel extends FlexTable
         popup.show();
         popup.setPopupPosition(px == -1 ? (Window.getClientWidth() - popup.getOffsetWidth()) : px,
                                py == -1 ? HEADER_HEIGHT : py);
-    }
-
-    /**
-     * Rereads our flow, gold, etc. levels and updates our header display.
-     */
-    public void refreshLevels ()
-    {
-        if (_creds != null) {
-            _levels.refreshLevels();
-            _levels.setVisible(true);
-        } else {
-            CShell.log("Ignoring refreshLevels() request as we're not logged on.");
-        }
-    }
-
-    /**
-     * Rereads our mail notification status and updates our header display.
-     */
-    public void refreshMailNotification ()
-    {
-        if (_creds != null) {
-            _mailNotifier.setVisible(FlashClients.getMailNotification());
-        } else {
-            CShell.log("Ignoring refreshMailNotification() request as we're not logged on.");
-        }
     }
 
     /**
@@ -230,11 +225,16 @@ public class StatusPanel extends FlexTable
             getFlexCellFormatter().setStyleName(0, idx, "Icon");
         }
 
-        public void refreshLevels () {
-            int[] levels = FlashClients.getLevels();
-            setText(0, _flowIdx, String.valueOf(levels[0]));
-            setText(0, _goldIdx, String.valueOf(levels[1]));
-            setText(0, _levelIdx, String.valueOf(levels[2]));
+        public void setLevel (int level) {
+            setText(0, _levelIdx, String.valueOf(level));
+        }
+
+        public void setFlow (int flow) {
+            setText(0, _flowIdx, String.valueOf(flow));
+        }
+
+        public void setGold (int gold) {
+            setText(0, _goldIdx, String.valueOf(gold));
         }
 
         public void showLevelUpPopup () {

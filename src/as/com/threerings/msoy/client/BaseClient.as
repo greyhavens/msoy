@@ -53,20 +53,6 @@ public /*abstract*/ class BaseClient extends Client
 {
     public static const log :Log = Log.getLog(BaseClient);
 
-    /**
-     * Notifies our JavaScript shell that our flow, gold, etc. levels have updated.
-     */
-    public static function levelsUpdated () :void
-    {
-        try {
-            if (ExternalInterface.available) {
-                ExternalInterface.call("levelsUpdated");
-            }
-        } catch (err :Error) {
-            log.warning("ExternalInterface.call('levelsUpdated') failed: " + err);
-        }
-    }
-
     public function dispatchEventToGWT (eventName :String, eventArgs :Array) :void
     {
         try {
@@ -75,20 +61,6 @@ public /*abstract*/ class BaseClient extends Client
             }
         } catch (err :Error) {
             Log.getLog(this).warning("triggerFlashEvent failed: " + err);
-        }
-    }
-
-    /**
-     * Notifies our JavaScript shell that our mail notification has changed.
-     */
-    public static function mailNotificationUpdated () :void
-    {
-        try {
-            if (ExternalInterface.available) {
-                ExternalInterface.call("mailNotificationUpdated");
-            }
-        } catch (err :Error) {
-            log.warning("ExternalInterface.call('mailNotificationUpdated') failed: " + err);
         }
     }
 
@@ -179,11 +151,14 @@ public /*abstract*/ class BaseClient extends Client
 
         // listen for flow and gold updates
         _user = (clobj as MemberObject);
-        _user.addListener(new LevelUpdater(this));
+        var updater :LevelUpdater = new LevelUpdater(this);
+        _user.addListener(updater);
+
         // configure our levels to start
-        levelsUpdated();
-        // and our mail notification
-        mailNotificationUpdated();
+        updater.newLevel(_user.level);
+        // updater.newGold(_user.gold);
+        updater.newFlow(_user.flow);
+        updater.newMail(_user.hasNewMail);
     }
 
     /**
@@ -193,8 +168,6 @@ public /*abstract*/ class BaseClient extends Client
     {
         ExternalInterface.addCallback("onUnload", externalOnUnload);
         ExternalInterface.addCallback("getFriends", externalGetFriends);
-        ExternalInterface.addCallback("getLevels", externalGetLevels);
-        ExternalInterface.addCallback("getMailNotification", externalGetMailNotification);
         ExternalInterface.addCallback("openChannel", externalOpenChannel);
     }
 
@@ -232,37 +205,6 @@ public /*abstract*/ class BaseClient extends Client
 //     protected function externalGetGroups () :Array
 //     {
 //     }
-
-    /**
-     * Provides this player's flow, gold and level levels to the GWT client.
-     */
-    protected function externalGetLevels () :Array
-    {
-        var levels :Array = new Array(3);
-        if (_user == null) {
-            log.info("externalGetLevels() without MemberObject.");
-            levels[0] = 0;
-            levels[1] = 0;
-            levels[2] = 0;
-        } else {
-            levels[0] = _user.flow;
-            levels[1] = 0; // _user.gold;
-            levels[2] = _user.level;
-        }
-        return levels;
-    }
-
-    /**
-     * Provides this player's flow, gold and level levels to the GWT client.
-     */
-    protected function externalGetMailNotification () :Boolean
-    {
-        if (_user == null) {
-            log.info("externalGetMailNotification() without MemberObject.");
-            return false;
-        }
-        return _user.hasNewMail;
-    }
 
     /**
      * Exposed to JavaScript so that it may order us to open chat channels.
@@ -331,22 +273,45 @@ class LevelUpdater implements AttributeChangeListener
     }
 
     public function attributeChanged (event :AttributeChangedEvent) :void {
-        if (/* event.getName() == MemberObject.GOLD || */ event.getName() == MemberObject.FLOW ||
-            event.getName() == MemberObject.LEVEL) {
-            BaseClient.levelsUpdated();
-            if (event.getName() == MemberObject.LEVEL) {
-                // TODO this is repetitive... switch all level notification to events.  For now,
-                // this gets the bling to show up in the corner.
-                _client.dispatchEventToGWT(LEVELED_UP_EVENT, 
-                    [ event.getValue(), event.getOldValue() ]);
-            }
+        if (event.getName() == MemberObject.LEVEL) {
+            newLevel(event.getValue() as int, event.getOldValue() as int);
+        /*} else if (event.getName() == MemberObject.GOLD) {
+            newGold(event.getValue() as int, event.getOldValue() as int); */
+        } else if (event.getName() == MemberObject.FLOW) {
+            newFlow(event.getValue() as int, event.getOldValue() as int);
         } else if (event.getName() == MemberObject.HAS_NEW_MAIL) {
-            BaseClient.mailNotificationUpdated();
+            // TODO: support indicating how many new mails the user has?
+            newMail(event.getValue() as Boolean, event.getOldValue() as Boolean);
         }
     }
 
+    public function newLevel (level :int, oldLevel :int = 0) :void {
+        sendNotification([LEVEL_UPDATE_LEVEL, level, oldLevel]);
+    }
+
+    public function newFlow (flow :int, oldFlow :int = 0) :void {
+        sendNotification([LEVEL_UPDATE_FLOW, flow, oldFlow]);
+    }
+
+    public function newGold (gold :int, oldGold :int = 0) :void {
+        sendNotification([LEVEL_UPDATE_GOLD, gold, oldGold]);
+    }
+
+    public function newMail (mail :Boolean, oldMail :Boolean = false) :void {
+        // TODO: support indication how many new mails the user has?
+        sendNotification([LEVEL_UPDATE_MAIL, mail ? 1 : 0, oldMail ? 1 : 0]);
+    }
+
+    protected function sendNotification (args :Array) :void {
+        _client.dispatchEventToGWT(LEVEL_UPDATE_EVENT, args);
+    }
+
     /** Event dispatched to GWT when we've leveled up */
-    protected static const LEVELED_UP_EVENT :String = "leveledUp";
+    protected static const LEVEL_UPDATE_EVENT :String = "levelUpdate";
+    protected static const LEVEL_UPDATE_LEVEL :int = 1;
+    protected static const LEVEL_UPDATE_FLOW :int = 2;
+    protected static const LEVEL_UPDATE_GOLD :int = 3;
+    protected static const LEVEL_UPDATE_MAIL :int = 4;
 
     protected var _client :BaseClient;
 }

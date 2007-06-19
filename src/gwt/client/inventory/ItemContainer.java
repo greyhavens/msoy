@@ -18,13 +18,13 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import client.util.ItemUtil;
 import client.util.FlashClients;
-import client.util.FlashEvents;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
 import client.util.events.AvatarChangedEvent;
 import client.util.events.AvatarChangeListener;
 import client.util.events.BackgroundChangedEvent;
 import client.util.events.BackgroundChangeListener;
+import client.util.events.FlashEvents;
 import client.util.events.FurniChangedEvent;
 import client.util.events.FurniChangeListener;
 import client.util.events.FlashEventListener;
