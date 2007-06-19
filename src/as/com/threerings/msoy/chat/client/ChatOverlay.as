@@ -1089,6 +1089,8 @@ public class ChatOverlay
     {
         var w :int = _targetBounds.width;
         if (_historyBar != null) {
+            // ScrollBar.THICKNESS is thicker than our scrollbars actually are, but it's
+            // a decent estimate and works even when the scrollbar hasn't measured itself.
             w -= ScrollBar.THICKNESS;
         }
         // there is PAD between the text and the edges of the bubble, and another PAD between the
