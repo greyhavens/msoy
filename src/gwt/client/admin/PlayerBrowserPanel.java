@@ -29,10 +29,10 @@ public class PlayerBrowserPanel extends HorizontalPanel
         _playerLists = new ArrayList();
 
         // first, load up the list of players that don't have an inviterId (defaults to 0)
-        displayList(CAdmin.msgs.browserNoInviter(), 0);
+        displayPlayersInvitedBy(CAdmin.msgs.browserNoInviter(), 0);
     }
 
-    public void displayList (final String title, int memberId) 
+    public void displayPlayersInvitedBy (final String title, int memberId) 
     {
         CAdmin.adminsvc.getPlayerList(CAdmin.ident, memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
@@ -43,6 +43,20 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 add(new Label(CAdmin.serverError(cause)));
             }
         });
+    }
+
+    /**
+     * Removes all the items after this one on the list, presumably because we're about to 
+     * go down a new path.
+     */
+    public void truncateList (PlayerList lastItem) 
+    {
+        int ii = _playerLists.lastIndexOf(lastItem);
+        if (ii != -1) {
+            while (_playerLists.size() > ii + 1) {
+                _playerLists.remove(ii + 1);
+            }
+        }
     }
 
     /**
@@ -116,7 +130,8 @@ public class PlayerBrowserPanel extends HorizontalPanel
                             _activeLabel.removeStyleName("Highlighted");
                         }
                         (_activeLabel = (Label) sender).addStyleName("Highlighted");
-                        panel.displayList(
+                        panel.truncateList(PlayerList.this);
+                        panel.displayPlayersInvitedBy(
                             CAdmin.msgs.browserInvitedBy(member.name), member.memberId);
                     }
                 });
