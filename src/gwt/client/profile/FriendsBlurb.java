@@ -7,16 +7,19 @@ import java.util.ArrayList;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.SimpleDataModel;
+import com.threerings.msoy.web.data.MemberCard;
 
 import client.msgs.FriendInvite;
 import client.msgs.MailComposition;
-import client.shell.Application;
+import client.util.ProfileGrid;
 
 /**
  * Displays a person's friends list.
@@ -26,8 +29,10 @@ public class FriendsBlurb extends Blurb
     // @Override // from Blurb
     protected Panel createContent ()
     {
-        _content = new FlexTable();
+        _content = new ProfileGrid(FRIEND_ROWS, FRIEND_COLUMNS, "");
+        _content.setVerticalOrienation(true);
         _content.setWidth("100%");
+        _content.setStyleName("friendsBlurb");
         return _content;
     }
 
@@ -36,25 +41,19 @@ public class FriendsBlurb extends Blurb
     {
         setHeader("Friends");
 
+        String empty = CProfile.getMemberId() == _name.getMemberId() ?
+            "You have no friends. Boo hoo." : "This person has no friends. How sad.";
+        _content.setEmptyMessage(empty);
+
         ArrayList friends = (ArrayList)blurbData;
-        boolean canInvite =
-            CProfile.getMemberId() > 0 && CProfile.getMemberId() != _name.getMemberId();
-        if (friends.size() == 0) {
-            setStatus(CProfile.getMemberId() == _name.getMemberId() ?
-                      "You have no friends. Boo hoo." : "This person has no friends. How sad.");
+        _content.setModel(new SimpleDataModel(friends), 0);
 
-        } else {
-            for (int ii = 0, ll = friends.size(); ii < ll; ii++) {
-                int row = ii / FRIEND_COLUMNS;
-                int col = ii % FRIEND_COLUMNS;
-                FriendEntry friend = (FriendEntry)friends.get(ii);
-                canInvite = canInvite && !(friend.getMemberId() == CProfile.getMemberId());
-                Hyperlink link = Application.memberViewLink(
-                    friend.name.toString(), friend.name.getMemberId());
-                _content.setWidget(row, col, link);
-            }
+        boolean canInvite = CProfile.getMemberId() > 0 &&
+            CProfile.getMemberId() != _name.getMemberId();
+        for (int ii = 0, ll = friends.size(); ii < ll; ii++) {
+            MemberCard friend = (MemberCard)friends.get(ii);
+            canInvite = canInvite && !(friend.name.getMemberId() == CProfile.getMemberId());
         }
-
         if (canInvite) {
             Button inviteButton = new Button("Invite To Be Your Friend", new ClickListener() {
                 public void onClick (Widget sender) {
@@ -62,9 +61,8 @@ public class FriendsBlurb extends Blurb
                                         "Let's be buddies!").show();
                 }
             });
-            int row = _content.getRowCount();
-            _content.getFlexCellFormatter().setColSpan(row, 0, FRIEND_COLUMNS);
-            _content.setWidget(row, 0, inviteButton);
+            _content.addToHeader(WidgetUtil.makeShim(15, 1));
+            _content.addToHeader(inviteButton);
         }
     }
 
@@ -72,15 +70,12 @@ public class FriendsBlurb extends Blurb
     protected void didFail (String cause)
     {
         setHeader("Error");
-        setStatus("Failed to load friends: " + cause);
+        _content.setEmptyMessage("Failed to load friends: " + cause);
+        _content.setModel(new SimpleDataModel(new ArrayList()), 0);
     }
 
-    protected void setStatus (String text)
-    {
-        _content.setText(0, 0, text);
-    }
-
-    protected FlexTable _content;
+    protected ProfileGrid _content;
 
     protected static final int FRIEND_COLUMNS = 3;
+    protected static final int FRIEND_ROWS = 2;
 }

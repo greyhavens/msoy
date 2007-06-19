@@ -84,21 +84,23 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public ArrayList loadProfile (int memberId)
+    public ArrayList loadProfile (WebIdent ident, int memberId)
         throws ServiceException
     {
+        MemberRecord memrec = getAuthedUser(ident);
+
         try {
-            MemberRecord memrec = MsoyServer.memberRepo.loadMember(memberId);
-            if (memrec == null) {
+            MemberRecord tgtrec = MsoyServer.memberRepo.loadMember(memberId);
+            if (tgtrec == null) {
                 return null;
             }
 
-            ProfileLayout layout = loadLayout(memrec);
+            ProfileLayout layout = loadLayout(tgtrec);
             ArrayList<Object> data = new ArrayList<Object>();
             data.add(layout);
-            data.add(memrec.getName());
+            data.add(tgtrec.getName());
             for (Object bdata : layout.blurbs) {
-                data.add(resolveBlurbData(memrec, (BlurbData)bdata));
+                data.add(resolveBlurbData(memrec, tgtrec, (BlurbData)bdata));
             }
             return data;
 
@@ -122,6 +124,7 @@ public class ProfileServlet extends MsoyServiceServlet
                     card.name = new MemberName(memrec.name, memrec.memberId);
                     cards.put(memrec.memberId, card);
                 }
+
             } else {
                 List<MemberNameRecord> names = null;
                 if ("display".equals(type)) {
@@ -139,15 +142,7 @@ public class ProfileServlet extends MsoyServiceServlet
             }
 
             // load up their profile data
-            for (ProfileRecord profile :
-                     MsoyServer.profileRepo.loadProfiles(cards.intKeySet().toIntArray())) {
-                MemberCard card = cards.get(profile.memberId);
-                if (profile.photoHash != null) {
-                    card.photo = new MediaDesc(profile.photoHash, profile.photoMimeType,
-                                               profile.photoConstraint);
-                    card.headline = profile.headline;
-                }
-            }
+            resolveCardData(cards);
 
             ArrayList<Object> results = new ArrayList<Object>();
             results.addAll(cards.values());
@@ -191,47 +186,57 @@ public class ProfileServlet extends MsoyServiceServlet
         return layout;
     }
 
-    protected Object resolveBlurbData (MemberRecord memrec, BlurbData bdata)
+    protected Object resolveBlurbData (MemberRecord reqrec, MemberRecord tgtrec, BlurbData bdata)
         throws PersistenceException
     {
         switch (bdata.type) {
-        case BlurbData.PROFILE: return resolveProfileData(memrec);
-        case BlurbData.FRIENDS: return resolveFriendsData(memrec);
-        case BlurbData.GROUPS: return resolveGroupsData(memrec);
-        case BlurbData.HOOD: return resolveHoodData(memrec);
+        case BlurbData.PROFILE: return resolveProfileData(reqrec, tgtrec);
+        case BlurbData.FRIENDS: return resolveFriendsData(reqrec, tgtrec);
+        case BlurbData.GROUPS: return resolveGroupsData(reqrec, tgtrec);
+        case BlurbData.HOOD: return resolveHoodData(reqrec, tgtrec);
         default:
             log.log(Level.WARNING, "Requested to resolve unknown blurb type " + bdata + ".");
             return new BlurbData.ResolutionFailure(MsoyCodes.INTERNAL_ERROR);
         }
     }
 
-    protected Profile resolveProfileData (MemberRecord memrec)
+    protected Profile resolveProfileData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
-        ProfileRecord prec = MsoyServer.profileRepo.loadProfile(memrec.memberId);
-        Profile profile = (prec == null) ? new Profile() : prec.toProfile(memrec.permaName);
+        ProfileRecord prec = MsoyServer.profileRepo.loadProfile(tgtrec.memberId);
+        Profile profile = (prec == null) ? new Profile() : prec.toProfile(tgtrec.permaName);
 
         // TODO: if they're online right now, show that
-        profile.lastLogon = (memrec.lastSession != null) ? memrec.lastSession.getTime() : 0L;
+        profile.lastLogon = (tgtrec.lastSession != null) ? tgtrec.lastSession.getTime() : 0L;
 
         return profile;
     }
 
-    protected List<FriendEntry> resolveFriendsData (MemberRecord memrec)
+    protected List<MemberCard> resolveFriendsData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
-        return MsoyServer.memberRepo.getFriends(memrec.memberId);
+        HashIntMap<MemberCard> cards = new HashIntMap<MemberCard>();
+        for (FriendEntry entry : MsoyServer.memberRepo.getFriends(tgtrec.memberId)) {
+            MemberCard card = new MemberCard();
+            card.name = entry.name;
+            cards.put(entry.name.getMemberId(), card);
+        }
+        resolveCardData(cards);
+
+        ArrayList<MemberCard> results = new ArrayList<MemberCard>();
+        results.addAll(cards.values());
+        return results;
     }
 
-    protected List<GroupMembership> resolveGroupsData (MemberRecord memrec)
+    protected List<GroupMembership> resolveGroupsData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
-        MemberName name = memrec.getName();
+        MemberName name = tgtrec.getName();
         List<GroupMembership> result = new ArrayList<GroupMembership>();
-        for (GroupMembershipRecord gmRec : MsoyServer.groupRepo.getMemberships(memrec.memberId)) {
+        for (GroupMembershipRecord gmRec : MsoyServer.groupRepo.getMemberships(tgtrec.memberId)) {
             GroupRecord gRec = MsoyServer.groupRepo.loadGroup(gmRec.groupId);
             if (gRec == null) {
-                log.warning("Unknown group membership [memberId=" + memrec.memberId +
+                log.warning("Unknown group membership [memberId=" + tgtrec.memberId +
                             ", groupId=" + gmRec.groupId + "]");
                 continue;
             }
@@ -240,7 +245,7 @@ public class ProfileServlet extends MsoyServiceServlet
         return result;
     }
 
-    protected String resolveHoodData (MemberRecord memrec)
+    protected String resolveHoodData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
 //         MsoyServer.memberMan.serializeNeighborhood(_memberId, false, new ResultListener<String>() {
@@ -253,6 +258,17 @@ public class ProfileServlet extends MsoyServiceServlet
 //         });
         // TODO: do we really want the hood on the profile page?
         return null;
+    }
+
+    protected void resolveCardData (HashIntMap<MemberCard> cards)
+        throws PersistenceException
+    {
+        for (ProfileRecord profile : MsoyServer.profileRepo.loadProfiles(
+                 cards.intKeySet().toIntArray())) {
+            MemberCard card = cards.get(profile.memberId);
+            card.photo = profile.getPhoto();
+            card.headline = profile.headline;
+        }
     }
 
     protected static final int MAX_PROFILE_MATCHES = 100;

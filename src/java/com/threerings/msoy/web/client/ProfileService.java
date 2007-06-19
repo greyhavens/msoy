@@ -28,7 +28,7 @@ public interface ProfileService extends RemoteService
      * be information on the page layout and subsequent entries will be data for each of the blurbs
      * on the page.
      */
-    public ArrayList loadProfile (int memberId) throws ServiceException;
+    public ArrayList loadProfile (WebIdent ident, int memberId) throws ServiceException;
 
     /**
      * Looks for profiles that match the specified search term. We'll aim to be smart about what we

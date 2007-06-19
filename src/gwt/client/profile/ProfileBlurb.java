@@ -183,14 +183,14 @@ public class ProfileBlurb extends Blurb
                 }
             }));
 
-            _buttons.add(new Button("Neighborhood", new ClickListener() {
-                public void onClick (Widget sender) {
-                    History.newItem(
-                        Application.createLinkToken("world", "nm" + _name.getMemberId()));
-                }
-            }));
+//             _buttons.add(new Button("Neighborhood", new ClickListener() {
+//                 public void onClick (Widget sender) {
+//                     History.newItem(
+//                         Application.createLinkToken("world", "nm" + _name.getMemberId()));
+//                 }
+//             }));
 
-            _buttons.add(new Button("Home", new ClickListener() {
+            _buttons.add(new Button("Visit Home", new ClickListener() {
                 public void onClick (Widget sender) {
                     History.newItem(
                         Application.createLinkToken("world", "m" + _name.getMemberId()));

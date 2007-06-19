@@ -174,11 +174,18 @@ public class ProfileRecord extends PersistentRecord
         profile.isMale = isMale;
         // profile.age = toAge(birthday);
         profile.location = location;
-        if (photoHash != null) {
-            profile.photo = new MediaDesc(photoHash, photoMimeType, photoConstraint);
-        }
+        profile.photo = getPhoto();
         profile.permaName = permaName;
         return profile;
+    }
+
+    /**
+     * Returns the photo associated with this profile, or the default record.
+     */
+    public MediaDesc getPhoto ()
+    {
+        return (photoHash != null) ?
+            new MediaDesc(photoHash, photoMimeType, photoConstraint) : Profile.DEFAULT_PHOTO;
     }
 
     // AUTO-GENERATED: METHODS START

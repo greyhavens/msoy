@@ -26,7 +26,7 @@ public class SearchResultsPanel extends VerticalPanel
         setStyleName("searchResultsPanel");
         setWidth("100%");
 
-        add(_profiles = new ProfileGrid(ROWS, COLUMNS));
+        add(_profiles = new ProfileGrid(ROWS, COLUMNS, CProfile.msgs.gridNoProfiles()));
         _profiles.setModel(new SimpleDataModel(cards), page);
     }
 

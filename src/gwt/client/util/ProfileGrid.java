@@ -5,6 +5,7 @@ package client.util;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -23,29 +24,43 @@ import client.shell.Application;
 import client.util.MediaUtil;
 
 /**
- * A Grid of profiles.  This is useful for profile searching, or displaying collections of profiles
+ * A grid of profiles.  This is useful for profile searching, or displaying collections of profiles
  * on other pages, such as group page or friends lists.
  */
 public class ProfileGrid extends PagedGrid
 {
-    public ProfileGrid (int height, int width) 
+    public ProfileGrid (int height, int width, String emptyMessage) 
     {
         super(height, width);
+        setEmptyMessage(emptyMessage);
     }
 
-    protected Widget createWidget (Object item) {
+    public void setVerticalOrienation (boolean vertical)
+    {
+        _vertical = vertical;
+    }
+
+    public void setEmptyMessage (String message)
+    {
+        _emptyMessage = message;
+    }
+
+    protected Widget createWidget (Object item)
+    {
         return new ProfileWidget((MemberCard) item);
     }
-    protected String getEmptyMessage () {
-        return CProfile.msgs.gridNoProfiles();
+
+    protected String getEmptyMessage ()
+    {
+        return _emptyMessage;
     }
 
-    protected class ProfileWidget extends HorizontalPanel
+    protected class ProfileWidget extends FlexTable
     {
         public ProfileWidget (final MemberCard card) 
         {
-            setStyleName("ProfileWidget");
-            setSpacing(10);
+            setStyleName("profileWidget");
+            setCellPadding(0);
 
             ClickListener profileClick = new ClickListener() {
                 public void onClick (Widget sender) {
@@ -53,24 +68,35 @@ public class ProfileGrid extends PagedGrid
                         card.name.getMemberId()));
                 }
             };
+
             Widget photo = MediaUtil.createMediaView(card.photo, MediaDesc.HALF_THUMBNAIL_SIZE);
             if (photo instanceof Image) {
                 ((Image) photo).addClickListener(profileClick);
             }
+            // we do this crazy double wrapping to avoid forcing this table column to 80 pixels
+            // which booches vertical layout mode
             SimplePanel photoPanel = new SimplePanel();
             photoPanel.add(photo);
             photoPanel.setStyleName("Photo");
-            add(photoPanel);
+            setWidget(0, 0, photoPanel);
 
-            VerticalPanel text = new VerticalPanel();
             Label nameLabel =  new Label(card.name.toString());
-            nameLabel.setStyleName("memberCardName");
+            nameLabel.setStyleName("MemberCardName");
             nameLabel.addClickListener(profileClick);
-            text.add(nameLabel);
-            Label headlineLabel = new Label(card.headline);
-            headlineLabel.setStyleName("memberCardHeadline");
-            text.add(headlineLabel);
-            add(text);
+
+            if (_vertical) {
+                setCellSpacing(0);
+                setWidget(1, 0, nameLabel);
+            } else {
+                setCellSpacing(5);
+                getFlexCellFormatter().setRowSpan(0, 0, 2);
+                setWidget(0, 1, nameLabel);
+                getFlexCellFormatter().setStyleName(1, 0, "MemberCardHeadline");
+                setText(1, 0, card.headline);
+            }
         }
     }
+
+    protected String _emptyMessage;
+    protected boolean _vertical;
 }

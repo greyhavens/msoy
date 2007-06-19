@@ -80,7 +80,7 @@ public class index extends MsgsEntryPoint
     protected void displayMemberPage (int memberId)
     {
         // issue a request for this member's profile page data
-        CProfile.profilesvc.loadProfile(_memberId = memberId, new AsyncCallback() {
+        CProfile.profilesvc.loadProfile(CProfile.ident, _memberId = memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 ArrayList data = (ArrayList)result;
                 ProfileLayout layout = (ProfileLayout)data.remove(0);

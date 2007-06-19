@@ -22,7 +22,7 @@ public interface ProfileServiceAsync
     /**
      * The asynchronous version of {@link ProfileService#loadProfile}.
      */
-    public void loadProfile (int memberId, AsyncCallback callback);
+    public void loadProfile (WebIdent ident, int memberId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link ProfileService#findProfiles}.
