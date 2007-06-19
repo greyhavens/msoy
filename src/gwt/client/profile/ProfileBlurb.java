@@ -46,6 +46,7 @@ public class ProfileBlurb extends Blurb
         _content.setStyleName("profileBlurb");
 
         _content.setWidget(0, 0, _photo = new Image());
+        _content.getFlexCellFormatter().setStyleName(0, 0, "Photo");
         _content.getFlexCellFormatter().setRowSpan(0, 0, 6);
 
         _content.setWidget(0, 1, _displayName = new Label("name"));

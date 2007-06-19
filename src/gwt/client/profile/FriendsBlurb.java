@@ -39,10 +39,10 @@ public class FriendsBlurb extends Blurb
     // @Override // from Blurb
     protected void didInit (Object blurbData)
     {
-        setHeader("Friends");
+        setHeader(CProfile.msgs.friendsTitle());
 
         String empty = CProfile.getMemberId() == _name.getMemberId() ?
-            "You have no friends. Boo hoo." : "This person has no friends. How sad.";
+            CProfile.msgs.noFriendsSelf() : CProfile.msgs.noFriendsOther();
         _content.setEmptyMessage(empty);
 
         ArrayList friends = (ArrayList)blurbData;
@@ -55,10 +55,11 @@ public class FriendsBlurb extends Blurb
             canInvite = canInvite && !(friend.name.getMemberId() == CProfile.getMemberId());
         }
         if (canInvite) {
-            Button inviteButton = new Button("Invite To Be Your Friend", new ClickListener() {
+            Button inviteButton = new Button(CProfile.msgs.inviteFriend(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    new MailComposition(_name, "Be my Friend", new FriendInvite.Composer(),
-                                        "Let's be buddies!").show();
+                    new MailComposition(_name, CProfile.msgs.inviteTitle(),
+                                        new FriendInvite.Composer(),
+                                        CProfile.msgs.inviteBody()).show();
                 }
             });
             _content.addToHeader(WidgetUtil.makeShim(15, 1));
@@ -69,8 +70,8 @@ public class FriendsBlurb extends Blurb
     // @Override // from Blurb
     protected void didFail (String cause)
     {
-        setHeader("Error");
-        _content.setEmptyMessage("Failed to load friends: " + cause);
+        setHeader(CProfile.msgs.errorTitle());
+        _content.setEmptyMessage(CProfile.msgs.friendsLoadFailed(cause));
         _content.setModel(new SimpleDataModel(new ArrayList()), 0);
     }
 

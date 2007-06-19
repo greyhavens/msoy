@@ -5,43 +5,50 @@
  */
 
 .blurbBox {
-   width: 100%;
+  width: 100%;
 }
 
 .blurbBox .HeaderLeft {
-   width: 33px;
-   height: 27px;
-   background: url(/images/profile/box_left.png);
+  width: 33px;
+  height: 27px;
+  background: url(/images/profile/box_left.png);
 }
 
 .blurbBox .HeaderRight {
-   width: 31px;
-   height: 27px;
-   background: url(/images/profile/box_right.png);
+  width: 31px;
+  height: 27px;
+  background: url(/images/profile/box_right.png);
 }
 
 .blurbBox .Header {
-   background: url(/images/profile/box_tile.png);
-   color: #EAF4F8;
-   text-align: center;
-   font-size: 16px;
-   font-weight: bold;
+  background: url(/images/profile/box_tile.png);
+  color: #EAF4F8;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .blurbBox .Content {
-   width: 350px;
+  width: 350px;
+}
+
+.profileBlurb .Photo {
+  width: 160px;
+  height: 120px;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .profileBlurb .Name {
-   font-weight: bold;
+  font-weight: bold;
 }
 
 .profileBlurb .Headline {
-   font-style: italic;
+  font-style: italic;
 }
 
 .profileBlurb .EditLabel {
-   font-size: 10px;
+  font-size: 10px;
 }
 
 .friendsBlurb {
@@ -61,6 +68,7 @@
   cursor: pointer;
   text-align: left;
   padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 .profileWidget .MemberCardHeadline {

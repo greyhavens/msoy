@@ -16,12 +16,12 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String searchRadioDisplayName();
 
   /**
-   * Translated "Groups".
+   * Translated "This person has no friends. How sad.".
    * 
-   * @return translated "Groups"
-   * @gwt.key groupsTitle
+   * @return translated "This person has no friends. How sad."
+   * @gwt.key noFriendsOther
    */
-  String groupsTitle();
+  String noFriendsOther();
 
   /**
    * Translated "Last online: {0}".
@@ -30,6 +30,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key lastOnline
    */
   String lastOnline(String arg0);
+
+  /**
+   * Translated "Groups".
+   * 
+   * @return translated "Groups"
+   * @gwt.key groupsTitle
+   */
+  String groupsTitle();
 
   /**
    * Translated "Home Page".
@@ -64,6 +72,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String searchGo();
 
   /**
+   * Translated "Be my Friend".
+   * 
+   * @return translated "Be my Friend"
+   * @gwt.key inviteTitle
+   */
+  String inviteTitle();
+
+  /**
    * Translated "Your display name must be between {0} and {1} characters long.".
    * 
    * @return translated "Your display name must be between {0} and {1} characters long."
@@ -86,6 +102,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key errorTitle
    */
   String errorTitle();
+
+  /**
+   * Translated "Failed to load friends: {0}".
+   * 
+   * @return translated "Failed to load friends: {0}"
+   * @gwt.key friendsLoadFailed
+   */
+  String friendsLoadFailed(String arg0);
 
   /**
    * Translated "Profile Search".
@@ -152,6 +176,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String searchRadioEmail();
 
   /**
+   * Translated "Let's be buddies!".
+   * 
+   * @return translated "Let's be buddies!"
+   * @gwt.key inviteBody
+   */
+  String inviteBody();
+
+  /**
    * Translated "Sorry pardner. You don't have invite privileges for any groups.".
    * 
    * @return translated "Sorry pardner. You don't have invite privileges for any groups."
@@ -168,12 +200,20 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String searchTitle();
 
   /**
-   * Translated "Name".
+   * Translated "Real Name".
    * 
-   * @return translated "Name"
+   * @return translated "Real Name"
    * @gwt.key searchRadioName
    */
   String searchRadioName();
+
+  /**
+   * Translated "You have no friends. Boo hoo.".
+   * 
+   * @return translated "You have no friends. Boo hoo."
+   * @gwt.key noFriendsSelf
+   */
+  String noFriendsSelf();
 
   /**
    * Translated "Search Type:".
@@ -192,12 +232,28 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String gridNoProfiles();
 
   /**
+   * Translated "Invite To Be Your Friend".
+   * 
+   * @return translated "Invite To Be Your Friend"
+   * @gwt.key inviteFriend
+   */
+  String inviteFriend();
+
+  /**
    * Translated "This person is not a member of any groups.".
    * 
    * @return translated "This person is not a member of any groups."
    * @gwt.key notInGroupsOther
    */
   String notInGroupsOther();
+
+  /**
+   * Translated "Friends".
+   * 
+   * @return translated "Friends"
+   * @gwt.key friendsTitle
+   */
+  String friendsTitle();
 
   /**
    * Translated "Display Name".

@@ -73,7 +73,7 @@ public class EditAccountDialog extends BorderedDialog
         
         contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.editRealName());
-        contents.setWidget(row++, 1, _rname = new TextBox());
+        contents.setWidget(row, 1, _rname = new TextBox());
         _rname.setText(_accountInfo.realName);
         _rname.addKeyboardListener(_valrname);
         _uprname = new Button(CShell.cmsgs.update(), new ClickListener() {
