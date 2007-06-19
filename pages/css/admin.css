@@ -42,6 +42,12 @@
   empty-cells: hide;
 }
 
+.playerBrowser .PlayerList .Title {
+  border-style: none;
+  text-decoration: bold;
+  font-size: 18px;
+}
+
 .playerBrowser .PlayerList td {
   border-style: solid none none solid;
   border-width: 1px;

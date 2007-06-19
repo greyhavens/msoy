@@ -29,9 +29,14 @@ public class PlayerBrowserPanel extends HorizontalPanel
         _playerLists = new ArrayList();
 
         // first, load up the list of players that don't have an inviterId (defaults to 0)
-        CAdmin.adminsvc.getPlayerList(CAdmin.ident, 0, new AsyncCallback() {
+        displayList(CAdmin.msgs.browserNoInviter(), 0);
+    }
+
+    public void displayList (final String title, int memberId) 
+    {
+        CAdmin.adminsvc.getPlayerList(CAdmin.ident, memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
-                _playerLists.add(new PlayerList((List) result));
+                _playerLists.add(new PlayerList(title, (List) result, PlayerBrowserPanel.this));
                 forward();
             }
             public void onFailure (Throwable cause) {
@@ -81,10 +86,14 @@ public class PlayerBrowserPanel extends HorizontalPanel
 
     protected class PlayerList extends FlexTable
     {
-        public PlayerList (List players)
+        public PlayerList (String title, List players, final PlayerBrowserPanel panel)
         {
             setStyleName("PlayerList");
             int row = 0;
+            getFlexCellFormatter().setColSpan(row, 0, NUM_COLUMNS);
+            getFlexCellFormatter().addStyleName(row, 0, "Title");
+            setText(row++, 0, title);
+
             getFlexCellFormatter().setColSpan(row, 1, 3);
             getFlexCellFormatter().addStyleName(row, 1, "Last");
             setText(row++, 1, CAdmin.msgs.browserInvites());
@@ -103,21 +112,12 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 Label nameLabel = new Label(member.name);
                 nameLabel.addClickListener(new ClickListener() {
                     public void onClick (final Widget sender) {
-                        CAdmin.adminsvc.getPlayerList(CAdmin.ident, member.memberId, 
-                            new AsyncCallback() {
-                                public void onSuccess (Object result) {
-                                    if (_activeLabel != null) {
-                                        _activeLabel.removeStyleName("Highlighted");
-                                    }
-                                    (_activeLabel = (Label) sender).addStyleName("Highlighted");
-                                    _playerLists.add(new PlayerList((List) result));
-                                    forward();
-                                }
-                                public void onFailure (Throwable cause) {
-                                    add(new Label(CAdmin.serverError(cause)));
-                                }
-                            }
-                        );
+                        if (_activeLabel != null) {
+                            _activeLabel.removeStyleName("Highlighted");
+                        }
+                        (_activeLabel = (Label) sender).addStyleName("Highlighted");
+                        panel.displayList(
+                            CAdmin.msgs.browserInvitedBy(member.name), member.memberId);
                     }
                 });
                 nameLabel.addStyleName("Clickable");
