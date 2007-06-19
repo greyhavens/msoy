@@ -19,6 +19,7 @@ import flash.text.TextFormat;
 
 import flash.utils.getTimer; // function import
 
+import mx.events.FlexEvent;
 import mx.events.ResizeEvent;
 import mx.events.ScrollEvent;
 
@@ -170,10 +171,11 @@ public class ChatOverlay
 
         if (historyEnabled) {
             _historyBar = new VScrollBar();
+            _historyBar.addEventListener(FlexEvent.UPDATE_COMPLETE, configureHistoryBarSize);
             _historyBar.addEventListener(ScrollEvent.SCROLL, handleHistoryScroll);
             _historyBar.includeInLayout = false;
-            configureHistoryBarSize();
             _target.addChild(_historyBar);
+            configureHistoryBarSize();
             _target.addEventListener(Event.ADDED_TO_STAGE, handleTargetAdded);
             _target.addEventListener(Event.REMOVED_FROM_STAGE, handleTargetRemoved);
             handleTargetAdded();
@@ -194,6 +196,7 @@ public class ChatOverlay
             handleTargetRemoved();
             _target.removeChild(_historyBar);
             _historyBar.removeEventListener(ScrollEvent.SCROLL, handleHistoryScroll);
+            _historyBar.removeEventListener(FlexEvent.UPDATE_COMPLETE, configureHistoryBarSize);
             _historyBar = null;
 
             clearGlyphs(_showingHistory);
@@ -945,12 +948,12 @@ public class ChatOverlay
     /**
      * Configure the history scrollbar size.
      */
-    protected function configureHistoryBarSize () :void
+    protected function configureHistoryBarSize (... ignored) :void
     {
         if (_targetBounds != null) {
             _historyBar.height = _targetBounds.height;
-            _historyBar.move(_targetBounds.x + _targetBounds.width - ScrollBar.THICKNESS + 1,
-                             _targetBounds.y);
+            _historyBar.move(_targetBounds.x + _targetBounds.width -
+                _historyBar.getExplicitOrMeasuredWidth(), _targetBounds.y);
         }
     }
 

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.client {
 
+import flash.system.Capabilities;
+
 import mx.controls.Text;
 
 import com.threerings.msoy.ui.FloatingPanel;
@@ -24,7 +26,7 @@ public class AboutDialog extends FloatingPanel
 
         var textArea :Text = new Text();
         textArea.width = 300;
-        textArea.htmlText = Msgs.GENERAL.get("m.about");
+        textArea.htmlText = Msgs.GENERAL.get("m.about", Capabilities.version);
         addChild(textArea);
 
         addButtons(OK_BUTTON);

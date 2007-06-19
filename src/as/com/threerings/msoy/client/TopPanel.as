@@ -83,10 +83,11 @@ public class TopPanel extends Canvas
         buildStamp.includeInLayout = false;
         buildStamp.mouseEnabled = false;
         buildStamp.mouseChildren = false;
-        buildStamp.text = "Build: " + DeploymentConfig.buildTime + "  " + Capabilities.version;
+        buildStamp.text = "Build: " + DeploymentConfig.buildTime;
         buildStamp.setStyle("color", "#F7069A");
         buildStamp.setStyle("fontSize", 8);
         buildStamp.setStyle("bottom", ControlBar.HEIGHT);
+        // The scrollbar isn't really this thick, but it's pretty close.
         buildStamp.setStyle("right", ScrollBar.THICKNESS);
         addChild(buildStamp);
 
