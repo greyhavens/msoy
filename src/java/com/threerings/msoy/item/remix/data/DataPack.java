@@ -43,7 +43,7 @@ public class DataPack extends com.whirled.DataPack
     /**
      * Add a new file to this DataPack.
      */
-    public void addFile (String filename, String name, String type, boolean optional)
+    public void addFile (String filename, String name, FileType type, boolean optional)
         throws IOException
     {
         File file = new File(filename);
@@ -56,7 +56,7 @@ public class DataPack extends com.whirled.DataPack
     /**
      * Add a data parameter.
      */
-    public void addData (String name, String type, String value, boolean optional)
+    public void addData (String name, DataType type, String value, boolean optional)
     {
         DataEntry entry = new DataEntry();
         entry.name = name;
@@ -70,7 +70,7 @@ public class DataPack extends com.whirled.DataPack
     /**
      * Add a new file to this DataPack.
      */
-    public void addFile (String filename, byte[] data, String name, String type, boolean optional)
+    public void addFile (String filename, byte[] data, String name, FileType type, boolean optional)
     {
         _files.put(filename, data);
 
@@ -137,7 +137,8 @@ public class DataPack extends com.whirled.DataPack
                 public void requestCompleted (DataPack pack)
                 {
                     try {
-                        //pack.addFile("/home/ray/media/mp3/tarzan and jane - Tarzan & Jane.mp3");
+                        //pack.addFile("/home/ray/media/mp3/tarzan and jane - Tarzan & Jane.mp3",
+                        //    "music", FileType.BLOB, true);
                         pack.writeTo("/export/msoy/pages/ClockPack.jpk");
 
                     } catch (IOException ioe) {
