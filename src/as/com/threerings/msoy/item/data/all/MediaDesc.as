@@ -83,6 +83,13 @@ public class MediaDesc
     /** The thumbnail image height.  */
     public static const THUMBNAIL_HEIGHT :int = 120;
 
+    /** Defines the dimensions of our various image sizes. */
+    public static const DIMENSIONS :Array = [
+        THUMBNAIL_WIDTH/2, THUMBNAIL_HEIGHT/2, // half thumbnail size
+        THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, // thumbnail size
+        THUMBNAIL_WIDTH*2, THUMBNAIL_HEIGHT*2, // preview size
+    ];
+
     /** A constant used to indicate that an image does not exceed half thumbnail size in either
      * dimension. */
     public static const NOT_CONSTRAINED :int = 0;
