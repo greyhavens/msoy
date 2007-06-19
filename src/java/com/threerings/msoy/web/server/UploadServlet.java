@@ -136,7 +136,7 @@ public class UploadServlet extends HttpServlet
                 ", " + fullInfo.getItem().getConstraint() + ", " + fullInfo.getItem().getWidth() +
                 ", " + fullInfo.getItem().getHeight() + ", " + "'" +
                 fullInfo.getThumb().getHash() + "', " + fullInfo.getThumb().getMimeType() + ", " +
-                fullInfo.getItem().getConstraint() + ")";
+                fullInfo.getThumb().getConstraint() + ")";
             out.println("<body onLoad=\"" + script + "\"></body>");
             out.println("</html>");
 
