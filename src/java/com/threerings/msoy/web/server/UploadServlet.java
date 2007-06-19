@@ -69,9 +69,9 @@ public class UploadServlet extends HttpServlet
         // start and computes the SHA hash on the way
         ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory(
             DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD, ServerConfig.mediaDir));
-        
+
         FileItem item = null;
-        String mediaId = null;        
+        String mediaId = null;
         FullMediaInfo fullInfo = null;
         try {
            // attempt to extract the FileItem from the servlet request
@@ -81,7 +81,7 @@ public class UploadServlet extends HttpServlet
                internalError(rsp);
                return;
            }
-           
+
            // attempt to extract the mediaId
            mediaId = item.getFieldName();
            if (mediaId == null) {
@@ -89,7 +89,7 @@ public class UploadServlet extends HttpServlet
                internalError(rsp);
                return;
            }
-           
+
            // turn the FileItem into MediaInfo records
            fullInfo = handleFileItem(item, mediaId, length);
            if (fullInfo == null) {
@@ -97,7 +97,7 @@ public class UploadServlet extends HttpServlet
                internalError(rsp);
                return;
            }
-           
+
         } catch (ServletFileUpload.SizeLimitExceededException slee) {
             log.info("File upload too big: " + slee + ".");
             // TODO: use slee.getActualSize(), slee.getPermittedSize()?
@@ -110,12 +110,12 @@ public class UploadServlet extends HttpServlet
             log.info("File upload choked: " + fue + ".");
             internalError(rsp);
             return;
-                
+
         } catch (IOException ioe) {
             log.info("File upload choked during file i/o: " + ioe + ".");
             internalError(rsp);
             return;
-            
+
         } finally {
             // delete the temporary upload file data.
             // item may be null if extractFileItem throws an exception
@@ -139,12 +139,12 @@ public class UploadServlet extends HttpServlet
                 fullInfo.getItem().getConstraint() + ")";
             out.println("<body onLoad=\"" + script + "\"></body>");
             out.println("</html>");
-            
+
         } catch (IOException ioe) {
             log.log(Level.WARNING, "Failed to setup OutputStream when finalizing upload.", ioe);
             internalError(rsp);
             return;
-            
+
         } finally {
             StreamUtil.close(out);
         }
@@ -157,7 +157,7 @@ public class UploadServlet extends HttpServlet
     {
         displayError(rsp, JavascriptError.UPLOAD_ERROR);
     }
-    
+
     /*
      * Displays a message to the user on the GWT client that the upload was too large.
      */
@@ -165,7 +165,7 @@ public class UploadServlet extends HttpServlet
     {
         displayError(rsp, JavascriptError.UPLOAD_TOO_LARGE);
     }
-    
+
     /**
      * Calls the function from the supplied JavascriptError on the GWT side to display an
      * error message to the user.
@@ -180,17 +180,17 @@ public class UploadServlet extends HttpServlet
             out.println("<head></head>");
             out.println("<body onLoad=\"parent." + error.function + "();\"></body>");
             out.println("</html>");
-            
+
         } catch (IOException ioe) {
             log.log(Level.WARNING, "Failed to setup OutputStream when displaying error.", ioe);
-            
+
         } finally {
             StreamUtil.close(out);
         }
     }
 
     /**
-     * Parse the upload request and return the first FileItem found. This will ignore 
+     * Parse the upload request and return the first FileItem found. This will ignore
      * multiple file uploads if a multipart request is used. Returns null if no FileItem
      * could be found.
      * @throws FileUploadException
@@ -229,11 +229,11 @@ public class UploadServlet extends HttpServlet
             validateFileLength(uploadFile.getMimeType(), uploadLength);
 
         } else {
-            log.warning("Received upload of unknown mime type [type=" + 
+            log.warning("Received upload of unknown mime type [type=" +
                 item.getContentType() + ", name=" + item.getName() + "].");
             return null;
         }
-        
+
         // if this is an image, determine its constraints, generate a thumbnail, and publish
         // the data into the media store
         if (MediaDesc.isImage(uploadFile.getMimeType())) {
@@ -278,18 +278,18 @@ public class UploadServlet extends HttpServlet
                 "File size is too big for specified mimeType", length, limit);
         }
     }
-    
+
     /**
      * Publishes a file. Currently this is to the filesystem first, and then s3 if enabled.
      */
     protected void publishStream (InputStream input, MediaInfo info)
         throws IOException
-    {        
+    {
         // now name it using the hash value and the suffix
         String name = info.getHash() + MediaDesc.mimeTypeToSuffix(info.getMimeType());
         File target = new File(ServerConfig.mediaDir, name);
-        
-        // copy the uploaded file data to the local file system media store. eventually we will 
+
+        // copy the uploaded file data to the local file system media store. eventually we will
         // only be keeping a local file on developer's machines
         IOUtils.copy(input, new FileOutputStream(target));
 
@@ -345,7 +345,7 @@ public class UploadServlet extends HttpServlet
         byte tconstraint = MediaDesc.computeConstraint(
             MediaDesc.THUMBNAIL_SIZE, image.getWidth(), image.getHeight());
         MediaInfo tinfo = null;
-        
+
         if (tconstraint == MediaDesc.NOT_CONSTRAINED ||
             tconstraint == MediaDesc.HALF_HORIZONTALLY_CONSTRAINED ||
             tconstraint == MediaDesc.HALF_VERTICALLY_CONSTRAINED) {
@@ -355,7 +355,7 @@ public class UploadServlet extends HttpServlet
         } else {
             // scale the image to thumbnail size
             float scale = (tconstraint == MediaDesc.HORIZONTALLY_CONSTRAINED) ?
-                (float)MediaDesc.THUMBNAIL_WIDTH / image.getWidth()  : 
+                (float)MediaDesc.THUMBNAIL_WIDTH / image.getWidth()  :
                 (float)MediaDesc.THUMBNAIL_HEIGHT / image.getHeight();
             int twidth =  Math.round(scale * image.getWidth());
             int theight =  Math.round(scale * image.getHeight());
@@ -393,7 +393,7 @@ public class UploadServlet extends HttpServlet
         if (!tinfo.getHash().equals(info.getHash()) && isThumbnail) {
             // the generated thumbnail is the item, leave the thumbnail element blank
             return new FullMediaInfo(tinfo);
-            
+
         } else {
             // publish the image
             publishStream(uploadFile.getInputStream(), info);
@@ -401,7 +401,7 @@ public class UploadServlet extends HttpServlet
             return new FullMediaInfo(info, tinfo);
         }
     }
-    
+
     /*
      * A class to hold an item and its generated thumbnail, if needed.
      */
@@ -429,7 +429,7 @@ public class UploadServlet extends HttpServlet
         {
             return _thumb;
         }
-        
+
         protected MediaInfo _item;
         protected MediaInfo _thumb;
     }
@@ -445,13 +445,13 @@ public class UploadServlet extends HttpServlet
         {
             this("", (byte)0);
         }
-        
+
         // for non image data
         public MediaInfo (String hash, byte mimeType)
         {
             this(hash, mimeType, (byte)0, 0, 0);
         }
-        
+
         // for image data
         public MediaInfo (String hash, byte mimeType, byte constraint, int width, int height)
         {
@@ -461,7 +461,7 @@ public class UploadServlet extends HttpServlet
             _width = width;
             _height = height;
         }
-        
+
         public byte getConstraint ()
         {
             return _constraint;
@@ -496,14 +496,14 @@ public class UploadServlet extends HttpServlet
                 throw new RuntimeException(cnse);
             }
         }
-        
+
         protected String _hash;
         protected byte _mimeType;
         protected byte _constraint;
         protected int _width;
         protected int _height;
     }
-    
+
     /*
      * Stores the GWT javascript functions used for various error messages.
      */
