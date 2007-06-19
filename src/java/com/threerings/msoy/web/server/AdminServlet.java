@@ -27,9 +27,11 @@ import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
 
 import com.threerings.msoy.web.client.AdminService;
 import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.data.MemberInviteStatus;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -142,15 +144,17 @@ public class AdminServlet extends MsoyServiceServlet
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
 
-        /*try {
-            // TODO - needs some magic love from samskivert for returning multiply-inherited 
-            // @Computed record classes from left joins.
+        List<MemberInviteStatus> players = new ArrayList<MemberInviteStatus>();
+        try {
+            for (MemberInviteStatusRecord rec : 
+                    MsoyServer.memberRepo.getMembersInvitedBy(inviterId)) {
+                players.add(rec.toWebObject());
+            }
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getPlayerList failed [inviterId=" + inviterId + "]", pe);
             throw new ServiceException(pe.getMessage());
-        }*/
-
-        return new ArrayList();
+        }
+        return players;
     }
 
     protected static String createTempPassword ()

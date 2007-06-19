@@ -34,3 +34,44 @@
 .invitePlayersPopup .Tip {
   width: 400px;
 }
+
+/*** Player Browser ***/
+.playerBrowser .PlayerList {
+  text-align: center;
+  border-spacing: 0px;
+  empty-cells: hide;
+}
+
+.playerBrowser .PlayerList td {
+  border-style: solid none none solid;
+  border-width: 1px;
+  padding: 5px;
+}
+
+.playerBrowser .PlayerList .Bottom {
+  border-bottom-style: solid;
+}
+
+.playerBrowser .PlayerList .Last {
+  border-right-style: solid;
+} 
+
+.playerBrowser .PlayerList .Separator {
+  border-bottom-width: 3px;
+  border-bottom-style: solid;
+}
+
+.playerBrowser .PlayerList .Clickable {
+  cursor: pointer;
+}
+
+.playerBrowser .PlayerList .gwt-Label {
+  /* non-highlighted labels. */
+  border-width: 2px;
+  border-style: solid;
+  border-color: white;
+}
+
+.playerBrowser .PlayerList .Highlighted {
+  border-color: red;
+}

@@ -640,6 +640,20 @@ public class MemberRepository extends DepotRepository
         updatePartial(MemberRecord.class, memberId, MemberRecord.LEVEL, level);
     }
 
+    public List<MemberInviteStatusRecord> getMembersInvitedBy (int memberId)
+        throws PersistenceException
+    {
+        return findAll(MemberInviteStatusRecord.class,
+                       new FromOverride(MemberRecord.class),
+                       new Join(MemberRecord.MEMBER_ID_C, InviterRecord.MEMBER_ID_C).
+                            setType(Join.Type.LEFT_OUTER),
+                       new Where(MemberRecord.INVITING_FRIEND_ID_C, memberId),
+                       new FieldOverride(MemberInviteStatusRecord.INVITES_GRANTED, 
+                            InviterRecord.INVITES_GRANTED_C),
+                       new FieldOverride(MemberInviteStatusRecord.INVITES_SENT,
+                            InviterRecord.INVITES_SENT_C));
+    }
+
     @Entity @Computed
     protected static class FriendCount extends PersistentRecord
     {
