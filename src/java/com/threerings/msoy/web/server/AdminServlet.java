@@ -147,11 +147,13 @@ public class AdminServlet extends MsoyServiceServlet
 
         MemberInviteResult res = new MemberInviteResult();
         try {
-            MemberRecord memRec = MsoyServer.memberRepo.loadMember(inviterId);
+            MemberRecord memRec = inviterId == 0 ? null : 
+                MsoyServer.memberRepo.loadMember(inviterId);
             if (memRec != null) {
                 res.name = memRec.permaName == null || memRec.permaName.equals("") ?
                     memRec.name : memRec.permaName;
                 res.memberId = inviterId;
+                res.invitingFriendId = memRec.invitingFriendId;
             }
 
             List<MemberInviteStatus> players = new ArrayList<MemberInviteStatus>();

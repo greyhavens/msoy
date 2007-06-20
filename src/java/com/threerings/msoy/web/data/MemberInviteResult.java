@@ -16,6 +16,9 @@ public class MemberInviteResult
     /** The member's permaname, or if none his display name. */
     public String name = "";
 
+    /** This member's invitingFriendId */
+    public int invitingFriendId;
+
     /** The list of the people that this member has invited. */
     public List invitees;
 }
