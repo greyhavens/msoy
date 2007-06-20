@@ -71,15 +71,6 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>ownedScenes</code> field. */
     public static final String OWNED_SCENES = "ownedScenes";
 
-    /** The field name of the <code>inventory</code> field. */
-    public static final String INVENTORY = "inventory";
-
-    /** The field name of the <code>resolvingInventory</code> field. */
-    public static final String RESOLVING_INVENTORY = "resolvingInventory";
-
-    /** The field name of the <code>loadedInventory</code> field. */
-    public static final String LOADED_INVENTORY = "loadedInventory";
-
     /** The field name of the <code>tokens</code> field. */
     public static final String TOKENS = "tokens";
 
@@ -140,16 +131,6 @@ public class MemberObject extends MsoyBodyObject
 
     /** The scenes we own. */
     public DSet<SceneBookmarkEntry> ownedScenes = new DSet<SceneBookmarkEntry>();
-
-    /** The user's inventory, lazy-initialized. */
-    public DSet<Item> inventory = new DSet<Item>();
-
-    /** A bitmask of the item types currently loading or loaded. */
-    public int resolvingInventory;
-
-    /** A bitmask of the item types that have been loaded into inventory.  Use isInventoryLoaded()
-     * and getItems() to access. */
-    public int loadedInventory;
 
     /** The tokens defining the access controls for this user. */
     public MsoyTokenRing tokens;
@@ -280,46 +261,6 @@ public class MemberObject extends MsoyBodyObject
             }
         }
         return GroupMembership.RANK_NON_MEMBER;
-    }
-
-    /**
-     * Return true if the specified item type is currently being loaded.
-     */
-    public boolean isInventoryResolving (byte itemType)
-    {
-        return (0 != ((1 << itemType) & resolvingInventory));
-    }
-
-    /**
-     * Return true if the specified item type has been loaded.
-     */
-    public boolean isInventoryLoaded (byte itemType)
-    {
-        return (0 != ((1 << itemType) & loadedInventory));
-    }
-
-    /**
-     * Get an iterator of the items of the specified type.
-     *
-     * @throws IllegalStateException if the specified type is not yet
-     * loaded.
-     */
-    public Iterator<Item> getItems (final byte itemType)
-    {
-        if (!isInventoryLoaded(itemType)) {
-            throw new IllegalStateException(
-                "Items not yet loaded: " + itemType);
-        }
-
-        // set up a predicate for that type of item
-        Predicate<Item> pred = new Predicate<Item>() {
-            public boolean isMatch (Item item) {
-                return (item.getType() == itemType);
-            }
-        };
-
-        // use the predicate to filter
-        return pred.filter(inventory.iterator());
     }
 
     /**
@@ -590,85 +531,85 @@ public class MemberObject extends MsoyBodyObject
         this.ownedScenes = clone;
     }
 
-    /**
-     * Requests that the specified entry be added to the
-     * <code>inventory</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void addToInventory (Item elem)
-    {
-        requestEntryAdd(INVENTORY, inventory, elem);
-    }
-
-    /**
-     * Requests that the entry matching the supplied key be removed from
-     * the <code>inventory</code> set. The set will not change until the
-     * event is actually propagated through the system.
-     */
-    public void removeFromInventory (Comparable key)
-    {
-        requestEntryRemove(INVENTORY, inventory, key);
-    }
-
-    /**
-     * Requests that the specified entry be updated in the
-     * <code>inventory</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void updateInventory (Item elem)
-    {
-        requestEntryUpdate(INVENTORY, inventory, elem);
-    }
-
-    /**
-     * Requests that the <code>inventory</code> field be set to the
-     * specified value. Generally one only adds, updates and removes
-     * entries of a distributed set, but certain situations call for a
-     * complete replacement of the set value. The local value will be
-     * updated immediately and an event will be propagated through the
-     * system to notify all listeners that the attribute did
-     * change. Proxied copies of this object (on clients) will apply the
-     * value change when they received the attribute changed notification.
-     */
-    public void setInventory (DSet<com.threerings.msoy.item.data.all.Item> value)
-    {
-        requestAttributeChange(INVENTORY, value, this.inventory);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.item.data.all.Item> clone =
-            (value == null) ? null : value.typedClone();
-        this.inventory = clone;
-    }
-
-    /**
-     * Requests that the <code>resolvingInventory</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setResolvingInventory (int value)
-    {
-        int ovalue = this.resolvingInventory;
-        requestAttributeChange(
-            RESOLVING_INVENTORY, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.resolvingInventory = value;
-    }
-
-    /**
-     * Requests that the <code>loadedInventory</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setLoadedInventory (int value)
-    {
-        int ovalue = this.loadedInventory;
-        requestAttributeChange(
-            LOADED_INVENTORY, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.loadedInventory = value;
-    }
+//    /**
+//     * Requests that the specified entry be added to the
+//     * <code>inventory</code> set. The set will not change until the event is
+//     * actually propagated through the system.
+//     */
+//    public void addToInventory (Item elem)
+//    {
+//        requestEntryAdd(INVENTORY, inventory, elem);
+//    }
+//
+//    /**
+//     * Requests that the entry matching the supplied key be removed from
+//     * the <code>inventory</code> set. The set will not change until the
+//     * event is actually propagated through the system.
+//     */
+//    public void removeFromInventory (Comparable key)
+//    {
+//        requestEntryRemove(INVENTORY, inventory, key);
+//    }
+//
+//    /**
+//     * Requests that the specified entry be updated in the
+//     * <code>inventory</code> set. The set will not change until the event is
+//     * actually propagated through the system.
+//     */
+//    public void updateInventory (Item elem)
+//    {
+//        requestEntryUpdate(INVENTORY, inventory, elem);
+//    }
+//
+//    /**
+//     * Requests that the <code>inventory</code> field be set to the
+//     * specified value. Generally one only adds, updates and removes
+//     * entries of a distributed set, but certain situations call for a
+//     * complete replacement of the set value. The local value will be
+//     * updated immediately and an event will be propagated through the
+//     * system to notify all listeners that the attribute did
+//     * change. Proxied copies of this object (on clients) will apply the
+//     * value change when they received the attribute changed notification.
+//     */
+//    public void setInventory (DSet<com.threerings.msoy.item.data.all.Item> value)
+//    {
+//        requestAttributeChange(INVENTORY, value, this.inventory);
+//        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.item.data.all.Item> clone =
+//            (value == null) ? null : value.typedClone();
+//        this.inventory = clone;
+//    }
+//
+//    /**
+//     * Requests that the <code>resolvingInventory</code> field be set to the
+//     * specified value. The local value will be updated immediately and an
+//     * event will be propagated through the system to notify all listeners
+//     * that the attribute did change. Proxied copies of this object (on
+//     * clients) will apply the value change when they received the
+//     * attribute changed notification.
+//     */
+//    public void setResolvingInventory (int value)
+//    {
+//        int ovalue = this.resolvingInventory;
+//        requestAttributeChange(
+//            RESOLVING_INVENTORY, Integer.valueOf(value), Integer.valueOf(ovalue));
+//        this.resolvingInventory = value;
+//    }
+//
+//    /**
+//     * Requests that the <code>loadedInventory</code> field be set to the
+//     * specified value. The local value will be updated immediately and an
+//     * event will be propagated through the system to notify all listeners
+//     * that the attribute did change. Proxied copies of this object (on
+//     * clients) will apply the value change when they received the
+//     * attribute changed notification.
+//     */
+//    public void setLoadedInventory (int value)
+//    {
+//        int ovalue = this.loadedInventory;
+//        requestAttributeChange(
+//            LOADED_INVENTORY, Integer.valueOf(value), Integer.valueOf(ovalue));
+//        this.loadedInventory = value;
+//    }
 
     /**
      * Requests that the <code>tokens</code> field be set to the

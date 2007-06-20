@@ -29,7 +29,6 @@ import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.client.persist.RuntimeSceneRepository;
 
 import com.threerings.msoy.game.client.GameDirector;
-import com.threerings.msoy.item.client.ItemDirector;
 import com.threerings.msoy.world.client.WorldDirector;
 
 /**
@@ -51,7 +50,6 @@ public class WorldContext extends BaseContext
         _parlorDir = new ParlorDirector(this);
         _mediaDir = new MediaDirector(this);
         _gameDir = new GameDirector(this);
-        _itemDir = new ItemDirector(this);
         _worldDir = new WorldDirector(this);
 
         // set up the top panel
@@ -104,14 +102,6 @@ public class WorldContext extends BaseContext
     }
 
     /**
-     * Get the ItemDirector.
-     */
-    public function getItemDirector () :ItemDirector
-    {
-        return _itemDir;
-    }
-
-    /**
      * Get the SpotSceneDirector.
      */
     public function getSpotSceneDirector () :SpotSceneDirector
@@ -158,6 +148,5 @@ public class WorldContext extends BaseContext
     protected var _gameDir :GameDirector;
     protected var _mediaDir :MediaDirector;
     protected var _worldDir :WorldDirector;
-    protected var _itemDir :ItemDirector;
 }
 }

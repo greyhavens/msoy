@@ -10,7 +10,9 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
+import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
+import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 
 /**
  * An ActionScript version of the Java ItemService interface.
@@ -18,7 +20,7 @@ import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 public interface ItemService extends InvocationService
 {
     // from Java interface ItemService
-    function getInventory (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
+    function peepItem (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface ItemService
     function reclaimItem (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ConfirmListener) :void;

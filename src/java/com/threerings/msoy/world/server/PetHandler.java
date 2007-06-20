@@ -144,7 +144,10 @@ public class PetHandler
      * before moving.
      */
     public void moveToOwner (MemberObject owner, ArrayList<MemoryEntry> memory)
+        throws InvocationException
     {
+        validateOwnership(owner);
+
         // locate the room to which we are headed
         DObject dobj = MsoyServer.omgr.getObject(owner.location);
         if (!(dobj instanceof RoomObject)) {
@@ -180,7 +183,7 @@ public class PetHandler
     public void orderPet (MemberObject orderer, int order)
         throws InvocationException
     {
-        // TODO: validate that this person has privileges to order us
+        validateOwnership(orderer);
 
         switch (order) {
         case Pet.ORDER_SLEEP:
@@ -189,6 +192,20 @@ public class PetHandler
 
         default:
             throw new InvocationException(PetCodes.E_INTERNAL_ERROR); // TODO
+        }
+    }
+
+    /**
+     * Validate that the specified user is the owner of this pet.
+     */
+    protected void validateOwnership (MemberObject owner)
+        throws InvocationException
+    {
+        if (_petobj.pet.ownerId != owner.getMemberId()) {
+            // TODO: allow support personnell?
+            log.warning("Pet handling by non-owner [who=" + owner.who() +
+                ", petId=" + _petobj.pet.itemId + "].");
+            throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
         }
     }
 

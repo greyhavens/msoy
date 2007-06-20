@@ -10,10 +10,11 @@ import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
-import com.threerings.presents.client.InvocationService_InvocationListener;
+import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
+import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 
 /**
  * Provides the implementation of the {@link ItemService} interface
@@ -25,16 +26,16 @@ import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 public class ItemMarshaller extends InvocationMarshaller
     implements ItemService
 {
-    /** The method id used to dispatch {@link #getInventory} requests. */
-    public static const GET_INVENTORY :int = 1;
+    /** The method id used to dispatch {@link #peepItem} requests. */
+    public static const PEEP_ITEM :int = 1;
 
     // from interface ItemService
-    public function getInventory (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
+    public function peepItem (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
         listener3.listener = arg3;
-        sendRequest(arg1, GET_INVENTORY, [
-            Byte.valueOf(arg2), listener3
+        sendRequest(arg1, PEEP_ITEM, [
+            arg2, listener3
         ]);
     }
 

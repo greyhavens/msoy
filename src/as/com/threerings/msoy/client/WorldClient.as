@@ -33,7 +33,6 @@ import com.threerings.toybox.data.ToyBoxMarshaller;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.msoy.item.client.InventoryLoader;
 import com.threerings.msoy.item.data.ItemMarshaller;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Document;
@@ -457,15 +456,9 @@ public class WorldClient extends BaseClient
 
     protected function externalUsePet (petId :int) :void
     {
-        var petLoader :InventoryLoader = new InventoryLoader(_wctx, Item.PET);
-        petLoader.addEventListener(InventoryLoader.SUCCESS, function (newPetId :int) :Function {
-            return function () :void {
-                var svc :PetService = _ctx.getClient().requireService(PetService) as PetService;
-                svc.callPet(_wctx.getClient(), newPetId, 
-                    new ReportingListener(_wctx, "general", null, "m.pet_called"));
-            };
-        }(petId));
-        petLoader.start();
+        var svc :PetService = _ctx.getClient().requireService(PetService) as PetService;
+        svc.callPet(_wctx.getClient(), petId, 
+            new ReportingListener(_wctx, "general", null, "m.pet_called"));
     }
 
     protected function externalRemovePet (petId :int) :void

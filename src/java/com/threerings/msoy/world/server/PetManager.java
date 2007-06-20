@@ -121,20 +121,10 @@ public class PetManager
     {
         final MemberObject user = (MemberObject)caller;
 
-        // first make sure this user owns the pet in question
-        if (!user.isInventoryLoaded(Pet.PET)) {
-            log.warning("callPet() by player without pet inventory resolved? [who=" + user.who() +
-                        ", pet=" + petId + "].");
-            throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
-        }
-        if (!user.inventory.containsKey(new ItemIdent(Pet.PET, petId))) {
-            log.warning("callPet() by non-owner [who=" + user.who() + ", pet=" + petId + "].");
-            throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
-        }
-        
         // now check to see if the pet is already loaded
         PetHandler handler = _handlers.get(petId);
         if (handler != null) {
+            // moveToOwner may throw an InvocationException if this isn't the owner..
             handler.moveToOwner(user, null);
             listener.requestProcessed();
             return;
@@ -147,6 +137,9 @@ public class PetManager
                 PetRecord petrec = MsoyServer.itemMan.getPetRepository().loadItem(petId);
                 if (petrec == null) {
                     throw new Exception("callPet() on non-existent pet");
+                }
+                if (petrec.ownerId != user.getMemberId()) {
+                    throw new Exception("Pet handling by non-owner [who=" + user.who() + "].");
                 }
                 _pet = (Pet)petrec.toItem();
 
@@ -270,7 +263,14 @@ public class PetManager
         // create a handler for this pet (which will register itself with us); then direct it
         // immediately to the room occupied by its owner
         PetHandler handler = new PetHandler(this, pet);
-        handler.moveToOwner(owner, memory);
+        try {
+            handler.moveToOwner(owner, memory);
+        } catch (InvocationException ie) {
+            log.warning("Newly resolved pet rejects its owner? [error=" + ie + "].");
+            // wow, this can only mean that the owner is not our owner.. this shouldn't happen
+            // but let's try doing the right thing.
+            handler.shutdown(false);
+        }
     }
 
     protected void mapHandler (int itemId, PetHandler handler)

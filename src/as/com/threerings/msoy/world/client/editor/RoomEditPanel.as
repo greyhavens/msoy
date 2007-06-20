@@ -139,23 +139,6 @@ public class RoomEditPanel extends FloatingPanel
             box.addChild(button);
         }
 
-        // TEMP add furniture button
-        // to be removed once we get dropping from javascript to work
-        [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/rollout_plus.png")]
-        const addicon :Class;
-        var add :CommandButton = new CommandButton();
-        add.setStyle("icon", addicon);
-        add.width = 28;
-        add.height = 25;
-        add.toolTip = Msgs.GENERAL.get("t.add_furni");
-        var roomCtrl :RoomController = roomView.getRoomController();
-        add.setCallback(function () :void {
-                // just a floating popup.
-                new FurniAddDialog(_ctx, _view, _ctx.getSceneDirector().getScene() as MsoyScene); 
-            });
-        box.addChild(add);
-        // end temp 
-
         // make the label row
 
         var labelrow :HBox = new HBox();

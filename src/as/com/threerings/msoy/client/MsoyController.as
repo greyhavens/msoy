@@ -87,9 +87,6 @@ public class MsoyController extends Controller
     /** Command to display the chat channel menu. */
     public static const POP_CHANNEL_MENU :String = "PopChannelMenu";
 
-    /** Command to display the pets popup. */
-    public static const SHOW_PETS :String = "ShowPets";
-
     /** Command to go to a particular place (by Oid). */
     public static const GO_LOCATION :String = "GoLocation";
 
@@ -287,16 +284,6 @@ public class MsoyController extends Controller
     public function handleAbout () :void
     {
         new AboutDialog(_ctx);
-    }
-
-    /**
-     * Handle the SHOW_PETS command.
-     */
-    public function handleShowPets (show :Boolean) :void
-    {
-        if (_topPanel.getPlaceView() is RoomView) {
-            new PetsDialog(_ctx);
-        }
     }
 
     /**

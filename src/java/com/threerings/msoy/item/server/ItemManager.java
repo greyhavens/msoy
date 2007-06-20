@@ -29,6 +29,7 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.util.ResultAdapter;
 
 import com.threerings.whirled.server.SceneManager;
 import com.threerings.whirled.server.SceneRegistry;
@@ -877,12 +878,7 @@ public class ItemManager
             }
             public void handleSuccess () {
                 // remove the item from their inventory
-                MemberObject memObj = MsoyServer.lookupMember(memberId);
-                if (memObj != null) {
-                    if (memObj.inventory.containsKey(ident)) {
-                        memObj.removeFromInventory(ident);
-                    }
-                }
+                deleteFromUserCache(memberId, ident);
                 super.handleSuccess();
             }
         });
@@ -1117,8 +1113,7 @@ public class ItemManager
     }
 
     // from ItemProvider
-    public void getInventory (ClientObject caller, final byte type,
-                              final InvocationService.InvocationListener listener)
+    public void peepItem (ClientObject caller, ItemIdent ident, InvocationService.ResultListener rl)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
@@ -1126,41 +1121,18 @@ public class ItemManager
             throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
         }
 
-        if (user.isInventoryResolving(type)) {
-            // already loaded/resolving!
-            return; // this is not an error condition, we expect that some other entity is loading
-            // and the user will notice soon enough.
-        }
+        getItem(ident, new ResultAdapter<Item>(rl) {
+            public void requestCompleted (Item item) {
+                if (item.ownerId == user.getMemberId()) {
+                    super.requestCompleted(item);
 
-        // mark the item type as resolving
-        user.setResolvingInventory(user.resolvingInventory | (1 << type));
-
-        // then, load that type
-        loadInventory(user.getMemberId(), type, new ResultListener<ArrayList<Item>>() {
-            public void requestCompleted (ArrayList<Item> result) {
-                // apply the changes
-                user.startTransaction();
-                try {
-                    for (Item item : result) {
-                        user.addToInventory(item);
-                    }
-                    user.setLoadedInventory(user.loadedInventory | (1 << type));
-                } finally {
-                    user.commitTransaction();
+                } else {
+                    _listener.requestFailed(ItemCodes.E_ACCESS_DENIED);
                 }
-            }
-
-            public void requestFailed (Exception cause) {
-                log.log(Level.WARNING, "Unable to retrieve inventory [who=" + user.who() + "].",
-                        cause);
-                listener.requestFailed(ItemCodes.E_INTERNAL_ERROR);
-
-                // we're not resolving anymore.. oops
-                user.setResolvingInventory(user.resolvingInventory & ~(1 << type));
             }
         });
     }
-    
+
     // from ItemProvider
     public void reclaimItem (ClientObject caller, final ItemIdent item,
                              final InvocationService.ConfirmListener listener)
@@ -1257,6 +1229,8 @@ public class ItemManager
      */
     protected MemberObject updateUserCache (ItemRecord rec, Item item)
     {
+        // TODO: This will change, now that the user doesn't cache all items
+
         // first locate the owner
         int ownerId;
         byte type;
@@ -1268,21 +1242,35 @@ public class ItemManager
             type = item.getType();
         }
         MemberObject memObj = MsoyServer.lookupMember(ownerId);
+//
+//        // if found and this item's inventory type is loaded or resolving, update or add it. (If
+//        // we're resolving, we might be the first adding the item. That's ok, nothing should think
+//        // it's actually loaded until the inventoryLoaded flag is set.
+//        if (memObj != null && memObj.isInventoryResolving(type)) {
+//            if (item == null) {
+//                item = rec.toItem(); // lazy-create when we need it.
+//            }
+//            if (memObj.inventory.contains(item)) {
+//                memObj.updateInventory(item);
+//            } else {
+//                memObj.addToInventory(item);
+//            }
+//        }
+//
+        return memObj;
+    }
 
-        // if found and this item's inventory type is loaded or resolving, update or add it. (If
-        // we're resolving, we might be the first adding the item. That's ok, nothing should think
-        // it's actually loaded until the inventoryLoaded flag is set.
-        if (memObj != null && memObj.isInventoryResolving(type)) {
-            if (item == null) {
-                item = rec.toItem(); // lazy-create when we need it.
-            }
-            if (memObj.inventory.contains(item)) {
-                memObj.updateInventory(item);
-            } else {
-                memObj.addToInventory(item);
-            }
-        }
+    /**
+     * Internal cache-updatey method for deleting an item that no longer exists.
+     */
+    protected MemberObject deleteFromUserCache (int memberId, ItemIdent ident)
+    {
+        // TODO: This will change, now that the user doesn't cache all items
 
+        MemberObject memObj = MsoyServer.lookupMember(memberId);
+//        if (memObj != null && memObj.inventory.containsKey(ident)) {
+//            memObj.removeFromInventory(ident);
+//        }
         return memObj;
     }
 
@@ -1292,27 +1280,29 @@ public class ItemManager
     protected MemberObject updateUserCache (
         int ownerId, byte type, int[] ids, ItemUpdateOp op, boolean warnIfMissing)
     {
+        // TODO: This will change, now that the user doesn't cache all items
+
         MemberObject memObj = MsoyServer.lookupMember(ownerId);
-        if (memObj != null && memObj.isInventoryLoaded(type)) {
-            memObj.startTransaction();
-            try {
-                for (int id : ids) {
-                    Item item = memObj.inventory.get(new ItemIdent(type, id));
-                    if (item == null) {
-                        if (warnIfMissing) {
-                            // TODO: this possibly a bigger error and we should maybe throw an
-                            // exception
-                            log.warning("Unable to update missing item: " + item);
-                        }
-                        continue;
-                    }
-                    op.update(item);
-                    memObj.updateInventory(item);
-                }
-            } finally {
-                memObj.commitTransaction();
-            }
-        }
+//        if (memObj != null && memObj.isInventoryLoaded(type)) {
+//            memObj.startTransaction();
+//            try {
+//                for (int id : ids) {
+//                    Item item = memObj.inventory.get(new ItemIdent(type, id));
+//                    if (item == null) {
+//                        if (warnIfMissing) {
+//                            // TODO: this possibly a bigger error and we should maybe throw an
+//                            // exception
+//                            log.warning("Unable to update missing item: " + item);
+//                        }
+//                        continue;
+//                    }
+//                    op.update(item);
+//                    memObj.updateInventory(item);
+//                }
+//            } finally {
+//                memObj.commitTransaction();
+//            }
+//        }
 
         return memObj;
     }

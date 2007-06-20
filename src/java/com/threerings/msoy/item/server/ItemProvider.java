@@ -17,9 +17,9 @@ import com.threerings.presents.server.InvocationProvider;
 public interface ItemProvider extends InvocationProvider
 {
     /**
-     * Handles a {@link ItemService#getInventory} request.
+     * Handles a {@link ItemService#peepItem} request.
      */
-    public void getInventory (ClientObject caller, byte arg1, InvocationService.InvocationListener arg2)
+    public void peepItem (ClientObject caller, ItemIdent arg1, InvocationService.ResultListener arg2)
         throws InvocationException;
 
     /**

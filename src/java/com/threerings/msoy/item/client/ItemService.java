@@ -14,12 +14,10 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 public interface ItemService extends InvocationService
 {
     /**
-     * Get the items in the user's inventory.
-     * TODO: WTF? Can we ever load the inventory? At best we can display
-     *       a page of it.
+     * Load the specified item from the user's inventory for short-term examination.
+     * An InvocationException will be thrown if the specified item does not belong to the user.
      */
-    public void getInventory (
-        Client client, byte type, InvocationListener listener);
+    public void peepItem (Client client, ItemIdent item, ResultListener listener);
 
     /** 
      * Cause this item to become unused, removing it from the room that its in.

@@ -61,15 +61,6 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>ownedScenes</code> field. */
     public static const OWNED_SCENES :String = "ownedScenes";
 
-    /** The field name of the <code>inventory</code> field. */
-    public static const INVENTORY :String = "inventory";
-
-    /** The field name of the <code>resolvingInventory</code> field. */
-    public static const RESOLVING_INVENTORY :String = "resolvingInventory";
-
-    /** The field name of the <code>loadedInventory</code> field. */
-    public static const LOADED_INVENTORY :String = "loadedInventory";
-
     /** The field name of the <code>tokens</code> field. */
     public static const TOKENS :String = "tokens";
 
@@ -121,15 +112,6 @@ public class MemberObject extends MsoyBodyObject
 
     /** The scenes we own. */
     public var ownedScenes :DSet;
-
-    /** Our inventory, lazy-initialized. */
-    public var inventory :DSet;
-
-    /** A bitmas of the item types that are currently being resolved. */
-    public var resolvingInventory :int;
-
-    /** A bitmask of the item types that have been loaded into inventory. */
-    public var loadedInventory :int;
 
     /** The tokens defining the access controls for this user. */
     public var tokens :MsoyTokenRing;
@@ -247,42 +229,6 @@ public class MemberObject extends MsoyBodyObject
         return GroupMembership.RANK_NON_MEMBER;
     }
 
-    /**
-     * Return true if the specified item type is being resolved.
-     */
-    public function isInventoryResolving (itemType :int) :Boolean
-    {
-        return (0 != ((1 << itemType) & resolvingInventory));
-    }
-
-    /**
-     * Return true if the specified item type has been loaded.
-     */
-    public function isInventoryLoaded (itemType :int) :Boolean
-    {
-        return (0 != ((1 << itemType) & loadedInventory));
-    }
-
-    /**
-     * Get an array of the items of the specified type.
-     */
-    public function getItems (itemType :int) :Array
-    {
-        if (!isInventoryLoaded(itemType)) {
-            throw new IllegalOperationError(
-                "Items not yet loaded: " + itemType);
-        }
-
-        // just filter by hand..
-        var list :Array = [];
-        for each (var item :Item in inventory.toArray()) {
-            if (item.getType() == itemType) {
-                list.push(item);
-            }
-        }
-        return list;
-    }
-
 //    // AUTO-GENERATED: METHODS START
 //    /**
 //     * Requests that the <code>sceneId</code> field be set to the
@@ -383,9 +329,6 @@ public class MemberObject extends MsoyBodyObject
         humanity = ins.readInt();
         recentScenes = (ins.readObject() as DSet);
         ownedScenes = (ins.readObject() as DSet);
-        inventory = (ins.readObject() as DSet);
-        resolvingInventory = ins.readInt();
-        loadedInventory = ins.readInt();
         tokens = (ins.readObject() as MsoyTokenRing);
         homeSceneId = ins.readInt();
         avatar = (ins.readObject() as Avatar);
