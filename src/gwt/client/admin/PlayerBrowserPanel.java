@@ -152,10 +152,11 @@ public class PlayerBrowserPanel extends HorizontalPanel
 
             getFlexCellFormatter().setColSpan(row, 1, 3);
             getFlexCellFormatter().addStyleName(row, 1, "Last");
+            getFlexCellFormatter().addStyleName(row, 1, "Header");
             setText(row++, 1, CAdmin.msgs.browserInvites());
+
             getRowFormatter().addStyleName(row, "Clickable");
             getRowFormatter().addStyleName(row, "Separator");
-
             // organized in the same order as the NNN_COLUMN constants
             String[] labelText = new String[] { CAdmin.msgs.browserName(), 
                 CAdmin.msgs.browserAvailable(), CAdmin.msgs.browserUsed(), 
@@ -168,6 +169,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 RowComparator.SORT_ORDER_DESCENDING };
             for (int ii = 0; ii < NUM_COLUMNS; ii++) {
                 Label headerLabel = new Label(labelText[ii]);
+                headerLabel.addStyleName("Header");
                 final int column = ii;
                 final int type = sortType[ii];
                 final int order = sortOrder[ii];
@@ -175,6 +177,10 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     public void onClick (Widget sender) {
                         sort(column, type, _sortOrder);
                         _sortOrder *= -1;
+                        if (_activeHeader != null) {
+                            _activeHeader.removeStyleName("HighlightedHeader");
+                        }
+                        (_activeHeader = (Label) sender).addStyleName("HighlightedHeader");
                     }
                     protected int _sortOrder = order;
                 });
@@ -321,7 +327,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
         // element is accessed it is casted to Element, everything works fine.
         protected Object[] _rows;
         protected int _inviterId;
-        protected Label _activeLabel;
+        protected Label _activeLabel, _activeHeader;
         protected Map _memberIds = new HashMap(); // Map<Integer, Integer>
     }
 

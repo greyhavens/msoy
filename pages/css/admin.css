@@ -51,7 +51,7 @@
 .playerBrowser .PlayerList td {
   border-style: solid none none solid;
   border-width: 1px;
-  padding: 5px;
+  padding: 0px;
 }
 
 .playerBrowser .PlayerList .Bottom td {
@@ -78,11 +78,18 @@
   border-color: white;
 }
 
+.playerBrowser .PlayerList .Header {
+  padding: 3px;
+}
+
 .playerBrowser .PlayerList .Highlighted {
   border-color: red;
 }
 
+.playerBrowser .PlayerList .HighlightedHeader {
+  border-color: blue;
+}
+
 .playerBrowser .PlayerList .DataRow td {
   font-size: 10px;
-  padding: 0px;
 }
