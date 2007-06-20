@@ -23,13 +23,16 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
 
+import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.util.MsoyUI;
 import client.util.events.FlashEvents;
-import client.util.events.LevelUpdateEvent;
-import client.util.events.LevelsListener;
+import client.util.events.FriendEvent;
+import client.util.events.StatusChangeEvent;
+import client.util.events.StatusChangeListener;
 
 /**
  * Displays basic player status (name, flow count) and handles logging on and logging off.
@@ -48,29 +51,29 @@ public class StatusPanel extends FlexTable
         _mailNotifier = new HTML(Application.createLinkHtml(mailImg, "mail", ""));
         _mailNotifier.setWidth("20px");
 
-        FlashEvents.addListener(new LevelsListener() {
-            public void levelUpdated (LevelUpdateEvent event) {
+        FlashEvents.addListener(new StatusChangeListener() {
+            public void statusChanged (StatusChangeEvent event) {
                 switch(event.getType()) {
-                case LevelUpdateEvent.LEVEL:
+                case StatusChangeEvent.LEVEL:
                     int newLevel = event.getValue();
                     int oldLevel = event.getOldValue();
                     _levels.setLevel(newLevel);
-                    // a user's level is never 0, so 0 is used to indicate that this is the first 
+                    // a user's level is never 0, so 0 is used to indicate that this is the first
                     // update, and the new level popup should not be shown.
                     if (oldLevel != 0 && oldLevel != newLevel) {
                         _levels.showLevelUpPopup();
                     }
                     _levels.setVisible(true);
                     break;
-                case LevelUpdateEvent.FLOW:
+                case StatusChangeEvent.FLOW:
                     _levels.setFlow(event.getValue());
                     _levels.setVisible(true);
                     break;
-                case LevelUpdateEvent.GOLD:
+                case StatusChangeEvent.GOLD:
                     _levels.setGold(event.getValue());
                     _levels.setVisible(true);
                     break;
-                case LevelUpdateEvent.MAIL:
+                case StatusChangeEvent.MAIL:
                     _mailNotifier.setVisible(event.getValue() > 0);
                     break;
                 }
@@ -115,6 +118,14 @@ public class StatusPanel extends FlexTable
     }
 
     /**
+     * Configures whether or not we have new mail.
+     */
+    public void setNewMailCount (int newMailCount)
+    {
+        _mailNotifier.setVisible(newMailCount > 0);
+    }
+
+    /**
      * Clears out our credentials and displays the logon interface.
      */
     public void logoff ()
@@ -127,17 +138,13 @@ public class StatusPanel extends FlexTable
         _levels.setVisible(false);
         _mailNotifier.setVisible(false);
 
-//         if (DeploymentConfig.devDeployment) {
-            setText(0, 0, "New to Whirled?");
-            setHTML(0, 1, "&nbsp;");
-            setWidget(0, 2, MsoyUI.createActionLabel("Create an account!", new ClickListener() {
-                public void onClick (Widget sender) {
-                    new CreateAccountDialog(StatusPanel.this, null).show();
-                }
-            }));
-//         } else {
-//             setText(0, 0, "Welcome to the First Whirled!");
-//         }
+        setText(0, 0, "New to Whirled?");
+        setHTML(0, 1, "&nbsp;");
+        setWidget(0, 2, MsoyUI.createActionLabel("Create an account!", new ClickListener() {
+            public void onClick (Widget sender) {
+                new CreateAccountDialog(StatusPanel.this, null).show();
+            }
+        }));
     }
 
     protected void validateSession (String token)
@@ -149,8 +156,7 @@ public class StatusPanel extends FlexTable
                     if (result == null) {
                         logoff();
                     } else {
-                        _creds = (WebCreds)result;
-                        didLogon(_creds);
+                        didLogon((SessionData)result);
                     }
                 }
                 public void onFailure (Throwable t) {
@@ -163,21 +169,31 @@ public class StatusPanel extends FlexTable
         }
     }
 
-    protected void didLogon (WebCreds creds)
+    protected void didLogon (SessionData data)
     {
-        _creds = creds;
+        _creds = data.creds;
         setCookie("creds", _creds.token);
         setCookie("who", _creds.accountName);
         _app.didLogon(_creds);
 
+        // configure our levels
         int idx = 0;
         setText(0, idx++, _creds.name.toString());
         setWidget(0, idx++, _levels);
-        _levels.setVisible(false); // we'll soon have a call to refreshLevels()
+        _levels.setFlow(data.flow);
+        _levels.setGold(data.gold);
+        _levels.setLevel(data.level);
 
-        // begin with 'new mail' turned off until we hear otherwise
+        // configure our 'new mail' indicator
         setWidget(0, idx++, _mailNotifier);
-        _mailNotifier.setVisible(false);
+        FlashEvents.dispatchEvent(
+            new StatusChangeEvent(StatusChangeEvent.MAIL, data.newMailCount, 0));
+
+        // notify listeners of our friends
+        for (int ii = 0, ll = data.friends.size(); ii < ll; ii++) {
+            FriendEntry entry = (FriendEntry)data.friends.get(ii);
+            FlashEvents.dispatchEvent(new FriendEvent(FriendEvent.FRIEND_ADDED, entry.name));
+        }
     }
 
     protected void actionClicked ()

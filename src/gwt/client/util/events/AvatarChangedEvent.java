@@ -9,6 +9,15 @@ import client.util.FlashClients;
 
 public class AvatarChangedEvent extends FlashEvent
 {
+    /** The name of this event type: defined in WorldClient.as. */
+    public static final String NAME = "avatarChanged";
+
+    // @Override // FlashEvent
+    public String getEventName ()
+    {
+        return NAME;
+    }
+
     // @Override // FlashEvent
     public void readFlashArgs (JavaScriptObject args) 
     {

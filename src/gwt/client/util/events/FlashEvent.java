@@ -8,6 +8,11 @@ import com.google.gwt.core.client.JavaScriptObject;
 public abstract class FlashEvent
 {
     /**
+     * Returns the string identifier for this event type.
+     */
+    public abstract String getEventName ();
+
+    /**
      * Pull the expected values for this event out of the JavaScriptObject, using the utility
      * functions in FlashClients.
      */

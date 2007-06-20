@@ -13,6 +13,15 @@ import client.util.FlashClients;
  */
 public class BackgroundChangedEvent extends FlashEvent
 {
+    /** The name of this event type: defined in RoomController.as. */
+    public static final String NAME = "backgroundChanged";
+
+    // @Override // FlashEvent
+    public String getEventName ()
+    {
+        return NAME;
+    }
+
     // @Override // FlashEvent
     public void readFlashArgs (JavaScriptObject args) 
     {

@@ -22,8 +22,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.AccountInfo;
-import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.data.SessionData;
 
 import client.util.BorderedDialog;
 import client.util.DateFields;
@@ -189,7 +189,7 @@ public class CreateAccountDialog extends BorderedDialog
                     // override the dialog token with the world
                     Application.setCurrentToken("world");
                     // TODO: display some sort of welcome to whirled business
-                    _parent.didLogon((WebCreds)result);
+                    _parent.didLogon((SessionData)result);
                 }
                 public void onFailure (Throwable caught) {
                     _status.setText(CShell.serverError(caught));

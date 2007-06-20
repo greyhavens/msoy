@@ -86,45 +86,6 @@ public class FlashClients
     }
 
     /**
-     * Calls into the Flash client and gets the list of our friends.
-     */
-    public static FriendEntry[] getFriends ()
-    {
-        JavaScriptObject result = getFriendsNative();
-        int length = (result == null ? 0 : getLength(result)/3);
-        FriendEntry[] friends = new FriendEntry[length];
-        for (int ii = 0; ii < friends.length; ii++) {
-            friends[ii] = new FriendEntry();
-            friends[ii].name = new MemberName(getStringElement(result, 3*ii),
-                                              getIntElement(result, 3*ii+1));
-            friends[ii].online = getBooleanElement(result, 3*ii+2);
-        }
-        return friends;
-    }
-
-    /**
-     * Loads our flow gold, and experience levels.
-     */
-    public static int[] getLevels ()
-    {
-        int[] levels = new int[3];
-        JavaScriptObject result = getLevelsNative();
-        int length = (result == null ? 0 : getLength(result));
-        for (int ii = 0; ii < length; ii++) {
-            levels[ii] = getIntElement(result, ii);
-        }
-        return levels;
-    }
-
-    /**
-     * Loads the mail notification status.
-     */
-    public static boolean getMailNotification ()
-    {
-        return getBoolean(getMailNotificationNative());
-    }
-
-    /**
      * Checks if the flash client can be found on this page.
      */
     public static boolean clientExists ()
@@ -282,51 +243,6 @@ public class FlashClients
      */
     public static native boolean getBoolean (JavaScriptObject value) /*-{
         return value;
-    }-*/;
-
-    /**
-     * Does the actual JavaScript <code>getFriends</code> call.
-     */
-    protected static native JavaScriptObject getFriendsNative () /*-{
-        var client = $doc.getElementById("asclient");
-        if (client) {
-            try {
-                return client.getFriends();
-            } catch (e) {
-                // fall through
-            }
-        }
-        return null;
-    }-*/;
-
-    /**
-     * Does the actual JavaScript <code>getLevels</code> call.
-     */
-    protected static native JavaScriptObject getLevelsNative () /*-{
-        var client = $doc.getElementById("asclient");
-        if (client) {
-            try {
-                return client.getLevels();
-            } catch (e) {
-                // fall through
-            }
-        }
-        return null;
-    }-*/;
-
-    /**
-     * Does the actual JavaScript <code>getMailNotification</code> call.
-     */
-    protected static native JavaScriptObject getMailNotificationNative () /*-{
-        var client = $doc.getElementById("asclient");
-        if (client) {
-            try {
-                return client.getMailNotification();
-            } catch (e) {
-                // fall through
-            }
-        }
-        return null;
     }-*/;
 
     /** 

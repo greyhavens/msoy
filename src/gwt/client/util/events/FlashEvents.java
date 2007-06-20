@@ -11,6 +11,8 @@ import java.util.Map;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
+import client.shell.CShell;
+
 /**
  * Utility class for listening to events from the Flash client.
  */
@@ -20,6 +22,10 @@ public class FlashEvents
         configureEventCallback();
     }
 
+    /**
+     * Registers an event listener to be notified when events arrive from the Flash client (or are
+     * dispatched locally).
+     */
     public static void addListener (FlashEventListener listener)
     {
         String name = nameForListener(listener);
@@ -33,6 +39,9 @@ public class FlashEvents
         }
     }
 
+    /**
+     * Clears out an event listener registration.
+     */
     public static void removeListener (FlashEventListener listener)
     {
         String name = nameForListener(listener);
@@ -44,51 +53,71 @@ public class FlashEvents
         }
     }
 
+    /**
+     * Dispatches an event to all registered listeners.
+     */
+    public static void dispatchEvent (FlashEvent event)
+    {
+        List listeners = (List)_eventListeners.get(event.getEventName());
+        if (listeners != null) {
+            Iterator iter = listeners.iterator();
+            while (iter.hasNext()) {
+                event.notifyListener((FlashEventListener) iter.next());
+            }
+        }
+    }
+
+    /**
+     * Called through the JavaScript bridge to dispatch an event that arrived from Flash.
+     */
     protected static void triggerEvent (String eventName, JavaScriptObject args) 
     {
-        List listeners = (List)_eventListeners.get(eventName);
-        if (listeners != null) {
-            FlashEvent event = eventForName(eventName);
-            if (event != null) {
-                event.readFlashArgs(args);
-                Iterator iter = listeners.iterator();
-                while (iter.hasNext()) {
-                    event.notifyListener((FlashEventListener) iter.next());
-                }
-            }
+        if (!_eventListeners.containsKey(eventName)) {
+            return; // if no one is listening, stop here
+        }
+        FlashEvent event = eventForName(eventName);
+        if (event != null) {
+            event.readFlashArgs(args);
+            dispatchEvent(event);
         }
     }
 
     protected static String nameForListener (FlashEventListener listener)
     {
         if (listener instanceof AvatarChangeListener) {
-            return AVATAR_CHANGED_EVENT;
+            return AvatarChangedEvent.NAME;
         } else if (listener instanceof BackgroundChangeListener) {
-            return BACKGROUND_CHANGED_EVENT;
+            return BackgroundChangedEvent.NAME;
         } else if (listener instanceof FurniChangeListener) {
-            return FURNI_CHANGED_EVENT;
-        } else if (listener instanceof LevelsListener) {
-            return LEVEL_UPDATE_EVENT;
+            return FurniChangedEvent.NAME;
+        } else if (listener instanceof StatusChangeListener) {
+            return StatusChangeEvent.NAME;
         } else if (listener instanceof PetListener) {
-            return PET_EVENT;
+            return PetEvent.NAME;
+        } else if (listener instanceof FriendsListener) {
+            return FriendEvent.NAME;
         } else {
+            CShell.log("Requested name for unknown listener '" + listener + "'?!");
             return null;
         }
     }
 
     protected static FlashEvent eventForName (String eventName)
     {
-        if (AVATAR_CHANGED_EVENT.equals(eventName)) {
+        if (AvatarChangedEvent.NAME.equals(eventName)) {
             return new AvatarChangedEvent();
-        } else if (BACKGROUND_CHANGED_EVENT.equals(eventName)) {
+        } else if (BackgroundChangedEvent.NAME.equals(eventName)) {
             return new BackgroundChangedEvent();
-        } else if (FURNI_CHANGED_EVENT.equals(eventName)) {
+        } else if (FurniChangedEvent.NAME.equals(eventName)) {
             return new FurniChangedEvent();
-        } else if (LEVEL_UPDATE_EVENT.equals(eventName)) {
-            return new LevelUpdateEvent();
-        } else if (PET_EVENT.equals(eventName)) {
+        } else if (StatusChangeEvent.NAME.equals(eventName)) {
+            return new StatusChangeEvent();
+        } else if (PetEvent.NAME.equals(eventName)) {
             return new PetEvent();
+        } else if (FriendEvent.NAME.equals(eventName)) {
+            return new FriendEvent();
         } else {
+            CShell.log("Requested event for unknown name '" + eventName + "'?!");
             return null;
         }
     }
@@ -98,21 +127,6 @@ public class FlashEvents
             @client.util.events.FlashEvents::triggerEvent(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(eventName, args);
         }
     }-*/;
-
-    // defined in WorldClient.as
-    protected static final String AVATAR_CHANGED_EVENT = "avatarChanged";
-
-    // defined in RoomController.as
-    protected static final String BACKGROUND_CHANGED_EVENT = "backgroundChanged";
-
-    // defined in RoomController.as
-    protected static final String FURNI_CHANGED_EVENT = "furniChanged";
-
-    // defined in BaseClient.as
-    protected static final String LEVEL_UPDATE_EVENT = "levelUpdate";
-
-    // defined in RoomView.as
-    protected static final String PET_EVENT = "pet";
 
     protected static Map _eventListeners = new HashMap();
 }

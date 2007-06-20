@@ -44,8 +44,6 @@ import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.SceneBookmarkEntry;
 
-import com.threerings.msoy.data.all.FriendEntry;
-
 /**
  * A client shared by both our virtual world and header incarnations.
  */
@@ -151,7 +149,7 @@ public /*abstract*/ class BaseClient extends Client
 
         // listen for flow and gold updates
         _user = (clobj as MemberObject);
-        var updater :LevelUpdater = new LevelUpdater(this);
+        var updater :StatusUpdater = new StatusUpdater(this);
         _user.addListener(updater);
 
         // configure our levels to start
@@ -167,7 +165,6 @@ public /*abstract*/ class BaseClient extends Client
     protected function configureExternalFunctions () :void
     {
         ExternalInterface.addCallback("onUnload", externalOnUnload);
-        ExternalInterface.addCallback("getFriends", externalGetFriends);
         ExternalInterface.addCallback("openChannel", externalOpenChannel);
     }
 
@@ -179,32 +176,6 @@ public /*abstract*/ class BaseClient extends Client
         log.info("Client unloaded. Logging off.");
         logoff(false);
     }
-
-    /**
-     * Provides this player's friends list to the GWT client.
-     */
-    protected function externalGetFriends () :Array
-    {
-        if (_user == null) {
-            log.info("externalGetFriends() without MemberObject.");
-            return new Array();
-        }
-
-        // we have to convert everything to an array of primitives, so we convert to an array of
-        // String, Number, Boolean (repeat) (an array of arrays doesn't work; yay!)
-        var friends :Array = _user.getSortedEstablishedFriends();
-        var fdata :Array = new Array();
-        friends.forEach(function (entry :FriendEntry, index :int, array :Array) :void {
-            fdata.push(entry.name.toString());
-            fdata.push(entry.name.getMemberId());
-            fdata.push(entry.online);
-        });
-        return fdata;
-    }
-
-//     protected function externalGetGroups () :Array
-//     {
-//     }
 
     /**
      * Exposed to JavaScript so that it may order us to open chat channels.
@@ -262,13 +233,18 @@ import flash.external.ExternalInterface;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.EntryAddedEvent;
+import com.threerings.presents.dobj.EntryRemovedEvent;
+import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.msoy.client.BaseClient;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.FriendEntry;
 
-class LevelUpdater implements AttributeChangeListener
+class StatusUpdater implements AttributeChangeListener, SetListener
 {
-    public function LevelUpdater (client :BaseClient) {
+    public function StatusUpdater (client :BaseClient) {
         _client = client;
     }
 
@@ -285,33 +261,56 @@ class LevelUpdater implements AttributeChangeListener
         }
     }
 
+    public function entryAdded (event :EntryAddedEvent) :void {
+        if (event.getName() == MemberObject.FRIENDS) {
+            var entry :FriendEntry = (event.getEntry() as FriendEntry);
+            _client.dispatchEventToGWT(
+                FRIEND_EVENT, [FRIEND_ADDED, entry.name.toString(), entry.name.getMemberId()]);
+        }
+    }
+
+    public function entryUpdated (event :EntryUpdatedEvent) :void {
+        // nada
+    }
+
+    public function entryRemoved (event :EntryRemovedEvent) :void {
+        if (event.getName() == MemberObject.FRIENDS) {
+            var memberId :int = int(event.getKey());
+            _client.dispatchEventToGWT(FRIEND_EVENT, [FRIEND_REMOVED, "", memberId]);
+        }
+    }
+
     public function newLevel (level :int, oldLevel :int = 0) :void {
-        sendNotification([LEVEL_UPDATE_LEVEL, level, oldLevel]);
+        sendNotification([STATUS_CHANGE_LEVEL, level, oldLevel]);
     }
 
     public function newFlow (flow :int, oldFlow :int = 0) :void {
-        sendNotification([LEVEL_UPDATE_FLOW, flow, oldFlow]);
+        sendNotification([STATUS_CHANGE_FLOW, flow, oldFlow]);
     }
 
     public function newGold (gold :int, oldGold :int = 0) :void {
-        sendNotification([LEVEL_UPDATE_GOLD, gold, oldGold]);
+        sendNotification([STATUS_CHANGE_GOLD, gold, oldGold]);
     }
 
     public function newMail (mail :Boolean, oldMail :Boolean = false) :void {
         // TODO: support indication how many new mails the user has?
-        sendNotification([LEVEL_UPDATE_MAIL, mail ? 1 : 0, oldMail ? 1 : 0]);
+        sendNotification([STATUS_CHANGE_MAIL, mail ? 1 : 0, oldMail ? 1 : 0]);
     }
 
     protected function sendNotification (args :Array) :void {
-        _client.dispatchEventToGWT(LEVEL_UPDATE_EVENT, args);
+        _client.dispatchEventToGWT(STATUS_CHANGE_EVENT, args);
     }
 
     /** Event dispatched to GWT when we've leveled up */
-    protected static const LEVEL_UPDATE_EVENT :String = "levelUpdate";
-    protected static const LEVEL_UPDATE_LEVEL :int = 1;
-    protected static const LEVEL_UPDATE_FLOW :int = 2;
-    protected static const LEVEL_UPDATE_GOLD :int = 3;
-    protected static const LEVEL_UPDATE_MAIL :int = 4;
+    protected static const STATUS_CHANGE_EVENT :String = "statusChange";
+    protected static const STATUS_CHANGE_LEVEL :int = 1;
+    protected static const STATUS_CHANGE_FLOW :int = 2;
+    protected static const STATUS_CHANGE_GOLD :int = 3;
+    protected static const STATUS_CHANGE_MAIL :int = 4;
+
+    protected static const FRIEND_EVENT :String = "friend";
+    protected static const FRIEND_ADDED :int = 1;
+    protected static const FRIEND_REMOVED :int = 2;
 
     protected var _client :BaseClient;
 }

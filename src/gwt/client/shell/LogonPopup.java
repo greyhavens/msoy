@@ -15,7 +15,7 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.SessionData;
 
 import client.util.BorderedPopup;
 import client.util.MsoyUI;
@@ -123,7 +123,7 @@ public class LogonPopup extends BorderedPopup
             DeploymentConfig.version, account, CShell.md5hex(password), 1, new AsyncCallback() {
             public void onSuccess (Object result) {
                 hide();
-                _parent.didLogon((WebCreds)result);
+                _parent.didLogon((SessionData)result);
             }
             public void onFailure (Throwable caught) {
                 CShell.log("Logon failed [account=" + _email.getText() + "]", caught);

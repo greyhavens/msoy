@@ -9,6 +9,15 @@ import client.util.FlashClients;
 
 public class PetEvent extends FlashEvent
 {
+    /** The name of this event type: defined in RoomView.as. */
+    public static final String NAME = "pet";
+
+    // @Override // FlashEvent
+    public String getEventName ()
+    {
+        return NAME;
+    }
+
     // @Override // FlashEvent
     public void readFlashArgs (JavaScriptObject args) 
     {
@@ -25,7 +34,7 @@ public class PetEvent extends FlashEvent
     }
 
     /**
-     * returns true if this pet was added to the room, false if removed. 
+     * Returns true if this pet was added to the room, false if it was removed. 
      */
     public boolean addedToRoom () 
     {

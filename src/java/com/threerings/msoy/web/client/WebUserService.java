@@ -10,7 +10,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -25,7 +25,7 @@ public interface WebUserService extends RemoteService
      * @return a set of credentials including a session cookie that should be provided to
      * subsequent remote service calls that require authentication.
      */
-    public WebCreds login (long clientVersion, String email, String password, int expireDays)
+    public SessionData login (long clientVersion, String email, String password, int expireDays)
         throws ServiceException;
 
     /**
@@ -35,15 +35,16 @@ public interface WebUserService extends RemoteService
      * @return a set of credentials including a session cookie that should be provided to
      * subsequent remote service calls that require authentication.
      */
-    public WebCreds register (long clientVersion, String email, String password, String displayName,
-                              Date birthday, AccountInfo info, int expireDays, Invitation invite)
+    public SessionData register (long clientVersion, String email, String password,
+                                 String displayName, Date birthday, AccountInfo info,
+                                 int expireDays, Invitation invite)
         throws ServiceException;
 
     /**
      * Validates that the supplied session token is still active and refreshes its expiration time
      * if so.
      */
-    public WebCreds validateSession (long clientVersion, String authtok, int expireDays)
+    public SessionData validateSession (long clientVersion, String authtok, int expireDays)
         throws ServiceException;
 
     /**

@@ -3,6 +3,8 @@
 
 package client.shell;
 
+import java.util.ArrayList;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
@@ -18,15 +20,19 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.data.AccountInfo;
-import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.MemberInvites;
+import com.threerings.msoy.web.data.WebCreds;
 
 import client.profile.SearchProfileDialog;
 import client.util.FlashClients;
 import client.util.MsoyUI;
+import client.util.events.FlashEvents;
+import client.util.events.FriendEvent;
+import client.util.events.FriendsListener;
 
 /**
  * Displays our navigation headers.
@@ -39,6 +45,19 @@ public class NaviPanel extends FlexTable
         setCellPadding(0);
         setCellSpacing(0);
         _status = status;
+
+        // register to hear about friend additions and removals
+        CShell.log("Registering NaviPanel as friends listener.");
+        FlashEvents.addListener(new FriendsListener() {
+            public void friendAdded (FriendEvent event) {
+                CShell.log("Friend added " + event.getFriend());
+                _friends.add(event.getFriend());
+            }
+            public void friendRemoved (FriendEvent event) {
+                CShell.log("Friend removed " + event.getFriend());
+                _friends.remove(event.getFriend());
+            }
+        });
     }
 
     /**
@@ -80,18 +99,14 @@ public class NaviPanel extends FlexTable
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "My Whirled", "world", "p");
                 addLink(menu, "My Home", "world", "m" + creds.getMemberId());
-                MenuBar fmenu = new MenuBar(true);
-                FriendEntry[] friends = FlashClients.getFriends();
-                if (friends.length > 0) {
-                    for (int ii = 0; ii < friends.length; ii++) {
-                        String prefix = (friends[ii].online ? "* " : "");
-                        addLink(fmenu, prefix + friends[ii].name + "'s Home", "world",
-                                "m" + friends[ii].name.getMemberId());
+                if (_friends.size() > 0) {
+                    MenuBar fmenu = new MenuBar(true);
+                    for (int ii = 0, ll = _friends.size(); ii < ll; ii++) {
+                        MemberName name = (MemberName)_friends.get(ii);
+                        addLink(fmenu, name + "'s Home", "world", "m" + name.getMemberId());
                     }
-                } else {
-                    addLink(fmenu, "Go to Your Home first...", "world", "m" + creds.getMemberId());
+                    menu.addItem("Friends' Homes", fmenu);
                 }
-                menu.addItem("Friends' Homes", fmenu);
                 if (CShell.isSupport()) {
                     addLink(menu, "Admin Console", "admin", "");
                 }
@@ -108,14 +123,9 @@ public class NaviPanel extends FlexTable
                         _popped.hide();
                     }
                 });
-                FriendEntry[] friends = FlashClients.getFriends();
-                if (friends.length > 0) {
-                    for (int ii = 0; ii < friends.length; ii++) {
-                        addLink(fmenu, (friends[ii].online ? "* " : "") + friends[ii].name,
-                                "profile", "" + friends[ii].name.getMemberId());
-                    }
-                } else {
-                    // TODO: add "invite" link if no friends?
+                for (int ii = 0, ll = _friends.size(); ii < ll; ii++) {
+                    MemberName name = (MemberName)_friends.get(ii);
+                    addLink(fmenu, name.toString(), "profile", "" + name.getMemberId());
                 }
                 menu.addItem("Profiles", fmenu);
                 addLink(menu, "Groups", "group", "");
@@ -253,4 +263,7 @@ public class NaviPanel extends FlexTable
 
     /** The currently popped up menu, for easy closing. */
     protected PopupPanel _popped;
+
+    /** Our friends. */
+    protected ArrayList _friends = new ArrayList();
 }

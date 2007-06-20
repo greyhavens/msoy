@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.web.server;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -18,20 +19,22 @@ import com.samskivert.util.ResultListener;
 import com.threerings.msoy.data.FriendAcceptedInvitationNotification;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.person.server.persist.ProfileRecord;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.WebUserService;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.AccountInfo;
+import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
-import com.threerings.msoy.web.data.Invitation;
 
 import static com.threerings.msoy.Log.log;
 
@@ -42,7 +45,7 @@ public class WebUserServlet extends MsoyServiceServlet
     implements WebUserService
 {
     // from interface WebUserService
-    public WebCreds login (long clientVersion, String username, String password, int expireDays)
+    public SessionData login (long clientVersion, String username, String password, int expireDays)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);
@@ -53,9 +56,9 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public WebCreds register (long clientVersion, String username, String password, 
-                              final String displayName, Date birthday, AccountInfo info, 
-                              int expireDays, final Invitation invite)
+    public SessionData register (long clientVersion, String username, String password, 
+                                 final String displayName, Date birthday, AccountInfo info, 
+                                 int expireDays, final Invitation invite)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);
@@ -136,7 +139,7 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public WebCreds validateSession (long clientVersion, String authtok, int expireDays)
+    public SessionData validateSession (long clientVersion, String authtok, int expireDays)
         throws ServiceException
     {
         checkClientVersion(clientVersion, authtok);
@@ -150,7 +153,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
             WebCreds creds = mrec.toCreds(authtok);
             mapUser(creds, mrec);
-            return creds;
+            return loadSessionData(mrec, creds);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to refresh session [tok=" + authtok + "].", pe);
@@ -331,7 +334,7 @@ public class WebUserServlet extends MsoyServiceServlet
         }
     }
 
-    protected WebCreds startSession (MemberRecord mrec, int expireDays)
+    protected SessionData startSession (MemberRecord mrec, int expireDays)
         throws ServiceException
     {
         try {
@@ -339,12 +342,41 @@ public class WebUserServlet extends MsoyServiceServlet
             WebCreds creds = mrec.toCreds(
                 MsoyServer.memberRepo.startOrJoinSession(mrec.memberId, expireDays));
             mapUser(creds, mrec);
-            return creds;
+            return loadSessionData(mrec, creds);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to start session [for=" + mrec.accountName + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_UNAVAILABLE);
         }
+    }
+
+    protected SessionData loadSessionData (MemberRecord mrec, WebCreds creds)
+    {
+        SessionData data = new SessionData();
+        data.creds = creds;
+
+        // fill in their flow, gold and level
+        data.flow = mrec.flow;
+        // data.gold = TODO
+        data.level = mrec.level;
+
+        // load up their new message count
+        try {
+            data.newMailCount = MsoyServer.mailMan.getRepository().getMessageCount(
+                mrec.memberId, MailFolder.INBOX_FOLDER_ID).right;
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to load new mail count [id=" + mrec.memberId + "].", pe);
+        }
+
+        // load up their friends list
+        try {
+            data.friends = MsoyServer.memberRepo.getFriends(mrec.memberId);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to load friends list [id=" + mrec.memberId + "].", pe);
+            data.friends = new ArrayList<Object>();
+        }
+
+        return data;
     }
 
     /** The regular expression defining valid permanames. */
