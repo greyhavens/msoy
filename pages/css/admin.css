@@ -81,3 +81,8 @@
 .playerBrowser .PlayerList .Highlighted {
   border-color: red;
 }
+
+.playerBrowser .PlayerList .DataRow {
+  font-size: 10px;
+  padding: 0px;
+}

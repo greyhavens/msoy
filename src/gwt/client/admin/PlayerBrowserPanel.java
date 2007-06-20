@@ -161,6 +161,9 @@ public class PlayerBrowserPanel extends HorizontalPanel
             Iterator iter = players.iterator();
             while (iter.hasNext()) {
                 final MemberInviteStatus member = (MemberInviteStatus) iter.next();
+                for (int ii = 0; ii < NUM_COLUMNS; ii++) {
+                    getFlexCellFormatter().addStyleName(row, ii, "DataRow");
+                }
                 Label nameLabel = new Label(member.name);
                 nameLabel.addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
@@ -189,8 +192,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
             }
 
             clearHighlight();
-            _activeLabel = (Label) getWidget(row.intValue(), 0);
-            _activeLabel.addStyleName("Highlighted");
+            (_activeLabel = (Label) getWidget(row.intValue(), 0)).addStyleName("Highlighted");
             return true;
         }
 
@@ -211,7 +213,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
 
         protected int _inviterId;
         protected Label _activeLabel;
-        protected Map _memberIds = new HashMap(); // Map<int, int>
+        protected Map _memberIds = new HashMap(); // Map<Integer, Integer>
     }
 
     // ArrayList<PlayerList>
