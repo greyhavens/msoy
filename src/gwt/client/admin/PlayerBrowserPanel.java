@@ -202,10 +202,10 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     }
                 });
                 nameLabel.addStyleName("Clickable");
+                _memberIds.put(new Integer(member.memberId), nameLabel);
                 setWidget(row, NAME_COLUMN, nameLabel);
                 setText(row, AVAILABLE_INVITES_COLUMN, "" + member.invitesGranted);
                 setText(row, USED_INVITES_COLUMN, "" + member.invitesSent);
-                _memberIds.put(new Integer(member.memberId), new Integer(row));
                 setText(row++, TOTAL_INVITES_COLUMN, 
                     "" + (member.invitesGranted + member.invitesSent));
                 getFlexCellFormatter().addStyleName(row-1, NUM_COLUMNS-1, "Last");
@@ -216,13 +216,13 @@ public class PlayerBrowserPanel extends HorizontalPanel
 
         public boolean highlight (int memberId) 
         {
-            Integer row = (Integer) _memberIds.get(new Integer(memberId));
-            if (row == null) {
+            Label label = (Label) _memberIds.get(new Integer(memberId));
+            if (label == null) {
                 return false;
             }
 
             clearHighlight();
-            (_activeLabel = (Label) getWidget(row.intValue(), 0)).addStyleName("Highlighted");
+            (_activeLabel = label).addStyleName("Highlighted");
             return true;
         }
 
@@ -328,7 +328,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
         protected Object[] _rows;
         protected int _inviterId;
         protected Label _activeLabel, _activeHeader;
-        protected Map _memberIds = new HashMap(); // Map<Integer, Integer>
+        protected Map _memberIds = new HashMap(); // Map<Integer, Label>
     }
 
     // ArrayList<PlayerList>
