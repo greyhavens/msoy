@@ -203,6 +203,16 @@ public class ControlBar extends HBox
         _roomeditBtn.enabled = false;
         addGroupChild(_roomeditBtn, [ UI_STD ]);
 
+        // transitional button for the new new new room editor
+        _roomeditBtnNew = new CommandButton();
+        _roomeditBtnNew.toolTip = Msgs.GENERAL.get("i.editScene");
+        _roomeditBtnNew.setCommand(ControlBarController.ROOM_EDIT_NEW, _roomeditBtnNew);
+        _roomeditBtnNew.styleName = "controlBarButtonEdit";
+        _roomeditBtnNew.enabled = false;
+        if (user != null && user.tokens.isSupport()) {
+            addGroupChild(_roomeditBtnNew, [ UI_STD ]);
+        }
+        
         if (_ctx.getWorldClient().isEmbedded()) {
             _logonPanel = new LogonPanel(_ctx, this.height - 4);
             addGroupChild(_logonPanel, [ UI_GUEST ]);
@@ -351,6 +361,7 @@ public class ControlBar extends HBox
     {
         if (_roomeditBtn != null) {
             _roomeditBtn.enabled = value;
+            _roomeditBtnNew.enabled = value;
         }
         if (_petBtn != null) {
             _petBtn.enabled = value;
@@ -404,6 +415,7 @@ public class ControlBar extends HBox
 
     /** Button for editing the current scene. */
     protected var _roomeditBtn :CommandButton;
+    protected var _roomeditBtnNew :CommandButton;
 
     /** Button for selecting/creating chat channels. */
     protected var _channelBtn :CommandButton;

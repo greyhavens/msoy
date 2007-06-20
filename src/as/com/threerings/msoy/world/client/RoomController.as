@@ -81,6 +81,7 @@ import com.threerings.msoy.world.client.updates.UpdateAction;
 import com.threerings.msoy.world.client.updates.UpdateStack;
 import com.threerings.msoy.world.client.editor.DoorTargetEditController;
 import com.threerings.msoy.world.client.editor.RoomEditPanel;
+import com.threerings.msoy.world.client.editor.RoomEditorController;
 import com.threerings.msoy.world.client.editor.ItemUsedDialog;
 
 import com.threerings.msoy.world.data.AudioData;
@@ -242,6 +243,8 @@ public class RoomController extends SceneController
         super.init(ctx, config);
 
         _mctx = (ctx as WorldContext);
+        _editor = new RoomEditorController(_mctx, this);
+        
         // watch for when we're un-minimized and the display list is valid, so that we can
         // open the editor, and place things correctly when necessary
         _mctx.getTopPanel().getControlBar().addEventListener(ControlBar.DISPLAY_LIST_VALID,
@@ -282,15 +285,22 @@ public class RoomController extends SceneController
         _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
+
+        _editor.init(_roomView);
     }
 
     // documentation inherited
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
         _updates.reset();
-        if (isRoomEditing()) {
+        if (isRoomEditingOld()) {
             cancelRoomEditing();
         }
+        if (isRoomEditingNew()) {
+            cancelRoomEditingNew();
+        }
+
+        _editor.deinit();
 
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
@@ -384,12 +394,38 @@ public class RoomController extends SceneController
             }));
     }
 
+    public function handleRoomEditNew (button :CommandButton) :void
+    {
+        _roomObj.roomService.editRoom(_mctx.getClient(), new ResultWrapper(
+            function (cause :String) :void {
+                _mctx.displayFeedback("general", cause);
+            },
+            function (result :Object) :void {
+                // if we're editing, let's finish, otherwise let's start!
+                if (isRoomEditing()) {
+                    cancelRoomEditingNew();
+                } else {
+                    beginRoomEditingNew(button);
+                }
+            }));
+    }
+
     /**
      * Returns true if we are in edit mode, false if not.
      */
     public function isRoomEditing () :Boolean
     {
-        return _roomEditPanel != null && _roomEditPanel.isOpen;
+        return (_roomEditPanel != null && _roomEditPanel.isOpen) || _editor.isEditing();
+    }
+
+    // scaffolding to enable both room editors at the same time
+    public function isRoomEditingOld () :Boolean
+    {
+        return (_roomEditPanel != null && _roomEditPanel.isOpen);
+    }
+    public function isRoomEditingNew () :Boolean
+    {
+        return _editor.isEditing();
     }
 
     /**
@@ -827,8 +863,54 @@ public class RoomController extends SceneController
      */
     public function cancelRoomEditing () :void
     {
-        _roomEditPanel.close();
+        if (isRoomEditingOld()) {
+            _roomEditPanel.close();
+        }
     }
+
+    /**
+     * Begin editing the room.
+     */
+    protected function beginRoomEditingNew (button :CommandButton) :void
+    {
+        _walkTarget.visible = false;
+        _flyTarget.visible = false;
+        setHoverSprite(null);
+
+        button.selected = true;
+
+        // this function will be called when the edit panel is closing
+        var wrapupFn :Function = function () :void {
+            //_roomEditor = null;
+            // _editor.endEditing(); // ???
+            // re-start any music
+            if (_music != null) {
+                _music.play();
+            }
+            button.selected = false;
+        }
+
+        if (_music != null && ! _musicIsBackground) {
+            _music.close();
+            _music = null;
+            _musicIsBackground = true;
+        }
+
+        //_roomEditor = new RoomEditPanel(_mctx, button, _roomView, wrapupFn);
+        //_roomEditor.open(false, null, button);
+        _editor.startEditing(wrapupFn);
+        //_roomEditor.updateUndoButton(_updates.length != 0);
+        _editor.updateUndoStatus(_updates.length != 0);
+    }
+
+    /**
+     * End editing the room.
+     */
+    public function cancelRoomEditingNew () :void
+    {
+        _editor.endEditing();
+    }
+
 
     /**
      * Applies a specified room update object to the current room.
@@ -870,8 +952,11 @@ public class RoomController extends SceneController
         var showFlyTarget :Boolean = false;
         var hoverTarget :MsoySprite = null;
 
-        if (isRoomEditing()) {
+        if (isRoomEditingOld()) {
             _roomEditPanel.controller.mouseMove(sx, sy);
+        }
+        if (isRoomEditingNew()) {
+            _editor.mouseMove(sx, sy);
         }
 
         // if shift is being held down, we're looking for locations only, so
@@ -913,7 +998,7 @@ public class RoomController extends SceneController
             }
 
             // if we're editing the room, don't highlight any furni at all,
-            if (isRoomEditing()) {
+            if (isRoomEditingOld()) {
                 hoverTarget = null;
 
                 // let the editor override our decision to display walk targets
@@ -923,6 +1008,19 @@ public class RoomController extends SceneController
                 // and tell the editor which sprite was being hovered (whether highlighted or not)
                 _roomEditPanel.controller.mouseOverSprite(hitter);
             }
+
+            // if we're editing the room, don't highlight any furni at all,
+            if (isRoomEditingNew()) {
+                hoverTarget = null;
+
+                // let the editor override our decision to display walk targets
+                showWalkTarget = (showWalkTarget && _editor.isMovementEnabled());
+                showFlyTarget = (showFlyTarget && _editor.isMovementEnabled());
+
+                // and tell the editor which sprite was being hovered (whether highlighted or not)
+                _editor.mouseOverSprite(hitter);
+            }
+            
         }
 
         _walkTarget.visible = showWalkTarget;
@@ -1032,8 +1130,11 @@ public class RoomController extends SceneController
         }
 
         // and in any case, tell the editor
-        if (isRoomEditing()) {
+        if (isRoomEditingOld()) {
             _roomEditPanel.controller.mouseClick(hitter, event);
+        }
+        if (isRoomEditingNew()) {
+            _editor.mouseClickOnSprite(hitter, event);
         }
 
     }
@@ -1390,7 +1491,10 @@ public class RoomController extends SceneController
 
     protected var _flyTarget :WalkTarget = new WalkTarget(true);
 
-    /** Panel for in-room furni editing. */
+    /** Controller for in-room furni editing. */
+    protected var _editor :RoomEditorController;
+
+    // legacy. FIXME ROBERT: DELETEME
     protected var _roomEditPanel :RoomEditPanel;
 
     /** Stack that stores the sequence of room updates. */
