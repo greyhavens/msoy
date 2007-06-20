@@ -47,14 +47,11 @@ public class NaviPanel extends FlexTable
         _status = status;
 
         // register to hear about friend additions and removals
-        CShell.log("Registering NaviPanel as friends listener.");
         FlashEvents.addListener(new FriendsListener() {
             public void friendAdded (FriendEvent event) {
-                CShell.log("Friend added " + event.getFriend());
                 _friends.add(event.getFriend());
             }
             public void friendRemoved (FriendEvent event) {
-                CShell.log("Friend removed " + event.getFriend());
                 _friends.remove(event.getFriend());
             }
         });
