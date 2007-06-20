@@ -54,7 +54,7 @@
   padding: 5px;
 }
 
-.playerBrowser .PlayerList .Bottom {
+.playerBrowser .PlayerList .Bottom td {
   border-bottom-style: solid;
 }
 
@@ -62,7 +62,7 @@
   border-right-style: solid;
 } 
 
-.playerBrowser .PlayerList .Separator {
+.playerBrowser .PlayerList .Separator td {
   border-bottom-width: 3px;
   border-bottom-style: solid;
 }
@@ -82,7 +82,7 @@
   border-color: red;
 }
 
-.playerBrowser .PlayerList .DataRow {
+.playerBrowser .PlayerList .DataRow td {
   font-size: 10px;
   padding: 0px;
 }

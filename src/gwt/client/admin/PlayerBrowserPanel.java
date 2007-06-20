@@ -3,12 +3,16 @@
 
 package client.admin;
 
+import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -149,21 +153,41 @@ public class PlayerBrowserPanel extends HorizontalPanel
             getFlexCellFormatter().setColSpan(row, 1, 3);
             getFlexCellFormatter().addStyleName(row, 1, "Last");
             setText(row++, 1, CAdmin.msgs.browserInvites());
-            for (int ii = 0; ii < NUM_COLUMNS; ii++) {
-                getFlexCellFormatter().addStyleName(row, ii, "Separator");
-            }
-            setText(row, 0, CAdmin.msgs.browserName());
-            setText(row, 1, CAdmin.msgs.browserAvailable());
-            setText(row, 2, CAdmin.msgs.browserUsed());
-            getFlexCellFormatter().addStyleName(row, 3, "Last");
-            setText(row++, 3, CAdmin.msgs.browserTotal());
+            getRowFormatter().addStyleName(row, "Clickable");
+            getRowFormatter().addStyleName(row, "Separator");
 
+            // organized in the same order as the NNN_COLUMN constants
+            String[] labelText = new String[] { CAdmin.msgs.browserName(), 
+                CAdmin.msgs.browserAvailable(), CAdmin.msgs.browserUsed(), 
+                CAdmin.msgs.browserTotal() };
+            int[] sortType = new int[] { RowComparator.SORT_TYPE_STRING, 
+                RowComparator.SORT_TYPE_INT, RowComparator.SORT_TYPE_INT, 
+                RowComparator.SORT_TYPE_INT };
+            int[] sortOrder = new int[] { RowComparator.SORT_ORDER_ASCENDING,
+                RowComparator.SORT_ORDER_DESCENDING, RowComparator.SORT_ORDER_DESCENDING,
+                RowComparator.SORT_ORDER_DESCENDING };
+            for (int ii = 0; ii < NUM_COLUMNS; ii++) {
+                Label headerLabel = new Label(labelText[ii]);
+                final int column = ii;
+                final int type = sortType[ii];
+                final int order = sortOrder[ii];
+                headerLabel.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        sort(column, type, _sortOrder);
+                        _sortOrder *= -1;
+                    }
+                    protected int _sortOrder = order;
+                });
+                setWidget(row, ii, headerLabel);
+            }
+            getFlexCellFormatter().addStyleName(row++, NUM_COLUMNS-1, "Last");
+
+            _rows = new Object[players.size()];
+            int ii = 0;
             Iterator iter = players.iterator();
             while (iter.hasNext()) {
                 final MemberInviteStatus member = (MemberInviteStatus) iter.next();
-                for (int ii = 0; ii < NUM_COLUMNS; ii++) {
-                    getFlexCellFormatter().addStyleName(row, ii, "DataRow");
-                }
+                getRowFormatter().addStyleName(row, "DataRow");
                 Label nameLabel = new Label(member.name);
                 nameLabel.addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
@@ -172,16 +196,16 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     }
                 });
                 nameLabel.addStyleName("Clickable");
-                setWidget(row, 0, nameLabel);
-                setText(row, 1, "" + member.invitesGranted);
-                setText(row, 2, "" + member.invitesSent);
-                getFlexCellFormatter().addStyleName(row, 3, "Last");
+                setWidget(row, NAME_COLUMN, nameLabel);
+                setText(row, AVAILABLE_INVITES_COLUMN, "" + member.invitesGranted);
+                setText(row, USED_INVITES_COLUMN, "" + member.invitesSent);
                 _memberIds.put(new Integer(member.memberId), new Integer(row));
-                setText(row++, 3, "" + (member.invitesGranted + member.invitesSent));
+                setText(row++, TOTAL_INVITES_COLUMN, 
+                    "" + (member.invitesGranted + member.invitesSent));
+                getFlexCellFormatter().addStyleName(row-1, NUM_COLUMNS-1, "Last");
+                _rows[ii++] = getRowFormatter().getElement(row-1);
             }
-            for (int ii = 0; ii < NUM_COLUMNS; ii++) {
-                getFlexCellFormatter().addStyleName(row-1, ii, "Bottom");
-            }
+            getRowFormatter().addStyleName(row-1, "Bottom");
         }
 
         public boolean highlight (int memberId) 
@@ -209,8 +233,93 @@ public class PlayerBrowserPanel extends HorizontalPanel
             return _inviterId;
         }
 
-        protected static final int NUM_COLUMNS = 4;
+        public void sort (int column, int type, int order)
+        {
+            int rowCount = getRowCount();
+            getRowFormatter().removeStyleName(rowCount-1, "Bottom");
+            Element table = getBodyElement();
+            for (int ii = 0; ii < _rows.length; ii++) {
+                DOM.removeChild(table, (Element) _rows[ii]);
+            }
+            Arrays.sort(_rows, new RowComparator(column, type, order));
+            for (int ii = 0; ii < _rows.length; ii++) {
+                DOM.appendChild(table, (Element) _rows[ii]);
+            }
+            getRowFormatter().addStyleName(rowCount-1, "Bottom");
+        }
 
+        protected class RowComparator implements Comparator
+        {
+            public static final int SORT_TYPE_STRING = 1;
+            public static final int SORT_TYPE_INT = 2;
+
+            public static final int SORT_ORDER_DESCENDING = -1;
+            public static final int SORT_ORDER_ASCENDING = 1;
+
+            public RowComparator (int column, int sortType, int sortOrder) 
+            {
+                _column = column;
+                _sortType = sortType;
+                _sortOrder = sortOrder;
+            }
+
+            public boolean equals (Object obj) {
+                if (!(obj instanceof RowComparator)) {
+                    return false;
+                }
+                RowComparator other = (RowComparator) obj;
+                return other._column == _column && other._sortType == _sortType;
+            }
+
+            public int compare (Object o1, Object o2) 
+            {
+                if (!(o1 instanceof Element) || !(o2 instanceof Element)) {
+                    CAdmin.log("Received non-Element when sorting player list! " +
+                        "|" + o1 + "|" + o2 + "|");
+                    return 0; 
+                }
+                String s1 = getCellContents((Element) o1);
+                String s2 = getCellContents((Element) o2);
+
+                int result = 0;
+                if (_sortType == SORT_TYPE_INT) {
+                    try {
+                        result = new Integer(s1).compareTo(new Integer(s2));
+                    } catch (NumberFormatException nfe) {
+                        CAdmin.log("NFE when sorting player list: " + nfe.getMessage());
+                    }
+                } else {
+                    result = s1.compareTo(s2);
+                }
+                return result * _sortOrder;
+            }
+
+            protected String getCellContents (Element row) 
+            {
+                if (DOM.getChildCount(row) < _column) {
+                    CAdmin.log("Element row does not contain " + _column + " children.");
+                    return "";
+                }
+                return DOM.getInnerText(DOM.getChild(row, _column));
+            }
+
+            protected int _column;
+            protected int _sortType;
+            protected int _sortOrder;
+        }
+
+        protected static final int NUM_COLUMNS = 4;
+        protected static final int NAME_COLUMN = 0;
+        protected static final int AVAILABLE_INVITES_COLUMN = 1;
+        protected static final int USED_INVITES_COLUMN = 2;
+        protected static final int TOTAL_INVITES_COLUMN = 3;
+
+        // Something super weird is going on here (possibly a bug with the GWT compiler).  
+        // This array holds only Elements, but if it is declared as Element[], the the 
+        // comparator's compare() method fails when checking if the objects it receives are
+        // instanceof Element.  If the array is declared as Object[], and every time an 
+        // element is accessed it is casted to Element, everything works fine.
+        protected Object[] _rows;
         protected int _inviterId;
         protected Label _activeLabel;
         protected Map _memberIds = new HashMap(); // Map<Integer, Integer>
