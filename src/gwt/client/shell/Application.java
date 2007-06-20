@@ -210,6 +210,8 @@ public class Application
         CShell.creds = creds;
         CShell.ident = new WebIdent(creds.getMemberId(), creds.token);
         _navi.didLogon(creds);
+        WorldClient.didLogon(creds);
+
         if (_page == null) {
             // we can now load our starting page
             onHistoryChanged(_currentToken);
@@ -226,6 +228,8 @@ public class Application
         CShell.creds = null;
         CShell.ident = null;
         _navi.didLogoff();
+        WorldClient.didLogoff();
+
         if (_page == null) {
             // we can now load our starting page
             onHistoryChanged(_currentToken);

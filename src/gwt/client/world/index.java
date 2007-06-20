@@ -102,7 +102,6 @@ public class index extends Page
     // @Override // from Page
     protected void didLogoff ()
     {
-        super.didLogoff();
         onHistoryChanged("p");
     }
 

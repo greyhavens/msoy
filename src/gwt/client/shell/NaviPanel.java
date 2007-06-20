@@ -107,7 +107,6 @@ public class NaviPanel extends FlexTable
                 if (CShell.isSupport()) {
                     addLink(menu, "Admin Console", "admin", "");
                 }
-                // TODO: bank/alchemist
             }
         });
 
@@ -162,7 +161,6 @@ public class NaviPanel extends FlexTable
                 menu.addItem("Catalog", cmenu);
                 addLink(menu, "Wiki", "wrap", "w");
                 addLink(menu, "Projects", "swiftly", "");
-                // TODO: bank/alchemist
             }
         });
 
@@ -170,7 +168,6 @@ public class NaviPanel extends FlexTable
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "My Games", "inventory", "" + Item.GAME);
                 addLink(menu, "Browse Games", "catalog", "" + Item.GAME);
-                // TODO: popular games
             }
         });
     }
@@ -204,9 +201,9 @@ public class NaviPanel extends FlexTable
         setMenu(menuidx++, "Games", CShell.cmsgs.menuGames(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "Browse", "catalog", "" + Item.GAME);
-                // TODO: popular games
             }
         });
+        _friends.clear();
     }
 
     protected void setMenu (int menuidx, String ident, String text, ClickListener listener)

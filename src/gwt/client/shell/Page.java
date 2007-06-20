@@ -286,17 +286,15 @@ public abstract class Page
      */
     protected void didLogon (WebCreds creds)
     {
-        WorldClient.didLogon(creds);
         onHistoryChanged(getPageArgs());
     }
 
     /**
      * Called when the player logs off while viewing this page. The default implementation
-     * redisplays the current page with the current args (by calling {@link #onHistoryChanged}.
+     * redisplays the current page with the current args (by calling {@link #onHistoryChanged}).
      */
     protected void didLogoff ()
     {
-        WorldClient.didLogoff();
         onHistoryChanged(getPageArgs());
     }
 
