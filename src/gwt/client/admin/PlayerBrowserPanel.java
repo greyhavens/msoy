@@ -36,21 +36,43 @@ public class PlayerBrowserPanel extends HorizontalPanel
 
     public void displayPlayersInvitedBy (final int memberId) 
     {
+        PlayerList playerList = null;
+        for (int ii = 0; _playerLists != null && ii < _playerLists.size(); ii++) {
+            playerList = (PlayerList) _playerLists.get(ii);
+            if (playerList.highlight(memberId)) {
+                break;
+            } else {
+                playerList = null;
+            }
+        }
+        if (playerList == null) {
+            // the given memberId was not found in any cached list - clear the display and 
+            // start fresh
+            clear();
+            _playerLists = new ArrayList();
+        } else {
+            int ii = _playerLists.indexOf(playerList);
+            if (ii < _playerLists.size() - 1 && 
+                    ((PlayerList) _playerLists.get(ii + 1)).getInviterId() == memberId) {
+                // we have what the caller wants cached... just display it
+                clear();
+                add(playerList);
+                PlayerList next = (PlayerList) _playerLists.get(ii + 1);
+                next.clearHighlight();
+                add(next);
+                return;
+            } else {
+                truncateList(playerList);
+            }
+        }
+
         CAdmin.adminsvc.getPlayerList(CAdmin.ident, memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
-                if (!highlightAndTruncate(memberId)) {
-                    // the given memberId was not found in either active list - clear the 
-                    // display and start with a new list.
-                    clear();
-                    _playerLists = new ArrayList();
-                    CAdmin.log("cleared lists");
-                }
                 MemberInviteResult res = (MemberInviteResult) result;
                 String title = res.name != null && !res.name.equals("") ? 
                     CAdmin.msgs.browserInvitedBy(res.name) : CAdmin.msgs.browserNoInviter();
-                CAdmin.log("adding new PlayerList with title: " + title);
-                _playerLists.add(new PlayerList(title, res.invitees != null ? res.invitees :
-                    new ArrayList()));
+                _playerLists.add(new PlayerList(title, memberId, 
+                    res.invitees != null ? res.invitees : new ArrayList()));
                 forward();
             }
             public void onFailure (Throwable cause) {
@@ -74,31 +96,12 @@ public class PlayerBrowserPanel extends HorizontalPanel
     }
 
     /**
-     * Finds the given memberId in one of the actively displayed lists, highlights that member,
-     * and truncates the display so that that is the last list available.  Returns false if the
-     * memberId is not found.
-     */
-    public boolean highlightAndTruncate (int memberId) 
-    {
-        for (int ii = 0; ii < getWidgetCount(); ii++) {
-            CAdmin.log("checking player list at " + ii);
-            PlayerList playerList = (PlayerList) getWidget(ii);
-            if (playerList.highlight(memberId)) {
-                truncateList(playerList);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Shifts the panels such that the second panel is shifted to the first position, and the
      * next panel on the list is shifted to the second position.
      */
     protected void forward ()
     {
         int size = _playerLists.size();
-        CAdmin.log("_playerLists.size() = " + size);
         int ii = size - 1;
         for (; ii > 0; ii--) {
             if (getWidgetIndex((Widget) _playerLists.get(ii)) != -1) {
@@ -133,8 +136,10 @@ public class PlayerBrowserPanel extends HorizontalPanel
 
     protected class PlayerList extends FlexTable
     {
-        public PlayerList (String title, List players)
+        public PlayerList (String title, int inviterId, List players)
         {
+            _inviterId = inviterId;
+
             setStyleName("PlayerList");
             int row = 0;
             getFlexCellFormatter().setColSpan(row, 0, NUM_COLUMNS);
@@ -168,7 +173,6 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 setText(row, 1, "" + member.invitesGranted);
                 setText(row, 2, "" + member.invitesSent);
                 getFlexCellFormatter().addStyleName(row, 3, "Last");
-                CAdmin.log("adding " + member.memberId + " to the map");
                 _memberIds.put(new Integer(member.memberId), new Integer(row));
                 setText(row++, 3, "" + (member.invitesGranted + member.invitesSent));
             }
@@ -179,24 +183,33 @@ public class PlayerBrowserPanel extends HorizontalPanel
 
         public boolean highlight (int memberId) 
         {
-            CAdmin.log("looking for member id " + memberId);
             Integer row = (Integer) _memberIds.get(new Integer(memberId));
             if (row == null) {
-                CAdmin.log("memberId not found");
                 return false;
             }
 
-            if (_activeLabel != null) {
-                _activeLabel.removeStyleName("Highlighted");
-            }
+            clearHighlight();
             _activeLabel = (Label) getWidget(row.intValue(), 0);
             _activeLabel.addStyleName("Highlighted");
-            CAdmin.log("memberId highlighted");
             return true;
+        }
+
+        public void clearHighlight ()
+        {
+            if (_activeLabel != null) {
+                _activeLabel.removeStyleName("Highlighted");
+                _activeLabel = null;
+            }
+        }
+
+        public int getInviterId () 
+        {
+            return _inviterId;
         }
 
         protected static final int NUM_COLUMNS = 4;
 
+        protected int _inviterId;
         protected Label _activeLabel;
         protected Map _memberIds = new HashMap(); // Map<int, int>
     }
