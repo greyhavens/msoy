@@ -4,11 +4,11 @@
 package com.threerings.msoy.web.client;
 
 import java.util.Date;
-import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.data.MemberInviteResult;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -41,6 +41,6 @@ public interface AdminService extends RemoteService
     /**
      * Fetches a list of players who were invited by inviterId. 
      */
-    public List getPlayerList (WebIdent ident, int inviterId)
+    public MemberInviteResult getPlayerList (WebIdent ident, int inviterId)
         throws ServiceException;
 }

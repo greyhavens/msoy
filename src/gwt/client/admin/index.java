@@ -37,8 +37,8 @@ public class index extends EditemEntryPoint
     {
         if (CAdmin.ident == null) {
             setContent(MsoyUI.createLabel(CAdmin.msgs.indexLogon(), "infoLabel"));
-        } else if ("browser".equals(token) && CAdmin.isAdmin()) {
-            displayPlayerBrowser();
+        } else if (token != null && token.startsWith("browser") && CAdmin.isAdmin()) {
+            displayPlayerBrowser(token.length() > 8 ? token.substring(8) : "");
         } else {
             displayDashboard();
         }
@@ -73,9 +73,23 @@ public class index extends EditemEntryPoint
         }
     }
 
-    protected void displayPlayerBrowser ()
+    protected void displayPlayerBrowser (String memberIdString)
     {
         setPageTitle(CAdmin.msgs.browserTitle());
-        setContent(new PlayerBrowserPanel());
+
+        int memberId = 0;
+        try {
+            memberId = Integer.parseInt(memberIdString);
+        } catch (NumberFormatException nfe) {
+            // nada - keep memberId at 0
+        }
+
+        if (_playerBrowser == null) {
+            _playerBrowser = new PlayerBrowserPanel();
+        } 
+        setContent(_playerBrowser);
+        _playerBrowser.displayPlayersInvitedBy(memberId);
     }
+
+    protected PlayerBrowserPanel _playerBrowser;
 }

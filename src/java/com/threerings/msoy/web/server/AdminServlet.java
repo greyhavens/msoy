@@ -31,6 +31,7 @@ import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
 
 import com.threerings.msoy.web.client.AdminService;
 import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.data.MemberInviteResult;
 import com.threerings.msoy.web.data.MemberInviteStatus;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
@@ -136,7 +137,7 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public List getPlayerList (WebIdent ident, int inviterId)
+    public MemberInviteResult getPlayerList (WebIdent ident, int inviterId)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
@@ -144,17 +145,27 @@ public class AdminServlet extends MsoyServiceServlet
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
 
-        List<MemberInviteStatus> players = new ArrayList<MemberInviteStatus>();
+        MemberInviteResult res = new MemberInviteResult();
         try {
+            MemberRecord memRec = MsoyServer.memberRepo.loadMember(inviterId);
+            if (memRec != null) {
+                res.name = memRec.permaName == null || memRec.permaName.equals("") ?
+                    memRec.name : memRec.permaName;
+                res.memberId = inviterId;
+            }
+
+            List<MemberInviteStatus> players = new ArrayList<MemberInviteStatus>();
             for (MemberInviteStatusRecord rec : 
                     MsoyServer.memberRepo.getMembersInvitedBy(inviterId)) {
                 players.add(rec.toWebObject());
             }
+            res.invitees = players;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getPlayerList failed [inviterId=" + inviterId + "]", pe);
             throw new ServiceException(pe.getMessage());
         }
-        return players;
+
+        return res;
     }
 
     protected static String createTempPassword ()
