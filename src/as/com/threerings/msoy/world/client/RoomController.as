@@ -21,6 +21,7 @@ import mx.core.UIComponent;
 import mx.managers.ToolTipManager;
 import mx.managers.ISystemManager;
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Integer;
 import com.threerings.util.NetUtil;
@@ -65,6 +66,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.client.InventoryLoader;
 import com.threerings.msoy.item.data.all.Audio;
+import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -97,6 +99,9 @@ import com.threerings.msoy.world.data.SceneAttrsUpdate;
 import com.threerings.msoy.world.data.WorldMemberInfo;
 import com.threerings.msoy.world.data.WorldOccupantInfo;
 import com.threerings.msoy.world.data.WorldPetInfo;
+
+import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.chat.client.ReportingListener;
@@ -467,8 +472,29 @@ public class RoomController extends SceneController
             // see if we can control our own avatar right now...
             var canControl :Boolean = _mctx.worldProps.userControlsAvatar;
 
+//            var avItems :Array = [];
+//
+//            var avatars :Array = us.getItems(Item.AVATAR);
+//            ArrayUtil.sort(avatars);
+//            // TODO: showing the thumbnails at half-thumbnail size is currently broken due
+//            // to layout bugs in ScrollableMenu when there are icons and scrollbars are needed.
+//            // Additonally, setting variableRowHeight=true breaks the ScrollableMenu. Both
+//            // are needed to make this feature work correctly.
+//            var iconW :Number = 20; //*/ MediaDesc.DIMENSIONS[0];
+//            var iconH :Number = 20; //*/ MediaDesc.DIMENSIONS[1];
+//            for (var ii :int = 0; ii < Math.min(avatars.length, 5); ii++) {
+//                var av :Avatar = avatars[ii] as Avatar;
+//                var smc :ScalingMediaContainer = new ScalingMediaContainer(iconW, iconH);
+//                smc.setMediaDesc(av.getThumbnailMedia());
+//                var wrap :MediaWrapper = new MediaWrapper(smc, iconW, iconH, true);
+//                avItems.push({ label: av.name }); //, iconObject: wrap }); // TODO
+//            }
+//
+//            avItems.push({ label: "view full list...", // TODO: xlate
+//                command: MsoyController.VIEW_MY_AVATARS });
             // add a menu item for changing their avatar
             menuItems.push({ label: Msgs.GENERAL.get("b.change_avatar"),
+//                children: avItems, enabled: canControl });
                 command: MsoyController.VIEW_MY_AVATARS, enabled: canControl });
 
             // create a sub-menu for playing avatar actions
@@ -500,8 +526,8 @@ public class RoomController extends SceneController
             var memId :int = occInfo.getMemberId();
             var isGuest :Boolean = (memId == MemberName.GUEST_ID);
             var isFriend :Boolean = us.friends.containsKey(memId);
-//            menuItems.push({ label: Msgs.GENERAL.get("b.tell"),
-//                command: MsoyController.TELL, arg: memId });
+            menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
+                command: MsoyController.OPEN_CHANNEL, arg: occInfo.username });
 
             if (!isGuest) {
                 menuItems.push(
@@ -518,6 +544,8 @@ public class RoomController extends SceneController
         // pop up the menu where the mouse is
         if (menuItems.length > 0) {
             var menu :CommandMenu = CommandMenu.createMenu(menuItems);
+// TODO: see note above, regarding avatar thumbnails.
+//            menu.variableRowHeight = true;
             menu.setDispatcher(_roomView);
             menu.show();
         }
