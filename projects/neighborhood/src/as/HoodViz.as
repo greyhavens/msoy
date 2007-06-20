@@ -322,7 +322,11 @@ public class HoodViz extends Sprite
             var text :TextField = new TextField();
             text.defaultTextFormat = format;
             text.embedFonts = true;
-            text.text = toPlaceName(neighbor.getName()) + ": " + neighbor.population;
+            var name :String = toPlaceName(neighbor.getName());
+            if (neighbor.population > 0) {
+                name += ": " + neighbor.population;
+            }
+            text.text = name;
             text.filters = [ new GlowFilter(0x660000, 1, 3, 3, 255) ];
             text.autoSize = TextFieldAutoSize.CENTER;
             text.wordWrap = true;
