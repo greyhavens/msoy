@@ -19,8 +19,8 @@ import com.threerings.msoy.data.all.ChannelName;
 public class ChatChannel extends SimpleStreamableObject
     implements Hashable
 {
-    /** A chat channel between a player and their friend. Implemented using tells. */
-    public static const FRIEND_CHANNEL :int = 1;
+    /** A chat channel between two players. Implemented using tells. */
+    public static const MEMBER_CHANNEL :int = 1;
 
     /** A chat channel open to all members of a group. */
     public static const GROUP_CHANNEL :int = 2;
@@ -36,11 +36,11 @@ public class ChatChannel extends SimpleStreamableObject
     public var ident :Name;
 
     /**
-     * Creates a channel identifier for a channel communicating with the specified friend.
+     * Creates a channel identifier for a channel communicating with the specified member.
      */
-    public static function makeFriendChannel (friend :MemberName) :ChatChannel
+    public static function makeMemberChannel (member :MemberName) :ChatChannel
     {
-        return new ChatChannel(FRIEND_CHANNEL, friend);
+        return new ChatChannel(MEMBER_CHANNEL, member);
     }
 
     /**

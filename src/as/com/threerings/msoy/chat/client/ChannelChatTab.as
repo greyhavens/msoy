@@ -101,7 +101,7 @@ public class ChannelChatTab extends ChatTab
     // @Override // from ChatTab
     override public function sendChat (message :String) :void
     {
-        if (channel.type == ChatChannel.FRIEND_CHANNEL) {
+        if (channel.type == ChatChannel.MEMBER_CHANNEL) {
             _ctx.getChatDirector().requestTell(channel.ident as Name, message, null);
 
         } else {

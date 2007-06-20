@@ -79,7 +79,7 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     /**
-     * Opens the chat interface for the supplied friend, group or private chat channel, selecting
+     * Opens the chat interface for the supplied player, group or private chat channel, selecting
      * the appropriate tab if said channel is already open.
      *
      * @param name either a MemberName, GroupName or ChannelName.
@@ -88,8 +88,8 @@ public class MsoyChatDirector extends ChatDirector
     {
         var channel :ChatChannel = makeChannel(name);
 
-        // if this is a friend or already open channel, open/select the UI immediately
-        if (channel.type == ChatChannel.FRIEND_CHANNEL ||
+        // if this is a member or already open channel, open/select the UI immediately
+        if (channel.type == ChatChannel.MEMBER_CHANNEL ||
             _chandlers.containsKey(channel.toLocalType())) {
             _ccpanel.getChatDisplay(channel, getHistory(channel), true);
             return;
@@ -104,7 +104,7 @@ public class MsoyChatDirector extends ChatDirector
 
     /**
      * Returns the channel object for the specified channel or null if the channel is not open or
-     * has no channel object (is a friend channel).
+     * has no channel object (is a member channel).
      */
     public function getChannelObject (channel :ChatChannel) :ChatChannelObject
     {
@@ -193,8 +193,8 @@ public class MsoyChatDirector extends ChatDirector
         if (channel != null) {
             var history :HistoryList = getHistory(channel);
             history.addMessage(msg);
-            // if it's a message from a friend, we open the UI even if it's not open
-            if (channel.type == ChatChannel.FRIEND_CHANNEL) {
+            // if it's a message from a member, we open the UI even if it's not open
+            if (channel.type == ChatChannel.MEMBER_CHANNEL) {
                 _ccpanel.getChatDisplay(channel, history, false).displayMessage(msg, false);
             } else {
                 // if not, the UI should already be open and if it's not then a message must have
@@ -226,7 +226,7 @@ public class MsoyChatDirector extends ChatDirector
     protected function makeChannel (name :Name) :ChatChannel
     {
         if (name is MemberName) {
-            return ChatChannel.makeFriendChannel(name as MemberName);
+            return ChatChannel.makeMemberChannel(name as MemberName);
         } else if (name is GroupName) {
             return ChatChannel.makeGroupChannel(name as GroupName);
         } else if (name is ChannelName) {
@@ -247,7 +247,7 @@ public class MsoyChatDirector extends ChatDirector
         if ((msg.localtype == ChatCodes.USER_CHAT_TYPE && msg is UserMessage) ||
             msg is TellFeedbackMessage) {
             var umsg :UserMessage = (msg as UserMessage);
-            return ChatChannel.makeFriendChannel(umsg.getSpeakerDisplayName() as MemberName);
+            return ChatChannel.makeMemberChannel(umsg.getSpeakerDisplayName() as MemberName);
         }
         var handler :ChannelHandler = _chandlers.get(msg.localtype) as ChannelHandler;
         if (handler != null) {

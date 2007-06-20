@@ -15,8 +15,8 @@ import com.threerings.msoy.data.all.ChannelName;
  */
 public class ChatChannel extends SimpleStreamableObject
 {
-    /** A chat channel between a player and their friend. Implemented using tells. */
-    public static final int FRIEND_CHANNEL = 1;
+    /** A chat channel between two players. Implemented using tells. */
+    public static final int MEMBER_CHANNEL = 1;
 
     /** A chat channel open to all members of a group. */
     public static final int GROUP_CHANNEL = 2;
@@ -32,11 +32,11 @@ public class ChatChannel extends SimpleStreamableObject
     public Name ident;
 
     /**
-     * Creates a channel identifier for a channel communicating with the specified friend.
+     * Creates a channel identifier for a channel communicating with the specified player.
      */
-    public static ChatChannel makeFriendChannel (MemberName friend)
+    public static ChatChannel makeMemberChannel (MemberName member)
     {
-        return new ChatChannel(FRIEND_CHANNEL, friend);
+        return new ChatChannel(MEMBER_CHANNEL, member);
     }
 
     /**

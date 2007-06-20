@@ -183,7 +183,7 @@ public /*abstract*/ class BaseClient extends Client
     protected function externalOpenChannel (type :int, name :String, id :int) :void
     {
         var nameObj :Name;
-        if (type == ChatChannel.FRIEND_CHANNEL) {
+        if (type == ChatChannel.MEMBER_CHANNEL) {
             nameObj = new MemberName(name, id);
         } else if (type == ChatChannel.GROUP_CHANNEL) {
             nameObj = new GroupName(name, id);
