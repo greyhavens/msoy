@@ -274,7 +274,8 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     return false;
                 }
                 RowComparator other = (RowComparator) obj;
-                return other._column == _column && other._sortType == _sortType;
+                return other._column == _column && other._sortType == _sortType &&
+                    other._sortOrder == _sortOrder;
             }
 
             public int compare (Object o1, Object o2) 
@@ -321,7 +322,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
         protected static final int TOTAL_INVITES_COLUMN = 3;
 
         // Something super weird is going on here (possibly a bug with the GWT compiler).  
-        // This array holds only Elements, but if it is declared as Element[], the the 
+        // This array holds only Elements, but if it is declared as Element[], then the 
         // comparator's compare() method fails when checking if the objects it receives are
         // instanceof Element.  If the array is declared as Object[], and every time an 
         // element is accessed it is casted to Element, everything works fine.
