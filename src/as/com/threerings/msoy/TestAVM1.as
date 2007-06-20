@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy {
 
 import flash.display.DisplayObject;

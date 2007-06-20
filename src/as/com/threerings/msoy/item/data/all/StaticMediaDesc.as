@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.item.data.all {
 
 import com.threerings.io.ObjectInputStream;

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.client.persist {
 
 import flash.utils.ByteArray;

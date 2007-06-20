@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.ui {
 
 public class ScalingMediaContainer extends MsoyMediaContainer

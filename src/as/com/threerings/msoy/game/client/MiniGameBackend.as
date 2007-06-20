@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.game.client {
 
 import com.threerings.msoy.client.ControlBackend;

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.world.client.editor {
 
 import com.threerings.msoy.world.client.MsoySprite;

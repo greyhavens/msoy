@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.world.client {
 
 import flash.display.BitmapData;

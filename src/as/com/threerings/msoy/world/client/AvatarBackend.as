@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.world.client {
 
 public class AvatarBackend extends ActorBackend

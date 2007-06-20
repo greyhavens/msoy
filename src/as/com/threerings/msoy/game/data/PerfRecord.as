@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.game.data {
 
 import com.threerings.util.Comparable;

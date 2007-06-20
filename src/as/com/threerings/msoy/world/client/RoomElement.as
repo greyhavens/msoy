@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.world.client {
 
 import com.threerings.msoy.world.data.MsoyLocation;

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.data {
 
 import com.threerings.presents.net.BootstrapData;

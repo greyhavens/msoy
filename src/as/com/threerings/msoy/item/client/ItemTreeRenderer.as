@@ -1,5 +1,6 @@
 //
 // $Id$
+
 package com.threerings.msoy.item.client {
 
 import mx.containers.Canvas;

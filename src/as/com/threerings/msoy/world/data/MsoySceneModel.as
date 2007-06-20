@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.world.data {
 
 import com.threerings.util.ArrayIterator;

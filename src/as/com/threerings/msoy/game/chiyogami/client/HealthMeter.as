@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.game.chiyogami.client {
 
 import flash.display.GradientType;

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.chat.client {
 
 import flash.geom.Rectangle;
