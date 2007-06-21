@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
@@ -20,6 +21,10 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.MouseListenerAdapter;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -221,11 +226,13 @@ public class PlayerBrowserPanel extends HorizontalPanel
             while (iter.hasNext()) {
                 final MemberInviteStatus member = (MemberInviteStatus) iter.next();
                 getRowFormatter().addStyleName(row, "DataRow");
-                Label nameLabel = new Label(member.name);
-                nameLabel.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        History.newItem(Application.createLinkToken("admin", 
-                            "browser_" + member.memberId));
+                final Label nameLabel = new Label(member.name);
+                final PopupPanel personMenuPanel = getPopupMenu(member.memberId);
+                nameLabel.addMouseListener(new MouseListenerAdapter() {
+                    public void onMouseDown (Widget sender, int x, int y) {
+                        personMenuPanel.setPopupPosition(nameLabel.getAbsoluteLeft() + x, 
+                            nameLabel.getAbsoluteTop() + y);
+                        personMenuPanel.show();
                     }
                 });
                 nameLabel.addStyleName("Clickable");
@@ -279,6 +286,24 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 DOM.appendChild(table, (Element) _rows[ii]);
             }
             getRowFormatter().addStyleName(rowCount-1, "Bottom");
+        }
+
+        protected PopupPanel getPopupMenu (int memberId) 
+        {
+            final PopupPanel panel = new PopupPanel(true);
+            MenuBar menu = new MenuBar(true);
+            Command hideCmd = new Command () {
+                public void execute () {
+                    panel.hide();
+                }
+            };
+            menu.addItem(Application.createLinkHtml("View Invitees", "admin", 
+                                                    "browser_" + memberId),
+                         true, hideCmd);
+            menu.addItem(Application.createLinkHtml("View Profile", "profile", "" + memberId),
+                         true, hideCmd);
+            panel.add(menu);
+            return panel;
         }
 
         protected class RowComparator implements Comparator
