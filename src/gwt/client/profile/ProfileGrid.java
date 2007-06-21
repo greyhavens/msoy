@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.util;
+package client.profile;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;

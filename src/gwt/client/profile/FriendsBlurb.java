@@ -19,7 +19,6 @@ import com.threerings.msoy.web.data.MemberCard;
 
 import client.msgs.FriendInvite;
 import client.msgs.MailComposition;
-import client.util.ProfileGrid;
 
 /**
  * Displays a person's friends list.

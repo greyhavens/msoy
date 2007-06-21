@@ -11,8 +11,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import client.util.ProfileGrid;
-
 public class SearchResultsPanel extends VerticalPanel
 {
     /** The number of columns of items to display. */
