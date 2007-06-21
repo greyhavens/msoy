@@ -44,7 +44,7 @@ public class CatalogPanel extends VerticalPanel
     implements TabListener, ItemSearchSortPanel.Listener, TagCloud.TagListener
 {
     /** The number of columns of items to display. */
-    public static final int COLUMNS = 4;
+    public static final int COLUMNS = 3;
 
     /** The number of rows of items to display. */
     public static final int ROWS = 3;
@@ -63,7 +63,7 @@ public class CatalogPanel extends VerticalPanel
                 History.newItem(Application.createLinkToken("catalog", args));
             }
             protected Widget createWidget (Object item) {
-                return new ItemContainer((CatalogListing)item, CatalogPanel.this);
+                return new ListingContainer((CatalogListing)item, CatalogPanel.this);
             }
             protected String getEmptyMessage () {
                 String name = Item.getTypeName(_type);

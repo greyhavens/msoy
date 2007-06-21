@@ -57,7 +57,7 @@ public class ItemContainer extends FlexTable
         clear();
 
         Widget mview = MediaUtil.createMediaView(
-            item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
+            item.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE);
         if (mview instanceof Image) {
             ((Image)mview).addClickListener(_clicker);
             mview.addStyleName("actionLabel");
