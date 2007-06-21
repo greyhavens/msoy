@@ -438,7 +438,11 @@ public class GroupView extends VerticalPanel
         MenuBar menu = new MenuBar(true);
         menu.addItem(Application.createLinkHtml(CGroup.msgs.viewViewProfile(), "profile",
                                                 "" + membership.member.getMemberId()),
-                     true, (Command)null);
+                     true, new Command() {
+                                public void execute () {
+                                    parent.hide();
+                                }
+                           });
         MenuItem promote = new MenuItem(CGroup.msgs.viewPromote(), new Command() {
             public void execute() {
                 (new PromptPopup(CGroup.msgs.viewPromotePrompt(membership.member.toString())) {
