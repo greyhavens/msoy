@@ -4,51 +4,13 @@
  * CSS styles for the (shared) Item interfaces.
  */
 
-.tagContents {
-   padding: 5px;
-   font-size: 9pt;
-   text-align: right;
-   font-weight: bold;
-}
-
-.tagSize1 {
-   font-size: 7pt;
-   font-style: italic;
-   font-weight: normal;
-   text-decoration: underline;
-   display: inline;
-}
-
-.tagSize2 {
-   font-size: 8pt;
-   font-style: italic;
-   font-weight: normal;
-   text-decoration: underline;
-   display: inline;
-}
-
-.tagSize3 {
-   font-size: 9pt;
-   font-style: italic;
-   font-weight: normal;
-   text-decoration: underline;
-   display: inline;
-}
-
-.tagSize4 {
-   font-size: 10pt;
-   font-style: italic;
-   font-weight: normal;
-   text-decoration: underline;
-   display: inline;
-}
-
-.tagSize5 {
-   font-size: 11pt;
-   font-style: italic;
-   font-weight: normal;
-   text-decoration: underline;
-   display: inline;
+.tagCloud {
+  background-image: url(/images/item/top_tags_bg.png);
+  background-repeat: no-repeat;
+  padding: 0px 10px 0px 48px;
+  width: 241px;
+  height: 59px;
+  font-size: 9pt;
 }
 
 .itemTypePanel .Left {
@@ -67,8 +29,7 @@
   text-decoration: none;
   font-family: Arial, Verdana, Helvetica, sans-serif;
   font-size: 12px;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding: 0px 5px;
 }
 
 .itemTypePanel .Tab .Button a {
@@ -157,9 +118,9 @@
 }
 
 .itemDetailPanel .LabelLink {
-    cursor: pointer;
-    text-decoration: underline;
-    color: black;
+   cursor: pointer;
+   text-decoration: underline;
+   color: black;
 }
 
 .tagDetailPanel {
@@ -184,9 +145,7 @@
 .itemSortLabel {
   font-family: Arial, Verdana, Helvetica, sans-serif;
   font-size: 14px;
-  padding-left: 15px;
-  padding-top: 2px;
-  padding-right: 5px;
+  padding: 2px 5px 0px 15px;
   width: 50px;
   vertical-align: middle;
 }
@@ -206,7 +165,7 @@
 }
 
 .creatorContents {
-   font-size: 9pt;
-   text-align: left;
-   font-weight: bold;
+  font-size: 9pt;
+  text-align: left;
+  font-weight: bold;
 }

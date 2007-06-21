@@ -32,7 +32,7 @@ public class FriendsBlurb extends Blurb
         _content = new ProfileGrid(FRIEND_ROWS, FRIEND_COLUMNS, "");
         _content.setVerticalOrienation(true);
         _content.setWidth("100%");
-        _content.setStyleName("friendsBlurb");
+        _content.addStyleName("friendsBlurb");
         return _content;
     }
 
@@ -62,8 +62,8 @@ public class FriendsBlurb extends Blurb
                                         CProfile.msgs.inviteBody()).show();
                 }
             });
-            _content.addToHeader(WidgetUtil.makeShim(15, 1));
-            _content.addToHeader(inviteButton);
+//             _content.addToHeader(WidgetUtil.makeShim(15, 1));
+//             _content.addToHeader(inviteButton);
         }
     }
 

@@ -10,6 +10,7 @@
 }
 
 .inventoryContents {
+  width: 650px;
   padding: 10px;
   margin-bottom: 10px;
 }

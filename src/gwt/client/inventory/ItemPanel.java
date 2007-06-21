@@ -58,7 +58,7 @@ public class ItemPanel extends VerticalPanel
                 return CInventory.msgs.panelNoItems(Item.getTypeName(_type));
             }
         };
-        _contents.setStyleName("inventoryContents");
+        _contents.addStyleName("inventoryContents");
 
         // this will allow us to create new items
         _upload = new FlexTable();

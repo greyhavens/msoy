@@ -9,85 +9,39 @@ import java.util.Iterator;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.InlineLabel;
+import client.util.MsoyUI;
 
 /**
  * Fetches and displays the tag cloud for a given item type.
  */
-public class TagCloud extends DockPanel
+public class TagCloud extends Grid
 {
-    public interface TagCloudListener
+    public interface TagListener
     {
-        /**
-         * Let the listener know that a tag has been chosen, or cleared if the argument is null.
-         */
-        void tagClicked(String tag);
+        /** Called when a tag has been clicked (or cleared if the argument is null). */
+        public void tagClicked (String tag);
     }
-    
-    public TagCloud (byte type)
+
+    public TagCloud (byte type, TagListener listener)
     {
-        this(type, null);
-    }
-    
-    public TagCloud (byte type, TagCloudListener listener)
-    {
+        super(TAG_ROWS, TAG_COLS);
+        setStyleName("tagCloud");
         _type = type;
         _listener = listener;
-        _tagFlow = new FlowPanel();
-        add(_tagFlow, DockPanel.CENTER);
-        setStyleName("tagContents");
-        CItem.catalogsvc.getPopularTags(_type, 20, new TagCallback());
+        CItem.catalogsvc.getPopularTags(_type, TAG_ROWS * TAG_COLS, new TagCallback());
     }
-    
-    public void setListener (TagCloudListener listener)
-    {
-        _listener = listener;
-    }
-    
-    public void setCurrentTag (String tag)
-    {
-        if (tag == null) {
-            setTagLine(null);
-            return;
-        }
-        FlowPanel tagLine = new FlowPanel();
-        tagLine.add(new InlineLabel(CItem.imsgs.currentTag(), true, false, true));
-        Label tagLabel = new InlineLabel(tag);
-        tagLine.add(tagLabel);
-        Label clearLabel = new InlineLabel(CItem.imsgs.clearCurrentTag(), false, true, false);
-        clearLabel.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
-                _listener.tagClicked(null);
-            }
-        });
-        tagLine.add(clearLabel);
-        setTagLine(tagLine);
-    }
-    
-    protected void setTagLine (Widget line)
-    {
-        if (_bottomLine != null) {
-            remove(_bottomLine);
-        }
-        _bottomLine = line;
-        if (line != null) {
-            add(line, DockPanel.SOUTH);
-        }
-    }
-    
 
     protected class TagCallback implements AsyncCallback
     {
         public void onSuccess (Object result) {
+            clear();
+
             HashMap _tagMap = (HashMap) result;
             if (_tagMap.size() == 0) {
-                setTagLine(new Label(CItem.imsgs.msgNoTags()));
+                setText(0, 0, CItem.imsgs.msgNoTags());
                 return;
             }
 
@@ -105,38 +59,39 @@ public class TagCloud extends DockPanel
             Object[] _sortedTags = _tagMap.keySet().toArray();
             Arrays.sort(_sortedTags);
 
-            _tagFlow.clear();
-            _tagFlow.add(new InlineLabel(CItem.imsgs.cloudCommonTags(), false, false, true));
-
-            for (int ii = 0; ii < _sortedTags.length; ii ++) {
-                if (ii > 0) {
-                    _tagFlow.add(new InlineLabel(", "));
-                }
-                final String tag = (String) _sortedTags[ii];
-                int count = ((Integer)_tagMap.get(tag)).intValue();
-                double rate = ((double) count) / _maxTagCount;
-                // let's start with just 4 different tag sizes
-                int size = 1+(int)(4 * rate);
-                Label label = new Label(tag);
-                label.setStyleName("tagSize" + size);
-                label.addClickListener(new ClickListener() {
-                    public void onClick (Widget widget) {
-                        _listener.tagClicked(tag);
+            for (int row = 0; row < TAG_ROWS; row++) {
+                for (int col = 0; col < TAG_COLS; col++) {
+                    int idx = (row * TAG_COLS + col);
+                    if (idx >= _sortedTags.length) {
+                        clearCell(row, col);
+                        continue;
                     }
-                });
-                _tagFlow.add(label);
+
+//                     int count = ((Integer)_tagMap.get(tag)).intValue();
+//                     double rate = ((double) count) / _maxTagCount;
+//                     // let's start with just 4 different tag sizes
+//                     int size = 1+(int)(4 * rate);
+
+                    final String tag = (String) _sortedTags[idx];
+                    setWidget(row, col, MsoyUI.createActionLabel(tag, new ClickListener() {
+                        public void onClick (Widget widget) {
+                            _listener.tagClicked(tag);
+                        }
+                    }));
+                }
             }
         }
 
         public void onFailure (Throwable caught) {
             CItem.log("getPopularTags failed", caught);
-            _tagFlow.clear();
-            setTagLine(new InlineLabel(CItem.serverError(caught)));
+            clear();
+            setText(0, 0, CItem.serverError(caught));
         }
     }
 
     protected byte _type;
-    protected Widget _bottomLine;
-    protected FlowPanel _tagFlow;
-    protected TagCloudListener _listener;
+    protected TagListener _listener;
+
+    protected static final int TAG_ROWS = 3;
+    protected static final int TAG_COLS = 3;
 }

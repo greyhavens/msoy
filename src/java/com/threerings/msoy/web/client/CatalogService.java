@@ -6,6 +6,7 @@ package com.threerings.msoy.web.client;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -20,11 +21,22 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface CatalogService extends RemoteService
 {
+    /** Provides results for {@link #loadCatalog}. */
+    public static class CatalogResult implements IsSerializable
+    {
+        public int listingCount;
+        public List listings;
+    }
+
     /**
      * Loads all catalogue items of the specified type. If memberId == 0, it's a guest request.
+     *
+     * @param includeCount if true, the count of all listings matching the query terms will also be
+     * computed and included in the result.
      */
-    public List loadCatalog (int memberId, byte type, byte sortBy, String search, String tag,
-                             int creator, int offset, int rows)
+    public CatalogResult loadCatalog (int memberId, byte type, byte sortBy, String search,
+                                      String tag, int creator, int offset, int rows,
+                                      boolean includeCount)
         throws ServiceException;
 
     /**

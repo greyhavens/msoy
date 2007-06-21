@@ -24,14 +24,6 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   String sortByPriceDesc();
 
   /**
-   * Translated "Browsing by Creator: ".
-   * 
-   * @return translated "Browsing by Creator: "
-   * @gwt.key creatorDisplay
-   */
-  String creatorDisplay();
-
-  /**
    * Translated "Rating".
    * 
    * @return translated "Rating"
@@ -43,9 +35,9 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "(clear)".
    * 
    * @return translated "(clear)"
-   * @gwt.key clearCurrentCreator
+   * @gwt.key catalogClearFilter
    */
-  String clearCurrentCreator();
+  String catalogClearFilter();
 
   /**
    * Translated "List Date".
@@ -72,6 +64,14 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   String listingDelistTip();
 
   /**
+   * Translated "Buy!".
+   * 
+   * @return translated "Buy!"
+   * @gwt.key listingBuy
+   */
+  String listingBuy();
+
+  /**
    * Translated "Catalog".
    * 
    * @return translated "Catalog"
@@ -80,12 +80,36 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   String catalogTitle();
 
   /**
-   * Translated "Buy!".
+   * Translated "No filter.".
    * 
-   * @return translated "Buy!"
-   * @gwt.key listingBuy
+   * @return translated "No filter."
+   * @gwt.key catalogNoFilter
    */
-  String listingBuy();
+  String catalogNoFilter();
+
+  /**
+   * Translated "Filtered by creator: {0}".
+   * 
+   * @return translated "Filtered by creator: {0}"
+   * @gwt.key catalogCreatorFilter
+   */
+  String catalogCreatorFilter(String arg0);
+
+  /**
+   * Translated "Filtered by tag: {0}".
+   * 
+   * @return translated "Filtered by tag: {0}"
+   * @gwt.key catalogTagFilter
+   */
+  String catalogTagFilter(String arg0);
+
+  /**
+   * Translated "Filtered by search: {0}".
+   * 
+   * @return translated "Filtered by search: {0}"
+   * @gwt.key catalogSearchFilter
+   */
+  String catalogSearchFilter(String arg0);
 
   /**
    * Translated "There are no {0} items listed.".

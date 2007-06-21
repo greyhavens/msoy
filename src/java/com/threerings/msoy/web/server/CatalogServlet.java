@@ -50,12 +50,14 @@ public class CatalogServlet extends MsoyServiceServlet
     implements CatalogService
 {
     // from interface CatalogService
-    public List loadCatalog (int memberId, byte type, byte sortBy, String search, String tag,
-                             int creator, int offset, int rows)
+    public CatalogResult loadCatalog (int memberId, byte type, byte sortBy, String search,
+                                      String tag, int creator, int offset, int rows,
+                                      boolean includeCount)
         throws ServiceException
     {
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
 
+        CatalogResult result = new CatalogResult();
         List<CatalogListing> list = new ArrayList<CatalogListing>();
         try {
             boolean mature = false;
@@ -91,11 +93,17 @@ public class CatalogServlet extends MsoyServiceServlet
                 listing.creator = map.get(listing.creator.getMemberId());
             }
 
+            // if they want the total number of matches, compute that as well
+            if (includeCount) {
+                result.listingCount = repo.countListings(mature, search, tagId, creator);
+            }
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load catalog [type=" + type + ", sort=" + sortBy +
                     ", search=" + search + ", offset=" + offset + ", rows=" + rows + "].", pe);
         }
-        return list;
+        result.listings = list;
+        return result;
     }
 
     // from interface CatalogService

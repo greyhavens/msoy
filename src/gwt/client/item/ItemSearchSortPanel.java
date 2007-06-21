@@ -21,17 +21,11 @@ public class ItemSearchSortPanel extends HorizontalPanel
     {
         /** This method is called when the user hits enters while on the search field, or clicks
          * the search button. */
-        public void search (ItemSearchSortPanel panel);
+        public void search (String query);
 
         /** This method is called when the user selects a sort criterium. */
-        public void sort (ItemSearchSortPanel panel);
+        public void sort (byte sortBy);
     }
-
-    /** The text in the search field. */
-    public String search;
-
-    /** The current sort order. */
-    public byte sortBy;
 
     public ItemSearchSortPanel (Listener listener, String[] sortNames, final byte[] sortValues,
                                 int selectedSortIndex)
@@ -40,16 +34,11 @@ public class ItemSearchSortPanel extends HorizontalPanel
         _listener = listener;
 
         _searchBox = new TextBox();
+        _searchBox.setVisibleLength(20);
         _searchBox.addStyleName("itemSearchBox");
-        _searchBox.addChangeListener(new ChangeListener() {
-            public void onChange (Widget widget) {
-                TextBox box = (TextBox) widget;
-                search = box.getText();
-            }
-        });
         ClickListener clickListener = new ClickListener() {
             public void onClick (Widget sender) {
-                _listener.search(ItemSearchSortPanel.this);
+                _listener.search(_searchBox.getText());
             }
         };
         _searchBox.addKeyboardListener(new EnterClickAdapter(clickListener));
@@ -58,6 +47,7 @@ public class ItemSearchSortPanel extends HorizontalPanel
         Button searchButton = new Button(CItem.imsgs.searchSearch());
         searchButton.addClickListener(clickListener);
         add(searchButton);
+
         Label sortLabel = new Label(CItem.imsgs.searchSortBy());
         sortLabel.setStyleName("itemSortLabel");
         add(sortLabel);
@@ -70,9 +60,7 @@ public class ItemSearchSortPanel extends HorizontalPanel
         sortBox.setSelectedIndex(selectedSortIndex);
         sortBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget widget) {
-                ListBox box = (ListBox) widget;
-                sortBy = sortValues[box.getSelectedIndex()];
-                _listener.sort(ItemSearchSortPanel.this);
+                _listener.sort(sortValues[((ListBox)widget).getSelectedIndex()]);
             }
         });
         add(sortBox);
@@ -84,10 +72,8 @@ public class ItemSearchSortPanel extends HorizontalPanel
     public void clearSearchBox ()
     {
         _searchBox.setText("");
-        search = "";
     }
     
     protected TextBox _searchBox;
     protected Listener _listener;
-
 }

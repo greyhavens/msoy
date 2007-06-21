@@ -271,6 +271,37 @@ a:visited {
   font-size: small;
 }
 
+/** Standard paged grid configuration. */
+.pagedGrid .PageHeader {
+  width: 100%;
+  background: #333333;
+  color: #FFFFFF;
+  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 12px;
+}
+
+.pagedGrid .Button {
+  border: none;
+  font-size: 12px;
+  width: 56px;
+  height: 20px;
+  vertical-align: top;
+  padding-bottom: 2px;
+  cursor: pointer;
+}
+
+.pagedGrid .PrevButton {
+  padding-left: 10px;
+  background-image: url(/images/ui/button_prev.png);
+}
+
+.pagedGrid .NextButton {
+  padding-right: 10px;
+  background-image: url(/images/ui/button_next.png);
+}
+
 /** Configuration for our bordered popup window */
 .borderedPopup {
    background: #FFFFFF;

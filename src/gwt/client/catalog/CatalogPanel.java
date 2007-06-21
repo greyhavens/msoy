@@ -4,18 +4,20 @@
 package client.catalog;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -25,20 +27,21 @@ import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
+import com.threerings.msoy.web.client.CatalogService;
 
 import client.item.ItemSearchSortPanel;
 import client.item.ItemTypePanel;
-import client.item.TagCloud.TagCloudListener;
 import client.item.TagCloud;
-import client.util.MsoyUI;
 import client.shell.Application;
 import client.shell.Page;
+import client.util.MsoyUI;
+import client.util.RowPanel;
 
 /**
  * Displays a tabbed panel containing the catalog.
  */
 public class CatalogPanel extends VerticalPanel
-    implements TabListener, ItemSearchSortPanel.Listener
+    implements TabListener, ItemSearchSortPanel.Listener, TagCloud.TagListener
 {
     /** The number of columns of items to display. */
     public static final int COLUMNS = 4;
@@ -53,7 +56,6 @@ public class CatalogPanel extends VerticalPanel
 
         _typeTabs = new ItemTypePanel("catalog", this);
 
-        int row = 0;
         _items = new PagedGrid(ROWS, COLUMNS) {
             protected void displayPageFromClick (int page) {
                 // route our page navigation through the URL
@@ -74,7 +76,12 @@ public class CatalogPanel extends VerticalPanel
                 }
             }
         };
-        _items.setStyleName("catalogContents");
+        _items.addStyleName("catalogContents");
+
+        _header = new FlexTable();
+        _header.setCellPadding(0);
+        _header.setCellSpacing(10);
+        _header.getFlexCellFormatter().setRowSpan(0, 0, 2);
 
         _searchSortPanel = new ItemSearchSortPanel(
             this,
@@ -90,11 +97,8 @@ public class CatalogPanel extends VerticalPanel
                 CatalogListing.SORT_BY_PRICE_DESC },
             0);
         _sortBy = CatalogListing.SORT_BY_RATING;
-
-        _items.addToHeader(WidgetUtil.makeShim(15, 1));
-        _items.addToHeader(_searchSortPanel);
-
-        _tagCloudContainer = new SimplePanel();
+        _header.setWidget(0, 1, _searchSortPanel);
+        _header.setText(1, 0, CCatalog.msgs.catalogNoFilter());
     }
 
     public Widget getTabs() 
@@ -139,8 +143,8 @@ public class CatalogPanel extends VerticalPanel
     {
         if (!_items.isAttached()) {
             clear();
+            add(_header);
             add(_items);
-            add(_tagCloudContainer);
         }
     }
 
@@ -149,7 +153,13 @@ public class CatalogPanel extends VerticalPanel
     {
         _type = (byte) tabIndex;
         refreshItems(false);
-        getTagCloud(false);
+
+        Byte tabKey = new Byte(_type);
+        TagCloud cloud = (TagCloud) _clouds.get(tabKey);
+        if (cloud == null) {
+            _clouds.put(tabKey, cloud = new TagCloud(_type, this));
+        }
+        _header.setWidget(0, 0, cloud);
     }
 
     // from TabListener
@@ -160,19 +170,18 @@ public class CatalogPanel extends VerticalPanel
     }
 
     // from ItemSearchSortPanel.Listener
-    public void search (ItemSearchSortPanel panel)
+    public void search (String query)
     {
-        _search = panel.search;
-        _tag = null;
-        _creator = -1;
-        getTagCloud(false).setCurrentTag(null);
+        clearFilters(false);
+        _search = query;
+        setFilteredBy(CCatalog.msgs.catalogSearchFilter(_search));
         refreshItems(true);
     }
 
     // from ItemSearchSortPanel.Listener
-    public void sort (ItemSearchSortPanel panel)
+    public void sort (byte sortBy)
     {
-        _sortBy = panel.sortBy;
+        _sortBy = sortBy;
         refreshItems(true);
     }
 
@@ -182,33 +191,10 @@ public class CatalogPanel extends VerticalPanel
      */
     public void browseByCreator (int creatorId, String creatorName) 
     {
-        _search = "";
-        _searchSortPanel.clearSearchBox();
-        _tag = null;
+        clearFilters(false);
         _creator = creatorId;
-
-        FlowPanel creatorDisplay = new FlowPanel();
-        creatorDisplay.add(new InlineLabel(CCatalog.msgs.creatorDisplay() + creatorName + " "));
-        InlineLabel clearCreator = new InlineLabel(CCatalog.msgs.clearCurrentCreator());
-        clearCreator.addClickListener(new ClickListener() {
-            public void onClick(Widget sender) {
-                _creator = -1;
-                refreshItems(true);
-                // reloads the tag cloud into _tagCloudContainer
-                getTagCloud(false);
-            }
-        });
-        creatorDisplay.add(clearCreator);
-        creatorDisplay.setStyleName("creatorContents");
-        _tagCloudContainer.setWidget(creatorDisplay);
-
-        if (_page == 0) {
-            refreshItems(true);
-        } else {
-            // force ourselves back to page 0
-            String args = Page.composeArgs(new int[] { _type, 0 });
-            History.newItem(Application.createLinkToken("catalog", args));
-        }
+        refreshItems(true);
+        setFilteredBy(CCatalog.msgs.catalogCreatorFilter(creatorName));
     }
 
     /**
@@ -219,18 +205,48 @@ public class CatalogPanel extends VerticalPanel
         _items.removeItem(listing);
     }
 
+    /**
+     * Clears any tag, creator or search filters currently in effect.
+     */
+    public void clearFilters (boolean reload)
+    {
+        _search = "";
+        _creator = -1;
+        _tag = null;
+        if (reload) {
+            refreshItems(true);
+            setFilteredBy(null);
+        }
+    }
+
+    // from interface TagCloud.TagListener
+    public void tagClicked (String tag)
+    {
+        clearFilters(false);
+        _tag = tag;
+        refreshItems(true);
+        setFilteredBy(CCatalog.msgs.catalogTagFilter(tag));
+    }
+
     protected void refreshItems (boolean ignoreCache)
     {
         Byte tabKey = new Byte(_type);
         DataModel model = ignoreCache ? null : (DataModel) _models.get(tabKey);
         if (model == null) {
             model = new DataModel() {
+                public int getItemCount () {
+                    return _listingCount;
+                }
                 public void doFetchRows (int start, int count, final AsyncCallback callback) {
-                    CCatalog.catalogsvc.loadCatalog(CCatalog.getMemberId(), _type, _sortBy, _search,
-                                                    _tag, _creator, start, count, 
-                                                    new AsyncCallback() {
+                    CCatalog.catalogsvc.loadCatalog(
+                        CCatalog.getMemberId(), _type, _sortBy, _search,
+                        _tag, _creator, start, count, _listingCount == -1, new AsyncCallback() {
                         public void onSuccess (Object result) {
-                            callback.onSuccess(result);
+                            CatalogService.CatalogResult cr = (CatalogService.CatalogResult)result;
+                            if (_listingCount == -1) {
+                                _listingCount = cr.listingCount;
+                            }
+                            callback.onSuccess(cr.listings);
                         }
                         public void onFailure (Throwable caught) {
                             CCatalog.log("loadCatalog failed", caught);
@@ -241,36 +257,28 @@ public class CatalogPanel extends VerticalPanel
                 public void removeItem (Object item) {
                     // currently we do no internal caching, no problem!
                 }
+                protected int _listingCount = -1;
             };
         }
         _items.setModel(model, _page);
     }
 
-    protected TagCloud getTagCloud (boolean ignoreCache)
+    protected void setFilteredBy (String text)
     {
-        Byte tabKey = new Byte(_type);
-        TagCloud cloud = ignoreCache ? null : (TagCloud) _clouds.get(tabKey);
-        if (cloud == null) {
-            final TagCloud newCloud = new TagCloud(_type);
-            TagCloudListener tagListener = new TagCloudListener() {
-                public void tagClicked (String tag) {
-                    _search = "";
-                    _searchSortPanel.clearSearchBox();
-                    _creator = -1;
-                    _tag = tag;
-                    newCloud.setCurrentTag(tag);
-                    refreshItems(true);
-                }
-            };
-            newCloud.setListener(tagListener);
-            _clouds.put(tabKey, newCloud);
-            cloud = newCloud;
+        if (text == null) {
+            _header.setText(1, 0, CCatalog.msgs.catalogNoFilter());
+            return;
         }
-        // if _creator != -1, we are currently displaying a creator in the _tagCloudContainer.
-        if (_creator == -1) {
-            _tagCloudContainer.setWidget(cloud);
-        }
-        return cloud;
+
+        RowPanel filter = new RowPanel();
+        filter.add(new Label(text));
+        String clear = CCatalog.msgs.catalogClearFilter();
+        filter.add(MsoyUI.createActionLabel(clear, new ClickListener() {
+            public void onClick (Widget widget) {
+                clearFilters(true);
+            }
+        }));
+        _header.setWidget(1, 0, filter);
     }
 
     protected byte _sortBy,  _type;
@@ -280,8 +288,8 @@ public class CatalogPanel extends VerticalPanel
     protected Map _models = new HashMap();
     protected Map _clouds = new HashMap();
 
+    protected FlexTable _header;
     protected ItemTypePanel _typeTabs;
     protected ItemSearchSortPanel _searchSortPanel;
-    protected SimplePanel _tagCloudContainer;
     protected PagedGrid _items;
 }

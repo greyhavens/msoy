@@ -32,12 +32,12 @@ public interface ItemMessages extends com.google.gwt.i18n.client.Messages {
   String clearCurrentTag();
 
   /**
-   * Translated "Current tag:".
+   * Translated "Filtered by tag: {0}".
    * 
-   * @return translated "Current tag:"
+   * @return translated "Filtered by tag: {0}"
    * @gwt.key currentTag
    */
-  String currentTag();
+  String currentTag(String arg0);
 
   /**
    * Translated "Sort by:".
