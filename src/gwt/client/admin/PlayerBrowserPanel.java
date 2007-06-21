@@ -15,10 +15,10 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -37,89 +37,92 @@ public class PlayerBrowserPanel extends HorizontalPanel
     {
         setStyleName("playerBrowser");
         setSpacing(10);
-        _upButton = new Image("/images/item/inventory_up.png");
-        _upButton.addClickListener(new ClickListener() {
+
+        add(_backButton = new Button("<--", new ClickListener() {
             public void onClick (Widget sender) {
-                Widget playerList = getWidget(1);
-                if (playerList != null && playerList instanceof PlayerList) {
-                    int inviterId = ((PlayerList) playerList).getInviterId();
-                    if (_currentMember != null && inviterId == _currentMember.memberId) {
-                        // we're not really going to a new page, just fetching new info
-                        displayPlayersInvitedBy(inviterId);
-                    } else {
-                        History.newItem(Application.createLinkToken("admin", 
-                            "browser_" + inviterId));
-                    }
+                if (_childList == null) {
+                    // nothing to do
+                    return;
+                }
+                if (_parentList == null) {
+                    // we're keeping the same history token, just need to grab parent info.
+                    displayPlayersInvitedBy(_childList.getResult().memberId);
+                } else {
+                    History.newItem(Application.createLinkToken("admin",
+                        "browser_" + _parentList.getResult().memberId));
                 }
             }
-        });
-        DOM.setStyleAttribute(_upButton.getElement(), "cursor", "pointer");
+        }));
+        _backButton.setEnabled(false);
+        add(_forwardButton = new Button("-->", new ClickListener() {
+            public void onClick (Widget sender) {
+                if (_childList == null) {
+                    // nothing to do
+                    return;
+                }
+                int index = _playerLists.indexOf(_childList);
+                if (index == _playerLists.size() - 1) {
+                    // nothing to do
+                    return;
+                }
+                History.newItem(Application.createLinkToken("admin", "browser_" + 
+                    ((PlayerList) _playerLists.get(index + 1)).getResult().memberId));
+            }
+        }));
+        _forwardButton.setEnabled(false);
     }
 
     public void displayPlayersInvitedBy (final int memberId) 
     {
-        PlayerList childList = null;
-        PlayerList parentList = null;
+        int childList = -1;
+        int parentList = -1;
         for (int ii = 0; _playerLists != null && ii < _playerLists.size(); ii++) {
             PlayerList list = (PlayerList) _playerLists.get(ii);
-            if (parentList == null) {
-                if (list.highlight(memberId)) {
-                    parentList = list;
-                }
-            }
-            if (childList == null) {
-                if (list.getInviterId() == memberId) {
-                    childList = list;
-                }
-            }
-            if (childList != null && parentList != null) {
+            if (list.highlight(memberId)) {
+                parentList = ii;
+            } else if (list.getResult().memberId == memberId) {
+                childList = ii;
                 break;
             }
         }
-
+        
         int memberIdToFetch = memberId;
-        if (childList != null && parentList != null) {
-            // we have what the caller wants cached... just display it
-            displayLists(parentList);
+        if (childList > 0 || 
+                // special case only invoked if we have a populated list, and the person goes back
+                // to the root admin console and clicks "player browser" again.
+                (childList == 0 && 
+                 ((PlayerList) _playerLists.get(childList)).getResult().memberId == 0)) {
+            // we already have everything the caller wants, just display it
+            displayLists(childList);
             return;
-        } else if (childList == null && parentList == null) {
-            // the given memberId was not found in any cached list - clear the display and 
-            // start fresh
-            clear();
-            _playerLists = new ArrayList();
-        } else if (childList == null && parentList != null) {
-            // we're grabbing a new child list... truncate everything after the parent
-            truncateList(parentList);
-        } else if (childList != null && parentList == null) {
-            if (_playerLists.indexOf(childList) != 0) {
-                // wtf?  If we found a child with no parent, the child should be at the top.
-                // Freak out and start over.
-                CAdmin.log("_playerLists was not sane.  Found child with no parent at " + 
-                    _playerLists.indexOf(childList));
-                clear();
-                _playerLists = new ArrayList();
-            } else if (_currentMember != null && _currentMember.invitingFriendId >= 0) {
-                // we're grabbing a new parent list
-                memberIdToFetch = _currentMember.invitingFriendId;
+        } else if (childList == 0) {
+            // we need to fetch the parent list
+            PlayerList list = _parentList != null ? _parentList : _childList;
+            memberIdToFetch = list.getResult().invitingFriendId;
+        } else if (parentList > -1) {
+            // we have the parent, but the child is not there, so we're on a new branch... truncate
+            // the list at the parent
+            while (_playerLists.size() > parentList + 1) {
+                _playerLists.remove(parentList + 1);
             }
+        } else {
+            clearLists();
+            _playerLists = new ArrayList();
         }
-        CAdmin.log("fetching for memberId: " + memberIdToFetch);
+
         CAdmin.adminsvc.getPlayerList(CAdmin.ident, memberIdToFetch, new AsyncCallback() {
             public void onSuccess (Object result) {
                 MemberInviteResult res = (MemberInviteResult) result;
-                String title = res.name != null && !res.name.equals("") ? 
-                    CAdmin.msgs.browserInvitedBy(res.name) : CAdmin.msgs.browserNoInviter();
-                PlayerList newList = new PlayerList(title, res.memberId,
-                    res.invitees != null ? res.invitees : new ArrayList());
+                PlayerList newList = new PlayerList(res);
                 if (res.memberId != memberId) {
                     // we're fetching a new parent.
                     _playerLists.add(0, newList);
-                    displayLists(newList);
-                    newList.highlight(_currentMember.memberId);
+                    PlayerList list = _parentList != null ? _parentList : _childList;
+                    newList.highlight(list.getResult().memberId);
+                    displayLists(1);
                 } else {
-                    _currentMember = res;
                     _playerLists.add(newList);
-                    displayLists(null);
+                    displayLists(_playerLists.size() - 1);
                 }
             }
             public void onFailure (Throwable cause) {
@@ -128,17 +131,15 @@ public class PlayerBrowserPanel extends HorizontalPanel
         });
     }
 
-    /**
-     * Removes all the items after this one on the list, presumably because we're about to 
-     * go down a new path.
-     */
-    protected void truncateList (PlayerList lastItem) 
+    protected void clearLists ()
     {
-        int ii = _playerLists.lastIndexOf(lastItem);
-        if (ii != -1) {
-            while (_playerLists.size() > ii + 1) {
-                _playerLists.remove(ii + 1);
-            }
+        if (_parentList != null) {
+            remove(_parentList);
+            _parentList = null;
+        }
+        if (_childList != null) {
+            remove(_childList);
+            _childList = null;
         }
     }
 
@@ -146,32 +147,26 @@ public class PlayerBrowserPanel extends HorizontalPanel
      * Displays two lists, with the firstList being shown first, if not null.  Otherwise, it
      * simply displays the last two PlayerLists we have.
      */
-    protected void displayLists (PlayerList firstList)
+    protected void displayLists (int childIndex)
     {
-        clear();
-        int size = _playerLists.size();
-        int ii = Math.max(size - 2, 0);
-        if (firstList != null) {
-            ii = _playerLists.indexOf(firstList);
+        clearLists();
+        insert(_childList = (PlayerList) _playerLists.get(childIndex), 1);
+        _forwardButton.setEnabled(childIndex != _playerLists.size() - 1);
+        if (childIndex != 0) {
+            insert(_parentList = (PlayerList) _playerLists.get(childIndex - 1), 1);
+            _backButton.setEnabled(_parentList.getResult().memberId != 0);
         } else {
-            firstList = (PlayerList) _playerLists.get(ii);
-        }
-        if (firstList.getInviterId() != 0) {
-            add(_upButton);
-        }
-        add((Widget) _playerLists.get(ii));
-        if (ii < size - 1) {
-            PlayerList childList = (PlayerList) _playerLists.get(ii + 1);
-            childList.clearHighlight();
-            add(childList);
+            _backButton.setEnabled(_childList.getResult().memberId != 0);
         }
     }
 
     protected class PlayerList extends FlexTable
     {
-        public PlayerList (String title, int inviterId, List players)
+        public PlayerList (MemberInviteResult result) 
         {
-            _inviterId = inviterId;
+            _result = result;
+            String title = _result.name != null && !_result.name.equals("") ? 
+                CAdmin.msgs.browserInvitedBy(_result.name) : CAdmin.msgs.browserNoInviter();
 
             setStyleName("PlayerList");
             int row = 0;
@@ -217,9 +212,12 @@ public class PlayerBrowserPanel extends HorizontalPanel
             }
             getFlexCellFormatter().addStyleName(row++, NUM_COLUMNS-1, "Last");
 
-            _rows = new Object[players.size()];
+            if (_result.invitees == null) {
+                return;
+            }
+            _rows = new Object[_result.invitees.size()];
             int ii = 0;
-            Iterator iter = players.iterator();
+            Iterator iter = _result.invitees.iterator();
             while (iter.hasNext()) {
                 final MemberInviteStatus member = (MemberInviteStatus) iter.next();
                 getRowFormatter().addStyleName(row, "DataRow");
@@ -263,9 +261,9 @@ public class PlayerBrowserPanel extends HorizontalPanel
             }
         }
 
-        public int getInviterId () 
+        public MemberInviteResult getResult () 
         {
-            return _inviterId;
+            return _result;
         }
 
         public void sort (int column, int type, int order)
@@ -356,15 +354,13 @@ public class PlayerBrowserPanel extends HorizontalPanel
         // instanceof Element.  If the array is declared as Object[], and every time an 
         // element is accessed it is casted to Element, everything works fine.
         protected Object[] _rows;
-        protected int _inviterId;
+        protected MemberInviteResult _result;
         protected Label _activeLabel, _activeHeader;
         protected Map _memberIds = new HashMap(); // Map<Integer, Label>
     }
 
     // ArrayList<PlayerList>
     protected ArrayList _playerLists;
-    protected PlayerList _primaryList;
-    protected PlayerList _secondaryList;
-    protected Image _upButton;
-    protected MemberInviteResult _currentMember;
+    protected PlayerList _parentList, _childList;
+    protected Button _backButton, _forwardButton;
 }
