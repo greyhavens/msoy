@@ -62,9 +62,12 @@ public class ListingContainer extends FlexTable
         setText(2, 2, String.valueOf(listing.flowCost));
         getFlexCellFormatter().setStyleName(2, 2, "Cost");
 
-//         bits.setWidget(0, 1, new Image("/images/header/symbol_gold.png"));
-//         bits.getFlexCellFormatter().setWidth(0, 1, "15px");
-//         bits.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
-//         bits.setText(0, 2, String.valueOf(listing.goldCost));
+        if (listing.goldCost > 0) {
+            setWidget(3, 1, new Image("/images/header/symbol_gold.png"));
+            getFlexCellFormatter().setWidth(3, 1, "15px");
+            getFlexCellFormatter().setHorizontalAlignment(3, 1, HasAlignment.ALIGN_RIGHT);
+            setText(3, 2, String.valueOf(listing.goldCost));
+            getFlexCellFormatter().setStyleName(3, 2, "Cost");
+        }
     }
 }
