@@ -62,7 +62,7 @@ public class HeaderBar extends HBox
         if (owner != "") {
             var nameLabel :Label = new Label();
             nameLabel.styleName = "ownerName";
-            nameLabel.text = Msgs.GENERAL.get("l.room_owner") + " " + owner
+            nameLabel.text = Msgs.GENERAL.get("m.room_owner", owner);
             nameLabel.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
                 if (onClick != null) {
                     onClick();
