@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
+import client.item.ItemRating;
 import client.util.ItemUtil;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
@@ -51,7 +52,8 @@ public class ListingContainer extends FlexTable
         getFlexCellFormatter().setStyleName(1, 0, "Creator");
         getFlexCellFormatter().setColSpan(1, 0, 3);
 
-        setText(2, 0, "(rating)");
+        setWidget(2, 0, new ItemRating(listing.item, ItemRating.NO_RATING,
+                                       ItemRating.MODE_READ, true));
         getFlexCellFormatter().setStyleName(2, 0, "Cost");
 
         setWidget(2, 1, new Image("/images/header/symbol_flow.png"));

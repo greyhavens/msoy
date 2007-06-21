@@ -23,20 +23,24 @@ public class ItemRating extends FlexTable
     /** Display average rating, or user's on mouse-over, with updates. */
     public static final int MODE_BOTH = 3;
 
+    /** Supply this for memberRating when using MODE_READ. */
+    public static final byte NO_RATING = 0;
+
     /**
      * Construct a new display for the given item with member's previous rating of the item,
      * automatically figuring out read-only or read/write display mode.
      */
     public ItemRating (Item item, byte memberRating)
     {
-        this(item, memberRating, item.isRatable() ? ItemRating.MODE_BOTH : ItemRating.MODE_READ);
+        this(item, memberRating, item.isRatable() ?
+             ItemRating.MODE_BOTH : ItemRating.MODE_READ, false);
     }
 
     /**
      * Construct a new display for the given item with member's previous rating of the item and a
      * specified display mode.
      */
-    public ItemRating (Item item, byte memberRating, int mode)
+    public ItemRating (Item item, byte memberRating, int mode, boolean halfSize)
     {
         // sanity check
         if (mode != MODE_READ && !item.isRatable()) {
@@ -51,13 +55,15 @@ public class ItemRating extends FlexTable
         _itemId = new ItemIdent(_item.getType(), _item.getPrototypeId());
         // if we're not logged in, force MODE_READ
         _mode = (CItem.ident == null) ? MODE_READ : mode;
+        _halfSize = halfSize;
 
         // add the 10 images whose src url's we mercilessly mutate throughout this widget
-        for (int i = 0; i < 10; i ++) {
+        for (int ii = 0; ii < 10; ii ++) {
             Image halfStar = new Image();
-            halfStar.addMouseListener(new RatingMouseListener(i/2+1));
-            halfStar.setStyleName("itemRatingStar");
-            setWidget(0, i, halfStar);
+            if (_mode != MODE_READ) {
+                halfStar.addMouseListener(new RatingMouseListener(ii/2+1));
+            }
+            setWidget(0, ii, halfStar);
         }
         // and initialize the stars
         update();
@@ -98,9 +104,7 @@ public class ItemRating extends FlexTable
         // from interface MouseListener
         public void onMouseUp (Widget sender, int x, int y)
         {
-            if (_mode != MODE_READ) {
-                rateItem((byte) _ratingInterval);
-            }
+            rateItem((byte) _ratingInterval);
         }
         
         protected int _ratingInterval;
@@ -122,7 +126,7 @@ public class ItemRating extends FlexTable
     {
         // show the changing user rating as user hovers over widget, unless we're read-only
         if (_mode == MODE_READ) {
-            updateStarImages(_memberRating, true);
+            updateStarImages(_item.rating, true);
         } else {
             updateStarImages(rating, true);
         }
@@ -132,14 +136,15 @@ public class ItemRating extends FlexTable
     protected void updateStarImages (double ratingToDisplay, boolean isUserRating)
     {
         int filledStars = (int) (ratingToDisplay * 2);
-        String filledUrl = "/images/ui/star_" + (isUserRating ? "user" : "average");
-        for (int i = 0; i < filledStars; i ++) {
-            ((Image) getWidget(0, i)).setUrl(
-                filledUrl + "_" + ((i % 2) == 0 ? "lhalf" : "rhalf") + ".png");
+        String prefix = "/images/ui/stars/" + (_halfSize ? "half" : "full") + "/";
+        String filledUrl = prefix + (isUserRating ? "user" : "average");
+        for (int ii = 0; ii < filledStars; ii++) {
+            String path = filledUrl + "_" + ((ii % 2) == 0 ? "lhalf" : "rhalf") + ".png";
+            ((Image) getWidget(0, ii)).setUrl(path);
         }
-        for (int i = filledStars; i < 10; i ++) {
-            ((Image) getWidget(0, i)).setUrl(
-                "/images/ui/star_empty_" + ((i % 2) == 0 ? "lhalf" : "rhalf") + ".png");
+        for (int ii = filledStars; ii < 10; ii++) {
+            String path = prefix + "empty_" + ((ii % 2) == 0 ? "lhalf" : "rhalf") + ".png";
+            ((Image) getWidget(0, ii)).setUrl(path);
         }
     }
 
@@ -166,4 +171,5 @@ public class ItemRating extends FlexTable
     protected ItemIdent _itemId;
     protected int _mode;
     protected byte _memberRating;
+    protected boolean _halfSize;
 }
