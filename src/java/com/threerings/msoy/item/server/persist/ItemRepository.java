@@ -67,7 +67,7 @@ public abstract class ItemRepository<
         public int count;
         public int sum;
     }
-    
+
     /** The factor by which we split item cost into gold and flow. */
     public final static int FLOW_FOR_GOLD = 600;
 
@@ -187,7 +187,7 @@ public abstract class ItemRepository<
                       new GreaterThan(new BitAnd(ItemRecord.FLAGS, flagMask), 0)),
             new Limit(0, count));
     }
-    
+
     /**
      * Loads a single clone record by item id.
      */
@@ -306,20 +306,44 @@ public abstract class ItemRepository<
     }
 
     /**
+     * Counts all items in the catalog that match the supplied query terms.
+     */
+    public int countListings (boolean mature, String search, int tag, int creator)
+        throws PersistenceException
+    {
+        ArrayList<QueryClause> clauses = new ArrayList<QueryClause>();
+        clauses.add(new FromOverride(getCatalogClass()));
+        clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+                             getItemClass(), ItemRecord.ITEM_ID));
+
+        // see if there's any where bits to turn into an actual where clause
+        addSearchClause(clauses, mature, search, tag, creator);
+
+        // finally fetch all the catalog records of interest
+        ListingCountRecord crec = load(
+            ListingCountRecord.class, clauses.toArray(new QueryClause[clauses.size()]));
+        return crec.count;
+    }
+
+    /**
      * Loads all items in the catalog.
      *
      * TODO: This method currently fetches CatalogRecords through a join against ItemRecord,
      *       and then executes a second query against ItemRecord only. This really really has
      *       to be a single join in a sane universe, but that makes significant demands on the
      *       Depot code that we don't know how to handle yet (or possibly some fiddling with
-     *       the Item vs Catalog class hierarchies). 
+     *       the Item vs Catalog class hierarchies).
      */
     public List<CAT> loadCatalog (byte sortBy, boolean mature, String search, int tag,
                                   int creator, int offset, int rows)
         throws PersistenceException
     {
-        OrderBy sortExp;
+        ArrayList<QueryClause> clauses = new ArrayList<QueryClause>();
+        clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+                             getItemClass(), ItemRecord.ITEM_ID));
+        clauses.add(new Limit(offset, rows));
 
+        OrderBy sortExp;
         switch(sortBy) {
         case CatalogListing.SORT_BY_NOTHING:
             sortExp = null;
@@ -334,7 +358,7 @@ public abstract class ItemRepository<
             break;
         case CatalogListing.SORT_BY_PRICE_ASC:
         case CatalogListing.SORT_BY_PRICE_DESC:
-            SQLExpression bit = 
+            SQLExpression bit =
                 new Add(new ColumnExp(getCatalogClass(), CatalogRecord.FLOW_COST),
                         new Mul(new ColumnExp(getCatalogClass(), CatalogRecord.GOLD_COST),
                                 FLOW_FOR_GOLD));
@@ -345,48 +369,16 @@ public abstract class ItemRepository<
             throw new IllegalArgumentException(
                 "Sort method not implemented [sortBy=" + sortBy + "]");
         }
-        // we collect separate query conditions in one array
-        ArrayList<SQLOperator> whereBits = new ArrayList<SQLOperator>();
-        // and actual clauses in another
-        ArrayList<QueryClause> clauses = new ArrayList<QueryClause>();
-        clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
-                     getItemClass(), ItemRecord.ITEM_ID));
-        clauses.add(new Limit(offset, rows));
-        
         if (sortExp != null) {
             clauses.add(sortExp);
         }
 
-        if (search != null && search.length() > 0) {
-            whereBits.add(new Like(ItemRecord.NAME, "%" + search + "%"));
-        }
-
-        if (tag > 0) {
-            // join against TagRecord
-            clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
-                                 getTagRepository().getTagClass(), TagRecord.TARGET_ID));
-            // and add a condition
-            whereBits.add(new Equals(TagRecord.TAG_ID, tag));
-        }
-        
-        if (creator > 0) {
-            whereBits.add(new Equals(ItemRecord.CREATOR_ID, creator));
-        }
-
-        if (!mature) {
-            // add a check to make sure ItemRecord.FLAG_MATURE is not set on any returned items
-            whereBits.add(new Equals(new BitAnd(ItemRecord.FLAGS, Item.FLAG_MATURE), 0));
-        }
-
         // see if there's any where bits to turn into an actual where clause
-        if (whereBits.size() > 0) {
-            clauses.add(new Where(new And(whereBits.toArray(new SQLOperator[whereBits.size()]))));
-        }
-        
+        addSearchClause(clauses, mature, search, tag, creator);
+
         // finally fetch all the catalog records of interest
         List<CAT> records = findAll(
             getCatalogClass(), clauses.toArray(new QueryClause[clauses.size()]));
-
         if (records.size() == 0) {
             return records;
         }
@@ -414,8 +406,43 @@ public abstract class ItemRepository<
     }
 
     /**
+     * Helper function for {@link #countListings} and {@link #loadCatalog}.
+     */
+    protected void addSearchClause (ArrayList<QueryClause> clauses, boolean mature, String search,
+                                    int tag, int creator)
+        throws PersistenceException
+    {
+        ArrayList<SQLOperator> whereBits = new ArrayList<SQLOperator>();
+
+        if (search != null && search.length() > 0) {
+            whereBits.add(new Like(ItemRecord.NAME, "%" + search + "%"));
+        }
+
+        if (tag > 0) {
+            // join against TagRecord
+            clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+                                 getTagRepository().getTagClass(), TagRecord.TARGET_ID));
+            // and add a condition
+            whereBits.add(new Equals(TagRecord.TAG_ID, tag));
+        }
+
+        if (creator > 0) {
+            whereBits.add(new Equals(ItemRecord.CREATOR_ID, creator));
+        }
+
+        if (!mature) {
+            // add a check to make sure ItemRecord.FLAG_MATURE is not set on any returned items
+            whereBits.add(new Equals(new BitAnd(ItemRecord.FLAGS, Item.FLAG_MATURE), 0));
+        }
+
+        if (whereBits.size() > 0) {
+            clauses.add(new Where(new And(whereBits.toArray(new SQLOperator[whereBits.size()]))));
+        }
+    }
+
+    /**
      * Load a single catalog listing.
-     * 
+     *
      * TODO: This needs to be a join, just like {@link #loadCatalog}.
      */
     public CAT loadListing (int itemId)
@@ -564,7 +591,7 @@ public abstract class ItemRepository<
                     ctx.cacheTraverse(getRatingClass().getName(), new CacheEvictionFilter<RT>() {
                         public boolean testForEviction (Serializable key, RT record) {
                             return record != null && record.itemId == itemId;
-                        }                
+                        }
                     });
                 }
             };
@@ -576,7 +603,7 @@ public abstract class ItemRepository<
 //                     ctx.cacheTraverse(getTagClass().getName(), new CacheEvictionFilter<TT>() {
 //                         public boolean testForEviction (Serializable key, TT record) {
 //                             return record != null && record.itemId == itemId;
-//                         }                
+//                         }
 //                     });
 //                 }
 //             };
@@ -589,7 +616,7 @@ public abstract class ItemRepository<
 //                     ctx.cacheTraverse(cacheName, new CacheEvictionFilter<THT>() {
 //                         public boolean testForEviction (Serializable key, THT record) {
 //                             return record != null && record.itemId == itemId;
-//                         }                
+//                         }
 //                     });
 //                 }
 //             };
@@ -661,7 +688,7 @@ public abstract class ItemRepository<
             ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
         if (modifiedRows == 0) {
             throw new PersistenceException(
-                "Failed to safely update ownerId [item=" + item + ", newOwnerId=" + newOwnerId + "]"); 
+                "Failed to safely update ownerId [item=" + item + ", newOwnerId=" + newOwnerId + "]");
         }
     }
 
