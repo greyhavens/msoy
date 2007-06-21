@@ -7,9 +7,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
@@ -21,9 +19,9 @@ import client.util.MsoyUI;
 /**
  * Displays a catalog listing.
  */
-public class ItemContainer extends FlexTable
+public class ListingContainer extends FlexTable
 {
-    public ItemContainer (final CatalogListing listing, final CatalogPanel panel)
+    public ListingContainer (final CatalogListing listing, final CatalogPanel panel)
     {
         setCellPadding(0);
         setCellSpacing(0);
