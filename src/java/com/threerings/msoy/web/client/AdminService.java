@@ -39,6 +39,12 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
+     * Grants the given number of invitations to the given user.
+     */
+    public void grantInvitations (WebIdent ident, int numberInvitations, int memberId)
+        throws ServiceException;
+
+    /**
      * Fetches a list of players who were invited by inviterId. 
      */
     public MemberInviteResult getPlayerList (WebIdent ident, int inviterId)

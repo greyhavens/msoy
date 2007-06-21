@@ -29,6 +29,7 @@ import com.threerings.msoy.web.data.MemberInviteResult;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import client.util.InfoPopup;
 import client.util.NumberTextBox;
 
 import client.shell.Application;
@@ -165,9 +166,20 @@ public class PlayerBrowserPanel extends HorizontalPanel
         }
     }
 
+    protected void addToAvailable (int memberId, int amount) 
+    {
+        Iterator iter = _playerLists.iterator();
+        while (iter.hasNext()) {
+            PlayerList list = (PlayerList) iter.next();
+            if (list.addToAvailable(memberId, amount)) {
+                break;
+            }
+        }
+    }
+
     protected class PlayerList extends FlexTable
     {
-        public PlayerList (MemberInviteResult result) 
+        public PlayerList (MemberInviteResult result)
         {
             _result = result;
             String title = _result.name != null && !_result.name.equals("") ? 
@@ -178,29 +190,44 @@ public class PlayerBrowserPanel extends HorizontalPanel
             getFlexCellFormatter().addStyleName(row, 0, "Title");
             setText(row++, 0, title);
 
-            getFlexCellFormatter().setColSpan(row, 0, NUM_COLUMNS);
-            getFlexCellFormatter().addStyleName(row, 0, "Title");
-            HorizontalPanel buttons = new HorizontalPanel();
-            // wtf?  Even if you don't set this property, the default gets applied directly to the
-            // element, so I can't override it in the css file.  Thanks a ton, GWT team.
-            buttons.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-            buttons.addStyleName("Buttons");
-            buttons.add(new Button("View Profile", new ClickListener() {
-                public void onClick (Widget sender) {
-                    History.newItem(Application.createLinkToken("profile", "" + _result.memberId));
-                }
-            }));
-            Widget shim = WidgetUtil.makeShim(1, 25);
-            shim.addStyleName("Shim");
-            buttons.add(shim);
-            final NumberTextBox numInvites = new NumberTextBox(false, 2);
-            buttons.add(numInvites);
-            buttons.add(new Button("Grant Invites", new ClickListener() {
-                public void onClick (Widget sender) {
-                    // TODO
-                }
-            }));
-            setWidget(row++, 0, buttons);
+            if (_result.name != null && !_result.name.equals("")) {
+                getFlexCellFormatter().setColSpan(row, 0, NUM_COLUMNS);
+                getFlexCellFormatter().addStyleName(row, 0, "Title");
+                HorizontalPanel buttons = new HorizontalPanel();
+                // wtf?  Even if you don't set this property, the default gets applied directly to 
+                // the element, so I can't override it in the css file.  Thanks a ton, GWT team.
+                buttons.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+                buttons.addStyleName("Buttons");
+                buttons.add(new Button("View Profile", new ClickListener() {
+                    public void onClick (Widget sender) {
+                        History.newItem(Application.createLinkToken("profile", 
+                            "" + _result.memberId));
+                    }
+                }));
+                Widget shim = WidgetUtil.makeShim(1, 25);
+                shim.addStyleName("Shim");
+                buttons.add(shim);
+                final NumberTextBox numInvites = new NumberTextBox(false, 2);
+                buttons.add(numInvites);
+                buttons.add(new Button("Grant Invites", new ClickListener() {
+                    public void onClick (Widget sender) {
+                        CAdmin.adminsvc.grantInvitations(CAdmin.ident, 
+                            numInvites.getValue().intValue(), _result.memberId, 
+                            new AsyncCallback () {
+                                public void onSuccess (Object result) {
+                                    (new InfoPopup(CAdmin.msgs.browserAddInvites(
+                                        "" + numInvites.getValue(), _result.name))).show();
+                                    PlayerBrowserPanel.this.addToAvailable(_result.memberId, 
+                                        numInvites.getValue().intValue());
+                                }
+                                public void onFailure (Throwable cause) {
+                                    (new InfoPopup(CAdmin.serverError(cause))).show();
+                                }
+                            });
+                    }
+                }));
+                setWidget(row++, 0, buttons);
+            }
 
             getFlexCellFormatter().setColSpan(row, 1, 3);
             getFlexCellFormatter().addStyleName(row, 1, "Last");
@@ -267,6 +294,26 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 _rows[ii++] = getRowFormatter().getElement(row-1);
             }
             getRowFormatter().addStyleName(row-1, "Bottom");
+        }
+
+        public boolean addToAvailable (int memberId, int amount) 
+        {
+            Label label = (Label) _memberIds.get(new Integer(memberId));
+            if (label == null) {
+                return false;
+            }
+
+            Element row = DOM.getParent(DOM.getParent(label.getElement()));
+            Element cell = DOM.getChild(row, AVAILABLE_INVITES_COLUMN);
+            String text = DOM.getInnerText(cell);
+            try {
+                int available = Integer.parseInt(text);
+                text = "" + (Integer.parseInt(text) + amount);
+            } catch (NumberFormatException nfe) {
+                CAdmin.log("NFE attempting to add to available invites: " + nfe.getMessage());
+            }
+            DOM.setInnerText(cell, text);
+            return true;
         }
 
         public boolean highlight (int memberId) 

@@ -224,6 +224,14 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String title();
 
   /**
+   * Translated "{0} additional invites have been granted to {1}.".
+   * 
+   * @return translated "{0} additional invites have been granted to {1}."
+   * @gwt.key browserAddInvites
+   */
+  String browserAddInvites(String arg0,  String arg1);
+
+  /**
    * Translated "Invitation functions:".
    * 
    * @return translated "Invitation functions:"

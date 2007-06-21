@@ -30,6 +30,12 @@ public interface AdminServiceAsync
     public void grantInvitations (WebIdent ident, int numberInvitations, Date activeSince,
                                   AsyncCallback callback);
 
+    /** 
+     * The asynchronous version of {@link grantInvitations}.
+     */
+    public void grantInvitations (WebIdent ident, int numberInvitations, int memberId,
+                                  AsyncCallback callback);
+
     /**
      * The asynchronous version of {@link getPlayerList}.
      */

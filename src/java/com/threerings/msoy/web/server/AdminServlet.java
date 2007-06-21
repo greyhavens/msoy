@@ -137,6 +137,24 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
+    public void grantInvitations (WebIdent ident, int numberInvitations, int memberId)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(ident);
+        if (!memrec.isAdmin()) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
+
+        try {
+            MsoyServer.memberRepo.grantInvites(numberInvitations, memberId);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "grantInvitations failed [num=" + numberInvitations +
+                ", memberId=" + memberId + "]", pe);
+            throw new ServiceException(pe.getMessage());
+        }
+    }
+
+    // from interface AdminService
     public MemberInviteResult getPlayerList (WebIdent ident, int inviterId)
         throws ServiceException
     {
