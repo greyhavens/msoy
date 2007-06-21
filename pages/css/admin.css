@@ -46,6 +46,17 @@
   border-style: none;
   text-decoration: bold;
   font-size: 18px;
+  padding: 2px;
+}
+
+.playerBrowser .PlayerList .Buttons td {
+  border-style: none;
+  padding: 3px;
+}
+
+.playerBrowser .PlayerList .Buttons .Shim {
+  background-color: black;
+  border-style: none;
 }
 
 .playerBrowser .PlayerList td {

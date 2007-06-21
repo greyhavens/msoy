@@ -21,15 +21,15 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MenuBar;
-import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.MouseListenerAdapter;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.MemberInviteStatus;
 import com.threerings.msoy.web.data.MemberInviteResult;
+
+import com.threerings.gwt.ui.WidgetUtil;
+
+import client.util.NumberTextBox;
 
 import client.shell.Application;
 
@@ -172,12 +172,35 @@ public class PlayerBrowserPanel extends HorizontalPanel
             _result = result;
             String title = _result.name != null && !_result.name.equals("") ? 
                 CAdmin.msgs.browserInvitedBy(_result.name) : CAdmin.msgs.browserNoInviter();
-
             setStyleName("PlayerList");
             int row = 0;
             getFlexCellFormatter().setColSpan(row, 0, NUM_COLUMNS);
             getFlexCellFormatter().addStyleName(row, 0, "Title");
             setText(row++, 0, title);
+
+            getFlexCellFormatter().setColSpan(row, 0, NUM_COLUMNS);
+            getFlexCellFormatter().addStyleName(row, 0, "Title");
+            HorizontalPanel buttons = new HorizontalPanel();
+            // wtf?  Even if you don't set this property, the default gets applied directly to the
+            // element, so I can't override it in the css file.  Thanks a ton, GWT team.
+            buttons.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+            buttons.addStyleName("Buttons");
+            buttons.add(new Button("View Profile", new ClickListener() {
+                public void onClick (Widget sender) {
+                    History.newItem(Application.createLinkToken("profile", "" + _result.memberId));
+                }
+            }));
+            Widget shim = WidgetUtil.makeShim(1, 25);
+            shim.addStyleName("Shim");
+            buttons.add(shim);
+            final NumberTextBox numInvites = new NumberTextBox(false, 2);
+            buttons.add(numInvites);
+            buttons.add(new Button("Grant Invites", new ClickListener() {
+                public void onClick (Widget sender) {
+                    // TODO
+                }
+            }));
+            setWidget(row++, 0, buttons);
 
             getFlexCellFormatter().setColSpan(row, 1, 3);
             getFlexCellFormatter().addStyleName(row, 1, "Last");
@@ -226,13 +249,11 @@ public class PlayerBrowserPanel extends HorizontalPanel
             while (iter.hasNext()) {
                 final MemberInviteStatus member = (MemberInviteStatus) iter.next();
                 getRowFormatter().addStyleName(row, "DataRow");
-                final Label nameLabel = new Label(member.name);
-                final PopupPanel personMenuPanel = getPopupMenu(member.memberId);
-                nameLabel.addMouseListener(new MouseListenerAdapter() {
-                    public void onMouseDown (Widget sender, int x, int y) {
-                        personMenuPanel.setPopupPosition(nameLabel.getAbsoluteLeft() + x, 
-                            nameLabel.getAbsoluteTop() + y);
-                        personMenuPanel.show();
+                Label nameLabel = new Label(member.name);
+                nameLabel.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        History.newItem(Application.createLinkToken("admin", "browser_" + 
+                            member.memberId));
                     }
                 });
                 nameLabel.addStyleName("Clickable");
@@ -286,24 +307,6 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 DOM.appendChild(table, (Element) _rows[ii]);
             }
             getRowFormatter().addStyleName(rowCount-1, "Bottom");
-        }
-
-        protected PopupPanel getPopupMenu (int memberId) 
-        {
-            final PopupPanel panel = new PopupPanel(true);
-            MenuBar menu = new MenuBar(true);
-            Command hideCmd = new Command () {
-                public void execute () {
-                    panel.hide();
-                }
-            };
-            menu.addItem(Application.createLinkHtml("View Invitees", "admin", 
-                                                    "browser_" + memberId),
-                         true, hideCmd);
-            menu.addItem(Application.createLinkHtml("View Profile", "profile", "" + memberId),
-                         true, hideCmd);
-            panel.add(menu);
-            return panel;
         }
 
         protected class RowComparator implements Comparator
