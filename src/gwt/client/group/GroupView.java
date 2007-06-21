@@ -15,7 +15,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.MouseListener;
+import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -281,17 +281,12 @@ public class GroupView extends VerticalPanel
                 personMenuPanel.add(menu);
                 final InlineLabel person = new InlineLabel(name.toString());
                 person.addStyleName("LabelLink");
-                // use a MouseListener instead of ClickListener so we can get at the mouse (x,y)
-                person.addMouseListener(new MouseListener() {
+                person.addMouseListener(new MouseListenerAdapter() {
                     public void onMouseDown (Widget sender, int x, int y) { 
                         personMenuPanel.setPopupPosition(person.getAbsoluteLeft() + x, 
                             person.getAbsoluteTop() + y);
                         personMenuPanel.show();
                     }
-                    public void onMouseLeave (Widget sender) { }
-                    public void onMouseUp (Widget sender, int x, int y) { }
-                    public void onMouseEnter (Widget sender) { }
-                    public void onMouseMove (Widget sender, int x, int y) { }
                 });
                 peoplePanel.add(person);
             } else {
