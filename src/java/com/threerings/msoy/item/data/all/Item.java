@@ -137,7 +137,8 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
      */
     public static MediaDesc getDefaultThumbnailMediaFor (byte itemType)
     {
-        return new StaticMediaDesc(MediaDesc.IMAGE_PNG, itemType, THUMB_MEDIA);
+        return new StaticMediaDesc(
+            MediaDesc.IMAGE_PNG, itemType, THUMB_MEDIA, MediaDesc.HALF_VERTICALLY_CONSTRAINED);
     }
 
     /**
