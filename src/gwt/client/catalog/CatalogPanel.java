@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -25,6 +26,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 import com.threerings.msoy.web.client.CatalogService;
@@ -56,7 +58,9 @@ public class CatalogPanel extends VerticalPanel
 
         _typeTabs = new ItemTypePanel("catalog", this);
 
-        _items = new PagedGrid(ROWS, COLUMNS) {
+        int rows = (Window.getClientHeight() - Application.HEADER_HEIGHT - NAV_BAR_ETC) /
+            BOX_HEIGHT;
+        _items = new PagedGrid(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {
                 // route our page navigation through the URL
                 String args = Page.composeArgs(new int[] { _type, page });
@@ -292,4 +296,7 @@ public class CatalogPanel extends VerticalPanel
     protected ItemTypePanel _typeTabs;
     protected ItemSearchSortPanel _searchSortPanel;
     protected PagedGrid _items;
+
+    protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ + 10 /* gap */;
+    protected static final int BOX_HEIGHT = MediaDesc.THUMBNAIL_HEIGHT/2 + 10 /* gap */;
 }

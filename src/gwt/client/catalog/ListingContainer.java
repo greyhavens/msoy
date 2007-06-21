@@ -54,7 +54,7 @@ public class ListingContainer extends FlexTable
 
         setWidget(2, 0, new ItemRating(listing.item, ItemRating.NO_RATING,
                                        ItemRating.MODE_READ, true));
-        getFlexCellFormatter().setStyleName(2, 0, "Cost");
+        getFlexCellFormatter().setStyleName(2, 0, "Rating");
 
         setWidget(2, 1, new Image("/images/header/symbol_flow.png"));
         getFlexCellFormatter().setWidth(2, 1, "15px");

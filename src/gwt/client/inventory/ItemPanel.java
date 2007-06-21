@@ -6,6 +6,7 @@ package client.inventory;
 import java.util.List;
 
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -19,6 +20,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.editem.EditorHost;
@@ -35,17 +37,16 @@ public class ItemPanel extends VerticalPanel
     implements EditorHost
 {
     /** The number of columns of items to display. */
-    public static final int COLUMNS = 4;
-
-    /** The number of rows of items to display. */
-    public static final int ROWS = 3;
+    public static final int COLUMNS = 3;
 
     public ItemPanel (byte type)
     {
         _type = type;
 
         // this will contain our items
-        _contents = new PagedGrid(ROWS, COLUMNS) {
+        int rows = (Window.getClientHeight() - Application.HEADER_HEIGHT -
+                    NAV_BAR_ETC - BLURB_HEIGHT) / BOX_HEIGHT;
+        _contents = new PagedGrid(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {
                 // route our page navigation through the URL
                 String args = Page.composeArgs(new int[] { _type, page });
@@ -250,4 +251,8 @@ public class ItemPanel extends VerticalPanel
 
     /** Only get the furni list for the current room once, and feed it to each ItemContainer */
     protected List _itemList;
+
+    protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ + 10 /* gap */;
+    protected static final int BLURB_HEIGHT = 25 /* gap */ + 33 /* title */ + 72 /* contents */;
+    protected static final int BOX_HEIGHT = MediaDesc.THUMBNAIL_HEIGHT/2 + 10 /* gap */;
 }

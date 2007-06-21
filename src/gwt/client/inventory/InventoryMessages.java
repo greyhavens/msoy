@@ -40,20 +40,20 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String doListRarityHeader();
 
   /**
-   * Translated "You can remix this item.".
-   * 
-   * @return translated "You can remix this item."
-   * @gwt.key detailRemixTip
-   */
-  String detailRemixTip();
-
-  /**
    * Translated "Item Description".
    * 
    * @return translated "Item Description"
    * @gwt.key doListDescripHeader
    */
   String doListDescripHeader();
+
+  /**
+   * Translated "You can remix this item.".
+   * 
+   * @return translated "You can remix this item."
+   * @gwt.key detailRemixTip
+   */
+  String detailRemixTip();
 
   /**
    * Translated "Delete".
@@ -78,6 +78,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key detailUseAvatar
    */
   String detailUseAvatar();
+
+  /**
+   * Translated "Remove avatar".
+   * 
+   * @return translated "Remove avatar"
+   * @gwt.key removeAvatar
+   */
+  String removeAvatar();
 
   /**
    * Translated "Upload...".
@@ -112,6 +120,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String detailRemoveAudio();
 
   /**
+   * Translated "Listing your {0}".
+   * 
+   * @return translated "Listing your {0}"
+   * @gwt.key doListHdrTop
+   */
+  String doListHdrTop(String arg0);
+
+  /**
    * Translated "Add item to current room ".
    * 
    * @return translated "Add item to current room "
@@ -126,14 +142,6 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key detailRemoveAvatar
    */
   String detailRemoveAvatar();
-
-  /**
-   * Translated "Listing your {0}".
-   * 
-   * @return translated "Listing your {0}"
-   * @gwt.key doListHdrTop
-   */
-  String doListHdrTop(String arg0);
 
   /**
    * Translated "Listing your item creates a snapshot of your item as it is just now and adds it to the Catalog, where other users may purchase copies of it.".
@@ -208,6 +216,14 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String errItemMissingDescrip();
 
   /**
+   * Translated "Add to room".
+   * 
+   * @return translated "Add to room"
+   * @gwt.key addToRoom
+   */
+  String addToRoom();
+
+  /**
    * Translated "Item deleted.".
    * 
    * @return translated "Item deleted."
@@ -238,6 +254,22 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key msgItemListed
    */
   String msgItemListed();
+
+  /**
+   * Translated "Wear avatar".
+   * 
+   * @return translated "Wear avatar"
+   * @gwt.key wearAvatar
+   */
+  String wearAvatar();
+
+  /**
+   * Translated "Remove from room".
+   * 
+   * @return translated "Remove from room"
+   * @gwt.key removeFromRoom
+   */
+  String removeFromRoom();
 
   /**
    * Translated "Use this decor in current room".

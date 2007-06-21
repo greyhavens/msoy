@@ -34,6 +34,9 @@ import client.util.MsoyUI;
 public class Application
     implements EntryPoint, HistoryListener
 {
+    /** The height of our header (including the black bar with location label) in pixels. */
+    public static final int HEADER_HEIGHT = 70;
+
     /**
      * Returns a {@link Hyperlink} that displays the details of a given group.
      */
