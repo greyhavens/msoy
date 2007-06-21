@@ -104,20 +104,20 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String errorTitle();
 
   /**
-   * Translated "Failed to load friends: {0}".
-   * 
-   * @return translated "Failed to load friends: {0}"
-   * @gwt.key friendsLoadFailed
-   */
-  String friendsLoadFailed(String arg0);
-
-  /**
    * Translated "Profile Search".
    * 
    * @return translated "Profile Search"
    * @gwt.key profileSearchTitle
    */
   String profileSearchTitle();
+
+  /**
+   * Translated "Failed to load friends: {0}".
+   * 
+   * @return translated "Failed to load friends: {0}"
+   * @gwt.key friendsLoadFailed
+   */
+  String friendsLoadFailed(String arg0);
 
   /**
    * Translated "Profile".
@@ -254,6 +254,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key friendsTitle
    */
   String friendsTitle();
+
+  /**
+   * Translated "Admin Info".
+   * 
+   * @return translated "Admin Info"
+   * @gwt.key adminBrowse
+   */
+  String adminBrowse();
 
   /**
    * Translated "Display Name".

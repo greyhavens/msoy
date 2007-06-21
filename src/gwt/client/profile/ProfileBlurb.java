@@ -199,7 +199,7 @@ public class ProfileBlurb extends Blurb
             }));
         }
         if (CProfile.isAdmin()) {
-            _buttons.add(new Button("Visit in Player Browser", new ClickListener() {
+            _buttons.add(new Button(CProfile.msgs.adminBrowse(), new ClickListener() {
                 public void onClick (Widget sender) {
                     History.newItem(Application.createLinkToken("admin", "browser_" + 
                         _name.getMemberId()));
