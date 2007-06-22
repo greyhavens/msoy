@@ -62,12 +62,7 @@ public class index extends ItemEntryPoint
             setContent(_catalog = new CatalogPanel());
             setPageTabs(_catalog.getTabs());
         }
-
-        int[] avals = Page.splitArgs(args);
-        byte type = (avals[0] == 0) ? Item.AVATAR : (byte)avals[0];
-        int pageNo = (avals.length > 1) ? avals[1] : 0;
-        int itemId = (avals.length > 2) ? avals[2] : 0;
-        _catalog.display(type, pageNo, itemId);
+        _catalog.display(args);
     }
 
     protected CatalogPanel _catalog;

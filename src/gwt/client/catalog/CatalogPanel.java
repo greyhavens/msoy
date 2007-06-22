@@ -59,9 +59,11 @@ public class CatalogPanel extends VerticalPanel
                     HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT;
         _items = new PagedGrid(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {
-                // route our page navigation through the URL
-                String args = Page.composeArgs(new int[] { _type, page });
-                History.newItem(Application.createLinkToken("catalog", args));
+// TODO: route our page navigation through the URL
+//                 String args = Page.composeArgs(new int[] { _type, page });
+//                 History.newItem(Application.createLinkToken("catalog", args));
+                CatalogPanel.this._page = page;
+                refreshItems(false);
             }
             protected Widget createWidget (Object item) {
                 return new ListingContainer((CatalogListing)item, CatalogPanel.this);
@@ -107,22 +109,17 @@ public class CatalogPanel extends VerticalPanel
         return _typeTabs;
     }
 
-    public void display (byte itemType, int pageNo, int itemId)
+    public void display (String args)
     {
-// TODO: sort out displaying items via the URL
-//         if (itemId == 0) {
-            _page = pageNo;
-            if (!_typeTabs.selectTab(itemType)) {
-                // we're already on this tab, so refresh our items in order to trigger the
-                // appropriate page selection
-                refreshItems(false);
-            }
-            showCatalog();
-
-//         } else {
-//             _typeTabs.selectTab(itemType);
-//             showListing(new ItemIdent(itemType, itemId));
-//         }
+        // TODO: route everything through the args (search, tag, creator, sortBy)
+        int[] avals = Page.splitArgs(args);
+        byte type = (avals[0] == 0) ? Item.AVATAR : (byte)avals[0];
+        if (!_typeTabs.selectTab(type)) {
+            // we're already on this tab, so refresh our items in order to trigger the
+            // appropriate page selection
+            refreshItems(false);
+        }
+        showCatalog();
     }
 
     public void showListing (final CatalogListing listing)
@@ -153,7 +150,8 @@ public class CatalogPanel extends VerticalPanel
     public void onTabSelected (SourcesTabEvents sender, int tabIndex)
     {
         _type = (byte) tabIndex;
-        refreshItems(false);
+        _page = 0;
+        refreshItems(true);
 
         Byte tabKey = new Byte(_type);
         TagCloud cloud = (TagCloud) _clouds.get(tabKey);
