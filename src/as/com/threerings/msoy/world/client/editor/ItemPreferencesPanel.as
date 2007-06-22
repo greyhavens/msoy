@@ -253,8 +253,7 @@ public class ItemPreferencesPanel extends FloatingPanel
     {
         if (_furniData != null) {
             var data :Array = _furniData.splitActionData();
-            var door :String = data[1] as String;
-            _door.text = door; 
+            _door.text = data[data.length-1] as String; // last argument is room name
         }
     }
 

@@ -297,7 +297,7 @@ public class RoomManager extends SpotSceneManager
      */
     public void reclaimDecor (MemberObject user)
     {
-        // replace the decor with defaults 
+        // replace the decor with defaults
         MsoyScene scene = (MsoyScene)_scene;
         SceneAttrsUpdate update = new SceneAttrsUpdate();
         update.init(scene.getId(), scene.getVersion());
@@ -485,7 +485,6 @@ public class RoomManager extends SpotSceneManager
         // TODO: if an item is removed from the room, remove any memories from the room object and
         // flush any modifications to the database
 
-        ArrayIntSet scenesToId = null;
         for (SceneUpdate update : updates) {
             // TODO: complicated verification of changes, including verifying that the user owns
             // the items they're adding (and that they don't add any props)
@@ -500,7 +499,7 @@ public class RoomManager extends SpotSceneManager
                         log.warning("Unable to update decor usage [e=" + cause + "].");
                     }
                 };
-                                
+
                 // if decor was modified, we should mark new decor as used, and clear the old one
                 Decor decor = msoyScene.getDecor();
                 if (decor != null && decor.itemId != up.decor.itemId) { // modified?
@@ -517,104 +516,22 @@ public class RoomManager extends SpotSceneManager
                         audioData.itemId, up.audioData.itemId, defaultListener);
                 }
             }
-            
+
             // furniture modification updates require us to mark item usage
             if (update instanceof ModifyFurniUpdate) {
                 ModifyFurniUpdate mfu = (ModifyFurniUpdate) update;
-                MsoyServer.itemMan.updateItemUsage(user.getMemberId(),
-                    _scene.getId(), mfu.furniRemoved, mfu.furniAdded,
+                MsoyServer.itemMan.updateItemUsage(
+                    user.getMemberId(), _scene.getId(), mfu.furniRemoved, mfu.furniAdded,
                     new ResultListener<Object>() {
-                        public void requestCompleted (Object result) {}
-                        public void requestFailed (Exception cause) {
-                            log.warning("Unable to update item usage [e=" + cause + "].");
-                        }
-                    });
-
-                // also, we locate all the scene ids named in added portals
-                if (mfu.furniAdded != null) {
-                    for (FurniData furni : mfu.furniAdded) {
-                        if (furni.actionType == FurniData.ACTION_PORTAL) {
-                            try {
-                                int sceneId = Integer.parseInt(
-                                    furni.splitActionData()[0]);
-                                if (scenesToId == null) {
-                                    scenesToId = new ArrayIntSet();
-                                }
-                                scenesToId.add(sceneId);
-                            } catch (Exception e) {
-                                // just accept it
-                            }
-                        }
+                    public void requestCompleted (Object result) {}
+                    public void requestFailed (Exception cause) {
+                        log.warning("Unable to update item usage [e=" + cause + "].");
                     }
-                }
+                });
             }
         }
 
-        if (scenesToId != null) {
-            updateRoom2(user, updates, scenesToId);
-        } else {
-            finishUpdateRoom(user, updates);
-        }
-    }
-
-    /**
-     * updateRoom, continued. Look up any scene names for new portals.
-     */
-    protected void updateRoom2 (final MemberObject user, final SceneUpdate[] updates,
-                                ArrayIntSet scenesToId)
-    {
-        final int[] sceneIds = scenesToId.toIntArray();
-        MsoyServer.invoker.postUnit(new RepositoryUnit("IdentifyScenes") {
-            public void invokePersist () throws PersistenceException {
-                _sceneNames = MsoyServer.sceneRepo.identifyScenes(sceneIds);
-            }
-            public void handleSuccess () {
-                updateRoom3(user, updates, _sceneNames);
-            }
-            public void handleFailure (Exception e) {
-                log.warning("Unable to identify scenes [err=" + e + "]");
-                // just finish off
-                finishUpdateRoom(user, updates);
-            }
-            protected HashIntMap<String> _sceneNames;
-        });
-    }
-
-    /**
-     * Assign the names to portals.
-     */
-    protected void updateRoom3 (MemberObject user, SceneUpdate[] updates,
-                                HashIntMap<String> sceneNames)
-    {
-        for (SceneUpdate update : updates) {
-            if (update instanceof ModifyFurniUpdate) {
-                ModifyFurniUpdate mfu = (ModifyFurniUpdate) update;
-                if (mfu.furniAdded != null) {
-                    for (FurniData furni : mfu.furniAdded) {
-                        if (furni.actionType == FurniData.ACTION_PORTAL) {
-                            try {
-                                int sceneId = Integer.parseInt(furni.splitActionData()[0]);
-                                String name = sceneNames.get(sceneId);
-                                if (name != null) {
-                                    furni.actionData = sceneId + ":" + name;
-                                }
-                            } catch (Exception e) {
-                                // whatever
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        finishUpdateRoom(user, updates);
-    }
-
-    /**
-     * Ah, the final step in updating the room.
-     */
-    protected void finishUpdateRoom (MemberObject user, SceneUpdate[] updates)
-    {
+        // finally record our updates
         for (SceneUpdate update : updates) {
             recordUpdate(update);
         }

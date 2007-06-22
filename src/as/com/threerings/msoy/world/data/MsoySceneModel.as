@@ -171,16 +171,7 @@ public class MsoySceneModel extends SceneModel
             if (furni.actionType != FurniData.ACTION_PORTAL) {
                 continue;
             }
-
-            var vals :Array = furni.splitActionData();
-
-            var p :Portal = new Portal();
-            p.portalId = furni.id;
-            p.loc = furni.loc;
-            p.targetSceneId = int(vals[0]);
-            p.targetPortalId = -1; // int(vals[1]);
-
-            // remember this portal
+            var p :MsoyPortal = new MsoyPortal(furni);
             _portalInfo.put(p.portalId, p);
         }
     }

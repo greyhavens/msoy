@@ -122,7 +122,7 @@ public class FurniSprite extends MsoySprite
             return Msgs.GENERAL.get("i.play_game", String(actionData[1]));
 
         case FurniData.ACTION_PORTAL:
-            return Msgs.GENERAL.get("i.trav_portal", String(actionData[1]));
+            return Msgs.GENERAL.get("i.trav_portal", String(actionData[actionData.length-1]));
 
         case FurniData.ACTION_HELP_PAGE:
             return Msgs.GENERAL.get("i.help_page", String(actionData[0]));

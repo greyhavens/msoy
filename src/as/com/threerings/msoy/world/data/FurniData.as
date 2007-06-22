@@ -34,7 +34,8 @@ public class FurniData
     public static const ACTION_LOBBY_GAME :int = 2;
 
     /** An actionType indicating that we're a portal.
-        actionData = "<targetSceneId>:<targetSceneName>" */
+        actionData = "<targetSceneId>:<targetLocX>:<targetLocY>:<targetLocZ>:
+        <targetLocOrient>:<targetSceneName>" */
     public static const ACTION_PORTAL :int = 3;
 
     /** An actionType indicating that actionData is a world game item id.
@@ -85,8 +86,8 @@ public class FurniData
     }
 
     /**
-     * Return the actionData as two strings, split after the first colon.
-     * If there is no colon, then a single-element array is returned.
+     * Return the actionData as strings separated by colons. If there is not at least one colon,
+     * then a single-element array is returned.
      */
     public function splitActionData () :Array
     {
@@ -97,8 +98,16 @@ public class FurniData
         if (colonDex == -1) {
             return [ actionData ];
         }
-        return [ actionData.substring(0, colonDex),
-            actionData.substring(colonDex + 1) ];
+        if (actionType == ACTION_PORTAL) {
+            return actionData.split(":", 6);
+        } else {
+            return [ actionData.substring(0, colonDex),
+                     actionData.substring(colonDex + 1) ];
+            // TODO: can we just do this? will the 2 mean "stick everything in the last argument"
+            // or will it mean "ignore everything after the third colon"? the documentation of
+            // course does not say...
+//             return actionData.split(":", 2);
+        }
     }
 
     /**

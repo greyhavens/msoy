@@ -24,14 +24,14 @@ public class FurniUpdateAction
         _oldData = oldData;
         _newData = newData;
     }
-                                       
-    // documentation inherited from 
+
+    // documentation inherited from
     public function makeApply () :SceneUpdate
     {
         return makeUpdate(_oldData, _newData);
     }
 
-    // documentation inherited 
+    // documentation inherited
     public function makeUndo () :SceneUpdate
     {
         return makeUpdate(_newData, _oldData);
