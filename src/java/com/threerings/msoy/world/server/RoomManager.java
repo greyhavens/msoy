@@ -57,6 +57,7 @@ import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
+import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.RoomCodes;
@@ -454,7 +455,7 @@ public class RoomManager extends SpotSceneManager
     }
 
     @Override // documentation inherited
-    protected SceneLocation computeEnteringLocation (BodyObject body, Portal entry)
+    protected SceneLocation computeEnteringLocation (BodyObject body, Portal from, Portal entry)
     {
         if (body instanceof MemberObject) {
             // automatically add the room to their recent list
@@ -462,9 +463,16 @@ public class RoomManager extends SpotSceneManager
             memberObj.addToRecentScenes(_scene.getId(), _scene.getName());
         }
 
-        if (entry != null) {
-            return super.computeEnteringLocation(body, entry);
+        // if the from portal has a destination location, use that
+        if (from instanceof MsoyPortal && ((MsoyPortal)from).dest != null) {
+            return new SceneLocation(((MsoyPortal)from).dest, body.getOid());
         }
+
+        // otherwise if we have a destination portal (the scene's default entrace) use that
+        if (entry != null) {
+            return super.computeEnteringLocation(body, from, entry);
+        }
+
         // fallback if there is no portal
         return new SceneLocation(new MsoyLocation(.5, 0, .5, (short) 0), body.getOid());
     }

@@ -9,14 +9,15 @@ import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.ListUtil;
 
+import com.threerings.whirled.data.SceneModel;
+import com.threerings.whirled.spot.data.Portal;
+
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
-import com.threerings.whirled.data.SceneModel;
-
-import com.threerings.whirled.spot.data.Portal;
+import static com.threerings.msoy.Log.log;
 
 /**
  * Extends basic scene model with scene type.
@@ -43,7 +44,7 @@ public class MsoySceneModel extends SceneModel
 
     /** Decor item reference. */
     public Decor decor;
-    
+
     /** Audio data representation. */
     public AudioData audioData;
 
@@ -52,7 +53,7 @@ public class MsoySceneModel extends SceneModel
     {
         audioData = new AudioData();
     }
-    
+
     /**
      * Add a piece of furniture to this model.
      */
@@ -143,8 +144,7 @@ public class MsoySceneModel extends SceneModel
     }
 
     /**
-     * Invalidate our portal info if the specified piece of furniture
-     * is a portal.
+     * Invalidate our portal info if the specified piece of furniture is a portal.
      */
     protected void invalidatePortalInfo (FurniData changedFurni)
     {
@@ -160,7 +160,7 @@ public class MsoySceneModel extends SceneModel
     {
         _portalInfo = null;
     }
-    
+
     /**
      * Validate that the portalInfo is up-to-date and ready to use.
      */
@@ -176,27 +176,12 @@ public class MsoySceneModel extends SceneModel
             if (furni.actionType != FurniData.ACTION_PORTAL) {
                 continue;
             }
-
-            String[] vals = furni.actionData.split(":");
-
-            Portal p = new Portal();
-            p.portalId = furni.id;
-            p.loc = furni.loc;
             try {
-                p.targetSceneId = Integer.parseInt(vals[0]);
+                MsoyPortal p = new MsoyPortal(furni);
+                _portalInfo.put(p.portalId, p);
             } catch (Exception e) {
-                // TODO: eventually, all data from the clients will
-                // have to be extensively verified
+                log.warning("Invalid portal furni [fd=" + furni + ", error=" + e + "].");
             }
-            p.targetPortalId = (short) -1;
-//            try {
-//                p.targetPortalId = (short) Integer.parseInt(vals[1]);
-//            } catch (Exception e) {
-//                // same as above
-//            }
-
-            // remember this portal
-            _portalInfo.put(p.portalId, p);
         }
     }
 
@@ -213,7 +198,7 @@ public class MsoySceneModel extends SceneModel
     }
 
     /**
-     * Create a blank scene, with default decor data. 
+     * Create a blank scene, with default decor data.
      */
     public static MsoySceneModel blankMsoySceneModel ()
     {
@@ -226,8 +211,8 @@ public class MsoySceneModel extends SceneModel
 
     /**
      * Create a default decor for a blank scene. The decor will not be completely filled in,
-     * because it doesn't correspond to an entity inside the database, but it has enough
-     * to be displayed inside the room.
+     * because it doesn't correspond to an entity inside the database, but it has enough to be
+     * displayed inside the room.
      */
     public static Decor defaultMsoySceneModelDecor ()
     {
