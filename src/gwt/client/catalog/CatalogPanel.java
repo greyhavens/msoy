@@ -214,6 +214,7 @@ public class CatalogPanel extends VerticalPanel
      */
     public void clearFilters (boolean reload)
     {
+        _page = 0;
         _search = "";
         _creator = -1;
         _tag = null;
