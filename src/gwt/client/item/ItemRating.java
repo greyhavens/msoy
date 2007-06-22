@@ -4,7 +4,7 @@
 package client.item;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.Widget;
@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
-public class ItemRating extends FlexTable
+public class ItemRating extends FlowPanel
 {
     /** Display only the item's average rating. Allow no updates. */
     public static final int MODE_READ = 1;
@@ -47,8 +47,6 @@ public class ItemRating extends FlexTable
             throw new IllegalArgumentException("Can only rate clones and listed items " + _item);
         }
         setStyleName("itemRating");
-        setCellSpacing(0);
-        setCellPadding(0);
 
         _item = item;
         _memberRating = memberRating;
@@ -63,7 +61,7 @@ public class ItemRating extends FlexTable
             if (_mode != MODE_READ) {
                 halfStar.addMouseListener(new RatingMouseListener(ii/2+1));
             }
-            setWidget(0, ii, halfStar);
+            add(halfStar);
         }
         // and initialize the stars
         update();
@@ -75,8 +73,8 @@ public class ItemRating extends FlexTable
         public RatingMouseListener (int starIx)
         {
             _ratingInterval = starIx;
-
         }
+
         // from interface MouseListener
         public void onMouseEnter (Widget sender)
         {
@@ -140,11 +138,11 @@ public class ItemRating extends FlexTable
         String filledUrl = prefix + (isUserRating ? "user" : "average");
         for (int ii = 0; ii < filledStars; ii++) {
             String path = filledUrl + "_" + ((ii % 2) == 0 ? "lhalf" : "rhalf") + ".png";
-            ((Image) getWidget(0, ii)).setUrl(path);
+            ((Image) getWidget(ii)).setUrl(path);
         }
         for (int ii = filledStars; ii < 10; ii++) {
             String path = prefix + "empty_" + ((ii % 2) == 0 ? "lhalf" : "rhalf") + ".png";
-            ((Image) getWidget(0, ii)).setUrl(path);
+            ((Image) getWidget(ii)).setUrl(path);
         }
     }
 
