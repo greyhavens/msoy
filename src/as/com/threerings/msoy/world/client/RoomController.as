@@ -243,7 +243,7 @@ public class RoomController extends SceneController
         super.init(ctx, config);
 
         _mctx = (ctx as WorldContext);
-        _editor = new RoomEditorController(_mctx, this);
+        _editor = new RoomEditorController(_mctx, _roomView);
         
         // watch for when we're un-minimized and the display list is valid, so that we can
         // open the editor, and place things correctly when necessary
@@ -285,8 +285,6 @@ public class RoomController extends SceneController
         _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
-
-        _editor.init(_roomView);
     }
 
     // documentation inherited
@@ -299,8 +297,6 @@ public class RoomController extends SceneController
         if (isRoomEditingNew()) {
             cancelRoomEditingNew();
         }
-
-        _editor.deinit();
 
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
@@ -954,9 +950,6 @@ public class RoomController extends SceneController
 
         if (isRoomEditingOld()) {
             _roomEditPanel.controller.mouseMove(sx, sy);
-        }
-        if (isRoomEditingNew()) {
-            _editor.mouseMove(sx, sy);
         }
 
         // if shift is being held down, we're looking for locations only, so
