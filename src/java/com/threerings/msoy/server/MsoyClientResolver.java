@@ -88,9 +88,12 @@ public class MsoyClientResolver extends CrowdClientResolver
 //        List<ItemListInfo> itemLists = MsoyServer.itemMan.getItemLists(member.memberId);
 //        userObj.lists = new DSet<ItemListInfo>(itemLists);
 
-        // calculate flow evaporation since last logon
-        int dT = (int) ((System.currentTimeMillis() - member.lastSession.getTime()) / 60000);
-        MsoyServer.memberRepo.getFlowRepository().expireFlow(member, dT); // modifies member.flow
+// TEMP: flow evaporation is disabled; we need to think more about this
+//         // calculate flow evaporation since last logon
+//         int dT = (int) ((System.currentTimeMillis() - member.lastSession.getTime()) / 60000);
+//         MsoyServer.memberRepo.getFlowRepository().expireFlow(member, dT); // modifies member.flow
+// END TEMP
+
         userObj.setFlow(member.flow);
         userObj.setAccFlow(member.accFlow);
 

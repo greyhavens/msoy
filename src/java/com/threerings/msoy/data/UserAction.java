@@ -22,7 +22,7 @@ public enum UserAction
 
     PLAYED_GAME(20, 0),
 
-    CREATED_ITEM(30, 200),
+    CREATED_ITEM(30, 100),
     BOUGHT_ITEM(31, 0),
     LISTED_ITEM(32, 0),
     RETURNED_ITEM(33, 0),
