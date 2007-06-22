@@ -30,77 +30,29 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  */
 public class UploadFile
 {
+    public final FileItem item;
+    
     public UploadFile (FileItem item)
         throws IOException
     {
-        _item = item;               
+        this.item = item;
         _mimeType = detectMimeType();
-        _hash = generateHash();
     }
-
-    /*
-     * Returns the hash of the FileItem data.
-     */
-    public String getHash ()
-    {
-        return _hash;
-    }
-    /*
-     * Returns the MediaDesc mime type of the FileItem data.
+    
+    /**
+     * Returns the mime type detected from the FileItem data.
      */
     public byte getMimeType ()
     {
         return _mimeType;
     }
-    /*
-     * Returns an InputStream of the FileItem data.
-     */
-    public InputStream getInputStream ()
-        throws IOException
-    {
-        return _item.getInputStream();
-    }
     
     /**
-     * Determine the mime type of the FileItem.
+     * Returns the mime type detected from the FileItem data.
      */
-    protected byte detectMimeType ()
-        throws IOException
+    public String getMimeTypeAsString ()
     {
-        byte mimeType;
-        
-        // look up the mime type
-        mimeType = MediaDesc.stringToMimeType(_item.getContentType());
-        if (mimeType != MediaDesc.INVALID_MIME_TYPE) {
-            return mimeType;
-        }
-
-        // if that failed, try inferring the type from the path
-        mimeType = MediaDesc.suffixToMimeType(_item.getName());
-        if (mimeType != MediaDesc.INVALID_MIME_TYPE) {
-            return mimeType;
-        }
-
-        // if we could not discern from the file path, try determining the mime type
-        // from the file data itself.
-        byte[] firstBytes = new byte[_mimeMagic.getMinArrayLength()];
-        String mimeString = null;
-
-        // Read identifying bytes from the uploaded file
-        if (_item.getInputStream().read(firstBytes, 0, firstBytes.length) < firstBytes.length) {
-            return MediaDesc.INVALID_MIME_TYPE;
-        }
-        
-        // Sufficient data was read, attempt magic identification
-        mimeString = _mimeMagic.identify(firstBytes, _item.getName(), null);
-
-        if (mimeString != null) {
-            // XXX debugging; want to know the effectiveness, any false hits,
-            // and what types of files are being uploaded -- landonf (March 5, 2007)
-            log.warning("Magically determined unknown mime type [type=" + mimeString +
-                ", name=" + _item.getName() + "].");
-        }
-        return MediaDesc.stringToMimeType(mimeString);     
+        return MediaDesc.mimeTypeToString(_mimeType);
     }
 
     /**
@@ -108,7 +60,7 @@ public class UploadFile
      * @return the hash as hex in a string.
      * @throws RuntimeException if no SHA hash implementation could be found.
      */
-    protected String generateHash ()
+    public String generateHash ()
         throws IOException
     {
         MessageDigest digest = null;
@@ -119,7 +71,7 @@ public class UploadFile
         }
 
         // read from the input stream and append to the digest, sending the bits to /dev/null
-        InputStream digestIn = new DigestInputStream(_item.getInputStream(), digest);
+        InputStream digestIn = new DigestInputStream(item.getInputStream(), digest);
         OutputStream devOut = new NullOutputStream();
         try {
             IOUtils.copy(digestIn, devOut);
@@ -132,8 +84,50 @@ public class UploadFile
         // return the hash
         return StringUtil.hexlate(digest.digest());
     }
+    
+    /**
+     * Determine the mime type of the FileItem.
+     */
+    protected byte detectMimeType ()
+        throws IOException
+    {
+        byte mimeType;
+        
+        // look up the mime type
+        mimeType = MediaDesc.stringToMimeType(item.getContentType());
+        if (mimeType != MediaDesc.INVALID_MIME_TYPE) {
+            return mimeType;
+        }
 
-    protected FileItem _item;
+        // if that failed, try inferring the type from the path
+        mimeType = MediaDesc.suffixToMimeType(item.getName());
+        if (mimeType != MediaDesc.INVALID_MIME_TYPE) {
+            return mimeType;
+        }
+
+        // if we could not discern from the file path, try determining the mime type
+        // from the file data itself.
+        byte[] firstBytes = new byte[_mimeMagic.getMinArrayLength()];
+        String mimeString = null;
+
+        // Read identifying bytes from the uploaded file
+        if (item.getInputStream().read(firstBytes, 0, firstBytes.length) < firstBytes.length) {
+            return MediaDesc.INVALID_MIME_TYPE;
+        }
+        
+        // Sufficient data was read, attempt magic identification
+        mimeString = _mimeMagic.identify(firstBytes, item.getName(), null);
+
+        if (mimeString != null) {
+            // XXX debugging; want to know the effectiveness, any false hits,
+            // and what types of files are being uploaded -- landonf (March 5, 2007)
+            log.warning("Magically determined unknown mime type [type=" + mimeString +
+                ", name=" + item.getName() + "].");
+        }
+        return MediaDesc.stringToMimeType(mimeString);     
+    }
+
+ 
     protected byte _mimeType;
     protected String _hash;
 
