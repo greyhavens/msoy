@@ -150,6 +150,14 @@ public class SwiftlyManager
         // TODO: wait for our serial executors to finish, but timeout if they take more than 90
         // seconds or so
     }
+    
+    /**
+     * Return the ProjectRoomManager for the given projectId. May return null.
+     */
+    public ProjectRoomManager getRoomManager (int projectId)
+    {
+        return _managers.get(projectId);
+    }
 
     /**
      * Called by a project room manager when it has become empty and shutdown.
