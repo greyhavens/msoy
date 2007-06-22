@@ -337,7 +337,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     }
     
     /**
-     * Determines if a  member is a collaborator on the supplied project.
+     * Determines if a member is a collaborator on the supplied project.
      * @param projectId the id of the project being tested
      * @param memberId the id of the member being tested
      * @return true if memberId is a collaborator, false otherwise.
@@ -347,7 +347,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            return (MsoyServer.swiftlyRepo.getMembership(projectId, memberId) != null);
+            return MsoyServer.swiftlyRepo.isCollaborator(projectId, memberId);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Checking project membership failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);

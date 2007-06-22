@@ -129,6 +129,16 @@ public class SwiftlyRepository extends DepotRepository
         }
         return (project.ownerId == memberId);
     }
+    
+    /**
+     * Returns true if the memberId is a collaborator, false otherwise. 
+     * 
+     */
+    public boolean isCollaborator (int projectId, int memberId)
+        throws PersistenceException
+    {
+        return (getMembership(projectId, memberId) != null);
+    }
 
     /**
      * Load the Swiftly SVN Storage record for the given project
