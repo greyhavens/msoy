@@ -22,6 +22,7 @@ import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.chat.client.ReportingListener;
+import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.ui.FloatingPanel;
@@ -94,13 +95,15 @@ public class DoorTargetEditController
         _container = ctx.getTopPanel().getPlaceContainer();
         _ui = makeUI();
         _ui.open();
-        _ui.x = _ui.y = 0;
+        _ui.x = 5;
+        _ui.y = HeaderBar.HEIGHT + 5;
 
         _doorScene = _ctx.getSceneDirector().getScene().getId();
         _doorId = doorData.itemId;
 
         _destinationScene = 0;
         _destinationLoc = null;
+        _destinationName = null;
     }
 
     /**
@@ -117,7 +120,7 @@ public class DoorTargetEditController
             var newdata :FurniData = doorData.clone() as FurniData;
             newdata.actionData = _destinationScene + ":" + roundCoord(_destinationLoc.x) + ":" +
                 roundCoord(_destinationLoc.y) + ":" +  roundCoord(_destinationLoc.z) + ":" +
-                _destinationLoc.orient + ":" + _ctx.getSceneDirector().getScene().getName();
+                _destinationLoc.orient + ":" + _destinationName;
 
             ctrl.applyUpdate(new FurniUpdateAction(_ctx, doorData, newdata));
         }
@@ -125,6 +128,7 @@ public class DoorTargetEditController
         // now clean up
         _doorId = _doorScene = _destinationScene = 0;
         _destinationLoc = null;
+        _destinationName = null;
 
         _ui.close();
         _ui = null;
@@ -146,6 +150,7 @@ public class DoorTargetEditController
 
         var label :Text = new Text();
         label.text = Msgs.EDITING.get("l.edit_door_label");
+        label.width = 400; // force the damned text to wrap
         panel.addChild(label);
 
         var elts :HBox = new HBox();
@@ -238,15 +243,14 @@ public class DoorTargetEditController
         // remember the target
         _destinationScene = targetSceneId;
         _destinationLoc = _ctx.getSpotSceneDirector().getIntendedLocation() as MsoyLocation;
+        _destinationName = _ctx.getSceneDirector().getScene().getName();
 
         // are we already in the room with the door?
         if (scene.getId() == _doorScene) {
-
             // get ready to rock!
             finalizeCommit(scene);
 
         } else {
-
             // move the player back to the room with the door
             sd.moveTo(_doorScene);
             // the rest will be triggered via updateLocation(), once we get there...
@@ -305,6 +309,9 @@ public class DoorTargetEditController
 
     /** The location at which to arrive in our destination. */
     protected var _destinationLoc :MsoyLocation;
+
+    /** The name of the destination scene. */
+    protected var _destinationName :String;
 
     /** Flex container for the scene. */
     protected var _container :Container;
