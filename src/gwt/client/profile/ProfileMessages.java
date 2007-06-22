@@ -24,6 +24,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String noFriendsOther();
 
   /**
+   * Translated "Send Mail".
+   * 
+   * @return translated "Send Mail"
+   * @gwt.key sendMail
+   */
+  String sendMail();
+
+  /**
    * Translated "Last online: {0}".
    * 
    * @return translated "Last online: {0}"
@@ -80,6 +88,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String inviteTitle();
 
   /**
+   * Translated "Permaname: {0}".
+   * 
+   * @return translated "Permaname: {0}"
+   * @gwt.key permaName
+   */
+  String permaName(String arg0);
+
+  /**
    * Translated "Your display name must be between {0} and {1} characters long.".
    * 
    * @return translated "Your display name must be between {0} and {1} characters long."
@@ -88,12 +104,12 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String displayNameInvalid(String arg0,  String arg1);
 
   /**
-   * Translated "Permaname: {0}".
+   * Translated "Visit Home".
    * 
-   * @return translated "Permaname: {0}"
-   * @gwt.key permaName
+   * @return translated "Visit Home"
+   * @gwt.key visitHome
    */
-  String permaName(String arg0);
+  String visitHome();
 
   /**
    * Translated "Error".
@@ -176,20 +192,20 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String profileLogin();
 
   /**
-   * Translated "Let's be buddies!".
-   * 
-   * @return translated "Let's be buddies!"
-   * @gwt.key inviteBody
-   */
-  String inviteBody();
-
-  /**
    * Translated "Sorry pardner. You don't have invite privileges for any groups.".
    * 
    * @return translated "Sorry pardner. You don't have invite privileges for any groups."
    * @gwt.key haveNoGroups
    */
   String haveNoGroups();
+
+  /**
+   * Translated "Let's be buddies!".
+   * 
+   * @return translated "Let's be buddies!"
+   * @gwt.key inviteBody
+   */
+  String inviteBody();
 
   /**
    * Translated "Real Name".
@@ -240,20 +256,20 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String notInGroupsOther();
 
   /**
-   * Translated "Admin Info".
-   * 
-   * @return translated "Admin Info"
-   * @gwt.key adminBrowse
-   */
-  String adminBrowse();
-
-  /**
    * Translated "Display Name".
    * 
    * @return translated "Display Name"
    * @gwt.key displayName
    */
   String displayName();
+
+  /**
+   * Translated "Admin Info".
+   * 
+   * @return translated "Admin Info"
+   * @gwt.key adminBrowse
+   */
+  String adminBrowse();
 
   /**
    * Translated "Friends".

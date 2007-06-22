@@ -28,8 +28,7 @@ public class FriendsBlurb extends Blurb
     // @Override // from Blurb
     protected Panel createContent ()
     {
-        _content = new ProfileGrid(FRIEND_ROWS, FRIEND_COLUMNS, "");
-        _content.setVerticalOrienation(true);
+        _content = new VerticalPanel();
         _content.setWidth("100%");
         _content.addStyleName("friendsBlurb");
         return _content;
@@ -40,12 +39,17 @@ public class FriendsBlurb extends Blurb
     {
         setHeader(CProfile.msgs.friendsTitle());
 
+        ProfileGrid grid = new ProfileGrid(FRIEND_ROWS, FRIEND_COLUMNS, "");
+        grid.setVerticalOrienation(true);
+        grid.setWidth("100%");
+
         String empty = CProfile.getMemberId() == _name.getMemberId() ?
             CProfile.msgs.noFriendsSelf() : CProfile.msgs.noFriendsOther();
-        _content.setEmptyMessage(empty);
+        grid.setEmptyMessage(empty);
 
         ArrayList friends = (ArrayList)blurbData;
-        _content.setModel(new SimpleDataModel(friends), 0);
+        grid.setModel(new SimpleDataModel(friends), 0);
+        _content.add(grid);
 
         boolean canInvite = CProfile.getMemberId() > 0 &&
             CProfile.getMemberId() != _name.getMemberId();
@@ -54,15 +58,14 @@ public class FriendsBlurb extends Blurb
             canInvite = canInvite && !(friend.name.getMemberId() == CProfile.getMemberId());
         }
         if (canInvite) {
-            Button inviteButton = new Button(CProfile.msgs.inviteFriend(), new ClickListener() {
+            _content.add(WidgetUtil.makeShim(5, 5));
+            _content.add(new Button(CProfile.msgs.inviteFriend(), new ClickListener() {
                 public void onClick (Widget sender) {
                     new MailComposition(_name, CProfile.msgs.inviteTitle(),
                                         new FriendInvite.Composer(),
                                         CProfile.msgs.inviteBody()).show();
                 }
-            });
-//             _content.addToHeader(WidgetUtil.makeShim(15, 1));
-//             _content.addToHeader(inviteButton);
+            }));
         }
     }
 
@@ -70,11 +73,10 @@ public class FriendsBlurb extends Blurb
     protected void didFail (String cause)
     {
         setHeader(CProfile.msgs.errorTitle());
-        _content.setEmptyMessage(CProfile.msgs.friendsLoadFailed(cause));
-        _content.setModel(new SimpleDataModel(new ArrayList()), 0);
+        _content.add(new Label(CProfile.msgs.friendsLoadFailed(cause)));
     }
 
-    protected ProfileGrid _content;
+    protected VerticalPanel _content;
 
     protected static final int FRIEND_COLUMNS = 3;
     protected static final int FRIEND_ROWS = 2;

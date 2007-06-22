@@ -84,8 +84,7 @@ public class ProfileBlurb extends Blurb
     // @Override // from Blurb
     protected void didInit (Object blurbData)
     {
-        setHeader("Profile");
-
+        setHeader(CProfile.msgs.profileTitle());
         _profile = (Profile)blurbData;
         displayProfile();
     }
@@ -93,7 +92,7 @@ public class ProfileBlurb extends Blurb
     // @Override // from Blurb
     protected void didFail (String cause)
     {
-        setHeader("Error");
+        setHeader(CProfile.msgs.errorTitle());
         _displayName.setText("Failed to load profile data: " + cause);
     }
 
@@ -177,10 +176,9 @@ public class ProfileBlurb extends Blurb
             _buttons.add(_edit);
 
         } else {
-            _buttons.add(new Button("Send Mail", new ClickListener() {
+            _buttons.add(new Button(CProfile.msgs.sendMail(), new ClickListener() {
                 public void onClick (Widget widget) {
-                    new MailComposition(new MemberName(_name.toString(), _name.getMemberId()),
-                                        null, null, null).show();
+                    new MailComposition(_name, null, null, null).show();
                 }
             }));
 
@@ -191,7 +189,7 @@ public class ProfileBlurb extends Blurb
 //                 }
 //             }));
 
-            _buttons.add(new Button("Visit Home", new ClickListener() {
+            _buttons.add(new Button(CProfile.msgs.visitHome(), new ClickListener() {
                 public void onClick (Widget sender) {
                     History.newItem(
                         Application.createLinkToken("world", "m" + _name.getMemberId()));
@@ -238,6 +236,7 @@ public class ProfileBlurb extends Blurb
         }
 
         // configure our profile instance with their bits
+        _name = new MemberName(name, _name.getMemberId());
         _profile.headline = _eheadline.getText().trim();
         _profile.homePageURL = _ehomepage.getText().trim();
 
