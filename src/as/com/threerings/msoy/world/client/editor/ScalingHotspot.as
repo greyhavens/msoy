@@ -19,17 +19,22 @@ public class ScalingHotspot extends Hotspot
         super(editor);
     }
 
+    // @Override from Hotspot
+    override public function updateDisplay (targetWidth :Number, targetHeight :Number) :void
+    {
+        super.updateDisplay(targetWidth, targetHeight);
+        
+        this.x = targetWidth;
+        this.y = 0;
+    }
     
     // @Override from Hotspot
     override protected function startAction (event :MouseEvent) :void
     {
         super.startAction(event);
         
-        var t :FurniSprite = _editor.target;
-        _targetOriginalScale = new Point(t.getMediaScaleX(), t.getMediaScaleY());
-        _targetOriginalHotspot = t.localToGlobal(t.getLayoutHotSpot());
-//       _targetOriginalBounds =
-//            new Rectangle(t.x, t.y, t.getActualWidth(), t.getActualHeight());
+        _originalScale =
+            new Point(_editor.target.getMediaScaleX(), _editor.target.getMediaScaleY());
     }
 
     // @Override from Hotspot
@@ -45,9 +50,7 @@ public class ScalingHotspot extends Hotspot
     {
         super.endAction(event);
         
-        _targetOriginalScale = null;
-        _targetOriginalHotspot = null;
-//        _targetOriginalBounds = null;
+        _originalScale = null;
     }
 
     // @Override from Hotspot
@@ -69,15 +72,15 @@ public class ScalingHotspot extends Hotspot
         
         // find pixel distance from hotspot to the current and the original mouse pointer
         var mouse :Point = new Point(sx, sy);
-        var newoffset :Point = mouse.subtract(_targetOriginalHotspot);
-        var oldoffset :Point = _anchor.subtract(_targetOriginalHotspot);
+        var newoffset :Point = mouse.subtract(_originalHotspot);
+        var oldoffset :Point = _anchor.subtract(_originalHotspot);
         
         // find scaling factor based on mouse movement
         var ratioX :Number = newoffset.x / oldoffset.x;
         var ratioY :Number = newoffset.y / oldoffset.y;
         
-        var x :Number = ratioX * _targetOriginalScale.x;
-        var y :Number = ratioY * _targetOriginalScale.y;
+        var x :Number = ratioX * _originalScale.x;
+        var y :Number = ratioY * _originalScale.y;
         
         /*
           if (_panel.advanced.proportionalScaling) {
@@ -89,22 +92,13 @@ public class ScalingHotspot extends Hotspot
         _editor.updateTargetScale(x, y);
     }
 
-
-//    /** Sprite size at the beginning of modifications. Only valid during action. */
-//    protected var _targetOriginalBounds :Rectangle;
-
     /** Sprite scale at the beginning of modifications. Only valid during action. */
-    protected var _targetOriginalScale :Point;
-
-    /** Sprite center in stage coordinates. Only valid during action. */
-    protected var _targetOriginalHotspot :Point;
+    protected var _originalScale :Point;
 
     // Bitmaps galore!
     [Embed(source="../../../../../../../../rsrc/media/skins/roomeditor/hotspot_scale.png")]
     public static const HOTSPOT :Class;
     [Embed(source="../../../../../../../../rsrc/media/skins/roomeditor/hotspot_scale_over.png")]
     public static const HOTSPOT_OVER :Class;
-
-    
 }
 }

@@ -32,7 +32,6 @@ public class Hotspot extends Sprite
         addEventListener(MouseEvent.ROLL_OUT, rollOut);
 
         initializeDisplay();
-        switchDisplay(_displayStandard);
     }
 
     /** Called before the editing UI is removed. */
@@ -42,12 +41,28 @@ public class Hotspot extends Sprite
         removeEventListener(MouseEvent.CLICK, clickSink);
         removeEventListener(MouseEvent.ROLL_OVER, rollOver);
         removeEventListener(MouseEvent.ROLL_OUT, rollOut);
+        _currentDisplay = null;
     }
 
     /** Returns true if the hotspot is currently being dragged around to perform some action. */
     public function isActive () :Boolean
     {
         return _anchor != null;
+    }
+    
+    /**
+     * This function is called every time the target's location or size change, and should be
+     * used to adjust this hotspot's location relative to the target edges.
+     * Subclasses should override it to provide their own functionality, in addition to
+     * calling this (superclass) version.
+     */
+    public function updateDisplay (targetWidth :Number, targetHeight :Number) :void
+    {
+        // lazy initialization of first display bitmap. this needs to be done here, after
+        // the editor's target variable has acquired a reference.
+        if (_currentDisplay == null) {
+            switchDisplay(_displayStandard);
+        }
     }
     
     /**
@@ -60,8 +75,9 @@ public class Hotspot extends Sprite
         // user clicked on the hotspot. let the games begin!
         _editor.setActive(this);
 
-        // remember click location
+        // remember click and target location
         _anchor = new Point(event.stageX, event.stageY);
+        _originalHotspot = _editor.target.localToGlobal(_editor.target.getLayoutHotSpot());
 
         // also, register for mouse moves and ups anywhere in the scene. if the player
         // pressed the button on the hotspot, we want to know about moves and the subsequent
@@ -88,6 +104,10 @@ public class Hotspot extends Sprite
      */
     protected function endAction (event :MouseEvent) :void
     {
+        if (_editor.isIdle()) {
+            Log.getLog(this).warning("Editor was idle before current hotspot finished: " + this);
+        }
+
         // we are done, clean up. these events, for example - we no longer need them.
         _editor.roomView.removeEventListener(MouseEvent.MOUSE_MOVE, updateAction);
         _editor.roomView.removeEventListener(MouseEvent.MOUSE_UP, endAction);
@@ -98,11 +118,8 @@ public class Hotspot extends Sprite
             _delayedRollout = false;
         }
 
-        if (_editor.isIdle()) {
-            Log.getLog(this).warning("Editor was idle before current hotspot finished: " + this);
-        }
-
         _anchor = null;
+        _originalHotspot = null;
         _editor.setActive(null);
     }
 
@@ -122,9 +139,14 @@ public class Hotspot extends Sprite
             return;
         }
 
-        // if the user rolled over during dragging, cancel any pending rollouts.
-        if (isActive()) {
-            _delayedRollout = false;
+        // if the user rolled over while dragging any hotspot, ignore it.
+        if (! _editor.isIdle()) {
+            // but, if they rolled over while dragging this hotspot, this must mean that it was
+            // preceded by a faulty rollout during the same dragging motion (see rollOut()).
+            // in which case, clear the flag that remembered that faulty rollout.
+            if (isActive()) {
+                _delayedRollout = false;
+            }
             return;
         }
 
@@ -139,10 +161,13 @@ public class Hotspot extends Sprite
             return;
         }
 
-        // if the user rolled out during dragging, don't change the bitmap just yet,
-        // but remember it for when the mouse button is released.
-        if (isActive()) {
-            _delayedRollout = true;
+        // if the user rolled out while dragging any hotspot, ignore it.
+        if (! _editor.isIdle()) {
+            // but, if they rolled out while dragging *this* hotspot, don't change the bitmap
+            // just yet, just remember it for after the dragging is over.
+            if (isActive()) {
+                _delayedRollout = true;
+            }
             return;
         }
 
@@ -163,7 +188,7 @@ public class Hotspot extends Sprite
             _currentDisplay.y = - _currentDisplay.height / 2;
         }
     }
-    
+
     /**
      * Called during init(), this function initializes the hotspot's _display* variables.
      * This default version draws a boring white square to represent the hotspot.
@@ -198,13 +223,18 @@ public class Hotspot extends Sprite
 
     /** Reference to the editor. */
     protected var _editor :FurniEditor;
-    
+
     /**
      * Mouse position at the beginning of the action. Also used to verify whether
      * a modification action is currently taking place (in which case its value is non-null).
      */
     protected var _anchor :Point;
-
+    
+    /**
+     * Target sprite hotspot at the beginning of the action, in stage coordinates.
+     */
+    protected var _originalHotspot :Point;
+    
     /** Bitmap used for hotspot display. */
     protected var _displayStandard :DisplayObject;
     

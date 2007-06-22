@@ -22,20 +22,20 @@ import com.threerings.msoy.world.data.MsoyLocation;
  */
 public class FurniHighlight
 {
-    public function FurniHighlight (roomCtrl :RoomEditorController)
+    public function FurniHighlight (controller :RoomEditorController)
     {
-        _roomCtrl = roomCtrl;
+        _controller = controller;
     }
 
     public function start () :void
     {
         _border = new Sprite();
-        _roomCtrl.roomView.addChild(_border);
+        _controller.roomView.addChild(_border);
     }
     
     public function end () :void
     {
-        _roomCtrl.roomView.removeChild(_border);
+        _controller.roomView.removeChild(_border);
         _border = null;
     }
 
@@ -90,7 +90,7 @@ public class FurniHighlight
     }
 
     /** Pointer back to the controller. */
-    protected var _roomCtrl :RoomEditorController;
+    protected var _controller :RoomEditorController;
 
     /** MsoySprite which the user is targeting. */
     protected var _target :FurniSprite;

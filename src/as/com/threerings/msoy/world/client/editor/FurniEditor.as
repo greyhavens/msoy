@@ -13,6 +13,7 @@ import flash.geom.Rectangle;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 
 
@@ -21,9 +22,9 @@ import com.threerings.msoy.world.data.MsoyLocation;
  */
 public class FurniEditor extends FurniHighlight
 {
-    public function FurniEditor (roomCtrl :RoomEditorController)
+    public function FurniEditor (controller :RoomEditorController)
     {
-        super(roomCtrl);
+        super(controller);
     }
 
     // @Override from FurniHighlight
@@ -31,24 +32,33 @@ public class FurniEditor extends FurniHighlight
     {
         super.start();
 
-        _resizeHotspot = new ScalingHotspot(this);
-        _border.addChild(_resizeHotspot);
-        _resizeHotspot.init();
+        _hotspots = new Array();
+        _hotspots.push(new ScalingHotspot(this));
+        _hotspots.push(new MovementYHotspot(this));
+        _hotspots.push(new MovementXZHotspot(this));
+
+        for each (var hotspot :Hotspot in _hotspots) {
+            _border.addChild(hotspot);
+            hotspot.init();
+        }
+
     }
 
     // @Override from FurniHighlight
     override public function end () :void
     {
-        _resizeHotspot.deinit();
-        _border.removeChild(_resizeHotspot);
-        _resizeHotspot = null;
+        for each (var hotspot :Hotspot in _hotspots) {
+            hotspot.deinit();
+            _border.removeChild(hotspot);
+        }            
+
         super.end();
     }
 
     /** Accessor to the room view. */
     public function get roomView () :RoomView
     {
-        return _roomCtrl.roomView;
+        return _controller.roomView;
     }
 
     /** Returns true if no hotspot is active (i.e., currently being dragged). */
@@ -60,6 +70,14 @@ public class FurniEditor extends FurniHighlight
     /** Called by hotspots, stores a reference to the currently active hotspot. */
     public function setActive (hotspot :Hotspot) :void
     {
+        if (hotspot != null) {
+            // we just started a new action - make a copy of the target's data
+            _originalTargetData = target.getFurniData().clone() as FurniData;
+        } else {
+            // the action just finished - wrap up.
+            _controller.updateFurni(_originalTargetData, target.getFurniData());
+        }
+        
         _activeHotspot = hotspot;
     }
 
@@ -70,14 +88,25 @@ public class FurniEditor extends FurniHighlight
         target.setMediaScaleX(x);
         target.setMediaScaleY(y);
         
-        _roomCtrl.targetSpriteUpdated();
+        _controller.targetSpriteUpdated();
     }
 
+    /** Called by hotspots, changes the target's display position. */
+    public function updateTargetLocation (loc :MsoyLocation) :void
+    {
+        target.setLocation(loc);          // change position on screen...
+        target.getFurniData().loc = loc;  // ...and in the data parameters
+        
+        _controller.targetSpriteUpdated();
+    }
+    
     // @Override from FurniHighlight
     override protected function clearBorder () :void
     {
         super.clearBorder();
-        _resizeHotspot.visible = false;
+        for each (var hotspot :Hotspot in _hotspots) {
+            hotspot.visible = false;
+        }
     }
 
     // @Override from FurniHighlight
@@ -89,7 +118,7 @@ public class FurniEditor extends FurniHighlight
         var g :Graphics = _border.graphics;
         var w :Number = target.getActualWidth();
         var h :Number = target.getActualHeight();
-        var view :RoomView = _roomCtrl.roomView;
+        var view :RoomView = _controller.roomView;
 
         g.clear();
         
@@ -123,15 +152,19 @@ public class FurniEditor extends FurniHighlight
         g.moveTo(0, 0);
 
         // now update hotspot positions
-        _resizeHotspot.visible = (_target != null);
-        _resizeHotspot.x = w;
-        _resizeHotspot.y = 0;
+        for each (var hotspot :Hotspot in _hotspots) {
+            hotspot.visible = (_target != null);
+            hotspot.updateDisplay(w, h);
+        }
     }
     
-    /** Hotspot for resizing the target sprite. */
-    protected var _resizeHotspot :Hotspot;
-
+    /** Copy of the target's original furni data, created when the user activates a hotspot. */
+    protected var _originalTargetData :FurniData;
+    
     /** Reference to the currently active hotspot. */
     protected var _activeHotspot :Hotspot;
+
+    /** Array of all Hotspot instances (initialized in the constructor). */
+    protected var _hotspots :Array; // of Hotspot references
 }
 }

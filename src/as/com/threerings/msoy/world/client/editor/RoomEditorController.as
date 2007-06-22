@@ -16,6 +16,8 @@ import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.world.client.updates.FurniUpdateAction;
+import com.threerings.msoy.world.data.FurniData;
 
 
 /**
@@ -85,6 +87,17 @@ public class RoomEditorController
         // FIXME ROBERT: dim the button if empty
     }
 
+    /**
+     * Called by the room editor, requests that an update be applied changing a furni
+     * from an old version to a new version.
+     */
+    public function updateFurni (toRemove :FurniData, toAdd :FurniData) :void
+    {
+        // FIXME ROBERT
+        // _view.getRoomController().applyUpdate(new FurniUpdateAction(_ctx, toRemove, toAdd));
+        // _panel.updateUndoButton(true);
+    }
+    
     /**
      * Called by the room controller, to query whether the user should be allowed to move
      * around the scene.
