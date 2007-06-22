@@ -393,6 +393,7 @@ public class FlashClients
             } catch (e) {
             }
         }
+        return [];
     }-*/;
 
     // TODO: put this in Application?
