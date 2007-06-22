@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.world.client.editor {
 
+import flash.display.DisplayObject;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
@@ -49,6 +50,13 @@ public class ScalingHotspot extends Hotspot
 //        _targetOriginalBounds = null;
     }
 
+    // @Override from Hotspot
+    override protected function initializeDisplay () :void
+    {
+        _displayStandard = new HOTSPOT() as DisplayObject;
+        _displayMouseOver = new HOTSPOT_OVER() as DisplayObject;
+    }
+
     /**
      * Computes target's furni scale based on a dragging action, and updates the editor.
      */
@@ -81,6 +89,7 @@ public class ScalingHotspot extends Hotspot
         _editor.updateTargetScale(x, y);
     }
 
+
 //    /** Sprite size at the beginning of modifications. Only valid during action. */
 //    protected var _targetOriginalBounds :Rectangle;
 
@@ -90,5 +99,12 @@ public class ScalingHotspot extends Hotspot
     /** Sprite center in stage coordinates. Only valid during action. */
     protected var _targetOriginalHotspot :Point;
 
+    // Bitmaps galore!
+    [Embed(source="../../../../../../../../rsrc/media/skins/roomeditor/hotspot_scale.png")]
+    public static const HOTSPOT :Class;
+    [Embed(source="../../../../../../../../rsrc/media/skins/roomeditor/hotspot_scale_over.png")]
+    public static const HOTSPOT_OVER :Class;
+
+    
 }
 }

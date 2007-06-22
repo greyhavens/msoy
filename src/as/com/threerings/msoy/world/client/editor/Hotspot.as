@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.world.client.editor {
 
+import flash.display.DisplayObject;
 import flash.display.Graphics;
+import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
@@ -25,7 +27,12 @@ public class Hotspot extends Sprite
         addEventListener(MouseEvent.MOUSE_DOWN, startAction);
         addEventListener(MouseEvent.CLICK, clickSink);
 
+        // register for mouse over and out, just for bitmap switching
+        addEventListener(MouseEvent.ROLL_OVER, rollOver);
+        addEventListener(MouseEvent.ROLL_OUT, rollOut);
+
         initializeDisplay();
+        switchDisplay(_displayStandard);
     }
 
     /** Called before the editing UI is removed. */
@@ -33,6 +40,8 @@ public class Hotspot extends Sprite
     {
         removeEventListener(MouseEvent.MOUSE_DOWN, startAction);
         removeEventListener(MouseEvent.CLICK, clickSink);
+        removeEventListener(MouseEvent.ROLL_OVER, rollOver);
+        removeEventListener(MouseEvent.ROLL_OUT, rollOut);
     }
 
     /** Returns true if the hotspot is currently being dragged around to perform some action. */
@@ -83,6 +92,12 @@ public class Hotspot extends Sprite
         _editor.roomView.removeEventListener(MouseEvent.MOUSE_MOVE, updateAction);
         _editor.roomView.removeEventListener(MouseEvent.MOUSE_UP, endAction);
 
+        // maybe update the bitmap
+        if (_delayedRollout) {
+            switchDisplay(_displayStandard);
+            _delayedRollout = false;
+        }
+
         if (_editor.isIdle()) {
             Log.getLog(this).warning("Editor was idle before current hotspot finished: " + this);
         }
@@ -99,20 +114,85 @@ public class Hotspot extends Sprite
         event.stopPropagation(); 
     }
 
+    /** Switches bitmaps on rollover. */
+    protected function rollOver (event :MouseEvent) :void
+    {
+        // if this spurious rollover is caused by a mouse click, ignore it.
+        if (event.relatedObject == null) {
+            return;
+        }
+
+        // if the user rolled over during dragging, cancel any pending rollouts.
+        if (isActive()) {
+            _delayedRollout = false;
+            return;
+        }
+
+        switchDisplay(_displayMouseOver);
+    }
+
+    /** Switches bitmaps on rollout. */
+    protected function rollOut (event :MouseEvent) :void
+    {
+        // if this spurious rollover is caused by a mouse click, ignore it.
+        if (event.relatedObject == null) {
+            return;
+        }
+
+        // if the user rolled out during dragging, don't change the bitmap just yet,
+        // but remember it for when the mouse button is released.
+        if (isActive()) {
+            _delayedRollout = true;
+            return;
+        }
+
+        switchDisplay(_displayStandard);
+    }
+    
+    /** Removes current display object and inserts the specified one in its place. */
+    protected function switchDisplay (display :DisplayObject) :void
+    {
+        if (_currentDisplay != null) {
+            removeChild(_currentDisplay);
+            _currentDisplay = null;
+        }
+        if (display != null) {
+            _currentDisplay = display;
+            addChild(_currentDisplay);
+            _currentDisplay.x = - _currentDisplay.width / 2;
+            _currentDisplay.y = - _currentDisplay.height / 2;
+        }
+    }
+    
     /**
-     * Default display function, draws a boring white square to represent the hotspot.
+     * Called during init(), this function initializes the hotspot's _display* variables.
+     * This default version draws a boring white square to represent the hotspot.
      * Subclasses should override it to provide their own functionality;
      * calling this superclass function is not necessary.
      */
     protected function initializeDisplay () :void
     {
         const SIZE :int = 9;
-        var g :Graphics = this.graphics;
+        var bitmap :Shape;
+        var g :Graphics;
+        
+        bitmap = new Shape();
+        g = bitmap.graphics;
         g.clear();
         g.lineStyle(0, 0x000000, 0.5, true);
         g.beginFill(0xffffff, 1.0);
-        g.drawRect(-SIZE/2, -SIZE/2, SIZE, SIZE);
+        g.drawRect(0, 0, SIZE, SIZE);
         g.endFill();
+        _displayStandard = bitmap;
+
+        bitmap = new Shape();
+        g = bitmap.graphics;
+        g.clear();
+        g.lineStyle(0, 0x000000, 0.5, true);
+        g.beginFill(0xaaaaff, 1.0);
+        g.drawRect(0, 0, SIZE, SIZE);
+        g.endFill();
+        _displayMouseOver = bitmap;
     }
 
 
@@ -125,7 +205,19 @@ public class Hotspot extends Sprite
      */
     protected var _anchor :Point;
 
+    /** Bitmap used for hotspot display. */
+    protected var _displayStandard :DisplayObject;
     
+    /** Bitmap used for hotspot with mouseover. */
+    protected var _displayMouseOver :DisplayObject;
 
+    /** Currently used _display* bitmap. */
+    protected var _currentDisplay :DisplayObject;
+
+    /**
+     * Display helper variable: remembers whether a rollout happened during dragging, and should
+     * cause a bitmap update after dragging has finished.
+     */
+    protected var _delayedRollout :Boolean = false;
 }
 }
