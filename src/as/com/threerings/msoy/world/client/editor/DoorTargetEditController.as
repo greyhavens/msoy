@@ -118,7 +118,6 @@ public class DoorTargetEditController
             newdata.actionData = _destinationScene + ":" + roundCoord(_destinationLoc.x) + ":" +
                 roundCoord(_destinationLoc.y) + ":" +  roundCoord(_destinationLoc.z) + ":" +
                 _destinationLoc.orient + ":" + _ctx.getSceneDirector().getScene().getName();
-            trace("Setting target " + newdata.actionData);
 
             ctrl.applyUpdate(new FurniUpdateAction(_ctx, doorData, newdata));
         }
