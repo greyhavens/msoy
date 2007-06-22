@@ -27,7 +27,6 @@ import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.profile.SearchProfileDialog;
 import client.util.FlashClients;
 import client.util.MsoyUI;
 import client.util.events.FlashEvents;
@@ -115,7 +114,7 @@ public class NaviPanel extends FlexTable
                 MenuBar fmenu = new MenuBar(true);
                 fmenu.addItem("Search Profiles", true, new Command() {
                     public void execute () {
-                        (new SearchProfileDialog()).show();
+                        History.newItem(Application.createLinkToken("profile", ""));
                         _popped.hide();
                     }
                 });

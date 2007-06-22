@@ -44,21 +44,23 @@ public class index extends MsgsEntryPoint
             return;
         }
 
-        if (token != null && token.startsWith("search")) {
-            performSearch(token.substring(7)); // strip off "search_"
-
-        } else if (token != null && token.length() > 0) {
+        if (token != null && token.length() > 0 && !"me".equals(token) && 
+                !token.startsWith("search")) {
             try {
                 displayMemberPage(Integer.parseInt(token));
             } catch (Exception e) {
                 // TODO: display error
             }
 
+        } else if (token == null || token.equals("") || token.startsWith("search")) {
+            displaySearch((token == null || token.equals("")) ? "" : token.substring(7));
+
         } else if (CProfile.ident != null) {
+            // #profile-me falls to here
             displayMemberPage(CProfile.getMemberId());
 
         } else {
-            // TODO: display something...
+            setContent(new Label(CProfile.msgs.profileLogin()));
         }
     }
 
@@ -104,40 +106,48 @@ public class index extends MsgsEntryPoint
         });
     }
 
-    protected void performSearch (String args) 
+    protected void displaySearch (String args) 
     {
-        String[] argArray = args.split("_", 3);
-        if (argArray.length < 3) {
-            setContent(new Label(CProfile.msgs.searchParseParamsError()));
-            return;
+        setPageTitle(CProfile.msgs.profileSearchTitle());
+        if (_search == null) {
+            _search = new SearchPanel();
         }
 
-        try {
-            String type = argArray[0];
-            final int page = Integer.parseInt(argArray[1]);
-            String search = argArray[2];
-
-            if (_searchResults == null || !type.equals(_searchType) || 
-                !search.equals(_searchString)) {
-                CProfile.profilesvc.findProfiles(type, search, new AsyncCallback() {
-                    public void onSuccess (Object result) {
-                        setPageTitle(CProfile.msgs.profileSearchTitle());
-                        setContent(_searchResults = new SearchResultsPanel((List)result, page));
-                    }
-                    public void onFailure (Throwable cause) {
-                        setContent(new Label(CProfile.serverError(cause)));
-                        CProfile.log("Failed to load search", cause);
-                    }
-                });
-            } else {
-                _searchResults.displayPage(page);
+        if (args == null || "".equals(args)) {
+            _search.clearResults();
+            setContent(_search);
+        } else {
+            String[] argArray = args.split("_", 3);
+            if (argArray.length < 3) {
+                setContent(new Label(CProfile.msgs.searchParseParamsError()));
+                return;
             }
-        } catch (NumberFormatException nfe) {
-            setContent(new Label(CProfile.msgs.searchParseParamsError()));
+
+            try {
+                final String type = argArray[0];
+                final int page = Integer.parseInt(argArray[1]);
+                final String search = argArray[2];
+    
+                if (!_search.showingResultsFor(type, search)) {
+                    CProfile.profilesvc.findProfiles(type, search, new AsyncCallback() {
+                        public void onSuccess (Object result) {
+                            _search.setResults((List) result, page, type, search);
+                            setContent(_search);
+                        }
+                        public void onFailure (Throwable cause) {
+                            setContent(new Label(CProfile.serverError(cause)));
+                            CProfile.log("Failed to load search", cause);
+                        }
+                    });
+                } else {
+                    _search.displayPage(page);
+                }
+            } catch (NumberFormatException nfe) {
+                setContent(new Label(CProfile.msgs.searchParseParamsError()));
+            }
         }
     }
 
     protected int _memberId = -1;
-    protected String _searchType, _searchString;
-    protected SearchResultsPanel _searchResults;
+    protected SearchPanel _search;
 }

@@ -75,7 +75,6 @@
   font-style: italic;
 }
 
-.searchResultsPanel {
-  padding-top: 5px;
-  padding-left: 5px;
+.SearchPanel {
+  font-size: 14px;
 }

@@ -152,14 +152,6 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String search();
 
   /**
-   * Translated "Perform a search in order to find your friends in Whirled.".
-   * 
-   * @return translated "Perform a search in order to find your friends in Whirled."
-   * @gwt.key searchIntro
-   */
-  String searchIntro();
-
-  /**
    * Translated "There was an error parsing the page parameters.".
    * 
    * @return translated "There was an error parsing the page parameters."
@@ -176,6 +168,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String searchRadioEmail();
 
   /**
+   * Translated "Please log in to view your profile.".
+   * 
+   * @return translated "Please log in to view your profile."
+   * @gwt.key profileLogin
+   */
+  String profileLogin();
+
+  /**
    * Translated "Let's be buddies!".
    * 
    * @return translated "Let's be buddies!"
@@ -190,14 +190,6 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key haveNoGroups
    */
   String haveNoGroups();
-
-  /**
-   * Translated "Search for a Friend".
-   * 
-   * @return translated "Search for a Friend"
-   * @gwt.key searchTitle
-   */
-  String searchTitle();
 
   /**
    * Translated "Real Name".
@@ -248,14 +240,6 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String notInGroupsOther();
 
   /**
-   * Translated "Friends".
-   * 
-   * @return translated "Friends"
-   * @gwt.key friendsTitle
-   */
-  String friendsTitle();
-
-  /**
    * Translated "Admin Info".
    * 
    * @return translated "Admin Info"
@@ -270,4 +254,12 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key displayName
    */
   String displayName();
+
+  /**
+   * Translated "Friends".
+   * 
+   * @return translated "Friends"
+   * @gwt.key friendsTitle
+   */
+  String friendsTitle();
 }
