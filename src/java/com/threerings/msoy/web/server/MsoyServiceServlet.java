@@ -38,27 +38,10 @@ import static com.threerings.msoy.Log.log;
 public class MsoyServiceServlet extends RemoteServiceServlet
 {
     /**
-     * Returns the member id of the client that provided the supplied ident or -1 if the ident is
-     * null. Throws a session expired exception if the ident is expired.
-     */
-    protected int getMemberId (WebIdent ident)
-        throws ServiceException
-    {
-        if (ident == null) {
-            return -1;
-        }
-        Integer memberId = _members.get(ident.token);
-        if (memberId != null) {
-            return memberId;
-        }
-        throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
-    }
-
-    /**
      * Returns the member record for the supplied ident, or null if the ident represents an expired
      * session or is null.
      */
-    protected MemberRecord getAuthedUser (WebIdent ident)
+    public static MemberRecord getAuthedUser (WebIdent ident)
         throws ServiceException
     {
         Integer memberId = (ident == null) ? null : _members.get(ident.token);
@@ -79,7 +62,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
      *
      * @exception ServiceException thrown if the session has expired or is otherwise invalid.
      */
-    protected MemberRecord requireAuthedUser (WebIdent ident)
+    public static MemberRecord requireAuthedUser (WebIdent ident)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser(ident);
@@ -87,6 +70,23 @@ public class MsoyServiceServlet extends RemoteServiceServlet
             throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
         }
         return mrec;
+    }
+    
+    /**
+     * Returns the member id of the client that provided the supplied ident or -1 if the ident is
+     * null. Throws a session expired exception if the ident is expired.
+     */
+    protected int getMemberId (WebIdent ident)
+        throws ServiceException
+    {
+        if (ident == null) {
+            return -1;
+        }
+        Integer memberId = _members.get(ident.token);
+        if (memberId != null) {
+            return memberId;
+        }
+        throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
     }
 
     /**
