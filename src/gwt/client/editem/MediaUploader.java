@@ -6,7 +6,6 @@ package client.editem;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -19,8 +18,6 @@ import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import com.threerings.gwt.ui.SubmitField;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
