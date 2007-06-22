@@ -48,9 +48,6 @@ public class CatalogPanel extends VerticalPanel
     /** The number of columns of items to display. */
     public static final int COLUMNS = 3;
 
-    /** The number of rows of items to display. */
-    public static final int ROWS = 3;
-
     public CatalogPanel ()
     {
         setStyleName("catalogPanel");
@@ -58,8 +55,8 @@ public class CatalogPanel extends VerticalPanel
 
         _typeTabs = new ItemTypePanel("catalog", this);
 
-        int rows = (Window.getClientHeight() - Application.HEADER_HEIGHT - NAV_BAR_ETC) /
-            BOX_HEIGHT;
+        int rows = (Window.getClientHeight() - Application.HEADER_HEIGHT -
+                    HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT;
         _items = new PagedGrid(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {
                 // route our page navigation through the URL
@@ -298,6 +295,7 @@ public class CatalogPanel extends VerticalPanel
     protected ItemSearchSortPanel _searchSortPanel;
     protected PagedGrid _items;
 
+    protected static final int HEADER_HEIGHT = 15 /* gap */ + 59 /* top tags, etc. */;
     protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ + 10 /* gap */;
-    protected static final int BOX_HEIGHT = MediaDesc.THUMBNAIL_HEIGHT/2 + 10 /* gap */;
+    protected static final int BOX_HEIGHT = MediaDesc.THUMBNAIL_HEIGHT/2 + 15 /* gap */;
 }

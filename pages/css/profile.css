@@ -55,6 +55,10 @@
   padding-top: 5px;
 }
 
+.profileWidget {
+  padding-bottom: 10px;
+}
+
 .profileWidget .Photo {
   width: 80px;
   height: 60px;
