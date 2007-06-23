@@ -13,6 +13,7 @@ import java.util.logging.Level;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.ResultListener;
 import com.samskivert.util.SerialExecutor;
 import com.samskivert.util.HashIntMap;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
@@ -43,6 +44,7 @@ import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
+import com.threerings.msoy.web.server.UploadFile;
 
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.swiftly.server.build.LocalProjectBuilder;
@@ -76,7 +78,7 @@ public class ProjectRoomManager extends PlaceManager
         _builder = new LocalProjectBuilder(
             project, _storage, flexSdk.getAbsoluteFile(), whirledSdk.getAbsoluteFile());
 
-        _currentUploads = new HashIntMap<UploadFile>();
+        _currentUploads = new HashIntMap<SwiftlyUploadFile>();
 
         // Load the project tree from the storage provider
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("loadProject") {
@@ -364,9 +366,9 @@ public class ProjectRoomManager extends PlaceManager
                         if (doc == null) {
                             doc = _storage.getDocument(element);
                         }
-                        _uploadFile = new UploadFile(fileName, parent, doc);
+                        _uploadFile = new SwiftlyUploadFile(fileName, parent, doc);
                     } else {
-                        _uploadFile = new UploadFile(fileName, parent);
+                        _uploadFile = new SwiftlyUploadFile(fileName, parent);
                     }
                 } catch (Exception e) {
                     _error = e;
@@ -384,7 +386,7 @@ public class ProjectRoomManager extends PlaceManager
                 }
             }
 
-            protected UploadFile _uploadFile;
+            protected SwiftlyUploadFile _uploadFile;
             protected Exception _error;
         });
     }
@@ -392,14 +394,14 @@ public class ProjectRoomManager extends PlaceManager
     // from interface ProjectRoomProvider
     public void uploadFile (ClientObject caller, final byte[] data)
     {
-        final UploadFile uploadFile = _currentUploads.get(caller.getOid());
-        if (uploadFile == null) {
+        final SwiftlyUploadFile swiftlyUploadFile = _currentUploads.get(caller.getOid());
+        if (swiftlyUploadFile == null) {
             return; // no way to report failure here so we lump it
         }
 
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("uploadFile") {
             public boolean invoke () {
-                uploadFile.appendData(data);
+                swiftlyUploadFile.appendData(data);
                 return true;
             }
         });
@@ -412,14 +414,14 @@ public class ProjectRoomManager extends PlaceManager
         // check that the caller has the correct permissions to perform this action
         checkPermissions(caller);
 
-        UploadFile uploadFile = _currentUploads.get(caller.getOid());
-        if (uploadFile == null) {
+        SwiftlyUploadFile swiftlyUploadFile = _currentUploads.get(caller.getOid());
+        if (swiftlyUploadFile == null) {
             throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
         }
 
         // run this task on the serial executor as the svn actions can take a while
         MsoyServer.swiftlyMan.svnExecutor.addTask(
-            new FinishFileUploadTask(uploadFile, caller, listener));
+            new FinishFileUploadTask(swiftlyUploadFile, caller, listener));
     }
 
     // from interface ProjectRoomProvider
@@ -429,8 +431,8 @@ public class ProjectRoomManager extends PlaceManager
         // check that the caller has the correct permissions to perform this action
         checkPermissions(caller);
 
-        final UploadFile uploadFile = _currentUploads.get(caller.getOid());
-        if (uploadFile == null) {
+        final SwiftlyUploadFile swiftlyUploadFile = _currentUploads.get(caller.getOid());
+        if (swiftlyUploadFile == null) {
             throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
         }
 
@@ -438,7 +440,7 @@ public class ProjectRoomManager extends PlaceManager
             public boolean invoke () {
                 try {
                     // cleanup the upload file
-                    uploadFile.abortUpload();
+                    swiftlyUploadFile.abortUpload();
 
                 } catch (Exception error) {
                     // we'll report this on resultReceived()
@@ -455,13 +457,40 @@ public class ProjectRoomManager extends PlaceManager
                     listener.requestProcessed();
                 } else {
                     log.log(Level.WARNING,
-                        "Aborting upload failed [file=" + uploadFile + "].", _error);
+                        "Aborting upload failed [file=" + swiftlyUploadFile + "].", _error);
                     listener.requestFailed("e.abort_upload_failed");
                 }
             }
 
             protected Exception _error;
         });
+    }
+    
+    /**
+     * Used by the SwiftlyUploadServlet to transfer the upload file data into the room. Permission
+     * to perform this action should be checked by the caller.
+     */
+    public void insertUploadFile (UploadFile uploadFile, ResultListener<Void> listener)
+    {
+        // TODO: getName() lowercases the filename on Linux+FF. Also, supposedly 
+        // Opera adds the full path when setting that field so we might need to 
+        // sanitize this value
+        String fileName = uploadFile.item.getName();
+
+        // if we're updating an existing document, handle that
+        PathElement element = _roomObj.findPathElement(fileName, _roomObj.getRootElement());
+        if (element != null) {
+            // let's try to pull the resolved document from the room object. this may return null
+            // in which case the task will load it from the repository
+            SwiftlyDocument doc = _roomObj.getDocument(element);
+            MsoyServer.swiftlyMan.svnExecutor.addTask(
+                new InsertFileUploadTask(uploadFile, fileName, element, doc, listener));
+        
+        // otherwise this is a new file
+        } else {
+            MsoyServer.swiftlyMan.svnExecutor.addTask(
+                new InsertFileUploadTask(uploadFile, fileName, listener));            
+        }
     }
 
     // from interface SetListener
@@ -750,10 +779,10 @@ public class ProjectRoomManager extends PlaceManager
     /** Handles a request to finalize an uploaded file. */
     protected class FinishFileUploadTask implements SerialExecutor.ExecutorTask
     {
-        public FinishFileUploadTask (UploadFile uploadFile, ClientObject caller,
+        public FinishFileUploadTask (SwiftlyUploadFile swiftlyUploadFile, ClientObject caller,
                                      ConfirmListener listener)
         {
-            _uploadFile = uploadFile;
+            _uploadFile = swiftlyUploadFile;
             _caller = caller;
             _listener = listener;
         }
@@ -826,23 +855,127 @@ public class ProjectRoomManager extends PlaceManager
             _listener.requestFailed("e.file_upload_timed_out");
         }
 
-        protected UploadFile _uploadFile;
+        protected SwiftlyUploadFile _uploadFile;
         protected ClientObject _caller;
         protected ConfirmListener _listener;
         protected Throwable _error;
         protected SwiftlyDocument _doc;
     }
+    
+    /** Handles inserting the upload file data into svn and the room object. */
+    protected class InsertFileUploadTask implements SerialExecutor.ExecutorTask
+    {
+        public InsertFileUploadTask (UploadFile uploadFile, String fileName,
+                                     ResultListener<Void> listener)
+        {
+            this(uploadFile, fileName, null, null, listener);
+        }
+        
+        public InsertFileUploadTask (UploadFile uploadFile, String fileName, PathElement element,
+                                     SwiftlyDocument doc, ResultListener<Void> listener)
+        {
+            _uploadFile = uploadFile;
+            _fileName = fileName;
+            _element = element;
+            _doc = doc;
+            _listener = listener;
+        }
+
+        public boolean merge (SerialExecutor.ExecutorTask other)
+        {
+            return false;
+        }
+
+        public long getTimeout ()
+        {
+            return 60 * 1000L; // 60 seconds is all you get kid
+        }
+
+        // this is called on the executor thread and can go hog wild with the blocking
+        public void executeTask ()
+        {
+            try {
+                // if we were given a valid path element, but the document was not resolved in 
+                // the room object, we need to load it from the storage repository
+                if (_element != null && _doc == null) {
+                    _doc = _storage.getDocument(_element);
+                    
+                } else if (_element == null) {
+                    // TODO: oh god, for now, the root is going to be the parent
+                    _element = PathElement.createFile(_fileName, _roomObj.getRootElement(),
+                        _uploadFile.getMimeTypeAsString());
+
+                    // create the new, blank SwiftlyDocument
+                    _doc = SwiftlyDocument.createFromPathElement(_element,
+                        ProjectStorage.TEXT_ENCODING);
+                }
+         
+               // insert the uploaded file data into the new document
+               _doc.setData(_uploadFile.item.getInputStream(), ProjectStorage.TEXT_ENCODING);
+
+               // save the document to the repository
+               _storage.putDocument(_doc, "Automatic Swiftly Upload Commit");
+               _doc.commit();
+               
+            } catch (Exception error) {
+                // we'll report this on resultReceived()
+                _error = error;
+            }
+        }
+
+        // meanwhile, back on the dobject thread
+        public void resultReceived ()
+        {
+            if (_error != null) {
+                log.log(Level.WARNING, "insertUploadFile failed [element=" + _element + "].",
+                    _error);
+                _listener.requestFailed(_error);
+                return;
+            }
+
+            // update or add the document and element in the room object
+            if (_element.elementId == 0) {
+                _roomObj.addPathElement(_element);
+            } else {
+                _roomObj.updatePathElements(_element);
+            }
+            if (_doc.documentId == 0) {
+                _roomObj.addSwiftlyDocument(_doc);
+            } else {
+                _roomObj.updateDocuments(_doc);
+            }
+
+            // TODO: this should post a message into the room saying a new element has been
+            // added so we can get a passive notification. alternatively, we just add to the
+            // set listener in the client every time an add or update happens to a pathelement
+            // we'll display a message? 
+            _listener.requestCompleted(null);
+        }
+
+        // this is called back on the dobj thread and must only report failure
+        public void timedOut ()
+        {
+            _listener.requestFailed(new Exception("InsertFileUploadTask timed out."));
+        }
+
+        protected final UploadFile _uploadFile;
+        protected final String _fileName;
+        protected PathElement _element;
+        protected SwiftlyDocument _doc;
+        protected final ResultListener<Void> _listener;
+        protected Exception _error;
+    }
 
     /** Handles tracking a file upload for a user. */
-    protected static class UploadFile
+    protected static class SwiftlyUploadFile
     {
-        public UploadFile (String fileName, PathElement parent)
+        public SwiftlyUploadFile (String fileName, PathElement parent)
             throws IOException
         {
             this(fileName, parent, null);
         }
 
-        public UploadFile (String fileName, PathElement parent, SwiftlyDocument doc)
+        public SwiftlyUploadFile (String fileName, PathElement parent, SwiftlyDocument doc)
             throws IOException
         {
             _fileName = fileName;
@@ -964,5 +1097,5 @@ public class ProjectRoomManager extends PlaceManager
     protected static final String LOCAL_BUILD_DIRECTORY = "/data/swiftly/build";
 
     /** A map from the client OID to the current file being uploaded. */
-    protected HashIntMap<UploadFile> _currentUploads;
+    protected HashIntMap<SwiftlyUploadFile> _currentUploads;
 }

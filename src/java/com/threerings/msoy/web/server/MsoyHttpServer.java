@@ -111,6 +111,7 @@ public class MsoyHttpServer extends HttpServer
         "mailsvc", MailServlet.class.getName(),
         "uploadsvc", UploadServlet.class.getName(),
         "gamesvc", GameServlet.class.getName(),
-        "swiftlysvc", SwiftlyServlet.class.getName()
+        "swiftlysvc", SwiftlyServlet.class.getName(),
+        "swiftlyuploadsvc", SwiftlyUploadServlet.class.getName()
     };
 }

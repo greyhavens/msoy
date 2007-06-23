@@ -56,6 +56,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String friends();
 
   /**
+   * Translated "You are not authorized to perform this upload.".
+   * 
+   * @return translated "You are not authorized to perform this upload."
+   * @gwt.key errAccessDenied
+   */
+  String errAccessDenied();
+
+  /**
    * Translated "No project types found.".
    * 
    * @return translated "No project types found."
@@ -104,6 +112,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String selectType();
 
   /**
+   * Translated "An unrecoverable error occurred during upload. The upload was aborted.".
+   * 
+   * @return translated "An unrecoverable error occurred during upload. The upload was aborted."
+   * @gwt.key errUploadError
+   */
+  String errUploadError();
+
+  /**
    * Translated "Please logon above to view your Swiftly projects.".
    * 
    * @return translated "Please logon above to view your Swiftly projects."
@@ -142,6 +158,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key membersProjects
    */
   String membersProjects();
+
+  /**
+   * Translated "Upload".
+   * 
+   * @return translated "Upload"
+   * @gwt.key upload
+   */
+  String upload();
 
   /**
    * Translated "Remixable projects:".
@@ -190,6 +214,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key viewProfile
    */
   String viewProfile();
+
+  /**
+   * Translated "The file being uploaded is too large to be used in a Swiftly project.".
+   * 
+   * @return translated "The file being uploaded is too large to be used in a Swiftly project."
+   * @gwt.key errUploadTooLarge
+   */
+  String errUploadTooLarge();
 
   /**
    * Translated "Remove".
