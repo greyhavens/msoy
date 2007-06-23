@@ -199,23 +199,19 @@ public class DoorTargetEditController
      */
     protected function purchase (event :MouseEvent) :void
     {
-        var listener :ResultWrapper =
-            new ResultWrapper (
-                function (cause :String) :void
-                {   // failure handler
-                    Log.getLog(this).info("Room purchase failure: " + cause);
-                    _ctx.displayFeedback(null, cause);
-                },
-                function (result :Object) :void
-                {   // success handler
-                    if (result != null) {
-                        var newSceneId :int = int(Number(result));
-                        // Log.getLog(this).info("Room purchase success, id = " + newSceneId);
-                        setDoor(newSceneId);
-                    }
-                });
-
-        _ctx.getWorldDirector().purchaseRoom(listener);
+        var roomObj :RoomObject = (_ctx.getLocationDirector().getPlaceObject() as RoomObject);
+        roomObj.roomService.purchaseRoom(_ctx.getClient(), new ResultWrapper (
+            function (cause :String) :void { // failure handler
+                Log.getLog(this).info("Room purchase failure: " + cause);
+                _ctx.displayFeedback(null, cause);
+            },
+            function (result :Object) :void { // success handler
+                if (result != null) {
+                    var newSceneId :int = int(Number(result));
+                    // Log.getLog(this).info("Room purchase success, id = " + newSceneId);
+                    setDoor(newSceneId);
+                }
+            }));
     }
 
     /**

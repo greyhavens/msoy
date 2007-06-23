@@ -24,18 +24,15 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.server.PlaceManager;
 
-import com.threerings.whirled.server.SceneManager;
-
-import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.SceneBookmarkEntry;
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.web.data.FriendInviteObject;
-import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -402,47 +399,6 @@ public class MemberManager
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
             protected String _groupName;
-        });
-    }
-
-    // from interface MemberProvider
-    public void purchaseRoom (ClientObject caller, final InvocationService.ResultListener listener)
-        throws InvocationException
-    {
-        final MemberObject user = (MemberObject) caller;
-        ensureNotGuest(user);
-
-        // figure out if they want a group or a personal room
-        SceneManager sceneMan = MsoyServer.screg.getSceneManager(user.sceneId);
-        MsoyScene scene = (MsoyScene) sceneMan.getScene();
-        if (!scene.canEdit(user)) {
-            throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
-        }
-        MsoySceneModel model = (MsoySceneModel) scene.getSceneModel();
-        boolean isGroup = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP);
-
-        final byte ownerType = isGroup ? MsoySceneModel.OWNER_TYPE_GROUP
-                                       : MsoySceneModel.OWNER_TYPE_MEMBER;
-        final int ownerId = isGroup ? model.ownerId : user.getMemberId();
-        final String roomName = isGroup ? "New 'somegroup' room"
-                                        : (user.memberName + "'s new room");
-
-        // TODO: charge some flow
-
-        MsoyServer.invoker.postUnit(new RepositoryUnit("purchaseRoom") {
-            public void invokePersist () throws PersistenceException {
-                _newRoomId = MsoyServer.sceneRepo.createBlankRoom(ownerType, ownerId, roomName);
-            }
-            public void handleSuccess () {
-                user.addToOwnedScenes(new SceneBookmarkEntry(_newRoomId, roomName, 0));
-                listener.requestProcessed(_newRoomId);
-            }
-            public void handleFailure (Exception pe) {
-                log.warning("Unable to create a new room [user=" + user.which() +
-                            ", error=" + pe + ", cause=" + pe.getCause() + "].");
-                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
-            }
-            protected int _newRoomId;
         });
     }
 

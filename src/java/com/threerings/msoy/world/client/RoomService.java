@@ -34,7 +34,8 @@ public interface RoomService extends InvocationService
      * @param arg the data
      * @param isAction if the message is a "action".
      */
-    public void sendSpriteMessage (Client client, ItemIdent item, String name, byte[] arg, boolean isAction);
+    public void sendSpriteMessage (Client client, ItemIdent item, String name, byte[] arg,
+                                   boolean isAction);
 
     /**
      * Requests to update an actor's state.
@@ -52,6 +53,11 @@ public interface RoomService extends InvocationService
      * Request to apply the specified scene updates to the room.
      */
     public void updateRoom (Client client, SceneUpdate[] updates, InvocationListener listener);
+
+    /**
+     * Request to purchase a new room.
+     */
+    public void purchaseRoom (Client client, ResultListener listener);
 
     /**
      * Issues a request to update the memory of the specified entity (which is associated with a

@@ -52,8 +52,21 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch {@link #purchaseRoom} requests. */
+    public static const PURCHASE_ROOM :int = 3;
+
+    // from interface RoomService
+    public function purchaseRoom (arg1 :Client, arg2 :InvocationService_ResultListener) :void
+    {
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, PURCHASE_ROOM, [
+            listener2
+        ]);
+    }
+
     /** The method id used to dispatch {@link #requestControl} requests. */
-    public static const REQUEST_CONTROL :int = 3;
+    public static const REQUEST_CONTROL :int = 4;
 
     // from interface RoomService
     public function requestControl (arg1 :Client, arg2 :ItemIdent) :void
@@ -64,7 +77,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #sendSpriteMessage} requests. */
-    public static const SEND_SPRITE_MESSAGE :int = 4;
+    public static const SEND_SPRITE_MESSAGE :int = 5;
 
     // from interface RoomService
     public function sendSpriteMessage (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray, arg5 :Boolean) :void
@@ -75,7 +88,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setActorState} requests. */
-    public static const SET_ACTOR_STATE :int = 5;
+    public static const SET_ACTOR_STATE :int = 6;
 
     // from interface RoomService
     public function setActorState (arg1 :Client, arg2 :ItemIdent, arg3 :int, arg4 :String) :void
@@ -86,7 +99,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static const UPDATE_MEMORY :int = 6;
+    public static const UPDATE_MEMORY :int = 7;
 
     // from interface RoomService
     public function updateMemory (arg1 :Client, arg2 :MemoryEntry) :void
@@ -97,7 +110,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static const UPDATE_ROOM :int = 7;
+    public static const UPDATE_ROOM :int = 8;
 
     // from interface RoomService
     public function updateRoom (arg1 :Client, arg2 :Array, arg3 :InvocationService_InvocationListener) :void

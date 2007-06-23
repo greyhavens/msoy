@@ -74,15 +74,6 @@ public class WorldDirector extends BasicDirector
     }
 
     /**
-     * Request to purchase a new room.
-     * @param listener InvocationService_ResultListener that will process the request result.
-     */
-    public function purchaseRoom (listener :InvocationService_ResultListener) :void
-    {
-        _msvc.purchaseRoom(_mctx.getClient(), listener);
-    }
-
-    /**
      * Request to go to the home of the specified entity.
      */
     protected function goToHome (ownerType :int, ownerId :int) :void

@@ -52,11 +52,6 @@ public interface MemberService extends InvocationService
     public void getGroupName (Client client, int groupId, ResultListener listener);
 
     /**
-     * Request to purchase a new room.
-     */
-    public void purchaseRoom (Client client, ResultListener listener);
-
-    /**
      * Acknowledge that the specified notification was processed, and can be removed
      * from the user's queue.
      */

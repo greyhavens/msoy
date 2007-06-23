@@ -43,6 +43,7 @@ import com.threerings.whirled.spot.server.SpotSceneManager;
 import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
+import com.threerings.msoy.data.SceneBookmarkEntry;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -274,6 +275,47 @@ public class RoomManager extends SpotSceneManager
             throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
         }
         doRoomUpdate(updates, user);
+    }
+
+    // from interface RoomProvider
+    public void purchaseRoom (ClientObject caller, final RoomService.ResultListener listener)
+        throws InvocationException
+    {
+        final MemberObject user = (MemberObject) caller;
+
+        // make sure they have editing privileges in this scene as they will be adding to this
+        // scene group
+        MsoyScene scene = (MsoyScene) _scene;
+        if (!scene.canEdit(user)) {
+            throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
+        }
+        MsoySceneModel model = (MsoySceneModel) scene.getSceneModel();
+
+        // figure out if they want a group or a personal room
+        boolean isGroup = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP);
+        final byte ownerType = isGroup ? MsoySceneModel.OWNER_TYPE_GROUP
+                                       : MsoySceneModel.OWNER_TYPE_MEMBER;
+        final int ownerId = isGroup ? model.ownerId : user.getMemberId();
+        final String roomName = isGroup ? // TODO: i18n!
+            "New 'somegroup' room" : (user.memberName + "'s new room");
+
+        // TODO: charge some flow
+
+        MsoyServer.invoker.postUnit(new RepositoryUnit("purchaseRoom") {
+            public void invokePersist () throws PersistenceException {
+                _newRoomId = MsoyServer.sceneRepo.createBlankRoom(ownerType, ownerId, roomName);
+            }
+            public void handleSuccess () {
+                user.addToOwnedScenes(new SceneBookmarkEntry(_newRoomId, roomName, 0));
+                listener.requestProcessed(_newRoomId);
+            }
+            public void handleFailure (Exception pe) {
+                log.warning("Unable to create a new room [user=" + user.which() +
+                            ", error=" + pe + ", cause=" + pe.getCause() + "].");
+                listener.requestFailed(RoomCodes.INTERNAL_ERROR);
+            }
+            protected int _newRoomId;
+        });
     }
 
     /**

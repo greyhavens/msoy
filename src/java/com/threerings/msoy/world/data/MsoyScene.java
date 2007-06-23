@@ -51,10 +51,9 @@ public class MsoyScene extends SceneImpl
         }
 
         if (!hasRights && member.tokens.isSupport()) {
-            log.info("Allowing support+ to edit scene in which " +
-                "they otherwise wouldn't have rights " +
-                "[sceneId=" + getId() + ", sceneName=\"" + getName() + "\", " +
-                "support=" + member.who() + "].");
+            log.info("Allowing support+ to edit scene in which they otherwise wouldn't have " +
+                     "rights [sceneId=" + getId() + ", sceneName=\"" + getName() + "\", " +
+                     "support=" + member.who() + "].");
             return true;
         }
 

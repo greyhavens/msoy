@@ -47,8 +47,21 @@ public class RoomMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #purchaseRoom} requests. */
+    public static final int PURCHASE_ROOM = 3;
+
+    // from interface RoomService
+    public void purchaseRoom (Client arg1, InvocationService.ResultListener arg2)
+    {
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, PURCHASE_ROOM, new Object[] {
+            listener2
+        });
+    }
+
     /** The method id used to dispatch {@link #requestControl} requests. */
-    public static final int REQUEST_CONTROL = 3;
+    public static final int REQUEST_CONTROL = 4;
 
     // from interface RoomService
     public void requestControl (Client arg1, ItemIdent arg2)
@@ -59,7 +72,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #sendSpriteMessage} requests. */
-    public static final int SEND_SPRITE_MESSAGE = 4;
+    public static final int SEND_SPRITE_MESSAGE = 5;
 
     // from interface RoomService
     public void sendSpriteMessage (Client arg1, ItemIdent arg2, String arg3, byte[] arg4, boolean arg5)
@@ -70,7 +83,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setActorState} requests. */
-    public static final int SET_ACTOR_STATE = 5;
+    public static final int SET_ACTOR_STATE = 6;
 
     // from interface RoomService
     public void setActorState (Client arg1, ItemIdent arg2, int arg3, String arg4)
@@ -81,7 +94,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static final int UPDATE_MEMORY = 6;
+    public static final int UPDATE_MEMORY = 7;
 
     // from interface RoomService
     public void updateMemory (Client arg1, MemoryEntry arg2)
@@ -92,7 +105,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static final int UPDATE_ROOM = 7;
+    public static final int UPDATE_ROOM = 8;
 
     // from interface RoomService
     public void updateRoom (Client arg1, SceneUpdate[] arg2, InvocationService.InvocationListener arg3)
