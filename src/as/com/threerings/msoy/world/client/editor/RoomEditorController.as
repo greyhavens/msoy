@@ -97,22 +97,16 @@ public class RoomEditorController
             var targetIdent :ItemIdent = _edit.target.getFurniData().getItemIdent();
 
             if (mod.furniRemoved != null) {
-                mod.furniRemoved.some(function (furni :FurniData, ... rest) :Boolean {
-                        if (furni.getItemIdent().equals(targetIdent)) {
-                            targetRemoved = true;
-                            return true;
-                        }
-                        return false;    
+                targetRemoved = mod.furniRemoved.some(
+                    function (furni :FurniData, ... rest) :Boolean {
+                        return furni.getItemIdent().equals(targetIdent);
                     });
             }
 
             if (mod.furniAdded != null) {
-                mod.furniAdded.some(function (furni :FurniData, ... rest) :Boolean {
-                        if (furni.getItemIdent().equals(targetIdent)) {
-                            targetAdded = true;
-                            return true;
-                        }
-                        return false;
+                targetAdded = mod.furniAdded.some(
+                    function (furni :FurniData, ... rest) :Boolean {
+                        return furni.getItemIdent().equals(targetIdent);                
                     });
             }
             
