@@ -214,17 +214,17 @@ ButtonBar {
 
 TitleWindow {
   cornerRadius: 0;
-  closeButtonDisabledSkin: Embed(source="../../pages/images/ui/close.png");
-  closeButtonDownSkin: Embed(source="../../pages/images/ui/close_down.png");
-  closeButtonOverSkin: Embed(source="../../pages/images/ui/close_over.png");
-  closeButtonUpSkin: Embed(source="../../pages/images/ui/close.png");
+  closeButtonDisabledSkin: Embed(source="../../rsrc/media/skins/close.png");
+  closeButtonDownSkin: Embed(source="../../rsrc/media/skins/close_down.png");
+  closeButtonOverSkin: Embed(source="../../rsrc/media/skins/close_over.png");
+  closeButtonUpSkin: Embed(source="../../rsrc/media/skins/close.png");
 }
 
 Window {
-  closeButtonDisabledSkin: Embed(source="../../pages/images/ui/close.png");
-  closeButtonDownSkin: Embed(source="../../pages/images/ui/close_down.png");
-  closeButtonOverSkin: Embed(source="../../pages/images/ui/close_over.png");
-  closeButtonUpSkin: Embed(source="../../pages/images/ui/close.png");
+  closeButtonDisabledSkin: Embed(source="../../rsrc/media/skins/close.png");
+  closeButtonDownSkin: Embed(source="../../rsrc/media/skins/close_down.png");
+  closeButtonOverSkin: Embed(source="../../rsrc/media/skins/close_over.png");
+  closeButtonUpSkin: Embed(source="../../rsrc/media/skins/close.png");
 }
 
 .msoyButtonBar {
@@ -419,6 +419,7 @@ Window {
   upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_trash.png");
   overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_trash_over.png");
   downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_trash_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_trash_disabled.png");
   selectedUpSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_trash_selected.png");
   selectedOverSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_trash_selected.png");
   selectedDownSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_trash_selected.png");
