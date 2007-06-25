@@ -65,25 +65,25 @@ public class ChatOverlay
 //        _overlay.alpha = ALPHA;
         _overlay.blendMode = BlendMode.LAYER;
 
-        // NOTE: Any null values in the override formats will use the value from the default, so if
-        // a property is added to the default then it should be explicitely negated if not desired
-        // in an override.
-        _defaultFmt = new TextFormat();
-        _defaultFmt.font = FONT;
-        _defaultFmt.size = 10;
-        _defaultFmt.color = 0x000070;
-        _defaultFmt.bold = false;
-        _defaultFmt.underline = false;
-
-        _userSpeakFmt = new TextFormat();
-        _userSpeakFmt.font = FONT;
-        _userSpeakFmt.size = 12;
-        _userSpeakFmt.color = 0x000000;
-        _userSpeakFmt.bold = false;
-        _userSpeakFmt.underline = false;
+        createStandardFormats();
 
         // listen for preferences changes, update history mode
         Prefs.config.addEventListener(ConfigValueSetEvent.TYPE, handlePrefsUpdated, false, 0, true);
+    }
+
+    /**
+     * Create the standard chat TextFormat. This is exposed so that other things can
+     * show something in the current "chat font".
+     */
+    public static function createChatFormat () :TextFormat
+    {
+        var fmt :TextFormat = new TextFormat();
+        fmt.font = FONT;
+        fmt.size = Prefs.getChatFontSize();
+        fmt.color = 0x000000;
+        fmt.bold = false;
+        fmt.underline = false;
+        return fmt;
     }
 
     /**
@@ -252,8 +252,21 @@ public class ChatOverlay
 
     protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
     {
-        if ((_target != null) && (event.name == Prefs.CHAT_HISTORY)) {
-            setHistoryEnabled(Boolean(event.value));
+        switch (event.name) {
+        case Prefs.CHAT_HISTORY:
+            if (_target != null) {
+                setHistoryEnabled(Boolean(event.value));
+            }
+            break;
+
+        case Prefs.CHAT_FONT_SIZE:
+            createStandardFormats();
+            if (isHistoryMode()) {
+                clearGlyphs(_showingHistory);
+                figureCurrentHistory();
+            }
+            layout(null, -1);
+            break;
         }
     }
 
@@ -460,6 +473,24 @@ public class ChatOverlay
     }
 
     /**
+     * (Re)create the standard formats.
+     */
+    protected function createStandardFormats () :void
+    {
+        // NOTE: Any null values in the override formats will use the value from the default, so if
+        // a property is added to the default then it should be explicitely negated if not desired
+        // in an override.
+        _defaultFmt = new TextFormat();
+        _defaultFmt.font = FONT;
+        _defaultFmt.size = Prefs.getChatFontSize();
+        _defaultFmt.color = 0x000070;
+        _defaultFmt.bold = false;
+        _defaultFmt.underline = false;
+
+        _userSpeakFmt = createChatFormat();
+    }
+
+    /**
      * Create a link format for the specified link text.
      */
     protected function createLinkFormat (url :String, userSpeakFmt :TextFormat) :TextFormat
@@ -467,7 +498,7 @@ public class ChatOverlay
         var fmt :TextFormat = new TextFormat();
         fmt.align = userSpeakFmt.align;
         fmt.font = FONT;
-        fmt.size = 10;
+        fmt.size = Prefs.getChatFontSize();
         fmt.underline = true;
         fmt.color = 0xFF0000;
         fmt.bold = true;

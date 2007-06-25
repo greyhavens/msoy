@@ -10,11 +10,19 @@ import mx.controls.ComboBox;
 import mx.controls.Label;
 import mx.controls.RadioButton;
 import mx.controls.RadioButtonGroup;
+import mx.controls.Spacer;
 
+import mx.containers.HBox;
 import mx.containers.Grid;
 import mx.containers.VBox;
 
+import mx.core.UIComponent;
+
+import com.threerings.util.ConfigValueSetEvent;
+
+import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
+
 import com.threerings.msoy.ui.FloatingPanel;
 
 public class ChatPrefsDialog extends FloatingPanel
@@ -23,6 +31,9 @@ public class ChatPrefsDialog extends FloatingPanel
     {
         super(ctx, Msgs.GENERAL.get("t.chat_prefs"));
         open(true);
+
+        // listen for preferences changes that happen without us..
+        Prefs.config.addEventListener(ConfigValueSetEvent.TYPE, handlePrefsUpdated, false, 0, true);
     }
 
     override protected function createChildren () :void
@@ -35,10 +46,13 @@ public class ChatPrefsDialog extends FloatingPanel
         var ii :int;
         var grid :Grid = new Grid();
 
-        var history :CheckBox = new CheckBox();
-        history.selected = Prefs.getShowingChatHistory();
-        BindingUtils.bindSetter(Prefs.setShowingChatHistory, history, "selected");
-        GridUtil.addRow(grid, Msgs.PREFS.get("l.chat_history"), history);
+        GridUtil.addRow(grid, Msgs.PREFS.get("l.chat_size"), createFontSizeControl());
+
+        _history = new CheckBox();
+        _history.label = "(shortcut: F7)"; // TODO
+        _history.selected = Prefs.getShowingChatHistory();
+        BindingUtils.bindSetter(Prefs.setShowingChatHistory, _history, "selected");
+        GridUtil.addRow(grid, Msgs.PREFS.get("l.chat_history"), _history);
 
         var decay :ComboBox = new ComboBox();
         var choices :Array = [];
@@ -59,7 +73,12 @@ public class ChatPrefsDialog extends FloatingPanel
             but.selected = (ii == filterChoice);
             but.value = ii;
             but.group = filterGroup;
-            GridUtil.addRow(grid, but, [2, 1]);
+            var hbox :HBox = new HBox();
+            var spacer :Spacer = new Spacer();
+            spacer.width = 20;
+            hbox.addChild(spacer);
+            hbox.addChild(but);
+            GridUtil.addRow(grid, hbox, [2, 1]);
         }
         BindingUtils.bindSetter(Prefs.setChatFilterLevel, filterGroup, "selectedValue");
 
@@ -73,5 +92,103 @@ public class ChatPrefsDialog extends FloatingPanel
 
         addButtons(OK_BUTTON);
     }
+
+    protected function createFontSizeControl () :UIComponent
+    {
+        _fontTest = new FontTestArea();
+
+        var hbox :HBox = new HBox();
+
+        var bbox :VBox = new VBox();
+        _upFont = new CommandButton();
+        _upFont.styleName = "plusButton";
+        //_upFont.label = "+";
+        _upFont.setCallback(adjustFont, +1);
+        _downFont = new CommandButton();
+        _downFont.styleName = "minusButton";
+        //_downFont.label = "-";
+        _downFont.setCallback(adjustFont, -1);
+        bbox.addChild(_upFont);
+        bbox.addChild(_downFont);
+
+        hbox.addChild(_fontTest);
+        hbox.addChild(bbox);
+        adjustFont(0); // jiggle everything into place..
+        return hbox;
+    }
+
+    protected function adjustFont (delta :int) :void
+    {
+        var size :int = delta + Prefs.getChatFontSize();
+        size = Math.max(Prefs.CHAT_FONT_SIZE_MIN, Math.min(Prefs.CHAT_FONT_SIZE_MAX, size));
+        Prefs.setChatFontSize(size);
+
+        _upFont.enabled = size < Prefs.CHAT_FONT_SIZE_MAX;
+        _downFont.enabled = size > Prefs.CHAT_FONT_SIZE_MIN;
+    }
+
+    /**
+     * Handle prefs that update some other way, and reflect the changes in the UI.
+     */
+    protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
+    {
+        switch (event.name) {
+        case Prefs.CHAT_HISTORY:
+            _history.selected = Boolean(event.value);
+            break;
+
+        case Prefs.CHAT_FONT_SIZE:
+            _fontTest.reloadFont();
+            break;
+        }
+    }
+
+    /** The chat history checkbox. */
+    protected var _history :CheckBox;
+
+    /** A place where the currently configured chat font is tested. */
+    protected var _fontTest :FontTestArea;
+
+    protected var _upFont :CommandButton;
+    protected var _downFont :CommandButton;
 }
+}
+
+import flash.text.TextFormat;
+
+import mx.controls.TextArea;
+
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.WorldContext;
+
+import com.threerings.msoy.chat.client.ChatOverlay;
+
+class FontTestArea extends TextArea
+{
+    public function FontTestArea ()
+    {
+        text = Msgs.PREFS.get("m.chat_test");
+        editable = false;
+        minWidth = 200;
+        minHeight = 100;
+    }
+
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+
+        reloadFont();
+    }
+
+    public function reloadFont () :void
+    {
+        var tf :TextFormat = ChatOverlay.createChatFormat();
+
+        setStyle("fontSize", tf.size);
+        setStyle("fontWeight", tf.bold ? "bold" : "normal");
+        setStyle("textAlign", tf.align);
+        setStyle("fontStyle", tf.italic ? "italic" : "normal");
+        setStyle("color", tf.color);
+        setStyle("fontFamily", tf.font);
+    }
 }

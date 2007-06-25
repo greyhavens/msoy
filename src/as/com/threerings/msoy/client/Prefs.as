@@ -22,11 +22,15 @@ public class Prefs
     public static const SESSION_TOKEN :String = "sessionTok";
     public static const MACHINE_IDENT :String = "machIdent";
     public static const VOLUME :String = "volume";
+    public static const CHAT_FONT_SIZE :String = "chatFontSize";
     public static const CHAT_DECAY :String = "chatDecay";
     public static const CHAT_FILTER :String = "chatFilter";
     public static const CHAT_HISTORY :String = "chatHistory";
     public static const LOG_TO_CHAT :String = "logToChat";
     public static const BLOCKED_MEDIA :String = "blockedMedia";
+
+    public static const CHAT_FONT_SIZE_MIN :int = 10;
+    public static const CHAT_FONT_SIZE_MAX :int = 24;
 
     public static function getUsername () :String
     {
@@ -97,6 +101,23 @@ public class Prefs
     {
         config.setValue(VOLUME, vol);
         useSoundVolume();
+    }
+
+    /**
+     * Get the preferred chat font size.
+     * Default value: 10.
+     */
+    public static function getChatFontSize () :int
+    {
+        return (config.getValue(CHAT_FONT_SIZE, 10) as int);
+    }
+
+    /**
+     * Set the user's new preferred chat size.
+     */
+    public static function setChatFontSize (newSize :int) :void
+    {
+        config.setValue(CHAT_FONT_SIZE, newSize);
     }
 
     /**

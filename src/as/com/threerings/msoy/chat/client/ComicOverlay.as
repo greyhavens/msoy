@@ -39,18 +39,6 @@ public class ComicOverlay extends ChatOverlay
     public function ComicOverlay (ctx :WorldContext)
     {
         super(ctx);
-
-        // Bubbles use copies of the standard subtitle formats, only with align = CENTER.
-        _defaultBubbleFmt = new TextFormat(_defaultFmt.font, _defaultFmt.size,
-            _defaultFmt.color, _defaultFmt.bold, _defaultFmt.italic, _defaultFmt.underline,
-            _defaultFmt.url, _defaultFmt.target, TextFormatAlign.CENTER,
-            _defaultFmt.leftMargin, _defaultFmt.rightMargin, _defaultFmt.indent,
-            _defaultFmt.leading);
-        _userBubbleFmt = new TextFormat(_userSpeakFmt.font, _userSpeakFmt.size,
-            _userSpeakFmt.color, _userSpeakFmt.bold, _userSpeakFmt.italic, _userSpeakFmt.underline,
-            _userSpeakFmt.url, _userSpeakFmt.target, TextFormatAlign.CENTER,
-            _userSpeakFmt.leftMargin, _userSpeakFmt.rightMargin, _userSpeakFmt.indent,
-            _userSpeakFmt.leading);
     }
 
     /**
@@ -83,6 +71,23 @@ public class ComicOverlay extends ChatOverlay
     {
         super.clear();
         clearBubbles(true);
+    }
+
+    override protected function createStandardFormats () :void
+    {
+        super.createStandardFormats();
+
+        // Bubbles use copies of the standard subtitle formats, only with align = CENTER.
+        _defaultBubbleFmt = new TextFormat(_defaultFmt.font, _defaultFmt.size,
+            _defaultFmt.color, _defaultFmt.bold, _defaultFmt.italic, _defaultFmt.underline,
+            _defaultFmt.url, _defaultFmt.target, TextFormatAlign.CENTER,
+            _defaultFmt.leftMargin, _defaultFmt.rightMargin, _defaultFmt.indent,
+            _defaultFmt.leading);
+        _userBubbleFmt = new TextFormat(_userSpeakFmt.font, _userSpeakFmt.size,
+            _userSpeakFmt.color, _userSpeakFmt.bold, _userSpeakFmt.italic, _userSpeakFmt.underline,
+            _userSpeakFmt.url, _userSpeakFmt.target, TextFormatAlign.CENTER,
+            _userSpeakFmt.leftMargin, _userSpeakFmt.rightMargin, _userSpeakFmt.indent,
+            _userSpeakFmt.leading);
     }
 
     /**

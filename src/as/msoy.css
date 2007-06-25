@@ -532,6 +532,14 @@ Window {
   paddingBottom: 0;
 } 
 
+.plusButton {
+  icon: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_plus.png");
+}
+
+.minusButton {
+  icon: Embed(source="../../rsrc/media/skins/button/furniedit/rollout_minus.png");
+}
+
 VScrollBar {
   cornerRadius: 4;
   borderColor: #cccccc;
