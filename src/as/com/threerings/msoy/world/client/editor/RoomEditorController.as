@@ -88,7 +88,8 @@ public class RoomEditorController
      */
     public function processUpdate (update :SceneUpdate) :void
     {
-        if (update is ModifyFurniUpdate) {
+        // we only care about this if a target is selected...
+        if (update is ModifyFurniUpdate && _edit.target != null) {
             var mod :ModifyFurniUpdate = update as ModifyFurniUpdate;
 
             // check if the currently selected furni was modified
@@ -124,12 +125,10 @@ public class RoomEditorController
         }
     }
 
-    /**
-     * Called by the room controller, to specify whether the undo stack is empty.
-     */
-    public function updateUndoStatus (isEmpty :Boolean) :void
+    /** Called by the controller and other functions, to update the panel's undo button. */
+    public function updateUndoStatus (undoAvailable :Boolean) :void
     {
-        // FIXME ROBERT: dim the button if empty
+        _panel.updateUndoStatus(undoAvailable);
     }
 
     /**
@@ -139,7 +138,7 @@ public class RoomEditorController
     public function updateFurni (toRemove :FurniData, toAdd :FurniData) :void
     {
         _view.getRoomController().applyUpdate(new FurniUpdateAction(_ctx, toRemove, toAdd));
-        // _panel.updateUndoButton(true);
+        updateUndoStatus(true);
     }
     
     /**
@@ -151,6 +150,18 @@ public class RoomEditorController
         return isEditing() && _edit.isIdle();
     }
 
+    /** Performs an Undo action, if possible. */
+    public function actionUndo () :void
+    {
+        // undo the last action, and set undo button's enabled state appropriately
+        updateUndoStatus(_view.getRoomController().undoLastUpdate());
+    }
+
+    /** Performs a Delete action on the currently selected target. */
+    public function actionDelete () :void
+    {
+    }
+    
     /**
      * Cleans up editing actions and closes editing UIs. This function is called automatically
      * when the main editing UI is being closed (whether because the user clicked the close

@@ -96,9 +96,9 @@ public class ScalingHotspot extends Hotspot
     protected var _originalScale :Point;
 
     // Bitmaps galore!
-    [Embed(source="../../../../../../../../rsrc/media/skins/roomeditor/hotspot_scale.png")]
+    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_scale.png")]
     public static const HOTSPOT :Class;
-    [Embed(source="../../../../../../../../rsrc/media/skins/roomeditor/hotspot_scale_over.png")]
+    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_scale_over.png")]
     public static const HOTSPOT_OVER :Class;
 }
 }

@@ -66,9 +66,9 @@ public class MovementXZHotspot extends Hotspot
     }
 
     // Bitmaps galore!
-    [Embed(source="../../../../../../../../rsrc/media/skins/roomeditor/hotspot_move_xz.png")]
+    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_move_xz.png")]
     public static const HOTSPOT :Class;
-    [Embed(source="../../../../../../../../rsrc/media/skins/roomeditor/hotspot_move_xz_over.png")]
+    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_move_xz_over.png")]
     public static const HOTSPOT_OVER :Class;
 }
 }
