@@ -6,9 +6,12 @@ package com.threerings.msoy.world.server.persist;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.GeneratedValue;
+import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.world.data.AudioData;
@@ -119,7 +122,8 @@ public class SceneRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 1;
 
     /** The unique identifier for this scene. */
-    @Id public int sceneId;
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    public int sceneId;
 
     public byte ownerType;
 
@@ -166,7 +170,9 @@ public class SceneRecord extends PersistentRecord
      */
     public SceneRecord (MsoySceneModel model)
     {
-        sceneId = model.sceneId;
+        if (model.sceneId > 0) {
+            sceneId = model.sceneId;
+        }
         ownerType = model.ownerType;
         ownerId = model.ownerId;
         version = model.version;
@@ -209,6 +215,12 @@ public class SceneRecord extends PersistentRecord
         model.entrance = new MsoyLocation(entranceX, entranceY, entranceZ, 180);
 
         return model;
+    }
+
+    @Override // from Object
+    public String toString ()
+    {
+        return StringUtil.fieldsToString(this);
     }
 
     // AUTO-GENERATED: METHODS START

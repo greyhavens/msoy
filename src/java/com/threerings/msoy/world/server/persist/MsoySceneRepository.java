@@ -355,11 +355,12 @@ public class MsoySceneRepository extends DepotRepository
     protected int insertScene (MsoySceneModel model)
         throws PersistenceException
     {
-        int sceneId = insert(new SceneRecord(model));
+        SceneRecord scene = new SceneRecord(model);
+        insert(scene);
         for (FurniData data : model.furnis) {
-            insert(new SceneFurniRecord(sceneId, data));
+            insert(new SceneFurniRecord(scene.sceneId, data));
         }
-        return sceneId;
+        return scene.sceneId;
     }
 
     /**
