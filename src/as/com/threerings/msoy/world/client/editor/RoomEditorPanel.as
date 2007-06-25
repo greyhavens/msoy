@@ -63,7 +63,9 @@ public class RoomEditorPanel extends FloatingPanel
     
     public function updateDeleteStatus (enabled :Boolean) :void
     {
-        _deleteButton.enabled = enabled;
+        if (_deleteButton != null) { // just in case this gets called during initialization...
+            _deleteButton.enabled = enabled;
+        }
     }
     
     // from superclasses

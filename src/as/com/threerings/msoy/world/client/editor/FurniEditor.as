@@ -55,6 +55,13 @@ public class FurniEditor extends FurniHighlight
         super.end();
     }
 
+    // @Override from FurniHighlight
+    override public function set target (sprite :FurniSprite) :void
+    {
+        super.target = sprite;
+        _controller.updateDeleteStatus(_target != null);
+    }
+
     /** Accessor to the room view. */
     public function get roomView () :RoomView
     {

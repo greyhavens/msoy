@@ -95,23 +95,27 @@ public class RoomEditorController
             // check if the currently selected furni was modified
             var targetAdded :Boolean, targetRemoved :Boolean;
             var targetIdent :ItemIdent = _edit.target.getFurniData().getItemIdent();
-            
-            mod.furniRemoved.some(function (furni :FurniData, ... rest) :Boolean {
-                    if (furni.getItemIdent().equals(targetIdent)) {
-                        targetRemoved = true;
-                        return true;
-                    }
-                    return false;    
-                });
-            
-            mod.furniAdded.some(function (furni :FurniData, ... rest) :Boolean {
-                    if (furni.getItemIdent().equals(targetIdent)) {
-                        targetAdded = true;
-                        return true;
-                    }
-                    return false;
-                });
 
+            if (mod.furniRemoved != null) {
+                mod.furniRemoved.some(function (furni :FurniData, ... rest) :Boolean {
+                        if (furni.getItemIdent().equals(targetIdent)) {
+                            targetRemoved = true;
+                            return true;
+                        }
+                        return false;    
+                    });
+            }
+
+            if (mod.furniAdded != null) {
+                mod.furniAdded.some(function (furni :FurniData, ... rest) :Boolean {
+                        if (furni.getItemIdent().equals(targetIdent)) {
+                            targetAdded = true;
+                            return true;
+                        }
+                        return false;
+                    });
+            }
+            
             if (targetRemoved) {
                 if (targetAdded) {
                     // if the target furni was removed and then added back in, it means
@@ -131,9 +135,14 @@ public class RoomEditorController
         _panel.updateUndoStatus(undoAvailable);
     }
 
+    /** Called by the targetting system, to update the panel's delete button. */
+    public function updateDeleteStatus (deleteAvailable :Boolean) :void
+    {
+        _panel.updateDeleteStatus(deleteAvailable);
+    }
+
     /**
-     * Called by the room editor, requests that an update be applied changing a furni
-     * from an old version to a new version.
+     * Requests that the specified update be applied to the scene.
      */
     public function updateFurni (toRemove :FurniData, toAdd :FurniData) :void
     {
@@ -160,6 +169,10 @@ public class RoomEditorController
     /** Performs a Delete action on the currently selected target. */
     public function actionDelete () :void
     {
+        // delete the currently selected item
+        if (_edit.target != null) {
+            updateFurni(_edit.target.getFurniData(), null);
+        }
     }
     
     /**
