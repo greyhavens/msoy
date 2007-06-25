@@ -7,10 +7,12 @@ import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import com.threerings.flash.MediaContainer;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomView;
@@ -31,10 +33,12 @@ public class FurniHighlight
     {
         _border = new Sprite();
         _controller.roomView.addChild(_border);
+        target = null;
     }
     
     public function end () :void
     {
+        target = null;
         _controller.roomView.removeChild(_border);
         _border = null;
     }
@@ -47,8 +51,14 @@ public class FurniHighlight
     /** Displays or hides a hover rectangle around the specified sprite. */
     public function set target (sprite :FurniSprite) :void
     {
+        if (_target != null) {
+            _target.removeEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
+        }
         _target = sprite;
         updateDisplay();
+        if (_target != null) {
+            _target.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
+        }
     }
 
     /** Updates the UI displayed over the tracked sprite */
@@ -87,6 +97,12 @@ public class FurniHighlight
         g.lineStyle(0, 0xffffff, 1, true);
         g.drawRect(-1, -1, w + 2, h + 2);
 
+    }
+
+    /** Called by the media container when the sprite's visuals finished loading. */
+    protected function handleSizeKnown (event :Event) :void
+    {
+        updateDisplay();
     }
 
     /** Pointer back to the controller. */

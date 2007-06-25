@@ -1432,6 +1432,7 @@ public class RoomController extends SceneController
 
         super.sceneUpdated(update);
         _roomView.processUpdate(update);
+        _editor.processUpdate(update);
     }
 
     /** The number of pixels we scroll the room on a keypress. */

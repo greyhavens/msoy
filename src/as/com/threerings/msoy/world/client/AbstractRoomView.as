@@ -73,9 +73,9 @@ public class AbstractRoomView extends Sprite
     /**
      * Called by the editor to have direct access to our sprite list..
      */
-    public function getFurniSprites () :Array
+    public function getFurniSprites () :HashMap
     {
-        return _furni.values();
+        return _furni;
     }
 
     /**

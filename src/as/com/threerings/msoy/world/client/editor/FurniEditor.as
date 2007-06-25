@@ -75,7 +75,10 @@ public class FurniEditor extends FurniHighlight
             _originalTargetData = target.getFurniData().clone() as FurniData;
         } else {
             // the action just finished - wrap up.
-            _controller.updateFurni(_originalTargetData, target.getFurniData());
+            if (_originalTargetData != null) {
+                _controller.updateFurni(_originalTargetData, target.getFurniData());
+                _originalTargetData = null;
+            }
         }
         
         _activeHotspot = hotspot;
@@ -99,7 +102,7 @@ public class FurniEditor extends FurniHighlight
         
         _controller.targetSpriteUpdated();
     }
-    
+
     // @Override from FurniHighlight
     override protected function clearBorder () :void
     {

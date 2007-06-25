@@ -12,11 +12,15 @@ import flash.geom.Rectangle;
 import flash.ui.Keyboard;
 
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.util.HashMap;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
+import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.FurniData;
 
 
@@ -80,6 +84,47 @@ public class RoomEditorController
     }
 
     /**
+     * Receives a scene update from the controller, and refreshes the edited target appropriately.
+     */
+    public function processUpdate (update :SceneUpdate) :void
+    {
+        if (update is ModifyFurniUpdate) {
+            var mod :ModifyFurniUpdate = update as ModifyFurniUpdate;
+
+            // check if the currently selected furni was modified
+            var targetAdded :Boolean, targetRemoved :Boolean;
+            var targetIdent :ItemIdent = _edit.target.getFurniData().getItemIdent();
+            
+            mod.furniRemoved.some(function (furni :FurniData, ... rest) :Boolean {
+                    if (furni.getItemIdent().equals(targetIdent)) {
+                        targetRemoved = true;
+                        return true;
+                    }
+                    return false;    
+                });
+            
+            mod.furniAdded.some(function (furni :FurniData, ... rest) :Boolean {
+                    if (furni.getItemIdent().equals(targetIdent)) {
+                        targetAdded = true;
+                        return true;
+                    }
+                    return false;
+                });
+
+            if (targetRemoved) {
+                if (targetAdded) {
+                    // if the target furni was removed and then added back in, it means
+                    // it got modified. reread it!
+                    refreshTarget();
+                } else {
+                    // the target furni got removed - we should lose the focus as well.
+                    setTarget(null);
+                }
+            }
+        }
+    }
+
+    /**
      * Called by the room controller, to specify whether the undo stack is empty.
      */
     public function updateUndoStatus (isEmpty :Boolean) :void
@@ -93,8 +138,7 @@ public class RoomEditorController
      */
     public function updateFurni (toRemove :FurniData, toAdd :FurniData) :void
     {
-        // FIXME ROBERT
-        // _view.getRoomController().applyUpdate(new FurniUpdateAction(_ctx, toRemove, toAdd));
+        _view.getRoomController().applyUpdate(new FurniUpdateAction(_ctx, toRemove, toAdd));
         // _panel.updateUndoButton(true);
     }
     
@@ -114,8 +158,6 @@ public class RoomEditorController
      */
     public function actionEditorClosed () :void
     {
-        //trace("*** actionEditorClosed");
-        
         if (_panel != null && _panel.isOpen) {
             Log.getLog(this).warning("Room editor failed to close!");
         }
@@ -148,9 +190,8 @@ public class RoomEditorController
     public function mouseClickOnSprite (sprite :MsoySprite, event :MouseEvent) :void
     {
         if (_edit.isIdle()) {
-            //trace("*** SELECTING SPRITE: " + sprite);
             _hover.target = null;
-            _edit.target = sprite as FurniSprite;
+            setTarget(sprite as FurniSprite);
         }
     }
 
@@ -163,6 +204,22 @@ public class RoomEditorController
         // todo: update flex panel here
     }
 
+    /** Sets the currently edited target to the specified sprite. */
+    protected function setTarget (targetSprite :FurniSprite) :void
+    {
+        _edit.target = targetSprite;
+        targetSpriteUpdated();
+    }
+
+    /** Forces the target sprite to be re-read from the room. */
+    protected function refreshTarget () :void
+    {
+        if (_edit.target != null) {
+            var sprites :HashMap = _view.getFurniSprites();
+            setTarget(sprites.get(_edit.target.getFurniData().id) as FurniSprite);
+        }
+    }
+       
     protected var _ctx :WorldContext;
     protected var _view :RoomView;
     protected var _edit :FurniEditor;
