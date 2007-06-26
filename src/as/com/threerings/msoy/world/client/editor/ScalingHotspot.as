@@ -36,9 +36,21 @@ public class ScalingHotspot extends Hotspot
     override public function updateDisplay (targetWidth :Number, targetHeight :Number) :void
     {
         super.updateDisplay(targetWidth, targetHeight);
-        
+
         this.x = targetWidth;
         this.y = 0;
+
+        // figure out if this hotspot is leaving the display area
+        var roomPos :Point = _editor.roomView.globalToLocal(
+            _editor.target.localToGlobal(new Point(this.x, this.y)));
+        
+        if (roomPos.y < _currentDisplay.height / 2) {
+            roomPos.y = _currentDisplay.height / 2;
+            var localPos :Point = _editor.target.globalToLocal(
+                _editor.roomView.localToGlobal(roomPos));
+            this.y = localPos.y;
+        }
+
     }
     
     // @Override from Hotspot

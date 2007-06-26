@@ -46,7 +46,7 @@ public class MovementWallHotspot extends Hotspot
             
             g = (_displayMouseOver as Shape).graphics;
             g.clear();
-            g.beginFill(0xffffff, 0.1);
+            g.beginFill(0xffffff, 0.0);
             g.drawRect(0, 0, targetWidth, targetHeight);
             g.endFill();
 
