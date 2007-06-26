@@ -9,8 +9,18 @@ import flash.media.SoundTransform;
 import flash.utils.Dictionary;
 
 import com.threerings.util.Config;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.msoy.client.persist.SharedObjectSceneRepository;
+
+/**
+ * Dispatched when a piece of media is bleeped or unbleeped.
+ * This is dispatched on the 'config' object.
+ * 
+ * @eventType com.threerings.msoy.client.Prefs.BLEEPED_MEDIA;
+ * arg: [ mediaId (String), bleeped (Boolean) ]
+ */
+[Event(name="bleepedMedia", type="com.threerings.util.ValueEvent")]
 
 public class Prefs
 {
@@ -27,7 +37,7 @@ public class Prefs
     public static const CHAT_FILTER :String = "chatFilter";
     public static const CHAT_HISTORY :String = "chatHistory";
     public static const LOG_TO_CHAT :String = "logToChat";
-    public static const BLOCKED_MEDIA :String = "blockedMedia";
+    public static const BLEEPED_MEDIA :String = "bleepedMedia";
 
     public static const CHAT_FONT_SIZE_MIN :int = 10;
     public static const CHAT_FONT_SIZE_MAX :int = 24;
@@ -66,20 +76,22 @@ public class Prefs
     {
         checkLoadBlockedMedia();
         if (blocked) {
-            _blockedMedia[id] = true;
+            _bleepedMedia[id] = true;
 
         } else {
-            delete _blockedMedia[id];
+            delete _bleepedMedia[id];
         }
 
         // TODO: right now we don't persist this.
-        //config.setValue(BLOCKED_MEDIA, _blockedMedia, false);
+        //config.setValue(BLEEPED_MEDIA, _bleepedMedia, false);
+
+        config.dispatchEvent(new ValueEvent(BLEEPED_MEDIA, [ id, blocked ]));
     }
 
     public static function isMediaBlocked (id :String) :Boolean
     {
         checkLoadBlockedMedia();
-        return (id in _blockedMedia);
+        return (id in _bleepedMedia);
     }
 
 //    public static function getMediaPosition (id :String) :Number
@@ -191,10 +203,10 @@ public class Prefs
 
     protected static function checkLoadBlockedMedia () :void
     {
-        if (_blockedMedia == null) {
-            _blockedMedia = config.getValue(BLOCKED_MEDIA, null) as Dictionary;
-            if (_blockedMedia == null) {
-                _blockedMedia = new Dictionary();
+        if (_bleepedMedia == null) {
+            _bleepedMedia = config.getValue(BLEEPED_MEDIA, null) as Dictionary;
+            if (_bleepedMedia == null) {
+                _bleepedMedia = new Dictionary();
             }
         }
     }
@@ -208,8 +220,8 @@ public class Prefs
         SoundMixer.soundTransform = new SoundTransform(getSoundVolume());
     }
 
-    /** A set of media ids that are blocked (they keys of the dictionary). */
-    protected static var _blockedMedia :Dictionary;
+    /** A set of media ids that are bleeped (the keys of the dictionary). */
+    protected static var _bleepedMedia :Dictionary;
 
     /**
     * A static initializer.

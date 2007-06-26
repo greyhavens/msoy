@@ -4,6 +4,7 @@
 package com.threerings.msoy.ui {
 
 import com.threerings.util.Util;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.MediaContainer;
 import com.threerings.flash.MenuUtil;
@@ -26,6 +27,9 @@ public class MsoyMediaContainer extends MediaContainer
         if (desc != null) {
             setMediaDesc(desc);
         }
+
+        // have this container listen for bleep changes during its lifetime
+        Prefs.config.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
     }
 
     override public function setMedia (url :String) :void
@@ -54,7 +58,7 @@ public class MsoyMediaContainer extends MediaContainer
     // TODO: doc
     public function isBlockable () :Boolean
     {
-        return !(_desc is StaticMediaDesc);
+        return (_desc != null) && !(_desc is StaticMediaDesc);
     }
 
     // TODO: doc
@@ -64,18 +68,23 @@ public class MsoyMediaContainer extends MediaContainer
     }
 
     // TODO: doc
-    public function toggleBlocked () :void
+    public function toggleBlocked (ctx :WorldContext = null) :void
     {
         var nowBlocked :Boolean = !isBlocked();
+        // and change the setting. We'll get an event about the change, and react to that.
         Prefs.setMediaBlocked(_desc.getMediaId(), nowBlocked);
-        setIsBlocked(nowBlocked);
+
+        // TEMP
+        if (!_hasBleeped && ctx != null) {
+            _hasBleeped = true;
+            ctx.displayInfo(Msgs.GENERAL.getPath(), "m.bleeping_todo");
+        }
     }
 
     // from ContextMenuProvider
     public function populateContextMenu (ctx :WorldContext, menuItems :Array) :void
     {
-        // TEMP: restrict blocking to support only, for now
-        if (ctx.getMemberObject().tokens.isSupport() && isBlockable()) {
+        if (isBlockable()) {
             var isBlocked :Boolean = isBlocked();
             // TODO: if there happens to be another bleepable MsoyMediaContainer
             // also under the mouse, we'll probably clobber each other's menu items.
@@ -83,7 +92,7 @@ public class MsoyMediaContainer extends MediaContainer
             // the MediaDesc. Punting!
             menuItems.push(MenuUtil.createControllerMenuItem(
                 Msgs.GENERAL.get(isBlocked ? "b.unbleep_media" : "b.bleep_media"),
-                toggleBlocked));
+                toggleBlocked, ctx));
         }
     }
 
@@ -99,7 +108,23 @@ public class MsoyMediaContainer extends MediaContainer
         super.setMedia(desc.getMediaPath());
     }
 
+    /**
+     * Called when a piece of media is bleeped or unbleeped.
+     */
+    protected function handleBleepChange (event :ValueEvent) :void
+    {
+        if (isBlockable()) {
+            var id :String = _desc.getMediaId();
+            if (id === event.value[0]) {
+                setIsBlocked(Boolean(event.value[1]));
+            }
+        }
+    }
+
     /** Our Media descriptor. */
     protected var _desc :MediaDesc;
+
+    // TEMP: have we bleeped something (and issued the bleep disclaimer?)
+    protected static var _hasBleeped :Boolean
 }
 }

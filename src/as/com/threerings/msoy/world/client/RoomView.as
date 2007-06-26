@@ -255,12 +255,11 @@ public class RoomView extends AbstractRoomView
                                    MsoyController.VIEW_ITEM, ident));
             }
 
-            // TEMP: restrict blocking to members only, for now.
-            if (_ctx.getMemberObject().tokens.isSupport() && sprite.isBlockable()) {
+            if (sprite.isBlockable()) {
                 var isBlocked :Boolean = sprite.isBlocked();
                 menuItems.push(MenuUtil.createControllerMenuItem(
                     Msgs.GENERAL.get((isBlocked ? "b.unbleep_item" : "b.bleep_item"), kind),
-                    sprite.toggleBlocked));
+                    sprite.toggleBlocked, ctx));
             }
         }
     }
