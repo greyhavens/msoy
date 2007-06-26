@@ -39,6 +39,7 @@ public class WhirledGameControlBackend extends GameControlBackend
         o["setChatBounds_v1"] = ctrl.setChatBounds_v1;
         o["getHeadShot_v1"] = getHeadShot_v1;
         o["getStageBounds_v1"] = getStageBounds_v1;
+        o["backToWhirled_v1"] = backToWhirled_v1;
     }
 
     protected function getHeadShot_v1 (occupant :int, callback :Function) :void
@@ -59,6 +60,11 @@ public class WhirledGameControlBackend extends GameControlBackend
     protected function getStageBounds_v1 () :Rectangle
     {
         return (_ctx as WorldContext).getTopPanel().getPlaceViewBounds();
+    }
+
+    protected function backToWhirled_v1 () :void
+    {
+        (_ctx as WorldContext).getTopPanel().getControlBar().moveBack();
     }
 
     /** A cache of loaded avatar headshots, indexed by occupant id. */

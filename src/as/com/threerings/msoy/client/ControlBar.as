@@ -139,6 +139,13 @@ public class ControlBar extends HBox
         updateUI();
     }
 
+    /**
+     * Moves back to the previous scene we occupied, if possible.
+     */
+    public function moveBack () :void
+    {
+        _controller.handleMoveBack(_backBtn);
+    }
 
     override protected function updateDisplayList (w :Number, h :Number) :void
     {
