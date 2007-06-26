@@ -481,7 +481,7 @@ public class ProjectRoomManager extends PlaceManager
         PathElement element = _roomObj.findPathElement(fileName, _roomObj.getRootElement());
         if (element != null) {
             // let's try to pull the resolved document from the room object. this may return null
-            // in which case the task will load it from the repository
+            // in which case the InsertFileUploadTask will load it from the repository
             SwiftlyDocument doc = _roomObj.getDocument(element);
             MsoyServer.swiftlyMan.svnExecutor.addTask(
                 new InsertFileUploadTask(uploadFile, fileName, element, doc, listener));
@@ -899,9 +899,14 @@ public class ProjectRoomManager extends PlaceManager
                 // the room object, we need to load it from the storage repository
                 if (_element != null && _doc == null) {
                     _doc = _storage.getDocument(_element);
-                    
+                
+                // else if we have no path element, then this is a new document. the final "else"
+                // is that we have an existing path element and we already found the document
+                // so just proceed.
                 } else if (_element == null) {
-                    // TODO: oh god, for now, the root is going to be the parent
+                    // TODO: as we currently have no way of getting from GWT which "directory"
+                    // the user wants this element to go into, we are going to assume that the root
+                    // is the parent of the new element.
                     _element = PathElement.createFile(_fileName, _roomObj.getRootElement(),
                         _uploadFile.getMimeTypeAsString());
 
@@ -945,10 +950,7 @@ public class ProjectRoomManager extends PlaceManager
                 _roomObj.updateDocuments(_doc);
             }
 
-            // TODO: this should post a message into the room saying a new element has been
-            // added so we can get a passive notification. alternatively, we just add to the
-            // set listener in the client every time an add or update happens to a pathelement
-            // we'll display a message? 
+            // inform the listener everything worked
             _listener.requestCompleted(null);
         }
 

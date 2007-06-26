@@ -63,15 +63,16 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
         log.info("Swiftly upload: [type: " + uploadFile.item.getContentType() + ", size="
             + uploadFile.item.getSize() + ", projectId=" + projectId + "].");
 
+        // run a task on the dobject thread that first finds the ProjectRoomManager for this
+        // project if it exists, and then commits the file to svn and adds it to the room
         final ServletWaiter<Void> waiter =
             new ServletWaiter<Void>("insertUploadFile[" + projectId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {               
                 ProjectRoomManager manager = MsoyServer.swiftlyMan.getRoomManager(projectId);
                 if (manager == null) {
-                    // TODO: is this at all clean?
-                    waiter.requestFailed(
-                        new Exception("No ProjectRoomManager found. Aborting upload."));
+                    waiter.requestFailed(new Exception("No ProjectRoomManager found."));
+                    return;
                 }
                 
                 manager.insertUploadFile(uploadFile, waiter);

@@ -74,17 +74,18 @@ public class SwiftlyPanel extends FlexTable
     {
         // Add project information to the header
         setText(0, 0, CSwiftly.msgs.swiftlyEditing());
-        setWidget(0, 1, _projectLink);
-        setWidget(0, 2, new Button(CSwiftly.msgs.editProject(), new ClickListener() {
+        HorizontalPanel projectInfo = new HorizontalPanel();
+        projectInfo.add(_projectLink);
+        projectInfo.add(new Button(CSwiftly.msgs.editProject(), new ClickListener() {
             public void onClick (Widget sender) {
                 new ProjectEdit(_project, SwiftlyPanel.this).show();
             }
         }));
-        // TODO: disable the upload buttons for further testing
-        // setWidget(0, 3, new SwiftlyUploader(String.valueOf(_project.projectId), CSwiftly.ident));
-        // TODO: fix the alignment here. might have to put these elements in the same cell
+        setWidget(0, 1, projectInfo);
+
+        // add the upload button
+        setWidget(0, 2, new SwiftlyUploader(String.valueOf(_project.projectId), CSwiftly.ident));        
         getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
-        // getFlexCellFormatter().setHorizontalAlignment(0, 3, HasAlignment.ALIGN_RIGHT);
         
         // Add the applet
         _applet = WidgetUtil.createApplet(
@@ -100,7 +101,7 @@ public class SwiftlyPanel extends FlexTable
         getFlexCellFormatter().setColSpan(1, 0, 4);
         getFlexCellFormatter().setHeight(1, 0, "100%");
 
-        // clear out any world client because swiftly currently kills it anyawy
+        // clear out any world client because Swiftly currently kills it anyawy
         WorldClient.clearClient(true);
     }
 
@@ -147,12 +148,7 @@ public class SwiftlyPanel extends FlexTable
                 }
 
                 public void onSubmitComplete (FormSubmitCompleteEvent event) {
-                    String result = event.getResults();
-                    if (result != null && result.length() > 0) {
-                        // TODO: What is this reporting? Result appears to have html tags,
-                        // so it looks like we'll want a spot to report this, not MsoyUI.info
-                        MsoyUI.info(result);
-                    }
+                    // nada. the Swiftly Java client will take care of reporting success.
                 }
             });
             

@@ -79,7 +79,7 @@ public class ProjectPanel extends JPanel
     public void setProject (ProjectRoomObject roomObj)
     {
         _roomObj = roomObj;
-        _treeModel = new ProjectTreeModel(roomObj, this);
+        _treeModel = new ProjectTreeModel(roomObj, this, _ctx);
         _treeModel.addTreeModelListener(this);
 
         _tree = new JTree(_treeModel);
@@ -337,7 +337,6 @@ public class ProjectPanel extends JPanel
         _roomObj.service.deletePathElement(_ctx.getClient(), element.elementId, 
             new ConfirmListener () {
             public void requestProcessed () {
-                _ctx.showInfoMessage(_msgs.get("m.element_deleted", element.getName()));
                 // disable the toolbar and unset the selected node
                 setToolbarEnabled(false);
                 _selectedNode = null;
