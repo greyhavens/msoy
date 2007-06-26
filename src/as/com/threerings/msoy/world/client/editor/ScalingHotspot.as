@@ -14,6 +14,19 @@ import com.threerings.msoy.world.client.FurniSprite;
  */
 public class ScalingHotspot extends Hotspot
 {
+    /**
+     * Scaling operation will be snapped to original proportions if the difference between
+     * horizontal and vertical scale is less than this ratio of the greater of the two.
+     */
+    public static const SNAP_RATIO :Number = 0.2;
+
+    /**
+     * Proportional snap will not be applied until the mouse has moved at least
+     * this number of pixels away from where it was clicked.
+     */
+    public static const SNAP_DEAD_RADIUS :Number = 20;
+    
+    
     public function ScalingHotspot (editor :FurniEditor)
     {
         super(editor);
@@ -81,17 +94,22 @@ public class ScalingHotspot extends Hotspot
         
         var x :Number = ratioX * _originalScale.x;
         var y :Number = ratioY * _originalScale.y;
-        
-        /*
-          if (_panel.advanced.proportionalScaling) {
-          var max :Number = Math.max(x, y);
-          x = y = max;
-          }
-        */
+
+        // should we snap?
+        if (Point.distance(mouse, _anchor) > SNAP_DEAD_RADIUS) {
+            var signx :Number = x / Math.abs(x);
+            var signy :Number = y / Math.abs(y);
+            var maxScale :Number = Math.max(Math.abs(x), Math.abs(y));
+            var delta :Number = Math.abs(Math.abs(x) - Math.abs(y));
+            if (delta < maxScale * SNAP_RATIO) {
+                x = maxScale * signx;
+                y = maxScale * signy;
+            }
+        }
         
         _editor.updateTargetScale(x, y);
     }
-
+    
     /** Sprite scale at the beginning of modifications. Only valid during action. */
     protected var _originalScale :Point;
 

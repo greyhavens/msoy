@@ -156,6 +156,16 @@ public class FurniEditor extends FurniHighlight
         g.moveTo(targetRoot.x, targetRoot.y);
         g.lineTo(targetLocation.x, targetLocation.y + 1);
 
+        // should we draw a proportional hinting guide?
+        var ds :Number = Math.abs(target.getMediaScaleX()) - Math.abs(target.getMediaScaleY());
+        if (Math.abs(ds) < 0.01) {
+            var delta :Point = new Point (2 * targetLocation.x, 2 * targetLocation.y);
+            // draw lines from the location hotspot to the top corners
+            g.moveTo(targetLocation.x - delta.x, targetLocation.y - delta.y);
+            g.lineTo(targetLocation.x, targetLocation.y);
+            g.lineTo(targetLocation.x + delta.x, targetLocation.y - delta.y);
+        }
+        
         // reset position, so that subsequent fills don't hallucinate that a curve was
         // left open, and needs to be filled in. (you'd think that curves defined *before*
         // a call to beginFill would get ignored, but you'd be wrong.)
