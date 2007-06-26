@@ -33,6 +33,7 @@ public class FurniEditor extends FurniHighlight
         super.start();
 
         _hotspots = new Array();
+        _hotspots.push(new MovementWallHotspot(this));
         _hotspots.push(new ScalingHotspot(this));
         _hotspots.push(new MovementYHotspot(this));
         _hotspots.push(new MovementXZHotspot(this));
