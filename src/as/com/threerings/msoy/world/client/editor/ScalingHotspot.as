@@ -71,6 +71,7 @@ public class ScalingHotspot extends Hotspot
     {
         _displayStandard = new HOTSPOT() as DisplayObject;
         _displayMouseOver = new HOTSPOT_OVER() as DisplayObject;
+        _displayLocked = new HOTSPOT_LOCKED() as DisplayObject;
     }
 
     /**
@@ -104,6 +105,9 @@ public class ScalingHotspot extends Hotspot
             if (delta < maxScale * SNAP_RATIO) {
                 x = maxScale * signx;
                 y = maxScale * signy;
+                switchDisplay(_displayLocked);
+            } else {
+                switchDisplay(_displayMouseOver);
             }
         }
         
@@ -113,10 +117,16 @@ public class ScalingHotspot extends Hotspot
     /** Sprite scale at the beginning of modifications. Only valid during action. */
     protected var _originalScale :Point;
 
+    /** Bitmap used for hotspot with mouseover. */
+    protected var _displayLocked :DisplayObject;
+
+
     // Bitmaps galore!
     [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_scale.png")]
     public static const HOTSPOT :Class;
     [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_scale_over.png")]
     public static const HOTSPOT_OVER :Class;
+    [Embed(source="../../../../../../../../rsrc/media/skins/button/furniedit/hotspot_scale_locked.png")]
+    public static const HOTSPOT_LOCKED :Class;
 }
 }

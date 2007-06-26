@@ -174,18 +174,23 @@ public class Hotspot extends Sprite
         switchDisplay(_displayStandard);
     }
     
-    /** Removes current display object and inserts the specified one in its place. */
+    /**
+     * If the new display differs from the current one, removes current display object
+     * and inserts the specified one in its place.
+     */
     protected function switchDisplay (display :DisplayObject) :void
     {
-        if (_currentDisplay != null) {
-            removeChild(_currentDisplay);
-            _currentDisplay = null;
-        }
-        if (display != null) {
-            _currentDisplay = display;
-            addChild(_currentDisplay);
-            _currentDisplay.x = - _currentDisplay.width / 2;
-            _currentDisplay.y = - _currentDisplay.height / 2;
+        if (_currentDisplay != display) {
+            if (_currentDisplay != null) {
+                removeChild(_currentDisplay);
+                _currentDisplay = null;
+            }
+            if (display != null) {
+                _currentDisplay = display;
+                addChild(_currentDisplay);
+                _currentDisplay.x = - _currentDisplay.width / 2;
+                _currentDisplay.y = - _currentDisplay.height / 2;
+            }
         }
     }
 
