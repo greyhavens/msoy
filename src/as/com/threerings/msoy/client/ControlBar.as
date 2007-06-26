@@ -174,13 +174,13 @@ public class ControlBar extends HBox
         _channelBtn = null;
 
         _chatControl = new ChatControl(_ctx, this.height - 4);
-        addGroupChild(_chatControl, [ UI_STD, UI_EDIT ]);
+        addGroupChild(_chatControl, [ UI_STD, UI_EDIT, UI_GUEST ]);
 
         var chatBtn :CommandButton = new CommandButton();
         chatBtn.toolTip = Msgs.GENERAL.get("i.chatPrefs");
         chatBtn.setCommand(MsoyController.CHAT_PREFS);
         chatBtn.styleName = "controlBarButtonChat";
-        addGroupChild(chatBtn, [ UI_STD ]);
+        addGroupChild(chatBtn, [ UI_STD, UI_GUEST ]);
 
         var volBtn :CommandButton = new CommandButton();
         volBtn.toolTip = Msgs.GENERAL.get("i.volume");
@@ -245,13 +245,13 @@ public class ControlBar extends HBox
         _backBtn.setCommand(ControlBarController.MOVE_BACK, _backBtn);
         _backBtn.styleName = "controlBarButtonBack";
         _backBtn.enabled = false;
-        addGroupChild(_backBtn, [ UI_STD ]);
+        addGroupChild(_backBtn, [ UI_STD, UI_GUEST ]);
 
         _channelBtn = new CommandButton();
         _channelBtn.toolTip = Msgs.GENERAL.get("i.channel");
         _channelBtn.setCommand(MsoyController.POP_CHANNEL_MENU, _channelBtn);
         _channelBtn.styleName = "controlBarButtonChannel";
-        addGroupChild(_channelBtn, [ UI_STD, UI_MINI ]);
+        addGroupChild(_channelBtn, [ UI_STD, UI_MINI, UI_GUEST ]);
 
         // and remember how things are set for now
         _isMember = isMember;

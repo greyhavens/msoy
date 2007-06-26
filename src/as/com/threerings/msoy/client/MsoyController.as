@@ -180,8 +180,9 @@ public class MsoyController extends Controller
      */
     public function handlePopChannelMenu (trigger :Button) :void
     {
+        var me :MemberObject = _ctx.getMemberObject();
         var friends :Array = new Array();
-        for each (var fe :FriendEntry in _ctx.getMemberObject().getSortedEstablishedFriends()) {
+        for each (var fe :FriendEntry in me.getSortedEstablishedFriends()) {
             if (fe.online) {
                 var item :Object = {
                     label: fe.name.toString(), command: OPEN_CHANNEL, arg: fe.name }
@@ -194,7 +195,7 @@ public class MsoyController extends Controller
                            enabled: false });
         }
 
-        var groups :Array = _ctx.getMemberObject().groups.toArray();
+        var groups :Array = (me.groups != null) ? me.groups.toArray() : [];
         groups = groups.map(function (gm :GroupMembership, index :int, array :Array) :Object {
             var item :Object = { label: gm.group.toString(), command: OPEN_CHANNEL, arg: gm.group };
             checkChatChannelOpen(gm.group, item);
