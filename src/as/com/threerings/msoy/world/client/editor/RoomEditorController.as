@@ -45,6 +45,11 @@ public class RoomEditorController
         return _view;
     }
 
+    public function get ctx () :WorldContext
+    {
+        return _ctx;
+    }
+
     /**
      * Returns true if the room is currently being edited.
      */
@@ -168,6 +173,12 @@ public class RoomEditorController
             updateFurni(_edit.target.getFurniData(), null);
         }
     }
+
+    /** Tells the room controller to start editing the specified door. */
+    public function actionEditDoor (data :FurniData) :void
+    {
+        _view.getRoomController().handleEditDoor(data);
+    }
     
     /**
      * Cleans up editing actions and closes editing UIs. This function is called automatically
@@ -219,7 +230,7 @@ public class RoomEditorController
     public function targetSpriteUpdated () :void
     {
         _edit.updateDisplay();
-        // todo: update flex panel here
+        _panel.updateDisplay(_edit.target != null ? _edit.target.getFurniData() : null);
     }
 
     /** Sets the currently edited target to the specified sprite. */

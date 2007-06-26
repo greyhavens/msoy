@@ -1,0 +1,445 @@
+//
+// $Id$
+
+package com.threerings.msoy.world.client.editor {
+
+import flash.events.Event;
+import flash.events.MouseEvent;
+import flash.events.TextEvent;
+
+import mx.binding.utils.BindingUtils;
+import mx.containers.Grid;
+import mx.containers.HBox;
+import mx.containers.VBox;
+import mx.containers.ViewStack;
+import mx.controls.Button;
+import mx.controls.CheckBox;
+import mx.controls.ComboBox;
+import mx.controls.Label;
+import mx.controls.Spacer;
+import mx.controls.TextInput;
+import mx.core.UIComponent;
+import mx.events.FlexEvent;
+
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.GridUtil;
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.world.data.FurniData;
+
+/**
+ * Displays furni action details as a sub-panel.
+ */
+public class ActionPanel extends VBox
+{
+    public function ActionPanel (controller :RoomEditorController)
+    {
+        _controller = controller;
+        this.percentWidth = 100;
+    }
+
+    /** Updates the UI from given data. */
+    public function updateDisplay (data :FurniData) :void
+    {
+        if (data == null) {
+            this.enabled = false;
+            _furniData = null;
+            _readOnlyActionLabel.text = "";
+            _actionTypeSelection.selectedIndex = 0;
+
+        } else {
+            this.enabled = true;
+            
+            // abandon previous edits
+            _furniData = data;
+            
+            var def :Object = getActionDef(_furniData.actionType);
+            
+            // can this action type be edited by the player?
+            var editable :Boolean = isActionTypeEditable(_furniData.actionType);
+            if (editable) {
+                // select the right drop down entry based on the action type
+                _actionTypeSelection.selectedIndex = getActionIndex(_furniData.actionType);
+                updateTypePanels(def);
+            } else {
+                _readOnlyActionLabel.text = def.label;
+                _actionTypeSelection.selectedIndex = 0;
+            }
+            
+            _actionPanels.visible = _actionPanels.includeInLayout = editable;
+            _actionTypeSelection.visible = _actionTypeSelection.includeInLayout = editable;
+            _readOnlyActionLabel.visible = _readOnlyActionLabel.includeInLayout = ! editable;
+        }
+    }
+
+    // @Override from superclass
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+
+        var playerIsSupportPlus :Boolean = _controller.ctx.getMemberObject().tokens.isSupport();
+        
+        // generate combo box definitions, including only those actions whose editable flag is set,
+        // and which are available for the player's account level
+        var entries :Array = new Array();
+        for each (var def :Object in ACTIONS) {
+            // is it editable in the first place?    
+            if (isActionTypeEditable(def.data)) {
+                // make sure the action is either available to everyone, or if it's support+ only,
+                // that the player has the credentials.
+                if (isActionTypeForAllPlayers(def.data) || playerIsSupportPlus) {
+                    entries.push(def);
+                }
+            }
+        }
+        
+        // create ui bits
+        var grid :Grid = new Grid();
+        addChild(grid);
+        
+        // this combo box will let the user pick a type
+        _actionTypeSelection = new ComboBox();
+        _actionTypeSelection.dataProvider = entries;
+        // and this will be displayed instead of the drop-down box if the user can't edit it
+        _readOnlyActionLabel = new TextInput();
+        _readOnlyActionLabel.editable = false;
+        // hide this one initially
+        _readOnlyActionLabel.visible = _readOnlyActionLabel.includeInLayout = false;
+        
+        var action :HBox = new HBox();
+        action.addChild(_readOnlyActionLabel);
+        action.addChild(_actionTypeSelection);
+
+        // make editing panels for each action type
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.action"), action);
+        _actionPanels = new ViewStack();
+        _actionPanels.resizeToContent = true;
+        for each (var entry :Object in entries) {
+            if (entry.panelCreateFn != null) {
+                _actionPanels.addChild((entry.panelCreateFn as Function)());
+            } else {
+                _actionPanels.addChild(new VBox());
+            }
+        }
+        addChild(_actionPanels);
+
+        // this label is for support+
+        _debug = new TextInput();
+        _debug.editable = false;
+        _debug.enabled = false;
+        if (playerIsSupportPlus) {
+            var dgrid :Grid = new Grid();
+            dgrid.setStyle("color", 0xff0000);
+            addChild(dgrid);
+            GridUtil.addRow(dgrid, Msgs.EDITING.get("l.action_debug"), _debug);
+        }
+
+        // now the button row
+        _applyButton = new CommandButton();
+        _applyButton.label = Msgs.EDITING.get("b.apply_changes");
+        _applyButton.setCallback(applyChanges);
+        _cancelButton = new CommandButton();
+        _cancelButton.label = Msgs.EDITING.get("b.revert_changes");
+        _cancelButton.setCallback(revertChanges);
+
+        var buttons :HBox = new HBox();
+        buttons.addChild(_applyButton);
+        buttons.addChild(_cancelButton);
+        addChild(buttons);
+    }
+
+    // @Override from superclass
+    override protected function childrenCreated () :void
+    {
+        super.childrenCreated();
+
+        // set data binding functions
+        BindingUtils.bindProperty(
+            _actionPanels, "selectedIndex", _actionTypeSelection, "selectedIndex");
+        BindingUtils.bindSetter(updateTypePanels, _actionTypeSelection, "selectedItem");
+
+        var changedThunk :Function = function (event :Event) :void { setChanged(true); };
+        _actionTypeSelection.addEventListener(MouseEvent.CLICK, changedThunk);
+        _captureMouse.addEventListener(MouseEvent.CLICK, changedThunk);
+        _helpTabAction.addEventListener(TextEvent.TEXT_INPUT, changedThunk);
+        _url.addEventListener(TextEvent.TEXT_INPUT, changedThunk);
+
+        var applyThunk :Function = function (event :Event) :void { applyChanges(); };
+        _helpTabAction.addEventListener(FlexEvent.ENTER, applyThunk);
+        _url.addEventListener(FlexEvent.ENTER, applyThunk);
+
+        updateDisplay(null);
+        setChanged(false);
+    }
+
+    /** Applies changes to the currently targetted object. */
+    protected function applyChanges () :void
+    {
+        var newData :FurniData = getUserModifications();
+        if (newData != null) {
+            _controller.updateFurni(_furniData, newData);
+        }
+        setChanged(false);
+    }
+
+    /** Reverts changes by re-reading from the original furni data. */
+    protected function revertChanges () :void
+    {
+        updateDisplay(_furniData);
+        setChanged(false);
+    }
+
+    /**
+     * Called when a new type is selected from the list, it will find call the appropriate panel's
+     * update function. The panel itself is popped to the top independently of this function.
+     */
+    protected function updateTypePanels (def :Object) :void
+    {
+        var actionData :String = _furniData != null ? _furniData.actionData : null;
+        if (def != null) {
+            if (def.panelUpdateFn != null) {
+                (def.panelUpdateFn as Function)();
+            }
+            _debug.text = actionData;
+        } else {
+            _debug.text = "";
+        }
+    }
+
+
+
+    // FurniData.ACTION_NONE functions
+    
+    protected function createNonePanel () :UIComponent
+    {
+        var grid :Grid = new Grid();
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.captureMouse"), _captureMouse = new CheckBox());
+        return grid;
+    }
+
+    protected function updateNonePanel () :void
+    {
+        if (_furniData != null) {
+            // null == capture mouse, "-" means don't.
+            // We don't just check for null, because we want to default back to capturing
+            // if the user is switching from a different action type.
+            _captureMouse.selected = (_furniData.actionData != "-");
+        }
+    }
+
+    // URL functions
+    
+    protected function createURLPanel () :UIComponent
+    {
+        var grid :Grid = new Grid();
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.url"), _url = new TextInput());
+        return grid;
+    }
+
+    protected function updateURLPanel () :void
+    {
+        if (_furniData != null) {
+            var url :String = _furniData.actionData;
+            // maybe validation here?
+            _url.text = url; 
+        }
+    }
+
+    // HELP_PAGE functions
+    
+    protected function createHelpTabPanel () :UIComponent
+    {
+        var grid :Grid = new Grid();
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.help_tab"), _helpTabAction = new TextInput());
+        return grid;
+    }
+
+    protected function updateHelpTabPanel () :void
+    {
+        if (_furniData != null) {
+            var url :String = _furniData.actionData;
+            // maybe validation here?
+            _helpTabAction.text = url; 
+        }
+    }
+
+    // door functions
+    
+    protected function createPortalPanel () :UIComponent
+    {
+        var grid :Grid = new Grid();
+
+        _door = new TextInput();
+        _door.editable = false;
+        
+        var setportal :CommandButton = new CommandButton();
+        setportal.label = Msgs.EDITING.get("b.set_portal");
+        setportal.setCallback(this.editPortalTarget);
+
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.dest_scene"), _door);
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.set_portal"), setportal);
+            
+        return grid;
+    }
+
+    protected function updatePortalPanel () :void
+    {
+        if (_furniData != null) {
+            var data :Array = _furniData.splitActionData();
+            _door.text = data[data.length-1] as String; // last argument is room name
+        }
+    }
+
+    /**
+     * Called when the player clicks on the "set portal" button, this function closes
+     * this properties editor, and tells the room controller to start a new door editor.
+     */
+    protected function editPortalTarget () :void
+    {
+        var data :FurniData = _furniData;  // keep a reference to the furni data
+        applyChanges();                    // save changes so far
+        _controller.actionEditDoor(data);  // close editing window, open door editor
+    }
+
+    /**
+     * Copies action data from the UI based on action type, and if the data is different,
+     * creates a new FurniData with changes applied.
+     */
+    protected function getUserModifications () :FurniData
+    {
+        if (_furniData == null || _actionTypeSelection.selectedIndex == -1) {
+            return null; // nothing to do!
+        }
+
+        var newData :FurniData;
+        var type :int = _actionTypeSelection.selectedItem.data;
+
+        if (! isActionTypeEditable(type)) {
+            // these aren't handled by this editor, so let's not touch the data
+            return null;
+        }
+        
+        newData = _furniData.clone() as FurniData;
+        newData.actionType = type;
+
+        switch (type) {
+        case FurniData.ACTION_NONE:
+            newData.actionData = _captureMouse.selected ? null : "-";
+            break;
+        case FurniData.ACTION_URL:
+            newData.actionData = _url.text;
+            break;
+        case FurniData.ACTION_PORTAL:
+            newData.actionData = DEFAULT_PORTAL_DEST;
+            break;
+        case FurniData.ACTION_HELP_PAGE:
+            newData.actionData = _helpTabAction.text;
+            break;
+        }
+
+        if (! _furniData.equivalent(newData)) {
+            return newData;
+        } else {
+            return null;
+        }
+    }
+
+    /** Enables or disables the "apply" and "cancel" buttons, based on UI changes. */
+    protected function setChanged (changed :Boolean = true) :void
+    {
+        _applyButton.enabled = _cancelButton.enabled = changed;
+    }
+
+    /** Returns the index in ACTIONS of the action definiton with specified type. */
+    protected function getActionIndex (actionType :int) :int
+    {
+        for (var i :int = 0; i < ACTIONS.length; i++) {
+            if (ACTIONS[i].data == actionType) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /** Returns definition object for the specified action type. */
+    protected function getActionDef (actionType :int) :Object
+    {
+        var index :int = getActionIndex(actionType);
+        return (index != -1) ? ACTIONS[index] : null;
+    }
+    
+    /** Returns true if the specified action type is available in the combo box. */
+    protected function isActionTypeEditable (actionType :int) :Boolean
+    {
+        var def :Object = getActionDef(actionType);
+        return (def != null) && Boolean(def.editable);
+    }
+
+    /** Returns true if the specifies action type should be displayed to all players,
+     *  or false if it should be displayed to support+ staff only. */
+    protected function isActionTypeForAllPlayers (actionType :int) :Boolean
+    {
+        var def :Object = getActionDef(actionType);
+        return (def != null) && (! Boolean(def.supportOnly));
+    }
+
+
+    /** Definitions of different action types and how they affect the preferences panel. */
+    protected const ACTIONS :Array = [
+        { data: FurniData.ACTION_NONE,
+          label: Msgs.EDITING.get("l.action_none"),
+          editable: true,
+          panelCreateFn: createNonePanel,
+          panelUpdateFn: updateNonePanel },
+
+        { data: FurniData.ACTION_PORTAL,
+          label: Msgs.EDITING.get("l.action_portal"),
+          editable: true,
+          panelCreateFn: createPortalPanel,
+          panelUpdateFn: updatePortalPanel },
+
+        { data: FurniData.ACTION_URL,
+          label: Msgs.EDITING.get("l.action_url"),
+          editable: true,
+          panelCreateFn: createURLPanel,
+          panelUpdateFn: updateURLPanel },
+
+        { data: FurniData.ACTION_LOBBY_GAME,
+          label: Msgs.EDITING.get("l.action_lobby_game"),
+          supportOnly: true },
+
+        { data: FurniData.ACTION_WORLD_GAME,
+          label: Msgs.EDITING.get("l.action_world_game"),
+          supportOnly: true },
+
+        { data: FurniData.ACTION_HELP_PAGE,
+          label: Msgs.EDITING.get("l.action_help_page"),
+          editable: true,
+          supportOnly: true,
+          panelCreateFn: createHelpTabPanel,
+          panelUpdateFn: updateHelpTabPanel },
+
+        ];
+
+    /** Default location for doors, in case they get interrupted mid-editing. */
+    protected static const DEFAULT_PORTAL_DEST :String = "1:";
+
+    protected var _furniData :FurniData;
+    protected var _controller :RoomEditorController;
+
+    protected var _comboEntries :Array = new Array();
+    protected var _readOnlyActionLabel :TextInput;
+    protected var _actionTypeSelection :ComboBox;
+    protected var _actionPanels :ViewStack;
+    protected var _captureMouse :CheckBox;
+    protected var _url :TextInput;
+    protected var _helpTabAction :TextInput;
+    protected var _door :TextInput;
+    protected var _debug :TextInput;
+
+    protected var _applyButton :CommandButton;
+    protected var _cancelButton :CommandButton;
+
+}
+
+}

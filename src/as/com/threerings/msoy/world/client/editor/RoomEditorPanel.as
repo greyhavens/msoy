@@ -14,6 +14,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import mx.containers.HBox;
+import mx.containers.TabNavigator;
 import mx.controls.Button;
 import mx.controls.Label;
 import mx.controls.Spacer;
@@ -22,6 +23,7 @@ import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.ui.FloatingPanel;
 
 
@@ -56,11 +58,20 @@ public class RoomEditorPanel extends FloatingPanel
         _controller.actionEditorClosed();
     }
 
+    /** Updates object data displayed on the editing panel. */
+    public function updateDisplay (data :FurniData) :void
+    {
+        _details.updateDisplay(data);
+        _action.updateDisplay(data);
+    }
+
+    /** Updates the enabled status of the undo button (based on the size of the undo stack). */
     public function updateUndoStatus (enabled :Boolean) :void
     {
         _undoButton.enabled = enabled;
     }
-    
+
+    /** Updates the enabled status of the delete button (based on current selection). */
     public function updateDeleteStatus (enabled :Boolean) :void
     {
         if (_deleteButton != null) { // just in case this gets called during initialization...
@@ -97,11 +108,22 @@ public class RoomEditorPanel extends FloatingPanel
         _undoButton.enabled = false;
         _undoButton.addEventListener(MouseEvent.CLICK, makeListener(_controller.actionUndo));
         box.addChild(_undoButton);
-        
+
+        // now create tabs
+        var c :CollapsingContainer = new CollapsingContainer(Msgs.EDITING.get("t.item_prefs"));
+        c.setContents(_details = new DetailsPanel(_controller));
+        addChild(c);
+
+        c = new CollapsingContainer(Msgs.EDITING.get("t.item_action"));
+        c.setContents(_action = new ActionPanel(_controller)); 
+        addChild(c);
     }
 
     protected var _deleteButton :Button;
     protected var _undoButton :Button;
+    protected var _details :DetailsPanel;
+    protected var _action :ActionPanel;
+    
     protected var _controller :RoomEditorController;
 }
 }
