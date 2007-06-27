@@ -265,7 +265,9 @@ public class ChatOverlay
                 clearGlyphs(_showingHistory);
                 figureCurrentHistory();
             }
-            layout(null, -1);
+            if (_target != null) {
+                layout(null, -1);
+            }
             break;
         }
     }
