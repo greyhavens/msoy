@@ -20,7 +20,10 @@ import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.updates.FurniUpdateAction;
+import com.threerings.msoy.world.client.updates.SceneUpdateAction;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
+import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.FurniData;
 
 
@@ -35,7 +38,7 @@ public class RoomEditorController
     {
         _ctx = ctx;
         _view = view;
-
+        
         _edit = new FurniEditor(this);
         _hover = new FurniHighlight(this);
     }
@@ -48,6 +51,11 @@ public class RoomEditorController
     public function get ctx () :WorldContext
     {
         return _ctx;
+    }
+
+    public function get scene () :MsoyScene
+    {
+        return _ctx.getSceneDirector().getScene() as MsoyScene;
     }
 
     /**
@@ -141,11 +149,20 @@ public class RoomEditorController
     }
 
     /**
-     * Requests that the specified update be applied to the scene.
+     * Requests that the specified furni update be applied to the scene.
      */
     public function updateFurni (toRemove :FurniData, toAdd :FurniData) :void
     {
         _view.getRoomController().applyUpdate(new FurniUpdateAction(_ctx, toRemove, toAdd));
+        updateUndoStatus(true);
+    }
+
+    /**
+     * Requests that the specified scene update be applied to the scene.
+     */
+    public function updateScene (oldScene :MsoyScene, newScene :MsoyScene) :void
+    {
+        _view.getRoomController().applyUpdate(new SceneUpdateAction(_ctx, oldScene, newScene));
         updateUndoStatus(true);
     }
     

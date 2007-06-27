@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.world.client.editor {
 
+import flash.events.Event;
+
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.core.Container;
@@ -94,10 +96,22 @@ public class BasePanel extends VBox
     }
 
     /** Enables or disables the "apply" and "cancel" buttons, based on UI changes. */
-    protected function setChanged (changed :Boolean = true) :void
+    protected function setChanged (changed :Boolean) :void
     {
         _applyButton.enabled = _cancelButton.enabled = changed;
     }
+
+    /** Event handler for widgets; enables the "apply" and "cancel" buttons. */
+    protected function changedHandler (event :Event) :void
+    {
+        setChanged(true);
+    };
+    
+    /** Event handler for widgets; saves updates, just like clicking the "apply" button. */
+    protected function applyHandler (event :Event) :void
+    {
+        applyChanges();
+    };
 
     protected var _furniData :FurniData;
     protected var _controller :RoomEditorController;

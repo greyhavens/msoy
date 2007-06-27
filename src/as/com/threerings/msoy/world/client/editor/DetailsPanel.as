@@ -111,9 +111,6 @@ public class DetailsPanel extends BasePanel
     {
         super.childrenCreated();
 
-        var changedHandler :Function = function (event :TextEvent) :void { setChanged(true); };
-        var applyHandler :Function = function (event :FlexEvent) :void { applyChanges(); };
-
         _all.forEach(function (input :TextInput, ... rest) :void {
                 input.addEventListener(TextEvent.TEXT_INPUT, changedHandler);
                 input.addEventListener(FlexEvent.ENTER, applyHandler);

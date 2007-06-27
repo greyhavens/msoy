@@ -142,15 +142,13 @@ public class ActionPanel extends BasePanel
             _actionPanels, "selectedIndex", _actionTypeSelection, "selectedIndex");
         BindingUtils.bindSetter(updateTypePanels, _actionTypeSelection, "selectedItem");
 
-        var changedThunk :Function = function (event :Event) :void { setChanged(true); };
-        _actionTypeSelection.addEventListener(MouseEvent.CLICK, changedThunk);
-        _captureMouse.addEventListener(MouseEvent.CLICK, changedThunk);
-        _helpTabAction.addEventListener(TextEvent.TEXT_INPUT, changedThunk);
-        _url.addEventListener(TextEvent.TEXT_INPUT, changedThunk);
+        _actionTypeSelection.addEventListener(MouseEvent.CLICK, changedHandler);
+        _captureMouse.addEventListener(MouseEvent.CLICK, changedHandler);
+        _helpTabAction.addEventListener(TextEvent.TEXT_INPUT, changedHandler);
+        _url.addEventListener(TextEvent.TEXT_INPUT, changedHandler);
 
-        var applyThunk :Function = function (event :Event) :void { applyChanges(); };
-        _helpTabAction.addEventListener(FlexEvent.ENTER, applyThunk);
-        _url.addEventListener(FlexEvent.ENTER, applyThunk);
+        _helpTabAction.addEventListener(FlexEvent.ENTER, applyHandler);
+        _url.addEventListener(FlexEvent.ENTER, applyHandler);
     }
 
     /**

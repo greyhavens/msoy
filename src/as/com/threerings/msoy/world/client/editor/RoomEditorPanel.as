@@ -64,6 +64,7 @@ public class RoomEditorPanel extends FloatingPanel
     {
         _details.updateDisplay(data);
         _action.updateDisplay(data);
+        _room.updateDisplay(data);
     }
 
     /** Updates the enabled status of the undo button (based on the size of the undo stack). */
@@ -122,13 +123,21 @@ public class RoomEditorPanel extends FloatingPanel
         c = new CollapsingContainer(Msgs.EDITING.get("t.item_action"));
         c.setContents(_action = new ActionPanel(_controller)); 
         addChild(c);
+
+        hr = new HRule();
+        hr.percentWidth = 100;
+        addChild(hr);
+
+        c = new CollapsingContainer(Msgs.EDITING.get("t.room_settings"));
+        c.setContents(_room = new RoomPanel(_controller)); 
+        addChild(c);
     }
 
     protected var _deleteButton :Button;
     protected var _undoButton :Button;
     protected var _details :DetailsPanel;
     protected var _action :ActionPanel;
-    
+    protected var _room :RoomPanel;
     protected var _controller :RoomEditorController;
 }
 }
