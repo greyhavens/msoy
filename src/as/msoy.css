@@ -382,6 +382,21 @@ Window {
   verticalGap: 0;
 }
 
+.roomEditCollapsingContainer { 
+  borderStyle: "none";
+  borderThickness: 0;
+  borderThicknessLeft: 0;
+  borderThicknessRight: 0;
+  borderThicknessTop: 0;
+  borderThicknessBottom: 0;
+  paddingBottom: 2;
+  paddingTop: 2;
+  paddingLeft: 5;
+  paddingRight: 5;
+  horizontalGap: 2;
+  verticalGap: 2;
+}
+
 .roomEditButtonRoom {
   upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_room.png");
   overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_room_over.png");

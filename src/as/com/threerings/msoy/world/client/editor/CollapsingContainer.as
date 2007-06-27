@@ -39,14 +39,14 @@ public class CollapsingContainer extends VBox
     // @Override from VBox
     override protected function createChildren () :void
     {
+        this.styleName = "roomEditCollapsingContainer";
+        
         var labelrow :HBox = new HBox();
-        labelrow.styleName = "roomEditLabelContainer";
         labelrow.setStyle("verticalAlign", "middle");
         labelrow.percentWidth = 100;
         addChild(labelrow); 
         
         var label :Label = new Label();
-        label.styleName = "roomEditLabel";
         label.text = _labeltext;
         labelrow.addChild(label);
 

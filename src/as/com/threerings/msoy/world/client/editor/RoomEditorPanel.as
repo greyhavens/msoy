@@ -16,6 +16,7 @@ import flash.geom.Rectangle;
 import mx.containers.HBox;
 import mx.containers.TabNavigator;
 import mx.controls.Button;
+import mx.controls.HRule;
 import mx.controls.Label;
 import mx.controls.Spacer;
 
@@ -113,6 +114,10 @@ public class RoomEditorPanel extends FloatingPanel
         var c :CollapsingContainer = new CollapsingContainer(Msgs.EDITING.get("t.item_prefs"));
         c.setContents(_details = new DetailsPanel(_controller));
         addChild(c);
+
+        var hr :HRule = new HRule();
+        hr.percentWidth = 100;
+        addChild(hr);
 
         c = new CollapsingContainer(Msgs.EDITING.get("t.item_action"));
         c.setContents(_action = new ActionPanel(_controller)); 

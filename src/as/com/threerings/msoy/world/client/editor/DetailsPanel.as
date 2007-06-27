@@ -12,6 +12,7 @@ import mx.events.FlexEvent;
 
 import com.threerings.flash.MathUtil;
 import com.threerings.flex.GridUtil;
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 
@@ -96,8 +97,10 @@ public class DetailsPanel extends BasePanel
                 input.text = "0.0";
                 input.width = 35;
             });
-            
+
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.location"), [3, 1]);
         GridUtil.addRow(grid, _locx, _locy, _locz);
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.scale"), [3, 1]);
         GridUtil.addRow(grid, _scalex, _scaley);
 
         addChild(makePanelButtons());
