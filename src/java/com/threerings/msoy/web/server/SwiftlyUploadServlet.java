@@ -60,7 +60,7 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
         // verify this user is logged in and is a collaborator
         checkPermissions(ident, projectId);
 
-        log.info("Swiftly upload: [type: " + uploadFile.item.getContentType() + ", size="
+        log.info("Swiftly upload: [type= " + uploadFile.item.getContentType() + ", size="
             + uploadFile.item.getSize() + ", projectId=" + projectId + "].");
 
         // run a task on the dobject thread that first finds the ProjectRoomManager for this
@@ -74,7 +74,7 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
                     waiter.requestFailed(new Exception("No ProjectRoomManager found."));
                     return;
                 }
-                
+
                 manager.insertUploadFile(uploadFile, waiter);
             }
         });
@@ -103,11 +103,13 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
         try {
             MemberRecord record = MsoyServiceServlet.requireAuthedUser(ident);
             if (!MsoyServer.swiftlyRepo.isCollaborator(projectId, record.memberId)) {
-                throw new AccessDeniedException();
+                throw new AccessDeniedException("Access denied. Not a collaborator: [memberId=" +
+                    record.memberId + ", projectId=" + projectId + "]");
             }
 
         } catch (ServiceException e) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException("Access denied. Member not logged in: [memberId=" +
+                ident.memberId + ", projectId=" + projectId + "]");
             
         } catch (PersistenceException pe) {
             throw new FileUploadException("Failed when trying to check collaborator status");

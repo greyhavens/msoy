@@ -32,6 +32,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String remixable();
 
   /**
+   * Translated "Starting the file upload.".
+   * 
+   * @return translated "Starting the file upload."
+   * @gwt.key uploadStarted
+   */
+  String uploadStarted();
+
+  /**
    * Translated "You have not created any projects.".
    * 
    * @return translated "You have not created any projects."
@@ -216,6 +224,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String viewProfile();
 
   /**
+   * Translated "Upload a file".
+   * 
+   * @return translated "Upload a file"
+   * @gwt.key uploadTitle
+   */
+  String uploadTitle();
+
+  /**
    * Translated "The file being uploaded is too large to be used in a Swiftly project.".
    * 
    * @return translated "The file being uploaded is too large to be used in a Swiftly project."
@@ -230,6 +246,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key viewRemove
    */
   String viewRemove();
+
+  /**
+   * Translated "Click the browse button to select a file. Then click upload.".
+   * 
+   * @return translated "Click the browse button to select a file. Then click upload."
+   * @gwt.key selectFile
+   */
+  String selectFile();
 
   /**
    * Translated "Welcome to <b>Swiftly</b> the Whirled Integrated Development Environment.  <p><font size="-1">Beware that Swiftly is <i>really</i> Alpha and a lot of work remains to be done. That said, play with it and enjoy, and soon we''ll be asking for your feedback. Right now we're really busy implementing a bunch of stuff that we <i>know</i> needs to be done.</font></p>".

@@ -21,7 +21,6 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.FriendEntry;
@@ -123,7 +122,7 @@ public class ProjectEdit extends BorderedDialog
         };
 
         // Cancel button
-        _footer.add(new Button(CSwiftly.msgs.cancel(),new ClickListener() {
+        _footer.add(new Button(CSwiftly.msgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 closeDialog();
             }

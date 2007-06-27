@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 
 import java.io.File;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.AbstractAction;
@@ -210,6 +211,24 @@ public class ProjectPanel extends JPanel
     }
 
     protected Action createUploadFileAction ()
+    {
+        URL imageURL = getClass().getResource(UPLOAD_FILE_ICON);
+        Action action =
+            new AbstractAction(_msgs.get("m.action.upload_file"), new ImageIcon(imageURL)) {
+            public void actionPerformed (ActionEvent e) {
+                try {
+                    _ctx.getAppletContext().showDocument(new URL("javascript:showUploadDialog(" +
+                        _roomObj.project.projectId + ")"));
+                } catch (MalformedURLException mue) {
+                    // we shall not give ourselves a bad URL
+                }
+            }
+        };
+        action.putValue(AbstractAction.SHORT_DESCRIPTION, _msgs.get("m.tooltip.upload_file"));
+        return action;
+    }
+    
+    protected Action createUploadFileActionOLD ()
     {
         URL imageURL = getClass().getResource(UPLOAD_FILE_ICON);
         Action action =

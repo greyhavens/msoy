@@ -184,9 +184,9 @@ public abstract class AbstractUploadServlet extends HttpServlet
      */
     protected static class AccessDeniedException extends Exception
     {
-        AccessDeniedException ()
+        AccessDeniedException (String reason)
         {
-            super("Access denied when attempting upload.");
+            super(reason);
         }
     }
 

@@ -3,19 +3,11 @@
 
 package client.swiftly;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FormHandler;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -24,7 +16,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
-import com.threerings.msoy.web.data.WebIdent;
 
 import client.shell.Application;
 import client.shell.WorldClient;
@@ -74,17 +65,12 @@ public class SwiftlyPanel extends FlexTable
     {
         // Add project information to the header
         setText(0, 0, CSwiftly.msgs.swiftlyEditing());
-        HorizontalPanel projectInfo = new HorizontalPanel();
-        projectInfo.add(_projectLink);
-        projectInfo.add(new Button(CSwiftly.msgs.editProject(), new ClickListener() {
+        setWidget(0, 1, _projectLink);
+        setWidget(0, 2, new Button(CSwiftly.msgs.editProject(), new ClickListener() {
             public void onClick (Widget sender) {
                 new ProjectEdit(_project, SwiftlyPanel.this).show();
             }
         }));
-        setWidget(0, 1, projectInfo);
-
-        // add the upload button
-        setWidget(0, 2, new SwiftlyUploader(String.valueOf(_project.projectId), CSwiftly.ident));        
         getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
         
         // Add the applet
@@ -98,10 +84,10 @@ public class SwiftlyPanel extends FlexTable
                             "port", String.valueOf(_config.port) });
         _applet.setHeight("100%");
         setWidget(1, 0, _applet);
-        getFlexCellFormatter().setColSpan(1, 0, 4);
+        getFlexCellFormatter().setColSpan(1, 0, 3);
         getFlexCellFormatter().setHeight(1, 0, "100%");
 
-        // clear out any world client because Swiftly currently kills it anyawy
+        // clear out any world client because Swiftly currently kills it anyway
         WorldClient.clearClient(true);
     }
 
@@ -112,57 +98,12 @@ public class SwiftlyPanel extends FlexTable
         _projectLink.setText(_project.projectName);
     }
 
-    // TODO: make the browse/upload buttons look like the rest of the msoy buttons
-    protected static class SwiftlyUploader extends HorizontalPanel
+    // display a dialog for selecting a file to be uploaded into the project
+    protected static void showUploadDialog (String projectId)
     {
-        public SwiftlyUploader (String projectId, WebIdent ident)
-        {
-            final FormPanel form = new FormPanel();
-            HorizontalPanel panel = new HorizontalPanel();
-            form.setWidget(panel);
-
-            if (GWT.isScript()) {
-                form.setAction("/swiftlyuploadsvc");
-            } else {
-                form.setAction("http://localhost:8080/swiftlyuploadsvc");
-            }
-            form.setEncoding(FormPanel.ENCODING_MULTIPART);
-            form.setMethod(FormPanel.METHOD_POST);
-
-            final FileUpload upload = new FileUpload() {
-                public void onBrowserEvent (Event event) {
-                    // TODO: what is this actually doing?
-                    MsoyUI.info(event.toString());
-                }
-            };
-            // stuff the web credentials and the projectId into the field name
-            upload.setName(ident.token + "::" + ident.memberId + "::" + projectId);
-            panel.add(upload);
-
-            form.addFormHandler(new FormHandler() {
-                public void onSubmit (FormSubmitEvent event) {
-                    // don't let them submit until they plug in a file...
-                    if (upload.getFilename().length() == 0) {
-                        event.setCancelled(true);
-                    }
-                }
-
-                public void onSubmitComplete (FormSubmitCompleteEvent event) {
-                    // nada. the Swiftly Java client will take care of reporting success.
-                }
-            });
-            
-            Button submit = new Button(CSwiftly.msgs.upload());
-            submit.addClickListener(new ClickListener() {
-                public void onClick (Widget widget) {
-                    form.submit();
-                }
-            });
-            panel.add(submit);
-            add(form);
-        }
+        new UploadDialog(projectId, CSwiftly.ident).show();
     }
-    
+
     /**
      * This is called from our magical JavaScript method by JavaScript code received from the
      * server to display an internal error message to the user.
@@ -202,6 +143,9 @@ public class SwiftlyPanel extends FlexTable
         };
         $wnd.accessDenied = function () {
            @client.swiftly.SwiftlyPanel::accessDenied()();
+        };
+        $wnd.showUploadDialog = function (projectId) {
+           @client.swiftly.SwiftlyPanel::showUploadDialog(Ljava/lang/String;)(projectId);
         };
     }-*/;
     
