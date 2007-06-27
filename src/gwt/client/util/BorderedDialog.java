@@ -8,9 +8,8 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MouseListener;
+import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -44,6 +43,11 @@ public abstract class BorderedDialog extends BorderedPopup
 
     public BorderedDialog (boolean autoHide, boolean omitCloseBox)
     {
+        this(autoHide, omitCloseBox, true);
+    }
+    
+    public BorderedDialog (boolean autoHide, boolean omitCloseBox, boolean enableDrag)
+    {
         super(autoHide);
 
         _main = new VerticalPanel();
@@ -64,7 +68,9 @@ public abstract class BorderedDialog extends BorderedPopup
         Label dragLabel = new Label();
         dragLabel.setWidth("100%");
         dragLabel.setHeight("100%");
-        dragLabel.addMouseListener(_dragListener);
+        if (enableDrag) {
+            dragLabel.addMouseListener(createDragListener());
+        }
         headerBackground.setWidget(1, 0, dragLabel);
 
         Grid headerTitle = new Grid(1, 3);
@@ -114,36 +120,33 @@ public abstract class BorderedDialog extends BorderedPopup
      */
     protected abstract Widget createContents ();
 
-    /** Handles dragging of this popup window. */
-    protected MouseListener _dragListener = new MouseListener() {
-        public void onMouseEnter (Widget sender) {
-        }
-        public void onMouseLeave (Widget sender) {
-        }
-
-        public void onMouseDown (Widget sender, int x, int y) {
-            _dragging = true;
-            DOM.setCapture(sender.getElement());
-            _dragStartX = x;
-            _dragStartY = y;
-        }
-
-        public void onMouseMove (Widget sender, int x, int y) {
-            if (_dragging) {
-                int absX = x + getAbsoluteLeft();
-                int absY = y + getAbsoluteTop();
-                setPopupPosition(absX - _dragStartX, absY - _dragStartY);
+    /** Creates the drag listener. */
+    protected MouseListenerAdapter createDragListener () {
+        return new MouseListenerAdapter() {
+            public void onMouseDown (Widget sender, int x, int y) {
+                _dragging = true;
+                DOM.setCapture(sender.getElement());
+                _dragStartX = x;
+                _dragStartY = y;
             }
-        }
 
-        public void onMouseUp (Widget sender, int x, int y) {
-            _dragging = false;
-            DOM.releaseCapture(sender.getElement());
-        }
+            public void onMouseMove (Widget sender, int x, int y) {
+                if (_dragging) {
+                    int absX = x + getAbsoluteLeft();
+                    int absY = y + getAbsoluteTop();
+                    setPopupPosition(absX - _dragStartX, absY - _dragStartY);
+                }
+            }
 
-        protected boolean _dragging;
-        protected int _dragStartX, _dragStartY;
-    };
+            public void onMouseUp (Widget sender, int x, int y) {
+                _dragging = false;
+                DOM.releaseCapture(sender.getElement());
+            }
+
+            protected boolean _dragging;
+            protected int _dragStartX, _dragStartY;
+        };
+    }
 
     protected VerticalPanel _main;
     protected HorizontalPanel _header;

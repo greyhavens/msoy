@@ -25,7 +25,8 @@ public class UploadDialog extends BorderedDialog
 {
     public UploadDialog (String projectId, WebIdent ident)
     {
-        super();
+        // no autohiding, have a close button, disable dragging
+        super(false, false, false);
         
         _header.add(new InlineLabel(CSwiftly.msgs.uploadTitle()));
         _status = new InlineLabel();

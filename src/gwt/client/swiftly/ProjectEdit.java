@@ -49,7 +49,8 @@ public class ProjectEdit extends BorderedDialog
         
     public ProjectEdit (SwiftlyProject project, ProjectEditListener listener)
     {
-        super();
+        // no autohiding, have a close button, disable dragging
+        super(false, false, false);
 
         _project = project;
         _listener = listener;
