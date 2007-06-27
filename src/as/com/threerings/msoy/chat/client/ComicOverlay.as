@@ -309,6 +309,11 @@ public class ComicOverlay extends ChatOverlay
         _bubbles.push(bubble);
         _overlay.addChild(bubble);
 
+        // if we have a tail, add it now, now that it's added
+        if (speakerloc != null) {
+            drawTailShape(bubble, type, speakerloc);
+        }
+
         // and we need to dirty all the bubbles because they'll all be painted in slightly
         // different colors
         var numbubs :int = _bubbles.length;
@@ -343,6 +348,33 @@ public class ComicOverlay extends ChatOverlay
         return r;
     }
 
+    protected function drawTailShape (bubble :BubbleGlyph, type :int, speaker :Rectangle) :void
+    {
+        if (modeOf(type) == EMOTE) {
+            return; // no tail for emotes
+        }
+
+        var speakerP :Point = bubble.globalToLocal(
+            new Point(speaker.x + speaker.width/2, speaker.y + speaker.height/2));
+
+        var bubRect :Rectangle = bubble.getBubbleBounds();
+
+        var midX :Number = bubRect.width/2;
+        var midY :Number = bubRect.height/2;
+
+        bubble.graphics.beginFill(WHITE);
+        bubble.graphics.moveTo(speakerP.x, speakerP.y);
+        if (Math.abs(speakerP.x - midX) > Math.abs(speakerP.y - midY)) {
+            bubble.graphics.lineTo(midX, PAD);
+            bubble.graphics.lineTo(midX, bubRect.height - PAD);
+        } else {
+            bubble.graphics.lineTo(PAD, midY);
+            bubble.graphics.lineTo(bubRect.width - PAD, midY);
+        }
+        bubble.graphics.lineTo(speakerP.x, speakerP.y);
+        bubble.graphics.endFill();
+    }
+
     /**
      * Draw the specified bubble shape.
      *
@@ -371,13 +403,12 @@ public class ComicOverlay extends ChatOverlay
 
         // clear any old graphics
         g.clear();
-        // fill the shape with the background color
+
+        // fill and outline in the same step
+        g.lineStyle(1, outline);
         g.beginFill(background);
         shapeFunction(g, width, height);
         g.endFill();
-        // draw the shape with the outline color
-        g.lineStyle(1, outline);
-        shapeFunction(g, width, height);
 
         return padding;
     }

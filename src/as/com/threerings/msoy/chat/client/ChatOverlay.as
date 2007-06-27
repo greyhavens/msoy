@@ -598,13 +598,12 @@ public class ChatOverlay
 
         // clear any old graphics
         g.clear();
-        // fill the shape with the background color
+
+        // fill and outline in the same step
+        g.lineStyle(1, outline);
         g.beginFill(background);
         shapeFunction(g, width, height);
         g.endFill();
-        // draw the shape with the outline color
-        g.lineStyle(1, outline);
-        shapeFunction(g, width, height);
 
         return PAD;
     }

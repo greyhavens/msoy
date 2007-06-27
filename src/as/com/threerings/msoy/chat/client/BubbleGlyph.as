@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.chat.client {
 
+import flash.display.Shape;
+
+import flash.events.TimerEvent;
+
 import flash.geom.Rectangle;
 
 import flash.text.TextField;
@@ -30,10 +34,13 @@ public class BubbleGlyph extends ChatGlyph
         makeGolden(txt);
         sizeFieldToText(txt);
 
+        _outline = new Shape();
+        addChild(_outline);
+
         addChild(txt);
         _txt = txt;
         var offset :int = overlay.drawBubbleShape(
-            graphics, type, txt.width, txt.height);
+            _outline.graphics, type, txt.width, txt.height);
         txt.x = offset;
         txt.y = offset;
     }
@@ -51,7 +58,7 @@ public class BubbleGlyph extends ChatGlyph
      */
     public function getBubbleBounds () :Rectangle
     {
-        return new Rectangle(int(x), int(y), int(width), int(height));
+        return new Rectangle(int(x), int(y), int(_outline.width), int(_outline.height));
     }
 
     /**
@@ -70,7 +77,8 @@ public class BubbleGlyph extends ChatGlyph
 
     public function removeTail () :void
     {
-        // TODO
+        // the tail is added to our own graphics area
+        graphics.clear();
     }
 
     public function setAgeLevel (overlay :ComicOverlay, ageLevel :int) :void
@@ -139,11 +147,19 @@ public class BubbleGlyph extends ChatGlyph
         txt.width = w + TextFieldUtil.WIDTH_PAD;
     }
 
+    override protected function handleStartExpire (evt :TimerEvent) :void
+    {
+        removeTail();
+        super.handleStartExpire(evt);
+    }
+
     /** The name of the speaker. */
     protected var _speaker :Name;
 
     /** A reference to our textfield. */
     protected var _txt :TextField;
+
+    protected var _outline :Shape;
 
     /** The minimum width of a bubble's label before we consider splitting
      * lines. */
