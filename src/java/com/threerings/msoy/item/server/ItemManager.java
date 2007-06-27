@@ -19,6 +19,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntListUtil;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ObserverList;
 import com.samskivert.util.Predicate;
@@ -646,14 +647,7 @@ public class ItemManager
                 super.handleSuccess();
 
                 // update the user's cache
-                MemberObject user = updateUserCache(null, _result);
-                // and, if the user is wearing that particular avatar right now, update them
-                if (user != null) {
-                    if (_result.equals(user.avatar)) {
-                        user.setAvatar(_result);
-                        MsoyServer.memberMan.updateOccupantInfo(user);
-                    }
-                }
+                updateUserCache(null, _result);
             }
         });
     }
@@ -1227,10 +1221,8 @@ public class ItemManager
     /**
      * Internal cache-updatey method that takes a record or an item.
      */
-    protected MemberObject updateUserCache (ItemRecord rec, Item item)
+    protected void updateUserCache (ItemRecord rec, Item item)
     {
-        // TODO: This will change, now that the user doesn't cache all items
-
         // first locate the owner
         int ownerId;
         byte type;
@@ -1241,70 +1233,73 @@ public class ItemManager
             ownerId = item.ownerId;
             type = item.getType();
         }
+
+        if (type != Item.AVATAR) {
+            return; // nothing to update, currently
+        }
+
+        if (item == null) {
+            item = rec.toItem(); // lazy-create when we need it
+        }
+
+        // currently, the only thing to update would be if the user is wearing this avatar
         MemberObject memObj = MsoyServer.lookupMember(ownerId);
-//
-//        // if found and this item's inventory type is loaded or resolving, update or add it. (If
-//        // we're resolving, we might be the first adding the item. That's ok, nothing should think
-//        // it's actually loaded until the inventoryLoaded flag is set.
-//        if (memObj != null && memObj.isInventoryResolving(type)) {
-//            if (item == null) {
-//                item = rec.toItem(); // lazy-create when we need it.
-//            }
-//            if (memObj.inventory.contains(item)) {
-//                memObj.updateInventory(item);
-//            } else {
-//                memObj.addToInventory(item);
-//            }
-//        }
-//
-        return memObj;
+        if (memObj != null) {
+            if (item.equals(memObj.avatar)) {
+                // the user is wearing this item: update
+                memObj.setAvatar((Avatar) item);
+                MsoyServer.memberMan.updateOccupantInfo(memObj);
+            }
+        }
+
+        // TODO: the avatar mini-cache that each user has
     }
 
     /**
      * Internal cache-updatey method for deleting an item that no longer exists.
      */
-    protected MemberObject deleteFromUserCache (int memberId, ItemIdent ident)
+    protected void deleteFromUserCache (int memberId, ItemIdent ident)
     {
-        // TODO: This will change, now that the user doesn't cache all items
+        // first, filter any items we don't care about
+        if (ident.type != Item.AVATAR) {
+            return;
+        }
 
         MemberObject memObj = MsoyServer.lookupMember(memberId);
-//        if (memObj != null && memObj.inventory.containsKey(ident)) {
-//            memObj.removeFromInventory(ident);
-//        }
-        return memObj;
+        if (memObj != null) {
+            if ((ident.type == Item.AVATAR) && (memObj.avatar != null) &&
+                    (memObj.avatar.itemId == ident.itemId)) {
+                // the user is wearing this item: delete
+                memObj.setAvatar(null);
+                MsoyServer.memberMan.updateOccupantInfo(memObj);
+            }
+        }
+
+        // TODO: the avatar mini-cache that each user has
     }
 
     /**
      * Update changed items that are already loaded in a user's inventory.
      */
-    protected MemberObject updateUserCache (
+    protected void updateUserCache (
         int ownerId, byte type, int[] ids, ItemUpdateOp op, boolean warnIfMissing)
     {
-        // TODO: This will change, now that the user doesn't cache all items
+        // currently, only avatars are affected
+        if (type != Item.AVATAR) {
+            return;
+        }
 
         MemberObject memObj = MsoyServer.lookupMember(ownerId);
-//        if (memObj != null && memObj.isInventoryLoaded(type)) {
-//            memObj.startTransaction();
-//            try {
-//                for (int id : ids) {
-//                    Item item = memObj.inventory.get(new ItemIdent(type, id));
-//                    if (item == null) {
-//                        if (warnIfMissing) {
-//                            // TODO: this possibly a bigger error and we should maybe throw an
-//                            // exception
-//                            log.warning("Unable to update missing item: " + item);
-//                        }
-//                        continue;
-//                    }
-//                    op.update(item);
-//                    memObj.updateInventory(item);
-//                }
-//            } finally {
-//                memObj.commitTransaction();
-//            }
-//        }
+        if (memObj != null) {
+            if (type == Item.AVATAR && memObj.avatar != null &&
+                    IntListUtil.contains(ids, memObj.avatar.itemId)) {
+                op.update(memObj.avatar);
+                memObj.setAvatar(memObj.avatar);
+                MsoyServer.memberMan.updateOccupantInfo(memObj);
+            }
+        }
 
-        return memObj;
+        // TODO: the avatar mini-cache that each user has
     }
 
     /**
