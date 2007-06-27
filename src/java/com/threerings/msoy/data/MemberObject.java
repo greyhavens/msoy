@@ -105,6 +105,9 @@ public class MemberObject extends MsoyBodyObject
     /** The {@link #humanity} value for a fully actualized human. */
     public static final int MAX_HUMANITY = 255;
 
+    /** The ideal size of the avatar cache. */
+    public static final int AVATAR_CACHE_SIZE = 5;
+
     /** The name and id information for this user. */
     public MemberName memberName;
 

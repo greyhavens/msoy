@@ -797,6 +797,9 @@ public class ItemManager
             });
     }
 
+    /**
+     * Load at most maxCount recently-touched items from the specified user's inventory.
+     */
     public void loadRecentlyTouched (
         final int memberId, byte type, final int maxCount, ResultListener<ArrayList<Item>> listener)
     {
@@ -1281,13 +1284,16 @@ public class ItemManager
                         MsoyServer.memberMan.updateOccupantInfo(memObj);
                     }
 
-                    // then, find the oldest avatar in the user's cache (or the same one)
+                    // Find the same avatar in the cache, or the oldest if we need to replace.
+                    boolean needReplace =
+                        (memObj.avatarCache.size() >= MemberObject.AVATAR_CACHE_SIZE);
                     Avatar oldest = null;
                     for (Avatar av : memObj.avatarCache) {
                         if (av.equals(updatedAvatar)) {
                             oldest = av;
                             break;
-                        } else if (oldest == null || oldest.lastTouched > av.lastTouched) {
+                        } else if (needReplace &&
+                                (oldest == null || oldest.lastTouched > av.lastTouched)) {
                             oldest = av; // no 'break' here
                         }
                     }
@@ -1295,7 +1301,7 @@ public class ItemManager
                     if (updatedAvatar.equals(oldest)) {
                         memObj.updateAvatarCache(updatedAvatar);
 
-                    } else {
+                    } else if (oldest == null || oldest.lastTouched < updatedAvatar.lastTouched) {
                         memObj.addToAvatarCache(updatedAvatar);
                         if (oldest != null) {
                             memObj.removeFromAvatarCache(oldest.getKey());

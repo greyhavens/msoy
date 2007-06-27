@@ -149,8 +149,8 @@ public class MsoyClientResolver extends CrowdClientResolver
                 }
             });
 
-            MsoyServer.itemMan.loadRecentlyTouched(user.getMemberId(), Item.AVATAR, 5,
-                new ResultListener<ArrayList<Item>>() {
+            MsoyServer.itemMan.loadRecentlyTouched(user.getMemberId(), Item.AVATAR,
+                MemberObject.AVATAR_CACHE_SIZE, new ResultListener<ArrayList<Item>>() {
                     public void requestCompleted (ArrayList<Item> items) {
                         Avatar[] avatars = new Avatar[items.size()];
                         for (int ii = 0; ii < avatars.length; ii++) {

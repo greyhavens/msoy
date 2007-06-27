@@ -800,18 +800,6 @@ public abstract class ItemRepository<
         System.arraycopy(clauses, 0, allClauses, OUR_CLAUSE_COUNT, clauses.length);
 
         return findAll(getItemClass(), allClauses);
-//
-//        return findAll(
-//            getItemClass(), where,
-//            new Join(getItemClass(), ItemRecord.ITEM_ID,
-//                     getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID),
-//            new FieldOverride(ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID),
-//            new FieldOverride(ItemRecord.PARENT_ID, getItemClass(), ItemRecord.ITEM_ID),
-//            new FieldOverride(ItemRecord.OWNER_ID, getCloneClass(), CloneRecord.OWNER_ID),
-//            new FieldOverride(ItemRecord.LOCATION, getItemClass(), CloneRecord.LOCATION),
-//            new FieldOverride(ItemRecord.USED, getItemClass(), CloneRecord.USED),
-//            new FieldOverride(ItemRecord.LAST_TOUCHED, getCloneClass(), CloneRecord.LAST_TOUCHED)
-//            );
     }
 
     protected ColumnExp getItemColumn (String cname)
