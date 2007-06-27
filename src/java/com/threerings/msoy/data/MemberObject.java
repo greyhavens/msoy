@@ -80,6 +80,9 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>avatar</code> field. */
     public static final String AVATAR = "avatar";
 
+    /** The field name of the <code>avatarCache</code> field. */
+    public static final String AVATAR_CACHE = "avatarCache";
+
     /** The field name of the <code>friends</code> field. */
     public static final String FRIENDS = "friends";
 
@@ -140,6 +143,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The avatar that the user has chosen, or null for guests. */
     public Avatar avatar;
+
+    /** A cache of the user's 5 most recently touched avatars. */
+    public DSet<Avatar> avatarCache;
 
     /** The friends of this player. */
     public DSet<FriendEntry> friends = new DSet<FriendEntry>();
@@ -531,86 +537,6 @@ public class MemberObject extends MsoyBodyObject
         this.ownedScenes = clone;
     }
 
-//    /**
-//     * Requests that the specified entry be added to the
-//     * <code>inventory</code> set. The set will not change until the event is
-//     * actually propagated through the system.
-//     */
-//    public void addToInventory (Item elem)
-//    {
-//        requestEntryAdd(INVENTORY, inventory, elem);
-//    }
-//
-//    /**
-//     * Requests that the entry matching the supplied key be removed from
-//     * the <code>inventory</code> set. The set will not change until the
-//     * event is actually propagated through the system.
-//     */
-//    public void removeFromInventory (Comparable key)
-//    {
-//        requestEntryRemove(INVENTORY, inventory, key);
-//    }
-//
-//    /**
-//     * Requests that the specified entry be updated in the
-//     * <code>inventory</code> set. The set will not change until the event is
-//     * actually propagated through the system.
-//     */
-//    public void updateInventory (Item elem)
-//    {
-//        requestEntryUpdate(INVENTORY, inventory, elem);
-//    }
-//
-//    /**
-//     * Requests that the <code>inventory</code> field be set to the
-//     * specified value. Generally one only adds, updates and removes
-//     * entries of a distributed set, but certain situations call for a
-//     * complete replacement of the set value. The local value will be
-//     * updated immediately and an event will be propagated through the
-//     * system to notify all listeners that the attribute did
-//     * change. Proxied copies of this object (on clients) will apply the
-//     * value change when they received the attribute changed notification.
-//     */
-//    public void setInventory (DSet<com.threerings.msoy.item.data.all.Item> value)
-//    {
-//        requestAttributeChange(INVENTORY, value, this.inventory);
-//        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.item.data.all.Item> clone =
-//            (value == null) ? null : value.typedClone();
-//        this.inventory = clone;
-//    }
-//
-//    /**
-//     * Requests that the <code>resolvingInventory</code> field be set to the
-//     * specified value. The local value will be updated immediately and an
-//     * event will be propagated through the system to notify all listeners
-//     * that the attribute did change. Proxied copies of this object (on
-//     * clients) will apply the value change when they received the
-//     * attribute changed notification.
-//     */
-//    public void setResolvingInventory (int value)
-//    {
-//        int ovalue = this.resolvingInventory;
-//        requestAttributeChange(
-//            RESOLVING_INVENTORY, Integer.valueOf(value), Integer.valueOf(ovalue));
-//        this.resolvingInventory = value;
-//    }
-//
-//    /**
-//     * Requests that the <code>loadedInventory</code> field be set to the
-//     * specified value. The local value will be updated immediately and an
-//     * event will be propagated through the system to notify all listeners
-//     * that the attribute did change. Proxied copies of this object (on
-//     * clients) will apply the value change when they received the
-//     * attribute changed notification.
-//     */
-//    public void setLoadedInventory (int value)
-//    {
-//        int ovalue = this.loadedInventory;
-//        requestAttributeChange(
-//            LOADED_INVENTORY, Integer.valueOf(value), Integer.valueOf(ovalue));
-//        this.loadedInventory = value;
-//    }
-
     /**
      * Requests that the <code>tokens</code> field be set to the
      * specified value. The local value will be updated immediately and an
@@ -657,6 +583,54 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             AVATAR, value, ovalue);
         this.avatar = value;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>avatarCache</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToAvatarCache (Avatar elem)
+    {
+        requestEntryAdd(AVATAR_CACHE, avatarCache, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>avatarCache</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromAvatarCache (Comparable key)
+    {
+        requestEntryRemove(AVATAR_CACHE, avatarCache, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>avatarCache</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateAvatarCache (Avatar elem)
+    {
+        requestEntryUpdate(AVATAR_CACHE, avatarCache, elem);
+    }
+
+    /**
+     * Requests that the <code>avatarCache</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setAvatarCache (DSet<com.threerings.msoy.item.data.all.Avatar> value)
+    {
+        requestAttributeChange(AVATAR_CACHE, value, this.avatarCache);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.item.data.all.Avatar> clone =
+            (value == null) ? null : value.typedClone();
+        this.avatarCache = clone;
     }
 
     /**

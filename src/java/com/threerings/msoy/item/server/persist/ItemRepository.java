@@ -6,6 +6,7 @@ package com.threerings.msoy.item.server.persist;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +14,10 @@ import java.util.Map;
 
 import com.samskivert.Log;
 import com.samskivert.io.PersistenceException;
+
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntListUtil;
+import com.samskivert.util.QuickSort;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.CacheInvalidator;
@@ -143,8 +146,7 @@ public abstract class ItemRepository<
     public List<T> loadOriginalItems (int ownerId)
         throws PersistenceException
     {
-        return findAll(getItemClass(), new Where(ItemRecord.OWNER_ID, ownerId),
-                       OrderBy.descending(ItemRecord.RATING));
+        return findAll(getItemClass(), new Where(ItemRecord.OWNER_ID, ownerId));
     }
 
     /**
@@ -154,6 +156,41 @@ public abstract class ItemRepository<
         throws PersistenceException
     {
         return loadClonedItems(new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId));
+    }
+
+    /**
+     * Loads up to maxCount items from a user's inventory that were the most recently touched.
+     */
+    public List<T> loadRecentlyTouched (int ownerId, int maxCount)
+        throws PersistenceException
+    {
+        // Since we don't know how many we'll find of each kind (cloned, orig), we load the max
+        // from each.
+        Limit limit = new Limit(0, maxCount);
+        List<T> originals = findAll(getItemClass(), new Where(ItemRecord.OWNER_ID, ownerId),
+            OrderBy.descending(ItemRecord.LAST_TOUCHED), limit);
+        List<T> clones = loadClonedItems(new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId),
+            OrderBy.descending(CloneRecord.LAST_TOUCHED), limit);
+        int size = originals.size() + clones.size();
+
+        ArrayList<T> list = new ArrayList<T>(size);
+        list.addAll(originals);
+        list.addAll(clones);
+
+        // now, sort by their lastTouched time
+        QuickSort.sort(list, new Comparator<T>() {
+            public int compare (T o1, T o2) {
+                return o2.lastTouched.compareTo(o1.lastTouched);
+            }
+        });
+
+        // remove any items beyond maxCount
+        list.subList(Math.min(size, maxCount), size).clear();
+//        for (int ii = size - 1; ii >= maxCount; ii--) {
+//            list.remove(ii);
+//        }
+
+        return list;
     }
 
     /**
@@ -744,20 +781,37 @@ public abstract class ItemRepository<
     /**
      * Performs the necessary join to load cloned items matching the supplied where clause.
      */
-    protected List<T> loadClonedItems (Where where)
+    protected List<T> loadClonedItems (Where where, QueryClause... clauses)
         throws PersistenceException
     {
-        return findAll(
-            getItemClass(), where,
-            new Join(getItemClass(), ItemRecord.ITEM_ID,
-                     getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID),
-            new FieldOverride(ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID),
-            new FieldOverride(ItemRecord.PARENT_ID, getItemClass(), ItemRecord.ITEM_ID),
-            new FieldOverride(ItemRecord.OWNER_ID, getCloneClass(), CloneRecord.OWNER_ID),
-            new FieldOverride(ItemRecord.LOCATION, getItemClass(), CloneRecord.LOCATION),
-            new FieldOverride(ItemRecord.USED, getItemClass(), CloneRecord.USED),
-            new FieldOverride(ItemRecord.LAST_TOUCHED, getCloneClass(), CloneRecord.LAST_TOUCHED)
-            );
+        final int OUR_CLAUSE_COUNT = 8;
+        QueryClause[] allClauses = new QueryClause[clauses.length + OUR_CLAUSE_COUNT];
+        allClauses[0] = where;
+        allClauses[1] = new Join(getItemClass(), ItemRecord.ITEM_ID, getCloneClass(),
+            CloneRecord.ORIGINAL_ITEM_ID);
+        allClauses[2] = new FieldOverride(ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID);
+        allClauses[3] = new FieldOverride(ItemRecord.PARENT_ID, getItemClass(), ItemRecord.ITEM_ID);
+        allClauses[4] = new FieldOverride(ItemRecord.OWNER_ID, getCloneClass(),
+            CloneRecord.OWNER_ID);
+        allClauses[5] = new FieldOverride(ItemRecord.LOCATION, getItemClass(), CloneRecord.LOCATION);
+        allClauses[6] = new FieldOverride(ItemRecord.USED, getItemClass(), CloneRecord.USED);
+        allClauses[7] = new FieldOverride(ItemRecord.LAST_TOUCHED, getCloneClass(),
+            CloneRecord.LAST_TOUCHED);
+        System.arraycopy(clauses, 0, allClauses, OUR_CLAUSE_COUNT, clauses.length);
+
+        return findAll(getItemClass(), allClauses);
+//
+//        return findAll(
+//            getItemClass(), where,
+//            new Join(getItemClass(), ItemRecord.ITEM_ID,
+//                     getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID),
+//            new FieldOverride(ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID),
+//            new FieldOverride(ItemRecord.PARENT_ID, getItemClass(), ItemRecord.ITEM_ID),
+//            new FieldOverride(ItemRecord.OWNER_ID, getCloneClass(), CloneRecord.OWNER_ID),
+//            new FieldOverride(ItemRecord.LOCATION, getItemClass(), CloneRecord.LOCATION),
+//            new FieldOverride(ItemRecord.USED, getItemClass(), CloneRecord.USED),
+//            new FieldOverride(ItemRecord.LAST_TOUCHED, getCloneClass(), CloneRecord.LAST_TOUCHED)
+//            );
     }
 
     protected ColumnExp getItemColumn (String cname)

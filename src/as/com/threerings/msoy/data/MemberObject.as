@@ -70,6 +70,9 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>avatar</code> field. */
     public static const AVATAR :String = "avatar";
 
+    /** The field name of the <code>avatarCache</code> field. */
+    public static const AVATAR_CACHE :String = "avatarCache";
+
     /** The field name of the <code>friends</code> field. */
     public static const FRIENDS :String = "friends";
 
@@ -121,6 +124,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The avatar that the user has chosen, or null for guests. */
     public var avatar :Avatar;
+
+    /** A cache of the user's 5 most recently touched avatars. */
+    public var avatarCache :DSet;
 
     /** The buddies of this player. */
     public var friends :DSet;
@@ -332,6 +338,7 @@ public class MemberObject extends MsoyBodyObject
         tokens = (ins.readObject() as MsoyTokenRing);
         homeSceneId = ins.readInt();
         avatar = (ins.readObject() as Avatar);
+        avatarCache = (ins.readObject() as DSet);
         friends = (ins.readObject() as DSet);
         groups = (ins.readObject() as DSet);
         hasNewMail = ins.readBoolean();

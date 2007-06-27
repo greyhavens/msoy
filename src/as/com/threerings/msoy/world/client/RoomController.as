@@ -505,30 +505,37 @@ public class RoomController extends SceneController
             // see if we can control our own avatar right now...
             var canControl :Boolean = _mctx.worldProps.userControlsAvatar;
 
-//            var avItems :Array = [];
-//
-//            var avatars :Array = us.getItems(Item.AVATAR);
-//            ArrayUtil.sort(avatars);
-//            // TODO: showing the thumbnails at half-thumbnail size is currently broken due
-//            // to layout bugs in ScrollableMenu when there are icons and scrollbars are needed.
-//            // Additonally, setting variableRowHeight=true breaks the ScrollableMenu. Both
-//            // are needed to make this feature work correctly.
+            var avItems :Array = [];
+            var avatars :Array = (us.avatarCache != null) ? us.avatarCache.toArray() : [];
+            ArrayUtil.removeFirst(avatars, us.avatar); // remove currently-worn
+            ArrayUtil.sort(avatars);
+            // TODO: showing the thumbnails at half-thumbnail size is currently broken due
+            // to layout bugs in ScrollableMenu when there are icons and scrollbars are needed.
+            // Additonally, setting variableRowHeight=true breaks the ScrollableMenu. Both
+            // are needed to make this feature work correctly.
 //            var iconW :Number = 20; //*/ MediaDesc.DIMENSIONS[0];
 //            var iconH :Number = 20; //*/ MediaDesc.DIMENSIONS[1];
-//            for (var ii :int = 0; ii < Math.min(avatars.length, 5); ii++) {
-//                var av :Avatar = avatars[ii] as Avatar;
-//                var smc :ScalingMediaContainer = new ScalingMediaContainer(iconW, iconH);
-//                smc.setMediaDesc(av.getThumbnailMedia());
-//                var wrap :MediaWrapper = new MediaWrapper(smc, iconW, iconH, true);
-//                avItems.push({ label: av.name }); //, iconObject: wrap }); // TODO
-//            }
-//
-//            avItems.push({ label: "view full list...", // TODO: xlate
-//                command: MsoyController.VIEW_MY_AVATARS });
+            for (var ii :int = 0; ii < Math.min(avatars.length, 5); ii++) {
+                var av :Avatar = avatars[ii] as Avatar;
+                avItems.push({ label: av.name,
+                    // TODO
+                    // iconObject: MediaWrapper.createScaled(av.getThumbnailMedia(), iconW, iconH),
+                    callback: _mctx.getWorldDirector().setAvatar, arg: av.itemId });
+            }
+            // add defaults
+            avItems.push({ label: Msgs.ITEM.get("m.default"),
+                // TODO
+                // iconObject: MediaWrapper.createScaled(
+                //    Avatar.getDefaultMemberAvatarMedia(), iconW, iconH),
+                callback: _mctx.getWorldDirector().setAvatar, arg: 0 });
+
+            avItems.push({ type: "separator" });
+            avItems.push({ label: Msgs.GENERAL.get("b.avatars_full"),
+                command: MsoyController.VIEW_MY_AVATARS,
+                enabled: !_mctx.getWorldClient().isEmbedded() });
             // add a menu item for changing their avatar
             menuItems.push({ label: Msgs.GENERAL.get("b.change_avatar"),
-//                children: avItems, enabled: canControl });
-                command: MsoyController.VIEW_MY_AVATARS, enabled: canControl });
+                children: avItems, enabled: canControl });
 
             // create a sub-menu for playing avatar actions
             var actions :Array = avatar.getAvatarActions();
@@ -1073,17 +1080,58 @@ public class RoomController extends SceneController
             _hoverTip = null;
         }
         if (_hoverTip == null && text != null) {
-            _hoverTip = ToolTipManager.createToolTip(text,
-                stageX, stageY);
-            var tipComp :UIComponent = UIComponent(_hoverTip);
-            tipComp.styleName = "roomToolTip";
-            var hoverColor :uint = _hoverSprite.getHoverColor();
-            tipComp.setStyle("color", hoverColor);
-            if (hoverColor == 0) {
-                tipComp.setStyle("backgroundColor", 0xFFFFFF);
-            }
+            _hoverTip = createHoverTip(_hoverSprite, text, stageX, stageY);
         }
     }
+
+    protected function createHoverTip (
+        sprite :MsoySprite, tipText :String, stageX :Number, stageY :Number) :IToolTip
+    {
+        var tip :IToolTip = ToolTipManager.createToolTip(tipText, stageX, stageY);
+        var tipComp :UIComponent = UIComponent(tip);
+        tipComp.styleName = "roomToolTip";
+        tipComp.x -= tipComp.width/2;
+        tipComp.y -= tipComp.height/2;
+        var hoverColor :uint = sprite.getHoverColor();
+        tipComp.setStyle("color", hoverColor);
+        if (hoverColor == 0) {
+            tipComp.setStyle("backgroundColor", 0xFFFFFF);
+        }
+
+        return tip;
+    }
+
+//    /**
+//     * Hover all Furni on or off.
+//     */
+//    // TODO: this feature not yet done
+//    public function hoverAllFurni (on :Boolean) :void
+//    {
+//        var sprite :FurniSprite;
+//
+//        if (on) {
+//            for each (sprite in _roomView.getFurniSprites().values()) {
+//                if (!sprite.isActive() || !sprite.capturesMouse() || !sprite.hasAction()) {
+//                    continue;
+//                }
+//                var tipText :String = sprite.setHovered(true);
+//                var p :Point = sprite.getLayoutHotSpot();
+//                p = sprite.localToGlobal(p);
+//                _allTips.push(createHoverTip(sprite, tipText, p.x, p.y));
+//            }
+//        } else {
+//            for each (sprite in _roomView.getFurniSprites().values()) {
+//                sprite.setHovered(false);
+//            }
+//
+//            for each (var tip :IToolTip in _allTips) {
+//                ToolTipManager.destroyToolTip(tip);
+//            }
+//            _allTips.length = 0; // truncate
+//        }
+//    }
+//
+//    protected var _allTips :Array = [];
 
     protected function mouseClicked (event :MouseEvent) :void
     {

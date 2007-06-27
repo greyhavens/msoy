@@ -149,6 +149,22 @@ public class MsoyClientResolver extends CrowdClientResolver
                 }
             });
 
+            MsoyServer.itemMan.loadRecentlyTouched(user.getMemberId(), Item.AVATAR, 5,
+                new ResultListener<ArrayList<Item>>() {
+                    public void requestCompleted (ArrayList<Item> items) {
+                        Avatar[] avatars = new Avatar[items.size()];
+                        for (int ii = 0; ii < avatars.length; ii++) {
+                            avatars[ii] = (Avatar) items.get(ii);
+                        }
+                        user.setAvatarCache(new DSet<Avatar>(avatars));
+                    }
+                    public void requestFailed (Exception cause) {
+                        log.warning("Failed to load member's avatar cache [who=" + user.who() +
+                            ", error=" + cause + "].");
+                        cause.printStackTrace();
+                    }
+                });
+
             if (_avatarId != 0) {
                 MsoyServer.itemMan.getItem(new ItemIdent(Item.AVATAR, _avatarId),
                                            new ResultListener<Item>() {

@@ -773,8 +773,8 @@ public class ItemManager
     /**
      * Loads up the inventory of items of the specified type for the specified member.
      */
-    public void loadInventory (final int memberId, byte type,
-                               ResultListener<ArrayList<Item>> listener)
+    public void loadInventory (
+        final int memberId, byte type, ResultListener<ArrayList<Item>> listener)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(type, listener);
@@ -783,17 +783,43 @@ public class ItemManager
         }
 
         // and load their items; notifying the listener on success or failure
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ArrayList<Item>>(listener) {
-            public ArrayList<Item> invokePersistResult () throws PersistenceException {
-                Collection<ItemRecord> list = repo.loadOriginalItems(memberId);
-                list.addAll(repo.loadClonedItems(memberId));
-                ArrayList<Item> newList = new ArrayList<Item>();
-                for (ItemRecord record : list) {
-                    newList.add(record.toItem());
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ArrayList<Item>>(
+            "loadInventory", listener) {
+                public ArrayList<Item> invokePersistResult () throws PersistenceException {
+                    Collection<ItemRecord> list = repo.loadOriginalItems(memberId);
+                    list.addAll(repo.loadClonedItems(memberId));
+                    ArrayList<Item> newList = new ArrayList<Item>(list.size());
+                    for (ItemRecord record : list) {
+                        newList.add(record.toItem());
+                    }
+                    return newList;
                 }
-                return newList;
-            }
-        });
+            });
+    }
+
+    public void loadRecentlyTouched (
+        final int memberId, byte type, final int maxCount, ResultListener<ArrayList<Item>> listener)
+    {
+        // locate the appropriate repo
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(type, listener);
+        if (repo == null) {
+            return;
+        }
+
+        // load ye items
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ArrayList<Item>>(
+            "loadRecentlyTouched", listener) {
+                public ArrayList<Item> invokePersistResult ()
+                    throws Exception
+                {
+                    List<ItemRecord> list = repo.loadRecentlyTouched(memberId, maxCount);
+                    ArrayList<Item> returnList = new ArrayList<Item>(list.size());
+                    for (int ii = 0, nn = list.size(); ii < nn; ii++) {
+                        returnList.add(list.get(ii).toItem());
+                    }
+                    return returnList;
+                }
+            });
     }
 
     /**
@@ -1245,14 +1271,41 @@ public class ItemManager
         // currently, the only thing to update would be if the user is wearing this avatar
         MemberObject memObj = MsoyServer.lookupMember(ownerId);
         if (memObj != null) {
-            if (item.equals(memObj.avatar)) {
-                // the user is wearing this item: update
-                memObj.setAvatar((Avatar) item);
-                MsoyServer.memberMan.updateOccupantInfo(memObj);
+            memObj.startTransaction();
+            try {
+                if (type == Item.AVATAR) {
+                    Avatar updatedAvatar = (Avatar) item;
+                    if (updatedAvatar.equals(memObj.avatar)) {
+                        // the user is wearing this item: update
+                        memObj.setAvatar(updatedAvatar);
+                        MsoyServer.memberMan.updateOccupantInfo(memObj);
+                    }
+
+                    // then, find the oldest avatar in the user's cache (or the same one)
+                    Avatar oldest = null;
+                    for (Avatar av : memObj.avatarCache) {
+                        if (av.equals(updatedAvatar)) {
+                            oldest = av;
+                            break;
+                        } else if (oldest == null || oldest.lastTouched > av.lastTouched) {
+                            oldest = av; // no 'break' here
+                        }
+                    }
+                    // and update the avatarCache
+                    if (updatedAvatar.equals(oldest)) {
+                        memObj.updateAvatarCache(updatedAvatar);
+
+                    } else {
+                        memObj.addToAvatarCache(updatedAvatar);
+                        if (oldest != null) {
+                            memObj.removeFromAvatarCache(oldest.getKey());
+                        }
+                    }
+                }
+            } finally {
+                memObj.commitTransaction();
             }
         }
-
-        // TODO: the avatar mini-cache that each user has
     }
 
     /**
@@ -1267,15 +1320,22 @@ public class ItemManager
 
         MemberObject memObj = MsoyServer.lookupMember(memberId);
         if (memObj != null) {
-            if ((ident.type == Item.AVATAR) && (memObj.avatar != null) &&
-                    (memObj.avatar.itemId == ident.itemId)) {
-                // the user is wearing this item: delete
-                memObj.setAvatar(null);
-                MsoyServer.memberMan.updateOccupantInfo(memObj);
+            memObj.startTransaction();
+            try {
+                if (ident.type == Item.AVATAR) {
+                    if ((memObj.avatar != null) && (memObj.avatar.itemId == ident.itemId)) {
+                        // the user is wearing this item: delete
+                        memObj.setAvatar(null);
+                        MsoyServer.memberMan.updateOccupantInfo(memObj);
+                    }
+                    if (memObj.avatarCache.containsKey(ident)) {
+                        memObj.removeFromAvatarCache(ident);
+                    }
+                }
+            } finally {
+                memObj.commitTransaction();
             }
         }
-
-        // TODO: the avatar mini-cache that each user has
     }
 
     /**
@@ -1291,15 +1351,28 @@ public class ItemManager
 
         MemberObject memObj = MsoyServer.lookupMember(ownerId);
         if (memObj != null) {
-            if (type == Item.AVATAR && memObj.avatar != null &&
-                    IntListUtil.contains(ids, memObj.avatar.itemId)) {
-                op.update(memObj.avatar);
-                memObj.setAvatar(memObj.avatar);
-                MsoyServer.memberMan.updateOccupantInfo(memObj);
+            memObj.startTransaction();
+            try {
+                if (type == Item.AVATAR) {
+                    if (memObj.avatar != null && IntListUtil.contains(ids, memObj.avatar.itemId)) {
+                        op.update(memObj.avatar);
+                        memObj.setAvatar(memObj.avatar);
+                        MsoyServer.memberMan.updateOccupantInfo(memObj);
+                    }
+
+                    // then, check if any of the cached avatars need updating
+                    Avatar[] avs = memObj.avatarCache.toArray(new Avatar[memObj.avatarCache.size()]);
+                    for (Avatar av : avs) {
+                        if (IntListUtil.contains(ids, av.itemId)) {
+                            op.update(av);
+                            memObj.updateAvatarCache(av);
+                        }
+                    }
+                }
+            } finally {
+                memObj.commitTransaction();
             }
         }
-
-        // TODO: the avatar mini-cache that each user has
     }
 
     /**
