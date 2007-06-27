@@ -61,14 +61,19 @@ public class CollapsingContainer extends VBox
         expand.setCallback(toggleContents);
         labelrow.addChild(expand);
         
-        addChild(_contents);
         toggleContents(false);
     }
 
     /** Shows or hides the content box. */
-    protected function toggleContents (enabled :Boolean) :void
+    protected function toggleContents (shouldDisplay :Boolean) :void
     {
-        _contents.visible = _contents.includeInLayout = enabled;
+        var currentlyDisplayed :Boolean = this.contains(_contents);
+
+        if (shouldDisplay && ! currentlyDisplayed) {
+            addChild(_contents);
+        } else if (! shouldDisplay && currentlyDisplayed) {
+            removeChild(_contents);
+        }
     }
 
     protected var _labeltext :String;
