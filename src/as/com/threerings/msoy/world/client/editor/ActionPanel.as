@@ -126,7 +126,8 @@ public class ActionPanel extends BasePanel
             var dgrid :Grid = new Grid();
             dgrid.setStyle("color", 0xff0000);
             addChild(dgrid);
-            GridUtil.addRow(dgrid, Msgs.EDITING.get("l.action_debug"), _debug);
+            GridUtil.addRow(dgrid, Msgs.EDITING.get("l.action_debug"));
+            GridUtil.addRow(dgrid, _debug);
         }
 
         addChild(makePanelButtons());
@@ -194,7 +195,8 @@ public class ActionPanel extends BasePanel
     protected function createURLPanel () :UIComponent
     {
         var grid :Grid = new Grid();
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.url"), _url = new TextInput());
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.url"));
+        GridUtil.addRow(grid, _url = new TextInput());
         return grid;
     }
 
@@ -212,7 +214,8 @@ public class ActionPanel extends BasePanel
     protected function createHelpTabPanel () :UIComponent
     {
         var grid :Grid = new Grid();
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.help_tab"), _helpTabAction = new TextInput());
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.help_tab"));
+        GridUtil.addRow(grid, _helpTabAction = new TextInput());
         return grid;
     }
 
@@ -238,8 +241,10 @@ public class ActionPanel extends BasePanel
         setportal.label = Msgs.EDITING.get("b.set_portal");
         setportal.setCallback(this.editPortalTarget);
 
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.dest_scene"), _door);
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.set_portal"), setportal);
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.dest_scene"));
+        GridUtil.addRow(grid, _door);
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.set_portal"));
+        GridUtil.addRow(grid, setportal);
             
         return grid;
     }
