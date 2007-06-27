@@ -3,15 +3,28 @@
 
 package com.threerings.msoy.ui {
 
+import mx.core.Container;
+
 import com.threerings.flash.MediaContainer;
 
-import mx.core.Container;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Wraps a MediaContainer into a UIComponent.
  */
 public class MediaWrapper extends Container
 {
+    /**
+     * A factory method to create a MediaWrapper holding a scaled instance.
+     */
+    public static function createScaled (
+        desc :MediaDesc, width :Number, height :Number) :MediaWrapper
+    {
+        var smc :ScalingMediaContainer = new ScalingMediaContainer(width, height);
+        smc.setMediaDesc(desc);
+        return new MediaWrapper(smc, width, height, true);
+    }
+
     /**
      * @param cont the container to wrap
      * @param altReportedWidth a width to report when the media width is 0.
