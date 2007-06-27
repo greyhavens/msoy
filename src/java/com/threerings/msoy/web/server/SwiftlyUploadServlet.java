@@ -39,7 +39,7 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
         String token = split[0];
         if (StringUtil.isBlank(token)) {
             throw new FileUploadException(
-                "Failed to parse the authentication token form field from the upload request.");
+                "The authentication token form field from the upload request is blank, aborting.");
         }
         
         // now pull the integers out
@@ -51,7 +51,8 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
             
         } catch (NumberFormatException nfe) {
             throw new FileUploadException(
-                "Failed to parse integer form field parameters from the upload request.");
+                "Failed to parse integer form field parameters from the upload request. " +
+                    "[memberId=" + split[1] + " projectId=" + split[2] + "]");
         }
         
         // finally, instantiate the WebIdent
