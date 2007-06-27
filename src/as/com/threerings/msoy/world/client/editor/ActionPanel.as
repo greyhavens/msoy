@@ -29,28 +29,24 @@ import com.threerings.msoy.world.data.FurniData;
 /**
  * Displays furni action details as a sub-panel.
  */
-public class ActionPanel extends VBox
+public class ActionPanel extends BasePanel
 {
     public function ActionPanel (controller :RoomEditorController)
     {
-        _controller = controller;
-        this.percentWidth = 100;
+        super(controller);
     }
 
-    /** Updates the UI from given data. */
-    public function updateDisplay (data :FurniData) :void
+    // @Override from BasePanel
+    override public function updateDisplay (data :FurniData) :void
     {
+        super.updateDisplay(data);
+        
         if (data == null) {
-            this.enabled = false;
-            _furniData = null;
             _readOnlyActionLabel.text = "";
             _actionTypeSelection.selectedIndex = 0;
 
         } else {
-            this.enabled = true;
-            
             // abandon previous edits
-            _furniData = data;
             
             var def :Object = getActionDef(_furniData.actionType);
             
@@ -133,18 +129,7 @@ public class ActionPanel extends VBox
             GridUtil.addRow(dgrid, Msgs.EDITING.get("l.action_debug"), _debug);
         }
 
-        // now the button row
-        _applyButton = new CommandButton();
-        _applyButton.label = Msgs.EDITING.get("b.apply_changes");
-        _applyButton.setCallback(applyChanges);
-        _cancelButton = new CommandButton();
-        _cancelButton.label = Msgs.EDITING.get("b.revert_changes");
-        _cancelButton.setCallback(revertChanges);
-
-        var buttons :HBox = new HBox();
-        buttons.addChild(_applyButton);
-        buttons.addChild(_cancelButton);
-        addChild(buttons);
+        addChild(makePanelButtons());
     }
 
     // @Override from superclass
@@ -166,26 +151,6 @@ public class ActionPanel extends VBox
         var applyThunk :Function = function (event :Event) :void { applyChanges(); };
         _helpTabAction.addEventListener(FlexEvent.ENTER, applyThunk);
         _url.addEventListener(FlexEvent.ENTER, applyThunk);
-
-        updateDisplay(null);
-        setChanged(false);
-    }
-
-    /** Applies changes to the currently targetted object. */
-    protected function applyChanges () :void
-    {
-        var newData :FurniData = getUserModifications();
-        if (newData != null) {
-            _controller.updateFurni(_furniData, newData);
-        }
-        setChanged(false);
-    }
-
-    /** Reverts changes by re-reading from the original furni data. */
-    protected function revertChanges () :void
-    {
-        updateDisplay(_furniData);
-        setChanged(false);
     }
 
     /**
@@ -300,12 +265,11 @@ public class ActionPanel extends VBox
         _controller.actionEditDoor(data);  // close editing window, open door editor
     }
 
-    /**
-     * Copies action data from the UI based on action type, and if the data is different,
-     * creates a new FurniData with changes applied.
-     */
-    protected function getUserModifications () :FurniData
+    // @Override from BasePanel
+    override protected function getUserModifications () :FurniData
     {
+        // do not call super - this is a replacement
+        
         if (_furniData == null || _actionTypeSelection.selectedIndex == -1) {
             return null; // nothing to do!
         }
@@ -341,12 +305,6 @@ public class ActionPanel extends VBox
         } else {
             return null;
         }
-    }
-
-    /** Enables or disables the "apply" and "cancel" buttons, based on UI changes. */
-    protected function setChanged (changed :Boolean = true) :void
-    {
-        _applyButton.enabled = _cancelButton.enabled = changed;
     }
 
     /** Returns the index in ACTIONS of the action definiton with specified type. */
@@ -424,9 +382,6 @@ public class ActionPanel extends VBox
     /** Default location for doors, in case they get interrupted mid-editing. */
     protected static const DEFAULT_PORTAL_DEST :String = "1:";
 
-    protected var _furniData :FurniData;
-    protected var _controller :RoomEditorController;
-
     protected var _comboEntries :Array = new Array();
     protected var _readOnlyActionLabel :TextInput;
     protected var _actionTypeSelection :ComboBox;
@@ -436,10 +391,6 @@ public class ActionPanel extends VBox
     protected var _helpTabAction :TextInput;
     protected var _door :TextInput;
     protected var _debug :TextInput;
-
-    protected var _applyButton :CommandButton;
-    protected var _cancelButton :CommandButton;
-
 }
 
 }

@@ -361,6 +361,9 @@ public class RoomController extends SceneController
         if (isRoomEditing()) {
             cancelRoomEditing();
         }
+        if (isRoomEditingNew()) {
+            cancelRoomEditingNew();
+        }
 
         _roomObj.roomService.editRoom(_mctx.getClient(), new ResultWrapper(
             function (cause :String) :void {
