@@ -170,7 +170,7 @@ class FontTestArea extends TextArea
         text = Msgs.PREFS.get("m.chat_test");
         editable = false;
         minWidth = 200;
-        minHeight = 100;
+        minHeight = 50;
     }
 
     override protected function createChildren () :void
