@@ -67,6 +67,16 @@ public class RoomEditorPanel extends FloatingPanel
         _room.updateDisplay(data);
     }
 
+    /** Updates object name for display in the window title bar. */
+    public function updateName (name :String) :void
+    {
+        if (name == null) {
+            this.title = Msgs.EDITING.get("t.editor");
+        } else {
+            this.title = Msgs.EDITING.get("t.editing_name", name);
+        }
+    }
+    
     /** Updates the enabled status of the undo button (based on the size of the undo stack). */
     public function updateUndoStatus (enabled :Boolean) :void
     {

@@ -12,7 +12,10 @@ import flash.geom.Rectangle;
 import flash.ui.Keyboard;
 
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.presents.client.ResultWrapper;
 import com.threerings.util.HashMap;
+import com.threerings.msoy.item.client.ItemService;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.msoy.world.client.FurniSprite;
@@ -247,7 +250,34 @@ public class RoomEditorController
     public function targetSpriteUpdated () :void
     {
         _edit.updateDisplay();
-        _panel.updateDisplay(_edit.target != null ? _edit.target.getFurniData() : null);
+        
+        if (_edit.target != null) {
+            var furniData :FurniData = _edit.target.getFurniData();
+            _panel.updateDisplay(furniData);
+
+            if (furniData.itemType == Item.NOT_A_TYPE) {
+                // this must be one of the "freebie" doors - since this isn't an actual Item,
+                // we can't pull its name from the database. oh well.
+                _panel.updateName(null);
+            } else {
+                // perform a database query to get the item's name
+                
+                var svc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
+                svc.peepItem(_ctx.getClient(), furniData.getItemIdent(),
+                              new ResultWrapper(
+                                  function (cause :String) :void {
+                                      _panel.updateName(null);
+                                  }, function (item :Item) :void {
+                                      _panel.updateName(item.name);
+                                  }));
+                
+            }
+            
+        } else {
+            // nothing selected - just clear the display
+            _panel.updateDisplay(null);
+            _panel.updateName(null);
+        }
     }
 
     /** Sets the currently edited target to the specified sprite. */
