@@ -72,6 +72,25 @@ public class FlowAwardTracker
     }
 
     /**
+     * Return the total number of seconds that members were being tracked.
+     */
+    public int getTotalTrackedSeconds ()
+    {
+        int total = _totalTrackedSeconds;
+
+        int now = _tracking ? now() : 0;
+        for (FlowRecord record : _flowRecords.values()) {
+            total += record.secondsPlayed;
+
+            if (_tracking && record.beganStamp != 0) {
+                total += (now - record.beganStamp);
+            }
+        }
+
+        return total;
+    }
+
+    /**
      * Start tracking the specified member.
      */
     public void addMember (int oid)
@@ -111,6 +130,16 @@ public class FlowAwardTracker
             return;
         }
 
+        // if they're leaving in the middle of things, update their secondsPlayed,
+        // just so that it's correct for calculations below
+        if (_tracking) {
+            record.secondsPlayed += now() - record.beganStamp;
+            record.beganStamp = 0;
+        }
+
+        // since we're dropping this record, we need to record the seconds played
+        _totalTrackedSeconds += record.secondsPlayed;
+
         // see if we even care
         if (record.awarded == 0 || record.memberId == MemberName.GUEST_ID) {
             return;
@@ -122,14 +151,7 @@ public class FlowAwardTracker
             return;
         }
 
-        // if they're leaving in the middle of things, update their secondsPlayed,
-        // just so that it's correct for calculations below
-        if (_tracking) {
-            record.secondsPlayed += now() - record.beganStamp;
-            record.beganStamp = 0;
-        }
-
-        // see how much they actually get
+        // see how much they actually get (also uses their secondsPlayed)
         int flowBudget = (int) ((record.humanity * _flowPerMinute * record.secondsPlayed) / 60);
         int awarded = Math.min(record.awarded, flowBudget);
 
@@ -269,6 +291,10 @@ public class FlowAwardTracker
 
     /** The action to use when granting flow. */
     protected UserAction _grantAction;
+
+    /** Counts the total number of seconds that have elapsed during 'tracked' time,
+     * for each tracked member that is no longer present with a FlowRecord. */
+    protected int _totalTrackedSeconds = 0;
 
     protected String _detailsPrefix;
 

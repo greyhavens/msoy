@@ -133,20 +133,25 @@ public class WhirledGameDelegate extends GameManagerDelegate
 
         tracker.stopTracking();
 
-        // TODO: This value is currently always zero; see declaration below.
-        if (_playerMinutes != 0) {
+        int totalSeconds = tracker.getTotalTrackedSeconds();
+        int totalMinutes = (int) Math.round(totalSeconds / 60f);
+        if (totalMinutes == 0 && totalSeconds > 0) {
+            totalMinutes = 1; // round very short games up to 1 minute.
+        }
+        if (totalMinutes > 0) {
+            final int playerMins = totalMinutes;
             final int gameId = getGameId();
             MsoyServer.invoker.postUnit(new Invoker.Unit() {
                 public boolean invoke () {
                     try {
-                        MsoyServer.memberRepo.noteGameEnded(gameId, _playerMinutes);
+                        MsoyServer.memberRepo.noteGameEnded(gameId, playerMins);
                     } catch (PersistenceException pe) {
-                        log.log(Level.WARNING, "Failed to note end of game [where=" +
-                                where() + "]", pe);
+                        log.log(Level.WARNING,
+                            "Failed to note end of game [where=" + where() + "]", pe);
                     }
                     return false;
-                }       
-            });         
+                }
+            });
         }
     }
 
@@ -177,12 +182,4 @@ public class WhirledGameDelegate extends GameManagerDelegate
 
     /** Keep our invocation service registration so that we can unload it at shutdown. */
     protected InvocationMarshaller _invmarsh;
-
-    /**
-     * Cumulative player minutes for this game, reported when the game ends and used by the
-     * anti-abuse algorithm.
-     * 
-     * TODO: Not yet implemented. Should track players entering and leaving.
-     */
-    protected int _playerMinutes;
 }
