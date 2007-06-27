@@ -59,7 +59,7 @@ public class UploadDialog extends BorderedDialog
                 // don't let them submit until they plug in a file...
                 if (upload.getFilename().length() == 0) {
                     event.setCancelled(true);
-                    _status.setText(CSwiftly.msgs.selectFile());
+                    _status.setText(CSwiftly.msgs.mustSelectFile());
                 } else {
                     _status.setText(CSwiftly.msgs.uploadStarted());
                 }

@@ -248,9 +248,9 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String viewRemove();
 
   /**
-   * Translated "Select a file before clicking upload.".
+   * Translated "Click the browse button to select a file. Then click upload.".
    * 
-   * @return translated "Select a file before clicking upload."
+   * @return translated "Click the browse button to select a file. Then click upload."
    * @gwt.key selectFile
    */
   String selectFile();
@@ -262,6 +262,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key swiftlyIntro
    */
   String swiftlyIntro();
+
+  /**
+   * Translated "Select a file before clicking upload.".
+   * 
+   * @return translated "Select a file before clicking upload."
+   * @gwt.key mustSelectFile
+   */
+  String mustSelectFile();
 
   /**
    * Translated "Project name".
