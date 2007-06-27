@@ -32,9 +32,9 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String remixable();
 
   /**
-   * Translated "Starting the file upload.".
+   * Translated "Uploading file.".
    * 
-   * @return translated "Starting the file upload."
+   * @return translated "Uploading file."
    * @gwt.key uploadStarted
    */
   String uploadStarted();
@@ -248,9 +248,9 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String viewRemove();
 
   /**
-   * Translated "Click the browse button to select a file. Then click upload.".
+   * Translated "Select a file before clicking upload.".
    * 
-   * @return translated "Click the browse button to select a file. Then click upload."
+   * @return translated "Select a file before clicking upload."
    * @gwt.key selectFile
    */
   String selectFile();

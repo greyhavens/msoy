@@ -28,7 +28,7 @@ public class UploadDialog extends BorderedDialog
         super();
         
         _header.add(new InlineLabel(CSwiftly.msgs.uploadTitle()));
-        _error = new InlineLabel();
+        _status = new InlineLabel();
         
         FlexTable contents = (FlexTable)_contents;
         contents.setStyleName("swiftlyUploader");
@@ -46,7 +46,7 @@ public class UploadDialog extends BorderedDialog
         final FileUpload upload = new FileUpload() {
             public void onBrowserEvent (Event event) {
                 // something went horribly wrong, so let the user know something
-                _error.setText(event.toString());
+                _status.setText(event.toString());
             }
         };
         // stuff the web credentials and the projectId into the field name
@@ -58,6 +58,9 @@ public class UploadDialog extends BorderedDialog
                 // don't let them submit until they plug in a file...
                 if (upload.getFilename().length() == 0) {
                     event.setCancelled(true);
+                    _status.setText(CSwiftly.msgs.selectFile());
+                } else {
+                    _status.setText(CSwiftly.msgs.uploadStarted());
                 }
             }
 
@@ -67,7 +70,7 @@ public class UploadDialog extends BorderedDialog
                 // if something went horribly wrong, give the user some kind of error
                 String result = event.getResults();
                 if (result != null && result.length() > 0) {
-                    _error.setText(result);
+                    _status.setText(result);
                 }
             }
         });
@@ -79,7 +82,6 @@ public class UploadDialog extends BorderedDialog
         // Upload button
         buttons.add(new Button(CSwiftly.msgs.upload(), new ClickListener() {
             public void onClick (Widget sender) {
-                _error.setText(CSwiftly.msgs.uploadStarted());
                 form.submit();
             }
         }));
@@ -92,7 +94,7 @@ public class UploadDialog extends BorderedDialog
         }));
         contents.setWidget(2, 0, buttons);
         contents.getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_RIGHT);
-        contents.setWidget(3, 0, _error);
+        contents.setWidget(3, 0, _status);
     }
     
     // from BorderedDialog.  This is called in the super constructor, so no UI components that
@@ -102,5 +104,5 @@ public class UploadDialog extends BorderedDialog
         return new FlexTable();
     }
     
-    protected InlineLabel _error;
+    protected InlineLabel _status;
 }
