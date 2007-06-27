@@ -348,6 +348,9 @@ public class ComicOverlay extends ChatOverlay
         return r;
     }
 
+    /**
+     * Draw the tail for the specified bubble.
+     */
     protected function drawTailShape (bubble :BubbleGlyph, type :int, speaker :Rectangle) :void
     {
         if (modeOf(type) == EMOTE) {
@@ -356,20 +359,19 @@ public class ComicOverlay extends ChatOverlay
 
         var speakerP :Point = bubble.globalToLocal(
             new Point(speaker.x + speaker.width/2, speaker.y + speaker.height/2));
-
         var bubRect :Rectangle = bubble.getBubbleBounds();
-
         var midX :Number = bubRect.width/2;
         var midY :Number = bubRect.height/2;
 
         bubble.graphics.beginFill(WHITE);
+        // draw a triangle from the speaker to the center of the bubble
         bubble.graphics.moveTo(speakerP.x, speakerP.y);
         if (Math.abs(speakerP.x - midX) > Math.abs(speakerP.y - midY)) {
-            bubble.graphics.lineTo(midX, PAD);
-            bubble.graphics.lineTo(midX, bubRect.height - PAD);
+            bubble.graphics.lineTo(midX, midY - PAD);
+            bubble.graphics.lineTo(midX, midY + PAD);
         } else {
-            bubble.graphics.lineTo(PAD, midY);
-            bubble.graphics.lineTo(bubRect.width - PAD, midY);
+            bubble.graphics.lineTo(midX - PAD, midY);
+            bubble.graphics.lineTo(midX + PAD, midY);
         }
         bubble.graphics.lineTo(speakerP.x, speakerP.y);
         bubble.graphics.endFill();
