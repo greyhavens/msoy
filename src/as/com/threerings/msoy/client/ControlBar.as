@@ -208,17 +208,17 @@ public class ControlBar extends HBox
         _roomeditBtn.setCommand(ControlBarController.ROOM_EDIT, _roomeditBtn);
         _roomeditBtn.styleName = "controlBarButtonEdit";
         _roomeditBtn.enabled = false;
-        addGroupChild(_roomeditBtn, [ UI_STD ]);
-
+        if (user != null && user.tokens.isSupport()) {
+            addGroupChild(_roomeditBtn, [ UI_STD ]);
+        }
+        
         // transitional button for the new new new room editor
         _roomeditBtnNew = new CommandButton();
         _roomeditBtnNew.toolTip = Msgs.GENERAL.get("i.editScene");
         _roomeditBtnNew.setCommand(ControlBarController.ROOM_EDIT_NEW, _roomeditBtnNew);
         _roomeditBtnNew.styleName = "controlBarButtonEdit";
         _roomeditBtnNew.enabled = false;
-        if (user != null && user.tokens.isSupport()) {
-            addGroupChild(_roomeditBtnNew, [ UI_STD ]);
-        }
+        addGroupChild(_roomeditBtnNew, [ UI_STD ]);
         
         if (_ctx.getWorldClient().isEmbedded()) {
             _logonPanel = new LogonPanel(_ctx, this.height - 4);

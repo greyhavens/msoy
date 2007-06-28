@@ -250,7 +250,7 @@ public class RoomController extends SceneController
         _mctx.getTopPanel().getControlBar().addEventListener(ControlBar.DISPLAY_LIST_VALID,
             function (evt :ValueEvent) :void {
                 if (_openEditor && !isRoomEditing()) {
-                    beginRoomEditing(_mctx.getTopPanel().getControlBar().roomEditBtn);
+                    beginRoomEditingNew(_mctx.getTopPanel().getControlBar().roomEditBtn);
                 }
                 _openEditor = false;
             }
