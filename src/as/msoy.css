@@ -367,6 +367,25 @@ Window {
   verticalGap: 0;
 }
 
+.roomEditNameBar {  
+  backgroundImage: Embed(source="../../rsrc/media/skins/button/furniedit/name_bar_tile.png");
+  backgroundSize: "100%";
+  borderStyle: "none";
+  paddingBottom: 5;
+  paddingTop: 5;
+  paddingLeft: 3;
+  paddingRight: 3;
+} 
+
+.roomEditButtonBar {  
+  borderStyle: "none";
+  paddingBottom: 0;
+  paddingTop: 0;
+  paddingLeft: 0;
+  paddingRight: 0;
+  horizontalGap: 3;
+} 
+
 .roomEditContents {  
   paddingBottom: 5;
   paddingTop: 5;
@@ -392,11 +411,16 @@ Window {
 
 .roomEditCollapsingContainer { 
   borderStyle: "none";
-  paddingBottom: 3;
+  paddingBottom: 0;
   paddingTop: 0;
   paddingLeft: 0;
   paddingRight: 5;
-  verticalGap: 2;
+  verticalGap: 1;
+}
+
+.roomEditCollapsingContents { 
+  paddingBottom: 5;
+  paddingTop: 2;
 }
 
 .roomEditButtonRoom {
@@ -449,11 +473,32 @@ Window {
   disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_undo_disabled.png");
 }
 
+.roomEditButtonTrash3 {
+  upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_v3_trash.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_v3_trash_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_v3_trash_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_v3_trash_disabled.png");
+}
+
+.roomEditButtonUndo3 {
+  upSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_v3_undo.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_v3_undo_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_v3_undo_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/furniedit/button_v3_undo_disabled.png");
+}
+
 .roomEditLabel {
     color: #000000;
     themeColor: #54a9da;
     fontFamily: "Arial";
     fontSize: 9;
+}
+
+.roomEditNameLabel {
+    color: #000000;
+    themeColor: #54a9da;
+    fontSize: 11;
+    fontWeight: "bold";
 }
 
 .roomEditTextInput {

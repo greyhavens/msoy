@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.world.client.editor {
 
-import mx.containers.Canvas;
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Label;
@@ -22,7 +21,8 @@ public class CollapsingContainer extends VBox
     public function CollapsingContainer (label :String)
     {
         _labeltext = label;
-        _contents = new Canvas();
+        _contents = new HBox();
+        _contents.styleName = "roomEditCollapsingContents";
         this.percentWidth = 100;
     }
 

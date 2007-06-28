@@ -36,7 +36,7 @@ public class RoomEditorPanel extends FloatingPanel
 {
     public function RoomEditorPanel (ctx :WorldContext, controller :RoomEditorController)
     {
-        super(ctx, Msgs.EDITING.get("t.editor"));
+        super(ctx, Msgs.EDITING.get("t.editor_title"));
         _controller = controller;
 
         styleName = "roomEditPanel";
@@ -71,10 +71,8 @@ public class RoomEditorPanel extends FloatingPanel
     /** Updates object name for display in the window title bar. */
     public function updateName (name :String) :void
     {
-        if (name == null) {
-            this.title = Msgs.EDITING.get("t.editor");
-        } else {
-            this.title = Msgs.EDITING.get("t.editing_name", name);
+        if (_namelabel != null) {
+            _namelabel.text = (name != null) ? name : "";
         }
     }
     
@@ -101,26 +99,12 @@ public class RoomEditorPanel extends FloatingPanel
             return function (event :Event) :void { thunk(); };
         };
         
-        // container for buttons
-        var box :HBox = new HBox();
-        box.styleName = "roomEditPanelContainer";
-        box.percentWidth = 100;
-        addChild(box);
-
-        // create a button for each definition
-        _deleteButton = new Button();
-        _deleteButton.styleName = "roomEditButtonTrash";
-        _deleteButton.toolTip = Msgs.EDITING.get("i.delete_button");
-        _deleteButton.enabled = false;
-        _deleteButton.addEventListener(MouseEvent.CLICK, makeListener(_controller.actionDelete));
-        box.addChild(_deleteButton);
-        
-        _undoButton = new Button();
-        _undoButton.styleName = "roomEditButtonUndo";
-        _undoButton.toolTip = Msgs.EDITING.get("i.undo_button");
-        _undoButton.enabled = false;
-        _undoButton.addEventListener(MouseEvent.CLICK, makeListener(_controller.actionUndo));
-        box.addChild(_undoButton);
+        // container for room name
+        var namebar :VBox = new VBox();
+        namebar.styleName = "roomEditNameBar";
+        namebar.percentWidth = 100;
+        namebar.addChild(_room = new RoomPanel(_controller));
+        addChild(namebar);
 
         // container for everything else
         var contents :VBox = new VBox();
@@ -128,10 +112,31 @@ public class RoomEditorPanel extends FloatingPanel
         contents.percentWidth = 100;
         addChild(contents);
         
-        // room name should sit right at the top
-        _room = new RoomPanel(_controller);
-        contents.addChild(_room);
-            
+        // sub-container for object name and buttons
+        var box :HBox = new HBox();
+        box.styleName = "roomEditButtonBar";
+        box.percentWidth = 100;
+        contents.addChild(box);
+
+        _namelabel = new Label();
+        _namelabel.styleName = "roomEditNameLabel";
+        _namelabel.percentWidth = 100;
+        box.addChild(_namelabel);
+        
+        _deleteButton = new Button();
+        _deleteButton.styleName = "roomEditButtonTrash3";
+        _deleteButton.toolTip = Msgs.EDITING.get("i.delete_button");
+        _deleteButton.enabled = false;
+        _deleteButton.addEventListener(MouseEvent.CLICK, makeListener(_controller.actionDelete));
+        box.addChild(_deleteButton);
+        
+        _undoButton = new Button();
+        _undoButton.styleName = "roomEditButtonUndo3";
+        _undoButton.toolTip = Msgs.EDITING.get("i.undo_button");
+        _undoButton.enabled = false;
+        _undoButton.addEventListener(MouseEvent.CLICK, makeListener(_controller.actionUndo));
+        box.addChild(_undoButton);
+
         hr = new HRule();
         hr.percentWidth = 100;
         contents.addChild(hr);
@@ -155,6 +160,7 @@ public class RoomEditorPanel extends FloatingPanel
     protected var _details :DetailsPanel;
     protected var _action :ActionPanel;
     protected var _room :RoomPanel;
+    protected var _namelabel :Label;
     protected var _controller :RoomEditorController;
 }
 }
