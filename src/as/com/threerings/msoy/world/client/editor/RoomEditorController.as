@@ -250,32 +250,36 @@ public class RoomEditorController
     public function targetSpriteUpdated () :void
     {
         _edit.updateDisplay();
-        
+        _panel.updateDisplay(_edit.target != null ? _edit.target.getFurniData() : null);
+    }
+
+    /**
+     * Re-reads target name from the database.
+     */
+    protected function updateTargetName () :void
+    {
         if (_edit.target != null) {
             var furniData :FurniData = _edit.target.getFurniData();
             _panel.updateDisplay(furniData);
-
+            
             if (furniData.itemType == Item.NOT_A_TYPE) {
                 // this must be one of the "freebie" doors - since this isn't an actual Item,
                 // we can't pull its name from the database. oh well.
                 _panel.updateName(null);
             } else {
+                
                 // perform a database query to get the item's name
                 
                 var svc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
                 svc.peepItem(_ctx.getClient(), furniData.getItemIdent(),
-                              new ResultWrapper(
-                                  function (cause :String) :void {
+                             new ResultWrapper(
+                                 function (cause :String) :void {
                                       _panel.updateName(null);
                                   }, function (item :Item) :void {
                                       _panel.updateName(item.name);
                                   }));
-                
             }
-            
         } else {
-            // nothing selected - just clear the display
-            _panel.updateDisplay(null);
             _panel.updateName(null);
         }
     }
@@ -285,6 +289,7 @@ public class RoomEditorController
     {
         _edit.target = targetSprite;
         targetSpriteUpdated();
+        updateTargetName();
     }
 
     /** Forces the target sprite to be re-read from the room. */
