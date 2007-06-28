@@ -170,10 +170,11 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     /**
-     * Get the stage-coordinate rectangle of the bounds of this sprite, including any non-media
-     * content like decorations.
+     * Get the stage-coordinate rectangle of the bounds of this sprite.
+     *
+     * @param includeExtras unless false, include any non-media content like decorations.
      */
-    public function getStageRect () :Rectangle
+    public function getStageRect (includeExtras :Boolean = true) :Rectangle
     {
         var botRight :Point = new Point(getActualWidth(), getActualHeight());
         var r :Rectangle = new Rectangle();

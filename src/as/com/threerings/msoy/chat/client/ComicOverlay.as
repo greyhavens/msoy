@@ -357,12 +357,14 @@ public class ComicOverlay extends ChatOverlay
             return; // no tail for emotes
         }
 
+        // the speaker point is 1/2-width through the speaker bounding box, and 1/3 from the top.
         var speakerP :Point = bubble.globalToLocal(
-            new Point(speaker.x + speaker.width/2, speaker.y + speaker.height/2));
+            new Point(speaker.x + speaker.width/2, speaker.y + speaker.height/3));
         var bubRect :Rectangle = bubble.getBubbleBounds();
         var midX :Number = bubRect.width/2;
         var midY :Number = bubRect.height/2;
 
+        bubble.graphics.lineStyle(1, BLACK);
         bubble.graphics.beginFill(WHITE);
         // draw a triangle from the speaker to the center of the bubble
         bubble.graphics.moveTo(speakerP.x, speakerP.y);

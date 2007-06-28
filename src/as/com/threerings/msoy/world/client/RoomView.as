@@ -434,8 +434,8 @@ public class RoomView extends AbstractRoomView
     {
         var actor :ActorSprite = getActorByName(speaker);
         if (actor != null) {
-            // return the global screen coords
-            return actor.getStageRect();
+            // return the global screen coords, without decorations
+            return actor.getStageRect(false);
         }
         return null;
     }

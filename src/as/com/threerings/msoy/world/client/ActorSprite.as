@@ -188,20 +188,22 @@ public class ActorSprite extends MsoySprite
     }
 
     // from MsoySprite
-    override public function getStageRect () :Rectangle
+    override public function getStageRect (includeExtras :Boolean = true) :Rectangle
     {
         // Note: Ideally we could just return getRect(stage), but that seems to pay too
         // much attention to our mask. 
         var r :Rectangle = super.getStageRect();
 
-        // But it seems to work for these other bits...
-        // Add the bounds of the name label.
-        r = r.union(_label.getRect(this.stage));
+        if (includeExtras) {
+            // But it seems to work for these other bits...
+            // Add the bounds of the name label.
+            r = r.union(_label.getRect(this.stage));
 
-        // Add the bounds of any decorations.
-        if (_decorations != null) {
-            for each (var obj :Object in _decorations) {
-                r = r.union(DisplayObject(obj.dec).getRect(this.stage));
+            // Add the bounds of any decorations.
+            if (_decorations != null) {
+                for each (var obj :Object in _decorations) {
+                    r = r.union(DisplayObject(obj.dec).getRect(this.stage));
+                }
             }
         }
 
