@@ -212,6 +212,9 @@ public class MemberServlet extends MsoyServiceServlet
                         // map the specific location to an owner (game, person, group) cluster
                         PopularPlace place = PopularPlace.getPopularPlace(
                             MsoyServer.plreg.getPlaceManager(friend.location));
+                        if (place == null) {
+                            continue;
+                        }
                         Set<MemberName> set = popSets.get(place);
                         if (set == null) {
                             set = new HashSet<MemberName>();

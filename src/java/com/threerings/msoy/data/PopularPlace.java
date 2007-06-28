@@ -3,18 +3,24 @@
 
 package com.threerings.msoy.data;
 
+import com.samskivert.util.StringUtil;
+
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.io.SimpleStreamableObject;
 import com.threerings.util.ActionScript;
+
+import com.threerings.parlor.game.server.GameManager;
 
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.server.SceneManager;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.server.MsoyGameManager;
+import com.threerings.msoy.swiftly.server.ProjectRoomManager;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
-import com.threerings.parlor.game.server.GameManager;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Represent a single place in the top list of populated places.
@@ -28,7 +34,6 @@ public abstract class PopularPlace extends SimpleStreamableObject
             SceneManager rMgr = ((SceneManager) plMgr);
             MsoyScene scene = (MsoyScene) rMgr.getScene();
             MsoySceneModel model = (MsoySceneModel) scene.getSceneModel();
-
             if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
                 return new PopularGroupPlace(scene);
             }
@@ -36,12 +41,18 @@ public abstract class PopularPlace extends SimpleStreamableObject
                 return new PopularMemberPlace(scene);
             }
             throw new IllegalArgumentException("unknown owner type: " + model.ownerType);
-        }
-        if (plMgr instanceof MsoyGameManager) {
+
+        } else if (plMgr instanceof MsoyGameManager) {
             MsoyGameConfig config = (MsoyGameConfig) ((GameManager) plMgr).getGameConfig();
             return new PopularGamePlace(config.name, config.getGameId());
+
+        } else if (plMgr instanceof ProjectRoomManager) {
+            return null; // don't worry about people using Swiftly
+
+        } else {
+            log.warning("Unknown place manager type: " + StringUtil.shortClassName(plMgr));
+            return null;
         }
-        throw new IllegalArgumentException("unknown place manager type: " + plMgr.getClass());
     }
 
     public static abstract class PopularScenePlace extends PopularPlace
