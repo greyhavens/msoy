@@ -98,6 +98,7 @@ public class MsoyGameController extends EZGameController
     {
         super.gameDidStart();
 
+        _flowAwarded = 0;
         _startStamp = getTimer();
     }
 
