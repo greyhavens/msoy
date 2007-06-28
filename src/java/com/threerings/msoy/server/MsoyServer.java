@@ -369,9 +369,9 @@ public class MsoyServer extends WhirledServer
 
         // shut down our http server
         try {
-            httpServer.stop(true);
-        } catch (InterruptedException ie) {
-            log.log(Level.WARNING, "Failed to stop http server.", ie);
+            httpServer.stop();
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Failed to stop http server.", e);
         }
     }
 
@@ -474,7 +474,7 @@ public class MsoyServer extends WhirledServer
 
         // create and start up our HTTP server
         httpServer = new MsoyHttpServer(_logdir);
-        httpServer.init();
+        httpServer.start();
 
         // start up an interval that checks to see if our code has changed and auto-restarts the
         // server as soon as possible when it has

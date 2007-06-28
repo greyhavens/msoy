@@ -76,7 +76,6 @@
     <file name="${extlibs.dir}/mail.jar"/>
     <file name="${extlibs.dir}/mysql-connector-java.jar"/>
     <file name="${extlibs.dir}/proguard.jar"/>
-    <file name="${extlibs.dir}/servlet-2.3.jar"/>
     <file name="${extlibs.dir}/ganymed.jar"/>
     <file name="${extlibs.dir}/svnClientAdapter.jar"/>
     <file name="${extlibs.dir}/svnjavahl.jar"/>
@@ -87,12 +86,14 @@
     <file name="${extlibs.dir}/velocity-1.5-dev.jar"/>
     <file name="${extlibs.dir}/ehcache-1.2.jar"/>
 
-    <file name="tools/jetty/lib/org.mortbay.jetty.jar"/>
-
     <file name="lib/json.jar"/>
     <file name="lib/jswiff-8.0-beta-2-threerings.jar"/>
     <file name="lib/sdoc-0.5.0-beta-ooo.jar"/>
     <file name="lib/substance-lite.jar"/>
+
+    <file name="lib/jetty-6.1.4.jar"/>
+    <file name="lib/jetty-util-6.1.4.jar"/>
+    <file name="lib/servlet-api-2.5-6.1.4.jar"/>
 
     <!-- The following are used for aperture -->
     <file name="lib/aperture/aperture-2006.1-alpha-3.jar"/>
