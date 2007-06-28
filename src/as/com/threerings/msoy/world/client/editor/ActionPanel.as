@@ -95,6 +95,8 @@ public class ActionPanel extends BasePanel
         // this combo box will let the user pick a type
         _actionTypeSelection = new ComboBox();
         _actionTypeSelection.dataProvider = entries;
+        _actionTypeSelection.addEventListener(MouseEvent.CLICK, changedHandler);
+        
         // and this will be displayed instead of the drop-down box if the user can't edit it
         _readOnlyActionLabel = new TextInput();
         _readOnlyActionLabel.editable = false;
@@ -143,13 +145,6 @@ public class ActionPanel extends BasePanel
             _actionPanels, "selectedIndex", _actionTypeSelection, "selectedIndex");
         BindingUtils.bindSetter(updateTypePanels, _actionTypeSelection, "selectedItem");
 
-        _actionTypeSelection.addEventListener(MouseEvent.CLICK, changedHandler);
-        _captureMouse.addEventListener(MouseEvent.CLICK, changedHandler);
-        _helpTabAction.addEventListener(TextEvent.TEXT_INPUT, changedHandler);
-        _url.addEventListener(TextEvent.TEXT_INPUT, changedHandler);
-
-        _helpTabAction.addEventListener(FlexEvent.ENTER, applyHandler);
-        _url.addEventListener(FlexEvent.ENTER, applyHandler);
     }
 
     /**
@@ -177,6 +172,9 @@ public class ActionPanel extends BasePanel
     {
         var grid :Grid = new Grid();
         GridUtil.addRow(grid, Msgs.EDITING.get("l.captureMouse"), _captureMouse = new CheckBox());
+
+        _captureMouse.addEventListener(MouseEvent.CLICK, changedHandler);
+
         return grid;
     }
 
@@ -197,6 +195,10 @@ public class ActionPanel extends BasePanel
         var grid :Grid = new Grid();
         GridUtil.addRow(grid, Msgs.EDITING.get("l.url"));
         GridUtil.addRow(grid, _url = new TextInput());
+
+        _url.addEventListener(TextEvent.TEXT_INPUT, changedHandler);
+        _url.addEventListener(FlexEvent.ENTER, applyHandler);
+
         return grid;
     }
 
@@ -216,6 +218,10 @@ public class ActionPanel extends BasePanel
         var grid :Grid = new Grid();
         GridUtil.addRow(grid, Msgs.EDITING.get("l.help_tab"));
         GridUtil.addRow(grid, _helpTabAction = new TextInput());
+
+        _helpTabAction.addEventListener(TextEvent.TEXT_INPUT, changedHandler);
+        _helpTabAction.addEventListener(FlexEvent.ENTER, applyHandler);
+
         return grid;
     }
 
