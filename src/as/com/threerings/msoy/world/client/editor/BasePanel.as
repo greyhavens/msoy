@@ -98,7 +98,12 @@ public class BasePanel extends VBox
     /** Enables or disables the "apply" and "cancel" buttons, based on UI changes. */
     protected function setChanged (changed :Boolean) :void
     {
-        _applyButton.enabled = _cancelButton.enabled = changed;
+        if (_applyButton != null) {
+            _applyButton.enabled = changed;
+        }
+        if (_cancelButton != null) {
+            _cancelButton.enabled = changed;
+        }
     }
 
     /** Event handler for widgets; enables the "apply" and "cancel" buttons. */

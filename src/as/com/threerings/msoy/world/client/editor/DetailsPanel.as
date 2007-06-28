@@ -98,12 +98,10 @@ public class DetailsPanel extends BasePanel
                 input.width = 35;
             });
 
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.location"), [3, 1]);
-        GridUtil.addRow(grid, _locx, _locy, _locz);
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.scale"), [3, 1]);
-        GridUtil.addRow(grid, _scalex, _scaley);
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.location"), _locx, _locy, _locz);
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.scale"), _scalex, _scaley);
 
-        addChild(makePanelButtons());
+        // addChild(makePanelButtons());
     }
 
     // @Override from superclass

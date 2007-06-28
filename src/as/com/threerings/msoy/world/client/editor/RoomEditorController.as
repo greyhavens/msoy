@@ -11,6 +11,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.ui.Keyboard;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.presents.client.ResultWrapper;
 import com.threerings.util.HashMap;
@@ -265,7 +266,8 @@ public class RoomEditorController
             if (furniData.itemType == Item.NOT_A_TYPE) {
                 // this must be one of the "freebie" doors - since this isn't an actual Item,
                 // we can't pull its name from the database. oh well.
-                _panel.updateName(null);
+                _panel.updateName(Msgs.EDITING.get("t.editing_no_name"));
+                
             } else {
                 
                 // perform a database query to get the item's name

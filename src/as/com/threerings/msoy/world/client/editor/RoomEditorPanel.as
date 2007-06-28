@@ -121,7 +121,15 @@ public class RoomEditorPanel extends FloatingPanel
         _undoButton.addEventListener(MouseEvent.CLICK, makeListener(_controller.actionUndo));
         box.addChild(_undoButton);
 
-        // now create tabs
+        // room name should sit right at the top
+        _room = new RoomPanel(_controller);
+        addChild(_room);
+            
+        hr = new HRule();
+        hr.percentWidth = 100;
+        addChild(hr);
+
+        // now create collapsing sections
         var c :CollapsingContainer = new CollapsingContainer(Msgs.EDITING.get("t.item_prefs"));
         c.setContents(_details = new DetailsPanel(_controller));
         addChild(c);
@@ -132,14 +140,6 @@ public class RoomEditorPanel extends FloatingPanel
 
         c = new CollapsingContainer(Msgs.EDITING.get("t.item_action"));
         c.setContents(_action = new ActionPanel(_controller)); 
-        addChild(c);
-
-        hr = new HRule();
-        hr.percentWidth = 100;
-        addChild(hr);
-
-        c = new CollapsingContainer(Msgs.EDITING.get("t.room_settings"));
-        c.setContents(_room = new RoomPanel(_controller)); 
         addChild(c);
     }
 

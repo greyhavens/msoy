@@ -47,6 +47,7 @@ public class RoomPanel extends BasePanel
     {
         super.createChildren();
 
+        /*
         var grid :Grid = new Grid();
         grid.percentWidth = 100;
         addChild(grid);
@@ -55,6 +56,10 @@ public class RoomPanel extends BasePanel
         GridUtil.addRow(grid, _name = new TextInput());
 
         addChild(makePanelButtons());
+        */
+
+        addChild(_name = new TextInput());
+        _name.percentWidth = 100;
     }
 
     // @Override from superclass
