@@ -110,13 +110,13 @@ public class ScalingHotspot extends Hotspot
 
         // should we snap?
         if (Point.distance(mouse, _anchor) > SNAP_DEAD_RADIUS) {
-            var signx :Number = x / Math.abs(x);
-            var signy :Number = y / Math.abs(y);
-            var maxScale :Number = Math.max(Math.abs(x), Math.abs(y));
+            // remember sign along each dimension
+            var sign :Point = new Point(x / Math.abs(x), y / Math.abs(y));
+            var scale :Number = Math.sqrt((x * x + y * y) / 2);
             var delta :Number = Math.abs(Math.abs(x) - Math.abs(y));
-            if (delta < maxScale * SNAP_RATIO) {
-                x = maxScale * signx;
-                y = maxScale * signy;
+            if (delta < scale * SNAP_RATIO) {
+                x = scale * sign.x;
+                y = scale * sign.y;
                 switchDisplay(_displayLocked);
             } else {
                 switchDisplay(_displayMouseOver);
