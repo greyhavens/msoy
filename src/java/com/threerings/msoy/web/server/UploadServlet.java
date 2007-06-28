@@ -354,7 +354,7 @@ public class UploadServlet extends AbstractUploadServlet
     }
 
     /** Prevent Captain Insano from showing up to fill our drives. */
-    protected static final int SMALL_MEDIA_MAX_SIZE = 4 * MEGABYTE;
+    protected static final int SMALL_MEDIA_MAX_SIZE = 5 * MEGABYTE; // TODO: back to 4megs soon!
     protected static final int LARGE_MEDIA_MAX_SIZE = 100 * MEGABYTE;
 
     protected static final byte THUMBNAIL_MIME_TYPE = MediaDesc.IMAGE_PNG;
