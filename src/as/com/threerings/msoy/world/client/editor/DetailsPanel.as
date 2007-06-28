@@ -94,6 +94,7 @@ public class DetailsPanel extends BasePanel
         _all = _locs.concat(_scales);        
 
         _all.forEach(function (input :TextInput, ... rest) :void {
+                input.styleName = "roomEditTextInput";
                 input.text = "0.0";
                 input.width = 35;
             });

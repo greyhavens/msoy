@@ -15,6 +15,7 @@ import flash.geom.Rectangle;
 
 import mx.containers.HBox;
 import mx.containers.TabNavigator;
+import mx.containers.VBox;
 import mx.controls.Button;
 import mx.controls.HRule;
 import mx.controls.Label;
@@ -121,26 +122,32 @@ public class RoomEditorPanel extends FloatingPanel
         _undoButton.addEventListener(MouseEvent.CLICK, makeListener(_controller.actionUndo));
         box.addChild(_undoButton);
 
+        // container for everything else
+        var contents :VBox = new VBox();
+        contents.styleName = "roomEditContents";
+        contents.percentWidth = 100;
+        addChild(contents);
+        
         // room name should sit right at the top
         _room = new RoomPanel(_controller);
-        addChild(_room);
+        contents.addChild(_room);
             
         hr = new HRule();
         hr.percentWidth = 100;
-        addChild(hr);
+        contents.addChild(hr);
 
         // now create collapsing sections
         var c :CollapsingContainer = new CollapsingContainer(Msgs.EDITING.get("t.item_prefs"));
         c.setContents(_details = new DetailsPanel(_controller));
-        addChild(c);
+        contents.addChild(c);
 
         var hr :HRule = new HRule();
         hr.percentWidth = 100;
-        addChild(hr);
+        contents.addChild(hr);
 
         c = new CollapsingContainer(Msgs.EDITING.get("t.item_action"));
         c.setContents(_action = new ActionPanel(_controller)); 
-        addChild(c);
+        contents.addChild(c);
     }
 
     protected var _deleteButton :Button;

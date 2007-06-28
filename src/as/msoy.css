@@ -347,7 +347,7 @@ Window {
   paddingLeft: 0;
   paddingRight: 0;
   horizontalGap: 0;
-  verticalGap: 0;
+  verticalGap: 1;
 } 
 
 .roomEditPanelContainer { 
@@ -367,6 +367,14 @@ Window {
   verticalGap: 0;
 }
 
+.roomEditContents {  
+  paddingBottom: 5;
+  paddingTop: 5;
+  paddingLeft: 3;
+  paddingRight: 3;
+  verticalGap: 2;
+} 
+
 .roomEditLabelContainer { 
   borderStyle: "none";
   borderThickness: 0;
@@ -384,16 +392,10 @@ Window {
 
 .roomEditCollapsingContainer { 
   borderStyle: "none";
-  borderThickness: 0;
-  borderThicknessLeft: 0;
-  borderThicknessRight: 0;
-  borderThicknessTop: 0;
-  borderThicknessBottom: 0;
-  paddingBottom: 2;
-  paddingTop: 2;
-  paddingLeft: 5;
+  paddingBottom: 3;
+  paddingTop: 0;
+  paddingLeft: 0;
   paddingRight: 5;
-  horizontalGap: 2;
   verticalGap: 2;
 }
 
@@ -452,6 +454,13 @@ Window {
     themeColor: #54a9da;
     fontFamily: "Arial";
     fontSize: 9;
+}
+
+.roomEditTextInput {
+    borderStyle: "inset";
+    backgroundColor: #e9f6fb;
+    backgroundDisabledColor: #eeeeee;
+    themeColor: #54a9da;
 }
 
 .roomEditButtonExpand {
