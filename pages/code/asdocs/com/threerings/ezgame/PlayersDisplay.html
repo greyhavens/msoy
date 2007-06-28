@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="PlayersDisplay,com.threerings.ezgame.PlayersDisplay,_gameCtrl,_playerLabels,TEXTWIDTH_ADD,TEXTHEIGHT_ADD,setGameControl,stateChanged,configureInterface,createHeader,createPlayerLabel,createPlayerIcon,getBackground,getBorderSpacing,getInternalSpacing,displayCurrentTurn" name="keywords">
+<meta content="PlayersDisplay,com.threerings.ezgame.PlayersDisplay,_gameCtrl,_playerLabels,TEXTWIDTH_ADD,TEXTHEIGHT_ADD,setGameControl,stateChanged,configureInterface,createHeader,createPlayerLabel,createPlayerIcon,drawBorder,getBackground,getBorderSpacing,getInternalSpacing,displayCurrentTurn" name="keywords">
 <title>com.threerings.ezgame.PlayersDisplay</title>
 </head>
 <body>
@@ -45,14 +45,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 <p></p>
- A sample component that displays the players of a game.
- If the game has a turn holder, the current turn holder will be highlighted.
-  This class demonstrates that the 'Game' interface may be implemented
- by any DisplayObject that want access to the GameObject, not just the
- actual DisplayObject that is displaying the game. Here, all we are
- interested in is the names of the players and the current turn holder.
-  You may use this, with any modifications you desire, in your game. Feel
- free to copy/modify or extend this class.
+ A sample component that displays the players of a game.  If the game has a turn holder, the
+ current turn holder will be highlighted.
+  This class demonstrates that the 'Game' interface may be implemented by any DisplayObject that
+ want access to the GameObject, not just the actual DisplayObject that is displaying the
+ game. Here, all we are interested in is the names of the players and the current turn holder.
+  You may use this, with any modifications you desire, in your game. Feel free to copy/modify or
+ extend this class.
  <p></p>
 <br>
 <hr>
@@ -141,8 +140,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#displayCurrentTurn()">displayCurrentTurn</a>():void</div>
 <div class="summaryTableDescription">
-     Re-set the background color for every player label, highlighting
-     only the player who has the turn.</div>
+     Re-set the background color for every player label, highlighting only the player who has the
+     turn.</div>
+</td><td class="summaryTableOwnerCol">PlayersDisplay</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#drawBorder()">drawBorder</a>(maxWidth:int):void</div>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">PlayersDisplay</td>
 </tr>
 <tr class="">
@@ -300,9 +306,23 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected function displayCurrentTurn():void</code><p>
-     Re-set the background color for every player label, highlighting
-     only the player who has the turn.
+     Re-set the background color for every player label, highlighting only the player who has the
+     turn.
      </p></div>
+<a name="drawBorder()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">drawBorder</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function drawBorder(maxWidth:int):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">maxWidth</span>:int</code></td>
+</tr>
+</table>
+</div>
 <a name="getBackground()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>

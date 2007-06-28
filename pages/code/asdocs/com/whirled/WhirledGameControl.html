@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="WhirledGameControl,com.whirled.WhirledGameControl,getAvailableFlow,awardFlow,setChatEnabled" name="keywords">
+<meta content="WhirledGameControl,com.whirled.WhirledGameControl,getAvailableFlow,awardFlow,setChatEnabled,setChatBounds,getHeadShot,getStageBounds,backToWhirled" name="keywords">
 <title>com.whirled.WhirledGameControl</title>
 </head>
 <body>
@@ -138,8 +138,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#WhirledGameControl()">WhirledGameControl</a>(disp:DisplayObject)</div>
-<div class="summaryTableDescription"></div>
+<a class="signatureLink" href="#WhirledGameControl()">WhirledGameControl</a>(disp:DisplayObject, autoReady:Boolean = true)</div>
+<div class="summaryTableDescription">
+     Creates a control and connects to the Whirled game system.</div>
 </td><td class="summaryTableOwnerCol">WhirledGameControl</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -163,6 +164,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#awardFlow()">awardFlow</a>(amount:int):void</div>
 <div class="summaryTableDescription">
      Award flow to this occupant.</div>
+</td><td class="summaryTableOwnerCol">WhirledGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#backToWhirled()">backToWhirled</a>():void</div>
+<div class="summaryTableDescription">
+     Instructs the game client to return to Whirled.</div>
 </td><td class="summaryTableOwnerCol">WhirledGameControl</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -196,6 +205,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Your own events may not be dispatched here.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/BaseControl.html">BaseControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#doBatch()">doBatch</a>(fn:Function):void</div>
+<div class="summaryTableDescription">
+     Execute the specified function as a batch of commands that will be sent to the server
+     together.</div>
+</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -262,6 +280,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Requests a set of random letters from the dictionary service.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getHeadShot()">getHeadShot</a>(occupant:int, callback:Function):void</div>
+<div class="summaryTableDescription">
+     Return the headshot image for the given occupant in the form of a Sprite object.</div>
+</td><td class="summaryTableOwnerCol">WhirledGameControl</td>
+</tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
@@ -289,10 +315,26 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#getPropertyNames()">getPropertyNames</a>(prefix:String = ""):Array</div>
+<div class="summaryTableDescription">
+     Get the names of all currently-set properties that begin with the specified prefix.</div>
+</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#getRound()">getRound</a>():int</div>
 <div class="summaryTableDescription">
      Returns the current round number.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getStageBounds()">getStageBounds</a>():Rectangle</div>
+<div class="summaryTableDescription">
+     Returns the bounds of the "stage" on which the game will be drawn.</div>
+</td><td class="summaryTableOwnerCol">WhirledGameControl</td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -349,6 +391,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#playerReady()">playerReady</a>():void</div>
+<div class="summaryTableDescription">
+     If the game was not configured to auto-start, all clients must call this function to let the
+     server know that they are ready, at which point the game will be started.</div>
+</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#registerListener()">registerListener</a>(obj:Object):void</div>
 <div class="summaryTableDescription">
      Register an object to receive whatever events it should receive, based on which event
@@ -385,6 +436,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Set a property that will be distributed.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setChatBounds()">setChatBounds</a>(bounds:Rectangle):void</div>
+<div class="summaryTableDescription">
+     Relocates the chat overlay to the specified region.</div>
+</td><td class="summaryTableOwnerCol">WhirledGameControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -599,6 +658,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableDescription summaryTableCol">
  Dispatched when the turn changes in a turn-based game.</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
 </tr>
+<tr class="hideInheritedEvent">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#event:UserChat">UserChat</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when a user chats.</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</tr>
 </table>
 </div>
 <script type="text/javascript" language="javascript">
@@ -615,12 +682,29 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function WhirledGameControl(disp:DisplayObject)</code><span class="label">Parameters</span>
+<code>public function WhirledGameControl(disp:DisplayObject, autoReady:Boolean = true)</code><p>
+     Creates a control and connects to the Whirled game system.
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">disp</span>:DisplayObject</code></td>
+<td width="20px"></td><td><code><span class="label">disp</span>:DisplayObject</code> &mdash; the display object that is the game's UI.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">autoReady</span>:Boolean</code> (default = <code>true</code>)<code></code> &mdash; if true, the game will automatically be started when initialization is
+     complete, if false, the game will not start until all clients call playerReady().
+          </td>
 </tr>
 </table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../threerings/ezgame/EZGameControl.html#playerReady()" target="">com.threerings.ezgame.EZGameControl.playerReady()</a>
+</div>
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
@@ -632,15 +716,30 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function awardFlow(amount:int):void</code><p>
-     Award flow to this occupant. See getAvailableFlow(). NOTE: awards must be completed before
-     the game is ended.
-     </p><span class="label">Parameters</span>
+     Award flow to this occupant.
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">amount</span>:int</code></td>
 </tr>
 </table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../whirled/WhirledGameControl.html#getAvailableFlow()" target="">getAvailableFlow()</a>
 </div>
+</div>
+<a name="backToWhirled()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">backToWhirled</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function backToWhirled():void</code><p>
+     Instructs the game client to return to Whirled.
+     </p></div>
 <a name="getAvailableFlow()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -658,6 +757,70 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="getHeadShot()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getHeadShot</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getHeadShot(occupant:int, callback:Function):void</code><p>
+     Return the headshot image for the given occupant in the form of a Sprite object.
+          The sprite are cached in the client backend so the user should not worry too much
+     about multiple requests for the same occupant.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">occupant</span>:int</code> &mdash; signature: function (sprite :Sprite, success :Boolean) :void
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">callback</span>:Function</code></td>
+</tr>
+</table>
+</div>
+<a name="getStageBounds()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getStageBounds</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getStageBounds():Rectangle</code><p>
+     Returns the bounds of the "stage" on which the game will be drawn. This is mainly useful for
+     the width and height so that the game can know how much area it has to cover, however the x
+     and y coordinates will also indicate the offset from the upper left of the stage of the view
+     rectangle that contains the game.
+          TODO: the chat channel panel can be opened and closed during a game, so we need to dispatch
+     an event to let the game know in case it wants to do something special to handle that.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Rectangle</code></td>
+</tr>
+</table>
+</div>
+<a name="setChatBounds()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setChatBounds</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setChatBounds(bounds:Rectangle):void</code><p>
+     Relocates the chat overlay to the specified region. By default the overlay covers the entire
+     width of the display and the bottom 150 pixels or so.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">bounds</span>:Rectangle</code></td>
 </tr>
 </table>
 </div>
