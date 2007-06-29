@@ -34,7 +34,6 @@ public class GameMemberInfo extends MemberInfo
     {
         super.readObject(ins);
         _headShot = (ins.readObject() as MediaDesc);
-        _humanity = ins.readFloat();
     }
 
     // from interface Streamable
@@ -42,13 +41,9 @@ public class GameMemberInfo extends MemberInfo
     {
         super.writeObject(out);
         out.writeObject(_headShot);
-        out.writeFloat(_humanity);
     }
 
     /** The media of the user's headshot (part of their avatar). */
     protected var _headShot :MediaDesc;
-
-    /** This member's humanity rating from 0 to 1. */
-    protected var _humanity :Number;
 }
 }

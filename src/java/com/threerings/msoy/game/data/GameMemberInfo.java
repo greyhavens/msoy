@@ -25,9 +25,7 @@ public class GameMemberInfo extends MemberInfo
     public GameMemberInfo (MemberObject user)
     {
         super(user);
-
         _headShot = user.getHeadShotMedia();
-        _humanity = user.getHumanity();
     }
 
     // from interface WhirledOccupantInfo
@@ -36,16 +34,6 @@ public class GameMemberInfo extends MemberInfo
         return _headShot.getMediaPath();
     }
 
-    // from interface WhirledOccupantInfo
-    public int getAdjustedFlowPerMinute (int flowPerMinute)
-    {
-        // scale available flow linearly with humanity
-        return Math.round(flowPerMinute * _humanity);
-    }
-
     /** The media of the user's headshot (part of their avatar). */
     protected MediaDesc _headShot;
-
-    /** This member's humanity rating from 0 to 1. */
-    protected float _humanity;
 }
