@@ -507,7 +507,6 @@ public class RoomController extends SceneController
 
             var avItems :Array = [];
             var avatars :Array = (us.avatarCache != null) ? us.avatarCache.toArray() : [];
-            ArrayUtil.removeFirst(avatars, us.avatar); // remove currently-worn
             ArrayUtil.sort(avatars);
             // TODO: showing the thumbnails at half-thumbnail size is currently broken due
             // to layout bugs in ScrollableMenu when there are icons and scrollbars are needed.
@@ -517,13 +516,13 @@ public class RoomController extends SceneController
 //            var iconH :Number = 20; //*/ MediaDesc.DIMENSIONS[1];
             for (var ii :int = 0; ii < Math.min(avatars.length, 5); ii++) {
                 var av :Avatar = avatars[ii] as Avatar;
-                avItems.push({ label: av.name,
+                avItems.push({ label: av.name, enabled: !av.equals(us.avatar),
                     // TODO
                     // iconObject: MediaWrapper.createScaled(av.getThumbnailMedia(), iconW, iconH),
                     callback: _mctx.getWorldDirector().setAvatar, arg: av.itemId });
             }
             // add defaults
-            avItems.push({ label: Msgs.ITEM.get("m.default"),
+            avItems.push({ label: Msgs.ITEM.get("m.default"), enabled: (us.avatar != null),
                 // TODO
                 // iconObject: MediaWrapper.createScaled(
                 //    Avatar.getDefaultMemberAvatarMedia(), iconW, iconH),
