@@ -95,6 +95,10 @@ a:visited {
   background: #E9F6FB;
 }
 
+.gwt-FileUpload {
+  background: #E9F6FB;
+}
+
 /** Header styles. */
 .msoyHeader {
   color: #EAEFF1;
