@@ -21,6 +21,14 @@ public class GameMemberInfo extends MemberInfo
         // only used for unserialization
     }
 
+    /**
+     * Returns the headshot URL of this member's avatar.
+     */
+    public function getHeadshotURL () :String
+    {
+        return _headShot.getMediaPath();
+    }
+
     // documentation inherited
     override public function readObject (ins :ObjectInputStream) :void
     {
@@ -38,9 +46,9 @@ public class GameMemberInfo extends MemberInfo
     }
 
     /** The media of the user's headshot (part of their avatar). */
-    protected var headShot :MediaDesc;
+    protected var _headShot :MediaDesc;
 
     /** This member's humanity rating from 0 to 1. */
-    protected var _humanity :float;
+    protected var _humanity :Number;
 }
 }

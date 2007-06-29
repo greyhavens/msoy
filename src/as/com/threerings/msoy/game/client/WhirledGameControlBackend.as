@@ -49,7 +49,7 @@ public class WhirledGameControlBackend extends GameControlBackend
         if (info != null) {
             var headshot :Headshot = _headshots[occupant];
             if (headshot == null) {
-                _headshots[occupant] = headshot = new Headshot(info.headShot.getMediaPath());
+                _headshots[occupant] = headshot = new Headshot(info.getHeadshotURL());
             }
             headshot.newRequest(callback);
             return;
