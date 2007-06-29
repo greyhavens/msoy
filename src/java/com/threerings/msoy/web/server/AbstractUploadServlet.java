@@ -102,6 +102,10 @@ public abstract class AbstractUploadServlet extends HttpServlet
         // start and computes the SHA hash on the way
         ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory(
             DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD, ServerConfig.mediaDir));
+        
+        // enforce maximum sizes for the client supplied content size and the temporary file
+        upload.setSizeMax(getMaxUploadSize());
+        upload.setFileSizeMax(getMaxUploadSize());
 
         for (Object obj : upload.parseRequest(req)) {
             FileItem item = (FileItem)obj;
@@ -126,10 +130,6 @@ public abstract class AbstractUploadServlet extends HttpServlet
         int length = req.getContentLength();
         if (length <= 0) {
             throw new FileUploadException("Invalid content length set. [length=" + length + "].");
-        }
-        if (length > getMaxUploadSize()) {
-            throw new ServletFileUpload.SizeLimitExceededException(
-                "Uploaded file size is too large.", length, getMaxUploadSize());
         }
         return length;
     }
