@@ -472,8 +472,7 @@ public class ProjectRoomManager extends PlaceManager
      */
     public void insertUploadFile (UploadFile uploadFile, ResultListener<Void> listener)
     {
-        // TODO: getName() lowercases the filename on Linux+FF. Also, supposedly 
-        // Opera adds the full path when setting that field so we might need to 
+        // TODO: Supposedly Opera adds the full path when setting that field so we might need to 
         // sanitize this value
         String fileName = uploadFile.item.getName();
 
