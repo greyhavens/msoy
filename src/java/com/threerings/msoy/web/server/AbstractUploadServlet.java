@@ -48,7 +48,8 @@ public abstract class AbstractUploadServlet extends HttpServlet
             handleUploadFile(new UploadFile(item), length, rsp);
 
         } catch (ServletFileUpload.SizeLimitExceededException slee) {
-            log.info("File upload too big: " + slee + ".");
+            log.info(slee.getMessage() + " [size=" + slee.getActualSize() + " allowed=" +
+                slee.getPermittedSize() + "].");
             uploadTooLarge(rsp);
             return;
 
@@ -102,9 +103,6 @@ public abstract class AbstractUploadServlet extends HttpServlet
         ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory(
             DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD, ServerConfig.mediaDir));
 
-        // set the maximum allowed size. this will throw an exception inside of parseRequest
-        upload.setSizeMax(getMaxUploadSize());
-
         for (Object obj : upload.parseRequest(req)) {
             FileItem item = (FileItem)obj;
             if (item.isFormField()) {
@@ -128,6 +126,10 @@ public abstract class AbstractUploadServlet extends HttpServlet
         int length = req.getContentLength();
         if (length <= 0) {
             throw new FileUploadException("Invalid content length set. [length=" + length + "].");
+        }
+        if (length > getMaxUploadSize()) {
+            throw new ServletFileUpload.SizeLimitExceededException(
+                "Uploaded file size is too large.", length, getMaxUploadSize());
         }
         return length;
     }
