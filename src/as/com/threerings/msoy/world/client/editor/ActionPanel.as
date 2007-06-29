@@ -102,7 +102,6 @@ public class ActionPanel extends BasePanel
         _readOnlyActionLabel = new TextInput();
         _readOnlyActionLabel.editable = false;
         _readOnlyActionLabel.enabled = false;
-        _readOnlyActionLabel.styleName = "roomEditTextInput";
         // hide this one initially
         _readOnlyActionLabel.visible = _readOnlyActionLabel.includeInLayout = false;
         
@@ -125,7 +124,6 @@ public class ActionPanel extends BasePanel
 
         // this label is for support+
         _debug = new TextInput();
-        _debug.styleName = "roomEditTextInput";
         _debug.editable = false;
         _debug.enabled = false;
         if (playerIsSupportPlus) {
@@ -200,7 +198,6 @@ public class ActionPanel extends BasePanel
         GridUtil.addRow(grid, Msgs.EDITING.get("l.url"));
         GridUtil.addRow(grid, _url = new TextInput());
 
-        _url.styleName = "roomEditTextInput";
         _url.addEventListener(TextEvent.TEXT_INPUT, changedHandler);
         _url.addEventListener(FlexEvent.ENTER, applyHandler);
 
@@ -224,7 +221,6 @@ public class ActionPanel extends BasePanel
         GridUtil.addRow(grid, Msgs.EDITING.get("l.help_tab"));
         GridUtil.addRow(grid, _helpTabAction = new TextInput());
 
-        _helpTabAction.styleName = "roomEditTextInput";
         _helpTabAction.addEventListener(TextEvent.TEXT_INPUT, changedHandler);
         _helpTabAction.addEventListener(FlexEvent.ENTER, applyHandler);
 
@@ -248,7 +244,6 @@ public class ActionPanel extends BasePanel
 
         _door = new TextInput();
         _door.editable = false;
-        _door.styleName = "roomEditTextInput";
         
         var setportal :CommandButton = new CommandButton();
         setportal.label = Msgs.EDITING.get("b.set_portal");

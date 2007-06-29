@@ -48,7 +48,6 @@ public class RoomPanel extends BasePanel
         super.createChildren();
 
         addChild(_name = new TextInput());
-        _name.styleName = "roomEditTextInput";
         _name.percentWidth = 100;
     }
 

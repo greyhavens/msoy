@@ -119,6 +119,8 @@ Accordion {
 TextInput {
   backgroundAlpha: 1;
   color: #000000;
+  backgroundColor: #e9f6fb;
+  backgroundDisabledColor: #eeeeee;
   borderStyle: inset;
   borderColor: #d5dcdf;
   borderThickness: 2;
@@ -499,13 +501,6 @@ Window {
     themeColor: #54a9da;
     fontSize: 11;
     fontWeight: "bold";
-}
-
-.roomEditTextInput {
-    borderStyle: "inset";
-    backgroundColor: #e9f6fb;
-    backgroundDisabledColor: #eeeeee;
-    themeColor: #54a9da;
 }
 
 .roomEditButtonExpand {
