@@ -7,14 +7,14 @@ import com.threerings.presents.dobj.DSet;
 
 import com.threerings.ezgame.data.EZGameObject;
 
+import com.whirled.data.WhirledGame;
 import com.whirled.data.WhirledGameMarshaller;
-import com.whirled.data.WhirledGameObject;
 
 /**
  * Maintains additional state for MSOY games.
  */
 public class MsoyGameObject extends EZGameObject
-    implements WhirledGameObject
+    implements WhirledGame
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>flowPerMinute</code> field. */

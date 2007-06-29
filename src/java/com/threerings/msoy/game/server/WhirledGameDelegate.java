@@ -19,8 +19,8 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.game.server.GameManagerDelegate;
 
+import com.whirled.data.WhirledGame;
 import com.whirled.data.WhirledGameMarshaller;
-import com.whirled.data.WhirledGameObject;
 import com.whirled.server.WhirledGameDispatcher;
 import com.whirled.server.WhirledGameProvider;
 
@@ -60,10 +60,10 @@ public class WhirledGameDelegate extends GameManagerDelegate
         super.didStartup(plobj);
 
         // wire up our WhirledGameService
-        if (plobj instanceof WhirledGameObject) {
-            _whobj = (WhirledGameObject)plobj;
+        if (plobj instanceof WhirledGame) {
+            _wgame = (WhirledGame)plobj;
             _invmarsh = MsoyServer.invmgr.registerDispatcher(new WhirledGameDispatcher(this));
-            _whobj.setWhirledGameService((WhirledGameMarshaller)_invmarsh);
+            _wgame.setWhirledGameService((WhirledGameMarshaller)_invmarsh);
         }
 
         // then load up our anti-abuse factor
@@ -171,14 +171,14 @@ public class WhirledGameDelegate extends GameManagerDelegate
     protected void setFlowPerMinute (int flowPerMinute)
     {
         tracker.init(flowPerMinute, UserAction.PLAYED_GAME, String.valueOf(getGameId()));
-        if (_whobj != null) {
-            _whobj.setFlowPerMinute(flowPerMinute);
+        if (_wgame != null) {
+            _wgame.setFlowPerMinute(flowPerMinute);
         }
     }
 
     /** A reference to our game object, casted appropriately or null if the game does not implement
-     * {@link WhirledGameObject}. */
-    protected WhirledGameObject _whobj;
+     * {@link WhirledGame}. */
+    protected WhirledGame _wgame;
 
     /** Keep our invocation service registration so that we can unload it at shutdown. */
     protected InvocationMarshaller _invmarsh;
