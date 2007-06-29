@@ -91,7 +91,7 @@ public class MailApplication extends DockPanel
         _currentFolder = folderId;
         _currentOffset = headerOffset;
         _currentMessage = messageId;
-        updateHistory();
+
         if (messageId >= 0) {
             // loadMessage will call loadFolders() and loadHeaders()
             loadMessage(true);
