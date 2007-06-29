@@ -19,14 +19,14 @@
 }
 
 .projectEdit .LabelLink {
-    cursor: pointer;
-    text-decoration: underline;
-    color: blue;
+  cursor: pointer;
+  text-decoration: underline;
+  color: blue;
 }
 
 .projectEdit .MenuTitle {
-    font-weight: bold;
-    background-color: transparent;
+  font-weight: bold;
+  background-color: transparent;
 }
 
 .projectSelectionPanel {

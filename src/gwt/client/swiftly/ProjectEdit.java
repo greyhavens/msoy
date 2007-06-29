@@ -90,7 +90,6 @@ public class ProjectEdit extends BorderedDialog
         // Add collaborators button if project owner
         if (_amOwner) {
             _collabMenuPanel = new PopupPanel(true);
-            _collabMenuPanel.setStyleName("projectEdit");
             // MenuBar(true) creates a vertical menu
             _collabMenu = new MenuBar(true);
             _collabMenuPanel.add(_collabMenu);
