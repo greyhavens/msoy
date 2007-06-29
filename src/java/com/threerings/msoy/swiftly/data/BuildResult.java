@@ -61,7 +61,7 @@ public class BuildResult
     }
 
     /** All compiler output. */
-    private List<CompilerOutput> _output;
+    protected List<CompilerOutput> _output;
     
     /** Did the build succeed. */
     protected boolean _buildSuccess = true;

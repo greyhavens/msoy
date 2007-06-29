@@ -117,6 +117,6 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
         }
     }
 
-    /** Restrict all Swiftly file uploads to 10 megabytes. */
-    protected static final int UPLOAD_MAX_SIZE = 10 * MEGABYTE;
+    /** Restrict all Swiftly file uploads to 4 megabytes. */
+    protected static final int UPLOAD_MAX_SIZE = 4 * MEGABYTE;
 }
