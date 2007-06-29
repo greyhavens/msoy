@@ -21,7 +21,6 @@ public class EditorToolBar extends JToolBar
         // TODO tooltips with keyboard shortcuts
         add(createButton(_ctrl.buildAction, BUILD_ICON));
         add(createButton(_editor.getPreviewAction(), PREVIEW_ICON));
-        add(createButton(_editor.getExportAction(), EXPORT_ICON));
         add(createButton(_editor.createShowConsoleAction(), CONSOLE_ICON));
 
         setFloatable(false);
@@ -42,7 +41,6 @@ public class EditorToolBar extends JToolBar
     /** The location of various icons */
     protected static final String BUILD_ICON = "/rsrc/icons/swiftly/build.png";
     protected static final String PREVIEW_ICON = "/rsrc/icons/swiftly/preview.png";
-    protected static final String EXPORT_ICON = "/rsrc/icons/swiftly/export.png";
     protected static final String CONSOLE_ICON = "/rsrc/icons/swiftly/console.png";
 
     protected ProjectRoomController _ctrl;

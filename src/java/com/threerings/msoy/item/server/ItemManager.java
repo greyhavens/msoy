@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.server;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -20,7 +19,6 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntListUtil;
-import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ObserverList;
 import com.samskivert.util.Predicate;
 import com.samskivert.util.ResultListener;

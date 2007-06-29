@@ -17,12 +17,6 @@ import com.threerings.presents.server.InvocationProvider;
 public interface ProjectRoomProvider extends InvocationProvider
 {
     /**
-     * Handles a {@link ProjectRoomService#abortFileUpload} request.
-     */
-    public void abortFileUpload (ClientObject caller, InvocationService.ConfirmListener arg1)
-        throws InvocationException;
-
-    /**
      * Handles a {@link ProjectRoomService#addDocument} request.
      */
     public void addDocument (ClientObject caller, String arg1, PathElement arg2, String arg3, InvocationService.InvocationListener arg4)
@@ -59,12 +53,6 @@ public interface ProjectRoomProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link ProjectRoomService#finishFileUpload} request.
-     */
-    public void finishFileUpload (ClientObject caller, InvocationService.ConfirmListener arg1)
-        throws InvocationException;
-
-    /**
      * Handles a {@link ProjectRoomService#loadDocument} request.
      */
     public void loadDocument (ClientObject caller, PathElement arg1, InvocationService.ConfirmListener arg2)
@@ -74,12 +62,6 @@ public interface ProjectRoomProvider extends InvocationProvider
      * Handles a {@link ProjectRoomService#renamePathElement} request.
      */
     public void renamePathElement (ClientObject caller, int arg1, String arg2, InvocationService.ConfirmListener arg3)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link ProjectRoomService#startFileUpload} request.
-     */
-    public void startFileUpload (ClientObject caller, String arg1, PathElement arg2, InvocationService.ConfirmListener arg3)
         throws InvocationException;
 
     /**
@@ -93,9 +75,4 @@ public interface ProjectRoomProvider extends InvocationProvider
      */
     public void updatePathElement (ClientObject caller, PathElement arg1, InvocationService.InvocationListener arg2)
         throws InvocationException;
-
-    /**
-     * Handles a {@link ProjectRoomService#uploadFile} request.
-     */
-    public void uploadFile (ClientObject caller, byte[] arg1);
 }

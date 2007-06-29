@@ -57,8 +57,6 @@ import com.threerings.msoy.swiftly.data.SwiftlyImageDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
-import com.threerings.msoy.swiftly.client.signed.ResultExporter;
-
 import static com.threerings.msoy.Log.log;
 
 public class SwiftlyEditor extends PlacePanel
@@ -274,22 +272,6 @@ public class SwiftlyEditor extends PlacePanel
         return _previewAction;
     }
 
-    public Action getExportAction ()
-    {
-        if (_exportAction == null) {
-            _exportAction = new AbstractAction(_msgs.get("m.action.export")) {
-                public void actionPerformed (ActionEvent e) {
-                    ResultExporter exporter = new ResultExporter(
-                        _roomObj.result.getBuildResultURL(), _roomObj.project.getOutputFileName(),
-                        _ctx);
-                    exporter.exportResult();
-                }
-            };
-            _exportAction.setEnabled(false);
-        }
-        return _exportAction;
-    }
-
     public Action createShowConsoleAction ()
     {
         return new AbstractAction(_msgs.get("m.action.show_console")) {
@@ -397,7 +379,6 @@ public class SwiftlyEditor extends PlacePanel
             boolean haveResult = _roomObj.result.buildSuccessful() &&
                 (_roomObj.result.getBuildResultURL() != null);
             _previewAction.setEnabled(haveResult);
-            _exportAction.setEnabled(haveResult);
 
         } else if (event.getName().equals(ProjectRoomObject.BUILDING)) {
             _ctrl.buildAction.setEnabled(!_roomObj.building);
@@ -509,7 +490,7 @@ public class SwiftlyEditor extends PlacePanel
     protected Console _console;
     protected EditorToolBar _toolbar;
     protected ProjectPanel _projectPanel;
-    protected Action _previewAction, _exportAction;
+    protected Action _previewAction;
 
     protected String _avatarViewerPath;
 }

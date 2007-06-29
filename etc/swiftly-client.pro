@@ -30,7 +30,6 @@
 
 -dontskipnonpubliclibraryclasses
 -dontobfuscate
--outjars ../dist/swiftly-client-signed.jar(**/msoy/swiftly/client/signed/**)
 -outjars ../dist/swiftly-client.jar
 
 -keep class * extends javax.swing.plaf.ComponentUI {

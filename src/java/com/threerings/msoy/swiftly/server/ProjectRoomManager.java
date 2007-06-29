@@ -4,8 +4,6 @@
 package com.threerings.msoy.swiftly.server;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +13,6 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SerialExecutor;
-import com.samskivert.util.HashIntMap;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
@@ -77,8 +74,6 @@ public class ProjectRoomManager extends PlaceManager
         // Setup the builder.
         _builder = new LocalProjectBuilder(
             project, _storage, flexSdk.getAbsoluteFile(), whirledSdk.getAbsoluteFile());
-
-        _currentUploads = new HashIntMap<SwiftlyUploadFile>();
 
         // Load the project tree from the storage provider
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("loadProject") {
@@ -345,127 +340,6 @@ public class ProjectRoomManager extends PlaceManager
         });
     }
 
-    // from interface ProjectRoomProvider
-    public void startFileUpload (final ClientObject caller, final String fileName,
-                                 final PathElement parent, final ConfirmListener listener)
-        throws InvocationException
-    {
-        // check that the caller has the correct permissions to perform this action
-        checkPermissions(caller);
-
-        // attempt to find the path element in the dobj
-        final PathElement element = _roomObj.findPathElement(fileName, parent);
-
-        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("startFileUpload") {
-            public boolean invoke () {
-                try {
-                    // if we're updating an existing document, handle that
-                    if ((element != null)) {
-                        SwiftlyDocument doc = _roomObj.getDocument(element);
-                        // if the document is not yet resolved we must do so now
-                        if (doc == null) {
-                            doc = _storage.getDocument(element);
-                        }
-                        _uploadFile = new SwiftlyUploadFile(fileName, parent, doc);
-                    } else {
-                        _uploadFile = new SwiftlyUploadFile(fileName, parent);
-                    }
-                } catch (Exception e) {
-                    _error = e;
-                }
-                return true;
-            }
-
-            public void handleResult () {
-                if (_error == null) {
-                    _currentUploads.put(caller.getOid(), _uploadFile);
-                    listener.requestProcessed();
-                } else {
-                    log.log(Level.WARNING, "Start upload failed [file=" + fileName + "].", _error);
-                    listener.requestFailed("e.start_upload_failed");
-                }
-            }
-
-            protected SwiftlyUploadFile _uploadFile;
-            protected Exception _error;
-        });
-    }
-
-    // from interface ProjectRoomProvider
-    public void uploadFile (ClientObject caller, final byte[] data)
-    {
-        final SwiftlyUploadFile swiftlyUploadFile = _currentUploads.get(caller.getOid());
-        if (swiftlyUploadFile == null) {
-            return; // no way to report failure here so we lump it
-        }
-
-        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("uploadFile") {
-            public boolean invoke () {
-                swiftlyUploadFile.appendData(data);
-                return true;
-            }
-        });
-    }
-
-    // from interface ProjectRoomProvider
-    public void finishFileUpload (ClientObject caller, ConfirmListener listener)
-        throws InvocationException
-    {
-        // check that the caller has the correct permissions to perform this action
-        checkPermissions(caller);
-
-        SwiftlyUploadFile swiftlyUploadFile = _currentUploads.get(caller.getOid());
-        if (swiftlyUploadFile == null) {
-            throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
-        }
-
-        // run this task on the serial executor as the svn actions can take a while
-        MsoyServer.swiftlyMan.svnExecutor.addTask(
-            new FinishFileUploadTask(swiftlyUploadFile, caller, listener));
-    }
-
-    // from interface ProjectRoomProvider
-    public void abortFileUpload (final ClientObject caller, final ConfirmListener listener)
-        throws InvocationException
-    {
-        // check that the caller has the correct permissions to perform this action
-        checkPermissions(caller);
-
-        final SwiftlyUploadFile swiftlyUploadFile = _currentUploads.get(caller.getOid());
-        if (swiftlyUploadFile == null) {
-            throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
-        }
-
-        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("abortFileUpload") {
-            public boolean invoke () {
-                try {
-                    // cleanup the upload file
-                    swiftlyUploadFile.abortUpload();
-
-                } catch (Exception error) {
-                    // we'll report this on resultReceived()
-                    _error = error;
-                }
-                return true;
-            }
-
-            public void handleResult () {
-                // the upload was aborted, so remove it from the list
-                _currentUploads.remove(caller.getOid());
-
-                if (_error == null) {
-                    listener.requestProcessed();
-                } else {
-                    log.log(Level.WARNING,
-                        "Aborting upload failed [file=" + swiftlyUploadFile + "].", _error);
-                    listener.requestFailed("e.abort_upload_failed");
-                }
-            }
-
-            protected Exception _error;
-        });
-    }
-    
     /**
      * Used by the SwiftlyUploadServlet to transfer the upload file data into the room. Permission
      * to perform this action should be checked by the caller.
@@ -775,92 +649,6 @@ public class ProjectRoomManager extends PlaceManager
         protected BuildResult _result;
     }
 
-    /** Handles a request to finalize an uploaded file. */
-    protected class FinishFileUploadTask implements SerialExecutor.ExecutorTask
-    {
-        public FinishFileUploadTask (SwiftlyUploadFile swiftlyUploadFile, ClientObject caller,
-                                     ConfirmListener listener)
-        {
-            _uploadFile = swiftlyUploadFile;
-            _caller = caller;
-            _listener = listener;
-        }
-
-        public boolean merge (SerialExecutor.ExecutorTask other)
-        {
-            return false;
-        }
-
-        public long getTimeout ()
-        {
-            return 60 * 1000L; // 60 seconds is all you get kid
-        }
-
-        // this is called on the executor thread and can go hog wild with the blocking
-        public void executeTask ()
-        {
-            try {
-                // finalize the upload
-                _doc = _uploadFile.finishUpload();
-
-                // save the document to the repository
-                _storage.putDocument(_doc, "Automatic Swiftly Commit");
-                _doc.commit();
-            } catch (Throwable error) {
-                // we'll report this on resultReceived()
-                _error = error;
-            }
-        }
-
-        // this is called back on the dobj thread and must only report results
-        public void resultReceived ()
-        {
-            // if we failed, stop here
-            if (_error != null) {
-                if (_error instanceof CannotDetermineMimeTypeException) {
-                    // let's see what people were trying to upload for now
-                    log.warning("Unable to determine mime type." + _error);
-                    _listener.requestFailed("e.mimetype_not_found");
-                } else {
-                    log.log(Level.WARNING, "Finish upload failed.", _error);
-                    _listener.requestFailed("e.finish_upload_failed");
-                }
-                return;
-            }
-
-            // otherwise add or update our path element and document
-            PathElement element = _doc.getPathElement();
-            if (element.elementId == 0) {
-                _roomObj.addPathElement(element);
-            } else {
-                _roomObj.updatePathElements(element);
-            }
-            if (_doc.documentId == 0) {
-                _roomObj.addSwiftlyDocument(_doc);
-            } else {
-                _roomObj.updateDocuments(_doc);
-            }
-
-            // the upload worked, so remove it from the list
-            _currentUploads.remove(_caller.getOid());
-
-            // and let the caller know we finally made it
-            _listener.requestProcessed();
-        }
-
-        // this is called back on the dobj thread and must only report failure
-        public void timedOut ()
-        {
-            _listener.requestFailed("e.file_upload_timed_out");
-        }
-
-        protected SwiftlyUploadFile _uploadFile;
-        protected ClientObject _caller;
-        protected ConfirmListener _listener;
-        protected Throwable _error;
-        protected SwiftlyDocument _doc;
-    }
-    
     /** Handles inserting the upload file data into svn and the room object. */
     protected class InsertFileUploadTask implements SerialExecutor.ExecutorTask
     {
@@ -967,121 +755,6 @@ public class ProjectRoomManager extends PlaceManager
         protected Exception _error;
     }
 
-    /** Handles tracking a file upload for a user. */
-    protected static class SwiftlyUploadFile
-    {
-        public SwiftlyUploadFile (String fileName, PathElement parent)
-            throws IOException
-        {
-            this(fileName, parent, null);
-        }
-
-        public SwiftlyUploadFile (String fileName, PathElement parent, SwiftlyDocument doc)
-            throws IOException
-        {
-            _fileName = fileName;
-            _parent = parent;
-            _doc = doc;
-
-            // setup the temp file
-            _tempFile = File.createTempFile("swiftlyupload", ".uploadfile");
-            _tempFile.deleteOnExit();
-            _fileOutput = new FileOutputStream(_tempFile);
-        }
-
-        public void appendData (byte[] data)
-        {
-            // if we have already encountered an IOException, don't try to append any more data
-            if (_error != null) {
-                return;
-            }
-
-            try {
-                _fileOutput.write(data);
-            } catch (IOException ioe) {
-                _error = ioe;
-                log.warning("Append upload data failed [file=" +  _fileName +
-                            ", error=" + ioe + "].");
-            }
-        }
-
-        public SwiftlyDocument finishUpload()
-            throws IOException, CannotDetermineMimeTypeException
-        {
-            try {
-                // close the FileOutputStream
-                _fileOutput.close();
-
-                // if we encountered an error during appendData, throw that now
-                if (_error != null) {
-                    throw _error;
-                }
-
-                // determine the mime type of the uploaded file
-                SwiftlyMimeTypeIdentifier identifier = new SwiftlyMimeTypeIdentifier();
-                String mimeType = identifier.determineMimeType(_fileName, _tempFile);
-
-                // if we were unable to determine the mimetype, throw an exception
-                if (mimeType == null) {
-                    throw new CannotDetermineMimeTypeException("File name: " + _fileName);
-                }
-
-                // if we already have an existing file, update it
-                if (_doc != null) {
-                    _doc.getPathElement().setMimeType(mimeType);
-                    _doc.setData(new FileInputStream(_tempFile), ProjectStorage.TEXT_ENCODING);
-                    return _doc;
-
-                } else {
-                    // create the new PathElement
-                    PathElement element = PathElement.createFile(_fileName, _parent, mimeType);
-
-                    // create the new, blank SwiftlyDocument
-                    SwiftlyDocument doc = SwiftlyDocument.createFromPathElement(element,
-                        ProjectStorage.TEXT_ENCODING);
-                    // insert the uploaded file data into the new document
-                    doc.setData(new FileInputStream(_tempFile), ProjectStorage.TEXT_ENCODING);
-                    return doc;
-                }
-
-            } finally {
-                // remove the temp file no matter what
-                _tempFile.delete();
-            }
-        }
-
-        public void abortUpload()
-            throws IOException
-        {
-            try {
-                // close the FileOutputStream
-                _fileOutput.close();
-
-            } finally {
-                // remove the temp file no matter what
-                _tempFile.delete();
-            }
-        }
-
-        protected String _fileName;
-        protected PathElement _parent;
-        protected SwiftlyDocument _doc;
-        protected File _tempFile;
-        protected FileOutputStream _fileOutput;
-
-        /** flag to track if the upload failed at any point */
-        protected IOException _error;
-    }
-
-    /** An exception for when the mime type cannot be determined for a file. */
-    protected static class CannotDetermineMimeTypeException extends Exception
-    {
-        public CannotDetermineMimeTypeException (String message)
-        {
-            super(message);
-        }
-    }
-
     protected ProjectRoomObject _roomObj;
     protected ArrayIntSet _collaborators;
     protected ProjectStorage _storage;
@@ -1096,7 +769,4 @@ public class ProjectRoomManager extends PlaceManager
 
     /** Server-root relative path to the server build directory. */
     protected static final String LOCAL_BUILD_DIRECTORY = "/data/swiftly/build";
-
-    /** A map from the client OID to the current file being uploaded. */
-    protected HashIntMap<SwiftlyUploadFile> _currentUploads;
 }

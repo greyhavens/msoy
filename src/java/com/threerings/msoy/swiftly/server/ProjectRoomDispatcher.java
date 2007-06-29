@@ -39,13 +39,6 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
-        case ProjectRoomMarshaller.ABORT_FILE_UPLOAD:
-            ((ProjectRoomProvider)provider).abortFileUpload(
-                source,
-                (InvocationService.ConfirmListener)args[0]
-            );
-            return;
-
         case ProjectRoomMarshaller.ADD_DOCUMENT:
             ((ProjectRoomProvider)provider).addDocument(
                 source,
@@ -88,13 +81,6 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
             );
             return;
 
-        case ProjectRoomMarshaller.FINISH_FILE_UPLOAD:
-            ((ProjectRoomProvider)provider).finishFileUpload(
-                source,
-                (InvocationService.ConfirmListener)args[0]
-            );
-            return;
-
         case ProjectRoomMarshaller.LOAD_DOCUMENT:
             ((ProjectRoomProvider)provider).loadDocument(
                 source,
@@ -109,13 +95,6 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
             );
             return;
 
-        case ProjectRoomMarshaller.START_FILE_UPLOAD:
-            ((ProjectRoomProvider)provider).startFileUpload(
-                source,
-                (String)args[0], (PathElement)args[1], (InvocationService.ConfirmListener)args[2]
-            );
-            return;
-
         case ProjectRoomMarshaller.UPDATE_DOCUMENT:
             ((ProjectRoomProvider)provider).updateDocument(
                 source,
@@ -127,13 +106,6 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
             ((ProjectRoomProvider)provider).updatePathElement(
                 source,
                 (PathElement)args[0], (InvocationService.InvocationListener)args[1]
-            );
-            return;
-
-        case ProjectRoomMarshaller.UPLOAD_FILE:
-            ((ProjectRoomProvider)provider).uploadFile(
-                source,
-                (byte[])args[0]
             );
             return;
 

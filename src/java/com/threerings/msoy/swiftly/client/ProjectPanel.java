@@ -10,8 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import java.io.File;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -19,7 +17,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -44,14 +41,8 @@ import com.threerings.msoy.swiftly.data.ProjectTreeModel;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
-import com.threerings.msoy.swiftly.client.signed.SignedFileChooser;
-import com.threerings.msoy.swiftly.client.signed.UploadTask;
-
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.client.InvocationService.InvocationListener;
-
-import com.samskivert.swing.util.TaskMaster;
-import com.samskivert.swing.util.TaskObserver;
 
 public class ProjectPanel extends JPanel
     implements TreeSelectionListener, TreeModelListener
@@ -221,53 +212,6 @@ public class ProjectPanel extends JPanel
                         _roomObj.project.projectId + ")"));
                 } catch (MalformedURLException mue) {
                     // we shall not give ourselves a bad URL
-                }
-            }
-        };
-        action.putValue(AbstractAction.SHORT_DESCRIPTION, _msgs.get("m.tooltip.upload_file"));
-        return action;
-    }
-    
-    protected Action createUploadFileActionOLD ()
-    {
-        URL imageURL = getClass().getResource(UPLOAD_FILE_ICON);
-        Action action =
-            new AbstractAction(_msgs.get("m.action.upload_file"), new ImageIcon(imageURL)) {
-            public void actionPerformed (ActionEvent e) {
-                // TODO: implement filters based on supported MediaDesc mime types
-                // FileNameExtensionFilter filter =
-                // new FileNameExtensionFilter("JPG & GIF Images", "jpg", "gif");
-                // chooser.setFileFilter(filter);
-                SignedFileChooser sfc = new SignedFileChooser();
-                sfc.setApproveButtonText(_msgs.get("m.action.upload"));
-                int returnVal = sfc.showOpenDialog(_editor);
-
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    // these operations need to happen in the signed code
-                    final File file = sfc.getSelectedFile();
-                    final long fileLength = sfc.getSelectedFileLength();
-                    final String fileName = sfc.getSelectedFileName();
-
-                    // display an error to the user if the file being uploaded is too large
-                    if (fileLength > MAX_UPLOAD * ONE_MEG) {
-                        _ctx.showErrorMessage(_msgs.get("e.upload_too_large",
-                            String.valueOf(MAX_UPLOAD)));
-                        return;
-                    }
-
-                    // mime type will be determined on the server after the upload
-                    _roomObj.service.startFileUpload(_ctx.getClient(), fileName,
-                        getCurrentParent(), new ConfirmListener () {
-                        public void requestProcessed () {
-                            _uploadFileAction.setEnabled(false);
-                            UploadTask task =
-                                new UploadTask(file, ProjectPanel.this, _roomObj, _ctx);
-                            TaskMaster.invokeTask(UPLOAD_TASK, task, new UploadTaskObserver());
-                        }
-                        public void requestFailed (String reason) {
-                            _ctx.showErrorMessage(_msgs.get(reason));
-                        }
-                    });
                 }
             }
         };
@@ -466,59 +410,6 @@ public class ProjectPanel extends JPanel
             }
         }
     }
-
-    protected class UploadTaskObserver
-        implements TaskObserver, ConfirmListener
-    {
-        // from interface TaskObserver
-        public void taskCompleted(String name, Object result)
-        {
-            _uploadFileAction.setEnabled(true);
-            _result = (String)result;
-            if (_result.equals(UploadTask.SUCCEEDED)) {
-                _roomObj.service.finishFileUpload(_ctx.getClient(), this);
-            } else {
-                _roomObj.service.abortFileUpload(_ctx.getClient(), this);
-            }
-        }
-
-        // from interface TaskObserver
-        public void taskFailed(String name, Throwable exception)
-        {
-            _uploadFileAction.setEnabled(true);
-            // first inform the user that the upload failed
-            _ctx.showErrorMessage(_msgs.get("e.upload_failed"));
-            // no need to inform the user that the upload aborted successfully though
-            _result = null;
-            // cleanup the backend state of the upload
-            _roomObj.service.abortFileUpload(_ctx.getClient(), this);
-        }
-
-        // from interface ConfirmListener
-        public void requestProcessed ()
-        {
-            if (_result != null) {
-                _ctx.showInfoMessage(_msgs.get(_result));
-            }
-        }
-
-        // from interface ConfirmListener
-        public void requestFailed (String reason)
-        {
-            _ctx.showErrorMessage(_msgs.get(reason));
-        }
-
-        protected String _result;
-    }
-
-    /** Maximum file upload size is 10 megs. */
-    protected static final int MAX_UPLOAD = 10;
-
-    /** 1 megabyte in bytes. */
-    protected static final int ONE_MEG = 1048576;
-
-    /** The name of the upload task */
-    protected static final String UPLOAD_TASK = "upload task";
 
     /** The location of various icons */
     protected static final String ADD_FILE_ICON = "/rsrc/icons/swiftly/new.gif";
