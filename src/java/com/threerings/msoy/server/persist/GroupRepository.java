@@ -156,7 +156,7 @@ public class GroupRepository extends DepotRepository
         insert(record);
 
         int sceneId = MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_GROUP, 
-            record.groupId, /* TODO */ "Group " + record.name + "'s room");
+            record.groupId, /* TODO */ "Group " + record.name + "'s room", null, true);
         updateGroup(record.groupId, GroupRecord.HOME_SCENE_ID, sceneId);
 
         return record.groupId;

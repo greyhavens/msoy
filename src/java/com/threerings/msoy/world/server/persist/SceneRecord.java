@@ -24,6 +24,40 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 @Entity(indices={@Index(name="ixOwnerId", columns={"ownerId"})})
 public class SceneRecord extends PersistentRecord
 {
+    /** Enumerates our various stock scenes. */
+    public enum Stock {
+        /** The default public space created on a blank server. */
+        PUBLIC_ROOM(1, "A Common Area"),
+
+        /** The scene we clone to create a new member's room. */
+        FIRST_MEMBER_ROOM(2, "Member's First Room"),
+
+        /** The scene we clone when a member purchases an additional room. */
+        EXTRA_MEMBER_ROOM(3, "Member's Extra Room"),
+
+        /** The scene we clone to create a new group's hall. */
+        FIRST_GROUP_HALL(4, "Group's First Hall"),
+
+        /** The scene we clone when someone purchases an additional room for their group. */
+        EXTRA_GROUP_HALL(5, "Group's Extra Hall");
+
+        public int getSceneId () {
+            return _sceneId;
+        }
+
+        public String getName () {
+            return _name;
+        }
+
+        Stock (int sceneId, String name) {
+            _sceneId = sceneId;
+            _name = name;
+        }
+
+        protected int _sceneId;
+        protected String _name;
+    };
+
     // AUTO-GENERATED: FIELDS START
     /** The column identifier for the {@link #sceneId} field. */
     public static final String SCENE_ID = "sceneId";
@@ -125,6 +159,7 @@ public class SceneRecord extends PersistentRecord
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int sceneId;
 
+    /** Whether this scene is owned by a member or a group. See {@link MsoySceneModel}. */
     public byte ownerType;
 
     /** The member id of the owner if this scene. */

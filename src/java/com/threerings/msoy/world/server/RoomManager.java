@@ -298,12 +298,14 @@ public class RoomManager extends SpotSceneManager
         final int ownerId = isGroup ? model.ownerId : user.getMemberId();
         final String roomName = isGroup ? // TODO: i18n!
             "New 'somegroup' room" : (user.memberName + "'s new room");
+        final String portalAction = scene.getId() + ":" + scene.getName();
 
         // TODO: charge some flow
 
         MsoyServer.invoker.postUnit(new RepositoryUnit("purchaseRoom") {
             public void invokePersist () throws PersistenceException {
-                _newRoomId = MsoyServer.sceneRepo.createBlankRoom(ownerType, ownerId, roomName);
+                _newRoomId = MsoyServer.sceneRepo.createBlankRoom(
+                    ownerType, ownerId, roomName, portalAction, false);
             }
             public void handleSuccess () {
                 user.addToOwnedScenes(new SceneBookmarkEntry(_newRoomId, roomName, 0));
