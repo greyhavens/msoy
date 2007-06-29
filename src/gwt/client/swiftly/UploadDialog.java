@@ -15,8 +15,6 @@ import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormSubmitEvent;
-import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.web.data.WebIdent;
@@ -78,24 +76,22 @@ public class UploadDialog extends BorderedDialog
 
         contents.setText(0, 0, CSwiftly.msgs.selectFile());
         contents.setWidget(1, 0, form);
+        contents.setWidget(2, 0, _status);
 
-        HorizontalPanel buttons = new HorizontalPanel();
         // Upload button
-        buttons.add(new Button(CSwiftly.msgs.upload(), new ClickListener() {
+        _footer.add(new Button(CSwiftly.msgs.upload(), new ClickListener() {
             public void onClick (Widget sender) {
                 form.submit();
             }
         }));
         
         // Cancel button
-        buttons.add(new Button(CSwiftly.msgs.cancel(), new ClickListener() {
+        _footer.add(new Button(CSwiftly.msgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 hide();
             }
         }));
-        contents.setWidget(2, 0, buttons);
-        contents.getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_RIGHT);
-        contents.setWidget(3, 0, _status);
+
     }
     
     // from BorderedDialog.  This is called in the super constructor, so no UI components that
