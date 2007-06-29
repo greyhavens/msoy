@@ -98,10 +98,22 @@ public class SwiftlyPanel extends FlexTable
         _projectLink.setText(_project.projectName);
     }
 
-    // display a dialog for selecting a file to be uploaded into the project
+    /**
+     * Display a dialog for selecting a file to be uploaded into the project.
+     */
     protected static void showUploadDialog (String projectId)
     {
-        new UploadDialog(projectId, CSwiftly.ident).show();
+        if (_uploadDialog == null) {
+            _uploadDialog = new UploadDialog(projectId, CSwiftly.ident,
+                new UploadDialog.UploadDialogListener () {
+                public void dialogClosed ()
+                {
+                    // clear the static reference to the upload dialog
+                    _uploadDialog = null;
+                }
+            });
+        }
+        _uploadDialog.show();
     }
 
     /**
@@ -110,7 +122,7 @@ public class SwiftlyPanel extends FlexTable
      */
     protected static void uploadError ()
     {
-        MsoyUI.error(CSwiftly.msgs.errUploadError());
+        displayError(CSwiftly.msgs.errUploadError());
     }
     
     /**
@@ -119,7 +131,7 @@ public class SwiftlyPanel extends FlexTable
      */
     protected static void uploadTooLarge ()
     {
-        MsoyUI.error(CSwiftly.msgs.errUploadTooLarge());
+        displayError(CSwiftly.msgs.errUploadTooLarge());
     }
     
     /**
@@ -128,7 +140,19 @@ public class SwiftlyPanel extends FlexTable
      */
     protected static void accessDenied ()
     {
-        MsoyUI.error(CSwiftly.msgs.errAccessDenied());
+        displayError(CSwiftly.msgs.errAccessDenied());
+    }
+    
+    /**
+     * Display an error message into the UploadDialog if open, otherwise use MsoyUI to display.
+     */
+    protected static void displayError (String message)
+    {
+        if (_uploadDialog != null) {
+            _uploadDialog.setErrorMessage(message);
+        } else {
+            MsoyUI.error(message);
+        }
     }
     
     /**
@@ -149,9 +173,13 @@ public class SwiftlyPanel extends FlexTable
         };
     }-*/;
     
+    /** Reference to an open upload dialog window, if any is open */
+    protected static UploadDialog _uploadDialog;
+    
     protected SwiftlyProject _project;
     protected ConnectConfig _config;
     protected String _authtoken;
     protected Hyperlink _projectLink = new Hyperlink();
     protected Widget _applet;
+
 }

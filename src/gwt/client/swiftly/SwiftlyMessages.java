@@ -120,9 +120,9 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String selectType();
 
   /**
-   * Translated "An unrecoverable error occurred during upload. The upload was aborted.".
+   * Translated "An unrecoverable error occurred during upload. Upload aborted.".
    * 
-   * @return translated "An unrecoverable error occurred during upload. The upload was aborted."
+   * @return translated "An unrecoverable error occurred during upload. Upload aborted."
    * @gwt.key errUploadError
    */
   String errUploadError();
@@ -232,9 +232,9 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String uploadTitle();
 
   /**
-   * Translated "The file being uploaded is too large to be used in a Swiftly project.".
+   * Translated "The selected file is too large to be used in a Swiftly project.".
    * 
-   * @return translated "The file being uploaded is too large to be used in a Swiftly project."
+   * @return translated "The selected file is too large to be used in a Swiftly project."
    * @gwt.key errUploadTooLarge
    */
   String errUploadTooLarge();
