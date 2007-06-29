@@ -16,9 +16,6 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  */
 public class GameMemberInfo extends MemberInfo
 {
-    /** The media of the user's headshot (part of their avatar). */
-    public var headShot :MediaDesc;
-
     public function GameMemberInfo (who :MemberObject = null)
     {
         // only used for unserialization
@@ -28,14 +25,22 @@ public class GameMemberInfo extends MemberInfo
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        headShot = (ins.readObject() as MediaDesc);
+        _headShot = (ins.readObject() as MediaDesc);
+        _humanity = ins.readFloat();
     }
 
     // from interface Streamable
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-        out.writeObject(headShot);
+        out.writeObject(_headShot);
+        out.writeFloat(_humanity);
     }
+
+    /** The media of the user's headshot (part of their avatar). */
+    protected var headShot :MediaDesc;
+
+    /** This member's humanity rating from 0 to 1. */
+    protected var _humanity :float;
 }
 }

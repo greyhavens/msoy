@@ -202,9 +202,9 @@ public class MemberObject extends MsoyBodyObject
     /**
      * Return our assessment of how likely this member is to be human, in [0, 1).
      */
-    public double getHumanity ()
+    public float getHumanity ()
     {
-        return humanity / (double)MAX_HUMANITY;
+        return humanity / (float)MAX_HUMANITY;
     }
 
     // documentation inherited

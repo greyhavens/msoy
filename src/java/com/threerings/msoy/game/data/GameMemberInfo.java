@@ -16,24 +16,36 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 public class GameMemberInfo extends MemberInfo
     implements WhirledOccupantInfo
 {
-    /** The media of the user's headshot (part of their avatar). */
-    public MediaDesc headShot;
-
     /** Suitable for unserialization. */
     public GameMemberInfo ()
     {
     }
 
+    /** Creates an info record for the supplied user. */
     public GameMemberInfo (MemberObject user)
     {
         super(user);
 
-        headShot = user.getHeadShotMedia();
+        _headShot = user.getHeadShotMedia();
+        _humanity = user.getHumanity();
     }
 
     // from interface WhirledOccupantInfo
     public String getHeadshotURL ()
     {
-        return headShot.getMediaPath();
+        return _headShot.getMediaPath();
     }
+
+    // from interface WhirledOccupantInfo
+    public int getAdjustedFlowPerMinute (int flowPerMinute)
+    {
+        // scale available flow linearly with humanity
+        return Math.round(flowPerMinute * _humanity);
+    }
+
+    /** The media of the user's headshot (part of their avatar). */
+    protected MediaDesc _headShot;
+
+    /** This member's humanity rating from 0 to 1. */
+    protected float _humanity;
 }
