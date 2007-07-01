@@ -123,8 +123,10 @@ public class UploadFile
             // and what types of files are being uploaded -- landonf (March 5, 2007)
             log.warning("Magically determined unknown mime type [type=" + mimeString +
                 ", name=" + item.getName() + "].");
+            return MediaDesc.stringToMimeType(mimeString);
+        } else {
+            return MediaDesc.INVALID_MIME_TYPE;
         }
-        return MediaDesc.stringToMimeType(mimeString);     
     }
 
  
