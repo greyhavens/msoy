@@ -54,12 +54,11 @@ public class SwiftlyStandAlone
         });
         frame.setContentPane(applet);
         applet.setStub(new SwiftlyAppletStub(applet, properties));
-        applet.init();
-        applet.start();
         // TODO: allow this to be set on the command line?
         frame.setSize(1024, 768);
-        frame.pack();
         frame.setVisible(true);
+        applet.init();
+        applet.start();
     }
 
     protected static HashMap<String, String> parseArguments (String argv[])
