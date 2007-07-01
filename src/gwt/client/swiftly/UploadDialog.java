@@ -120,10 +120,9 @@ public class UploadDialog extends BorderedDialog
      */
     public void setErrorMessage (String message)
     {
-        setVisible(false);
-        _status.setText(message);
-        setVisible(true);
-        _wasError = true;
+         _status.setText(message);
+         updateFrame();
+         _wasError = true;
     }
 
     /**
