@@ -203,7 +203,13 @@ public class ProjectEdit extends BorderedDialog
         // MenuBar(true) creates a vertical menu
         MenuBar menu = new MenuBar(true);
         menu.addItem(Application.createLinkHtml(CSwiftly.msgs.viewProfile(), "profile",
-                                                "" + name.getMemberId()), true, (Command)null);
+            "" + name.getMemberId()), true, new Command() {
+            public void execute () {
+                parent.hide();
+                ProjectEdit.this.hide();
+            }
+        });  
+
         MenuItem remove = new MenuItem(CSwiftly.msgs.viewRemove(), new Command() {
             public void execute() {
                 (new PromptPopup(CSwiftly.msgs.viewRemovePrompt(name.toString(),
