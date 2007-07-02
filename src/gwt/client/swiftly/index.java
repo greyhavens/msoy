@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.msoy.web.client.SwiftlyService;
 import com.threerings.msoy.web.client.SwiftlyServiceAsync;
-import com.threerings.msoy.web.data.WebCreds;
 
 import com.threerings.msoy.web.data.ConnectConfig;
 
