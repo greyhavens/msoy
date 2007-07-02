@@ -1,0 +1,8 @@
+//
+// $Id$
+//
+// The security policy used by the Whirled server
+
+grant codeBase "file:@PREFIX@/-" {
+    permission java.security.AllPermission;
+};
