@@ -176,6 +176,24 @@ public class RoomManager extends SpotSceneManager
         updateOccupantInfo(occInfo);
     }
 
+    @Override // from SpotSceneManager
+    public void willTraversePortal (BodyObject body, Portal portal)
+    {
+        MsoyLocation loc = (MsoyLocation) portal.getLocation();
+        // We need to set the body's orientation to match the approach to the portal.
+        // Look up their current location and move them from there. This could be a little
+        // "off" if their sprite has not yet walked to this location, but oh well.
+        SceneLocation sloc = (SceneLocation) _roomObj.occupantLocs.get(body.getOid());
+        if (sloc != null) {
+            MsoyLocation origin = (MsoyLocation) sloc.loc;
+            double radians = Math.atan2(loc.z - origin.z, loc.x - origin.x);
+            // turn the radians into a positive degree value in the whirled orientation space
+            loc.orient = (short) ((360 + 90 + (int) Math.round(Math.toDegrees(radians))) % 360);
+        }
+
+        updateLocation(body, loc);
+    }
+
     // documentation inherited from RoomProvider
     public void requestControl (ClientObject caller, ItemIdent item)
     {
