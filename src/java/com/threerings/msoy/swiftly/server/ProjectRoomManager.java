@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
@@ -45,6 +47,7 @@ import com.threerings.msoy.web.server.UploadFile;
 
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.swiftly.server.build.LocalProjectBuilder;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 
@@ -364,6 +367,31 @@ public class ProjectRoomManager extends PlaceManager
             MsoyServer.swiftlyMan.svnExecutor.addTask(
                 new InsertFileUploadTask(uploadFile, fileName, listener));            
         }
+    }
+    
+    /**
+     * Used by the SwiftlyServlet to update the local list of collaborators.
+     */
+    public void updateCollaborators (ResultListener<Void> lner)
+    {
+        final int projectId = _roomObj.project.projectId;
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("getCollaborators", lner) {
+            public Void invokePersistResult () throws PersistenceException {
+                _newCollaborators = new ArrayIntSet();
+                for (SwiftlyCollaboratorsRecord record :
+                    MsoyServer.swiftlyRepo.getCollaborators(projectId)) {
+                    _newCollaborators.add(record.memberId);
+                }
+                return null;
+            }
+
+            public void handleResult () {
+                _collaborators = _newCollaborators;
+                _listener.requestCompleted(null);
+            }
+
+            protected ArrayIntSet _newCollaborators;
+        });
     }
 
     // from interface SetListener

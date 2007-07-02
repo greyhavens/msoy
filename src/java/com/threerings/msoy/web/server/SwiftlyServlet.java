@@ -27,6 +27,7 @@ import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebIdent;
 
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.server.ProjectRoomManager;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
@@ -284,6 +285,8 @@ public class SwiftlyServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Removing project's collaborators failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
+        
+        updateRoomCollaborators(projectId);
     }
 
     // from SwiftlyService
@@ -306,6 +309,35 @@ public class SwiftlyServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Joining project's collaborators failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
+        
+        updateRoomCollaborators(projectId);
+    }
+    
+    /**
+     * Informs the room manager for this project, if resolved, that the collaborators have 
+     * been modified.
+     */
+    protected void updateRoomCollaborators (final int projectId)
+        throws ServiceException
+    {
+        // run a task on the dobject thread that first finds the ProjectRoomManager for this
+        // project if it exists, and then tells it to update its local list of collaborators
+        final ServletWaiter<Void> waiter =
+            new ServletWaiter<Void>("updateCollaborators[" + projectId + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {               
+                ProjectRoomManager manager = MsoyServer.swiftlyMan.getRoomManager(projectId);
+                // the room manager is not resolved, no problem, we updated the database
+                if (manager == null) {
+                    return;
+                }
+
+                manager.updateCollaborators(waiter);
+            }
+        });
+        
+        // block the servlet waiting for the dobject thread
+        waiter.waitForResult();
     }
 
     /**
