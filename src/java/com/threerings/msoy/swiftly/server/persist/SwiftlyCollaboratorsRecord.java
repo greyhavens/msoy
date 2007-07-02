@@ -28,15 +28,25 @@ public class SwiftlyCollaboratorsRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #memberId} field. */
     public static final ColumnExp MEMBER_ID_C =
         new ColumnExp(SwiftlyCollaboratorsRecord.class, MEMBER_ID);
+
+    /** The column identifier for the {@link #buildResultItemId} field. */
+    public static final String BUILD_RESULT_ITEM_ID = "buildResultItemId";
+
+    /** The qualified column identifier for the {@link #buildResultItemId} field. */
+    public static final ColumnExp BUILD_RESULT_ITEM_ID_C =
+        new ColumnExp(SwiftlyCollaboratorsRecord.class, BUILD_RESULT_ITEM_ID);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The SwiftlyProject this memberId is a member of. */
     @Id public int projectId; /*TODO: this should have a foreign key constraint */
 
     /** The memberId of the project member. */
     @Id public int memberId; /*TODO: this should have a foreign key constraint */
+    
+    /** The itemId of the build result for this member, for this project. Can be null */
+    public int buildResultItemId;
 
     // AUTO-GENERATED: METHODS START
     /**
