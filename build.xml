@@ -153,7 +153,7 @@
     <!-- create a dev usable security.policy file; real one created in prepare-server-extra -->
     <copy file="etc/security.policy.in" tofile="${deploy.dir}/security.policy" overwrite="true">
       <filterset>
-        <filter token="PREFIX" value="/export/msoy"/>
+        <filter token="PREFIX" value="${server_root}"/>
       </filterset>
     </copy>
   </target>
