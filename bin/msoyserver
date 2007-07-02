@@ -4,5 +4,12 @@
 #
 # Command line launcher for the Msoy development server
 
+MSOY_HOME=`dirname $0`
+MSOY_HOME=`cd $MSOY_HOME/.. ; pwd`
+
+JAVA_ARGS="-Djava.awt.headless=true \
+           -Djava.security.manager \
+           -Djava.security.policy=$MSOY_HOME/dist/security.policy"
+
 CLASS=com.threerings.msoy.server.MsoyServer
-`dirname $0`/msoyjava -ea -server -Djava.awt.headless=true $CLASS $*
+`dirname $0`/msoyjava -ea -server $JAVA_ARGS $CLASS $*

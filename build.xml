@@ -150,6 +150,12 @@
     <!-- copy ehcache.xml to a classpath location -->
     <copy todir="${deploy.dir}" file="${basedir}/etc/ehcache.xml"/>
     <mkdir dir="${deploy.dir}/lib"/>
+    <!-- create a dev usable security.policy file; real one created in prepare-server-extra -->
+    <copy file="etc/security.policy.in" tofile="${deploy.dir}/security.policy" overwrite="true">
+      <filterset>
+        <filter token="PREFIX" value="/export/msoy"/>
+      </filterset>
+    </copy>
   </target>
 
   <!-- runs the GWT debugging shell -->
@@ -806,6 +812,13 @@
     <mkdir dir="${pkg.base}/logs"/>
     <mkdir dir="${pkg.base}/run"/>
     <mkdir dir="${pkg.base}/tmp"/>
+    <!-- create our production security.policy file -->
+    <copy file="etc/security.policy.in" tofile="${pkg.base}/${deploy.dir}/security.policy">
+      <filterset>
+        <filter token="PREFIX" value="${prefix.app}"/>
+      </filterset>
+    </copy>
+    <copy file="etc/pubkeystore.dat" tofile="${pkg.base}/etc/pubkeystore.dat"/>
   </target>
 
   <!-- install extra pages stuff into ${pkg.base} -->
