@@ -100,16 +100,18 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public Item loadItem (WebIdent ident, final ItemIdent item)
+    public Item loadItem (WebIdent ident, ItemIdent item)
         throws ServiceException
     {
-        final ServletWaiter<Item> waiter = new ServletWaiter<Item>("loadItem[" + item + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.itemMan.getItem(item, waiter);
-            }
-        });
-        return waiter.waitForResult();
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(item.type);
+        try {
+            ItemRecord irec = repo.loadItem(item.itemId);
+            return (irec == null) ? null : irec.toItem();
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to load item [id=" + item + "].", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
     }
 
     // from interface ItemService
@@ -288,6 +290,7 @@ public class ItemServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to wrap item [item=" + iident + ", wrap=" + wrap + "]");
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
     }
 
@@ -399,6 +402,7 @@ public class ItemServlet extends MsoyServiceServlet
                 MsoyServer.mailMan.getRepository().fileMessage(record);
             }
             return Integer.valueOf(deletionCount);
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Admin item delete failed [item=" + iident + "].", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
