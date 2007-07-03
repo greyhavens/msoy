@@ -818,7 +818,6 @@
         <filter token="PREFIX" value="${prefix.app}"/>
       </filterset>
     </copy>
-    <copy file="etc/pubkeystore.dat" tofile="${pkg.base}/etc/pubkeystore.dat"/>
   </target>
 
   <!-- install extra pages stuff into ${pkg.base} -->
