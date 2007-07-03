@@ -85,7 +85,7 @@ public class BaseItemDetailPopup extends BorderedDialog
         CItem.itemsvc.loadItemDetail(CItem.ident, _item.getIdent(), new AsyncCallback() {
             public void onSuccess (Object result) {
                 gotDetail(_detail = (ItemDetail)result);
-                recenter();
+                center();
             }
             public void onFailure (Throwable caught) {
                 _description.setText(CItem.serverError(caught));

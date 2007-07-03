@@ -135,6 +135,7 @@ public abstract class BorderedDialog extends BorderedPopup
                     int absX = x + getAbsoluteLeft();
                     int absY = y + getAbsoluteTop();
                     setPopupPosition(absX - _dragStartX, absY - _dragStartY);
+                    updateFrame();
                 }
             }
 

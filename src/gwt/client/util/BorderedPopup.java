@@ -10,6 +10,8 @@ import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import client.shell.Page;
+
 /**
  * Displays a popup with a nice border around it.
  */
@@ -52,26 +54,10 @@ public class BorderedPopup extends PopupPanel
             DOM.setStyleAttribute(elem, "left", "-5000px");
             DOM.setStyleAttribute(elem, "top", "-5000px");
             super.show();
-            recenter();
+            center();
         } else {
             super.show();
         }
-    }
-
-    // @Override // from PopupPanel
-    public void setPopupPosition (int left, int top)
-    {
-        super.setPopupPosition(left, top);
-        updateFrame();
-    }
-
-    /**
-     * Recenters our popup.
-     */
-    protected void recenter ()
-    {
-        setPopupPosition((Window.getClientWidth() - getOffsetWidth()) / 2,
-                         (Window.getClientHeight() - getOffsetHeight()) / 2);
     }
 
     /**
@@ -88,10 +74,12 @@ public class BorderedPopup extends PopupPanel
      */
     protected void updateFrame ()
     {
-        // if I could access 'impl' here, I wouldn't have to do this lame hack, but the GWT
-        // engineers conveniently made it private, so I can't
-        hide();
-        super.show();
+        if (Page.needPopupHack()) {
+            // if I could access 'impl' here, I wouldn't have to do this lame hack, but the GWT
+            // engineers conveniently made it private, so I can't
+            hide();
+            super.show();
+        }
     }
 
     protected BorderedWidget _widget;

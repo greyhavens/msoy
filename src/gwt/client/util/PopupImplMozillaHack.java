@@ -4,31 +4,33 @@
 package client.util;
 
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.impl.PopupImpl;
+import com.google.gwt.user.client.ui.impl.PopupImplMozilla;
+
+import client.shell.Page;
 
 /**
  * Mozilla implementation of {@link PopupImpl} that does the right thing with Flash and other
  * non-well-behaved layers.
  */
-public class PopupImplMozilla extends PopupImpl
+public class PopupImplMozillaHack extends PopupImplMozilla
 {
-    public native void onHide (Element popup) /*-{
-        var frame = popup.__frame;
-        if (frame) {
-            $doc.body.removeChild(frame);
-            popup.__frame = null;
+    // @Override // from PopupImpl
+    public void onShow (Element popup)
+    {
+        super.onShow(popup);
+        if (Page.needPopupHack()) {
+            createIFrame(popup);
         }
-    }-*/;
+    }
 
-    public native void onShow (Element popup) /*-{
-        // if we're displaying a Java applet, we always need the popup hack, but for Flash we only
-        // need it on Linux
-        if (!@client.shell.Page::displayingJava &&
-            (!@client.shell.Page::displayingFlash ||
-             navigator.userAgent.toLowerCase().indexOf("linux") == -1)) {
-            return;
-        }
+    // @Override // from PopupImpl
+    public void onHide (Element popup)
+    {
+        super.onHide(popup);
+        clearIFrame(popup);
+    }
 
+    protected native void createIFrame (Element popup) /*-{
         var frame = $doc.createElement('iframe');
         frame.scrolling = 'no';
         frame.frameBorder = 0;
@@ -45,5 +47,13 @@ public class PopupImplMozilla extends PopupImpl
         frame.style.width = popup.offsetWidth + "px";
         frame.style.height = popup.offsetHeight + "px";
         popup.parentNode.insertBefore(frame, popup);
+    }-*/;
+
+    protected native void clearIFrame (Element popup) /*-{
+        var frame = popup.__frame;
+        if (frame) {
+            $doc.body.removeChild(frame);
+            popup.__frame = null;
+        }
     }-*/;
 }

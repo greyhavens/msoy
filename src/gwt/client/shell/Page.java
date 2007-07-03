@@ -136,6 +136,16 @@ public abstract class Page
     }
 
     /**
+     * Returns true if we need to do our popup hackery, false if not.
+     */
+    public static boolean needPopupHack ()
+    {
+        // if we're displaying a Java applet, we always need the popup hack, but for Flash we only
+        // need it on Linux
+        return displayingJava || (displayingFlash && isLinux());
+    }
+
+    /**
      * Called when the page is first resolved to initialize its bits.
      */
     public void init ()
@@ -297,6 +307,10 @@ public abstract class Page
     {
         onHistoryChanged(getPageArgs());
     }
+
+    protected static native boolean isLinux () /*-{
+        return (navigator.userAgent.toLowerCase().indexOf("linux") != -1);
+    }-*/;
 
     protected FlexTable _content;
 
