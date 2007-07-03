@@ -61,17 +61,24 @@ public class ItemServlet extends MsoyServiceServlet
         item.creatorId = memrec.memberId;
         item.ownerId = memrec.memberId;
 
-        // pass the buck to the item manager to do the dirty work
-        final ServletWaiter<Item> waiter = new ServletWaiter<Item>(
-            "insertItem[" + ident + ", " + item + "]");
+        // write the item to the database
+        final ItemRecord record = ItemRecord.newRecord(item);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(item.getType());
+        try {
+            repo.insertOriginalItem(record);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to create item " + item + ".", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
+
+        // let the item manager know that we've created this item
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.insertItem(item, waiter);
-                MsoyServer.memberMan.logUserAction(
-                    memrec.getName(), UserAction.CREATED_ITEM, item.toString());
+                MsoyServer.itemMan.itemCreated(record);
             }
         });
-        return waiter.waitForResult().itemId;
+
+        return record.itemId;
     }
 
     // from interface ItemService

@@ -651,35 +651,12 @@ public class ItemManager
     }
 
     /**
-     * Inserts the supplied item into the system. The item should be fully configured, and an item
-     * id will be assigned during the insertion process. Success or failure will be communicated to
-     * the supplied result listener.
+     * Informs the runimte world that an item was created and inserted into the database.
      */
-    public void insertItem (final Item item, ResultListener<Item> listener)
+    public void itemCreated (ItemRecord record)
     {
-        final ItemRecord record = ItemRecord.newRecord(item);
-        byte type = record.getType();
-
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(type, listener);
-        if (repo == null) {
-            return;
-        }
-
-        // and insert the item; notifying the listener on success or failure
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
-            public Item invokePersistResult () throws PersistenceException {
-                repo.insertOriginalItem(record);
-                item.itemId = record.itemId;
-                return item;
-            }
-
-            public void handleSuccess () {
-                super.handleSuccess();
-                // add the item to the user's cached inventory
-                updateUserCache(record, null);
-            }
-        });
+        // add the item to the user's cached inventory
+        updateUserCache(record, null);
     }
 
     /**
