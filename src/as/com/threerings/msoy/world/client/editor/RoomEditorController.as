@@ -42,7 +42,7 @@ public class RoomEditorController
     {
         _ctx = ctx;
         _view = view;
-        
+
         _edit = new FurniEditor(this);
         _hover = new FurniHighlight(this);
     }
@@ -78,7 +78,7 @@ public class RoomEditorController
         if (_view == null) {
             Log.getLog(this).warning("Cannot edit a null room view!");
         }
-        
+
         _panel = new RoomEditorPanel(_ctx, this);
         _wrapupFn = wrapupFn;
 
@@ -87,7 +87,7 @@ public class RoomEditorController
         _hover.start();
 
         _panel.open();
-      
+
     }
 
     /**
@@ -96,7 +96,7 @@ public class RoomEditorController
     public function endEditing () :void
     {
         _panel.close();
-        
+
         // note: the rest of cleanup will happen in actionEditorClosed
     }
 
@@ -123,10 +123,10 @@ public class RoomEditorController
             if (mod.furniAdded != null) {
                 targetAdded = mod.furniAdded.some(
                     function (furni :FurniData, ... rest) :Boolean {
-                        return furni.getItemIdent().equals(targetIdent);                
+                        return furni.getItemIdent().equals(targetIdent);
                     });
             }
-            
+
             if (targetRemoved) {
                 if (targetAdded) {
                     // if the target furni was removed and then added back in, it means
@@ -169,7 +169,7 @@ public class RoomEditorController
         _view.getRoomController().applyUpdate(new SceneUpdateAction(_ctx, oldScene, newScene));
         updateUndoStatus(true);
     }
-    
+
     /**
      * Called by the room controller, to query whether the user should be allowed to move
      * around the scene.
@@ -200,7 +200,7 @@ public class RoomEditorController
     {
         _view.getRoomController().handleEditDoor(data);
     }
-    
+
     /**
      * Cleans up editing actions and closes editing UIs. This function is called automatically
      * when the main editing UI is being closed (whether because the user clicked the close
@@ -211,18 +211,18 @@ public class RoomEditorController
         if (_panel != null && _panel.isOpen) {
             Log.getLog(this).warning("Room editor failed to close!");
         }
-        
+
         _edit.end();
         _hover.end();
         _view.setEditing(false);
-        
+
         _wrapupFn();
         _panel = null;
     }
 
 
     // Functions for highlighting targets and displaying the furni editing UI
-    
+
     /** Called by the room controller, when the user rolls over or out of a valid sprite. */
     public function mouseOverSprite (sprite :MsoySprite) :void
     {
@@ -259,39 +259,37 @@ public class RoomEditorController
      */
     protected function updateTargetName () :void
     {
-        if (_edit.target != null) {
-            var furniData :FurniData = _edit.target.getFurniData();
-            _panel.updateDisplay(furniData);
-            
-            if (furniData.itemType == Item.NOT_A_TYPE) {
-                // this must be one of the "freebie" doors - since this isn't an actual Item,
-                // we can't pull its name from the database. oh well.
-                _panel.updateName(Msgs.EDITING.get("t.editing_no_name"));
-                
-            } else {
-                // do we already have it in the cache?
-                var ident :ItemIdent = furniData.getItemIdent();
-                if (_names.containsKey(ident)) {
-                    // all set!
-                    _panel.updateName(String(_names.get(ident)));
-                } else {
-                    // perform a database query to get the item's name
-                    var svc :ItemService =
-                        _ctx.getClient().requireService(ItemService) as ItemService;
-                    svc.peepItem(
-                        _ctx.getClient(), ident, new ResultWrapper(
-                            function (cause :String) :void {
-                                _panel.updateName(null);
-                            }, function (item :Item) :void {
-                                _names.put(item.getIdent(), item.name); // cache update!
-                                _panel.updateName(item.name);
-                            }));
-                }
-            }
-        } else {
+        if (_edit.target == null) {
             // no target selected
             _panel.updateName(null);
+            return;
         }
+
+        var furniData :FurniData = _edit.target.getFurniData();
+        _panel.updateDisplay(furniData);
+
+        if (furniData.itemType == Item.NOT_A_TYPE) {
+            // this must be one of the "freebie" doors - since this isn't an actual Item, we can't
+            // pull its name from the database. oh well.
+            _panel.updateName(Msgs.EDITING.get("t.editing_no_name"));
+            return;
+        }
+
+        // do we already have it in the cache?
+        var ident :ItemIdent = furniData.getItemIdent();
+        if (_names.containsKey(ident)) {
+            _panel.updateName(String(_names.get(ident))); // all set!
+            return;
+        }
+
+        // perform a database query to get the item's name
+        var svc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
+        svc.peepItem(_ctx.getClient(), ident, new ResultWrapper(function (cause :String) :void {
+            _panel.updateName(null);
+        }, function (item :Item) :void {
+            _names.put(item.getIdent(), item.name); // cache update!
+            _panel.updateName(item.name);
+        }));
     }
 
     /** Sets the currently edited target to the specified sprite. */
@@ -314,17 +312,15 @@ public class RoomEditorController
     /**
      * Static cache that maps from ItemIdents to item names; it saves server round-trips when the
      * user edits different items in the room. Please note: item names are not updated after the
-     * first lookup, and may become stale. 
+     * first lookup, and may become stale.
      */
     protected static var _names :HashMap = new HashMap();
-    
+
     protected var _ctx :WorldContext;
     protected var _view :RoomView;
     protected var _edit :FurniEditor;
     protected var _hover :FurniHighlight;
     protected var _panel :RoomEditorPanel;
     protected var _wrapupFn :Function;   // will be called when ending editing
-
-    
 }
 }
