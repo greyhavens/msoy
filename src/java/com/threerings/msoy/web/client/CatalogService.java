@@ -68,6 +68,8 @@ public interface CatalogService extends RemoteService
 
     /**
      * Fetches the N most-used tags for a given item type.
+     *
+     * @gwt.typeArgs <java.lang.String, java.lang.Integer>
      */
     public Map getPopularTags (byte type, int rows)
         throws ServiceException;
