@@ -463,9 +463,9 @@ public class MsoyServer extends WhirledServer
         worldGameReg.init(invmgr);
 
         GameCookieManager.init(conProv, new GameCookieManager.UserIdentifier() {
-            public int getUserId (ClientObject cliObj) {
+            public int getUserId (BodyObject bodyObj) {
                 // will return 0 for guests..
-                return ((MemberObject) cliObj).getMemberId();
+                return ((MemberObject) bodyObj).getMemberId();
             }
         });
         DictionaryManager.init("data/dictionary");
