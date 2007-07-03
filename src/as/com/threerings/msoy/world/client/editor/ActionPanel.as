@@ -41,16 +41,16 @@ public class ActionPanel extends BasePanel
     override public function updateDisplay (data :FurniData) :void
     {
         super.updateDisplay(data);
-        
+
         if (data == null) {
             _readOnlyActionLabel.text = "";
             _actionTypeSelection.selectedIndex = 0;
 
         } else {
             // abandon previous edits
-            
+
             var def :Object = getActionDef(_furniData.actionType);
-            
+
             // can this action type be edited by the player?
             var editable :Boolean = isActionTypeEditable(_furniData.actionType);
             if (editable) {
@@ -61,7 +61,7 @@ public class ActionPanel extends BasePanel
                 _readOnlyActionLabel.text = def.label;
                 _actionTypeSelection.selectedIndex = 0;
             }
-            
+
             _actionPanels.visible = _actionPanels.includeInLayout = editable;
             _actionTypeSelection.visible = _actionTypeSelection.includeInLayout = editable;
             _readOnlyActionLabel.visible = _readOnlyActionLabel.includeInLayout = ! editable;
@@ -74,12 +74,12 @@ public class ActionPanel extends BasePanel
         super.createChildren();
 
         var playerIsSupportPlus :Boolean = _controller.ctx.getMemberObject().tokens.isSupport();
-        
+
         // generate combo box definitions, including only those actions whose editable flag is set,
         // and which are available for the player's account level
         var entries :Array = new Array();
         for each (var def :Object in ACTIONS) {
-            // is it editable in the first place?    
+            // is it editable in the first place?
             if (isActionTypeEditable(def.data)) {
                 // make sure the action is either available to everyone, or if it's support+ only,
                 // that the player has the credentials.
@@ -88,23 +88,23 @@ public class ActionPanel extends BasePanel
                 }
             }
         }
-        
+
         // create ui bits
         var grid :Grid = new Grid();
         addChild(grid);
-        
+
         // this combo box will let the user pick a type
         _actionTypeSelection = new ComboBox();
         _actionTypeSelection.dataProvider = entries;
         _actionTypeSelection.addEventListener(ListEvent.CHANGE, applyHandler);
-        
+
         // and this will be displayed instead of the drop-down box if the user can't edit it
         _readOnlyActionLabel = new TextInput();
         _readOnlyActionLabel.editable = false;
         _readOnlyActionLabel.enabled = false;
         // hide this one initially
         _readOnlyActionLabel.visible = _readOnlyActionLabel.includeInLayout = false;
-        
+
         var action :HBox = new HBox();
         action.addChild(_readOnlyActionLabel);
         action.addChild(_actionTypeSelection);
@@ -169,7 +169,7 @@ public class ActionPanel extends BasePanel
 
 
     // FurniData.ACTION_NONE functions
-    
+
     protected function createNonePanel () :UIComponent
     {
         var grid :Grid = new Grid();
@@ -191,7 +191,7 @@ public class ActionPanel extends BasePanel
     }
 
     // URL functions
-    
+
     protected function createURLPanel () :UIComponent
     {
         var grid :Grid = new Grid();
@@ -209,12 +209,12 @@ public class ActionPanel extends BasePanel
         if (_furniData != null) {
             var url :String = _furniData.actionData;
             // maybe validation here?
-            _url.text = url; 
+            _url.text = url;
         }
     }
 
     // HELP_PAGE functions
-    
+
     protected function createHelpTabPanel () :UIComponent
     {
         var grid :Grid = new Grid();
@@ -232,19 +232,19 @@ public class ActionPanel extends BasePanel
         if (_furniData != null) {
             var url :String = _furniData.actionData;
             // maybe validation here?
-            _helpTabAction.text = url; 
+            _helpTabAction.text = url;
         }
     }
 
     // door functions
-    
+
     protected function createPortalPanel () :UIComponent
     {
         var grid :Grid = new Grid();
 
         _door = new TextInput();
         _door.editable = false;
-        
+
         var setportal :CommandButton = new CommandButton();
         setportal.label = Msgs.EDITING.get("b.set_portal");
         setportal.setCallback(this.editPortalTarget);
@@ -253,7 +253,7 @@ public class ActionPanel extends BasePanel
         GridUtil.addRow(grid, _door);
         GridUtil.addRow(grid, Msgs.EDITING.get("l.set_portal"));
         GridUtil.addRow(grid, setportal);
-            
+
         return grid;
     }
 
@@ -280,7 +280,7 @@ public class ActionPanel extends BasePanel
     override protected function getUserModifications () :FurniData
     {
         // do not call super - this is a replacement
-        
+
         if (_furniData == null || _actionTypeSelection.selectedIndex == -1) {
             return null; // nothing to do!
         }
@@ -292,7 +292,7 @@ public class ActionPanel extends BasePanel
             // these aren't handled by this editor, so let's not touch the data
             return null;
         }
-        
+
         newData = _furniData.clone() as FurniData;
         newData.actionType = type;
 
@@ -304,7 +304,12 @@ public class ActionPanel extends BasePanel
             newData.actionData = _url.text;
             break;
         case FurniData.ACTION_PORTAL:
-            newData.actionData = DEFAULT_PORTAL_DEST;
+            if (_furniData.actionType == FurniData.ACTION_PORTAL) {
+                // preserve the existing portal target if we're currently a portal
+                newData.actionData = _furniData.actionData;
+            } else {
+                newData.actionData = DEFAULT_PORTAL_DEST;
+            }
             break;
         case FurniData.ACTION_HELP_PAGE:
             newData.actionData = _helpTabAction.text;
@@ -336,7 +341,7 @@ public class ActionPanel extends BasePanel
         var index :int = getActionIndex(actionType);
         return (index != -1) ? ACTIONS[index] : null;
     }
-    
+
     /** Returns true if the specified action type is available in the combo box. */
     protected function isActionTypeEditable (actionType :int) :Boolean
     {
