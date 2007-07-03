@@ -16,6 +16,8 @@ import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.io.Streamable;
 
+import com.threerings.msoy.data.all.TagCodes;
+
 /**
  * Maps a tag's id to the tag itself.
  */
@@ -43,7 +45,9 @@ public class TagNameRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 1;
 
     /** A regexp pattern to validate tags */
-    public static final Pattern VALID_TAG = Pattern.compile("[a-z](_?[a-z0-9]){2,18}");
+    public static final Pattern VALID_TAG = Pattern.compile(
+        "[a-z](_?[a-z0-9]){" + (TagCodes.MIN_TAG_LENGTH-1) + "," +
+        (TagCodes.MAX_TAG_LENGTH-1) + "}");
 
     /** The ID of this tag. */
     @Id

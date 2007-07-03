@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
 
+import com.threerings.msoy.data.all.TagCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.data.TagHistory;
 
@@ -296,12 +297,12 @@ public class TagDetailPanel extends FlexTable
             if (tagName.length() == 0) {
                 return;
             }
-            if (tagName.length() < MIN_TAG_LENGTH) {
-                _status.setText(CShell.cmsgs.errTagTooShort("" + MIN_TAG_LENGTH));
+            if (tagName.length() < TagCodes.MIN_TAG_LENGTH) {
+                _status.setText(CShell.cmsgs.errTagTooShort("" + TagCodes.MIN_TAG_LENGTH));
                 return;
             }
-            if (tagName.length() > MAX_TAG_LENGTH) {
-                _status.setText(CShell.cmsgs.errTagTooLong("" + MAX_TAG_LENGTH));
+            if (tagName.length() > TagCodes.MAX_TAG_LENGTH) {
+                _status.setText(CShell.cmsgs.errTagTooLong("" + TagCodes.MAX_TAG_LENGTH));
                 return;
             }
             for (int ii = 0; ii < tagName.length(); ii ++) {
@@ -332,7 +333,4 @@ public class TagDetailPanel extends FlexTable
     protected ListBox _quickTags;
     protected Label _quickTagLabel;
     protected FlexTable _tagHistory;
-
-    protected static final int MIN_TAG_LENGTH = 3;
-    protected static final int MAX_TAG_LENGTH = 24;
 }

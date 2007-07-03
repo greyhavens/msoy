@@ -1062,8 +1062,7 @@ public class ItemManager
         final String tagName = rawTagName.trim().toLowerCase();
 
         if (!TagNameRecord.VALID_TAG.matcher(tagName).matches()) {
-            listener.requestFailed(
-                new IllegalArgumentException("Invalid tag [tag=" + tagName + "]"));
+            listener.requestFailed(new IllegalArgumentException("Invalid tag '" + tagName + "'"));
             return;
         }
 
