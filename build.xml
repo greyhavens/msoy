@@ -70,7 +70,7 @@
     <file name="${extlibs.dir}/commons-logging.jar"/>
     <file name="${extlibs.dir}/getdown.jar"/>
     <file name="${extlibs.dir}/gwt-user.jar"/>
-    <file name="${extlibs.dir}/gwt-widgets-0.1.5.jar"/>
+    <file name="${extlibs.dir}/gwt-widgets.jar"/>
     <file name="${extlibs.dir}/javassist.jar"/>
     <file name="${extlibs.dir}/junit-3.7.jar"/>
     <file name="${extlibs.dir}/mail.jar"/>
