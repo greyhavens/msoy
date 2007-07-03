@@ -344,12 +344,12 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String editPermaShort();
 
   /**
-   * Translated "Invalid Tag: can''t be more than 24 characters.".
+   * Translated "Tags can''t be more than {0} characters long.".
    * 
-   * @return translated "Invalid Tag: can''t be more than 24 characters."
+   * @return translated "Tags can''t be more than {0} characters long."
    * @gwt.key errTagTooLong
    */
-  String errTagTooLong();
+  String errTagTooLong(String arg0);
 
   /**
    * Translated "Submit".
@@ -536,9 +536,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String sendInvitesResults();
 
   /**
-   * Translated "Invalid tag: use letters, numbers, and underscore.".
+   * Translated "Tags must be only letters, numbers, and underscore.".
    * 
-   * @return translated "Invalid tag: use letters, numbers, and underscore."
+   * @return translated "Tags must be only letters, numbers, and underscore."
    * @gwt.key errTagInvalidCharacters
    */
   String errTagInvalidCharacters();
@@ -974,6 +974,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key inviteReject
    */
   String inviteReject();
+
+  /**
+   * Translated "Tags must be at least {0} characters long.".
+   * 
+   * @return translated "Tags must be at least {0} characters long."
+   * @gwt.key errTagTooShort
+   */
+  String errTagTooShort(String arg0);
 
   /**
    * Translated "Send Invites".

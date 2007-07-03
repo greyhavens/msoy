@@ -296,8 +296,12 @@ public class TagDetailPanel extends FlexTable
             if (tagName.length() == 0) {
                 return;
             }
-            if (tagName.length() > 24) {
-                _status.setText(CShell.cmsgs.errTagTooLong());
+            if (tagName.length() < MIN_TAG_LENGTH) {
+                _status.setText(CShell.cmsgs.errTagTooShort("" + MIN_TAG_LENGTH));
+                return;
+            }
+            if (tagName.length() > MAX_TAG_LENGTH) {
+                _status.setText(CShell.cmsgs.errTagTooLong("" + MAX_TAG_LENGTH));
                 return;
             }
             for (int ii = 0; ii < tagName.length(); ii ++) {
@@ -328,4 +332,7 @@ public class TagDetailPanel extends FlexTable
     protected ListBox _quickTags;
     protected Label _quickTagLabel;
     protected FlexTable _tagHistory;
+
+    protected static final int MIN_TAG_LENGTH = 3;
+    protected static final int MAX_TAG_LENGTH = 24;
 }
