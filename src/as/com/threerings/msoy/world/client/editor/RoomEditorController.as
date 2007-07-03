@@ -255,7 +255,7 @@ public class RoomEditorController
     }
 
     /**
-     * Re-reads target name from the database.
+     * When the user clicks on a new item, updates its displayed name.
      */
     protected function updateTargetName () :void
     {
@@ -269,19 +269,27 @@ public class RoomEditorController
                 _panel.updateName(Msgs.EDITING.get("t.editing_no_name"));
                 
             } else {
-                
-                // perform a database query to get the item's name
-                
-                var svc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
-                svc.peepItem(_ctx.getClient(), furniData.getItemIdent(),
-                             new ResultWrapper(
-                                 function (cause :String) :void {
-                                      _panel.updateName(null);
-                                  }, function (item :Item) :void {
-                                      _panel.updateName(item.name);
-                                  }));
+                // do we already have it in the cache?
+                var ident :ItemIdent = furniData.getItemIdent();
+                if (_names.containsKey(ident)) {
+                    // all set!
+                    _panel.updateName(String(_names.get(ident)));
+                } else {
+                    // perform a database query to get the item's name
+                    var svc :ItemService =
+                        _ctx.getClient().requireService(ItemService) as ItemService;
+                    svc.peepItem(
+                        _ctx.getClient(), ident, new ResultWrapper(
+                            function (cause :String) :void {
+                                _panel.updateName(null);
+                            }, function (item :Item) :void {
+                                _names.put(item.getIdent(), item.name); // cache update!
+                                _panel.updateName(item.name);
+                            }));
+                }
             }
         } else {
+            // no target selected
             _panel.updateName(null);
         }
     }
@@ -302,7 +310,14 @@ public class RoomEditorController
             setTarget(sprites.get(_edit.target.getFurniData().id) as FurniSprite);
         }
     }
-       
+
+    /**
+     * Static cache that maps from ItemIdents to item names; it saves server round-trips when the
+     * user edits different items in the room. Please note: item names are not updated after the
+     * first lookup, and may become stale. 
+     */
+    protected static var _names :HashMap = new HashMap();
+    
     protected var _ctx :WorldContext;
     protected var _view :RoomView;
     protected var _edit :FurniEditor;
