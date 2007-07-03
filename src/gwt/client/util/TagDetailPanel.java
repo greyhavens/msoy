@@ -307,7 +307,7 @@ public class TagDetailPanel extends FlexTable
             }
             for (int ii = 0; ii < tagName.length(); ii ++) {
                 char c = tagName.charAt(ii);
-                if (Character.isLetter(c) || Character.isDigit(c) || c == '_') {
+                if (c == '_' || Character.isLetterOrDigit(c)) {
                     continue;
                 }
                 _status.setText(CShell.cmsgs.errTagInvalidCharacters());
