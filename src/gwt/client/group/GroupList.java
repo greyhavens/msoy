@@ -57,8 +57,6 @@ public class GroupList extends VerticalPanel
         setStyleName("groupList");
         DOM.setStyleAttribute(getElement(), "width", "100%");
 
-        _groupLists = new HashMap();
-
         _errorContainer = new VerticalPanel();
         _errorContainer.setStyleName("GroupListErrors");
         add(_errorContainer);
@@ -67,9 +65,9 @@ public class GroupList extends VerticalPanel
         DOM.setStyleAttribute(table.getElement(), "width", "100%");
         add(table);
 
-        _popularTagsContainer = new FlowPanel();
-        _popularTagsContainer.setStyleName("PopularTags");
-        table.setWidget(0, 0, _popularTagsContainer);
+        _popularTags = new FlowPanel();
+        _popularTags.setStyleName("PopularTags");
+        table.setWidget(0, 0, _popularTags);
         table.getFlexCellFormatter().setStyleName(0, 0, "LeftColumn");
 
         final TextBox searchInput = new TextBox();
@@ -100,7 +98,7 @@ public class GroupList extends VerticalPanel
         // fathom, the height of this cell is defaulting to way too large.
         DOM.setStyleAttribute(table.getFlexCellFormatter().getElement(0, 1), "height", "10px");
 
-        _groupListContainer = new PagedGrid(GRID_ROWS, GRID_COLUMNS) {
+        _groupGrid = new PagedGrid(GRID_ROWS, GRID_COLUMNS) {
             protected Widget createWidget (Object item) {
                 return new GroupWidget((Group)item);
             }
@@ -108,39 +106,38 @@ public class GroupList extends VerticalPanel
                 return CGroup.msgs.listNoGroups();
             }
         };
-        _groupListContainer.setStyleName("Groups");
-        _groupListContainer.setWidth("100%");
-        table.setWidget(1, 0, _groupListContainer);
+        _groupGrid.setWidth("100%");
+        table.setWidget(1, 0, _groupGrid);
         table.getFlexCellFormatter().setColSpan(1, 0, 2);
 
-        _currentTagContainer = new FlowPanel();
+        _currentTag = new FlowPanel();
         loadPopularTags();
         loadGroupsList(tag);
     }
 
     protected void loadPopularTags ()
     {
-        _popularTagsContainer.clear();
+        _popularTags.clear();
         InlineLabel popularTagsLabel = new InlineLabel(CGroup.msgs.listPopularTags() + " ");
         popularTagsLabel.addStyleName("PopularTagsLabel");
-        _popularTagsContainer.add(popularTagsLabel);
+        _popularTags.add(popularTagsLabel);
 
         CGroup.groupsvc.getPopularTags(CGroup.ident, 10, new AsyncCallback() {
             public void onSuccess (Object result) {
                 Iterator iter = ((List)result).iterator();
                 if (!iter.hasNext()) {
-                    _popularTagsContainer.add(new InlineLabel(CGroup.msgs.listNoPopularTags()));
+                    _popularTags.add(new InlineLabel(CGroup.msgs.listNoPopularTags()));
                 } else {
                     while (iter.hasNext()) {
                         final String tag = (String)iter.next();
                         Hyperlink tagLink = Application.createLink(tag, "group", "tag=" + tag);
                         DOM.setStyleAttribute(tagLink.getElement(), "display", "inline");
-                        _popularTagsContainer.add(tagLink);
+                        _popularTags.add(tagLink);
                         if (iter.hasNext()) {
-                            _popularTagsContainer.add(new InlineLabel(", "));
+                            _popularTags.add(new InlineLabel(", "));
                         }
                     }
-                    _popularTagsContainer.add(_currentTagContainer);
+                    _popularTags.add(_currentTag);
                 }
             }
             public void onFailure (Throwable caught) {
@@ -154,19 +151,19 @@ public class GroupList extends VerticalPanel
     {
         AsyncCallback groupsListCallback = new AsyncCallback() {
             public void onSuccess (Object result) {
-                _groupListContainer.setModel(new SimpleDataModel((List)result), 0);
-                _currentTagContainer.clear();
+                _groupGrid.setModel(new SimpleDataModel((List)result), 0);
+                _currentTag.clear();
                 if (tag != null) {
                     InlineLabel tagLabel = new InlineLabel(CGroup.msgs.listCurrentTag() + " " + 
                         tag + " ");
                     DOM.setStyleAttribute(tagLabel.getElement(), "fontWeight", "bold");
-                    _currentTagContainer.add(tagLabel);
-                    _currentTagContainer.add(new InlineLabel("("));
+                    _currentTag.add(tagLabel);
+                    _currentTag.add(new InlineLabel("("));
                     Hyperlink clearLink = Application.createLink(
                         CGroup.msgs.listTagClear(), "group", "");
                     DOM.setStyleAttribute(clearLink.getElement(), "display", "inline");
-                    _currentTagContainer.add(clearLink);
-                    _currentTagContainer.add(new InlineLabel(")"));
+                    _currentTag.add(clearLink);
+                    _currentTag.add(new InlineLabel(")"));
                 }
             }
             public void onFailure (Throwable caught) {
@@ -186,7 +183,7 @@ public class GroupList extends VerticalPanel
     {
         CGroup.groupsvc.searchGroups(CGroup.ident, searchString, new AsyncCallback() {
             public void onSuccess (Object result) {
-                _groupListContainer.setModel(new SimpleDataModel((List)result), 0);
+                _groupGrid.setModel(new SimpleDataModel((List)result), 0);
             }
             public void onFailure (Throwable caught) {
                 CGroup.log("searchGroups(" + searchString + ") failed", caught);
@@ -239,9 +236,7 @@ public class GroupList extends VerticalPanel
     }
 
     protected VerticalPanel _errorContainer;
-    protected FlowPanel _popularTagsContainer;
-    protected FlowPanel _currentTagContainer;
-    protected PagedGrid _groupListContainer;
-
-    protected HashMap _groupLists;
+    protected FlowPanel _popularTags;
+    protected FlowPanel _currentTag;
+    protected PagedGrid _groupGrid;
 }
