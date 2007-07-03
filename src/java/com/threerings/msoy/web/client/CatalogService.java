@@ -24,7 +24,14 @@ public interface CatalogService extends RemoteService
     /** Provides results for {@link #loadCatalog}. */
     public static class CatalogResult implements IsSerializable
     {
+        /** The total count of listings matching the query. */
         public int listingCount;
+
+        /**
+         * The particular set of listings requested.
+         *
+         * @gwt.typeArgs <com.threerings.msoy.item.data.gwt.CatalogListing>
+         */
         public List listings;
     }
 

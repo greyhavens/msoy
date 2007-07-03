@@ -13,8 +13,7 @@ import com.threerings.msoy.data.all.MemberName;
 /**
  * Represents all the metadata for a mail message.
  */
-
-final public class MailHeaders
+public final class MailHeaders
     implements IsSerializable, Streamable
 {
     /** The id of this message, unique within its current folder. */
@@ -57,8 +56,7 @@ final public class MailHeaders
             return false;
         }
         MailHeaders other = (MailHeaders) obj;
-        return (other.messageId == messageId &&
-                other.folderId == folderId &&
+        return (other.messageId == messageId && other.folderId == folderId &&
                 other.ownerId == ownerId);
     }
 }

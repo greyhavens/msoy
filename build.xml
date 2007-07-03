@@ -70,7 +70,7 @@
     <file name="${extlibs.dir}/commons-logging.jar"/>
     <file name="${extlibs.dir}/getdown.jar"/>
     <file name="${extlibs.dir}/gwt-user.jar"/>
-    <file name="${extlibs.dir}/gwt-widgets-0.1.3.jar"/>
+    <file name="${extlibs.dir}/gwt-widgets-0.1.5.jar"/>
     <file name="${extlibs.dir}/javassist.jar"/>
     <file name="${extlibs.dir}/junit-3.7.jar"/>
     <file name="${extlibs.dir}/mail.jar"/>
@@ -204,7 +204,8 @@
   <target name="gmsg">
     <java fork="true" classname="com.google.gwt.i18n.tools.I18NSync">
       <classpath>
-        <fileset dir="${extlibs.dir}" includes="gwt*.jar"/>
+        <fileset dir="${extlibs.dir}" includes="gwt-user.jar"/>
+        <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/>
         <pathelement location="${gsrc.dir}"/>
       </classpath>
       <arg value="-createMessages"/>
@@ -272,7 +273,7 @@
             classname="com.google.gwt.dev.GWTCompiler">
         <classpath>
           <pathelement location="${classes.dir}"/>
-          <fileset dir="${extlibs.dir}" includes="gwt*.jar"/>
+          <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/> <!-- the GWT compiler -->
           <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
           <pathelement location="${src.dir}"/>
           <pathelement location="${gsrc.dir}"/>

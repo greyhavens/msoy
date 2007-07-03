@@ -19,6 +19,10 @@ public class MemberInviteResult
     /** This member's invitingFriendId */
     public int invitingFriendId;
 
-    /** The list of the people that this member has invited. */
+    /**
+     * The list of the people that this member has invited.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.web.data.MemberInviteStatus>
+     */
     public List invitees;
 }

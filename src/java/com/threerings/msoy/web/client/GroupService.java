@@ -21,17 +21,23 @@ public interface GroupService extends RemoteService
 {
     /** 
      * Get the list of all groups.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.web.data.Group>
      */
     public List getGroupsList (WebIdent ident) throws ServiceException;
 
     /**
-     * performs a search against the name, blurb and charter fields.
+     * Performs a search against the name, blurb and charter fields.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.web.data.Group>
      */
     public List searchGroups (WebIdent ident, String searchString)
         throws ServiceException;
 
     /**
-     * return all groups that are tagged with the given tag.
+     * Return all groups that are tagged with the given tag.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.web.data.Group>
      */
     public List searchForTag (WebIdent ident, String tag)
         throws ServiceException;
@@ -43,9 +49,10 @@ public interface GroupService extends RemoteService
         throws ServiceException;
 
     /**
-     * Fetch a list of {@link GroupMembership} records, one for each group memberId
-     * is a member of. If canInvite is true, only include groups to which the member
-     * can invite.
+     * Fetch a list of {@link GroupMembership} records, one for each group of which memberId is a
+     * member. If canInvite is true, only include groups to which the member can invite.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.data.all.GroupMembership>
      */
     public List getMembershipGroups (WebIdent ident, int memberId, boolean canInvite)
         throws ServiceException;
@@ -94,21 +101,27 @@ public interface GroupService extends RemoteService
 
     /** 
      * Gets the tags recently used by the user.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.web.data.TagHistory>
      */
     public Collection getRecentTags (WebIdent ident)
         throws ServiceException;
 
     /**
      * Gets the tags on the indicated Group.
+     *
+     * @gwt.typeArgs <java.lang.String>
      */
     public Collection getTags (WebIdent ident, int groupId)
         throws ServiceException;
 
     /**
      * Gets the popular tags for groups.  The TagRepository method getPopularTags is not actually
-     * using its row parameter... if that changes in the future, this should be changed to make
-     * the rows returned configurable in the client.  Also, for some crazy reason, TagRepository is
-     * not sorting its results, so we're doing it on the client
+     * using its row parameter. If that changes in the future, this should be changed to make the
+     * rows returned configurable in the client.  Also, for some crazy reason, TagRepository is not
+     * sorting its results, so we're doing it on the client
+     *
+     * @gwt.typeArgs <java.lang.String>
      */
     public List getPopularTags (WebIdent ident, int rows)
         throws ServiceException;

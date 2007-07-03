@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.web.client;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -40,8 +39,10 @@ public interface MemberService extends RemoteService
 
     /**
      * Loads all items in a player's inventory of the specified type.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.item.data.all.Item>
      */
-    public ArrayList loadInventory (WebIdent ident, byte type)
+    public List loadInventory (WebIdent ident, byte type)
         throws ServiceException;
 
     /**
@@ -58,6 +59,8 @@ public interface MemberService extends RemoteService
 
     /** 
      * Send out some of this person's available invites.
+     *
+     * @gwt.typeArgs addresses <java.lang.String>
      */
     public InvitationResults sendInvites (WebIdent ident, List addresses, String customMessage)
         throws ServiceException;

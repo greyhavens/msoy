@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.web.data;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -24,6 +24,10 @@ public class ProfileLayout implements IsSerializable
     /** Arbitrary layout information interpreted by the layout code. */
     public String layoutData;
 
-    /** {@link BlurbData} records for every blurb on this page. */
-    public ArrayList blurbs;
+    /**
+     * {@link BlurbData} records for every blurb on this page.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.web.data.BlurbData>
+     */
+    public List blurbs;
 }

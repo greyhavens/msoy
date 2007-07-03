@@ -24,9 +24,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.Profile;
 
 import client.msgs.MailComposition;
@@ -82,18 +83,17 @@ public class ProfileBlurb extends Blurb
     }
 
     // @Override // from Blurb
-    protected void didInit (Object blurbData)
+    protected void didInit (ProfileService.ProfileResult pdata)
     {
-        setHeader(CProfile.msgs.profileTitle());
-        _profile = (Profile)blurbData;
-        displayProfile();
-    }
+        if (pdata.profile != null) {
+            setHeader(CProfile.msgs.profileTitle());
+            _profile = pdata.profile;
+            displayProfile();
 
-    // @Override // from Blurb
-    protected void didFail (String cause)
-    {
-        setHeader(CProfile.msgs.errorTitle());
-        _displayName.setText("Failed to load profile data: " + cause);
+        } else {
+            setHeader(CProfile.msgs.errorTitle());
+            _displayName.setText(CProfile.msgs.profileLoadFailed());
+        }
     }
 
     protected void startEdit ()

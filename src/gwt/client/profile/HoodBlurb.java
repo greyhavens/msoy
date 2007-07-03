@@ -9,6 +9,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
+import com.threerings.msoy.web.client.ProfileService;
+
 /**
  * Displays a neighborhood visualization.
  */
@@ -21,17 +23,10 @@ public class HoodBlurb extends Blurb
     }
 
     // @Override // from Blurb
-    protected void didInit (Object blurbData)
+    protected void didInit (ProfileService.ProfileResult pdata)
     {
         setHeader("Neighborhood");
-        _content.setWidget(FlashClients.createNeighborhood((String) blurbData, "480", "360"));
-    }
-
-    // @Override // from Blurb
-    protected void didFail (String cause)
-    {
-        setHeader("Error");
-        setStatus("Failed to load neighborhood: " + cause);
+//         _content.setWidget(FlashClients.createNeighborhood((String) blurbData, "480", "360"));
     }
  
     protected void setStatus (String text)

@@ -3,27 +3,24 @@
 
 package client.profile;
 
-import java.util.ArrayList;
-
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
+
+import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.BlurbData;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.data.ProfileLayout;
 
 /**
  * Lays out a profile page in two columns.
  */
 public class TwoColumnLayout extends FlexTable
 {
-    public TwoColumnLayout (MemberName name, ProfileLayout layout, 
-        ArrayList blurbs)
+    public TwoColumnLayout (ProfileService.ProfileResult pdata)
     {
         setCellPadding(5);
-        for (int ii = 0; ii < layout.blurbs.size(); ii++) {
-            BlurbData bdata = (BlurbData)layout.blurbs.get(ii);
+        for (int ii = 0; ii < pdata.layout.blurbs.size(); ii++) {
+            BlurbData bdata = (BlurbData)pdata.layout.blurbs.get(ii);
             Blurb blurb = Blurb.createBlurb(bdata.type);
-            blurb.init(name, bdata.blurbId, blurbs.get(ii));
+            blurb.init(bdata.blurbId, pdata);
             setWidget(ii/2, ii%2, blurb);
             getFlexCellFormatter().setVerticalAlignment(ii/2, ii%2, HasAlignment.ALIGN_TOP);
         }

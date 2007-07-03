@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
+import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.MemberName;
 
 /**
@@ -25,6 +26,10 @@ public class GroupDetail
     /** The person who created the group. */
     public MemberName creator;
 
-    /** The members of this group, expressed as a Set of GroupMembership(s) */
+    /**
+     * The members of this group, expressed as a Set of GroupMembership(s).
+     *
+     * @gwt.typeArgs <com.threerings.msoy.data.all.GroupMembership>
+     */
     public List members;
 }

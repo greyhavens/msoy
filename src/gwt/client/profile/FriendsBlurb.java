@@ -15,6 +15,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.SimpleDataModel;
+
+import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.msgs.FriendInvite;
@@ -35,8 +37,14 @@ public class FriendsBlurb extends Blurb
     }
 
     // @Override // from Blurb
-    protected void didInit (Object blurbData)
+    protected void didInit (ProfileService.ProfileResult pdata)
     {
+        if (pdata.friends == null) {
+            setHeader(CProfile.msgs.errorTitle());
+            _content.add(new Label(CProfile.msgs.friendsLoadFailed()));
+            return;
+        }
+
         setHeader(CProfile.msgs.friendsTitle());
 
         ProfileGrid grid = new ProfileGrid(FRIEND_ROWS, FRIEND_COLUMNS, "");
@@ -47,14 +55,13 @@ public class FriendsBlurb extends Blurb
             CProfile.msgs.noFriendsSelf() : CProfile.msgs.noFriendsOther();
         grid.setEmptyMessage(empty);
 
-        ArrayList friends = (ArrayList)blurbData;
-        grid.setModel(new SimpleDataModel(friends), 0);
+        grid.setModel(new SimpleDataModel(pdata.friends), 0);
         _content.add(grid);
 
         boolean canInvite = CProfile.getMemberId() > 0 &&
             CProfile.getMemberId() != _name.getMemberId();
-        for (int ii = 0, ll = friends.size(); ii < ll; ii++) {
-            MemberCard friend = (MemberCard)friends.get(ii);
+        for (int ii = 0, ll = pdata.friends.size(); ii < ll; ii++) {
+            MemberCard friend = (MemberCard)pdata.friends.get(ii);
             canInvite = canInvite && !(friend.name.getMemberId() == CProfile.getMemberId());
         }
         if (canInvite) {
@@ -67,13 +74,6 @@ public class FriendsBlurb extends Blurb
                 }
             }));
         }
-    }
-
-    // @Override // from Blurb
-    protected void didFail (String cause)
-    {
-        setHeader(CProfile.msgs.errorTitle());
-        _content.add(new Label(CProfile.msgs.friendsLoadFailed(cause)));
     }
 
     protected VerticalPanel _content;

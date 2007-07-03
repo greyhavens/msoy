@@ -18,13 +18,17 @@ import com.threerings.msoy.web.data.WebIdent;
 public interface SwiftlyService extends RemoteService
 {
     /**
-     * Returns the list of SwiftlyProjects that are remixable
+     * Returns the list of SwiftlyProjects that are remixable.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.web.data.SwiftlyProject>
      */
     public List getRemixableProjects (WebIdent ident)
         throws ServiceException;
 
     /**
-     * Returns the list of SwiftlyProjects that the supplied member is a collaborator on
+     * Returns the list of SwiftlyProjects on which the supplied member is a collaborator.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.web.data.SwiftlyProject>
      */
     public List getMembersProjects (WebIdent ident)
         throws ServiceException;
@@ -56,12 +60,16 @@ public interface SwiftlyService extends RemoteService
 
     /**
      * Loads the collaborators for the given project.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.data.all.MemberName>
      */
     public List getProjectCollaborators (WebIdent ident, int projectId)
         throws ServiceException;
 
     /**
      * Loads the friends for a given member.
+     *
+     * @gwt.typeArgs <com.threerings.msoy.data.all.FriendEntry>
      */
     public List getFriends (WebIdent ident)
         throws ServiceException;

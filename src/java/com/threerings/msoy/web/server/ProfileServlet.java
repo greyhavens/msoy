@@ -88,7 +88,7 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public ArrayList loadProfile (WebIdent ident, int memberId)
+    public ProfileResult loadProfile (WebIdent ident, int memberId)
         throws ServiceException
     {
         MemberRecord memrec = getAuthedUser(ident);
@@ -99,14 +99,36 @@ public class ProfileServlet extends MsoyServiceServlet
                 return null;
             }
 
-            ProfileLayout layout = loadLayout(tgtrec);
-            ArrayList<Object> data = new ArrayList<Object>();
-            data.add(layout);
-            data.add(tgtrec.getName());
-            for (Object bdata : layout.blurbs) {
-                data.add(resolveBlurbData(memrec, tgtrec, (BlurbData)bdata));
+            ProfileResult result = new ProfileResult();
+            result.name = tgtrec.getName();
+            result.layout = loadLayout(tgtrec);
+
+            // resolve the data for whichever blurbs are active on this player's profile page
+            for (Object bdata : result.layout.blurbs) {
+                BlurbData blurb = (BlurbData)bdata;
+                switch (blurb.type) {
+                case BlurbData.PROFILE:
+                    result.profile = resolveProfileData(memrec, tgtrec);
+                    break;
+
+                case BlurbData.FRIENDS:
+                    result.friends = resolveFriendsData(memrec, tgtrec);
+                    break;
+
+                case BlurbData.GROUPS:
+                    result.groups = resolveGroupsData(memrec, tgtrec);
+                    break;
+
+//                 case BlurbData.HOOD:
+//                     result.hood = resolveHoodData(memrec, tgtrec);
+//                     break;
+
+                default:
+                    log.log(Level.WARNING, "Requested to resolve unknown blurb " + bdata + ".");
+                    break;
+                }
             }
-            return data;
+            return result;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failure resolving blurbs [who=" + memberId + "].", pe);
@@ -115,7 +137,7 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public ArrayList findProfiles (String type, String search)
+    public List<MemberCard> findProfiles (String type, String search)
         throws ServiceException
     {
         try {
@@ -148,7 +170,7 @@ public class ProfileServlet extends MsoyServiceServlet
             // load up their profile data
             resolveCardData(cards);
 
-            ArrayList<Object> results = new ArrayList<Object>();
+            ArrayList<MemberCard> results = new ArrayList<MemberCard>();
             results.addAll(cards.values());
             return results;
 
@@ -188,20 +210,6 @@ public class ProfileServlet extends MsoyServiceServlet
 
         layout.blurbs = blurbs;
         return layout;
-    }
-
-    protected Object resolveBlurbData (MemberRecord reqrec, MemberRecord tgtrec, BlurbData bdata)
-        throws PersistenceException
-    {
-        switch (bdata.type) {
-        case BlurbData.PROFILE: return resolveProfileData(reqrec, tgtrec);
-        case BlurbData.FRIENDS: return resolveFriendsData(reqrec, tgtrec);
-        case BlurbData.GROUPS: return resolveGroupsData(reqrec, tgtrec);
-        case BlurbData.HOOD: return resolveHoodData(reqrec, tgtrec);
-        default:
-            log.log(Level.WARNING, "Requested to resolve unknown blurb type " + bdata + ".");
-            return new BlurbData.ResolutionFailure(MsoyCodes.INTERNAL_ERROR);
-        }
     }
 
     protected Profile resolveProfileData (MemberRecord reqrec, MemberRecord tgtrec)
@@ -249,9 +257,10 @@ public class ProfileServlet extends MsoyServiceServlet
         return result;
     }
 
-    protected String resolveHoodData (MemberRecord reqrec, MemberRecord tgtrec)
-        throws PersistenceException
-    {
+// TODO: do we really want the hood on the profile page?
+//     protected String resolveHoodData (MemberRecord reqrec, MemberRecord tgtrec)
+//         throws PersistenceException
+//     {
 //         MsoyServer.memberMan.serializeNeighborhood(_memberId, false, new ResultListener<String>() {
 //             public void requestCompleted (String hood) {
 //                 resolutionCompleted(hood);
@@ -260,9 +269,8 @@ public class ProfileServlet extends MsoyServiceServlet
 //                 resolutionFailed(cause);
 //             }
 //         });
-        // TODO: do we really want the hood on the profile page?
-        return null;
-    }
+//         return null;
+//     }
 
     protected void resolveCardData (HashIntMap<MemberCard> cards)
         throws PersistenceException

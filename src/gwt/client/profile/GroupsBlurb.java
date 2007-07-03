@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 import com.threerings.msoy.data.all.GroupMembership;
+import com.threerings.msoy.web.client.ProfileService;
 
 import client.msgs.GroupInvite;
 import client.msgs.MailComposition;
@@ -30,18 +31,22 @@ public class GroupsBlurb extends Blurb
     }
 
     // @Override // from Blurb
-    protected void didInit (Object blurbData)
+    protected void didInit (ProfileService.ProfileResult pdata)
     {
+        if (pdata.groups == null) {
+            setHeader(CProfile.msgs.errorTitle());
+            setStatus(CProfile.msgs.groupsLoadFailed());
+            return;
+        }
+
         setHeader(CProfile.msgs.groupsTitle());
 
-        List blurbGroups = (List)blurbData;
-        if (blurbGroups.size() == 0) {
+        if (pdata.groups.size() == 0) {
             setStatus(CProfile.getMemberId() == _name.getMemberId() ?
                       CProfile.msgs.notInGroupsSelf() : CProfile.msgs.notInGroupsOther());
-
         } else {
-            for (int ii = 0, ll = blurbGroups.size(); ii < ll; ii++) {
-                GroupMembership group = (GroupMembership)blurbGroups.get(ii);
+            for (int ii = 0, ll = pdata.groups.size(); ii < ll; ii++) {
+                GroupMembership group = (GroupMembership)pdata.groups.get(ii);
                 _content.setWidget(ii, 0, Application.groupViewLink(
                                        group.group.toString(), group.group.getGroupId()));
             }
@@ -69,13 +74,6 @@ public class GroupsBlurb extends Blurb
             };
             _content.setWidget(_content.getRowCount(), 0, inviteButton);
         }
-    }
-
-    // @Override // from Blurb
-    protected void didFail (String cause)
-    {
-        setHeader(CProfile.msgs.errorTitle());
-        setStatus("Failed to load friends: " + cause);
     }
 
     protected void setStatus (String text)

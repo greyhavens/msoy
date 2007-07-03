@@ -3,7 +3,6 @@
 
 package client.profile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -12,7 +11,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.msoy.web.client.DeploymentConfig;
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.ProfileLayout;
 
 import client.util.MsoyUI;
@@ -84,17 +83,15 @@ public class index extends MsgsEntryPoint
         // issue a request for this member's profile page data
         CProfile.profilesvc.loadProfile(CProfile.ident, _memberId = memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
-                ArrayList data = (ArrayList)result;
-                ProfileLayout layout = (ProfileLayout)data.remove(0);
-                MemberName name = (MemberName)data.remove(0);
+                ProfileService.ProfileResult pdata = (ProfileService.ProfileResult)result;
                 setPageTitle(CProfile.msgs.profileTitle());
-                switch (layout.layout) {
+                switch (pdata.layout.layout) {
                 default:
                 case ProfileLayout.ONE_COLUMN_LAYOUT:
-                    setContent(new OneColumnLayout(name, layout, data));
+                    setContent(new OneColumnLayout(pdata));
                     break;
                 case ProfileLayout.TWO_COLUMN_LAYOUT:
-                    setContent(new TwoColumnLayout(name, layout, data));
+                    setContent(new TwoColumnLayout(pdata));
                     break;
                 }
             }

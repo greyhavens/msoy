@@ -9,12 +9,12 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 
+import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.BlurbData;
 import com.threerings.msoy.data.all.MemberName;
 
 /**
- * Contains a chunk of content that a user would want to display on their
- * personal page.
+ * Contains a chunk of content that a user would want to display on their personal page.
  */
 public abstract class Blurb extends FlexTable
 {
@@ -33,23 +33,18 @@ public abstract class Blurb extends FlexTable
         case BlurbData.HOOD:
             return new HoodBlurb();
         default:
-            return null; // TODO: return NOOP blurb?
+            return null;
         }
     }
 
     /**
-     * Configures this blurb with a context and the member id for whom it is
-     * displaying content.
+     * Configures this blurb with a context and the member id for whom it is displaying content.
      */
-    public void init (MemberName name, int blurbId, Object blurbData)
+    public void init (int blurbId, ProfileService.ProfileResult pdata)
     {
-        _name = name;
         _blurbId = blurbId;
-        if (blurbData instanceof BlurbData.ResolutionFailure) {
-            didFail(((BlurbData.ResolutionFailure)blurbData).cause);
-        } else {
-            didInit(blurbData);
-        }
+        _name = pdata.name;
+        didInit(pdata);
     }
 
     protected Blurb ()
@@ -75,21 +70,15 @@ public abstract class Blurb extends FlexTable
     }
 
     /**
-     * Creates the interface components for this blurb. This is called during
-     * construction and the blurb will not yet have been initialized.
+     * Creates the interface components for this blurb. This is called during construction and the
+     * blurb will not yet have been initialized.
      */
     protected abstract Panel createContent ();
 
     /**
      * Called once we have been configured with our context and member info.
-     * The blurb data will be the content to be displayed by this blurb.
      */
-    protected abstract void didInit (Object blurbData);
-
-    /**
-     * Called if our blurb data failed to load.
-     */
-    protected abstract void didFail (String cause);
+    protected abstract void didInit (ProfileService.ProfileResult pdata);
 
     protected MemberName _name;
     protected int _blurbId;

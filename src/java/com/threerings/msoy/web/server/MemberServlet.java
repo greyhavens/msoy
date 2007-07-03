@@ -101,7 +101,7 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from interface MemberService
-    public ArrayList loadInventory (final WebIdent ident, final byte type)
+    public List loadInventory (final WebIdent ident, final byte type)
         throws ServiceException
     {
         final MemberRecord memrec = requireAuthedUser(ident);

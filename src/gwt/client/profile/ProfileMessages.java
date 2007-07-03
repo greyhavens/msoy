@@ -16,6 +16,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String searchRadioDisplayName();
 
   /**
+   * Translated "Missing profile details.".
+   * 
+   * @return translated "Missing profile details."
+   * @gwt.key profileLoadFailed
+   */
+  String profileLoadFailed();
+
+  /**
    * Translated "This person has no friends. How sad.".
    * 
    * @return translated "This person has no friends. How sad."
@@ -104,20 +112,20 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String displayNameInvalid(String arg0,  String arg1);
 
   /**
-   * Translated "Visit Home".
-   * 
-   * @return translated "Visit Home"
-   * @gwt.key visitHome
-   */
-  String visitHome();
-
-  /**
    * Translated "Error".
    * 
    * @return translated "Error"
    * @gwt.key errorTitle
    */
   String errorTitle();
+
+  /**
+   * Translated "Visit Home".
+   * 
+   * @return translated "Visit Home"
+   * @gwt.key visitHome
+   */
+  String visitHome();
 
   /**
    * Translated "Profile Search".
@@ -128,12 +136,12 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String profileSearchTitle();
 
   /**
-   * Translated "Failed to load friends: {0}".
+   * Translated "Missing friends list.".
    * 
-   * @return translated "Failed to load friends: {0}"
+   * @return translated "Missing friends list."
    * @gwt.key friendsLoadFailed
    */
-  String friendsLoadFailed(String arg0);
+  String friendsLoadFailed();
 
   /**
    * Translated "Profile".
@@ -240,6 +248,14 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String gridNoProfiles();
 
   /**
+   * Translated "This person is not a member of any groups.".
+   * 
+   * @return translated "This person is not a member of any groups."
+   * @gwt.key notInGroupsOther
+   */
+  String notInGroupsOther();
+
+  /**
    * Translated "Invite To Be Your Friend".
    * 
    * @return translated "Invite To Be Your Friend"
@@ -248,12 +264,12 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String inviteFriend();
 
   /**
-   * Translated "This person is not a member of any groups.".
+   * Translated "Missing group list.".
    * 
-   * @return translated "This person is not a member of any groups."
-   * @gwt.key notInGroupsOther
+   * @return translated "Missing group list."
+   * @gwt.key groupsLoadFailed
    */
-  String notInGroupsOther();
+  String groupsLoadFailed();
 
   /**
    * Translated "Display Name".

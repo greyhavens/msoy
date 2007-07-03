@@ -11,7 +11,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class BlurbData implements IsSerializable
 {
     /** A tiny class to wrap a failure reason during blurb resolution. */
-    public static class ResolutionFailure implements IsSerializable {
+    public static class ResolutionFailure implements IsSerializable
+    {
         public String cause;
 
         public ResolutionFailure () {

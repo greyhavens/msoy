@@ -3,28 +3,24 @@
 
 package client.profile;
 
-import java.util.ArrayList;
-
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.BlurbData;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.data.ProfileLayout;
 
 /**
  * Lays out a profile page in one column.
  */
 public class OneColumnLayout extends VerticalPanel
 {
-    public OneColumnLayout (MemberName name, ProfileLayout layout,    
-        ArrayList blurbs)
+    public OneColumnLayout (ProfileService.ProfileResult pdata)
     {
-        for (int ii = 0; ii < layout.blurbs.size(); ii++) {
-            BlurbData bdata = (BlurbData)layout.blurbs.get(ii);
+        for (int ii = 0; ii < pdata.layout.blurbs.size(); ii++) {
+            BlurbData bdata = (BlurbData)pdata.layout.blurbs.get(ii);
             Blurb blurb = Blurb.createBlurb(bdata.type);
             if (blurb != null) {
-                blurb.init(name, bdata.blurbId, blurbs.get(ii));
+                blurb.init(bdata.blurbId, pdata);
                 add(blurb);
             } else {
                 add(new Label("Unknown blurb type " + bdata.type));
