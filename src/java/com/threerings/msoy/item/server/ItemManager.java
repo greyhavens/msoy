@@ -692,35 +692,16 @@ public class ItemManager
     }
 
     /**
-     * Updates the supplied item. The item should have previously been checked for validity.
-     * Success or failure will be communicated to the supplied result listener.
+     * Informs the runtime world that an item was updated in the database. Worn avatars will be
+     * updated, someday items being used as furni or decor in rooms will also magically be updated.
      */
-    public void updateItem (final Item item, ResultListener<Item> listener)
+    public void itemUpdated (ItemRecord record)
     {
-        final ItemRecord record = ItemRecord.newRecord(item);
-        byte type = record.getType();
+        // add the item to the user's cached inventory
+        updateUserCache(record, null);
 
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(type, listener);
-        if (repo == null) {
-            return;
-        }
-
-        // and update the item; notifying the listener on success or failure
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
-            public Item invokePersistResult () throws PersistenceException {
-                repo.updateOriginalItem(record);
-                return item;
-            }
-
-            public void handleSuccess () {
-                super.handleSuccess();
-                // add the item to the user's cached inventory
-                updateUserCache(record, null);
-                // notify any item update listeners
-                notifyItemUpdated(record);
-            }
-        });
+        // notify any item update listeners
+        notifyItemUpdated(record);
     }
 
     /**
@@ -1364,7 +1345,8 @@ public class ItemManager
                     }
 
                     // then, check if any of the cached avatars need updating
-                    Avatar[] avs = memObj.avatarCache.toArray(new Avatar[memObj.avatarCache.size()]);
+                    Avatar[] avs = memObj.avatarCache.toArray(
+                        new Avatar[memObj.avatarCache.size()]);
                     for (Avatar av : avs) {
                         if (IntListUtil.contains(ids, av.itemId)) {
                             op.update(av);
@@ -1546,7 +1528,8 @@ public class ItemManager
     /** Contains a reference to our pet repository. See {@link #_gameRepository} for complaint. */
     protected PetRepository _petRepo;
 
-    /** Contains a reference to our avatar repository. See {@link #_gameRepository} for complaint. */
+    /** Contains a reference to our avatar repository. See {@link #_gameRepository} for
+     * complaint. */
     protected AvatarRepository _avatarRepo;
 
     /** Contains a reference to our decor repository. See {@link #_gameRepository} for complaint. */

@@ -75,7 +75,7 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public void updateItem (WebIdent ident, final Item item)
+    public void updateItem (WebIdent ident, Item item)
         throws ServiceException
     {
         // TODO: validate this user's ident
@@ -88,15 +88,22 @@ public class ItemServlet extends MsoyServiceServlet
 
         // TODO: validate anything else?
 
-        // pass the buck to the item manager to do the dirty work
-        final ServletWaiter<Item> waiter = new ServletWaiter<Item>(
-            "updateItem[" + ident + ", " + item + "]");
+        // write the item to the database
+        final ItemRecord record = ItemRecord.newRecord(item);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(item.getType());
+        try {
+            repo.updateOriginalItem(record);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to update item " + item + ".", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
+
+        // let the item manager know that we've updated this item
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.updateItem(item, waiter);
+                MsoyServer.itemMan.itemUpdated(record);
             }
         });
-        waiter.waitForResult();
     }
 
     // from interface ItemService
