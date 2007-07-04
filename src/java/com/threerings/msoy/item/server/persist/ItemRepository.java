@@ -380,35 +380,32 @@ public abstract class ItemRepository<
                              getItemClass(), ItemRecord.ITEM_ID));
         clauses.add(new Limit(offset, rows));
 
-        OrderBy sortExp;
+        // sort out the primary and secondary order by clauses
+        ArrayList<SQLExpression> obExprs = new ArrayList<SQLExpression>();
+        ArrayList<OrderBy.Order> obOrders = new ArrayList<OrderBy.Order>();
         switch(sortBy) {
-        case CatalogListing.SORT_BY_NOTHING:
-            sortExp = null;
-            break;
         case CatalogListing.SORT_BY_LIST_DATE:
-            sortExp = OrderBy.descending(
-                new ColumnExp(getCatalogClass(), CatalogRecord.LISTED_DATE));
+            addOrderByListDate(obExprs, obOrders);
+            addOrderByRating(obExprs, obOrders);
             break;
         case CatalogListing.SORT_BY_RATING:
-            sortExp = OrderBy.descending(
-                new FunctionExp("floor", getItemColumn(ItemRecord.RATING)));
+            addOrderByRating(obExprs, obOrders);
+            addOrderByPrice(obExprs, obOrders, OrderBy.Order.DESC);
             break;
         case CatalogListing.SORT_BY_PRICE_ASC:
+            addOrderByPrice(obExprs, obOrders, OrderBy.Order.ASC);
+            addOrderByRating(obExprs, obOrders);
+            break;
         case CatalogListing.SORT_BY_PRICE_DESC:
-            SQLExpression bit =
-                new Add(new ColumnExp(getCatalogClass(), CatalogRecord.FLOW_COST),
-                        new Mul(new ColumnExp(getCatalogClass(), CatalogRecord.GOLD_COST),
-                                FLOW_FOR_GOLD));
-            sortExp = (sortBy == CatalogListing.SORT_BY_PRICE_ASC) ?
-                OrderBy.ascending(bit) : OrderBy.descending(bit);
+            addOrderByPrice(obExprs, obOrders, OrderBy.Order.DESC);
+            addOrderByRating(obExprs, obOrders);
             break;
         default:
             throw new IllegalArgumentException(
                 "Sort method not implemented [sortBy=" + sortBy + "]");
         }
-        if (sortExp != null) {
-            clauses.add(sortExp);
-        }
+        clauses.add(new OrderBy(obExprs.toArray(new SQLExpression[obExprs.size()]),
+                                obOrders.toArray(new OrderBy.Order[obOrders.size()])));
 
         // see if there's any where bits to turn into an actual where clause
         addSearchClause(clauses, mature, search, tag, creator);
@@ -440,41 +437,6 @@ public abstract class ItemRepository<
             record.item = map.get(record.itemId);
         }
         return records;
-    }
-
-    /**
-     * Helper function for {@link #countListings} and {@link #loadCatalog}.
-     */
-    protected void addSearchClause (ArrayList<QueryClause> clauses, boolean mature, String search,
-                                    int tag, int creator)
-        throws PersistenceException
-    {
-        ArrayList<SQLOperator> whereBits = new ArrayList<SQLOperator>();
-
-        if (search != null && search.length() > 0) {
-            whereBits.add(new Like(ItemRecord.NAME, "%" + search + "%"));
-        }
-
-        if (tag > 0) {
-            // join against TagRecord
-            clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
-                                 getTagRepository().getTagClass(), TagRecord.TARGET_ID));
-            // and add a condition
-            whereBits.add(new Equals(TagRecord.TAG_ID, tag));
-        }
-
-        if (creator > 0) {
-            whereBits.add(new Equals(ItemRecord.CREATOR_ID, creator));
-        }
-
-        if (!mature) {
-            // add a check to make sure ItemRecord.FLAG_MATURE is not set on any returned items
-            whereBits.add(new Equals(new BitAnd(ItemRecord.FLAGS, Item.FLAG_MATURE), 0));
-        }
-
-        if (whereBits.size() > 0) {
-            clauses.add(new Where(new And(whereBits.toArray(new SQLOperator[whereBits.size()]))));
-        }
     }
 
     /**
@@ -724,8 +686,8 @@ public abstract class ItemRepository<
             ItemRecord.OWNER_ID, newOwnerId,
             ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
         if (modifiedRows == 0) {
-            throw new PersistenceException(
-                "Failed to safely update ownerId [item=" + item + ", newOwnerId=" + newOwnerId + "]");
+            throw new PersistenceException("Failed to safely update ownerId [item=" + item +
+                                           ", newOwnerId=" + newOwnerId + "]");
         }
     }
 
@@ -787,19 +749,78 @@ public abstract class ItemRepository<
         final int OUR_CLAUSE_COUNT = 8;
         QueryClause[] allClauses = new QueryClause[clauses.length + OUR_CLAUSE_COUNT];
         allClauses[0] = where;
-        allClauses[1] = new Join(getItemClass(), ItemRecord.ITEM_ID, getCloneClass(),
-            CloneRecord.ORIGINAL_ITEM_ID);
+        allClauses[1] = new Join(
+            getItemClass(), ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID);
         allClauses[2] = new FieldOverride(ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID);
         allClauses[3] = new FieldOverride(ItemRecord.PARENT_ID, getItemClass(), ItemRecord.ITEM_ID);
-        allClauses[4] = new FieldOverride(ItemRecord.OWNER_ID, getCloneClass(),
-            CloneRecord.OWNER_ID);
-        allClauses[5] = new FieldOverride(ItemRecord.LOCATION, getItemClass(), CloneRecord.LOCATION);
+        allClauses[4] = new FieldOverride(
+            ItemRecord.OWNER_ID, getCloneClass(), CloneRecord.OWNER_ID);
+        allClauses[5] = new FieldOverride(
+            ItemRecord.LOCATION, getItemClass(), CloneRecord.LOCATION);
         allClauses[6] = new FieldOverride(ItemRecord.USED, getItemClass(), CloneRecord.USED);
-        allClauses[7] = new FieldOverride(ItemRecord.LAST_TOUCHED, getCloneClass(),
-            CloneRecord.LAST_TOUCHED);
+        allClauses[7] = new FieldOverride(
+            ItemRecord.LAST_TOUCHED, getCloneClass(), CloneRecord.LAST_TOUCHED);
         System.arraycopy(clauses, 0, allClauses, OUR_CLAUSE_COUNT, clauses.length);
 
         return findAll(getItemClass(), allClauses);
+    }
+
+    /**
+     * Helper function for {@link #countListings} and {@link #loadCatalog}.
+     */
+    protected void addSearchClause (ArrayList<QueryClause> clauses, boolean mature, String search,
+                                    int tag, int creator)
+        throws PersistenceException
+    {
+        ArrayList<SQLOperator> whereBits = new ArrayList<SQLOperator>();
+
+        if (search != null && search.length() > 0) {
+            whereBits.add(new Like(ItemRecord.NAME, "%" + search + "%"));
+        }
+
+        if (tag > 0) {
+            // join against TagRecord
+            clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+                                 getTagRepository().getTagClass(), TagRecord.TARGET_ID));
+            // and add a condition
+            whereBits.add(new Equals(TagRecord.TAG_ID, tag));
+        }
+
+        if (creator > 0) {
+            whereBits.add(new Equals(ItemRecord.CREATOR_ID, creator));
+        }
+
+        if (!mature) {
+            // add a check to make sure ItemRecord.FLAG_MATURE is not set on any returned items
+            whereBits.add(new Equals(new BitAnd(ItemRecord.FLAGS, Item.FLAG_MATURE), 0));
+        }
+
+        if (whereBits.size() > 0) {
+            clauses.add(new Where(new And(whereBits.toArray(new SQLOperator[whereBits.size()]))));
+        }
+    }
+
+    protected void addOrderByListDate (ArrayList<SQLExpression> exprs,
+                                       ArrayList<OrderBy.Order> orders)
+    {
+        exprs.add(new ColumnExp(getCatalogClass(), CatalogRecord.LISTED_DATE));
+        orders.add(OrderBy.Order.DESC);
+    }
+
+    protected void addOrderByRating (ArrayList<SQLExpression> exprs,
+                                     ArrayList<OrderBy.Order> orders)
+    {
+        exprs.add(new FunctionExp("floor", getItemColumn(ItemRecord.RATING)));
+        orders.add(OrderBy.Order.DESC);
+    }
+
+    protected void addOrderByPrice (ArrayList<SQLExpression> exprs, ArrayList<OrderBy.Order> orders,
+                                    OrderBy.Order order)
+    {
+        exprs.add(new Add(new ColumnExp(getCatalogClass(), CatalogRecord.FLOW_COST),
+                          new Mul(new ColumnExp(getCatalogClass(), CatalogRecord.GOLD_COST),
+                                  FLOW_FOR_GOLD)));
+        orders.add(order);
     }
 
     protected ColumnExp getItemColumn (String cname)

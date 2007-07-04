@@ -19,8 +19,6 @@ public class CatalogListing
     implements Streamable, IsSerializable
 {
     /** A constant for requesting catalog search results to be returned in a certain order. */
-    public static final byte SORT_BY_NOTHING = 0;
-    /** A constant for requesting catalog search results to be returned in a certain order. */
     public static final byte SORT_BY_RATING = 1;
     /** A constant for requesting catalog search results to be returned in a certain order. */
     public static final byte SORT_BY_LIST_DATE = 2;
