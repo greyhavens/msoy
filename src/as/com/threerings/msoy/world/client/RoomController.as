@@ -962,6 +962,11 @@ public class RoomController extends SceneController
      */
     protected function checkMouse (event :Event) :void
     {
+        // freak not out if we're temporarily removed from the stage
+        if (_roomView.stage == null) {
+            return;
+        }
+
         var sx :Number = _roomView.stage.mouseX;
         var sy :Number = _roomView.stage.mouseY;
         var showWalkTarget :Boolean = false;

@@ -32,11 +32,12 @@ public class WorldChatTab extends ChatTab
         _placeBox = _ctx.getTopPanel().takePlaceContainer();
         if (_placeBox == null) {
             Log.getLog(this).warning("Failed to get PlaceBox.");
-        } else {
-            addChildAt(_placeBox, 0);
-            addEventListener(Event.ADDED_TO_STAGE, checkSizes);
-            addEventListener(ResizeEvent.RESIZE, checkSizes);
+            return;
         }
+
+        addChildAt(_placeBox, 0);
+        addEventListener(Event.ADDED_TO_STAGE, checkSizes);
+        addEventListener(ResizeEvent.RESIZE, checkSizes);
     }
 
     /**
@@ -61,6 +62,10 @@ public class WorldChatTab extends ChatTab
 
     protected function checkSizes (... ignored) :void
     {
+        if (stage == null) {
+            return; // sometimes RESIZE comes in before ADDED_TO_STAGE
+        }
+
         var height :int = stage.stageHeight - ControlBar.HEIGHT - HeaderBar.HEIGHT -
             TopPanel.DECORATIVE_MARGIN_HEIGHT;
         // we don't have our proper width yet (the stage has not yet resized), so we have to
@@ -76,7 +81,6 @@ public class WorldChatTab extends ChatTab
     }
 
     protected var _chatContainer :ChatContainer;
-
     protected var _placeBox :PlaceBox;
 }
 }

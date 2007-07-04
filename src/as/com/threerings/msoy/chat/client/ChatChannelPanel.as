@@ -166,7 +166,11 @@ public class ChatChannelPanel extends VBox
         callLater(function () :void {
             _tabnav.setClosePolicyForTab(0, SuperTab.CLOSE_NEVER);
         });
-        selectTab(_wtab);
+        // select the world tab if we're not showing at all, otherwise don't fiddle with the
+        // selected tab to avoid hiding an active chat channel or the tutorial
+        if (parent == null) {
+            selectTab(_wtab);
+        }
         _ctx.getTopPanel().getControlBar().setTabMode(true);
     }
 
