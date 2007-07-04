@@ -112,7 +112,7 @@ public class NaviPanel extends FlexTable
         setMenu(menuidx++, "People", CShell.cmsgs.menuPeople(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 MenuBar fmenu = new MenuBar(true);
-                fmenu.addItem("Search Profiles", true, new Command() {
+                fmenu.addItem("Find People", true, new Command() {
                     public void execute () {
                         History.newItem(Application.createLinkToken("profile", ""));
                         _popped.hide();
