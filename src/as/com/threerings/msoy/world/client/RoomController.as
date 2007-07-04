@@ -963,7 +963,7 @@ public class RoomController extends SceneController
     protected function checkMouse (event :Event) :void
     {
         // freak not out if we're temporarily removed from the stage
-        if (_roomView.stage == null) {
+        if (_roomView.stage == null || !_roomView.isShowing()) {
             return;
         }
 

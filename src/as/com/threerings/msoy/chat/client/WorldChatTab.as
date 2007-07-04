@@ -11,6 +11,7 @@ import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.HeaderBar;
+import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldContext;
@@ -38,6 +39,17 @@ public class WorldChatTab extends ChatTab
         addChildAt(_placeBox, 0);
         addEventListener(Event.ADDED_TO_STAGE, checkSizes);
         addEventListener(ResizeEvent.RESIZE, checkSizes);
+    }
+
+    override public function setVisible (value :Boolean, noEvent :Boolean = false) :void
+    {
+        if (_placeBox != null) {
+            var o :Object = _placeBox.getPlaceView();
+            if (o is MsoyPlaceView) {
+                MsoyPlaceView(o).setIsShowing(value);
+            }
+        }
+        super.setVisible(value, noEvent);
     }
 
     /**

@@ -15,5 +15,10 @@ public interface MsoyPlaceView extends PlaceView
      * Informs the place view of its pixel dimensions.
      */
     function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void;
+
+    /**
+     * Inform the place view whether or not it's showing.
+     */
+    function setIsShowing (showing :Boolean) :void;
 }
 }

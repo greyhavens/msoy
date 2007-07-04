@@ -70,6 +70,20 @@ public class AbstractRoomView extends Sprite
         updateEditingOverlay();
     }
 
+    // from MsoyPlaceView
+    public function setIsShowing (showing :Boolean) :void
+    {
+        _showing = showing;
+    }
+
+    /**
+     * Are we actually showing?
+     */
+    public function isShowing () :Boolean
+    {
+        return _showing;
+    }
+
     /**
      * Called by the editor to have direct access to our sprite list..
      */
@@ -420,6 +434,9 @@ public class AbstractRoomView extends Sprite
 
     /** The msoy context. */
     protected var _ctx :WorldContext;
+
+    /** Are we actually showing? */
+    protected var _showing :Boolean = true;
 
     /** The model of the current scene. */
     protected var _scene :MsoyScene;
