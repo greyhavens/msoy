@@ -45,7 +45,6 @@ public class ControlBarController extends Controller
 
     /** Opens up a new toolbar and a new room editor. */
     public static const ROOM_EDIT :String = "handleRoomEdit";
-    public static const ROOM_EDIT_NEW :String = "handleRoomEditNew";
     
     /** Create the controller. */
     public function ControlBarController (
@@ -117,14 +116,6 @@ public class ControlBarController extends Controller
         if (canEditScene()) {
             var room :RoomView = _topPanel.getPlaceView() as RoomView;
             room.getRoomController().handleRoomEdit(button);
-        }
-    }   
-    // scaffolding for the new new new room editor
-    public function handleRoomEditNew (button :CommandButton) :void
-    {
-        if (canEditScene()) {
-            var room :RoomView = _topPanel.getPlaceView() as RoomView;
-            room.getRoomController().handleRoomEditNew(button);
         }
     }   
 

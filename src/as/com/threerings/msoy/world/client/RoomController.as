@@ -80,7 +80,6 @@ import com.threerings.msoy.world.client.updates.SceneUpdateAction;
 import com.threerings.msoy.world.client.updates.UpdateAction;
 import com.threerings.msoy.world.client.updates.UpdateStack;
 import com.threerings.msoy.world.client.editor.DoorTargetEditController;
-import com.threerings.msoy.world.client.editor.RoomEditPanel;
 import com.threerings.msoy.world.client.editor.RoomEditorController;
 import com.threerings.msoy.world.client.editor.ItemUsedDialog;
 
@@ -250,7 +249,7 @@ public class RoomController extends SceneController
         _mctx.getTopPanel().getControlBar().addEventListener(ControlBar.DISPLAY_LIST_VALID,
             function (evt :ValueEvent) :void {
                 if (_openEditor && !isRoomEditing()) {
-                    beginRoomEditingNew(_mctx.getTopPanel().getControlBar().roomEditBtn);
+                    beginRoomEditing(_mctx.getTopPanel().getControlBar().roomEditBtn);
                 }
                 _openEditor = false;
             }
@@ -291,11 +290,8 @@ public class RoomController extends SceneController
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
         _updates.reset();
-        if (isRoomEditingOld()) {
+        if (isRoomEditing()) {
             cancelRoomEditing();
-        }
-        if (isRoomEditingNew()) {
-            cancelRoomEditingNew();
         }
 
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
@@ -362,9 +358,6 @@ public class RoomController extends SceneController
         if (isRoomEditing()) {
             cancelRoomEditing();
         }
-        if (isRoomEditingNew()) {
-            cancelRoomEditingNew();
-        }
 
         _roomObj.roomService.editRoom(_mctx.getClient(), new ResultWrapper(
             function (cause :String) :void {
@@ -394,36 +387,10 @@ public class RoomController extends SceneController
             }));
     }
 
-    public function handleRoomEditNew (button :CommandButton) :void
-    {
-        _roomObj.roomService.editRoom(_mctx.getClient(), new ResultWrapper(
-            function (cause :String) :void {
-                _mctx.displayFeedback("general", cause);
-            },
-            function (result :Object) :void {
-                // if we're editing, let's finish, otherwise let's start!
-                if (isRoomEditing()) {
-                    cancelRoomEditingNew();
-                } else {
-                    beginRoomEditingNew(button);
-                }
-            }));
-    }
-
     /**
      * Returns true if we are in edit mode, false if not.
      */
     public function isRoomEditing () :Boolean
-    {
-        return (_roomEditPanel != null && _roomEditPanel.isOpen) || _editor.isEditing();
-    }
-
-    // scaffolding to enable both room editors at the same time
-    public function isRoomEditingOld () :Boolean
-    {
-        return (_roomEditPanel != null && _roomEditPanel.isOpen);
-    }
-    public function isRoomEditingNew () :Boolean
     {
         return _editor.isEditing();
     }
@@ -438,12 +405,8 @@ public class RoomController extends SceneController
             return; // only furni sprites can be edited
         }
 
-        if (isRoomEditing()) {
-            return; // don't let editor v. 1 interfere with editor v. 2
-        }
-
         var furni :FurniSprite = sprite as FurniSprite;
-        var menuItems :Array = [];
+        var menuItems :Array = []; // this should be filled in as necessary
 
         // pop up the menu where the mouse is
         if (menuItems.length > 0) {
@@ -856,74 +819,26 @@ public class RoomController extends SceneController
 
         // this function will be called when the edit panel is closing
         var wrapupFn :Function = function () :void {
-            _roomEditPanel = null;
-            // re-start any music
-            if (_music != null) {
-                _music.play();
+            if (_music != null && ! _musicIsBackground) {
+                _music.play(); // restart non-background music
             }
             button.selected = false;
         }
 
         if (_music != null && ! _musicIsBackground) {
-            _music.close();
+            _music.close();    // stop non-background music
             _music = null;
             _musicIsBackground = true;
         }
 
-        _roomEditPanel = new RoomEditPanel(_mctx, button, _roomView, wrapupFn);
-        _roomEditPanel.open(false, null, button);
-        _roomEditPanel.updateUndoButton(_updates.length != 0);
-    }
-
-    /**
-     * End editing the room.
-     */
-    public function cancelRoomEditing () :void
-    {
-        if (isRoomEditingOld()) {
-            _roomEditPanel.close();
-        }
-    }
-
-    /**
-     * Begin editing the room.
-     */
-    protected function beginRoomEditingNew (button :CommandButton) :void
-    {
-        _walkTarget.visible = false;
-        _flyTarget.visible = false;
-        setHoverSprite(null);
-
-        button.selected = true;
-
-        // this function will be called when the edit panel is closing
-        var wrapupFn :Function = function () :void {
-            //_roomEditor = null;
-            // _editor.endEditing(); // ???
-            // re-start any music
-            if (_music != null) {
-                _music.play();
-            }
-            button.selected = false;
-        }
-
-        if (_music != null && ! _musicIsBackground) {
-            _music.close();
-            _music = null;
-            _musicIsBackground = true;
-        }
-
-        //_roomEditor = new RoomEditPanel(_mctx, button, _roomView, wrapupFn);
-        //_roomEditor.open(false, null, button);
         _editor.startEditing(wrapupFn);
-        //_roomEditor.updateUndoButton(_updates.length != 0);
         _editor.updateUndoStatus(_updates.length != 0);
     }
 
     /**
      * End editing the room.
      */
-    public function cancelRoomEditingNew () :void
+    public function cancelRoomEditing () :void
     {
         _editor.endEditing();
     }
@@ -974,10 +889,6 @@ public class RoomController extends SceneController
         var showFlyTarget :Boolean = false;
         var hoverTarget :MsoySprite = null;
 
-        if (isRoomEditingOld()) {
-            _roomEditPanel.controller.mouseMove(sx, sy);
-        }
-
         // if shift is being held down, we're looking for locations only, so
         // skip looking for hitSprites.
         var hit :* = (_shiftDownSpot == null) ? getHitSprite(sx, sy, isRoomEditing()) : null;
@@ -1017,19 +928,7 @@ public class RoomController extends SceneController
             }
 
             // if we're editing the room, don't highlight any furni at all,
-            if (isRoomEditingOld()) {
-                hoverTarget = null;
-
-                // let the editor override our decision to display walk targets
-                showWalkTarget = (showWalkTarget && _roomEditPanel.isMovementEnabled);
-                showFlyTarget = (showFlyTarget && _roomEditPanel.isMovementEnabled);
-
-                // and tell the editor which sprite was being hovered (whether highlighted or not)
-                _roomEditPanel.controller.mouseOverSprite(hitter);
-            }
-
-            // if we're editing the room, don't highlight any furni at all,
-            if (isRoomEditingNew()) {
+            if (isRoomEditing()) {
                 hoverTarget = null;
 
                 // let the editor override our decision to display walk targets
@@ -1196,10 +1095,7 @@ public class RoomController extends SceneController
         }
 
         // and in any case, tell the editor
-        if (isRoomEditingOld()) {
-            _roomEditPanel.controller.mouseClick(hitter, event);
-        }
-        if (isRoomEditingNew()) {
+        if (isRoomEditing()) {
             _editor.mouseClickOnSprite(hitter, event);
         }
 
@@ -1562,9 +1458,6 @@ public class RoomController extends SceneController
 
     /** Controller for in-room furni editing. */
     protected var _editor :RoomEditorController;
-
-    // legacy. FIXME ROBERT: DELETEME
-    protected var _roomEditPanel :RoomEditPanel;
 
     /** Stack that stores the sequence of room updates. */
     protected var _updates :UpdateStack = new UpdateStack(updateRoom);

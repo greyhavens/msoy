@@ -210,18 +210,8 @@ public class ControlBar extends HBox
         _roomeditBtn.setCommand(ControlBarController.ROOM_EDIT, _roomeditBtn);
         _roomeditBtn.styleName = "controlBarButtonEdit";
         _roomeditBtn.enabled = false;
-        if (user != null && user.tokens.isSupport()) {
-            addGroupChild(_roomeditBtn, [ UI_STD ]);
-        }
+        addGroupChild(_roomeditBtn, [ UI_STD ]);
         
-        // transitional button for the new new new room editor
-        _roomeditBtnNew = new CommandButton();
-        _roomeditBtnNew.toolTip = Msgs.GENERAL.get("i.editScene");
-        _roomeditBtnNew.setCommand(ControlBarController.ROOM_EDIT_NEW, _roomeditBtnNew);
-        _roomeditBtnNew.styleName = "controlBarButtonEdit";
-        _roomeditBtnNew.enabled = false;
-        addGroupChild(_roomeditBtnNew, [ UI_STD ]);
-
         // hover hover hotzone
         var hotZone :CommandButton = new CommandButton();
         hotZone.toolTip = "Hover to see clickable furniture"; // TODO, if we keep
@@ -386,7 +376,6 @@ public class ControlBar extends HBox
     {
         if (_roomeditBtn != null) {
             _roomeditBtn.enabled = value;
-            _roomeditBtnNew.enabled = value;
         }
         if (_petBtn != null) {
             _petBtn.enabled = value;
@@ -394,8 +383,7 @@ public class ControlBar extends HBox
     }
 
     /**
-     * This is needed by the RoomController so that it can position the room edit popup and modify
-     * this button correctly when room editing is forced by javascript pushing some furni on us.
+     * This is needed by the room controller, so that it can enable/disable the edit button.
      */
     public function get roomEditBtn () :CommandButton
     {
