@@ -34,6 +34,7 @@ public abstract class Stars extends FlowPanel
             }
             add(halfStar);
         }
+        update();
     }
 
     protected void updateStarImages (double ratingToDisplay, boolean isUserRating)
