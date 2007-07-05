@@ -102,10 +102,11 @@ public class ActionPanel extends BasePanel
         _readOnlyActionLabel = new TextInput();
         _readOnlyActionLabel.editable = false;
         _readOnlyActionLabel.enabled = false;
+        _readOnlyActionLabel.width = 120; // not too big
         // hide this one initially
         _readOnlyActionLabel.visible = _readOnlyActionLabel.includeInLayout = false;
 
-        var action :HBox = new HBox();
+        var action :VBox = new VBox();
         action.addChild(_readOnlyActionLabel);
         action.addChild(_actionTypeSelection);
 
