@@ -38,6 +38,7 @@ public /*abstract*/ class Item
     public static const AUDIO :int = 7; //registerItemType(Audio, 7);
     public static const VIDEO :int = 8; // registerItemType(Video, 8);
     public static const DECOR :int = 9; //registerItemType(Decor, 9);
+    public static const TOY :int = 10; //registerItemType(Toy, 10);
     // Note: registery of Item types is done at the bottom of this class
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
 
@@ -164,6 +165,8 @@ public /*abstract*/ class Item
             return "video";
         } else if (type == DECOR) {
             return "decor";
+        } else if (type == TOY) {
+            return "toy";
         } else {
             return "unknown:" + type;
         }
@@ -398,6 +401,7 @@ public /*abstract*/ class Item
         registerItemType(Audio, AUDIO);
         registerItemType(Video, VIDEO);
         registerItemType(Decor, DECOR);
+        registerItemType(Toy, TOY);
     }
     private static function staticInit () :void
     {

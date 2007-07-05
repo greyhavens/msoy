@@ -31,6 +31,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     public static final byte AUDIO = registerItemType(Audio.class, 7);
     public static final byte VIDEO = registerItemType(Video.class, 8);
     public static final byte DECOR = registerItemType(Decor.class, 9);
+    public static final byte TOY = registerItemType(Toy.class, 10);
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
     //
     // Note: If the number of item types surpasses 31, we need to change the loadedInventory field
@@ -38,7 +39,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
 
     /** A canonical ordering of our item types for use in the catalog, inventory, etc. */
     public static final byte[] TYPES = {
-        AVATAR, FURNITURE, DECOR, PET, GAME, PHOTO, AUDIO, VIDEO
+        AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO
     };
 
     /** A 'used' constant value to indicate that the item is unused. */
@@ -185,6 +186,8 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
             return "video";
         } else if (type == DECOR) {
             return "decor";
+        } else if (type == TOY) {
+            return "toy";
         } else {
             return "unknown:" + type;
         }

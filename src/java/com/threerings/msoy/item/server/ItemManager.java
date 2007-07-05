@@ -58,6 +58,7 @@ import com.threerings.msoy.item.server.persist.AudioRepository;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.DecorRepository;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -68,8 +69,9 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PetRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.server.persist.RatingRecord;
+import com.threerings.msoy.item.server.persist.ToyRepository;
 import com.threerings.msoy.item.server.persist.VideoRepository;
-import com.threerings.msoy.item.server.persist.DecorRepository;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -115,6 +117,8 @@ public class ItemManager
         _repos.put(Item.DOCUMENT, repo);
         repo = new FurnitureRepository(conProv);
         _repos.put(Item.FURNITURE, repo);
+        repo = new ToyRepository(conProv);
+        _repos.put(Item.TOY, repo);
         repo = (_gameRepo = new GameRepository(conProv));
         _repos.put(Item.GAME, repo);
         repo = (_petRepo = new PetRepository(conProv));
