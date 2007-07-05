@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.external.ExternalInterface;
 import flash.events.Event;
@@ -22,6 +23,7 @@ import mx.controls.HSlider;
 import mx.controls.TextInput;
 import mx.core.Application;
 import mx.core.BitmapAsset;
+import mx.core.Container;
 import mx.core.UIComponent;
 import mx.core.ScrollPolicy;
 import mx.events.SliderEvent;
@@ -31,6 +33,7 @@ import com.threerings.flash.MathUtil;
 import com.threerings.flex.GridUtil;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.util.MessageManager;
+import com.threerings.util.ParameterUtil;
 import com.threerings.msoy.client.Msgs;
 
  
@@ -53,6 +56,36 @@ public class DecorViewerComp extends Canvas
             }
         } else {
             log.warning("External interface not available!");
+        }
+
+        ParameterUtil.getParameters(DisplayObject(Application.application), gotParams);
+    }
+
+    /**
+     * Called back from ParameterUtil when we've got the goods.
+     */
+    protected function gotParams (params :Object) :void
+    {
+        if (null != params["readonly"]) {
+            _mousePanel.visible = false;
+            _mousePanel.includeInLayout = false;
+            _optionPanel.visible = false;
+            _optionPanel.includeInLayout = false;
+
+            for each (var input :TextInput in getTextInputs()) {
+                input.editable = false;
+            }
+        }
+
+        var media :String = String(params["media"]);
+        if (media != null) {
+            // Below, we mostly rely on flash's runtime type coercian
+            // width :int, height :int, depth :int, horizon :Number, type :int,
+            // offsetX :Number, offsetY :Number, hideWalls :Boolean
+            updateParameters(params["width"], params["height"], params["depth"],
+                params["horizon"], params["type"], params["offsetX"], params["offsetY"],
+                ("true" == params["hideWalls"]));
+            updateMedia(media);
         }
     }
 
@@ -113,6 +146,7 @@ public class DecorViewerComp extends Canvas
         // container for mouse options
 
         var mouseopts :Grid = new Grid();
+        _mousePanel = mouseopts;
         vbox.addChild(mouseopts);
         
         _horizonMode = new CheckBox();
@@ -129,6 +163,7 @@ public class DecorViewerComp extends Canvas
         // container for standard options
         
         var standard :Grid = new Grid();
+        _optionPanel = standard;
         vbox.addChild(standard);
 
         var types :Array = [];
@@ -167,9 +202,7 @@ public class DecorViewerComp extends Canvas
                         Msgs.EDITING.get("l.offset"), _offsetXBox = new TextInput(),
                         _offsetYBox = new TextInput());
         
-        for each (var input :TextInput in [ _widthBox, _heightBox, _depthBox, _horizonXBox,
-                                            _horizonYBox, _offsetXBox, _offsetYBox ])
-        {
+        for each (var input :TextInput in getTextInputs()) {
             input.width = 40;
             input.addEventListener(Event.CHANGE, advancedOptionsChanged);
         }
@@ -184,7 +217,7 @@ public class DecorViewerComp extends Canvas
             for each (var c :Class in def) {
                 if (c != null) {
                     var image :Image = new Image();
-                    image.source = new c() as BitmapAsset;
+                    image.source = new c();
                     pointer.push(image);
                 } else {
                     pointer.push(null);
@@ -206,14 +239,24 @@ public class DecorViewerComp extends Canvas
     // @Override from Canvas
     override protected function childrenCreated () :void
     {
+        super.childrenCreated();
+
         _preview.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
         _preview.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
         _preview.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
         _preview.addEventListener(MouseEvent.ROLL_OVER, rollOverHandler);
         _preview.addEventListener(MouseEvent.ROLL_OUT, rollOutHandler);
     }
-      
-            
+
+    /**
+     * Return an array of all the text input fields.
+     */
+    protected function getTextInputs () :Array
+    {
+        return [ _widthBox, _heightBox, _depthBox, _horizonXBox, _horizonYBox,
+            _offsetXBox, _offsetYBox ];
+    }
+
     /**
      * Called whenever any of the UI elements changes.
      */
@@ -507,6 +550,10 @@ public class DecorViewerComp extends Canvas
     protected static const MOUSE_MODE_HORIZON :int = 2;
 
     protected var _testing :Boolean = true;
+
+    // panels containing other control options
+    protected var _mousePanel :Container;
+    protected var _optionPanel :Container;
 
     // standard options
     protected var _results :Label;
