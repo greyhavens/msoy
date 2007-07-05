@@ -3,9 +3,12 @@
 
 package com.threerings.msoy.web.server;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -66,19 +69,29 @@ public class MediaProxyServlet extends HttpServlet
             // reroute the URL to our media server
             URL url = new URL(ServerConfig.mediaURL + rsrc);
 
-            // open the connection and copy the request data
-            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-            conn.setRequestMethod(method);
+            // if our media is being served from this host, simply serve up the data directly from
+            // the file system instead of proxying (Jetty 6 doesn't like to proxy from itself)
+            if (requrl.getHost().equals(url.getHost())) {
+                File media = new File(ServerConfig.mediaDir, rsrc);
+                in = new FileInputStream(media);
 
-            // convey the response back to the requester
-            int rcode = conn.getResponseCode();
-            if (rcode == HttpServletResponse.SC_OK) {
-                IOUtils.copy(in = conn.getInputStream(), rsp.getOutputStream());
             } else {
-                log.warning("Proxy failed [url=" + url + ", rcode=" + rcode +
-                            ", rmsg=" + conn.getResponseMessage() + "].");
-                rsp.sendError(rcode, conn.getResponseMessage());
+                // open the connection and copy the request data
+                HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+                conn.setRequestMethod(method);
+
+                // convey the response back to the requester
+                int rcode = conn.getResponseCode();
+                if (rcode != HttpServletResponse.SC_OK) {
+                    log.warning("Proxy failed [url=" + url + ", rcode=" + rcode +
+                                ", rmsg=" + conn.getResponseMessage() + "].");
+                    rsp.sendError(rcode, conn.getResponseMessage());
+                    return;
+                }
+                in = conn.getInputStream();
             }
+
+            IOUtils.copy(in, rsp.getOutputStream());
 
         } catch (MalformedURLException mue) {
             throw new IOException("Failed to create proxy URL: " + mue);
