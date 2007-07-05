@@ -42,8 +42,9 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.ezgame.server.DictionaryManager;
-import com.threerings.ezgame.server.GameCookieManager;
+import com.threerings.ezgame.server.persist.GameCookieRepository;
 
+import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.ParlorManager;
 
 import com.threerings.whirled.server.SceneRegistry;
@@ -129,6 +130,9 @@ public class MsoyServer extends WhirledServer
 
     /** Manages the persistent repository of stats. */
     public static StatRepository statRepo;
+
+    /** Stores user's game cookies. */
+    public static GameCookieRepository gameCookieRepo;
 
     /** The Msoy item manager. */
     public static ItemManager itemMan = new ItemManager();
@@ -309,6 +313,7 @@ public class MsoyServer extends WhirledServer
         swiftlyRepo = new SwiftlyRepository(conProv);
         memoryRepo = new MemoryRepository(conProv);
         statRepo = new StatRepository(conProv);
+        gameCookieRepo = new GameCookieRepository(conProv);
 
         // create and set up our configuration registry and admin service
         confReg = new DatabaseConfigRegistry(conProv, invoker);
@@ -462,10 +467,9 @@ public class MsoyServer extends WhirledServer
         lobbyReg.init(invmgr);
         worldGameReg.init(invmgr);
 
-        GameCookieManager.init(conProv, new GameCookieManager.UserIdentifier() {
+        GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
-                // will return 0 for guests..
-                return ((MemberObject) bodyObj).getMemberId();
+                return ((MemberObject) bodyObj).getMemberId(); // will return 0 for guests
             }
         });
         DictionaryManager.init("data/dictionary");
