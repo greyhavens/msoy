@@ -29,7 +29,9 @@ import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
+
 import com.threerings.msoy.world.client.RoomController;
+import com.threerings.msoy.world.client.RoomView;
 
 import com.threerings.msoy.chat.client.ChatControl;
 
@@ -219,7 +221,23 @@ public class ControlBar extends HBox
         _roomeditBtnNew.styleName = "controlBarButtonEdit";
         _roomeditBtnNew.enabled = false;
         addGroupChild(_roomeditBtnNew, [ UI_STD ]);
-        
+
+        // hover hover hotzone
+        var hotZone :CommandButton = new CommandButton();
+        hotZone.toolTip = "Hover to see clickable furniture"; // TODO, if we keep
+        hotZone.styleName = "controlBarHoverZone";
+        hotZone.enabled = false;
+        hotZone.focusEnabled = false;
+        var hotHandler :Function = function (event :MouseEvent) :void {
+            var roomView :RoomView = _ctx.getTopPanel().getPlaceView() as RoomView;
+            if (roomView != null) {
+                roomView.getRoomController().hoverAllFurni(event.type == MouseEvent.ROLL_OVER);
+            }
+        };
+        hotZone.addEventListener(MouseEvent.ROLL_OVER, hotHandler);
+        hotZone.addEventListener(MouseEvent.ROLL_OUT, hotHandler);
+        addGroupChild(hotZone, [ UI_STD, UI_GUEST ]);
+
         if (_ctx.getWorldClient().isEmbedded()) {
             _logonPanel = new LogonPanel(_ctx, this.height - 4);
             addGroupChild(_logonPanel, [ UI_GUEST ]);

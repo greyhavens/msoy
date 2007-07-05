@@ -305,6 +305,7 @@ public class RoomController extends SceneController
 
         _roomView.removeChild(_walkTarget);
         _roomView.removeChild(_flyTarget);
+        hoverAllFurni(false);
         setHoverSprite(null);
 
         _roomObj.removeListener(_roomListener);
@@ -1067,10 +1068,7 @@ public class RoomController extends SceneController
         // otherwise, unglow the old sprite (and remove any tooltip)
         if (_hoverSprite != null) {
             _hoverSprite.setHovered(false);
-            if (_hoverTip != null) {
-                ToolTipManager.destroyToolTip(_hoverTip);
-                _hoverTip = null;
-            }
+            removeHoverTips();
         }
 
         // assign the new hoversprite
@@ -1090,17 +1088,21 @@ public class RoomController extends SceneController
         }
 
         var text :String = _hoverSprite.setHovered(true, stageX, stageY);
-        if (_hoverTip != null && _hoverTip.text != text) {
-            ToolTipManager.destroyToolTip(_hoverTip);
-            _hoverTip = null;
+        var tip :IToolTip = (_hoverTips.length == 1) ? IToolTip(_hoverTips[0]) : null;
+        if (tip != null && tip.text != text) {
+            removeHoverTips();
+            tip = null;
         }
-        if (_hoverTip == null && text != null) {
-            _hoverTip = createHoverTip(_hoverSprite, text, stageX, stageY);
+        if (tip == null && text != null) {
+            addHoverTip(_hoverSprite, text, stageX, stageY);
         }
     }
 
-    protected function createHoverTip (
-        sprite :MsoySprite, tipText :String, stageX :Number, stageY :Number) :IToolTip
+    /**
+     * Utility method to create and style the hover tip for a sprite.
+     */
+    protected function addHoverTip (
+        sprite :MsoySprite, tipText :String, stageX :Number, stageY :Number) :void
     {
         var tip :IToolTip = ToolTipManager.createToolTip(tipText, stageX, stageY);
         var tipComp :UIComponent = UIComponent(tip);
@@ -1113,40 +1115,45 @@ public class RoomController extends SceneController
             tipComp.setStyle("backgroundColor", 0xFFFFFF);
         }
 
-        return tip;
+        _hoverTips.push(tip);
     }
 
-//    /**
-//     * Hover all Furni on or off.
-//     */
-//    // TODO: this feature not yet done
-//    public function hoverAllFurni (on :Boolean) :void
-//    {
-//        var sprite :FurniSprite;
-//
-//        if (on) {
-//            for each (sprite in _roomView.getFurniSprites().values()) {
-//                if (!sprite.isActive() || !sprite.capturesMouse() || !sprite.hasAction()) {
-//                    continue;
-//                }
-//                var tipText :String = sprite.setHovered(true);
-//                var p :Point = sprite.getLayoutHotSpot();
-//                p = sprite.localToGlobal(p);
-//                _allTips.push(createHoverTip(sprite, tipText, p.x, p.y));
-//            }
-//        } else {
-//            for each (sprite in _roomView.getFurniSprites().values()) {
-//                sprite.setHovered(false);
-//            }
-//
-//            for each (var tip :IToolTip in _allTips) {
-//                ToolTipManager.destroyToolTip(tip);
-//            }
-//            _allTips.length = 0; // truncate
-//        }
-//    }
-//
-//    protected var _allTips :Array = [];
+    /**
+     * Remove all currently-shown hover tips. Does not unglow the sprites.
+     */
+    protected function removeHoverTips () :void
+    {
+        for each (var tip :IToolTip in _hoverTips) {
+            ToolTipManager.destroyToolTip(tip);
+        }
+        _hoverTips.length = 0; // truncate
+    }
+
+    /**
+     * Set the hover for all furniture on or off.
+     */
+    public function hoverAllFurni (on :Boolean) :void
+    {
+        var sprite :FurniSprite;
+
+        if (on) {
+            for each (sprite in _roomView.getFurniSprites().values()) {
+                if (!sprite.isActive() || !sprite.capturesMouse() || !sprite.hasAction()) {
+                    continue;
+                }
+                var tipText :String = sprite.setHovered(true);
+                var p :Point = sprite.getLayoutHotSpot();
+                p = sprite.localToGlobal(p);
+                addHoverTip(sprite, tipText, p.x, p.y);
+            }
+        } else {
+            for each (sprite in _roomView.getFurniSprites().values()) {
+                sprite.setHovered(false);
+            }
+
+            removeHoverTips();
+        }
+    }
 
     protected function mouseClicked (event :MouseEvent) :void
     {
@@ -1521,9 +1528,11 @@ public class RoomController extends SceneController
     /** Our general-purpose room listener. */
     protected var _roomListener :ChangeListener;
 
+    /** The currently hovered sprite, or null. */
     protected var _hoverSprite :MsoySprite;
 
-    protected var _hoverTip :IToolTip;
+    /** All currently displayed sprite tips. */
+    protected var _hoverTips :Array = [];
 
     /** True if the shift key is currently being held down, false if not. */
     protected var _shiftDown :Boolean;
