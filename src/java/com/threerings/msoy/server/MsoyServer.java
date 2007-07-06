@@ -45,6 +45,7 @@ import com.threerings.ezgame.server.DictionaryManager;
 import com.threerings.ezgame.server.persist.GameCookieRepository;
 
 import com.threerings.parlor.game.server.GameManager;
+import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.server.ParlorManager;
 
 import com.threerings.whirled.server.SceneRegistry;
@@ -122,6 +123,9 @@ public class MsoyServer extends WhirledServer
     /** Contains information on our swiftly projects. */
     public static SwiftlyRepository swiftlyRepo;
 
+    /** Contains the rating data for each player and game. */
+    public static RatingRepository ratingRepo;
+    
     /** The Msoy scene repository. */
     public static MsoySceneRepository sceneRepo;
 
@@ -311,6 +315,7 @@ public class MsoyServer extends WhirledServer
         profileRepo = new ProfileRepository(conProv);
         groupRepo = new GroupRepository(conProv);
         swiftlyRepo = new SwiftlyRepository(conProv);
+        ratingRepo = new RatingRepository(conProv);
         memoryRepo = new MemoryRepository(conProv);
         statRepo = new StatRepository(conProv);
         gameCookieRepo = new GameCookieRepository(conProv);

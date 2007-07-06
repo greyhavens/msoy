@@ -17,7 +17,9 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.server.GameManager;
-import com.threerings.parlor.game.server.GameManagerDelegate;
+import com.threerings.parlor.rating.server.RatingManagerDelegate;
+import com.threerings.parlor.rating.server.persist.RatingRepository;
+import com.threerings.util.Name;
 
 import com.whirled.data.WhirledGame;
 import com.whirled.data.WhirledGameMarshaller;
@@ -35,7 +37,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles Whirled game services like awarding flow.
  */
-public class WhirledGameDelegate extends GameManagerDelegate
+public class WhirledGameDelegate extends RatingManagerDelegate
     implements WhirledGameProvider
 {
     /** Actually takes care of flow tracking and awarding. */
@@ -134,7 +136,7 @@ public class WhirledGameDelegate extends GameManagerDelegate
         tracker.stopTracking();
 
         int totalSeconds = tracker.getTotalTrackedSeconds();
-        int totalMinutes = (int) Math.round(totalSeconds / 60f);
+        int totalMinutes = Math.round(totalSeconds / 60f);
         if (totalMinutes == 0 && totalSeconds > 0) {
             totalMinutes = 1; // round very short games up to 1 minute.
         }
@@ -153,6 +155,25 @@ public class WhirledGameDelegate extends GameManagerDelegate
                 }
             });
         }
+    }
+
+    @Override
+    protected int minimumRatedDuration ()
+    {
+        // don't rate games that last less than 10 seconds
+        return 10;
+    }
+    
+    @Override
+    protected RatingRepository getRatingRepository ()
+    {
+        return MsoyServer.ratingRepo;
+    }
+
+    @Override
+    protected void updateRatingInMemory (int gameId, Name playerName, Rating rating)
+    {
+        // we don't keep in-memory ratings for whirled
     }
 
     /**
