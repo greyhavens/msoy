@@ -4,13 +4,15 @@
 package com.threerings.msoy.web.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntMap;
 
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
 
 import com.threerings.msoy.server.MsoyServer;
@@ -19,12 +21,13 @@ import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.BlurbData;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.GameRating;
 import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.data.all.MemberName;
@@ -32,6 +35,8 @@ import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.ProfileLayout;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.parlor.rating.server.RatingManagerDelegate;
+import com.threerings.parlor.rating.server.persist.RatingRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -122,7 +127,11 @@ public class ProfileServlet extends MsoyServiceServlet
 //                 case BlurbData.HOOD:
 //                     result.hood = resolveHoodData(memrec, tgtrec);
 //                     break;
-
+                    
+                case BlurbData.RATINGS:
+                    result.ratings = resolveRatingsData(memrec, tgtrec);
+                    break;
+                    
                 default:
                     log.log(Level.WARNING, "Requested to resolve unknown blurb " + bdata + ".");
                     break;
@@ -208,6 +217,11 @@ public class ProfileServlet extends MsoyServiceServlet
 //         blurb.blurbId = 3;
 //         blurbs.add(blurb);
 
+        blurb = new BlurbData();
+        blurb.type = BlurbData.RATINGS;
+        blurb.blurbId = 4;
+        blurbs.add(blurb);
+
         layout.blurbs = blurbs;
         return layout;
     }
@@ -271,6 +285,53 @@ public class ProfileServlet extends MsoyServiceServlet
 //         });
 //         return null;
 //     }
+
+    protected List<GameRating> resolveRatingsData (MemberRecord reqrec, MemberRecord tgtrec)
+        throws PersistenceException
+    {
+        // fetch all the rating records for the user
+        List<RatingRecord> ratings = MsoyServer.ratingRepo.getRatings(tgtrec.memberId);
+
+        // sort them by rating
+        Collections.sort(ratings, new Comparator<RatingRecord>() {
+            public int compare (RatingRecord o1, RatingRecord o2) {
+                return (o1.rating > o2.rating) ? -1 : (o1.rating == o2.rating) ? 0 : 1;
+            }
+        });
+        
+        // extract the game id's
+        int[] gameIds = new int[ratings.size()];
+        for (int ii = 0; ii < gameIds.length; ii ++) {
+            gameIds[ii] = ratings.get(ii).gameId;
+        }
+        
+        // load the associated game records and put them in a lookup map (by id)
+        IntMap<GameRecord> gameMap = new HashIntMap<GameRecord>();
+        for (GameRecord record : MsoyServer.itemMan.getGameRepository().loadItems(gameIds)) {
+            gameMap.put(record.itemId, record);
+        }
+        
+        List<GameRating> result = new ArrayList<GameRating>();
+
+        // client decides how much to show, but don't send ridiculous amounts of data
+        int count = Math.min(gameIds.length, 20);
+
+        for (int ii = 0; ii < count; ii ++) {
+            GameRecord record = gameMap.get(gameIds[ii]);
+            if (record == null) {
+                // if there is a RatingRecord referencing a game that's disappeared, just skip
+                // it; we don't clean out RatingRecords when we delete a GameRecord, so this
+                // could happen with some frequency
+                continue;
+            }
+            float rating = 
+                (ratings.get(ii).rating - RatingManagerDelegate.MINIMUM_RATING) /
+                (RatingManagerDelegate.MAXIMUM_RATING - RatingManagerDelegate.MINIMUM_RATING);
+            result.add(new GameRating(record.itemId, record.name, rating));
+        }
+
+        return result;
+    }
 
     protected void resolveCardData (HashIntMap<MemberCard> cards)
         throws PersistenceException

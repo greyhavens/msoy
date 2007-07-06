@@ -34,6 +34,9 @@ public class BlurbData implements IsSerializable
 
     /** The type code for a neighborhood blurb. */
     public static final int HOOD = 3;
+    
+    /** The type code for a rating blurb. */
+    public static final int RATINGS = 4;
 
     /** Indicates which kind of blurb this is. */
     public int type;
