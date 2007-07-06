@@ -324,9 +324,8 @@ public class ProfileServlet extends MsoyServiceServlet
                 // could happen with some frequency
                 continue;
             }
-            float rating = 
-                (ratings.get(ii).rating - RatingManagerDelegate.MINIMUM_RATING) /
-                (RatingManagerDelegate.MAXIMUM_RATING - RatingManagerDelegate.MINIMUM_RATING);
+            float rating = ratings.get(ii).rating - RatingManagerDelegate.MINIMUM_RATING;
+            rating /= (RatingManagerDelegate.MAXIMUM_RATING - RatingManagerDelegate.MINIMUM_RATING);
             result.add(new GameRating(record.itemId, record.name, rating));
         }
 
