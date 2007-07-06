@@ -450,14 +450,14 @@ public class RoomManager extends SpotSceneManager
         _roomObj.addListener(_roomListener);
 
         // determine which (if any) items in this room have a memories and load them up
-        ArrayIntSet furniIds = new ArrayIntSet();
+        ArrayList<ItemIdent> memoryIds = new ArrayList<ItemIdent>();
         for (FurniData furni : ((MsoyScene) _scene).getFurni()) {
-            if (furni.itemType == Item.FURNITURE) {
-                furniIds.add(furni.itemId);
+            if (furni.itemType != Item.NOT_A_TYPE) {
+                memoryIds.add(furni.getItemIdent());
             }
         }
-        if (furniIds.size() > 0) {
-            resolveMemories(furniIds);
+        if (memoryIds.size() > 0) {
+            resolveMemories(memoryIds);
         }
 
         // load up any pets that are "let out" in this room scene
@@ -626,16 +626,16 @@ public class RoomManager extends SpotSceneManager
     /**
      * Loads up all specified memories and places them into the room object.
      */
-    protected void resolveMemories (final ArrayIntSet furniIds)
+    protected void resolveMemories (final Collection<ItemIdent> idents)
     {
         MsoyServer.invoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 try {
-                    _mems = MsoyServer.memoryRepo.loadMemories(Item.FURNITURE, furniIds);
+                    _mems = MsoyServer.memoryRepo.loadMemories(idents);
                     return true;
                 } catch (PersistenceException pe) {
                     log.log(Level.WARNING, "Failed to load memories [where=" + where() +
-                            ", ids=" + furniIds + "].", pe);
+                            ", ids=" + idents + "].", pe);
                     return false;
                 }
             };
