@@ -102,7 +102,7 @@ public class UploadUtil
         // create the media info object for this image
         byte constraint = MediaDesc.computeConstraint(MediaDesc.PREVIEW_SIZE, image.getWidth(),
             image.getHeight());
-        MediaInfo info = new MediaInfo(uploadFile.getHash(), uploadFile.detectMimeType(),
+        MediaInfo info = new MediaInfo(uploadFile.getHash(), uploadFile.getMimeType(),
             constraint, image.getWidth(), image.getHeight());
 
         // generate a thumbnail for this image
