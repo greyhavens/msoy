@@ -40,8 +40,8 @@ public class RatingsBlurb extends Blurb
             _content.setText(row, 0, entry.gameName);
             _content.getCellFormatter().setStyleName(row, 0, "Game");
 
-            // scale the rating into the [0.5, 5.0] range
-            final float rating = (float) (0.5 + entry.rating * 4.5);
+            // the the cube root of the rating, scale it to [0.5, 5.25] and snip the top
+            final float rating = (float) Math.min(5.0, 0.5 + Math.pow(entry.rating, 1.0/3) * 4.75);
 
             _content.setWidget(row, 1, new Stars(Stars.MODE_READ, false) {
                 protected void starsClicked (byte newRating) {
