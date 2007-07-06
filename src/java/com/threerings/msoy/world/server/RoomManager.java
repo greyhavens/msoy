@@ -272,16 +272,8 @@ public class RoomManager extends SpotSceneManager
             throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
         }
 
-        // Create a list of all item ids
-        ArrayList<ItemIdent> list = new ArrayList<ItemIdent>();
-        for (FurniData furni : ((MsoyScene) _scene).getFurni()) {
-            if (furni.itemType == Item.NOT_A_TYPE) {
-                continue;
-            }
-            list.add(new ItemIdent(furni.itemType, furni.itemId));
-        }
-
-        MsoyServer.itemMan.getItems(list, new ResultAdapter<ArrayList<Item>>(listener));
+        // for now send back a TRUE
+        listener.requestProcessed(Boolean.TRUE);
     }
 
     // documentation inherited from RoomProvider
