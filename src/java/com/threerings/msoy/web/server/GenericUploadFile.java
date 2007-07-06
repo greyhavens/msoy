@@ -36,5 +36,4 @@ public class GenericUploadFile extends UploadFile
     }
 
     protected File _file;
-    protected String _originalName;
 }
