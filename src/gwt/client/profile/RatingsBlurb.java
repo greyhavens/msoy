@@ -29,10 +29,7 @@ public class RatingsBlurb extends Blurb
     // @Override // from Blurb
     protected void didInit (ProfileService.ProfileResult pdata)
     {
-        setHeader(CProfile.msgs.friendsTitle());
-
-        _content.getFlexCellFormatter().setStyleName(0, 0, "Game");
-        _content.getFlexCellFormatter().setStyleName(0, 1, "Rating");
+        setHeader(CProfile.msgs.ratingsTitle());
 
         Iterator i = pdata.ratings.iterator();
 
@@ -41,10 +38,10 @@ public class RatingsBlurb extends Blurb
             
             GameRating entry = (GameRating) i.next();
             _content.setText(row, 0, entry.gameName);
-            _content.getCellFormatter().setStyleName(row, 0, "name");
+            _content.getCellFormatter().setStyleName(row, 0, "Game");
 
-            // take the square of the rating and scale it to [0, 5] for display
-            final float rating = (float) (entry.rating * entry.rating * 5.0);
+            // scale the rating into the [0.5, 5.0] range
+            final float rating = (float) (0.5 + entry.rating * 4.5);
 
             _content.setWidget(row, 1, new Stars(Stars.MODE_READ, false) {
                 protected void starsClicked (byte newRating) {
@@ -56,7 +53,7 @@ public class RatingsBlurb extends Blurb
                     updateStarImages(rating, false);
                 }
             });
-            _content.getCellFormatter().setStyleName(row, 1, "rating");
+            _content.getCellFormatter().setStyleName(row, 1, "Rating");
         }
     }
 

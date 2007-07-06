@@ -294,4 +294,12 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key friendsTitle
    */
   String friendsTitle();
+
+  /**
+   * Translated "Rated Games".
+   * 
+   * @return translated "Rated Games"
+   * @gwt.key ratingsTitle
+   */
+  String ratingsTitle();
 }

@@ -55,6 +55,17 @@
   padding-top: 5px;
 }
 
+.ratingsBlurb {
+  padding-top: 5px;
+}
+
+.ratingsBlurb .Game {
+}
+
+.ratingsBlurb .Rating {
+  width: 80px;
+}
+
 .profileWidget {
   padding-bottom: 10px;
 }
