@@ -691,8 +691,8 @@ public class ProjectRoomManager extends PlaceManager
                 // build the project
                 _result = _builder.build(_buildDir);
 
-                // Only publish the result if the caller asked and the build succeeded
-                if ( _buildData.exportResults() && _result.buildSuccessful()) {
+                // Only publish the result if the build succeeded and the caller asked
+                if (_result.buildSuccessful() && _buildData.exportResults()) {
                     publishResult();
                 }
 
@@ -826,7 +826,7 @@ public class ProjectRoomManager extends PlaceManager
             // Provide build output
             _roomObj.setResult(_result);
 
-            if (_buildData.exportResults()) {
+            if (_result.buildSuccessful() && _buildData.exportResults()) {
                 // inform the item manager of the new or updated item
                 if (_record.itemId == 0) {
                     MsoyServer.itemMan.itemCreated(_record);
@@ -834,10 +834,8 @@ public class ProjectRoomManager extends PlaceManager
                     MsoyServer.itemMan.itemUpdated(_record);
                 }
 
-                // inform the listener that the result was exported if the build succeeded.
-                if (_result.buildSuccessful()) {
-                    _listener.requestProcessed();
-                }
+                // inform the listener that the result was exported.
+                _listener.requestProcessed();
             }
         }
 
