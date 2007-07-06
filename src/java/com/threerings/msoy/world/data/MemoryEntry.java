@@ -32,6 +32,20 @@ public class MemoryEntry
         return this;
     }
 
+    /**
+     * Get a special key for use when removing this entry from a DSet.
+     * Maybe this is early optimization, but I hate that otherwise we're sending down
+     * the entire entry when we want to remove it!
+     */
+    public Comparable getRemoveKey ()
+    {
+        MemoryEntry other = new MemoryEntry();
+        other.item = this.item;
+        other.key = this.key;
+        // other.value == null
+        return other;
+    }
+
     // from interface Comparable<MemoryEntry>
     public int compareTo (MemoryEntry other)
     {

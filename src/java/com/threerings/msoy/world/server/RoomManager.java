@@ -619,7 +619,7 @@ public class RoomManager extends SpotSceneManager
             _roomObj.startTransaction();
             try {
                 for (MemoryEntry entry : oldMemories) {
-                    _roomObj.removeFromMemories(entry.getKey());
+                    _roomObj.removeFromMemories(entry.getRemoveKey());
                 }
             } finally {
                 _roomObj.commitTransaction();
