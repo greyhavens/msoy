@@ -31,7 +31,6 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.data.MailFolder;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.TagHistory;
