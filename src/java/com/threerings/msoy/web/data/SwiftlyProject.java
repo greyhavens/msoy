@@ -13,14 +13,14 @@ import com.threerings.msoy.item.data.all.Item;
  * Contains information on a Swiftly Project
  */
 public class SwiftlyProject
-    implements IsSerializable, Streamable
+    implements IsSerializable, Streamable, Cloneable
 {
     public SwiftlyProject ()
     {
     }
 
     /** The valid project types. */
-    public static byte[] PROJECT_TYPES = { Item.GAME, Item.AVATAR, Item.FURNITURE };
+    public static byte[] PROJECT_TYPES = { Item.GAME, Item.AVATAR, Item.FURNITURE, Item.PET };
 
     /** Returns true if the given project type is supported by Swiftly. */
     public static boolean isValidProjectType (byte projectType)
@@ -62,6 +62,8 @@ public class SwiftlyProject
             return "SwiftlyAvatar.as";
         } else if (projectType == Item.FURNITURE) {
             return "SwiftlyFurni.as";
+        } else if (projectType == Item.PET) {
+            return "SwiftlyPet.as";
         } else {
             return null;
         }
@@ -72,16 +74,18 @@ public class SwiftlyProject
      * TODO: Store this in the database upon project creation. Until that's
      * implemented changing these will break existing projects, so don't.
      */
-     public String getOutputFileName () {
-         // We can't use a switch statement because the type finals are not actually constants
-         if (projectType == Item.GAME) {
-             return "SwiftlyGame.swf";
-         } else if (projectType == Item.AVATAR) {
-             return "SwiftlyAvatar.swf";
-         } else if (projectType == Item.FURNITURE) {
-             return "SwiftlyFurni.swf";
-         } else {
-             return null;
-         }
+    public String getOutputFileName () {
+        // We can't use a switch statement because the type finals are not actually constants
+        if (projectType == Item.GAME) {
+            return "SwiftlyGame.swf";
+        } else if (projectType == Item.AVATAR) {
+            return "SwiftlyAvatar.swf";
+        } else if (projectType == Item.FURNITURE) {
+            return "SwiftlyFurni.swf";
+        } else if (projectType == Item.PET) {
+            return "SwiftlyPet.swf";
+        } else {
+            return null;
+        }
     }
 }
