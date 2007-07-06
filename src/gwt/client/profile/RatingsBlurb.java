@@ -40,8 +40,21 @@ public class RatingsBlurb extends Blurb
             _content.setText(row, 0, entry.gameName);
             _content.getCellFormatter().setStyleName(row, 0, "Game");
 
-            // the the cube root of the rating, scale it to [0.5, 5.25] and snip the top
-            final float rating = (float) Math.min(5.0, 0.5 + Math.pow(entry.rating, 1.0/3) * 4.75);
+            /**
+             * FIDE/Elo ratings lie between 1000 and 3000, with new players starting out at
+             * 1200 and the average active player having, on average, approximately 1500. The
+             * ceiling is very high; anything about 2750 is quite extraordinary.
+             * 
+             * When we get the rating, it's been mapped into the [0, 1] range, but it is still
+             * a highly non-linear distribution. We straighten the value out with a square root,
+             * and then we want to map to a 5-star visualization, i.e. 10 half-stars, like so:
+             * 
+             * 1000 -> 0.00 -> 0.00 -> 0.5 stars
+             * 1200 -> 0.10 -> 0.31 -> 2.0 stars
+             * 1500 -> 0.25 -> 0.50 -> 3.0 stars
+             * 2800 -> 0.90 -> 0.95 -> 5.0 stars
+             */
+            final float rating = (float) Math.min(5.0, 0.5 + Math.sqrt(entry.rating) * 5.0);
 
             _content.setWidget(row, 1, new Stars(Stars.MODE_READ, false) {
                 protected void starsClicked (byte newRating) {
