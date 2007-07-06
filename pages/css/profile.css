@@ -59,7 +59,10 @@
   padding-top: 5px;
 }
 
-.ratingsBlurb .Game {
+.ratingsBlurb .GameName {
+}
+
+.ratingsBlurb .GameThumb {
 }
 
 .ratingsBlurb .Rating {
