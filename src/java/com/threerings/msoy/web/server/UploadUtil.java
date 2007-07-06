@@ -37,11 +37,11 @@ public class UploadUtil
     /**
      * Publishes a file. Currently this is to the filesystem first, and then s3 if enabled.
      */
-    public static void publishStream (InputStream input, MediaInfo info)
+    public static void publishStream (InputStream input, String hash, byte mimeType)
         throws IOException
     {
         // now name it using the hash value and the suffix
-        String name = info.hash + MediaDesc.mimeTypeToSuffix(info.mimeType);
+        String name = hash + MediaDesc.mimeTypeToSuffix(mimeType);
         File target = new File(ServerConfig.mediaDir, name);
 
         // copy the uploaded file data to the local file system media store. eventually we will 
@@ -56,7 +56,7 @@ public class UploadUtil
                     ServerConfig.mediaS3Key);
 
                 S3FileObject uploadTarget = new S3FileObject(name, target,
-                    MediaDesc.mimeTypeToString(info.mimeType));
+                    MediaDesc.mimeTypeToString(mimeType));
 
                 conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget,
                     AccessControlList.StandardPolicy.PUBLIC_READ);
@@ -76,6 +76,15 @@ public class UploadUtil
     }
 
     /**
+     * Publishes an UploadFile to the media store.
+     */
+    public static void publishUploadFile (UploadFile uploadFile)
+        throws IOException
+    {
+        publishStream(uploadFile.getInputStream(), uploadFile.getHash(), uploadFile.getMimeType());
+    }
+    
+    /**
      * Computes and fills in the constraints on the supplied image, generates a thumbnail
      * representation, and publishes the image data to the media store.
      *
@@ -85,7 +94,7 @@ public class UploadUtil
         throws IOException
     {
         // convert the uploaded file data into an image object
-        BufferedImage image = ImageIO.read(uploadFile.item.getInputStream());
+        BufferedImage image = ImageIO.read(uploadFile.getInputStream());
         if (image == null) {
             throw new IOException("Invalid image data. Unable to complete upload.");
         }
@@ -93,7 +102,7 @@ public class UploadUtil
         // create the media info object for this image
         byte constraint = MediaDesc.computeConstraint(MediaDesc.PREVIEW_SIZE, image.getWidth(),
             image.getHeight());
-        MediaInfo info = new MediaInfo(uploadFile.generateHash(), uploadFile.detectMimeType(),
+        MediaInfo info = new MediaInfo(uploadFile.getHash(), uploadFile.detectMimeType(),
             constraint, image.getWidth(), image.getHeight());
 
         // generate a thumbnail for this image
@@ -139,7 +148,8 @@ public class UploadUtil
             tinfo = new MediaInfo(thash, THUMBNAIL_MIME_TYPE, tconstraint, twidth, theight);
 
             // publish the thumbnail
-            publishStream(new ByteArrayInputStream(bout.toByteArray()), tinfo);
+            publishStream(
+                new ByteArrayInputStream(bout.toByteArray()), tinfo.hash, tinfo.mimeType);
             bout.close();
         }
 
@@ -151,7 +161,7 @@ public class UploadUtil
 
         } else {
             // publish the image
-            publishStream(uploadFile.item.getInputStream(), info);
+            publishUploadFile(uploadFile);
 
             return new FullMediaInfo(info, tinfo, mediaId);
         }

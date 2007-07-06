@@ -8,6 +8,7 @@ import java.io.PrintStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
@@ -30,14 +31,17 @@ public class UploadServlet extends AbstractUploadServlet
      * store and returns the results via Javascript to the GWT client.
      */
     @Override // from AbstractUploadServlet
-    protected void handleUploadFile (UploadFile uploadFile, int uploadLength,
-        HttpServletResponse rsp)
+    protected void handleFileItem (FileItem item, int uploadLength,
+                                   HttpServletResponse rsp)
         throws IOException, FileUploadException, AccessDeniedException
     {
         FullMediaInfo fullInfo = null;
-
+        
+        // wrap the FileItem in an UploadFile for publishing
+        UploadFile uploadFile = new FileItemUploadFile(item);
+        
         // attempt to extract the mediaId
-        String mediaId = uploadFile.item.getFieldName();
+        String mediaId = item.getFieldName();
         if (mediaId == null) {
             throw new FileUploadException("Failed to extract mediaId from upload request.");
         }
@@ -46,8 +50,8 @@ public class UploadServlet extends AbstractUploadServlet
         // pass a WebIdent down here.
 
         // TODO: check that this is a supported content type
-        log.info("Received file: [type: " + uploadFile.item.getContentType() + ", size="
-            + uploadFile.item.getSize() + ", id=" + uploadFile.item.getFieldName() + "].");
+        log.info("Received file: [type: " + item.getContentType() + ", size="
+            + item.getSize() + ", id=" + item.getFieldName() + "].");
 
         // check the file size now that we know mimetype,
         // or freak out if we still don't know the mimetype.
@@ -56,8 +60,8 @@ public class UploadServlet extends AbstractUploadServlet
             validateFileLength(uploadFile.getMimeType(), uploadLength);
 
         } else {
-            throw new FileUploadException("Received upload of unknown mime type [type="
-                + uploadFile.item.getContentType() + ", name=" + uploadFile.item.getName() + "].");
+            throw new FileUploadException("Received upload of unknown mime type [type=" +
+                item.getContentType() + ", name=" + item.getName() + "].");
         }
 
         // if this is an image, determine its constraints, generate a thumbnail, and publish
@@ -67,10 +71,10 @@ public class UploadServlet extends AbstractUploadServlet
 
             // treat all other file types in the same manner
         } else {
-            MediaInfo info = new MediaInfo(uploadFile.generateHash(), uploadFile.getMimeType());
+            MediaInfo info = new MediaInfo(uploadFile.getHash(), uploadFile.getMimeType());
 
             // publish the file
-            UploadUtil.publishStream(uploadFile.item.getInputStream(), info);
+            UploadUtil.publishUploadFile(uploadFile);
 
             // the full media info is just the item and a blank thumbnail
             fullInfo = new FullMediaInfo(info, mediaId);

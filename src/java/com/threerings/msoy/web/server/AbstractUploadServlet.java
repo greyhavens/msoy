@@ -45,7 +45,7 @@ public abstract class AbstractUploadServlet extends HttpServlet
             }
 
             // pass the extracted file to the concrete class
-            handleUploadFile(new UploadFile(item), length, rsp);
+            handleFileItem(item, length, rsp);
 
         } catch (ServletFileUpload.SizeLimitExceededException slee) {
             log.info(slee.getMessage() + " [size=" + slee.getActualSize() + " allowed=" +
@@ -80,8 +80,8 @@ public abstract class AbstractUploadServlet extends HttpServlet
     /**
      * Handles the extracted UploadFile in a concrete class specific way.
      */
-    protected abstract void handleUploadFile (UploadFile uploadFile, int uploadLength,
-                                              HttpServletResponse rsp)
+    protected abstract void handleFileItem (FileItem item, int uploadLength,
+                                            HttpServletResponse rsp)
         throws IOException, FileUploadException, AccessDeniedException;
 
     /**
