@@ -615,7 +615,7 @@ public class ProjectSVNStorage
         }
 
         @SuppressWarnings("unchecked")
-        Collection<SVNDirEntry> entries = (Collection<SVNDirEntry>) svnRepo.getDir(parent.getAbsolutePath(),
+        Collection<SVNDirEntry> entries = svnRepo.getDir(parent.getAbsolutePath(),
             revision, null, (Collection)null);
 
         for (SVNDirEntry entry : entries) {

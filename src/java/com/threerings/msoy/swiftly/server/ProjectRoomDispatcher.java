@@ -53,17 +53,17 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
             );
             return;
 
-        case ProjectRoomMarshaller.BUILD_PROJECT:
-            ((ProjectRoomProvider)provider).buildProject(
+        case ProjectRoomMarshaller.BUILD_AND_EXPORT_PROJECT:
+            ((ProjectRoomProvider)provider).buildAndExportProject(
                 source,
-                (InvocationService.InvocationListener)args[0]
+                (InvocationService.ConfirmListener)args[0]
             );
             return;
 
-        case ProjectRoomMarshaller.COMMIT_PROJECT:
-            ((ProjectRoomProvider)provider).commitProject(
+        case ProjectRoomMarshaller.BUILD_PROJECT:
+            ((ProjectRoomProvider)provider).buildProject(
                 source,
-                (String)args[0], (InvocationService.ConfirmListener)args[1]
+                (InvocationService.ConfirmListener)args[0]
             );
             return;
 

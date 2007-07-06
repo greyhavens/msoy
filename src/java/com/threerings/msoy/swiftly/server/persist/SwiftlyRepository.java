@@ -42,7 +42,7 @@ public class SwiftlyRepository extends DepotRepository
         _ctx.registerMigration(
             SwiftlyProjectRecord.class, new EntityMigration.Retype(12, "creationDate"));
     }
-        
+
     /**
      * Find all the projects which have the remixable flag set.
      */
@@ -117,8 +117,8 @@ public class SwiftlyRepository extends DepotRepository
     }
 
     /**
-     * Returns true if the memberId is the owner, false otherwise. 
-     * 
+     * Returns true if the memberId is the owner, false otherwise.
+     *
      */
     public boolean isOwner (int projectId, int memberId)
         throws PersistenceException
@@ -129,10 +129,10 @@ public class SwiftlyRepository extends DepotRepository
         }
         return (project.ownerId == memberId);
     }
-    
+
     /**
-     * Returns true if the memberId is a collaborator, false otherwise. 
-     * 
+     * Returns true if the memberId is a collaborator, false otherwise.
+     *
      */
     public boolean isCollaborator (int projectId, int memberId)
         throws PersistenceException
@@ -170,7 +170,7 @@ public class SwiftlyRepository extends DepotRepository
         } catch (DuplicateKeyException dke) {
             // Already exists, return it
             List<SwiftlySVNStorageRecord> result;
-            
+
             result = findAll(SwiftlySVNStorageRecord.class,
                 new Where(
                     new And(
@@ -212,7 +212,7 @@ public class SwiftlyRepository extends DepotRepository
 
     /**
      * Fetches the membership details for a given project and member, or null.
-     * 
+     *
      */
     public SwiftlyCollaboratorsRecord getMembership (int projectId, int memberId)
         throws PersistenceException
@@ -244,6 +244,15 @@ public class SwiftlyRepository extends DepotRepository
         Key<SwiftlyCollaboratorsRecord> key =
             SwiftlyCollaboratorsRecord.getKey(projectId, memberId);
         return deleteAll(SwiftlyCollaboratorsRecord.class, key, key) > 0;
+    }
+
+    /**
+     * Updates the buildResultItemId for a SwiftlyCollaboratorRecord.
+     */
+    public void updateBuildResultItem (SwiftlyCollaboratorsRecord record)
+        throws PersistenceException
+    {
+        update(record, SwiftlyCollaboratorsRecord.BUILD_RESULT_ITEM_ID);
     }
 
 }

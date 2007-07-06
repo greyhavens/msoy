@@ -13,7 +13,8 @@ import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
-import com.threerings.presents.client.InvocationService.InvocationListener;
+import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
@@ -27,16 +28,29 @@ public class ProjectRoomController extends PlaceController
     /** An action that requests to build the project. */
     public Action buildAction;
 
+    /**
+     *  An action that requests to build the project and export the results to the users
+     *  Whirled inventory.
+     */
+    public Action buildExportAction;
+
     @Override // from PlaceController
     public void init (CrowdContext ctx, PlaceConfig config)
     {
         // we need to create our actions before we call super because that will call
         // createPlaceView which will create the whole UI which will want to wire up our actions
         _ctx = (SwiftlyContext)ctx;
+        _msgs = _ctx.getMessageManager().getBundle(SwiftlyCodes.SWIFTLY_MSGS);
 
-        buildAction = new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.build")) {
+        buildAction = new AbstractAction(_msgs.get("m.action.build")) {
             public void actionPerformed (ActionEvent e) {
                 buildProject();
+            }
+        };
+
+        buildExportAction = new AbstractAction(_msgs.get("m.action.build_export")) {
+            public void actionPerformed (ActionEvent e) {
+                buildAndExport();
             }
         };
 
@@ -61,10 +75,12 @@ public class ProjectRoomController extends PlaceController
      */
     protected void buildProject ()
     {
-        // disable the action on this client
-        buildAction.setEnabled(false);
-        // the successful results of this request will be communicated via _roomObj.result
-        _roomObj.service.buildProject(_ctx.getClient(), new InvocationListener () {
+        disableBuild();
+        _roomObj.service.buildProject(_ctx.getClient(), new ConfirmListener () {
+            public void requestProcessed ()
+            {
+                // Success will be handled with the room object result field.
+            }
             public void requestFailed (String reason) {
                 _ctx.showErrorMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, reason));
             }
@@ -72,6 +88,35 @@ public class ProjectRoomController extends PlaceController
 
     }
 
+    /**
+     * Triggered by {@link #buildExportAction}.
+     */
+    protected void buildAndExport ()
+    {
+       disableBuild();
+        _roomObj.service.buildAndExportProject(_ctx.getClient(), new ConfirmListener() {
+            public void requestProcessed () {
+                // inform just this user that the build result was exported
+                _ctx.showInfoMessage(_msgs.get("m.build_export_succeeded"));
+            }
+            public void requestFailed (String reason) {
+                _ctx.showErrorMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, reason));
+            }
+        });
+    }
+
+    /**
+     * Disable the build actions while a build is happening. Enabling will be handled by watching
+     * the _roomObj.building field in SwiftlyEditor.
+     */
+    protected void disableBuild ()
+    {
+        // disable the action on this client
+        buildAction.setEnabled(false);
+        buildExportAction.setEnabled(false);
+    }
+
     protected SwiftlyContext _ctx;
+    protected MessageBundle _msgs;
     protected ProjectRoomObject _roomObj;
 }

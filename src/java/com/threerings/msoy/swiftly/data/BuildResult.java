@@ -31,15 +31,6 @@ public class BuildResult
         return _outputFile;
     }
 
-    public void setBuildResultURL (String url) {
-        _buildResultURL = url;
-    }
-
-    public String getBuildResultURL ()
-    {
-        return _buildResultURL;
-    }
-
     /** Return the build compiler's output, in the order it was received. */
     public List<CompilerOutput> getOutput () {
         return _output;
@@ -68,7 +59,4 @@ public class BuildResult
 
     /** The build output file. */
     protected transient File _outputFile;
-
-    /** The URL of the built artifact. */
-    protected String _buildResultURL;
 }

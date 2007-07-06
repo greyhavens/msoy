@@ -29,15 +29,15 @@ public interface ProjectRoomProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link ProjectRoomService#buildProject} request.
+     * Handles a {@link ProjectRoomService#buildAndExportProject} request.
      */
-    public void buildProject (ClientObject caller, InvocationService.InvocationListener arg1)
+    public void buildAndExportProject (ClientObject caller, InvocationService.ConfirmListener arg1)
         throws InvocationException;
 
     /**
-     * Handles a {@link ProjectRoomService#commitProject} request.
+     * Handles a {@link ProjectRoomService#buildProject} request.
      */
-    public void commitProject (ClientObject caller, String arg1, InvocationService.ConfirmListener arg2)
+    public void buildProject (ClientObject caller, InvocationService.ConfirmListener arg1)
         throws InvocationException;
 
     /**

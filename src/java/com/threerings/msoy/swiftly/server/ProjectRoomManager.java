@@ -3,35 +3,39 @@
 
 package com.threerings.msoy.swiftly.server;
 
+import static com.threerings.msoy.Log.log;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.apache.commons.io.FileUtils;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
-import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SerialExecutor;
-import com.threerings.presents.client.InvocationService.ConfirmListener;
-import com.threerings.presents.client.InvocationService.InvocationListener;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.EntryAddedEvent;
-import com.threerings.presents.dobj.EntryRemovedEvent;
-import com.threerings.presents.dobj.EntryUpdatedEvent;
-import com.threerings.presents.dobj.SetListener;
-import com.threerings.presents.server.InvocationException;
-
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
-
 import com.threerings.msoy.data.MemberObject;
-
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Furniture;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.Pet;
+import com.threerings.msoy.item.server.persist.AvatarRecord;
+import com.threerings.msoy.item.server.persist.FurnitureRecord;
+import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.item.server.persist.PetRecord;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
-
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.PathElement;
@@ -41,19 +45,22 @@ import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
-
-import com.threerings.msoy.web.data.SwiftlyProject;
-import com.threerings.msoy.web.server.UploadFile;
-
-import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.swiftly.server.build.LocalProjectBuilder;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
-
-import org.apache.commons.io.FileUtils;
-
-import static com.threerings.msoy.Log.log;
+import com.threerings.msoy.web.data.SwiftlyProject;
+import com.threerings.msoy.web.server.GenericUploadFile;
+import com.threerings.msoy.web.server.UploadFile;
+import com.threerings.msoy.web.server.UploadUtil;
+import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.presents.client.InvocationService.InvocationListener;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.EntryAddedEvent;
+import com.threerings.presents.dobj.EntryRemovedEvent;
+import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.SetListener;
+import com.threerings.presents.server.InvocationException;
 
 /**
  * Manages a Swiftly project room.
@@ -64,8 +71,8 @@ public class ProjectRoomManager extends PlaceManager
     /**
      * Called by the {@link SwiftlyManager} after creating this project room manager.
      */
-    public void init (final SwiftlyProject project, ArrayIntSet collaborators,
-                      ProjectStorage storage)
+    public void init (final SwiftlyProject project,
+                      HashIntMap<SwiftlyCollaboratorsRecord> collaborators, ProjectStorage storage)
     {
         _storage = storage;
         _collaborators = collaborators;
@@ -80,6 +87,7 @@ public class ProjectRoomManager extends PlaceManager
 
         // Load the project tree from the storage provider
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("loadProject") {
+            @Override
             public boolean invoke () {
                 try {
                     // Okay, so it's not really a tree, but hey ...
@@ -94,6 +102,7 @@ public class ProjectRoomManager extends PlaceManager
                 }
             }
 
+            @Override
             public void handleResult () {
                 for (PathElement element : _projectTree) {
                     _roomObj.addPathElement(element);
@@ -159,6 +168,7 @@ public class ProjectRoomManager extends PlaceManager
 
         // Otherwise we'll have to delete the document from the storage provider
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("deletePathElement") {
+            @Override
             public boolean invoke () {
                 try {
                     _storage.deleteDocument(element, "Automatic Swiftly Delete");
@@ -168,6 +178,7 @@ public class ProjectRoomManager extends PlaceManager
                 return true;
             }
 
+            @Override
             public void handleResult () {
                 if (_error != null) {
                     log.log(Level.WARNING, "Delete pathElement failed [element=" + element + "].",
@@ -208,6 +219,7 @@ public class ProjectRoomManager extends PlaceManager
 
         // Otherwise we'll have to rename the document from the storage provider
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("renamePathElement") {
+            @Override
             public boolean invoke () {
                 try {
                     _storage.renameDocument(element, newName, "Automatic Swiftly Rename");
@@ -217,6 +229,7 @@ public class ProjectRoomManager extends PlaceManager
                 return true;
             }
 
+            @Override
             public void handleResult () {
                 if (_error != null) {
                     log.log(Level.WARNING, "Rename pathElement failed [element=" + element + "].",
@@ -282,27 +295,29 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface ProjectRoomProvider
-    public void buildProject (ClientObject caller, InvocationListener listener)
+    public void buildProject (ClientObject caller, ConfirmListener listener)
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
         checkPermissions(caller);
 
-        // inform all the clients that a build is starting
-        _roomObj.setBuilding(true);
-
         // perform a commit first. if that works, it will run the build
-        doCommit(true, listener);
+        doCommitAndBuild(listener);
     }
 
     // from interface ProjectRoomProvider
-    public void commitProject (ClientObject caller, String commitMsg, ConfirmListener listener)
+    public void buildAndExportProject (ClientObject caller, ConfirmListener listener)
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
         checkPermissions(caller);
+        MemberObject memobj = (MemberObject)caller;
 
-        throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
+        // grab the collaborator record on the dobject thread
+        SwiftlyCollaboratorsRecord record = _collaborators.get(memobj.getMemberId());
+
+        // perform a commit first. if that works, it will run the build and export the result
+        doCommitAndBuildAndExport(listener, record);
     }
 
     // from interface ProjectRoomProvider
@@ -318,6 +333,7 @@ public class ProjectRoomManager extends PlaceManager
 
         // Load the document from the storage provider
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("loadDocument") {
+            @Override
             public boolean invoke () {
                 try {
                     _doc = _storage.getDocument(element);
@@ -327,6 +343,7 @@ public class ProjectRoomManager extends PlaceManager
                 return true;
             }
 
+            @Override
             public void handleResult () {
                 if (_error == null) {
                     _roomObj.addSwiftlyDocument(_doc);
@@ -349,26 +366,23 @@ public class ProjectRoomManager extends PlaceManager
      */
     public void insertUploadFile (UploadFile uploadFile, ResultListener<Void> listener)
     {
-        // TODO: Supposedly Opera adds the full path when setting that field so we might need to 
-        // sanitize this value
-        String fileName = uploadFile.item.getName();
-
         // if we're updating an existing document, handle that
-        PathElement element = _roomObj.findPathElement(fileName, _roomObj.getRootElement());
+        PathElement element = _roomObj.findPathElement(
+            uploadFile.getOriginalName(), _roomObj.getRootElement());
         if (element != null) {
             // let's try to pull the resolved document from the room object. this may return null
             // in which case the InsertFileUploadTask will load it from the repository
             SwiftlyDocument doc = _roomObj.getDocument(element);
             MsoyServer.swiftlyMan.svnExecutor.addTask(
-                new InsertFileUploadTask(uploadFile, fileName, element, doc, listener));
-        
+                new InsertFileUploadTask(uploadFile, element, doc, listener));
+
         // otherwise this is a new file
         } else {
             MsoyServer.swiftlyMan.svnExecutor.addTask(
-                new InsertFileUploadTask(uploadFile, fileName, listener));            
+                new InsertFileUploadTask(uploadFile, listener));
         }
     }
-    
+
     /**
      * Used by the SwiftlyServlet to update the local list of collaborators.
      */
@@ -376,21 +390,23 @@ public class ProjectRoomManager extends PlaceManager
     {
         final int projectId = _roomObj.project.projectId;
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("getCollaborators", lner) {
+            @Override
             public Void invokePersistResult () throws PersistenceException {
-                _newCollaborators = new ArrayIntSet();
+                _newCollaborators = new HashIntMap<SwiftlyCollaboratorsRecord>();
                 for (SwiftlyCollaboratorsRecord record :
                     MsoyServer.swiftlyRepo.getCollaborators(projectId)) {
-                    _newCollaborators.add(record.memberId);
+                    _newCollaborators.put(record.memberId, record);
                 }
                 return null;
             }
 
+            @Override
             public void handleResult () {
                 _collaborators = _newCollaborators;
                 _listener.requestCompleted(null);
             }
 
-            protected ArrayIntSet _newCollaborators;
+            protected HashIntMap<SwiftlyCollaboratorsRecord> _newCollaborators;
         });
     }
 
@@ -474,20 +490,49 @@ public class ProjectRoomManager extends PlaceManager
      */
     protected void onShutdownCommit ()
     {
-        doCommit(false, new InvocationListener() {
+        doCommitOnly(new ConfirmListener() {
+            public void requestProcessed ()
+            {
+                // nada. no result will be provided to the user.
+            }
             public void requestFailed (String reason) {
                 // nada. no result will be provided to the user.
             }
+
         });
     }
 
     /**
-     * Issue a request on the executor to commit this project; failure will be reported on the
-     * listener. If the commit works, it will start the build if true was passed as a parameter.
+     * Just commit the project, no build.
      */
-    protected void doCommit (boolean shouldBuild, InvocationListener listener)
+    protected void doCommitOnly (ConfirmListener listener)
     {
-        MsoyServer.swiftlyMan.svnExecutor.addTask(new CommitProjectTask(shouldBuild, listener));
+        MsoyServer.swiftlyMan.svnExecutor.addTask(new CommitProjectTask(listener));
+    }
+
+    /**
+     * Commit the project and then build.
+     */
+    protected void doCommitAndBuild (ConfirmListener listener)
+    {
+        // inform all the clients that a build is starting
+        _roomObj.setBuilding(true);
+
+        MsoyServer.swiftlyMan.svnExecutor.addTask(
+            new CommitProjectTask(new BuildData(_roomObj.project), listener));
+    }
+
+    /**
+     * Commit the project and then build and export the result.
+     */
+    protected void doCommitAndBuildAndExport (ConfirmListener listener,
+                                              SwiftlyCollaboratorsRecord collabRecord)
+    {
+        // inform all the clients that a build is starting
+        _roomObj.setBuilding(true);
+
+        MsoyServer.swiftlyMan.svnExecutor.addTask(
+            new CommitProjectTask(new BuildData(_roomObj.project, collabRecord), listener));
     }
 
     /**
@@ -497,7 +542,7 @@ public class ProjectRoomManager extends PlaceManager
         throws InvocationException
     {
         MemberObject memobj = (MemberObject)caller;
-        if (!_collaborators.contains(memobj.getMemberId())) {
+        if (!_collaborators.containsKey(memobj.getMemberId())) {
             throw new InvocationException("e.access_denied");
         }
     }
@@ -505,12 +550,24 @@ public class ProjectRoomManager extends PlaceManager
     /** Handles a request to commit our project. */
     protected class CommitProjectTask implements SerialExecutor.ExecutorTask
     {
-        public CommitProjectTask (boolean shouldBuild, InvocationListener listener)
+        public final int projectId;
+
+        /**
+         * Only commit the project, do not perform a build.
+         */
+        public CommitProjectTask (ConfirmListener listener)
         {
-            _projectId = ((ProjectRoomConfig)_config).projectId;
-            _shouldBuild = shouldBuild;
+            this(null, listener);
+        }
+        /**
+         * Commit the project, then perform a build.
+         */
+        public CommitProjectTask (BuildData buildData, ConfirmListener listener)
+        {
+            _buildData = buildData;
             _listener = listener;
-            // take a snapshot of our documents while we're on the dobj thread
+            // take a snapshot of certain items while we're on the dobj thread
+            this.projectId = ((ProjectRoomConfig)_config).projectId;
             _allDocs = _roomObj.documents.toArray(new SwiftlyDocument[_roomObj.documents.size()]);
         }
 
@@ -518,7 +575,7 @@ public class ProjectRoomManager extends PlaceManager
         {
             // we don't want more than one pending commit for a project
             if (other instanceof CommitProjectTask) {
-                return _projectId == ((CommitProjectTask)other)._projectId;
+                return this.projectId == ((CommitProjectTask)other).projectId;
             }
             return false;
         }
@@ -563,8 +620,9 @@ public class ProjectRoomManager extends PlaceManager
             }
 
             // if the commit worked, run the build if instructed
-            if (_shouldBuild) {
-                MsoyServer.swiftlyMan.buildExecutor.addTask(new BuildProjectTask(_listener));
+            if (buildRequested()) {
+                MsoyServer.swiftlyMan.buildExecutor.addTask(
+                    new BuildProjectTask(_buildData, _listener));
             }
         }
 
@@ -574,29 +632,36 @@ public class ProjectRoomManager extends PlaceManager
             _listener.requestFailed("e.commit_timed_out");
         }
 
+        protected boolean buildRequested ()
+        {
+            return (_buildData != null);
+        }
+
         protected SwiftlyDocument[] _allDocs;
         protected ArrayList<SwiftlyDocument> _modDocs = new ArrayList<SwiftlyDocument>();
 
-        protected int _projectId;
-        protected boolean _shouldBuild;
-        protected InvocationListener _listener;
+        protected BuildData _buildData;
+        protected ConfirmListener _listener;
         protected Throwable _error;
     }
 
     /** Handles a request to build our project. */
     protected class BuildProjectTask implements SerialExecutor.ExecutorTask
     {
-        public BuildProjectTask (InvocationListener listener)
+        public final int projectId;
+
+        public BuildProjectTask (BuildData buildData, ConfirmListener listener)
         {
-            _projectId = ((ProjectRoomConfig)_config).projectId;
+            _buildData = buildData;
             _listener = listener;
+            this.projectId = buildData.projectId;
         }
 
         public boolean merge (SerialExecutor.ExecutorTask other)
         {
             // we don't want more than one pending build for a project
             if (other instanceof BuildProjectTask) {
-                return _projectId == ((BuildProjectTask)other)._projectId;
+                return this.projectId == ((BuildProjectTask)other).projectId;
             }
             return false;
         }
@@ -615,7 +680,7 @@ public class ProjectRoomManager extends PlaceManager
 
                 // Create a temporary build directory
                 _buildDir = File.createTempFile(
-                    "localbuilder", String.valueOf(_projectId), topBuildDir);
+                    "localbuilder", String.valueOf(_buildData.projectId), topBuildDir);
                 _buildDir.delete();
                 if (_buildDir.mkdirs() != true) {
                     // This should -never- happen, try to exit gracefully.
@@ -623,10 +688,126 @@ public class ProjectRoomManager extends PlaceManager
                     _error = new Exception("internal error");
                 }
 
+                // build the project
                 _result = _builder.build(_buildDir);
+
+                // Only publish the result if the caller asked and the build succeeded
+                if ( _buildData.exportResults() && _result.buildSuccessful()) {
+                    publishResult();
+                }
+
             } catch (Throwable error) {
                 // we'll report this on resultReceived()
                 _error = error;
+
+            } finally {
+                // finally clean up the build results.
+                try {
+                    FileUtils.deleteDirectory(_buildDir);
+                } catch (IOException ioe) {
+                    // only log to the server if this fails, client doesn't care.
+                    log.log(Level.WARNING,
+                        "Failed to delete temporary build results directory.", ioe);
+                }
+            }
+        }
+
+        protected void publishResult ()
+            throws Exception
+        {
+            // First, publish the results into the media store
+            UploadFile uploadFile = new GenericUploadFile(_result.getOutputFile());
+            UploadUtil.publishUploadFile(uploadFile);
+
+            // load the correct item repository
+            ItemRepository<ItemRecord, ?, ?, ?> repo =
+                MsoyServer.itemMan.getRepository(_buildData.itemType());
+
+            // if the user already has an item, look it up
+            if (_buildData.record.buildResultItemId > 0) {
+                _record = repo.loadItem(_buildData.record.buildResultItemId);
+            }
+
+            // if the item was null [meaning they never had one or it was deleted] or
+            // the user is no longer the owner, then create a new item.
+            if (_record == null || _record.ownerId != _buildData.record.memberId) {
+                Item item = null;
+                // can't use switch since Item.* are not constants
+                if (_buildData.itemType() == Item.AVATAR) {
+                    Avatar avatar = new Avatar();
+                    avatar.avatarMedia = new MediaDesc(
+                        MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
+                    item = avatar;
+
+                } else if (_buildData.itemType() == Item.GAME) {
+                    Game game = new Game();
+                    game.gameMedia = new MediaDesc(
+                        MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
+                    item = game;
+
+                } else if (_buildData.itemType() == Item.FURNITURE) {
+                    Furniture furniture = new Furniture();
+                    furniture.furniMedia = new MediaDesc(
+                        MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
+                    item = furniture;
+
+                } else if (_buildData.itemType() == Item.PET) {
+                    Pet pet = new Pet();
+                    pet.furniMedia = new MediaDesc(
+                        MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
+                    item = pet;
+
+                } else {
+                    throw new Exception(
+                        "Unsupported itemType encountered during Swiftly item exporting.");
+                }
+
+                // setup the rest of the generic item fields
+                // TODO: Figure out a way to i18n this string
+                item.name = _buildData.projectName + " Swiftly Result";
+                // description cannot be NULL
+                item.description = "";
+                item.ownerId = _buildData.record.memberId;
+                item.creatorId = _buildData.record.memberId;
+                _record = ItemRecord.newRecord(item);
+
+                // insert the new item into the repository
+                repo.insertOriginalItem(_record);
+
+                // update the collaborator record with the new itemId
+                _buildData.record.buildResultItemId = _record.itemId;
+                MsoyServer.swiftlyRepo.updateBuildResultItem(_buildData.record);
+
+            // otherwise, update the existing item
+            } else {
+                // can't use switch since Item.* are not constants
+                ItemRecord updateRecord = null;
+                if (_buildData.itemType() == Item.AVATAR) {
+                    AvatarRecord avatarRecord = (AvatarRecord) _record;
+                    avatarRecord.avatarMediaHash = MediaDesc.stringToHash(uploadFile.getHash());
+                    updateRecord = avatarRecord;
+
+                } else if (_buildData.itemType() == Item.GAME) {
+                    GameRecord gameRecord = (GameRecord) _record;
+                    gameRecord.gameMediaHash = MediaDesc.stringToHash(uploadFile.getHash());
+                    updateRecord = gameRecord;
+
+                } else if (_buildData.itemType() == Item.FURNITURE) {
+                    FurnitureRecord furnitureRecord = (FurnitureRecord) _record;
+                    furnitureRecord.furniMediaHash = MediaDesc.stringToHash(uploadFile.getHash());
+                    updateRecord = furnitureRecord;
+
+                } else if (_buildData.itemType() == Item.PET) {
+                    PetRecord petRecord = (PetRecord) _record;
+                    petRecord.furniMediaHash = MediaDesc.stringToHash(uploadFile.getHash());
+                    updateRecord = petRecord;
+
+                } else {
+                    throw new Exception(
+                        "Unsupported itemType encountered during Swiftly item exporting.");
+                }
+
+                repo.updateOriginalItem(updateRecord);
             }
         }
 
@@ -642,26 +823,22 @@ public class ProjectRoomManager extends PlaceManager
                 return;
             }
 
-            // Check for failure
-            if (_result.buildSuccessful()) {
-                // TODO: This is an awful last minute hack!
-                try {
-                    File endResult = File.createTempFile(
-                        "buildresult" + Integer.toString(_projectId), ".swf",
-                        new File(ServerConfig.serverRoot + "/pages/buildresults/"));
-                    FileUtils.copyFile(_result.getOutputFile(), endResult);
-                    FileUtils.deleteDirectory(_buildDir);
-                    String url = "http://" + ServerConfig.serverHost + ":" +
-                        ServerConfig.getHttpPort() + "/buildresults/" + endResult.getName();
-                    _result.setBuildResultURL(url);
-                } catch (IOException ioe) {
-                    // XXX HACK HACK HACK
-                }
-
-            }
-
             // Provide build output
             _roomObj.setResult(_result);
+
+            if (_buildData.exportResults()) {
+                // inform the item manager of the new or updated item
+                if (_record.itemId == 0) {
+                    MsoyServer.itemMan.itemCreated(_record);
+                } else {
+                    MsoyServer.itemMan.itemUpdated(_record);
+                }
+
+                // inform the listener that the result was exported if the build succeeded.
+                if (_result.buildSuccessful()) {
+                    _listener.requestProcessed();
+                }
+            }
         }
 
         // this is called back on the dobj thread and must only report failure
@@ -670,9 +847,10 @@ public class ProjectRoomManager extends PlaceManager
             _listener.requestFailed("e.build_timed_out");
         }
 
+        protected BuildData _buildData;
+        protected ConfirmListener _listener;
+        protected ItemRecord _record;
         protected File _buildDir;
-        protected int _projectId;
-        protected InvocationListener _listener;
         protected Throwable _error;
         protected BuildResult _result;
     }
@@ -680,17 +858,15 @@ public class ProjectRoomManager extends PlaceManager
     /** Handles inserting the upload file data into svn and the room object. */
     protected class InsertFileUploadTask implements SerialExecutor.ExecutorTask
     {
-        public InsertFileUploadTask (UploadFile uploadFile, String fileName,
-                                     ResultListener<Void> listener)
+        public InsertFileUploadTask (UploadFile uploadFile, ResultListener<Void> listener)
         {
-            this(uploadFile, fileName, null, null, listener);
+            this(uploadFile, null, null, listener);
         }
-        
-        public InsertFileUploadTask (UploadFile uploadFile, String fileName, PathElement element,
+
+        public InsertFileUploadTask (UploadFile uploadFile, PathElement element,
                                      SwiftlyDocument doc, ResultListener<Void> listener)
         {
             _uploadFile = uploadFile;
-            _fileName = fileName;
             _element = element;
             _doc = doc;
             _listener = listener;
@@ -710,11 +886,11 @@ public class ProjectRoomManager extends PlaceManager
         public void executeTask ()
         {
             try {
-                // if we were given a valid path element, but the document was not resolved in 
+                // if we were given a valid path element, but the document was not resolved in
                 // the room object, we need to load it from the storage repository
                 if (_element != null && _doc == null) {
                     _doc = _storage.getDocument(_element);
-                
+
                 // else if we have no path element, then this is a new document. the final "else"
                 // is that we have an existing path element and we already found the document
                 // so just proceed.
@@ -722,21 +898,21 @@ public class ProjectRoomManager extends PlaceManager
                     // TODO: as we currently have no way of getting from GWT which "directory"
                     // the user wants this element to go into, we are going to assume that the root
                     // is the parent of the new element.
-                    _element = PathElement.createFile(_fileName, _roomObj.getRootElement(),
-                        _uploadFile.getMimeTypeAsString());
+                    _element = PathElement.createFile(_uploadFile.getOriginalName(),
+                        _roomObj.getRootElement(), _uploadFile.getMimeTypeAsString());
 
                     // create the new, blank SwiftlyDocument
                     _doc = SwiftlyDocument.createFromPathElement(_element,
                         ProjectStorage.TEXT_ENCODING);
                 }
-         
+
                // insert the uploaded file data into the new document
-               _doc.setData(_uploadFile.item.getInputStream(), ProjectStorage.TEXT_ENCODING);
+               _doc.setData(_uploadFile.getInputStream(), ProjectStorage.TEXT_ENCODING);
 
                // save the document to the repository
                _storage.putDocument(_doc, "Automatic Swiftly Upload Commit");
                _doc.commit();
-               
+
             } catch (Exception error) {
                 // we'll report this on resultReceived()
                 _error = error;
@@ -776,18 +952,57 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         protected final UploadFile _uploadFile;
-        protected final String _fileName;
         protected PathElement _element;
         protected SwiftlyDocument _doc;
         protected final ResultListener<Void> _listener;
         protected Exception _error;
     }
 
-    protected ProjectRoomObject _roomObj;
-    protected ArrayIntSet _collaborators;
-    protected ProjectStorage _storage;
-    protected LocalProjectBuilder _builder;
-    protected File _buildDir;
+    /**
+     * Small data class to hold dobject thread objects needed during the build process.
+     */
+    protected static class BuildData
+    {
+        public final int projectId;
+        public final String projectName;
+        public final int projectType;
+        public final SwiftlyCollaboratorsRecord record;
+
+        // only store information needed for building
+        public BuildData (SwiftlyProject project)
+        {
+            this(project, null);
+        }
+
+        // store information needed for building and exporting the result
+        public BuildData (SwiftlyProject project, SwiftlyCollaboratorsRecord record)
+        {
+            // since GWT does not support clone, we'll pull off the primitives we want from
+            // the project object, which came from the dobject thread.
+            this.projectId = project.projectId;
+            this.projectName = project.projectName;
+            this.projectType = project.projectType;
+
+            // we can't call clone here it looks like or else we will get a new row in the database
+            this.record = record;
+        }
+
+        /**
+         * The item type being built by this project.
+         */
+        public byte itemType ()
+        {
+            return (byte)this.projectType;
+        }
+
+        /**
+         * Whether this instance of BuildData should have its results exported.
+         */
+        public boolean exportResults ()
+        {
+            return (this.record != null);
+        }
+    }
 
     /** Server-root relative path to the Whirled SDK. */
     protected static final String WHIRLED_SDK = "/data/swiftly/whirled_sdk";
@@ -797,4 +1012,11 @@ public class ProjectRoomManager extends PlaceManager
 
     /** Server-root relative path to the server build directory. */
     protected static final String LOCAL_BUILD_DIRECTORY = "/data/swiftly/build";
+
+    protected ProjectRoomObject _roomObj;
+    protected HashIntMap<SwiftlyCollaboratorsRecord> _collaborators;
+    protected ProjectStorage _storage;
+    protected LocalProjectBuilder _builder;
+    protected File _buildDir;
+
 }

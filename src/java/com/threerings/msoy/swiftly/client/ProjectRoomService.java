@@ -40,10 +40,10 @@ public interface ProjectRoomService extends InvocationService
     public void deleteDocument (Client client, int elementId, InvocationListener listener);
 
     /** Requests that the project be build and the artifacts be published to the game object. */
-    public void buildProject (Client client, InvocationListener listener);
-
-    /** Requests pending project modifications be committed. */
-    public void commitProject (Client client, String commitMsg, ConfirmListener listener);
+    public void buildProject (Client client, ConfirmListener listener);
+    
+    /** Load the build result into this users inventory. */
+    public void buildAndExportProject (Client client, ConfirmListener listener);
 
     /** Requests a document be loaded. */
     public void loadDocument (Client client, PathElement element, ConfirmListener listener);

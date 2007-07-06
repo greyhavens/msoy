@@ -46,29 +46,29 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #buildProject} requests. */
-    public static final int BUILD_PROJECT = 3;
+    /** The method id used to dispatch {@link #buildAndExportProject} requests. */
+    public static final int BUILD_AND_EXPORT_PROJECT = 3;
 
     // from interface ProjectRoomService
-    public void buildProject (Client arg1, InvocationService.InvocationListener arg2)
+    public void buildAndExportProject (Client arg1, InvocationService.ConfirmListener arg2)
     {
-        ListenerMarshaller listener2 = new ListenerMarshaller();
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
         listener2.listener = arg2;
-        sendRequest(arg1, BUILD_PROJECT, new Object[] {
+        sendRequest(arg1, BUILD_AND_EXPORT_PROJECT, new Object[] {
             listener2
         });
     }
 
-    /** The method id used to dispatch {@link #commitProject} requests. */
-    public static final int COMMIT_PROJECT = 4;
+    /** The method id used to dispatch {@link #buildProject} requests. */
+    public static final int BUILD_PROJECT = 4;
 
     // from interface ProjectRoomService
-    public void commitProject (Client arg1, String arg2, InvocationService.ConfirmListener arg3)
+    public void buildProject (Client arg1, InvocationService.ConfirmListener arg2)
     {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, COMMIT_PROJECT, new Object[] {
-            arg2, listener3
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, BUILD_PROJECT, new Object[] {
+            listener2
         });
     }
 

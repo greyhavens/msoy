@@ -1,12 +1,8 @@
 //
 // $Id$
 
-package com.threerings.msoy.swiftly.client;        
+package com.threerings.msoy.swiftly.client;
 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +42,6 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.micasa.client.ChatPanel;
 import com.threerings.micasa.client.OccupantList;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.swiftly.data.PathElement;
@@ -56,8 +51,6 @@ import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyImageDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
-
-import static com.threerings.msoy.Log.log;
 
 public class SwiftlyEditor extends PlacePanel
     implements SwiftlyDocumentEditor, AttributeChangeListener, SetListener
@@ -235,10 +228,10 @@ public class SwiftlyEditor extends PlacePanel
     // from SwiftlyDocumentEditor
     public List<FileTypes> getCreateableFileTypes ()
     {
-        return _createableFileTypes; 
+        return _createableFileTypes;
     }
 
-    /** Should be called when a path element is changed to update the tab title if open */ 
+    /** Should be called when a path element is changed to update the tab title if open */
     public void pathElementChanged (PathElement pathElement)
     {
         _editorTabs.updateTabTitleAt(pathElement);
@@ -257,19 +250,6 @@ public class SwiftlyEditor extends PlacePanel
     public AbstractAction createCloseCurrentTabAction ()
     {
         return _editorTabs.createCloseCurrentTabAction();
-    }
-
-    public Action getPreviewAction ()
-    {
-        if (_previewAction == null) {
-            _previewAction = new AbstractAction(_msgs.get("m.action.preview")) {
-                public void actionPerformed (ActionEvent e) {
-                    showPreview();
-                }
-            };
-            _previewAction.setEnabled(false);
-        }
-        return _previewAction;
     }
 
     public Action createShowConsoleAction ()
@@ -376,12 +356,10 @@ public class SwiftlyEditor extends PlacePanel
     {
         if (event.getName().equals(ProjectRoomObject.RESULT)) {
             displayBuildResult();
-            boolean haveResult = _roomObj.result.buildSuccessful() &&
-                (_roomObj.result.getBuildResultURL() != null);
-            _previewAction.setEnabled(haveResult);
 
         } else if (event.getName().equals(ProjectRoomObject.BUILDING)) {
             _ctrl.buildAction.setEnabled(!_roomObj.building);
+            _ctrl.buildExportAction.setEnabled(!_roomObj.building);
 
         // the project has been loaded or changed. tell the project panel to make the project tree
         } else if (event.getName().equals(ProjectRoomObject.PROJECT)) {
@@ -445,25 +423,6 @@ public class SwiftlyEditor extends PlacePanel
         _rightPane.setDividerLocation(getHeight());
     }
 
-    protected void showPreview ()
-    {
-        String resultUrl = _roomObj.result.getBuildResultURL();
-        try {
-            URL url = new URL(resultUrl);
-            if (_roomObj.project.projectType == Item.AVATAR) {
-                url = new URL(url, _avatarViewerPath + URLEncoder.encode(url.toString(), "UTF-8"));
-            }
-            _ctx.getAppletContext().showDocument(url, "_blank");
-
-        } catch (MalformedURLException e) {
-            log.warning("Malformed results URL [url=" + resultUrl + ", error=" + e + "].");
-            _ctx.showErrorMessage(_msgs.get("e.preview_failed"));
-
-        } catch (UnsupportedEncodingException e) {
-            log.warning("Failed to encode results URL [url=" + resultUrl + ", error=" + e + "].");
-            _ctx.showErrorMessage(_msgs.get("e.preview_failed"));
-        }
-    }
 
     /** Displays the build result on the console */
     protected void displayBuildResult ()
@@ -490,7 +449,6 @@ public class SwiftlyEditor extends PlacePanel
     protected Console _console;
     protected EditorToolBar _toolbar;
     protected ProjectPanel _projectPanel;
-    protected Action _previewAction;
 
     protected String _avatarViewerPath;
 }

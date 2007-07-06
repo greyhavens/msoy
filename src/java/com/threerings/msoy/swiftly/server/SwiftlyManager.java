@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.SerialExecutor;
 
@@ -110,10 +110,10 @@ public class SwiftlyManager
                     }                 
                     _storage = new ProjectSVNStorage(_project, storageRecord);
 
-                    _collaborators = new ArrayIntSet();
+                    _collaborators = new HashIntMap<SwiftlyCollaboratorsRecord>();
                     for (SwiftlyCollaboratorsRecord record :
                         MsoyServer.swiftlyRepo.getCollaborators(projectId)) {
-                        _collaborators.add(record.memberId);
+                        _collaborators.put(record.memberId, record);
                     }
                     return true;
 
@@ -135,7 +135,7 @@ public class SwiftlyManager
 
             protected SwiftlyProject _project;
             protected ProjectStorage _storage;
-            protected ArrayIntSet _collaborators;
+            protected HashIntMap<SwiftlyCollaboratorsRecord> _collaborators;
         });
     }
 

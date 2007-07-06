@@ -20,7 +20,7 @@ public class EditorToolBar extends JToolBar
 
         // TODO tooltips with keyboard shortcuts
         add(createButton(_ctrl.buildAction, BUILD_ICON));
-        add(createButton(_editor.getPreviewAction(), PREVIEW_ICON));
+        add(createButton(_ctrl.buildExportAction, PREVIEW_ICON));
         add(createButton(_editor.createShowConsoleAction(), CONSOLE_ICON));
 
         setFloatable(false);
