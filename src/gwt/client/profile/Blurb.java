@@ -32,6 +32,8 @@ public abstract class Blurb extends FlexTable
             return new GroupsBlurb();
         case BlurbData.HOOD:
             return new HoodBlurb();
+        case BlurbData.RATINGS:
+            return new RatingsBlurb();
         default:
             return null;
         }
