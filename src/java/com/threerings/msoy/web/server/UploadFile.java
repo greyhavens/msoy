@@ -1,6 +1,5 @@
-/**
- * 
- */
+//
+// $Id$
 package com.threerings.msoy.web.server;
 
 import static com.threerings.msoy.Log.log;
@@ -13,7 +12,6 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 
@@ -28,39 +26,50 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 /**
  * Wrap a FileItem and provide useful methods for dealing with uploaded file data.
  */
-public class UploadFile
+public abstract class UploadFile
 {
-    public final FileItem item;
-    
-    public UploadFile (FileItem item)
-        throws IOException
-    {
-        this.item = item;
-        _mimeType = detectMimeType();
-    }
-    
     /**
-     * Returns the mime type detected from the FileItem data.
+     * Returns the mime type detected from the wrapped file data.
      */
-    public byte getMimeType ()
-    {
-        return _mimeType;
-    }
-    
+    public abstract byte getMimeType ();
+
     /**
-     * Returns the mime type detected from the FileItem data.
+     * Returns the mime type as a string.
      */
     public String getMimeTypeAsString ()
     {
-        return MediaDesc.mimeTypeToString(_mimeType);
+        return MediaDesc.mimeTypeToString(getMimeType());
     }
+
+    /**
+     * Returns the hash generated from the file data.
+     */
+    // TODO: should not throw IOException
+    public String getHash ()
+        throws IOException
+    {
+        if (_hash == null) {
+            _hash = generateHash();
+        }
+        return _hash;
+    }
+
+    /**
+     * Returns an input stream from the file data wrapped by this UploadFile.
+     */
+    public abstract InputStream getInputStream () throws IOException;
+
+    /**
+     * Returns the name of the original file wrapped by this UploadFile.
+     */
+    public abstract String getOriginalName ();
 
     /**
      * Read data from a FileItem, calculating and returning a SHA hash.
      * @return the hash as hex in a string.
      * @throws RuntimeException if no SHA hash implementation could be found.
      */
-    public String generateHash ()
+    protected String generateHash ()
         throws IOException
     {
         MessageDigest digest = null;
@@ -71,7 +80,7 @@ public class UploadFile
         }
 
         // read from the input stream and append to the digest, sending the bits to /dev/null
-        InputStream digestIn = new DigestInputStream(item.getInputStream(), digest);
+        InputStream digestIn = new DigestInputStream(getInputStream(), digest);
         OutputStream devOut = new NullOutputStream();
         try {
             IOUtils.copy(digestIn, devOut);
@@ -80,11 +89,11 @@ public class UploadFile
             StreamUtil.close(digestIn);
             StreamUtil.close(devOut);
         }
-        
+
         // return the hash
         return StringUtil.hexlate(digest.digest());
     }
-    
+
     /**
      * Determine the mime type of the FileItem.
      */
@@ -92,15 +101,9 @@ public class UploadFile
         throws IOException
     {
         byte mimeType;
-        
-        // look up the mime type
-        mimeType = MediaDesc.stringToMimeType(item.getContentType());
-        if (mimeType != MediaDesc.INVALID_MIME_TYPE) {
-            return mimeType;
-        }
 
-        // if that failed, try inferring the type from the path
-        mimeType = MediaDesc.suffixToMimeType(item.getName());
+        // try inferring the type from the file name
+        mimeType = MediaDesc.suffixToMimeType(getOriginalName());
         if (mimeType != MediaDesc.INVALID_MIME_TYPE) {
             return mimeType;
         }
@@ -111,26 +114,25 @@ public class UploadFile
         String mimeString = null;
 
         // Read identifying bytes from the uploaded file
-        if (item.getInputStream().read(firstBytes, 0, firstBytes.length) < firstBytes.length) {
+        if (getInputStream().read(firstBytes, 0, firstBytes.length) < firstBytes.length) {
             return MediaDesc.INVALID_MIME_TYPE;
         }
-        
+
         // Sufficient data was read, attempt magic identification
-        mimeString = _mimeMagic.identify(firstBytes, item.getName(), null);
+        mimeString = _mimeMagic.identify(firstBytes, getOriginalName(), null);
 
         if (mimeString != null) {
             // XXX debugging; want to know the effectiveness, any false hits,
             // and what types of files are being uploaded -- landonf (March 5, 2007)
             log.warning("Magically determined unknown mime type [type=" + mimeString +
-                ", name=" + item.getName() + "].");
+                ", name=" + getOriginalName() + "].");
             return MediaDesc.stringToMimeType(mimeString);
         } else {
             return MediaDesc.INVALID_MIME_TYPE;
         }
     }
 
- 
-    protected byte _mimeType;
+    protected byte _detectedMimeType;
     protected String _hash;
 
     /** A magic mime type identifier. */
