@@ -39,12 +39,11 @@ import flash.system.LoaderContext;
 import flash.system.SecurityDomain;
 
 import com.threerings.util.CommandEvent;
+import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.FilterUtil;
 import com.threerings.flash.VideoDisplayer;
-
-import com.threerings.ezgame.util.EZObjectMarshaller;
 
 import com.threerings.msoy.client.WorldContext;
 
@@ -549,7 +548,7 @@ public class MsoySprite extends MsoyMediaContainer
                 roomObj :RoomObject = (parent as RoomView).getRoomObject(),
                 entry :MemoryEntry = roomObj.memories.get(mkey) as MemoryEntry;
             if (entry != null) {
-                return EZObjectMarshaller.decode(entry.value);
+                return ObjectMarshaller.decode(entry.value);
             }
         }
         return null;

@@ -25,6 +25,7 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Integer;
 import com.threerings.util.NetUtil;
+import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.io.TypedArray;
@@ -49,8 +50,6 @@ import com.threerings.crowd.util.CrowdContext;
 import com.threerings.whirled.client.SceneController;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneUpdate;
-
-import com.threerings.ezgame.util.EZObjectMarshaller;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MemberService;
@@ -173,7 +172,7 @@ public class RoomController extends SceneController
 
         // send the request off to the server
         log.info("Sending sprite message [ident=" + ident + ", name=" + name + "].");
-        var data :ByteArray = (EZObjectMarshaller.encode(arg, false) as ByteArray);
+        var data :ByteArray = ObjectMarshaller.validateAndEncode(arg);
         _roomObj.roomService.sendSpriteMessage(_mctx.getClient(), ident, name, data, isAction);
     }
 
@@ -213,8 +212,8 @@ public class RoomController extends SceneController
             return false;
         }
 
-        // serialize datum (TODO: move this to somewhere more general purpose)
-        var data :ByteArray = (EZObjectMarshaller.encode(value, false) as ByteArray);
+        // serialize datum
+        var data :ByteArray = ObjectMarshaller.validateAndEncode(value);
 
         // TODO: total up item's used memory, ensure it doesn't exceed the allowed limit
 

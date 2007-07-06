@@ -6,6 +6,7 @@ package com.threerings.msoy.game.client {
 import flash.utils.ByteArray;
 
 import com.threerings.util.Name;
+import com.threerings.util.ObjectMarshaller;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -21,7 +22,6 @@ import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.ezgame.client.GameControlBackend;
-import com.threerings.ezgame.util.EZObjectMarshaller;
 
 import com.threerings.msoy.client.WorldContext;
 
@@ -140,13 +140,13 @@ public class AVRGameControlBackend extends WhirledGameControlBackend
         validateConnected();
         var mkey :MemoryEntry = new MemoryEntry(_gameIdent, key),
             entry :MemoryEntry = _avrGameObj.memories.get(mkey) as MemoryEntry;
-        return (entry == null) ? null : EZObjectMarshaller.decode(entry.value);
+        return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
     }
 
     protected function updateMemory_v1 (key :String, value: Object) :Boolean
     {
         validateConnected();
-        var data :ByteArray = (EZObjectMarshaller.encode(value, false) as ByteArray);
+        var data :ByteArray = ObjectMarshaller.validateAndEncode(value);
         var wgsvc :WorldGameService =
             (_ctx.getClient().requireService(WorldGameService) as WorldGameService);
         wgsvc.updateMemory(_ctx.getClient(), new MemoryEntry(_gameIdent, key, data));
@@ -203,7 +203,7 @@ public class AVRGameControlBackend extends WhirledGameControlBackend
     
     protected function callMemoryChanged (entry :MemoryEntry) :void
     {
-        callUserCode("memoryChanged_v1", entry.key, EZObjectMarshaller.decode(entry.value));
+        callUserCode("memoryChanged_v1", entry.key, ObjectMarshaller.decode(entry.value));
     }
     
     protected var _mctx :WorldContext;

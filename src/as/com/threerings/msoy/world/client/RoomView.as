@@ -22,6 +22,7 @@ import mx.core.Container;
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 import com.threerings.util.Name;
+import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -49,8 +50,6 @@ import com.threerings.whirled.spot.data.Location;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
-
-import com.threerings.ezgame.util.EZObjectMarshaller;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -829,7 +828,7 @@ public class RoomView extends AbstractRoomView
     {
         var sprite :MsoySprite = (_entities.get(item) as MsoySprite);
         if (sprite != null) {
-            sprite.messageReceived(name, EZObjectMarshaller.decode(arg), isAction);
+            sprite.messageReceived(name, ObjectMarshaller.decode(arg), isAction);
         } else {
             log.info("Received sprite message for unknown sprite [item=" + item +
                      ", name=" + name + "].");
@@ -843,7 +842,7 @@ public class RoomView extends AbstractRoomView
     {
         var sprite :MsoySprite = (_entities.get(entry.item) as MsoySprite);
         if (sprite != null) {
-            sprite.memoryChanged(entry.key, EZObjectMarshaller.decode(entry.value));
+            sprite.memoryChanged(entry.key, ObjectMarshaller.decode(entry.value));
         } else {
             log.info("Received memory update for unknown sprite [item=" + entry.item +
                      ", key=" + entry.key + "].");
