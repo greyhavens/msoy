@@ -13,7 +13,7 @@ import com.threerings.msoy.item.data.all.Item;
  * Contains information on a Swiftly Project
  */
 public class SwiftlyProject
-    implements IsSerializable, Streamable, Cloneable
+    implements IsSerializable, Streamable
 {
     public SwiftlyProject ()
     {
