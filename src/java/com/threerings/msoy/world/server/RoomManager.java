@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
@@ -495,25 +496,7 @@ public class RoomManager extends SpotSceneManager
         MsoyServer.petMan.shutdownRoomPets(_roomObj);
 
         // flush any modified memory records to the database
-        final ArrayList<MemoryRecord> memrecs = new ArrayList<MemoryRecord>();
-        for (MemoryEntry entry : _roomObj.memories) {
-            if (entry.modified) {
-                memrecs.add(new MemoryRecord(entry));
-            }
-        }
-        if (memrecs.size() > 0) {
-            MsoyServer.invoker.postUnit(new Invoker.Unit() {
-                public boolean invoke () {
-                    try {
-                        MsoyServer.memoryRepo.storeMemories(memrecs);
-                    } catch (PersistenceException pe) {
-                        log.log(Level.WARNING, "Failed to update memories [where=" + where() +
-                                ", memrecs=" + memrecs + "].", pe);
-                    }
-                    return false;
-                }
-            });
-        }
+        flushMemories(_roomObj.memories);
     }
 
     @Override // documentation inherited
@@ -544,8 +527,9 @@ public class RoomManager extends SpotSceneManager
      */
     protected void doRoomUpdate (SceneUpdate[] updates, MemberObject user)
     {
-        // TODO: if an item is removed from the room, remove any memories from the room object and
-        // flush any modifications to the database
+        // track memory comings and goings
+        ArrayList<ItemIdent> oldIdents = new ArrayList<ItemIdent>();
+        ArrayList<ItemIdent> newIdents = new ArrayList<ItemIdent>();
 
         for (SceneUpdate update : updates) {
             // TODO: complicated verification of changes, including verifying that the user owns
@@ -590,12 +574,64 @@ public class RoomManager extends SpotSceneManager
                         log.warning("Unable to update item usage [e=" + cause + "].");
                     }
                 });
+
+                // note memory comings and goings
+                if (mfu.furniRemoved != null) {
+                    for (FurniData furni : mfu.furniRemoved) {
+                        if (furni.itemType != Item.NOT_A_TYPE) {
+                            oldIdents.add(furni.getItemIdent());
+                        }
+                    }
+                }
+                if (mfu.furniAdded != null) {
+                    for (FurniData furni : mfu.furniAdded) {
+                        if (furni.itemType != Item.NOT_A_TYPE) {
+                            newIdents.add(furni.getItemIdent());
+                        }
+                    }
+                }
             }
         }
 
-        // finally record our updates
+        // record our updates
         for (SceneUpdate update : updates) {
             recordUpdate(update);
+        }
+
+        // now fix up the lists: any ItemIdent that appears in both lists should be in neither.
+        ArrayList<MemoryEntry> oldMemories = new ArrayList<MemoryEntry>();
+        for (Iterator<ItemIdent> itr = oldIdents.iterator(); itr.hasNext(); ) {
+            ItemIdent ident = itr.next();
+            if (newIdents.remove(ident)) {
+                itr.remove();
+            } else {
+                // ah, this is an item that's actually being removed. Locate any memories.
+                for (MemoryEntry entry : _roomObj.memories) {
+                    if (ident.equals(entry.item)) {
+                        oldMemories.add(entry);
+                    }
+                }
+            }
+        }
+
+        // now remove any old memories from the room object and persist them
+        if (!oldMemories.isEmpty()) {
+            _roomObj.startTransaction();
+            try {
+                for (MemoryEntry entry : oldMemories) {
+                    _roomObj.removeFromMemories(entry.getKey());
+                }
+            } finally {
+                _roomObj.commitTransaction();
+            }
+
+            // persist any of the old memories that were modified
+            flushMemories(oldMemories);
+        }
+
+        // finally, load any new memories
+        if (!newIdents.isEmpty()) {
+            resolveMemories(newIdents);
         }
     }
 
@@ -621,38 +657,6 @@ public class RoomManager extends SpotSceneManager
         }
 
         return 0; // never found it..
-    }
-
-    /**
-     * Loads up all specified memories and places them into the room object.
-     */
-    protected void resolveMemories (final Collection<ItemIdent> idents)
-    {
-        MsoyServer.invoker.postUnit(new Invoker.Unit() {
-            public boolean invoke () {
-                try {
-                    _mems = MsoyServer.memoryRepo.loadMemories(idents);
-                    return true;
-                } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to load memories [where=" + where() +
-                            ", ids=" + idents + "].", pe);
-                    return false;
-                }
-            };
-
-            public void handleResult () {
-                _roomObj.startTransaction();
-                try {
-                    for (MemoryRecord mrec : _mems) {
-                        _roomObj.addToMemories(mrec.toEntry());
-                    }
-                } finally {
-                    _roomObj.commitTransaction();
-                }
-            }
-
-            protected Collection<MemoryRecord> _mems;
-        });
     }
 
     /**
@@ -759,6 +763,64 @@ public class RoomManager extends SpotSceneManager
             _roomObj.commitTransaction();
         }
         return true;
+    }
+
+    /**
+     * Loads up all specified memories and places them into the room object.
+     */
+    protected void resolveMemories (final Collection<ItemIdent> idents)
+    {
+        MsoyServer.invoker.postUnit(new Invoker.Unit() {
+            public boolean invoke () {
+                try {
+                    _mems = MsoyServer.memoryRepo.loadMemories(idents);
+                    return true;
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to load memories [where=" + where() +
+                            ", ids=" + idents + "].", pe);
+                    return false;
+                }
+            };
+
+            public void handleResult () {
+                _roomObj.startTransaction();
+                try {
+                    for (MemoryRecord mrec : _mems) {
+                        _roomObj.addToMemories(mrec.toEntry());
+                    }
+                } finally {
+                    _roomObj.commitTransaction();
+                }
+            }
+
+            protected Collection<MemoryRecord> _mems;
+        });
+    }
+
+    /**
+     * Flush any modified memories contained within the specified Iterable.
+     */
+    protected void flushMemories (Iterable<MemoryEntry> entries)
+    {
+        final ArrayList<MemoryRecord> memrecs = new ArrayList<MemoryRecord>();
+        for (MemoryEntry entry : entries) {
+            if (entry.modified) {
+                memrecs.add(new MemoryRecord(entry));
+            }
+        }
+        if (memrecs.size() > 0) {
+            MsoyServer.invoker.postUnit(new Invoker.Unit() {
+                public boolean invoke () {
+                    try {
+                        MsoyServer.memoryRepo.storeMemories(memrecs);
+                    } catch (PersistenceException pe) {
+                        log.log(Level.WARNING, "Failed to update memories [where=" + where() +
+                                ", memrecs=" + memrecs + "].", pe);
+                    }
+                    return false;
+                }
+            });
+        }
     }
 
     /** Listens to the room. */
