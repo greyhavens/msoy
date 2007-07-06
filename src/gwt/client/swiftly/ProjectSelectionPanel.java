@@ -3,28 +3,31 @@
 
 package client.swiftly;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import com.google.gwt.user.client.DOM;
+import client.shell.Application;
+import client.util.ClickCallback;
+import client.util.MsoyUI;
+import client.util.PromptPopup;
+
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
 import com.threerings.msoy.web.data.SwiftlyProject;
-
-import client.shell.Application;
-import client.util.ClickCallback;
-import client.util.MsoyUI;
 
 /**
  * Displays the client interface for selecting or creating a swiftly project.
@@ -47,15 +50,15 @@ public class ProjectSelectionPanel extends FlexTable
         getFlexCellFormatter().setStyleName(row, 0, "Header");
         setText(row, 1, CSwiftly.msgs.startProject());
         getFlexCellFormatter().setStyleName(row++, 1, "Header");
-        setWidget(row, 0, _membersProjects = new VerticalPanel());
-        _membersProjects.setStyleName("membersProjects");
-        setWidget(row++, 1, createCreateUI());
+        setWidget(row, 0, _membersProjectsPanel = new VerticalPanel());
+        _membersProjectsPanel.setStyleName("membersProjects");
+        setWidget(row++, 1, createNewProjectUI());
 
         // add a display for all remixable projects
         setText(row, 0, CSwiftly.msgs.remixableProjects());
         getFlexCellFormatter().setStyleName(row, 0, "Header");
         getFlexCellFormatter().setColSpan(row++, 0, 2);
-        setWidget(row, 0, _remixableProjects = new VerticalPanel());
+        setWidget(row, 0, _remixableProjectsPanel = new VerticalPanel());
         getFlexCellFormatter().setColSpan(row++, 0, 2);
 
         // populate the data from the backend
@@ -63,7 +66,7 @@ public class ProjectSelectionPanel extends FlexTable
         loadMembersProjects();
     }
 
-    protected FlexTable createCreateUI ()
+    protected FlexTable createNewProjectUI ()
     {
         // a drop down to select the project type
         FlexTable table = new FlexTable();
@@ -117,54 +120,103 @@ public class ProjectSelectionPanel extends FlexTable
         return table;
     }
 
-    // get the list of projects that are remixable
+    /**
+     * Get the list of projects that are remixable.
+     */
     protected void loadRemixableProjects ()
     {
         CSwiftly.swiftlysvc.getRemixableProjects(CSwiftly.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
                 Iterator iter = ((List)result).iterator();
                 if (!iter.hasNext()) {
-                    _remixableProjects.add(new Label(CSwiftly.msgs.noRemixableProjects()));
+                    _remixableProjectsPanel.add(new Label(CSwiftly.msgs.noRemixableProjects()));
                 } else {
+                    _remixableProjects = new HashMap();
                     while (iter.hasNext()) {
-                        final SwiftlyProject project = (SwiftlyProject)iter.next();
-                        Hyperlink projectLink = Application.createLink(
-                            project.projectName, "swiftly", String.valueOf(project.projectId));
-                        DOM.setStyleAttribute(projectLink.getElement(), "display", "inline");
-                        _remixableProjects.add(projectLink);
+                        SwiftlyProject project = (SwiftlyProject)iter.next();
+                        _remixableProjects.put(new Integer(project.projectId), project);
                     }
+                    displayRemixableProjects();
                 }
             }
             public void onFailure (Throwable caught) {
-                CSwiftly.log("getMembersProjects failed", caught);
-                _remixableProjects.add(new Label(CSwiftly.serverError(caught)));
+                CSwiftly.log("loadRemixableProjects failed", caught);
+                _remixableProjectsPanel.add(new Label(CSwiftly.serverError(caught)));
             }
         });
     }
 
-    // get the list of projects this user is a collaborator on
+    /**
+     * Display the list of loaded remixable projects.
+     */
+    protected void displayRemixableProjects ()
+    {
+        _remixableProjectsPanel.clear();
+        Iterator iter = _remixableProjects.values().iterator();
+        while (iter.hasNext()) {
+            SwiftlyProject project = (SwiftlyProject)iter.next();
+            Hyperlink projectLink = Application.createLink(
+                project.projectName, "swiftly", String.valueOf(project.projectId));
+            _remixableProjectsPanel.add(projectLink);
+        }
+    }
+
+    /**
+     *  Get the list of projects this user is a collaborator on.
+     */
     protected void loadMembersProjects ()
     {
         CSwiftly.swiftlysvc.getMembersProjects(CSwiftly.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
                 Iterator iter = ((List)result).iterator();
                 if (!iter.hasNext()) {
-                    _membersProjects.add(new Label(CSwiftly.msgs.noMembersProjects()));
+                    _membersProjectsPanel.add(new Label(CSwiftly.msgs.noMembersProjects()));
                 } else {
+                    _membersProjects = new HashMap();
                     while (iter.hasNext()) {
-                        final SwiftlyProject project = (SwiftlyProject)iter.next();
-                        Hyperlink projectLink = Application.createLink(
-                            project.projectName, "swiftly", String.valueOf(project.projectId));
-                        DOM.setStyleAttribute(projectLink.getElement(), "display", "inline");
-                        _membersProjects.add(projectLink);
+                        SwiftlyProject project = (SwiftlyProject)iter.next();
+                        _membersProjects.put(new Integer(project.projectId), project);
                     }
+                    displayMembersProjects();
                 }
             }
             public void onFailure (Throwable caught) {
-                CSwiftly.log("getMembersProjects failed", caught);
-                _membersProjects.add(new Label(CSwiftly.serverError(caught)));
+                CSwiftly.log("loadMembersProjects failed", caught);
+                _membersProjectsPanel.add(new Label(CSwiftly.serverError(caught)));
             }
         });
+    }
+
+    /**
+     * Display the list of projects this user is a collaborator on
+     */
+    protected void displayMembersProjects ()
+    {
+        _membersProjectsPanel.clear();
+        Iterator iter = _membersProjects.values().iterator();
+        while (iter.hasNext()) {
+            SwiftlyProject project = (SwiftlyProject)iter.next();
+            HorizontalPanel projectInfo = new HorizontalPanel();
+            projectInfo.add(Application.createLink(
+                project.projectName, "swiftly", String.valueOf(project.projectId)));
+            /* TODO: Disabled until we figure out how delete should actually work
+            if (CSwiftly.ident.memberId == project.ownerId) {
+                projectInfo.add(new DeleteButton(project, ProjectSelectionPanel.this));
+            }
+            */
+            _membersProjectsPanel.add(projectInfo);
+        }
+    }
+
+    /**
+     * Called after a project has been removed on the back end to update the project display.
+     */
+    protected void projectWasRemoved (Integer projectId)
+    {
+        _remixableProjects.remove(projectId);
+        displayRemixableProjects();
+        _membersProjects.remove(projectId);
+        displayMembersProjects();
     }
 
     protected void updateSelectedProjectType ()
@@ -176,8 +228,38 @@ public class ProjectSelectionPanel extends FlexTable
         _selectedProjectType = Byte.parseByte(_projectTypes.getValue(tx));
     }
 
-    protected VerticalPanel _membersProjects;
-    protected VerticalPanel _remixableProjects;
+    protected static class DeleteButton extends Button
+    {
+        public DeleteButton (final SwiftlyProject project, final ProjectSelectionPanel panel)
+        {
+            super(CSwiftly.msgs.deleteButton(), new ClickListener() {
+                public void onClick (Widget target)
+                {
+                    new PromptPopup(CSwiftly.msgs.projectDeletePrompt(project.projectName)) {
+                        public void onAffirmative () {
+                            CSwiftly.swiftlysvc.deleteProject(CSwiftly.ident, project.projectId,
+                                new AsyncCallback() {
+                                public void onSuccess (Object result)
+                                {
+                                    panel.projectWasRemoved(new Integer(project.projectId));
+                                }
+                                public void onFailure (Throwable caught)
+                                {
+                                    MsoyUI.error(CSwiftly.serverError(caught));
+                                }
+
+                            });
+                        }
+                        public void onNegative () { }
+                    }.prompt();
+                }});
+        }
+    }
+
+    protected VerticalPanel _membersProjectsPanel;
+    protected VerticalPanel _remixableProjectsPanel;
+    protected Map _membersProjects;
+    protected Map _remixableProjects;
 
     protected ListBox _projectTypes;
     protected CheckBox _remixable;

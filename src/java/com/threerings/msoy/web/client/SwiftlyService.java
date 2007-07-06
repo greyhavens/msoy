@@ -47,6 +47,12 @@ public interface SwiftlyService extends RemoteService
         throws ServiceException;
 
     /**
+     * Deletes a SwiftlyProject
+     */
+    public void deleteProject (WebIdent ident, int projectId)
+        throws ServiceException;
+
+    /**
      * Loads the SwiftlyProject using the supplied projectId
      */
     public SwiftlyProject loadProject (WebIdent ident, int projectId)

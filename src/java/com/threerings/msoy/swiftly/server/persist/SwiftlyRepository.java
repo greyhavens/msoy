@@ -4,22 +4,19 @@
 package com.threerings.msoy.swiftly.server.persist;
 
 import java.sql.Timestamp;
-
 import java.util.List;
 import java.util.Map;
 
 import com.samskivert.io.PersistenceException;
-
-import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.ConnectionProvider;
-
+import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
-
+import com.samskivert.jdbc.depot.clause.Join;
+import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Logic.And;
-import com.samskivert.jdbc.depot.clause.Where;
 
 /**
  * Manages the persistent information associated with a member's projects.
@@ -44,14 +41,28 @@ public class SwiftlyRepository extends DepotRepository
     }
 
     /**
-     * Find all the projects which have the remixable flag set.
+     * Find all the projects which have the remixable flag set and not the deleted flag.
      */
      // TODO: this should take a limit parameter
     public List<SwiftlyProjectRecord> findRemixableProjects ()
         throws PersistenceException
     {
         return findAll(SwiftlyProjectRecord.class,
-            new Where(SwiftlyProjectRecord.REMIXABLE_C, true));
+            new Where(new And(new Equals(SwiftlyProjectRecord.REMIXABLE_C, true),
+                new Equals(SwiftlyProjectRecord.DELETED_C, false))));
+    }
+
+    /**
+     * Find all the projects which have this member as a collaborator and not the deleted flag.
+     */
+     // TODO: this should take a limit parameter
+    public List<SwiftlyProjectRecord> findMembersProjects (final int memberId)
+        throws PersistenceException
+    {
+        return findAll(SwiftlyProjectRecord.class,
+                new Join(SwiftlyProjectRecord.PROJECT_ID_C, SwiftlyCollaboratorsRecord.PROJECT_ID_C),
+                new Where(new And(new Equals(SwiftlyCollaboratorsRecord.MEMBER_ID, memberId),
+                new Equals(SwiftlyProjectRecord.DELETED_C, false))));
     }
 
     /**
@@ -62,6 +73,34 @@ public class SwiftlyRepository extends DepotRepository
         throws PersistenceException
     {
         return load(SwiftlyProjectRecord.class, projectId);
+    }
+
+    /**
+     * Deletes a project by setting the deleted flag to true, but not actually removing the record
+     * from the database.
+     */
+    public void markProjectDeleted (int projectId)
+        throws PersistenceException
+    {
+        SwiftlyProjectRecord project = loadProject(projectId);
+        if (project == null) {
+            throw new PersistenceException(
+                "Couldn't find swiftly project for deletion marking. [id=" + projectId + "]");
+        }
+        // TODO: how do we actually want delete to work? If we decide this is the way, then
+        // we should probably add a creatorId field that never changes
+        project.deleted = true;
+        project.ownerId = 0;
+        update(project, SwiftlyProjectRecord.DELETED, SwiftlyProjectRecord.OWNER_ID);
+    }
+
+    /**
+     * Deletes the specified project record.
+     */
+    public void deleteProject (SwiftlyProjectRecord record)
+        throws PersistenceException
+    {
+        delete(record);
     }
 
     /**
@@ -105,15 +144,6 @@ public class SwiftlyRepository extends DepotRepository
             throw new PersistenceException(
                 "Couldn't find swiftly project for update [id=" + projectId + "]");
         }
-    }
-
-    /*
-     * Deletes the specified project record.
-     */
-    public void deleteProject (SwiftlyProjectRecord record)
-        throws PersistenceException
-    {
-        delete(record);
     }
 
     /**

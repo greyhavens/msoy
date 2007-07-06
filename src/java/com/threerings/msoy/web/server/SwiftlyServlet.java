@@ -47,7 +47,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireAuthedUser(ident);
-        
+
         ArrayList<SwiftlyProject> projects = new ArrayList<SwiftlyProject>();
         try {
             for (SwiftlyProjectRecord pRec :
@@ -55,7 +55,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
                 projects.add(pRec.toSwiftlyProject());
             }
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Getting user's projects failed.", pe);
+            log.log(Level.WARNING, "Getting remixable projects failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
@@ -67,17 +67,11 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
-        
+
         ArrayList<SwiftlyProject> projects = new ArrayList<SwiftlyProject>();
         try {
-            for (SwiftlyCollaboratorsRecord cRec :
-                MsoyServer.swiftlyRepo.getMemberships(memrec.memberId)) {
-                SwiftlyProjectRecord pRec = MsoyServer.swiftlyRepo.loadProject(cRec.projectId);
-                if (pRec == null) {
-                    log.warning("Swiftly project not found when loading users projects. " + 
-                        "[memberId=" + memrec.memberId + "]");
-                    continue;
-                }
+            for (SwiftlyProjectRecord pRec :
+                MsoyServer.swiftlyRepo.findMembersProjects(memrec.memberId)) {
                 projects.add(pRec.toSwiftlyProject());
             }
         } catch (PersistenceException pe) {
@@ -94,7 +88,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
-        
+
         SwiftlyProject project;
         SwiftlyProjectRecord pRec;
         SwiftlySVNStorageRecord storeRec;
@@ -194,6 +188,21 @@ public class SwiftlyServlet extends MsoyServiceServlet
     }
 
     // from SwiftlyService
+    public void deleteProject (WebIdent ident, int projectId)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(ident);
+        requireOwner(projectId, memrec.memberId);
+
+        try {
+            MsoyServer.swiftlyRepo.markProjectDeleted(projectId);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Marking project deleted failed [id= " + projectId + "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+    }
+
+    // from SwiftlyService
     public SwiftlyProject loadProject (WebIdent ident, int projectId)
         throws ServiceException
     {
@@ -235,7 +244,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = requireAuthedUser(ident);
         requireCollaborator(projectId, memrec.memberId);
-        
+
         ArrayList<MemberName> members = new ArrayList<MemberName>();
 
         try {
@@ -256,7 +265,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
-        
+
         try {
             return MsoyServer.memberRepo.getFriends(memrec.memberId);
         } catch (PersistenceException pe) {
@@ -274,18 +283,18 @@ public class SwiftlyServlet extends MsoyServiceServlet
 
         // Don't let the owner remove themselves.
         if (isOwner(projectId, memberId)) {
-            log.warning("Refusing to remove the project owner from collaborators. [projectId=" + 
+            log.warning("Refusing to remove the project owner from collaborators. [projectId=" +
                 projectId + "]");
             return;
         }
-        
+
         try {
             MsoyServer.swiftlyRepo.leaveCollaborators(projectId, memberId);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Removing project's collaborators failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
-        
+
         updateRoomCollaborators(projectId);
     }
 
@@ -295,26 +304,26 @@ public class SwiftlyServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = requireAuthedUser(ident);
         requireOwner(projectId, memrec.memberId);
-        
+
         // if the user is already a collaborator, do nothing
         if (isCollaborator(projectId, memberId)) {
-            log.warning("Refusing to add an existing collaborator to project. [projectId=" + 
+            log.warning("Refusing to add an existing collaborator to project. [projectId=" +
                 projectId + ", memberId=" + memberId + "]");
             return;
         }
-        
+
         try {
             MsoyServer.swiftlyRepo.joinCollaborators(projectId, memberId);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Joining project's collaborators failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
-        
+
         updateRoomCollaborators(projectId);
     }
-    
+
     /**
-     * Informs the room manager for this project, if resolved, that the collaborators have 
+     * Informs the room manager for this project, if resolved, that the collaborators have
      * been modified.
      */
     protected void updateRoomCollaborators (final int projectId)
@@ -325,7 +334,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         final ServletWaiter<Void> waiter =
             new ServletWaiter<Void>("updateCollaborators[" + projectId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {               
+            public void run () {
                 ProjectRoomManager manager = MsoyServer.swiftlyMan.getRoomManager(projectId);
                 // the room manager is not resolved, no problem, we updated the database
                 if (manager == null) {
@@ -335,7 +344,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
                 manager.updateCollaborators(waiter);
             }
         });
-        
+
         // block the servlet waiting for the dobject thread
         waiter.waitForResult();
     }
@@ -351,9 +360,9 @@ public class SwiftlyServlet extends MsoyServiceServlet
     {
         if (!isCollaborator(projectId, memberId)) {
             throw new ServiceException(SwiftlyCodes.ACCESS_DENIED);
-        }        
+        }
     }
-    
+
     /**
      * Verifies a member is the owner of a project.
      * @param projectId the id of the project being tested
@@ -365,9 +374,9 @@ public class SwiftlyServlet extends MsoyServiceServlet
     {
         if (!isOwner(projectId, memberId)) {
             throw new ServiceException(SwiftlyCodes.ACCESS_DENIED);
-        }        
+        }
     }
-    
+
     /**
      * Determines if a member is a collaborator on the supplied project.
      * @param projectId the id of the project being tested

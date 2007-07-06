@@ -40,6 +40,11 @@ public interface SwiftlyServiceAsync
     public void loadProject (WebIdent ident, int projectId, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link SwiftlyService#deleteProject}.
+     */
+    public void deleteProject (WebIdent ident, int projectId, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link SwiftlyService#loadConnectConfig}.
      */
     public void loadConnectConfig (WebIdent ident, AsyncCallback callback);

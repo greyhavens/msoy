@@ -48,6 +48,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String noMembersProjects();
 
   /**
+   * Translated "Delete".
+   * 
+   * @return translated "Delete"
+   * @gwt.key deleteButton
+   */
+  String deleteButton();
+
+  /**
    * Translated "Start a project!".
    * 
    * @return translated "Start a project!"
@@ -86,6 +94,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key editProject
    */
   String editProject();
+
+  /**
+   * Translated "Are you sure you wish to delete {0}?".
+   * 
+   * @return translated "Are you sure you wish to delete {0}?"
+   * @gwt.key projectDeletePrompt
+   */
+  String projectDeletePrompt(String arg0);
 
   /**
    * Translated "Submit".
@@ -216,20 +232,20 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String invalidProjectId(String arg0);
 
   /**
-   * Translated "View profile".
-   * 
-   * @return translated "View profile"
-   * @gwt.key viewProfile
-   */
-  String viewProfile();
-
-  /**
    * Translated "Upload a file".
    * 
    * @return translated "Upload a file"
    * @gwt.key uploadTitle
    */
   String uploadTitle();
+
+  /**
+   * Translated "View profile".
+   * 
+   * @return translated "View profile"
+   * @gwt.key viewProfile
+   */
+  String viewProfile();
 
   /**
    * Translated "The selected file is too large to be used in a Swiftly project.".
@@ -256,9 +272,9 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String selectFile();
 
   /**
-   * Translated "Welcome to <b>Swiftly</b> the Whirled Integrated Development Environment.  <p><font size="-1">Beware that Swiftly is <i>really</i> Alpha and a lot of work remains to be done. That said, play with it and enjoy, and soon we''ll be asking for your feedback. Right now we're really busy implementing a bunch of stuff that we <i>know</i> needs to be done.</font></p>".
+   * Translated "Welcome to <b>Swiftly</b> the Whirled Integrated Development Environment.  <p><font size="-1">Beware that Swiftly is <i>really</i> Alpha and a lot of work remains to be done. That said, play with it and enjoy, and soon we''ll be asking for your feedback. Right now we''re really busy implementing a bunch of stuff that we <i>know</i> needs to be done.</font></p>".
    * 
-   * @return translated "Welcome to <b>Swiftly</b> the Whirled Integrated Development Environment.  <p><font size="-1">Beware that Swiftly is <i>really</i> Alpha and a lot of work remains to be done. That said, play with it and enjoy, and soon we''ll be asking for your feedback. Right now we're really busy implementing a bunch of stuff that we <i>know</i> needs to be done.</font></p>"
+   * @return translated "Welcome to <b>Swiftly</b> the Whirled Integrated Development Environment.  <p><font size="-1">Beware that Swiftly is <i>really</i> Alpha and a lot of work remains to be done. That said, play with it and enjoy, and soon we''ll be asking for your feedback. Right now we''re really busy implementing a bunch of stuff that we <i>know</i> needs to be done.</font></p>"
    * @gwt.key swiftlyIntro
    */
   String swiftlyIntro();
