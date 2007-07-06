@@ -5,11 +5,14 @@ package client.profile;
 
 import java.util.Iterator;
 
+import client.util.MediaUtil;
 import client.util.Stars;
 
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Panel;
 import com.threerings.msoy.data.all.GameRating;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.client.ProfileService;
 
 /**
@@ -37,8 +40,12 @@ public class RatingsBlurb extends Blurb
             int row = _content.getRowCount();
             
             GameRating entry = (GameRating) i.next();
-            _content.setText(row, 0, entry.gameName);
-            _content.getCellFormatter().setStyleName(row, 0, "Game");
+            _content.setWidget(row, 0, MediaUtil.createMediaView(
+                entry.gameThumb, MediaDesc.HALF_THUMBNAIL_SIZE));
+            _content.getCellFormatter().setStyleName(row, 0, "gameThumb");
+
+            _content.setText(row, 1, entry.gameName);
+            _content.getCellFormatter().setStyleName(row, 1, "gameName");
 
             /**
              * FIDE/Elo ratings lie between 1000 and 3000, with new players starting out at
@@ -56,7 +63,7 @@ public class RatingsBlurb extends Blurb
              */
             final float rating = (float) Math.min(5.0, 0.5 + Math.sqrt(entry.rating) * 5.0);
 
-            _content.setWidget(row, 1, new Stars(Stars.MODE_READ, false) {
+            _content.setWidget(row, 2, new Stars(Stars.MODE_READ, false) {
                 protected void starsClicked (byte newRating) {
                 }
                 protected void update () {
@@ -66,7 +73,7 @@ public class RatingsBlurb extends Blurb
                     updateStarImages(rating, false);
                 }
             });
-            _content.getCellFormatter().setStyleName(row, 1, "Rating");
+            _content.getCellFormatter().setStyleName(row, 2, "Rating");
         }
     }
 

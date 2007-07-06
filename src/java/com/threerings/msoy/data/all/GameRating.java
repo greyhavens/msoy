@@ -4,6 +4,7 @@
 package com.threerings.msoy.data.all;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
  * Contains information about an an implicit user's rating for a (also included) game.
@@ -17,6 +18,9 @@ public class GameRating
     /** The game's name. */
     public String gameName;
     
+    /** The game's thumbnail media. */
+    public MediaDesc gameThumb;
+    
     /** The actual rating of the implicit user, for this game. This value is scaled to [0, 1]. */
     public float rating;
 
@@ -27,11 +31,13 @@ public class GameRating
 
     /**
      * Creates a {@link GameRating} instance populated with the given data.
+     * @param thumb 
      */
-    public GameRating (int gameId, String gameName, float rating)
+    public GameRating (int gameId, String gameName, MediaDesc thumb, float rating)
     {
         this.gameId = gameId;
         this.gameName = gameName;
+        this.gameThumb = thumb;
         this.rating = rating;
     }
 

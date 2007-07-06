@@ -21,6 +21,8 @@ import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
@@ -326,7 +328,12 @@ public class ProfileServlet extends MsoyServiceServlet
             }
             float rating = ratings.get(ii).rating - RatingManagerDelegate.MINIMUM_RATING;
             rating /= (RatingManagerDelegate.MAXIMUM_RATING - RatingManagerDelegate.MINIMUM_RATING);
-            result.add(new GameRating(record.itemId, record.name, rating));
+
+            MediaDesc thumb = record.thumbMediaHash != null ?
+                new MediaDesc(record.thumbMediaHash, record.thumbMimeType, record.thumbConstraint) :
+                Item.getDefaultThumbnailMediaFor(Item.GAME);
+
+            result.add(new GameRating(record.itemId, record.name, thumb, rating));
         }
 
         return result;
