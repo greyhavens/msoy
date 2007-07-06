@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 
 import com.samskivert.io.PersistenceException;
@@ -22,12 +23,15 @@ import com.threerings.msoy.web.data.WebIdent;
 public class SwiftlyUploadServlet extends AbstractUploadServlet
 {
     @Override // from AbstractUploadServlet
-    protected void handleUploadFile (final UploadFile uploadFile, int uploadLength,
-                                     HttpServletResponse rsp)
+    protected void handleFileItem (FileItem item, int uploadLength,
+                                   HttpServletResponse rsp)
         throws IOException, FileUploadException, AccessDeniedException
     {
+        // wrap the FileItem in an UploadFile for publishing
+        final UploadFile uploadFile = new FileItemUploadFile(item);
+        
         // attempt to extract the projectId and auth token from the field name
-        String field = uploadFile.item.getFieldName();
+        String field = item.getFieldName();
         if (field == null) {
             throw new FileUploadException("Failed to extract form field from the upload request.");
         }
@@ -61,8 +65,8 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
         // verify this user is logged in and is a collaborator
         checkPermissions(ident, projectId);
 
-        log.info("Swiftly upload: [type=" + uploadFile.item.getContentType() + ", size="
-            + uploadFile.item.getSize() + ", projectId=" + projectId + "].");
+        log.info("Swiftly upload: [type=" + item.getContentType() + ", size=" +
+            item.getSize() + ", projectId=" + projectId + "].");
 
         // run a task on the dobject thread that first finds the ProjectRoomManager for this
         // project if it exists, and then commits the file to svn and adds it to the room
