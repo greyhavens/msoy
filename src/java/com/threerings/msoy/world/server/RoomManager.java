@@ -383,12 +383,13 @@ public class RoomManager extends SpotSceneManager
     // documentation inherited from RoomProvider
     public void updateMemory (ClientObject caller, final MemoryEntry entry)
     {
-        // if this client does not currently control this entity; ignore the request; if no one
-        // controls it, this will assign this client as controller
-        MemberObject who = (MemberObject) caller;
-        if (!checkAssignControl(who, entry.item, "updateMemory")) {
-            return;
-        }
+// NOTE: I've disabled the need to be in control to update memory (Ray July 6, 2007)
+//        // if this client does not currently control this entity; ignore the request; if no one
+//        // controls it, this will assign this client as controller
+//        MemberObject who = (MemberObject) caller;
+//        if (!checkAssignControl(who, entry.item, "updateMemory")) {
+//            return;
+//        }
 
         // TODO: verify that the caller is in the scene with this item, that the memory does not
         // exdeed legal size, other item specific restrictions

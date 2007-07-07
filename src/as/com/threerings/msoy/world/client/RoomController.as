@@ -208,9 +208,10 @@ public class RoomController extends SceneController
      */
     public function updateMemory (ident :ItemIdent, key :String, value: Object) :Boolean
     {
-        if (!checkCanRequest(ident, "updateMemory")) {
-            return false;
-        }
+// NOTE: I've disabled the need to be in control to update memory (Ray July 6, 2007)
+//        if (!checkCanRequest(ident, "updateMemory")) {
+//            return false;
+//        }
 
         // serialize datum
         var data :ByteArray = ObjectMarshaller.validateAndEncode(value);
