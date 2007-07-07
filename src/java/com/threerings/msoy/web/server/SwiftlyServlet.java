@@ -295,11 +295,12 @@ public class SwiftlyServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
+        // inform the project room manager of the change in collaborators
         updateRoomCollaborators(projectId);
     }
 
     // from SwiftlyService
-    public void joinCollaborators (WebIdent ident, int projectId, int memberId)
+    public MemberName joinCollaborators (WebIdent ident, int projectId, int memberId)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
@@ -309,17 +310,22 @@ public class SwiftlyServlet extends MsoyServiceServlet
         if (isCollaborator(projectId, memberId)) {
             log.warning("Refusing to add an existing collaborator to project. [projectId=" +
                 projectId + ", memberId=" + memberId + "]");
-            return;
+            return null;
         }
 
+        MemberName member = null;
         try {
             MsoyServer.swiftlyRepo.joinCollaborators(projectId, memberId);
+            member = MsoyServer.memberRepo.loadMember(memberId).getName();
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Joining project's collaborators failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
+        // inform the project room manager of the change in collaborators
         updateRoomCollaborators(projectId);
+
+        return member;
     }
 
     /**

@@ -3,9 +3,15 @@
 
 package client.swiftly;
 
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.HashSet;
 import java.util.List;
+
+import client.shell.Application;
+import client.util.BorderedDialog;
+import client.util.ClickCallback;
+import client.util.MsoyUI;
+import client.util.PromptPopup;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -22,17 +28,10 @@ import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-
+import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.SwiftlyProject;
-import com.threerings.gwt.ui.InlineLabel;
-
-import client.shell.Application;
-import client.util.BorderedDialog;
-import client.util.ClickCallback;
-import client.util.MsoyUI;
-import client.util.PromptPopup;
 
 /**
  * Display a dialog to edit a project.
@@ -46,7 +45,7 @@ public class ProjectEdit extends BorderedDialog
     {
         public void projectSubmitted (SwiftlyProject project);
     }
-        
+
     public ProjectEdit (SwiftlyProject project, ProjectEditListener listener)
     {
         // no autohiding, have a close button, disable dragging
@@ -83,9 +82,8 @@ public class ProjectEdit extends BorderedDialog
 
         contents.setText(idx, 0, CSwiftly.msgs.collaborators());
         contents.getFlexCellFormatter().setHeight(idx, 0, "100%");
-        _collaborators = new HorizontalPanel();
-        _collaboratorsSet = new HashSet();
-        contents.setWidget(idx, 1, _collaborators);
+        _collaboratorsPanel = new HorizontalPanel();
+        contents.setWidget(idx, 1, _collaboratorsPanel);
 
         // Add collaborators button if project owner
         if (_amOwner) {
@@ -128,8 +126,8 @@ public class ProjectEdit extends BorderedDialog
             }
         }));
 
-        // TODO: don't call this all over the place
         loadCollaborators();
+        loadFriends();
     }
 
     // from BorderedDialog.  This is called in the super constructor, so no UI components that
@@ -147,34 +145,38 @@ public class ProjectEdit extends BorderedDialog
         }
     }
 
-    protected void loadCollaborators()
+    protected void loadCollaborators ()
     {
-        CSwiftly.swiftlysvc.getProjectCollaborators(
-            CSwiftly.ident, _project.projectId, new AsyncCallback() {
+        _collaborators = new HashMap();
+        CSwiftly.swiftlysvc.getProjectCollaborators(CSwiftly.ident, _project.projectId,
+            new AsyncCallback() {
             public void onSuccess (Object result) {
-                gotCollaborators((List)result);
+                Iterator iter = ((List)result).iterator();
+                while (iter.hasNext()) {
+                    MemberName name = (MemberName)iter.next();
+                    _collaborators.put(new Integer(name.getMemberId()), name);
+                }
+                displayCollaborators();
             }
             public void onFailure (Throwable caught) {
-                CSwiftly.log("getProjectCollaborators failed", caught);
+                CSwiftly.log("Listing collaborators failed memberId=[" + CSwiftly.getMemberId() +
+                    "]", caught);
                 MsoyUI.error(CSwiftly.serverError(caught));
             }
         });
     }
 
-    protected void gotCollaborators (List members)
+    protected void displayCollaborators ()
     {
-        _collaborators.clear();
-        _collaboratorsSet.clear();
-
-        Iterator iter = members.iterator();
+        _collaboratorsPanel.clear();
+        Iterator iter = _collaborators.values().iterator();
         if (!iter.hasNext()) {
-            _collaborators.add(new Label(CSwiftly.msgs.noCollaborators()));
+            _collaboratorsPanel.add(new Label(CSwiftly.msgs.noCollaborators()));
             return;
         }
 
         while (iter.hasNext()) {
             MemberName name = (MemberName)iter.next();
-            _collaboratorsSet.add(name.toString());
             final PopupPanel collabMenuPanel = new PopupPanel(true);
             MenuBar menu = getOwnerMenuBar(name, collabMenuPanel);
             collabMenuPanel.add(menu);
@@ -188,9 +190,9 @@ public class ProjectEdit extends BorderedDialog
                     collabMenuPanel.show();
                 }
             });
-            _collaborators.add(collaborator);
+            _collaboratorsPanel.add(collaborator);
             if (iter.hasNext()) {
-                _collaborators.add(new InlineLabel(", "));
+                _collaboratorsPanel.add(new InlineLabel(", "));
             }
         }
     }
@@ -208,7 +210,7 @@ public class ProjectEdit extends BorderedDialog
                 parent.hide();
                 ProjectEdit.this.hide();
             }
-        });  
+        });
 
         MenuItem remove = new MenuItem(CSwiftly.msgs.viewRemove(), new Command() {
             public void execute() {
@@ -235,60 +237,73 @@ public class ProjectEdit extends BorderedDialog
     }
 
     /**
-     * Get the menu for use by owners when adding collaborators of their project.
+     * Loads this users current list of friends from the backend.
      */
-    protected void updateCollabMenu ()
+    protected void loadFriends ()
     {
-        _collabMenu.clearItems();
-        final int memberId = CSwiftly.getMemberId();
+        _friends = new HashMap();
         CSwiftly.swiftlysvc.getFriends(CSwiftly.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
                 Iterator iter = ((List)result).iterator();
-                boolean foundFriend = false;
                 while (iter.hasNext()) {
                     final FriendEntry friend = (FriendEntry)iter.next();
-                    // do not display friends who are already collaborators
-                    if (_collaboratorsSet.contains(friend.name.toString())) {
-                        continue;
-                    }
-                    // add a menu title element as the first element
-                    if (!foundFriend) {
-                        MenuItem title = new MenuItem(CSwiftly.msgs.friends(), new Command() {
-                            public void execute() {
-                                // noop
-                            }
-                        });
-                        title.addStyleName("MenuTitle");
-                        _collabMenu.addItem(title);
-                        foundFriend = true;
-                    }
-                    MenuItem member = new MenuItem(friend.name.toString(), new Command() {
-                        public void execute() {
-                            addCollaborator(friend.name.getMemberId());
-                            _collabMenuPanel.hide();
-                        }
-                    });
-                    _collabMenu.addItem(member);
-                }
-                if (!foundFriend) {
-                    MenuItem noFriends = new MenuItem(CSwiftly.msgs.noFriends(), new Command() {
-                        public void execute() {
-                            // noop
-                            _collabMenuPanel.hide();
-                        }
-                    });
-                    _collabMenu.addItem(noFriends);
+                    _friends.put(new Integer(friend.getMemberId()), friend);
                 }
             }
             public void onFailure (Throwable caught) {
-                CSwiftly.log("Listing friends failed memberId=[" + memberId + "]", caught);
+                CSwiftly.log(
+                    "Listing friends failed memberId=[" + CSwiftly.getMemberId() + "]", caught);
                 MsoyUI.error(CSwiftly.serverError(caught));
             }
         });
     }
 
     /**
-     * Add the indicated member to this project. 
+     * Populate the menu for use by owners when adding collaborators of their project.
+     */
+    protected void updateCollabMenu ()
+    {
+        _collabMenu.clearItems();
+        Iterator iter = _friends.values().iterator();
+        boolean foundFriend = false;
+        while (iter.hasNext()) {
+            final FriendEntry friend = (FriendEntry)iter.next();
+            // do not display friends who are already collaborators
+            if (_collaborators.containsKey(new Integer(friend.getMemberId()))) {
+                continue;
+            }
+            // add a menu title element as the first element
+            if (!foundFriend) {
+                MenuItem title = new MenuItem(CSwiftly.msgs.friends(), new Command() {
+                    public void execute() {
+                        // noop
+                    }
+                });
+                title.addStyleName("MenuTitle");
+                _collabMenu.addItem(title);
+                foundFriend = true;
+            }
+            MenuItem member = new MenuItem(friend.name.toString(), new Command() {
+                public void execute() {
+                    addCollaborator(friend.name.getMemberId());
+                    _collabMenuPanel.hide();
+                }
+            });
+            _collabMenu.addItem(member);
+        }
+        if (!foundFriend) {
+            MenuItem noFriends = new MenuItem(CSwiftly.msgs.noFriends(), new Command() {
+                public void execute() {
+                    // noop
+                    _collabMenuPanel.hide();
+                }
+            });
+            _collabMenu.addItem(noFriends);
+        }
+    }
+
+    /**
+     * Add the indicated member to this project.
      *
      * @param memberId The member to add.
      */
@@ -297,7 +312,11 @@ public class ProjectEdit extends BorderedDialog
         CSwiftly.swiftlysvc.joinCollaborators(
             CSwiftly.ident, _project.projectId, memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
-                loadCollaborators();
+                // result will be null if the member was already a collaborator
+                if (result != null) {
+                    _collaborators.put(new Integer(memberId), result);
+                    displayCollaborators();
+                }
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("Failed to add collaborator [projectId=" + _project.projectId +
@@ -308,7 +327,7 @@ public class ProjectEdit extends BorderedDialog
     }
 
     /**
-     * Remove the indicated member from this project. 
+     * Remove the indicated member from this project.
      *
      * @param memberId The member to remove.
      */
@@ -317,7 +336,8 @@ public class ProjectEdit extends BorderedDialog
         CSwiftly.swiftlysvc.leaveCollaborators(
             CSwiftly.ident, _project.projectId, memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
-                loadCollaborators();
+                _collaborators.remove(new Integer(memberId));
+                displayCollaborators();
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("Failed to remove collaborator [projectId=" + _project.projectId +
@@ -329,11 +349,12 @@ public class ProjectEdit extends BorderedDialog
 
     protected SwiftlyProject _project;
     protected ProjectEditListener _listener;
-    protected HashSet _collaboratorsSet;
+    protected HashMap _collaborators;
+    protected HashMap _friends;
     protected boolean _amOwner;
 
     protected CheckBox _remixable;
-    protected HorizontalPanel _collaborators;
+    protected HorizontalPanel _collaboratorsPanel;
     protected MenuBar _collabMenu;
     protected PopupPanel _collabMenuPanel;
 }

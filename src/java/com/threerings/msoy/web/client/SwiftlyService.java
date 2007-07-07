@@ -6,10 +6,10 @@ package com.threerings.msoy.web.client;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
-
-import com.threerings.msoy.web.data.SwiftlyProject;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -88,7 +88,8 @@ public interface SwiftlyService extends RemoteService
 
     /**
      * Adds a collaborator from a project
+     * @return the MemberName record of the member that just joined.
      */
-    public void joinCollaborators (WebIdent ident, int projectId, int memberId)
+    public MemberName joinCollaborators (WebIdent ident, int projectId, int memberId)
         throws ServiceException;
 }
