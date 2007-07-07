@@ -98,23 +98,12 @@ public class MemoryRepository extends DepotRepository
     public void storeMemory (MemoryRecord record)
         throws PersistenceException
     {
-        // we assume that most of the time we'll be updating, so optimize for that
-        if (update(record) == 0) {
-            insert(record);
-        }
-    }
+        // delete, update, or insert...
+        if (record.datumValue == null) {
+            delete(record);
 
-    /**
-     * Updates all supplied memory records. The records are all assumed to already exist in the
-     * database.
-     */
-    public void updateMemories (Collection<MemoryRecord> records)
-        throws PersistenceException
-    {
-        // TODO: if one update() fails, should we catch that error, keep going, then consolidate
-        // the errors and throw a single error?
-        for (MemoryRecord record : records) {
-            update(record);
+        } else if (update(record) == 0) {
+            insert(record);
         }
     }
 }
