@@ -14,6 +14,11 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 public interface ItemService extends InvocationService
 {
     /**
+     * Get the item's name. This can be called by any user for any item.
+     */
+    public void getItemName (Client client, ItemIdent item, ResultListener listener);
+
+    /**
      * Load the specified item from the user's inventory for short-term examination.
      * An InvocationException will be thrown if the specified item does not belong to the user.
      */

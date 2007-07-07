@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
+import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.ObserverList;
@@ -191,7 +192,21 @@ public class ItemManager
             return null;
         }
     }
-    
+
+    /**
+     * Returns the repository used to manage items of the specified type.
+     */
+    public ItemRepository<ItemRecord, ?, ?, ?> getRepository (
+        byte type, InvocationService.InvocationListener listener)
+    {
+        try {
+            return getRepositoryFor(type);
+        } catch (MissingRepositoryException mre) {
+            listener.requestFailed(ItemCodes.E_INTERNAL_ERROR);
+            return null;
+        }
+    }
+
     /**
      * Returns an iterator of item types for which we have repositories.
      */ 
@@ -199,7 +214,6 @@ public class ItemManager
     {
         return _repos.keySet();
     }
-
 
     /**
      * Returns the repository used to manage items of the specified type. Throws a service
@@ -1090,6 +1104,38 @@ public class ItemManager
                 item.flags = (byte) ((item.flags & ~mask) | value);
                 repo.updateOriginalItem(item);
                 return null;
+            }
+        });
+    }
+
+    // from ItemProvider
+    public void getItemName (
+        ClientObject caller, final ItemIdent ident, final InvocationService.ResultListener rl)
+        throws InvocationException
+    {
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident.type, rl);
+        if (repo == null) {
+            return; // error already reported to listener...
+        }
+
+        // TODO: Maybe we add a repository method that just looks up the name, and not
+        // the other crap?
+        MsoyServer.invoker.postUnit(new RepositoryUnit("getItemName") {
+            public void invokePersist () throws Exception {
+                ItemRecord rec = repo.loadItem(ident.itemId);
+                if (rec != null) {
+                    _name = rec.name;
+                }
+            }
+            public void handleSuccess () {
+                if (_name != null) {
+                    rl.requestProcessed(_name);
+                } else {
+                    rl.requestFailed("no such item"); // untranslated. Whatever.
+                }
+            }
+            public void handleFailure (Exception pe) {
+                rl.requestFailed(pe.getMessage());
             }
         });
     }
