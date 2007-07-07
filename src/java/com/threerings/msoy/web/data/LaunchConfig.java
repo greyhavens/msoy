@@ -13,7 +13,7 @@ public class LaunchConfig
 {
     /** A constant used to denote in-world Flash games. */
     public static final int FLASH_IN_WORLD = 0;
-    
+
     /** A constant used to denote lobbied Flash games. */
     public static final int FLASH_LOBBIED = 1;
 
@@ -38,7 +38,7 @@ public class LaunchConfig
     /** The display name of this game. */
     public String name;
 
-    /** The path (relative to the reosurce URL) for the game client media (SWF or JAR). */
+    /** The path (relative to the resource URL) for the game client media (SWF or JAR). */
     public String gameMediaPath;
 
     /** The server to which the game should connect (if this is a multiplayer game). */

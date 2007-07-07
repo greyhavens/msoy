@@ -3,6 +3,10 @@
 
 package client.swiftly;
 
+import client.shell.Application;
+import client.shell.WorldClient;
+import client.util.MsoyUI;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -10,16 +14,10 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Widget;
-
 import com.threerings.gwt.ui.WidgetUtil;
-
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
-
-import client.shell.Application;
-import client.shell.WorldClient;
-import client.util.MsoyUI;
 
 /**
  * Displays the client interface for a particular Swiftly project.
@@ -53,7 +51,7 @@ public class SwiftlyPanel extends FlexTable
         _project = project;
         updateProjectLink();
     }
-    
+
     // @Override // from Widget
     protected void onLoad ()
     {
@@ -72,16 +70,20 @@ public class SwiftlyPanel extends FlexTable
             }
         }));
         getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
-        
+
         // Add the applet
+        String[] args = new String[] {
+            "authtoken", "" + _authtoken,
+            "projectId", String.valueOf(_project.projectId),
+            "server", _config.server,
+            "port", String.valueOf(_config.port) };
+        // we have to serve swiftly-client.jar from the server to which it will connect back
+        // due to security restrictions and proxy the game jar through there as well
+        String swiftlyJar = "http://" + _config.server + ":" + _config.httpPort + "/clients/" +
+            DeploymentConfig.version + "/swiftly-client.jar";
         _applet = WidgetUtil.createApplet(
-            "swiftly", "/clients/" + DeploymentConfig.version + "/swiftly-client.jar" + 
-            ",/clients/" + DeploymentConfig.version + "/swiftly-client-signed.jar",
-            "com.threerings.msoy.swiftly.client.SwiftlyApplet", "100%", "100%",
-            new String[] {  "authtoken", _authtoken,
-                            "projectId", String.valueOf(_project.projectId),
-                            "server", _config.server,
-                            "port", String.valueOf(_config.port) });
+            "swiftly", swiftlyJar, "com.threerings.msoy.swiftly.client.SwiftlyApplet",
+            "100%", "100%", args);
         _applet.setHeight("100%");
         setWidget(1, 0, _applet);
         getFlexCellFormatter().setColSpan(1, 0, 3);
@@ -124,7 +126,7 @@ public class SwiftlyPanel extends FlexTable
     {
         displayError(CSwiftly.msgs.errUploadError());
     }
-    
+
     /**
      * This is called from our magical JavaScript method by JavaScript code received from the
      * server to display a friendly message to the user that the upload was too large.
@@ -133,7 +135,7 @@ public class SwiftlyPanel extends FlexTable
     {
         displayError(CSwiftly.msgs.errUploadTooLarge());
     }
-    
+
     /**
      * This is called from our magical JavaScript method by JavaScript code received from the
      * server to display a friendly message to the user that access was denied.
@@ -142,7 +144,7 @@ public class SwiftlyPanel extends FlexTable
     {
         displayError(CSwiftly.msgs.errAccessDenied());
     }
-    
+
     /**
      * Display an error message into the UploadDialog if open, otherwise use MsoyUI to display.
      */
@@ -154,7 +156,7 @@ public class SwiftlyPanel extends FlexTable
             MsoyUI.error(message);
         }
     }
-    
+
     /**
      * This wires up upload error functions.
      */
@@ -172,10 +174,10 @@ public class SwiftlyPanel extends FlexTable
            @client.swiftly.SwiftlyPanel::showUploadDialog(Ljava/lang/String;)(projectId);
         };
     }-*/;
-    
+
     /** Reference to an open upload dialog window, if any is open */
     protected static UploadDialog _uploadDialog;
-    
+
     protected SwiftlyProject _project;
     protected ConnectConfig _config;
     protected String _authtoken;

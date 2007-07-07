@@ -235,6 +235,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         ConnectConfig config = new ConnectConfig();
         config.server = ServerConfig.serverHost;
         config.port = ServerConfig.serverPorts[0];
+        config.httpPort = ServerConfig.getHttpPort();
         return config;
     }
 
