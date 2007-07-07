@@ -260,6 +260,7 @@ public class RoomEditorController
     protected function updateTargetName () :void
     {
         if (_edit.target == null) {
+            _lastIdent = null;
             // no target selected
             _panel.updateName(null);
             return;
@@ -267,28 +268,39 @@ public class RoomEditorController
 
         var furniData :FurniData = _edit.target.getFurniData();
         _panel.updateDisplay(furniData);
+        var ident :ItemIdent = furniData.getItemIdent();
+        _lastIdent = ident;
 
-        if (furniData.itemType == Item.NOT_A_TYPE) {
+        if (ident.type == Item.NOT_A_TYPE) {
             // this must be one of the "freebie" doors - since this isn't an actual Item, we can't
             // pull its name from the database. oh well.
             _panel.updateName(Msgs.EDITING.get("t.editing_no_name"));
             return;
         }
 
-        // do we already have it in the cache?
-        var ident :ItemIdent = furniData.getItemIdent();
-        if (_names.containsKey(ident)) {
-            _panel.updateName(String(_names.get(ident))); // all set!
+        // update the name..
+        var name :String = _names.get(ident) as String;
+        _panel.updateName(name);
+        if (name != null) {
             return;
         }
 
+        // We don't know the name, and need to look it up.
+        // Put a fake name in there for this ident, so we don't fire off a
+        // second request should this get called again before the response arrives
+        _names.put(ident, "...");
+
         // perform a database query to get the item's name
         var svc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
-        svc.peepItem(_ctx.getClient(), ident, new ResultWrapper(function (cause :String) :void {
-            _panel.updateName(null);
-        }, function (item :Item) :void {
-            _names.put(item.getIdent(), item.name); // cache update!
-            _panel.updateName(item.name);
+        svc.getItemName(_ctx.getClient(), ident, new ResultWrapper(function (cause :String) :void {
+            Log.getLog(RoomEditorController).warning(
+                "Unable to get name of item [cause=" + cause + "].");
+            // and do nothing
+        }, function (name :String) :void {
+            _names.put(ident, name); // cache update
+            if (ident.equals(_lastIdent)) {
+                _panel.updateName(name);
+            }
         }));
     }
 
@@ -310,11 +322,14 @@ public class RoomEditorController
     }
 
     /**
-     * Static cache that maps from ItemIdents to item names; it saves server round-trips when the
+     * Cache that maps from ItemIdents to item names; it saves server round-trips when the
      * user edits different items in the room. Please note: item names are not updated after the
      * first lookup, and may become stale.
      */
-    protected static var _names :HashMap = new HashMap();
+    protected var _names :HashMap = new HashMap();
+
+    /** The ItemIdent of the currently selected furni. */
+    protected var _lastIdent :ItemIdent;
 
     protected var _ctx :WorldContext;
     protected var _view :RoomView;
