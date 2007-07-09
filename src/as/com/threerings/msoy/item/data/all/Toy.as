@@ -31,7 +31,7 @@ public class Toy extends Item
     // from Item
     override public function getType () :int
     {
-        return FURNITURE;
+        return TOY;
     }
 
     // from interface Streamable

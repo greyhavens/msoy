@@ -12,7 +12,7 @@ public class Toy extends Item
     // @Override from Item
     public byte getType ()
     {
-        return FURNITURE;
+        return TOY;
     }
 
     // @Override
