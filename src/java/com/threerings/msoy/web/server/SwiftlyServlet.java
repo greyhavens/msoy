@@ -345,6 +345,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
                 ProjectRoomManager manager = MsoyServer.swiftlyMan.getRoomManager(projectId);
                 // the room manager is not resolved, no problem, we updated the database
                 if (manager == null) {
+                    waiter.requestCompleted(null);
                     return;
                 }
 
