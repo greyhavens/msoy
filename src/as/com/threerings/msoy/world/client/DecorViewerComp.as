@@ -36,6 +36,7 @@ import com.threerings.util.MessageManager;
 import com.threerings.util.ParameterUtil;
 import com.threerings.msoy.client.Msgs;
 
+import mx.utils.ObjectUtil;
  
 public class DecorViewerComp extends Canvas
 {
@@ -57,8 +58,6 @@ public class DecorViewerComp extends Canvas
         } else {
             log.warning("External interface not available!");
         }
-
-        ParameterUtil.getParameters(DisplayObject(Application.application), gotParams);
     }
 
     /**
@@ -77,7 +76,7 @@ public class DecorViewerComp extends Canvas
             }
         }
 
-        var media :String = String(params["media"]);
+        var media :String = params["media"] as String;
         if (media != null) {
             // Below, we mostly rely on flash's runtime type coercian
             // width :int, height :int, depth :int, horizon :Number, type :int,
@@ -234,6 +233,9 @@ public class DecorViewerComp extends Canvas
                 log.warning("Unable to initialize updates with Javascript: " + e);
             }
         } 
+
+        // and try to get any other params we may have
+        ParameterUtil.getParameters(DisplayObject(Application.application), gotParams);
     }
 
     // @Override from Canvas
