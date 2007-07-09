@@ -26,6 +26,7 @@ import static com.threerings.msoy.Log.log;
  * committed to the database. 
  */
 public class UpdateAccumulator
+    implements MsoyServer.Shutdowner
 {
     // Current implementation of the accumulator only collapses ModifyFurniUpdate instances,
     // since those happen frequently enough to demand optimization. SceneAttrUpdates are
@@ -42,9 +43,10 @@ public class UpdateAccumulator
         // note carefully that we're setting up an Interval that posts to the invoker thread.
         new Interval(MsoyServer.invoker) {
             public void expired () {
-                checkAll();
+                checkAll(false);
             }
         }.schedule(FLUSH_INTERVAL, true);
+        MsoyServer.registerShutdowner(this);
     }
 
     /**
@@ -76,6 +78,17 @@ public class UpdateAccumulator
         log.info("Accumulating updates for scene " + sceneId + ", version " + acc.targetVersion);
     }
 
+    // from interface MsoyServer.Shutdowner
+    public void shutdown ()
+    {
+        MsoyServer.invoker.postUnit(new Invoker.Unit() {
+            public boolean invoke () {
+                checkAll(true);
+                return false;
+            }
+        });
+    }
+
     /**
      * If any updates are being accumulated for this scene, force a repository write.
      */
@@ -101,11 +114,11 @@ public class UpdateAccumulator
      * Commits accumulated updates that are either old enough or contain enough modifications.
      * This gets scheduled to run on the invoker thread.
      */
-    protected void checkAll ()
+    protected void checkAll (boolean forceFlushAll)
     {
         for (Iterator<UpdateWrapper> itr = _pending.values().iterator(); itr.hasNext(); ) {
             UpdateWrapper update = itr.next();
-            if (update.isCommitDesired()) {
+            if (forceFlushAll || update.isCommitDesired()) {
                 itr.remove(); // go ahead and remove it, even if the persist fails
                 try {
                     persistUpdate(update);
