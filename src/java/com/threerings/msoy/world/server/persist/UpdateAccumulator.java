@@ -45,6 +45,10 @@ public class UpdateAccumulator
             public void expired () {
                 checkAll(false);
             }
+
+            public String toString () {
+                return "UpdateAccumulator.checkAll";
+            }
         }.schedule(FLUSH_INTERVAL, true);
         MsoyServer.registerShutdowner(this);
     }
@@ -81,7 +85,7 @@ public class UpdateAccumulator
     // from interface MsoyServer.Shutdowner
     public void shutdown ()
     {
-        MsoyServer.invoker.postUnit(new Invoker.Unit() {
+        MsoyServer.invoker.postUnit(new Invoker.Unit("UpdateAccumulator.shutdown") {
             public boolean invoke () {
                 checkAll(true);
                 return false;
