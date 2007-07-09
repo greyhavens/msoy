@@ -29,6 +29,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.Photo;
+import com.threerings.msoy.item.data.all.Toy;
 import com.threerings.msoy.item.data.all.Video;
 import com.threerings.msoy.item.data.all.Decor;
 
@@ -182,6 +183,8 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
             return new VideoRecord((Video) item);
         } else if (item instanceof Decor) {
             return new DecorRecord((Decor) item);
+        } else if (item instanceof Toy) {
+            return new ToyRecord((Toy) item);
         }
         throw new RuntimeException("Unknown item type: " + item);
     }

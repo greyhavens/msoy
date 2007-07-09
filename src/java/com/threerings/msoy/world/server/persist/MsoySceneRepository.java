@@ -109,7 +109,7 @@ public class MsoySceneRepository extends DepotRepository
         return names;
     }
 
-    // documentation inherited from interface SceneRepository
+    @Override // documentation inherited from interface SceneRepository
     public void applyAndRecordUpdate (SceneModel model, SceneUpdate update)
         throws PersistenceException
     {

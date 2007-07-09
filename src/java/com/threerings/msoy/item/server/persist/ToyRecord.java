@@ -39,7 +39,7 @@ public class ToyRecord extends ItemRecord
     @Override // from Item
     public byte getType ()
     {
-        return Item.FURNITURE;
+        return Item.TOY;
     }
 
     @Override
