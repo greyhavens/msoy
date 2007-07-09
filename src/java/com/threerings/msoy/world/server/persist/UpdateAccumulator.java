@@ -3,14 +3,13 @@
 
 package com.threerings.msoy.world.server.persist;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.TreeMap;
-import java.util.Vector;
+import java.util.Iterator;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.HashIntMap;
+import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -35,14 +34,17 @@ public class UpdateAccumulator
     /**
      * How often accumulated updates should be checked, in milliseconds between checks.
      */
-    protected static final long TIMER_DELAY = 2000;
+    protected static final long FLUSH_INTERVAL = 2000;
 
     public UpdateAccumulator (MsoySceneRepository repo)
     {
         _repo = repo;
-        _timer = new Timer(true);
-
-        initializeTimer();
+        // note carefully that we're setting up an Interval that posts to the invoker thread.
+        new Interval(MsoyServer.invoker) {
+            public void expired () {
+                checkAll();
+            }
+        }.schedule(FLUSH_INTERVAL, true);
     }
 
     /**
@@ -55,141 +57,64 @@ public class UpdateAccumulator
         // if this update doesn't support accumulation, flush whatever we've accumulated
         // for this scene so far, and send the new update over as well.
         if (! (update instanceof ModifyFurniUpdate)) {
-            commit(sceneId);
+            commitUpdates(sceneId);
             _repo.persistUpdate(sceneId, update);
             return;
-        } 
+        }
 
         // this update can be accumulated. let's save it.
-        synchronized(_pending) {
-            // do we have anything pending at the moment?
-            if (! _pending.containsKey(sceneId)) {
-                
-                // there's nothing pending - just add the new one to the map
-                _pending.put(sceneId, new UpdateWrapper((ModifyFurniUpdate)update));
-            } else {
-                
-                // something is pending already. collapse the existing and the new update into one.
-                accumulate(_pending.get(sceneId), (ModifyFurniUpdate)update);
-            }
+        UpdateWrapper acc = _pending.get(sceneId);
+        if (acc == null) {
+            // there's nothing pending - just add the new one to the map
+            _pending.put(sceneId, acc = new UpdateWrapper((ModifyFurniUpdate)update));
 
-            UpdateWrapper acc = _pending.get(sceneId);
-            log.info("Accumulating updates for scene " + sceneId +
-                     ", version " + acc.targetVersion);
+        } else {
+            // something is pending already. collapse the existing and the new update into one.
+            acc.accumulate((ModifyFurniUpdate)update);
         }
+        // TODO: remove this logging after we've tested lots
+        log.info("Accumulating updates for scene " + sceneId + ", version " + acc.targetVersion);
     }
-    
-    /**
-     * Initializes the internal timer that will check and commit updates on a regular basis.
-     */
-    protected void initializeTimer ()
-    {
-        TimerTask task = new TimerTask () {
-            public void run () {
-                // we're in the timer thread now; perform database operations on the
-                // standard invoker thread instead.
-                MsoyServer.invoker.postUnit(new Invoker.Unit("UpdateAccumulator task") {
-                    public boolean invoke () {
-                        checkAll();
-                        return false;
-                    }
-                });
-            }
-        };
 
-        _timer.scheduleAtFixedRate(task, 0, TIMER_DELAY);
-    }
-    
     /**
      * If any updates are being accumulated for this scene, force a repository write.
      */
-    protected void commit (int sceneId)
+    protected void commitUpdates (int sceneId)
+        throws PersistenceException
     {
-        synchronized(_pending) {
-            try {
-                if (_pending.containsKey(sceneId)) {
-                    UpdateWrapper update = _pending.remove(sceneId);
-                    _repo.persistUpdate(sceneId, update.unwrap());
-                }
-            } catch (Exception ex) {
-                log.warning("Failed to commit an update accumulator for scene " + sceneId +
-                            " [exception=" + ex + "]");
-            }
+        UpdateWrapper update = _pending.remove(sceneId);
+        if (update != null) {
+            persistUpdate(update);
         }
+    }
+
+    /**
+     * Actually persist accumulated updates.
+     */
+    protected void persistUpdate (UpdateWrapper update)
+        throws PersistenceException
+    {
+        _repo.persistUpdate(update.targetId, update.unwrap());
     }
 
     /**
      * Commits accumulated updates that are either old enough or contain enough modifications.
+     * This gets scheduled to run on the invoker thread.
      */
     protected void checkAll ()
     {
-        Vector<Integer> scenesToCommit = new Vector<Integer>();
-
-        synchronized(_pending) {
-            for (Map.Entry<Integer, UpdateWrapper> entry : _pending.entrySet()) {
-                if (entry.getValue().isCommitDesired())
-                {
-                    // remember which scenes we should remove, after we're done iterating
-                    scenesToCommit.add(entry.getKey());
-                } 
-            }
-        }
-
-        for (int sceneId : scenesToCommit) {
-            commit(sceneId);
-        }
-    }
-        
-    /**
-     * Destructively merges the contents of the newer update into the accumulated update.
-     */
-    protected void accumulate (UpdateWrapper acc, ModifyFurniUpdate update) 
-    {
-        // vector of item ids to be removed from the accumulator, and not copied over from update
-        Vector<FurniData> redundantAdditions = new Vector<FurniData>();
-        Vector<FurniData> redundantRemovals = new Vector<FurniData>();
-        
-        if (acc.targetVersion >= update.getSceneVersion()) {
-            log.warning(
-                "Merged update should have a higher version number! Got " +
-                update.getSceneVersion() + ", expected more than " + acc.targetVersion + ".");
-            return;
-        }
-        
-        // update version
-        acc.targetVersion = update.getSceneVersion();
-
-        // find and mark any items that were being added before, but are now getting removed.
-        // this pair of actions is redundant, and we get rid of them both.
-        if (update.furniRemoved != null) {
-            for (FurniData removed : update.furniRemoved) {
-                for (FurniData added : acc.furniAdded) {
-                    if (removed.getItemIdent().equals(added.getItemIdent())) {
-                        // remember it for later removal, after we're done iterating
-                        redundantAdditions.add(added);
-                        redundantRemovals.add(removed);
-                    }
+        for (Iterator<UpdateWrapper> itr = _pending.values().iterator(); itr.hasNext(); ) {
+            UpdateWrapper update = itr.next();
+            if (update.isCommitDesired()) {
+                itr.remove(); // go ahead and remove it, even if the persist fails
+                try {
+                    persistUpdate(update);
+                } catch (PersistenceException pe) {
+                    log.warning("Failed to commit an accumulated update " +
+                        "[sceneId=" + update.targetId+ ", exception=" + pe + "]");
                 }
             }
         }
-
-        // remove any redundant additions from the accumulator
-        acc.furniAdded.removeAll(redundantAdditions);
-
-        // copy from the update into the accumulator, ignoring redundant removals 
-        if (update.furniAdded != null) {
-            Collections.addAll(acc.furniAdded, update.furniAdded);
-        }
-        if (update.furniRemoved != null) {
-            for (FurniData removed : update.furniRemoved) {
-                if (! redundantRemovals.contains(removed)) {
-                    acc.furniRemoved.add(removed);
-                }
-            }
-        }
-        
-        acc.lastUpdate = System.currentTimeMillis();
-        acc.modificationCount++;
     }
     
     /**
@@ -211,8 +136,8 @@ public class UpdateAccumulator
         
         public int targetId;
         public int targetVersion;
-        public Vector<FurniData> furniRemoved;
-        public Vector<FurniData> furniAdded;
+        public ArrayList<FurniData> furniRemoved;
+        public ArrayList<FurniData> furniAdded;
 
         public long lastUpdate;
         public int modificationCount;
@@ -221,8 +146,8 @@ public class UpdateAccumulator
         {
             targetId = update.getSceneId();
             targetVersion = update.getSceneVersion();
-            furniAdded = new Vector<FurniData>();
-            furniRemoved = new Vector<FurniData>();
+            furniAdded = new ArrayList<FurniData>();
+            furniRemoved = new ArrayList<FurniData>();
             lastUpdate = System.currentTimeMillis();
 
             if (update.furniAdded != null) {
@@ -232,10 +157,61 @@ public class UpdateAccumulator
                 Collections.addAll(furniRemoved, update.furniRemoved);
             }
         }
+            
+        /**
+         * Destructively merges the contents of the newer update into this accumulated update.
+         */
+        protected void accumulate (ModifyFurniUpdate update) 
+        {
+            // vector of item ids to be removed from the accumulator, and not copied over from update
+            ArrayList<FurniData> redundantAdditions = new ArrayList<FurniData>();
+            ArrayList<FurniData> redundantRemovals = new ArrayList<FurniData>();
+            
+            if (targetVersion >= update.getSceneVersion()) {
+                log.warning("Merged update should have a higher version number! " +
+                    "[Got=" + update.getSceneVersion() + ", expected>=" + targetVersion + "].");
+                return;
+            }
+            
+            // update version
+            targetVersion = update.getSceneVersion();
+
+            // find and mark any items that were being added before, but are now getting removed.
+            // this pair of actions is redundant, and we get rid of them both.
+            if (update.furniRemoved != null) {
+                for (FurniData removed : update.furniRemoved) {
+                    for (FurniData added : furniAdded) {
+                        if (removed.getItemIdent().equals(added.getItemIdent())) {
+                            // remember it for later removal, after we're done iterating
+                            redundantAdditions.add(added);
+                            redundantRemovals.add(removed);
+                        }
+                    }
+                }
+            }
+
+            // remove any redundant additions from the accumulator
+            furniAdded.removeAll(redundantAdditions);
+
+            // copy from the update into this accumulator, ignoring redundant removals 
+            if (update.furniAdded != null) {
+                Collections.addAll(furniAdded, update.furniAdded);
+            }
+            if (update.furniRemoved != null) {
+                for (FurniData removed : update.furniRemoved) {
+                    if (! redundantRemovals.contains(removed)) {
+                        furniRemoved.add(removed);
+                    }
+                }
+            }
+            
+            lastUpdate = System.currentTimeMillis();
+            modificationCount++;
+        }
 
         /** Returns true if the update hasn't been modified in a while, or
          *  has been changed more than the desired number of times. */
-        public Boolean isCommitDesired ()
+        public boolean isCommitDesired ()
         {
             return (lastUpdate + TARGET_AGE < System.currentTimeMillis() ||
                     modificationCount >= TARGET_COUNT);
@@ -248,23 +224,19 @@ public class UpdateAccumulator
             update.initialize(targetId, targetVersion,
                               new FurniData[furniRemoved.size()],
                               new FurniData[furniAdded.size()]);
-            furniRemoved.copyInto(update.furniRemoved);
-            furniAdded.copyInto(update.furniAdded);
+            furniRemoved.toArray(update.furniRemoved);
+            furniAdded.toArray(update.furniAdded);
             return update;
         }
     }
 
-    /** Timer object that periodically commits accumulated updates. */
-    protected Timer _timer;
-    
     /**
      * Internal storage for the updates being accumulated for each scene, indexed by scene id.
      * Since only furni updates are currently supported, the value is a cumulative update
      * that includes all changes accumulated so far. Scenes not included in this map
      * do not have any pending accumulated updates.
      */
-    protected Map<Integer, UpdateWrapper> _pending =
-        Collections.synchronizedMap(new TreeMap<Integer, UpdateWrapper>());
+    protected HashIntMap<UpdateWrapper> _pending = new HashIntMap<UpdateWrapper>();
 
     /** Repository reference. */
     protected MsoySceneRepository _repo;
