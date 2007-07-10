@@ -46,7 +46,7 @@ public class MsoyGameController extends EZGameController
     /**
      * Record a user performance for the specified identification.
      */
-    public function awardFlow_v2 (perf :Number, id :String) :int
+    public function awardFlow_v2 (perf :Number) :int
     {
         // TODO!
 
