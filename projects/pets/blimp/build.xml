@@ -1,11 +1,8 @@
-
-
-
 <!-- build configuration -->
-<project name="roomba" default="compile" basedir=".">
+<project name="blimp" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name"         value="Roomba"/>
+  <property name="app.name"         value="Blimp"/>
   <property name="root.path"        value="../../.."/>
 
   <!-- builds our Flash game -->
@@ -25,7 +22,6 @@
       <arg value="-compiler.warn-constructor-returns-value=true"/>
       <arg value="-compiler.fonts.local-fonts-snapshot=${root.path}/lib/as-compiler/frameworks/localFonts.ser"/>
       <arg value="-compiler.source-path=${root.path}/projects/vilya/src/as/"/>
-      <arg value="-compiler.source-path=${root.path}/src/as/"/>
       <arg value="-compiler.source-path=."/>
       <arg value="-externs"/>
       <arg value="com.threerings.ezgame:EZGame"/>
@@ -45,8 +41,10 @@
     </delete>
   </target>
 
+<!--
   <target name="dist" depends="compile">
-    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/c5774730f7255c160b5a4a2baca0add71c9bf4e2.swf"/>
+    <copy file="Blimp.swf" tofile="/export/msoy/pages/media/d2a329f63447c25f83e92f04fbb201cbcc820d5a.swf"/>
   </target>
+-->
 
 </project>

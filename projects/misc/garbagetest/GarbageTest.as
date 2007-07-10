@@ -3,7 +3,6 @@ package {
 import flash.display.Sprite;
 
 import flash.events.Event;
-import flash.events.TimerEvent;
 import flash.events.MouseEvent;
 
 import flash.text.TextField;
@@ -11,7 +10,6 @@ import flash.text.TextField;
 import flash.system.System;
 
 import flash.utils.getTimer;
-import flash.utils.Timer;
 
 [SWF(width="500", height="500")]
 public class GarbageTest extends Sprite
@@ -28,7 +26,7 @@ public class GarbageTest extends Sprite
         addChild(_tf);
 
         _removeListener = (Math.random() >= .5);
-        _event = TimerEvent.TIMER; //(Math.random() >= .5) ? Event.ENTER_FRAME : MouseEvent.CLICK;
+        _event = (Math.random() >= .5) ? Event.ENTER_FRAME : MouseEvent.CLICK;
         _tf.appendText("Will " + (_removeListener ? "" : "NOT ") +
             "remove '" + _event + "' listener...");
     }
@@ -39,9 +37,8 @@ public class GarbageTest extends Sprite
         switch (_frameCount) {
         case 30:
             _tf.appendText("\n\nBefore creation: " + memUsage());
-            _other = new Other();
-            _other.addEventListener(_event, theBlackHole);
-            _other.start();
+            _otherSprite = new Other();
+            _otherSprite.addEventListener(_event, theBlackHole);
             break;
 
         case 31:
@@ -50,9 +47,9 @@ public class GarbageTest extends Sprite
 
         case 60:
             if (_removeListener) {
-                _other.removeEventListener(_event, theBlackHole);
+                _otherSprite.removeEventListener(_event, theBlackHole);
             }
-            _other = null;
+            _otherSprite = null;
             _tf.appendText("\nNulled sprite: " + memUsage());
             break;
 
@@ -95,7 +92,7 @@ public class GarbageTest extends Sprite
 
     protected var _removeListener :Boolean;
 
-    protected var _other :Other;
+    protected var _otherSprite :Other;
 
     protected var _frameCount :int = 0;
 
@@ -110,13 +107,10 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 
-import flash.utils.Timer;
-
-class Other extends Timer
+class Other extends Sprite
 {
     public function Other ()
     {
-        super(20000, 1);
         GarbageTest.genCrap(_crap);
     }
 

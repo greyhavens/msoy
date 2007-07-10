@@ -7,7 +7,6 @@ import flash.display.InteractiveObject;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
-import flash.events.ProgressEvent;
 import flash.events.TimerEvent;
 
 import flash.filters.GlowFilter;
@@ -16,10 +15,7 @@ import flash.system.Security;
 
 import flash.media.Sound;
 
-import flash.utils.ByteArray;
 import flash.utils.Timer;
-import flash.utils.getTimer; // func import
-
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
 
@@ -28,11 +24,6 @@ public class Ballhead extends Sprite
 {
     public function Ballhead ()
     {
-        trace("Ballhead loaded " + this.root.loaderInfo.url);
-        this.root.loaderInfo.addEventListener(ProgressEvent.PROGRESS, handleProgress);
-        this.root.loaderInfo.addEventListener(Event.INIT, handleInit);
-        this.root.loaderInfo.addEventListener(Event.COMPLETE, handleComplete);
-
         _speakSound = Sound(new SPEAK_SOUND());
 
 //        var sprite :Sprite = new Sprite();
@@ -45,9 +36,7 @@ public class Ballhead extends Sprite
         _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, setupVisual);
         _ctrl.addEventListener(ControlEvent.AVATAR_SPOKE, spoke);
         _ctrl.addEventListener(ControlEvent.STATE_CHANGED, handleNewState);
-        _ctrl.addEventListener(ControlEvent.ACTION_TRIGGERED, handleAction);
         _ctrl.registerStates("normal", "blushing");
-        _ctrl.registerActions("blowup", "speaksound", "freeze");
 
         if (_ctrl.isConnected()) {
             _blushing = ("blushing" == _ctrl.getState());
@@ -74,21 +63,6 @@ public class Ballhead extends Sprite
 //        root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
 //        addEventListener(Event.ENTER_FRAME, handleEnterFrame);
-    }
-
-    protected function handleProgress (event :Event) :void
-    {
-        trace("Really progress: " + this.root.loaderInfo.url);
-    }
-
-    protected function handleInit (event :Event) :void
-    {
-        trace("Really inited: " + this.root.loaderInfo.url);
-    }
-
-    protected function handleComplete (event :Event) :void
-    {
-        trace("Really loaded: " + this.root.loaderInfo.url);
     }
 
     protected function traceMouse (str :String) :void
@@ -146,38 +120,10 @@ public class Ballhead extends Sprite
         setupVisual();
     }
 
-    protected function handleAction (event :ControlEvent) :void
-    {
-        if (event.name == "blowup") {
-            _blowup = new ByteArray();
-            _blowup.writeDouble(Math.random() * int.MAX_VALUE);
-            addEventListener(Event.ENTER_FRAME, handleBlowup);
-
-        } else if (event.name == "speaksound") {
-            spoke();
-
-        } else if (event.name == "freeze") {
-            while (true) {
-                // ha ha!
-            }
-        }
-    }
-
-    protected function handleBlowup (event :Event) :void
-    {
-        var value :Number = Math.random() * int.MAX_VALUE;
-        for (var ii :int = _blowup.length; ii >= 0; ii--) {
-            _blowup.writeDouble(value);
-        }
-    }
-
     protected function handleEnterFrame (event :Event) :void
     {
-        trace("ballhead frame " + getTimer());
-
-
-//        _ctrl.setHotSpot((Math.random() * 1000) - 500,
-//                         (Math.random() * 1000) - 500);
+        _ctrl.setHotSpot((Math.random() * 1000) - 500,
+                         (Math.random() * 1000) - 500);
     }
 
     protected function handleUnload (event :Event) :void
@@ -205,8 +151,6 @@ public class Ballhead extends Sprite
     protected var _blushing :Boolean;
 
     protected var _annoyTimer :Timer;
-
-    protected var _blowup :ByteArray;
 
     [Embed(source="talk.mp3")]
     protected static const SPEAK_SOUND :Class;

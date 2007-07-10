@@ -2182,28 +2182,7 @@ final class SWFTreeBuilder {
     byte[] data                    = tag.getData();
     addLeaf(tagNode, "size: " + data.length);
     addLeaf(tagNode, "data: " + HexUtils.toHex(data));
-    addLeaf(tagNode, "text: " + stringify(data));
   }
-
-  private static String stringify (byte[] bytes)
-  {
-      StringBuilder buf = new StringBuilder(bytes.length);
-      boolean stringMode = false;
-      for (int ii = 0; ii < bytes.length; ii++) {
-          boolean stringable = (bytes[ii] >= ' ' && bytes[ii] < '~');
-          if (stringable != stringMode) {
-              buf.append('~');
-              stringMode = stringable;
-          }
-          if (stringable) {
-              buf.append(Character.valueOf((char) bytes[ii]));
-          } else {
-              buf.append(HexUtils.toHex(bytes, ii, 1));
-          }
-      }
-      return buf.toString();
-  }
-
 
   private static void addNode(DefaultMutableTreeNode node, VideoFrame tag) {
     DefaultMutableTreeNode tagNode = addParentNode(

@@ -19,5 +19,4 @@ if [ "$DBPORT" = "" ]; then
     DBPORT=3306
 fi
 
-echo mysql -u $DBUSER -p$DBPASSWD -h $DBSERVER -P $DBPORT "$@"
 mysql -u $DBUSER -p$DBPASSWD -h $DBSERVER -P $DBPORT "$@"
