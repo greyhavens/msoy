@@ -365,35 +365,46 @@ public class ComicOverlay extends ChatOverlay
         var midX :Number = bubRect.width/2;
         var midY :Number = bubRect.height/2;
 
-//        var speakerTopLeft :Point = bubble.globalToLocal(speaker.topLeft);
-//        var speakerBottomRight :Point = bubble.globalToLocal(speaker.bottomRight);
-//        var speakerMidX :Number = (speakerTopLeft.x + speakerBottomRight.x) / 2;
-//
-//        var speakerP :Point = new Point(0, ((speakerTopLeft.y * 2) + speakerBottomRight.y) / 3);
-//        if (midX > speakerMidX) {
-//            speakerP.x = speakerBottomRight.x;
-//        } else {
-//            speakerP.x = speakerTopLeft.x;
-//        }
-
         // the speaker point is 1/2-width through the speaker bounding box, and 1/3 from the top.
         var speakerP :Point = bubble.globalToLocal(
             new Point(speaker.x + speaker.width/2, speaker.y + speaker.height/3));
 
+        var x :Number;
+        var offset :Number;
+        if (midX > speakerP.x) {
+            x = bubRect.width - PAD;
+            offset = -PAD;
+        } else {
+            x = PAD;
+            offset = PAD;
+        }
+
         var g :Graphics = bubble.graphics;
         g.lineStyle(1, BLACK);
         g.beginFill(WHITE);
-        // draw a triangle from the speaker to the center of the bubble
-        g.moveTo(speakerP.x, speakerP.y);
-        if (Math.abs(speakerP.x - midX) > Math.abs(speakerP.y - midY)) {
-            g.lineTo(midX, midY - PAD);
-            g.lineTo(midX, midY + PAD);
-        } else {
-            g.lineTo(midX - PAD, midY);
-            g.lineTo(midX + PAD, midY);
-        }
-        g.lineTo(speakerP.x, speakerP.y);
+        g.moveTo(x, midY);
+        g.lineTo(x, bubRect.height);
+        g.curveTo(x, bubRect.height + PAD, x + offset + offset, bubRect.height + PAD);
+        g.curveTo(x + offset, bubRect.height + PAD, x + offset, bubRect.height);
+        g.lineTo(x + offset, midY);
+        g.lineTo(x, midY);
         g.endFill();
+
+//
+//        var g :Graphics = bubble.graphics;
+//        g.lineStyle(1, BLACK);
+//        g.beginFill(WHITE);
+//        // draw a triangle from the speaker to the center of the bubble
+//        g.moveTo(speakerP.x, speakerP.y);
+//        if (Math.abs(speakerP.x - midX) > Math.abs(speakerP.y - midY)) {
+//            g.lineTo(midX, midY - PAD);
+//            g.lineTo(midX, midY + PAD);
+//        } else {
+//            g.lineTo(midX - PAD, midY);
+//            g.lineTo(midX + PAD, midY);
+//        }
+//        g.lineTo(speakerP.x, speakerP.y);
+//        g.endFill();
     }
 
     /**
