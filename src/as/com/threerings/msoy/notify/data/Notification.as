@@ -1,13 +1,17 @@
 //
 // $Id$
 
-package com.threerings.msoy.data {
+package com.threerings.msoy.notify.data {
+
+import com.threerings.util.Comparable;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
+
 import com.threerings.presents.dobj.DSet_Entry;
-import com.threerings.util.Comparable;
+
+import mx.core.UIComponent;
 
 /**
  * Notification from the server to the client. Instances of notifications are collected inside
@@ -15,7 +19,7 @@ import com.threerings.util.Comparable;
  * it via an appropriate call to the MemberService, which will remove the notification from
  * the member object.
  */
-public class Notification extends SimpleStreamableObject
+public /* abstract */ class Notification extends SimpleStreamableObject
     implements Comparable, DSet_Entry
 {
     /**
@@ -36,6 +40,31 @@ public class Notification extends SimpleStreamableObject
     public function getKey () :Object
     {
         return this.id;
+    }
+
+    /**
+     * Should this notification hang around until the user acknowledges it?
+     */
+    public function isPersistent () :Boolean
+    {
+        return true;
+    }
+
+    /**
+     * Get the chat message used to announce this notification, or null.
+     * WTF are you doing with a null announcement?
+     */
+    public function getAnnouncement () :String
+    {
+        throw new Error("Abstract");
+    }
+
+    /**
+     * Get the UIComponent used to display this notification.
+     */
+    public function getDisplay () :UIComponent
+    {
+        throw new Error("Abstract");
     }
 
     // from SimpleStreamableObject

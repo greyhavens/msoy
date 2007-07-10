@@ -68,6 +68,7 @@ import com.threerings.msoy.game.server.HostedGameManager;
 import com.threerings.msoy.game.server.LobbyRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
@@ -167,6 +168,9 @@ public class MsoyServer extends WhirledServer
 
     /** Handles our cuddly little pets. */
     public static PetManager petMan = new PetManager();
+
+    /** Handles notifications to clients. */
+    public static NotificationManager notifyMan = new NotificationManager();
 
     /** All blocking Swiftly subversion actions must occur on this thread. */
     public static Invoker swiftlyInvoker;

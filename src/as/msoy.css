@@ -291,6 +291,14 @@ Window {
   disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/hoverzone.png");
 }
 
+.controlBarNotifyActive {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/notify_active.swf");
+}
+
+.controlBarNotifyInactive {
+  disabledUpSkin: Embed(source="../../rsrc/media/skins/controlbar/notify_inactive.png");
+}
+
 .controlBarButtonBack {
   upSkin: Embed(source="../../rsrc/media/skins/controlbar/location_back.png");
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/location_back_over.png");

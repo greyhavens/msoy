@@ -12,6 +12,7 @@
       <arg value="-load-config"/>
       <arg value="${root.path}/etc/msoy-config.xml"/>
       <arg value="-compiler.source-path=."/>
+      <arg value="-use-network=false"/>
       <arg value="-file-specs"/>
       <arg value="${app.name}.as"/>
     </java>

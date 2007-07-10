@@ -15,7 +15,6 @@ import com.threerings.stats.data.StatSet;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
-import com.threerings.msoy.data.FriendStatusChangeNotification;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.SceneBookmarkEntry;
 import com.threerings.msoy.person.server.persist.MailRepository;
@@ -196,14 +195,12 @@ public class MsoyClientResolver extends CrowdClientResolver
             // and notify them that we're online
             FriendEntry userEntry = friendObj.friends.get(user.getMemberId());
             // when the account is newly created, my friends won't yet know that i exist
-            if (userEntry != null) { 
+            if (userEntry != null) {
                 userEntry.online = true;
                 friendObj.updateFriends(userEntry);
             }
-            friendObj.notify(new FriendStatusChangeNotification(user.memberName, true));
         }
         user.setFriends(new DSet<FriendEntry>(friends.iterator()));
-        // TODO: we currently never note that friends have logged off
     }
 
     /**

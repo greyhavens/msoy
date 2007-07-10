@@ -29,6 +29,7 @@ import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.client.persist.RuntimeSceneRepository;
 
 import com.threerings.msoy.game.client.GameDirector;
+import com.threerings.msoy.notify.client.NotificationDirector;
 import com.threerings.msoy.world.client.WorldDirector;
 
 /**
@@ -51,6 +52,7 @@ public class WorldContext extends BaseContext
         _mediaDir = new MediaDirector(this);
         _gameDir = new GameDirector(this);
         _worldDir = new WorldDirector(this);
+        _notifyDir = new NotificationDirector(this);
 
         // set up the top panel
         _topPanel = new TopPanel(this);
@@ -83,6 +85,14 @@ public class WorldContext extends BaseContext
     public function getMediaDirector () :MediaDirector
     {
         return _mediaDir;
+    }
+
+    /**
+     * Get the notification director.
+     */
+    public function getNotificationDirector () :NotificationDirector
+    {
+        return _notifyDir;
     }
 
     /**
@@ -148,5 +158,6 @@ public class WorldContext extends BaseContext
     protected var _gameDir :GameDirector;
     protected var _mediaDir :MediaDirector;
     protected var _worldDir :WorldDirector;
+    protected var _notifyDir :NotificationDirector;
 }
 }

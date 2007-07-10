@@ -110,6 +110,17 @@ public class ControlBar extends HBox
     }
 
     /**
+     * Sets whether or not there are notifications available for review.
+     */
+    public function setNotificationsAvailable (avail :Boolean) :void
+    {
+        if (_notifyBtn != null) {
+            _notifyBtn.styleName = avail ? "controlBarNotifyActive" : "controlBarNotifyInactive";
+            _notifyBtn.enabled = avail;
+        }
+    }
+
+    /**
      * Called by the ChannelChatPanel when it needs to stuff a chat input field into the control
      * bar while it's open. Setting it to null removes it.
      */
@@ -227,6 +238,14 @@ public class ControlBar extends HBox
         hotZone.addEventListener(MouseEvent.ROLL_OVER, hotHandler);
         hotZone.addEventListener(MouseEvent.ROLL_OUT, hotHandler);
         addGroupChild(hotZone, [ UI_STD, UI_GUEST ]);
+
+        // notifications button
+        _notifyBtn = new CommandButton();
+        _notifyBtn.toolTip = Msgs.GENERAL.get("i.notifications");
+        _notifyBtn.setCallback(_ctx.getNotificationDirector().displayNotifications);
+        _notifyBtn.styleName = "controlBarNotifyInactive";
+        _notifyBtn.enabled = false;
+        addGroupChild(_notifyBtn, [ UI_STD, UI_GUEST ]);
 
         if (_ctx.getWorldClient().isEmbedded()) {
             _logonPanel = new LogonPanel(_ctx, this.height - 4);
@@ -429,6 +448,9 @@ public class ControlBar extends HBox
     /** Button for editing the current scene. */
     protected var _roomeditBtn :CommandButton;
     protected var _roomeditBtnNew :CommandButton;
+
+    /** Displays notification status. */
+    protected var _notifyBtn :CommandButton;
 
     /** Button for selecting/creating chat channels. */
     protected var _channelBtn :CommandButton;

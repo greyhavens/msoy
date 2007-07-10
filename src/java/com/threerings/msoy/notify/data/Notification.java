@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.data;
+package com.threerings.msoy.notify.data;
 
 import com.threerings.io.SimpleStreamableObject;
 import com.threerings.presents.dobj.DSet;
@@ -13,7 +13,7 @@ import com.threerings.util.ActionScript;
  * it via an appropriate call to the MemberService, which will remove the notification from
  * the member object.
  */
-public class Notification extends SimpleStreamableObject
+public abstract class Notification extends SimpleStreamableObject
     implements Comparable, DSet.Entry
 {
     /**
@@ -41,4 +41,18 @@ public class Notification extends SimpleStreamableObject
         Notification that = (Notification) other;
         return this.id - that.id;
     }
+
+    /**
+     * Should this notification hang around until the user acknowledges it?
+     */
+    public boolean isPersistent ()
+    {
+        return true;
+    }
+
+    /**
+     * Get the chat message used to announce this notification, or null.
+     * WTF are you doing with a null announcement.
+     */
+    public abstract String getAnnouncement ();
 }

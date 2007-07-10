@@ -19,7 +19,6 @@ import com.threerings.whirled.server.WhirledClient;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
-import com.threerings.msoy.data.FriendStatusChangeNotification;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyTokenRing;
@@ -170,8 +169,6 @@ public class MsoyClient extends WhirledClient
                 // update their friend entry
                 userEntry.online = false;
                 friendObj.updateFriends(userEntry);
-                // and notify them
-                friendObj.notify(new FriendStatusChangeNotification(_memobj.memberName, false));
             } finally {
                 friendObj.commitTransaction();
             }

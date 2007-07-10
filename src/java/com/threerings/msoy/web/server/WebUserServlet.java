@@ -16,7 +16,6 @@ import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.ResultListener;
 
-import com.threerings.msoy.data.FriendAcceptedInvitationNotification;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
@@ -125,12 +124,9 @@ public class WebUserServlet extends MsoyServiceServlet
                         newAccount.memberId, invite.inviter.getMemberId(), "Invitation Accepted!",
                         body, null, new ResultListener.NOOP<Void>());
 
-                    MemberObject inviterObj = MsoyServer.lookupMember(invite.inviter);
-                    if (inviterObj != null) {
-                        // the inviter is logged on - send a notification!
-                        inviterObj.notify(new FriendAcceptedInvitationNotification(
-                                              displayName, invite.inviteeEmail));
-                    }
+                    // and possibly send a runtime notification as well
+                    MsoyServer.notifyMan.notifyInvitationAccepted(
+                        invite.inviter, displayName, invite.inviteeEmail);
                 }
             });
         }

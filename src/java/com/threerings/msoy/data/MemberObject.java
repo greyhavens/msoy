@@ -36,6 +36,8 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.game.data.GameMemberInfo;
 import com.threerings.msoy.game.data.GameSummary;
 
+import com.threerings.msoy.notify.data.Notification;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -852,10 +854,10 @@ public class MemberObject extends MsoyBodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setNotifications (DSet<com.threerings.msoy.data.Notification> value)
+    public void setNotifications (DSet<Notification> value)
     {
         requestAttributeChange(NOTIFICATIONS, value, this.notifications);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.Notification> clone =
+        @SuppressWarnings("unchecked") DSet<Notification> clone =
             (value == null) ? null : value.typedClone();
         this.notifications = clone;
     }

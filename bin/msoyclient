@@ -15,6 +15,10 @@ if [ "$1" = "-nodebug" ]; then
     PLAYER="flashplayer"
     shift
 fi
+if [ "$1" = "-old" ]; then
+    PLAYER="flashplayer-debug-9.0.31"
+    shift
+fi
 
 PARAMETERS=$1
 BUILD_VERSION=$2

@@ -78,9 +78,6 @@ public class MsoyController extends Controller
     /** Command to log us on. */
     public static const LOGON :String = "Logon";
 
-    /** Command to display the friends list. */
-    public static const SHOW_FRIENDS :String = "ShowFriends";
-
     /** Command to display the recent scenes list. */
     public static const POP_ROOMS_MENU :String = "PopRoomsMenu";
 
@@ -157,14 +154,6 @@ public class MsoyController extends Controller
             setIdle(true)
         });
         restartIdleTimer();
-    }
-
-    /**
-     * Handles the SHOW_FRIENDS command.
-     */
-    public function handleShowFriends (show :Boolean) :void
-    {
-        _topPanel.showFriends(show);
     }
 
     /**
