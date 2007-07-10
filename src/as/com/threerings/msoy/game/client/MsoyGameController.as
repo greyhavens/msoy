@@ -46,14 +46,15 @@ public class MsoyGameController extends EZGameController
     /**
      * Record a user performance for the specified identification.
      */
-    public function awardFlow_v2 (perf :Number) :int
+    public function awardFlow_v2 (perf :int) :int
     {
         // TODO!
 
         // currently emulated using the old API
         var avail :int = getAvailableFlow_v1();
-        if (perf >= 0 && perf <= 1) {
-            avail *= perf;
+        // wacky assumption time. There's no way to emulate these methods with each other.
+        if (perf >= 0 && perf <= 100) {
+            avail *= (perf / 100);
         }
         awardFlow_v1(avail);
         return avail;
