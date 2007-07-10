@@ -322,10 +322,6 @@ Window {
   backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/footer_left.png");
 }
 
-.controlBarFooterRight {
-  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/footer_right.png");
-}
-
 .notificationDisplay { 
   borderStyle: "solid";
   borderThickness: 1;
