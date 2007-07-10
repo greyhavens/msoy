@@ -115,10 +115,8 @@ public class ChannelChatTab extends ChatTab
 
     protected function displayFeedback (message :String) :void
     {
-        var msg :SystemMessage = new SystemMessage();
-        msg.attentionLevel = SystemMessage.FEEDBACK;
-        msg.setClientInfo(Msgs.CHAT.xlate(message), channel.toLocalType());
-        _ctx.getChatDirector().dispatchMessage(msg);
+        var msg :SystemMessage = new SystemMessage(message, "chat", SystemMessage.FEEDBACK);
+        _ctx.getChatDirector().dispatchMessage(msg, channel.toLocalType());
     }
 
     protected function handleAddRemove (event :Event) :void
