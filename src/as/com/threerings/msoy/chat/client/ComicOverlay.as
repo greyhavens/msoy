@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.chat.client {
 
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Sprite;
 
@@ -13,6 +15,7 @@ import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
 import mx.core.Container;
+import mx.core.IFlexDisplayObject;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.MessageBundle;
@@ -357,26 +360,40 @@ public class ComicOverlay extends ChatOverlay
             return; // no tail for emotes
         }
 
-        // the speaker point is 1/2-width through the speaker bounding box, and 1/3 from the top.
-        var speakerP :Point = bubble.globalToLocal(
-            new Point(speaker.x + speaker.width/2, speaker.y + speaker.height/3));
+        // we're drawing in bubble coordinates, so the middle is just the width and height div 2.
         var bubRect :Rectangle = bubble.getBubbleBounds();
         var midX :Number = bubRect.width/2;
         var midY :Number = bubRect.height/2;
 
-        bubble.graphics.lineStyle(1, BLACK);
-        bubble.graphics.beginFill(WHITE);
+//        var speakerTopLeft :Point = bubble.globalToLocal(speaker.topLeft);
+//        var speakerBottomRight :Point = bubble.globalToLocal(speaker.bottomRight);
+//        var speakerMidX :Number = (speakerTopLeft.x + speakerBottomRight.x) / 2;
+//
+//        var speakerP :Point = new Point(0, ((speakerTopLeft.y * 2) + speakerBottomRight.y) / 3);
+//        if (midX > speakerMidX) {
+//            speakerP.x = speakerBottomRight.x;
+//        } else {
+//            speakerP.x = speakerTopLeft.x;
+//        }
+
+        // the speaker point is 1/2-width through the speaker bounding box, and 1/3 from the top.
+        var speakerP :Point = bubble.globalToLocal(
+            new Point(speaker.x + speaker.width/2, speaker.y + speaker.height/3));
+
+        var g :Graphics = bubble.graphics;
+        g.lineStyle(1, BLACK);
+        g.beginFill(WHITE);
         // draw a triangle from the speaker to the center of the bubble
-        bubble.graphics.moveTo(speakerP.x, speakerP.y);
+        g.moveTo(speakerP.x, speakerP.y);
         if (Math.abs(speakerP.x - midX) > Math.abs(speakerP.y - midY)) {
-            bubble.graphics.lineTo(midX, midY - PAD);
-            bubble.graphics.lineTo(midX, midY + PAD);
+            g.lineTo(midX, midY - PAD);
+            g.lineTo(midX, midY + PAD);
         } else {
-            bubble.graphics.lineTo(midX - PAD, midY);
-            bubble.graphics.lineTo(midX + PAD, midY);
+            g.lineTo(midX - PAD, midY);
+            g.lineTo(midX + PAD, midY);
         }
-        bubble.graphics.lineTo(speakerP.x, speakerP.y);
-        bubble.graphics.endFill();
+        g.lineTo(speakerP.x, speakerP.y);
+        g.endFill();
     }
 
     /**
@@ -402,6 +419,10 @@ public class ComicOverlay extends ChatOverlay
         var padding :int = getBubbleLabelOffset(type);
         var width :int = txtWidth + padding * 2;
         var height :int = txtHeight + padding * 2;
+
+//        var skin :IFlexDisplayObject = IFlexDisplayObject(new BUB());
+//        skin.setActualSize(width, height);
+//        bubble.addChildAt(DisplayObject(skin), 0);
 
         var shapeFunction :Function = getBubbleShape(type);
 
@@ -724,5 +745,9 @@ public class ComicOverlay extends ChatOverlay
         }
     }
     staticInit();
+
+//    [Embed(source="../../../../../../../rsrc/media/skins/bubble.png",
+//        scaleGridTop="7", scaleGridBottom="32", scaleGridLeft="9", scaleGridRight="73")]
+//    protected static const BUB :Class;
 }
 }
