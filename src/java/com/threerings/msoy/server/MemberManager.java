@@ -530,8 +530,9 @@ public class MemberManager
             final int levelToSet = level;
             MsoyServer.invoker.postUnit(new RepositoryUnit("updateLevel") {
                 public void invokePersist () throws PersistenceException {
-                    // record the new level
+                    // record the new level, and grant a new invite
                     _memberRepo.setUserLevel(member.memberName.getMemberId(), levelToSet);
+                    _memberRepo.grantInvites(member.memberName.getMemberId(), 1);
                 }
                 public void handleSuccess () {
                     member.setLevel(levelToSet);

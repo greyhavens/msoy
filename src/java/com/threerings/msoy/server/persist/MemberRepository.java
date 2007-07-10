@@ -468,7 +468,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Grants the given number of invites to the given memberId
      */
-    public void grantInvites (int number, int memberId)
+    public void grantInvites (int memberId, int number)
         throws PersistenceException
     {
         InviterRecord inviterRec = load(InviterRecord.class, memberId);

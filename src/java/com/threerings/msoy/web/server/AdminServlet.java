@@ -146,7 +146,7 @@ public class AdminServlet extends MsoyServiceServlet
         }
 
         try {
-            MsoyServer.memberRepo.grantInvites(numberInvitations, memberId);
+            MsoyServer.memberRepo.grantInvites(memberId, numberInvitations);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "grantInvitations failed [num=" + numberInvitations +
                 ", memberId=" + memberId + "]", pe);
