@@ -186,7 +186,14 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     // from ChatDirector
-    override public function dispatchMessage (msg :ChatMessage) :void
+    override public function clearDisplays () :void
+    {
+        super.clearDisplays();
+        _roomHistory.clear();
+    }
+
+    // from ChatDirector
+    override protected function dispatchPreparedMessage (msg :ChatMessage) :void
     {
         // determine which channel to which this message is targeted
         var channel :ChatChannel = determineChannel(msg);
@@ -211,7 +218,7 @@ public class MsoyChatDirector extends ChatDirector
             // add this message to the room chat history
             _roomHistory.addMessage(msg);
             // dispatch it normally as room chat displays are registered normally
-            super.dispatchMessage(msg);
+            super.dispatchPreparedMessage(msg);
         }
     }
 

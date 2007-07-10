@@ -19,6 +19,16 @@ public class HistoryList
     }
 
     /**
+     * Clear the history.
+     */
+    public function clear () :void
+    {
+        var size :int = _history.length;
+        _history.length = 0; // truncate the array
+        notify(size);
+    }
+
+    /**
      * Get the history entry at the specified index.
      */
     public function get (index :int) :ChatMessage
