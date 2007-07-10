@@ -30,13 +30,7 @@ public class EmbedDialog extends FloatingPanel
         html.editable = false;
         var url :String = ctx.getTopPanel().root.loaderInfo.loaderURL;
         url = url.replace(/(http:\/\/[^\/]*).*/, "$1/clients/world-client.swf");
-        if (ctx.getMemberObject().tokens.isSupport()) {
-            html.text = Msgs.GENERAL.get("m.embed",
-                ctx.getMsoyController().getSceneIdString(), url);
-
-        } else {
-            html.text = Msgs.GENERAL.get("m.embed_disabled");
-        }
+        html.text = Msgs.GENERAL.get("m.embed", ctx.getMsoyController().getSceneIdString(), url);
         addChild(html);
         addButtons(FloatingPanel.OK_BUTTON);
 
