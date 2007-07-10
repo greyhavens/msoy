@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
@@ -123,7 +124,15 @@ public class GroupView extends VerticalPanel
         infoPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
         infoPanel.setStyleName("LogoPanel");
         infoPanel.setSpacing(0);
-        infoPanel.add(MediaUtil.createMediaView(_group.logo, MediaDesc.THUMBNAIL_SIZE));
+        Widget logo = MediaUtil.createMediaView(_group.logo, MediaDesc.THUMBNAIL_SIZE);
+        infoPanel.add(logo);
+        if (logo instanceof Image) {
+            ((Image) logo).addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    History.newItem(Application.createLinkToken("world", "g" + _group.groupId));
+                }
+            });
+        }
         HorizontalPanel links = new HorizontalPanel();
         links.setStyleName("Links");
         links.setSpacing(8);

@@ -32,6 +32,7 @@
     margin: 0px;
     width: 160px;
     font-size: 11px;
+    cursor: pointer;
 }
 
 .groupView .LogoPanel .Links {
