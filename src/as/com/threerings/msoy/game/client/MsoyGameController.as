@@ -44,8 +44,25 @@ public class MsoyGameController extends EZGameController
     }
 
     /**
+     * Record a user performance for the specified identification.
+     */
+    public function awardFlow_v2 (perf :Number, id :String) :int
+    {
+        // TODO!
+
+        // currently emulated using the old API
+        var avail :int = getAvailableFlow_v1();
+        if (perf >= 0 && perf <= 1) {
+            avail *= perf;
+        }
+        awardFlow_v1(avail);
+        return avail;
+    }
+
+    /**
      * This method is used by the WhirledGameControlBackend.
      */
+    // TODO: remove. See changes in WhirledGameControlBackend
     public function getAvailableFlow_v1 () :int
     {
         _panel.backend.validateConnected();
@@ -61,6 +78,7 @@ public class MsoyGameController extends EZGameController
     /**
      * This method is used by the WhirledGameControlBackend.
      */
+    // TODO: remove. See changes in WhirledGameControlBackend
     public function awardFlow_v1 (amount :int) :void
     {
         _panel.backend.validateConnected();

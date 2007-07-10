@@ -33,13 +33,16 @@ public class WhirledGameControlBackend extends GameControlBackend
         super.populateProperties(o);
 
         var ctrl :MsoyGameController = (_ctrl as MsoyGameController);
-        o["getAvailableFlow_v1"] = ctrl.getAvailableFlow_v1;
-        o["awardFlow_v1"] = ctrl.awardFlow_v1;
+        o["awardFlow_v2"] = ctrl.awardFlow_v2;
         o["setChatEnabled_v1"] = ctrl.setChatEnabled_v1;
         o["setChatBounds_v1"] = ctrl.setChatBounds_v1;
         o["getHeadShot_v1"] = getHeadShot_v1;
         o["getStageBounds_v1"] = getStageBounds_v1;
         o["backToWhirled_v1"] = backToWhirled_v1;
+
+        // backwards compatibility
+        o["getAvailableFlow_v1"] = getAvailableFlow_v1;
+        o["awardFlow_v1"] = awardFlow_v1;
     }
 
     protected function getHeadShot_v1 (occupant :int, callback :Function) :void
@@ -65,6 +68,30 @@ public class WhirledGameControlBackend extends GameControlBackend
     protected function backToWhirled_v1 () :void
     {
         (_ctx as WorldContext).getTopPanel().getControlBar().moveBack();
+    }
+
+    // ------ Compatibility methods, for operating with old games
+
+    /** A backwards compatible method. */
+    protected function getAvailableFlow_v1 () :int
+    {
+//        return 100;
+
+        // we still support the old way, for now
+        return (_ctrl as MsoyGameController).getAvailableFlow_v1();
+    }
+
+    /** A backwards compatible method. */
+    protected function awardFlow_v1 (amount :int) :void
+    {
+//        var perf :Number = amount / 100;
+//        var flow :int = (_ctrl as MsoyGameController).awardFlow_v2(perf, null);
+//        if (flow != amount) {
+//            (_ctx as WorldContext).displayFeedback(null, "Actual flow awarded: " + flow);
+//        }
+
+        // we still support the old way, for now
+        return (_ctrl as MsoyGameController).awardFlow_v1(amount);
     }
 
     /** A cache of loaded avatar headshots, indexed by occupant id. */
