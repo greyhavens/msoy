@@ -10,6 +10,5 @@ import com.threerings.presents.net.BootstrapData;
  */
 public class MsoyBootstrapData extends BootstrapData
 {
-    /** Oid of the chat room. */
-    public int chatOid;
+    // nada, at the moment
 }
