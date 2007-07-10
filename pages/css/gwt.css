@@ -156,23 +156,38 @@ a:visited {
 }
 
 .naviPanel .Me {
-  background: url(/images/header/navi/me.png);
+  background: url(/images/header/navi/me.png) no-repeat;
+}
+.naviPanel .MeHover {
+  background: url(/images/header/navi/me_over.png) no-repeat;
 }
 
 .naviPanel .Places {
   background: url(/images/header/navi/places.png);
 }
+.naviPanel .PlacesHover {
+  background: url(/images/header/navi/places_over.png);
+}
 
 .naviPanel .People {
   background: url(/images/header/navi/people.png);
+}
+.naviPanel .PeopleHover {
+  background: url(/images/header/navi/people_over.png);
 }
 
 .naviPanel .Stuff {
   background: url(/images/header/navi/stuff.png);
 }
+.naviPanel .StuffHover {
+  background: url(/images/header/navi/stuff_over.png);
+}
 
 .naviPanel .Games {
   background: url(/images/header/navi/games.png);
+}
+.naviPanel .GamesHover {
+  background: url(/images/header/navi/games_over.png);
 }
 
 .naviPanel .SelLink {

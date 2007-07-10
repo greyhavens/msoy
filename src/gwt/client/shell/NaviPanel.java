@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -205,13 +206,24 @@ public class NaviPanel extends FlexTable
         _friends.clear();
     }
 
-    protected void setMenu (int menuidx, String ident, String text, ClickListener listener)
+    protected void setMenu (int menuidx, final String ident, String text, ClickListener listener)
     {
-        VerticalPanel box = new VerticalPanel();
-        box.add(MsoyUI.createCustomActionLabel("", "Button", listener));
-        box.add(MsoyUI.createCustomActionLabel(text, "Link", listener));
+        final VerticalPanel box = new VerticalPanel();
+        box.setStyleName(ident);
+        MouseListenerAdapter fiddle = new MouseListenerAdapter() {
+            public void onMouseEnter (Widget sender) {
+                box.setStyleName(ident + "Hover");
+            }
+            public void onMouseLeave (Widget sender) {
+                box.setStyleName(ident);
+            }
+        };
+        Label lbl;
+        box.add(lbl = MsoyUI.createCustomActionLabel("", "Button", listener));
+        lbl.addMouseListener(fiddle);
+        box.add(lbl = MsoyUI.createCustomActionLabel(text, "Link", listener));
+        lbl.addMouseListener(fiddle);
         setWidget(0, menuidx, box);
-        getFlexCellFormatter().setStyleName(0, menuidx, ident);
     }
 
     protected void addLink (MenuBar menu, String text, final String page, final String args)
