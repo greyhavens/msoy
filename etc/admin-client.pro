@@ -20,7 +20,7 @@
     **/msoy/world/data/WorldMemberInfo.class,**/msoy/item/data/all/**,
     **/msoy/admin/data/**,**/msoy/admin/client/**,**/msoy/admin/util/**,
     **/msoy/game/data/GameMemberInfo.class,**/msoy/game/data/GameSummary.class,
-    **/msoy/world/data/WorldOccupantInfo.class)
+    **/msoy/notify/data/**,**/msoy/world/data/WorldOccupantInfo.class)
 
 -dontskipnonpubliclibraryclasses
 -outjars ../dist/admin-client.jar
