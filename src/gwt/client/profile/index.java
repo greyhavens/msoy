@@ -123,7 +123,7 @@ public class index extends MsgsEntryPoint
             try {
                 final String type = argArray[0];
                 final int page = Integer.parseInt(argArray[1]);
-                final String search = argArray[2];
+                final String search = URL.decodeComponent(argArray[2]);
     
                 if (!_search.showingResultsFor(type, search)) {
                     CProfile.profilesvc.findProfiles(type, search, new AsyncCallback() {
