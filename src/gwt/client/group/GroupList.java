@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Collections;
 
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -16,6 +17,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -204,7 +206,7 @@ public class GroupList extends VerticalPanel
 
     protected class GroupWidget extends FlexTable
     {
-        GroupWidget (Group group)
+        GroupWidget (final Group group)
         {
             super();
             setStyleName("GroupWidget");
@@ -213,6 +215,13 @@ public class GroupList extends VerticalPanel
             setWidget(0, 0, logo);
             getFlexCellFormatter().setStyleName(0, 0, "Logo");
             getFlexCellFormatter().setRowSpan(0, 0, 2);
+            if (logo instanceof Image) {
+                ((Image) logo).addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        History.newItem(Application.createLinkToken("group", "" + group.groupId));
+                    }
+                });
+            }
 
             FlowPanel titleLine = new FlowPanel();
             Hyperlink title = Application.createLink(group.name, "group", "" + group.groupId);
