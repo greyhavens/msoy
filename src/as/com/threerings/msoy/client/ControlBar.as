@@ -115,8 +115,8 @@ public class ControlBar extends HBox
     public function setNotificationsAvailable (avail :Boolean) :void
     {
         if (_notifyBtn != null) {
-            _notifyBtn.styleName = avail ? "controlBarNotifyActive" : "controlBarNotifyInactive";
             _notifyBtn.enabled = avail;
+            _notifyBtn.toolTip = Msgs.GENERAL.get("i.notifications" + (avail ? "_avail" : ""));
         }
     }
 
@@ -225,7 +225,7 @@ public class ControlBar extends HBox
         
         // hover hover hotzone
         var hotZone :CommandButton = new CommandButton();
-        hotZone.toolTip = "Hover to see clickable furniture"; // TODO, if we keep
+        hotZone.toolTip = Msgs.GENERAL.get("i.hover");
         hotZone.styleName = "controlBarHoverZone";
         hotZone.enabled = false;
         hotZone.focusEnabled = false;
@@ -242,9 +242,10 @@ public class ControlBar extends HBox
         // notifications button
         _notifyBtn = new CommandButton();
         _notifyBtn.toolTip = Msgs.GENERAL.get("i.notifications");
-        _notifyBtn.setCallback(_ctx.getNotificationDirector().displayNotifications);
-        _notifyBtn.styleName = "controlBarNotifyInactive";
+        _notifyBtn.setCallback(_ctx.getNotificationDirector().displayNotifications, _notifyBtn);
+        _notifyBtn.styleName = "controlBarButtonNotify";
         _notifyBtn.enabled = false;
+        _notifyBtn.toggle = true;
         addGroupChild(_notifyBtn, [ UI_STD, UI_GUEST ]);
 
         if (_ctx.getWorldClient().isEmbedded()) {

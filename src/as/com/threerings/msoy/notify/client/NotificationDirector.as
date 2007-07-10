@@ -5,6 +5,8 @@ package com.threerings.msoy.notify.client {
 
 import com.threerings.util.MessageBundle;
 
+import com.threerings.flex.CommandButton;
+
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 
@@ -39,19 +41,24 @@ public class NotificationDirector extends BasicDirector
     /**
      * Display all currently pending notifications.
      */
-    public function displayNotifications () :void
+    public function displayNotifications (btn :CommandButton) :void
     {
+        if (_notifyPanel != null) {
+            _notifyPanel.close();
+            return;
+        }
+
         _notifyPanel = new NotificationDisplay(
             _wctx, _wctx.getMemberObject().notifications.toArray());
         _notifyPanel.open();
 
-        // TODO: disable button on control bar
+        _notifyBtn = btn;
     }
 
     public function notificationPanelClosed () :void
     {
         _notifyPanel = null;
-        // TODO: enable button on control bar
+        _notifyBtn.selected = false;
     }
 
     public function acknowledgeNotification (notifyId :int) :void
@@ -127,6 +134,8 @@ public class NotificationDirector extends BasicDirector
     protected var _msvc :MemberService;
 
     protected var _notifyPanel :NotificationDisplay;
+
+    protected var _notifyBtn :CommandButton;
 
     /** Contains a list of notification popups currently being shown. */
     protected var _popups :Array = new Array();

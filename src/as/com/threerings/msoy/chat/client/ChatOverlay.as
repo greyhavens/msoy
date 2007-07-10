@@ -50,6 +50,8 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.notify.data.NotifyMessage;
+
 public class ChatOverlay
     implements ChatDisplay
 {
@@ -572,6 +574,7 @@ public class ChatOverlay
         case INFO: return INFO_COLOR;
         case FEEDBACK: return FEEDBACK_COLOR;
         case ATTENTION: return ATTENTION_COLOR;
+        case NOTIFICATION: return NOTIFY_COLOR;
         default:
             switch (placeOf(type)) {
             case GAME: return GAME_COLOR;
@@ -791,6 +794,9 @@ public class ChatOverlay
 
             // otherwise
             return IGNORECHAT;
+
+        } else if (msg is NotifyMessage) {
+            return NOTIFICATION;
         }
 
         log.warning("Skipping received message of unknown type [msg=" + msg + "].");
@@ -1251,6 +1257,9 @@ public class ChatOverlay
     /** Type code for game chat. */
     protected static const GAME :int = 10 << 4;
 
+    /** Type code for notifications. */
+    protected static const NOTIFICATION :int = 11 << 4;
+
     /** Our internal code for a chat type we will ignore. */
     protected static const IGNORECHAT :int = -1;
 
@@ -1265,6 +1274,7 @@ public class ChatOverlay
     protected static const INFO_COLOR :uint = 0xAAAA00;
     protected static const ATTENTION_COLOR :uint = 0xFF5000;
     protected static const GAME_COLOR :uint = 0x777777;
+    protected static const NOTIFY_COLOR :uint = 0x008A83;
     protected static const BLACK :uint = 0x000000;
     protected static const WHITE :uint = 0xFFFFFF;
 

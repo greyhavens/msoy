@@ -291,12 +291,11 @@ Window {
   disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/hoverzone.png");
 }
 
-.controlBarNotifyActive {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/notify_active.swf");
-}
-
-.controlBarNotifyInactive {
-  disabledUpSkin: Embed(source="../../rsrc/media/skins/controlbar/notify_inactive.png");
+.controlBarButtonNotify {
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_over.png");
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications.png");
+  selectedDownSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_disabled.png");
 }
 
 .controlBarButtonBack {
