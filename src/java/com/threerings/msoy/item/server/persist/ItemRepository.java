@@ -167,10 +167,14 @@ public abstract class ItemRepository<
         // Since we don't know how many we'll find of each kind (cloned, orig), we load the max
         // from each.
         Limit limit = new Limit(0, maxCount);
-        List<T> originals = findAll(getItemClass(), new Where(ItemRecord.OWNER_ID_C, ownerId),
-            OrderBy.descending(ItemRecord.LAST_TOUCHED_C), limit);
-        List<T> clones = loadClonedItems(new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId),
-            OrderBy.descending(CloneRecord.LAST_TOUCHED_C), limit);
+        List<T> originals = findAll(
+            getItemClass(),
+            new Where(getItemColumn(ItemRecord.OWNER_ID), ownerId),
+            OrderBy.descending(getItemColumn(ItemRecord.LAST_TOUCHED)),
+            limit);
+        List<T> clones = loadClonedItems(
+            new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId),
+            OrderBy.descending(getCloneColumn(CloneRecord.LAST_TOUCHED)), limit);
         int size = originals.size() + clones.size();
 
         ArrayList<T> list = new ArrayList<T>(size);
@@ -776,7 +780,7 @@ public abstract class ItemRepository<
 
         if (search != null && search.length() > 0) {
             whereBits.add(new Like(
-                new ColumnExp(getItemClass(), ItemRecord.NAME), "%" + search + "%"));
+                getItemColumn(ItemRecord.NAME), "%" + search + "%"));
         }
 
         if (tag > 0) {
@@ -788,14 +792,14 @@ public abstract class ItemRepository<
         }
 
         if (creator > 0) {
-            whereBits.add(new Equals(new ColumnExp(
-                getItemClass(), ItemRecord.CREATOR_ID), creator));
+            whereBits.add(new Equals(getItemColumn(ItemRecord.CREATOR_ID), creator));
         }
 
         if (!mature) {
             // add a check to make sure ItemRecord.FLAG_MATURE is not set on any returned items
-            whereBits.add(new Equals(new BitAnd(
-                new ColumnExp(getItemClass(), ItemRecord.FLAGS), Item.FLAG_MATURE), 0));
+            whereBits.add(new Equals(
+                new BitAnd(getItemColumn(ItemRecord.FLAGS), Item.FLAG_MATURE),
+                0));
         }
 
         if (whereBits.size() > 0) {
