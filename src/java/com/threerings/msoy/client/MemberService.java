@@ -55,5 +55,5 @@ public interface MemberService extends InvocationService
      * Acknowledge that the specified notification was processed, and can be removed
      * from the user's queue.
      */
-    public void acknowledgeNotification (Client client, int id, ConfirmListener listener);
+    public void acknowledgeNotifications (Client client, int[] ids, InvocationListener listener);
 }

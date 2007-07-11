@@ -5,6 +5,7 @@ package com.threerings.msoy.data {
 
 import flash.utils.ByteArray;
 import com.threerings.util.*; // for Float, Integer, etc.
+import com.threerings.io.TypedArray;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.presents.client.Client;
@@ -26,16 +27,16 @@ import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 public class MemberMarshaller extends InvocationMarshaller
     implements MemberService
 {
-    /** The method id used to dispatch {@link #acknowledgeNotification} requests. */
-    public static const ACKNOWLEDGE_NOTIFICATION :int = 1;
+    /** The method id used to dispatch {@link #acknowledgeNotifications} requests. */
+    public static const ACKNOWLEDGE_NOTIFICATIONS :int = 1;
 
     // from interface MemberService
-    public function acknowledgeNotification (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
+    public function acknowledgeNotifications (arg1 :Client, arg2 :TypedArray /* of int */, arg3 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
         listener3.listener = arg3;
-        sendRequest(arg1, ACKNOWLEDGE_NOTIFICATION, [
-            Integer.valueOf(arg2), listener3
+        sendRequest(arg1, ACKNOWLEDGE_NOTIFICATIONS, [
+            arg2, listener3
         ]);
     }
 

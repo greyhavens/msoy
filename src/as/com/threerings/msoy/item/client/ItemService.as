@@ -4,6 +4,7 @@
 package com.threerings.msoy.item.client {
 
 import flash.utils.ByteArray;
+import com.threerings.io.TypedArray;
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.presents.client.Client;

@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.notify.client {
 
+import flash.utils.Dictionary;
+
+import com.threerings.io.TypedArray;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.flex.CommandButton;
@@ -48,12 +51,13 @@ public class NotificationDirector extends BasicDirector
             return;
         }
 
-        var notifs :Array = _wctx.getMemberObject().notifications.toArray();
-        notifs = notifs.filter(function (notif :Notification, ... ignored) :Boolean {
-            return notif.isPersistent();
-        });
-        _notifyPanel = new NotificationDisplay(_wctx, notifs);
+        _notifyPanel = new NotificationDisplay(_wctx);
         _notifyPanel.open();
+        for each (var notif :Notification in _wctx.getMemberObject().notifications.toArray()) {
+            if (notif.isPersistent()) {
+                _notifyPanel.addNotification(notif);
+            }
+        }
 
         _notifyBtn = btn;
     }
@@ -64,9 +68,20 @@ public class NotificationDirector extends BasicDirector
         _notifyBtn.selected = false;
     }
 
-    public function acknowledgeNotification (notifyId :int) :void
+    public function acknowledgeNotification (id :int) :void
     {
-        _msvc.acknowledgeNotification(_wctx.getClient(), notifyId, new ReportingListener(_wctx));
+        var ids :TypedArray = TypedArray.create(int);
+        ids.push(id);
+        acknowledgeNotifications(ids);
+    }
+
+    protected function acknowledgeNotifications (notifyIds :TypedArray /* of int */) :void
+    {
+        // put each id in the TypedArray, and record that we've acked it
+        for each (var id :int in notifyIds) {
+            _acked[id] = true;
+        }
+        _msvc.acknowledgeNotifications(_wctx.getClient(), notifyIds, new ReportingListener(_wctx));
     }
 
     // from BasicDirector
@@ -74,13 +89,6 @@ public class NotificationDirector extends BasicDirector
     {
         super.clientObjectUpdated(client);
         client.getClientObject().addListener(this);
-
-        // check now for any 
-        for each (var notif :Notification in _wctx.getMemberObject().notifications.toArray()) {
-            if (!notif.isPersistent()) {
-                _wctx.displayFeedback("notify", notif.getAnnouncement());
-            }
-        }
 
         // and, let's always update the control bar button
         updateNotifications();
@@ -132,6 +140,11 @@ public class NotificationDirector extends BasicDirector
     {
         var name :String = event.getName();
         if (name == MemberObject.NOTIFICATIONS) {
+            // delete any memories associated with this notification
+            var id :int = event.getKey() as int;
+            delete _acked[id];
+            delete _announced[id];
+            // and update the button if applicable
             updateNotifications();
         }
     }
@@ -139,13 +152,38 @@ public class NotificationDirector extends BasicDirector
     protected function updateNotifications () :void
     {
         var hasPersistent :Boolean = false;
+        var shouldAck :TypedArray = TypedArray.create(int);
         for each (var notif :Notification in _wctx.getMemberObject().notifications.toArray()) {
+            // skip it if we've already acked it
+            if (_acked[notif.id]) {
+                continue;
+            }
+            // if we haven't announced it, do that now
+            if (!_announced[notif.id]) {
+                _announced[notif.id] = true;
+                var ann :String = notif.getAnnouncement();
+                if (ann != null) {
+                    _wctx.displayFeedback("notify", ann);
+                }
+                // if it's announcement-only, ack it
+                if (!notif.isPersistent()) {
+                    shouldAck.push(notif.id);
+                }
+            }
             if (notif.isPersistent()) {
                 hasPersistent = true;
-                break;
+                // if the panel is currently showing, add the notification
+                if (_notifyPanel != null) {
+                    _notifyPanel.addNotification(notif);
+                }
             }
         }
 
+        // ack those we need to ack
+        if (shouldAck.length > 0) {
+            acknowledgeNotifications(shouldAck);
+        }
+        // and update the button if there are any persistent notifications
         _wctx.getTopPanel().getControlBar().setNotificationsAvailable(hasPersistent);
     }
 
@@ -156,6 +194,12 @@ public class NotificationDirector extends BasicDirector
     protected var _notifyPanel :NotificationDisplay;
 
     protected var _notifyBtn :CommandButton;
+
+    /** Tracks notifications we've announced. */
+    protected var _announced :Dictionary = new Dictionary();
+
+    /** Tracks notifications we've acknowledged but that haven't yet been removed. */
+    protected var _acked :Dictionary = new Dictionary();
 
     /** Contains a list of notification popups currently being shown. */
     protected var _popups :Array = new Array();

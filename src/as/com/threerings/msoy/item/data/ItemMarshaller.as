@@ -5,6 +5,7 @@ package com.threerings.msoy.item.data {
 
 import flash.utils.ByteArray;
 import com.threerings.util.*; // for Float, Integer, etc.
+import com.threerings.io.TypedArray;
 
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.ItemIdent;

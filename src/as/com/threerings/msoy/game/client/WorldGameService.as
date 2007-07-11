@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.client {
 
 import flash.utils.ByteArray;
+import com.threerings.io.TypedArray;
 import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;

@@ -38,10 +38,10 @@ public class MemberDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
-        case MemberMarshaller.ACKNOWLEDGE_NOTIFICATION:
-            ((MemberProvider)provider).acknowledgeNotification(
+        case MemberMarshaller.ACKNOWLEDGE_NOTIFICATIONS:
+            ((MemberProvider)provider).acknowledgeNotifications(
                 source,
-                ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
+                (int[])args[0], (InvocationService.InvocationListener)args[1]
             );
             return;
 

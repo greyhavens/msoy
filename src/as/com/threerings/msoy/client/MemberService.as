@@ -4,6 +4,7 @@
 package com.threerings.msoy.client {
 
 import flash.utils.ByteArray;
+import com.threerings.io.TypedArray;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
@@ -19,7 +20,7 @@ import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 public interface MemberService extends InvocationService
 {
     // from Java interface MemberService
-    function acknowledgeNotification (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
+    function acknowledgeNotifications (arg1 :Client, arg2 :TypedArray /* of int */, arg3 :InvocationService_InvocationListener) :void;
 
     // from Java interface MemberService
     function alterFriend (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void;

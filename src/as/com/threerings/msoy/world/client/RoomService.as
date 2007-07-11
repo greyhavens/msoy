@@ -4,6 +4,7 @@
 package com.threerings.msoy.world.client {
 
 import flash.utils.ByteArray;
+import com.threerings.io.TypedArray;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.MemoryEntry;
@@ -42,6 +43,6 @@ public interface RoomService extends InvocationService
     function updateMemory (arg1 :Client, arg2 :MemoryEntry) :void;
 
     // from Java interface RoomService
-    function updateRoom (arg1 :Client, arg2 :Array, arg3 :InvocationService_InvocationListener) :void;
+    function updateRoom (arg1 :Client, arg2 :TypedArray /* of class com.threerings.whirled.data.SceneUpdate */, arg3 :InvocationService_InvocationListener) :void;
 }
 }

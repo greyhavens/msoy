@@ -38,13 +38,11 @@ public class MsoyClient extends WhirledClient
         return new MsoyBootstrapData();
     }
 
-    @Override // from PresentsClient
-    protected void populateBootstrapData (BootstrapData data)
-    {
-        super.populateBootstrapData(data);
-
-        //((MsoyBootstrapData) data).chatOid = MsoyServer.chatOid;
-    }
+//    @Override // from PresentsClient
+//    protected void populateBootstrapData (BootstrapData data)
+//    {
+//        super.populateBootstrapData(data);
+//    }
 
     @Override // from PresentsClient
     protected void sessionWillStart ()

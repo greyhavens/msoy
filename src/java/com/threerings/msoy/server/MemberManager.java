@@ -403,19 +403,19 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void acknowledgeNotification (
-        ClientObject caller, int id, InvocationService.ConfirmListener listener)
+    public void acknowledgeNotifications (
+        ClientObject caller, int[] ids, InvocationService.InvocationListener listener)
         throws InvocationException
     {
         MemberObject user = (MemberObject) caller;
 
-        // unlike in the potentially long db calls above, this one just modifies the transient
-        // notification DSet, so there's no need to invoke this on a separate thread.
-
-        if (user.acknowledgeNotification(id)) {
-            listener.requestProcessed();
-        } else {
-            listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+        user.startTransaction();
+        try {
+            for (int id : ids) {
+                user.acknowledgeNotification(id);
+            }
+        } finally {
+            user.commitTransaction();
         }
     }        
 

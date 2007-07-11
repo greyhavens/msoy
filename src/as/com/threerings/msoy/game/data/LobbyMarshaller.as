@@ -5,6 +5,7 @@ package com.threerings.msoy.game.data {
 
 import flash.utils.ByteArray;
 import com.threerings.util.*; // for Float, Integer, etc.
+import com.threerings.io.TypedArray;
 
 import com.threerings.msoy.game.client.LobbyService;
 import com.threerings.presents.client.Client;

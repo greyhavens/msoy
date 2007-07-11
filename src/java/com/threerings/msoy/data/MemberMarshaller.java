@@ -19,16 +19,16 @@ import com.threerings.presents.dobj.InvocationResponseEvent;
 public class MemberMarshaller extends InvocationMarshaller
     implements MemberService
 {
-    /** The method id used to dispatch {@link #acknowledgeNotification} requests. */
-    public static final int ACKNOWLEDGE_NOTIFICATION = 1;
+    /** The method id used to dispatch {@link #acknowledgeNotifications} requests. */
+    public static final int ACKNOWLEDGE_NOTIFICATIONS = 1;
 
     // from interface MemberService
-    public void acknowledgeNotification (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
+    public void acknowledgeNotifications (Client arg1, int[] arg2, InvocationService.InvocationListener arg3)
     {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        ListenerMarshaller listener3 = new ListenerMarshaller();
         listener3.listener = arg3;
-        sendRequest(arg1, ACKNOWLEDGE_NOTIFICATION, new Object[] {
-            Integer.valueOf(arg2), listener3
+        sendRequest(arg1, ACKNOWLEDGE_NOTIFICATIONS, new Object[] {
+            arg2, listener3
         });
     }
 

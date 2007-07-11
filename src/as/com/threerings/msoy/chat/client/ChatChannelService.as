@@ -4,6 +4,7 @@
 package com.threerings.msoy.chat.client {
 
 import flash.utils.ByteArray;
+import com.threerings.io.TypedArray;
 import com.threerings.msoy.chat.client.ChatChannelService;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.data.all.MemberName;
