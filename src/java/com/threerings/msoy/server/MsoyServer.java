@@ -184,6 +184,10 @@ public class MsoyServer extends WhirledServer
      */
     public static AuditLogger createAuditLog (String logname)
     {
+        // qualify our log file with the nodename to avoid collisions
+        if (ServerConfig.nodeName != null) {
+            logname = logname + "_" + ServerConfig.nodeName;
+        }
         return new AuditLogger(_logdir, logname + ".log");
     }
 

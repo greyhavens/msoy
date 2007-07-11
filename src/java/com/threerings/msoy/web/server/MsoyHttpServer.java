@@ -52,8 +52,9 @@ public class MsoyHttpServer extends Server
         setHandler(handlers);
 
         // set up logging
-        logger.setRequestLog(
-            new NCSARequestLog(new File(logdir, "access.log.yyyy_mm_dd").getPath()));
+        String logname = (ServerConfig.nodeName != null) ?
+            "access_" + ServerConfig.nodeName + ".log.yyyy_mm_dd" : "access.log.yyyy_mm_dd";
+        logger.setRequestLog(new NCSARequestLog(new File(logdir, logname).getPath()));
 
         // wire up our various servlets
         Context context = new Context(contexts, "/", Context.NO_SESSIONS);
