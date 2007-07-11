@@ -48,8 +48,11 @@ public class NotificationDirector extends BasicDirector
             return;
         }
 
-        _notifyPanel = new NotificationDisplay(
-            _wctx, _wctx.getMemberObject().notifications.toArray());
+        var notifs :Array = _wctx.getMemberObject().notifications.toArray();
+        notifs = notifs.filter(function (notif :Notification, ... ignored) :Boolean {
+            return notif.isPersistent();
+        });
+        _notifyPanel = new NotificationDisplay(_wctx, notifs);
         _notifyPanel.open();
 
         _notifyBtn = btn;
@@ -72,11 +75,15 @@ public class NotificationDirector extends BasicDirector
         super.clientObjectUpdated(client);
         client.getClientObject().addListener(this);
 
+        // check now for any 
         for each (var notif :Notification in _wctx.getMemberObject().notifications.toArray()) {
             if (!notif.isPersistent()) {
                 _wctx.displayFeedback("notify", notif.getAnnouncement());
             }
         }
+
+        // and, let's always update the control bar button
+        updateNotifications();
     }
 
     // from BasicDirector
@@ -131,8 +138,15 @@ public class NotificationDirector extends BasicDirector
 
     protected function updateNotifications () :void
     {
-        _wctx.getTopPanel().getControlBar().setNotificationsAvailable(
-            _wctx.getMemberObject().notifications.size() > 0);
+        var hasPersistent :Boolean = false;
+        for each (var notif :Notification in _wctx.getMemberObject().notifications.toArray()) {
+            if (notif.isPersistent()) {
+                hasPersistent = true;
+                break;
+            }
+        }
+
+        _wctx.getTopPanel().getControlBar().setNotificationsAvailable(hasPersistent);
     }
 
     protected var _wctx :WorldContext;
