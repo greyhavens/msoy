@@ -71,6 +71,12 @@ public class NotificationDirector extends BasicDirector
     {
         super.clientObjectUpdated(client);
         client.getClientObject().addListener(this);
+
+        for each (var notif :Notification in _wctx.getMemberObject().notifications.toArray()) {
+            if (!notif.isPersistent()) {
+                _wctx.displayFeedback("notify", notif.getAnnouncement());
+            }
+        }
     }
 
     // from BasicDirector

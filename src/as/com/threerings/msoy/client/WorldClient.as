@@ -60,6 +60,7 @@ import com.threerings.msoy.game.chiyogami.client.ChiyogamiController;
 
 import com.threerings.msoy.chat.client.ReportingListener;
 
+import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.ReleaseNotesNotification;
 
 /**
@@ -144,6 +145,7 @@ public class WorldClient extends BaseClient
         c = WorldGameConfig;
         c = ChiyogamiController;
         c = ItemList;
+        c = LevelUpNotification;
         c = ReleaseNotesNotification;
 
         // these cause bundles to be compiled in.

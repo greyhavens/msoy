@@ -53,6 +53,9 @@ public /* abstract */ class Notification extends SimpleStreamableObject
     /**
      * Get the chat message used to announce this notification, or null.
      * WTF are you doing with a null announcement?
+     *
+     * All announcements will be translated using the "notify" bundle.
+     * You can qualify the string if you want a different bundle.
      */
     public function getAnnouncement () :String
     {
@@ -77,8 +80,7 @@ public /* abstract */ class Notification extends SimpleStreamableObject
     // from SimpleStreamableObject
     override public function writeObject (out :ObjectOutputStream) :void
     {
-        super.writeObject(out);
-        out.writeInt(id);
+        throw new Error();
     }
 }
 }

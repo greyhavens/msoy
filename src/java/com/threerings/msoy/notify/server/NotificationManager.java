@@ -12,6 +12,7 @@ import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.server.MsoyServer;
 
+import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.data.NotifyMessage;
 
@@ -39,6 +40,10 @@ public class NotificationManager
         }
     }
 
+    /**
+     * Notify the specified member that an invitation they sent has been accepted
+     * by a new whirled member!
+     */
     public void notifyInvitationAccepted (
         MemberName inviter, String inviteeDisplayName, String inviteeEmail)
     {
@@ -47,6 +52,18 @@ public class NotificationManager
         if (target != null) {
             dispatchChatOnlyNotification(target, 
                 MessageBundle.tcompose("m.invite_accepted", inviteeEmail, inviteeDisplayName));
+        }
+    }
+
+    /**
+     * Notify the specified user that they've leveled up to the specified level.
+     */
+    public void notifyLeveledUp (MemberObject target, int newLevel)
+    {
+        if (target != null) {
+            // leveling up is pretty much chat-only, but it apparently happens prior
+            // to the user logging all the way in. Perhaps we need some new thinking here...
+            target.notify(new LevelUpNotification(newLevel));
         }
     }
 

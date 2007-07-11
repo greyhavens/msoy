@@ -536,8 +536,7 @@ public class MemberManager
                 }
                 public void handleSuccess () {
                     member.setLevel(levelToSet);
-                    // TODO: generate a notification letting them know that they've gone up a level
-                    // which we can display with pomp, circumstance and fanfare
+                    MsoyServer.notifyMan.notifyLeveledUp(member, levelToSet);
                 }
                 public void handleFailure (Exception pe) {
                     log.warning("Unable to set user level [memberId=" + 
