@@ -118,7 +118,7 @@ public class OOOUserRecord extends PersistentRecord
     public int userId;
 
     /** The user's chosen username. */
-    @Column(length=24)
+    @Column(length=128)
     public String username;
 
     /** The user's chosen password (encrypted). */
