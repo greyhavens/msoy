@@ -113,7 +113,8 @@ public class GroupRepository extends DepotRepository
             new Where(GroupTagRecord.TAG_ID_C, _tagRepo.getOrCreateTag(tag).tagId))) {
             groupIds.add(tagRec.targetId);
         }
-        return findAll(GroupRecord.class, new Where(new In(GroupRecord.GROUP_ID_C, groupIds)));
+        return findAll(GroupRecord.class, new Where(new In(
+            GroupRecord.class, GroupRecord.GROUP_ID, groupIds)));
     }
 
     /**

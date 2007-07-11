@@ -51,7 +51,7 @@ public class MemoryRepository extends DepotRepository
     {
         return findAll(MemoryRecord.class,
                        new Where(new And(new Equals(MemoryRecord.ITEM_TYPE_C, itemType),
-                                         new In(MemoryRecord.ITEM_ID_C, itemIds))));
+                                         new In(MemoryRecord.class, MemoryRecord.ITEM_ID, itemIds))));
     }
 
     /**
@@ -73,7 +73,7 @@ public class MemoryRepository extends DepotRepository
         int index = 0;
         for (IntMap.IntEntry<ArrayIntSet> entry : types.intEntrySet()) {
             eachType[index++] = new And(new Equals(MemoryRecord.ITEM_TYPE_C, entry.getIntKey()),
-                new In(MemoryRecord.ITEM_ID_C, entry.getValue()));
+                new In(MemoryRecord.class, MemoryRecord.ITEM_ID, entry.getValue()));
         }
 
         return findAll(MemoryRecord.class, new Where(new Or(eachType)));
