@@ -24,5 +24,20 @@ public class MsoyCodes extends InvocationCodes
 
     /** Identifies our chat message bundle. */
     public static const CHAT_MSGS :String = "chat";
+
+    /** Identifies our game message bundle. */
+    public static const GAME_MSGS :String = "game";
+
+    /** Identifies our item message bundle. */
+    public static const ITEM_MSGS :String = "item";
+
+    /** Identifies our prefs message bundle. */
+    public static const PREFS_MSGS :String = "prefs";
+
+    /** Identifies our notification message bundle. */
+    public static const NOTIFY_MSGS :String = "notify";
+
+    /** Identifies our editing message bundle. */
+    public static const EDITING_MSGS :String = "editing";
 }
 }

@@ -39,7 +39,7 @@ public class MemberDirector extends BasicDirector
     public function alterFriend (friendId :int, makeFriend :Boolean) :void
     {
         var listener :ReportingListener = makeFriend ?
-            new ReportingListener(_bctx, "general", null, "m.friend_invited") :
+            new ReportingListener(_bctx, MsoyCodes.GENERAL_MSGS, null, "m.friend_invited") :
             new ReportingListener(_bctx);
 
         _msvc.alterFriend(_bctx.getClient(), friendId, makeFriend, listener);
@@ -59,7 +59,8 @@ public class MemberDirector extends BasicDirector
         var name :String = event.getName();
         if (name == MemberObject.FRIENDS) {
             var entry :FriendEntry = (event.getEntry() as FriendEntry);
-            _bctx.displayInfo("general", MessageBundle.tcompose("m.friend_added", entry.name));
+            _bctx.displayInfo(MsoyCodes.GENERAL_MSGS,
+                MessageBundle.tcompose("m.friend_added", entry.name));
         }
     }
 
@@ -72,7 +73,7 @@ public class MemberDirector extends BasicDirector
             var entry :FriendEntry = (event.getEntry() as FriendEntry);
             var oldEntry :FriendEntry = (event.getOldEntry() as FriendEntry);
             if (entry.online && !oldEntry.online) {
-                _bctx.displayInfo("general", MessageBundle.tcompose("m.friend_online", entry.name));
+                _bctx.displayInfo(MsoyCodes.GENERAL_MSGS, MessageBundle.tcompose("m.friend_online", entry.name));
             }
         }
         */
@@ -84,7 +85,8 @@ public class MemberDirector extends BasicDirector
         var name :String = event.getName();
         if (name == MemberObject.FRIENDS) {
             var oldEntry :FriendEntry = (event.getOldEntry() as FriendEntry);
-            _bctx.displayInfo("general", MessageBundle.tcompose("m.friend_removed", oldEntry.name));
+            _bctx.displayInfo(MsoyCodes.GENERAL_MSGS,
+                MessageBundle.tcompose("m.friend_removed", oldEntry.name));
         }
     }
 

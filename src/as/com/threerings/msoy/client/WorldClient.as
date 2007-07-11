@@ -32,6 +32,7 @@ import com.threerings.toybox.data.ToyBoxMarshaller;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.item.data.ItemMarshaller;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -464,7 +465,7 @@ public class WorldClient extends BaseClient
     {
         var svc :PetService = _ctx.getClient().requireService(PetService) as PetService;
         svc.callPet(_wctx.getClient(), petId, 
-            new ReportingListener(_wctx, "general", null, "m.pet_called"));
+            new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS, null, "m.pet_called"));
     }
 
     protected function externalRemovePet (petId :int) :void

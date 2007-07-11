@@ -28,6 +28,18 @@ public interface MsoyCodes extends InvocationCodes
     /** The translation message bundle for our Java game applet. */
     public static final String GAME_MSGS = "game";
 
+    /** The translation message bundle for our item messages. */
+    public static final String ITEM_MSGS = "item";
+
+    /** The translation message bundle for our prefs messages. */
+    public static final String PREFS_MSGS = "prefs";
+
+    /** The translation message bundle for our notification messages. */
+    public static final String NOTIFY_MSGS = "notify";
+
+    /** The translation message bundle for our room editing messages. */
+    public static final String EDITING_MSGS = "editing";
+
     /** The translation message bundle for our group services. */
     public static final String GROUP_MSGS = "group";
 

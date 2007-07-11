@@ -16,6 +16,8 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
+import com.threerings.msoy.data.MsoyCodes;
+
 /**
  * Listens for and reports occupant entry and exit.
  */
@@ -40,8 +42,8 @@ public class OccupantReporter
         }
         if (occs.length > 0) {
             trace("Reporting " + occs + "(" + occs.length + ")");
-            _ctx.getChatDirector().displayInfo(
-                "general", MessageBundle.tcompose("m.in_room", occs));
+            _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS,
+                MessageBundle.tcompose("m.in_room", occs));
         }
 
         // listen for and report enter/exit
@@ -61,8 +63,8 @@ public class OccupantReporter
             if (isSelf(info)) {
                 return;
             }
-            _ctx.getChatDirector().displayInfo(
-                "general", MessageBundle.tcompose("m.entered_room", info.username));
+            _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS,
+                MessageBundle.tcompose("m.entered_room", info.username));
         }
     }
 
@@ -80,8 +82,8 @@ public class OccupantReporter
             if (isSelf(info)) {
                 return;
             }
-            _ctx.getChatDirector().displayInfo(
-                "general", MessageBundle.tcompose("m.left_room", info.username));
+            _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS,
+                MessageBundle.tcompose("m.left_room", info.username));
         }
     }
 

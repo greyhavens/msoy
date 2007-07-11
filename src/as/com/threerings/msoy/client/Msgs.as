@@ -6,9 +6,10 @@ package com.threerings.msoy.client {
 import com.threerings.util.MessageBundle;
 import com.threerings.util.MessageManager;
 
+import com.threerings.msoy.data.MsoyCodes;
+
 /**
- * TODO: The problem with this is that if we want to use the message
- * bundle name as an arg to displayFeedback() or somesuch...
+ * Handy class for easily getting message bundles on the client.
  */
 public class Msgs
 {
@@ -57,12 +58,12 @@ public class Msgs
             return;
         }
 
-        _general = msgMgr.getBundle("general");
-        _chat = msgMgr.getBundle("chat");
-        _editing = msgMgr.getBundle("editing");
-        _game = msgMgr.getBundle("game");
-        _item = msgMgr.getBundle("item");
-        _prefs = msgMgr.getBundle("prefs");
+        _general = msgMgr.getBundle(MsoyCodes.GENERAL_MSGS);
+        _chat = msgMgr.getBundle(MsoyCodes.CHAT_MSGS);
+        _editing = msgMgr.getBundle(MsoyCodes.EDITING_MSGS);
+        _game = msgMgr.getBundle(MsoyCodes.GAME_MSGS);
+        _item = msgMgr.getBundle(MsoyCodes.ITEM_MSGS);
+        _prefs = msgMgr.getBundle(MsoyCodes.PREFS_MSGS);
     }
 
     protected static var _general :MessageBundle;

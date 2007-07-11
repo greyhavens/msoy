@@ -44,6 +44,7 @@ import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneObject;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.SceneBookmarkEntry;
 
@@ -436,7 +437,7 @@ public class MsoyController extends Controller
         var wgsvc :WorldGameService =
             (_ctx.getClient().requireService(WorldGameService) as WorldGameService);
         wgsvc.joinWorldGame(_ctx.getClient(), gameId,
-                            new ReportingListener(_ctx, "game", "e.join_world_game_failed"));
+            new ReportingListener(_ctx, MsoyCodes.GAME_MSGS, "e.join_world_game_failed"));
     }
 
     /**
@@ -447,7 +448,7 @@ public class MsoyController extends Controller
         var wgsvc :WorldGameService =
             (_ctx.getClient().requireService(WorldGameService) as WorldGameService);
         wgsvc.leaveWorldGame(_ctx.getClient(),
-                             new ReportingListener(_ctx, "game", "e.leave_world_game_failed"));
+             new ReportingListener(_ctx, MsoyCodes.GAME_MSGS, "e.leave_world_game_failed"));
     }
 
     /**
@@ -707,7 +708,7 @@ public class MsoyController extends Controller
         // get all the keys from a resource bundle...
         try {
             var numTips :int = StringUtil.parseInteger(Msgs.GENERAL.get("n.tip_count"));
-            _ctx.displayInfo("general", "m.tip_" + int(1 + (Math.random() * numTips)));
+            _ctx.displayInfo(MsoyCodes.GENERAL_MSGS, "m.tip_" + int(1 + (Math.random() * numTips)));
         } catch (err :Error) {
             // just omit the tip
         }

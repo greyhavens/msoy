@@ -16,6 +16,7 @@ import mx.controls.Label;
 import mx.controls.Text;
 
 import com.threerings.util.Name;
+import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;
 
@@ -26,6 +27,7 @@ import com.threerings.ezgame.data.GameDefinition;
 import com.threerings.ezgame.data.Parameter;
 
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -33,8 +35,6 @@ import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.MsoyTable;
-
-import com.threerings.util.StringUtil;
 
 public class TableRenderer extends HBox
 {
@@ -202,7 +202,7 @@ public class TableRenderer extends HBox
             box.percentWidth = 100;
             box.percentHeight = 100;
             btn = new CommandButton(LobbyController.START_TABLE, table.tableId);
-            btn.label = ctx.xlate("game", "b.start_now");
+            btn.label = Msgs.GAME.get("b.start_now");
             btn.enabled = table.mayBeStarted();
             box.addChild(btn);
             _seatsGrid.addChild(box);
@@ -231,7 +231,7 @@ public class TableRenderer extends HBox
                 box.percentWidth = 100;
                 box.percentHeight = 100;
                 btn = new CommandButton(MsoyController.GO_GAME, [ _game.itemId, table.gameOid ]);
-                btn.label = ctx.xlate("game", key);
+                btn.label = Msgs.GAME.get(key);
                 box.addChild(btn);
                 _seatsGrid.addChild(box);
             }
@@ -247,11 +247,11 @@ public class TableRenderer extends HBox
             _labelsBox.removeChild(_labelsBox.getChildAt(0));
         }
         if (table.config.getMatchType() == GameConfig.PARTY) {
-            _labelsBox.addChild(getConfigRow(ctx.xlate("game", "l.players"),
+            _labelsBox.addChild(getConfigRow(Msgs.GAME.get("l.players"),
                 String(_watcherCount)));
         } else if (!(_gameDef.match as MsoyMatchConfig).unwatchable && 
             !table.tconfig.privateTable) {
-            _labelsBox.addChild(getConfigRow(ctx.xlate("game", "l.watchers"), 
+            _labelsBox.addChild(getConfigRow(Msgs.GAME.get("l.watchers"), 
                 String(_watcherCount)));
         }
 
@@ -324,6 +324,10 @@ import mx.core.UIComponent;
 import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.client.Msgs;
+
+import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
@@ -331,8 +335,6 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.game.client.LobbyController;
 import com.threerings.msoy.game.data.MsoyTable;
-
-import com.threerings.msoy.data.all.MemberName;
 
 class SeatRenderer extends HBox
 {
@@ -393,7 +395,7 @@ class SeatRenderer extends HBox
             if (_joinBtn == null) {
                 _joinBtn = new CommandButton(LobbyController.JOIN_TABLE, 
                     [ _table.tableId, _index ]);
-                _joinBtn.label = _ctx.xlate("game", "b.join");
+                _joinBtn.label = Msgs.GAME.get("b.join");
             }
             addChild(_joinBtn);
         }

@@ -163,7 +163,7 @@ public class NotificationDirector extends BasicDirector
                 _announced[notif.id] = true;
                 var ann :String = notif.getAnnouncement();
                 if (ann != null) {
-                    _wctx.displayFeedback("notify", ann);
+                    _wctx.displayFeedback(MsoyCodes.NOTIFY_MSGS, ann);
                 }
                 // if it's announcement-only, ack it
                 if (!notif.isPersistent()) {

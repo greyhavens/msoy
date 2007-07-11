@@ -158,7 +158,7 @@ public /*abstract*/ class BaseContext
     {
         args.unshift(key);
         if (bundle == null) {
-            bundle = "general";
+            bundle = MsoyCodes.GENERAL_MSGS;
         }
         var mb :MessageBundle = _msgMgr.getBundle(bundle);
         return mb.get.apply(mb, args);

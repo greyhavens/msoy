@@ -20,6 +20,8 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldContext;
 
+import com.threerings.msoy.data.MsoyCodes;
+
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.chat.data.ChatterInfo;
@@ -115,7 +117,8 @@ public class ChannelChatTab extends ChatTab
 
     protected function displayFeedback (message :String) :void
     {
-        var msg :SystemMessage = new SystemMessage(message, "chat", SystemMessage.FEEDBACK);
+        var msg :SystemMessage = new SystemMessage(
+            message, MsoyCodes.CHAT_MSGS, SystemMessage.FEEDBACK);
         _ctx.getChatDirector().dispatchMessage(msg, channel.toLocalType());
     }
 

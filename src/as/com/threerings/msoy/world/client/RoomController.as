@@ -61,6 +61,7 @@ import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.Audio;
@@ -361,7 +362,7 @@ public class RoomController extends SceneController
 
         _roomObj.roomService.editRoom(_mctx.getClient(), new ResultWrapper(
             function (cause :String) :void {
-                _mctx.displayFeedback("general", cause);
+                _mctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
             },
             function (result :Object) :void {
                 DoorTargetEditController.start(furniData, _mctx);
@@ -375,7 +376,7 @@ public class RoomController extends SceneController
     {
         _roomObj.roomService.editRoom(_mctx.getClient(), new ResultWrapper(
             function (cause :String) :void {
-                _mctx.displayFeedback("general", cause);
+                _mctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
             },
             function (result :Object) :void {
                 // if we're editing, let's finish, otherwise let's start!
@@ -606,7 +607,7 @@ public class RoomController extends SceneController
     {
         var svc :PetService = (_mctx.getClient().requireService(PetService) as PetService);
         svc.orderPet(_mctx.getClient(), petId, command,
-                     new ReportingListener(_mctx, "general", null, "m.pet_ordered" + command));
+            new ReportingListener(_mctx, MsoyCodes.GENERAL_MSGS, null, "m.pet_ordered" + command));
     }
 
     /**
@@ -683,7 +684,7 @@ public class RoomController extends SceneController
     public function useItem (itemId :int, itemType :int) :void
     {
         if (!canEditRoom()) {
-            _mctx.displayInfo("editing", "e.no_permission");
+            _mctx.displayInfo(MsoyCodes.EDITING_MSGS, "e.no_permission");
             return;
         }
 
@@ -753,7 +754,7 @@ public class RoomController extends SceneController
                                 "Failed to remove item from its current location " +
                                 "[id=" + item.itemId + ", type=" + item.getType() +
                                 ", cause=" + cause + "]");
-                            _mctx.displayInfo("editing", "e.failed_to_remove");
+                            _mctx.displayInfo(MsoyCodes.EDITING_MSGS, "e.failed_to_remove");
                         }, useNewItem);
                     isvc.reclaimItem(_mctx.getClient(), ident, confWrap);
                 })).open(true);
@@ -764,7 +765,7 @@ public class RoomController extends SceneController
 
         isvc.peepItem(_mctx.getClient(), ident, new ResultWrapper(
             function (cause :String) :void {
-                _mctx.displayFeedback("editing", cause);
+                _mctx.displayFeedback(MsoyCodes.EDITING_MSGS, cause);
             }, gotItem));
     }
 

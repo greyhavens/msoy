@@ -13,6 +13,7 @@ import com.threerings.flex.CommandButton;
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.WorldContext;
+import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.notify.data.Notification;
 
@@ -20,7 +21,7 @@ public class NotificationDisplay extends FloatingPanel
 {
     public function NotificationDisplay (ctx :WorldContext)
     {
-        super(ctx, ctx.xlate("notify", "t.notify"));
+        super(ctx, ctx.xlate(MsoyCodes.NOTIFY_MSGS, "t.notify"));
         _box.maxHeight = 250;
         _box.minWidth = 200;
         styleName = "notificationDisplay";
