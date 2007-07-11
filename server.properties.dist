@@ -4,6 +4,11 @@
 # Configuration for a MetaSOY! server installation
 
 #
+# Is this a development deployment?
+
+dev_deployment = true
+
+#
 # The public URL that should be used to access this Whirled installation
 
 # server_url = http://first.whirled.com
@@ -13,14 +18,24 @@
 
 server_host = game.metasoy.com
 
-# For a peer server installation, use nodename.server_host like so:
-# node1.server_host = node1.metasoy.com
-# node2.server_host = node2.metasoy.com
+#
+# The port on which the server listens for client and HTTP connections.
+
+# server_ports = 47624, 443
+http_port = 8080
 
 #
-# Is this a development deployment?
+# When running in clustered mode, we must override the server_host for each
+# node and we can optionally override the ports on which this node listens for
+# Presents and HTTP connections
 
-dev_deployment = true
+# msoy1.server_host = game1.metasoy.com
+# msoy1.server_ports = 47624
+# msoy1.http_port = 80
+
+# msoy2.server_host = game2.metasoy.com
+# msoy2.server_ports = 47624
+# msoy2.http_port = 80
 
 #
 # If this server is running as a part of a cluster, this value should be set to
@@ -28,12 +43,6 @@ dev_deployment = true
 # cluster. If it is left commented out, the server will run standalone.
 
 # server_secret = Is it secret? Is it safe?
-
-#
-# The port on which the server listens for client and HTTP connections.
-
-# server_ports = 47624, 443
-http_port = 8080
 
 #
 # The directory from which the server is run. Used to put log files in the

@@ -17,8 +17,8 @@ MSOY_USER=msoy
 LOG_EMAIL=msoy-logs@DOMAIN
 LOGLEVEL=info
 
-# The user as which we run Jetty
-JETTY_USER=msoy
+# The node name for this server instance. msoy1, msoy2 etc.
+NODE=msoy1
 
 # These is passed to the various JVMs
 SERVER_MEMORY=384M

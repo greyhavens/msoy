@@ -35,6 +35,9 @@ public class ServerConfig
     /** The ports on which we are listening for client connections. */
     public static int[] serverPorts;
 
+    /** The port on which we are listening for HTTP connections. */
+    public static int httpPort;
+
     /** The secret used to authenticate other servers in our cluster. */
     public static String sharedSecret;
 
@@ -72,22 +75,11 @@ public class ServerConfig
     }
 
     /**
-     * Returns the port on which the server should listen for HTTP connections.
-     * The default is 8080 to avoid conflict with local web server
-     * installations on development servers but the expectation is that in
-     * production the server will listen directly on port 80.
-     */
-    public static int getHttpPort ()
-    {
-        return config.getValue("http_port", 8080);
-    }
-
-    /**
      * Returns a URL that can be used to make HTTP requests from this server.
      */
     public static String getServerURL ()
     {
-        String defurl = "http://" + serverHost + (getHttpPort() != 80 ? ":" + getHttpPort() : "");
+        String defurl = "http://" + serverHost + (httpPort != 80 ? ":" + httpPort : "");
         return config.getValue("server_url", defurl);
     }
 
@@ -103,16 +95,10 @@ public class ServerConfig
      * Configures server bits when this class is resolved.
      */
     static {
-        // fill in our standard properties
-        serverRoot = new File(config.getValue("server_root", "/tmp"));
-        mediaDir = new File(config.getValue("media_dir", "/tmp"));
-        mediaURL = config.getValue("media_url", "http://localhost:" + getHttpPort() + "/media");
-        mediaS3Enable = config.getValue("media_s3enable", false);
-        mediaS3Bucket = config.getValue("media_s3bucket", "msoy");
-        mediaS3Id = config.getValue("media_s3id", "id");
-        mediaS3Key = config.getValue("media_s3key", "key");
+        // these will be overridden if we're running in cluster mode
         serverHost = config.getValue("server_host", "localhost");
         serverPorts = config.getValue("server_ports", Client.DEFAULT_SERVER_PORTS);
+        httpPort = config.getValue("http_port", 8080);
 
         // if we're a server node (not the webapp or a tool) do some extra stuff
         if (Boolean.getBoolean("is_node")) {
@@ -128,8 +114,21 @@ public class ServerConfig
             if (StringUtil.isBlank(nodeName) || StringUtil.isBlank(backChannelHost)) {
                 System.exit(-1);
             }
+
             // fill in our node-specific properties
             serverHost = config.getValue(nodeName + ".server_host", serverHost);
+            serverPorts = config.getValue(nodeName + ".server_ports", serverPorts);
+            httpPort = config.getValue(nodeName + ".http_port", httpPort);
         }
+
+        // fill in our standard properties
+        serverRoot = new File(config.getValue("server_root", "/tmp"));
+        mediaDir = new File(config.getValue("media_dir", "/tmp"));
+        mediaURL = config.getValue("media_url", "http://localhost:" + httpPort + "/media");
+        mediaS3Enable = config.getValue("media_s3enable", false);
+        mediaS3Bucket = config.getValue("media_s3bucket", "msoy");
+        mediaS3Id = config.getValue("media_s3id", "id");
+        mediaS3Key = config.getValue("media_s3key", "key");
+        sharedSecret = config.getValue("server_secret", (String)null);
     }
 }

@@ -97,7 +97,7 @@ public class GameServlet extends MsoyServiceServlet
         config.name = game.name;
         config.server = ServerConfig.serverHost;
         config.port = ServerConfig.serverPorts[0];
-        config.httpPort = ServerConfig.getHttpPort();
+        config.httpPort = ServerConfig.httpPort;
         return config;
     }
 }

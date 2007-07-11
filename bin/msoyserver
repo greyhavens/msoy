@@ -10,6 +10,23 @@ MSOY_HOME=`cd $MSOY_HOME/.. ; pwd`
 JAVA_ARGS="-Djava.awt.headless=true \
            -Djava.security.manager \
            -Djava.security.policy=$MSOY_HOME/dist/security.policy"
+NODE="msoy1"
+HOSTNAME=`hostname`
+
+# parse our arguments
+while [ ! -z "$1" ]; do
+    case "$1" in
+        -D*)
+            JAVA_ARGS="$JAVA_ARGS $1"
+            ;;
+
+        *)
+            NODE="$1"
+            ;;
+    esac
+    shift
+done
 
 CLASS=com.threerings.msoy.server.MsoyServer
-`dirname $0`/msoyjava -ea -server $JAVA_ARGS $CLASS $*
+`dirname $0`/msoyjava -ea -server -Dhostname=$HOSTNAME -Dnode=$NODE -Dis_node=true \
+    $JAVA_ARGS $CLASS $*

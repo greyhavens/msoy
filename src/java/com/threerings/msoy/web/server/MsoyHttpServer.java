@@ -41,7 +41,7 @@ public class MsoyHttpServer extends Server
         throws IOException
     {
         BlockingChannelConnector conn = new BlockingChannelConnector();
-        conn.setPort(ServerConfig.getHttpPort());
+        conn.setPort(ServerConfig.httpPort);
         setConnectors(new Connector[] { conn });
 
         // jetty initialization is weird
