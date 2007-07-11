@@ -47,6 +47,7 @@ public class MsoyChatDirector extends ChatDirector
         var msg :MessageBundle = _msgmgr.getBundle(_bundle);
         registerCommandHandler(msg, "action", new AvatarActionHandler(false));
         registerCommandHandler(msg, "state", new AvatarActionHandler(true));
+        registerCommandHandler(msg, "away", new AwayHandler());
     }
 
     /**

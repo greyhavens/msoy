@@ -498,6 +498,10 @@ public class RoomController extends SceneController
                     children: worldStates, enabled: canControl });
             }
 
+//            // and a menu item for making the user idle
+//            menuItems.push({ label: Msgs.GENERAL.get("b.go_idle"), enabled: !avatar.isIdle(),
+//                callback: _mctx.getMsoyController().forceIdle, arg: 2 });
+
         } else {
             // create a menu for clicking on someone else
             var memId :int = occInfo.getMemberId();

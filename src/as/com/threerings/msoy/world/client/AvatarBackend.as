@@ -16,7 +16,7 @@ public class AvatarBackend extends ActorBackend
     {
         super.populateControlInitProperties(o);
 
-        o["isSleeping"] = (_sprite as ActorSprite).isIdle();
+        o["isSleeping"] = (_sprite as AvatarSprite).isIdle();
     }
 
     /**

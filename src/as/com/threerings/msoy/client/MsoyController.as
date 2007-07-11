@@ -15,6 +15,7 @@ import flash.text.TextField;
 
 import flash.ui.Keyboard;
 
+import flash.utils.getTimer; // function import
 import flash.utils.Timer;
 
 import mx.controls.Button;
@@ -301,6 +302,16 @@ public class MsoyController extends Controller
         if (!NetUtil.navigateToURL(url, false)) {
             _ctx.displayFeedback(null, MessageBundle.tcompose("e.no_navigate", url));
         }
+    }
+
+    /**
+     * Force the user to be idle immediately, and give them the specified number
+     * of seconds to move the mouse and such before we automatically de-idle them.
+     */
+    public function forceIdle (secondsOfLeeway :int) :void
+    {
+        _idleOverrideStamp = (secondsOfLeeway * 1000) + getTimer();
+        setIdle(true);
     }
 
     /**
@@ -802,6 +813,15 @@ public class MsoyController extends Controller
      */
     protected function restartIdleTimer () :void
     {
+        // see if we want to honor this request..
+        if (_idleOverrideStamp != 0) {
+            if (getTimer() < _idleOverrideStamp) {
+                return;
+            } else {
+                _idleOverrideStamp = 0;
+            }
+        }
+
         setIdle(false);
         _idleTimer.reset();
         _idleTimer.start();
@@ -841,6 +861,9 @@ public class MsoyController extends Controller
 
     /** A timer to watch our idleness. */
     protected var _idleTimer :Timer;
+
+    /** A timestamp (from flash.utils.getTimer()) before which we ignore non-idling behavior. */
+    protected var _idleOverrideStamp :Number = 0;
 
     /** A timer to wait for a little bit of idle to pop up a chat tip. */
     protected var _tipTimer :Timer;
