@@ -146,7 +146,7 @@ public abstract class ItemRepository<
     public List<T> loadOriginalItems (int ownerId)
         throws PersistenceException
     {
-        return findAll(getItemClass(), new Where(ItemRecord.OWNER_ID_C, ownerId));
+        return findAll(getItemClass(), new Where(getItemColumn(ItemRecord.OWNER_ID), ownerId));
     }
 
     /**
