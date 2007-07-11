@@ -82,10 +82,11 @@ public class GroupRepository extends DepotRepository
     public List<GroupRecord> getGroupsList ()
         throws PersistenceException
     {
-        return findAll(GroupRecord.class, new Where(new Not(new Equals(GroupRecord.POLICY_C, 
-            Group.POLICY_EXCLUSIVE))), new OrderBy(new SQLExpression[] { new ColumnExp(null, 
-            GroupRecord.MEMBER_COUNT), new ColumnExp(null, GroupRecord.CREATION_DATE) }, 
-            new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.ASC }));
+        return findAll(GroupRecord.class,
+            new Where(new Not(new Equals(GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE))),
+            new OrderBy(
+                new SQLExpression[] { GroupRecord.MEMBER_COUNT_C, GroupRecord.CREATION_DATE_C },
+                new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.ASC }));
     }
 
 
