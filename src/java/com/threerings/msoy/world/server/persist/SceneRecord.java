@@ -156,7 +156,7 @@ public class SceneRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 1;
 
     /** The unique identifier for this scene. */
-    @Id @GeneratedValue(strategy=GenerationType.AUTO)
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int sceneId;
 
     /** Whether this scene is owned by a member or a group. See {@link MsoySceneModel}. */

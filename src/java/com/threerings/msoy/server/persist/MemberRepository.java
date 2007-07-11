@@ -698,11 +698,10 @@ public class MemberRepository extends DepotRepository
             public List<FriendEntry> invoke (Connection conn)
                 throws SQLException
             {
-                String query = "select \"name\", \"memberId\", \"inviterId\" from" +
-                " \"FriendRecord\" inner join \"MemberRecord\" on" +
-                    " ((\"inviterId\"=" + memberId + " and \"memberId\"=\"inviteeId\") or" +
-                    " (\"inviteeId\"=" + memberId + " and \"memberId\"=\"inviterId\"))" +
-                    " order by \"name\"";
+                String query = "select name, memberId, inviterId from FriendRecord " +
+                    "inner join MemberRecord on " +
+                    "((inviterId=" + memberId + " and memberId=inviteeId) or" +
+                    " (inviteeId=" + memberId + " and memberId=inviterId)) order by name";
                 ArrayList<FriendEntry> list = new ArrayList<FriendEntry>();
                 Statement stmt = conn.createStatement();
                 try {

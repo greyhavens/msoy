@@ -255,7 +255,7 @@ public class GroupRecord extends PersistentRecord
 
     /** The unique id of this group. */
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int groupId;
 
     /** The name of the group. */

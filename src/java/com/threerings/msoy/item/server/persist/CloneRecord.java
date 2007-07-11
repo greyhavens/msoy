@@ -96,6 +96,7 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
     public int ownerId;
 
     /** The time at which this clone was purchased from the catalog. */
+    @Column(columnDefinition="purchaseTime DATETIME NOT NULL")
     public Timestamp purchaseTime;
     
     /** The amount of flow that was paid for this item. */
@@ -111,6 +112,7 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
     public int location;
 
     /** The timestamp at which this item was last used or modified. */
+    @Column(columnDefinition="lastTouched DATETIME NOT NULL")
     public Timestamp lastTouched;
 
     /**

@@ -73,5 +73,6 @@ public abstract class TagHistoryRecord extends PersistentRecord
     public byte action;
 
     /** The time of the tagging event. */
+    @Column(columnDefinition="time DATETIME NOT NULL")
     public Timestamp time;
 }
