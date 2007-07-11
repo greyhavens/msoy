@@ -18,6 +18,7 @@ import com.threerings.user.OOOUserRepository;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
 import com.threerings.msoy.web.data.ServiceException;
 
 import static com.threerings.msoy.Log.log;
@@ -32,10 +33,10 @@ public class OOOAuthenticationDomain
     public void init ()
         throws PersistenceException
     {
-        // we get our user manager configuration from the ocean config
-        _usermgr = new OOOUserManager(
-            ServerConfig.config.getSubProperties("oooauth"), MsoyServer.conProv);
-        _authrep = (OOOUserRepository)_usermgr.getRepository();
+//        // we get our user manager configuration from the ocean config
+//        _usermgr = new OOOUseYTrManager(
+//            ServerConfig.config.getSubProperties("oooauth"), MsoyServer.conProv);
+        _authrep = new MsoyOOOUserRepository(MsoyServer.conProv);
     }
 
     // from interface MsoyAuthenticator.Domain
@@ -60,7 +61,7 @@ public class OOOAuthenticationDomain
         }
 
         // load up our newly created record
-        OOOUser user = (OOOUser)_authrep.loadUser(userId);
+        OOOUser user = _authrep.loadUser(userId);
         if (user == null) {
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
@@ -199,6 +200,6 @@ public class OOOAuthenticationDomain
         }
     }
 
-    protected OOOUserRepository _authrep;
-    protected OOOUserManager _usermgr;
+    protected MsoyOOOUserRepository _authrep;
+//    protected OOOUserManager _usermgr;
 }

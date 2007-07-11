@@ -96,9 +96,9 @@ public abstract class TagRepository extends DepotRepository
         throws PersistenceException
     {
         return findAll(TagPopularityRecord.class,
-                       new FromOverride(_tagClass),
+                       new FromOverride(getTagClass()),
                        new Limit(0, rows),
-                       new Join(new ColumnExp(_tagClass, TagRecord.TAG_ID), TagNameRecord.TAG_ID_C),
+                       new Join(getTagColumn(TagRecord.TAG_ID), TagNameRecord.TAG_ID_C),
                        new FieldOverride(TagPopularityRecord.COUNT, "count(*)"),
                        OrderBy.descending(new LiteralExp("count(*)")),
                        new GroupBy(TagNameRecord.TAG_ID_C, TagNameRecord.TAG_C));
@@ -111,9 +111,8 @@ public abstract class TagRepository extends DepotRepository
         throws PersistenceException
     {
         return findAll(TagNameRecord.class,
-                       new Where(TagRecord.TARGET_ID_C, targetId),
-                       new Join(TagNameRecord.TAG_ID_C,
-                                new ColumnExp(_tagClass, TagRecord.TAG_ID)));
+                       new Where(getTagColumn(TagRecord.TARGET_ID), targetId),
+                       new Join(TagNameRecord.TAG_ID_C, getTagColumn(TagRecord.TAG_ID)));
     }
 
     /**
@@ -185,7 +184,7 @@ public abstract class TagRepository extends DepotRepository
     public TagHistoryRecord tag (int targetId, int tagId, int taggerId, long now)
         throws PersistenceException
     {
-        TagRecord tag = load(_tagClass, TagRecord.TARGET_ID, targetId, TagRecord.TAG_ID, tagId);
+        TagRecord tag = load(getTagClass(), TagRecord.TARGET_ID, targetId, TagRecord.TAG_ID, tagId);
         if (tag != null) {
             return null;
         }
@@ -212,7 +211,7 @@ public abstract class TagRepository extends DepotRepository
     public TagHistoryRecord untag (int targetId, int tagId, int taggerId, long now)
         throws PersistenceException
     {
-        TagRecord tag = load(_tagClass, TagRecord.TARGET_ID, targetId, TagRecord.TAG_ID, tagId);
+        TagRecord tag = load(getTagClass(), TagRecord.TARGET_ID, targetId, TagRecord.TAG_ID, tagId);
         if (tag == null) {
             return null;
         }
@@ -240,7 +239,7 @@ public abstract class TagRepository extends DepotRepository
     public int copyTags (final int fromTargetId, final int toTargetId, int ownerId, long now)
         throws PersistenceException
     {
-        final String tagTable = _ctx.getMarshaller(_tagClass).getTableName();
+        final String tagTable = _ctx.getMarshaller(getTagClass()).getTableName();
         int rows = _ctx.invoke(new Modifier() {
             public int invoke (Connection conn) throws SQLException {
                 PreparedStatement stmt = null;
@@ -269,6 +268,11 @@ public abstract class TagRepository extends DepotRepository
         history.time = new Timestamp(now);
         insert(history);
         return rows;
+    }
+    
+    protected ColumnExp getTagColumn (String cname)
+    {
+        return new ColumnExp(getTagClass(), cname);
     }
 
     protected Class<TagRecord> _tagClass;

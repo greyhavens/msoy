@@ -222,7 +222,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public int location;
 
     /** The timestamp at which this item was last touched. */
-    @Column(columnDefinition="lastTouched DATETIME NOT NULL")
     public Timestamp lastTouched;
 
     /** A user supplied name for this item. */
