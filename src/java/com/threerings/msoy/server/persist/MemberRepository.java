@@ -444,7 +444,7 @@ public class MemberRepository extends DepotRepository
         return findAll(
             NeighborFriendRecord.class,
             new FromOverride(MemberRecord.class),
-            OrderBy.descending(MemberRecord.LAST_SESSION),
+            OrderBy.descending(MemberRecord.LAST_SESSION_C),
             new Join(FriendRecord.class, joinCondition));
     }
 

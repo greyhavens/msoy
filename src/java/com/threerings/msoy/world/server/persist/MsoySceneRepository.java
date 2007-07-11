@@ -131,7 +131,7 @@ public class MsoySceneRepository extends DepotRepository
         UpdateList list = new UpdateList();
         for (SceneUpdateRecord record : findAll(
                  SceneUpdateRecord.class, new Where(SceneUpdateRecord.SCENE_ID_C, sceneId),
-                 OrderBy.ascending(SceneUpdateRecord.SCENE_VERSION))) {
+                 OrderBy.ascending(SceneUpdateRecord.SCENE_VERSION_C))) {
             list.addUpdate(_updateMarshaller.decodeUpdate(
                                sceneId, record.sceneVersion, record.updateType, record.data));
         }

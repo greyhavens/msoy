@@ -168,9 +168,9 @@ public abstract class ItemRepository<
         // from each.
         Limit limit = new Limit(0, maxCount);
         List<T> originals = findAll(getItemClass(), new Where(ItemRecord.OWNER_ID_C, ownerId),
-            OrderBy.descending(ItemRecord.LAST_TOUCHED), limit);
+            OrderBy.descending(ItemRecord.LAST_TOUCHED_C), limit);
         List<T> clones = loadClonedItems(new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId),
-            OrderBy.descending(CloneRecord.LAST_TOUCHED), limit);
+            OrderBy.descending(CloneRecord.LAST_TOUCHED_C), limit);
         int size = originals.size() + clones.size();
 
         ArrayList<T> list = new ArrayList<T>(size);
