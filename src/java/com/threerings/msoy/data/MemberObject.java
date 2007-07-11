@@ -224,6 +224,13 @@ public class MemberObject extends MsoyBodyObject
     }
 
     @Override // from BodyObject
+    protected void addWhoData (StringBuilder buf)
+    {
+        buf.append("id=").append(getMemberId()).append(" oid=");
+        super.addWhoData(buf);
+    }
+
+    @Override // from BodyObject
     public TokenRing getTokens ()
     {
         return tokens;
