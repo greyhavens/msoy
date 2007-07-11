@@ -292,8 +292,11 @@ Window {
 }
 
 .controlBarButtonNotify {
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_over.png");
   upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_over.png");
+  selectedUpSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_down.png");
+  selectedOverSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_down.png");
   selectedDownSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_down.png");
   disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_notifications_disabled.png");
 }
