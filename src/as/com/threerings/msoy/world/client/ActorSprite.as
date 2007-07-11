@@ -225,6 +225,7 @@ public class ActorSprite extends MsoySprite
     public function setActorInfo (newInfo :ActorInfo) :void
     {
         var winfo :WorldOccupantInfo = (newInfo as WorldOccupantInfo);
+        var triggerAppearanceChanged :Boolean = false;
         var oldScale :Number = _scale;
         _scale = winfo.getScale();
         var newMedia :MediaDesc = winfo.getMedia();
@@ -263,6 +264,7 @@ public class ActorSprite extends MsoySprite
 
             // if our idle status has changed...
             if ((newInfo.status == OccupantInfo.IDLE) == (_idleIcon == null)) {
+                triggerAppearanceChanged = true;
                 if (_idleIcon == null) {
                     _idleIcon = (new IDLE_ICON() as DisplayObject);
                     addDecoration(_idleIcon, {
@@ -293,6 +295,10 @@ public class ActorSprite extends MsoySprite
         // special state-changed dobj event.
         if (oldWinfo != null && !Util.equals(oldWinfo.getState(), winfo.getState())) {
             callUserCode("stateSet_v1", winfo.getState());
+        }
+
+        if (triggerAppearanceChanged) {
+            appearanceChanged();
         }
     }
 
@@ -364,6 +370,14 @@ public class ActorSprite extends MsoySprite
     public function isMoving () :Boolean
     {
         return (_walk != null);
+    }
+
+    /**
+     * @return true if we're idle.
+     */
+    public function isIdle () :Boolean
+    {
+        return (_occInfo.status == OccupantInfo.IDLE);
     }
 
     /**
@@ -697,7 +711,12 @@ public class ActorSprite extends MsoySprite
      */
     protected function appearanceChanged () :void
     {
-        callUserCode("appearanceChanged_v1", [ _loc.x, _loc.y, _loc.z ], _loc.orient, isMoving());
+        var locArray :Array = [ _loc.x, _loc.y, _loc.z ];
+        if (hasUserCode("appearanceChanged_v2")) {
+            callUserCode("appearanceChanged_v2", locArray, _loc.orient, isMoving(), isIdle());
+        } else {
+            callUserCode("appearanceChanged_v1", locArray, _loc.orient, isMoving());
+        }
     }
 
     /** A label containing the actor's name.

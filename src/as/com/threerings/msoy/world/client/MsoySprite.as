@@ -629,6 +629,14 @@ public class MsoySprite extends MsoyMediaContainer
         return undefined;
     }
 
+    /**
+     * Has the usercode published a function with the specified name?
+     */
+    protected function hasUserCode (name :String) :Boolean
+    {
+        return (_backend != null) && _backend.hasUserCode(name);
+    }
+
     /** The current logical coordinate of this media. */
     protected const _loc :MsoyLocation = new MsoyLocation();
 

@@ -45,6 +45,14 @@ public class ControlBackend
     }
 
     /**
+     * Did the usercode expose a function with the specified name?
+     */
+    public function hasUserCode (name :String) :Boolean
+    {
+        return (_props != null) && (_props[name] is Function);
+    }
+
+    /**
      * Shutdown and disconnect this control.
      */
     public function shutdown () :void

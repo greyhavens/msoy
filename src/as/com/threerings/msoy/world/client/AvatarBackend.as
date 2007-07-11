@@ -12,6 +12,13 @@ public class AvatarBackend extends ActorBackend
         o["setPreferredY_v1"] = setPreferredY_v1;
     }
 
+    override protected function populateControlInitProperties (o :Object) :void
+    {
+        super.populateControlInitProperties(o);
+
+        o["isSleeping"] = (_sprite as ActorSprite).isIdle();
+    }
+
     /**
      * Called by user code to set a preferred height off the ground for their
      * moves.
