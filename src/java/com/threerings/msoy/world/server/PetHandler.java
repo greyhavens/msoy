@@ -201,10 +201,12 @@ public class PetHandler
     protected void validateOwnership (MemberObject owner)
         throws InvocationException
     {
+        // TODO: if pet is updated or changes hands, we need to update the resolved PetObject
         if (_petobj.pet.ownerId != owner.getMemberId()) {
-            // TODO: allow support personnell?
+            // TODO: allow support personnel?
             log.warning("Pet handling by non-owner [who=" + owner.who() +
-                ", petId=" + _petobj.pet.itemId + "].");
+                        ", petId=" + _petobj.pet.itemId +
+                        ", ownerId=" + _petobj.pet.ownerId + "].");
             throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
         }
     }
