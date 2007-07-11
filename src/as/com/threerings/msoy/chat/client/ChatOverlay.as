@@ -433,7 +433,7 @@ public class ChatOverlay
         msg :ChatMessage, type :int, forceSpeaker :Boolean, userSpeakFmt :TextFormat) :Array
     {
         // first parse the message text into plain and links
-        var texts :Array = parseLinks(msg.message, userSpeakFmt);
+        var texts :Array = parseLinks(msg.message, userSpeakFmt, shouldParseSpecialLinks(type));
 
         // possibly insert the formatting
         if (forceSpeaker || alwaysUseSpeaker(type)) {
@@ -458,7 +458,8 @@ public class ChatOverlay
      * Return an array of text strings, with any string needing special formatting preceeded by
      * that format.
      */
-    protected function parseLinks (text :String, userSpeakFmt :TextFormat) :Array
+    protected function parseLinks (
+        text :String, userSpeakFmt :TextFormat, parseSpecial :Boolean) :Array
     {
         // parse the text into an array with urls at odd elements
         var array :Array = StringUtil.parseURLs(text);
@@ -467,12 +468,53 @@ public class ChatOverlay
         for (var ii :int = array.length - 1; ii >= 0; ii--) {
             if (ii % 2 == 0) {
                 // normal text at even-numbered elements...
-                array.splice(ii, 0, userSpeakFmt);
+                if (parseSpecial) {
+                    var specialBits :Array = parseSpecialLinks(String(array[ii]), userSpeakFmt);
+                    specialBits.unshift(ii, 1);
+                    array.splice.apply(array, specialBits);
+
+                } else {
+                    // just insert the speak format before the text
+                    array.splice(ii, 0, userSpeakFmt);
+                }
+
             } else {
                 // links at the odd indexes
                 array.splice(ii, 0, createLinkFormat(String(array[ii]), userSpeakFmt));
             }
         }
+
+        return array;
+    }
+
+    /**
+     * Parse any "special links" (in the format "[text|url]") in the specified text.
+     *
+     * @return an array containing [ format, text, format, text, ... ].
+     */
+    protected function parseSpecialLinks (text :String, userSpeakFmt :TextFormat) :Array
+    {
+        var array :Array = [];
+
+        var result :Object;
+        do {
+            result = _specialLinkRegExp.exec(text);
+            if (result != null) {
+                var index :int = int(result.index);
+                array.push(userSpeakFmt, text.substring(0, index));
+                array.push(createLinkFormat(String(result[2]), userSpeakFmt), String(result[1]));
+
+                // and advance the text
+                var match :String = String(result[0]);
+                text = text.substring(index + match.length);
+
+            } else {
+                // it's just left-over text
+                array.push(userSpeakFmt, text);
+            }
+
+        } while (result != null);
+
         return array;
     }
 
@@ -560,6 +602,24 @@ public class ChatOverlay
     protected function alwaysUseSpeaker (type :int) :Boolean
     {
         return (modeOf(type) == EMOTE) || (placeOf(type) == BROADCAST);
+    }
+
+    /**
+     * Should we parse "special links" (in the format "[text|url]") for chat messages
+     * of the specified type.
+     */
+    protected function shouldParseSpecialLinks (type :int) :Boolean
+    {
+        switch (type) {
+        case FEEDBACK:
+        case INFO:
+        case ATTENTION:
+        case NOTIFICATION:
+            return true;
+
+        default:
+            return false;
+        }
     }
 
     /**
@@ -1179,6 +1239,9 @@ public class ChatOverlay
 
     /** The format for user-entered text. */
     protected var _userSpeakFmt :TextFormat;
+
+    /** Matches "special links", which are in the format "[text|url]". */
+    protected var _specialLinkRegExp :RegExp = new RegExp("\\[(.+?)\\|(.+?)\\]");
 
     /** The history scrollbar. */
     protected var _historyBar :VScrollBar;
