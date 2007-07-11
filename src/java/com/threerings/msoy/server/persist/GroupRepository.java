@@ -82,7 +82,7 @@ public class GroupRepository extends DepotRepository
     public List<GroupRecord> getGroupsList ()
         throws PersistenceException
     {
-        return findAll(GroupRecord.class, new Where(new Not(new Equals(GroupRecord.POLICY, 
+        return findAll(GroupRecord.class, new Where(new Not(new Equals(GroupRecord.POLICY_C, 
             Group.POLICY_EXCLUSIVE))), new OrderBy(new SQLExpression[] { new ColumnExp(null, 
             GroupRecord.MEMBER_COUNT), new ColumnExp(null, GroupRecord.CREATION_DATE) }, 
             new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.ASC }));
@@ -97,7 +97,7 @@ public class GroupRepository extends DepotRepository
         throws PersistenceException
     {
         // for now, always operate with boolean searching enabled, without query expansion
-        return findAll(GroupRecord.class, new Where(new And(new Not(new Equals(GroupRecord.POLICY,
+        return findAll(GroupRecord.class, new Where(new And(new Not(new Equals(GroupRecord.POLICY_C,
             Group.POLICY_EXCLUSIVE)), new Match(searchString, Match.Mode.BOOLEAN, false, 
             "name", "blurb", "charter"))));
     }
@@ -110,11 +110,10 @@ public class GroupRepository extends DepotRepository
     {
         ArrayList<Integer> groupIds = new ArrayList<Integer>();
         for (GroupTagRecord tagRec : findAll(GroupTagRecord.class,
-            new Where(GroupTagRecord.TAG_ID, _tagRepo.getOrCreateTag(tag).tagId))) {
+            new Where(GroupTagRecord.TAG_ID_C, _tagRepo.getOrCreateTag(tag).tagId))) {
             groupIds.add(tagRec.targetId);
         }
-        return findAll(GroupRecord.class, new Where(new In(GroupRecord.class, 
-            GroupRecord.GROUP_ID, groupIds)));
+        return findAll(GroupRecord.class, new Where(new In(GroupRecord.GROUP_ID_C, groupIds)));
     }
 
     /**
@@ -265,7 +264,7 @@ public class GroupRepository extends DepotRepository
         throws PersistenceException
     {
         GroupMembershipCount count =
-            load(GroupMembershipCount.class, new Where(GroupMembershipRecord.GROUP_ID, groupId),
+            load(GroupMembershipCount.class, new Where(GroupMembershipRecord.GROUP_ID_C, groupId),
                  new FieldOverride(GroupMembershipCount.COUNT, "count(*)"),
                  new FromOverride(GroupMembershipRecord.class));
         if (count == null) {
@@ -281,7 +280,7 @@ public class GroupRepository extends DepotRepository
         throws PersistenceException
     {
         return findAll(GroupMembershipRecord.class,
-                       new Where(GroupMembershipRecord.GROUP_ID, groupId));
+                       new Where(GroupMembershipRecord.GROUP_ID_C, groupId));
     }
 
     /**
@@ -291,7 +290,7 @@ public class GroupRepository extends DepotRepository
         throws PersistenceException
     {
         return findAll(GroupMembershipRecord.class,
-                       new Where(GroupMembershipRecord.MEMBER_ID, memberId));
+                       new Where(GroupMembershipRecord.MEMBER_ID_C, memberId));
     }
 
     /**
@@ -302,7 +301,7 @@ public class GroupRepository extends DepotRepository
     {
         return findAll(GroupRecord.class,
                        new Join(GroupRecord.GROUP_ID_C, GroupMembershipRecord.GROUP_ID_C),
-                       new Where(GroupMembershipRecord.MEMBER_ID, memberId));
+                       new Where(GroupMembershipRecord.MEMBER_ID_C, memberId));
     }
     
     protected void updateMemberCount (int groupId) 

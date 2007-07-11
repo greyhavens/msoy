@@ -135,7 +135,7 @@ public class MemberRepository extends DepotRepository
     public MemberRecord loadMember (String accountName)
         throws PersistenceException
     {
-        return load(MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME, accountName));
+        return load(MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME_C, accountName));
     }
 
     /**
@@ -243,7 +243,7 @@ public class MemberRepository extends DepotRepository
         } catch (DuplicateKeyException dke) {
             // if that fails with a duplicate key, reuse the old record but adjust its expiration
             SessionRecord esess = load(
-                SessionRecord.class, new Where(SessionRecord.MEMBER_ID, memberId));
+                SessionRecord.class, new Where(SessionRecord.MEMBER_ID_C, memberId));
             esess.expires = nsess.expires;
             update(esess, SessionRecord.EXPIRES);
 
@@ -366,7 +366,7 @@ public class MemberRepository extends DepotRepository
     {
         // TODO: Cache Invalidation
         int mods = updatePartial(
-            MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME, accountName), null,
+            MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME_C, accountName), null,
             MemberRecord.ACCOUNT_NAME, disabledName);
         switch (mods) {
         case 0:
@@ -496,7 +496,7 @@ public class MemberRepository extends DepotRepository
         List<MemberRecord> activeUsers;
         if (lastSession != null) {
             activeUsers = findAll(MemberRecord.class, new Where(
-                new GreaterThanEquals(MemberRecord.LAST_SESSION, lastSession)));
+                new GreaterThanEquals(MemberRecord.LAST_SESSION_C, lastSession)));
         } else {
             activeUsers = findAll(MemberRecord.class);
         }
@@ -547,7 +547,7 @@ public class MemberRepository extends DepotRepository
     public boolean inviteAvailable (String inviteId)
         throws PersistenceException
     {
-        return (load(InvitationRecord.class, new Where(InvitationRecord.INVITE_ID, inviteId))).
+        return (load(InvitationRecord.class, new Where(InvitationRecord.INVITE_ID_C, inviteId))).
             inviteeId == 0;
     }
 
@@ -573,7 +573,7 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         return findAll(InvitationRecord.class, new Where(new And(new Equals(
-            InvitationRecord.INVITER_ID, memberId), new Equals(InvitationRecord.INVITEE_ID,
+            InvitationRecord.INVITER_ID_C, memberId), new Equals(InvitationRecord.INVITEE_ID_C,
             0))));
     }
 
@@ -584,7 +584,7 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         InvitationRecord invRec = load(
-            InvitationRecord.class, new Where(InvitationRecord.INVITE_ID, inviteId));
+            InvitationRecord.class, new Where(InvitationRecord.INVITE_ID_C, inviteId));
         if (invRec != null && invRec.viewed == null) {
             invRec.viewed = new Timestamp((new java.util.Date()).getTime());
             update(invRec, InvitationRecord.VIEWED);
@@ -673,10 +673,10 @@ public class MemberRepository extends DepotRepository
     {
         List<FriendRecord> friends = findAll(
             FriendRecord.class,
-            new Where(new And(new Or(new And(new Equals(FriendRecord.INVITER_ID, firstId),
-                                             new Equals(FriendRecord.INVITEE_ID, secondId)),
-                                     new And(new Equals(FriendRecord.INVITER_ID, secondId),
-                                             new Equals(FriendRecord.INVITEE_ID, firstId))))));
+            new Where(new And(new Or(new And(new Equals(FriendRecord.INVITER_ID_C, firstId),
+                                             new Equals(FriendRecord.INVITEE_ID_C, secondId)),
+                                     new And(new Equals(FriendRecord.INVITER_ID_C, secondId),
+                                             new Equals(FriendRecord.INVITEE_ID_C, firstId))))));
         return friends.size() > 0;
     }
 
@@ -749,11 +749,11 @@ public class MemberRepository extends DepotRepository
         // see if there is already a connection, either way
         ArrayList<FriendRecord> existing = new ArrayList<FriendRecord>();
         existing.addAll(findAll(FriendRecord.class,
-                                new Where(FriendRecord.INVITER_ID, memberId,
-                                          FriendRecord.INVITEE_ID, otherId)));
+                                new Where(FriendRecord.INVITER_ID_C, memberId,
+                                          FriendRecord.INVITEE_ID_C, otherId)));
         existing.addAll(findAll(FriendRecord.class,
-                                new Where(FriendRecord.INVITER_ID, otherId,
-                                          FriendRecord.INVITEE_ID, memberId)));
+                                new Where(FriendRecord.INVITER_ID_C, otherId,
+                                          FriendRecord.INVITEE_ID_C, memberId)));
 
         // invalidate the FriendsCache for both members
         _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, memberId));
@@ -814,8 +814,8 @@ public class MemberRepository extends DepotRepository
         };
 
         deleteAll(FriendRecord.class,
-                  new Where(new Or(new Equals(FriendRecord.INVITER_ID, memberId),
-                                   new Equals(FriendRecord.INVITEE_ID, memberId))),
+                  new Where(new Or(new Equals(FriendRecord.INVITER_ID_C, memberId),
+                                   new Equals(FriendRecord.INVITEE_ID_C, memberId))),
                   invalidator);
     }
 

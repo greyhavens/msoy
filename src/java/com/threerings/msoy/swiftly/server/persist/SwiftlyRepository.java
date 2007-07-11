@@ -61,7 +61,7 @@ public class SwiftlyRepository extends DepotRepository
     {
         return findAll(SwiftlyProjectRecord.class,
                 new Join(SwiftlyProjectRecord.PROJECT_ID_C, SwiftlyCollaboratorsRecord.PROJECT_ID_C),
-                new Where(new And(new Equals(SwiftlyCollaboratorsRecord.MEMBER_ID, memberId),
+                new Where(new And(new Equals(SwiftlyCollaboratorsRecord.MEMBER_ID_C, memberId),
                 new Equals(SwiftlyProjectRecord.DELETED_C, false))));
     }
 
@@ -127,8 +127,8 @@ public class SwiftlyRepository extends DepotRepository
 
             // ownerId,projectName already exists, return it
             return load(SwiftlyProjectRecord.class,
-                        new Where(SwiftlyProjectRecord.OWNER_ID, record.ownerId,
-                                  SwiftlyProjectRecord.PROJECT_NAME, record.projectName));
+                        new Where(SwiftlyProjectRecord.OWNER_ID_C, record.ownerId,
+                                  SwiftlyProjectRecord.PROJECT_NAME_C, record.projectName));
         }
         return record;
     }
@@ -204,10 +204,10 @@ public class SwiftlyRepository extends DepotRepository
             result = findAll(SwiftlySVNStorageRecord.class,
                 new Where(
                     new And(
-                        new Equals(SwiftlySVNStorageRecord.PROTOCOL, protocol),
-                        new Equals(SwiftlySVNStorageRecord.HOST, host),
-                        new Equals(SwiftlySVNStorageRecord.PORT, port),
-                        new Equals(SwiftlySVNStorageRecord.BASE_DIR, baseDir)
+                        new Equals(SwiftlySVNStorageRecord.PROTOCOL_C, protocol),
+                        new Equals(SwiftlySVNStorageRecord.HOST_C, host),
+                        new Equals(SwiftlySVNStorageRecord.PORT_C, port),
+                        new Equals(SwiftlySVNStorageRecord.BASE_DIR_C, baseDir)
                     )
                 )
             );
@@ -227,7 +227,7 @@ public class SwiftlyRepository extends DepotRepository
         throws PersistenceException
     {
         return findAll(SwiftlyCollaboratorsRecord.class,
-                       new Where(SwiftlyCollaboratorsRecord.PROJECT_ID, projectId));
+                       new Where(SwiftlyCollaboratorsRecord.PROJECT_ID_C, projectId));
     }
 
     /**
@@ -237,7 +237,7 @@ public class SwiftlyRepository extends DepotRepository
         throws PersistenceException
     {
         return findAll(SwiftlyCollaboratorsRecord.class,
-                       new Where(SwiftlyCollaboratorsRecord.MEMBER_ID, memberId));
+                       new Where(SwiftlyCollaboratorsRecord.MEMBER_ID_C, memberId));
     }
 
     /**

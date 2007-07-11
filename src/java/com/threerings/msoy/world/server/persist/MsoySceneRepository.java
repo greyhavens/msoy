@@ -85,8 +85,8 @@ public class MsoySceneRepository extends DepotRepository
         throws PersistenceException
     {
         ArrayList<SceneBookmarkEntry> marks = new ArrayList<SceneBookmarkEntry>();
-        Where where = new Where(new And(new Equals(SceneRecord.OWNER_TYPE, ownerType),
-                                        new Equals(SceneRecord.OWNER_ID, memberId)));
+        Where where = new Where(new And(new Equals(SceneRecord.OWNER_TYPE_C, ownerType),
+                                        new Equals(SceneRecord.OWNER_ID_C, memberId)));
         // TODO: use a @Computed record?
         for (SceneRecord scene : findAll(SceneRecord.class, where)) {
             marks.add(new SceneBookmarkEntry(scene.sceneId, scene.name, 0L));
@@ -102,7 +102,7 @@ public class MsoySceneRepository extends DepotRepository
     {
         HashIntMap<String> names = new HashIntMap<String>();
         // TODO: use a @Computed record?
-        Where where = new Where(new In(SceneRecord.SCENE_ID, IntListUtil.box(scenes)));
+        Where where = new Where(new In(SceneRecord.SCENE_ID_C, IntListUtil.box(scenes)));
         for (SceneRecord scene : findAll(SceneRecord.class, where)) {
             names.put(scene.sceneId, scene.name);
         }
@@ -130,7 +130,7 @@ public class MsoySceneRepository extends DepotRepository
     {
         UpdateList list = new UpdateList();
         for (SceneUpdateRecord record : findAll(
-                 SceneUpdateRecord.class, new Where(SceneUpdateRecord.SCENE_ID, sceneId),
+                 SceneUpdateRecord.class, new Where(SceneUpdateRecord.SCENE_ID_C, sceneId),
                  OrderBy.ascending(SceneUpdateRecord.SCENE_VERSION))) {
             list.addUpdate(_updateMarshaller.decodeUpdate(
                                sceneId, record.sceneVersion, record.updateType, record.data));
@@ -150,7 +150,7 @@ public class MsoySceneRepository extends DepotRepository
 
         // load up all of our furni data
         ArrayList<FurniData> flist = new ArrayList<FurniData>();
-        Where where = new Where(SceneFurniRecord.SCENE_ID, sceneId);
+        Where where = new Where(SceneFurniRecord.SCENE_ID_C, sceneId);
         for (SceneFurniRecord furni : findAll(SceneFurniRecord.class, where)) {
             flist.add(furni.toFurniData());
         }
@@ -293,7 +293,7 @@ public class MsoySceneRepository extends DepotRepository
         insert(record);
 
         // now load up furni from the stock scene
-        Where where = new Where(SceneFurniRecord.SCENE_ID, stock.getSceneId());
+        Where where = new Where(SceneFurniRecord.SCENE_ID_C, stock.getSceneId());
         for (SceneFurniRecord furni : findAll(SceneFurniRecord.class, where)) {
             furni.sceneId = record.sceneId;
             // if the scene has a portal pointing to the default public space; rewrite it to point
@@ -346,7 +346,7 @@ public class MsoySceneRepository extends DepotRepository
         // then prune the older updates
         int minVersion = update.getSceneVersion() - MAX_UPDATES_PER_SCENE;
         deleteAll(SceneUpdateRecord.class,
-                  new Where(new LessThan(SceneUpdateRecord.SCENE_VERSION, minVersion)),
+                  new Where(new LessThan(SceneUpdateRecord.SCENE_VERSION_C, minVersion)),
                   null); // TODO: cache invalidator
     }
 

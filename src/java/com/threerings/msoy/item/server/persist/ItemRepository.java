@@ -146,7 +146,7 @@ public abstract class ItemRepository<
     public List<T> loadOriginalItems (int ownerId)
         throws PersistenceException
     {
-        return findAll(getItemClass(), new Where(ItemRecord.OWNER_ID, ownerId));
+        return findAll(getItemClass(), new Where(ItemRecord.OWNER_ID_C, ownerId));
     }
 
     /**
@@ -167,7 +167,7 @@ public abstract class ItemRepository<
         // Since we don't know how many we'll find of each kind (cloned, orig), we load the max
         // from each.
         Limit limit = new Limit(0, maxCount);
-        List<T> originals = findAll(getItemClass(), new Where(ItemRecord.OWNER_ID, ownerId),
+        List<T> originals = findAll(getItemClass(), new Where(ItemRecord.OWNER_ID_C, ownerId),
             OrderBy.descending(ItemRecord.LAST_TOUCHED), limit);
         List<T> clones = loadClonedItems(new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId),
             OrderBy.descending(CloneRecord.LAST_TOUCHED), limit);
@@ -220,8 +220,8 @@ public abstract class ItemRepository<
         return findAll(
             getItemClass(),
             new Where(all ?
-                      new Equals(new BitAnd(ItemRecord.FLAGS, flagMask), flagMask) :
-                      new GreaterThan(new BitAnd(ItemRecord.FLAGS, flagMask), 0)),
+                      new Equals(new BitAnd(ItemRecord.FLAGS_C, flagMask), flagMask) :
+                      new GreaterThan(new BitAnd(ItemRecord.FLAGS_C, flagMask), 0)),
             new Limit(0, count));
     }
 
@@ -241,7 +241,7 @@ public abstract class ItemRepository<
     public List<CLT> loadCloneRecords (int itemId)
         throws PersistenceException
     {
-        return findAll(getCloneClass(), new Where(CloneRecord.ORIGINAL_ITEM_ID, itemId));
+        return findAll(getCloneClass(), new Where(CloneRecord.ORIGINAL_ITEM_ID_C, itemId));
     }
 
     /**
@@ -330,7 +330,7 @@ public abstract class ItemRepository<
                 OrderBy.random(),
                 new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
                     getTagRepository().getTagClass(), TagRecord.TARGET_ID),
-                new Where(new In(TagRecord.TAG_ID, tagIds))
+                new Where(new In(TagRecord.TAG_ID_C, tagIds))
             });
 
         if (records.isEmpty()) {
@@ -594,7 +594,7 @@ public abstract class ItemRepository<
                     });
                 }
             };
-            deleteAll(getRatingClass(), new Where(RatingRecord.ITEM_ID, itemId), inv);
+            deleteAll(getRatingClass(), new Where(RatingRecord.ITEM_ID_C, itemId), inv);
 
 //             // invalidate and delete tag records for this item
 //             inv = new CacheInvalidator() {
@@ -680,8 +680,8 @@ public abstract class ItemRepository<
             new Key<T>(getItemClass(), ItemRecord.ITEM_ID, item.itemId);
         int modifiedRows =  updatePartial(
             item.itemId < 0 ? getCloneClass() : getItemClass(),
-            new Where(ItemRecord.ITEM_ID, item.itemId,
-                      ItemRecord.OWNER_ID, item.ownerId),
+            new Where(ItemRecord.ITEM_ID_C, item.itemId,
+                      ItemRecord.OWNER_ID_C, item.ownerId),
             key,
             ItemRecord.OWNER_ID, newOwnerId,
             ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
@@ -775,7 +775,8 @@ public abstract class ItemRepository<
         ArrayList<SQLOperator> whereBits = new ArrayList<SQLOperator>();
 
         if (search != null && search.length() > 0) {
-            whereBits.add(new Like(ItemRecord.NAME, "%" + search + "%"));
+            whereBits.add(new Like(
+                new ColumnExp(getItemClass(), ItemRecord.NAME), "%" + search + "%"));
         }
 
         if (tag > 0) {
@@ -783,16 +784,18 @@ public abstract class ItemRepository<
             clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
                                  getTagRepository().getTagClass(), TagRecord.TARGET_ID));
             // and add a condition
-            whereBits.add(new Equals(TagRecord.TAG_ID, tag));
+            whereBits.add(new Equals(TagRecord.TAG_ID_C, tag));
         }
 
         if (creator > 0) {
-            whereBits.add(new Equals(ItemRecord.CREATOR_ID, creator));
+            whereBits.add(new Equals(new ColumnExp(
+                getItemClass(), ItemRecord.CREATOR_ID), creator));
         }
 
         if (!mature) {
             // add a check to make sure ItemRecord.FLAG_MATURE is not set on any returned items
-            whereBits.add(new Equals(new BitAnd(ItemRecord.FLAGS, Item.FLAG_MATURE), 0));
+            whereBits.add(new Equals(new BitAnd(
+                new ColumnExp(getItemClass(), ItemRecord.FLAGS), Item.FLAG_MATURE), 0));
         }
 
         if (whereBits.size() > 0) {

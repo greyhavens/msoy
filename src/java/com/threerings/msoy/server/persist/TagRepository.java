@@ -111,7 +111,7 @@ public abstract class TagRepository extends DepotRepository
         throws PersistenceException
     {
         return findAll(TagNameRecord.class,
-                       new Where(TagRecord.TARGET_ID, targetId),
+                       new Where(TagRecord.TARGET_ID_C, targetId),
                        new Join(TagNameRecord.TAG_ID_C,
                                 new ColumnExp(_tagClass, TagRecord.TAG_ID)));
     }
@@ -122,7 +122,7 @@ public abstract class TagRepository extends DepotRepository
     public List<TagHistoryRecord> getTagHistoryByTarget (int targetId)
         throws PersistenceException
     {
-        return findAll(_tagHistoryClass, new Where(TagHistoryRecord.TARGET_ID, targetId));
+        return findAll(_tagHistoryClass, new Where(TagHistoryRecord.TARGET_ID_C, targetId));
     }
 
     /**
@@ -131,7 +131,7 @@ public abstract class TagRepository extends DepotRepository
     public List<TagHistoryRecord> getTagHistoryByMember (int memberId)
         throws PersistenceException
     {
-        return findAll(_tagHistoryClass, new Where(TagHistoryRecord.MEMBER_ID, memberId));
+        return findAll(_tagHistoryClass, new Where(TagHistoryRecord.MEMBER_ID_C, memberId));
     }
 
     /**
@@ -149,7 +149,7 @@ public abstract class TagRepository extends DepotRepository
     public TagNameRecord getTag (String tagName)
         throws PersistenceException
     {
-        return load(TagNameRecord.class, new Where(TagNameRecord.TAG, tagName));
+        return load(TagNameRecord.class, new Where(TagNameRecord.TAG_C, tagName));
     }
 
     /**

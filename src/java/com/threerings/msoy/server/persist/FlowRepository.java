@@ -108,7 +108,7 @@ public class FlowRepository extends DepotRepository
         throws PersistenceException
     {
         // load up all of their actions since our last humanity assessment
-        Where condition = new Where(MemberActionLogRecord.MEMBER_ID, memberId);
+        Where condition = new Where(MemberActionLogRecord.MEMBER_ID_C, memberId);
         List<MemberActionLogRecord> records = findAll(MemberActionLogRecord.class, condition);
 
         // if they've done nothing of note, do not adjust their humanity
@@ -165,7 +165,7 @@ public class FlowRepository extends DepotRepository
             // load all actions logged since our last assessment
             List<GameFlowSummaryRecord> records =
                 findAll(GameFlowSummaryRecord.class,
-                    new Where(GameFlowGrantLogRecord.GAME_ID, gameId),
+                    new Where(GameFlowGrantLogRecord.GAME_ID_C, gameId),
                     new FromOverride(GameFlowGrantLogRecord.class),
                     new FieldOverride(GameFlowSummaryRecord.GAME_ID,
                                       GameFlowGrantLogRecord.GAME_ID_C),
@@ -179,7 +179,7 @@ public class FlowRepository extends DepotRepository
 
             // then delete the records
             deleteAll(MemberActionLogRecord.class,
-                      new Where(GameFlowGrantLogRecord.GAME_ID, gameId),
+                      new Where(GameFlowGrantLogRecord.GAME_ID_C, gameId),
                       null);
         }
         store(gameRecord);
@@ -193,7 +193,7 @@ public class FlowRepository extends DepotRepository
         throws PersistenceException
     {
         MemberRecord record =
-            load(MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME, accountName));
+            load(MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME_C, accountName));
         if (record == null) {
             throw new PersistenceException(
                 "Unknown member [accountName=" + accountName + ", action=" + action + "]");
@@ -295,7 +295,7 @@ public class FlowRepository extends DepotRepository
         do {
             mods = updateLiteral(
                 DailyFlowRecord.class,
-                new Where(DailyFlowRecord.TYPE, type, DailyFlowRecord.DATE, date),
+                new Where(DailyFlowRecord.TYPE_C, type, DailyFlowRecord.DATE_C, date),
                 null,
                 DailyFlowRecord.AMOUNT, DailyFlowRecord.AMOUNT + op + amount);
             if (mods == 0) {

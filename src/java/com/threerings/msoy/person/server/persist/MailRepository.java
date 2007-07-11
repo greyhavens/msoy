@@ -78,7 +78,7 @@ public class MailRepository extends DepotRepository
     {
         testFolders(memberId);
 
-        return findAll(MailFolderRecord.class, new Where(MailFolderRecord.OWNER_ID, memberId));
+        return findAll(MailFolderRecord.class, new Where(MailFolderRecord.OWNER_ID_C, memberId));
     }
 
     /**
@@ -229,7 +229,7 @@ public class MailRepository extends DepotRepository
         throws PersistenceException
     {
         if (findAll(MailFolderRecord.class,
-                    new Where(MailFolderRecord.OWNER_ID, memberId)).size() == 0) {
+                    new Where(MailFolderRecord.OWNER_ID_C, memberId)).size() == 0) {
             MailFolderRecord record = new MailFolderRecord();
             record.ownerId = memberId;
             record.nextMessageId = 1;
