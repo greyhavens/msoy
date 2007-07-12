@@ -20,6 +20,7 @@ import com.samskivert.util.OneLineLogFormatter;
 
 import net.sf.ehcache.CacheManager;
 
+import com.threerings.util.MessageManager;
 import com.threerings.util.Name;
 
 import com.threerings.presents.data.ClientObject;
@@ -93,6 +94,12 @@ public class MsoyServer extends WhirledServer
 
     /** Maintains a registry of runtime configuration information. */
     public static ConfigRegistry confReg;
+
+    /** Provides a mechanism for translating strings on the server. <em>Note:</em> avoid using this
+     * if at all possible. Delay translation to the client so that we can properly react to the
+     * client's locale. Translating on the server means that we treat all clients as if they are
+     * using the default locale of the server. */
+    public static MessageManager msgMan = new MessageManager("rsrc.i18n");
 
     /** All blocking Swiftly subversion actions must occur on this thread. */
     public static Invoker swiftlyInvoker;

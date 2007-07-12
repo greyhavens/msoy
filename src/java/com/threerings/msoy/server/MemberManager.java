@@ -242,9 +242,11 @@ public class MemberManager
         MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
         if (add) {
+            String subject = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_subject");
+            String body = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_body");
             MsoyServer.mailMan.deliverMessage(
-                user.memberName.getMemberId(), friendId, "Be My Friend",
-                null, new FriendInviteObject(), new ConfirmAdapter(lner));
+                user.memberName.getMemberId(), friendId, subject, body,
+                new FriendInviteObject(), new ConfirmAdapter(lner));
         } else {
             alterFriend(user, user.getMemberId(), friendId, add, new ConfirmAdapter(lner));
         }
