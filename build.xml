@@ -514,9 +514,22 @@
     <!-- sign the lwjgl-enabled client -->
     <if><equals arg1="${ident}" arg2="lwjgl-game"/>
       <then>
-        <property file="${cert_dir}/certificate.properties"/>
-        <signjar jar="${deploy.dir}/${ident}-client.jar" keystore="${sign.keystore}"
-                 alias="${sign.alias}" keypass="${sign.keypass}" storepass="${sign.storepass}"/>
+        <!-- Sign the resulting jar file -->
+        <if><isset property="cert_dir"/>
+          <then>
+            <property file="${cert_dir}/certificate.properties"/>
+          </then>
+          <else>
+            <!-- No official keystore, use the development keystore -->
+            <echo message="Signing with self-signed development certificate"/>
+            <echo message="(cert_dir is not set, using development keystore)"/>
+            <property name="sign.keystore" value="lib/dev-keystore.dat"/>
+            <property name="sign.storepass" value="secret"/>
+            <property name="sign.alias" value="threerings-dev"/>
+          </else>
+        </if>
+        <signjar jar="${deploy.dir}/${ident}-client.jar" keystore="${sign.keystore}" lazy="true"
+                 alias="${sign.alias}" storepass="${sign.storepass}"/>
       </then>
     </if>
 
