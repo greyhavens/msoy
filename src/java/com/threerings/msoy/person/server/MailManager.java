@@ -23,12 +23,12 @@ import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.server.JSONMarshaller;
-import com.threerings.msoy.server.MailSender;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.util.JSONMarshaller;
+import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.person.server.persist.MailFolderRecord;
@@ -65,8 +65,8 @@ public class MailManager
     public void getMessage (final int memberId, final int folderId, final int messageId,
                             final boolean flagAsRead, ResultListener<MailMessage> waiter)
     {
-        final MemberObject mObj =
-                folderId == MailFolder.INBOX_FOLDER_ID ? MsoyServer.lookupMember(memberId) : null;
+        final MemberObject mObj = folderId == MailFolder.INBOX_FOLDER_ID ?
+            MsoyServer.lookupMember(memberId) : null;
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<MailMessage>(waiter) {
             public MailMessage invokePersistResult () throws PersistenceException {
                 MailMessageRecord record = _mailRepo.getMessage(memberId, folderId, messageId);
@@ -94,8 +94,9 @@ public class MailManager
     }
 
     /**
-     * Deliver a message, i.e. file one copy of it in the sender's 'Sent' folder,
-     * and one copy in the recipient's 'Inbox' folder.
+     * Deliver a message, i.e. file one copy of it in the sender's 'Sent' folder, and one copy in
+     * the recipient's 'Inbox' folder. <em>Note:</em> because this method immediately posts an
+     * invoker unit, it may be called from any thread.
      */
     public void deliverMessage (final int senderId, final int recipientId, final String subject,
                                 final String text, final MailPayload payload,

@@ -14,9 +14,9 @@ import com.samskivert.util.Tuple;
 import com.threerings.msoy.person.server.persist.MailFolderRecord;
 import com.threerings.msoy.person.server.persist.MailMessageRecord;
 import com.threerings.msoy.person.server.persist.MailRepository;
-import com.threerings.msoy.server.JSONMarshaller;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.util.JSONMarshaller;
 
 import com.threerings.msoy.web.client.MailService;
 import com.threerings.msoy.web.data.MailFolder;

@@ -127,8 +127,11 @@ public class AdminServlet extends MsoyServiceServlet
         }
 
         try {
-            MsoyServer.memberRepo.grantInvites(numberInvitations, activeSince != null ? 
-                new Timestamp(activeSince.getTime()) : null);
+            Timestamp since = activeSince != null ? new Timestamp(activeSince.getTime()) : null;
+            for (int memberId : MsoyServer.memberRepo.grantInvites(numberInvitations, since)) {
+                sendGotInvitesMail(memrec.memberId, memberId);
+            }
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "grantInvitations failed [num=" + numberInvitations + 
                 ", activeSince=" + activeSince + "]", pe);
@@ -147,6 +150,8 @@ public class AdminServlet extends MsoyServiceServlet
 
         try {
             MsoyServer.memberRepo.grantInvites(memberId, numberInvitations);
+            sendGotInvitesMail(memrec.memberId, memberId);
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "grantInvitations failed [num=" + numberInvitations +
                 ", memberId=" + memberId + "]", pe);
@@ -195,6 +200,11 @@ public class AdminServlet extends MsoyServiceServlet
             builder.append(PASSWORD_LETTERS.charAt(RandomUtil.getInt(PASSWORD_LETTERS.length())));
         }
         return builder.toString();
+    }
+
+    protected void sendGotInvitesMail (int senderId, int recipientId)
+    {
+        // TODO
     }
 
     protected static final String PASSWORD_LETTERS = "abcdefghijklmnopqrstuvwxyz0123456789";

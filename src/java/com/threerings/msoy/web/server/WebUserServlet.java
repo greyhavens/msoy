@@ -19,10 +19,10 @@ import com.samskivert.util.ResultListener;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
-import com.threerings.msoy.server.MailSender;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.client.DeploymentConfig;

@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.StringUtil;
 
@@ -466,7 +467,7 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Grants the given number of invites to the given memberId
+     * Grants the specified number of invites to the given member.
      */
     public void grantInvites (int memberId, int number)
         throws PersistenceException
@@ -475,6 +476,7 @@ public class MemberRepository extends DepotRepository
         if (inviterRec != null) {
             inviterRec.invitesGranted += number;
             update(inviterRec, InviterRecord.INVITES_GRANTED);
+
         } else {
             inviterRec = new InviterRecord();
             inviterRec.memberId = memberId;
@@ -489,8 +491,10 @@ public class MemberRepository extends DepotRepository
      *
      * @param lastSession Anybody who's been logged in since this timestamp will get the invites.
      *                    If this parameter is null, everybody will get the invites.
+     *
+     * @return an array containing the member ids of all members that received invites.
      */
-    public void grantInvites (int number, Timestamp lastSession)
+    public int[] grantInvites (int number, Timestamp lastSession)
         throws PersistenceException
     {
         List<MemberRecord> activeUsers;
@@ -501,9 +505,12 @@ public class MemberRepository extends DepotRepository
             activeUsers = findAll(MemberRecord.class);
         }
 
+        ArrayIntSet ids = new ArrayIntSet();
         for (MemberRecord memRec : activeUsers) {
             grantInvites(memRec.memberId, number);
+            ids.add(memRec.memberId);
         }
+        return ids.toIntArray();
     }
 
     /**

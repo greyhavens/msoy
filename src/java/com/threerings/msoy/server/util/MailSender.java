@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.server;
+package com.threerings.msoy.server.util;
 
 import java.io.StringWriter;
 import java.util.logging.Level;

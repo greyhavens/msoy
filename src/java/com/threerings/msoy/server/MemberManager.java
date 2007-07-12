@@ -21,6 +21,7 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.util.ConfirmAdapter;
 
 import com.threerings.crowd.server.PlaceManager;
 
@@ -235,26 +236,17 @@ public class MemberManager
 
     // from interface MemberProvider
     public void alterFriend (ClientObject caller, int friendId, boolean add,
-                             final InvocationService.ConfirmListener lner)
+                             InvocationService.ConfirmListener lner)
         throws InvocationException
     {
         MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
-        ResultListener<Void> rl = new ResultListener<Void>() {
-            public void requestCompleted (Void result) {
-                lner.requestProcessed();
-            }
-            public void requestFailed (Exception cause) {
-                lner.requestFailed(cause.getMessage());
-            }
-        };
         if (add) {
             MsoyServer.mailMan.deliverMessage(
                 user.memberName.getMemberId(), friendId, "Be My Friend",
-                null, new FriendInviteObject(), rl);
-
+                null, new FriendInviteObject(), new ConfirmAdapter(lner));
         } else {
-            alterFriend(user, user.getMemberId(), friendId, add, rl);
+            alterFriend(user, user.getMemberId(), friendId, add, new ConfirmAdapter(lner));
         }
     }
 

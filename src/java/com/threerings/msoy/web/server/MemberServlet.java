@@ -24,12 +24,12 @@ import com.samskivert.net.MailUtil;
 
 import org.apache.velocity.VelocityContext;
 
-import com.threerings.msoy.server.MailSender;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.chat.data.ChatChannel;
