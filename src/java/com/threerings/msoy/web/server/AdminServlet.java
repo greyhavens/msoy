@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.servlet.user.UserUtil;
+import com.samskivert.util.ComplainingListener;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Tuple;
@@ -129,7 +130,7 @@ public class AdminServlet extends MsoyServiceServlet
         try {
             Timestamp since = activeSince != null ? new Timestamp(activeSince.getTime()) : null;
             for (int memberId : MsoyServer.memberRepo.grantInvites(numberInvitations, since)) {
-                sendGotInvitesMail(memrec.memberId, memberId);
+                sendGotInvitesMail(memrec.memberId, memberId, numberInvitations);
             }
 
         } catch (PersistenceException pe) {
@@ -150,7 +151,7 @@ public class AdminServlet extends MsoyServiceServlet
 
         try {
             MsoyServer.memberRepo.grantInvites(memberId, numberInvitations);
-            sendGotInvitesMail(memrec.memberId, memberId);
+            sendGotInvitesMail(memrec.memberId, memberId, numberInvitations);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "grantInvitations failed [num=" + numberInvitations +
@@ -202,9 +203,14 @@ public class AdminServlet extends MsoyServiceServlet
         return builder.toString();
     }
 
-    protected void sendGotInvitesMail (int senderId, int recipientId)
+    protected void sendGotInvitesMail (int senderId, int recipientId, int number)
     {
-        // TODO
+        String subject = MsoyServer.msgMan.getBundle("server").get("m.got_invites_subject", number);
+        String body = MsoyServer.msgMan.getBundle("server").get("m.got_invites_body", number);
+        MsoyServer.mailMan.deliverMessage(
+            senderId, recipientId, subject, body, null,
+            new ComplainingListener<Void>(log, "Send got invites mail failed [sid=" + senderId +
+                                          ", rid=" + recipientId + "]"));
     }
 
     protected static final String PASSWORD_LETTERS = "abcdefghijklmnopqrstuvwxyz0123456789";
