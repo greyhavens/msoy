@@ -552,9 +552,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String noName();
 
   /**
-   * Translated "You have no Photos in your Inventory. Select the ''Stuff'' -> ''Inventory'' from the menu at the top of the page and upload some Photos!".
+   * Translated "You have no photos. Select ''Stuff'' -> ''My Stuff'' -> ''My Photos'' from the menu at the top of the page and upload some!".
    * 
-   * @return translated "You have no Photos in your Inventory. Select the ''Stuff'' -> ''Inventory'' from the menu at the top of the page and upload some Photos!"
+   * @return translated "You have no photos. Select ''Stuff'' -> ''My Stuff'' -> ''My Photos'' from the menu at the top of the page and upload some!"
    * @gwt.key haveNoImages
    */
   String haveNoImages();
