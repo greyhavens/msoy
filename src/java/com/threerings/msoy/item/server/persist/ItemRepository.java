@@ -189,10 +189,9 @@ public abstract class ItemRepository<
         });
 
         // remove any items beyond maxCount
-        list.subList(Math.min(size, maxCount), size).clear();
-//        for (int ii = size - 1; ii >= maxCount; ii--) {
-//            list.remove(ii);
-//        }
+        for (int ii = size - 1; ii >= maxCount; ii--) {
+            list.remove(ii);
+        }
 
         return list;
     }

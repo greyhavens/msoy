@@ -114,6 +114,11 @@ public class NotificationDirector extends BasicDirector
         var name :String = event.getName();
         if (name == MemberObject.NOTIFICATIONS) {
             updateNotifications();
+
+        } else if (name == MemberObject.FRIENDS) {
+            var entry :FriendEntry = event.getEntry() as FriendEntry;
+            dispatchChatNotification(MessageBundle.tcompose(
+                "m.friend_added", entry.name, entry.name.getMemberId()));
         }
     }
 
@@ -126,11 +131,9 @@ public class NotificationDirector extends BasicDirector
             var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
             // display the message if the status changed
             if (entry.online != oldEntry.online) {
-                var text :String = MessageBundle.tcompose(
+                dispatchChatNotification(MessageBundle.tcompose(
                     entry.online ? "m.friend_online" : "m.friend_offline",
-                    entry.name, entry.name.getMemberId());
-                var msg :NotifyMessage = new NotifyMessage(text);
-                _wctx.getChatDirector().dispatchMessage(msg, ChatCodes.USER_CHAT_TYPE);
+                    entry.name, entry.name.getMemberId()));
             }
         }
     }
@@ -146,6 +149,10 @@ public class NotificationDirector extends BasicDirector
             delete _announced[id];
             // and update the button if applicable
             updateNotifications();
+
+        } else if (name == MemberObject.FRIENDS) {
+            var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
+            dispatchChatNotification(MessageBundle.tcompose("m.friend_removed", oldEntry.name));
         }
     }
 
@@ -163,7 +170,7 @@ public class NotificationDirector extends BasicDirector
                 _announced[notif.id] = true;
                 var ann :String = notif.getAnnouncement();
                 if (ann != null) {
-                    _wctx.displayFeedback(MsoyCodes.NOTIFY_MSGS, ann);
+                    dispatchChatNotification(ann);
                 }
                 // if it's announcement-only, ack it
                 if (!notif.isPersistent()) {
@@ -185,6 +192,15 @@ public class NotificationDirector extends BasicDirector
         }
         // and update the button if there are any persistent notifications
         _wctx.getTopPanel().getControlBar().setNotificationsAvailable(hasPersistent);
+    }
+
+    /**
+     * Dispatch a notification chat message to the user.
+     */
+    protected function dispatchChatNotification (text :String) :void
+    {
+        var msg :NotifyMessage = new NotifyMessage(text);
+        _wctx.getChatDirector().dispatchMessage(msg, ChatCodes.USER_CHAT_TYPE);
     }
 
     protected var _wctx :WorldContext;
