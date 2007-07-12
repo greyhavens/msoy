@@ -58,4 +58,13 @@ public abstract class Notification extends SimpleStreamableObject
      * You can qualify the string if you want a different bundle.
      */
     public abstract String getAnnouncement ();
+
+    /**
+     * Get the UIComponent used to display this notification- this is only implemented
+     * on the actionscript side of things.
+     */
+    public Object getDisplay ()
+    {
+        return null;
+    }
 }

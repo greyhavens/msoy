@@ -134,6 +134,9 @@ public class MsoyController extends Controller
     /** Command to view the "my avatars" page. */
     public static const VIEW_MY_AVATARS :String= "ViewMyAvatars";
 
+    /** Command to view the "mail" page. */
+    public static const VIEW_MAIL :String= "ViewMail";
+
     /** Command to view the app in full-screen mode. */
     public static const TOGGLE_FULLSCREEN :String = "ToggleFullscreen";
 
@@ -356,6 +359,14 @@ public class MsoyController extends Controller
     public function handleViewMyAvatars () :void
     {
         handleInternalGo("inventory", "" + Item.AVATAR);
+    }
+
+    /**
+     * Handle the VIEW_MAIL command.
+     */
+    public function handleViewMail () :void
+    {
+        handleInternalGo("mail", "");
     }
 
     /**

@@ -13,6 +13,8 @@ import com.threerings.flex.CommandButton;
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 
+import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -33,7 +35,7 @@ import com.threerings.msoy.notify.data.NotifyMessage;
 import com.threerings.msoy.notify.data.Notification;
 
 public class NotificationDirector extends BasicDirector
-    implements SetListener
+    implements AttributeChangeListener, SetListener
 {
     public function NotificationDirector (ctx :WorldContext)
     {
@@ -92,6 +94,7 @@ public class NotificationDirector extends BasicDirector
 
         // and, let's always update the control bar button
         updateNotifications();
+        showStartupNotifications();
     }
 
     // from BasicDirector
@@ -106,6 +109,17 @@ public class NotificationDirector extends BasicDirector
     {
         super.fetchServices(client);
         _msvc = (client.requireService(MemberService) as MemberService);
+    }
+
+    // from interface AttributeChangeListener
+    public function attributeChanged (event :AttributeChangedEvent) :void
+    {
+        var name :String = event.getName();
+        if (name == MemberObject.HAS_NEW_MAIL) {
+            if (event.getValue() as Boolean) {
+                dispatchChatNotification("m.new_mail");
+            }
+        }
     }
 
     // from interface SetListener
@@ -154,6 +168,21 @@ public class NotificationDirector extends BasicDirector
             var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
             dispatchChatNotification(MessageBundle.tcompose("m.friend_removed", oldEntry.name));
         }
+    }
+
+    /**
+     * Called once the user is logged on and the chat system is ready.
+     * Display any notifications that we generate by inspecting the user object,
+     * or external data, or whatever.
+     */
+    protected function showStartupNotifications () :void
+    {
+        var us :MemberObject = _wctx.getMemberObject();
+        if (us.hasNewMail) {
+            dispatchChatNotification("m.new_mail");
+        }
+
+        // and so forth..
     }
 
     protected function updateNotifications () :void
