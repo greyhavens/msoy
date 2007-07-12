@@ -14,6 +14,7 @@ import com.threerings.ezgame.client.GameControlBackend;
 
 import com.threerings.msoy.client.WorldContext;
 
+import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameObject;
 import com.threerings.msoy.game.data.GameMemberInfo;
 
@@ -65,9 +66,13 @@ public class WhirledGameControlBackend extends GameControlBackend
         return (_ctx as WorldContext).getTopPanel().getPlaceViewBounds();
     }
 
-    protected function backToWhirled_v1 () :void
+    protected function backToWhirled_v1 (showLobby :Boolean = false) :void
     {
         (_ctx as WorldContext).getTopPanel().getControlBar().moveBack();
+        if (showLobby) {
+            var cfg :MsoyGameConfig = _ctrl.getPlaceConfig() as MsoyGameConfig;
+            (_ctx as WorldContext).getMsoyController().handleJoinGameLobby(cfg.getGameId());
+        }
     }
 
     // ------ Compatibility methods, for operating with old games
