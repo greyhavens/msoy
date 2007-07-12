@@ -498,10 +498,6 @@ public class RoomController extends SceneController
                     children: worldStates, enabled: canControl });
             }
 
-//            // and a menu item for making the user idle
-//            menuItems.push({ label: Msgs.GENERAL.get("b.go_idle"), enabled: !avatar.isIdle(),
-//                callback: _mctx.getMsoyController().forceIdle, arg: 2 });
-
         } else {
             // create a menu for clicking on someone else
             var memId :int = occInfo.getMemberId();
@@ -515,17 +511,20 @@ public class RoomController extends SceneController
                     { label: Msgs.GENERAL.get("b.visit_home"),
                       command: MsoyController.GO_MEMBER_HOME, arg: memId },
                     { label: Msgs.GENERAL.get("b.view_member"),
-                      command: MsoyController.VIEW_MEMBER, arg: memId },
-                    { label: Msgs.GENERAL.get(isFriend ? "b.removeAsFriend"
-                                                       : "b.addAsFriend"),
-                      command: MsoyController.ALTER_FRIEND, arg: [memId, !isFriend] });
+                      command: MsoyController.VIEW_MEMBER, arg: memId });
+                if (!us.isGuest()) {
+                    menuItems.push(
+                        { label: Msgs.GENERAL.get(isFriend ? "b.removeAsFriend"
+                                                           : "b.addAsFriend"),
+                          command: MsoyController.ALTER_FRIEND, arg: [memId, !isFriend] });
+                }
             }
         }
 
         // pop up the menu where the mouse is
         if (menuItems.length > 0) {
             var menu :CommandMenu = CommandMenu.createMenu(menuItems);
-// TODO: see note above, regarding avatar thumbnails.
+// TODO: see note in createChangeAvatarMenu, regarding avatar thumbnails.
 //            menu.variableRowHeight = true;
             menu.setDispatcher(_roomView);
             menu.show();
