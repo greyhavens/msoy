@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.data {
 
 import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.ezgame.data.GameDefinition;
 
@@ -36,6 +37,13 @@ public class MsoyGameDefinition extends GameDefinition
         super.readObject(ins);
 
         ins.readBoolean(); // the "lwjgl" variable is unused here...
+    }
+
+    override public function writeObject (out :ObjectOutputStream) :void
+    {
+        super.writeObject(out);
+
+        out.writeBoolean(false); // no, we don't need the lwjgl library...
     }
 }
 }
