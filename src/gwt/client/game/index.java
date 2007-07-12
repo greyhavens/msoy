@@ -118,12 +118,15 @@ public class index extends Page
                 // due to security restrictions and proxy the game jar through there as well
                 String gameServer = "http://" + config.server + ":" + config.httpPort;
                 String gameJar = gameServer + "/clients/" +
-                    DeploymentConfig.version + "/game-client.jar";
+                    DeploymentConfig.version + "/" + (config.lwjgl ? "lwjgl-" : "") +
+                    "game-client.jar";
                 WorldClient.displayJava(
                     WidgetUtil.createApplet(
                         "game", gameJar + "," + gameServer + config.gameMediaPath,
                         // TODO: allow games to specify their dimensions in their config
-                        "com.threerings.msoy.game.client.GameApplet", "100%", "600", args));
+                        "com.threerings.msoy.game.client." +
+                            (config.lwjgl ? "LWJGL" : "") + "GameApplet",
+                        "100%", "600", args));
             }
             break;
 

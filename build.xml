@@ -95,6 +95,10 @@
     <file name="lib/jetty-util-6.1.4.jar"/>
     <file name="lib/servlet-api-2.5-6.1.4.jar"/>
 
+    <file name="lib/servlet-api-2.5-6.1.4.jar"/>
+
+    <file name="lib/lwjgl-applet.jar"/>
+
     <!-- The following are used for aperture -->
     <file name="lib/aperture/aperture-2006.1-alpha-3.jar"/>
     <file name="lib/aperture/aperture-test-2006.1-alpha-3.jar"/>
@@ -509,12 +513,21 @@
       <libraryjar name="${rtClasses}"/>
     </proguard>
 
+    <!-- sign the lwjgl-enabled client -->
+    <if><equals arg1="${ident}" arg2="lwjgl-game"/>
+      <then>
+        <property file="${cert_dir}/certificate.properties"/>
+        <signjar jar="${deploy.dir}/${ident}-client.jar" keystore="${sign.keystore}"
+                 alias="${sign.alias}" keypass="${sign.keypass}" storepass="${sign.storepass}"/>
+      </then>
+    </if>
+
     <!-- Copy the resulting jar file into the document tree. -->
     <copy file="${deploy.dir}/${ident}-client.jar" todir="pages/clients/${build_version}"/>
   </target>
 
   <!-- builds our Java clients -->
-  <property name="jclients" value="admin,game,swiftly"/>
+  <property name="jclients" value="admin,game,lwjgl-game,swiftly"/>
   <target name="jclients" depends="dist">
     <for list="${jclients}" param="ident">
       <sequential>

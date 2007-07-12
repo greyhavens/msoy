@@ -11,6 +11,7 @@ import com.samskivert.util.StringUtil;
 import com.threerings.presents.data.InvocationCodes;
 
 import com.threerings.msoy.game.xml.MsoyGameParser;
+import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -67,7 +68,9 @@ public class GameServlet extends MsoyServiceServlet
                 match.minSeats = match.startSeats = 1;
                 match.maxSeats = 2;
             } else {
-                match = (MsoyMatchConfig)new MsoyGameParser().parseGame(game).match;
+                MsoyGameDefinition def = (MsoyGameDefinition)new MsoyGameParser().parseGame(game);
+                config.lwjgl = def.lwjgl;
+                match = (MsoyMatchConfig)def.match;
             }
 
         } catch (Exception e) {
@@ -91,7 +94,7 @@ public class GameServlet extends MsoyServiceServlet
             return null;
         }
 
-        // we have to proxy game jar files through the game server due to the applet sandbox 
+        // we have to proxy game jar files through the game server due to the applet sandbox
         config.gameMediaPath = (game.gameMedia.mimeType == MediaDesc.APPLICATION_JAVA_ARCHIVE) ?
             game.gameMedia.getProxyMediaPath() : game.gameMedia.getMediaPath();
         config.name = game.name;

@@ -172,6 +172,9 @@ public class GameEditor extends ItemEditor
         bits.setWidget(row++, 1, _manager = new TextBox());
         _manager.setVisibleLength(40);
 
+        bits.setText(row, 0, CEditem.emsgs.gameLWJGL());
+        bits.setWidget(row++, 1, _lwjgl = new CheckBox());
+
         super.createInterface(contents, tabs);
     }
 
@@ -211,6 +214,10 @@ public class GameEditor extends ItemEditor
                 elem.appendChild(xml.createTextNode(text));
                 xml.getFirstChild().appendChild(elem);
             }
+        }
+
+        if (_lwjgl.isChecked()) {
+            xml.getFirstChild().appendChild(xml.createElement("lwjgl"));
         }
 
         String extras = _extras.getText();
@@ -266,5 +273,6 @@ public class GameEditor extends ItemEditor
     protected ListBox _matchType;
     protected CheckBox _watchable;
     protected TextBox _ident, _controller, _manager;
+    protected CheckBox _lwjgl;
     protected TextArea _extras;
 }

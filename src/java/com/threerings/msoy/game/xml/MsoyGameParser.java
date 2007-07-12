@@ -29,6 +29,16 @@ import com.threerings.parlor.game.data.GameConfig;
  */
 public class MsoyGameParser extends GameParser
 {
+    public MsoyGameParser ()
+    {
+        _digester.addRule("game/lwjgl", new Rule() {
+            public void begin (String namespace, String name, Attributes attrs)
+                throws Exception {
+                ((MsoyGameDefinition)digester.peek()).lwjgl = true;
+            }
+        });
+    }
+
     /**
      * Parses a game definition from the supplied {@link Game} object.
      *
@@ -56,10 +66,10 @@ public class MsoyGameParser extends GameParser
         int mtype = Integer.valueOf(type);
         if (mtype == GameConfig.SEATED_GAME) {
             digester.addRule("game/match/unwatchable", new Rule() {
-                public void begin (String namespace, String name, Attributes attrs) 
+                public void begin (String namespace, String name, Attributes attrs)
                     throws Exception {
                     ((MsoyMatchConfig)digester.peek()).unwatchable = true;
-                } 
+                }
             });
         }
         super.addMatchParsingRules(digester, type);

@@ -11,6 +11,9 @@ import com.threerings.ezgame.data.GameDefinition;
  */
 public class MsoyGameDefinition extends GameDefinition
 {
+    /** If true, the game requires the LWJGL libraries. */
+    public boolean lwjgl;
+
     /**
      * Configures the path to this game's media.
      */

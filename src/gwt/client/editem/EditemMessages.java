@@ -216,9 +216,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String editorDescripTitle();
 
   /**
-   * Translated "Background type: ".
+   * Translated "Background type:".
    * 
-   * @return translated "Background type: "
+   * @return translated "Background type:"
    * @gwt.key decorType
    */
   String decorType();
@@ -358,6 +358,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key editorSave
    */
   String editorSave();
+
+  /**
+   * Translated "Uses LWJGL?".
+   * 
+   * @return translated "Uses LWJGL?"
+   * @gwt.key gameLWJGL
+   */
+  String gameLWJGL();
 
   /**
    * Translated "Item updated.".
