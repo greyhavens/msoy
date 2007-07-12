@@ -502,7 +502,7 @@ public class MemberRepository extends DepotRepository
         }
 
         for (MemberRecord memRec : activeUsers) {
-            grantInvites(number, memRec.memberId);
+            grantInvites(memRec.memberId, number);
         }
     }
 
