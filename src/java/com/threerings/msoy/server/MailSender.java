@@ -19,7 +19,7 @@ import com.threerings.msoy.web.data.ServiceException;
 import static com.threerings.msoy.Log.log;
 
 /**
- * Does something extraordinary.
+ * Utility methods for sending email, using the mail invoker thread if appropriate.
  */
 public class MailSender
 {
@@ -77,6 +77,7 @@ public class MailSender
 
         StringWriter sw = new StringWriter();
         try {
+            // TODO: have a server language and select templates based on that
             ve.mergeTemplate("rsrc/email/" + template + ".tmpl", "UTF-8", ctx, sw);
             String body = sw.toString();
             int nidx = body.indexOf("\n"); // first line is the subject

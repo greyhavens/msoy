@@ -20,7 +20,6 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.server.MailSender;
-import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -51,8 +50,7 @@ public class WebUserServlet extends MsoyServiceServlet
         checkClientVersion(clientVersion, username);
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
-        MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
-        return startSession(auth.authenticateSession(username, password), expireDays);
+        return startSession(MsoyServer.author.authenticateSession(username, password), expireDays);
     }
 
     // from interface WebUserService
@@ -88,9 +86,9 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
-        MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
-        final MemberRecord newAccount = auth.createAccount(username, password, displayName, 
-            ignoreRestrict, invite != null ? invite.inviter.getMemberId() : 0);
+        final MemberRecord newAccount = MsoyServer.author.createAccount(
+            username, password, displayName, ignoreRestrict,
+            invite != null ? invite.inviter.getMemberId() : 0);
         try {
             ProfileRecord prec = new ProfileRecord();
             prec.memberId = newAccount.memberId;
@@ -163,8 +161,7 @@ public class WebUserServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
-            String code = auth.generatePasswordResetCode(email);
+            String code = MsoyServer.author.generatePasswordResetCode(email);
             if (code == null) {
                 throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
             }
@@ -213,8 +210,7 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         // let the authenticator know that we updated our account name
-        MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
-        auth.updateAccount(mrec.accountName, newEmail, null, null);
+        MsoyServer.author.updateAccount(mrec.accountName, newEmail, null, null);
     }
 
     // from interface WebUserService
@@ -222,8 +218,7 @@ public class WebUserServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser(ident);
-        MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
-        auth.updateAccount(mrec.accountName, null, null, newPassword);
+        MsoyServer.author.updateAccount(mrec.accountName, null, null, newPassword);
     }
 
     // from interface WebUserService
@@ -237,14 +232,14 @@ public class WebUserServlet extends MsoyServiceServlet
                 return false;
             }
 
-            MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
-            if (!auth.validatePasswordResetCode(mrec.accountName, code)) {
+            if (!MsoyServer.author.validatePasswordResetCode(mrec.accountName, code)) {
+                String actual = MsoyServer.author.generatePasswordResetCode(mrec.accountName);
                 log.info("Code mismatch for password reset [id=" + memberId + ", code=" + code +
-                         ", actual=" + auth.generatePasswordResetCode(mrec.accountName) + "].");
+                         ", actual=" + actual + "].");
                 return false;
             }
 
-            auth.updateAccount(mrec.accountName, null, null, newPassword);
+            MsoyServer.author.updateAccount(mrec.accountName, null, null, newPassword);
             return true;
 
         } catch (PersistenceException pe) {
@@ -282,8 +277,7 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         // let the authenticator know that we updated our permaname
-        MsoyAuthenticator auth = (MsoyAuthenticator)MsoyServer.conmgr.getAuthenticator();
-        auth.updateAccount(mrec.accountName, null, permaName, null);
+        MsoyServer.author.updateAccount(mrec.accountName, null, permaName, null);
     }
 
     // from interface WebUserService

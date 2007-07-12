@@ -94,6 +94,15 @@ public class MsoyServer extends WhirledServer
     /** Maintains a registry of runtime configuration information. */
     public static ConfigRegistry confReg;
 
+    /** All blocking Swiftly subversion actions must occur on this thread. */
+    public static Invoker swiftlyInvoker;
+
+    /** An invoker for sending email. */
+    public static Invoker mailInvoker;
+
+    /** Handles authentication of sessions. */
+    public static MsoyAuthenticator author;
+
     /** Our runtime admin manager. */
     public static MsoyAdminManager adminMan = new MsoyAdminManager();
 
@@ -171,12 +180,6 @@ public class MsoyServer extends WhirledServer
 
     /** Handles notifications to clients. */
     public static NotificationManager notifyMan = new NotificationManager();
-
-    /** All blocking Swiftly subversion actions must occur on this thread. */
-    public static Invoker swiftlyInvoker;
-
-    /** An invoker for sending email. */
-    public static Invoker mailInvoker;
 
     /**
      * Creates an audit log with the specified name (which should not include
@@ -417,7 +420,7 @@ public class MsoyServer extends WhirledServer
     @Override
     protected Authenticator createAuthenticator ()
     {
-        return new MsoyAuthenticator();
+        return (author = new MsoyAuthenticator());
     }
 
     @Override
