@@ -546,7 +546,7 @@ public class ChatOverlay
         fmt.font = FONT;
         fmt.size = Prefs.getChatFontSize();
         fmt.underline = true;
-        fmt.color = 0xFF0000;
+        fmt.color = 0x0093dd;
         fmt.bold = true;
         fmt.url = "event:" + url;
         return fmt;

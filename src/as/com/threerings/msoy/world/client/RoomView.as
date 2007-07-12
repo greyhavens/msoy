@@ -429,14 +429,10 @@ public class RoomView extends AbstractRoomView
     }
 
     // from ChatInfoProvider
-    public function getSpeaker (speaker :Name) :Rectangle
+    public function getSpeakerInfo (speaker :Name) :Array
     {
         var actor :ActorSprite = getActorByName(speaker);
-        if (actor != null) {
-            // return the global screen coords, without decorations
-            return actor.getStageRect(false);
-        }
-        return null;
+        return (actor == null) ? null : actor.getChatInfo();
     }
 
     // from ChatInfoProvider

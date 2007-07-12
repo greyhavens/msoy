@@ -211,6 +211,18 @@ public class ActorSprite extends MsoySprite
     }
 
     /**
+     * Get the information needed by the ChatOverlay in order to draw
+     * chat bubbles around this actor.
+     *
+     * @return [ bounds, mouthPoint, tail termination distance ], all in
+     * screen coordinates.
+     */
+    public function getChatInfo () :Array
+    {
+        return [ getStageRect(false), "TODO", "TODO" ];
+    }
+
+    /**
      * Called to set up the actor's initial location upon entering a room.
      */
     public function setEntering (loc :MsoyLocation) :void
@@ -667,6 +679,14 @@ public class ActorSprite extends MsoySprite
     {
         // TODO
         Log.getLog(this).debug("user-set orientation is currently TODO.");
+    }
+
+    /**
+     * Update the actor's mouthspot.
+     */
+    internal function setMouthSpot (x :Number, y :Number, tailTerminationDist :Number) :void
+    {
+        // TODO
     }
 
     internal function setMoveSpeedFromUser (speed :Number) :void

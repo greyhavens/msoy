@@ -165,11 +165,10 @@ public class ComicOverlay extends ChatOverlay
         case PLACE: {
             var umsg :UserMessage = (msg as UserMessage);
             var speaker :Name = umsg.getSpeakerDisplayName();
-            var speakerLoc :Rectangle = _provider.getSpeaker(speaker);
-            if (speakerLoc == null) {
-                log.warning("ChatOverlay.InfoProvider doesn't know " +
-                            "the speaker! [speaker=" + speaker + ", type=" +
-                            type + "].");
+            var speakerInfo :Array = _provider.getSpeakerInfo(speaker);
+            if (speakerInfo == null) {
+                log.warning("ChatOverlay.InfoProvider doesn't know the speaker! " +
+                    "[speaker=" + speaker + ", type=" + type + "].");
                 return false;
             }
 
@@ -197,7 +196,7 @@ public class ComicOverlay extends ChatOverlay
 //            }
 
             // TODO: adapt above code, with formats
-            if (createBubble(msg, type, speaker, speakerLoc)) {
+            if (createBubble(msg, type, speaker, speakerInfo)) {
                 return true; // EXIT
             }
             // else: turn into subtitle
@@ -239,12 +238,13 @@ public class ComicOverlay extends ChatOverlay
     /**
      * Create a chat bubble with the specified type and text.
      *
-     * @param speakerloc if non-null, specifies that a tail should be added which points to that
-     * location.
+     * @param speakerInfo if non-null, contains the speaker info described in
+     * ChatInfoProvider.getSpeakerInfo().
+     *
      * @return true if we successfully laid out the bubble
      */
     protected function createBubble (
-        msg :ChatMessage, type :int, speaker :Name, speakerloc :Rectangle) :Boolean
+        msg :ChatMessage, type :int, speaker :Name, speakerInfo :Array) :Boolean
     {
         var ii :int;
         var texts :Array = formatMessage(msg, type, false, _userBubbleFmt);
@@ -259,18 +259,19 @@ public class ComicOverlay extends ChatOverlay
         var oldbubs :Array = getAndExpireBubbles(speaker);
         var numold :int = oldbubs.length;
 
+        var speakerBounds :Rectangle = (speakerInfo == null) ? null : (speakerInfo[0] as Rectangle);
         var placer :Rectangle;
         var bigR :Rectangle = null;
         if (numold == 0) {
             placer = r.clone();
-            positionRectIdeally(placer, type, speakerloc);
+            positionRectIdeally(placer, type, speakerBounds);
 
         } else {
             // get a big rectangle encompassing the old and new
             bigR = getRectWithOlds(r, oldbubs);
             placer = bigR.clone();
 
-            positionRectIdeally(placer, type, speakerloc);
+            positionRectIdeally(placer, type, speakerBounds);
             // we actually try to place midway between ideal and old and adjust up half the height
             // of the new boy
             placer.x = (placer.x + bigR.x) / 2;
@@ -313,8 +314,8 @@ public class ComicOverlay extends ChatOverlay
         _overlay.addChild(bubble);
 
         // if we have a tail, add it now, now that it's added
-        if (speakerloc != null) {
-            drawTailShape(bubble, type, speakerloc);
+        if (speakerInfo != null) {
+            drawTailShape(bubble, type, speakerInfo);
         }
 
         // and we need to dirty all the bubbles because they'll all be painted in slightly
@@ -354,7 +355,7 @@ public class ComicOverlay extends ChatOverlay
     /**
      * Draw the tail for the specified bubble.
      */
-    protected function drawTailShape (bubble :BubbleGlyph, type :int, speaker :Rectangle) :void
+    protected function drawTailShape (bubble :BubbleGlyph, type :int, speakerInfo :Array) :void
     {
         if (modeOf(type) == EMOTE) {
             return; // no tail for emotes
@@ -366,8 +367,9 @@ public class ComicOverlay extends ChatOverlay
         var midY :Number = bubRect.height/2;
 
         // the speaker point is 1/2-width through the speaker bounding box, and 1/3 from the top.
+        var speakerRect :Rectangle = speakerInfo[0] as Rectangle;
         var speakerP :Point = bubble.globalToLocal(
-            new Point(speaker.x + speaker.width/2, speaker.y + speaker.height/3));
+            new Point(speakerRect.x + speakerRect.width/2, speakerRect.y + speakerRect.height/3));
 
         var x :Number;
         var offset :Number;
@@ -413,6 +415,7 @@ public class ComicOverlay extends ChatOverlay
      * @return the padding that should be applied to the bubble's label.
      */
     internal function drawBubbleShape (
+//        bubble :BubbleGlyph,
         g :Graphics, type :int, txtWidth :int, txtHeight :int, ageLevel :int = 0) :int
     {
         // this little bit copied from superclass- if we keep: reuse
@@ -432,6 +435,9 @@ public class ComicOverlay extends ChatOverlay
         var height :int = txtHeight + padding * 2;
 
 //        var skin :IFlexDisplayObject = IFlexDisplayObject(new BUB());
+//        var rect :Rectangle = bubble.getTextSize();
+//        skin.x = -PAD/2;
+//        skin.y = -PAD/2;
 //        skin.setActualSize(width, height);
 //        bubble.addChildAt(DisplayObject(skin), 0);
 
@@ -759,6 +765,8 @@ public class ComicOverlay extends ChatOverlay
 
 //    [Embed(source="../../../../../../../rsrc/media/skins/bubble.png",
 //        scaleGridTop="7", scaleGridBottom="32", scaleGridLeft="9", scaleGridRight="73")]
+//    protected static const BUB :Class;
+//    [Embed(source="../../../../../../../rsrc/media/skins/bubble.swf")]
 //    protected static const BUB :Class;
 }
 }

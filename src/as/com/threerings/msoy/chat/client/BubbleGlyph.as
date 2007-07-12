@@ -40,6 +40,7 @@ public class BubbleGlyph extends ChatGlyph
         addChild(txt);
         _txt = txt;
         var offset :int = overlay.drawBubbleShape(
+            //this,
             _outline.graphics, type, txt.width, txt.height);
         txt.x = offset;
         txt.y = offset;
