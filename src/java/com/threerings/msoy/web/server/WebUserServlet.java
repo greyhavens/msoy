@@ -19,6 +19,7 @@ import com.samskivert.util.ResultListener;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.server.MailSender;
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
@@ -180,7 +181,7 @@ public class WebUserServlet extends MsoyServiceServlet
             ctx.put("memberId", mrec.memberId);
             ctx.put("code", code);
             try {
-                sendEmail(email, ServerConfig.getFromAddress(), "forgotPassword", ctx);
+                MailSender.sendEmail(email, ServerConfig.getFromAddress(), "forgotPassword", ctx);
             } catch (Exception e) {
                 throw new ServiceException(e.getMessage());
             }

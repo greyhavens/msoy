@@ -24,6 +24,7 @@ import com.samskivert.net.MailUtil;
 
 import org.apache.velocity.VelocityContext;
 
+import com.threerings.msoy.server.MailSender;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.GroupRecord;
@@ -422,7 +423,7 @@ public class MemberServlet extends MsoyServiceServlet
             ctx.put("server_url", ServerConfig.getServerURL());
 
             try {
-                sendEmail(email, inviter.accountName, "memberInvite", ctx);
+                MailSender.sendEmail(email, inviter.accountName, "memberInvite", ctx);
             } catch (Exception e) {
                 return e.getMessage();
             }

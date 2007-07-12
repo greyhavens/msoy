@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.web.server;
 
-import java.io.StringWriter;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,11 +11,6 @@ import java.util.logging.Level;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.net.MailUtil;
-import com.samskivert.velocity.VelocityUtil;
-
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserAction;
@@ -109,35 +102,6 @@ public class MsoyServiceServlet extends RemoteServiceServlet
             memrec.memberId, action, details);
         if (flowRec != null) {
             MemberManager.queueFlowUpdated(flowRec);
-        }
-    }
-
-    /**
-     * Delivers an email using the supplied template and context. The first line of the template
-     * should be the subject and the remaining lines the body.
-     *
-     * @return null or a string indicating the problem in the event of failure.
-     */
-    protected String sendEmail (String recip, String sender, String template, VelocityContext ctx)
-    {
-        VelocityEngine ve;
-        try {
-            ve = VelocityUtil.createEngine();
-        } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to create the velocity engine.", e);
-            return ServiceException.INTERNAL_ERROR;
-        }
-
-        StringWriter sw = new StringWriter();
-        try {
-            ve.mergeTemplate("rsrc/email/" + template + ".tmpl", "UTF-8", ctx, sw);
-            String body = sw.toString();
-            int nidx = body.indexOf("\n"); // first line is the subject
-            MailUtil.deliverMail(recip, sender, body.substring(0, nidx), body.substring(nidx+1));
-            return null;
-
-        } catch (Exception e) {
-            return e.getMessage();
         }
     }
 

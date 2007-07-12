@@ -7,11 +7,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.velocity.VelocityContext;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
+
+import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailHeaders;
@@ -20,7 +24,9 @@ import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.server.JSONMarshaller;
+import com.threerings.msoy.server.MailSender;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
@@ -96,24 +102,36 @@ public class MailManager
                                 ResultListener<Void> waiter)
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(waiter) {
-            public Void invokePersistResult () throws PersistenceException {
-                // copy the mail message into record format
-                MailMessageRecord record = new MailMessageRecord();
-                record.senderId = senderId;
-                record.recipientId = recipientId;
-                record.subject = subject;
-                record.bodyText = text;
+            public Void invokePersistResult () throws Exception {
+                // look up the sender and recipient for later emailery
+                _sendrec = MsoyServer.memberRepo.loadMember(senderId);
+                _reciprec = MsoyServer.memberRepo.loadMember(recipientId);
+                if (_sendrec == null || _reciprec == null) {
+                    log.info("Dropping message with missing sender or recipient " +
+                             "[sender=" + senderId + ", recip=" + recipientId + "].");
+                    throw new InvocationException("m.no_such_user");
+                }
 
+                // copy the mail message into record format
+                _record = new MailMessageRecord();
+                _record.senderId = senderId;
+                _record.recipientId = recipientId;
+                _record.subject = subject;
+                _record.bodyText = text;
+
+                // serialize the payload
                 if (payload != null) {
-                    record.payloadType = payload.getType();
+                    _record.payloadType = payload.getType();
                     try {
-                        record.payloadState =
-                            JSONMarshaller.getMarshaller(payload.getClass()).getStateBytes(payload);
+                        _record.payloadState = JSONMarshaller.getMarshaller(
+                            payload.getClass()).getStateBytes(payload);
                     } catch (Exception e) {
                         throw new PersistenceException(e);
                     }
                 }
-                _mailRepo.deliverMessage(record);
+
+                // record the message to the repository
+                _mailRepo.deliverMessage(_record);
                 return null;
             }
 
@@ -124,7 +142,21 @@ public class MailManager
                     mObj.setHasNewMail(true);
                 }
                 super.handleSuccess();
+
+                // finally send a real email to the recipient
+                MsoyServer.mailInvoker.postUnit(
+                    new MailSender.Unit(_reciprec.accountName, "gotMail") {
+                    protected void populateContext (VelocityContext ctx) {
+                        ctx.put("subject", _record.subject);
+                        ctx.put("sender", _sendrec.name);
+                        ctx.put("body", (_record.bodyText == null) ? "" : _record.bodyText);
+                        ctx.put("server_url", ServerConfig.getServerURL());
+                    }
+                });
             }
+
+            protected MemberRecord _sendrec, _reciprec;
+            protected MailMessageRecord _record;
         });
     }
 

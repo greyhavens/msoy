@@ -107,7 +107,7 @@ public class AdminServlet extends MsoyServiceServlet
                 ve.mergeTemplate("rsrc/email/invite.tmpl", "UTF-8", ctx, sw);
                 String body = sw.toString();
                 int nidx = body.indexOf("\n"); // first line is the subject
-                MailUtil.deliverMail(email, INVITE_FROM, body.substring(0, nidx),
+                MailUtil.deliverMail(email, ServerConfig.getFromAddress(), body.substring(0, nidx),
                                      body.substring(nidx+1));
             } catch (Exception e) {
                 results[ii] = e.getMessage();
@@ -197,6 +197,5 @@ public class AdminServlet extends MsoyServiceServlet
         return builder.toString();
     }
 
-    protected static final String INVITE_FROM = "peas@whirled.com";
     protected static final String PASSWORD_LETTERS = "abcdefghijklmnopqrstuvwxyz0123456789";
 }

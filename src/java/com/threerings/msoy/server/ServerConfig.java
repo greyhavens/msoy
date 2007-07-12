@@ -88,7 +88,7 @@ public class ServerConfig
      */
     public static String getFromAddress ()
     {
-        return "peas@whirled.com"; // TODO: move this to the server config
+        return "\"Whirled Mailbot\" <peas@whirled.com>"; // TODO: move this to the server config
     }
 
     /**
