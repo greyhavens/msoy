@@ -95,8 +95,6 @@
     <file name="lib/jetty-util-6.1.4.jar"/>
     <file name="lib/servlet-api-2.5-6.1.4.jar"/>
 
-    <file name="lib/servlet-api-2.5-6.1.4.jar"/>
-
     <file name="lib/lwjgl-applet.jar"/>
 
     <!-- The following are used for aperture -->
