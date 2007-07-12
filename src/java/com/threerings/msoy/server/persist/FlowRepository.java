@@ -163,15 +163,15 @@ public class FlowRepository extends DepotRepository
 
         if (gameRecord.accumMinutes >= RuntimeConfig.server.abuseFactorReassessment) {
             // load all actions logged since our last assessment
-            List<GameFlowSummaryRecord> records =
-                findAll(GameFlowSummaryRecord.class,
-                    new Where(GameFlowGrantLogRecord.GAME_ID_C, gameId),
-                    new FromOverride(GameFlowGrantLogRecord.class),
-                    new FieldOverride(GameFlowSummaryRecord.GAME_ID,
-                                      GameFlowGrantLogRecord.GAME_ID_C),
-                    new FieldOverride(GameFlowSummaryRecord.AMOUNT,
-                                      new FunctionExp("sum", GameFlowGrantLogRecord.AMOUNT_C)),
-                    new GroupBy(GameFlowGrantLogRecord.GAME_ID_C));
+//            List<GameFlowSummaryRecord> records =
+//                findAll(GameFlowSummaryRecord.class,
+//                    new Where(GameFlowGrantLogRecord.GAME_ID_C, gameId),
+//                    new FromOverride(GameFlowGrantLogRecord.class),
+//                    new FieldOverride(GameFlowSummaryRecord.GAME_ID,
+//                                      GameFlowGrantLogRecord.GAME_ID_C),
+//                    new FieldOverride(GameFlowSummaryRecord.AMOUNT,
+//                                      new FunctionExp("sum", GameFlowGrantLogRecord.AMOUNT_C)),
+//                    new GroupBy(GameFlowGrantLogRecord.GAME_ID_C));
             
             // write an algorithm that actually does something with 'records' here
             gameRecord.abuseFactor = 123;
