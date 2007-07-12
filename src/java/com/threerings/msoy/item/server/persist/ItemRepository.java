@@ -784,10 +784,10 @@ public abstract class ItemRepository<
 
         if (tag > 0) {
             // join against TagRecord
-            clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+            clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID, 
                                  getTagRepository().getTagClass(), TagRecord.TARGET_ID));
             // and add a condition
-            whereBits.add(new Equals(TagRecord.TAG_ID_C, tag));
+            whereBits.add(new Equals(getTagColumn(TagRecord.TAG_ID), tag));
         }
 
         if (creator > 0) {
@@ -838,6 +838,12 @@ public abstract class ItemRepository<
     {
         return new ColumnExp(getCloneClass(), cname);
     }
+
+    protected ColumnExp getTagColumn (String cname)
+    {
+        return new ColumnExp(getTagRepository().getTagClass(), cname);
+    }
+
 
     /**
      * Specific item repositories override this method and indicate the class of item on which they
