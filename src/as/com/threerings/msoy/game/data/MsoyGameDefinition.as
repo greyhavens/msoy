@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.data {
 
+import com.threerings.io.ObjectInputStream;
+
 import com.threerings.ezgame.data.GameDefinition;
 
 /**
@@ -27,6 +29,13 @@ public class MsoyGameDefinition extends GameDefinition
     public function setMediaPath (path :String) :void
     {
         digest = path;
+    }
+
+    override public function readObject (ins :ObjectInputStream) :void
+    {
+        super.readObject(ins);
+
+        ins.readBoolean(); // the "lwjgl" variable is unused here...
     }
 }
 }
