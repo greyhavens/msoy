@@ -100,6 +100,11 @@ public class GameEditor extends ItemEditor
                 ((TextBox)bits[ii+1]).setText(elem.getFirstChild().toString());
             }
         }
+
+        NodeList lwjgl = xml.getElementsByTagName("lwjgl");
+        if (lwjgl.getLength() > 0) {
+            _lwjgl.setChecked(true);
+        }
     }
 
     // @Override from ItemEditor
