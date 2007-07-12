@@ -49,9 +49,14 @@ public class AvatarViewerComp extends Canvas
         // create an HBox to hold "walking", "facing", "talk"
         var controls: HBox = new HBox();
         controls.setStyle("verticalAlign", "middle");
+
         controls.addChild(MsoyUI.createLabel("Walking:"));
         var walking :CheckBox = new CheckBox();
         controls.addChild(walking);
+
+        controls.addChild(MsoyUI.createLabel("Idle:"));
+        var idle :CheckBox = new CheckBox();
+        controls.addChild(idle);
 
         controls.addChild(MsoyUI.createLabel("Facing angle:"));
 
@@ -77,6 +82,7 @@ public class AvatarViewerComp extends Canvas
         // bind actions to the user interface elements
         talk.addEventListener(FlexEvent.BUTTON_DOWN, speak);
         BindingUtils.bindSetter(setMoving, walking, "selected");
+        BindingUtils.bindSetter(setIdle, idle, "selected");
 
         // finally, load our parameters and see what we should do.
         ParameterUtil.getParameters(this, gotParams);
@@ -210,6 +216,13 @@ public class AvatarViewerComp extends Canvas
         }
     }
 
+    protected function setIdle (idle :Boolean) :void
+    {
+        for each (var avatar :ViewerAvatarSprite in _avatars) {
+            avatar.setIdle(idle);
+        }
+    }
+
     protected function setOrient (val :Number) :void
     {
         var orient :int = int(val);
@@ -328,9 +341,20 @@ class ViewerAvatarSprite extends AvatarSprite
         appearanceChanged();
     }
 
+    public function setIdle (idle :Boolean) :void
+    {
+        _idle = idle;
+        appearanceChanged();
+    }
+
     override public function isMoving () :Boolean
     {
         return _moving;
+    }
+
+    override public function isIdle () :Boolean
+    {
+        return _idle;
     }
 
     public function setScale (scale :Number) :void
@@ -379,6 +403,8 @@ class ViewerAvatarSprite extends AvatarSprite
     }
 
     protected var _moving :Boolean = false;
+
+    protected var _idle :Boolean = false;
 
     protected var _state :String;
 }
