@@ -217,18 +217,20 @@ public class MemberManager
      */
     public void registerMember (final MemberObject member)
     {
-        //  add a listener for changes to accumulated flow so that the member's level can be
-        // updated as necessary
-        member.addListener(new AttributeChangeListener() {
-            public void attributeChanged (AttributeChangedEvent event) {
-                if (MemberObject.ACC_FLOW.equals(event.getName())) {
-                    checkCurrentLevel(member);
+        if (!member.isGuest()) {
+            //  add a listener for changes to accumulated flow so that the member's level can be
+            // updated as necessary
+            member.addListener(new AttributeChangeListener() {
+                public void attributeChanged (AttributeChangedEvent event) {
+                    if (MemberObject.ACC_FLOW.equals(event.getName())) {
+                        checkCurrentLevel(member);
+                    }
                 }
-            }
-        });
+            });
 
-        // check their current level now in case they got flow while they were offline
-        checkCurrentLevel(member);
+            // check their current level now in case they got flow while they were offline
+            checkCurrentLevel(member);
+        }
     }
 
     // from interface MemberProvider
