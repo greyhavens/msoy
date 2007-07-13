@@ -732,7 +732,7 @@ public class MailApplication extends DockPanel
     }
 
     // generate a short string to summarize most relevantly a date in the past
-    // For reference: Date.toString() returns: Wed Oct 25 2006 15:30:32 GMT-0500 (CDT)
+    // For reference: Date.toString() returns: Wed Oct 25 15:30:32 GMT 2006
     protected String formatDate (Date date)
     {
         long nowTime = System.currentTimeMillis();
@@ -749,10 +749,10 @@ public class MailApplication extends DockPanel
         if (hourDiff > 23) {
             // e.g. Wed 15:10
             String str = date.toString();
-            return str.substring(0, 3) + " " + str.substring(16, 21);
+            return str.substring(0, 3) + " " + str.substring(11, 16);
         }
         // e.g. 15:10
-        return date.toString().substring(16, 21);
+        return date.toString().substring(11, 16);
     }
     
     protected void addError (String error)
