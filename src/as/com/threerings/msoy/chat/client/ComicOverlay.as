@@ -363,50 +363,66 @@ public class ComicOverlay extends ChatOverlay
 
         // we're drawing in bubble coordinates, so the middle is just the width and height div 2.
         var bubRect :Rectangle = bubble.getBubbleBounds();
-        var midX :Number = bubRect.width/2;
-        var midY :Number = bubRect.height/2;
+        var midP :Point = new Point(bubRect.width/2, bubRect.height/2);
 
-        // the speaker point is 1/2-width through the speaker bounding box, and 1/3 from the top.
-        var speakerRect :Rectangle = speakerInfo[0] as Rectangle;
-        var speakerP :Point = bubble.globalToLocal(
-            new Point(speakerRect.x + speakerRect.width/2, speakerRect.y + speakerRect.height/3));
+        var speakerP :Point = bubble.globalToLocal(speakerInfo[1] as Point);
+        var tailDistance :Number = speakerInfo[2] as Number;
 
-        var x :Number;
-        var offset :Number;
-        if (midX > speakerP.x) {
-            x = bubRect.width - PAD;
-            offset = -PAD;
-        } else {
-            x = PAD;
-            offset = PAD;
-        }
-
-        var g :Graphics = bubble.graphics;
-        g.lineStyle(1, BLACK);
-        g.beginFill(WHITE);
-        g.moveTo(x, midY);
-        g.lineTo(x, bubRect.height);
-        g.curveTo(x, bubRect.height + PAD, x + offset + offset, bubRect.height + PAD);
-        g.curveTo(x + offset, bubRect.height + PAD, x + offset, bubRect.height);
-        g.lineTo(x + offset, midY);
-        g.lineTo(x, midY);
-        g.endFill();
-
-//
+//        // Draw daniel-style mini-tails
+//        var x :Number;
+//        var offset :Number;
+//        if (midX > speakerP.x) {
+//            x = bubRect.width - PAD;
+//            offset = -PAD;
+//        } else {
+//            x = PAD;
+//            offset = PAD;
+//        }
 //        var g :Graphics = bubble.graphics;
 //        g.lineStyle(1, BLACK);
 //        g.beginFill(WHITE);
-//        // draw a triangle from the speaker to the center of the bubble
-//        g.moveTo(speakerP.x, speakerP.y);
-//        if (Math.abs(speakerP.x - midX) > Math.abs(speakerP.y - midY)) {
-//            g.lineTo(midX, midY - PAD);
-//            g.lineTo(midX, midY + PAD);
-//        } else {
-//            g.lineTo(midX - PAD, midY);
-//            g.lineTo(midX + PAD, midY);
-//        }
-//        g.lineTo(speakerP.x, speakerP.y);
+//        g.moveTo(x, midY);
+//        g.lineTo(x, bubRect.height);
+//        g.curveTo(x, bubRect.height + PAD, x + offset + offset, bubRect.height + PAD);
+//        g.curveTo(x + offset, bubRect.height + PAD, x + offset, bubRect.height);
+//        g.lineTo(x + offset, midY);
+//        g.lineTo(x, midY);
 //        g.endFill();
+
+
+        // draw full tails
+
+// more complex tail distance calculations... fuck it! Let's go simple
+//        var speakerBounds :Rectangle = speakerInfo[0] as Rectangle;
+//        var speakerTopLeft :Point = bubble.globalToLocal(speakerBounds.topLeft);
+//        var speakerBottomRight :Point = bubble.globalToLocal(speakerBounds.bottomRight);
+        // this is the furthest point that the tail could end up pointing
+        var furthestP :Point = midP; // TODO: complex stuff, above... maybe
+        //trace("Taildisatnce: " + tailDistance);
+
+//        var p :Point = furthestP.subtract(speakerP);
+//        if (Point.distance(p, new Point()) < tailDistance) {
+//            speakerP = furthestP;
+//        } else {
+//            p.normalize(tailDistance);
+//            p.add(speakerP);
+//            speakerP = p;
+//        }
+
+        var g :Graphics = bubble.graphics;
+        g.lineStyle(1, BLACK);
+        g.beginFill(WHITE, .5);
+        // draw a triangle from the speaker to the center of the bubble
+        g.moveTo(speakerP.x, speakerP.y);
+        if (Math.abs(speakerP.x - midP.x) > Math.abs(speakerP.y - midP.y)) {
+            g.lineTo(midP.x, midP.y - PAD);
+            g.lineTo(midP.x, midP.y + PAD);
+        } else {
+            g.lineTo(midP.x - PAD, midP.y);
+            g.lineTo(midP.x + PAD, midP.y);
+        }
+        g.lineTo(speakerP.x, speakerP.y);
+        g.endFill();
     }
 
     /**
