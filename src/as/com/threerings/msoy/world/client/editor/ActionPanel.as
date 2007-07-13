@@ -177,6 +177,7 @@ public class ActionPanel extends BasePanel
         GridUtil.addRow(grid, Msgs.EDITING.get("l.captureMouse"), _captureMouse = new CheckBox());
 
         _captureMouse.addEventListener(MouseEvent.CLICK, changedHandler);
+        _captureMouse.addEventListener(MouseEvent.CLICK, applyHandler);
 
         return grid;
     }

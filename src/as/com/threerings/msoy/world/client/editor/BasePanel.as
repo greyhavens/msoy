@@ -110,13 +110,13 @@ public class BasePanel extends VBox
     protected function changedHandler (event :Event) :void
     {
         setChanged(true);
-    };
+    }
     
     /** Event handler for widgets; saves updates, just like clicking the "apply" button. */
     protected function applyHandler (event :Event) :void
     {
         applyChanges();
-    };
+    }
 
     protected var _furniData :FurniData;
     protected var _controller :RoomEditorController;
