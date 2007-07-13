@@ -822,6 +822,7 @@
       <param name="copy.list"  value="lfilter,filter_interesting"/>
       <param name="copy.dest"  value="${pkg.base}/tools/bin"/>
     </antcall>
+    <copy file="tools/lib/perl/GrindUtil.pm" todir="${pkg.base}/tools/lib/perl"/>
     <antcall target="prepare-server-rcscript"/>
     <mkdir dir="${pkg.base}/data"/>
     <copy todir="${pkg.base}/data">
