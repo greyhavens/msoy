@@ -1,0 +1,150 @@
+#!/usr/bin/perl -w
+#
+# $Id$
+#
+# Moves the MetaSOY server log files from the runtime log directory into the
+# historical log directory and will soon do some processing on them.
+
+BEGIN {
+    $root = `dirname $0`; chomp($root);
+    $root = `cd $root/.. ; pwd`; chomp($root);
+}
+
+use lib "$root/tools/lib/perl";
+
+use Getopt::Long;
+use GrindUtil;
+
+# add /usr/local/bin to the path for FreeBSD
+$ENV{'PATH'} = $ENV{'PATH'} . ":/usr/local/bin";
+
+my $usage = "Usage: $0 [--dryrun] [--node node] [year month day (ie. 2006 05 06)]\n";
+
+my $dry_run;
+my $node;
+GetOptions("dryrun" => \$dry_run, "node" => \$node);
+
+# read in some server properties
+my %sconf;
+open(CONF, "$root/server.conf") or die "Can't read '$root/server.conf': $!\n";
+while (<CONF>) {
+    chomp;
+    if (m/(\S+)=(.*)/) {
+        $sconf{$1} = $2;
+    }
+}
+my $stats_email = $sconf{"STATS_EMAIL"};
+$node = $sconf{"NODE"} unless (defined $node);
+die "Unable to determine node from server.conf\n" unless (defined $node);
+
+# if they specified a date, use it
+my $year = shift;
+my $month;
+my $day;
+my $dateWasSpecified = (defined $year);
+my ($datestr, $datedir);
+if ($dateWasSpecified) {
+    $month = shift or die $usage;
+    $day = shift or die $usage;
+
+} else {
+    # otherwise, we start at today's date and work backwords, finding the most
+    # recent logfile to process
+    my @info = localtime(time);
+    $year = $info[5] + 1900;
+    $month = $info[4] + 1;
+    $day = $info[3];
+}
+
+# make sure we're being invoked on the actual server host
+if (! -e "$root/log/server_$node.log") {
+    # exit quietly because we are run automatically via cron on any machine in
+    # a cluster, even machines that are quietly awaiting duty as a backup
+    exit(0);
+}
+
+while (1) {
+    $datestr = sprintf("%04d%02d%02d", $year, $month, $day);
+    $datedir = sprintf("%04d/%02d/%02d", $year, $month, $day);
+
+    # if we find a moved or unmoved log file, call it good
+    last if (-e "$root/log/server_$node.log.$datestr" ||
+             -e "$root/logs/$datedir/server_$node.log");
+
+    # if it doesn't exist and it was specified on the command line, die
+    if ($dateWasSpecified) {
+       die "Unable to find logfile for that date!";
+    }
+
+    # otherwise, we do twisted horrible things to back up the date
+    if ($day > 1) {
+        $day--;
+    } else {
+        $day = 31;
+        if ($month > 1) {
+            $month--;
+        } else {
+            $month = 12;
+            if ($year > 2000) {
+                $year--;
+            } else {
+                die "Unable to find any logfiles in '$root/log'.\n";
+            }
+        }
+    }
+}
+
+# now move the log files to their appropriate historical directory
+my $histlogdir = "$root/logs/$datedir";
+if ($dry_run) {
+    print "Would create historical log directory: $histlogdir\n";
+} else {
+    system_warn("mkdir -p $histlogdir");
+    for $file (glob "$root/log/*_$node.log.$datestr") {
+        $file =~ m:$root/log/(.*).log.$datestr:;
+        system_warn("mv $file $histlogdir/$1.log");
+    }
+}
+
+my $statsdir = "$root/pages/stats/$datedir";
+if ($dry_run) {
+    print "Would place generated files in '$statsdir'.\n";
+} else {
+    system_warn("mkdir -p $statsdir");
+}
+
+# process the general server statistics
+my $date = $datedir;
+$date =~ s:/:-:g;
+
+my $host = `hostname`;
+chomp($host);
+
+# if we're on a production server...
+if ($host =~ /^msoy\d+/) {
+#     # run our performance stat summarizer
+#     $cmd = "$root/bin/summarize_perf $histlogdir/perf_$node.log > $statsdir/perf_$node.html";
+#     if ($dry_run) {
+#         print("$cmd\n");
+#         print("mv *.png *.dat $statsdir\n");
+#     } else {
+#         system_warn("nice -n 20 $cmd");
+#         # move the generated graphs into the right directory
+#         system_warn("mv *.png *.dat $statsdir");
+#     }
+
+#     # run our simple stat summarizer
+#     $cmd = "$root/bin/summarize_stats $histlogdir/server_$node.log > /tmp/msoystats.tmp";
+#     if ($dry_run) {
+#         print("$cmd\n");
+#     } else {
+#         system_warn("nice -n 20 $cmd");
+#     }
+
+#     # send the stats email
+#     if (!$dry_run) {
+#         send_mail($stats_email, $stats_email,
+#                   "$host: Whirled nightly stats", "/tmp/msoystats.tmp");
+#         unlink("/tmp/msoystats.tmp");
+#     }
+}
