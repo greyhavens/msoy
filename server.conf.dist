@@ -17,8 +17,8 @@ MSOY_USER=msoy
 LOG_EMAIL=msoy-logs@DOMAIN
 LOGLEVEL=info
 
-# The node name for this server instance. msoy1, msoy2 etc.
-NODE=msoy1
+# The node names for this server instance: "msoy1 msoy2" or just "msoy1" for example
+NODES=msoy1
 
 # These is passed to the various JVMs
 SERVER_MEMORY=384M

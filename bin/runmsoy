@@ -12,6 +12,15 @@ MSOY_HOME=`dirname $0 | sed s:/bin$::`
 MSOY_USER=www-data
 HOSTNAME=`hostname`
 
+# Make sure our nodename was and server pid file were properly supplied.
+if [ -z "$1" -o -z "$2" ]; then
+    echo "Usage: $0 nodename pid_file"
+    exit 255
+fi
+NODE=$1
+PIDFILE=$2
+
+LOGFILE=$BANG_HOME/log/stdout-$NODE.log
 LOG_EMAIL=nightly-logs@threerings.net
 LOGLEVEL=info
 SERVER_MEMORY=384M
@@ -23,17 +32,6 @@ else
     echo "Can't load $MSOY_HOME/server.conf; can't run server."
     exit 255
 fi
-
-# Make sure our nodename was properly specified (we have to do this after
-# reading server.conf because now server.conf contains a default NODE
-# specification). Also make sure the server pid file was supplied.
-if [ -z "$1" -o -z "$2" ]; then
-    echo "Usage: $0 nodename pid_file"
-    exit 255
-fi
-NODE=$1
-LOGFILE=$BANG_HOME/log/stdout-$NODE.log
-PIDFILE=$2
 
 # Make sure we're running as the correct user
 WHOAMI=`whoami`

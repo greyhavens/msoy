@@ -20,87 +20,89 @@ fi
 # Read in our configuration
 . $MSOY_HOME/server.conf
 
-# Override NODE if passed on the command line
-if [ ! -z "$2" ]; then
-    NODE=$2
-fi
-
-# # Make sure someone running things as root didn't booch the permissions on
-# # the bundles
-# BFILE=$MSOY_HOME/run/booched.txt
-# find $MSOY_HOME/rsrc -user root > $BFILE
-# if [ -s "$BFILE" ]; then
-#     cat $BFILE | xargs chown -R $MSOY_USER
-# fi
-# rm $BFILE
-
 # Let's blow that file descriptor limit wide open baby!
 ulimit -n 4096
 
 # Bump our maximum data segment size to 1.5 gigs
 ulimit -d 1572864
 
-DAEMON=$MSOY_HOME/bin/msoyrespawn
-RESPAWN_PIDFILE=$MSOY_HOME/run/msoyrespawn-$NODE.pid
-SERVER_PIDFILE=$MSOY_HOME/run/msoyserver-$NODE.pid
-LOGFILE=$MSOY_HOME/log/msoyrespawn-$NODE.log
-
 # See how we were called
 case "$1" in
   start)
         # Make sure msoyrespawn is not currently running
-	if [ -f $RESPAWN_PIDFILE ]; then
-	    echo "msoyrespawn appears to be already running for $NODE."
-            echo "Run '$0 stop' to stop it first."
-	    exit 1
-	fi
-        # Make sure there are no hung MetaSOY server processes
-        if [ -f $SERVER_PIDFILE ]; then
-            PID=`cat $SERVER_PIDFILE`
-            RPIDS=`ps auxww | grep " $PID " | grep java | awk '{ print $2 }' | sort -n | head -1`
-            if [ ! -z "$RPIDS" ]; then
-                echo "WARNING: A $NODE MsoyServer process is currently running."
-                echo "If it has failed and you wish to forcibly restart it, please"
-                echo "execute the following commands:"
-                echo ""
-                echo "% kill -QUIT $RPIDS"
-                echo "% kill -KILL $RPIDS"
-                echo ""
-                echo "And then rerun this script."
-                exit 255
+        for NODE in $NODES; do
+            if [ -f $MSOY_HOME/run/msoyrespawn-$NODE.pid ]; then
+                echo "msoyrespawn appears to be already running for $NODE."
+                echo "Run '$0 stop' to stop it first."
+                exit 1
             fi
-        fi
+        done
+
+        # Make sure there are no hung MetaSOY server processes
+        for NODE in $NODES; do
+            SERVER_PIDFILE=$MSOY_HOME/run/msoyserver-$NODE.pid
+            if [ -f $SERVER_PIDFILE ]; then
+                PID=`cat $SERVER_PIDFILE`
+                RPIDS=`ps auxww | grep " $PID " | grep java | awk '{ print $2 }' | \
+                    sort -n | head -1`
+                if [ ! -z "$RPIDS" ]; then
+                    echo "WARNING: A $NODE MsoyServer process is currently running."
+                    echo "If it has failed and you wish to forcibly restart it, please"
+                    echo "execute the following commands:"
+                    echo ""
+                    echo "% kill -QUIT $RPIDS"
+                    echo "% kill -KILL $RPIDS"
+                    echo ""
+                    echo "And then rerun this script."
+                    exit 255
+                fi
+            fi
+        done
+
         # Go ahead and start things up
-        echo -n "Starting $DAEMON: "
-        touch $RESPAWN_PIDFILE $LOGFILE
-        chown $MSOY_USER $RESPAWN_PIDFILE $LOGFILE
-        su - $MSOY_USER -c "$DAEMON $NODE $RESPAWN_PIDFILE $SERVER_PIDFILE" \
-            >$LOGFILE 2>&1 </dev/null &
-        echo "started."
+        for NODE in $NODES; do
+            DAEMON=$MSOY_HOME/bin/msoyrespawn
+            RESPAWN_PIDFILE=$MSOY_HOME/run/msoyrespawn-$NODE.pid
+            SERVER_PIDFILE=$MSOY_HOME/run/msoyserver-$NODE.pid
+            LOGFILE=$MSOY_HOME/log/msoyrespawn-$NODE.log
+            echo -n "Starting $DAEMON: "
+            touch $RESPAWN_PIDFILE $LOGFILE
+            chown $MSOY_USER $RESPAWN_PIDFILE $LOGFILE
+            su - $MSOY_USER -c "$DAEMON $NODE $RESPAWN_PIDFILE $SERVER_PIDFILE" \
+                >$LOGFILE 2>&1 </dev/null &
+            echo "started."
+        done
         ;;
 
   stop)
-	if [ ! -f $RESPAWN_PIDFILE ]; then
-	    echo "No $RESPAWN_PIDFILE exists. Is msoyrespawn running?"
-	    exit 1
-	fi
-        echo -n "Shutting down msoy node $NODE, "
-        kill -INT `cat $SERVER_PIDFILE`
-        echo -n "msoyrespawn: "
-        kill `cat $RESPAWN_PIDFILE`
-        echo "stopped."
-        rm -f $RESPAWN_PIDFILE $SERVER_PIDFILE
+        for NODE in $NODES ; do
+            RESPAWN_PIDFILE=$MSOY_HOME/run/msoyrespawn-$NODE.pid
+            SERVER_PIDFILE=$MSOY_HOME/run/msoyserver-$NODE.pid
+            if [ ! -f $RESPAWN_PIDFILE ]; then
+                echo "No $RESPAWN_PIDFILE exists. Is msoyrespawn running?"
+            else
+                echo -n "Shutting down msoy node $NODE, "
+                kill -INT `cat $SERVER_PIDFILE`
+                echo -n "msoyrespawn: "
+                kill `cat $RESPAWN_PIDFILE`
+                echo "stopped."
+                rm -f $RESPAWN_PIDFILE $SERVER_PIDFILE
+            fi
+        done
         ;;
 
   unspawn)
-	if [ ! -f $RESPAWN_PIDFILE ]; then
-	    echo "No $RESPAWN_PIDFILE exists. Is msoyrespawn running?"
-	    exit 1
-	fi
-        echo -n "Shutting down msoyrespawn: "
-        kill `cat $RESPAWN_PIDFILE`
-        echo "stopped."
-        rm -f $RESPAWN_PIDFILE
+        for NODE in $NODES ; do
+            RESPAWN_PIDFILE=$MSOY_HOME/run/msoyrespawn-$NODE.pid
+            if [ ! -f $RESPAWN_PIDFILE ]; then
+                echo "No $RESPAWN_PIDFILE exists. Is msoyrespawn running?"
+            else
+                echo -n "Shutting down msoyrespawn: "
+                kill `cat $RESPAWN_PIDFILE`
+                echo "stopped."
+                rm -f $RESPAWN_PIDFILE
+            fi
+        done
         ;;
 
   restart)
