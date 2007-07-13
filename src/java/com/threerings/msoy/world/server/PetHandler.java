@@ -13,7 +13,7 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceConfig;
 
-import com.threerings.whirled.client.SceneService.SceneMoveListener;
+import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 
@@ -82,18 +82,7 @@ public class PetHandler
         }
 
         // then enter the scene like a proper scene entity
-        MsoyServer.screg.sceneprov.moveTo(_petobj, sceneId, -1, new SceneMoveListener() {
-            public void moveSucceeded (int placeId, PlaceConfig config) {
-                // NOOP
-            }
-            public void moveSucceededWithUpdates (
-                int placeId, PlaceConfig config, SceneUpdate[] updates) {
-                // NOOPITY
-            }
-            public void moveSucceededWithScene (
-                int placeId, PlaceConfig config, SceneModel model) {
-                // NOOP NOOP NOOP
-            }
+        MsoyServer.screg.sceneprov.moveTo(_petobj, sceneId, -1, new SceneMoveAdapter() {
             public void requestFailed (String reason) {
                 log.warning("Pet failed to enter scene [pet=" + _petobj.pet + ", scene=" + sceneId +
                             ", reason=" + reason + "].");

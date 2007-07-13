@@ -33,7 +33,7 @@ import com.threerings.crowd.chat.server.SpeakProvider;
 
 import com.threerings.parlor.game.server.GameManager;
 
-import com.threerings.whirled.client.SceneService.SceneMoveListener;
+import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 
@@ -464,18 +464,7 @@ public class ChiyogamiManager extends GameManager
         _bossObj.init(_script.boss, _script.bossName);
 
         // add the boss to the room
-        MsoyServer.screg.sceneprov.moveTo(_bossObj, _sceneId, -1, new SceneMoveListener() {
-            public void moveSucceeded (int placeId, PlaceConfig config) {
-                // nada: we wait to hear the oid in RoomListener
-            }
-            public void moveSucceededWithUpdates (
-                int placeId, PlaceConfig config, SceneUpdate[] updates) {
-                // nada: we wait to hear the oid in RoomListener
-            }
-            public void moveSucceededWithScene (
-                int placeId, PlaceConfig config, SceneModel model) {
-                // nada: we wait to hear the oid in RoomListener
-            }
+        MsoyServer.screg.sceneprov.moveTo(_bossObj, _sceneId, -1, new SceneMoveAdapter() {
             public void requestFailed (String reason) {
                 log.warning("Boss failed to enter scene [scene=" + _sceneId +
                             ", reason=" + reason + "].");
