@@ -20,15 +20,15 @@ import com.threerings.presents.dobj.InvocationResponseEvent;
 public class ItemMarshaller extends InvocationMarshaller
     implements ItemService
 {
-    /** The method id used to dispatch {@link #getItemName} requests. */
-    public static final int GET_ITEM_NAME = 1;
+    /** The method id used to dispatch {@link #getItemNames} requests. */
+    public static final int GET_ITEM_NAMES = 1;
 
     // from interface ItemService
-    public void getItemName (Client arg1, ItemIdent arg2, InvocationService.ResultListener arg3)
+    public void getItemNames (Client arg1, ItemIdent[] arg2, InvocationService.ResultListener arg3)
     {
         InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
         listener3.listener = arg3;
-        sendRequest(arg1, GET_ITEM_NAME, new Object[] {
+        sendRequest(arg1, GET_ITEM_NAMES, new Object[] {
             arg2, listener3
         });
     }

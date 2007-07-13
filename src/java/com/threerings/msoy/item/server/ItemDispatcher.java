@@ -39,10 +39,10 @@ public class ItemDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
-        case ItemMarshaller.GET_ITEM_NAME:
-            ((ItemProvider)provider).getItemName(
+        case ItemMarshaller.GET_ITEM_NAMES:
+            ((ItemProvider)provider).getItemNames(
                 source,
-                (ItemIdent)args[0], (InvocationService.ResultListener)args[1]
+                (ItemIdent[])args[0], (InvocationService.ResultListener)args[1]
             );
             return;
 

@@ -396,6 +396,7 @@ Window {
   paddingLeft: 0;
   paddingRight: 0;
   horizontalGap: 3;
+  verticalAlign: "middle";
 } 
 
 .roomEditContents {  

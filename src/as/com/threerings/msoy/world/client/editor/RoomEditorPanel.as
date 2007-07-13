@@ -17,12 +17,16 @@ import mx.containers.HBox;
 import mx.containers.TabNavigator;
 import mx.containers.VBox;
 import mx.controls.Button;
+import mx.controls.ComboBox;
 import mx.controls.HRule;
 import mx.controls.Label;
 import mx.controls.Spacer;
+import mx.events.ListEvent;
 
+import com.threerings.flex.CommandButton;
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.world.data.FurniData;
@@ -68,14 +72,6 @@ public class RoomEditorPanel extends FloatingPanel
         _room.updateDisplay(data);
     }
 
-    /** Updates object name for display in the window title bar. */
-    public function updateName (name :String) :void
-    {
-        if (_namelabel != null) {
-            _namelabel.text = (name != null) ? name : "";
-        }
-    }
-    
     /** Updates the enabled status of the undo button (based on the size of the undo stack). */
     public function updateUndoStatus (enabled :Boolean) :void
     {
@@ -89,7 +85,31 @@ public class RoomEditorPanel extends FloatingPanel
             _deleteButton.enabled = enabled;
         }
     }
-    
+
+    /** Updates the name drop-down box with the selected item definitions. */
+    public function updateNameList (defs :Array) :void
+    {
+        _namebox.dataProvider = defs;
+    }
+
+    /** Selects the specified item in the name list. */
+    public function selectInNameList (def :Object) :void
+    {
+        if (def == null) {
+            _namebox.selectedIndex = -1;
+        } else {
+            _namebox.selectedItem = def;
+        }
+    }
+
+    /** Handler for dealing with changes in the name selection box. */
+    protected function nameListChanged (event :ListEvent) :void
+    {
+        if (_namebox.selectedItem != null) {
+            _controller.findAndSetTarget(_namebox.selectedItem.data);
+        }
+    }
+        
     // from superclasses
     override protected function createChildren () :void
     {
@@ -117,12 +137,13 @@ public class RoomEditorPanel extends FloatingPanel
         box.styleName = "roomEditButtonBar";
         box.percentWidth = 100;
         contents.addChild(box);
-
-        _namelabel = new Label();
-        _namelabel.styleName = "roomEditNameLabel";
-        _namelabel.percentWidth = 100;
-        box.addChild(_namelabel);
         
+        _namebox = new ComboBox();
+        _namebox.percentWidth = 100;
+        _namebox.prompt = Msgs.EDITING.get("l.select_item");
+        _namebox.addEventListener(ListEvent.CHANGE, nameListChanged);
+        box.addChild(_namebox);
+
         _deleteButton = new Button();
         _deleteButton.styleName = "roomEditButtonTrash3";
         _deleteButton.toolTip = Msgs.EDITING.get("i.delete_button");
@@ -160,7 +181,7 @@ public class RoomEditorPanel extends FloatingPanel
     protected var _details :DetailsPanel;
     protected var _action :ActionPanel;
     protected var _room :RoomPanel;
-    protected var _namelabel :Label;
+    protected var _namebox :ComboBox;
     protected var _controller :RoomEditorController;
 }
 }

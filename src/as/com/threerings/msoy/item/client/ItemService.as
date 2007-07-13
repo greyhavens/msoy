@@ -21,7 +21,7 @@ import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 public interface ItemService extends InvocationService
 {
     // from Java interface ItemService
-    function getItemName (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ResultListener) :void;
+    function getItemNames (arg1 :Client, arg2 :TypedArray /* of class com.threerings.msoy.item.data.all.ItemIdent */, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface ItemService
     function peepItem (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ResultListener) :void;

@@ -17,9 +17,9 @@ import com.threerings.presents.server.InvocationProvider;
 public interface ItemProvider extends InvocationProvider
 {
     /**
-     * Handles a {@link ItemService#getItemName} request.
+     * Handles a {@link ItemService#getItemNames} request.
      */
-    public void getItemName (ClientObject caller, ItemIdent arg1, InvocationService.ResultListener arg2)
+    public void getItemNames (ClientObject caller, ItemIdent[] arg1, InvocationService.ResultListener arg2)
         throws InvocationException;
 
     /**

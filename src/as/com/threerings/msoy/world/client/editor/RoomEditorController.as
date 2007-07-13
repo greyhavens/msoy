@@ -11,9 +11,11 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.ui.Keyboard;
 
+import com.threerings.io.TypedArray;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.presents.client.ResultWrapper;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.Item;
@@ -85,9 +87,9 @@ public class RoomEditorController
         _view.setEditing(true);
         _edit.start();
         _hover.start();
-
         _panel.open();
 
+        requestNamesForAllFurnis();
     }
 
     /**
@@ -105,35 +107,40 @@ public class RoomEditorController
      */
     public function processUpdate (update :SceneUpdate) :void
     {
-        // we only care about this if a target is selected...
-        if (update is ModifyFurniUpdate && _edit.target != null) {
+        if (! isEditing()) {
+            // don't care about updates if we're not actually editing.
+            return;
+        }
+        
+        if (update is ModifyFurniUpdate) {
             var mod :ModifyFurniUpdate = update as ModifyFurniUpdate;
 
-            // check if the currently selected furni was modified
-            var targetAdded :Boolean, targetRemoved :Boolean;
-            var targetIdent :ItemIdent = _edit.target.getFurniData().getItemIdent();
-
-            if (mod.furniRemoved != null) {
-                targetRemoved = mod.furniRemoved.some(
-                    function (furni :FurniData, ... rest) :Boolean {
-                        return furni.getItemIdent().equals(targetIdent);
-                    });
-            }
-
-            if (mod.furniAdded != null) {
-                targetAdded = mod.furniAdded.some(
-                    function (furni :FurniData, ... rest) :Boolean {
-                        return furni.getItemIdent().equals(targetIdent);
-                    });
-            }
-
-            if (targetRemoved) {
-                if (targetAdded) {
-                    // if the target furni was removed and then added back in, it means
-                    // it got modified. reread it!
+            // special case: most of the time the player will just move furnis around, which
+            // results in an update that removes and re-adds the same object.
+            // if that's what's going on, just do a simple refresh.
+            if (mod.furniRemoved != null && mod.furniRemoved.length == 1 &&
+                mod.furniAdded != null && mod.furniAdded.length == 1)
+            {
+                var added :FurniData = mod.furniAdded[0] as FurniData;
+                var removed :FurniData = mod.furniRemoved[0] as FurniData;
+                if (added.getItemIdent().equals(removed.getItemIdent())) {
                     refreshTarget();
-                } else {
-                    // the target furni got removed - we should lose the focus as well.
+                    return;
+                }
+            }
+
+            // this is a different kind of an update. refresh the name cache appropriately.
+            forgetItemNames(mod.furniRemoved);
+            addItemNames(mod.furniAdded);
+
+            // finally, if the target furni just got removed, we should lose focus.
+            if (mod.furniRemoved != null && _edit.target != null) {
+                var targetIdent :ItemIdent = _edit.target.getFurniData().getItemIdent();
+                var targetRemoved :Boolean = mod.furniRemoved.some(
+                    function (furni :FurniData, ... rest) :Boolean {
+                        return furni.getItemIdent().equals(targetIdent);
+                    });
+                if (targetRemoved) {
                     setTarget(null);
                 }
             }
@@ -170,6 +177,24 @@ public class RoomEditorController
         updateUndoStatus(true);
     }
 
+    /**
+     * Called by the panel when the name list selection changed, either programmatically
+     * or due to user interaction - causes the specified item to be selected as the new target.
+     * Note: this searches through the list of sprites; use setTarget() directly if possible.
+     */
+    public function findAndSetTarget (ident :ItemIdent) :void
+    {
+        // if the new target is different, let's select it
+        if (_edit.target == null || ! _edit.target.getFurniData().getItemIdent().equals(ident)) {
+            var sprites :Array = _view.getFurniSprites().values();
+            // unfortunately, we have to search through all sprites to find the one we want
+            var index :int = ArrayUtil.indexIf(sprites, function (sprite :FurniSprite) :Boolean {
+                    return sprite.getFurniData().getItemIdent().equals(ident);
+                });
+            setTarget(index == -1 ? null : sprites[index]);
+        }
+    }        
+    
     /**
      * Called by the room controller, to query whether the user should be allowed to move
      * around the scene.
@@ -255,53 +280,119 @@ public class RoomEditorController
     }
 
     /**
+     * Retrieves item names for objects placed in this room.
+     */
+    protected function requestNamesForAllFurnis () :void
+    {
+        // make a list of furni identifiers
+        var furnis :Array = scene.getFurni();
+        var idents :TypedArray = TypedArray.create(ItemIdent);
+        for each (var data :FurniData in furnis) {
+            if (data.itemType != Item.NOT_A_TYPE) { // skip freebie doors and other fake items
+                idents.push(data.getItemIdent());
+            }
+        }
+
+        // clear out the current map, and read from the server
+        _names = new HashMap();
+        queryServerForItemNames(idents);
+    }
+
+    /** Removes the item's name from the cache. */
+    protected function forgetItemNames (furnis :TypedArray /* of FurniData */) :void
+    {
+        if (furnis == null) {
+            return; // nothing to do
+        }
+        
+        for each (var furni :FurniData in furnis) {
+            var ident :ItemIdent = furni.getItemIdent();
+            if (_names.remove(ident) == undefined) {
+                Log.getLog(RoomEditorController).warning(
+                    "Unable to forget item name, it's not in the map [id=" + ident + "].");
+            }
+        }
+        updateNameList();
+    };
+
+    /** Asks the server for the name of the recently added item. */
+    protected function addItemNames (furnis :TypedArray /* of FurniData */) :void
+    {
+        if (furnis == null) {
+            return; // nothing to do
+        }
+
+        var idents :TypedArray = TypedArray.create(ItemIdent);
+        for each (var furni :FurniData in furnis) {
+            if (furni.itemType != Item.NOT_A_TYPE) { // skip freebie doors and other fake items
+                idents.push(furni.getItemIdent());
+            }
+        }
+        queryServerForItemNames(idents);
+    };
+
+    /**
+     * Retrieves item names for the specified list of items.
+     */
+    protected function queryServerForItemNames (idents :TypedArray /* of ItemIdent */) :void
+    {
+        // now ask the server for ids
+        var svc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
+        svc.getItemNames(
+            _ctx.getClient(), idents, new ResultWrapper(function (cause :String) :void {
+                    // do nothing
+                    Log.getLog(RoomEditorController).warning(
+                        "Unable to get item names [cause=" + cause + "].");
+            }, function (names :Array /* of String */) :void {
+                    // we got an array of names! put them all in the cache and update the list.
+                    for (var i :int = 0; i < idents.length; i++) {
+                        _names.put(idents[i], { label: names[i], data: idents[i] });
+                    }
+                    updateNameList();
+                    // if a target is currently selected, update its displayed name
+                    updateTargetName();
+            }));
+    }
+
+    /**
      * When the user clicks on a new item, updates its displayed name.
      */
     protected function updateTargetName () :void
     {
+        // if there's no furni selected, we have nothing to do
         if (_edit.target == null) {
-            _lastIdent = null;
-            // no target selected
-            _panel.updateName(null);
+            _panel.selectInNameList(null);
             return;
         }
 
-        var furniData :FurniData = _edit.target.getFurniData();
-        _panel.updateDisplay(furniData);
-        var ident :ItemIdent = furniData.getItemIdent();
-        _lastIdent = ident;
+        // pull out selected furni
+        var targetData :FurniData = _edit.target.getFurniData();
+        _panel.updateDisplay(targetData);
 
+        var ident :ItemIdent = targetData.getItemIdent();
         if (ident.type == Item.NOT_A_TYPE) {
-            // this must be one of the "freebie" doors - since this isn't an actual Item, we can't
-            // pull its name from the database. oh well.
-            _panel.updateName(Msgs.EDITING.get("t.editing_no_name"));
+            // this must be one of the "freebie" doors - since this isn't an actual Item,
+            // it has no name.
+            _panel.selectInNameList(null);
             return;
         }
 
-        // update the name..
-        var name :String = _names.get(ident) as String;
-        _panel.updateName(name);
-        if (name != null) {
-            return;
+        // update display name
+        if (_names.containsKey(ident)) {
+            _panel.selectInNameList(_names.get(ident));
+        } else {
+            _panel.selectInNameList(null);
+            Log.getLog(RoomEditorController).debug("Furni name not found! [id=" + ident + "].");
         }
+    }
 
-        // We don't know the name, and need to look it up.
-        // Put a fake name in there for this ident, so we don't fire off a
-        // second request should this get called again before the response arrives
-        _names.put(ident, "...");
-
-        // perform a database query to get the item's name
-        var svc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
-        svc.getItemName(_ctx.getClient(), ident, new ResultWrapper(function (cause :String) :void {
-            Log.getLog(RoomEditorController).warning(
-                "Unable to get name of item [cause=" + cause + "].");
-            // and do nothing
-        }, function (name :String) :void {
-            _names.put(ident, name); // cache update
-            if (ident.equals(_lastIdent)) {
-                _panel.updateName(name);
-            }
-        }));
+    /** Called when the list of objects in the room had changed, it updates the panel. */
+    protected function updateNameList () :void
+    {
+        var defs :Array = _names.values();
+        defs.sortOn("label", Array.CASEINSENSITIVE);
+        _panel.updateNameList(defs);
+        _panel.selectInNameList(null);
     }
 
     /** Sets the currently edited target to the specified sprite. */
@@ -322,14 +413,10 @@ public class RoomEditorController
     }
 
     /**
-     * Cache that maps from ItemIdents to item names; it saves server round-trips when the
-     * user edits different items in the room. Please note: item names are not updated after the
-     * first lookup, and may become stale.
+     * Mapping from ItemIdents to combo box entries that contain both names and ItemIdents.
+     * This cache is updated once when the editor is opened, and then following each furni update. 
      */
     protected var _names :HashMap = new HashMap();
-
-    /** The ItemIdent of the currently selected furni. */
-    protected var _lastIdent :ItemIdent;
 
     protected var _ctx :WorldContext;
     protected var _view :RoomView;

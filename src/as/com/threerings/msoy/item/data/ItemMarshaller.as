@@ -27,15 +27,15 @@ import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 public class ItemMarshaller extends InvocationMarshaller
     implements ItemService
 {
-    /** The method id used to dispatch {@link #getItemName} requests. */
-    public static const GET_ITEM_NAME :int = 1;
+    /** The method id used to dispatch {@link #getItemNames} requests. */
+    public static const GET_ITEM_NAMES :int = 1;
 
     // from interface ItemService
-    public function getItemName (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ResultListener) :void
+    public function getItemNames (arg1 :Client, arg2 :TypedArray /* of class com.threerings.msoy.item.data.all.ItemIdent */, arg3 :InvocationService_ResultListener) :void
     {
         var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
         listener3.listener = arg3;
-        sendRequest(arg1, GET_ITEM_NAME, [
+        sendRequest(arg1, GET_ITEM_NAMES, [
             arg2, listener3
         ]);
     }

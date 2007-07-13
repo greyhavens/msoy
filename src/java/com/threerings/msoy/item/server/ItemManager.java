@@ -19,6 +19,7 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.ObserverList;
 import com.samskivert.util.Predicate;
@@ -1109,34 +1110,50 @@ public class ItemManager
     }
 
     // from ItemProvider
-    public void getItemName (
-        ClientObject caller, final ItemIdent ident, final InvocationService.ResultListener rl)
+    public void getItemNames (
+        ClientObject caller, final ItemIdent[] idents, final InvocationService.ResultListener rl)
         throws InvocationException
     {
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident.type, rl);
-        if (repo == null) {
-            return; // error already reported to listener...
+        final HashIntMap<ItemRepository<ItemRecord, ?, ?, ?>> repos =
+            new HashIntMap<ItemRepository<ItemRecord, ?, ?, ?>>();
+
+        // get all the repos for all item idents
+        for (ItemIdent ident : idents) {
+            if (! repos.containsKey(ident.type)) {
+
+                // get a new repo, and save in the map
+                ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident.type, rl);
+                if (repo == null) {
+                    return; // error already reported to listener...
+                } else {
+                    repos.put(ident.type, repo);
+                }
+            }
         }
 
-        // TODO: Maybe we add a repository method that just looks up the name, and not
-        // the other crap?
+        // pull item names from repos
         MsoyServer.invoker.postUnit(new RepositoryUnit("getItemName") {
             public void invokePersist () throws Exception {
-                ItemRecord rec = repo.loadItem(ident.itemId);
-                if (rec != null) {
-                    _name = rec.name;
+                _itemNames = new String[idents.length];
+                for (int i = 0; i < idents.length; i++) {
+                    ItemIdent ident = idents[i];
+                    ItemRecord rec = repos.get(ident.type).loadItem(ident.itemId);
+                    if (rec != null) {
+                        _itemNames[i] = rec.name;
+                    }
                 }
             }
             public void handleSuccess () {
-                if (_name != null) {
-                    rl.requestProcessed(_name);
+                if (_itemNames != null) {
+                    rl.requestProcessed(_itemNames);
                 } else {
-                    rl.requestFailed("no such item"); // untranslated. Whatever.
+                    rl.requestFailed(null); 
                 }
             }
             public void handleFailure (Exception pe) {
                 rl.requestFailed(pe.getMessage());
             }
+            public String[] _itemNames;
         });
     }
 
