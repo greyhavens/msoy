@@ -214,10 +214,11 @@ public class MailRepository extends DepotRepository
      protected int claimMessageId (int memberId, int folderId, int idCount)
          throws PersistenceException
      {
+         // TODO: When we have just a little more time, do this with fancy lockless magic
+         // TODO: like UPDATE set NEXT=NEXT+1 where NEXT=122 and iterate until rows modified.
          MailFolderRecord record = load(MailFolderRecord.class,
                                         MailFolderRecord.OWNER_ID, memberId,
-                                        MailFolderRecord.FOLDER_ID, folderId,
-                                        new ForUpdate());
+                                        MailFolderRecord.FOLDER_ID, folderId);
          int firstId = record.nextMessageId;
          record.nextMessageId += idCount;
          update(record, MailFolderRecord.NEXT_MESSAGE_ID);
