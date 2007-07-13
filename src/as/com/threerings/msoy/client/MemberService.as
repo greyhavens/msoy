@@ -38,6 +38,9 @@ public interface MemberService extends InvocationService
     function getHomeId (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
+    function issueInvitation (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void;
+
+    // from Java interface MemberService
     function setAvatar (arg1 :Client, arg2 :int, arg3 :Number, arg4 :InvocationService_InvocationListener) :void;
 
     // from Java interface MemberService

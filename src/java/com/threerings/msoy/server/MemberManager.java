@@ -415,6 +415,14 @@ public class MemberManager
         }
     }        
 
+    // from interface MemberProvider
+    public void issueInvitation (
+        ClientObject caller, String guestName, InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        listener.requestFailed("e.not_enough_invites");
+    }
+
     /**
      * Grant a member some flow, categorized and optionally metatagged with an action type and a
      * detail String. The member's {@link MemberRecord} is updated, as is the {@link

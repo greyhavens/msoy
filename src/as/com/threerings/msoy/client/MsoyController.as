@@ -515,7 +515,11 @@ public class MsoyController extends Controller
      */
     public function handleInviteGuest (username :String) :void
     {
-        Log.getLog(this).debug("INVITE_GUEST username: " + username);
+        var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
+        var errorHandler :Function = function (cause :String) :void {
+            _ctx.getChatDirector().displayAttention(MsoyCodes.GENERAL_MSGS, cause);
+        };
+        msvc.issueInvitation(_ctx.getClient(), username, new InvocationAdapter(errorHandler));
     }
 
     /**

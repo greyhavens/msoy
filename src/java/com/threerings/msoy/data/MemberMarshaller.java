@@ -97,8 +97,21 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #issueInvitation} requests. */
+    public static final int ISSUE_INVITATION = 7;
+
+    // from interface MemberService
+    public void issueInvitation (Client arg1, String arg2, InvocationService.InvocationListener arg3)
+    {
+        ListenerMarshaller listener3 = new ListenerMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, ISSUE_INVITATION, new Object[] {
+            arg2, listener3
+        });
+    }
+
     /** The method id used to dispatch {@link #setAvatar} requests. */
-    public static final int SET_AVATAR = 7;
+    public static final int SET_AVATAR = 8;
 
     // from interface MemberService
     public void setAvatar (Client arg1, int arg2, float arg3, InvocationService.InvocationListener arg4)
@@ -111,7 +124,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setDisplayName} requests. */
-    public static final int SET_DISPLAY_NAME = 8;
+    public static final int SET_DISPLAY_NAME = 9;
 
     // from interface MemberService
     public void setDisplayName (Client arg1, String arg2, InvocationService.InvocationListener arg3)

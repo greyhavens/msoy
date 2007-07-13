@@ -80,6 +80,13 @@ public class MemberDispatcher extends InvocationDispatcher
             );
             return;
 
+        case MemberMarshaller.ISSUE_INVITATION:
+            ((MemberProvider)provider).issueInvitation(
+                source,
+                (String)args[0], (InvocationService.InvocationListener)args[1]
+            );
+            return;
+
         case MemberMarshaller.SET_AVATAR:
             ((MemberProvider)provider).setAvatar(
                 source,

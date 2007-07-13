@@ -56,4 +56,9 @@ public interface MemberService extends InvocationService
      * from the user's queue.
      */
     public void acknowledgeNotifications (Client client, int[] ids, InvocationListener listener);
+
+    /**
+     * Issue an invitation to the given guest from the user's available invites.
+     */
+    public void issueInvitation (Client client, String guestName, InvocationListener listener);
 }
