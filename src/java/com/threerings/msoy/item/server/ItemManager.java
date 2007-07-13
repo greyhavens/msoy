@@ -17,7 +17,6 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
-import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntListUtil;
@@ -304,20 +303,19 @@ public class ItemManager
         }
 
         // do it all at once
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<ArrayList<Item>>(listener) {
-                public ArrayList<Item> invokePersistResult () throws PersistenceException {
-                    // create a list to hold the results
-                    ArrayList<Item> items = new ArrayList<Item>();
-                    // mass-lookup items, a repo at a time
-                    for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : list) {
-                        for (ItemRecord rec : tup.left.loadItems(tup.right)) {
-                            items.add(rec.toItem());
-                        }
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ArrayList<Item>>(listener) {
+            public ArrayList<Item> invokePersistResult () throws PersistenceException {
+                // create a list to hold the results
+                ArrayList<Item> items = new ArrayList<Item>();
+                // mass-lookup items, a repo at a time
+                for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : list) {
+                    for (ItemRecord rec : tup.left.loadItems(tup.right)) {
+                        items.add(rec.toItem());
                     }
-                    return items;
                 }
-            });
+                return items;
+            }
+        });
     }
 
     public List<ItemListInfo> getItemLists (int memberId)
@@ -352,60 +350,58 @@ public class ItemManager
 
     public void loadItemList (final int listId, ResultListener<ArrayList<Item>> listener)
     {
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<ArrayList<Item>>(listener) {
-                public ArrayList<Item> invokePersistResult () throws PersistenceException {
-                    // first, look up the list
-                    ItemListInfoRecord infoRecord = _listRepo.loadInfo(listId);
-                    ItemIdent[] idents = _listRepo.loadList(listId);
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ArrayList<Item>>(listener) {
+            public ArrayList<Item> invokePersistResult () throws PersistenceException {
+                // first, look up the list
+                ItemListInfoRecord infoRecord = _listRepo.loadInfo(listId);
+                ItemIdent[] idents = _listRepo.loadList(listId);
 
-                    // now we're going to load all of these items
-                    LookupList lookupList = new LookupList();
-                    for (ItemIdent ident : idents) {
-                        try {
-                            lookupList.addItem(ident);
-
-                        } catch (MissingRepositoryException mre) {
-                            log.warning("Omitting bogus item from list: " + ident);
-                        }
+                // now we're going to load all of these items
+                LookupList lookupList = new LookupList();
+                for (ItemIdent ident : idents) {
+                    try {
+                        lookupList.addItem(ident);
+                    } catch (MissingRepositoryException mre) {
+                        log.warning("Omitting bogus item from list: " + ident);
                     }
-
-                    // now look up all those items
-                    HashMap<ItemIdent, Item> items = new HashMap<ItemIdent, Item>();
-                    // mass-lookup items, a repo at a time
-                    for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : lookupList) {
-                        for (ItemRecord rec : tup.left.loadItems(tup.right)) {
-                            Item item = rec.toItem();
-                            items.put(item.getIdent(), item);
-                        }
-                    }
-
-                    // prune any items that need pruning
-                    pruneItemsFromList(infoRecord, items.values());
-
-                    // then, if we're missing any items, we need to re-save the list
-                    if (idents.length != items.size()) {
-                        ArrayList<ItemIdent> newIdents = new ArrayList<ItemIdent>(items.size());
-                        for (ItemIdent ident : idents) {
-                            if (items.containsKey(ident)) {
-                                newIdents.add(ident);
-                            }
-                        }
-
-                        // now save the list
-                        idents = new ItemIdent[newIdents.size()];
-                        newIdents.toArray(idents);
-                        _listRepo.saveList(listId, idents);
-                    }
-
-                    // finally, return all the items in list order
-                    ArrayList<Item> list = new ArrayList<Item>(idents.length);
-                    for (ItemIdent ident : idents) {
-                        list.add(items.get(ident));
-                    }
-                    return list;
                 }
-            });
+
+                // now look up all those items
+                HashMap<ItemIdent, Item> items = new HashMap<ItemIdent, Item>();
+                // mass-lookup items, a repo at a time
+                for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : lookupList) {
+                    for (ItemRecord rec : tup.left.loadItems(tup.right)) {
+                        Item item = rec.toItem();
+                        items.put(item.getIdent(), item);
+                    }
+                }
+
+                // prune any items that need pruning
+                pruneItemsFromList(infoRecord, items.values());
+
+                // then, if we're missing any items, we need to re-save the list
+                if (idents.length != items.size()) {
+                    ArrayList<ItemIdent> newIdents = new ArrayList<ItemIdent>(items.size());
+                    for (ItemIdent ident : idents) {
+                        if (items.containsKey(ident)) {
+                            newIdents.add(ident);
+                        }
+                    }
+
+                    // now save the list
+                    idents = new ItemIdent[newIdents.size()];
+                    newIdents.toArray(idents);
+                    _listRepo.saveList(listId, idents);
+                }
+
+                // finally, return all the items in list order
+                ArrayList<Item> list = new ArrayList<Item>(idents.length);
+                for (ItemIdent ident : idents) {
+                    list.add(items.get(ident));
+                }
+                return list;
+            }
+        });
     }
 
     /**
@@ -497,42 +493,41 @@ public class ItemManager
         final int[] oldItemIds = new int[] { oldItemId };
         final int[] newItemIds = new int[] { newItemId };
 
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Object>(rlo) {
-                public Object invokePersistResult () throws PersistenceException {
-                    if (oldItemId != 0) {
-                        repo.markItemUsage(oldItemIds, Item.UNUSED, 0);
-                    }
-                    if (newItemId != 0) {
-                        repo.markItemUsage(newItemIds, itemUseType, locationId);
-                    }
-                    return null;
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Object>(rlo) {
+            public Object invokePersistResult () throws PersistenceException {
+                if (oldItemId != 0) {
+                    repo.markItemUsage(oldItemIds, Item.UNUSED, 0);
                 }
+                if (newItemId != 0) {
+                    repo.markItemUsage(newItemIds, itemUseType, locationId);
+                }
+                return null;
+            }
 
-                public void handleSuccess () {
-                    super.handleSuccess();
-                    final double lastTouched = (double) System.currentTimeMillis();
-                    if (oldItemId != 0) {
-                        updateUserCache(memberId, itemType, oldItemIds, new ItemUpdateOp() {
-                            public void update (Item item) {
-                                item.used = Item.UNUSED;
-                                item.location = 0;
-                                item.lastTouched = lastTouched;
-                            }
-                        }, true);
-                    }
-                    if (newItemId != 0) {
-                        updateUserCache(memberId, itemType, newItemIds, new ItemUpdateOp() {
-                            public void update (Item item) {
-                                item.used = itemUseType;
-                                item.location = locationId;
-                                // make the now-used item sliiightly more recently touched..
-                                item.lastTouched = lastTouched + 1;
-                            }
-                        }, true);
-                    }
+            public void handleSuccess () {
+                super.handleSuccess();
+                final double lastTouched = (double) System.currentTimeMillis();
+                if (oldItemId != 0) {
+                    updateUserCache(memberId, itemType, oldItemIds, new ItemUpdateOp() {
+                        public void update (Item item) {
+                            item.used = Item.UNUSED;
+                            item.location = 0;
+                            item.lastTouched = lastTouched;
+                        }
+                    }, true);
                 }
-            });
+                if (newItemId != 0) {
+                    updateUserCache(memberId, itemType, newItemIds, new ItemUpdateOp() {
+                        public void update (Item item) {
+                            item.used = itemUseType;
+                            item.location = locationId;
+                            // make the now-used item sliiightly more recently touched..
+                            item.lastTouched = lastTouched + 1;
+                        }
+                    }, true);
+                }
+            }
+        });
     }
    
     /**
@@ -724,6 +719,7 @@ public class ItemManager
                     throw new PersistenceException(
                         "Cannot load details of non-existent item [ident=" + ident + "]");
                 }
+
                 ItemDetail detail = new ItemDetail();
                 detail.item = record.toItem();
                 RatingRecord<ItemRecord> rr = repo.getRating(ident.itemId, memberId);
@@ -758,18 +754,18 @@ public class ItemManager
         }
 
         // and load their items; notifying the listener on success or failure
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ArrayList<Item>>(
-            "loadInventory", listener) {
-                public ArrayList<Item> invokePersistResult () throws PersistenceException {
-                    Collection<ItemRecord> list = repo.loadOriginalItems(memberId);
-                    list.addAll(repo.loadClonedItems(memberId));
-                    ArrayList<Item> newList = new ArrayList<Item>(list.size());
-                    for (ItemRecord record : list) {
-                        newList.add(record.toItem());
-                    }
-                    return newList;
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<ArrayList<Item>>("loadInventory", listener) {
+            public ArrayList<Item> invokePersistResult () throws PersistenceException {
+                Collection<ItemRecord> list = repo.loadOriginalItems(memberId);
+                list.addAll(repo.loadClonedItems(memberId));
+                ArrayList<Item> newList = new ArrayList<Item>(list.size());
+                for (ItemRecord record : list) {
+                    newList.add(record.toItem());
                 }
-            });
+                return newList;
+            }
+        });
     }
 
     /**
@@ -785,19 +781,17 @@ public class ItemManager
         }
 
         // load ye items
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ArrayList<Item>>(
-            "loadRecentlyTouched", listener) {
-                public ArrayList<Item> invokePersistResult ()
-                    throws Exception
-                {
-                    List<ItemRecord> list = repo.loadRecentlyTouched(memberId, maxCount);
-                    ArrayList<Item> returnList = new ArrayList<Item>(list.size());
-                    for (int ii = 0, nn = list.size(); ii < nn; ii++) {
-                        returnList.add(list.get(ii).toItem());
-                    }
-                    return returnList;
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<ArrayList<Item>>("loadRecentlyTouched", listener) {
+            public ArrayList<Item> invokePersistResult () throws Exception {
+                List<ItemRecord> list = repo.loadRecentlyTouched(memberId, maxCount);
+                ArrayList<Item> returnList = new ArrayList<Item>(list.size());
+                for (int ii = 0, nn = list.size(); ii < nn; ii++) {
+                    returnList.add(list.get(ii).toItem());
                 }
-            });
+                return returnList;
+            }
+        });
     }
 
     /**
@@ -1001,8 +995,7 @@ public class ItemManager
         }
 
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Float>(listener) {
-            public Float invokePersistResult ()
-                throws PersistenceException {
+            public Float invokePersistResult () throws PersistenceException {
                 ItemRecord item = repo.loadItem(ident.itemId);
                 if (item == null) {
                     throw new PersistenceException("Can't find item [item=" + ident + "]");
@@ -1110,8 +1103,8 @@ public class ItemManager
     }
 
     // from ItemProvider
-    public void getItemNames (
-        ClientObject caller, final ItemIdent[] idents, final InvocationService.ResultListener rl)
+    public void getItemNames (ClientObject caller, final ItemIdent[] idents,
+                              InvocationService.ResultListener rl)
         throws InvocationException
     {
         final HashIntMap<ItemRepository<ItemRecord, ?, ?, ?>> repos =
@@ -1120,7 +1113,6 @@ public class ItemManager
         // get all the repos for all item idents
         for (ItemIdent ident : idents) {
             if (! repos.containsKey(ident.type)) {
-
                 // get a new repo, and save in the map
                 ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident.type, rl);
                 if (repo == null) {
@@ -1132,28 +1124,19 @@ public class ItemManager
         }
 
         // pull item names from repos
-        MsoyServer.invoker.postUnit(new RepositoryUnit("getItemName") {
-            public void invokePersist () throws Exception {
-                _itemNames = new String[idents.length];
-                for (int i = 0; i < idents.length; i++) {
-                    ItemIdent ident = idents[i];
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<String[]>("getItemName", new ResultAdapter<String[]>(rl)) {
+            public String[] invokePersistResult () throws Exception {
+                String[] itemNames = new String[idents.length];
+                for (int ii = 0; ii < idents.length; ii++) {
+                    ItemIdent ident = idents[ii];
                     ItemRecord rec = repos.get(ident.type).loadItem(ident.itemId);
                     if (rec != null) {
-                        _itemNames[i] = rec.name;
+                        itemNames[ii] = rec.name;
                     }
                 }
+                return itemNames;
             }
-            public void handleSuccess () {
-                if (_itemNames != null) {
-                    rl.requestProcessed(_itemNames);
-                } else {
-                    rl.requestFailed(null); 
-                }
-            }
-            public void handleFailure (Exception pe) {
-                rl.requestFailed(pe.getMessage());
-            }
-            public String[] _itemNames;
         });
     }
 
