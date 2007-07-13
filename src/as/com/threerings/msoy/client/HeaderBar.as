@@ -68,9 +68,10 @@ public class HeaderBar extends HBox
                     onClick();
                 }
             });
-            nameLabel.buttonMode = true;
-            nameLabel.useHandCursor = true;
-            nameLabel.mouseChildren = false;
+            var embedded :Boolean = _ctx.getWorldClient().isEmbedded();
+            nameLabel.buttonMode = !embedded;
+            nameLabel.useHandCursor = !embedded;
+            nameLabel.mouseChildren = embedded;
             _owner.addChild(nameLabel);
         }
     }
