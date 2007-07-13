@@ -861,10 +861,10 @@ public class MemberObject extends MsoyBodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setNotifications (DSet<Notification> value)
+    public void setNotifications (DSet<com.threerings.msoy.notify.data.Notification> value)
     {
         requestAttributeChange(NOTIFICATIONS, value, this.notifications);
-        @SuppressWarnings("unchecked") DSet<Notification> clone =
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.notify.data.Notification> clone =
             (value == null) ? null : value.typedClone();
         this.notifications = clone;
     }

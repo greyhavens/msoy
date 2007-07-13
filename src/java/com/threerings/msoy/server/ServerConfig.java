@@ -129,6 +129,6 @@ public class ServerConfig
         mediaS3Bucket = config.getValue("media_s3bucket", "msoy");
         mediaS3Id = config.getValue("media_s3id", "id");
         mediaS3Key = config.getValue("media_s3key", "key");
-        sharedSecret = config.getValue("server_secret", (String)null);
+        sharedSecret = config.getValue("server_secret", "");
     }
 }

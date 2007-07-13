@@ -1,11 +1,13 @@
 //
 // $Id$
 
-package com.threerings.msoy.data;
+package com.threerings.msoy.peer.data;
 
 import com.threerings.util.ActionScript;
 
 import com.threerings.crowd.peer.data.CrowdClientInfo;
+
+import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Contains information on a player logged into one of our peer servers.
@@ -13,6 +15,9 @@ import com.threerings.crowd.peer.data.CrowdClientInfo;
 @ActionScript(omit=true)
 public class MsoyClientInfo extends CrowdClientInfo
 {
-    /** The member's unique identifier. */
-    public int memberId;
+    /** Returns this member's unique identifier. */
+    public int getMemberId ()
+    {
+        return ((MemberName)visibleName).getMemberId();
+    }
 }

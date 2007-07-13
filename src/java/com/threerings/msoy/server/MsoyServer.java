@@ -70,6 +70,7 @@ import com.threerings.msoy.game.server.LobbyRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.notify.server.NotificationManager;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
@@ -342,12 +343,9 @@ public class MsoyServer extends WhirledServer
         confReg = new DatabaseConfigRegistry(conProv, invoker);
         AdminProvider.init(invmgr, confReg);
 
-        // if we have a node name and shared secret, assume we're running in a cluster
-        String node = System.getProperty("node");
-        if (node != null && ServerConfig.sharedSecret != null) {
-            log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
-            peerMan = new MsoyPeerManager(conProv, invoker);
-        }
+        // start up our peer manager
+        log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
+        peerMan = new MsoyPeerManager(conProv, invoker);
 
         // initialize the swiftly invoker
         swiftlyInvoker = new Invoker("swiftly_invoker", omgr);

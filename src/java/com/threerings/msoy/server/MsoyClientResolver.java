@@ -76,7 +76,7 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         // configure their member name which is a combination of their display name and their
         // member id
-        userObj.setMemberName(new MemberName(member.name, member.memberId));
+        userObj.setMemberName(member.getName());
         userObj.setHomeSceneId(member.homeSceneId);
 
         // load up this member's persistent stats

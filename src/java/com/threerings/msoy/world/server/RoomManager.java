@@ -437,11 +437,14 @@ public class RoomManager extends SpotSceneManager
     {
         super.didStartup();
 
+        // set up our room object
         _roomObj = (RoomObject) _plobj;
         _roomObj.setRoomService((RoomMarshaller)
                                 MsoyServer.invmgr.registerDispatcher(new RoomDispatcher(this)));
-
         _roomObj.addListener(_roomListener);
+
+        // register ourselves in our peer object
+        MsoyServer.peerMan.roomDidStartup(_scene.getId(), _scene.getName());
 
         // determine which (if any) items in this room have a memories and load them up
         ArrayList<ItemIdent> memoryIds = new ArrayList<ItemIdent>();
@@ -483,7 +486,11 @@ public class RoomManager extends SpotSceneManager
     {
         _roomObj.removeListener(_roomListener);
         MsoyServer.invmgr.clearDispatcher(_roomObj.roomService);
+
         super.didShutdown();
+
+        // clear out our peer hosting information
+        MsoyServer.peerMan.roomDidShutdown(_scene.getId());
 
         // shut our pets down
         MsoyServer.petMan.shutdownRoomPets(_roomObj);
