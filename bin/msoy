@@ -20,6 +20,11 @@ fi
 # Read in our configuration
 . $MSOY_HOME/server.conf
 
+# Override NODE if passed on the command line
+if [ ! -z "$2" ]; then
+    NODE=$2
+fi
+
 # # Make sure someone running things as root didn't booch the permissions on
 # # the bundles
 # BFILE=$MSOY_HOME/run/booched.txt
@@ -36,16 +41,16 @@ ulimit -n 4096
 ulimit -d 1572864
 
 DAEMON=$MSOY_HOME/bin/msoyrespawn
-RESPAWN_PIDFILE=$MSOY_HOME/run/msoyrespawn.pid
-SERVER_PIDFILE=$MSOY_HOME/run/msoyserver.pid
-LOGFILE=$MSOY_HOME/log/msoyrespawn.log
+RESPAWN_PIDFILE=$MSOY_HOME/run/msoyrespawn-$NODE.pid
+SERVER_PIDFILE=$MSOY_HOME/run/msoyserver-$NODE.pid
+LOGFILE=$MSOY_HOME/log/msoyrespawn-$NODE.log
 
 # See how we were called
 case "$1" in
   start)
         # Make sure msoyrespawn is not currently running
 	if [ -f $RESPAWN_PIDFILE ]; then
-	    echo "msoyrespawn appears to be already running."
+	    echo "msoyrespawn appears to be already running for $NODE."
             echo "Run '$0 stop' to stop it first."
 	    exit 1
 	fi
@@ -54,7 +59,7 @@ case "$1" in
             PID=`cat $SERVER_PIDFILE`
             RPIDS=`ps auxww | grep " $PID " | grep java | awk '{ print $2 }' | sort -n | head -1`
             if [ ! -z "$RPIDS" ]; then
-                echo "WARNING: An MsoyServer process is currently running."
+                echo "WARNING: A $NODE MsoyServer process is currently running."
                 echo "If it has failed and you wish to forcibly restart it, please"
                 echo "execute the following commands:"
                 echo ""
@@ -69,7 +74,8 @@ case "$1" in
         echo -n "Starting $DAEMON: "
         touch $RESPAWN_PIDFILE $LOGFILE
         chown $MSOY_USER $RESPAWN_PIDFILE $LOGFILE
-        su - $MSOY_USER -c "$DAEMON $RESPAWN_PIDFILE $SERVER_PIDFILE" >$LOGFILE 2>&1 </dev/null &
+        su - $MSOY_USER -c "$DAEMON $NODE $RESPAWN_PIDFILE $SERVER_PIDFILE" \
+            >$LOGFILE 2>&1 </dev/null &
         echo "started."
         ;;
 
@@ -78,7 +84,7 @@ case "$1" in
 	    echo "No $RESPAWN_PIDFILE exists. Is msoyrespawn running?"
 	    exit 1
 	fi
-        echo -n "Shutting down msoy, "
+        echo -n "Shutting down msoy node $NODE, "
         kill -INT `cat $SERVER_PIDFILE`
         echo -n "msoyrespawn: "
         kill `cat $RESPAWN_PIDFILE`
