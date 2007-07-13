@@ -18,11 +18,10 @@ use GrindUtil;
 # add /usr/local/bin to the path for FreeBSD
 $ENV{'PATH'} = $ENV{'PATH'} . ":/usr/local/bin";
 
-my $usage = "Usage: $0 [--dryrun] [--node node] [year month day (ie. 2006 05 06)]\n";
+my $usage = "Usage: $0 [--dryrun] [year month day (ie. 2006 05 06)]\n";
 
 my $dry_run;
-my $node;
-GetOptions("dryrun" => \$dry_run, "node" => \$node);
+GetOptions("dryrun" => \$dry_run);
 
 # read in some server properties
 my %sconf;
@@ -34,8 +33,11 @@ while (<CONF>) {
     }
 }
 my $stats_email = $sconf{"STATS_EMAIL"};
-$node = $sconf{"NODE"} unless (defined $node);
-die "Unable to determine node from server.conf\n" unless (defined $node);
+
+my $nodestr = $sconf{"NODES"};
+die "Unable to determine node from server.conf\n" unless (defined $nodestr);
+$nodestr =~ s/\"//g;
+my @nodes = split(/ /, $nodestr);
 
 # if they specified a date, use it
 my $year = shift;
@@ -56,72 +58,72 @@ if ($dateWasSpecified) {
     $day = $info[3];
 }
 
-# make sure we're being invoked on the actual server host
-if (! -e "$root/log/server_$node.log") {
-    # exit quietly because we are run automatically via cron on any machine in
-    # a cluster, even machines that are quietly awaiting duty as a backup
-    exit(0);
-}
+# iterate over all the nodes on this server
+NODELOOP: foreach $node (@nodes) {
+    # make sure we have log files to process
+    next unless (-e "$root/log/server_$node.log");
 
-while (1) {
-    $datestr = sprintf("%04d%02d%02d", $year, $month, $day);
-    $datedir = sprintf("%04d/%02d/%02d", $year, $month, $day);
+    while (1) {
+        $datestr = sprintf("%04d%02d%02d", $year, $month, $day);
+        $datedir = sprintf("%04d/%02d/%02d", $year, $month, $day);
 
-    # if we find a moved or unmoved log file, call it good
-    last if (-e "$root/log/server_$node.log.$datestr" ||
-             -e "$root/logs/$datedir/server_$node.log");
+        # if we find a moved or unmoved log file, call it good
+        last if (-e "$root/log/server_$node.log.$datestr" ||
+                 -e "$root/logs/$datedir/server_$node.log");
 
-    # if it doesn't exist and it was specified on the command line, die
-    if ($dateWasSpecified) {
-       die "Unable to find logfile for that date!";
-    }
+        # if it doesn't exist and it was specified on the command line, complain
+        if ($dateWasSpecified) {
+            warn "Unable to find $node logfile for $datestr!";
+            next NODELOOP;
+        }
 
-    # otherwise, we do twisted horrible things to back up the date
-    if ($day > 1) {
-        $day--;
-    } else {
-        $day = 31;
-        if ($month > 1) {
-            $month--;
+        # otherwise, we do twisted horrible things to back up the date
+        if ($day > 1) {
+            $day--;
         } else {
-            $month = 12;
-            if ($year > 2000) {
-                $year--;
+            $day = 31;
+            if ($month > 1) {
+                $month--;
             } else {
-                die "Unable to find any logfiles in '$root/log'.\n";
+                $month = 12;
+                if ($year > 2000) {
+                    $year--;
+                } else {
+                    warn "Unable to find any $node logfiles in '$root/log'.\n";
+                    next NODELOOP;
+                }
             }
         }
     }
-}
 
-# now move the log files to their appropriate historical directory
-my $histlogdir = "$root/logs/$datedir";
-if ($dry_run) {
-    print "Would create historical log directory: $histlogdir\n";
-} else {
-    system_warn("mkdir -p $histlogdir");
-    for $file (glob "$root/log/*_$node.log.$datestr") {
-        $file =~ m:$root/log/(.*).log.$datestr:;
-        system_warn("mv $file $histlogdir/$1.log");
+    # now move the log files to their appropriate historical directory
+    my $histlogdir = "$root/logs/$datedir";
+    if ($dry_run) {
+        print "Would create historical log directory: $histlogdir\n";
+    } else {
+        system_warn("mkdir -p $histlogdir");
+        for $file (glob "$root/log/*_$node.log.$datestr") {
+            $file =~ m:$root/log/(.*).log.$datestr:;
+            system_warn("mv $file $histlogdir/$1.log");
+        }
     }
-}
 
-my $statsdir = "$root/pages/stats/$datedir";
-if ($dry_run) {
-    print "Would place generated files in '$statsdir'.\n";
-} else {
-    system_warn("mkdir -p $statsdir");
-}
+    my $statsdir = "$root/pages/stats/$datedir";
+    if ($dry_run) {
+        print "Would place generated files in '$statsdir'.\n";
+    } else {
+        system_warn("mkdir -p $statsdir");
+    }
 
-# process the general server statistics
-my $date = $datedir;
-$date =~ s:/:-:g;
+    # process the general server statistics
+    my $date = $datedir;
+    $date =~ s:/:-:g;
 
-my $host = `hostname`;
-chomp($host);
+    my $host = `hostname`;
+    chomp($host);
 
-# if we're on a production server...
-if ($host =~ /^msoy\d+/) {
+    # if we're on a production server...
+    if ($host =~ /^msoy\d+/) {
 #     # run our performance stat summarizer
 #     $cmd = "$root/bin/summarize_perf $histlogdir/perf_$node.log > $statsdir/perf_$node.html";
 #     if ($dry_run) {
@@ -147,4 +149,5 @@ if ($host =~ /^msoy\d+/) {
 #                   "$host: Whirled nightly stats", "/tmp/msoystats.tmp");
 #         unlink("/tmp/msoystats.tmp");
 #     }
+    }
 }
