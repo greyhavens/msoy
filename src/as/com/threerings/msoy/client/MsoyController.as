@@ -140,6 +140,9 @@ public class MsoyController extends Controller
     /** Command to view the app in full-screen mode. */
     public static const TOGGLE_FULLSCREEN :String = "ToggleFullscreen";
 
+    /** Command to issue an invite to a current guest. */
+    public static const INVITE_GUEST :String = "InviteGuest";
+
     /**
      * Create the msoy controller.
      */
@@ -505,6 +508,14 @@ public class MsoyController extends Controller
             client.setCredentials(creds);
             client.logon();
         });
+    }
+
+    /**
+     * Handle the INVITE_GUEST command.
+     */
+    public function handleInviteGuest (username :String) :void
+    {
+        Log.getLog(this).debug("INVITE_GUEST username: " + username);
     }
 
     /**

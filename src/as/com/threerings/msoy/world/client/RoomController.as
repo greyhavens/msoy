@@ -506,12 +506,19 @@ public class RoomController extends SceneController
             menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
                 command: MsoyController.OPEN_CHANNEL, arg: occInfo.username });
 
-            if (!isGuest) {
+            if (isGuest) {
+                menuItems.push(
+                    { label: Msgs.GENERAL.get("b.invite_to_whirled"),
+                      command: MsoyController.INVITE_GUEST, arg: occInfo.username });
+            } else {
                 menuItems.push(
                     { label: Msgs.GENERAL.get("b.visit_home"),
-                      command: MsoyController.GO_MEMBER_HOME, arg: memId },
-                    { label: Msgs.GENERAL.get("b.view_member"),
-                      command: MsoyController.VIEW_MEMBER, arg: memId });
+                      command: MsoyController.GO_MEMBER_HOME, arg: memId });
+                if (!_mctx.getWorldClient().isEmbedded()) {
+                    menuItems.push(
+                        { label: Msgs.GENERAL.get("b.view_member"),
+                          command: MsoyController.VIEW_MEMBER, arg: memId });
+                }
                 if (!us.isGuest()) {
                     menuItems.push(
                         { label: Msgs.GENERAL.get(isFriend ? "b.removeAsFriend"
