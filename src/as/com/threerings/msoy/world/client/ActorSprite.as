@@ -80,6 +80,7 @@ public class ActorSprite extends MsoySprite
         // It seems that setting cacheAsBitmap makes the vertical jumpiness go away, but
         // not the horizontal jumpiness. So, I've disabled it for now...
         //_label.cacheAsBitmap = true;
+        _label.selectable = false;
         _label.autoSize = TextFieldAutoSize.CENTER;
         _label.defaultTextFormat = labelFormat;
         _label.filters = [ new GlowFilter(0, 1, 2, 2, 255) ];
@@ -219,7 +220,26 @@ public class ActorSprite extends MsoySprite
      */
     public function getChatInfo () :Array
     {
-        return [ getStageRect(false), "TODO", "TODO" ];
+        var w :int = getContentWidth();
+        var h :int = getContentHeight();
+
+        var mouthSpot :Point;
+        if (_mouthSpot == null) {
+            mouthSpot = new Point(w/2, h/4);
+
+        } else {
+            mouthSpot = new Point(Math.max(0, Math.min(_mouthSpot.x, w)),
+                Math.max(0, Math.min(_mouthSpot.y, h)));
+        }
+
+        var tailDist :Number;
+        if (isNaN(_tailDistance)) {
+            tailDist = Math.max(w/4, h/4);
+        } else {
+            tailDist = _tailDistance;
+        }
+
+        return [ getStageRect(false), localToGlobal(mouthSpot), tailDist ];
     }
 
     /**
@@ -686,7 +706,14 @@ public class ActorSprite extends MsoySprite
      */
     internal function setMouthSpot (x :Number, y :Number, tailTerminationDist :Number) :void
     {
-        // TODO
+        if (isNaN(x) || isNaN(y)) {
+            _mouthSpot = null;
+        } else {
+            // just set it here, we'll bound it when it's used...
+            _mouthSpot = new Point(x, y);
+        }
+
+        _tailDistance = tailTerminationDist; // ok to be NaN
     }
 
     internal function setMoveSpeedFromUser (speed :Number) :void
@@ -752,6 +779,12 @@ public class ActorSprite extends MsoySprite
 
     /** The media scale we should use. */
     protected var _scale :Number = 1;
+
+    /** The actor's mouthspot, or null to use the calculated one. */
+    protected var _mouthSpot :Point = null;
+
+    /** The tail termination distance, or NaN to use the calculated one. */
+    protected var _tailDistance :Number = NaN;
 
     /** The move speed, in pixels per second. */
     protected var _moveSpeed :Number = DEFAULT_MOVE_SPEED;
