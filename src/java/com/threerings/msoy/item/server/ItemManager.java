@@ -1125,7 +1125,7 @@ public class ItemManager
 
         // pull item names from repos
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<String[]>("getItemName", new ResultAdapter<String[]>(rl)) {
+            new RepositoryListenerUnit<String[]>("getItemNames", new ResultAdapter<String[]>(rl)) {
             public String[] invokePersistResult () throws Exception {
                 String[] itemNames = new String[idents.length];
                 for (int ii = 0; ii < idents.length; ii++) {
