@@ -16,6 +16,7 @@ import com.adobe.crypto.MD5;
 import com.threerings.util.Name;
 import com.threerings.util.ResultAdapter;
 import com.threerings.util.StringUtil;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.ClientObject;
@@ -54,7 +55,7 @@ public /*abstract*/ class BaseClient extends Client
     public function dispatchEventToGWT (eventName :String, eventArgs :Array) :void
     {
         try {
-            if (ExternalInterface.available) {
+            if (ExternalInterface.available && !_embedded) {
                 ExternalInterface.call("triggerFlashEvent", eventName, eventArgs);
             }
         } catch (err :Error) {
@@ -69,13 +70,14 @@ public /*abstract*/ class BaseClient extends Client
 
         _ctx = createContext();
         LoggingTargets.configureLogging(_ctx);
-
+        
         // wire up our JavaScript bridge functions
         try {
             if (ExternalInterface.available) {
                 configureExternalFunctions();
             }
         } catch (err :Error) {
+            _embedded = true;
             // nada: ExternalInterface isn't there. Oh well!
             log.info("Unable to configure external functions.");
         }
@@ -126,7 +128,7 @@ public /*abstract*/ class BaseClient extends Client
 
         if (rdata.sessionToken != null) {
             try {
-                if (ExternalInterface.available) {
+                if (ExternalInterface.available && !_embedded) {
                     ExternalInterface.call("flashDidLogon", "Foo", 1, rdata.sessionToken);
                 }
             } catch (err :Error) {
@@ -157,6 +159,14 @@ public /*abstract*/ class BaseClient extends Client
         // updater.newGold(_user.gold);
         updater.newFlow(_user.flow);
         updater.newMail(_user.hasNewMail);
+    }
+
+    /**
+     * Find out whether this client is embedded in a non-whirled page.
+     */
+    public function isEmbedded () :Boolean
+    {
+        return _embedded;
     }
 
     /**
@@ -226,10 +236,9 @@ public /*abstract*/ class BaseClient extends Client
 
     protected var _ctx :BaseContext;
     protected var _user :MemberObject;
+    protected var _embedded :Boolean = false;
 }
 }
-
-import flash.external.ExternalInterface;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;

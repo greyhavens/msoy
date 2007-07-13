@@ -79,6 +79,7 @@ import com.threerings.msoy.notify.data.ReleaseNotesNotification;
  */
 [Event(name="embeddedStateKnown", type="com.threerings.util.ValueEvent")]
 
+
 /**
  * Handles the main services for the world and game clients.
  */
@@ -161,14 +162,6 @@ public class WorldClient extends BaseClient
     }
 
     /**
-     * Find out whether this client is embedded in a non-whirled page.
-     */
-    public function isEmbedded () :Boolean
-    {
-        return _embedded;
-    }
-
-    /**
      * Find out if we're currently working in mini-land or not.  Other components should be able to
      * check this value after they detect that the flash player's size has changed, to discover our
      * status in this regard.
@@ -184,7 +177,7 @@ public class WorldClient extends BaseClient
     public function closeClient () :void
     {
         try {
-            if (ExternalInterface.available) {
+            if (ExternalInterface.available && !_embedded) {
                 ExternalInterface.call("clearClient");
             }
         } catch (err :Error) {
@@ -198,7 +191,7 @@ public class WorldClient extends BaseClient
     public function setSeparator (x :int) :void
     {
         try {
-            if (ExternalInterface.available) {
+            if (ExternalInterface.available && !_embedded) {
                 ExternalInterface.call("setSeparator", x);
             }
         } catch (err :Error) {
@@ -212,7 +205,7 @@ public class WorldClient extends BaseClient
     public function clearSeparator () :void
     {
         try {
-            if (ExternalInterface.available) {
+            if (ExternalInterface.available && !_embedded) {
                 ExternalInterface.call("clearSeparator");
             }
         } catch (err :Error) {
@@ -226,7 +219,7 @@ public class WorldClient extends BaseClient
     public function setWindowTitle (title :String) :void
     {
         try {
-            if (ExternalInterface.available) {
+            if (ExternalInterface.available && !_embedded) {
                 ExternalInterface.call("setWindowTitle", title);
             }
         } catch (err :Error) {
@@ -238,7 +231,7 @@ public class WorldClient extends BaseClient
     override public function gotClientObject (clobj :ClientObject) :void
     {
         super.gotClientObject(clobj);
-        if (clobj is MemberObject) {
+        if (clobj is MemberObject && !_embedded) {
             var member :MemberObject = clobj as MemberObject;
             member.addListener(new AvatarUpdateNotifier());
         }
@@ -271,8 +264,12 @@ public class WorldClient extends BaseClient
         ExternalInterface.addCallback("removePet", externalRemovePet);
         ExternalInterface.addCallback("getPets", externalGetPets);
 
-        _embedded = !Boolean(ExternalInterface.call("helloWhirled"));
-        dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
+        try {
+            _embedded = !(ExternalInterface.call("helloWhirled") as Boolean);
+        } catch (err :Error) {
+            _embedded = true;
+        }
+        dispatchEvent(new ValueEvent(WorldClient.EMBEDDED_STATE_KNOWN, _embedded));
     }
 
     /**
@@ -497,7 +494,6 @@ public class WorldClient extends BaseClient
     }
 
     protected var _wctx :WorldContext;
-    protected var _embedded :Boolean;
     protected var _minimized :Boolean;
 }
 }
