@@ -31,7 +31,7 @@ case "$1" in
   start)
         # Make sure msoyrespawn is not currently running
         for NODE in $NODES; do
-            if [ -f $MSOY_HOME/run/msoyrespawn-$NODE.pid ]; then
+            if [ -f $MSOY_HOME/run/respawn-$NODE.pid ]; then
                 echo "msoyrespawn appears to be already running for $NODE."
                 echo "Run '$0 stop' to stop it first."
                 exit 1
@@ -40,7 +40,7 @@ case "$1" in
 
         # Make sure there are no hung MetaSOY server processes
         for NODE in $NODES; do
-            SERVER_PIDFILE=$MSOY_HOME/run/msoyserver-$NODE.pid
+            SERVER_PIDFILE=$MSOY_HOME/run/server-$NODE.pid
             if [ -f $SERVER_PIDFILE ]; then
                 PID=`cat $SERVER_PIDFILE`
                 RPIDS=`ps auxww | grep " $PID " | grep java | awk '{ print $2 }' | \
@@ -62,22 +62,22 @@ case "$1" in
         # Go ahead and start things up
         for NODE in $NODES; do
             DAEMON=$MSOY_HOME/bin/msoyrespawn
-            RESPAWN_PIDFILE=$MSOY_HOME/run/msoyrespawn-$NODE.pid
-            SERVER_PIDFILE=$MSOY_HOME/run/msoyserver-$NODE.pid
-            LOGFILE=$MSOY_HOME/log/msoyrespawn-$NODE.log
+            RESPAWN_PIDFILE=$MSOY_HOME/run/respawn-$NODE.pid
+            SERVER_PIDFILE=$MSOY_HOME/run/server-$NODE.pid
+            LOGFILE=$MSOY_HOME/log/respawn-$NODE.log
             echo -n "Starting $DAEMON: "
             touch $RESPAWN_PIDFILE $LOGFILE
             chown $MSOY_USER $RESPAWN_PIDFILE $LOGFILE
             su - $MSOY_USER -c "$DAEMON $NODE $RESPAWN_PIDFILE $SERVER_PIDFILE" \
-                >$LOGFILE 2>&1 </dev/null &
+                >>$LOGFILE 2>&1 </dev/null &
             echo "started."
         done
         ;;
 
   stop)
         for NODE in $NODES ; do
-            RESPAWN_PIDFILE=$MSOY_HOME/run/msoyrespawn-$NODE.pid
-            SERVER_PIDFILE=$MSOY_HOME/run/msoyserver-$NODE.pid
+            RESPAWN_PIDFILE=$MSOY_HOME/run/respawn-$NODE.pid
+            SERVER_PIDFILE=$MSOY_HOME/run/server-$NODE.pid
             if [ ! -f $RESPAWN_PIDFILE ]; then
                 echo "No $RESPAWN_PIDFILE exists. Is msoyrespawn running?"
             else
@@ -93,7 +93,7 @@ case "$1" in
 
   unspawn)
         for NODE in $NODES ; do
-            RESPAWN_PIDFILE=$MSOY_HOME/run/msoyrespawn-$NODE.pid
+            RESPAWN_PIDFILE=$MSOY_HOME/run/respawn-$NODE.pid
             if [ ! -f $RESPAWN_PIDFILE ]; then
                 echo "No $RESPAWN_PIDFILE exists. Is msoyrespawn running?"
             else

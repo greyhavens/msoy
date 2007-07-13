@@ -20,7 +20,7 @@ fi
 NODE=$1
 PIDFILE=$2
 
-LOGFILE=$BANG_HOME/log/stdout-$NODE.log
+LOGFILE=$MSOY_HOME/log/stdout-$NODE.log
 LOG_EMAIL=nightly-logs@threerings.net
 LOGLEVEL=info
 SERVER_MEMORY=384M

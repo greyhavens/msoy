@@ -32,7 +32,7 @@ while (1) {
     my $now = localtime($start);
 
     # actually run the server
-    print $LOG "$now Running msoy server\n";
+    print $LOG "$now Running msoy server: $root/bin/runmsoy $node $server_pidfile\n";
     my $rcode = system("$root/bin/runmsoy $node $server_pidfile");
 
     # note the time again
