@@ -73,7 +73,7 @@ NODELOOP: foreach $node (@nodes) {
 
         # if it doesn't exist and it was specified on the command line, complain
         if ($dateWasSpecified) {
-            warn "Unable to find $node logfile for $datestr!";
+            warn "Unable to find $node logfile for $datestr!\n";
             next NODELOOP;
         }
 
