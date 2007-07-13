@@ -5,10 +5,12 @@
 # A script to respawn the MetaSOY server over and over again, assuming that
 # it exits cleanly each time.
 
-my $root = `dirname $0 | sed s:/bin\$::`; chomp($root);
+my $root = `cd \`dirname $0\`/..; pwd`; chomp($root);
+my $node = shift or die "Usage: $0 nodename [pidfile]\n";
+
 my $LOG;
-if (!open($LOG, ">$root/log/msoyrespawn.log")) {
-    warn "Unable to log to $root/log/msoyrespawn.log: $!\n";
+if (!open($LOG, ">$root/log/respawn-$node.log")) {
+    warn "Unable to log to $root/log/respawn-$node.log: $!\n";
     $LOG = STDERR;
 }
 
@@ -31,7 +33,7 @@ while (1) {
 
     # actually run the server
     print $LOG "$now Running msoy server\n";
-    my $rcode = system("$root/bin/runmsoy $server_pidfile");
+    my $rcode = system("$root/bin/runmsoy $node $server_pidfile");
 
     # note the time again
     my $finish = time();
@@ -45,9 +47,8 @@ while (1) {
 	print $LOG "$fnow MetaSOY server exited healthily after $duration seconds.\n";
     }
 
-    # don't spiral out of control
+    # don't spiral out of control; only restart once per minute
     if ($duration < 60) {
-        print $LOG "$fnow MetaSOY server exited too quickly. Shutting down.\n";
         print $LOG "$fnow MetaSOY server exited too quickly. Taking a breather.\n";
         sleep(60-$duration);
     }
