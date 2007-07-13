@@ -299,6 +299,25 @@ public class MsoyServer extends WhirledServer
         }
     }
 
+    /**
+     * Starts everything a runnin'.
+     */
+    public static void main (String[] args)
+    {
+        // set up the proper logging services
+        com.samskivert.util.Log.setLogProvider(new LoggingLogProvider());
+        OneLineLogFormatter.configureDefaultHandler();
+
+        MsoyServer server = new MsoyServer();
+        try {
+            server.init();
+            server.run();
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Unable to initialize server", e);
+            System.exit(255);
+        }
+    }
+
     @Override
     public void init ()
         throws Exception
@@ -401,34 +420,28 @@ public class MsoyServer extends WhirledServer
         }
     }
 
-    @Override
+    @Override // from WhirledServer
     protected SceneRepository createSceneRepository ()
         throws Exception
     {
         return new MsoySceneRepository(conProv);
     }
 
-    @Override
+    @Override // from WhirledServer
     protected SceneFactory createSceneFactory ()
         throws Exception
     {
         return _sceneFactory;
     }
 
-    @Override
+    @Override // from WhirledServer
     protected SceneRegistry.ConfigFactory createConfigFactory ()
         throws Exception
     {
         return _sceneFactory;
     }
 
-    @Override
-    protected Authenticator createAuthenticator ()
-    {
-        return (author = new MsoyAuthenticator());
-    }
-
-    @Override
+    @Override // from CrowdServer
     protected PlaceRegistry createPlaceRegistry (InvocationManager invmgr, RootDObjectManager omgr)
     {
         return new PlaceRegistry(invmgr, omgr) {
@@ -439,19 +452,7 @@ public class MsoyServer extends WhirledServer
         };
     }
 
-    @Override
-    protected int[] getListenPorts ()
-    {
-        return ServerConfig.serverPorts;
-    }
-
-    @Override
-    protected void logReport (String report)
-    {
-        _stlog.log(report);
-    }
-
-    @Override // documentation inherited
+    @Override // from CrowdServer
     protected BodyLocator createBodyLocator ()
     {
         return new BodyLocator() {
@@ -459,6 +460,24 @@ public class MsoyServer extends WhirledServer
                 return _online.get(visibleName);
             }
         };
+    }
+
+    @Override // from PresentsServer
+    protected Authenticator createAuthenticator ()
+    {
+        return (author = new MsoyAuthenticator());
+    }
+
+    @Override // from PresentsServer
+    protected int[] getListenPorts ()
+    {
+        return ServerConfig.serverPorts;
+    }
+
+    @Override // from PresentsServer
+    protected void logReport (String report)
+    {
+        _stlog.log(report);
     }
 
     /**
@@ -567,22 +586,6 @@ public class MsoyServer extends WhirledServer
             }
         }
         adminMan.scheduleReboot(playersOnline ? 2 : 0, "codeUpdateAutoRestart");
-    }
-
-    public static void main (String[] args)
-    {
-        // set up the proper logging services
-        com.samskivert.util.Log.setLogProvider(new LoggingLogProvider());
-        OneLineLogFormatter.configureDefaultHandler();
-
-        MsoyServer server = new MsoyServer();
-        try {
-            server.init();
-            server.run();
-        } catch (Exception e) {
-            log.log(Level.WARNING, "Unable to initialize server", e);
-            System.exit(255);
-        }
     }
 
     /** Our scene and config factory. */
