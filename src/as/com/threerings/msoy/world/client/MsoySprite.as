@@ -194,11 +194,19 @@ public class MsoySprite extends MsoyMediaContainer
         return [ metrics.sceneWidth, metrics.sceneHeight, metrics.sceneDepth];
     }
 
+    /**
+     * Does this sprite have action? In other words, do we want to glow it
+     * for the user when they hover over it?
+     */
     public function hasAction () :Boolean
     {
         return false;
     }
 
+    /**
+     * Does this sprite capture the mouse? If the sprite has action
+     * then it should really capture the mouse, otherwise either is fine.
+     */
     public function capturesMouse () :Boolean
     {
         return hasAction();
@@ -417,7 +425,7 @@ public class MsoySprite extends MsoyMediaContainer
     protected function configureMouseProperties () :void
     {
         var active :Boolean = isActive();
-        mouseChildren = active && !_editing && !hasAction() && capturesMouse();
+        mouseChildren = active && !_editing && capturesMouse();
         mouseEnabled = active && !_editing;
     }
 
