@@ -47,7 +47,9 @@
   <property name="props.list" value="server.properties"/>
 
   <!-- declare the files from bin needed in the package -->
-  <property name="bin.list" value="msoy,msoyrespawn,msoyserver,msoyjava,runmsoy,mysql"/>
+  <property name="bin.list1" value="msoy,msoyrespawn,msoyserver,msoyjava,runmsoy,mysql"/>
+  <property name="bin.list2" value="process_stats,roll_logs"/>
+  <property name="bin.list"   value="${bin.list1},${bin.list2}"/>
 
   <!-- declare the files that will be deployed to the maven repository -->
   <filelist dir="." id="deploy.filelist">
