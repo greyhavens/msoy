@@ -89,7 +89,9 @@ public class RoomEditorController
         _hover.start();
         _panel.open();
 
-        requestNamesForAllFurnis();
+        // clear out the names cache, and ping the server
+        _names = new HashMap();
+        queryServerForNames(this.scene.getFurni());
     }
 
     /**
@@ -119,8 +121,8 @@ public class RoomEditorController
             // results in an update that removes and re-adds the same object.
             // if that's what's going on, just do a simple refresh.
             if (mod.furniRemoved != null && mod.furniRemoved.length == 1 &&
-                mod.furniAdded != null && mod.furniAdded.length == 1)
-            {
+                mod.furniAdded != null && mod.furniAdded.length == 1) {
+
                 var added :FurniData = mod.furniAdded[0] as FurniData;
                 var removed :FurniData = mod.furniRemoved[0] as FurniData;
                 if (added.getItemIdent().equals(removed.getItemIdent())) {
@@ -130,9 +132,9 @@ public class RoomEditorController
             }
 
             // this is a different kind of an update. refresh the name cache appropriately.
-            forgetItemNames(mod.furniRemoved);
-            addItemNames(mod.furniAdded);
-
+            queryServerForNames(mod.furniAdded);
+            updateNameDisplay();
+            
             // finally, if the target furni just got removed, we should lose focus.
             if (mod.furniRemoved != null && _edit.target != null) {
                 var targetIdent :ItemIdent = _edit.target.getFurniData().getItemIdent();
@@ -280,84 +282,59 @@ public class RoomEditorController
     }
 
     /**
-     * Retrieves item names for objects placed in this room.
+     * Helper function, returns an array of ItemIdents of pieces of furniture from the specified
+     * /furnis/ array, whose names are not stored in the cache.
      */
-    protected function requestNamesForAllFurnis () :void
+    protected function findNamelessFurnis (furnis :Array) :TypedArray /* of ItemIdent */
     {
-        // make a list of furni identifiers
-        var furnis :Array = scene.getFurni();
         var idents :TypedArray = TypedArray.create(ItemIdent);
         for each (var data :FurniData in furnis) {
-            if (data.itemType != Item.NOT_A_TYPE) { // skip freebie doors and other fake items
-                idents.push(data.getItemIdent());
+            var ident :ItemIdent = data.getItemIdent();
+            if (! _names.containsKey(ident)) {          // only query for new items
+                if (data.itemType != Item.NOT_A_TYPE) { // skip freebie doors and other fake items
+                    idents.push(ident);
+                }
             }
         }
-
-        // clear out the current map, and read from the server
-        _names = new HashMap();
-        queryServerForItemNames(idents);
+        return idents;
     }
-
-    /** Removes the item's name from the cache. */
-    protected function forgetItemNames (furnis :TypedArray /* of FurniData */) :void
+        
+    /**
+     * Given a list of furnis, retrieves names of furnis we don't yet know about.
+     */
+    protected function queryServerForNames (furnis :Array /* of FurniData */) :void
     {
         if (furnis == null) {
             return; // nothing to do
         }
         
-        for each (var furni :FurniData in furnis) {
-            var ident :ItemIdent = furni.getItemIdent();
-            if (_names.remove(ident) == undefined) {
-                Log.getLog(RoomEditorController).warning(
-                    "Unable to forget item name, it's not in the map [id=" + ident + "].");
-            }
-        }
-        updateNameList();
-    };
+        // find which furni names we're missing
+        var idents :TypedArray = findNamelessFurnis(furnis);
 
-    /** Asks the server for the name of the recently added item. */
-    protected function addItemNames (furnis :TypedArray /* of FurniData */) :void
-    {
-        if (furnis == null) {
-            return; // nothing to do
+        if (idents.length == 0) {
+            return; // no names are missing - we're done!
         }
-
-        var idents :TypedArray = TypedArray.create(ItemIdent);
-        for each (var furni :FurniData in furnis) {
-            if (furni.itemType != Item.NOT_A_TYPE) { // skip freebie doors and other fake items
-                idents.push(furni.getItemIdent());
-            }
-        }
-        queryServerForItemNames(idents);
-    };
-
-    /**
-     * Retrieves item names for the specified list of items.
-     */
-    protected function queryServerForItemNames (idents :TypedArray /* of ItemIdent */) :void
-    {
+        
         // now ask the server for ids
         var svc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
         svc.getItemNames(
             _ctx.getClient(), idents, new ResultWrapper(function (cause :String) :void {
-                    // do nothing
-                    Log.getLog(RoomEditorController).warning(
-                        "Unable to get item names [cause=" + cause + "].");
+                // do nothing
+                Log.getLog(RoomEditorController).warning(
+                    "Unable to get item names [cause=" + cause + "].");
             }, function (names :Array /* of String */) :void {
-                    // we got an array of names! put them all in the cache and update the list.
-                    for (var i :int = 0; i < idents.length; i++) {
-                        _names.put(idents[i], { label: names[i], data: idents[i] });
-                    }
-                    updateNameList();
-                    // if a target is currently selected, update its displayed name
-                    updateTargetName();
+                // we got an array of names! put them all in the cache and update the list.
+                for (var i :int = 0; i < idents.length; i++) {
+                    _names.put(idents[i], { label: names[i], data: idents[i] });
+                }
+                updateNameDisplay();
             }));
     }
 
     /**
      * When the user clicks on a new item, updates its displayed name.
      */
-    protected function updateTargetName () :void
+    protected function selectTargetName () :void
     {
         // if there's no furni selected, we have nothing to do
         if (_edit.target == null) {
@@ -387,12 +364,20 @@ public class RoomEditorController
     }
 
     /** Called when the list of objects in the room had changed, it updates the panel. */
-    protected function updateNameList () :void
+    protected function updateNameDisplay () :void
     {
-        var defs :Array = _names.values();
+        var idents :Array = this.scene.getFurni().map(
+            function(furni :FurniData, i :*, a :*) :ItemIdent {
+                return furni.getItemIdent();
+            });
+        var defs :Array = _names.values().filter(function (def :Object, i :*, a :*) :Boolean {
+            return ArrayUtil.contains(idents, def.data);
+        });
+
         defs.sortOn("label", Array.CASEINSENSITIVE);
         _panel.updateNameList(defs);
-        _panel.selectInNameList(null);
+
+        selectTargetName();
     }
 
     /** Sets the currently edited target to the specified sprite. */
@@ -400,7 +385,7 @@ public class RoomEditorController
     {
         _edit.target = targetSprite;
         targetSpriteUpdated();
-        updateTargetName();
+        selectTargetName();
     }
 
     /** Forces the target sprite to be re-read from the room. */
