@@ -10,7 +10,7 @@ import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.client.persist.SceneRepository;
 
 /**
- * Does something extraordinary.
+ * Handles custom scene traversal and extra bits for Whirled.
  */
 public class MsoySceneDirector extends SceneDirector
 {
