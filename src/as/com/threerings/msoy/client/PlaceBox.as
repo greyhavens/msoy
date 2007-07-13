@@ -41,6 +41,9 @@ public class PlaceBox extends Canvas
             addChildAt(disp, 0);
         } else {
             rawChildren.addChildAt(disp, 0);
+            if (_placeView is MsoyPlaceView) {
+                MsoyPlaceView(_placeView).setPlaceSize(_mask.width, _mask.height);
+            }
         }
     }
 
