@@ -49,6 +49,7 @@ import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.PetService;
 import com.threerings.msoy.world.client.PetSprite;
 
+import com.threerings.msoy.world.data.MsoySceneMarshaller;
 import com.threerings.msoy.world.data.PetMarshaller;
 import com.threerings.msoy.world.data.RoomConfig;
 
@@ -131,6 +132,7 @@ public class WorldClient extends BaseClient
         var c :Class;
         c = RoomConfig;
         c = SceneMarshaller;
+        c = MsoySceneMarshaller;
         c = SpotMarshaller;
         c = SpotSceneObject;
         c = ParlorMarshaller;
