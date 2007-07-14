@@ -1442,9 +1442,9 @@ public class RoomController extends SceneController
     internal function showEntityPopup (
         sprite :MsoySprite, title :String, panel :DisplayObject, w :Number, h :Number) :Boolean
     {
-        if (_entityAllowedToPop != sprite) {
-            return false;
-        }
+//        if (_entityAllowedToPop != sprite) {
+//            return false;
+//        }
         if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0 || title == null || panel == null) {
             return false;
         }

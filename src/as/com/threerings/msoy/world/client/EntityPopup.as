@@ -3,21 +3,14 @@
 
 package com.threerings.msoy.world.client {
 
-import flash.events.Event;
-
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
-import flash.display.Loader;
 import flash.display.Shape;
-
-import flash.net.URLRequest;
-
-import flash.system.LoaderContext;
-
-import flash.utils.ByteArray;
+import flash.display.Sprite;
 
 import mx.containers.Canvas;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.ui.FloatingPanel;
@@ -33,12 +26,13 @@ public class EntityPopup extends FloatingPanel
         ctx :WorldContext, entitySprite :MsoySprite, ctrl :RoomController,
         title :String, userPanel :DisplayObject, panelWidth :Number, panelHeight :Number)
     {
-        super(ctx, title);
+        super(ctx,
+            Msgs.GENERAL.get("t.entity_popup", Msgs.GENERAL.get(entitySprite.getDesc()), title));
+
         _ctrl = ctrl;
         _entitySprite = entitySprite;
-        _userPanel = userPanel;
 
-        // TODO: style the title bar so that it cannot look like a whirled interface...
+        styleName = "entityPopup";
         showCloseButton = true;
         // TODO: a nice pop-up effect when this thing comes up. ZoomEffect.
 
@@ -56,6 +50,12 @@ public class EntityPopup extends FloatingPanel
         mask.graphics.endFill();
         _canvas.rawChildren.addChild(mask);
         _canvas.mask = mask;
+
+        // we need to put the userpanel one-level down, otherwise flex stuff will
+        // try to examine it and freak out
+        var holder :Sprite = new Sprite();
+        holder.addChild(userPanel);
+        _canvas.rawChildren.addChild(holder);
     }
 
     public function getOwningEntity () :MsoySprite
@@ -73,16 +73,6 @@ public class EntityPopup extends FloatingPanel
     {
         super.createChildren();
         addChild(_canvas);
-
-        _loader = new Loader();
-        _loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleLoadingComplete);
-        _loader.loadBytes(new STUB() as ByteArray);
-        _canvas.rawChildren.addChild(_loader);
-    }
-
-    protected function handleLoadingComplete (event :Event) :void
-    {
-        DisplayObjectContainer(_loader.content).addChild(_userPanel);
     }
 
     /** We use this to control the size allocated for the displayed content. */
@@ -92,12 +82,5 @@ public class EntityPopup extends FloatingPanel
 
     /** The sprite that owns this. */
     protected var _entitySprite :MsoySprite;
-
-    protected var _loader :Loader;
-
-    protected var _userPanel :DisplayObject;
-
-    [Embed(source="../../../../../../../rsrc/media/Stub.swf", mimeType="application/octet-stream")]
-    protected static const STUB :Class;
 }
 }
