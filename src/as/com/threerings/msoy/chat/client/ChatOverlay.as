@@ -62,7 +62,7 @@ public class ChatOverlay
         _ctx = ctx;
 
         _overlay = new Sprite();
-        _overlay.mouseChildren = false;
+//        _overlay.mouseChildren = false;
         _overlay.mouseEnabled = false;
 //        _overlay.alpha = ALPHA;
         _overlay.blendMode = BlendMode.LAYER;

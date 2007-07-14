@@ -22,6 +22,7 @@ public class ChatGlyph extends Sprite
     public function ChatGlyph (
         overlay :ChatOverlay, type :int, lifetime :int)
     {
+        mouseEnabled = false;
         _overlay = overlay;
         _type = type;
 
@@ -76,6 +77,7 @@ public class ChatGlyph extends Sprite
     {
         var fmt :TextFormat = null;
         var length :int = 0;
+        var hasLinks :Boolean = false;
         for each (var o :Object in texts) {
             if (o is TextFormat) {
                 fmt = (o as TextFormat);
@@ -93,11 +95,16 @@ public class ChatGlyph extends Sprite
                 }
                 if (length != newLength) {
                     txt.setTextFormat(fmt, length, newLength);
+                    if (fmt.url != null) {
+                        hasLinks = true;
+                    }
                 }
                 fmt = null;
                 length = newLength;
             }
         }
+
+        txt.mouseEnabled = hasLinks;
     }
 
     /**
