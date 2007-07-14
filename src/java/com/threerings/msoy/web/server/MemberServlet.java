@@ -418,6 +418,7 @@ public class MemberServlet extends MsoyServiceServlet
 
             // create and send the invitation
             VelocityContext ctx = new VelocityContext();
+            ctx.put("friend", inviter.name);
             ctx.put("custom_message", customMessage);
             ctx.put("invite_id", inviteId);
             ctx.put("server_url", ServerConfig.getServerURL());
