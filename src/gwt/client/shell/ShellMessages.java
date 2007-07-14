@@ -808,17 +808,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String createReady();
 
   /**
-   * Translated "Greetings!
+   * Translated "Come hang out with me on this crazy new website.".
    * 
-   * You are cordially invited to participate in the closed alpha test of Whirled,
-   * Three Rings' exciting new online social world for chat, games and
-   * player-created content.".
-   * 
-   * @return translated "Greetings!
-   * 
-   * You are cordially invited to participate in the closed alpha test of Whirled,
-   * Three Rings' exciting new online social world for chat, games and
-   * player-created content."
+   * @return translated "Come hang out with me on this crazy new website."
    * @gwt.key sendInvitesCustomDefault
    */
   String sendInvitesCustomDefault();
