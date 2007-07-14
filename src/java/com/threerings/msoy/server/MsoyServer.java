@@ -55,7 +55,6 @@ import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.spot.data.SpotCodes;
 import com.threerings.whirled.spot.server.SpotDispatcher;
 import com.threerings.whirled.spot.server.SpotProvider;
-import com.threerings.whirled.util.SceneFactory;
 
 import com.threerings.stats.server.persist.StatRepository;
 
@@ -75,6 +74,7 @@ import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.web.server.MsoyHttpServer;
+import com.threerings.msoy.world.server.MsoySceneRegistry;
 import com.threerings.msoy.world.server.PetManager;
 
 import com.threerings.msoy.server.persist.GroupRepository;
@@ -421,24 +421,10 @@ public class MsoyServer extends WhirledServer
     }
 
     @Override // from WhirledServer
-    protected SceneRepository createSceneRepository ()
+    protected SceneRegistry createSceneRegistry ()
         throws Exception
     {
-        return new MsoySceneRepository(conProv);
-    }
-
-    @Override // from WhirledServer
-    protected SceneFactory createSceneFactory ()
-        throws Exception
-    {
-        return _sceneFactory;
-    }
-
-    @Override // from WhirledServer
-    protected SceneRegistry.ConfigFactory createConfigFactory ()
-        throws Exception
-    {
-        return _sceneFactory;
+        return new MsoySceneRegistry(invmgr, sceneRepo = new MsoySceneRepository(conProv));
     }
 
     @Override // from CrowdServer
@@ -490,7 +476,6 @@ public class MsoyServer extends WhirledServer
         spotProv = new SpotProvider(omgr, plreg, screg);
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), SpotCodes.WHIRLED_GROUP);
         parlorMan.init(invmgr, plreg);
-        sceneRepo = (MsoySceneRepository) _screp;
         adminMan.init(this);
         if (peerMan != null) {
             peerMan.init(ServerConfig.nodeName, ServerConfig.sharedSecret,
@@ -587,9 +572,6 @@ public class MsoyServer extends WhirledServer
         }
         adminMan.scheduleReboot(playersOnline ? 2 : 0, "codeUpdateAutoRestart");
     }
-
-    /** Our scene and config factory. */
-    protected MsoySceneFactory _sceneFactory = new MsoySceneFactory();
 
     /** A mapping from member name to member object for all online members. */
     protected static HashMap<MemberName,MemberObject> _online =

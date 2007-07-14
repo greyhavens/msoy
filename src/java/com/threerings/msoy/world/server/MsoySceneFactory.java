@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.server;
+package com.threerings.msoy.world.server;
 
 import com.threerings.crowd.data.PlaceConfig;
 

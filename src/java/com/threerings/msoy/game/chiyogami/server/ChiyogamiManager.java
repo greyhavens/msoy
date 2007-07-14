@@ -464,7 +464,7 @@ public class ChiyogamiManager extends GameManager
         _bossObj.init(_script.boss, _script.bossName);
 
         // add the boss to the room
-        MsoyServer.screg.sceneprov.moveTo(_bossObj, _sceneId, -1, new SceneMoveAdapter() {
+        MsoyServer.screg.moveTo(_bossObj, _sceneId, -1, new SceneMoveAdapter() {
             public void requestFailed (String reason) {
                 log.warning("Boss failed to enter scene [scene=" + _sceneId +
                             ", reason=" + reason + "].");
@@ -572,7 +572,7 @@ public class ChiyogamiManager extends GameManager
 //        }
 //
 //        // add the boss to the room
-//        MsoyServer.screg.sceneprov.moveTo(_bossObj, _sceneId, -1, new SceneMoveListener() {
+//        MsoyServer.screg.moveTo(_bossObj, _sceneId, -1, new SceneMoveListener() {
 //            public void moveSucceeded (int placeId, PlaceConfig config) {
 //                // nada: we wait to hear the oid in RoomListener
 //            }
@@ -619,7 +619,7 @@ public class ChiyogamiManager extends GameManager
     {
         if (_bossObj != null) {
             bossSpeak(_script.exitProse);
-            MsoyServer.screg.sceneprov.leaveOccupiedScene(_bossObj);
+            MsoyServer.screg.leaveOccupiedScene(_bossObj);
             MsoyServer.omgr.destroyObject(_bossObj.getOid());
             _bossObj = null;
         }

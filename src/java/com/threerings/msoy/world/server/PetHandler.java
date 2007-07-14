@@ -82,7 +82,7 @@ public class PetHandler
         }
 
         // then enter the scene like a proper scene entity
-        MsoyServer.screg.sceneprov.moveTo(_petobj, sceneId, -1, new SceneMoveAdapter() {
+        MsoyServer.screg.moveTo(_petobj, sceneId, -1, new SceneMoveAdapter() {
             public void requestFailed (String reason) {
                 log.warning("Pet failed to enter scene [pet=" + _petobj.pet + ", scene=" + sceneId +
                             ", reason=" + reason + "].");
@@ -121,7 +121,7 @@ public class PetHandler
 
         // clear out, clear out and clear out
         _roomObj = null;
-        MsoyServer.screg.sceneprov.leaveOccupiedScene(_petobj);
+        MsoyServer.screg.leaveOccupiedScene(_petobj);
         return memories;
     }
 
