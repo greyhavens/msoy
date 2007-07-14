@@ -55,11 +55,11 @@ public class MailRepository extends DepotRepository
         List<MailCountRecord> records = findAll(
             MailCountRecord.class,
             new Where(MailMessageRecord.OWNER_ID_C, memberId,
-                MailMessageRecord.FOLDER_ID_C, folderId),
-                new FromOverride(MailMessageRecord.class),
-                new FieldOverride(MailCountRecord.UNREAD, MailMessageRecord.UNREAD_C),
-                new FieldOverride(MailCountRecord.COUNT, "count(*)"),
-                new GroupBy(MailMessageRecord.UNREAD_C));
+                      MailMessageRecord.FOLDER_ID_C, folderId),
+            new FromOverride(MailMessageRecord.class),
+            new FieldOverride(MailCountRecord.UNREAD, MailMessageRecord.UNREAD_C),
+            new FieldOverride(MailCountRecord.COUNT, "count(*)"),
+            new GroupBy(MailMessageRecord.UNREAD_C));
         for (MailCountRecord record : records) {
             if (record.unread) {
                 unread = record.count;
@@ -76,8 +76,6 @@ public class MailRepository extends DepotRepository
     public List<MailFolderRecord> getFolders (int memberId)
         throws PersistenceException
     {
-        testFolders(memberId);
-
         return findAll(MailFolderRecord.class, new Where(MailFolderRecord.OWNER_ID_C, memberId));
     }
 
@@ -98,167 +96,129 @@ public class MailRepository extends DepotRepository
      *
      * TODO: If messages end up being non-trivial in size, separate into own table.
      */
-     public List<MailMessageRecord> getMessages (int memberId, int folderId)
-         throws PersistenceException
-     {
-         return findAll(MailMessageRecord.class,
-                        new Where(MailMessageRecord.OWNER_ID_C, memberId,
-                                  MailMessageRecord.FOLDER_ID_C, folderId),
-                        OrderBy.descending(MailMessageRecord.SENT_C));
-     }
+    public List<MailMessageRecord> getMessages (int memberId, int folderId)
+        throws PersistenceException
+    {
+        return findAll(MailMessageRecord.class,
+                       new Where(MailMessageRecord.OWNER_ID_C, memberId,
+                                 MailMessageRecord.FOLDER_ID_C, folderId),
+                       OrderBy.descending(MailMessageRecord.SENT_C));
+    }
 
-     /**
-      * Insert a new folder record into the database.
-      */
-     public MailFolderRecord createFolder (MailFolderRecord record)
-         throws PersistenceException
-     {
-         insert(record);
-         return record;
-     }
+    /**
+     * Insert a new folder record into the database.
+     */
+    public MailFolderRecord createFolder (MailFolderRecord record)
+        throws PersistenceException
+    {
+        insert(record);
+        return record;
+    }
 
-     /**
-      * Deliver a message by filing it in the recipient's and the sender's in- and sent boxes
-      * respectively, with ownerId set appropriately. This method modifies the record.
-      */
-     public void deliverMessage (MailMessageRecord record)
-         throws PersistenceException
-     {
-         record.sent = new Timestamp(System.currentTimeMillis());
+    /**
+     * Deliver a message by filing it in the recipient's and the sender's in- and sent boxes
+     * respectively, with ownerId set appropriately. This method modifies the record.
+     */
+    public void deliverMessage (MailMessageRecord record)
+        throws PersistenceException
+    {
+        record.sent = new Timestamp(System.currentTimeMillis());
 
-         // file one copy for ourselves
-         record.ownerId = record.senderId;
-         record.folderId = MailFolder.SENT_FOLDER_ID;
-         record.unread = false;
-         fileMessage(record);
+        // file one copy for ourselves
+        if (record.senderId != 0) {
+            record.ownerId = record.senderId;
+            record.folderId = MailFolder.SENT_FOLDER_ID;
+            record.unread = false;
+            fileMessage(record);
+        }
 
-         // and make a copy for the recipient
-         record.ownerId = record.recipientId;
-         record.folderId = MailFolder.INBOX_FOLDER_ID;
-         record.unread = true;
-         fileMessage(record);
-     }
+        // and make a copy for the recipient
+        record.ownerId = record.recipientId;
+        record.folderId = MailFolder.INBOX_FOLDER_ID;
+        record.unread = true;
+        fileMessage(record);
+    }
 
-     /**
-      * Insert a message into the database, for a given member and folder. This method
-      * fills in the messageId field with a new value that's unique within the folder.
-      */
-     public MailMessageRecord fileMessage (MailMessageRecord record)
-         throws PersistenceException
-     {
-         testFolders(record.ownerId);
-         
-         record.messageId = claimMessageId(record.ownerId, record.folderId, 1);
-         insert(record);
-         return record;
-     }
+    /**
+     * Insert a message into the database, for a given member and folder. This method
+     * fills in the messageId field with a new value that's unique within the folder.
+     */
+    public MailMessageRecord fileMessage (MailMessageRecord record)
+        throws PersistenceException
+    {
+        record.messageId = claimMessageId(record.ownerId, record.folderId, 1);
+        insert(record);
+        return record;
+    }
 
-     /**
-      * Move a message from one folder to another.
-      */
-     public void moveMessage (int ownerId, int folderId, int newFolderId, int[] messageIds)
-         throws PersistenceException
-     {
-         Comparable[] idArr = IntListUtil.box(messageIds);
-         int newId = claimMessageId(ownerId, newFolderId, 1);
-         MultiKey<MailMessageRecord> key = new MultiKey<MailMessageRecord>(
-                 MailMessageRecord.class,
-                 MailMessageRecord.OWNER_ID, ownerId,
-                 MailMessageRecord.FOLDER_ID, folderId,
-                 MailMessageRecord.MESSAGE_ID, idArr);
-         updatePartial(MailMessageRecord.class, key, key,
-                       MailMessageRecord.FOLDER_ID, newFolderId,
-                       MailMessageRecord.MESSAGE_ID, newId);
-     }
+    /**
+     * Move a message from one folder to another.
+     */
+    public void moveMessage (int ownerId, int folderId, int newFolderId, int[] messageIds)
+        throws PersistenceException
+    {
+        Comparable[] idArr = IntListUtil.box(messageIds);
+        int newId = claimMessageId(ownerId, newFolderId, 1);
+        MultiKey<MailMessageRecord> key = new MultiKey<MailMessageRecord>(
+            MailMessageRecord.class,
+            MailMessageRecord.OWNER_ID, ownerId,
+            MailMessageRecord.FOLDER_ID, folderId,
+            MailMessageRecord.MESSAGE_ID, idArr);
+        updatePartial(MailMessageRecord.class, key, key,
+                      MailMessageRecord.FOLDER_ID, newFolderId,
+                      MailMessageRecord.MESSAGE_ID, newId);
+    }
 
-     /**
-      * Delete one or more message records.
-      */
-     public void deleteMessage (int ownerId, int folderId, int... messageIds)
-         throws PersistenceException
-     {
-         if (messageIds.length == 0) {
-             return;
-         }
-         Comparable[] idArr = IntListUtil.box(messageIds);
-         MultiKey<MailMessageRecord> key = new MultiKey<MailMessageRecord>(
-                 MailMessageRecord.class,
-                 MailMessageRecord.OWNER_ID, ownerId,
-                 MailMessageRecord.FOLDER_ID, folderId,
-                 MailMessageRecord.MESSAGE_ID, idArr);
-         deleteAll(MailMessageRecord.class, key, key);
-     }
+    /**
+     * Delete one or more message records.
+     */
+    public void deleteMessage (int ownerId, int folderId, int... messageIds)
+        throws PersistenceException
+    {
+        if (messageIds.length == 0) {
+            return;
+        }
+        Comparable[] idArr = IntListUtil.box(messageIds);
+        MultiKey<MailMessageRecord> key = new MultiKey<MailMessageRecord>(
+            MailMessageRecord.class,
+            MailMessageRecord.OWNER_ID, ownerId,
+            MailMessageRecord.FOLDER_ID, folderId,
+            MailMessageRecord.MESSAGE_ID, idArr);
+        deleteAll(MailMessageRecord.class, key, key);
+    }
 
-     /**
-      * Set the payload state of a message in the persistent store.
-      */
-     public void setPayloadState (int ownerId, int folderId, int messageId, byte[] state)
-         throws PersistenceException
-     {
-         Key<MailMessageRecord> key = MailMessageRecord.getKey(messageId, folderId, ownerId);
-         updatePartial(MailMessageRecord.class, key, key, MailMessageRecord.PAYLOAD_STATE, state);
-     }
+    /**
+     * Set the payload state of a message in the persistent store.
+     */
+    public void setPayloadState (int ownerId, int folderId, int messageId, byte[] state)
+        throws PersistenceException
+    {
+        Key<MailMessageRecord> key = MailMessageRecord.getKey(messageId, folderId, ownerId);
+        updatePartial(MailMessageRecord.class, key, key, MailMessageRecord.PAYLOAD_STATE, state);
+    }
 
     /**
      * Flag a message as being unread (or not).
      */
-     public void setUnread (int ownerId, int folderId, int messageId, boolean unread)
-         throws PersistenceException
-     {
-         Key<MailMessageRecord> key = MailMessageRecord.getKey(messageId, folderId, ownerId);
-         updatePartial(MailMessageRecord.class, key, key, MailMessageRecord.UNREAD, unread);
-     }
-
-
-     // claim space in a folder to deliver idCount messages; returns the first usable id
-     protected int claimMessageId (int memberId, int folderId, int idCount)
-         throws PersistenceException
-     {
-         // TODO: When we have just a little more time, do this with fancy lockless magic
-         // TODO: like UPDATE set NEXT=NEXT+1 where NEXT=122 and iterate until rows modified.
-         MailFolderRecord record = load(MailFolderRecord.class,
-                                        MailFolderRecord.OWNER_ID, memberId,
-                                        MailFolderRecord.FOLDER_ID, folderId);
-         int firstId = record.nextMessageId;
-         record.nextMessageId += idCount;
-         update(record, MailFolderRecord.NEXT_MESSAGE_ID);
-         return firstId;
-     }
-
-    // initialize a member's folder structure, if necessary
-    protected void testFolders (int memberId)
+    public void setUnread (int ownerId, int folderId, int messageId, boolean unread)
         throws PersistenceException
     {
-        if (findAll(MailFolderRecord.class,
-                    new Where(MailFolderRecord.OWNER_ID_C, memberId)).size() == 0) {
-            MailFolderRecord record = new MailFolderRecord();
-            record.ownerId = memberId;
-            record.nextMessageId = 1;
-    
-            record.folderId = MailFolder.INBOX_FOLDER_ID;
-            record.name = "Inbox";
-            createFolder(record);
-    
-            record.folderId = MailFolder.TRASH_FOLDER_ID;
-            record.name = "Trash";
-            createFolder(record);
-    
-            record.folderId = MailFolder.SENT_FOLDER_ID;
-            record.name = "Sent";
-            createFolder(record);
-    
-            MailMessageRecord welcome = new MailMessageRecord();
-            welcome.ownerId = memberId;
-            welcome.folderId = MailFolder.INBOX_FOLDER_ID;
-            welcome.recipientId = memberId;
-            // TODO: We need to be able to send system messages somehow.
-            welcome.senderId = memberId;
-            welcome.subject = "Welcome to Whirled!";
-            welcome.sent = new Timestamp(System.currentTimeMillis());
-            welcome.unread = true;
-            welcome.bodyText = "Welcome to the Whirled mail system!\n";
-            fileMessage(welcome);
-        }
+        Key<MailMessageRecord> key = MailMessageRecord.getKey(messageId, folderId, ownerId);
+        updatePartial(MailMessageRecord.class, key, key, MailMessageRecord.UNREAD, unread);
     }
 
+    // claim space in a folder to deliver idCount messages; returns the first usable id
+    protected int claimMessageId (int memberId, int folderId, int idCount)
+        throws PersistenceException
+    {
+        // TODO: When we have just a little more time, do this with fancy lockless magic
+        // TODO: like UPDATE set NEXT=NEXT+1 where NEXT=122 and iterate until rows modified.
+        MailFolderRecord record = load(MailFolderRecord.class,
+                                       MailFolderRecord.OWNER_ID, memberId,
+                                       MailFolderRecord.FOLDER_ID, folderId);
+        int firstId = record.nextMessageId;
+        record.nextMessageId += idCount;
+        update(record, MailFolderRecord.NEXT_MESSAGE_ID);
+        return firstId;
+    }
 }

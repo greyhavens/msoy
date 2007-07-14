@@ -6,12 +6,14 @@ package com.threerings.msoy.person.server;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.apache.velocity.VelocityContext;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
+import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
@@ -57,6 +59,45 @@ public class MailManager
     public MailRepository getRepository ()
     {
         return _mailRepo;
+    }
+
+    /**
+     * Called when a new member is created. Configures their mail folders and sends them a welcome
+     * message.
+     */
+    public void memberCreated (int memberId)
+    {
+        final ArrayList<MailFolderRecord> folders = new ArrayList<MailFolderRecord>();
+        for (int folderId : MailFolder.STOCK_FOLDERS) {
+            MailFolderRecord record = new MailFolderRecord();
+            record.ownerId = memberId;
+            record.nextMessageId = 1;
+            record.folderId = folderId;
+            record.name = MsoyServer.msgMan.getBundle("server").get("m.mail_folder_" + folderId);
+            folders.add(record);
+        }
+
+        final MailMessageRecord welcome = new MailMessageRecord();
+        welcome.recipientId = memberId;
+        // TODO: We need to be able to send system messages somehow.
+        welcome.senderId = memberId;
+        welcome.subject = MsoyServer.msgMan.getBundle("server").get("m.welcome_mail_subject");
+        welcome.bodyText = MsoyServer.msgMan.getBundle("server").get("m.welcome_mail_body");
+
+        // now actually save this stuff to the database
+        MsoyServer.invoker.postUnit(new Invoker.Unit("MailManager.memberCreated") {
+            public boolean invoke () {
+                try {
+                    for (MailFolderRecord record : folders) {
+                        _mailRepo.createFolder(record);
+                    }
+                    _mailRepo.deliverMessage(welcome);
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Member mailbox initialization failure.", pe);
+                }
+                return false;
+            }
+        });
     }
 
     /**

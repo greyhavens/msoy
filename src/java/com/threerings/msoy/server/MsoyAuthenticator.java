@@ -479,7 +479,7 @@ public class MsoyAuthenticator extends Authenticator
         throws PersistenceException
     {
         // create their main member record
-        MemberRecord mrec = new MemberRecord();
+        final MemberRecord mrec = new MemberRecord();
         mrec.accountName = account.accountName;
         mrec.name = displayName;
         String portalAction = null;
@@ -500,6 +500,13 @@ public class MsoyAuthenticator extends Authenticator
             }
         }
         MsoyServer.memberRepo.insertMember(mrec);
+
+        // create their mail account
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.mailMan.memberCreated(mrec.memberId);
+            }
+        });
 
         // use the tokens filled in by the domain to assign privileges
         mrec.setFlag(MemberRecord.SUPPORT_FLAG, account.tokens.isSupport());

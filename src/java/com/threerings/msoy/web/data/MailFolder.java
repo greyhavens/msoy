@@ -16,6 +16,8 @@ final public class MailFolder
     public static final int TRASH_FOLDER_ID = 2;
     public static final int SENT_FOLDER_ID = 3;
 
+    public static final int[] STOCK_FOLDERS = { INBOX_FOLDER_ID, TRASH_FOLDER_ID, SENT_FOLDER_ID };
+
     /** The id of this folder, unique relative to its member. */
     public int folderId;
 
