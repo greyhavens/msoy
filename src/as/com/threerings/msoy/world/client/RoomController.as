@@ -282,6 +282,7 @@ public class RoomController extends SceneController
         _roomView.addChildAt(_walkTarget, _roomView.numChildren);
 
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.addEventListener(MouseEvent.CLICK, mouseWillClick, true);
         _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
@@ -296,6 +297,7 @@ public class RoomController extends SceneController
         }
 
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.removeEventListener(MouseEvent.CLICK, mouseWillClick, true);
         _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
@@ -889,6 +891,9 @@ public class RoomController extends SceneController
      */
     protected function checkMouse (event :Event) :void
     {
+        // in case a mouse event was captured by an entity, prevent it from adding a popup later
+        _entityAllowedToPop = null;
+
         // freak not out if we're temporarily removed from the stage
         if (_roomView.stage == null || !_roomView.isShowing()) {
             return;
@@ -1065,8 +1070,24 @@ public class RoomController extends SceneController
         }
     }
 
+    protected function mouseWillClick (event :MouseEvent) :void
+    {
+        if (_shiftDownSpot != null || isRoomEditing()) {
+            return;
+        }
+
+        // this method is called for the CAPTURE phase of the MouseEvent, the entity
+        // has not yet received the click, but we see which it was to see if we'll allow
+        // the popup.
+        _entityAllowedToPop = getHitSprite(event.stageX, event.stageY, false);
+    }
+
     protected function mouseClicked (event :MouseEvent) :void
     {
+        // at this point, the mouse click is bubbling back out, and the entity is no
+        // longer allowed to pop up a popup.
+        _entityAllowedToPop = null;
+
         // if shift is being held down, we're looking for locations only, so
         // skip looking for hitSprites.
         var hit :* = (_shiftDownSpot == null) ?
@@ -1415,6 +1436,47 @@ public class RoomController extends SceneController
         _editor.processUpdate(update);
     }
 
+    /**
+     * Called from user code to show a custom popup.
+     */
+    internal function showEntityPopup (
+        sprite :MsoySprite, title :String, panel :DisplayObject, w :Number, h :Number) :Boolean
+    {
+        if (_entityAllowedToPop != sprite) {
+            return false;
+        }
+        if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0 || title == null || panel == null) {
+            return false;
+        }
+
+        // close any existing popup
+        if (_entityPopup != null) {
+            _entityPopup.close();
+        }
+
+        _entityPopup = new EntityPopup(_mctx, sprite, this, title, panel, w, h);
+        _entityPopup.open();
+        return true;
+    }
+
+    /**
+     * Clear any popup belonging to the specified sprite.
+     */
+    internal function clearEntityPopup (sprite :MsoySprite) :void
+    {
+        if (_entityPopup != null && _entityPopup.getOwningEntity() == sprite) {
+            _entityPopup.close(); // will trigger callback that clears _entityPopup
+        }
+    }
+
+    /**
+     * A callback from the EntityPopup to let us know that it's been closed.
+     */
+    internal function entityPopupClosed () :void
+    {
+        _entityPopup = null;
+    }
+
     /** The number of pixels we scroll the room on a keypress. */
     protected static const ROOM_SCROLL_INCREMENT :int = 20;
 
@@ -1466,6 +1528,10 @@ public class RoomController extends SceneController
     protected var _walkTarget :WalkTarget = new WalkTarget();
 
     protected var _flyTarget :WalkTarget = new WalkTarget(true);
+
+    protected var _entityPopup :EntityPopup;
+
+    protected var _entityAllowedToPop :MsoySprite;
 
     /** Controller for in-room furni editing. */
     protected var _editor :RoomEditorController;

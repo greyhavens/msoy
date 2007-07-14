@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.display.DisplayObject;
+
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.world.data.MsoyLocation;
 
@@ -38,6 +40,8 @@ public class EntityBackend extends ControlBackend
         o["sendMessage_v1"] = sendMessage_v1;
         o["getRoomBounds_v1"] = getRoomBounds_v1;
         o["canEditRoom_v1"] = canEditRoom_v1;
+        o["showPopup_v1"] = showPopup_v1;
+        o["clearPopup_v1"] = clearPopup_v1;
 
         // deprecated methods
         o["triggerEvent_v1"] = triggerEvent_v1;
@@ -89,6 +93,18 @@ public class EntityBackend extends ControlBackend
     protected function canEditRoom_v1 () :Boolean
     {
         return _sprite.canEditRoom();
+    }
+
+    protected function showPopup_v1 (
+        title :String, panel :DisplayObject, w :Number, h :Number) :Boolean
+    {
+        return (_sprite.parent as RoomView).getRoomController().showEntityPopup(
+            _sprite, title, panel, w, h);
+    }
+
+    protected function clearPopup_v1 () :void
+    {
+        (_sprite.parent as RoomView).getRoomController().clearEntityPopup(_sprite);
     }
 
     // Deprecated on 2007-03-12
