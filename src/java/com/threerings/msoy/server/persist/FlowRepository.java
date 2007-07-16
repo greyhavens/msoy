@@ -178,9 +178,8 @@ public class FlowRepository extends DepotRepository
             gameRecord.accumMinutes = 0;
 
             // then delete the records
-            deleteAll(MemberActionLogRecord.class,
-                      new Where(GameFlowGrantLogRecord.GAME_ID_C, gameId),
-                      null);
+            deleteAll(GameFlowGrantLogRecord.class,
+                      new Where(GameFlowGrantLogRecord.GAME_ID_C, gameId), null);
         }
         store(gameRecord);
     }
