@@ -425,7 +425,13 @@ public class MsoySprite extends MsoyMediaContainer
     protected function configureMouseProperties () :void
     {
         var active :Boolean = isActive();
-        mouseChildren = active && !_editing && capturesMouse();
+        // If we want to capture mouse events for this sprite up in the whirled layer, then
+        // we cannot allow the click to go down into the usercode, because when we're running
+        // with security boundaries then the click won't come back out.
+        // TODO: have a way for entities to temporarily capture mouse events? Maybe only
+        // your own personal avatar, for things like an art-vatar, or an avatar that plays back
+        // mouse motions...
+        mouseChildren = active && !_editing && !hasAction() && capturesMouse();
         mouseEnabled = active && !_editing;
     }
 
