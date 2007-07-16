@@ -26,7 +26,9 @@ public class AboutDialog extends FloatingPanel
 
         var textArea :Text = new Text();
         textArea.width = 300;
-        textArea.htmlText = Msgs.GENERAL.get("m.about", Capabilities.version);
+        textArea.selectable = false;
+        textArea.htmlText = Msgs.GENERAL.get("m.about",
+            DeploymentConfig.buildTime, Capabilities.version);
         addChild(textArea);
 
         addButtons(OK_BUTTON);
