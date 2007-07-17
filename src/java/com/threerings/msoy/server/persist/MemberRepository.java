@@ -98,7 +98,22 @@ public class MemberRepository extends DepotRepository
         // added 4-30-2007
         _ctx.registerMigration(InvitationRecord.class, new EntityMigration.Retype(2, "issued"));
         _ctx.registerMigration(InvitationRecord.class, new EntityMigration.Retype(2, "viewed"));
+        
+        // added 7-16-2007
+        _ctx.registerMigration(InvitationRecord.class, new EntityMigration(3) {
+            public int invoke (Connection conn) throws SQLException {
+                Statement stmt = conn.createStatement();
+                try {
+                    log.info("Removing primary key from " + _tableName);
+                    return stmt.executeUpdate("alter table " + _tableName + " drop primary key");
+                } finally {
+                    stmt.close();
+                }
+            }
+        });
+
         // END TEMP
+        
 
         _flowRepo = new FlowRepository(_ctx);
 
@@ -533,6 +548,22 @@ public class MemberRepository extends DepotRepository
         return inviter != null ? inviter.invitesSent : 0;
     }
 
+    public String generateInviteId ()
+        throws PersistenceException
+    {
+        // find a free invite id
+        String inviteId;
+        int tries = 0;
+        while (loadInvite(inviteId = randomInviteId(), false) != null) {
+            tries++;
+        }
+        if (tries > 5) {
+            log.warning("InvitationRecord.inviteId space is getting saturated, it took " + tries + 
+                " tries to find a free id");
+        }
+        return inviteId;
+    }
+
     /**
      * Add a new invitation. Also decrements the available invitation count for the inviterId and
      * increments the number of invites sent.
@@ -564,8 +595,8 @@ public class MemberRepository extends DepotRepository
     public void linkInvite (Invitation invite, MemberRecord member)
         throws PersistenceException
     {
-        InvitationRecord invRec = load(InvitationRecord.class, InvitationRecord.getKey(
-            invite.inviteeEmail, invite.inviter.getMemberId()));
+        InvitationRecord invRec = load(InvitationRecord.class, 
+            InvitationRecord.getKey(invite.inviteId));
         invRec.inviteeId = member.memberId;
         update(invRec, InvitationRecord.INVITEE_ID);
 
@@ -597,15 +628,6 @@ public class MemberRepository extends DepotRepository
             update(invRec, InvitationRecord.VIEWED);
         }
         return invRec;
-    }
-
-    /**
-     * Get the invite that was sent to thsi email address by this member.
-     */
-    public InvitationRecord loadInvite (String email, int inviterId)
-        throws PersistenceException
-    {
-        return load(InvitationRecord.class, InvitationRecord.getKey(email, inviterId));
     }
 
     /**
@@ -825,6 +847,19 @@ public class MemberRepository extends DepotRepository
                                    new Equals(FriendRecord.INVITEE_ID_C, memberId))),
                   invalidator);
     }
+
+    protected String randomInviteId ()
+    {
+        String rand = "";
+        for (int ii = 0; ii < INVITE_ID_LENGTH; ii++) {
+            rand += INVITE_ID_CHARACTERS.charAt((int)(Math.random() *
+                INVITE_ID_CHARACTERS.length()));
+        }
+        return rand;
+    }
+
+    protected static final int INVITE_ID_LENGTH = 10;
+    protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
 
     protected FlowRepository _flowRepo;
 }

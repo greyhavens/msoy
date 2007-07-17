@@ -509,9 +509,9 @@ public class RoomController extends SceneController
                 command: MsoyController.OPEN_CHANNEL, arg: occInfo.username });
 
             if (isGuest) {
-                /*menuItems.push(
+                menuItems.push(
                     { label: Msgs.GENERAL.get("b.invite_to_whirled"),
-                      command: MsoyController.INVITE_GUEST, arg: occInfo.username });*/
+                      command: MsoyController.INVITE_GUEST, arg: occInfo.username });
             } else {
                 menuItems.push(
                     { label: Msgs.GENERAL.get("b.visit_home"),

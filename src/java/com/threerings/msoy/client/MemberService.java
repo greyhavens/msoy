@@ -6,6 +6,8 @@ package com.threerings.msoy.client;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
+import com.threerings.msoy.data.all.MemberName;
+
 /**
  * Services for members.
  */
@@ -60,5 +62,5 @@ public interface MemberService extends InvocationService
     /**
      * Issue an invitation to the given guest from the user's available invites.
      */
-    public void issueInvitation (Client client, String guestName, InvocationListener listener);
+    public void issueInvitation (Client client, MemberName guest, ResultListener listener);
 }

@@ -33,6 +33,10 @@ import client.util.MsoyUI;
  */
 public class SendInvitesDialog extends BorderedDialog
 {
+    /** Originally formulated by lambert@nas.nasa.gov. */
+    public static final String EMAIL_REGEX = "^([-A-Za-z0-9_.!%+]+@" +
+        "[-a-zA-Z0-9]+(\\.[-a-zA-Z0-9]+)*\\.[-a-zA-Z0-9]+)$";
+
     public SendInvitesDialog (final MemberInvites invites)
     {
         _header.add(createTitleLabel(CShell.cmsgs.sendInvitesTitle(), null));
@@ -208,10 +212,6 @@ public class SendInvitesDialog extends BorderedDialog
             setWidget(top);
         }
     }
-
-    /** Originally formulated by lambert@nas.nasa.gov. */
-    protected static final String EMAIL_REGEX = "^([-A-Za-z0-9_.!%+]+@" +
-        "[-a-zA-Z0-9]+(\\.[-a-zA-Z0-9]+)*\\.[-a-zA-Z0-9]+)$";
 
     protected TextArea _emailAddresses;
     protected TextArea _customMessage;

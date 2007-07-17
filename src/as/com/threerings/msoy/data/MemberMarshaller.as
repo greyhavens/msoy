@@ -8,6 +8,7 @@ import com.threerings.util.*; // for Float, Integer, etc.
 import com.threerings.io.TypedArray;
 
 import com.threerings.msoy.client.MemberService;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
@@ -109,9 +110,9 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const ISSUE_INVITATION :int = 7;
 
     // from interface MemberService
-    public function issueInvitation (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void
+    public function issueInvitation (arg1 :Client, arg2 :MemberName, arg3 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, ISSUE_INVITATION, [
             arg2, listener3

@@ -405,16 +405,7 @@ public class MemberServlet extends MsoyServiceServlet
                 return InvitationResults.ALREADY_INVITED;
             }
 
-            // find a free invite id
-            String inviteId;
-            int tries = 0;
-            while (MsoyServer.memberRepo.loadInvite(inviteId = randomInviteId(), false) != null) {
-                tries++;
-            }
-            if (tries > 5) {
-                log.log(Level.WARNING, "InvitationRecord.inviteId space is getting " +
-                        "saturated, it took " + tries + " tries to find a free id");
-            }
+            String inviteId = MsoyServer.memberRepo.generateInviteId();
 
             // create and send the invitation
             VelocityContext ctx = new VelocityContext();
@@ -437,17 +428,4 @@ public class MemberServlet extends MsoyServiceServlet
             return ServiceException.INTERNAL_ERROR;
         }
     }
-
-    protected String randomInviteId ()
-    {
-        String rand = "";
-        for (int ii = 0; ii < INVITE_ID_LENGTH; ii++) {
-            rand += INVITE_ID_CHARACTERS.charAt((int)(Math.random() *
-                INVITE_ID_CHARACTERS.length()));
-        }
-        return rand;
-    }
-
-    protected static final int INVITE_ID_LENGTH = 10;
-    protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
 }

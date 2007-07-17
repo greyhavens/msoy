@@ -5,6 +5,7 @@ package com.threerings.msoy.server;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.data.MemberMarshaller;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -83,7 +84,7 @@ public class MemberDispatcher extends InvocationDispatcher
         case MemberMarshaller.ISSUE_INVITATION:
             ((MemberProvider)provider).issueInvitation(
                 source,
-                (String)args[0], (InvocationService.InvocationListener)args[1]
+                (MemberName)args[0], (InvocationService.ResultListener)args[1]
             );
             return;
 

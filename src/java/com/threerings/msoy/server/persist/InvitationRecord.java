@@ -74,19 +74,17 @@ public class InvitationRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The email address we're sending this invitation to. */
-    @Id
     public String inviteeEmail;
 
     /** The inviter's member Id */
-    @Id
     public int inviterId; 
 
     /** A randomly generated string of numbers and characters that is used to uniquely identify
      * this invitation. */
-    @Column(unique=true)
+    @Id
     public String inviteId;
 
     /** The memberId that was assigned to the invitee when (if) the invitation was accepted. */
@@ -138,12 +136,12 @@ public class InvitationRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link #InvitationRecord}
      * with the supplied key values.
      */
-    public static Key<InvitationRecord> getKey (String inviteeEmail, int inviterId)
+    public static Key<InvitationRecord> getKey (String inviteId)
     {
         return new Key<InvitationRecord>(
                 InvitationRecord.class,
-                new String[] { INVITEE_EMAIL, INVITER_ID },
-                new Comparable[] { inviteeEmail, inviterId });
+                new String[] { INVITE_ID },
+                new Comparable[] { inviteId });
     }
     // AUTO-GENERATED: METHODS END
 }

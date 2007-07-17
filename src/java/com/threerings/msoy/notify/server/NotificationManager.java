@@ -12,6 +12,7 @@ import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.server.MsoyServer;
 
+import com.threerings.msoy.notify.data.GuestInviteNotification;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.data.NotifyMessage;
@@ -64,6 +65,17 @@ public class NotificationManager
             // leveling up is pretty much chat-only, but it apparently happens prior
             // to the user logging all the way in. Perhaps we need some new thinking here...
             target.notify(new LevelUpNotification(newLevel));
+        }
+    }
+
+    /**
+     * Notify the specified guest that they've received an invitation to Whirled.
+     */
+    public void notifyIssuedInvitation (MemberName guest, String inviteId) 
+    {
+        MemberObject target = MsoyServer.lookupMember(guest);
+        if (guest != null) {
+            target.notify(new GuestInviteNotification(inviteId));
         }
     }
 

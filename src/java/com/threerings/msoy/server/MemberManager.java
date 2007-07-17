@@ -416,11 +416,38 @@ public class MemberManager
     }        
 
     // from interface MemberProvider
-    public void issueInvitation (
-        ClientObject caller, String guestName, InvocationService.InvocationListener listener)
+    public void issueInvitation (ClientObject caller, final MemberName guest, 
+        final InvocationService.ResultListener listener)
         throws InvocationException
     {
-        listener.requestFailed("e.not_enough_invites");
+        final MemberObject member = (MemberObject) caller;
+        ensureNotGuest(member);
+
+        MsoyServer.invoker.postUnit(new RepositoryUnit("issueInvitation") {
+            public void invokePersist () throws PersistenceException {
+                _invitesAvailable = _memberRepo.getInvitesGranted(member.memberName.getMemberId());
+                if (_invitesAvailable > 0) {
+                    _memberRepo.addInvite(guest.toString(), member.getMemberId(), 
+                        _inviteId = _memberRepo.generateInviteId());
+                } // else - listener.requestFailed() called in handleSuccess()
+            }
+            public void handleSuccess () {
+                _invitesAvailable--;
+                if (_invitesAvailable >= 0) {
+                    MsoyServer.notifyMan.notifyIssuedInvitation(guest, _inviteId);
+                    listener.requestProcessed(_invitesAvailable);
+                } else {
+                    listener.requestFailed("e.not_enough_invites");
+                }
+            }
+            public void handleFailure (Exception pe) {
+                log.log(Level.WARNING, "Unable to issue an invite [member=" + 
+                    member.memberName.getMemberId() + "]", pe);
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+            protected int _invitesAvailable;
+            protected String _inviteId;
+        });
     }
 
     /**

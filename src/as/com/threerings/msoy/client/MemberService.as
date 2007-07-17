@@ -6,6 +6,7 @@ package com.threerings.msoy.client {
 import flash.utils.ByteArray;
 import com.threerings.io.TypedArray;
 import com.threerings.msoy.client.MemberService;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
@@ -38,7 +39,7 @@ public interface MemberService extends InvocationService
     function getHomeId (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
-    function issueInvitation (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void;
+    function issueInvitation (arg1 :Client, arg2 :MemberName, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
     function setAvatar (arg1 :Client, arg2 :int, arg3 :Number, arg4 :InvocationService_InvocationListener) :void;

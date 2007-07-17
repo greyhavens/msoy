@@ -513,13 +513,18 @@ public class MsoyController extends Controller
     /**
      * Handle the INVITE_GUEST command.
      */
-    public function handleInviteGuest (username :String) :void
+    public function handleInviteGuest (guest :MemberName) :void
     {
         var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
         var errorHandler :Function = function (cause :String) :void {
-            _ctx.getChatDirector().displayAttention(MsoyCodes.GENERAL_MSGS, cause);
+            _ctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
         };
-        msvc.issueInvitation(_ctx.getClient(), username, new InvocationAdapter(errorHandler));
+        var resultHandler :Function = function (result :Object) :void {
+            _ctx.displayFeedback(MsoyCodes.GENERAL_MSGS, MessageBundle.tcompose("m.invite_sent",
+                result));
+        };
+        msvc.issueInvitation(_ctx.getClient(), guest, 
+                             new ResultWrapper(errorHandler, resultHandler));
     }
 
     /**

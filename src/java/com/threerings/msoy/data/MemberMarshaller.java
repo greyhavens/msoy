@@ -4,6 +4,7 @@
 package com.threerings.msoy.data;
 
 import com.threerings.msoy.client.MemberService;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -101,9 +102,9 @@ public class MemberMarshaller extends InvocationMarshaller
     public static final int ISSUE_INVITATION = 7;
 
     // from interface MemberService
-    public void issueInvitation (Client arg1, String arg2, InvocationService.InvocationListener arg3)
+    public void issueInvitation (Client arg1, MemberName arg2, InvocationService.ResultListener arg3)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
+        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, ISSUE_INVITATION, new Object[] {
             arg2, listener3

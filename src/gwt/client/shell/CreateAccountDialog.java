@@ -74,7 +74,7 @@ public class CreateAccountDialog extends BorderedDialog
                 _password.setFocus(true);
             }
         }));
-        if (invite != null) {
+        if (invite != null && invite.inviteeEmail.matches(SendInvitesDialog.EMAIL_REGEX)) {
             // provide the invitation email as the default
             _email.setText(invite.inviteeEmail);
         }
