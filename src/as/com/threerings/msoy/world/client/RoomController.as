@@ -438,7 +438,7 @@ public class RoomController extends SceneController
             return;
 
         case FurniData.ACTION_PORTAL:
-            _mctx.getSpotSceneDirector().traversePortal(furni.id);
+            (_mctx.getSceneDirector() as MsoySceneDirector).traversePortal(furni.id);
             return;
 
         case FurniData.ACTION_HELP_PAGE:

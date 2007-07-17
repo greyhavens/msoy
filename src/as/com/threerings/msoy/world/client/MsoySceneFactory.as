@@ -1,14 +1,14 @@
 //
 // $Id$
 
-package com.threerings.msoy.client {
-
-import com.threerings.whirled.util.SceneFactory;
+package com.threerings.msoy.world.client {
 
 import com.threerings.crowd.data.PlaceConfig;
+
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneImpl;
 import com.threerings.whirled.data.SceneModel;
+import com.threerings.whirled.util.SceneFactory;
 
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;

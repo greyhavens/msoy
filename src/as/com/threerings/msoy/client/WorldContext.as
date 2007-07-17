@@ -30,6 +30,7 @@ import com.threerings.msoy.client.persist.RuntimeSceneRepository;
 
 import com.threerings.msoy.game.client.GameDirector;
 import com.threerings.msoy.notify.client.NotificationDirector;
+import com.threerings.msoy.world.client.MsoySceneDirector;
 import com.threerings.msoy.world.client.WorldDirector;
 
 /**
