@@ -86,6 +86,9 @@ public class MsoyController extends Controller
     /** Command to display the chat channel menu. */
     public static const POP_CHANNEL_MENU :String = "PopChannelMenu";
 
+    /** Command to display the notificaitons popup. */
+    public static const POPUP_NOTIFICATIONS :String = "PopupNotifications";
+
     /** Command to go to a particular place (by Oid). */
     public static const GO_LOCATION :String = "GoLocation";
 
@@ -274,6 +277,14 @@ public class MsoyController extends Controller
         }
 
         CommandMenu.createMenu(menuData).popUp(trigger, true);
+    }
+
+    /**
+     * Handle the POPUP_NOTIFICATIONS command.
+     */
+    public function handlePopupNotifications (... ignored) :void
+    {
+        _ctx.getNotificationDirector().displayNotifications();
     }
 
     /**

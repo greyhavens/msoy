@@ -46,7 +46,7 @@ public class NotificationDirector extends BasicDirector
     /**
      * Display all currently pending notifications.
      */
-    public function displayNotifications (btn :CommandButton) :void
+    public function displayNotifications () :void
     {
         if (_notifyPanel != null) {
             _notifyPanel.close();
@@ -60,14 +60,13 @@ public class NotificationDirector extends BasicDirector
                 _notifyPanel.addNotification(notif);
             }
         }
-
-        _notifyBtn = btn;
+        updateNotificationButton(true);
     }
 
     public function notificationPanelClosed () :void
     {
         _notifyPanel = null;
-        _notifyBtn.selected = false;
+        updateNotificationButton(false);
     }
 
     public function acknowledgeNotification (id :int) :void
@@ -79,7 +78,8 @@ public class NotificationDirector extends BasicDirector
 
     protected function acknowledgeNotifications (notifyIds :TypedArray /* of int */) :void
     {
-        // put each id in the TypedArray, and record that we've acked it
+        // record that we've sent off an ack to the server, from here on out we act like
+        // each of these notifications doesn't exist on the client...
         for each (var id :int in notifyIds) {
             _acked[id] = true;
         }
@@ -232,13 +232,20 @@ public class NotificationDirector extends BasicDirector
         _wctx.getChatDirector().dispatchMessage(msg, ChatCodes.USER_CHAT_TYPE);
     }
 
+    /**
+     * Update the button on the control bar to indicate whether notifications are 
+     * showing or not.
+     */
+    protected function updateNotificationButton (notifsShowing :Boolean) :void
+    {
+        _wctx.getTopPanel().getControlBar().setNotificationsShowing(notifsShowing);
+    }
+
     protected var _wctx :WorldContext;
 
     protected var _msvc :MemberService;
 
     protected var _notifyPanel :NotificationDisplay;
-
-    protected var _notifyBtn :CommandButton;
 
     /** Tracks notifications we've announced. */
     protected var _announced :Dictionary = new Dictionary();

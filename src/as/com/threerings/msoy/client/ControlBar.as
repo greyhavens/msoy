@@ -96,6 +96,7 @@ public class ControlBar extends HBox
 
         _ctx.getClient().addEventListener(WorldClient.EMBEDDED_STATE_KNOWN, embeddedStateKnown);
 
+        createControls();
         checkControls();
     }
 
@@ -118,6 +119,14 @@ public class ControlBar extends HBox
             _notifyBtn.enabled = avail;
             _notifyBtn.toolTip = Msgs.GENERAL.get("i.notifications" + (avail ? "_avail" : ""));
         }
+    }
+
+    /**
+     * Sets whether the notification display is showing or not. Called by the NotificationDirector.
+     */
+    public function setNotificationsShowing (showing :Boolean) :void
+    {
+        _notifyBtn.selected = showing;
     }
 
     /**
@@ -166,6 +175,21 @@ public class ControlBar extends HBox
         if (!_isMinimized && width != 0) {
             dispatchEvent(new ValueEvent(DISPLAY_LIST_VALID, true));
         }
+    }
+
+    /**
+     * Create the controls we'll be using.
+     */
+    protected function createControls () :void
+    {
+        // create the notification button
+        _notifyBtn = new CommandButton(MsoyController.POPUP_NOTIFICATIONS);
+        _notifyBtn.toolTip = Msgs.GENERAL.get("i.notifications");
+        _notifyBtn.styleName = "controlBarButtonNotify";
+        _notifyBtn.enabled = false;
+        _notifyBtn.toggle = true;
+
+        // TODO: move more button creation here...
     }
 
     /**
@@ -240,12 +264,6 @@ public class ControlBar extends HBox
         addGroupChild(hotZone, [ UI_STD, UI_GUEST ]);
 
         // notifications button
-        _notifyBtn = new CommandButton();
-        _notifyBtn.toolTip = Msgs.GENERAL.get("i.notifications");
-        _notifyBtn.setCallback(_ctx.getNotificationDirector().displayNotifications, _notifyBtn);
-        _notifyBtn.styleName = "controlBarButtonNotify";
-        _notifyBtn.enabled = false;
-        _notifyBtn.toggle = true;
         addGroupChild(_notifyBtn, [ UI_STD, UI_GUEST ]);
 
         if (_ctx.getWorldClient().isEmbedded()) {
