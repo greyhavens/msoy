@@ -61,18 +61,18 @@ public class MsoyPeerManager extends CrowdPeerManager
         _mnobj.removeFromHostedScenes(sceneId);
     }
 
-    public String getSceneHost (int sceneId)
+    /**
+     * Returns the node name of the peer that is hosting the specified scene, or null if no peer
+     * has published that they are hosting the scene.
+     */
+    public String getSceneHost (final int sceneId)
     {
-        for (PeerNode peer : _peers.values()) {
-            if (peer.nodeobj == null) {
-                continue;
+        return lookupNodeDatum(new Lookup<String>() {
+            public String lookup (NodeObject nodeobj) {
+                HostedScene info = ((MsoyNodeObject)nodeobj).hostedScenes.get(sceneId);
+                return (info == null) ? null : nodeobj.nodeName;
             }
-            HostedScene info = ((MsoyNodeObject)peer.nodeobj).hostedScenes.get(sceneId);
-            if (info != null) {
-                return peer.nodeobj.nodeName;
-            }
-        }
-        return null;
+        });
     }
 
     @Override // from CrowdPeerManager
@@ -85,17 +85,6 @@ public class MsoyPeerManager extends CrowdPeerManager
     protected ClientInfo createClientInfo ()
     {
         return new MsoyClientInfo();
-    }
-
-    @Override // from CrowdPeerManager
-    protected void didInit ()
-    {
-        super.didInit();
-
-//         // set up our node object
-//         MsoyNodeObject mnodeobj = (MsoyNodeObject)_nodeobj;
-//         mnodeobj.setMsoyPeerService(
-//             (MsoyPeerMarshaller)MsoyServer.invmgr.registerDispatcher(new MsoyPeerDispatcher(this)));
     }
 
     /** A casted reference to our node object. */
