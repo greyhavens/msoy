@@ -17,7 +17,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 /**
  * Emulates {@link OOOUser} for the Depot.
  */
-@Entity(name="user")
+@Entity(name="users")
 public class OOOUserRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
