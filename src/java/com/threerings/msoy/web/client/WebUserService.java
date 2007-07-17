@@ -8,6 +8,7 @@ import java.util.Date;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.AccountInfo;
+import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SessionData;
@@ -45,6 +46,12 @@ public interface WebUserService extends RemoteService
      * if so.
      */
     public SessionData validateSession (long clientVersion, String authtok, int expireDays)
+        throws ServiceException;
+
+    /**
+     * Returns the connection information for this server's World services.
+     */
+    public ConnectConfig getConnectConfig ()
         throws ServiceException;
 
     /**

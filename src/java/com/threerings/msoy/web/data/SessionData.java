@@ -14,10 +14,16 @@ public class SessionData implements IsSerializable
 {
     public WebCreds creds;
 
+    /** This member's flow at the time of session start. */
     public int flow;
+
+    /** This member's gold at the time of session start. */
     public int gold;
+
+    /** This member's level at the time of session start. */
     public int level;
 
+    /** This member's new mail message count at the time of session start. */
     public int newMailCount;
 
     /**
@@ -26,4 +32,10 @@ public class SessionData implements IsSerializable
      * @gwt.typeArgs <com.threerings.msoy.data.all.FriendEntry>
      */
     public List friends;
+
+    /** The hostname of the game server to which this client should connect. */
+    public String gameServerHost;
+
+    /** The port on which this client should connect to the game server. */
+    public int gameServerPort;
 }

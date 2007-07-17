@@ -5,16 +5,19 @@ package client.shell;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.util.FlashClients;
+import client.util.InfoPopup;
 
 /**
  * Manages our World client (which also handles Flash games).
@@ -23,15 +26,30 @@ public class WorldClient extends Widget
 {
     public static void displayFlash (String flashArgs)
     {
+        // if we have not yet determined our default server, find that out now
+        if (_defaultServer == null) {
+            final String savedArgs = flashArgs;
+            CShell.usersvc.getConnectConfig(new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    _defaultServer = (ConnectConfig)result;
+                    displayFlash(savedArgs);
+                }
+                public void onFailure (Throwable cause) {
+                    new InfoPopup(CShell.serverError(cause)).show();
+                }
+            });
+            return;
+        }
+
         // let the page know that we're displaying a client
         boolean newPage = Page.setShowingClient(true, false);
 
         // create our client if necessary
         if (! _isFlashClientPresent) {
             clearClient(false); // clear our Java client if we have one
+            flashArgs += "&host=" + _defaultServer.server + "&port=" + _defaultServer.port;
             if (CShell.ident != null) {
-                flashArgs = "token=" + CShell.ident.token +
-                    (flashArgs == null ? "" : ("&" + flashArgs));;
+                flashArgs += "&token=" + CShell.ident.token;
             }
             RootPanel.get("client").clear();
             FlashClients.embedWorldClient(RootPanel.get("client"), flashArgs);
@@ -162,4 +180,7 @@ public class WorldClient extends Widget
 
     protected static boolean _isFlashClientPresent;
     protected static Widget _jclient;
+
+    /** Our default world server. Configured the first time Flash is used. */
+    protected static ConnectConfig _defaultServer;
 }

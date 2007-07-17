@@ -36,6 +36,11 @@ public interface WebUserServiceAsync
                                  AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link WebUserService#getConnectConfig}.
+     */
+    public void getConnectConfig (AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link WebUserService#sendForgotPasswordEmail}.
      */
     public void sendForgotPasswordEmail (String email, AsyncCallback callback);
@@ -67,7 +72,7 @@ public interface WebUserServiceAsync
     public void getAccountInfo (WebIdent ident, AsyncCallback callback);
 
     /**
-     * The asyncrhonous version of {@link WebUserService#updateAccountInfo}.
+     * The asynchronous version of {@link WebUserService#updateAccountInfo}.
      */
     public void updateAccountInfo (WebIdent ident, AccountInfo info, AsyncCallback callback);
 }

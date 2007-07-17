@@ -83,14 +83,14 @@ public /*abstract*/ class BaseClient extends Client
         }
 
         // allow connecting to the game server
-        Security.loadPolicyFile("http://" + DeploymentConfig.serverHost + "/crossdomain.xml");
+        Security.loadPolicyFile("http://" + getServerHost(stage) + "/crossdomain.xml");
         // and the media server if it differs from the game server
         if (DeploymentConfig.mediaURL.indexOf(DeploymentConfig.serverHost) == -1) {
             Security.loadPolicyFile(DeploymentConfig.mediaURL + "crossdomain.xml");
         }
 
         // configure our server and port info and logon
-        setServer(DeploymentConfig.serverHost, DeploymentConfig.serverPorts);
+        setServer(getServerHost(stage), getServerPorts(stage));
     }
 
     public function fuckingCompiler () :void
@@ -232,6 +232,27 @@ public /*abstract*/ class BaseClient extends Client
             creds.sessionToken = (token == null) ? params["token"] : token;
         }
         return creds;
+    }
+
+    /**
+     * Returns the hostname of the game server to which we should connect, first checking the movie
+     * parameters, then falling back to the default in DeploymentConfig.
+     */
+    protected static function getServerHost (stage :Stage) :String
+    {
+        var params :Object = stage.loaderInfo.parameters;
+        return (params["host"] != null) ? String(params["host"]) : DeploymentConfig.serverHost;
+    }
+
+    /**
+     * Returns the ports on which we should connect to the game server, first checking the movie
+     * parameters, then falling back to the default in DeploymentConfig.
+     */
+    protected static function getServerPorts (stage :Stage) :Array
+    {
+        var params :Object = stage.loaderInfo.parameters;
+        return (params["port"] != null) ?
+            [ int(parseInt(params["port"])) ] : DeploymentConfig.serverPorts;
     }
 
     protected var _ctx :BaseContext;

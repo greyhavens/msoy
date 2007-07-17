@@ -21,7 +21,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.client.SwiftlyService;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebIdent;
@@ -223,20 +222,6 @@ public class SwiftlyServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Loading project failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
-    }
-
-    // from interface SwiftlyService
-    public ConnectConfig loadConnectConfig (WebIdent ident)
-        throws ServiceException
-    {
-        requireAuthedUser(ident);
-
-        // create an applet config record
-        ConnectConfig config = new ConnectConfig();
-        config.server = ServerConfig.serverHost;
-        config.port = ServerConfig.serverPorts[0];
-        config.httpPort = ServerConfig.httpPort;
-        return config;
     }
 
     // from SwiftlyService

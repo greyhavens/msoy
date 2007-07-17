@@ -83,7 +83,7 @@ public class DashboardPanel extends FlexTable
     protected void displayDashboard ()
     {
         // load up the information needed to display the dashboard applet
-        CAdmin.adminsvc.loadConnectConfig(CAdmin.ident, new AsyncCallback() {
+        CAdmin.usersvc.getConnectConfig(new AsyncCallback() {
             public void onSuccess (Object result) {
                 finishDisplayDashboard((ConnectConfig)result);
             }

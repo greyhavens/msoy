@@ -648,7 +648,10 @@ public class MsoyController extends Controller
             }
         }
 
-        goToPlace(_topPanel.loaderInfo.parameters);
+        if (!_didFirstLogonGo) {
+            _didFirstLogonGo = true;
+            goToPlace(_topPanel.loaderInfo.parameters);
+        }
     }
 
     // from ClientObserver
@@ -902,6 +905,10 @@ public class MsoyController extends Controller
 
     /** The topmost panel in the msoy client. */
     protected var _topPanel :TopPanel;
+
+    /** Tracks whether we've done our first-logon movement so that we avoid trying to redo it as we
+     * subsequently move between servers (and log off and on in the process). */
+    protected var _didFirstLogonGo :Boolean;
 
     /** A special logoff message to use when we disconnect. */
     protected var _logoffMessage :String;

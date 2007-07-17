@@ -7,7 +7,6 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
-import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.MemberInviteResult;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
@@ -17,12 +16,6 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface AdminService extends RemoteService
 {
-    /**
-     * Loads the configuration needed to run the Dashboard applet.
-     */
-    public ConnectConfig loadConnectConfig (WebIdent ident)
-        throws ServiceException;
-
     /**
      * Creates accounts for the supplied email addresses and sends invitation emails to same.
      * Returns a string for each address denoting success or failure.

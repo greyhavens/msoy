@@ -28,6 +28,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.data.AccountInfo;
+import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.ServiceException;
@@ -154,6 +155,17 @@ public class WebUserServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Failed to refresh session [tok=" + authtok + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_UNAVAILABLE);
         }
+    }
+
+    // from interface WebUserService
+    public ConnectConfig getConnectConfig ()
+        throws ServiceException
+    {
+        ConnectConfig config = new ConnectConfig();
+        config.server = ServerConfig.serverHost;
+        config.port = ServerConfig.serverPorts[0];
+        config.httpPort = ServerConfig.httpPort;
+        return config;
     }
 
     // from interface WebUserService
@@ -366,6 +378,10 @@ public class WebUserServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Failed to load friends list [id=" + mrec.memberId + "].", pe);
             data.friends = new ArrayList<Object>();
         }
+
+        // fill in our game server host and port
+        data.gameServerHost = ServerConfig.serverHost;
+        data.gameServerPort = ServerConfig.serverPorts[0];
 
         return data;
     }

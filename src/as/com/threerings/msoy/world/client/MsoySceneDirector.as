@@ -4,10 +4,12 @@
 package com.threerings.msoy.world.client {
 
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ClientEvent;
 
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.data.PlaceConfig;
 
+import com.threerings.whirled.client.PendingData;
 import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.client.persist.SceneRepository;
 
@@ -60,7 +62,7 @@ public class MsoySceneDirector extends SceneDirector
 
         // note our departing portal id and target location in the destination scene
         _departingPortalId = portalId;
-        _destLoc = dest.dest;
+        (_pendingData as MsoyPendingData).destLoc = dest.dest;
 
         // now that everything is noted (in case we have to switch servers) ask to move
         sendMoveRequest();
@@ -88,10 +90,14 @@ public class MsoySceneDirector extends SceneDirector
     // from SceneDirector
     override public function requestFailed (reason :String) :void
     {
-        // clear out our bits
         _departingPortalId = -1;
-        _destLoc = null;
         super.requestFailed(reason);
+    }
+
+    // from SceneDirector
+    override protected function createPendingData () :PendingData
+    {
+        return new MsoyPendingData();
     }
 
     // from SceneDirector
@@ -100,27 +106,40 @@ public class MsoySceneDirector extends SceneDirector
         // check the version of our cached copy of the scene to which we're requesting to move; if
         // we were unable to load it, assume a cached version of zero
         var sceneVers :int = 0;
-        if (_pendingModel != null) {
-            sceneVers = _pendingModel.version;
+        if (_pendingData.model != null) {
+            sceneVers = _pendingData.model.version;
         }
 
+        // extract our destination location from the pending data
+        var destLoc :MsoyLocation = (_pendingData as MsoyPendingData).destLoc;
+
+        // note: _departingPortalId is only needed *before* a server switch, so we intentionally
+        // allow it to get cleared out in the clientDidLogoff() call that happens as we're
+        // switching from one server to another
+
         // issue a moveTo request
-        log.info("Issuing moveTo(" + _pendingSceneId + ", " + sceneVers + ", " +
-                 _departingPortalId + ", " + _destLoc + ").");
-        _msservice.moveTo(_wctx.getClient(), _pendingSceneId, sceneVers,
-                          _departingPortalId, _destLoc, this);
+        log.info("Issuing moveTo(" + _pendingData.sceneId + ", " + sceneVers + ", " +
+                 _departingPortalId + ", " + destLoc + ").");
+        _msservice.moveTo(_wctx.getClient(), _pendingData.sceneId, sceneVers,
+                          _departingPortalId, destLoc, this);
+    }
+
+    // documentation inherited
+    override public function clientDidLogoff (event :ClientEvent) :void
+    {
+        super.clientDidLogoff(event);
+        _departingPortalId = -1;
     }
 
     // from SceneDirector
     override protected function fetchServices (client :Client) :void
     {
         super.fetchServices(client);
-        // get a handle on our scene service
+        // get a handle on our special scene service
         _msservice = (client.requireService(MsoySceneService) as MsoySceneService);
     }
 
     protected var _msservice :MsoySceneService;
     protected var _departingPortalId :int = -1;
-    protected var _destLoc :MsoyLocation;
 }
 }

@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebIdent;
@@ -56,12 +55,6 @@ public interface SwiftlyService extends RemoteService
      * Loads the SwiftlyProject using the supplied projectId
      */
     public SwiftlyProject loadProject (WebIdent ident, int projectId)
-        throws ServiceException;
-
-    /**
-     * Loads the configuration needed to load the Swiftly applet.
-     */
-    public ConnectConfig loadConnectConfig (WebIdent ident)
         throws ServiceException;
 
     /**

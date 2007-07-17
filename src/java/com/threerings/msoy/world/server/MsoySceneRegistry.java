@@ -70,12 +70,14 @@ public class MsoySceneRegistry extends SceneRegistry
 
         // if it's hosted on this server, then send the client directly to the scene
         if (MsoyServer.peerMan.getNodeObject().nodeName.equals(nodeName)) {
+            log.info("Going directly to resolved local scene " + sceneId + ".");
             resolveScene(sceneId, new MsoySceneMoveHandler(memobj, version, destLoc, listener));
             return;
         }
 
         // if it's hosted on another server; send the client to that server
         if (nodeName != null) {
+            log.info("Going directly to remote node " + sceneId + "@" + nodeName + ".");
             sendClientToNode(nodeName, listener);
             return;
         }
@@ -88,9 +90,11 @@ public class MsoySceneRegistry extends SceneRegistry
             MsoyPeerManager.getSceneLock(sceneId), new ResultListener<String>() {
             public void requestCompleted (String nodeName) {
                 if (MsoyServer.peerMan.getNodeObject().nodeName.equals(nodeName)) {
+                    log.info("Got lock, resolving " + sceneId + ".");
                     resolveScene(sceneId, handler);
                 } else if (nodeName != null) {
                     // some other peer got the lock before we could; send them there
+                    log.info("Didn't get lock, going remote " + sceneId + "@" + nodeName + ".");
                     sendClientToNode(nodeName, listener);
                 } else {
                     log.warning("Scene lock acquired by null? [for=" + memobj.who() +

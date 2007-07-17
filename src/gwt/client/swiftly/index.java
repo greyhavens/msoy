@@ -71,7 +71,7 @@ public class index extends Page
 
         } else {
             // load up the information needed to launch the applet
-            CSwiftly.swiftlysvc.loadConnectConfig(CSwiftly.ident, new AsyncCallback() {
+            CSwiftly.usersvc.getConnectConfig(new AsyncCallback() {
                 public void onSuccess (Object result) {
                     try {
                         int projectId = Integer.parseInt(args);
