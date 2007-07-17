@@ -12,10 +12,12 @@ import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.clause.Where;
 
 import com.samskivert.servlet.user.Password;
 import com.samskivert.servlet.user.UserExistsException;
+import com.samskivert.servlet.user.UserRepository;
 import com.samskivert.servlet.user.Username;
 
 import com.samskivert.util.ArrayUtil;
@@ -31,7 +33,7 @@ public class MsoyOOOUserRepository extends DepotRepository
 {
     public MsoyOOOUserRepository (ConnectionProvider conprov)
     {
-        super(conprov);
+        super(new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT, conprov));
     }
     
     /**
