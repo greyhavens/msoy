@@ -43,6 +43,12 @@ public class Msgs
         return _item;
     }
 
+    /** The notify message bundle. */
+    public static function get NOTIFY () :MessageBundle
+    {
+        return _notify;
+    }
+
     /** The prefs message bundle. */
     public static function get PREFS () :MessageBundle
     {
@@ -63,6 +69,7 @@ public class Msgs
         _editing = msgMgr.getBundle(MsoyCodes.EDITING_MSGS);
         _game = msgMgr.getBundle(MsoyCodes.GAME_MSGS);
         _item = msgMgr.getBundle(MsoyCodes.ITEM_MSGS);
+        _notify = msgMgr.getBundle(MsoyCodes.NOTIFY_MSGS);
         _prefs = msgMgr.getBundle(MsoyCodes.PREFS_MSGS);
     }
 
@@ -71,6 +78,7 @@ public class Msgs
     protected static var _editing :MessageBundle;
     protected static var _game :MessageBundle;
     protected static var _item :MessageBundle;
+    protected static var _notify :MessageBundle;
     protected static var _prefs :MessageBundle;
 }
 }

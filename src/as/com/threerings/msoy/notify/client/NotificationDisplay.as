@@ -24,6 +24,7 @@ public class NotificationDisplay extends FloatingPanel
         super(ctx, ctx.xlate(MsoyCodes.NOTIFY_MSGS, "t.notify"));
         _box.maxHeight = 250;
         _box.minWidth = 200;
+        _box.maxWidth = 350;
         styleName = "notificationDisplay";
         showCloseButton = true;
     }

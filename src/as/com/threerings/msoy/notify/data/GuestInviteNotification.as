@@ -21,15 +21,16 @@ public class GuestInviteNotification extends Notification
     // from Notification
     override public function getAnnouncement () :String
     {
-        return MessageBundle.tcompose("m.guest_invite");
+        return "m.guest_invite";
     }
 
     // from Notification
     override public function getDisplay () :UIComponent
     {
         var invite :Text = new Text();
-        Log.getLog(this).debug(Msgs.GENERAL.get("m.invite_text", _serverUrl + "/#invite-" + _inviteId));
-        invite.htmlText = Msgs.GENERAL.get("m.invite_text", _serverUrl + "/#invite-" + _inviteId);
+        invite.minHeight = 100;
+        invite.maxWidth = 300;
+        invite.htmlText = Msgs.NOTIFY.get("m.invite_text", _serverUrl + "/#invite-" + _inviteId);
         return invite;
     }
 
