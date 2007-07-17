@@ -318,11 +318,7 @@ public class Application
        $wnd.onunload = function (event) {
            var client = $doc.getElementById("asclient");
            if (client) {
-               try {
-                   client.onUnload();
-               } catch (e) {
-                   // nada
-               }
+               client.onUnload();
            }
            return true;
        };
@@ -351,12 +347,8 @@ public class Application
     protected static native boolean openChannelNative (int type, String name, int id) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            try {
-                client.openChannel(type, name, id);
-                return true;
-            } catch (e) {
-                // nada
-            }
+            client.openChannel(type, name, id);
+            return true;
         }
         return false;
     }-*/;

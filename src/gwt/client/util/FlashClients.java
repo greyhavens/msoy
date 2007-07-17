@@ -280,11 +280,7 @@ public class FlashClients
     protected static native boolean inRoomNative () /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            try {
-                return client.inRoom();
-            } catch (e) {
-                // fall through
-            }
+            return client.inRoom();
         } 
         return false;
     }-*/;
@@ -295,11 +291,7 @@ public class FlashClients
     protected static native void useItemNative (int itemId, byte itemType) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            try {
-                client.useItem(itemId, itemType);
-            } catch (e) {
-                // fall through
-            }
+            client.useItem(itemId, itemType);
         }
     }-*/;
 
@@ -309,11 +301,7 @@ public class FlashClients
     protected static native void removeFurniNative (int itemId, byte itemType) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            try {
-                client.removeFurni(itemId, itemType);
-            } catch (e) {
-                // fall through
-            }
+            client.removeFurni(itemId, itemType);
         }
     }-*/;
 
@@ -323,11 +311,7 @@ public class FlashClients
     protected static native JavaScriptObject getFurniListNative () /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            try {
-                return client.getFurniList();
-            } catch (e) {
-                // fall through
-            }
+            return client.getFurniList();
         }
         return [];
     }-*/;
@@ -338,11 +322,7 @@ public class FlashClients
     protected static native int getSceneItemIdNative(byte itemType) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            try {
-                return client.getSceneItemId(itemType);
-            } catch (e) {
-                // fall through
-            }
+            return client.getSceneItemId(itemType);
         }
         return 0;
     }-*/;
@@ -353,11 +333,7 @@ public class FlashClients
     protected static native void useAvatarNative (int avatarId, float scale) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            try {
-                client.useAvatar(avatarId, scale);
-            } catch (e) {
-                // fall through
-            }
+            client.useAvatar(avatarId, scale);
         }
     }-*/;
 
@@ -367,11 +343,7 @@ public class FlashClients
     protected static native int getAvatarIdNative () /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            try {
-                return client.getAvatarId();
-            } catch (e) {
-                // fall through
-            }
+            return client.getAvatarId();
         }
         return 0;
     }-*/;
@@ -382,11 +354,7 @@ public class FlashClients
     protected static native void usePetNative (int petId) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            try {
-                client.usePet(petId);
-            } catch (e) {
-                // fall through
-            }
+            client.usePet(petId);
         }
     }-*/;
 
@@ -396,11 +364,7 @@ public class FlashClients
     protected static native void removePetNative (int petId) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            try {
-                client.removePet(petId);
-            } catch (e) {
-                // fall through
-            }
+            client.removePet(petId);
         }
     }-*/;
 
@@ -410,10 +374,7 @@ public class FlashClients
     protected static native JavaScriptObject getPetsNative () /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            try {
-                return client.getPets();
-            } catch (e) {
-            }
+            return client.getPets();
         }
         return [];
     }-*/;
