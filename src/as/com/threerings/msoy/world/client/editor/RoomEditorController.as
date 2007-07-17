@@ -13,9 +13,11 @@ import flash.ui.Keyboard;
 
 import com.threerings.io.TypedArray;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.presents.client.ResultWrapper;
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.CommandEvent;
 import com.threerings.util.HashMap;
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.Item;
@@ -186,7 +188,14 @@ public class RoomEditorController
      */
     public function findAndSetTarget (ident :ItemIdent) :void
     {
-        // if the new target is different, let's select it
+        // if the player selected the special "new item" option, pop up the inventory panel
+        if (ident == NEW_ITEM_SELECTION) {
+            CommandEvent.dispatch(_panel.parent, MsoyController.VIEW_MY_FURNITURE);
+            setTarget(null);
+            return;
+        }
+        
+        // it's a bona fide selection. if the new target is different, let's select it
         if (_edit.target == null || ! _edit.target.getFurniData().getItemIdent().equals(ident)) {
             var sprites :Array = _view.getFurniSprites().values();
             // unfortunately, we have to search through all sprites to find the one we want
@@ -375,8 +384,13 @@ public class RoomEditorController
         });
 
         defs.sortOn("label", Array.CASEINSENSITIVE);
-        _panel.updateNameList(defs);
 
+        // if we're running in a browser, add the "new item" selection
+        if (! _ctx.getWorldClient().isEmbedded()) {
+            defs.unshift({ label: Msgs.EDITING.get("l.new_furni"), data: NEW_ITEM_SELECTION });
+        }
+        
+        _panel.updateNameList(defs);
         selectTargetName();
     }
 
@@ -403,6 +417,9 @@ public class RoomEditorController
      */
     protected var _names :HashMap = new HashMap();
 
+    /** Special ItemIdent instance for the "new item" option in name selection box. */
+    protected static const NEW_ITEM_SELECTION :ItemIdent = new ItemIdent();
+    
     protected var _ctx :WorldContext;
     protected var _view :RoomView;
     protected var _edit :FurniEditor;

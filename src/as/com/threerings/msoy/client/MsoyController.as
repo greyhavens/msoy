@@ -137,6 +137,9 @@ public class MsoyController extends Controller
     /** Command to view the "my avatars" page. */
     public static const VIEW_MY_AVATARS :String= "ViewMyAvatars";
 
+    /** Command to view the "my avatars" page. */
+    public static const VIEW_MY_FURNITURE :String= "ViewMyFurniture";
+
     /** Command to view the "mail" page. */
     public static const VIEW_MAIL :String= "ViewMail";
 
@@ -373,6 +376,14 @@ public class MsoyController extends Controller
     public function handleViewMyAvatars () :void
     {
         handleInternalGo("inventory", "" + Item.AVATAR);
+    }
+
+    /**
+     * Handle the VIEW_MY_FURNITURE command.
+     */
+    public function handleViewMyFurniture () :void
+    {
+        handleInternalGo("inventory", "" + Item.FURNITURE);
     }
 
     /**
