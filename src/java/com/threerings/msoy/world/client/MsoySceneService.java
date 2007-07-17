@@ -20,8 +20,9 @@ public interface MsoySceneService extends InvocationService
      *
      * @param sceneId the scene id to which we want to move.
      * @param version the version number of the scene object that we have in our local repository.
+     * @param portalId the id of the portal via which we are departing the current scene, or 0.
      * @param destLoc the location in the target scene where the client wishes to enter.
      */
-    public void moveTo (Client client, int sceneId, int version, MsoyLocation destLoc,
+    public void moveTo (Client client, int sceneId, int version, int portalId, MsoyLocation destLoc,
                         SceneService.SceneMoveListener listener);
 }

@@ -19,6 +19,6 @@ import com.threerings.whirled.data.SceneMarshaller_SceneMoveMarshaller;
 public interface MsoySceneService extends InvocationService
 {
     // from Java interface MsoySceneService
-    function moveTo (arg1 :Client, arg2 :int, arg3 :int, arg4 :MsoyLocation, arg5 :SceneService_SceneMoveListener) :void;
+    function moveTo (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :MsoyLocation, arg6 :SceneService_SceneMoveListener) :void;
 }
 }

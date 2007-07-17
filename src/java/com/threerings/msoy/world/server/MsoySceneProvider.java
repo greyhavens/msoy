@@ -20,6 +20,6 @@ public interface MsoySceneProvider extends InvocationProvider
     /**
      * Handles a {@link MsoySceneService#moveTo} request.
      */
-    public void moveTo (ClientObject caller, int arg1, int arg2, MsoyLocation arg3, SceneService.SceneMoveListener arg4)
+    public void moveTo (ClientObject caller, int arg1, int arg2, int arg3, MsoyLocation arg4, SceneService.SceneMoveListener arg5)
         throws InvocationException;
 }

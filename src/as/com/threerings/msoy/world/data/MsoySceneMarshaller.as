@@ -29,12 +29,12 @@ public class MsoySceneMarshaller extends InvocationMarshaller
     public static const MOVE_TO :int = 1;
 
     // from interface MsoySceneService
-    public function moveTo (arg1 :Client, arg2 :int, arg3 :int, arg4 :MsoyLocation, arg5 :SceneService_SceneMoveListener) :void
+    public function moveTo (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :MsoyLocation, arg6 :SceneService_SceneMoveListener) :void
     {
-        var listener5 :SceneMarshaller_SceneMoveMarshaller = new SceneMarshaller_SceneMoveMarshaller();
-        listener5.listener = arg5;
+        var listener6 :SceneMarshaller_SceneMoveMarshaller = new SceneMarshaller_SceneMoveMarshaller();
+        listener6.listener = arg6;
         sendRequest(arg1, MOVE_TO, [
-            Integer.valueOf(arg2), Integer.valueOf(arg3), arg4, listener5
+            Integer.valueOf(arg2), Integer.valueOf(arg3), Integer.valueOf(arg4), arg5, listener6
         ]);
     }
 }

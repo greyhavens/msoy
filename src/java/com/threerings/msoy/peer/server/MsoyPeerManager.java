@@ -6,12 +6,14 @@ package com.threerings.msoy.peer.server;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.ResultListener;
 
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.crowd.peer.server.CrowdPeerManager;
 
 import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
+import com.threerings.presents.peer.server.PeerNode;
 import com.threerings.presents.peer.server.persist.NodeRecord;
 
 import com.threerings.msoy.data.MemberObject;
@@ -27,6 +29,12 @@ import static com.threerings.msoy.Log.log;
  */
 public class MsoyPeerManager extends CrowdPeerManager
 {
+    /** Returns a lock used to claim resolution of the specified scene. */
+    public static NodeObject.Lock getSceneLock (int sceneId)
+    {
+        return new NodeObject.Lock("SceneHost", sceneId);
+    }
+
     public MsoyPeerManager (ConnectionProvider conprov, Invoker invoker)
         throws PersistenceException
     {
@@ -40,6 +48,8 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         log.info("Hosting scene [id=" + sceneId + ", name=" + name + "].");
         _mnobj.addToHostedScenes(new HostedScene(sceneId, name));
+        // release our lock on this scene now that it is resolved and we are hosting it
+        releaseLock(getSceneLock(sceneId), new ResultListener.NOOP<String>());
     }
 
     /**
@@ -51,10 +61,18 @@ public class MsoyPeerManager extends CrowdPeerManager
         _mnobj.removeFromHostedScenes(sceneId);
     }
 
-    @Override // from PeerManager
-    protected PeerNode createPeerNode (NodeRecord record)
+    public String getSceneHost (int sceneId)
     {
-        return new MsoyPeerNode(record);
+        for (PeerNode peer : _peers.values()) {
+            if (peer.nodeobj == null) {
+                continue;
+            }
+            HostedScene info = ((MsoyNodeObject)peer.nodeobj).hostedScenes.get(sceneId);
+            if (info != null) {
+                return peer.nodeobj.nodeName;
+            }
+        }
+        return null;
     }
 
     @Override // from CrowdPeerManager
@@ -78,15 +96,6 @@ public class MsoyPeerManager extends CrowdPeerManager
 //         MsoyNodeObject mnodeobj = (MsoyNodeObject)_nodeobj;
 //         mnodeobj.setMsoyPeerService(
 //             (MsoyPeerMarshaller)MsoyServer.invmgr.registerDispatcher(new MsoyPeerDispatcher(this)));
-    }
-
-    protected class MsoyPeerNode extends PeerNode
-    {
-        public MsoyPeerNode (NodeRecord record) {
-            super(record);
-        }
-
-        // TODO: stuff!
     }
 
     /** A casted reference to our node object. */
