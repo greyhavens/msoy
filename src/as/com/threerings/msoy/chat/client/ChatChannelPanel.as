@@ -7,8 +7,6 @@ import flash.display.DisplayObject;
 
 import flash.events.Event;
 
-import mx.core.mx_internal;
-
 import mx.containers.HBox;
 import mx.containers.TabNavigator;
 import mx.containers.VBox;
