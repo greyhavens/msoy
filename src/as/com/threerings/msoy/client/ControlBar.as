@@ -94,8 +94,6 @@ public class ControlBar extends HBox
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
         addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
 
-        _ctx.getClient().addEventListener(WorldClient.EMBEDDED_STATE_KNOWN, embeddedStateKnown);
-
         createControls();
         checkControls();
     }
@@ -266,11 +264,6 @@ public class ControlBar extends HBox
         // notifications button
         addGroupChild(_notifyBtn, [ UI_STD, UI_GUEST ]);
 
-        if (_ctx.getWorldClient().isEmbedded()) {
-            _logonPanel = new LogonPanel(_ctx, this.height - 4);
-            addGroupChild(_logonPanel, [ UI_GUEST ]);
-        }
-
         // some elements that are common to guest and logged in users
         var footerLeft :SkinnableImage = new SkinnableImage();
         footerLeft.styleName = "controlBarFooterLeft";
@@ -353,15 +346,6 @@ public class ControlBar extends HBox
             }
         } else {
             updateGroup(UI_GUEST, true);
-        }
-    }
-
-    protected function embeddedStateKnown (event :ValueEvent) :void
-    {
-        var embedded :Boolean = (event.value as Boolean);
-        // no logon panel if we're not in embedded mode
-        if (!embedded && _logonPanel != null) {
-            removeChild(_logonPanel);
         }
     }
 
@@ -451,9 +435,6 @@ public class ControlBar extends HBox
 
     /** Our chat control. */
     protected var _chatControl :ChatControl;
-
-    /** Our logon panel (if shown). */
-    protected var _logonPanel :LogonPanel;
 
     /** The back-movement button. */
     protected var _backBtn :CommandButton;
