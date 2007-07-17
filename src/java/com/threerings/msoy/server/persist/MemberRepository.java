@@ -631,6 +631,17 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Return the InvitationRecord that corresponds to the given inviter
+     */
+    public InvitationRecord loadInvite (String inviteeEmail, int inviterId)
+        throws PersistenceException
+    {
+        return load(InvitationRecord.class, new Where(
+            new And(new Equals(InvitationRecord.INVITEE_EMAIL_C, inviteeEmail),
+                    new Equals(InvitationRecord.INVITER_ID_C, inviterId))));
+    }
+
+    /**
      * Add an email address to the opt-out list.
      */
     public void addOptOutEmail (String email)
