@@ -637,8 +637,8 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         return load(InvitationRecord.class, new Where(
-            new And(new Equals(InvitationRecord.INVITEE_EMAIL_C, inviteeEmail),
-                    new Equals(InvitationRecord.INVITER_ID_C, inviterId))));
+            InvitationRecord.INVITEE_EMAIL_C, inviteeEmail,
+            InvitationRecord.INVITER_ID_C, inviterId));
     }
 
     /**
