@@ -53,10 +53,10 @@ public class ActorSprite extends MsoySprite
     /** The maximum height of an avatar sprite. */
     public static const MAX_HEIGHT :int = 450;
 
-    /** The default move speed, in pixels per millisecond. */
+    /** The default move speed, in pixels per second. */
     public static const DEFAULT_MOVE_SPEED :Number = 500;
 
-    /** The minimum move speed, in pixels per millisecond. */
+    /** The minimum move speed, in pixels per second. */
     public static const MIN_MOVE_SPEED :Number = 50;
 
     /**
@@ -173,7 +173,7 @@ public class ActorSprite extends MsoySprite
     }
 
     /**
-     * Return the walk speed of this actor, in pixels / millisecond.
+     * Return the walk speed of this actor, in pixels / second.
      */
     public function getMoveSpeed () :Number
     {
@@ -718,8 +718,10 @@ public class ActorSprite extends MsoySprite
 
     internal function setMoveSpeedFromUser (speed :Number) :void
     {
-        _moveSpeed = speed;
-        // don't worry, it'll be bounded by the minimum at the appropriate place
+        if (!isNaN(speed)) {
+            // don't worry, it'll be bounded by the minimum at the appropriate place
+            _moveSpeed = speed;
+        }
     }
 
     /**
