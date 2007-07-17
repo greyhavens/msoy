@@ -51,16 +51,27 @@ public class EntityPopup extends FloatingPanel
         _canvas.rawChildren.addChild(mask);
         _canvas.mask = mask;
 
-        // we need to put the userpanel one-level down, otherwise flex stuff will
-        // try to examine it and freak out
-        var holder :Sprite = new Sprite();
-        holder.addChild(userPanel);
-        _canvas.rawChildren.addChild(holder);
+        // don't add the user panel yet. See note in open().
+        _userPanel = userPanel;
     }
 
     public function getOwningEntity () :MsoySprite
     {
         return _entitySprite;
+    }
+
+    override public function open (modal :Boolean = false, parent :DisplayObject = null,
+        avoid :DisplayObject = null) :void
+    {
+        super.open(modal, parent, avoid);
+
+        // Only add the user panel after all the flex components have created their content panes.
+        // Otherwise, when the content pane is created a REMOVED_FROM_STAGE will be dispatched
+        // to the userpanel, which is like the only reliable way to tell from inside the
+        // entity when you've been removed. Fuck you flex! Why do wait to create the content pane
+        // and then move all the children over, instead of just fucking creating it and adding
+        // the children directly?
+        _canvas.rawChildren.addChild(_userPanel);
     }
 
     override public function close () :void
@@ -82,5 +93,7 @@ public class EntityPopup extends FloatingPanel
 
     /** The sprite that owns this. */
     protected var _entitySprite :MsoySprite;
+
+    protected var _userPanel :DisplayObject;
 }
 }
