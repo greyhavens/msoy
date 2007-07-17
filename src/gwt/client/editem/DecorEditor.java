@@ -42,11 +42,12 @@ public class DecorEditor extends ItemEditor
     {
         super.createInterface(contents, tabs);
 
+        // note: the container has to be added to the page *before* we add the flash viewer
         VerticalPanel bits = new VerticalPanel();
-        bits.add(_viewer = FlashClients.createDecorViewer());
-        bits.add(_label = new HTML());
         tabs.add(bits, CEditem.emsgs.decorConfigTab());
 
+        FlashClients.embedDecorViewer(bits); 
+        bits.add(_label = new HTML());
         configureCallbacks(this);
     }
 
@@ -175,7 +176,6 @@ public class DecorEditor extends ItemEditor
     }-*/;
 
     protected Decor _decor;
-    protected HTML _viewer;
     protected HTML _label;
 
 }

@@ -132,18 +132,18 @@ public class index extends Page
 
         case LaunchConfig.FLASH_SOLO:
             setPageTitle(config.name);
-            setContent(WidgetUtil.createFlashContainer(
-                           "game", config.gameMediaPath, 800, 600, null), true, false);
+            setFlashContent(WidgetUtil.createFlashObjectDefinition(
+                                "game", config.gameMediaPath, 800, 600, null));
             break;
 
         case LaunchConfig.JAVA_SOLO:
             setPageTitle(config.name);
-            setContent(new Label("Not yet supported"), false, false);
+            setContent(new Label("Not yet supported"));
             break;
 
         default:
             setPageTitle(config.name);
-            setContent(new Label(CGame.msgs.errUnknownGameType("" + config.type)), false, false);
+            setContent(new Label(CGame.msgs.errUnknownGameType("" + config.type)));
             break;
         }
     }

@@ -10,6 +10,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Panel;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -26,40 +27,65 @@ public class FlashClients
 {
     public static final String HOOD_SKIN_URL = "/media/static/hood_pastoral.swf";
 
-    public static HTML createWorldClient (String flashVars)
+    /**
+     * Creates a world client, and embeds it in a container object, with which it can communicate
+     * via the Flash/Javascript interface.
+     */
+    public static void embedWorldClient (Panel container, String flashVars)
     {
-        return WidgetUtil.createFlashContainer(
-            "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
-            "100%", getClientHeight(false), flashVars);
+        WidgetUtil.embedFlashObject(
+            container, WidgetUtil.createFlashObjectDefinition(
+                "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
+                "100%", getClientHeight(false), flashVars));
     }
 
-    public static HTML createLobbyClient (int gameId, String token)
+    /**
+     * Creates a decor viewer, and embeds it in a container object, with which it can communicate
+     * via the Flash/Javascript interface.
+     */
+    public static void embedDecorViewer (Panel container)
     {
-        return WidgetUtil.createFlashContainer(
-            "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
-            "100%", getClientHeight(false), "gameLobby=" + gameId + "&token=" + token);
+        WidgetUtil.embedFlashObject(
+            container, WidgetUtil.createFlashObjectDefinition(
+                "decorViewer", "/clients/" + DeploymentConfig.version + "/decorviewer.swf",
+                600, 400, ""));
     }
 
-    public static HTML createNeighborhood (String hoodData)
-    {
-        return createNeighborhood(hoodData, "100%", getClientHeight(true));
-    }
+//     public static HTML createLobbyClient (int gameId, String token)
+//     {
+//         return WidgetUtil.createFlashContainer(
+//             "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
+//             "100%", getClientHeight(false), "gameLobby=" + gameId + "&token=" + token);
+//     }
+    
+//     public static HTML createNeighborhood (String hoodData)
+//     {
+//         return createNeighborhood(hoodData, "100%", getClientHeight(true));
+//     }
 
-    public static HTML createNeighborhood (String hoodData, String width, String height)
-    {
-        return WidgetUtil.createFlashContainer(
-            "hood", "/clients/" + DeploymentConfig.version + "/neighborhood.swf", width, height,
-            "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hoodData);
-    }
+//     public static HTML createNeighborhood (String hoodData, String width, String height)
+//     {
+//         return WidgetUtil.createFlashContainer(
+//             "hood", "/clients/" + DeploymentConfig.version + "/neighborhood.swf", width, height,
+//             "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hoodData);
+//     }
 
-    public static HTML createPopularPlaces (String hotspotData)
+    /**
+     * Creates a neighborhood view definition, as an object definition string. The resulting
+     * string can be turned into an embedded Flash object using a call to
+     * WidgetUtil.embedFlashObject or equivalent.
+     */
+    public static String createPopularPlacesDefinition (String hotspotData)
     {
-        return WidgetUtil.createFlashContainer(
+        return WidgetUtil.createFlashObjectDefinition(
             "hotspots", "/clients/" + DeploymentConfig.version + "/neighborhood.swf",
             "100%", getClientHeight(true),
             "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hotspotData);
     }
 
+    /**
+     * Creates an avatar viewer without equipping it for communication with Javascript.
+     */
     public static HTML createAvatarViewer (String avatarPath, float scale, boolean allowScaleChange)
     {
         String flashVars = "avatar=" + URL.encodeComponent(avatarPath) + "&scale=" + scale;
@@ -71,18 +97,14 @@ public class FlashClients
             360, 450, flashVars);
     }
 
+    /**
+     * Creates an video viewer without equipping it for communication with Javascript.
+     */
     public static HTML createVideoViewer (String videoPath)
     {
         return WidgetUtil.createFlashContainer(
             "videoViewer", "/clients/" + DeploymentConfig.version + "/videoviewer.swf",
             320, 240, "video=" + URL.encodeComponent(videoPath));
-    }
-
-    public static HTML createDecorViewer ()
-    {
-        return WidgetUtil.createFlashContainer(
-            "decorViewer", "/clients/" + DeploymentConfig.version + "/decorviewer.swf",
-            600, 400, "");
     }
 
     /**

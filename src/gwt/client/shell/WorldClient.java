@@ -8,6 +8,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -26,15 +27,16 @@ public class WorldClient extends Widget
         boolean newPage = Page.setShowingClient(true, false);
 
         // create our client if necessary
-        if (_fclient == null) {
+        if (! _isFlashClientPresent) {
             clearClient(false); // clear our Java client if we have one
             if (CShell.ident != null) {
                 flashArgs = "token=" + CShell.ident.token +
                     (flashArgs == null ? "" : ("&" + flashArgs));;
             }
             RootPanel.get("client").clear();
-            RootPanel.get("client").add(_fclient = FlashClients.createWorldClient(flashArgs));
-
+            FlashClients.embedWorldClient(RootPanel.get("client"), flashArgs);
+            _isFlashClientPresent = true;
+            
         } else {
             // don't tell the client anything if we're just restoring our URL
             if (newPage) {
@@ -65,7 +67,7 @@ public class WorldClient extends Widget
         // note that we don't need to hack our popups
         Page.displayingFlash = false;
 
-        if (_fclient != null || _jclient != null) {
+        if (_isFlashClientPresent || _jclient != null) {
             RootPanel.get("client").setWidth("300px");
             clientMinimized(true);
         }
@@ -73,12 +75,13 @@ public class WorldClient extends Widget
 
     public static void clearClient (boolean restoreContent)
     {
-        if (_fclient != null || _jclient != null) {
-            if (_fclient != null) {
+        if (_isFlashClientPresent || _jclient != null) {
+            if (_isFlashClientPresent) {
                 clientUnload(); // TODO: make this work for jclient
             }
             RootPanel.get("client").clear();
-            _fclient = _jclient = null;
+            _isFlashClientPresent = false;
+            _jclient = null;
         }
         if (restoreContent) {
             RootPanel.get("client").setWidth("0px");
@@ -88,7 +91,7 @@ public class WorldClient extends Widget
 
     public static void didLogon (WebCreds creds)
     {
-        if (_fclient != null) {
+        if (_isFlashClientPresent) {
             clientLogon(creds.getMemberId(), creds.token);
         }
         // TODO: let jclient know about logon?
@@ -157,5 +160,6 @@ public class WorldClient extends Widget
         }
     }-*/;
 
-    protected static Widget _fclient, _jclient;
+    protected static boolean _isFlashClientPresent;
+    protected static Widget _jclient;
 }

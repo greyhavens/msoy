@@ -158,9 +158,8 @@ public class index extends Page
 
     protected HTML hotSpots (String hotSpots)
     {
-        HTML content = FlashClients.createPopularPlaces(hotSpots);
         setPageTitle(CWorld.msgs.hotSpotsTitle());
-        setContent(content, true, false);
+        HTML content = setFlashContent(FlashClients.createPopularPlacesDefinition(hotSpots));
         setCloseButton();
         return content;
     }

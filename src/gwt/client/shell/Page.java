@@ -13,6 +13,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -222,13 +223,40 @@ public abstract class Page
      */
     protected void setContent (Widget content)
     {
-        setContent(content, false, false);
+        setContentInternal(content, false, false);
+    }
+
+    /**
+     * Clears out any existing content, creates a new Flash object from the definition, and 
+     * sets it as the new main page content. Returns the newly-created content as a widget.
+     */
+    protected HTML setFlashContent (String definition)
+    {
+        // Please note: the following is a work-around for an IE7 bug. If we create a Flash object
+        // node *before* attaching it to the DOM tree, IE will silently fail to register
+        // the Flash object's callback functions for access from JavaScript. To make this work,
+        // create an empty node first, add it to the DOM tree, and then initialize it with
+        // the Flash object definition.
+        // Also see: WidgetUtil.embedFlashObject()
+        HTML control = new HTML();
+        setContentInternal(control, true, false);
+        control.setHTML(definition);
+        return control;
+    }
+    
+    /**
+     * Clears out any existing content and sets the specified Java applet as the main page content.
+     */
+    protected void setJavaContent (Widget content)
+    {
+        setContentInternal(content, false, true);
     }
 
     /**
      * Clears out any existing content and sets the specified widget as the main page content.
      */
-    protected void setContent (Widget content, boolean contentIsFlash, boolean contentIsJava)
+    protected void setContentInternal (
+        Widget content, boolean contentIsFlash, boolean contentIsJava)
     {
         WorldClient.minimize();
         displayingFlash = contentIsFlash;
@@ -240,8 +268,8 @@ public abstract class Page
         if (_content == null) {
             createContentContainer();
         }
-        _content.setWidget(1, 0, content);
         RootPanel.get("content").add(_content);
+        _content.setWidget(1, 0, content);
         // if there isn't anything in the tabs area, the name ends up centering over the whole
         // display.
         if (_content.getWidget(0, 1) == null) {
