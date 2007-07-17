@@ -227,10 +227,11 @@ public class StatusPanel extends FlexTable
             setWidget(0, idx++, new Image("/images/header/symbol_flow.png"));
             setText(0, _flowIdx = idx++, "0");
 
-            getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
+            // TODO: display once we've implemented gold!
+            /*getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
             getFlexCellFormatter().setStyleName(0, idx, "Icon");
             setWidget(0, idx++, new Image("/images/header/symbol_gold.png"));
-            setText(0, _goldIdx = idx++, "0");
+            setText(0, _goldIdx = idx++, "0");*/
 
             getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
             getFlexCellFormatter().setStyleName(0, idx, "Icon");
@@ -250,7 +251,7 @@ public class StatusPanel extends FlexTable
         }
 
         public void setGold (int gold) {
-            setText(0, _goldIdx, String.valueOf(gold));
+            //setText(0, _goldIdx, String.valueOf(gold));
         }
 
         public void showLevelUpPopup () {
