@@ -54,19 +54,23 @@ public class MediaUtil
             switch (desc.constraint) {
             case MediaDesc.HALF_HORIZONTALLY_CONSTRAINED:
                 if (width < MediaDesc.THUMBNAIL_WIDTH) {
+                    view.setHeight("auto");
                     view.setWidth(width + "px");
                 }
                 break;
             case MediaDesc.HALF_VERTICALLY_CONSTRAINED:
                 if (height < MediaDesc.THUMBNAIL_HEIGHT) {
                     view.setHeight(height + "px");
+                    view.setWidth("auto");
                 }
                 break;
             case MediaDesc.HORIZONTALLY_CONSTRAINED:
+                view.setHeight("auto");
                 view.setWidth(width + "px");
                 break;
             case MediaDesc.VERTICALLY_CONSTRAINED:
                 view.setHeight(height + "px");
+                view.setWidth("auto");
                 break;
             }
             break;
