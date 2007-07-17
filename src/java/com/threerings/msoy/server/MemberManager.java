@@ -71,7 +71,7 @@ public class MemberManager
 
     public MemberManager ()
     {
-        // intialize our internal array of memoized flow values per level.  Start with 256 
+        // intialize our internal array of memoized flow values per level.  Start with 256
         // calculated levels
         _levelForFlow = new int[256];
         for (int ii = 0; ii < BEGINNING_FLOW_LEVELS.length; ii++) {
@@ -171,7 +171,7 @@ public class MemberManager
     }
 
     /**
-     * Export alterFriend() functionality according to the web servlet way of doing things. 
+     * Export alterFriend() functionality according to the web servlet way of doing things.
      */
     public void alterFriend (int userId, int friendId, boolean add,
                              ResultListener<Void> listener)
@@ -213,7 +213,7 @@ public class MemberManager
         });
     }
 
-    /** 
+    /**
      * Called by MsoyServer to indicate that a user has logged on.
      */
     public void registerMember (final MemberObject member)
@@ -356,7 +356,7 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void getDisplayName (ClientObject caller, final int memberId, 
+    public void getDisplayName (ClientObject caller, final int memberId,
                                 final InvocationService.ResultListener listener)
         throws InvocationException
     {
@@ -413,10 +413,10 @@ public class MemberManager
         } finally {
             user.commitTransaction();
         }
-    }        
+    }
 
     // from interface MemberProvider
-    public void issueInvitation (ClientObject caller, final MemberName guest, 
+    public void issueInvitation (ClientObject caller, final MemberName guest,
         final InvocationService.ResultListener listener)
         throws InvocationException
     {
@@ -427,7 +427,7 @@ public class MemberManager
             public void invokePersist () throws PersistenceException {
                 _invitesAvailable = _memberRepo.getInvitesGranted(member.memberName.getMemberId());
                 if (_invitesAvailable > 0) {
-                    _memberRepo.addInvite(guest.toString(), member.getMemberId(), 
+                    _memberRepo.addInvite(guest.toString(), member.getMemberId(),
                         _inviteId = _memberRepo.generateInviteId());
                 } // else - listener.requestFailed() called in handleSuccess()
             }
@@ -441,7 +441,7 @@ public class MemberManager
                 }
             }
             public void handleFailure (Exception pe) {
-                log.log(Level.WARNING, "Unable to issue an invite [member=" + 
+                log.log(Level.WARNING, "Unable to issue an invite [member=" +
                     member.memberName.getMemberId() + "]", pe);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
@@ -528,7 +528,7 @@ public class MemberManager
         });
     }
 
-    /** 
+    /**
      * Check if the member's accumulated flow level matches up with their current level, and update
      * their current level if necessary
      */
@@ -550,7 +550,7 @@ public class MemberManager
                 checkCurrentLevel(member);
                 return;
             }
-            // level was equal to what would be the insertion point of accFlow, which is actually 
+            // level was equal to what would be the insertion point of accFlow, which is actually
             // one greater than the real level.
             level--;
         }
@@ -570,13 +570,13 @@ public class MemberManager
                     MsoyServer.notifyMan.notifyLeveledUp(member, levelToSet);
                 }
                 public void handleFailure (Exception pe) {
-                    log.warning("Unable to set user level [memberId=" + 
+                    log.warning("Unable to set user level [memberId=" +
                         member.memberName.getMemberId() + ", level=" + levelToSet + "]");
                 }
             });
         }
     }
-    
+
     /**
      * Generic alterFriend() functionality for the two public methods above. Please note that user
      * can be null here (i.e. offline).
@@ -702,8 +702,8 @@ public class MemberManager
         // to the time (in minutes) it takes the average WoW player to get from level n-1 to level
         // n, and 3000 is the expected average flow per hour that we hope to drive our system on.
         for (int ii = fromIndex; ii < _levelForFlow.length; ii++) {
-            // this array gets filled here with values for levels 1 through _levelForFlow.length... 
-            // the flow requirement for level n is at array index n-1.  Also, this function will 
+            // this array gets filled here with values for levels 1 through _levelForFlow.length...
+            // the flow requirement for level n is at array index n-1.  Also, this function will
             // never be called before _levelForFlow has been inialized with 1+ entries.
             _levelForFlow[ii] = _levelForFlow[ii-1] + (int)((ii * 17.8 - 49) * (3000 / 60));
         }
@@ -720,7 +720,7 @@ public class MemberManager
 
     /** Provides access to persistent member data. */
     protected MemberRepository _memberRepo;
-    
+
     /** Provides access to persistent group data. */
     protected GroupRepository _groupRepo;
 
