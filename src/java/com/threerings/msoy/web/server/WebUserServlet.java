@@ -379,10 +379,6 @@ public class WebUserServlet extends MsoyServiceServlet
             data.friends = new ArrayList<Object>();
         }
 
-        // fill in our game server host and port
-        data.gameServerHost = ServerConfig.serverHost;
-        data.gameServerPort = ServerConfig.serverPorts[0];
-
         return data;
     }
 

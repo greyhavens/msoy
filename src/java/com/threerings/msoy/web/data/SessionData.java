@@ -32,10 +32,4 @@ public class SessionData implements IsSerializable
      * @gwt.typeArgs <com.threerings.msoy.data.all.FriendEntry>
      */
     public List friends;
-
-    /** The hostname of the game server to which this client should connect. */
-    public String gameServerHost;
-
-    /** The port on which this client should connect to the game server. */
-    public int gameServerPort;
 }
