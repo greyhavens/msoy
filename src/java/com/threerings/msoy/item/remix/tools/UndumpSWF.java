@@ -95,7 +95,7 @@ public class UndumpSWF
     protected void replaceImages (SWFDocument doc, File inputDir)
         throws IOException
     {
-        List tags = doc.getTags();
+        @SuppressWarnings("unchecked") List<Object> tags = (List<Object>)doc.getTags();
         for (int ii=0; ii < tags.size(); ii++) {
             Object tagObj = tags.get(ii);
             if (tagObj instanceof DefinitionTag) {
