@@ -41,21 +41,8 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #alterFriend} requests. */
-    public static const ALTER_FRIEND :int = 2;
-
-    // from interface MemberService
-    public function alterFriend (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void
-    {
-        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, ALTER_FRIEND, [
-            Integer.valueOf(arg2), langBoolean.valueOf(arg3), listener4
-        ]);
-    }
-
     /** The method id used to dispatch {@link #getCurrentSceneId} requests. */
-    public static const GET_CURRENT_SCENE_ID :int = 3;
+    public static const GET_CURRENT_SCENE_ID :int = 2;
 
     // from interface MemberService
     public function getCurrentSceneId (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
@@ -68,7 +55,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getDisplayName} requests. */
-    public static const GET_DISPLAY_NAME :int = 4;
+    public static const GET_DISPLAY_NAME :int = 3;
 
     // from interface MemberService
     public function getDisplayName (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
@@ -81,7 +68,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getGroupName} requests. */
-    public static const GET_GROUP_NAME :int = 5;
+    public static const GET_GROUP_NAME :int = 4;
 
     // from interface MemberService
     public function getGroupName (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
@@ -94,7 +81,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getHomeId} requests. */
-    public static const GET_HOME_ID :int = 6;
+    public static const GET_HOME_ID :int = 5;
 
     // from interface MemberService
     public function getHomeId (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_ResultListener) :void
@@ -103,6 +90,19 @@ public class MemberMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, GET_HOME_ID, [
             Byte.valueOf(arg2), Integer.valueOf(arg3), listener4
+        ]);
+    }
+
+    /** The method id used to dispatch {@link #inviteToBeFriend} requests. */
+    public static const INVITE_TO_BE_FRIEND :int = 6;
+
+    // from interface MemberService
+    public function inviteToBeFriend (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
+    {
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, INVITE_TO_BE_FRIEND, [
+            Integer.valueOf(arg2), listener3
         ]);
     }
 

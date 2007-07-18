@@ -20,6 +20,7 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.util.ConfirmAdapter;
 
 import com.threerings.crowd.server.PlaceManager;
 
@@ -31,6 +32,7 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import com.threerings.msoy.web.data.FriendInviteObject;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
@@ -208,13 +210,19 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void alterFriend (ClientObject caller, int friendId, boolean add,
-                             InvocationService.ConfirmListener lner)
+    public void inviteToBeFriend (ClientObject caller, int friendId,
+                              InvocationService.ConfirmListener lner)
         throws InvocationException
     {
         MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
-        MsoyServer.friendMan.alterFriend(user, friendId, add, lner);
+
+        // in GWT land, we just send a mail message, so do the same here
+        String subject = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_subject");
+        String body = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_body");
+        MsoyServer.mailMan.deliverMessage(
+            user.getMemberId(), friendId, subject, body, new FriendInviteObject(),
+            new ConfirmAdapter(lner));
     }
 
     // from interface MemberProvider

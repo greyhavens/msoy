@@ -46,13 +46,6 @@ public class MemberDispatcher extends InvocationDispatcher
             );
             return;
 
-        case MemberMarshaller.ALTER_FRIEND:
-            ((MemberProvider)provider).alterFriend(
-                source,
-                ((Integer)args[0]).intValue(), ((Boolean)args[1]).booleanValue(), (InvocationService.ConfirmListener)args[2]
-            );
-            return;
-
         case MemberMarshaller.GET_CURRENT_SCENE_ID:
             ((MemberProvider)provider).getCurrentSceneId(
                 source,
@@ -78,6 +71,13 @@ public class MemberDispatcher extends InvocationDispatcher
             ((MemberProvider)provider).getHomeId(
                 source,
                 ((Byte)args[0]).byteValue(), ((Integer)args[1]).intValue(), (InvocationService.ResultListener)args[2]
+            );
+            return;
+
+        case MemberMarshaller.INVITE_TO_BE_FRIEND:
+            ((MemberProvider)provider).inviteToBeFriend(
+                source,
+                ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
             );
             return;
 

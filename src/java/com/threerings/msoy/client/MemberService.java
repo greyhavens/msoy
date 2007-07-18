@@ -14,9 +14,9 @@ import com.threerings.msoy.data.all.MemberName;
 public interface MemberService extends InvocationService
 {
     /**
-     * Request to add the specified user to the client's friendlist.
+     * Request to invite the specified user to be our friend.
      */
-    public void alterFriend (Client client, int friendId, boolean add, ConfirmListener listener);
+    public void inviteToBeFriend (Client client, int friendId, ConfirmListener listener);
 
     /**
      * Request to know the home scene id for the specified owner.

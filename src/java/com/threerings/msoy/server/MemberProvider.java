@@ -23,12 +23,6 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link MemberService#alterFriend} request.
-     */
-    public void alterFriend (ClientObject caller, int arg1, boolean arg2, InvocationService.ConfirmListener arg3)
-        throws InvocationException;
-
-    /**
      * Handles a {@link MemberService#getCurrentSceneId} request.
      */
     public void getCurrentSceneId (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
@@ -50,6 +44,12 @@ public interface MemberProvider extends InvocationProvider
      * Handles a {@link MemberService#getHomeId} request.
      */
     public void getHomeId (ClientObject caller, byte arg1, int arg2, InvocationService.ResultListener arg3)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link MemberService#inviteToBeFriend} request.
+     */
+    public void inviteToBeFriend (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
         throws InvocationException;
 
     /**

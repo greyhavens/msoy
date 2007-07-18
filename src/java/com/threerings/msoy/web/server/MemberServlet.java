@@ -43,6 +43,7 @@ import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.PopularPlace.PopularGamePlace;
 import com.threerings.msoy.data.PopularPlace.PopularMemberPlace;
 import com.threerings.msoy.data.PopularPlace.PopularScenePlace;
@@ -66,43 +67,57 @@ public class MemberServlet extends MsoyServiceServlet
         try {
             return MsoyServer.memberRepo.getFriendStatus(getMemberId(ident), memberId);
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "isFriend failed [memberId=" + memberId + "].", pe);
+            log.log(Level.WARNING, "getFriendStatus failed [for=" + memberId + "].", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
     }
 
     // from MemberService
-    public void addFriend (final WebIdent ident, final int friendId)
+    public void addFriend (WebIdent ident, final int friendId)
         throws ServiceException
     {
         final MemberRecord memrec = requireAuthedUser(ident);
-        final ServletWaiter<Void> waiter =
-            new ServletWaiter<Void>("acceptFriend[" + friendId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.friendMan.alterFriend(memrec.memberId, friendId, true, waiter);
+        try {
+            final MemberName friendName =
+                MsoyServer.memberRepo.noteFriendship(memrec.memberId, friendId);
+            if (friendName == null) {
+                throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
             }
-        });
-        waiter.waitForResult();
+            MsoyServer.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    MsoyServer.friendMan.friendshipEstablished(memrec.getName(), friendName);
+                }
+            });
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "addFriend failed [for=" + memrec.memberId +
+                    ", friendId=" + friendId + "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from MemberService
-    public void removeFriend (final WebIdent ident, final int friendId)
+    public void removeFriend (WebIdent ident, final int friendId)
         throws ServiceException
     {
         final MemberRecord memrec = requireAuthedUser(ident);
-        final ServletWaiter<Void> waiter =
-            new ServletWaiter<Void>("removeFriend[" + friendId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.friendMan.alterFriend(memrec.memberId, friendId, false, waiter);
-            }
-        });
-        waiter.waitForResult();
+        try {
+            MsoyServer.memberRepo.clearFriendship(memrec.memberId, friendId);
+            MsoyServer.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    MsoyServer.friendMan.friendshipCleared(memrec.memberId, friendId);
+                }
+            });
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "removeFriend failed [for=" + memrec.memberId +
+                    ", friendId=" + friendId + "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from interface MemberService
-    public List loadInventory (final WebIdent ident, final byte type)
+    public List loadInventory (WebIdent ident, final byte type)
         throws ServiceException
     {
         final MemberRecord memrec = requireAuthedUser(ident);

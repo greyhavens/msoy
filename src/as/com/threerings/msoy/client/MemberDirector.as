@@ -27,15 +27,13 @@ public class MemberDirector extends BasicDirector
     }
 
     /**
-     * Request to make the user our friend, or remove them as a friend.
+     * Request to make the user our friend.
      */
-    public function alterFriend (friendId :int, makeFriend :Boolean) :void
+    public function inviteToBeFriend (friendId :int) :void
     {
-        var listener :ReportingListener = makeFriend ?
-            new ReportingListener(_bctx, MsoyCodes.GENERAL_MSGS, null, "m.friend_invited") :
-            new ReportingListener(_bctx);
-
-        _msvc.alterFriend(_bctx.getClient(), friendId, makeFriend, listener);
+        _msvc.inviteToBeFriend(
+            _bctx.getClient(), friendId,
+            new ReportingListener(_bctx, MsoyCodes.GENERAL_MSGS, null, "m.friend_invited"));
     }
 
     /**

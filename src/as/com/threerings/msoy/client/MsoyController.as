@@ -116,8 +116,8 @@ public class MsoyController extends Controller
     /** Command to leave the in-world game. */
     public static const LEAVE_WORLD_GAME :String = "LeaveWorldGame";
 
-    /** Command to add/remove friends. */
-    public static const ALTER_FRIEND :String = "AlterFriend";
+    /** Command to invite someone to be a friend. */
+    public static const INVITE_FRIEND :String = "InviteFriend";
 
     /** Command to open the chat interface for a particular chat channel. */
     public static const OPEN_CHANNEL :String = "OpenChannel";
@@ -499,11 +499,11 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handles ALTER_FRIEND.
+     * Handles INVITE_FRIEND.
      */
-    public function handleAlterFriend (memberId :int, makeFriend :Boolean) :void
+    public function handleInviteFriend (memberId :int) :void
     {
-        _ctx.getMemberDirector().alterFriend(memberId, makeFriend);
+        _ctx.getMemberDirector().inviteToBeFriend(memberId);
     }
 
     /**

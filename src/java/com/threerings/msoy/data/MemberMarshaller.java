@@ -33,21 +33,8 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #alterFriend} requests. */
-    public static final int ALTER_FRIEND = 2;
-
-    // from interface MemberService
-    public void alterFriend (Client arg1, int arg2, boolean arg3, InvocationService.ConfirmListener arg4)
-    {
-        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, ALTER_FRIEND, new Object[] {
-            Integer.valueOf(arg2), Boolean.valueOf(arg3), listener4
-        });
-    }
-
     /** The method id used to dispatch {@link #getCurrentSceneId} requests. */
-    public static final int GET_CURRENT_SCENE_ID = 3;
+    public static final int GET_CURRENT_SCENE_ID = 2;
 
     // from interface MemberService
     public void getCurrentSceneId (Client arg1, int arg2, InvocationService.ResultListener arg3)
@@ -60,7 +47,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getDisplayName} requests. */
-    public static final int GET_DISPLAY_NAME = 4;
+    public static final int GET_DISPLAY_NAME = 3;
 
     // from interface MemberService
     public void getDisplayName (Client arg1, int arg2, InvocationService.ResultListener arg3)
@@ -73,7 +60,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getGroupName} requests. */
-    public static final int GET_GROUP_NAME = 5;
+    public static final int GET_GROUP_NAME = 4;
 
     // from interface MemberService
     public void getGroupName (Client arg1, int arg2, InvocationService.ResultListener arg3)
@@ -86,7 +73,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getHomeId} requests. */
-    public static final int GET_HOME_ID = 6;
+    public static final int GET_HOME_ID = 5;
 
     // from interface MemberService
     public void getHomeId (Client arg1, byte arg2, int arg3, InvocationService.ResultListener arg4)
@@ -95,6 +82,19 @@ public class MemberMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, GET_HOME_ID, new Object[] {
             Byte.valueOf(arg2), Integer.valueOf(arg3), listener4
+        });
+    }
+
+    /** The method id used to dispatch {@link #inviteToBeFriend} requests. */
+    public static final int INVITE_TO_BE_FRIEND = 6;
+
+    // from interface MemberService
+    public void inviteToBeFriend (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, INVITE_TO_BE_FRIEND, new Object[] {
+            Integer.valueOf(arg2), listener3
         });
     }
 

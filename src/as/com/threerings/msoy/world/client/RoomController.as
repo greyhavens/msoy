@@ -504,14 +504,13 @@ public class RoomController extends SceneController
             // create a menu for clicking on someone else
             var memId :int = occInfo.getMemberId();
             var isGuest :Boolean = (memId == MemberName.GUEST_ID);
-            var isFriend :Boolean = us.friends.containsKey(memId);
             menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
                 command: MsoyController.OPEN_CHANNEL, arg: occInfo.username });
-
             if (isGuest) {
                 menuItems.push(
                     { label: Msgs.GENERAL.get("b.invite_to_whirled"),
                       command: MsoyController.INVITE_GUEST, arg: occInfo.username });
+
             } else {
                 menuItems.push(
                     { label: Msgs.GENERAL.get("b.visit_home"),
@@ -521,11 +520,10 @@ public class RoomController extends SceneController
                         { label: Msgs.GENERAL.get("b.view_member"),
                           command: MsoyController.VIEW_MEMBER, arg: memId });
                 }
-                if (!us.isGuest()) {
+                if (!us.isGuest() && !us.friends.containsKey(memId)) {
                     menuItems.push(
-                        { label: Msgs.GENERAL.get(isFriend ? "b.removeAsFriend"
-                                                           : "b.addAsFriend"),
-                          command: MsoyController.ALTER_FRIEND, arg: [memId, !isFriend] });
+                        { label: Msgs.GENERAL.get("b.addAsFriend"),
+                          command: MsoyController.INVITE_FRIEND, arg: [memId] });
                 }
             }
         }

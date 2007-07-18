@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.util.HashIntMap;
 import com.samskivert.util.ResultListener;
 
 import com.threerings.presents.client.InvocationService;
@@ -19,7 +20,8 @@ import com.threerings.presents.util.ConfirmAdapter;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.data.FriendInviteObject;
+
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import static com.threerings.msoy.Log.log;
 
@@ -28,7 +30,11 @@ import static com.threerings.msoy.Log.log;
  * friends.
  */
 public class FriendManager
+    implements MsoyPeerManager.RemoteMemberObserver
 {
+    /**
+     * Called when a member logs onto this server.
+     */
     public void memberLoggedOn (final MemberObject memobj)
     {
         if (memobj.isGuest()) {
@@ -40,23 +46,21 @@ public class FriendManager
         try {
             FriendEntry[] snapshot = memobj.friends.toArray(new FriendEntry[memobj.friends.size()]);
             for (FriendEntry entry : snapshot) {
-                checkAndNotifyFriend(memobj, entry);
+                if (MsoyServer.peerMan.locateClient(entry.name) != null) {
+                    memobj.updateFriends(new FriendEntry(entry.name, true));
+                }
             }
         } finally {
             memobj.commitTransaction();
         }
     }
 
+    /**
+     * Called when a member logs off of this server.
+     */
     public void memberLoggedOff (MemberObject memobj)
     {
         for (FriendEntry entry : memobj.friends) {
-            // TEMP: sanity check
-            if (entry.name.equals(memobj.memberName)) {
-                log.warning("Why am I mine own friend? [user=" + memobj.memberName + "].");
-                continue;
-            }
-            // END TEMP
-
             if (!entry.online) {
                 continue;
             }
@@ -87,112 +91,50 @@ public class FriendManager
     }
 
     /**
-     * Adds or removes the specified friend.
+     * Called to notify the friend manager that a friendship request was accepted. TODO: make this
+     * work via peer services.
      */
-    public void alterFriend (int userId, int friendId, boolean add,
-                             ResultListener<Void> listener)
+    public void friendshipEstablished (MemberName acceptor, MemberName friend)
     {
-        alterFriend(MsoyServer.lookupMember(userId), userId, friendId, add, listener);
-    }
-
-    /**
-     * Adds or removes the specified friend.
-     */
-    public void alterFriend (MemberObject user, int friendId, boolean add,
-                             InvocationService.ConfirmListener lner)
-        throws InvocationException
-    {
-        if (add) {
-            String subject = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_subject");
-            String body = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_body");
-            MsoyServer.mailMan.deliverMessage(
-                user.memberName.getMemberId(), friendId, subject, body,
-                new FriendInviteObject(), new ConfirmAdapter(lner));
-
-        } else {
-            alterFriend(user, user.getMemberId(), friendId, add, new ConfirmAdapter(lner));
+        // remove them from the friends list of both parties of they are online
+        MemberObject accobj = MsoyServer.lookupMember(acceptor.getMemberId());
+        MemberObject frobj = MsoyServer.lookupMember(friend.getMemberId());
+        if (accobj != null) {
+            accobj.addToFriends(new FriendEntry(friend, frobj != null));
+        }
+        if (frobj != null) {
+            frobj.addToFriends(new FriendEntry(acceptor, accobj != null));
         }
     }
 
     /**
-     * Generic alterFriend() functionality for the two public methods above. Please note that user
-     * can be null here (i.e. offline).
+     * Called to notify the friend manager that a friendship was removed. TODO: make this work via
+     * peer services.
      */
-    protected void alterFriend (final MemberObject user, final int userId, final int friendId,
-                                final boolean add, ResultListener<Void> lner)
+    public void friendshipCleared (int removerId, int friendId)
     {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("alterFriend", lner) {
-            public Void invokePersistResult () throws PersistenceException {
-                if (add) {
-                    _entry = MsoyServer.memberRepo.inviteFriend(userId, friendId);
-                    if (user != null) {
-                        _userName = user.memberName;
-                    } else {
-                        _userName = MsoyServer.memberRepo.loadMember(userId).getName();
-                    }
-                } else {
-                    MsoyServer.memberRepo.removeFriends(userId, friendId);
-                }
-                return null;
-            }
-
-            public void handleSuccess () {
-                FriendEntry oldEntry = user != null ? user.friends.get(friendId) : null;
-                MemberName friendName = (oldEntry != null) ?
-                    oldEntry.name : (_entry != null ? _entry.name : null);
-                MemberObject friendObj = (friendName != null) ?
-                    MsoyServer.lookupMember(friendName) : null;
-
-                // update ourselves and the friend
-                if (!add || _entry == null) {
-                    // remove the friend
-                    if (oldEntry != null) {
-                        if (user != null) {
-                            user.removeFromFriends(friendId);
-                        }
-                        if (friendObj != null) {
-                            friendObj.removeFromFriends(userId);
-                        }
-                    }
-
-                } else {
-                    // add or update the friend/status
-                    _entry.online = (friendObj != null);
-                    if (oldEntry == null) {
-                        if (user != null) {
-                            user.addToFriends(_entry);
-                        }
-                        if (friendObj != null) {
-                            FriendEntry opp = new FriendEntry(_userName, user != null);
-                            friendObj.addToFriends(opp);
-                        }
-                    }
-                }
-                _listener.requestCompleted(null);
-            }
-
-            protected FriendEntry _entry;
-            protected MemberName _userName;
-        });
-    }
-
-    protected void checkAndNotifyFriend (MemberObject memobj, FriendEntry entry)
-    {
-        // TODO: wire this up to peer services
-
-        // determine whether this friend is online
-        MemberObject friendObj = MsoyServer.lookupMember(entry.name);
-        if (friendObj == null) {
-            return;
+        // remove them from the friends list of both parties of they are online
+        MemberObject remover = MsoyServer.lookupMember(removerId);
+        if (remover != null) {
+            remover.removeFromFriends(friendId);
         }
-
-        // this friend is online, mark them as such
-        memobj.updateFriends(new FriendEntry(entry.name, true));
-
-        // and notify them that we're online (when the account is newly created, my friends won't
-        // yet know that i exist)
-        if (friendObj.friends.containsKey(memobj.getMemberId())) {
-            friendObj.updateFriends(new FriendEntry(memobj.memberName, true));
+        MemberObject exfriend = MsoyServer.lookupMember(friendId);
+        if (exfriend != null) {
+            exfriend.removeFromFriends(removerId);
         }
     }
+
+    // from interface MsoyPeerManager.RemoteMemberObserver
+    public void remoteMemberLoggedOn (MemberName member)
+    {
+    }
+
+    // from interface MsoyPeerManager.RemoteMemberObserver
+    public void remoteMemberLoggedOff (MemberName member)
+    {
+    }
+
+    /** A mapping from member id to member object of members on this server that are friends of the
+     * member in question. */
+    protected HashIntMap<List<MemberObject>> _friendMap = new HashIntMap<List<MemberObject>>();
 }

@@ -600,7 +600,7 @@ public class MemberRepository extends DepotRepository
         invRec.inviteeId = member.memberId;
         update(invRec, InvitationRecord.INVITEE_ID);
 
-        inviteFriend(invite.inviter.getMemberId(), member.memberId);
+        noteFriendship(invite.inviter.getMemberId(), member.memberId);
     }
 
     /**
@@ -767,22 +767,23 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Invite or approve the specified member as our friend.
+     * Makes the specified members friends. If they are already friends, this method will still
+     * return succesfully.
      *
      * @param memberId The id of the member performing this action.
      * @param otherId The id of the other member.
      *
-     * @return the new FriendEntry record for this friendship (modulo online information), or null
-     * if there was an error finding the friend.
+     * @return the member name of the invited friend, or null if the invited friend no longer
+     * exists.
      */
-    public FriendEntry inviteFriend (int memberId,  int otherId)
+    public MemberName noteFriendship (int memberId,  int otherId)
         throws PersistenceException
     {
         // first load the member record of the potential friend
         MemberRecord other = load(MemberRecord.class, otherId);
         if (other.name == null) {
-            log.warning("Failed to establish friends: member no longer " +
-                "exists [missingId=" + otherId + ", reqId=" + memberId + "].");
+            log.warning("Failed to establish friends: member no longer exists " +
+                        "[missingId=" + otherId + ", reqId=" + memberId + "].");
             return null;
         }
 
@@ -799,20 +800,27 @@ public class MemberRepository extends DepotRepository
         _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, memberId));
         _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, otherId));
 
+        // there is no connection yet: add the other
         if (existing.size() == 0) {
-            // there is no connection yet: add the other
             FriendRecord rec = new FriendRecord();
             rec.inviterId = memberId;
             rec.inviteeId = otherId;
             insert(rec);
         }
-        return new FriendEntry(other.getName(), false);
+
+        // insert the new friendship connection
+        FriendRecord rec = new FriendRecord();
+        rec.inviterId = memberId;
+        rec.inviteeId = otherId;
+        insert(rec);
+
+        return other.getName();
     }
 
     /**
      * Remove a friend mapping from the database.
      */
-    public void removeFriends (final int memberId, final int otherId)
+    public void clearFriendship (final int memberId, final int otherId)
         throws PersistenceException
     {
         _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, memberId));
