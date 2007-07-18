@@ -178,8 +178,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public int getMemberId ()
     {
-        return (memberName == null) ? MemberName.GUEST_ID
-                                    : memberName.getMemberId();
+        return (memberName == null) ? MemberName.GUEST_ID : memberName.getMemberId();
     }
 
     /**
@@ -214,10 +213,8 @@ public class MemberObject extends MsoyBodyObject
     {
         if (plobj instanceof RoomObject) {
             return new WorldMemberInfo(this);
-
         } else if (plobj instanceof GameObject) {
             return new GameMemberInfo(this);
-
         } else {
             return new MemberInfo(this);
         }

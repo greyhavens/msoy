@@ -721,13 +721,13 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Get the FriendEntry record for all friends (pending, too) of the specified memberId. The
+     * Loads the FriendEntry record for all friends (pending, too) of the specified memberId. The
      * online status of each friend will be false.
      *
      * The {@link FriendEntry} records returned by this method should be considered read-only,
      * and must be cloned before they are modified or sent to untrusted code.
      */
-    public List<FriendEntry> getFriends (final int memberId)
+    public List<FriendEntry> loadFriends (final int memberId)
         throws PersistenceException
     {
         // force the creation of the FriendRecord table if necessary
@@ -759,9 +759,9 @@ public class MemberRepository extends DepotRepository
 
             // from Query
             public List<FriendEntry> transformCacheHit (CacheKey key, List<FriendEntry> value) {
-                // we do not clone this result
-                return value;
-
+                // copy the results to a new array list so that the caller won't break our cached
+                // value if they modify the resulting list
+                return new ArrayList<FriendEntry>(value);
             }
         });
     }

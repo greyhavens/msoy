@@ -120,6 +120,9 @@ public class MsoyServer extends WhirledServer
     /** Our runtime member manager. */
     public static MemberManager memberMan = new MemberManager();
 
+    /** Handles management of member's friends lists. */
+    public static FriendManager friendMan = new FriendManager();
+
     /** Our runtime group manager. */
     public static GroupManager groupMan = new GroupManager();
 
@@ -251,25 +254,26 @@ public class MsoyServer extends WhirledServer
     }
 
     /**
-     * Called when a member starts their session to associate the name with the
-     * member's distributed object.
+     * Called when a member starts their session to associate the name with the member's
+     * distributed object.
      */
-    public static void registerMember (MemberObject member)
+    public static void memberLoggedOn (MemberObject memobj)
     {
-        _online.put(member.memberName, member);
-        memberMan.registerMember(member);
+        _online.put(memobj.memberName, memobj);
+        memberMan.memberLoggedOn(memobj);
+        friendMan.memberLoggedOn(memobj);
 
         // update our members online count in the status object
         adminMan.statObj.setMembersOnline(clmgr.getClientCount());
     }
 
     /**
-     * Called when a member ends their session to clear their name to member
-     * object mapping.
+     * Called when a member ends their session to clear their name to member object mapping.
      */
-    public static void clearMember (MemberObject member)
+    public static void memberLoggedOff (MemberObject memobj)
     {
-        _online.remove(member.memberName);
+        _online.remove(memobj.memberName);
+        friendMan.memberLoggedOff(memobj);
 
         // update our members online count in the status object
         adminMan.statObj.setMembersOnline(clmgr.getClientCount());

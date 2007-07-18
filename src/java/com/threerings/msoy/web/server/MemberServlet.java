@@ -80,7 +80,7 @@ public class MemberServlet extends MsoyServiceServlet
             new ServletWaiter<Void>("acceptFriend[" + friendId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.alterFriend(memrec.memberId, friendId, true, waiter);
+                MsoyServer.friendMan.alterFriend(memrec.memberId, friendId, true, waiter);
             }
         });
         waiter.waitForResult();
@@ -95,7 +95,7 @@ public class MemberServlet extends MsoyServiceServlet
             new ServletWaiter<Void>("removeFriend[" + friendId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.alterFriend(memrec.memberId, friendId, false, waiter);
+                MsoyServer.friendMan.alterFriend(memrec.memberId, friendId, false, waiter);
             }
         });
         waiter.waitForResult();
@@ -141,17 +141,17 @@ public class MemberServlet extends MsoyServiceServlet
 
         // if we're logged on, fetch our friends
         final List<FriendEntry> friends;
-        // and which groups we're members of
+        // and which groups of which we're members
         final Set<GroupName> memberGroups = new HashSet<GroupName>();
         if (mrec != null) {
             try {
-                friends = MsoyServer.memberRepo.getFriends(mrec.memberId);
+                friends = MsoyServer.memberRepo.loadFriends(mrec.memberId);
                 for (GroupRecord gRec : MsoyServer.groupRepo.getFullMemberships(mrec.memberId)) {
                     memberGroups.add(new GroupName(gRec.name, gRec.groupId));
                 }
 
             } catch (PersistenceException e) {
-                log.log(Level.WARNING, "Failed to list friends", e);
+                log.log(Level.WARNING, "Failed to load friends or groups", e);
                 throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
             }
             friends.add(new FriendEntry(name, true));

@@ -244,7 +244,7 @@ public class ProfileServlet extends MsoyServiceServlet
         throws PersistenceException
     {
         HashIntMap<MemberCard> cards = new HashIntMap<MemberCard>();
-        for (FriendEntry entry : MsoyServer.memberRepo.getFriends(tgtrec.memberId)) {
+        for (FriendEntry entry : MsoyServer.memberRepo.loadFriends(tgtrec.memberId)) {
             MemberCard card = new MemberCard();
             card.name = entry.name;
             cards.put(entry.name.getMemberId(), card);

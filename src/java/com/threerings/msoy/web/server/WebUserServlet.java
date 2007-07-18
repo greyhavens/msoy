@@ -373,7 +373,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // load up their friends list
         try {
-            data.friends = MsoyServer.memberRepo.getFriends(mrec.memberId);
+            data.friends = MsoyServer.memberRepo.loadFriends(mrec.memberId);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to load friends list [id=" + mrec.memberId + "].", pe);
             data.friends = new ArrayList<Object>();

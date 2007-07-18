@@ -38,12 +38,6 @@ public class MsoyClient extends WhirledClient
         return new MsoyBootstrapData();
     }
 
-//    @Override // from PresentsClient
-//    protected void populateBootstrapData (BootstrapData data)
-//    {
-//        super.populateBootstrapData(data);
-//    }
-
     @Override // from PresentsClient
     protected void sessionWillStart ()
     {
@@ -58,7 +52,8 @@ public class MsoyClient extends WhirledClient
             _memobj.setTokens(new MsoyTokenRing());
         }
 
-        MsoyServer.registerMember(_memobj);
+        // let our various server entities know that this member logged on
+        MsoyServer.memberLoggedOn(_memobj);
     }
 
     @Override // from PresentsClient
@@ -81,10 +76,8 @@ public class MsoyClient extends WhirledClient
             return;
         }
 
-        notifyFriendsOfLogoff();
-
-        // clean up logged-on data for this member
-        MsoyServer.clearMember(_memobj);
+        // let our various server entities know that this member logged off
+        MsoyServer.memberLoggedOff(_memobj);
 
         // nothing more needs doing for guests
         if (_memobj.isGuest()) {
@@ -127,49 +120,6 @@ public class MsoyClient extends WhirledClient
             MsoyServer.worldGameReg.leaveWorldGame((MemberObject)bobj);
         } catch (InvocationException e) {
             // a warning will have already been logged
-        }
-    }
-
-    /**
-     * Notify any friends of ours that we're now offline.
-     */
-    protected void notifyFriendsOfLogoff ()
-    {
-        // Notify all friends that we're now offline
-        for (FriendEntry entry : _memobj.friends) {
-            // TEMP: sanity check
-            if (entry.name.equals(_memobj.memberName)) {
-                log.warning("Why am I mine own friend? [user=" + _memobj.memberName + "].");
-                continue;
-            }
-            // END TEMP
-
-            if (!entry.online) {
-                continue;
-            }
-
-            // look up online friends..
-            MemberObject friendObj = MsoyServer.lookupMember(entry.name);
-            if (friendObj == null) {
-                log.warning("Online friend not really online? [us=" + _memobj.memberName +
-                            ", them=" + entry.name + "].");
-                continue;
-            }
-            FriendEntry userEntry = friendObj.friends.get(_memobj.getMemberId());
-            if (userEntry == null) {
-                log.warning("Our friend doesn't know us? [us=" + _memobj.memberName +
-                            ", them=" + entry.name + "].");
-                continue;
-            }
-
-            friendObj.startTransaction();
-            try {
-                // update their friend entry
-                userEntry.online = false;
-                friendObj.updateFriends(userEntry);
-            } finally {
-                friendObj.commitTransaction();
-            }
         }
     }
 

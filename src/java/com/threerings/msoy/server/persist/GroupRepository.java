@@ -71,7 +71,7 @@ public class GroupRepository extends DepotRepository
         };
     }
 
-    public TagRepository getTagRepository () 
+    public TagRepository getTagRepository ()
     {
         return _tagRepo;
     }
@@ -91,15 +91,15 @@ public class GroupRepository extends DepotRepository
 
 
     /**
-     * Searches all public and inv-only groups for the search string against the indexed blurb, 
+     * Searches all public and inv-only groups for the search string against the indexed blurb,
      * charter and name fields.  Results are returned in order of relevance.
      */
-    public List<GroupRecord> searchGroups (String searchString) 
+    public List<GroupRecord> searchGroups (String searchString)
         throws PersistenceException
     {
         // for now, always operate with boolean searching enabled, without query expansion
         return findAll(GroupRecord.class, new Where(new And(new Not(new Equals(GroupRecord.POLICY_C,
-            Group.POLICY_EXCLUSIVE)), new Match(searchString, Match.Mode.BOOLEAN, false, 
+            Group.POLICY_EXCLUSIVE)), new Match(searchString, Match.Mode.BOOLEAN, false,
             GroupRecord.NAME_C, GroupRecord.BLURB_C, GroupRecord.CHARTER_C))));
     }
 
@@ -143,7 +143,7 @@ public class GroupRepository extends DepotRepository
 
     /**
      * Creates a new group, defined by a {@link GroupRecord}. The key of the record must
-     * be null -- it will be filled in through the insertion, and returned.  A blank room is 
+     * be null -- it will be filled in through the insertion, and returned.  A blank room is
      * also created that is owned by the group.
      */
     public int createGroup (GroupRecord record)
@@ -156,7 +156,7 @@ public class GroupRepository extends DepotRepository
         record.creationDate = new Date(System.currentTimeMillis());
         insert(record);
 
-        int sceneId = MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_GROUP, 
+        int sceneId = MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_GROUP,
             record.groupId, /* TODO */ "Group " + record.name + "'s room", null, true);
         updateGroup(record.groupId, GroupRecord.HOME_SCENE_ID, sceneId);
 
@@ -190,20 +190,20 @@ public class GroupRepository extends DepotRepository
         }
     }
 
-    /** 
+    /**
      * Deletes the specified group from the repository.  This is generally only done when the
      * last member of a group leaves.
      */
-    public void deleteGroup (GroupRecord group) 
+    public void deleteGroup (GroupRecord group)
         throws PersistenceException
     {
         delete(group);
     }
-    
+
     /**
      * Makes a given person a member of a given group.
      */
-    public GroupMembershipRecord joinGroup (int groupId, int memberId, byte rank)
+    public void joinGroup (int groupId, int memberId, byte rank)
         throws PersistenceException
     {
         GroupMembershipRecord record = new GroupMembershipRecord();
@@ -213,9 +213,8 @@ public class GroupRepository extends DepotRepository
         record.rankAssigned = new Timestamp(System.currentTimeMillis());
         insert(record);
         updateMemberCount(groupId);
-        return record;
     }
-    
+
     /**
      * Sets the rank of a member of a group.
      */
@@ -233,10 +232,10 @@ public class GroupRepository extends DepotRepository
                 "memberId=" + memberId + "]");
         }
     }
-    
+
     /**
      * Fetches the membership details for a given group and member, or null.
-     * 
+     *
      */
     public GroupMembershipRecord getMembership(int groupId, int memberId)
         throws PersistenceException
@@ -305,11 +304,11 @@ public class GroupRepository extends DepotRepository
                        new Join(GroupRecord.GROUP_ID_C, GroupMembershipRecord.GROUP_ID_C),
                        new Where(GroupMembershipRecord.MEMBER_ID_C, memberId));
     }
-    
-    protected void updateMemberCount (int groupId) 
+
+    protected void updateMemberCount (int groupId)
         throws PersistenceException
     {
-        updateLiteral(GroupRecord.class, groupId, "memberCount", 
+        updateLiteral(GroupRecord.class, groupId, "memberCount",
             "(select count(*) from GroupMembershipRecord where groupId=" + groupId + ")");
     }
 

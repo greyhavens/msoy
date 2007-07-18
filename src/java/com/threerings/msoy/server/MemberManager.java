@@ -4,7 +4,6 @@
 package com.threerings.msoy.server;
 
 import java.util.Arrays;
-import java.util.List;
 
 import java.util.logging.Level;
 
@@ -21,19 +20,16 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.util.ConfirmAdapter;
 
 import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.web.data.FriendInviteObject;
 
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -109,22 +105,6 @@ public class MemberManager
     }
 
     /**
-     * Loads the specified member's friends list.
-     *
-     * Note: all the friends will be marked as offline. If you desire to know their online status,
-     * that should be filled in elsewhere.
-     */
-    public void loadFriends (final int memberId, ResultListener<List<FriendEntry>> listener)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<FriendEntry>>(listener) {
-            public List<FriendEntry> invokePersistResult ()
-                throws PersistenceException {
-                return _memberRepo.getFriends(memberId);
-            }
-        });
-    }
-
-    /**
      * Update the user's occupant info.
      */
     public void updateOccupantInfo (MemberObject user)
@@ -171,15 +151,6 @@ public class MemberManager
     }
 
     /**
-     * Export alterFriend() functionality according to the web servlet way of doing things.
-     */
-    public void alterFriend (int userId, int friendId, boolean add,
-                             ResultListener<Void> listener)
-    {
-        alterFriend(MsoyServer.lookupMember(userId), userId, friendId, add, listener);
-    }
-
-    /**
      * Fetch the home ID for a member and return it.
      */
     public void getHomeId (final byte ownerType, final int ownerId,
@@ -214,24 +185,26 @@ public class MemberManager
     }
 
     /**
-     * Called by MsoyServer to indicate that a user has logged on.
+     * Called when a member logs onto this server.
      */
-    public void registerMember (final MemberObject member)
+    public void memberLoggedOn (final MemberObject member)
     {
-        if (!member.isGuest()) {
-            //  add a listener for changes to accumulated flow so that the member's level can be
-            // updated as necessary
-            member.addListener(new AttributeChangeListener() {
-                public void attributeChanged (AttributeChangedEvent event) {
-                    if (MemberObject.ACC_FLOW.equals(event.getName())) {
-                        checkCurrentLevel(member);
-                    }
-                }
-            });
-
-            // check their current level now in case they got flow while they were offline
-            checkCurrentLevel(member);
+        if (member.isGuest()) {
+            return;
         }
+
+        //  add a listener for changes to accumulated flow so that the member's level can be
+        // updated as necessary
+        member.addListener(new AttributeChangeListener() {
+            public void attributeChanged (AttributeChangedEvent event) {
+                if (MemberObject.ACC_FLOW.equals(event.getName())) {
+                    checkCurrentLevel(member);
+                }
+            }
+        });
+
+        // check their current level now in case they got flow while they were offline
+        checkCurrentLevel(member);
     }
 
     // from interface MemberProvider
@@ -241,15 +214,7 @@ public class MemberManager
     {
         MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
-        if (add) {
-            String subject = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_subject");
-            String body = MsoyServer.msgMan.getBundle("server").get("m.friend_invite_body");
-            MsoyServer.mailMan.deliverMessage(
-                user.memberName.getMemberId(), friendId, subject, body,
-                new FriendInviteObject(), new ConfirmAdapter(lner));
-        } else {
-            alterFriend(user, user.getMemberId(), friendId, add, new ConfirmAdapter(lner));
-        }
+        MsoyServer.friendMan.alterFriend(user, friendId, add, lner);
     }
 
     // from interface MemberProvider
@@ -575,68 +540,6 @@ public class MemberManager
                 }
             });
         }
-    }
-
-    /**
-     * Generic alterFriend() functionality for the two public methods above. Please note that user
-     * can be null here (i.e. offline).
-     */
-    protected void alterFriend (final MemberObject user, final int userId, final int friendId,
-                                final boolean add, ResultListener<Void> lner)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("alterFriend", lner) {
-            public Void invokePersistResult () throws PersistenceException {
-                if (add) {
-                    _entry = _memberRepo.inviteFriend(userId, friendId);
-                    if (user != null) {
-                        _userName = user.memberName;
-                    } else {
-                        _userName = _memberRepo.loadMember(userId).getName();
-                    }
-                } else {
-                    _memberRepo.removeFriends(userId, friendId);
-                }
-                return null;
-            }
-
-            public void handleSuccess () {
-                FriendEntry oldEntry = user != null ? user.friends.get(friendId) : null;
-                MemberName friendName = (oldEntry != null) ?
-                    oldEntry.name : (_entry != null ? _entry.name : null);
-                MemberObject friendObj = (friendName != null) ?
-                    MsoyServer.lookupMember(friendName) : null;
-
-                // update ourselves and the friend
-                if (!add || _entry == null) {
-                    // remove the friend
-                    if (oldEntry != null) {
-                        if (user != null) {
-                            user.removeFromFriends(friendId);
-                        }
-                        if (friendObj != null) {
-                            friendObj.removeFromFriends(userId);
-                        }
-                    }
-
-                } else {
-                    // add or update the friend/status
-                    _entry.online = (friendObj != null);
-                    if (oldEntry == null) {
-                        if (user != null) {
-                            user.addToFriends(_entry);
-                        }
-                        if (friendObj != null) {
-                            FriendEntry opp = new FriendEntry(_userName, user != null);
-                            friendObj.addToFriends(opp);
-                        }
-                    }
-                }
-                _listener.requestCompleted(null);
-            }
-
-            protected FriendEntry _entry;
-            protected MemberName _userName;
-        });
     }
 
     /**

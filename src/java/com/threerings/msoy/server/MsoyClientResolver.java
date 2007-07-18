@@ -26,8 +26,9 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemListInfo;
+import com.threerings.msoy.item.server.persist.AvatarRecord;
 
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
@@ -55,7 +56,6 @@ public class MsoyClientResolver extends CrowdClientResolver
         super.resolveClientData(clobj);
 
         MemberObject userObj = (MemberObject) clobj;
-        // set up the standard user access controller
         userObj.setAccessController(MsoyObjectAccess.USER);
         if (isResolvingGuest()) {
             resolveGuest(userObj);
@@ -72,12 +72,18 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         // load up their member information using on their authentication (account) name
         MemberRecord member = MsoyServer.memberRepo.loadMember(_username.toString());
-        _avatarId = member.avatarId;
 
-        // configure their member name which is a combination of their display name and their
-        // member id
-        userObj.setMemberName(member.getName());
-        userObj.setHomeSceneId(member.homeSceneId);
+        // NOTE: we avoid using the dobject setters here because we know the object is not out in
+        // the wild and there's no point in generating a crapload of events during user
+        // initialization when we know that no one is listening
+
+        // configure various bits directly from their member record
+        userObj.memberName = member.getName();
+        userObj.homeSceneId = member.homeSceneId;
+        userObj.flow = member.flow;
+        userObj.accFlow = member.accFlow;
+        userObj.level = member.level;
+        userObj.humanity = member.humanity;
 
         // load up this member's persistent stats
         List<Stat> stats = MsoyServer.statRepo.loadStats(member.memberId);
@@ -93,15 +99,16 @@ public class MsoyClientResolver extends CrowdClientResolver
 //         MsoyServer.memberRepo.getFlowRepository().expireFlow(member, dT); // modifies member.flow
 // END TEMP
 
-        userObj.setFlow(member.flow);
-        userObj.setAccFlow(member.accFlow);
+// TEMP: not currently used, do we really need this database hit every time they logon?
+//         userObj.ownedScenes = new DSet<SceneBookmarkEntry>(
+//             MsoyServer.sceneRepo.getOwnedScenes(
+//                 MsoySceneModel.OWNER_TYPE_MEMBER, member.memberId).iterator()));
+// END TEMP
 
-        userObj.setLevel(member.level);
+        // fill in this member's raw friends list; the friend manager will update it later
+        userObj.friends = new DSet<FriendEntry>(MsoyServer.memberRepo.loadFriends(member.memberId));
 
-        userObj.setHumanity(member.humanity);
-        userObj.setOwnedScenes(new DSet<SceneBookmarkEntry>(
-            MsoyServer.sceneRepo.getOwnedScenes(
-                MsoySceneModel.OWNER_TYPE_MEMBER, member.memberId).iterator()));
+        // load up this member's group memberships (TODO: do this in one lookup)
         ArrayList<GroupMembership> groups = new ArrayList<GroupMembership>();
         for (GroupMembershipRecord record : MsoyServer.groupRepo.getMemberships(member.memberId)) {
             GroupRecord group = MsoyServer.groupRepo.loadGroup(record.groupId);
@@ -112,12 +119,22 @@ public class MsoyClientResolver extends CrowdClientResolver
             }
             groups.add(record.toGroupMembership(group, null));
         }
-        userObj.setGroups(new DSet<GroupMembership>(groups.iterator()));
+        userObj.groups = new DSet<GroupMembership>(groups.iterator());
 
+        // load up this member's current new mail message count
         MailRepository mailRepo = MsoyServer.mailMan.getRepository();
         Tuple<Integer, Integer> count = mailRepo.getMessageCount(
             member.memberId, MailFolder.INBOX_FOLDER_ID);
-        userObj.setHasNewMail(count.right > 0);
+        userObj.hasNewMail = (count.right > 0);
+
+        // load up their selected avatar, we'll configure it later
+        if (member.avatarId != 0) {
+            AvatarRecord avatar =
+                MsoyServer.itemMan.getAvatarRepository().loadItem(member.avatarId);
+            if (avatar != null) {
+                userObj.avatar = (Avatar)avatar.toItem();
+            }
+        }
     }
 
     /**
@@ -135,72 +152,25 @@ public class MsoyClientResolver extends CrowdClientResolver
         super.finishResolution(clobj);
         final MemberObject user = (MemberObject)clobj;
 
-        // load up their friend info
         if (!user.isGuest()) {
-            MsoyServer.memberMan.loadFriends(user.getMemberId(),
-                new ResultListener<List<FriendEntry>>() {
-                public void requestCompleted (List<FriendEntry> friends) {
-                    finishInitFriends(user, friends);
+            // load up their recently used avatars
+            MsoyServer.itemMan.loadRecentlyTouched(
+                user.getMemberId(), Item.AVATAR, MemberObject.AVATAR_CACHE_SIZE,
+                new ResultListener<ArrayList<Item>>() {
+                public void requestCompleted (ArrayList<Item> items) {
+                    Avatar[] avatars = new Avatar[items.size()];
+                    for (int ii = 0; ii < avatars.length; ii++) {
+                        avatars[ii] = (Avatar) items.get(ii);
+                    }
+                    user.setAvatarCache(new DSet<Avatar>(avatars));
                 }
                 public void requestFailed (Exception cause) {
-                    log.warning("Failed to load member's friend info [who=" + user.who() +
+                    log.warning("Failed to load member's avatar cache [who=" + user.who() +
                                 ", error=" + cause + "].");
+                    cause.printStackTrace();
                 }
             });
-
-            MsoyServer.itemMan.loadRecentlyTouched(user.getMemberId(), Item.AVATAR,
-                MemberObject.AVATAR_CACHE_SIZE, new ResultListener<ArrayList<Item>>() {
-                    public void requestCompleted (ArrayList<Item> items) {
-                        Avatar[] avatars = new Avatar[items.size()];
-                        for (int ii = 0; ii < avatars.length; ii++) {
-                            avatars[ii] = (Avatar) items.get(ii);
-                        }
-                        user.setAvatarCache(new DSet<Avatar>(avatars));
-                    }
-                    public void requestFailed (Exception cause) {
-                        log.warning("Failed to load member's avatar cache [who=" + user.who() +
-                            ", error=" + cause + "].");
-                        cause.printStackTrace();
-                    }
-                });
-
-            if (_avatarId != 0) {
-                MsoyServer.itemMan.getItem(new ItemIdent(Item.AVATAR, _avatarId),
-                                           new ResultListener<Item>() {
-                    public void requestCompleted (Item avatar) {
-                        user.setAvatar((Avatar) avatar);
-                        MsoyServer.memberMan.updateOccupantInfo(user);
-                    }
-                    public void requestFailed (Exception cause) {
-                        log.warning("Failed to load member's avatar [who=" + user.who() +
-                                    ", error=" + cause + "].");
-                    }
-                });
-            }
         }
-    }
-
-    /**
-     * Called from {@link #finishResolution} once our friends have been loaded.
-     */
-    protected void finishInitFriends (MemberObject user, List<FriendEntry> friends)
-    {
-        for (FriendEntry entry : friends) {
-            MemberObject friendObj = MsoyServer.lookupMember(entry.name);
-            if (friendObj == null) {
-                continue;
-            }
-            // this friend is online, mark them as such
-            entry.online = true;
-            // and notify them that we're online
-            FriendEntry userEntry = friendObj.friends.get(user.getMemberId());
-            // when the account is newly created, my friends won't yet know that i exist
-            if (userEntry != null) {
-                userEntry.online = true;
-                friendObj.updateFriends(userEntry);
-            }
-        }
-        user.setFriends(new DSet<FriendEntry>(friends.iterator()));
     }
 
     /**
@@ -213,7 +183,4 @@ public class MsoyClientResolver extends CrowdClientResolver
         // guests will use the same MemberName object for their display name and auth name
         return (_username instanceof MemberName);
     }
-
-    /** The user's avatarId, or 0. */
-    protected int _avatarId;
 }
