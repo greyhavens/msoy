@@ -65,9 +65,9 @@ public class GroupMembershipRecord extends PersistentRecord
     public int memberId;
 
     @Id
-    /** The id of the group in the group membership. */ 
+    /** The id of the group in the group membership. */
     public int groupId;
-    
+
     /** The rank of the member in the group, defined in {@link GroupMembership}. */
     public byte rank;
 
@@ -75,7 +75,7 @@ public class GroupMembershipRecord extends PersistentRecord
     @Column(columnDefinition="rankAssigned DATETIME NOT NULL")
     public Timestamp rankAssigned;
 
-    /** 
+    /**
      * Converts this persistent record to a runtime record.
      */
     public GroupMembership toGroupMembership (GroupRecord group, MemberName member)
@@ -87,7 +87,7 @@ public class GroupMembershipRecord extends PersistentRecord
         gm.rankAssignedDate = rankAssigned.getTime();
         return gm;
     }
-    
+
     /**
      * Generates a string representation of this instance.
      */
