@@ -630,6 +630,7 @@ public class RoomController extends SceneController
      */
     public function getHitSprite (stageX :Number, stageY :Number, all :Boolean = false) :*
     {
+        // first, avoid any popups
         var smgr :ISystemManager = Application.application.systemManager as ISystemManager;
         var ii :int;
         var disp :DisplayObject;
@@ -642,14 +643,10 @@ public class RoomController extends SceneController
                 return undefined;
             }
         }
-//        var popups :IChildList = smgr.popUpChildren;
-//        for (ii = popups.numChildren - 1; ii >= 0; ii--) {
-//            disp = popups.getChildAt(ii);
-//            trace("Checkingz: " + disp + " : " + ClassUtil.getClassName(disp));
-//            if (disp.hitTestPoint(stageX, stageY)) {
-//                return undefined;
-//            }
-//        }
+        // then avoid any chat glyphs that are clickable
+        if (_roomView.chatOverlay.hasClickableGlyphsAtPoint(stageX, stageY)) {
+            return undefined;
+        }
 
         // we search from last-drawn to first drawn to get the topmost...
         for (var dex :int = _roomView.numChildren - 1; dex >= 0; dex--) {

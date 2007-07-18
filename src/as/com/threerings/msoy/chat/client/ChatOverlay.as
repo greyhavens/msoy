@@ -4,8 +4,10 @@
 package com.threerings.msoy.chat.client {
 
 import flash.display.BlendMode;
+import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
+import flash.display.InteractiveObject;
 import flash.display.Sprite;
 import flash.display.Stage;
 
@@ -71,6 +73,23 @@ public class ChatOverlay
 
         // listen for preferences changes, update history mode
         Prefs.config.addEventListener(ConfigValueSetEvent.TYPE, handlePrefsUpdated, false, 0, true);
+    }
+
+    /**
+     * @return true if there are clickable glyphs under the specified point.
+     */
+    public function hasClickableGlyphsAtPoint (stageX :Number, stageY :Number) :Boolean
+    {
+        // NOTE: The docs swear up and down that the point needs to be in stage coords,
+        // but only local coords seem to work. Bug?
+        var p :Point = _overlay.globalToLocal(new Point(stageX, stageY));
+        var objs :Array = _overlay.getObjectsUnderPoint(p);
+        for each (var obj :DisplayObject in objs) {
+            if (obj is InteractiveObject && InteractiveObject(obj).mouseEnabled) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
