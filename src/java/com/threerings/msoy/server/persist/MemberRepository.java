@@ -742,7 +742,6 @@ public class MemberRepository extends DepotRepository
             OrderBy.ascending(MemberRecord.NAME_C));
         
         List<FriendEntry> list = new ArrayList<FriendEntry>();
-        
         for (MemberNameRecord record : records) {
             list.add(new FriendEntry(new MemberName(record.name, record.memberId), false));
         }
