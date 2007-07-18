@@ -9,6 +9,8 @@ import flash.events.MouseEvent;
 import flash.events.TextEvent;
 import flash.events.TimerEvent;
 
+import flash.external.ExternalInterface;
+
 import flash.system.Capabilities;
 
 import flash.text.TextField;
@@ -763,7 +765,20 @@ public class MsoyController extends Controller
      */
     protected function handleInternalGo (page :String, args :String) :Boolean
     {
-        return shouldLoadNewPages() && NetUtil.navigateToURL("#" + page + "-" + args, true);
+        try {
+            if (shouldLoadNewPages()) {
+                // the external interface will not be available when running in
+                // standalone debugger, so let's look before we leap. :)
+                if (ExternalInterface.available) {
+                    ExternalInterface.call("updateSceneHistory", page + "-" + args);
+                    return true;
+                }
+            }
+        } catch (e :Error) {
+            log.warning("Unable to send update to Javascript: " + e);
+        }
+
+        return false;
     }
 
     /**
