@@ -289,17 +289,6 @@ public class Application
             DOM.removeChild(DOM.getParent(div), div);
         }
     }
-
-    /**
-     * Called when the Flash client wishes to display a particular Whirled page. The supplied page
-     * and args are composed into a history token and inserted into the history which will trigger
-     * the loading of the page in question.
-     */
-    protected void displayPageExternal (String page, String args)
-    {
-        // note: the following operation will trigger onHistoryChanged
-        History.newItem(createLinkToken(page, args));
-    }
         
     protected void createMappings ()
     {
@@ -316,12 +305,23 @@ public class Application
     }
 
     /**
-     * Configures top-level functions that can be called by Flash when it wants to tell us about
-     * things.
+     * Called when the Flash client wishes to display a particular Whirled page. The supplied page
+     * and args are composed into a history token and inserted into the history which will trigger
+     * the loading of the page in question.
+     */
+    protected static void displayPageExternal (String page, String args)
+    {
+        // note: the following operation will trigger onHistoryChanged
+        History.newItem(createLinkToken(page, args));
+    }
+
+    /**
+     * Configures top-level functions that can be called by Flash.
      */
     protected static native void configureCallbacks (Application app) /*-{
        $wnd.flashDidLogon = function (displayName, memberId, token) {
-           app.@client.shell.Application::didLogonFromFlash(Ljava/lang/String;ILjava/lang/String;)(displayName, memberId, token);
+           app.@client.shell.Application::didLogonFromFlash(Ljava/lang/String;ILjava/lang/String;)(
+               displayName, memberId, token);
        };
        $wnd.openChannel = function (type, name, id) {
            app.@client.shell.Application::openChannelRequest(ILjava/lang/String;I)(type, name, id);
@@ -351,7 +351,8 @@ public class Application
             @com.google.gwt.user.client.Window::setTitle(Ljava/lang/String;)(msg);
        }
        $wnd.displayPage = function (page, args) {
-            app.@client.shell.Application::displayPageExternal(Ljava/lang/String;Ljava/lang/String;)(page, args);
+           @client.shell.Application::displayPageExternal(Ljava/lang/String;Ljava/lang/String;)(
+               page, args);
        };
     }-*/;
 
