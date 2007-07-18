@@ -4,7 +4,6 @@
 package client.world;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
@@ -90,13 +89,6 @@ public class index extends Page
     }
 
     // @Override // from Page
-    public void onPageLoad ()
-    {
-        super.onPageLoad();
-        configureHistoryCallback(this);
-    }
-
-    // @Override // from Page
     public void onPageUnload ()
     {
         super.onPageUnload();
@@ -105,20 +97,8 @@ public class index extends Page
             _refresher.cancel();
             _refresher = null;
         }
-        
-        configureHistoryCallback(null);
     }
 
-    /**
-     * Exposed to Flash via {@link configureHistoryCallback}, so that Flash clients can add
-     * new tokens to the history stack.
-     */
-    public void addHistoryToken (String token)
-    {
-        // note: the following operation will trigger onHistoryChanged
-        History.newItem(token);
-    }
-        
     // @Override // from Page
     protected void didLogoff ()
     {
@@ -194,19 +174,6 @@ public class index extends Page
     {
         return "world";
     }
-
-    /**
-     * Configures foreign function interface for access from Flash.
-     */
-    protected static native void configureHistoryCallback (index idx) /*-{
-        if (idx != null) {
-            $wnd.updateSceneHistory = function (token) {
-                idx.@client.world.index::addHistoryToken(Ljava/lang/String;)(token);
-            };
-        } else {
-            $wnd.updateSceneHistory = null;
-        }
-    }-*/;
 
     /** A counter to help asynchronous callbacks to figure out if they've been obsoleted. */
     protected int _entryCounter;

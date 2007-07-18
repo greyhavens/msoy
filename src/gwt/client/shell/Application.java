@@ -290,6 +290,12 @@ public class Application
         }
     }
 
+    protected void addHistoryToken (String token)
+    {
+        // note: the following operation will trigger onHistoryChanged
+        History.newItem(token);
+    }
+        
     protected void createMappings ()
     {
         _creators.put("admin", client.admin.index.getCreator());
@@ -339,6 +345,9 @@ public class Application
             var msg = xlater.@client.shell.ShellMessages::windowTitle(Ljava/lang/String;)(title);
             @com.google.gwt.user.client.Window::setTitle(Ljava/lang/String;)(msg);
        }
+       $wnd.updateSceneHistory = function (token) {
+            app.@client.shell.Application::addHistoryToken(Ljava/lang/String;)(token);
+       };
     }-*/;
 
     /**
