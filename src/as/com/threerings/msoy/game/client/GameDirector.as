@@ -99,7 +99,6 @@ public class GameDirector extends BasicDirector
     // from GameReadyObserver
     public function receivedGameReady (gameOid :int) :Boolean
     {
-        // let the scene director know that we're leaving our current scene
         _mctx.getTopPanel().clearTableDisplay();
         if (_matchingGame == null) {
             log.warning("Got game ready but we were never in a table? [oid=" + gameOid + "].");
