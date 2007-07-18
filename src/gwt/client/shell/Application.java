@@ -290,10 +290,15 @@ public class Application
         }
     }
 
-    protected void addHistoryToken (String token)
+    /**
+     * Called when the Flash client wishes to display a particular Whirled page. The supplied page
+     * and args are composed into a history token and inserted into the history which will trigger
+     * the loading of the page in question.
+     */
+    protected void displayPageExternal (String page, String args)
     {
         // note: the following operation will trigger onHistoryChanged
-        History.newItem(token);
+        History.newItem(createLinkToken(page, args));
     }
         
     protected void createMappings ()
@@ -345,8 +350,8 @@ public class Application
             var msg = xlater.@client.shell.ShellMessages::windowTitle(Ljava/lang/String;)(title);
             @com.google.gwt.user.client.Window::setTitle(Ljava/lang/String;)(msg);
        }
-       $wnd.updateSceneHistory = function (token) {
-            app.@client.shell.Application::addHistoryToken(Ljava/lang/String;)(token);
+       $wnd.displayPage = function (page, args) {
+            app.@client.shell.Application::displayPageExternal(Ljava/lang/String;Ljava/lang/String;)(page, args);
        };
     }-*/;
 
