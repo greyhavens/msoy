@@ -6,7 +6,6 @@ package com.threerings.msoy.server.persist;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -43,6 +42,7 @@ import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
+import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
@@ -723,47 +723,31 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads the FriendEntry record for all friends (pending, too) of the specified memberId. The
      * online status of each friend will be false.
-     *
-     * The {@link FriendEntry} records returned by this method should be considered read-only,
-     * and must be cloned before they are modified or sent to untrusted code.
+     * 
+     * TODO: Bring back full collection caching to this method.
      */
     public List<FriendEntry> loadFriends (final int memberId)
         throws PersistenceException
     {
-        // force the creation of the FriendRecord table if necessary
-        _ctx.getMarshaller(FriendRecord.class);
+        SQLExpression condition =
+            new Or(new And(new Equals(FriendRecord.INVITER_ID_C, memberId),
+                           new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITEE_ID_C)),
+                   new And(new Equals(FriendRecord.INVITEE_ID_C, memberId),
+                           new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITER_ID_C)));
 
-        CacheKey key = new SimpleCacheKey(FRIENDS_CACHE_ID, memberId);
-        return _ctx.invoke(new CollectionQuery<List<FriendEntry>>(key) {
-            public List<FriendEntry> invoke (Connection conn)
-                throws SQLException
-            {
-                String query = "select name, memberId, inviterId from FriendRecord " +
-                    "inner join MemberRecord on " +
-                    "((inviterId=" + memberId + " and memberId=inviteeId) or" +
-                    " (inviteeId=" + memberId + " and memberId=inviterId)) order by name";
-                ArrayList<FriendEntry> list = new ArrayList<FriendEntry>();
-                Statement stmt = conn.createStatement();
-                try {
-                    ResultSet rs = stmt.executeQuery(query);
-                    while (rs.next()) {
-                        MemberName name = new MemberName(rs.getString(1), rs.getInt(2));
-                        list.add(new FriendEntry(name, false));
-                    }
-                    return list;
-
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-            }
-
-            // from Query
-            public List<FriendEntry> transformCacheHit (CacheKey key, List<FriendEntry> value) {
-                // copy the results to a new array list so that the caller won't break our cached
-                // value if they modify the resulting list
-                return new ArrayList<FriendEntry>(value);
-            }
-        });
+        List<MemberNameRecord> records = findAll(
+            MemberNameRecord.class,
+            new FromOverride(FriendRecord.class),
+            new Join(MemberRecord.class, condition),
+            OrderBy.ascending(MemberRecord.NAME_C));
+        
+        List<FriendEntry> list = new ArrayList<FriendEntry>();
+        
+        for (MemberNameRecord record : records) {
+            list.add(new FriendEntry(new MemberName(record.name, record.memberId), false));
+        }
+        
+        return list;
     }
 
     /**
