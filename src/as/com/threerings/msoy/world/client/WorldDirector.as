@@ -56,10 +56,7 @@ public class WorldDirector extends BasicDirector
                 _mctx.displayFeedback(null, cause);
             },
             function (sceneId :int) :void {
-                if (sceneId != 0) {
-                    _mctx.getSceneDirector().moveTo(sceneId);
-                } else {
-                }
+                _mctx.getSceneDirector().moveTo(sceneId);
             }));
     }
 
