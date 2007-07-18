@@ -101,7 +101,6 @@ public class GameDirector extends BasicDirector
     {
         // let the scene director know that we're leaving our current scene
         _mctx.getTopPanel().clearTableDisplay();
-        _mctx.getSceneDirector().didLeaveScene();
         if (_matchingGame == null) {
             log.warning("Got game ready but we were never in a table? [oid=" + gameOid + "].");
         } else {
