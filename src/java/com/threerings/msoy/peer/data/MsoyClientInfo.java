@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.peer.data;
 
-import com.threerings.util.ActionScript;
-
 import com.threerings.crowd.peer.data.CrowdClientInfo;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -12,7 +10,6 @@ import com.threerings.msoy.data.all.MemberName;
 /**
  * Contains information on a player logged into one of our peer servers.
  */
-@ActionScript(omit=true)
 public class MsoyClientInfo extends CrowdClientInfo
 {
     /** Returns this member's unique identifier. */

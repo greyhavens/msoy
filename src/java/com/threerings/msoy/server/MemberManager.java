@@ -13,6 +13,7 @@ import com.samskivert.jdbc.RepositoryListenerUnit;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.ResultListener;
+import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -27,11 +28,13 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import com.threerings.msoy.peer.data.MemberLocation;
 import com.threerings.msoy.web.data.FriendInviteObject;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -250,21 +253,19 @@ public class MemberManager
         MemberObject user = (MemberObject) caller;
 
         // ensure that the other member is a full friend
-        if (null == user.friends.get(memberId)) {
+        FriendEntry entry = user.friends.get(memberId);
+        if (null == entry) {
             throw new InvocationException("e.not_a_friend");
         }
 
-        MemberObject other = MsoyServer.lookupMember(memberId);
-        if (other == null) {
-            throw new InvocationException("m.user_not_online");
+        MemberLocation memloc = MsoyServer.peerMan.getMemberLocation(memberId);
+        if (memloc == null) {
+            throw new InvocationException(MessageBundle.tcompose("e.not_online", entry.name));
         }
-
-        int sceneId = other.getSceneId();
-        if (sceneId == 0) {
+        if (memloc.type != MemberLocation.SCENE || memloc.locationId == 0) {
             throw new InvocationException("e.not_in_room");
         }
-
-        listener.requestProcessed(sceneId);
+        listener.requestProcessed(memloc.locationId);
     }
 
     // from interface MemberProvider

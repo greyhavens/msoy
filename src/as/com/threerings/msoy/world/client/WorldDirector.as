@@ -54,7 +54,7 @@ public class WorldDirector extends BasicDirector
         _msvc.getCurrentSceneId(_mctx.getClient(), memberId, new ResultWrapper(
             function (cause :String) :void {
                 _mctx.displayFeedback(null, cause);
-            }, 
+            },
             function (sceneId :int) :void {
                 if (sceneId != 0) {
                     _mctx.getSceneDirector().moveTo(sceneId);
