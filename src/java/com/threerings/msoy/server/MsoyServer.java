@@ -487,6 +487,7 @@ public class MsoyServer extends WhirledServer
                          getListenPorts()[0]);
         }
         memberMan.init(memberRepo, groupRepo);
+        friendMan.init();
         groupMan.init(groupRepo, memberRepo);
         mailMan.init(conProv, memberRepo);
         channelMan.init(invmgr);
