@@ -173,22 +173,20 @@ public class ItemManager
     /**
      * Returns the repository used to manage items of the specified type.
      */
-    public ItemRepository<ItemRecord, ?, ?, ?> getRepository (
-        ItemIdent ident, ResultListener<?> listener)
+    public ItemRepository<ItemRecord, ?, ?, ?> getRepository (ItemIdent ident, ResultListener<?> rl)
     {
-        return getRepository(ident.type, listener);
+        return getRepository(ident.type, rl);
     }
 
     /**
      * Returns the repository used to manage items of the specified type.
      */
-    public ItemRepository<ItemRecord, ?, ?, ?> getRepository (
-        byte type, ResultListener<?> listener)
+    public ItemRepository<ItemRecord, ?, ?, ?> getRepository (byte type, ResultListener<?> rl)
     {
         try {
             return getRepositoryFor(type);
         } catch (MissingRepositoryException mre) {
-            listener.requestFailed(mre);
+            rl.requestFailed(mre);
             return null;
         }
     }
@@ -197,12 +195,12 @@ public class ItemManager
      * Returns the repository used to manage items of the specified type.
      */
     public ItemRepository<ItemRecord, ?, ?, ?> getRepository (
-        byte type, InvocationService.InvocationListener listener)
+        byte type, InvocationService.InvocationListener lner)
     {
         try {
             return getRepositoryFor(type);
         } catch (MissingRepositoryException mre) {
-            listener.requestFailed(ItemCodes.E_INTERNAL_ERROR);
+            lner.requestFailed(ItemCodes.E_INTERNAL_ERROR);
             return null;
         }
     }
@@ -233,8 +231,8 @@ public class ItemManager
     /**
      * Registers an item update listener.
      */
-    public void registerItemUpdateListener (Class<? extends ItemRecord> type,
-                                            ItemUpdateListener listener)
+    public void registerItemUpdateListener (
+        Class<? extends ItemRecord> type, ItemUpdateListener lner)
     {
         MsoyServer.requireDObjThread();
         ObserverList<ItemUpdateListener> list = _listeners.get(type);
@@ -242,34 +240,34 @@ public class ItemManager
             list = new ObserverList<ItemUpdateListener>(ObserverList.FAST_UNSAFE_NOTIFY);
             _listeners.put(type, list);
         }
-        list.add(listener);
+        list.add(lner);
     }
 
     /**
      * Removes a previously registered item update listener.
      */
-    public void removeItemUpdateListener (Class<? extends ItemRecord> type,
-                                          ItemUpdateListener listener)
+    public void removeItemUpdateListener (
+        Class<? extends ItemRecord> type, ItemUpdateListener lner)
     {
         MsoyServer.requireDObjThread();
         ObserverList<ItemUpdateListener> list = _listeners.get(type);
         if (list != null) {
-            list.remove(listener);
+            list.remove(lner);
         }
     }
 
     /**
      * Get the specified item.
      */
-    public void getItem (final ItemIdent ident, ResultListener<Item> listener)
+    public void getItem (final ItemIdent ident, ResultListener<Item> lner)
     {
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
         if (repo == null) {
             return;
         }
 
         // TODO: do we have to check cloned items as well?
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>("getItem", lner) {
             public Item invokePersistResult () throws PersistenceException {
                 ItemRecord rec = repo.loadItem(ident.itemId);
                 return (rec != null) ? rec.toItem() : null;
@@ -289,7 +287,7 @@ public class ItemManager
      * Mass-load the specified items. If any type is invalid, none are returned. If specific
      * itemIds are invalid, they are omitted from the result list.
      */
-    public void getItems (Collection<ItemIdent> ids, ResultListener<ArrayList<Item>> listener)
+    public void getItems (Collection<ItemIdent> ids, ResultListener<ArrayList<Item>> lner)
     {
         final LookupList list = new LookupList();
         try {
@@ -298,12 +296,13 @@ public class ItemManager
             }
 
         } catch (MissingRepositoryException mre) {
-            listener.requestFailed(mre);
+            lner.requestFailed(mre);
             return;
         }
 
         // do it all at once
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ArrayList<Item>>(listener) {
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<ArrayList<Item>>("getItems", lner) {
             public ArrayList<Item> invokePersistResult () throws PersistenceException {
                 // create a list to hold the results
                 ArrayList<Item> items = new ArrayList<Item>();
@@ -348,9 +347,10 @@ public class ItemManager
         // TODO: easy addition without having to rewrite old stuff
     }
 
-    public void loadItemList (final int listId, ResultListener<ArrayList<Item>> listener)
+    public void loadItemList (final int listId, ResultListener<ArrayList<Item>> lner)
     {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ArrayList<Item>>(listener) {
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<ArrayList<Item>>("loadItemList", lner) {
             public ArrayList<Item> invokePersistResult () throws PersistenceException {
                 // first, look up the list
                 ItemListInfoRecord infoRecord = _listRepo.loadInfo(listId);
@@ -452,20 +452,18 @@ public class ItemManager
     }
 
     /**
-     * Helper function: updates usage of avatar items.
-     * @see #updateItemUsage(
-     *   final byte itemType, final byte itemUseType, final int memberId, final int locationId,
-     *   final int oldItemId, final int newItemId, ResultListener<Object> listener)
+     * Helper function: updates usage of avatar items.  This method assumes that the specified
+     * items are both valid and owned by the user in question. The supplied listener will be
+     * notified of success with null.
      *
-     * This method assumes that the specified items are both valid and owned by the user in
-     * question. The supplied listener will be notified of success with null.
+     * @see #updateItemUsage(byte, byte, int, int, int, int, ResultListener<Object>)
      */
-    public void updateItemUsage (
-        int memberId, Avatar oldAvatar, Avatar newAvatar, ResultListener<Object> listener)
+    public void updateItemUsage (int memberId, Avatar oldAvatar, Avatar newAvatar,
+                                 ResultListener<Object> lner)
     {
         updateItemUsage(Item.AVATAR, Item.USED_AS_AVATAR, memberId, memberId,
-            (oldAvatar != null) ? oldAvatar.itemId : 0, (newAvatar != null) ? newAvatar.itemId : 0,
-            listener);
+                        (oldAvatar != null) ? oldAvatar.itemId : 0,
+                        (newAvatar != null) ? newAvatar.itemId : 0, lner);
     }
         
     /**
@@ -477,23 +475,22 @@ public class ItemManager
      */
     public void updateItemUsage (
         final byte itemType, final byte itemUseType, final int memberId, final int locationId,
-        final int oldItemId, final int newItemId, ResultListener<Object> listener)
+        final int oldItemId, final int newItemId, ResultListener<Object> lner)
     {
         if (oldItemId == newItemId) {
-            listener.requestCompleted(null); // mr. no-op
+            lner.requestCompleted(null); // mr. no-op
             return;
         }
 
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(itemType, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(itemType, lner);
         if (repo == null) {
             return; // getRepository already informed the listener about this problem
         }
 
-        ResultListener<Object> rlo = listener;
         final int[] oldItemIds = new int[] { oldItemId };
         final int[] newItemIds = new int[] { newItemId };
 
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Object>(rlo) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Object>("updateItemUsage", lner) {
             public Object invokePersistResult () throws PersistenceException {
                 if (oldItemId != 0) {
                     repo.markItemUsage(oldItemIds, Item.UNUSED, 0);
@@ -537,7 +534,7 @@ public class ItemManager
      */
     public void updateItemUsage (final int editorMemberId, final int sceneId,
                                  FurniData[] removedFurni, FurniData[] addedFurni,
-                                 ResultListener<Object> listener)
+                                 ResultListener<Object> lner)
     {
         final LookupList unused = new LookupList();
         final LookupList scened = new LookupList();
@@ -563,7 +560,7 @@ public class ItemManager
                     if (furni.itemType == Item.NOT_A_TYPE) {
                         // it's only legal to add props that were already there
                         if (props == null || !props.contains(furni.id)) {
-                            listener.requestFailed(
+                            lner.requestFailed(
                                 new Exception("Furni added with invalid item source."));
                             return;
                         }
@@ -575,12 +572,11 @@ public class ItemManager
             }
 
         } catch (MissingRepositoryException mre) {
-            listener.requestFailed(mre);
+            lner.requestFailed(mre);
             return;
         }
 
-        ResultListener<Object> rlo = listener;
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Object>(rlo) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Object>("updateItemsUsage", lner) {
             public Object invokePersistResult () throws PersistenceException {
                 for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : unused) {
                     tup.left.markItemUsage(tup.right, Item.UNUSED, 0);
@@ -637,9 +633,9 @@ public class ItemManager
      */
     public void scaleAvatar (
         final int ownerId, final int avatarId, final float newScale,
-        ResultListener<Avatar> listener)
+        ResultListener<Avatar> lner)
     {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Avatar>(listener) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Avatar>("scaleAvatar", lner) {
             public Avatar invokePersistResult () throws Exception {
                 // load it out, which we need to do anyway
                 AvatarRecord avatar = _avatarRepo.loadItem(avatarId);
@@ -705,14 +701,14 @@ public class ItemManager
      * cheesy. If we were to cache ItemRecords in the repository, this would be fine. Will we?
      */
     public void getItemDetail (final ItemIdent ident, final int memberId,
-                               ResultListener<ItemDetail> listener)
+                               ResultListener<ItemDetail> lner)
     {
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
         if (repo == null) {
             return;
         }
 
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ItemDetail>(listener) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ItemDetail>("getItemDetail", lner) {
             public ItemDetail invokePersistResult () throws PersistenceException {
                 ItemRecord record = repo.loadItem(ident.itemId);
                 if (record == null) {
@@ -745,17 +741,17 @@ public class ItemManager
      * Loads up the inventory of items of the specified type for the specified member.
      */
     public void loadInventory (
-        final int memberId, byte type, ResultListener<ArrayList<Item>> listener)
+        final int memberId, byte type, ResultListener<ArrayList<Item>> lner)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(type, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(type, lner);
         if (repo == null) {
             return;
         }
 
         // and load their items; notifying the listener on success or failure
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<ArrayList<Item>>("loadInventory", listener) {
+            new RepositoryListenerUnit<ArrayList<Item>>("loadInventory", lner) {
             public ArrayList<Item> invokePersistResult () throws PersistenceException {
                 Collection<ItemRecord> list = repo.loadOriginalItems(memberId);
                 list.addAll(repo.loadClonedItems(memberId));
@@ -772,17 +768,17 @@ public class ItemManager
      * Load at most maxCount recently-touched items from the specified user's inventory.
      */
     public void loadRecentlyTouched (
-        final int memberId, byte type, final int maxCount, ResultListener<ArrayList<Item>> listener)
+        final int memberId, byte type, final int maxCount, ResultListener<ArrayList<Item>> lner)
     {
         // locate the appropriate repo
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(type, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(type, lner);
         if (repo == null) {
             return;
         }
 
         // load ye items
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<ArrayList<Item>>("loadRecentlyTouched", listener) {
+            new RepositoryListenerUnit<ArrayList<Item>>("loadRecentlyTouched", lner) {
             public ArrayList<Item> invokePersistResult () throws Exception {
                 List<ItemRecord> list = repo.loadRecentlyTouched(memberId, maxCount);
                 ArrayList<Item> returnList = new ArrayList<Item>(list.size());
@@ -797,16 +793,16 @@ public class ItemManager
     /**
      * Remix a clone, turning it back into a full-featured original.
      */
-    public void remixItem (final ItemIdent ident, ResultListener<Item> listener)
+    public void remixItem (final ItemIdent ident, ResultListener<Item> lner)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
         if (repo == null) {
             return;
         }
 
         // and perform the remixing
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>("remixItem", lner) {
             public Item invokePersistResult () throws PersistenceException {
                 // load a copy of the clone to modify
                 ItemRecord item = repo.loadClone(ident.itemId);
@@ -844,16 +840,16 @@ public class ItemManager
      * restrictions, an {@link InvocationException} will be delivered to the listener.
      */
     public void deleteItemFor (final int memberId, final ItemIdent ident,
-                               ResultListener<Void> listener)
+                               ResultListener<Void> lner)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
         if (repo == null) {
             return;
         }
 
         log.info("Deleting " + ident + " for " + memberId + ".");
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("deleteItem", lner) {
             public Void invokePersistResult () throws Exception {
                 ItemRecord item = repo.loadItem(ident.itemId);
                 if (item == null) {
@@ -877,15 +873,15 @@ public class ItemManager
     }
 
     /** Fetch the rating a user has given an item, or 0. */
-    public void getRating (final ItemIdent ident, final int memberId, ResultListener<Byte> listener)
+    public void getRating (final ItemIdent ident, final int memberId, ResultListener<Byte> lner)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
         if (repo == null) {
             return;
         }
 
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Byte>(listener) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Byte>("getRating", lner) {
             public Byte invokePersistResult () throws PersistenceException {
                 RatingRecord<ItemRecord> record = repo.getRating(ident.itemId, memberId);
                 return record != null ? record.rating : 0;
@@ -894,15 +890,16 @@ public class ItemManager
     }
 
     /** Fetch the tags for a given item. */
-    public void getTags (final ItemIdent ident, ResultListener<Collection<String>> listener)
+    public void getTags (final ItemIdent ident, ResultListener<Collection<String>> lner)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
         if (repo == null) {
             return;
         }
 
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Collection<String>>(listener) {
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Collection<String>>("getTags", lner) {
             public Collection<String> invokePersistResult () throws PersistenceException {
                 ArrayList<String> result = new ArrayList<String>();
                 for (TagNameRecord tagName : repo.getTagRepository().getTags(ident.itemId)) {
@@ -917,15 +914,16 @@ public class ItemManager
      * Fetch the tagging history for a given item.
      */
     public void getTagHistory (final ItemIdent ident,
-                               ResultListener<Collection<TagHistory>> listener)
+                               ResultListener<Collection<TagHistory>> lner)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
         if (repo == null) {
             return;
         }
 
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Collection<TagHistory>>(listener) {
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Collection<TagHistory>>("getTagHistory", lner) {
             public Collection<TagHistory> invokePersistResult () throws PersistenceException {
                 Map<Integer, MemberRecord> memberCache = new HashMap<Integer, MemberRecord>();
                 ArrayList<TagHistory> list = new ArrayList<TagHistory>();
@@ -954,9 +952,10 @@ public class ItemManager
     /**
      * Fetch the list of recently assigned tags for the specified member.
      */
-    public void getRecentTags (final int memberId, ResultListener<Collection<TagHistory>> listener)
+    public void getRecentTags (final int memberId, ResultListener<Collection<TagHistory>> lner)
     {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Collection<TagHistory>>(listener) {
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Collection<TagHistory>>("getRecentTags", lner) {
             public Collection<TagHistory> invokePersistResult ()
                 throws PersistenceException {
                 MemberRecord memRec = MsoyServer.memberRepo.loadMember(memberId);
@@ -986,15 +985,15 @@ public class ItemManager
      * Records the specified member's rating of an item.
      */
     public void rateItem (final ItemIdent ident, final int memberId, final byte rating,
-                          ResultListener<Float> listener)
+                          ResultListener<Float> lner)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
         if (repo == null) {
             return;
         }
 
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Float>(listener) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Float>("rateItem", lner) {
             public Float invokePersistResult () throws PersistenceException {
                 ItemRecord item = repo.loadItem(ident.itemId);
                 if (item == null) {
@@ -1026,24 +1025,24 @@ public class ItemManager
      * tag did not already exist.
      */
     public void tagItem (final ItemIdent ident, final int taggerId, String rawTagName,
-                         final boolean doTag, ResultListener<TagHistory> listener)
+                         final boolean doTag, ResultListener<TagHistory> lner)
     {
         // sanitize the tag name
         final String tagName = rawTagName.trim().toLowerCase();
 
         if (!TagNameRecord.VALID_TAG.matcher(tagName).matches()) {
-            listener.requestFailed(new IllegalArgumentException("Invalid tag '" + tagName + "'"));
+            lner.requestFailed(new IllegalArgumentException("Invalid tag '" + tagName + "'"));
             return;
         }
 
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
         if (repo == null) {
             return;
         }
 
         // and perform the remixing
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<TagHistory>(listener) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<TagHistory>("tagItem", lner) {
             public TagHistory invokePersistResult () throws PersistenceException {
                 long now = System.currentTimeMillis();
 
@@ -1081,15 +1080,15 @@ public class ItemManager
      * TODO: If things get really tight, this could use updatePartial() later.
      */
     public void setFlags (final ItemIdent ident, final byte mask, final byte value,
-                          ResultListener<Void> listener)
+                          ResultListener<Void> lner)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
         if (repo == null) {
             return;
         }
 
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("setFlags", lner) {
             public Void invokePersistResult () throws PersistenceException {
                 ItemRecord item = repo.loadItem(ident.itemId);
                 if (item == null) {
@@ -1163,7 +1162,7 @@ public class ItemManager
 
     // from ItemProvider
     public void reclaimItem (ClientObject caller, final ItemIdent item,
-                             final InvocationService.ConfirmListener listener)
+                             final InvocationService.ConfirmListener lner)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
@@ -1180,7 +1179,7 @@ public class ItemManager
         getItem(item, new ResultListener<Item>() {
             public void requestCompleted (final Item result) {
                 if (result.ownerId != user.getMemberId()) {
-                    listener.requestFailed(ItemCodes.E_ACCESS_DENIED);
+                    lner.requestFailed(ItemCodes.E_ACCESS_DENIED);
                     return;
                 }
                 final byte type = result.getType();
@@ -1196,46 +1195,44 @@ public class ItemManager
                                 } else {
                                     ((RoomManager)scmgr).reclaimItem(item, user);
                                 }
-                                listener.requestProcessed();
+                                lner.requestProcessed();
                             }
                             public void sceneFailedToResolve (int sceneId, Exception reason) {
                                 log.log(Level.WARNING, "Scene failed to resolve. [id=" + sceneId + 
                                     "]", reason);
-                                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                                lner.requestFailed(InvocationCodes.INTERNAL_ERROR);
                             }
                         });
                 } else {
                     // TODO: avatar reclamation will be possible
                     log.log(Level.WARNING, "Item to be reclaimed is neither decor nor furni " + 
                         "[type=" + result.getType() + ", id=" + result.itemId + "]");
-                    listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                    lner.requestFailed(InvocationCodes.INTERNAL_ERROR);
                     return;
                 }
             }
             public void requestFailed (Exception cause) {
                 log.log(Level.WARNING, "Unable to retrieve item.", cause);
-                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                lner.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });
     }
 
     /**
-     * Get a random item out of the catalog.
+     * Get a random item out of the catalog. TODO: return a CatalogListing? (currently GWT only)
      *
-     * @param tags limits selection to one that matches any of these tags. If omitted,
-     *             selection is from all catalog entries.
-     *
-     * TODO: return a CatalogListing? (currently GWT only)
+     * @param tags limits selection to one that matches any of these tags. If omitted, selection is
+     * from all catalog entries.
      */
     public void getRandomCatalogItem (
-        final byte itemType, final String[] tags, ResultListener<Item> listener)
+        final byte itemType, final String[] tags, ResultListener<Item> lner)
     {
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(itemType, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(itemType, lner);
         if (repo == null) {
             return;
         }
 
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>("getRandomCatalogItem", lner) {
             public Item invokePersistResult () throws PersistenceException {
                 CatalogRecord<? extends ItemRecord> record;
                 if (tags == null || tags.length == 0) {
@@ -1410,8 +1407,8 @@ public class ItemManager
         ObserverList<ItemUpdateListener> obs = _listeners.get(record.getClass());
         if (obs != null) {
             obs.apply(new ObserverList.ObserverOp<ItemUpdateListener>() {
-                public boolean apply (ItemUpdateListener listener) {
-                    listener.itemUpdated(record);
+                public boolean apply (ItemUpdateListener lner) {
+                    lner.itemUpdated(record);
                     return true;
                 }
             });
