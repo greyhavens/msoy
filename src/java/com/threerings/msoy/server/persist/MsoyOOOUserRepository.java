@@ -1,5 +1,5 @@
 //
-// $Id: OOOUserRepository.java 2582 2007-05-22 21:46:03Z mdb $
+// $Id$
 
 package com.threerings.msoy.server.persist;
 

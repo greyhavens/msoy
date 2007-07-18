@@ -1,5 +1,5 @@
 //
-// $Id: TaintedIdent.java 1954 2006-06-15 22:47:48Z mdb $
+// $Id$
 
 package com.threerings.msoy.server.persist;
 

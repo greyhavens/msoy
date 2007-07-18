@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.game.data;
 
 public class PerfRecord

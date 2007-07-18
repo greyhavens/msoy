@@ -1,5 +1,5 @@
 //
-// $Id: HistoricalUser.java 2542 2007-04-07 00:18:57Z dhoover $
+// $Id$
 
 package com.threerings.msoy.server.persist;
 

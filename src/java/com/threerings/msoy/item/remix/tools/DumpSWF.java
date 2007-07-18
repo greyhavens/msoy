@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.item.remix.tools;
 
 import java.awt.image.BufferedImage;
