@@ -37,15 +37,12 @@ public class NotificationDisplay extends FloatingPanel
         _showing[notif.id] = true;
 
         var subBox :VBox = new VBox();
-        subBox.setStyle("left", 0);
-        subBox.setStyle("right", 0);
+        subBox.setStyle("horizontalAlign", "right");
+        subBox.percentWidth = 100;
         var closeBtn :CommandButton = new CommandButton();
-        closeBtn.setStyle("right", 0);
-        closeBtn.styleName = "closeButton";
         closeBtn.setCallback(closeNotification, [ subBox, notif.id ]);
-        var closeBox :HBox = new HBox();
-        closeBox.addChild(closeBtn);
-        subBox.addChild(closeBox);
+        closeBtn.styleName = "closeButton";
+        subBox.addChild(closeBtn);
         subBox.addChild(notif.getDisplay());
         _box.addChild(subBox);
     }
