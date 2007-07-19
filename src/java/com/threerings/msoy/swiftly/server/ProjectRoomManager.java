@@ -743,6 +743,9 @@ public class ProjectRoomManager extends PlaceManager
                     Game game = new Game();
                     game.gameMedia = new MediaDesc(
                         MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
+                    // game.config cannot be null so just set it to blank and the user can
+                    // tweak the config settings through the item editor
+                    game.config = "";
                     item = game;
 
                 } else if (_buildData.itemType() == Item.FURNITURE) {
