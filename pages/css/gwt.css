@@ -438,12 +438,23 @@ a:visited {
   height: 33px;
 }
 
-.borderedDialog .HeaderBackground .HeaderDrag {
+.borderedDialog .TitleBar {
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+}
+
+.borderedDialog .HeaderDrag {
   width: 100%;
   height: 33px;
   position: absolute;
   display: inline;
   top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
 }
 
 .borderedDialog .HeaderBackground .HeaderLeft {

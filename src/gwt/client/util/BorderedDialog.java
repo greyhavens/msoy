@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -63,15 +64,13 @@ public abstract class BorderedDialog extends BorderedPopup
         headerBackground.getCellFormatter().setHorizontalAlignment(0, 1, 
             HorizontalPanel.ALIGN_CENTER);
         headerBackground.getCellFormatter().setStyleName(0, 2, "HeaderRight");
-        ((FlexTable.FlexCellFormatter)headerBackground.getCellFormatter()).setColSpan(1, 0, 3);
-        headerBackground.getCellFormatter().setStyleName(1, 0, "HeaderDrag");
+
         Label dragLabel = new Label();
+        dragLabel.setStyleName("HeaderDrag");
         dragLabel.setWidth("100%");
-        dragLabel.setHeight("100%");
         if (enableDrag) {
             dragLabel.addMouseListener(createDragListener());
         }
-        headerBackground.setWidget(1, 0, dragLabel);
 
         Grid headerTitle = new Grid(1, 3);
         headerTitle.setStyleName("HeaderTitle");
@@ -82,7 +81,13 @@ public abstract class BorderedDialog extends BorderedPopup
         headerTitle.getCellFormatter().setStyleName(0, 2, "TitleRight");
         headerTitle.setWidget(0, 1, _header = new HorizontalPanel());
         headerBackground.setWidget(0, 1, headerTitle);
-        _main.add(headerBackground);
+
+        FlowPanel titleBar = new FlowPanel();
+        titleBar.setStyleName("TitleBar");
+        titleBar.add(headerBackground);
+        titleBar.add(dragLabel);
+        
+        _main.add(titleBar);
         _header.setSpacing(0);
         _header.setStyleName("Title");
         _header.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
