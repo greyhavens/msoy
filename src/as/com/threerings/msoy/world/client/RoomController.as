@@ -52,6 +52,7 @@ import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.client.ControlBar;
+import com.threerings.msoy.client.LogonPanel;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
@@ -498,6 +499,13 @@ public class RoomController extends SceneController
 
                 menuItems.push({ label: Msgs.GENERAL.get("l.avStates"),
                     children: worldStates, enabled: canControl });
+            }
+
+            if (us.isGuest() && _mctx.getWorldClient().isEmbedded()) {
+                menuItems.push({ label: Msgs.GENERAL.get("b.logon"),
+                    callback: function () :void {
+                        (new LogonPanel(_mctx)).open();
+                    }});
             }
 
         } else {

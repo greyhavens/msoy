@@ -6,6 +6,7 @@ package com.threerings.msoy.client {
 import flash.display.DisplayObjectContainer;
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 
 import mx.containers.HBox;
 
@@ -25,21 +26,17 @@ import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;
 
-import com.threerings.presents.client.ClientAdapter;
-import com.threerings.presents.client.ClientEvent;
-
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MemberObject;
 
-public class LogonPanel extends HBox
+import com.threerings.msoy.ui.FloatingPanel;
+
+public class LogonPanel extends FloatingPanel
 {
-    public function LogonPanel (ctx :WorldContext, height :int)
+    public function LogonPanel (ctx :WorldContext)
     {
-        _ctx = ctx;
-        _clientObs = new ClientAdapter(recheckGuest, recheckGuest, recheckGuest, recheckGuest,
-                                       recheckGuest, recheckGuest, recheckGuest);
-        this.height = height;
+        super(ctx, "Logon Panel");
     }
 
     override protected function createChildren () :void
@@ -48,68 +45,45 @@ public class LogonPanel extends HBox
         styleName = "logonPanel";
 
         var label :UITextField = new UITextField();
-        label.styleName = "controlBarText";
         label.text = Msgs.GENERAL.get("l.email");
-        label.height = this.height;
         addChild(label);
 
         _email = new TextInput();
         _email.text = Prefs.getUsername();
-        _email.height = this.height;
         addChild(_email);
 
         label = new UITextField();
-        label.styleName = "controlBarText";
         label.text = Msgs.GENERAL.get("l.password");
-        label.height = this.height;
         addChild(label);
 
         _password = new TextInput();
         _password.displayAsPassword = true;
-        _password.height = this.height;
         addChild(_password);
-
-        _logonBtn = new Button();
-        _logonBtn.label = Msgs.GENERAL.get("b.logon");
-        _logonBtn.enabled = false;
-        _logonBtn.height = this.height;
-        addChild(_logonBtn);
-
-        _guestBtn = new CommandButton(MsoyController.LOGON);
-        _guestBtn.label = Msgs.GENERAL.get("b.logon_guest");
-        _guestBtn.height = this.height;
-        addChild(_guestBtn);
-
-        _password.addEventListener(FlexEvent.ENTER, doLogon, false, 0, true);
-        _logonBtn.addEventListener(FlexEvent.BUTTON_DOWN, doLogon, false, 0, true);
 
         _email.addEventListener(Event.CHANGE, checkTexts, false, 0, true);
         _password.addEventListener(Event.CHANGE, checkTexts, false, 0, true);
-        recheckGuest(null);
-    }
+        _password.addEventListener(FlexEvent.ENTER, doLogon, false, 0, true);
 
-    override public function parentChanged (p :DisplayObjectContainer) :void
-    {
-        super.parentChanged(p);
+        var buttons :HBox = new HBox();
+        buttons.percentWidth = 100;
+        _logonBtn = new Button();
+        _logonBtn.label = Msgs.GENERAL.get("b.logon");
+        _logonBtn.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
+            doLogon();
+        });
+        buttons.addChild(_logonBtn);
+        var spacer :HBox = new HBox();
+        spacer.percentWidth = 100;
+        buttons.addChild(spacer);
+        var button :Button = new Button();
+        button.label = Msgs.GENERAL.get("b.cancel");
+        button.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
+            close();
+        });
+        buttons.addChild(button);
+        addChild(buttons);
 
-        if (p != null) {
-            _ctx.getClient().addClientObserver(_clientObs);
-            recheckGuest(null);
-
-        } else {
-            _ctx.getClient().removeClientObserver(_clientObs);
-        }
-    }
-
-    /**
-     * Called to configure the current user.
-     */
-    public function recheckGuest (event :ClientEvent) :void
-    {
-        if (_guestBtn != null) {
-            // we only get the option here to log in as a guest if we aren't even logged in
-            _guestBtn.visible = (_ctx.getMemberObject() == null);
-        }
+        checkTexts();
     }
 
     /**
@@ -123,7 +97,7 @@ public class LogonPanel extends HBox
     /**
      * Handles Event.CHANGE events from the text input fields.
      */
-    protected function checkTexts (event :Event) :void
+    protected function checkTexts (...ignored) :void
     {
         _logonBtn.enabled = canTryLogon();
     }
@@ -131,7 +105,7 @@ public class LogonPanel extends HBox
     /**
      * Handles FlexEvent.ENTER or FlexEvent.BUTTON_DOWN events generated to process a logon.
      */
-    protected function doLogon (event :FlexEvent) :void
+    protected function doLogon (...ignored) :void
     {
         if (!canTryLogon()) {
             // we disable the button, but they could still try pressing return in the password
@@ -144,15 +118,9 @@ public class LogonPanel extends HBox
         CommandEvent.dispatch(this, MsoyController.LOGON, creds);
     }
 
-    /** The giver of life. */
-    protected var _ctx :WorldContext;
-
     protected var _email :TextInput;
     protected var _password :TextInput;
 
     protected var _logonBtn :Button;
-    protected var _guestBtn :CommandButton;
-
-    protected var _clientObs :ClientAdapter;
 }
 }
