@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.hood {
 
 import com.adobe.serialization.json.*;
@@ -9,12 +12,12 @@ import com.adobe.serialization.json.*;
 public class NeighborGroup extends Neighbor
     implements LogoHolder
 {
-    /** The group's name. */
-    public var groupName :String;
     /** The group's id. */
     public var groupId :Number;
+
     /** The hash of the group's logo, if any. */
     public var groupLogo :String;
+
     /** The number of members in this group. */
     public var members :Number;
 
@@ -28,17 +31,10 @@ public class NeighborGroup extends Neighbor
             throw new Error("Missing name/id in JSON");
         }
         Neighbor.fromJSON(group, JSON);
-        group.groupName = JSON.name;
         group.groupId = JSON.id;
         group.groupLogo = JSON.logo;
         group.members = JSON.members;
         return group;
-    }
-
-    // from Neighbor
-    override public function getName () :String
-    {
-        return groupName;
     }
 
     // from LogoHolder

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.hood {
 
 import flash.display.LoaderInfo;
@@ -10,12 +13,12 @@ import com.adobe.serialization.json.*;
 public class Neighborhood
 {
     /** The central member for whom this query was generated, or null. */
-    public var centralMember :NeighborMember;
+    public var centralMember :Neighbor;
 
     /** The central group for whom this query was generated, or null. */
     public var centralGroup :NeighborGroup;
 
-    /** The member's houses, as {@link NeighborMember} objects. */
+    /** The member's houses, as {@link Neighbor} objects. */
     public var houses :Array;
 
     /** The member's groups, as {@link NeighborGroup} objects. */
@@ -48,7 +51,8 @@ public class Neighborhood
         var i :int;
 
         if (json.member != null) {
-            hood.centralMember = NeighborMember.fromJSON(json.member);
+            hood.centralMember = new Neighbor();
+            Neighbor.fromJSON(hood.centralMember, json.member);
         }
         if (json.group != null) {
             hood.centralGroup = NeighborGroup.fromJSON(json.group);
@@ -62,18 +66,19 @@ public class Neighborhood
 //         }            
 
         hood.houses = new Array();
-        if (json.friends != null) {
-            for (i = 0; i < json.friends.length; i ++) {
-                hood.houses[i] = NeighborMember.fromJSON(json.friends[i]);
+        if (json.scenes != null) {
+            for (i = 0; i < json.scenes.length; i ++) {
+                hood.houses[i] = new Neighbor();
+                Neighbor.fromJSON(hood.houses[i], json.scenes[i])
             }
         }
 
         hood.groups = new Array();
-        if (json.groups != null) {
-            for (i = 0; i < json.groups.length; i ++) {
-                hood.groups[i] = NeighborGroup.fromJSON(json.groups[i]);
-            }
-        }
+//         if (json.groups != null) {
+//             for (i = 0; i < json.groups.length; i ++) {
+//                 hood.groups[i] = NeighborGroup.fromJSON(json.groups[i]);
+//             }
+//         }
 
         hood.games = new Array();
         if (json.games != null) {

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.util {
 
 // A simple psuedo random number generator that allows seeding.

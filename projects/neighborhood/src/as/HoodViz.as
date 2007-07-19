@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package {
 
 import flash.display.*;
@@ -40,7 +43,7 @@ public class HoodViz extends Sprite
 
         var seed :int = 0;
         if (_hood.centralMember != null) {
-            seed = _hood.centralMember.memberId;
+            seed = _hood.centralMember.placeId;
         } else if (_hood.centralGroup != null) {
             seed = _hood.centralGroup.groupId;
         }
@@ -156,12 +159,12 @@ public class HoodViz extends Sprite
                 if ((y % 2) == 0) {
                     if (x == 0) {
                         addBit(_roadNS, 0, y, false, null);
-                    } else if (drawables[y][x] is NeighborMember) {
-                        addBit(_house, x, y, true, drawables[y][x]);
                     } else if (drawables[y][x] is NeighborGroup) {
                         addBit(_group, x, y, true, drawables[y][x]);
                     } else if (drawables[y][x] is NeighborGame) {
                         addBit(_game, x, y, true, drawables[y][x]);
+                    } else if (drawables[y][x] is Neighbor) {
+                        addBit(_house, x, y, true, drawables[y][x]);
                     } else {
                         addBit(_vacant, x, y, false, null);
                     }
@@ -171,7 +174,7 @@ public class HoodViz extends Sprite
                             if (drawables[y-1][1] == null) {
                                 addBit(_roadNS, 0, y, false, null);
                             } else {
-                                addBit(_roadNSE, 0, y, false, null);
+                                 addBit(_roadNSE, 0, y, false, null);
                             }
                         } else if (drawables[y-1][1] == null) {
                             addBit(_roadNSW, 0, y, false, null);
@@ -322,7 +325,7 @@ public class HoodViz extends Sprite
             var text :TextField = new TextField();
             text.defaultTextFormat = format;
             text.embedFonts = true;
-            var name :String = toPlaceName(neighbor.getName());
+            var name :String = toPlaceName(neighbor.name);
             if (neighbor.population > 0) {
                 name += ": " + neighbor.population;
             }
@@ -402,20 +405,11 @@ public class HoodViz extends Sprite
     {
         var neighbor :Neighbor = (event.currentTarget as ToolTipSprite).neighbor;
         var url :String = "#world-";
-        if (neighbor.sceneId > 0) {
-            url = "#world-s" + neighbor.sceneId;
-        } else if (neighbor is NeighborMember) {
-            var house :NeighborMember = neighbor as NeighborMember;
-            // clicking on a member takes us to their home scene
-            url = "#world-m" + house.memberId;
-        } else if (neighbor is NeighborGroup) {
-            var group :NeighborGroup = neighbor as NeighborGroup;
-            // clicking on a group takes us to that group's home scene
-            url = "#world-g" + group.groupId;
-        } else {
+        if (neighbor is NeighborGame) {
             var game :NeighborGame = neighbor as NeighborGame;
-            // clicking on a game takes us to that game's lobby
-            url = "#game-" + game.gameId;
+            url = "#game-" + game.placeId;
+        } else {
+            url = "#world-s" + neighbor.placeId;
         }
         NetUtil.navigateToURL(url);
     }
@@ -435,12 +429,13 @@ public class HoodViz extends Sprite
         var rule :Sprite;
         var obj :DisplayObject;
         var tipHeight :Number = 0;
+
         if (neighbor is NeighborMember) {
             var house :NeighborMember = neighbor as NeighborMember;
 
             tip = new _plaqueHouse();
 
-            obj = getTextField(toPlaceName(house.memberName), true);
+            obj = getTextField(toPlaceName(house.name), true);
             obj.y = tipHeight; tipHeight += obj.height;
             tipContent.addChild(obj);
 
@@ -475,7 +470,7 @@ public class HoodViz extends Sprite
 
             var loader :Loader;
             if (group.getLogoHash() != null) {
-                obj = getTextField(group.groupName, true);
+                obj = getTextField(group.name, true);
                 obj.y = tipHeight; tipHeight += obj.height;
                 tipContent.addChild(obj);
 
@@ -493,7 +488,7 @@ public class HoodViz extends Sprite
                 loader.y = 10 + tipHeight; tipHeight += 10 + 60;
 
             } else {
-                obj = getTextField(group.groupName, true);
+                obj = getTextField(group.name, true);
                 obj.y = tipHeight; tipHeight += obj.height;
                 tipContent.addChild(obj);
             }
@@ -515,15 +510,32 @@ public class HoodViz extends Sprite
                 tipContent.addChild(obj);
             }
 
-        } else {
+        } else if (neighbor is NeighborGame) {
             var game :NeighborGame = neighbor as NeighborGame;
 
             tip = new _plaqueGame();
-            obj = getTextField(game.gameName, true);
+            obj = getTextField(game.name, true);
             obj.y = tipHeight; tipHeight += obj.height;
             tipContent.addChild(obj);
 
             // TODO: thumbnail?
+
+        } else {
+            tip = new _plaqueHouse();
+
+            obj = getTextField(toPlaceName(neighbor.name), true);
+            obj.y = tipHeight; tipHeight += obj.height;
+            tipContent.addChild(obj);
+
+            if (neighbor.friends != null && neighbor.friends.length > 0) {
+                var here :String = "Here: " + neighbor.friends.join(", ");
+                if (neighbor.friends.length < neighbor.population) {
+                    here += " ...";
+                }
+                obj = getTextField(here, false);
+                obj.y = 10 + tipHeight; tipHeight += 10 + obj.height;
+                tipContent.addChild(obj);
+            }
         }
 
         _tip = new ToolTipSprite();

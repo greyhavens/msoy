@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package {
 
 import flash.display.*;

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.hood {
 
 import flash.display.MovieClip;

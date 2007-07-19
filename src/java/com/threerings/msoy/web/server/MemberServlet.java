@@ -21,15 +21,24 @@ import org.json.JSONObject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
+import com.samskivert.util.HashIntMap;
 
 import org.apache.velocity.VelocityContext;
 
+import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.peer.data.NodeObject;
+import com.threerings.presents.peer.server.PeerManager;
+
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
+
+import com.threerings.msoy.peer.data.MemberLocation;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
 
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.chat.data.ChatChannel;
@@ -44,13 +53,8 @@ import com.threerings.msoy.web.data.Invitation;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.data.PopularPlace.PopularGamePlace;
-import com.threerings.msoy.data.PopularPlace.PopularMemberPlace;
-import com.threerings.msoy.data.PopularPlace.PopularScenePlace;
-import com.threerings.msoy.data.PopularPlace;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.presents.data.InvocationCodes;
 
 import static com.threerings.msoy.Log.log;
 
@@ -154,142 +158,35 @@ public class MemberServlet extends MsoyServiceServlet
         final MemberRecord mrec = getAuthedUser(ident);
         final MemberName name = (mrec == null) ? null : mrec.getName();
 
-        // if we're logged on, fetch our friends
+        // if we're logged on, fetch our friends and groups of which we're members
         final List<FriendEntry> friends;
-        // and which groups of which we're members
-        final Set<GroupName> memberGroups = new HashSet<GroupName>();
+        final Set<GroupName> groups = new HashSet<GroupName>();
         if (mrec != null) {
             try {
                 friends = MsoyServer.memberRepo.loadFriends(mrec.memberId);
                 for (GroupRecord gRec : MsoyServer.groupRepo.getFullMemberships(mrec.memberId)) {
-                    memberGroups.add(new GroupName(gRec.name, gRec.groupId));
+                    groups.add(new GroupName(gRec.name, gRec.groupId));
                 }
-
             } catch (PersistenceException e) {
                 log.log(Level.WARNING, "Failed to load friends or groups", e);
                 throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
             }
-            friends.add(new FriendEntry(name, true));
-
         } else {
-            friends = Collections.emptyList();
+            friends = new ArrayList<FriendEntry>();
         }
+        // we add ourselves to our friends list so that we see where we are as well
+        friends.add(new FriendEntry(name, true));
 
-        // then proceed to the dobj thread to get runtime state
-        final ServletWaiter<String> waiter =
-            new ServletWaiter<String>("serializePopularPlaces[" + n + "]");
+        // now proceed to the dobj thread to get runtime state
+        final ServletWaiter<String> waiter = new ServletWaiter<String>(
+            "serializePopularPlaces[" + n + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                JSONObject result = new JSONObject();
-
                 try {
-                    JSONArray channels = new JSONArray();
-                    Iterable<ChatChannel> allChannels = MsoyServer.channelMan.getChatChannels();
-                    int desiredChannels = 8;
-
-                    // first add active channels we're members of
-                    for (ChatChannel channel : allChannels) {
-                        if (--desiredChannels < 0) {
-                            break;
-                        }
-                        if (channel.type == ChatChannel.GROUP_CHANNEL &&
-                            memberGroups.contains((GroupName) channel.ident)) {
-                            JSONObject cObj = new JSONObject();
-                            cObj.put("name", ((GroupName) channel.ident).toString());
-                            cObj.put("id", ((GroupName) channel.ident).getGroupId());
-                            channels.put(cObj);
-                        }
-                    }
-                    // then fill in with the ones we're not members of, if needed
-                    for (ChatChannel channel : allChannels) {
-                        if (--desiredChannels < 0) {
-                            break;
-                        }
-                        if (channel.type == ChatChannel.GROUP_CHANNEL &&
-                            !memberGroups.contains((GroupName) channel.ident)) {
-                            JSONObject cObj = new JSONObject();
-                            cObj.put("name", ((GroupName) channel.ident).toString());
-                            cObj.put("id", ((GroupName) channel.ident).getGroupId());
-                            channels.put(cObj);
-                        }
-                    }
-
-                    result.put("channels", channels);
-
-                    Map<PopularPlace, Set<MemberName>> popSets =
-                        new HashMap<PopularPlace, Set<MemberName>>();
-                    // retrieve the location of each one of our online friends
-                    for (FriendEntry entry : friends) {
-                        MemberObject friend = MsoyServer.lookupMember(entry.name);
-                        if (friend == null || friend.location == -1) {
-                            continue;
-                        }
-
-                        // map the specific location to an owner (game, person, group) cluster
-                        PopularPlace place = PopularPlace.getPopularPlace(
-                            MsoyServer.plreg.getPlaceManager(friend.location));
-                        if (place == null) {
-                            continue;
-                        }
-                        Set<MemberName> set = popSets.get(place);
-                        if (set == null) {
-                            set = new HashSet<MemberName>();
-                            popSets.put(place, set);
-                        }
-                        set.add(friend.memberName);
-                    }
-
-                    JSONArray homes = new JSONArray();
-                    JSONArray groups = new JSONArray();
-                    JSONArray games = new JSONArray();
-
-                    // after we've enumerated our friends, we add in the top populous places too
-                    int n = 3; // TODO: totally ad-hoc
-                    for (PopularPlace place : MsoyServer.memberMan.getPPCache().getTopPlaces()) {
-                        // make sure we didn't already include this place in the code above
-                        if (popSets.containsKey(place)) {
-                            continue;
-                        }
-                        popSets.put(place, null);
-                        if (--n <= 0) {
-                            break;
-                        }
-                    }
-
-                    // if we're logged in and our home has people in it, pull it out so that we can
-                    // set it as the "central" location; otherwise create a place for our home
-                    PopularPlace home = null;
-                    Set<MemberName> hfriends = null;
-                    if (mrec != null) {
-                        home = new PopularMemberPlace(mrec.memberId, mrec.homeSceneId);
-                        hfriends = popSets.remove(home);
-                    }
-
-                    // now convert all these popular places into JSON bits
-                    for (Map.Entry<PopularPlace, Set<MemberName>> entry : popSets.entrySet()) {
-                        PopularPlace place = entry.getKey();
-                        JSONObject obj = placeToJSON(name, place, entry.getValue());
-                        if (place instanceof PopularGamePlace) {
-                            games.put(obj);
-                        } else if (place instanceof PopularScenePlace) {
-                            obj.put("sceneId", ((PopularScenePlace)place).getSceneId());
-                            if (place instanceof PopularMemberPlace) {
-                                homes.put(obj);
-                            } else {
-                                groups.put(obj);
-                            }
-                        }
-                    }
-
-                    if (home != null) {
-                        result.put("member", placeToJSON(name, home, hfriends));
-                    }
-                    result.put("friends", homes);
-                    result.put("groups", groups);
-                    result.put("games", games);
-                    result.put("totpop", MsoyServer.memberMan.getPPCache().getPopulationCount());
+                    JSONObject result = new JSONObject();
+                    addPopularChannels(name, groups, result);
+                    addPopularPlaces(mrec, name, friends, result);
                     waiter.requestCompleted(URLEncoder.encode(result.toString(), "UTF-8"));
-
                 } catch (Exception e) {
                     waiter.requestFailed(e);
                     return;
@@ -377,17 +274,157 @@ public class MemberServlet extends MsoyServiceServlet
         }
     }
 
-    protected JSONObject placeToJSON (MemberName who, PopularPlace place, Set<MemberName> friends)
+    /**
+     * Adds popular chat channel information to the supplied "My Whirled" result.
+     */
+    protected void addPopularChannels (MemberName name, Set<GroupName> groups, JSONObject result)
+        throws JSONException
+    {
+        JSONArray channels = new JSONArray();
+        Iterable<ChatChannel> allChannels = MsoyServer.channelMan.getChatChannels();
+        int desiredChannels = 8;
+
+        // first add active channels we're members of
+        for (ChatChannel channel : allChannels) {
+            if (--desiredChannels < 0) {
+                break;
+            }
+            if (channel.type == ChatChannel.GROUP_CHANNEL &&
+                groups.contains((GroupName) channel.ident)) {
+                JSONObject cObj = new JSONObject();
+                cObj.put("name", ((GroupName) channel.ident).toString());
+                cObj.put("id", ((GroupName) channel.ident).getGroupId());
+                channels.put(cObj);
+            }
+        }
+        // then fill in with the ones we're not members of, if needed
+        for (ChatChannel channel : allChannels) {
+            if (--desiredChannels < 0) {
+                break;
+            }
+            if (channel.type == ChatChannel.GROUP_CHANNEL &&
+                !groups.contains((GroupName) channel.ident)) {
+                JSONObject cObj = new JSONObject();
+                cObj.put("name", ((GroupName) channel.ident).toString());
+                cObj.put("id", ((GroupName) channel.ident).getGroupId());
+                channels.put(cObj);
+            }
+        }
+
+        result.put("channels", channels);
+    }
+
+    /**
+     * Adds popular places (scenes and games) information to the supplied "My Whirled" result.
+     */
+    protected void addPopularPlaces (
+        MemberRecord mrec, MemberName name, final List<FriendEntry> friends, JSONObject result)
+        throws JSONException
+    {
+        final HashIntMap<PlaceDetail> scenes = new HashIntMap<PlaceDetail>();
+        final HashIntMap<PlaceDetail> games = new HashIntMap<PlaceDetail>();
+        final PopularPlacesSnapshot snap = MsoyServer.memberMan.getPPSnapshot();
+
+        // locate all of our online friends
+        MsoyServer.peerMan.applyToNodes(new PeerManager.Operation() {
+            public void apply (NodeObject nodeobj) {
+                MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
+
+                // see which (if any) of our friends are on this server
+                for (FriendEntry entry : friends) {
+                    MemberLocation memloc = mnobj.memberLocs.get(entry.name.getMemberId());
+                    if (memloc == null) {
+                        continue;
+                    }
+                    if (memloc.type == MemberLocation.SCENE) {
+                        noteFriend(scenes, entry, snap.getScene(memloc.locationId));
+                    } else if (memloc.type == MemberLocation.GAME) {
+                        noteFriend(games, entry, snap.getGame(memloc.locationId));
+                    }
+                }
+            }
+
+            protected void noteFriend (HashIntMap<PlaceDetail> dplaces, FriendEntry entry,
+                                       PopularPlacesSnapshot.Place place) {
+                if (place == null) {
+                    return;
+                }
+                PlaceDetail dplace = dplaces.get(place.placeId);
+                if (dplace == null) {
+                    dplaces.put(place.placeId, dplace = new PlaceDetail());
+                    dplace.place = place;
+                }
+                dplace.friends.add(entry.name);
+            }
+        });
+
+        // after we've located our friends, we add in the top populous places too
+        addTopPopularPlaces(snap.getTopScenes(), scenes);
+        addTopPopularPlaces(snap.getTopGames(), games);
+
+        // if we're logged in we want to note our home as the central spot (and remove it from the
+        // list of normal scenes)
+        PlaceDetail home = null;
+        if (mrec != null) {
+            home = scenes.remove(mrec.homeSceneId);
+            if (home == null) {
+                home = new PlaceDetail();
+                home.place = snap.getScene(mrec.homeSceneId);
+                if (home.place == null) {
+                    home.place = new PopularPlacesSnapshot.Place();
+                    home.place.placeId = mrec.homeSceneId;
+                }
+            }
+        }
+
+        // now convert all these places into JSON bits
+        JSONArray jscenes = new JSONArray();
+        for (PlaceDetail dplace : scenes.values()) {
+            jscenes.put(placeToJSON(name, dplace));
+        }
+        JSONArray jgames = new JSONArray();
+        for (PlaceDetail dplace : games.values()) {
+            jgames.put(placeToJSON(name, dplace));
+        }
+//         JSONArray groups = new JSONArray();
+
+        if (home != null) {
+            result.put("member", placeToJSON(name, home));
+        }
+        result.put("scenes", jscenes);
+//         result.put("groups", groups);
+        result.put("games", jgames);
+        result.put("totpop", snap.getPopulationCount());
+    }
+
+    protected void addTopPopularPlaces (
+        Iterable<PopularPlacesSnapshot.Place> top, HashIntMap<PlaceDetail> map)
+    {
+        int n = 3; // TODO: totally ad-hoc
+        for (PopularPlacesSnapshot.Place place : top) {
+            if (map.containsKey(place.placeId)) {
+                continue;
+            }
+            PlaceDetail dplace = new PlaceDetail();
+            dplace.place = place;
+            map.put(place.placeId, dplace);
+            if (--n <= 0) {
+                return;
+            }
+        }
+    }
+
+    protected JSONObject placeToJSON (MemberName who, PlaceDetail dplace)
         throws JSONException
     {
         JSONObject obj = new JSONObject();
-        obj.put("name", place.getName());
-        obj.put("pop", MsoyServer.memberMan.getPPCache().getPopulation(place));
-        obj.put("id", place.getId());
-        if (friends != null) {
+        obj.put("placeId", dplace.place.placeId);
+        obj.put("name", dplace.place.name);
+        obj.put("pcount", dplace.place.population);
+        if (dplace.friends.size() > 0) {
             JSONArray arr = new JSONArray();
-            for (MemberName bit : friends) {
-                arr.put(bit.equals(who) ? "You" : bit.toString());
+            for (MemberName name : dplace.friends) {
+                arr.put(name.equals(who) ? "You" : name.toString()); // TODO: localize "You"
             }
             obj.put("friends", arr);
         }
@@ -442,5 +479,11 @@ public class MemberServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "sendInvites failed.", pe);
             return ServiceException.INTERNAL_ERROR;
         }
+    }
+
+    protected static class PlaceDetail
+    {
+        public PopularPlacesSnapshot.Place place;
+        public ArrayList<MemberName> friends = new ArrayList<MemberName>();
     }
 }

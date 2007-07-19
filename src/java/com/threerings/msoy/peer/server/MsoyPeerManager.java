@@ -30,7 +30,7 @@ import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.server.RoomManager;
 
-import com.threerings.msoy.peer.data.HostedScene;
+import com.threerings.msoy.peer.data.HostedPlace;
 import com.threerings.msoy.peer.data.MemberLocation;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
@@ -72,7 +72,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         return lookupNodeDatum(new Lookup<String>() {
             public String lookup (NodeObject nodeobj) {
-                HostedScene info = ((MsoyNodeObject)nodeobj).hostedScenes.get(sceneId);
+                HostedPlace info = ((MsoyNodeObject)nodeobj).hostedScenes.get(sceneId);
                 return (info == null) ? null : nodeobj.nodeName;
             }
         });
@@ -112,7 +112,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     public void roomDidStartup (int sceneId, String name)
     {
         log.info("Hosting scene [id=" + sceneId + ", name=" + name + "].");
-        _mnobj.addToHostedScenes(new HostedScene(sceneId, name));
+        _mnobj.addToHostedScenes(new HostedPlace(sceneId, name));
         // release our lock on this scene now that it is resolved and we are hosting it
         releaseLock(getSceneLock(sceneId), new ResultListener.NOOP<String>());
     }
@@ -179,8 +179,11 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         super.clearClientInfo(client, info);
 
-        // clear out their location in our node object
-        _mnobj.removeFromMemberLocs(((MsoyClientInfo)info).getMemberId());
+        // clear out their location in our node object (if they were in one)
+        Integer memberId = ((MsoyClientInfo)info).getMemberId();
+        if (_mnobj.memberLocs.containsKey(memberId)) {
+            _mnobj.removeFromMemberLocs(memberId);
+        }
     }
 
     @Override // from PeerManager

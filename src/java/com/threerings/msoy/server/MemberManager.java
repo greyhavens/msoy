@@ -54,9 +54,6 @@ import static com.threerings.msoy.Log.log;
 public class MemberManager
     implements MemberProvider
 {
-    /** Cache popular place computations for five seconds while we're debugging. */
-    public static final long POPULAR_PLACES_CACHE_LIFE = 5*1000;
-
     /**
      * This can be called from any thread to queue an update of the member's current flow if they
      * are online.
@@ -90,22 +87,23 @@ public class MemberManager
         _groupRepo = groupRepo;
         MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.BASE_GROUP);
 
-        _ppCache = new PopularPlacesCache();
+        _ppSnapshot = new PopularPlacesSnapshot();
         _ppInvalidator = new Interval(MsoyServer.omgr) {
             public void expired() {
-                PopularPlacesCache newCache = new PopularPlacesCache();
+                // the constructor computes a current popular places snapshot
+                PopularPlacesSnapshot newSnapshot = new PopularPlacesSnapshot();
                 synchronized(this) {
-                    _ppCache = newCache;
+                    _ppSnapshot = newSnapshot;
                 }
             }
         };
-        _ppInvalidator.schedule(POPULAR_PLACES_CACHE_LIFE, true);
+        _ppInvalidator.schedule(POP_PLACES_REFRESH_PERIOD, true);
     }
 
-    public PopularPlacesCache getPPCache ()
+    public PopularPlacesSnapshot getPPSnapshot ()
     {
         synchronized(this) {
-            return _ppCache;
+            return _ppSnapshot;
         }
     }
 
@@ -621,14 +619,11 @@ public class MemberManager
         }
     }
 
-    /** The required flow for the first few levels is hard-coded */
-    protected static final int[] BEGINNING_FLOW_LEVELS = { 0, 300, 900, 1800, 3000, 5100, 8100 };
-
-    /** An interval that updates the popular places cache reference every so often. */
+    /** An interval that updates the popular places snapshot every so often. */
     protected Interval _ppInvalidator;
 
     /** The most recent summary of popular places in the whirled. */
-    protected PopularPlacesCache _ppCache;
+    protected PopularPlacesSnapshot _ppSnapshot;
 
     /** Provides access to persistent member data. */
     protected MemberRepository _memberRepo;
@@ -639,4 +634,10 @@ public class MemberManager
     /** The array of memoized flow values for each level.  The first few levels are hard coded, the
      * rest are calculated according to the equation in calculateLevelsForFlow() */
     protected int[] _levelForFlow;
+
+    /** The required flow for the first few levels is hard-coded */
+    protected static final int[] BEGINNING_FLOW_LEVELS = { 0, 300, 900, 1800, 3000, 5100, 8100 };
+
+    /** The frequency with which we recalculate our popular places snapshot. */
+    protected static final long POP_PLACES_REFRESH_PERIOD = 5*1000;
 }

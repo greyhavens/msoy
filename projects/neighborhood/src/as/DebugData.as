@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package {
     public class DebugData
     {
