@@ -894,7 +894,10 @@ public class RoomView extends AbstractRoomView
         if (shouldLoadAll()) {
             // add all currently present occupants
             for (var ii :int = _roomObj.occupants.size() - 1; ii >= 0; ii--) {
-                addBody(_roomObj.occupants.get(ii));
+                var bodyOid :int = _roomObj.occupants.get(ii);
+                if (! _actors.containsKey(bodyOid)) {
+                    addBody(bodyOid);
+                }
             }
         }
     }
