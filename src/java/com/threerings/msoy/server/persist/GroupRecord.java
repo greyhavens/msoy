@@ -27,9 +27,7 @@ import com.threerings.msoy.web.data.GroupExtras;
 /**
  * Contains the details of a group.
  */
-@Entity(indices={
-    @Index(name="searchIndex", type="fulltext",
-           columns={GroupRecord.NAME, GroupRecord.BLURB, GroupRecord.CHARTER })})
+@Entity
 public class GroupRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
