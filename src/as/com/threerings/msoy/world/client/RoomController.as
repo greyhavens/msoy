@@ -23,6 +23,7 @@ import mx.managers.ISystemManager;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
+import com.threerings.util.CommandEvent;
 import com.threerings.util.Integer;
 import com.threerings.util.NetUtil;
 import com.threerings.util.ObjectMarshaller;
@@ -35,6 +36,7 @@ import com.threerings.flash.MenuUtil;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandMenu;
 
+import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultWrapper;
 
@@ -501,11 +503,26 @@ public class RoomController extends SceneController
                     children: worldStates, enabled: canControl });
             }
 
-            if (us.isGuest() && _mctx.getWorldClient().isEmbedded()) {
-                menuItems.push({ label: Msgs.GENERAL.get("b.logon"),
-                    callback: function () :void {
-                        (new LogonPanel(_mctx)).open();
-                    }});
+            if (_mctx.getWorldClient().isEmbedded()) {
+                if (us.isGuest()) {
+                    menuItems.push({ label: Msgs.GENERAL.get("b.logon"),
+                        callback: function () :void {
+                            (new LogonPanel(_mctx)).open();
+                        }});
+                } else {
+                    menuItems.push({ label: Msgs.GENERAL.get("b.logout"),
+                        callback: function () :void {
+                            var sceneId :int = _mctx.getSceneDirector().getScene().getId();
+                            var observer :ClientAdapter;
+                            var logon :Function = function (...ignored) :void {
+                                _mctx.getSceneDirector().moveTo(sceneId);
+                                _mctx.getClient().removeClientObserver(observer);
+                            }
+                            observer = new ClientAdapter(null, logon);
+                            _mctx.getClient().addClientObserver(observer);
+                            _mctx.getMsoyController().handleLogon(null);
+                        }});
+                }
             }
 
         } else {
