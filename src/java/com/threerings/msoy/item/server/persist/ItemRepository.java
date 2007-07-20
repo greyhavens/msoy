@@ -393,7 +393,7 @@ public abstract class ItemRepository<
             break;
         case CatalogListing.SORT_BY_RATING:
             addOrderByRating(obExprs, obOrders);
-            addOrderByPrice(obExprs, obOrders, OrderBy.Order.DESC);
+            addOrderByPrice(obExprs, obOrders, OrderBy.Order.ASC);
             break;
         case CatalogListing.SORT_BY_PRICE_ASC:
             addOrderByPrice(obExprs, obOrders, OrderBy.Order.ASC);
