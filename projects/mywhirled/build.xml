@@ -1,0 +1,58 @@
+<!-- build configuration -->
+<project name="mywhirled" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name"  value="mywhirled"/>
+  <property name="root.path" value="../.."/>
+  <property name="flex.path" value="${root.path}/tools/extern/flex_sdk"/>
+
+  <target name="checklib">
+    <uptodate property="lib_is_up_to_date" targetfile="mywhirled.swc">
+      <srcfiles dir="src/as/com" includes="**/*.as"/>
+    </uptodate>
+  </target>
+
+  <!-- builds our Flash library -->
+  <target name="lib" unless="lib_is_up_to_date" depends="checklib">
+    <java jar="${flex.path}/lib/compc.jar" fork="true" failonerror="true">
+      <arg value="-compiler.optimize"/>
+      <arg value="-compiler.external-library-path"/>
+      <arg value="${flex.path}/frameworks/libs"/>
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=src/as/"/>
+      <arg value="-include-sources=src/as/com/"/>
+      <arg value="-output"/>
+      <arg value="${app.name}.swc"/>
+    </java>
+  </target>
+
+  <!-- builds our My Whirled swf -->
+  <target name="compile" depends="lib">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-compiler.optimize"/>
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=src/as"/>
+      <arg value="-externs"/>
+      <arg value="-file-specs"/>
+      <arg value="src/as/com/threerings/mywhirled/MyWhirled.as"/>
+      <arg value="-output"/>
+      <arg value="${app.name}.swf"/>
+    </java>
+  </target>
+
+  <!-- cleans out the compiled code -->
+  <target name="clean">
+    <delete>
+       <fileset file="${app.name}.swf"/>
+       <fileset file="${app.name}.swc"/>
+    </delete>
+  </target>
+
+  <!-- builds our swf and plops it up at the top level -->
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" todir="${root.path}/dist"/>
+  </target>
+
+</project>
