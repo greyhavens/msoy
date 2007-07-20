@@ -4,6 +4,7 @@
 package client.shell;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
@@ -51,9 +52,9 @@ public class LogonPopup extends BorderedPopup
         contents.setCellSpacing(10);
         setWidget(contents);
 
-        int row = 0;
+        int row = 0, cols = 3;
         contents.setText(row, 0, CShell.cmsgs.logonHelp());
-        contents.getFlexCellFormatter().setColSpan(row++, 0, 2);
+        contents.getFlexCellFormatter().setColSpan(row++, 0, cols);
 
         contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.logonEmail());
@@ -67,8 +68,13 @@ public class LogonPopup extends BorderedPopup
 
         contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.logonPassword());
-        contents.setWidget(row++, 1, _password = new PasswordTextBox());
+        contents.setWidget(row, 1, _password = new PasswordTextBox());
         _password.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
+            public void onClick (Widget sender) {
+                doLogon();
+            }
+        }));
+        contents.setWidget(row++, 2, new Button(CShell.cmsgs.menuLogon(), new ClickListener() {
             public void onClick (Widget sender) {
                 doLogon();
             }
@@ -80,10 +86,10 @@ public class LogonPopup extends BorderedPopup
                 displayForgotPassword();
             }
         }));
-        contents.getFlexCellFormatter().setColSpan(row++, 0, 2);
+        contents.getFlexCellFormatter().setColSpan(row++, 0, cols);
 
         contents.setWidget(row, 0, _status = new Label(""));
-        contents.getFlexCellFormatter().setColSpan(row++, 0, 2);
+        contents.getFlexCellFormatter().setColSpan(row++, 0, cols);
     }
 
     protected void displayForgotPassword ()
