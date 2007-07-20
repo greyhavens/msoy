@@ -468,7 +468,7 @@ public class MsoyController extends Controller
         var lsvc :LobbyService = (_ctx.getClient().requireService(LobbyService) as LobbyService);
         var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
             log.warning("fetching LobbyObject oid failed: " + cause);
-            _gameId = -1;
+//             _gameId = -1;
         },
         function (result :Object) :void {
             // this will create a panel and add it to the side panel on the top level
@@ -589,9 +589,9 @@ public class MsoyController extends Controller
                 var idx :int = sceneIdString.indexOf("g");
                 var gameId :int = int(sceneIdString.substring(idx + 1));
                 sceneIdString = sceneIdString.substring(0, idx);
-                if (_gameId == -1 || _gameId != gameId) {
+//                 if (_gameId == -1 || _gameId != gameId) {
                     handleJoinGameLobby(gameId);
-                }
+//                 }
 
             } else if (sceneIdString == null && null != params["gameLobby"]) {
                 // we want to stay in our current room, if we're in one
@@ -624,7 +624,8 @@ public class MsoyController extends Controller
     {
         // this will result in another request to move to the scene we're already in, but we'll
         // ignore it because we're already there
-        var scene :String = sceneId + (_gameId != -1 ? "g" + _gameId : "");
+//         var scene :String = sceneId + (_gameId != -1 ? "g" + _gameId : "");
+        var scene :String = sceneId + "";
         if (_sceneIdString != null) {
             handleInternalGo("world", "s" + scene);
         }
@@ -699,14 +700,16 @@ public class MsoyController extends Controller
      */
     public function gameLobbyShown (gameId :int) :void
     {
-        if (gameId != _gameId) {
-            _gameId = gameId;
-            // perform our bookmarkable URL magic
-            var scene :Scene = _ctx.getSceneDirector().getScene();
-            if (scene != null) {
-                wentToScene(scene.getId());
-            }
-        }
+// TEMP: disabled until we decide if this is what we want, in which case then we need to figure out
+// how to deal with the pesky race condition
+//         if (gameId != _gameId) {
+//             _gameId = gameId;
+//             // perform our bookmarkable URL magic
+//             var scene :Scene = _ctx.getSceneDirector().getScene();
+//             if (scene != null) {
+//                 wentToScene(scene.getId());
+//             }
+//         }
     }
 
     /**
@@ -714,17 +717,17 @@ public class MsoyController extends Controller
      */
     public function gameLobbyCleared (gameId :int, playerInitiated :Boolean) :void
     {
-        if (gameId == _gameId) {
-            _gameId = -1;
-            // if the player initiated the close, restore the URL to point to the current scene,
-            // otherwise we were minimized or are heading into a game, so don't mess with the URL
-            if (playerInitiated) {
-                var scene :Scene = _ctx.getSceneDirector().getScene();
-                if (scene != null) {
-                    wentToScene(scene.getId());
-                }
-            }
-        }
+//         if (gameId == _gameId) {
+//             _gameId = -1;
+//             // if the player initiated the close, restore the URL to point to the current scene,
+//             // otherwise we were minimized or are heading into a game, so don't mess with the URL
+//             if (playerInitiated) {
+//                 var scene :Scene = _ctx.getSceneDirector().getScene();
+//                 if (scene != null) {
+//                     wentToScene(scene.getId());
+//                 }
+//             }
+//         }
     }
 
     /**
@@ -928,8 +931,8 @@ public class MsoyController extends Controller
     /** A special logoff message to use when we disconnect. */
     protected var _logoffMessage :String;
 
-    /** The currently loaded game lobby, used for magic URL bookmarkable gamelobbies */
-    protected var _gameId :int = -1;
+//     /** The currently loaded game lobby, used for magic URL bookmarkable gamelobbies */
+//     protected var _gameId :int = -1;
 
     /** Whether we think we're idle or not. */
     protected var _idle :Boolean = false;
