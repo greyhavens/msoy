@@ -26,6 +26,9 @@ import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;
 
+import com.threerings.presents.client.ClientAdapter;
+import com.threerings.presents.client.ClientEvent;
+
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MemberObject;
@@ -36,7 +39,7 @@ public class LogonPanel extends FloatingPanel
 {
     public function LogonPanel (ctx :WorldContext)
     {
-        super(ctx, "Logon Panel");
+        super(ctx, Msgs.GENERAL.get("t.logon"));
     }
 
     override protected function createChildren () :void
@@ -83,6 +86,10 @@ public class LogonPanel extends FloatingPanel
         buttons.addChild(button);
         addChild(buttons);
 
+        _error = new Label();
+        _error.visible = _error.includeInLayout = false;
+        addChild(_error);
+
         checkTexts();
     }
 
@@ -113,6 +120,24 @@ public class LogonPanel extends FloatingPanel
             return;
         }
 
+        if (_sceneId == -1) {
+            _sceneId = _ctx.getSceneDirector().getScene().getId();
+        }
+        var observer :ClientAdapter;
+        var didLogon :Function = function (...ignored) :void {
+            close();
+            _ctx.getClient().removeClientObserver(observer);
+            _ctx.getSceneDirector().moveTo(_sceneId);
+        };
+        var failed :Function = function (evt :ClientEvent) :void {
+            _ctx.getClient().removeClientObserver(observer);
+            Log.getLog(this).debug("failed: " + Msgs.GENERAL.get(evt.getCause().message));
+            _error.text = "Logon failed: " + Msgs.GENERAL.get(evt.getCause().message);
+            _error.visible = _error.includeInLayout = true;
+        };
+        observer = new ClientAdapter(null, didLogon, null, null, failed, failed);
+        _ctx.getClient().addClientObserver(observer);
+
         var creds :MsoyCredentials = new MsoyCredentials(
             new Name(_email.text), MD5.hash(_password.text));
         CommandEvent.dispatch(this, MsoyController.LOGON, creds);
@@ -120,7 +145,10 @@ public class LogonPanel extends FloatingPanel
 
     protected var _email :TextInput;
     protected var _password :TextInput;
+    protected var _error :Label;
 
     protected var _logonBtn :Button;
+
+    protected var _sceneId :int = -1;
 }
 }
