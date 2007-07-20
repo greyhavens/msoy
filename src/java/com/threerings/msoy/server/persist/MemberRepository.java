@@ -791,12 +791,6 @@ public class MemberRepository extends DepotRepository
             insert(rec);
         }
 
-        // insert the new friendship connection
-        FriendRecord rec = new FriendRecord();
-        rec.inviterId = memberId;
-        rec.inviteeId = otherId;
-        insert(rec);
-
         return other.getName();
     }
 
