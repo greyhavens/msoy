@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntListUtil;
+import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.samskivert.jdbc.ConnectionProvider;
@@ -20,7 +21,10 @@ import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
+
 import com.threerings.msoy.web.data.MailFolder;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages the persistent store of mail and mailboxes.
@@ -147,18 +151,29 @@ public class MailRepository extends DepotRepository
         throws PersistenceException
     {
         record.messageId = claimMessageId(record.ownerId, record.folderId, 1);
+        if (record.messageId < 0) {
+            log.warning("Failed to file message, unable to obtain message id " + record + ".");
+            return null;
+        }
         insert(record);
         return record;
     }
 
     /**
-     * Move a message from one folder to another.
+     * Moves a message from one folder to another.
      */
     public void moveMessage (int ownerId, int folderId, int newFolderId, int[] messageIds)
         throws PersistenceException
     {
         Comparable[] idArr = IntListUtil.box(messageIds);
-        int newId = claimMessageId(ownerId, newFolderId, 1);
+        int newId = claimMessageId(ownerId, newFolderId, messageIds.length);
+        if (newId < 0) {
+            log.warning("Failed to move message, unable to obtain message id [oid=" + ownerId +
+                        ", fid=" + folderId + ", nfid=" + newFolderId +
+                        ", ids=" + StringUtil.toString(messageIds) + "].");
+            return;
+        }
+
         MultiKey<MailMessageRecord> key = new MultiKey<MailMessageRecord>(
             MailMessageRecord.class,
             MailMessageRecord.OWNER_ID, ownerId,
@@ -166,7 +181,7 @@ public class MailRepository extends DepotRepository
             MailMessageRecord.MESSAGE_ID, idArr);
         updatePartial(MailMessageRecord.class, key, key,
                       MailMessageRecord.FOLDER_ID, newFolderId,
-                      MailMessageRecord.MESSAGE_ID, newId);
+                      MailMessageRecord.MESSAGE_ID, newId++);
     }
 
     /**
@@ -216,6 +231,10 @@ public class MailRepository extends DepotRepository
         MailFolderRecord record = load(MailFolderRecord.class,
                                        MailFolderRecord.OWNER_ID, memberId,
                                        MailFolderRecord.FOLDER_ID, folderId);
+        if (record == null) {
+            return -1;
+        }
+
         int firstId = record.nextMessageId;
         record.nextMessageId += idCount;
         update(record, MailFolderRecord.NEXT_MESSAGE_ID);
