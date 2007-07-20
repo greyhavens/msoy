@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.util;
 
 import com.google.gwt.user.client.ui.ClickListener;

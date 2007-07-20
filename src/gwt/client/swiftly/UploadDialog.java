@@ -1,6 +1,6 @@
-/**
- * 
- */
+//
+// $Id$
+
 package client.swiftly;
 
 import client.util.BorderedDialog;

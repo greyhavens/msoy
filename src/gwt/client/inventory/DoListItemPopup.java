@@ -1,5 +1,6 @@
 //
 // $Id$
+
 package client.inventory;
 
 import com.google.gwt.user.client.Command;

@@ -1,6 +1,6 @@
-/**
- *
- */
+//
+// $Id$
+
 package client.item;
 
 import com.google.gwt.user.client.ui.Button;

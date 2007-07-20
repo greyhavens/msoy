@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.game;
 
 
