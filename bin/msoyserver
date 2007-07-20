@@ -16,7 +16,7 @@ HOSTNAME=`hostname`
 # parse our arguments
 while [ ! -z "$1" ]; do
     case "$1" in
-        -D*)
+        -*)
             JAVA_ARGS="$JAVA_ARGS $1"
             ;;
 
