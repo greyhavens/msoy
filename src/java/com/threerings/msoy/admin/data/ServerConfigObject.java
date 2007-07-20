@@ -24,6 +24,9 @@ public class ServerConfigObject extends ConfigObject
     /** The field name of the <code>nonAdminsAllowed</code> field. */
     public static final String NON_ADMINS_ALLOWED = "nonAdminsAllowed";
 
+    /** The field name of the <code>guestsAllowed</code> field. */
+    public static final String GUESTS_ALLOWED = "guestsAllowed";
+
     /** The field name of the <code>registrationEnabled</code> field. */
     public static final String REGISTRATION_ENABLED = "registrationEnabled";
 
@@ -48,6 +51,9 @@ public class ServerConfigObject extends ConfigObject
 
     /** Whether or not to allow non-admins to log on. */
     public boolean nonAdminsAllowed = true;
+
+    /** Whether or not to allow guests to log on. */
+    public boolean guestsAllowed = true;
 
     /** Whether or not to allow new registrations. */
     public boolean registrationEnabled = true;
@@ -116,6 +122,22 @@ public class ServerConfigObject extends ConfigObject
         requestAttributeChange(
             NON_ADMINS_ALLOWED, Boolean.valueOf(value), Boolean.valueOf(ovalue));
         this.nonAdminsAllowed = value;
+    }
+
+    /**
+     * Requests that the <code>guestsAllowed</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setGuestsAllowed (boolean value)
+    {
+        boolean ovalue = this.guestsAllowed;
+        requestAttributeChange(
+            GUESTS_ALLOWED, Boolean.valueOf(value), Boolean.valueOf(ovalue));
+        this.guestsAllowed = value;
     }
 
     /**

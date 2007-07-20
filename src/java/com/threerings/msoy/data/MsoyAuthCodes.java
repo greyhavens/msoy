@@ -51,6 +51,9 @@ public interface MsoyAuthCodes extends AuthCodes
     /** A code indicating that we are not currently allowing new registrations. */
     public static final String NO_REGISTRATIONS = "m.no_registrations";
 
+    /** A code indicating that we are not currently allowing guest users. */
+    public static final String NO_GUESTS = "m.no_guests";
+
     /** A code indicating that a client's web session has expired. */
     public static final String SESSION_EXPIRED = "m.session_expired";
 

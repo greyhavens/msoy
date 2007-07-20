@@ -194,8 +194,12 @@ public class MsoyAuthenticator extends Authenticator
                     member = MsoyServer.memberRepo.loadMemberForSession(creds.sessionToken);
                 }
 
-                // GUEST access
+                // potentially allow GUEST access
                 if (member == null) {
+                    if (!RuntimeConfig.server.guestsAllowed ||
+                        !RuntimeConfig.server.nonAdminsAllowed) {
+                        throw new ServiceException(MsoyAuthCodes.NO_GUESTS);
+                    }
                     rsp.authdata = null;
                     rdata.code = MsoyAuthResponseData.SUCCESS;
                     return;
