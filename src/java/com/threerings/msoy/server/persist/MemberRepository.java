@@ -164,6 +164,14 @@ public class MemberRepository extends DepotRepository
         return load(MemberRecord.class, memberId);
     }
 
+    // TEMP
+    public List<MemberRecord> loadAllMembers ()
+        throws PersistenceException
+    {
+        return findAll(MemberRecord.class);
+    }
+    // END TEMP
+
     /**
      * Calculate a count of the active member population, currently defined as anybody
      * whose last session is within the past 60 days.
