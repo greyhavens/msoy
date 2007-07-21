@@ -24,6 +24,8 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.data.GameObject;
 import com.threerings.parlor.game.server.GameManager;
 
+import com.threerings.whirled.data.ScenePlace;
+
 import com.threerings.ezgame.data.GameDefinition;
 import com.threerings.ezgame.data.TableMatchConfig;
 
@@ -72,12 +74,12 @@ public class WorldGameRegistry
     {
         // see what we've got..
         final MemberObject member = (MemberObject)caller;
-        if (member.sceneId == 0) {
+        if (member.getSceneId() == 0) {
             log.warning("User joining world game, but not in scene?");
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
-        final IntTuple gameKey = new IntTuple(gameId, member.sceneId);
+        final IntTuple gameKey = new IntTuple(gameId, member.getSceneId());
 
         Integer gameOid = _games.get(gameKey);
         if (gameOid != null) {

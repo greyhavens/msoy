@@ -52,7 +52,7 @@ public class MsoySceneRegistry extends SceneRegistry
 
         // if they are departing a scene hosted by this server, move them to the exit; if we fail
         // later, they will have walked to the exit and then received an error message, alas
-        RoomManager srcmgr = (RoomManager)getSceneManager(memobj.sceneId);
+        RoomManager srcmgr = (RoomManager)getSceneManager(memobj.getSceneId());
         if (srcmgr != null) {
             // give the source scene manager a chance to do access control
             Portal dest = ((MsoyScene)srcmgr.getScene()).getPortal(portalId);

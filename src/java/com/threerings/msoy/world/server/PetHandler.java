@@ -163,7 +163,7 @@ public class PetHandler
         _petobj.setFollowId(owner.getMemberId());
 
         // head to our destination
-        enterRoom(owner.sceneId, (RoomObject)dobj, memory);
+        enterRoom(owner.getSceneId(), (RoomObject)dobj, memory);
     }
 
     /**
