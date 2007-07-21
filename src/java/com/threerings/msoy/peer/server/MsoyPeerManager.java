@@ -199,7 +199,7 @@ public class MsoyPeerManager extends CrowdPeerManager
             // skip "location=-1" updates as the client will either logoff or arrive at their real
             // location immediately following and that will trigger the real update
             if (event.getName().equals(MemberObject.LOCATION) &&
-                event.getIntValue() != -1) {
+                event.getValue() != null) {
                 MemberObject memobj = (MemberObject)MsoyServer.omgr.getObject(event.getTargetOid());
                 if (memobj == null) {
                     log.warning("Got location change for unregistered member!? " + event);
@@ -209,7 +209,7 @@ public class MsoyPeerManager extends CrowdPeerManager
                 MemberLocation newloc = new MemberLocation();
                 newloc.memberId = memobj.getMemberId();
 
-                PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(memobj.location);
+                PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(memobj.getPlaceOid());
                 if (pmgr instanceof GameManager) {
                     newloc.type = MemberLocation.GAME;
                     newloc.locationId = ((MsoyGameConfig)pmgr.getConfig()).getGameId();

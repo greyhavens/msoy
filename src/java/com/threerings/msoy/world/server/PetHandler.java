@@ -138,7 +138,7 @@ public class PetHandler
         validateOwnership(owner);
 
         // locate the room to which we are headed
-        DObject dobj = MsoyServer.omgr.getObject(owner.location);
+        DObject dobj = MsoyServer.omgr.getObject(owner.getPlaceOid());
         if (!(dobj instanceof RoomObject)) {
             log.warning("moveToOwner() found owner in non-RoomObject [pet=" + _petobj.pet +
                         ", owner=" + owner.who() +

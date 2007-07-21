@@ -112,7 +112,7 @@ public class MemberManager
      */
     public void updateOccupantInfo (MemberObject user)
     {
-        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.location);
+        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.getPlaceOid());
         if (pmgr != null) {
             pmgr.updateOccupantInfo(user.createOccupantInfo(pmgr.getPlaceObject()));
         }

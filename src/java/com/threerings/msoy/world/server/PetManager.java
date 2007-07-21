@@ -190,7 +190,7 @@ public class PetManager
         final MemberObject user = (MemberObject)caller;
 
         // get the manager of the room where we're chatting
-        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.location);
+        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.getPlaceOid());
         if (! (pmgr instanceof RoomManager)) {
             log.warning("sendChat() on invalid location [location=" + user.location + "]");
             throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
