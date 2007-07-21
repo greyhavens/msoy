@@ -26,11 +26,11 @@ public class MsoyBodyObject extends BodyObject
     public transient String avatarState;
 
     /**
-     * Returns the id of the scene currently occupied by this member or -1 if we're not in a scene.
+     * @see ScenePlace#getSceneId
      */
     public int getSceneId ()
     {
-        return (location instanceof ScenePlace) ? ((ScenePlace)location).sceneId : -1;
+        return ScenePlace.getSceneId(this);
     }
 
     // from ClusteredBodyObject
