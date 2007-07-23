@@ -9,7 +9,6 @@ import client.util.MediaUtil;
 import client.util.Stars;
 
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Panel;
 import com.threerings.msoy.data.all.GameRating;
 import com.threerings.msoy.item.data.all.MediaDesc;

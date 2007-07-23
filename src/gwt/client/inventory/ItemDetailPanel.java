@@ -3,29 +3,21 @@
 
 package client.inventory;
 
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.editem.ItemEditor;
 import client.item.BaseItemDetailPanel;
-import client.shell.Application;
 import client.util.ClickCallback;
 import client.util.ItemUtil;
-import client.util.PopupMenu;
-import client.shell.Page;
 
 /**
  * Displays a popup detail view of an item from the user's inventory.

@@ -5,8 +5,6 @@ package client.shell;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;

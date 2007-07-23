@@ -4,13 +4,8 @@
 package client.inventory;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.Label;
-
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.web.data.WebCreds;
-
 import client.editem.EditemEntryPoint;
-import client.item.ItemEntryPoint;
 import client.shell.Page;
 import client.util.MsoyUI;
 

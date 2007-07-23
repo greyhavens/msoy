@@ -4,25 +4,19 @@
 package client.catalog;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
-import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.item.data.all.Item;

@@ -11,8 +11,6 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import client.shell.Page;
-
 /**
  * Utility routines for displaying media.
  */

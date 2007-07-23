@@ -3,8 +3,6 @@
 
 package client.profile;
 
-import client.util.FlashClients;
-
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;

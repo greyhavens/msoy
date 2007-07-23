@@ -267,7 +267,7 @@ public class GroupView extends VerticalPanel
         boolean firstMember = true;
         while (i.hasNext()) {
             final GroupMembership membership = (GroupMembership) i.next();
-            final MemberName name = (MemberName) membership.member;
+            final MemberName name = membership.member;
             FlowPanel peoplePanel;
             if (membership.rank == GroupMembership.RANK_MANAGER) {
                 if (firstManager) {

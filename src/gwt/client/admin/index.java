@@ -5,13 +5,8 @@ package client.admin;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import com.google.gwt.user.client.ui.Label;
-
 import com.threerings.msoy.web.client.AdminService;
 import com.threerings.msoy.web.client.AdminServiceAsync;
-import com.threerings.msoy.web.data.ConnectConfig;
-import com.threerings.msoy.web.data.WebCreds;
-
 import client.editem.EditemEntryPoint;
 import client.util.MsoyUI;
 import client.shell.Page;

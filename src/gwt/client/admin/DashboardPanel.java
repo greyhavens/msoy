@@ -20,7 +20,6 @@ import com.threerings.msoy.web.data.ConnectConfig;
 import client.shell.Application;
 import client.shell.Page;
 import client.shell.WorldClient;
-import client.util.MsoyUI;
 
 /**
  * Displays the various services available to support and admin personnel.

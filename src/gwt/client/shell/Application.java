@@ -25,8 +25,6 @@ import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
 
-import client.util.MsoyUI;
-
 /**
  * Our main application and entry point. This dispatches a requests to the appropriate {@link
  * Page}. Some day it may also do fancy on-demand loading of JavaScript.

@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.EnterClickAdapter;
 
 import com.threerings.gwt.util.SimpleDataModel;

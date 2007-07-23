@@ -40,7 +40,6 @@ import com.threerings.msoy.web.data.GroupExtras;
 import com.threerings.gwt.ui.InlineLabel;
 
 import client.shell.Application;
-import client.shell.Page;
 import client.util.BorderedDialog;
 import client.util.MediaUtil;
 import client.util.MsoyUI;

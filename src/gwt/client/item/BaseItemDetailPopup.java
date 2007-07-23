@@ -3,8 +3,6 @@
 
 package client.item;
 
-import java.util.List;
-
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -17,7 +15,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.gwt.ItemDetail;
 
-import client.shell.Page;
 import client.util.BorderedDialog;
 import client.util.FlashClients;
 import client.util.ItemUtil;
