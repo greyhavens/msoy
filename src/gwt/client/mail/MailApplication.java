@@ -44,6 +44,11 @@ import client.util.BorderedWidget;
  * A mail reading application, with a sidebar listing available folders, the upper
  * half of the main panel listing the message headers in the currently selected folder,
  * and the lower half displaying individual messages.
+ * 
+ * TODO: The mail system needs a substantial efficiency overhaul:
+ *  - Make a single initial request for all the data the application needs to start up.
+ *  - Don't perpetually ask the database to tell us about changes we already know happened:
+ *    reading a message will flag it as read, deleting a message will delete it.
  */
 public class MailApplication extends DockPanel
     implements PopupListener, MailUpdateListener
@@ -54,7 +59,7 @@ public class MailApplication extends DockPanel
     private static final int PAGES_TO_SHOW = 3;
     
     /**
-     * Initialize ths application and build the UI framework.
+     * Initialize this application and build the UI framework.
      */
     public MailApplication ()
     {
