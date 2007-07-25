@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
@@ -811,6 +812,17 @@ public class MemberRepository extends DepotRepository
                 INVITE_ID_CHARACTERS.length()));
         }
         return rand;
+    }
+
+    @Override // from DepotRepository
+    protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
+    {
+        classes.add(MemberRecord.class);
+        classes.add(FriendRecord.class);
+        classes.add(SessionRecord.class);
+        classes.add(InvitationRecord.class);
+        classes.add(InviterRecord.class);
+        classes.add(OptOutRecord.class);
     }
 
     protected static final int INVITE_ID_LENGTH = 10;

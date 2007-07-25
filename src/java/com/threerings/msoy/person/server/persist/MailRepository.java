@@ -5,6 +5,7 @@ package com.threerings.msoy.person.server.persist;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntListUtil;
@@ -15,6 +16,7 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.MultiKey;
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.ForUpdate;
 import com.samskivert.jdbc.depot.clause.FromOverride;
@@ -239,5 +241,12 @@ public class MailRepository extends DepotRepository
         record.nextMessageId += idCount;
         update(record, MailFolderRecord.NEXT_MESSAGE_ID);
         return firstId;
+    }
+
+    @Override // from DepotRepository
+    protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
+    {
+        classes.add(MailMessageRecord.class);
+        classes.add(MailFolderRecord.class);
     }
 }

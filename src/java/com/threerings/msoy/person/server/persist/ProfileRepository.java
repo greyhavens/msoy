@@ -5,6 +5,7 @@ package com.threerings.msoy.person.server.persist;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -17,6 +18,7 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
@@ -95,5 +97,11 @@ public class ProfileRepository extends DepotRepository
                        new Join(MemberRecord.MEMBER_ID_C, ProfileRecord.MEMBER_ID_C),
                        new Where(new Like(ProfileRecord.REAL_NAME_C, "%" + search + "%")),
                        new Limit(0, maxRecords));
+    }
+
+    @Override // from DepotRepository
+    protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
+    {
+        classes.add(ProfileRecord.class);
     }
 }

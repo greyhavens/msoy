@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -17,18 +18,19 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
+import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.SelectClause;
 import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.clause.OrderBy;
-import com.samskivert.jdbc.depot.operator.Conditionals.*;
-import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
+import com.samskivert.jdbc.depot.operator.Conditionals.*;
+import com.samskivert.jdbc.depot.operator.Logic.*;
 
 import com.samskivert.util.IntListUtil;
 
@@ -313,6 +315,13 @@ public class GroupRepository extends DepotRepository
                     new FromOverride(GroupMembershipRecord.class),
                     new Where(GroupMembershipRecord.GROUP_ID_C, groupId)));
         updateLiteral(GroupRecord.class, groupId, fieldMap);
+    }
+
+    @Override // from DepotRepository
+    protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
+    {
+        classes.add(GroupRecord.class);
+        classes.add(GroupMembershipRecord.class);
     }
 
     /** Used to manage our group tags. */

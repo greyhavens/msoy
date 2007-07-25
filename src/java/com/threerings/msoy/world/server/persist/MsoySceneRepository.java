@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
@@ -14,6 +15,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
@@ -377,6 +379,14 @@ public class MsoySceneRepository extends DepotRepository
 
         log.info("Creating stock scene " + stock + ".");
         insertScene(model);
+    }
+
+    @Override // from DepotRepository
+    protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
+    {
+        classes.add(SceneRecord.class);
+        classes.add(SceneUpdateRecord.class);
+        classes.add(SceneFurniRecord.class);
     }
 
     /** The marshaller that assists us in managing scene updates. */

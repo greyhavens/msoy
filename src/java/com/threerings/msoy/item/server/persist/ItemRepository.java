@@ -6,11 +6,12 @@ package com.threerings.msoy.item.server.persist;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.samskivert.Log;
 import com.samskivert.io.PersistenceException;
@@ -844,6 +845,14 @@ public abstract class ItemRepository<
         return new ColumnExp(getTagRepository().getTagClass(), cname);
     }
 
+    @Override // from DepotRepository
+    protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
+    {
+        classes.add(getItemClass());
+        classes.add(getCloneClass());
+        classes.add(getCatalogClass());
+        classes.add(getRatingClass());
+    }
 
     /**
      * Specific item repositories override this method and indicate the class of item on which they

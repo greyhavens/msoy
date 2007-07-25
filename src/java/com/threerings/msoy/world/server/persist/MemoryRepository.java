@@ -5,11 +5,13 @@ package com.threerings.msoy.world.server.persist;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Conditionals.In;
@@ -49,9 +51,10 @@ public class MemoryRepository extends DepotRepository
     public List<MemoryRecord> loadMemories (byte itemType, Collection<Integer> itemIds)
         throws PersistenceException
     {
-        return findAll(MemoryRecord.class,
-                       new Where(new And(new Equals(MemoryRecord.ITEM_TYPE_C, itemType),
-                                         new In(MemoryRecord.class, MemoryRecord.ITEM_ID, itemIds))));
+        return findAll(
+            MemoryRecord.class,
+            new Where(new And(new Equals(MemoryRecord.ITEM_TYPE_C, itemType),
+                              new In(MemoryRecord.class, MemoryRecord.ITEM_ID, itemIds))));
     }
 
     /**
@@ -105,5 +108,11 @@ public class MemoryRepository extends DepotRepository
         } else if (update(record) == 0) {
             insert(record);
         }
+    }
+
+    @Override // from DepotRepository
+    protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
+    {
+        classes.add(MemoryRecord.class);
     }
 }

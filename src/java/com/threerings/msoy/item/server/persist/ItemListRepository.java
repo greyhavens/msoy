@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import java.util.logging.Level;
 
@@ -14,10 +15,9 @@ import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.JDBCUtil;
-
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
-
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 
@@ -96,5 +96,12 @@ public class ItemListRepository extends DepotRepository
     {
         // TODO: depot method to overwrite all rows with the same primary key with a new set
         // of rows
+    }
+
+    @Override // from DepotRepository
+    protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
+    {
+        classes.add(ItemIdentListRecord.class);
+        classes.add(ItemListInfoRecord.class);
     }
 }

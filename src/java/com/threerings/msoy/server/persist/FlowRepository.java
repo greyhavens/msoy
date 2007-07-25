@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
 
@@ -17,6 +18,7 @@ import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
@@ -374,6 +376,16 @@ public class FlowRepository extends DepotRepository
             }
         }
         return gameRecord;
+    }
+
+    @Override // from DepotRepository
+    protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
+    {
+        classes.add(GameAbuseRecord.class);
+        classes.add(GameFlowGrantLogRecord.class);
+        classes.add(DailyFlowRecord.class);
+        classes.add(MemberFlowRecord.class);
+        classes.add(MemberActionLogRecord.class);
     }
 
     /** Minutes in a day. */

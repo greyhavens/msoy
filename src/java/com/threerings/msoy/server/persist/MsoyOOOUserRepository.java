@@ -7,12 +7,14 @@ import java.sql.Date;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.Where;
 
 import com.samskivert.servlet.user.Password;
@@ -35,7 +37,7 @@ public class MsoyOOOUserRepository extends DepotRepository
     {
         super(new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT, conprov));
     }
-    
+
     /**
      * Looks up a user by email address and optionally loads their machine identifier information.
      *
@@ -227,7 +229,7 @@ public class MsoyOOOUserRepository extends DepotRepository
     {
         insert(new TaintedIdentRecord(machIdent));
     }
-    
+
     /**
      * Changes a user's username.
      *
@@ -270,7 +272,7 @@ public class MsoyOOOUserRepository extends DepotRepository
         user.email = email;
         user.created = new Date(System.currentTimeMillis());
         user.siteId = siteId;
-        
+
         // fill in the ooo-specific user information
         user.tokens = new byte[0];
         user.spots = "";
@@ -282,7 +284,7 @@ public class MsoyOOOUserRepository extends DepotRepository
 
         return user.userId;
     }
-    
+
     // documentation inherited
     protected void populateUser (OOOUser user, Username uname, Password pass, String email,
                                  int siteId, int tagId)
@@ -299,6 +301,15 @@ public class MsoyOOOUserRepository extends DepotRepository
         user.tokens = new byte[0];
         user.spots = "";
         user.affiliateTagId = tagId;
+    }
+
+    @Override // from DepotRepository
+    protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
+    {
+        classes.add(OOOUserRecord.class);
+        classes.add(UserIdentRecord.class);
+        classes.add(TaintedIdentRecord.class);
+        classes.add(HistoricalUserRecord.class);
     }
 
     /** The number of days in the past from now where we no longer

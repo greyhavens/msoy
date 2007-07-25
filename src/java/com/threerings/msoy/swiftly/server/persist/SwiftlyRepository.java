@@ -6,6 +6,7 @@ package com.threerings.msoy.swiftly.server.persist;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
@@ -13,6 +14,7 @@ import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
@@ -26,24 +28,12 @@ public class SwiftlyRepository extends DepotRepository
     public SwiftlyRepository (ConnectionProvider conprov)
     {
         super(conprov);
-
-        // Make sure our column sizes are updated
-        _ctx.registerMigration(
-            SwiftlySVNStorageRecord.class, new EntityMigration.Retype(4, "host"));
-        _ctx.registerMigration(
-            SwiftlySVNStorageRecord.class, new EntityMigration.Retype(4, "protocol"));
-        _ctx.registerMigration(
-            SwiftlySVNStorageRecord.class, new EntityMigration.Retype(4, "baseDir"));
-
-        // TIMESTAMP -> DATETIME
-        _ctx.registerMigration(
-            SwiftlyProjectRecord.class, new EntityMigration.Retype(12, "creationDate"));
     }
 
     /**
      * Find all the projects which have the remixable flag set and not the deleted flag.
+     * TODO: this should take a limit parameter
      */
-     // TODO: this should take a limit parameter
     public List<SwiftlyProjectRecord> findRemixableProjects ()
         throws PersistenceException
     {
@@ -54,20 +44,22 @@ public class SwiftlyRepository extends DepotRepository
 
     /**
      * Find all the projects which have this member as a collaborator and not the deleted flag.
+     * TODO: this should take a limit parameter
      */
-     // TODO: this should take a limit parameter
     public List<SwiftlyProjectRecord> findMembersProjects (final int memberId)
         throws PersistenceException
     {
         return findAll(SwiftlyProjectRecord.class,
-                new Join(SwiftlyProjectRecord.PROJECT_ID_C, SwiftlyCollaboratorsRecord.PROJECT_ID_C),
-                new Where(new And(new Equals(SwiftlyCollaboratorsRecord.MEMBER_ID_C, memberId),
-                new Equals(SwiftlyProjectRecord.DELETED_C, false))));
+                       new Join(SwiftlyProjectRecord.PROJECT_ID_C,
+                                SwiftlyCollaboratorsRecord.PROJECT_ID_C),
+                       new Where(new And(
+                                     new Equals(SwiftlyCollaboratorsRecord.MEMBER_ID_C, memberId),
+                                     new Equals(SwiftlyProjectRecord.DELETED_C, false))));
     }
 
     /**
-     * Loads the project record for the specified project. Returns null if no
-     * record has been created for that project.
+     * Loads the project record for the specified project. Returns null if no record has been
+     * created for that project.
      */
     public SwiftlyProjectRecord loadProject (int projectId)
         throws PersistenceException
@@ -219,7 +211,6 @@ public class SwiftlyRepository extends DepotRepository
         return record;
     }
 
-
     /**
      * Fetches the collaborators for a given project.
      */
@@ -242,7 +233,6 @@ public class SwiftlyRepository extends DepotRepository
 
     /**
      * Fetches the membership details for a given project and member, or null.
-     *
      */
     public SwiftlyCollaboratorsRecord getMembership (int projectId, int memberId)
         throws PersistenceException
@@ -285,4 +275,11 @@ public class SwiftlyRepository extends DepotRepository
         update(record, SwiftlyCollaboratorsRecord.BUILD_RESULT_ITEM_ID);
     }
 
+    @Override // from DepotRepository
+    protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
+    {
+        classes.add(SwiftlyProjectRecord.class);
+        classes.add(SwiftlySVNStorageRecord.class);
+        classes.add(SwiftlyCollaboratorsRecord.class);
+    }
 }

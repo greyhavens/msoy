@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import java.util.List;
+import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
 
@@ -17,6 +18,7 @@ import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Modifier;
 import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
@@ -266,10 +268,17 @@ public abstract class TagRepository extends DepotRepository
         insert(history);
         return rows;
     }
-    
+
     protected ColumnExp getTagColumn (String cname)
     {
         return new ColumnExp(getTagClass(), cname);
+    }
+
+    @Override // from DepotRepository
+    protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
+    {
+        classes.add(getTagClass());
+        classes.add(getTagHistoryClass());
     }
 
     protected Class<TagRecord> _tagClass;
