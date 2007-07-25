@@ -136,7 +136,7 @@ public class ItemContainer extends FlexTable
             });
 
         } else if (type == Item.FURNITURE || type == Item.GAME || type == Item.PHOTO ||
-                   type == Item.VIDEO) {
+                   type == Item.VIDEO || type == Item.TOY) {
             updateActionLabel(_itemList.contains(ident));
             FlashEvents.addListener(_listener = new FurniChangeListener() {
                 public void furniChanged (FurniChangedEvent event) {
