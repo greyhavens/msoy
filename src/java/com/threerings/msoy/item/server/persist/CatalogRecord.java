@@ -106,7 +106,6 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
     public int itemId;
 
     /** The time this item was listed in the catalog. */
-    @Column(columnDefinition="listedDate DATETIME NOT NULL")
     public Timestamp listedDate;
 
     /** The amount of flow it costs to purchase a clone of this item. */

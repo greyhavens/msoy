@@ -11,8 +11,7 @@ import com.samskivert.jdbc.depot.annotation.TableGenerator;
 /** Clone records for Photos. */
 @Entity
 @Table
-@TableGenerator(name="cloneId", allocationSize=-1,
-                initialValue=-1, pkColumnValue="PHOTO_CLONE")
+@TableGenerator(name="cloneId", pkColumnValue="PHOTO_CLONE")
 public class PhotoCloneRecord extends CloneRecord<PhotoRecord>
 {
 

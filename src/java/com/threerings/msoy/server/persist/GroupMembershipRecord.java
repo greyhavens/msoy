@@ -72,7 +72,6 @@ public class GroupMembershipRecord extends PersistentRecord
     public byte rank;
 
     /** The date that this rank was assigned on.  Used to decide rank seniority. */
-    @Column(columnDefinition="rankAssigned DATETIME NOT NULL")
     public Timestamp rankAssigned;
 
     /**

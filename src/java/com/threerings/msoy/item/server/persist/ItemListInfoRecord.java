@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import com.threerings.io.Streamable;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 
@@ -12,10 +14,7 @@ import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.annotation.Table;
-
 import com.samskivert.jdbc.depot.expression.ColumnExp;
-
-import com.threerings.io.Streamable;
 
 import com.threerings.msoy.item.data.all.ItemListInfo;
 

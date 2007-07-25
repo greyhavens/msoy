@@ -67,54 +67,6 @@ public class MemberRepository extends DepotRepository
     {
         super(conprov);
 
-        // TEMP
-        _ctx.registerMigration(MemberRecord.class, new EntityMigration.Retype(4, "lastSession"));
-
-        _ctx.registerMigration(FriendRecord.class, new EntityMigration(2) {
-            public int invoke (Connection conn) throws SQLException {
-                if (!JDBCUtil.tableContainsColumn(conn, _tableName, "status")) {
-                    // we'll accept this inconsistency
-                    log.warning(_tableName + ".status already dropped.");
-                    return 0;
-                }
-
-                Statement stmt = conn.createStatement();
-                try {
-                    log.info("Deleting pending friends and dropping 'status' from " + _tableName);
-                    int n = stmt.executeUpdate("delete from " + _tableName + " where status = 0");
-                    n += stmt.executeUpdate("alter table " + _tableName + " drop column status");
-                    return n;
-                } finally {
-                    stmt.close();
-                }
-            }
-
-        });
-
-        // added 4-27-2007
-        _ctx.registerMigration(MemberRecord.class, new EntityMigration.Rename(8, "inviterId",
-            MemberRecord.INVITING_FRIEND_ID));
-
-        // added 4-30-2007
-        _ctx.registerMigration(InvitationRecord.class, new EntityMigration.Retype(2, "issued"));
-        _ctx.registerMigration(InvitationRecord.class, new EntityMigration.Retype(2, "viewed"));
-        
-        // added 7-16-2007
-        _ctx.registerMigration(InvitationRecord.class, new EntityMigration(3) {
-            public int invoke (Connection conn) throws SQLException {
-                Statement stmt = conn.createStatement();
-                try {
-                    log.info("Removing primary key from " + _tableName);
-                    return stmt.executeUpdate("alter table " + _tableName + " drop primary key");
-                } finally {
-                    stmt.close();
-                }
-            }
-        });
-
-        // END TEMP
-        
-
         _flowRepo = new FlowRepository(_ctx);
 
         // add a cache invalidator that listens to single FriendRecord updates
@@ -136,7 +88,6 @@ public class MemberRepository extends DepotRepository
             public void entryCached (CacheKey key, MemberRecord newEntry, MemberRecord oldEntry) {
             }
         });
-
     }
 
     public FlowRepository getFlowRepository ()

@@ -18,7 +18,7 @@ import com.threerings.msoy.item.data.all.Item;
  */
 @Entity
 @Table
-@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="FURNITURE")
+@TableGenerator(name="itemId", pkColumnValue="FURNITURE")
 public class FurnitureRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START

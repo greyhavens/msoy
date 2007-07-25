@@ -18,7 +18,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  */
 @Entity
 @Table
-@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="VIDEO")
+@TableGenerator(name="itemId", pkColumnValue="VIDEO")
 public class VideoRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START

@@ -193,7 +193,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
      * globally unique among all digital items. Each type of item has its own
      * identifier space. */
     @Id
-    @GeneratedValue(generator="itemId", strategy=GenerationType.TABLE)
+    @GeneratedValue(generator="itemId", strategy=GenerationType.TABLE, allocationSize=1)
     public int itemId;
 
     /** The item ID from which this object was cloned, or 0 if this is not a clone. This field is
@@ -222,7 +222,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public int location;
 
     /** The timestamp at which this item was last touched. */
-    @Column(columnDefinition="lastTouched DATETIME NOT NULL")
     public Timestamp lastTouched;
 
     /** A user supplied name for this item. */

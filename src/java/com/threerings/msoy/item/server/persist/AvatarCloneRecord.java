@@ -13,8 +13,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 /** Clone records for Avatars. */
 @Entity
 @Table
-@TableGenerator(name="cloneId", allocationSize=-1,
-                initialValue=-1, pkColumnValue="AVATAR_CLONE")
+@TableGenerator(name="cloneId", pkColumnValue="AVATAR_CLONE")
 public class AvatarCloneRecord extends CloneRecord<AvatarRecord>
 {
     // AUTO-GENERATED: FIELDS START

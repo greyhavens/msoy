@@ -18,7 +18,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  */
 @Entity
 @Table
-@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="AUDIO")
+@TableGenerator(name="itemId", pkColumnValue="AUDIO")
 public class AudioRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START

@@ -5,6 +5,7 @@ package com.threerings.msoy.server.persist;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,22 +15,20 @@ import java.sql.Timestamp;
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.jdbc.depot.EntityMigration;
-import com.samskivert.jdbc.depot.CacheKey;
-import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.SimpleCacheKey;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
+import com.samskivert.jdbc.depot.clause.SelectClause;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
+import com.samskivert.jdbc.depot.expression.FunctionExp;
+import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
-import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.samskivert.util.IntListUtil;
 
@@ -55,11 +54,6 @@ public class GroupRepository extends DepotRepository
     public GroupRepository (ConnectionProvider conprov)
     {
         super(conprov);
-
-        // TEMP
-        _ctx.registerMigration(GroupRecord.class, new EntityMigration.Retype(14, "creationDate"));
-        // END TEMP
-
 
         _tagRepo = new TagRepository(_ctx) {
             protected TagRecord createTagRecord () {
@@ -308,8 +302,17 @@ public class GroupRepository extends DepotRepository
     protected void updateMemberCount (int groupId)
         throws PersistenceException
     {
-        updateLiteral(GroupRecord.class, groupId, "memberCount",
-            "(select count(*) from GroupMembershipRecord where groupId=" + groupId + ")");
+        Map<String, SQLExpression> fieldMap = new HashMap<String, SQLExpression>();
+        fieldMap.put(
+            GroupRecord.MEMBER_COUNT,
+            new SelectClause<GroupMembershipCount>(
+                    GroupMembershipCount.class,
+                    new String[] { GroupMembershipCount.COUNT },
+                    new FieldOverride(GroupMembershipCount.COUNT,
+                                      new FunctionExp("COUNT", new LiteralExp("*"))),
+                    new FromOverride(GroupMembershipRecord.class),
+                    new Where(GroupMembershipRecord.GROUP_ID_C, groupId)));
+        updateLiteral(GroupRecord.class, groupId, fieldMap);
     }
 
     /** Used to manage our group tags. */

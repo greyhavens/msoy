@@ -94,7 +94,6 @@ public class SwiftlyProjectRecord extends PersistentRecord
     public byte projectType;
 
     /** The time this project was created. */
-    @Column(columnDefinition="creationDate DATETIME NOT NULL")
     public Timestamp creationDate;
 
     /** The project name. */

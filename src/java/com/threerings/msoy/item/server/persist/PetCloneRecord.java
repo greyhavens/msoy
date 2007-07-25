@@ -11,8 +11,7 @@ import com.samskivert.jdbc.depot.annotation.TableGenerator;
 /** Clone records for Pet. */
 @Entity
 @Table
-@TableGenerator(name="cloneId", allocationSize=-1,
-                initialValue=-1, pkColumnValue="PET_CLONE")
+@TableGenerator(name="cloneId", pkColumnValue="PET_CLONE")
 public class PetCloneRecord extends CloneRecord<PetRecord>
 {
 

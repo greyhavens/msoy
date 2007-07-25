@@ -16,7 +16,7 @@ import com.threerings.msoy.item.data.all.Item;
  */
 @Entity
 @Table
-@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="PET")
+@TableGenerator(name="itemId", pkColumnValue="PET")
 public class PetRecord extends ItemRecord
 {
     public static final int SCHEMA_VERSION = 1 +

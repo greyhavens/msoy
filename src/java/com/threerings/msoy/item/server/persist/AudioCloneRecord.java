@@ -11,8 +11,7 @@ import com.samskivert.jdbc.depot.annotation.TableGenerator;
 /** Clone records for Audios. */
 @Entity
 @Table
-@TableGenerator(name="cloneId", allocationSize=-1,
-                initialValue=-1, pkColumnValue="AUDIO_CLONE")
+@TableGenerator(name="cloneId", pkColumnValue="AUDIO_CLONE")
 public class AudioCloneRecord extends CloneRecord<AudioRecord>
 {
 

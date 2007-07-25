@@ -19,7 +19,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  */
 @Entity
 @Table
-@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="GAME")
+@TableGenerator(name="itemId", pkColumnValue="GAME")
 public class GameRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -49,7 +49,7 @@ public class GameRecord extends ItemRecord
         BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     /** The XML game configuration. */
-    @Column(columnDefinition="config TEXT NOT NULL")
+    @Column(type="TEXT")
     public String config;
 
     /** A hash code identifying the game media. */

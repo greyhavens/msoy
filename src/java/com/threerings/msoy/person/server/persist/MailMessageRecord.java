@@ -144,7 +144,6 @@ public class MailMessageRecord extends PersistentRecord
     public String subject;
 
     /** The time at which the message was delivered. */
-    @Column(columnDefinition="sent DATETIME NOT NULL")
     public Timestamp sent;
 
     /** Whether or not this message is yet to be read. */

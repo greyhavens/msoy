@@ -91,11 +91,9 @@ public class InvitationRecord extends PersistentRecord
     public int inviteeId;
 
     /** The time that this invite was sent out */
-    @Column(columnDefinition="issued DATETIME NOT NULL")
     public Timestamp issued;
 
     /** The time that this invitation was first viewed. */
-    @Column(columnDefinition="viewed DATETIME")
     public Timestamp viewed;
 
     /** A blank constructor used when loading records from the database. */

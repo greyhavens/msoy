@@ -19,7 +19,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  */
 @Entity
 @Table
-@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="AVATAR")
+@TableGenerator(name="itemId", pkColumnValue="AVATAR")
 public class AvatarRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START

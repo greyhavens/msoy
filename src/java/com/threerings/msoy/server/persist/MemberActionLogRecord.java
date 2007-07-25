@@ -55,7 +55,6 @@ public class MemberActionLogRecord extends PersistentRecord
     public int actionId;
     
     /** When this action occured. */
-    @Column(columnDefinition="actionTime DATETIME NOT NULL")
     public Timestamp actionTime;
 
     /** An (optional) opaque value, offline parsed/interpreted depending on the action. */

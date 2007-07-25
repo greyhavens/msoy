@@ -12,9 +12,9 @@ import java.util.List;
 
 import com.samskivert.io.PersistenceException;
 
+import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Modifier;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
@@ -42,18 +42,14 @@ public abstract class TagRepository extends DepotRepository
     public TagRepository (PersistenceContext ctx)
     {
         super(ctx);
+
         @SuppressWarnings("unchecked") Class<TagRecord> tagClass = (Class<TagRecord>)
             createTagRecord().getClass();
         _tagClass = tagClass;
+
         @SuppressWarnings("unchecked") Class<TagHistoryRecord> thClass = (Class<TagHistoryRecord>)
             createTagHistoryRecord().getClass();
         _tagHistoryClass = thClass;
-
-        // TEMP: migrations for new *TagRecord column names
-        _ctx.registerMigration(_tagClass, new EntityMigration.Rename(2, "itemId", "targetId"));
-        _ctx.registerMigration(_tagHistoryClass,
-                               new EntityMigration.Rename(2, "itemId", "targetId"));
-        // TEMP
     }
 
     /**
@@ -241,15 +237,16 @@ public abstract class TagRepository extends DepotRepository
     {
         final String tagTable = _ctx.getMarshaller(getTagClass()).getTableName();
         int rows = _ctx.invoke(new Modifier() {
-            public int invoke (Connection conn) throws SQLException {
+            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
                 PreparedStatement stmt = null;
                 try {
                     stmt = conn.prepareStatement(
-                        " INSERT INTO " + tagTable +
-                        " (" + TagRecord.TARGET_ID + ", " + TagRecord.TAG_ID + ")" +
-                        "      SELECT ?, " + TagRecord.TAG_ID +
-                        "        FROM " + tagTable +
-                        "       WHERE " + TagRecord.TARGET_ID + " = ?");
+                        " INSERT INTO " + liaison.tableSQL(tagTable) + " (" +
+                        liaison.columnSQL(TagRecord.TARGET_ID) + ", " +
+                        liaison.columnSQL(TagRecord.TAG_ID) + ")" +
+                        "      SELECT ?, " + liaison.columnSQL(TagRecord.TAG_ID) +
+                        "        FROM " + liaison.tableSQL(tagTable) +
+                        "       WHERE " + liaison.columnSQL(TagRecord.TARGET_ID) + " = ?");
                     stmt.setInt(1, toTargetId);
                     stmt.setInt(2, fromTargetId);
                     return stmt.executeUpdate();

@@ -194,14 +194,12 @@ public class MemberRecord extends PersistentRecord
     public int sessionMinutes;
 
     /** The time at which the player ended their last session. */
-    @Column(columnDefinition="lastSession DATETIME NOT NULL")
     public Timestamp lastSession;
 
     /** This member's current humanity rating, between 0 and {@link MemberObject#MAX_HUMANITY}. */
     public int humanity;
 
     /** The time at which we last assessed this member's humanity. */
-    @Column(columnDefinition="lastHumanityAssessment DATETIME NOT NULL")
     public Timestamp lastHumanityAssessment;
 
     /** Various one bit data. */

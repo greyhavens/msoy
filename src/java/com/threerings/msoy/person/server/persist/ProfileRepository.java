@@ -40,40 +40,6 @@ public class ProfileRepository extends DepotRepository
     public ProfileRepository (ConnectionProvider conprov)
     {
         super(conprov);
-
-        // TEMP - added 6-14-2007
-        _ctx.registerMigration(ProfileRecord.class, new EntityMigration(5) {
-            public boolean runBeforeDefault () {
-                return false;
-            }
-            public int invoke (Connection conn) throws SQLException {
-                if (!JDBCUtil.tableContainsColumn(conn, _tableName, "firstName")) {
-                    log.warning(_tableName + ".firstName already dropped.");
-                    return 0;
-                }
-                if (!JDBCUtil.tableContainsColumn(conn, _tableName, "lastName")) {
-                    log.warning(_tableName + ".lastName already dropped.");
-                    return 0;
-                }
-                if (!JDBCUtil.tableContainsColumn(conn, _tableName, "realName")) {
-                    log.warning(_tableName + ".realName has not yet been created.");
-                    return 0;
-                }
-
-                Statement stmt = conn.createStatement();
-                try {
-                    log.info("Merging firstName and lastName into realName in " + _tableName);
-                    int n = stmt.executeUpdate(
-                        "update " + _tableName + " set realName=concat(firstName,\" \",lastName)");
-                    n += stmt.executeUpdate("alter table " + _tableName + " drop column firstName");
-                    n += stmt.executeUpdate("alter table " + _tableName + " drop column lastName");
-                    return n;
-                } finally {
-                    stmt.close();
-                }
-            }
-        });
-        // END TEMP
     }
 
     /**

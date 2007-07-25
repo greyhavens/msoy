@@ -6,7 +6,9 @@ package com.threerings.msoy.server.persist;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.samskivert.io.PersistenceException;
 
@@ -22,6 +24,9 @@ import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
+import com.samskivert.jdbc.depot.expression.SQLExpression;
+import com.samskivert.jdbc.depot.operator.Arithmetic;
+import com.samskivert.jdbc.depot.operator.SQLOperator;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 
@@ -125,17 +130,19 @@ public class FlowRepository extends DepotRepository
             // tell our humanity helper about the record
             helper.noteRecord(record);
         }
+        
+        Map<String, SQLExpression> fieldMap = new HashMap<String, SQLExpression>();
 
         // update their action summary counts
         for (IntIntMap.IntIntEntry entry : actionCounts.entrySet()) {
+            fieldMap.put(
+                MemberActionSummaryRecord.COUNT,
+                new Arithmetic.Add(MemberActionSummaryRecord.COUNT_C, entry.getIntValue()));
             updateLiteral(
                 MemberActionSummaryRecord.class,
                 MemberActionSummaryRecord.MEMBER_ID, memberId,
                 MemberActionSummaryRecord.ACTION_ID, entry.getIntKey(),
-                new String[] {
-                    MemberActionSummaryRecord.COUNT,
-                    MemberActionSummaryRecord.COUNT + " + " + entry.getIntValue()
-                });
+                fieldMap);
         }
 
         // clear their log tables -- no cache invalidation needed because these records do not
@@ -270,16 +277,17 @@ public class FlowRepository extends DepotRepository
 
         String op = grant ? "+" : "-";
 
-        String[] fields = new String[] { MemberRecord.FLOW, MemberRecord.FLOW + op + amount };
+        Map<String, SQLExpression> fieldMap = new HashMap<String, SQLExpression>();
+        fieldMap.put(MemberRecord.FLOW, grant ?
+            new Arithmetic.Add(MemberRecord.FLOW_C, amount) :
+            new Arithmetic.Sub(MemberRecord.FLOW_C, amount));
         if (grant && accumulate) {
             // accumulate positive flow updates in its own field
-            fields = ArrayUtil.concatenate(fields, new String[] {
-                MemberRecord.ACC_FLOW, MemberRecord.ACC_FLOW + op + amount
-            });
+            fieldMap.put(MemberRecord.ACC_FLOW, new Arithmetic.Add(MemberRecord.ACC_FLOW_C, amount));
         }
 
         Key key = MemberFlowRecord.getKey(memberId);
-        int mods = updateLiteral(MemberRecord.class, key, key, fields);
+        int mods = updateLiteral(MemberRecord.class, key, key, fieldMap);
         if (mods == 0) {
             throw new PersistenceException(
                 "Flow " + type + " modified zero rows " +
@@ -292,11 +300,13 @@ public class FlowRepository extends DepotRepository
 
         boolean again = false;
         do {
+            fieldMap.clear();
+            fieldMap.put(
+                DailyFlowRecord.AMOUNT, new Arithmetic.Add(DailyFlowRecord.AMOUNT_C, amount));
             mods = updateLiteral(
                 DailyFlowRecord.class,
                 new Where(DailyFlowRecord.TYPE_C, type, DailyFlowRecord.DATE_C, date),
-                null,
-                DailyFlowRecord.AMOUNT, DailyFlowRecord.AMOUNT + op + amount);
+                null, fieldMap);
             if (mods == 0) {
                 // if this is the second time we tried that update, flip out.
                 if (again) {

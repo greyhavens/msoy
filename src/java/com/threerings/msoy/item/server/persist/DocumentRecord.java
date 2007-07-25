@@ -18,7 +18,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  */
 @Entity
 @Table
-@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="DOCUMENT")
+@TableGenerator(name="itemId", pkColumnValue="DOCUMENT")
 public class DocumentRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START

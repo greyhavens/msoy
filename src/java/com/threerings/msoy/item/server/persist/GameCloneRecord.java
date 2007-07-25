@@ -11,8 +11,7 @@ import com.samskivert.jdbc.depot.annotation.TableGenerator;
 /** Clone records for Games. */
 @Entity
 @Table
-@TableGenerator(name="cloneId", allocationSize=-1,
-                initialValue=-1, pkColumnValue="GAME_CLONE")
+@TableGenerator(name="cloneId", pkColumnValue="GAME_CLONE")
 public class GameCloneRecord extends CloneRecord<GameRecord>
 {
 

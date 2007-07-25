@@ -19,7 +19,7 @@ import com.threerings.msoy.item.data.all.Photo;
  */
 @Entity
 @Table
-@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="PHOTO")
+@TableGenerator(name="itemId", pkColumnValue="PHOTO")
 public class PhotoRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START

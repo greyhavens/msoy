@@ -18,7 +18,7 @@ import com.threerings.msoy.item.data.all.Item;
  */
 @Entity
 @Table
-@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="DECOR")
+@TableGenerator(name="itemId", pkColumnValue="DECOR")
 public class DecorRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START
