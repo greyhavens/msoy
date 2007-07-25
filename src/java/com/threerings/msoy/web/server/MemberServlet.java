@@ -171,11 +171,11 @@ public class MemberServlet extends MsoyServiceServlet
                 log.log(Level.WARNING, "Failed to load friends or groups", e);
                 throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
             }
+            // we add ourselves to our friends list so that we see where we are as well
+            friends.add(new FriendEntry(name, true));
         } else {
             friends = new ArrayList<FriendEntry>();
         }
-        // we add ourselves to our friends list so that we see where we are as well
-        friends.add(new FriendEntry(name, true));
 
         // now proceed to the dobj thread to get runtime state
         final ServletWaiter<String> waiter = new ServletWaiter<String>(
@@ -224,9 +224,9 @@ public class MemberServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser(ident);
 
-        // make sure this user still has available invites
         try {
-            // we already check this value in GWT land, and deal with it sensibly there
+            // make sure this user still has available invites; we already check this value in GWT
+            // land, and deal with it sensibly there
             if (MsoyServer.memberRepo.getInvitesGranted(mrec.memberId) < addresses.size()) {
                 throw new ServiceException(ServiceException.INTERNAL_ERROR);
             }
@@ -251,7 +251,6 @@ public class MemberServlet extends MsoyServiceServlet
         try {
             InvitationRecord invRec = MsoyServer.memberRepo.loadInvite(inviteId, viewing);
             return (invRec == null) ? null : invRec.toInvitationObject();
-
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getInvitation failed [inviteId=" + inviteId + "]", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
@@ -266,7 +265,6 @@ public class MemberServlet extends MsoyServiceServlet
             if (!MsoyServer.memberRepo.inviteAvailable(invite.inviteId)) {
                 throw new ServiceException(ServiceException.INTERNAL_ERROR);
             }
-
             MsoyServer.memberRepo.optOutInvite(invite);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "optOut failed [inviteId=" + invite.inviteId + "]", pe);
