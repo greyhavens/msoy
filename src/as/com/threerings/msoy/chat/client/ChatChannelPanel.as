@@ -175,10 +175,13 @@ public class ChatChannelPanel extends VBox
     public function removeRoomTab () :void
     {
         if (_wtab != null) {
+            var wtab :WorldChatTab = _wtab;
+            // calling shutdown on WorldChatTab causes the RoomView to call containsRoomTab() to
+            // see what aspect ratio it should use, therefore _wtab needs to be null
+            _wtab = null; 
             _ctx.getTopPanel().getControlBar().setTabMode(false);
-            _tabnav.removeChild(_wtab);
-            _wtab.shutdown();
-            _wtab = null;
+            _tabnav.removeChild(wtab);
+            wtab.shutdown();
         }
     }
 
