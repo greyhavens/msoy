@@ -1,6 +1,3 @@
-//
-// $Id$
-
 package client.profile;
 
 
@@ -299,9 +296,9 @@ public interface ProfileMessages extends com.google.gwt.i18n.client.Messages {
   String friendsTitle();
 
   /**
-   * Translated "Rated Games".
+   * Translated "Games".
    * 
-   * @return translated "Rated Games"
+   * @return translated "Games"
    * @gwt.key ratingsTitle
    */
   String ratingsTitle();
