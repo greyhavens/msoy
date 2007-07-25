@@ -106,7 +106,7 @@ public class ChatChannelManager
         // if we made it this far, we can do our joining immediately
         finishJoining(user, channel, listener);
     }
-    
+
     // from interface ChatChannelProvider
     public void leaveChannel (ClientObject caller, ChatChannel channel)
     {
@@ -137,7 +137,7 @@ public class ChatChannelManager
 
         // if they've already got a channel with this name (maybe they created a chat channel,
         // invited people to it, then left and are now "recreating it"), just give them back the
-        // original channel; otherwise create it 
+        // original channel; otherwise create it
         ChatChannelObject ccobj = _channels.get(channel);
         if (ccobj == null) {
             ccobj = createChannel(channel);
@@ -155,7 +155,7 @@ public class ChatChannelManager
     {
         return _channels.keySet();
     }
-    
+
     /**
      * Creates a new chat channel object, registers it in the necessary places and returns it.
      */
@@ -208,7 +208,6 @@ public class ChatChannelManager
         // and let them know that they're good to go
         listener.requestProcessed(ccobj.getOid());
     }
-
 
     /**
      * Called when the last chatter leaves a channel, cleans up and destroys the channel.
