@@ -15,9 +15,9 @@ import java.sql.Timestamp;
 
 import com.samskivert.io.PersistenceException;
 
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
@@ -53,9 +53,9 @@ public class GroupRepository extends DepotRepository
     {
     }
 
-    public GroupRepository (ConnectionProvider conprov)
+    public GroupRepository (PersistenceContext ctx)
     {
-        super(conprov);
+        super(ctx);
 
         _tagRepo = new TagRepository(_ctx) {
             protected TagRecord createTagRecord () {

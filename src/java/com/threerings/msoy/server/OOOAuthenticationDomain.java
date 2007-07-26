@@ -34,7 +34,7 @@ public class OOOAuthenticationDomain
     {
         // we get our user manager configuration from the ocean config
         _usermgr = new OOOUserManager(
-            ServerConfig.config.getSubProperties("oooauth"), MsoyServer.conProv);
+            ServerConfig.config.getSubProperties("oooauth"), MsoyServer._conProv);
         _authrep = (OOOUserRepository)_usermgr.getRepository();
     }
 

@@ -4,7 +4,7 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.EntityMigration;
 
@@ -32,9 +32,9 @@ public class GameRepository extends ItemRepository<
     {
     }
 
-    public GameRepository (ConnectionProvider provider)
+    public GameRepository (PersistenceContext ctx)
     {
-        super(provider);
+        super(ctx);
 
         // TEMP
         _ctx.registerMigration(GameRecord.class, new EntityMigration.Drop(8007, "gameType"));
@@ -45,7 +45,8 @@ public class GameRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<GameRecord> getItemClass () {
+    protected Class<GameRecord> getItemClass ()
+    {
         return GameRecord.class;
     }
     

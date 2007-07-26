@@ -13,7 +13,6 @@ import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -27,9 +26,9 @@ import static com.threerings.msoy.Log.log;
 
 public class ItemListRepository extends DepotRepository
 {
-    public ItemListRepository (ConnectionProvider provider)
+    public ItemListRepository (PersistenceContext ctx)
     {
-        super(new PersistenceContext("itemlistdb", provider));
+        super(ctx);
 
         // TEMP: test and create tables
         try {

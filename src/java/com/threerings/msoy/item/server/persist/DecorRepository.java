@@ -4,7 +4,7 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
 import com.threerings.msoy.server.persist.TagRecord;
@@ -31,13 +31,14 @@ public class DecorRepository extends ItemRepository<
     {
     }
 
-    public DecorRepository (ConnectionProvider provider)
+    public DecorRepository (PersistenceContext ctx)
     {
-        super(provider);
+        super(ctx);
     }
 
     @Override
-    protected Class<DecorRecord> getItemClass () {
+    protected Class<DecorRecord> getItemClass ()
+    {
         return DecorRecord.class;
     }
     

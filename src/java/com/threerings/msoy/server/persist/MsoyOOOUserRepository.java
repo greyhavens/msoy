@@ -11,7 +11,6 @@ import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
 
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -33,9 +32,9 @@ import com.threerings.user.OOOUserRepository;
  */
 public class MsoyOOOUserRepository extends DepotRepository
 {
-    public MsoyOOOUserRepository (ConnectionProvider conprov)
+    public MsoyOOOUserRepository (PersistenceContext ctx)
     {
-        super(new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT, conprov));
+        super(ctx);
     }
 
     /**

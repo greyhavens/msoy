@@ -21,7 +21,6 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.StringUtil;
 
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.CacheInvalidator;
@@ -64,9 +63,9 @@ public class MemberRepository extends DepotRepository
     /** The cache identifier for the friends-of-a-member collection query. */
     public static final String FRIENDS_CACHE_ID = "FriendsCache";
 
-    public MemberRepository (ConnectionProvider conprov)
+    public MemberRepository (PersistenceContext ctx)
     {
-        super(conprov);
+        super(ctx);
 
         _flowRepo = new FlowRepository(_ctx);
 

@@ -11,8 +11,8 @@ import java.util.logging.Level;
 import org.apache.velocity.VelocityContext;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
@@ -48,9 +48,9 @@ public class MailManager
     /**
      * Prepares our mail manager for operation.
      */
-    public void init (ConnectionProvider conProv, MemberRepository memberRepo)
+    public void init (PersistenceContext ctx, MemberRepository memberRepo)
     {
-        _mailRepo = new MailRepository(conProv);
+        _mailRepo = new MailRepository(ctx);
         _memberRepo = memberRepo;
 
         // TEMP: make sure everyone has the stock folders

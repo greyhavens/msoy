@@ -9,11 +9,11 @@ import java.util.Map;
 import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Where;
@@ -25,9 +25,9 @@ import com.samskivert.jdbc.depot.operator.Logic.And;
  */
 public class SwiftlyRepository extends DepotRepository
 {
-    public SwiftlyRepository (ConnectionProvider conprov)
+    public SwiftlyRepository (PersistenceContext ctx)
     {
-        super(conprov);
+        super(ctx);
     }
 
     /**

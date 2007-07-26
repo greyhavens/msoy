@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
@@ -29,9 +29,9 @@ import com.threerings.msoy.item.data.all.ItemIdent;
  */
 public class MemoryRepository extends DepotRepository
 {
-    public MemoryRepository (ConnectionProvider conprov)
+    public MemoryRepository (PersistenceContext ctx)
     {
-        super(conprov);
+        super(ctx);
     }
 
     /**

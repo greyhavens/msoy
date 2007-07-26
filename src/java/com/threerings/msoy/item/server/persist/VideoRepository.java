@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
 import com.threerings.msoy.server.persist.TagRecord;
@@ -28,13 +28,14 @@ public class VideoRepository extends ItemRepository<
     {
     }
 
-    public VideoRepository (ConnectionProvider provider)
+    public VideoRepository (PersistenceContext ctx)
     {
-        super(provider);
+        super(ctx);
     }
 
     @Override
-    protected Class<VideoRecord> getItemClass () {
+    protected Class<VideoRecord> getItemClass ()
+    {
         return VideoRecord.class;
     }
     

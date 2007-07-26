@@ -12,9 +12,9 @@ import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
@@ -57,10 +57,10 @@ import static com.threerings.msoy.Log.log;
 public class MsoySceneRepository extends DepotRepository
     implements SceneRepository
 {
-    public MsoySceneRepository (ConnectionProvider provider)
+    public MsoySceneRepository (PersistenceContext ctx)
         throws PersistenceException
     {
-        super(provider);
+        super(ctx);
 
         // create our stock scenes if they are not yet created
         for (SceneRecord.Stock stock : SceneRecord.Stock.values()) {

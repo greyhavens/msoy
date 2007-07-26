@@ -12,6 +12,8 @@ import java.util.logging.Level;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.jdbc.TransitionRepository;
+import com.samskivert.jdbc.depot.PersistenceContext;
+
 import com.samskivert.util.AuditLogger;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
@@ -90,8 +92,8 @@ import static com.threerings.msoy.Log.log;
  */
 public class MsoyServer extends WhirledServer
 {
-    /** The connection provider used to access our JDBC databases. */
-    public static ConnectionProvider conProv;
+    /** Provides database access to all of our repositories. */
+    public static PersistenceContext perCtx;
 
     /** Maintains a registry of runtime configuration information. */
     public static ConfigRegistry confReg;
@@ -332,10 +334,11 @@ public class MsoyServer extends WhirledServer
 
         // create our connection provider before calling super.init() because our superclass will
         // attempt to create our authenticator and we need the connection provider ready by then
-        conProv = new StaticConnectionProvider(ServerConfig.getJDBCConfig());
+        _conProv = new StaticConnectionProvider(ServerConfig.getJDBCConfig());
+        perCtx = new PersistenceContext("msoy", _conProv);
 
         // create our transition manager prior to doing anything else
-        transitRepo = new TransitionRepository(conProv);
+        transitRepo = new TransitionRepository(_conProv);
 
         super.init();
 
@@ -353,22 +356,22 @@ public class MsoyServer extends WhirledServer
         omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
 
         // create our various repositories
-        memberRepo = new MemberRepository(conProv);
-        profileRepo = new ProfileRepository(conProv);
-        groupRepo = new GroupRepository(conProv);
-        swiftlyRepo = new SwiftlyRepository(conProv);
-        ratingRepo = new RatingRepository(conProv);
-        memoryRepo = new MemoryRepository(conProv);
-        statRepo = new StatRepository(conProv);
-        gameCookieRepo = new GameCookieRepository(conProv);
+        memberRepo = new MemberRepository(perCtx);
+        profileRepo = new ProfileRepository(perCtx);
+        groupRepo = new GroupRepository(perCtx);
+        swiftlyRepo = new SwiftlyRepository(perCtx);
+        ratingRepo = new RatingRepository(perCtx);
+        memoryRepo = new MemoryRepository(perCtx);
+        statRepo = new StatRepository(_conProv);
+        gameCookieRepo = new GameCookieRepository(_conProv);
 
         // create and set up our configuration registry and admin service
-        confReg = new DatabaseConfigRegistry(conProv, invoker);
+        confReg = new DatabaseConfigRegistry(_conProv, invoker);
         AdminProvider.init(invmgr, confReg);
 
         // start up our peer manager
         log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
-        peerMan = new MsoyPeerManager(conProv, invoker);
+        peerMan = new MsoyPeerManager(_conProv, invoker);
 
         // initialize the swiftly invoker
         swiftlyInvoker = new Invoker("swiftly_invoker", omgr);
@@ -428,7 +431,7 @@ public class MsoyServer extends WhirledServer
     protected SceneRegistry createSceneRegistry ()
         throws Exception
     {
-        return new MsoySceneRegistry(invmgr, sceneRepo = new MsoySceneRepository(conProv));
+        return new MsoySceneRegistry(invmgr, sceneRepo = new MsoySceneRepository(perCtx));
     }
 
     @Override // from CrowdServer
@@ -489,9 +492,9 @@ public class MsoyServer extends WhirledServer
         memberMan.init(memberRepo, groupRepo);
         friendMan.init();
         groupMan.init(groupRepo, memberRepo);
-        mailMan.init(conProv, memberRepo);
+        mailMan.init(perCtx, memberRepo);
         channelMan.init(invmgr);
-        itemMan.init(conProv);
+        itemMan.init(perCtx);
         swiftlyMan.init(invmgr);
         petMan.init(invmgr);
         lobbyReg.init(invmgr);
@@ -584,6 +587,10 @@ public class MsoyServer extends WhirledServer
 
     /** Used to auto-restart the development server when its code is updated. */
     protected long _codeModified;
+
+    /** The connection provider used to access our JDBC databases. Don't use this; rather use
+     * {@link #perCtx}. */
+    protected static ConnectionProvider _conProv;
 
     protected static File _logdir = new File(ServerConfig.serverRoot, "log");
     protected static AuditLogger _glog = createAuditLog("server");

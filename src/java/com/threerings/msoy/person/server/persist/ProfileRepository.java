@@ -14,10 +14,10 @@ import java.sql.Statement;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntListUtil;
 
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
@@ -39,9 +39,9 @@ import static com.threerings.msoy.Log.log;
  */
 public class ProfileRepository extends DepotRepository
 {
-    public ProfileRepository (ConnectionProvider conprov)
+    public ProfileRepository (PersistenceContext ctx)
     {
-        super(conprov);
+        super(ctx);
     }
 
     /**

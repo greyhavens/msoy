@@ -12,10 +12,10 @@ import com.samskivert.util.IntListUtil;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.MultiKey;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.ForUpdate;
@@ -33,9 +33,9 @@ import static com.threerings.msoy.Log.log;
  */
 public class MailRepository extends DepotRepository
 {
-    public MailRepository (ConnectionProvider conprov)
+    public MailRepository (PersistenceContext ctx)
     {
-        super(conprov);
+        super(ctx);
     }
 
     /**

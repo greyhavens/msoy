@@ -20,7 +20,6 @@ import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.QuickSort;
 
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
@@ -75,11 +74,10 @@ public abstract class ItemRepository<
     /** The factor by which we split item cost into gold and flow. */
     public final static int FLOW_FOR_GOLD = 600;
 
-    public ItemRepository (ConnectionProvider provider)
+    public ItemRepository (PersistenceContext ctx)
     {
-        // we'll be using one persistence context per ItemRecord type
-        super(new PersistenceContext("itemdb", provider));
-        _tagRepo = new TagRepository(_ctx) {
+        super(ctx);
+        _tagRepo = new TagRepository(ctx) {
             protected TagRecord createTagRecord () {
                 return ItemRepository.this.createTagRecord();
             }

@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -28,13 +28,14 @@ public class PhotoRepository extends ItemRepository<
     {
     }
 
-    public PhotoRepository (ConnectionProvider provider)
+    public PhotoRepository (PersistenceContext ctx)
     {
-        super(provider);
+        super(ctx);
     }
 
     @Override
-    protected Class<PhotoRecord> getItemClass () {
+    protected Class<PhotoRecord> getItemClass ()
+    {
         return PhotoRecord.class;
     }
     

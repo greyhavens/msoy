@@ -4,8 +4,7 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.io.PersistenceException;
-
-import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -32,9 +31,9 @@ public class AvatarRepository extends ItemRepository<
     {
     }
 
-    public AvatarRepository (ConnectionProvider provider)
+    public AvatarRepository (PersistenceContext ctx)
     {
-        super(provider);
+        super(ctx);
     }
 
     /**
@@ -51,7 +50,8 @@ public class AvatarRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<AvatarRecord> getItemClass () {
+    protected Class<AvatarRecord> getItemClass ()
+    {
         return AvatarRecord.class;
     }
     

@@ -15,8 +15,6 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntListUtil;
@@ -24,6 +22,9 @@ import com.samskivert.util.ObserverList;
 import com.samskivert.util.Predicate;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
+
+import com.samskivert.jdbc.RepositoryListenerUnit;
+import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -106,32 +107,32 @@ public class ItemManager
      * repositories.
      */
     @SuppressWarnings("unchecked")
-    public void init (ConnectionProvider conProv) throws PersistenceException
+    public void init (PersistenceContext ctx) throws PersistenceException
     {
         ItemRepository repo;
         // create our various repositories
-        repo = new AudioRepository(conProv);
+        repo = new AudioRepository(ctx);
         _repos.put(Item.AUDIO, repo);
-        repo = (_avatarRepo = new AvatarRepository(conProv));
+        repo = (_avatarRepo = new AvatarRepository(ctx));
         _repos.put(Item.AVATAR, repo);
-        repo = new DocumentRepository(conProv);
+        repo = new DocumentRepository(ctx);
         _repos.put(Item.DOCUMENT, repo);
-        repo = new FurnitureRepository(conProv);
+        repo = new FurnitureRepository(ctx);
         _repos.put(Item.FURNITURE, repo);
-        repo = new ToyRepository(conProv);
+        repo = new ToyRepository(ctx);
         _repos.put(Item.TOY, repo);
-        repo = (_gameRepo = new GameRepository(conProv));
+        repo = (_gameRepo = new GameRepository(ctx));
         _repos.put(Item.GAME, repo);
-        repo = (_petRepo = new PetRepository(conProv));
+        repo = (_petRepo = new PetRepository(ctx));
         _repos.put(Item.PET, repo);
-        repo = new PhotoRepository(conProv);
+        repo = new PhotoRepository(ctx);
         _repos.put(Item.PHOTO, repo);
-        repo = new VideoRepository(conProv);
+        repo = new VideoRepository(ctx);
         _repos.put(Item.VIDEO, repo);
-        repo = (_decorRepo = new DecorRepository(conProv));
+        repo = (_decorRepo = new DecorRepository(ctx));
         _repos.put(Item.DECOR, repo);
 
-        _listRepo = new ItemListRepository(conProv);
+        _listRepo = new ItemListRepository(ctx);
 
         // register our invocation service
         MsoyServer.invmgr.registerDispatcher(new ItemDispatcher(this), MsoyCodes.WORLD_GROUP);
@@ -184,7 +185,7 @@ public class ItemManager
     public ItemRepository<ItemRecord, ?, ?, ?> getRepository (byte type, ResultListener<?> rl)
     {
         try {
-            return getRepositoryFor(type);
+            return getRepositoryFor (type);
         } catch (MissingRepositoryException mre) {
             rl.requestFailed(mre);
             return null;
@@ -198,7 +199,7 @@ public class ItemManager
         byte type, InvocationService.InvocationListener lner)
     {
         try {
-            return getRepositoryFor(type);
+            return getRepositoryFor (type);
         } catch (MissingRepositoryException mre) {
             lner.requestFailed(ItemCodes.E_INTERNAL_ERROR);
             return null;
@@ -207,7 +208,7 @@ public class ItemManager
 
     /**
      * Returns an iterator of item types for which we have repositories.
-     */ 
+     */
     public Iterable<Byte> getRepositoryTypes ()
     {
         return _repos.keySet();
@@ -221,7 +222,7 @@ public class ItemManager
         throws ServiceException
     {
         try {
-            return getRepositoryFor(type);
+            return getRepositoryFor (type);
         } catch (MissingRepositoryException mre) {
             log.warning("Requested invalid repository type " + type + ".");
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
@@ -465,7 +466,7 @@ public class ItemManager
                         (oldAvatar != null) ? oldAvatar.itemId : 0,
                         (newAvatar != null) ? newAvatar.itemId : 0, lner);
     }
-        
+
     /**
      * Update usage of any items. Old item will be marked as unused, and new item will be
      * marked with the itemUseType id.
@@ -526,7 +527,7 @@ public class ItemManager
             }
         });
     }
-   
+
     /**
      * Update usage of the specified items.
      *
@@ -1183,9 +1184,9 @@ public class ItemManager
                     return;
                 }
                 final byte type = result.getType();
-                if (type == Item.DECOR || type == Item.AUDIO || 
+                if (type == Item.DECOR || type == Item.AUDIO ||
                     result.used == Item.USED_AS_FURNITURE) {
-                    MsoyServer.screg.resolveScene(result.location, 
+                    MsoyServer.screg.resolveScene(result.location,
                         new SceneRegistry.ResolutionListener() {
                             public void sceneWasResolved (SceneManager scmgr) {
                                 if (type == Item.DECOR) {
@@ -1198,14 +1199,14 @@ public class ItemManager
                                 lner.requestProcessed();
                             }
                             public void sceneFailedToResolve (int sceneId, Exception reason) {
-                                log.log(Level.WARNING, "Scene failed to resolve. [id=" + sceneId + 
+                                log.log(Level.WARNING, "Scene failed to resolve. [id=" + sceneId +
                                     "]", reason);
                                 lner.requestFailed(InvocationCodes.INTERNAL_ERROR);
                             }
                         });
                 } else {
                     // TODO: avatar reclamation will be possible
-                    log.log(Level.WARNING, "Item to be reclaimed is neither decor nor furni " + 
+                    log.log(Level.WARNING, "Item to be reclaimed is neither decor nor furni " +
                         "[type=" + result.getType() + ", id=" + result.itemId + "]");
                     lner.requestFailed(InvocationCodes.INTERNAL_ERROR);
                     return;
@@ -1439,7 +1440,7 @@ public class ItemManager
         {
             LookupType lt = _byType.get(itemType);
             if (lt == null) {
-                lt = new LookupType(itemType, getRepositoryFor(itemType));
+                lt = new LookupType(itemType, getRepositoryFor (itemType));
                 _byType.put(itemType, lt);
             }
             lt.addItemId(itemId);

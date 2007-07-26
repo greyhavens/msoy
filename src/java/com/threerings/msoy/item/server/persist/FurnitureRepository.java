@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
 import com.threerings.msoy.server.persist.TagRecord;
@@ -28,13 +28,14 @@ public class FurnitureRepository extends ItemRepository<
     {
     }
 
-    public FurnitureRepository (ConnectionProvider provider)
+    public FurnitureRepository (PersistenceContext ctx)
     {
-        super(provider);
+        super(ctx);
     }
 
     @Override
-    protected Class<FurnitureRecord> getItemClass () {
+    protected Class<FurnitureRecord> getItemClass ()
+    {
         return FurnitureRecord.class;
     }
     
