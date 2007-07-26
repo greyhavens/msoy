@@ -19,8 +19,14 @@ public class MsoyNodeObject extends CrowdNodeObject
     /** The field name of the <code>hostedGames</code> field. */
     public static final String HOSTED_GAMES = "hostedGames";
 
+    /** The field name of the <code>hostedChannels</code> field. */
+    public static final String HOSTED_CHANNELS = "hostedChannels";
+
     /** The field name of the <code>memberLocs</code> field. */
     public static final String MEMBER_LOCS = "memberLocs";
+
+    /** The field name of the <code>peerChatService</code> field. */
+    public static final String PEER_CHAT_SERVICE = "peerChatService";
     // AUTO-GENERATED: FIELDS END
 
     /** Contains info on all scenes hosted by this server. */
@@ -29,9 +35,15 @@ public class MsoyNodeObject extends CrowdNodeObject
     /** Contains info on all games hosted by this server. */
     public DSet<HostedPlace> hostedGames = new DSet<HostedPlace>();
 
+    /** Contains info on all chat channels hosted by this server. */
+    public DSet<HostedChannel> hostedChannels = new DSet<HostedChannel>();
+    
     /** Contains the current location of all members on this server. */
     public DSet<MemberLocation> memberLocs = new DSet<MemberLocation>();
 
+    /** Dispatches chat channel modifications between proxies and hosts. */
+    public PeerChatMarshaller peerChatService;
+    
     // AUTO-GENERATED: METHODS START
     /**
      * Requests that the specified entry be added to the
@@ -131,6 +143,54 @@ public class MsoyNodeObject extends CrowdNodeObject
 
     /**
      * Requests that the specified entry be added to the
+     * <code>hostedChannels</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToHostedChannels (HostedChannel elem)
+    {
+        requestEntryAdd(HOSTED_CHANNELS, hostedChannels, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>hostedChannels</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromHostedChannels (Comparable key)
+    {
+        requestEntryRemove(HOSTED_CHANNELS, hostedChannels, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>hostedChannels</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateHostedChannels (HostedChannel elem)
+    {
+        requestEntryUpdate(HOSTED_CHANNELS, hostedChannels, elem);
+    }
+
+    /**
+     * Requests that the <code>hostedChannels</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setHostedChannels (DSet<com.threerings.msoy.peer.data.HostedChannel> value)
+    {
+        requestAttributeChange(HOSTED_CHANNELS, value, this.hostedChannels);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.peer.data.HostedChannel> clone =
+            (value == null) ? null : value.typedClone();
+        this.hostedChannels = clone;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
      * <code>memberLocs</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
@@ -175,6 +235,22 @@ public class MsoyNodeObject extends CrowdNodeObject
         @SuppressWarnings("unchecked") DSet<com.threerings.msoy.peer.data.MemberLocation> clone =
             (value == null) ? null : value.typedClone();
         this.memberLocs = clone;
+    }
+
+    /**
+     * Requests that the <code>peerChatService</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setPeerChatService (PeerChatMarshaller value)
+    {
+        PeerChatMarshaller ovalue = this.peerChatService;
+        requestAttributeChange(
+            PEER_CHAT_SERVICE, value, ovalue);
+        this.peerChatService = value;
     }
     // AUTO-GENERATED: METHODS END
 }

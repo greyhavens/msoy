@@ -24,12 +24,14 @@ import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.parlor.game.server.GameManager;
 
+import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.server.RoomManager;
 
+import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.HostedPlace;
 import com.threerings.msoy.peer.data.MemberLocation;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
@@ -58,6 +60,12 @@ public class MsoyPeerManager extends CrowdPeerManager
         return new NodeObject.Lock("SceneHost", sceneId);
     }
 
+    /** Returns a lock used to claim resolution of the specified chat channel. */
+    public static NodeObject.Lock getChannelLock (ChatChannel channel)
+    {
+        return new NodeObject.Lock("ChannelHost", HostedChannel.getKey(channel));
+    }
+
     public MsoyPeerManager (PersistenceContext perCtx, Invoker invoker)
         throws PersistenceException
     {
@@ -74,6 +82,21 @@ public class MsoyPeerManager extends CrowdPeerManager
             public String lookup (NodeObject nodeobj) {
                 HostedPlace info = ((MsoyNodeObject)nodeobj).hostedScenes.get(sceneId);
                 return (info == null) ? null : nodeobj.nodeName;
+            }
+        });
+    }
+
+    /**
+     * Returns the node name of the peer that is hosting the specified chat channer,
+     * or null if no peer has published that they are hosting the channel.
+     */
+    public MsoyNodeObject getChannelHost (final ChatChannel channel)
+    {
+        final Comparable channelKey = HostedChannel.getKey(channel);
+        return lookupNodeDatum(new Lookup<MsoyNodeObject>() {
+            public MsoyNodeObject lookup (NodeObject nodeobj) {
+                MsoyNodeObject node = (MsoyNodeObject) nodeobj;
+                return node.hostedChannels.get(channelKey) == null ? null : node;
             }
         });
     }
