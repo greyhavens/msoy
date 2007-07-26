@@ -93,7 +93,7 @@ public class LocalProjectBuilder
                 case IGNORE:
                     continue;
                 case UNKNOWN:
-                    log.warning("Unparsable swiftly flex compiler output. [line=" + line + "]");
+                    // log.warning("Unparsable swiftly flex compiler output. [line=" + line + "]");
                     break;
                 }
                 result.appendOutput(output);
