@@ -4,7 +4,7 @@
 package com.threerings.msoy.peer.server;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObserverList;
 import com.samskivert.util.ResultListener;
@@ -58,10 +58,10 @@ public class MsoyPeerManager extends CrowdPeerManager
         return new NodeObject.Lock("SceneHost", sceneId);
     }
 
-    public MsoyPeerManager (ConnectionProvider conprov, Invoker invoker)
+    public MsoyPeerManager (PersistenceContext perCtx, Invoker invoker)
         throws PersistenceException
     {
-        super(conprov, invoker);
+        super(perCtx, invoker);
     }
 
     /**

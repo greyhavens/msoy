@@ -373,16 +373,16 @@ public class MsoyServer extends WhirledServer
         swiftlyRepo = new SwiftlyRepository(perCtx);
         ratingRepo = new RatingRepository(perCtx);
         memoryRepo = new MemoryRepository(perCtx);
-        statRepo = new StatRepository(_conProv);
-        gameCookieRepo = new GameCookieRepository(_conProv);
+        statRepo = new StatRepository(perCtx);
+        gameCookieRepo = new GameCookieRepository(perCtx);
 
         // create and set up our configuration registry and admin service
-        confReg = new DatabaseConfigRegistry(_conProv, invoker);
+        confReg = new DatabaseConfigRegistry(perCtx, invoker);
         AdminProvider.init(invmgr, confReg);
 
         // start up our peer manager
         log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
-        peerMan = new MsoyPeerManager(_conProv, invoker);
+        peerMan = new MsoyPeerManager(perCtx, invoker);
 
         // initialize the swiftly invoker
         swiftlyInvoker = new Invoker("swiftly_invoker", omgr);
