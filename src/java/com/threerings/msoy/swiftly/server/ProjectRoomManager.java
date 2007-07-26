@@ -623,6 +623,8 @@ public class ProjectRoomManager extends PlaceManager
             if (buildRequested()) {
                 MsoyServer.swiftlyMan.buildExecutor.addTask(
                     new BuildProjectTask(_buildData, _listener));
+            } else {
+                _listener.requestProcessed();
             }
         }
 
@@ -836,10 +838,11 @@ public class ProjectRoomManager extends PlaceManager
                 } else {
                     MsoyServer.itemMan.itemUpdated(_record);
                 }
-
-                // inform the listener that the result was exported.
-                _listener.requestProcessed();
             }
+
+            // inform the listener that the build service call worked. the caller will need to
+            // check if the build succeeded using the room object.
+            _listener.requestProcessed();
         }
 
         // this is called back on the dobj thread and must only report failure

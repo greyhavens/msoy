@@ -96,8 +96,10 @@ public class ProjectRoomController extends PlaceController
        disableBuild();
         _roomObj.service.buildAndExportProject(_ctx.getClient(), new ConfirmListener() {
             public void requestProcessed () {
-                // inform just this user that the build result was exported
-                _ctx.showInfoMessage(_msgs.get("m.build_export_succeeded"));
+                // inform just this user that the build result was exported if the build succeeded
+                if (_roomObj.result.buildSuccessful()) {
+                    _ctx.showInfoMessage(_msgs.get("m.build_export_succeeded"));
+                }
             }
             public void requestFailed (String reason) {
                 _ctx.showErrorMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, reason));
