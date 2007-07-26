@@ -83,6 +83,12 @@ static_media_url = http://localhost:8080/media/static/
 toybox.resource_dir = /export/msoy/pages/media
 
 #
+# The class name of a Depot cache adapter to use. If this value is not supplied
+# no caching is done.
+
+# depot.cache.adapter = com.samskivert.jdbc.depot.EHCacheAdapter
+
+#
 # The default database mapping; all other definitions will inherit from
 # this and need only be specified in cases where they differ from the
 # defaults

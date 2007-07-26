@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.jdbc.TransitionRepository;
+import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.samskivert.util.AuditLogger;
@@ -19,8 +20,6 @@ import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.LoggingLogProvider;
 import com.samskivert.util.OneLineLogFormatter;
-
-import net.sf.ehcache.CacheManager;
 
 import com.threerings.util.MessageManager;
 import com.threerings.util.Name;
@@ -53,7 +52,6 @@ import com.threerings.parlor.server.ParlorManager;
 
 import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.whirled.server.WhirledServer;
-import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.spot.data.SpotCodes;
 import com.threerings.whirled.spot.server.SpotDispatcher;
 import com.threerings.whirled.spot.server.SpotProvider;
@@ -148,7 +146,7 @@ public class MsoyServer extends WhirledServer
 
     /** Contains the rating data for each player and game. */
     public static RatingRepository ratingRepo;
-    
+
     /** The Msoy scene repository. */
     public static MsoySceneRepository sceneRepo;
 
@@ -335,7 +333,20 @@ public class MsoyServer extends WhirledServer
         // create our connection provider before calling super.init() because our superclass will
         // attempt to create our authenticator and we need the connection provider ready by then
         _conProv = new StaticConnectionProvider(ServerConfig.getJDBCConfig());
-        perCtx = new PersistenceContext("msoy", _conProv);
+
+        // see if we have a cache adapter for Depot
+        CacheAdapter cacheAdapter = null;
+        String adapterName = ServerConfig.config.getValue("depot.cache.adapter", "");
+        if (adapterName.length() > 0) {
+            Class<?> adapterClass = Class.forName(adapterName);
+            if (adapterClass != null) {
+                if (CacheAdapter.class.isAssignableFrom(adapterClass)) {
+                    log.info("Using cache manager: " + adapterClass);
+                    cacheAdapter = (CacheAdapter) adapterClass.newInstance();
+                }
+            }
+        }
+        perCtx = new PersistenceContext("msoy", _conProv, cacheAdapter);
 
         // create our transition manager prior to doing anything else
         transitRepo = new TransitionRepository(_conProv);
@@ -540,8 +551,8 @@ public class MsoyServer extends WhirledServer
     {
         super.invokerDidShutdown();
 
-        // shutdown the ehcache manager
-        CacheManager.getInstance().shutdown();
+        // shutdown our persistence context (cache, JDBC connections)
+        perCtx.shutdown();
 
         // close our audit logs
         _glog.close();
