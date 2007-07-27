@@ -8,6 +8,7 @@ import com.samskivert.util.Interval;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
+import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.dobj.SetAdapter;
 
 import com.threerings.ezgame.data.GameDefinition;
@@ -26,21 +27,27 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages a lobby room.
  */
-public class LobbyManager 
+public class LobbyManager
     implements SubscriberListener
 {
+    public interface ShutdownObserver
+    {
+        public void lobbyDidShutdown (Game game);
+    }
+
     /**
      * Create a new LobbyManager.
      *
      * @param game The game we're managing a lobby for.
      */
-    public LobbyManager (LobbyRegistry lobreg, Game game)
+    public LobbyManager (RootDObjectManager omgr, Game game, ShutdownObserver shutObs)
         throws Exception
     {
-        _lobreg = lobreg;
+        _omgr = omgr;
         _game = game;
+        _shutObs = shutObs;
 
-        _lobj = _lobreg.getDObjectManager().registerObject(new LobbyObject());
+        _lobj = _omgr.registerObject(new LobbyObject());
         _lobj.subscriberListener = this;
         _lobj.setGame(_game);
         _lobj.setGameDef(new MsoyGameParser().parseGame(game));
@@ -74,7 +81,7 @@ public class LobbyManager
 //             MsoyServer.itemMan.removeItemUpdateListener(GameRecord.class, _uplist);
 //         }
 
-        _lobreg.lobbyDidShutdown(getGameId());
+        _shutObs.lobbyDidShutdown(_game);
 
         _tableMgr.shutdown();
 
@@ -82,7 +89,7 @@ public class LobbyManager
         cancelShutdowner();
 
         // finally, destroy the Lobby DObject
-        _lobreg.getDObjectManager().destroyObject(_lobj.getOid());
+        _omgr.destroyObject(_lobj.getOid());
     }
 
     /**
@@ -134,19 +141,17 @@ public class LobbyManager
         }
         _tableMgr.gameUpdated();
     }
-    
+
     /**
      * Check the current status of the lobby and maybe schedule or maybe cancel the shutdown
      * interval, as appropriate.
      */
     protected void recheckShutdownInterval ()
     {
-        //System.err.println("Checking lobby: subscribers=" + _lobj.getSubscriberCount() +
-        //        ", tables=" + _lobj.tables.size());
         if (_lobj.getSubscriberCount() == 0 && _lobj.tables.size() == 0) {
             // queue up a shutdown interval, unless we've already got one.
             if (_shutdownInterval == null) {
-                _shutdownInterval = new Interval(_lobreg.getDObjectManager()) {
+                _shutdownInterval = new Interval(_omgr) {
                     public void expired () {
                         log.fine("Unloading idle game lobby [gameId=" + getGameId() + "]");
                         shutdown();
@@ -155,7 +160,7 @@ public class LobbyManager
                 _shutdownInterval.schedule(IDLE_UNLOAD_PERIOD);
             }
 
-        } else { 
+        } else {
             cancelShutdowner();
         }
     }
@@ -182,17 +187,20 @@ public class LobbyManager
             if (event.getName().equals(LobbyObject.TABLES)) {
                 recheckShutdownInterval();
             }
-        } 
+        }
     };
 
-    /** Our lobby registry. */
-    protected LobbyRegistry _lobreg;
+    /** Our distributed object manager. */
+    protected RootDObjectManager _omgr;
+
+    /** The game for which we're lobbying. */
+    protected Game _game;
 
     /** The Lobby object we're using. */
     protected LobbyObject _lobj;
 
-    /** The game for which we're lobbying. */
-    protected Game _game;
+    /** This fellow wants to hear when we shutdown. */
+    protected ShutdownObserver _shutObs;
 
     /** Manages the actual tables. */
     protected MsoyTableManager _tableMgr;
@@ -200,8 +208,7 @@ public class LobbyManager
     /** Used to listen for updates to our game item if necessary. */
     protected ItemManager.ItemUpdateListener _uplist;
 
-    /** interval to let us delay lobby shutdown for awhile, in case a new table is created 
-     * immediately */
+    /** An interval to let us delay lobby shutdown for awhile. */
     protected Interval _shutdownInterval;
 
     /** idle time before shutting down the manager. */

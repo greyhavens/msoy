@@ -36,6 +36,8 @@ import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.server.ParlorManager;
 
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.data.MemberObject;
@@ -50,6 +52,7 @@ import static com.threerings.msoy.Log.log;
  * A bare bones server that does nothing but host a particular game.
  */
 public class MsoyGameServer extends CrowdServer
+    implements LobbyManager.ShutdownObserver
 {
     /** Provides database access to all of our repositories. */
     public static PersistenceContext perCtx;
@@ -78,8 +81,8 @@ public class MsoyGameServer extends CrowdServer
     /** The parlor manager in operation on this server. */
     public static ParlorManager parlorMan = new ParlorManager();
 
-    /** The lobby registry for this server. */
-    public static LobbyRegistry lobbyReg = new LobbyRegistry();
+    /** The lobby for the game hosted on this server. */
+    public static LobbyManager lobbyMgr;
 
     /** Handles sandboxed game server code. */
     public static HostedGameManager hostedMan = new HostedGameManager();
@@ -106,15 +109,22 @@ public class MsoyGameServer extends CrowdServer
      */
     public static void main (String[] args)
     {
+        if (args.length < 2) {
+            System.err.println("Usage: MsoyGameServer gameId port");
+            System.exit(-1);
+        }
+
         // set up the proper logging services
         com.samskivert.util.Log.setLogProvider(new LoggingLogProvider());
         OneLineLogFormatter.configureDefaultHandler();
 
-        // TODO: get info from command line arguments
         MsoyGameServer server = new MsoyGameServer();
         try {
+            server._gameId = Integer.parseInt(args[0]);
+            server._listenPort = Integer.parseInt(args[1]);
             server.init();
             server.run();
+
         } catch (Exception e) {
             log.log(Level.WARNING, "Unable to initialize server", e);
             System.exit(255);
@@ -160,7 +170,6 @@ public class MsoyGameServer extends CrowdServer
 
         // intialize various services
         parlorMan.init(invmgr, plreg);
-        lobbyReg.init(omgr, invmgr, gameRepo);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
@@ -168,6 +177,13 @@ public class MsoyGameServer extends CrowdServer
             }
         });
         DictionaryManager.init("data/dictionary");
+
+        // resolve our game metadata and create our lobby
+        GameRecord rec = gameRepo.loadItem(_gameId);
+        if (rec == null) {
+            throw new Exception("Unknown game [id=" + _gameId + "].");
+        }
+        lobbyMgr = new LobbyManager(omgr, (Game)rec.toItem(), this);
 
         log.info("Msoy server initialized.");
     }
@@ -187,6 +203,12 @@ public class MsoyGameServer extends CrowdServer
                         pmgr.where() + "].", e);
             }
         }
+    }
+
+    // from interface LobbyManager.ShutdownObserver
+    public void lobbyDidShutdown (Game game)
+    {
+        // TODO: shut the whole server down
     }
 
     @Override // from CrowdServer
@@ -219,7 +241,7 @@ public class MsoyGameServer extends CrowdServer
     @Override // from PresentsServer
     protected int[] getListenPorts ()
     {
-        return ServerConfig.serverPorts;
+        return new int[] { _listenPort };
     }
 
     @Override // from PresentsServer
@@ -239,6 +261,12 @@ public class MsoyGameServer extends CrowdServer
         // close our audit logs
 //         _glog.close();
     }
+
+    /** The game we're hosting. */
+    protected int _gameId;
+
+    /** The port on which we listen for client connections. */
+    protected int _listenPort;
 
     /** A mapping from member name to member object for all online members. */
     protected static HashMap<MemberName,MemberObject> _online =

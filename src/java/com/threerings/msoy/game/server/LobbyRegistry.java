@@ -35,7 +35,7 @@ import static com.threerings.msoy.Log.log;
  * Manages the lobbies active on this server.
  */
 public class LobbyRegistry
-    implements LobbyProvider
+    implements LobbyProvider, LobbyManager.ShutdownObserver
 {
     /**
      * Initializes this registry.
@@ -89,7 +89,7 @@ public class LobbyRegistry
                 }
 
                 try {
-                    LobbyManager lmgr = new LobbyManager(LobbyRegistry.this, _game);
+                    LobbyManager lmgr = new LobbyManager(_omgr, _game, LobbyRegistry.this);
                     _lobbies.put(gameId, lmgr);
 
                     ResultListenerList list = _loading.remove(gameId);
@@ -119,22 +119,20 @@ public class LobbyRegistry
     }
 
     /**
-     * Called by LobbyManager instances when they start to shut down and destroy their dobject.
-     */
-    public void lobbyDidShutdown (int gameId)
-    {
-        // destroy our record of that lobby
-        _lobbies.remove(gameId);
-        _loading.remove(gameId); // just in case
-    }
-
-    /**
      * Returns an enumeration of all of the registered lobby managers.  This should only be
      * accessed on the dobjmgr thread and shouldn't be kept around across event dispatches.
      */
     public Iterator<LobbyManager> enumerateLobbyManagers ()
     {
         return _lobbies.values().iterator();
+    }
+
+    // from interface LobbyManager.ShutdownObserver
+    public void lobbyDidShutdown (Game game)
+    {
+        // destroy our record of that lobby
+        _lobbies.remove(game.itemId);
+        _loading.remove(game.itemId); // just in case
     }
 
     /** The distributed object manager that we work with. */
