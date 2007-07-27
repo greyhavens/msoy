@@ -40,9 +40,6 @@ import static com.threerings.msoy.Log.log;
  */
 public class MsoyAuthenticator extends Authenticator
 {
-    /** The prefix for all authentication usernames provided to guests. */
-    public static final String GUEST_USERNAME_PREFIX = "Guest";
-
     /** Used to coordinate with authentication domains. */
     public static class Account
     {
@@ -334,8 +331,9 @@ public class MsoyAuthenticator extends Authenticator
                 } else {
                     // for guests, we use the same Name object as their username and their display
                     // name. We create it here.
-                    creds.setUsername(new MemberName(GUEST_USERNAME_PREFIX + (++_guestCount),
-                                                     MemberName.GUEST_ID));
+                    creds.setUsername(
+                        new MemberName(MsoyAuthCodes.GUEST_USERNAME_PREFIX + (++_guestCount),
+                                       MemberName.GUEST_ID));
                 }
             }
         }

@@ -6,6 +6,7 @@ package com.threerings.msoy.server;
 import java.io.File;
 import java.util.Properties;
 
+import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.util.Config;
 import com.samskivert.util.StringUtil;
 
@@ -72,6 +73,29 @@ public class ServerConfig
     public static Properties getJDBCConfig ()
     {
         return config.getSubProperties("db");
+    }
+
+    /**
+     * Creates the Depot cache that should be used by this server and its tools. May return null,
+     * in which case no caching is used.
+     */
+    public static CacheAdapter createCacheAdapter ()
+        throws Exception
+    {
+        CacheAdapter cacheAdapter = null;
+        String adapterName = config.getValue("depot.cache.adapter", "");
+        if (adapterName.length() > 0) {
+            Class<?> adapterClass = Class.forName(adapterName);
+            if (adapterClass != null) {
+                if (CacheAdapter.class.isAssignableFrom(adapterClass)) {
+                    log.info("Using cache manager: " + adapterClass);
+                    cacheAdapter = (CacheAdapter) adapterClass.newInstance();
+                } else {
+                    log.warning("Configured with invalid CacheAdapter: " + adapterName + ".");
+                }
+            }
+        }
+        return cacheAdapter;
     }
 
     /**

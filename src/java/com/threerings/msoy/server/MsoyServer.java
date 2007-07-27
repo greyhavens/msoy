@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.jdbc.TransitionRepository;
-import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.samskivert.util.AuditLogger;
@@ -249,7 +248,7 @@ public class MsoyServer extends WhirledServer
      */
     public static MemberObject lookupMember (MemberName name)
     {
-        MsoyServer.requireDObjThread();
+        requireDObjThread();
         return _online.get(name);
     }
 
@@ -330,23 +329,10 @@ public class MsoyServer extends WhirledServer
         // breaks Amazon S3, specifically.
         Security.setProperty("networkaddress.cache.ttl" , "30");
 
-        // create our connection provider before calling super.init() because our superclass will
-        // attempt to create our authenticator and we need the connection provider ready by then
+        // create our JDBC bits before calling super.init() because our superclass will attempt to
+        // create our authenticator and we need that ready by then
         _conProv = new StaticConnectionProvider(ServerConfig.getJDBCConfig());
-
-        // see if we have a cache adapter for Depot
-        CacheAdapter cacheAdapter = null;
-        String adapterName = ServerConfig.config.getValue("depot.cache.adapter", "");
-        if (adapterName.length() > 0) {
-            Class<?> adapterClass = Class.forName(adapterName);
-            if (adapterClass != null) {
-                if (CacheAdapter.class.isAssignableFrom(adapterClass)) {
-                    log.info("Using cache manager: " + adapterClass);
-                    cacheAdapter = (CacheAdapter) adapterClass.newInstance();
-                }
-            }
-        }
-        perCtx = new PersistenceContext("msoy", _conProv, cacheAdapter);
+        perCtx = new PersistenceContext("msoy", _conProv, ServerConfig.createCacheAdapter());
 
         // create our transition manager prior to doing anything else
         transitRepo = new TransitionRepository(_conProv);
@@ -508,7 +494,7 @@ public class MsoyServer extends WhirledServer
         itemMan.init(perCtx);
         swiftlyMan.init(invmgr);
         petMan.init(invmgr);
-        lobbyReg.init(invmgr);
+        lobbyReg.init(omgr, invmgr, itemMan.getGameRepository());
         worldGameReg.init(invmgr);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {

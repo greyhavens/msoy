@@ -8,224 +8,144 @@ import java.util.Iterator;
 
 import java.util.logging.Level;
 
+import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.HashIntMap;
-import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.ResultListener;
-import com.samskivert.util.Tuple;
 
 import com.threerings.presents.client.InvocationService;
-
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
-
-import com.threerings.presents.dobj.DObject;
-
+import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.util.ResultListenerList;
 
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.game.xml.MsoyGameParser;
-import com.threerings.msoy.game.data.LobbyObject;
-import com.threerings.msoy.game.data.SubscriberListener;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
-
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.peer.data.HostedGame;
+import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.GameRepository;
 
 import static com.threerings.msoy.Log.log;
 
 /**
- * Manages the lobbies in use.
+ * Manages the lobbies active on this server.
  */
 public class LobbyRegistry
     implements LobbyProvider
 {
     /**
-     * Initialize the lobby registry.
+     * Initializes this registry.
      */
-    public void init (InvocationManager invmgr)
+    public void init (RootDObjectManager omgr, InvocationManager invmgr, GameRepository gameRepo)
     {
+        _omgr = omgr;
+        _gameRepo = gameRepo;
         invmgr.registerDispatcher(new LobbyDispatcher(this), MsoyCodes.GAME_GROUP);
+    }
+
+    public RootDObjectManager getDObjectManager ()
+    {
+        return _omgr;
     }
 
     // from LobbyProvider
     public void identifyLobby (ClientObject caller, final int gameId,
-                               final InvocationService.ResultListener listener)
+                               InvocationService.ResultListener listener)
         throws InvocationException
     {
-        // if its hosted on this server, give them that...
+        // if we're already resolving this lobby, add this listener to the list of those interested
+        // in the outcome
+        ResultListenerList list = _loading.get(gameId);
+        if (list != null) {
+            list.add(listener);
+            return;
+        }
+
+        // if the lobby is already resolved, we're good
         LobbyManager mgr = _lobbies.get(gameId);
         if (mgr != null) {
             listener.requestProcessed(mgr.getLobbyObject().getOid());
             return;
         }
 
-        // if we've already got the proxy oid, give them that...
-        int proxyOid = _proxies.get(gameId);
-        if (proxyOid != -1) {
-            listener.requestProcessed(proxyOid);
-            return;
-        }
-
-        // if we're already resolving this lobby, add this listener to the list of those 
-        // interested in the outcome
-        ArrayList<InvocationService.ResultListener> list = _loading.get(gameId);
-        if (list != null) {
-            list.add(listener);
-            return;
-        }
-
-        // start a new list for this gameId
-        list = new ArrayList<InvocationService.ResultListener>();
+        // otherwise we need to do the resolving
+        _loading.put(gameId, list = new ResultListenerList());
         list.add(listener);
-        _loading.put(gameId, list);
-        
-        // if its hosted on another server, we need to proxy the lobby here.
-        final Tuple<String, Integer> gameInfo = MsoyServer.peerMan.getGameHost(gameId);
-        if (gameInfo != null) {
-            MsoyServer.peerMan.proxyRemoteObject(gameInfo.left, gameInfo.right,
-                    new ResultListener<Integer>() {
-                public void requestCompleted (Integer proxyOid) {
-                    _proxies.put(gameId, proxyOid);
-                    notifyLoadingComplete(gameId, proxyOid);
 
-                    // if all of our local lobby subscribers unsubscribe, we need to stop 
-                    // proxying...
-                    LobbyObject lobj = ((LobbyObject) MsoyServer.omgr.getObject(proxyOid));
-                    lobj.subscriberListener = new SubscriberListener() {
-                        public void subscriberCountChanged (DObject target) {
-                            LobbyObject lobj = (LobbyObject) target;
-                            if (lobj.getSubscriberCount() == 1) { // PeerManager is always there
-                                _proxies.remove(gameId);
-                                notifyLoadingFailed(gameId); // just in case
-                                MsoyServer.peerMan.unproxyRemoteObject(
-                                    gameInfo.left, gameInfo.right);
-                            }
-                        }
-                    };
-                }
-                public void requestFailed (Exception cause) {
-                    log.log(Level.WARNING, "Game lobby proxy subscription failed [gameId=" +
-                        gameId + "]", cause);
-                    notifyLoadingFailed(gameId);
-                }
-            });
-            return;
-        }
+        MsoyServer.invoker.postUnit(new RepositoryUnit() {
+            public void invokePersist () throws PersistenceException {
+                GameRecord rec = _gameRepo.loadItem(gameId);
+                _game = (rec == null) ? null : (Game)rec.toItem();
+            }
 
-        // otherwise this lonely little game isn't being played by anyone right now... we get to
-        // host it.
-        MsoyServer.peerMan.acquireLock(
-                MsoyPeerManager.getGameLock(gameId), new ResultListener<String>() {
-            public void requestCompleted (String nodeName) {
-                if (MsoyServer.peerMan.getNodeObject().nodeName.equals(nodeName)) {
-                    log.info("Got lock, resolving game " + gameId + ".");
-                    resolveLobby(gameId);
-                } else if (nodeName != null) {
-                    log.info("someone else got the lock: " + nodeName);
-                    // TODO - listen on hostedGames to get the lobby oid when the lock holder
-                    // finishes resolving the lobby.
-                    notifyLoadingFailed(gameId);
-                } else {
-                    log.warning("Game lock acquired by null? [id=" + gameId + "].");
-                    notifyLoadingFailed(gameId);
+            public void handleSuccess () {
+                if (_game == null) {
+                    reportFailure("m.no_such_game");
+                    return;
+                }
+
+                try {
+                    LobbyManager lmgr = new LobbyManager(LobbyRegistry.this, _game);
+                    _lobbies.put(gameId, lmgr);
+
+                    ResultListenerList list = _loading.remove(gameId);
+                    if (list != null) {
+                        list.requestProcessed(lmgr.getLobbyObject().getOid());
+                    }
+
+                } catch (Exception e) {
+                    handleFailure(e);
                 }
             }
-            public void requestFailed (Exception cause) {
-                log.log(Level.WARNING, "Failed to acquire game resolution lock " + 
-                    "[id=" + gameId + "].", cause);
-                notifyLoadingFailed(gameId);
+
+            public void handleFailure (Exception pe) {
+                log.log(Level.WARNING, "Failed to resolve game [id=" + gameId + "].", pe);
+                reportFailure(InvocationCodes.E_INTERNAL_ERROR);
             }
+
+            protected void reportFailure (String reason) {
+                ResultListenerList list = _loading.remove(gameId);
+                if (list != null) {
+                    list.requestFailed(reason);
+                }
+            }
+
+            protected Game _game;
         });
-    
-
     }
 
     /**
-     * Called by LobbyManager instances when they start to shut down and
-     * destroy their dobject.
+     * Called by LobbyManager instances when they start to shut down and destroy their dobject.
      */
-    public void lobbyShutdown (int gameId)
+    public void lobbyDidShutdown (int gameId)
     {
         // destroy our record of that lobby
         _lobbies.remove(gameId);
-        notifyLoadingFailed(gameId); // just in case
-        MsoyServer.peerMan.lobbyDidShutdown(gameId);
+        _loading.remove(gameId); // just in case
     }
 
     /**
-     * Returns an enumeration of all of the registered lobby managers.
-     * This should only be accessed on the dobjmgr thread and shouldn't be
-     * kept around across event dispatches.
+     * Returns an enumeration of all of the registered lobby managers.  This should only be
+     * accessed on the dobjmgr thread and shouldn't be kept around across event dispatches.
      */
     public Iterator<LobbyManager> enumerateLobbyManagers ()
     {
         return _lobbies.values().iterator();
     }
 
-    protected void resolveLobby (final int gameId)
-    {
-        MsoyServer.itemMan.getItem(new ItemIdent(Item.GAME, gameId), 
-                new ResultListener<Item>() {
-            public void requestCompleted (Item item) {
-                try {
-                    LobbyManager lmgr = new LobbyManager(
-                        (Game)item, new MsoyGameParser().parseGame((Game)item));
-                    // record the lobby oid for the game
-                    _lobbies.put(gameId, lmgr);
-                    notifyLoadingComplete(gameId, lmgr.getLobbyObject().getOid());
+    /** The distributed object manager that we work with. */
+    protected RootDObjectManager _omgr;
 
-                    // add this game lobby to our hostedGames list
-                    MsoyServer.peerMan.lobbyDidStartup(
-                        gameId, item.name, lmgr.getLobbyObject().getOid());
-
-                } catch (Exception e) {
-                    requestFailed(e);
-                }
-            }
-            public void requestFailed (Exception cause)
-            {
-                MsoyServer.peerMan.releaseLock(
-                    MsoyPeerManager.getGameLock(gameId), new ResultListener.NOOP<String>());
-                notifyLoadingFailed(gameId);
-            }
-        });
-    }
-
-    protected void notifyLoadingComplete (int gameId, int lobbyOid) 
-    {
-        ArrayList<InvocationService.ResultListener> list = _loading.remove(gameId);
-        if (list != null) {
-            for (InvocationService.ResultListener rList : list) {
-                rList.requestProcessed(lobbyOid);
-            }
-        }
-    }
-
-    protected void notifyLoadingFailed (int gameId)
-    {
-        ArrayList<InvocationService.ResultListener> list = _loading.remove(gameId);
-        if (list != null) {
-            for (InvocationService.ResultListener rList : list) {
-                rList.requestFailed(InvocationCodes.INTERNAL_ERROR);
-            }
-        }
-    }
+    /** Provides access to game metadata. */
+    protected GameRepository _gameRepo;
 
     /** Maps game id -> lobby. */
     protected IntMap<LobbyManager> _lobbies = new HashIntMap<LobbyManager>();
 
     /** Maps game id -> listeners waiting for a lobby to load. */
-    protected HashIntMap<ArrayList<InvocationService.ResultListener>> _loading =
-        new HashIntMap<ArrayList<InvocationService.ResultListener>>();
-
-    /** Maps game id -> proxy oids for remotely hosted game lobbies */
-    protected IntIntMap _proxies = new IntIntMap();
+    protected IntMap<ResultListenerList> _loading = new HashIntMap<ResultListenerList>();
 }

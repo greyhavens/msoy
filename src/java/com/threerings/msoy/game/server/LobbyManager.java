@@ -12,8 +12,6 @@ import com.threerings.presents.dobj.SetAdapter;
 
 import com.threerings.ezgame.data.GameDefinition;
 
-import com.threerings.msoy.server.MsoyServer;
-
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -36,25 +34,28 @@ public class LobbyManager
      *
      * @param game The game we're managing a lobby for.
      */
-    public LobbyManager (Game game, GameDefinition gameDef)
+    public LobbyManager (LobbyRegistry lobreg, Game game)
+        throws Exception
     {
+        _lobreg = lobreg;
         _game = game;
-        _lobj = MsoyServer.omgr.registerObject(new LobbyObject());
+
+        _lobj = _lobreg.getDObjectManager().registerObject(new LobbyObject());
         _lobj.subscriberListener = this;
         _lobj.setGame(_game);
-        _lobj.setGameDef(gameDef);
+        _lobj.setGameDef(new MsoyGameParser().parseGame(game));
 
-        // if our game object is mutable, listen for updates from the ItemManager
-        if (_game.parentId == 0) {
-            _uplist = new ItemManager.ItemUpdateListener() {
-                public void itemUpdated (ItemRecord item) {
-                    if (item.itemId == getGameId()) {
-                        updateGame((Game) item.toItem());
-                    }
-                }
-            };
-            MsoyServer.itemMan.registerItemUpdateListener(GameRecord.class, _uplist);
-        }
+//         // if our game object is mutable, listen for updates from the ItemManager
+//         if (_game.parentId == 0) {
+//             _uplist = new ItemManager.ItemUpdateListener() {
+//                 public void itemUpdated (ItemRecord item) {
+//                     if (item.itemId == getGameId()) {
+//                         updateGame((Game) item.toItem());
+//                     }
+//                 }
+//             };
+//             MsoyServer.itemMan.registerItemUpdateListener(GameRecord.class, _uplist);
+//         }
 
         _tableMgr = new MsoyTableManager(_lobj);
         _lobj.addListener(_tableWatcher);
@@ -68,12 +69,12 @@ public class LobbyManager
         _lobj.subscriberListener = null;
         _lobj.removeListener(_tableWatcher);
 
-        // if our game is mutable, clear our update listener
-        if (_uplist != null) {
-            MsoyServer.itemMan.removeItemUpdateListener(GameRecord.class, _uplist);
-        }
+//         // if our game is mutable, clear our update listener
+//         if (_uplist != null) {
+//             MsoyServer.itemMan.removeItemUpdateListener(GameRecord.class, _uplist);
+//         }
 
-        MsoyServer.lobbyReg.lobbyShutdown(getGameId());
+        _lobreg.lobbyDidShutdown(getGameId());
 
         _tableMgr.shutdown();
 
@@ -81,7 +82,7 @@ public class LobbyManager
         cancelShutdowner();
 
         // finally, destroy the Lobby DObject
-        MsoyServer.omgr.destroyObject(_lobj.getOid());
+        _lobreg.getDObjectManager().destroyObject(_lobj.getOid());
     }
 
     /**
@@ -145,7 +146,7 @@ public class LobbyManager
         if (_lobj.getSubscriberCount() == 0 && _lobj.tables.size() == 0) {
             // queue up a shutdown interval, unless we've already got one.
             if (_shutdownInterval == null) {
-                _shutdownInterval = new Interval(MsoyServer.omgr) {
+                _shutdownInterval = new Interval(_lobreg.getDObjectManager()) {
                     public void expired () {
                         log.fine("Unloading idle game lobby [gameId=" + getGameId() + "]");
                         shutdown();
@@ -170,18 +171,6 @@ public class LobbyManager
         }
     }
 
-    /** The Lobby object we're using. */
-    protected LobbyObject _lobj;
-
-    /** The game for which we're lobbying. */
-    protected Game _game;
-
-    /** Manages the actual tables. */
-    protected MsoyTableManager _tableMgr;
-
-    /** Used to listen for updates to our game item if necessary. */
-    protected ItemManager.ItemUpdateListener _uplist;
-
     /** Listens for table removal/addition and considers destroying the room. */
     protected SetAdapter _tableWatcher = new SetAdapter() {
         public void entryAdded (EntryAddedEvent event) {
@@ -195,6 +184,21 @@ public class LobbyManager
             }
         } 
     };
+
+    /** Our lobby registry. */
+    protected LobbyRegistry _lobreg;
+
+    /** The Lobby object we're using. */
+    protected LobbyObject _lobj;
+
+    /** The game for which we're lobbying. */
+    protected Game _game;
+
+    /** Manages the actual tables. */
+    protected MsoyTableManager _tableMgr;
+
+    /** Used to listen for updates to our game item if necessary. */
+    protected ItemManager.ItemUpdateListener _uplist;
 
     /** interval to let us delay lobby shutdown for awhile, in case a new table is created 
      * immediately */
