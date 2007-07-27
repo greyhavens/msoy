@@ -12,9 +12,6 @@ import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.presents.dobj.EntryRemovedEvent;
-import com.threerings.presents.dobj.SetAdapter;
-
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -47,7 +44,7 @@ public class SubscriptionWrapper extends ChannelWrapper
             public void requestCompleted (Integer localOid) {
                 // subscription successful! we have the local oid of the proxy object
                 _ccobj = (ChatChannelObject) MsoyServer.omgr.getObject(localOid);
-                initializeCCObj(_ccobj, _channel, new EntryListener());
+                initializeCCObj(_ccobj, _channel);
                 cccont.creationSucceeded(SubscriptionWrapper.this);
             }
             public void requestFailed (Exception cause) {
@@ -61,21 +58,19 @@ public class SubscriptionWrapper extends ChannelWrapper
     }
 
     // from abstract class ChannelWrapper 
-    public void shutdown (SetAdapter adapter)
+    public void shutdown ()
     {
-        // we need the hosting peer's object Id for this channel - so let's fetch it
+        deinitializeCCObj(_ccobj);
+
+        // unsubscribe from the proxy. 
         MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
-        HostedChannel hostedInfo = host.hostedChannels.get(HostedChannel.getKey(_channel));
-        if (hostedInfo == null) {
-            // it went away! 
-            log.warning("Remote channel no longer hosted, cannot be unsubscribed! " +
-                        "[previous host=" + host + ", channel=" + _channel + "].");
+        if (host == null) {
+            // host already destroyed the distributed object.
             return;
         }
-
-        deinitializeCCObj(_ccobj, adapter);
+        
+        HostedChannel hostedInfo = host.hostedChannels.get(HostedChannel.getKey(_channel));
         MsoyServer.peerMan.unproxyRemoteObject(host.nodeName, hostedInfo.oid);
-
     }
     
     // from abstract class ChannelWrapper 
@@ -97,20 +92,6 @@ public class SubscriptionWrapper extends ChannelWrapper
     }
 
     /**
-     * Listens to chatter removal events, and shuts down the channel if all of the local
-     * chat participants have left.
-     */
-    protected class EntryListener extends SetAdapter
-    {
-        public void entryRemoved (EntryRemovedEvent event) {
-            if (_localChatterCount <= 0) {
-                shutdown(this);
-                _mgr.removeWrapper(SubscriptionWrapper.this);
-            }
-        }
-    };
-
-    /**
      * Called when chatter list is changed, it updates the count of local chat clients
      * participating in the channel through this peer.
      */
@@ -122,12 +103,17 @@ public class SubscriptionWrapper extends ChannelWrapper
         }
         public void requestProcessed () {
             _localChatterCount += _delta;
-            log.info("Channel subscription modification successful [channel=" +
-                     _channel + ", user=" + _userInfo + "].");
+            log.info("Subscription channel: chatter action successful [channel=" + _channel
+                     + ", user=" + _userInfo.name + ", count=" + _localChatterCount + "].");
+            if (_localChatterCount <= 0) {
+                shutdown();
+                _mgr.removeWrapper(SubscriptionWrapper.this);
+            }
         }
         public void requestFailed (String cause) {
-            log.info("Channel subscription modification failed [channel=" +
-                     _channel + ", user=" + _userInfo + ", cause = " + cause + "].");
+            log.info("Subscription channel: chatter action failed [channel=" + _channel
+                     + ", user=" + _userInfo.name + ", count=" + _localChatterCount +
+                     ", cause = " + cause + "].");
         }
         protected ChatterInfo _userInfo;
         protected int _delta;

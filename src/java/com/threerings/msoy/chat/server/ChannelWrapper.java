@@ -49,22 +49,20 @@ public abstract class ChannelWrapper
         return _ccobj != null;
     }
 
-    /** Initializes the distributed channel object. When done, calls the continuation. */
+    /** Initializes the local distributed channel object. When done, calls the continuation. */
     public abstract void initialize (final ChannelCreationContinuation cccont);
 
-    /** Destroys the distributed channel object. */
-    public abstract void shutdown (SetAdapter adapter);
+    /** Deinitializes the local distributed channel object. */
+    public abstract void shutdown ();
 
-    /** Adds the specified user to the wrapped channel. */
+    /** Asks the hosting server to add the specified user to the wrapped channel. */
     public abstract void addChatter (ChatterInfo userInfo);
 
-    /** Removes the speficied user from the wrapped channel. */
+    /** Asks the hosting server to remove the speficied user from the wrapped channel. */
     public abstract void removeChatter (ChatterInfo userInfo);
 
-    /** Links a newly created distributed channel object to the channel definition,
-     *  and adds the specified event listener. */
-    protected static void initializeCCObj (final ChatChannelObject ccobj, ChatChannel channel,
-                                           SetAdapter listener)
+    /** Links a newly created distributed channel object to the channel definition. */
+    protected static void initializeCCObj (final ChatChannelObject ccobj, ChatChannel channel)
     {
         ccobj.channel = channel;
         SpeakProvider.SpeakerValidator validator = new SpeakProvider.SpeakerValidator() {
@@ -75,19 +73,17 @@ public abstract class ChannelWrapper
         };
         SpeakDispatcher sd = new SpeakDispatcher(new SpeakProvider(ccobj, validator));
         ccobj.setSpeakService((SpeakMarshaller)MsoyServer.invmgr.registerDispatcher(sd));
-        ccobj.addListener(listener);
     }
 
     /** Clears any initialization performed on the distributed channel object, and
      *  unregisters the listener. */
-    protected static void deinitializeCCObj (ChatChannelObject ccobj, SetAdapter listener)
+    protected static void deinitializeCCObj (ChatChannelObject ccobj)
     {
         if (ccobj == null) {
             log.warning("Deinitializing null channel object!"); // something went horribly wrong
             return;
         }
 
-        ccobj.removeListener(listener);
         MsoyServer.invmgr.clearDispatcher(ccobj.speakService);
     }
 

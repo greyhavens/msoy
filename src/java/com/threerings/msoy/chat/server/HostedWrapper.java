@@ -11,9 +11,6 @@ import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.presents.dobj.EntryRemovedEvent;
-import com.threerings.presents.dobj.SetAdapter;
-
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -38,17 +35,17 @@ public class HostedWrapper extends ChannelWrapper
         HostedChannel hosted = new HostedChannel(_channel, _ccobj.getOid());
         ((MsoyNodeObject) MsoyServer.peerMan.getNodeObject()).addToHostedChannels(hosted);
 
-        initializeCCObj(_ccobj, _channel, new EntryListener());
+        initializeCCObj(_ccobj, _channel);
         cccont.creationSucceeded(this);
     }
 
     // from abstract class ChannelWrapper 
-    public void shutdown (SetAdapter adapter)
+    public void shutdown ()
     {
         log.info("Shutting down hosted chat channel: " + _channel + ".");
         MsoyNodeObject host = (MsoyNodeObject) MsoyServer.peerMan.getNodeObject();
         host.removeFromHostedChannels(HostedChannel.getKey(_channel));
-        deinitializeCCObj(_ccobj, adapter);
+        deinitializeCCObj(_ccobj);
         MsoyServer.omgr.destroyObject(_ccobj.getOid());
     }
 
@@ -75,23 +72,29 @@ public class HostedWrapper extends ChannelWrapper
     }
 
     /**
-     * Listens to chatter removal events, and deletes the channel if nobody is
-     * participating in it anymore.
+     * Wrapper around the distributed channel object, to let chat manager add or remove
+     * users from the chatter list. It is assumed the caller already checked whether
+     * this modification is valid.
+     *
+     * @param chatter user to be added or removed from this channel
+     * @param addAction if true, the user will be added, otherwise they will be removed
      */
-    protected class EntryListener extends SetAdapter
+    public void updateDistributedObject (ChatterInfo chatter, boolean addAction)
     {
-        public void entryRemoved (EntryRemovedEvent event) {
-            if (ChatChannelObject.CHATTERS.equals(event.getName())) {
-                if (_ccobj.chatters.size() == 0) {
-                    shutdown(this);
-                    _mgr.removeWrapper(HostedWrapper.this);
-                }
+        if (addAction) {
+            _ccobj.addToChatters(chatter);
+        } else {
+            _ccobj.removeFromChatters(chatter.getKey());
+            if (_ccobj.chatters.size() == 0) {
+                shutdown();
+                _mgr.removeWrapper(HostedWrapper.this);
             }
         }
-    };
-
+    }
+    
     /**
-     * Called when chatter list is changed, it fills logs with marginally useful debug info. :)
+     * Called when chatter list is changed, deletes the channel if nobody is
+     * participating in it anymore.
      */
     protected class ChatterListener implements PeerChatService.ConfirmListener
     {
@@ -99,12 +102,14 @@ public class HostedWrapper extends ChannelWrapper
             _userInfo = userInfo;
         }
         public void requestProcessed () {
-            log.info("Channel subscription modification successful [channel=" +
-                     _channel + ", user=" + _userInfo + "].");
+            log.info("Hosted channel: chatter change successful [channel=" + _channel +
+                     ", user=" + _userInfo.name + ", chatterCount=" +
+                     _ccobj.chatters.size() + "].");
         }
         public void requestFailed (String cause) {
-            log.info("Channel subscription modification failed [channel=" +
-                     _channel + ", user=" + _userInfo + ", cause = " + cause + "].");
+            log.info("Hosted channel: chatter action failed [channel=" + _channel +
+                     ", user=" + _userInfo.name + ", chatterCount=" +
+                     _ccobj.chatters.size() + ", cause = " + cause + "].");
         }
         protected ChatterInfo _userInfo;
     };

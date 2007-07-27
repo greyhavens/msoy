@@ -155,14 +155,13 @@ public class ChatChannelManager
         throws InvocationException
     {
         ChannelWrapper wrapper = _wrappers.get(channel);
-        if (wrapper == null || !wrapper.ready()) {
-            listener.requestFailed("Channel not found or not initialized.");
+        if (wrapper instanceof HostedWrapper && wrapper.ready()) {
+            ((HostedWrapper)wrapper).updateDistributedObject(chatter, true);
+            listener.requestProcessed();
             return;
         }
-        
-        wrapper.getCCObj().addToChatters(chatter);
 
-        listener.requestProcessed();
+        listener.requestFailed("Channel not found or not initialized.");
     }
     
     // from interface PeerChatProvider
@@ -171,14 +170,13 @@ public class ChatChannelManager
         throws InvocationException
     {
         ChannelWrapper wrapper = _wrappers.get(channel);
-        if (wrapper == null || !wrapper.ready()) {
-            listener.requestFailed("Channel not found or not initialized.");
+        if (wrapper instanceof HostedWrapper && wrapper.ready()) {
+            ((HostedWrapper)wrapper).updateDistributedObject(chatter, false);
+            listener.requestProcessed();
             return;
         }
-        
-        wrapper.getCCObj().removeFromChatters(chatter.getKey());
 
-        listener.requestProcessed();
+        listener.requestFailed("Channel not found or not initialized.");
     }
         
     /**
