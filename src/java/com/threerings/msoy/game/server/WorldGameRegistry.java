@@ -46,20 +46,13 @@ import com.threerings.msoy.game.xml.MsoyGameParser;
 import static com.threerings.msoy.Log.*;
 
 /**
- * Manages the lobbies in use.
+ * Manages AVRG games.
  */
 public class WorldGameRegistry
     implements WorldGameProvider
 {
     /**
-     * Create the in-world game registry.
-     */
-    public WorldGameRegistry ()
-    {
-    }
-
-    /**
-     * Initialize the lobby registry.
+     * Initializes the registry.
      */
     public void init (InvocationManager invmgr)
     {
@@ -67,9 +60,8 @@ public class WorldGameRegistry
     }
 
     // from WorldGameProvider
-    public void joinWorldGame (
-        ClientObject caller, int gameId,
-        final InvocationService.InvocationListener listener)
+    public void joinWorldGame (ClientObject caller, int gameId,
+                               final InvocationService.InvocationListener listener)
         throws InvocationException
     {
         // see what we've got..
@@ -80,7 +72,6 @@ public class WorldGameRegistry
         }
 
         final IntTuple gameKey = new IntTuple(gameId, member.getSceneId());
-
         Integer gameOid = _games.get(gameKey);
         if (gameOid != null) {
             // if we know the game oid, join immediately
@@ -238,8 +229,8 @@ public class WorldGameRegistry
     }
 
     /**
-     * Called by WorldGameManagerDelegate instances when they start to shut down and
-     * destroy their dobject.
+     * Called by WorldGameManagerDelegate instances when they start to shut down and destroy their
+     * dobject.
      */
     public void gameShutdown (GameManager manager, int gameOid)
     {
@@ -299,7 +290,6 @@ public class WorldGameRegistry
         try {
             member.setWorldGameCfg(wgcfg);
             member.setWorldGameOid(gameOid);
-
         } finally {
             member.commitTransaction();
         }
