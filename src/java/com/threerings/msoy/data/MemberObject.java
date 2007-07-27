@@ -172,7 +172,7 @@ public class MemberObject extends MsoyBodyObject
 
     /** Statistics tracked for this player. */
     public transient StatSet stats;
-    
+
     /**
      * Returns this member's unique id.
      */
@@ -332,7 +332,7 @@ public class MemberObject extends MsoyBodyObject
         if (notifications.containsKey(id)) {
             removeFromNotifications(id);
             return true;
-        } else {            
+        } else {
             return false;
         }
     }

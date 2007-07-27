@@ -80,7 +80,6 @@ public class MsoyGameAuthenticator extends Authenticator
                 creds.setUsername(
                     new MemberName(MsoyAuthCodes.GUEST_USERNAME_PREFIX + (++_guestCount),
                                    MemberName.GUEST_ID));
-
                 rsp.authdata = null;
                 rdata.code = MsoyGameAuthResponseData.SUCCESS;
                 return;

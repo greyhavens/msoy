@@ -18,6 +18,7 @@ import com.threerings.util.Name;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.Authenticator;
+import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
@@ -40,11 +41,12 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyObjectAccess;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
+
+import com.threerings.msoy.game.data.PlayerObject;
 
 import static com.threerings.msoy.Log.log;
 
@@ -88,20 +90,20 @@ public class MsoyGameServer extends CrowdServer
     public static HostedGameManager hostedMan = new HostedGameManager();
 
     /**
-     * Called when a member starts their session to associate the name with the member's
+     * Called when a player starts their session to associate the name with the player's
      * distributed object.
      */
-    public static void memberLoggedOn (MemberObject memobj)
+    public static void playerLoggedOn (PlayerObject plobj)
     {
-        _online.put(memobj.memberName, memobj);
+        _online.put(plobj.memberName, plobj);
     }
 
     /**
-     * Called when a member ends their session to clear their name to member object mapping.
+     * Called when a player ends their session to clear their name to player object mapping.
      */
-    public static void memberLoggedOff (MemberObject memobj)
+    public static void playerLoggedOff (PlayerObject plobj)
     {
-        _online.remove(memobj.memberName);
+        _online.remove(plobj.memberName);
     }
 
     /**
@@ -148,15 +150,15 @@ public class MsoyGameServer extends CrowdServer
 
         super.init();
 
-//         // set up the right client factory
-//         clmgr.setClientFactory(new ClientFactory() {
-//             public PresentsClient createClient (AuthRequest areq) {
-//                 return new MsoyGameClient();
-//             }
-//             public ClientResolver createClientResolver (Name username) {
-//                 return new MsoyGameClientResolver();
-//             }
-//         });
+        // set up the right client factory
+        clmgr.setClientFactory(new ClientFactory() {
+            public PresentsClient createClient (AuthRequest areq) {
+                return new MsoyGameClient();
+            }
+            public ClientResolver createClientResolver (Name username) {
+                return new MsoyGameClientResolver();
+            }
+        });
 
         // set up our default object access controller
         omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
@@ -173,7 +175,7 @@ public class MsoyGameServer extends CrowdServer
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
-                return ((MemberObject) bodyObj).getMemberId(); // will return 0 for guests
+                return ((PlayerObject) bodyObj).getMemberId(); // will return 0 for guests
             }
         });
         DictionaryManager.init("data/dictionary");
@@ -269,8 +271,8 @@ public class MsoyGameServer extends CrowdServer
     protected int _listenPort;
 
     /** A mapping from member name to member object for all online members. */
-    protected static HashMap<MemberName,MemberObject> _online =
-        new HashMap<MemberName,MemberObject>();
+    protected static HashMap<MemberName,PlayerObject> _online =
+        new HashMap<MemberName,PlayerObject>();
 
     protected static File _logdir = new File(ServerConfig.serverRoot, "log");
 }
