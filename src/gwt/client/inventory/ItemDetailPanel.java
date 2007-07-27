@@ -16,6 +16,7 @@ import com.threerings.msoy.item.data.gwt.ItemDetail;
 
 import client.editem.ItemEditor;
 import client.item.BaseItemDetailPanel;
+import client.shell.CShell;
 import client.util.ClickCallback;
 import client.util.ItemUtil;
 
@@ -36,6 +37,14 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         super.createInterface(details);
 
         ItemUtil.addItemSpecificButtons(_item, _buttons);
+
+        // TODO: this may not be necessary if this panel is only shown to the owner, but currently
+        // anyone can see it by viewing the item details.
+        boolean userOwnsItem = (_item.ownerId == CShell.getMemberId());
+        if (!userOwnsItem) {
+            // don't add any more of the buttons
+            return;
+        }
 
         Button button = new Button(CInventory.msgs.detailDelete());
         new ClickCallback(button) {
