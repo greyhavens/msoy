@@ -9,7 +9,7 @@ package com.threerings.msoy.peer.data;
 public class HostedGame extends HostedPlace
 {
     /** The oid of the LobbyObject on the host. */
-    public Integer oid;
+    public Integer lobbyOid;
 
     /**
      * Empty constructor used for unserializing 
@@ -21,9 +21,9 @@ public class HostedGame extends HostedPlace
     /**
      * Creates a hosted game record.
      */
-    public HostedGame (int placeId, String name, int oid)
+    public HostedGame (int placeId, String name, int lobbyOid)
     {
         super(placeId, name);
-        this.oid = oid;
+        this.lobbyOid = lobbyOid;
     }
 }

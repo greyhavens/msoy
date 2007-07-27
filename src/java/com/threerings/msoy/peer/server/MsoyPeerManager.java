@@ -7,6 +7,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObserverList;
+import com.samskivert.util.Tuple;
 import com.samskivert.util.ResultListener;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -94,15 +95,16 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
-     * Returns the node of the peer that is hosting the specified game, or null if no peer
-     * has published that they are hosting the game.
+     * Returns the name and lobby oid of the peer that is hosting the specified game, or null if 
+     * no peer has published that they are hosting the game.
      */
-    public MsoyNodeObject getGameHost (final int gameId)
+    public Tuple<String, Integer> getGameHost (final int gameId)
     {
-        return lookupNodeDatum(new Lookup<MsoyNodeObject>() {
-            public MsoyNodeObject lookup (NodeObject nodeobj) {
-                MsoyNodeObject node = (MsoyNodeObject) nodeobj;
-                return node.hostedGames.get(gameId) == null ? null : node;
+        return lookupNodeDatum(new Lookup<Tuple<String, Integer>>() {
+            public Tuple<String, Integer> lookup (NodeObject nodeobj) {
+                HostedGame info = ((MsoyNodeObject) nodeobj).hostedGames.get(gameId);
+                return (info == null) ? null : 
+                    new Tuple<String, Integer>(nodeobj.nodeName, info.lobbyOid);
             }
         });
     }
@@ -173,16 +175,16 @@ public class MsoyPeerManager extends CrowdPeerManager
     /**
      * Called by the LobbyRegistry when it has finished resolving a lobby.
      */ 
-    public void lobbyDidStartup (int gameId, String name, int oid)
+    public void lobbyDidStartup (int gameId, String name, int lobbyOid)
     {
         log.info("Hosting game [id=" + gameId + ", name=" + name + "].");
-        _mnobj.addToHostedGames(new HostedGame(gameId, name, oid));
+        _mnobj.addToHostedGames(new HostedGame(gameId, name, lobbyOid));
         // releases our lock on this game now that it is resolved and we are hosting it
         releaseLock(getGameLock(gameId), new ResultListener.NOOP<String>());
     }
 
     /**
-     * Called by the LobbyRegistry when a lobby has been cleand up (no more running games or 
+     * Called by the LobbyRegistry when a lobby has been cleaned up (no more running games or 
      * waiting tables).
      */
     public void lobbyDidShutdown (int gameId)
