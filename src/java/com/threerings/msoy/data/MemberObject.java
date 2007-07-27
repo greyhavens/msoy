@@ -867,8 +867,9 @@ public class MemberObject extends MsoyBodyObject
     }
     // AUTO-GENERATED: METHODS END
 
-    public static final int MAX_RECENT_SCENES = 10;
-
     /** Used for tracking the number of notifications processed on the member object. */
-    public transient int _notificationCount = 0;
+    protected transient int _notificationCount = 0;
+
+    /** Limits the number of recent scenes tracked in {@link #recentScenes}. */
+    protected static final int MAX_RECENT_SCENES = 10;
 }
