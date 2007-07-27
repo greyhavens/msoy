@@ -277,8 +277,8 @@ public abstract class TagRepository extends DepotRepository
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
-        classes.add(getTagClass());
-        classes.add(getTagHistoryClass());
+        classes.add(createTagRecord().getClass());
+        classes.add(createTagHistoryRecord().getClass());
     }
 
     protected Class<TagRecord> _tagClass;
