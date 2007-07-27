@@ -7,7 +7,7 @@ import com.threerings.io.SimpleStreamableObject;
 import com.threerings.presents.dobj.DSet;
 
 /**
- * Represents a hosted scene or game on a particular server.
+ * Represents a hosted scene on a particular server.
  */
 public class HostedPlace extends SimpleStreamableObject
     implements DSet.Entry

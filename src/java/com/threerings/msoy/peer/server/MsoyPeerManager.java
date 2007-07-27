@@ -32,6 +32,7 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.server.RoomManager;
 
 import com.threerings.msoy.peer.data.HostedChannel;
+import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedPlace;
 import com.threerings.msoy.peer.data.MemberLocation;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
@@ -58,6 +59,12 @@ public class MsoyPeerManager extends CrowdPeerManager
     public static NodeObject.Lock getSceneLock (int sceneId)
     {
         return new NodeObject.Lock("SceneHost", sceneId);
+    }
+
+    /** Returns a lock used to claim resolution of the specified game/game loboby. */
+    public static NodeObject.Lock getGameLock (int gameId)
+    {
+        return new NodeObject.Lock("GameHost", gameId);
     }
 
     /** Returns a lock used to claim resolution of the specified chat channel. */
@@ -87,7 +94,21 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
-     * Returns the node name of the peer that is hosting the specified chat channer,
+     * Returns the node of the peer that is hosting the specified game, or null if no peer
+     * has published that they are hosting the game.
+     */
+    public MsoyNodeObject getGameHost (final int gameId)
+    {
+        return lookupNodeDatum(new Lookup<MsoyNodeObject>() {
+            public MsoyNodeObject lookup (NodeObject nodeobj) {
+                MsoyNodeObject node = (MsoyNodeObject) nodeobj;
+                return node.hostedGames.get(gameId) == null ? null : node;
+            }
+        });
+    }
+
+    /**
+     * Returns the node of the peer that is hosting the specified chat channel,
      * or null if no peer has published that they are hosting the channel.
      */
     public MsoyNodeObject getChannelHost (final ChatChannel channel)
@@ -147,6 +168,27 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         log.info("No longer hosting scene [id=" + sceneId + "].");
         _mnobj.removeFromHostedScenes(sceneId);
+    }
+
+    /**
+     * Called by the LobbyRegistry when it has finished resolving a lobby.
+     */ 
+    public void lobbyDidStartup (int gameId, String name, int oid)
+    {
+        log.info("Hosting game [id=" + gameId + ", name=" + name + "].");
+        _mnobj.addToHostedGames(new HostedGame(gameId, name, oid));
+        // releases our lock on this game now that it is resolved and we are hosting it
+        releaseLock(getGameLock(gameId), new ResultListener.NOOP<String>());
+    }
+
+    /**
+     * Called by the LobbyRegistry when a lobby has been cleand up (no more running games or 
+     * waiting tables).
+     */
+    public void lobbyDidShutdown (int gameId)
+    {
+        log.info("No longer hosting game [id=" + gameId + "].");
+        _mnobj.removeFromHostedGames(gameId);
     }
 
     /**
