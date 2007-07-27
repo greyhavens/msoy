@@ -59,7 +59,6 @@ public class MsoyHttpServer extends Server
         // wire up our various servlets
         Context context = new Context(contexts, "/", Context.NO_SESSIONS);
         for (int ii = 0; ii < SERVLETS.length; ii++) {
-            context.addServlet(new ServletHolder(SERVLETS[ii]), "/msoy/" + SERVLET_NAMES[ii]);
             context.addServlet(new ServletHolder(SERVLETS[ii]), "/" + SERVLET_NAMES[ii]);
         }
         context.addServlet(new ServletHolder(new MediaProxyServlet()),
@@ -101,6 +100,7 @@ public class MsoyHttpServer extends Server
         "gamesvc",
         "swiftlysvc",
         "swiftlyuploadsvc",
+        "facebook",
     };
 
     protected static final HttpServlet[] SERVLETS = {
@@ -116,5 +116,6 @@ public class MsoyHttpServer extends Server
         new GameServlet(),
         new SwiftlyServlet(),
         new SwiftlyUploadServlet(),
+        new FacebookServlet(),
     };
 }

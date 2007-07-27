@@ -108,3 +108,9 @@ oooauth.access_denied_url = /register/access_denied.wm
 # Used for signing our Java client code
 
 # cert_dir = /export/threerings
+
+#
+# Facebook Application configuration
+
+# facebook.api_key = 
+# facebook.secret = 
