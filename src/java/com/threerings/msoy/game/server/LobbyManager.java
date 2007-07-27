@@ -103,6 +103,7 @@ public class LobbyManager
     // from SubscriberListener
     public void subscriberCountChanged (DObject target)
     {
+        log.info("subscriber count changed: " + ((LobbyObject) target).getSubscriberCount());
         recheckShutdownInterval();
     }
 

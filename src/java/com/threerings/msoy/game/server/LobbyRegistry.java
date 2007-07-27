@@ -19,11 +19,15 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 
+import com.threerings.presents.dobj.DObject;
+
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.game.xml.MsoyGameParser;
+import com.threerings.msoy.game.data.LobbyObject;
+import com.threerings.msoy.game.data.SubscriberListener;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.data.all.Game;
@@ -84,13 +88,28 @@ public class LobbyRegistry
         _loading.put(gameId, list);
         
         // if its hosted on another server, we need to proxy the lobby here.
-        Tuple<String, Integer> gameInfo = MsoyServer.peerMan.getGameHost(gameId);
+        final Tuple<String, Integer> gameInfo = MsoyServer.peerMan.getGameHost(gameId);
         if (gameInfo != null) {
             MsoyServer.peerMan.proxyRemoteObject(gameInfo.left, gameInfo.right,
                     new ResultListener<Integer>() {
                 public void requestCompleted (Integer proxyOid) {
                     _proxies.put(gameId, proxyOid);
                     notifyLoadingComplete(gameId, proxyOid);
+
+                    // if all of our local lobby subscribers unsubscribe, we need to stop 
+                    // proxying...
+                    LobbyObject lobj = ((LobbyObject) MsoyServer.omgr.getObject(proxyOid));
+                    lobj.subscriberListener = new SubscriberListener() {
+                        public void subscriberCountChanged (DObject target) {
+                            LobbyObject lobj = (LobbyObject) target;
+                            if (lobj.getSubscriberCount() == 1) { // PeerManager is always there
+                                _proxies.remove(gameId);
+                                notifyLoadingFailed(gameId); // just in case
+                                MsoyServer.peerMan.unproxyRemoteObject(
+                                    gameInfo.left, gameInfo.right);
+                            }
+                        }
+                    };
                 }
                 public void requestFailed (Exception cause) {
                     log.log(Level.WARNING, "Game lobby proxy subscription failed [gameId=" +
@@ -137,7 +156,7 @@ public class LobbyRegistry
     {
         // destroy our record of that lobby
         _lobbies.remove(gameId);
-        _loading.remove(gameId); // just in case
+        notifyLoadingFailed(gameId); // just in case
         MsoyServer.peerMan.lobbyDidShutdown(gameId);
     }
 
@@ -182,15 +201,21 @@ public class LobbyRegistry
 
     protected void notifyLoadingComplete (int gameId, int lobbyOid) 
     {
-        for (InvocationService.ResultListener rList : _loading.remove(gameId)) {
-            rList.requestProcessed(lobbyOid);
+        ArrayList<InvocationService.ResultListener> list = _loading.remove(gameId);
+        if (list != null) {
+            for (InvocationService.ResultListener rList : list) {
+                rList.requestProcessed(lobbyOid);
+            }
         }
     }
 
     protected void notifyLoadingFailed (int gameId)
     {
-        for (InvocationService.ResultListener rList : _loading.remove(gameId)) {
-            rList.requestFailed(InvocationCodes.INTERNAL_ERROR);
+        ArrayList<InvocationService.ResultListener> list = _loading.remove(gameId);
+        if (list != null) {
+            for (InvocationService.ResultListener rList : list) {
+                rList.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
         }
     }
 
