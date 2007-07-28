@@ -48,8 +48,8 @@ import com.threerings.toybox.client.ToyBoxDirector;
 import com.whirled.util.WhirledContext;
 
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.web.client.DeploymentConfig;
 
 import static com.threerings.msoy.Log.log;
@@ -115,7 +115,7 @@ public class GameClient
             return;
         }
 
-        MsoyCredentials creds = new MsoyCredentials();
+        MsoyGameCredentials creds = new MsoyGameCredentials();
         creds.sessionToken = authtoken;
         _ctx.getClient().setCredentials(creds);
         _ctx.getClient().setVersion(String.valueOf(DeploymentConfig.version));

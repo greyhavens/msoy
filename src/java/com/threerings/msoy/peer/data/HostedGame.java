@@ -8,8 +8,8 @@ package com.threerings.msoy.peer.data;
  */
 public class HostedGame extends HostedPlace
 {
-    /** The oid of the LobbyObject on the host. */
-    public Integer lobbyOid;
+    /** The port on which this game server is listening. */
+    public Integer port;
 
     /**
      * Empty constructor used for unserializing 
@@ -21,9 +21,9 @@ public class HostedGame extends HostedPlace
     /**
      * Creates a hosted game record.
      */
-    public HostedGame (int placeId, String name, int lobbyOid)
+    public HostedGame (int placeId, String name, int port)
     {
         super(placeId, name);
-        this.lobbyOid = lobbyOid;
+        this.port = port;
     }
 }

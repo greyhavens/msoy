@@ -187,7 +187,7 @@ public class MsoyGameServer extends CrowdServer
         }
         lobbyMgr = new LobbyManager(omgr, (Game)rec.toItem(), this);
 
-        log.info("Msoy server initialized.");
+        log.info("Game server initialized for " + rec.name + " (" + rec.itemId + ").");
     }
 
     @Override

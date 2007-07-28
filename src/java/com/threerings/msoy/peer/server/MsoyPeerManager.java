@@ -81,6 +81,18 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
+     * Returns the location of the specified member, or null if they are not online on any peer.
+     */
+    public MemberLocation getMemberLocation (final int memberId)
+    {
+        return lookupNodeDatum(new Lookup<MemberLocation>() {
+            public MemberLocation lookup (NodeObject nodeobj) {
+                return ((MsoyNodeObject)nodeobj).memberLocs.get(memberId);
+            }
+        });
+    }
+
+    /**
      * Returns the node name of the peer that is hosting the specified scene, or null if no peer
      * has published that they are hosting the scene.
      */
@@ -95,23 +107,23 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
-     * Returns the name and lobby oid of the peer that is hosting the specified game, or null if 
-     * no peer has published that they are hosting the game.
+     * Returns the name and game server port of the peer that is hosting the specified game, or
+     * null if no peer has published that they are hosting the game.
      */
     public Tuple<String, Integer> getGameHost (final int gameId)
     {
         return lookupNodeDatum(new Lookup<Tuple<String, Integer>>() {
             public Tuple<String, Integer> lookup (NodeObject nodeobj) {
                 HostedGame info = ((MsoyNodeObject) nodeobj).hostedGames.get(gameId);
-                return (info == null) ? null : 
-                    new Tuple<String, Integer>(nodeobj.nodeName, info.lobbyOid);
+                return (info == null) ? null :
+                    new Tuple<String, Integer>(nodeobj.nodeName, info.port);
             }
         });
     }
 
     /**
-     * Returns the node of the peer that is hosting the specified chat channel,
-     * or null if no peer has published that they are hosting the channel.
+     * Returns the node of the peer that is hosting the specified chat channel, or null if no peer
+     * has published that they are hosting the channel.
      */
     public MsoyNodeObject getChannelHost (final ChatChannel channel)
     {
@@ -120,18 +132,6 @@ public class MsoyPeerManager extends CrowdPeerManager
             public MsoyNodeObject lookup (NodeObject nodeobj) {
                 MsoyNodeObject node = (MsoyNodeObject) nodeobj;
                 return node.hostedChannels.get(channelKey) == null ? null : node;
-            }
-        });
-    }
-
-    /**
-     * Returns the location of the specified member, or null if they are not online on any peer.
-     */
-    public MemberLocation getMemberLocation (final int memberId)
-    {
-        return lookupNodeDatum(new Lookup<MemberLocation>() {
-            public MemberLocation lookup (NodeObject nodeobj) {
-                return ((MsoyNodeObject)nodeobj).memberLocs.get(memberId);
             }
         });
     }
@@ -173,21 +173,21 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
-     * Called by the LobbyRegistry when it has finished resolving a lobby.
+     * Called by the GameServerRegistry when we have established a new game server to host a
+     * particular game.
      */ 
-    public void lobbyDidStartup (int gameId, String name, int lobbyOid)
+    public void gameDidStartup (int gameId, String name, int port)
     {
         log.info("Hosting game [id=" + gameId + ", name=" + name + "].");
-        _mnobj.addToHostedGames(new HostedGame(gameId, name, lobbyOid));
+        _mnobj.addToHostedGames(new HostedGame(gameId, name, port));
         // releases our lock on this game now that it is resolved and we are hosting it
         releaseLock(getGameLock(gameId), new ResultListener.NOOP<String>());
     }
 
     /**
-     * Called by the LobbyRegistry when a lobby has been cleaned up (no more running games or 
-     * waiting tables).
+     * Called by the GameServerRegistry when a game server has been shutdown.
      */
-    public void lobbyDidShutdown (int gameId)
+    public void gameDidShutdown (int gameId)
     {
         log.info("No longer hosting game [id=" + gameId + "].");
         _mnobj.removeFromHostedGames(gameId);
