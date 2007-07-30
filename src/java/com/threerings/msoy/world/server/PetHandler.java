@@ -68,6 +68,9 @@ public class PetHandler
      */
     public void enterRoom (final int sceneId, RoomObject roomObj, ArrayList<MemoryEntry> memories)
     {
+        log.info("Entering room [pet=" + _petobj.pet.getIdent() +
+                 ", room=" + roomObj.getOid() + "].");
+
         // add our memories to the room
         _roomObj = roomObj;
         try {
@@ -99,6 +102,9 @@ public class PetHandler
         if (_roomObj == null) {
             return null; // NOOP!
         }
+
+        log.info("Leaving room [pet=" + _petobj.pet.getIdent() +
+                 ", room=" + _roomObj.getOid() + "].");
 
         // collect up our memory entries from our previous room
         ItemIdent petid = _petobj.pet.getIdent();
