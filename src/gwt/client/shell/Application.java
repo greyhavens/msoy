@@ -300,6 +300,7 @@ public class Application
         _creators.put("swiftly", client.swiftly.index.getCreator());
         _creators.put("world", client.world.index.getCreator());
         _creators.put("wrap", client.wrap.index.getCreator());
+        _creators.put("whirled", client.whirled.index.getCreator());
     }
 
     /**

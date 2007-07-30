@@ -234,6 +234,7 @@
     <antcall target="gmsg"><param name="which" value="profile.Profile"/></antcall>
     <antcall target="gmsg"><param name="which" value="swiftly.Swiftly"/></antcall>
     <antcall target="gmsg"><param name="which" value="world.World"/></antcall>
+    <antcall target="gmsg"><param name="which" value="whirled.Whirled"/></antcall>
   </target>
 
   <!-- prepares to build our GWT client -->
