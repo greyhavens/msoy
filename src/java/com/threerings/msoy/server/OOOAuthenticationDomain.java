@@ -32,7 +32,7 @@ public class OOOAuthenticationDomain
     public void init ()
         throws PersistenceException
     {
-        _authrep = new MsoyOOOUserRepository(MsoyServer.perCtx);
+        _authrep = new MsoyOOOUserRepository(MsoyServer.userCtx);
     }
 
     // from interface MsoyAuthenticator.Domain

@@ -14,6 +14,7 @@ import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.jdbc.TransitionRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
+import com.samskivert.servlet.user.UserRepository;
 import com.samskivert.util.AuditLogger;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
@@ -91,6 +92,9 @@ public class MsoyServer extends WhirledServer
 {
     /** Provides database access to all of our repositories. */
     public static PersistenceContext perCtx;
+    
+    /** TODO: Provides database access to the user databases. This should probably be removed. */
+    public static PersistenceContext userCtx;
 
     /** Maintains a registry of runtime configuration information. */
     public static ConfigRegistry confReg;
@@ -334,6 +338,9 @@ public class MsoyServer extends WhirledServer
         _conProv = new StaticConnectionProvider(ServerConfig.getJDBCConfig());
         perCtx = new PersistenceContext("msoy", _conProv, ServerConfig.createCacheAdapter());
 
+        userCtx = new PersistenceContext(
+            UserRepository.USER_REPOSITORY_IDENT, _conProv, ServerConfig.createCacheAdapter());
+
         // create our transition manager prior to doing anything else
         transitRepo = new TransitionRepository(_conProv);
 
@@ -539,6 +546,7 @@ public class MsoyServer extends WhirledServer
 
         // shutdown our persistence context (cache, JDBC connections)
         perCtx.shutdown();
+        userCtx.shutdown();
 
         // close our audit logs
         _glog.close();
