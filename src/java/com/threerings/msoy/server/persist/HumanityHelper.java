@@ -75,9 +75,9 @@ public class HumanityHelper
             // no adjustments due to gameplay time
         } else if (hoursPerDay <= 2) {
             adjust = 0.1;
-        } else if (totalTime > 6) {
+        } else if (hoursPerDay > 6) {
             adjust = -0.2;
-        } else if (totalTime > 4) {
+        } else if (hoursPerDay > 4) {
             adjust = -0.1;
         } else /* (hoursPerDay > 2) */ {
             // no adjustments due to gameplay time
