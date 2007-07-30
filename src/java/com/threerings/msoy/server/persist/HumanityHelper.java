@@ -84,7 +84,7 @@ public class HumanityHelper
         }
 
         // TEMP: log this so that we can eyeball what's happening for a while
-        if (adjust != 1) {
+        if (adjust != 0) {
             log.info("Adjusting humanity [id=" + memberId + ", hpd=" + hoursPerDay +
                      ", adjust=" + adjust + "].");
         }
