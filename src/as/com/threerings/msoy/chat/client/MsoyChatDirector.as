@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.chat.client {
 
+import com.threerings.presents.client.ClientEvent;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.MessageBundle;
@@ -97,10 +98,10 @@ public class MsoyChatDirector extends ChatDirector
         }
 
         // otherwise we have to subscribe to the channel first
-        var ready :Function = function () :void {
+        var displayFn :Function = function () :void {
             _ccpanel.getChatDisplay(channel, getHistory(channel), true);
         };
-        _chandlers.put(channel.toLocalType(), new ChannelHandler(_wctx, channel, ready));
+        _chandlers.put(channel.toLocalType(), new ChannelHandler(_wctx, channel, displayFn));
     }
 
     /**
@@ -168,6 +169,20 @@ public class MsoyChatDirector extends ChatDirector
         return _ccpanel.containsRoomTab();
     }
 
+    // from parent superclass BasicDirector
+    override public function clientDidLogoff (event :ClientEvent) :void
+    {
+        super.clientDidLogoff(event);
+        reconnectChannels(false);
+    }
+
+    // from parent superclass BasicDirector
+    override public function clientDidLogon (event :ClientEvent) :void
+    {
+        super.clientDidLogon(event);
+        reconnectChannels(true);
+    }
+
     // from ChatDirector
     override public function pushChatDisplay (display :ChatDisplay) :void
     {
@@ -228,6 +243,24 @@ public class MsoyChatDirector extends ChatDirector
         return false;
     }
 
+    /**
+     * Iterates over all known channels, and either cleans up or reconnects them,
+     * based on the input parameter.
+     */
+    protected function reconnectChannels (connected :Boolean) :void
+    {
+        for each (var chandler :ChannelHandler in _chandlers.values()) {
+            if (connected) {
+                // reconnect any open channels
+                chandler.connect();
+            } else {
+                // we're already disconnected, so just clean up our local structures.
+                // we'll fill them in again if we reconnect on a different server.
+                chandler.disconnect();
+            }
+        }
+    }
+    
     /**
      * Create a ChatChannel object for the specified Name.
      */
@@ -303,33 +336,53 @@ import com.threerings.msoy.chat.client.ChatChannelService;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 
+/**
+ * The handler is a local object change dispatch for a channel. It can be active or shutdown:
+ * while active, it can be connected or disconnected as the player moves between servers;
+ * once shut down, it remains disconnected until destroyed. 
+ */
 class ChannelHandler implements Subscriber
 {
     public var channel :ChatChannel;
     public var chanobj :ChatChannelObject;
 
-    public function ChannelHandler (ctx :WorldContext, channel :ChatChannel, ready :Function)
+    public function ChannelHandler (ctx :WorldContext, channel :ChatChannel, displayFn :Function)
     {
         this.channel = channel;
         _ctx = ctx;
-        _ready = ready;
+        _displayFn = displayFn;
         _ccsvc = (_ctx.getClient().requireService(ChatChannelService) as ChatChannelService);
 
-        // start by joining the chat channel
-        _ccsvc.joinChannel(_ctx.getClient(), channel, new ResultWrapper(failed, gotChannelOid));
+        connect();
+    }
+
+    public function connect () :void
+    {
+        if (! _isConnected) {
+            _ccsvc.joinChannel(
+                _ctx.getClient(), channel, new ResultWrapper(failed, gotChannelOid));
+        }
+    }
+
+    public function disconnect () :void
+    {
+        if (_isConnected) {
+            if (_ccsub != null) {
+                _ccsub.unsubscribe(_ctx.getClient().getDObjectManager());
+                _ccsub = null;
+            }
+            if (chanobj != null) {
+                _ctx.getChatDirector().removeAuxiliarySource(chanobj);
+                chanobj = null;
+            }
+            _ccsvc.leaveChannel(_ctx.getClient(), channel);
+            _isConnected = false;
+        }
     }
 
     public function shutdown () :void
     {
-        if (_ccsub != null) {
-            _ccsub.unsubscribe(_ctx.getClient().getDObjectManager());
-            _ccsub = null;
-        }
-        if (chanobj != null) {
-            _ctx.getChatDirector().removeAuxiliarySource(chanobj);
-            chanobj = null;
-        }
-        _ccsvc.leaveChannel(_ctx.getClient(), channel);
+        disconnect();
         _isShutdown = true;
     }
 
@@ -338,7 +391,7 @@ class ChannelHandler implements Subscriber
     {
         chanobj = (obj as ChatChannelObject);
         _ctx.getChatDirector().addAuxiliarySource(chanobj, channel.toLocalType());
-        _ready();
+        _displayFn();
     }
 
     // from Subscriber
@@ -355,6 +408,7 @@ class ChannelHandler implements Subscriber
         } else {
             _ccsub = new SafeSubscriber(int(result), this);
             _ccsub.subscribe(_ctx.getClient().getDObjectManager());
+            _isConnected = true;
         }
     }
 
@@ -365,8 +419,9 @@ class ChannelHandler implements Subscriber
     }
 
     protected var _ctx :WorldContext;
-    protected var _ready :Function;
+    protected var _displayFn :Function;
     protected var _isShutdown :Boolean = false;
+    protected var _isConnected :Boolean = false;
 
     protected var _ccsvc :ChatChannelService;
     protected var _ccsub :SafeSubscriber;
