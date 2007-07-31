@@ -138,17 +138,8 @@ public class ControlBar extends HBox
             _channelInput = null;
         }
         if (input != null) {
-            var chidx :int = -1;
-            // TEMP: non-admins have no channel button for now
-            if (_channelBtn == null) {
-                chidx = numChildren;
-            } else {
-                // insert it to the left of the channel button
-                chidx = getChildIndex(_channelBtn);
-            }
-            if (chidx >= 0) {
-                addChildAt(_channelInput = input, chidx);
-            }
+            _channelInput = input;
+            recheckChannelChatInput();
         }
     }
 
@@ -298,7 +289,7 @@ public class ControlBar extends HBox
         _isEditing = false;
 
         updateUI();
-
+        recheckChannelChatInput();
         recheckAvatarControl();
     }
 
@@ -368,6 +359,23 @@ public class ControlBar extends HBox
     {
         if (_avatarBtn != null) {
             _avatarBtn.enabled = _ctx.worldProps.userControlsAvatar;
+        }
+    }
+
+    /** If the channel input box is defined, let's make sure it's displayed. */
+    protected function recheckChannelChatInput () :void
+    {
+        if (_channelInput != null && !contains(_channelInput)) {
+            var chidx :int = -1;
+            if (_channelBtn == null) {
+                chidx = numChildren;
+            } else {
+                // insert it to the left of the channel button
+                chidx = getChildIndex(_channelBtn);
+            }
+            if (chidx >= 0) {
+                addChildAt(_channelInput, chidx);
+            }
         }
     }
 
