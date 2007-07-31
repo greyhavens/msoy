@@ -94,9 +94,10 @@ public class GroupRepository extends DepotRepository
         throws PersistenceException
     {
         // for now, always operate with boolean searching enabled, without query expansion
-        return findAll(GroupRecord.class, new Where(new And(new Not(new Equals(GroupRecord.POLICY_C,
-            Group.POLICY_EXCLUSIVE)), new Match(searchString, Match.Mode.BOOLEAN, false,
-            GroupRecord.NAME_C, GroupRecord.BLURB_C, GroupRecord.CHARTER_C))));
+        return findAll(
+            GroupRecord.class,
+            new Where(new And(new Not(new Equals(GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE)),
+                              new FullTextMatch(GroupRecord.class, "NBC", searchString))));
     }
 
     /**

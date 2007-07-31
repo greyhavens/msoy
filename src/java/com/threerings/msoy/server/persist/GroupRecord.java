@@ -13,9 +13,11 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.FullTextIndex;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.util.StringUtil;
@@ -27,6 +29,9 @@ import com.threerings.msoy.web.data.GroupExtras;
  * Contains the details of a group.
  */
 @Entity
+@Table(fullTextIndexes = {
+    @FullTextIndex(name = "NBC", fieldNames = {
+        GroupRecord.NAME, GroupRecord.BLURB, GroupRecord.CHARTER }) })
 public class GroupRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START

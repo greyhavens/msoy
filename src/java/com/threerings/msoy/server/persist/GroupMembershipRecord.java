@@ -24,7 +24,7 @@ import com.threerings.msoy.data.all.GroupName;
  * Contains the details of person's membership in a group.
  */
 @Entity
-@Table(uniqueConstraints=@UniqueConstraint(columnNames={
+@Table(uniqueConstraints=@UniqueConstraint(fieldNames={
     GroupMembershipRecord.MEMBER_ID, GroupMembershipRecord.GROUP_ID }))
 public class GroupMembershipRecord extends PersistentRecord
 {

@@ -13,7 +13,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
  */
 @Entity
 @Table(uniqueConstraints =
-       {@UniqueConstraint(columnNames={FriendRecord.INVITER_ID, FriendRecord.INVITEE_ID })})
+       {@UniqueConstraint(fieldNames={FriendRecord.INVITER_ID, FriendRecord.INVITEE_ID })})
 public class FriendRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START

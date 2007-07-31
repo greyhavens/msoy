@@ -22,7 +22,7 @@ import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
  *    VARCHAR(255) * (UTF-8 4 bytes) == 1020
  */
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames={"protocol", "host", "port", "baseDir"})})
+@Table(uniqueConstraints = {@UniqueConstraint(fieldNames={"protocol", "host", "port", "baseDir"})})
 public class SwiftlySVNStorageRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START

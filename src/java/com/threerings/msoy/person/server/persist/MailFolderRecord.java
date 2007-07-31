@@ -18,7 +18,7 @@ import com.samskivert.util.StringUtil;
  */
 @Entity
 @Table(uniqueConstraints={
-    @UniqueConstraint(columnNames={MailFolderRecord.OWNER_ID, MailFolderRecord.NAME })})
+    @UniqueConstraint(fieldNames={MailFolderRecord.OWNER_ID, MailFolderRecord.NAME })})
 public class MailFolderRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
