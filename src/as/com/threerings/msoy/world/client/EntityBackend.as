@@ -42,6 +42,7 @@ public class EntityBackend extends ControlBackend
         o["canEditRoom_v1"] = canEditRoom_v1;
         o["showPopup_v1"] = showPopup_v1;
         o["clearPopup_v1"] = clearPopup_v1;
+        o["getMemories_v1"] = getMemories_v1;
 
         // deprecated methods
         o["triggerEvent_v1"] = triggerEvent_v1;
@@ -63,6 +64,11 @@ public class EntityBackend extends ControlBackend
     protected function getInstanceId_v1 () :int
     {
         return _sprite.getInstanceId();
+    }
+
+    protected function getMemories_v1 () :Object
+    {
+        return _sprite.getMemories();
     }
 
     protected function lookupMemory_v1 (key :String) :Object

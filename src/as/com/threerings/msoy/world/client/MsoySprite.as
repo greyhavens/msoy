@@ -552,6 +552,24 @@ public class MsoySprite extends MsoyMediaContainer
     }
 
     /**
+     * Return all memories in an associative hash.
+     * Called by our backend in response to a request from usercode.
+     */
+    internal function getMemories () :Object
+    {
+        var mems :Object = {};
+        if (_ident != null && parent is RoomView) {
+            var roomObj :RoomObject = (parent as RoomView).getRoomObject();
+            for each (var entry :MemoryEntry in roomObj.memories.toArray()) {
+                if (entry.item.equals(_ident)) {
+                    mems[entry.key] = ObjectMarshaller.decode(entry.value);
+                }
+            }
+        }
+        return mems;
+    }
+
+    /**
      * Locate the value bound to a particular key in the item's memory. Called by our backend in
      * response to a request from usercode.
      */
