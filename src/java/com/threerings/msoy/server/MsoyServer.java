@@ -418,11 +418,6 @@ public class MsoyServer extends WhirledServer
             }
         }
 
-        // shutdown our peer manager and logoff of our peer nodes
-        if (peerMan != null) {
-            peerMan.shutdown();
-        }
-
         // shut down our http server
         try {
             httpServer.stop();
