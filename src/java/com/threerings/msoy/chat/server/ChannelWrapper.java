@@ -11,7 +11,7 @@ import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.crowd.chat.data.SpeakMarshaller;
 import com.threerings.crowd.chat.server.SpeakDispatcher;
-import com.threerings.crowd.chat.server.SpeakProvider;
+import com.threerings.crowd.chat.server.SpeakHandler;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DObject;
@@ -71,13 +71,13 @@ public abstract class ChannelWrapper
     protected static void initializeCCObj (final ChatChannelObject ccobj, ChatChannel channel)
     {
         ccobj.channel = channel;
-        SpeakProvider.SpeakerValidator validator = new SpeakProvider.SpeakerValidator() {
+        SpeakHandler.SpeakerValidator validator = new SpeakHandler.SpeakerValidator() {
             public boolean isValidSpeaker (DObject speakObj, ClientObject speaker, byte mode) {
                 MemberObject who = (MemberObject)speaker;
                 return (who == null || ccobj.chatters.containsKey(who.memberName));
             }
         };
-        SpeakDispatcher sd = new SpeakDispatcher(new SpeakProvider(ccobj, validator));
+        SpeakDispatcher sd = new SpeakDispatcher(new SpeakHandler(ccobj, validator));
         ccobj.setSpeakService((SpeakMarshaller)MsoyServer.invmgr.registerDispatcher(sd));
     }
 

@@ -5,7 +5,7 @@ package com.threerings.msoy.notify.server;
 
 import com.threerings.util.MessageBundle;
 
-import com.threerings.crowd.chat.server.SpeakProvider;
+import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.MemberObject;
@@ -92,7 +92,7 @@ public class NotificationManager
      */
     protected void dispatchChatOnlyNotification (MemberObject target, String msg)
     {
-        SpeakProvider.sendMessage(target, new NotifyMessage(msg));
+        SpeakUtil.sendMessage(target, new NotifyMessage(msg));
     }
 
     /** The next id we'll use for a notification. */

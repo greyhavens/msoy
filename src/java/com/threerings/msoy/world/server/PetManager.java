@@ -15,7 +15,7 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.util.Name;
 
-import com.threerings.crowd.chat.server.SpeakProvider;
+import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
@@ -221,7 +221,7 @@ public class PetManager
 
             // it's in the room, let's chat
             PlaceObject place = mgr.getPlaceObject();
-            SpeakProvider.sendSpeak(place, petInfo.username, null, message);
+            SpeakUtil.sendSpeak(place, petInfo.username, null, message);
         }
         
         listener.requestProcessed();

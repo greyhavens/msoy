@@ -29,7 +29,7 @@ import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.crowd.chat.server.SpeakProvider;
+import com.threerings.crowd.chat.server.SpeakUtil;
 
 import com.threerings.parlor.game.server.GameManager;
 
@@ -783,14 +783,14 @@ public class ChiyogamiManager extends GameManager
     protected void roomSpeak (String message)
     {
         // TODO: translations
-        SpeakProvider.sendInfo(_roomObj, null, message);
+        SpeakUtil.sendInfo(_roomObj, null, message);
     }
 
     protected void bossSpeak (String utterance)
     {
         if (utterance != null) {
             // TODO: translations
-            SpeakProvider.sendSpeak(_roomObj, _bossObj.username, null, utterance);
+            SpeakUtil.sendSpeak(_roomObj, _bossObj.username, null, utterance);
         }
     }
 
