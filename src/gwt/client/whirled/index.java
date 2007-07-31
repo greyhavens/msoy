@@ -25,6 +25,12 @@ public class index extends MsgsEntryPoint
     // @Override // from Page
     public void onHistoryChanged (String token)
     {
+        if ("mywhirled".equals(token)) {
+            setPageTitle(CWhirled.msgs.titleMyWhirled());
+            setContent(new MyWhirled());
+        } else if ("whirledwide".equals(token)) {
+            setPageTitle(CWhirled.msgs.titleWhirledwide());
+        }
     }
 
     // @Override // from Page

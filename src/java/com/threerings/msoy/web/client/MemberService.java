@@ -13,6 +13,7 @@ import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.data.Whirled;
 
 /**
  * Defines member-specific services available to the GWT/AJAX web client.
@@ -49,6 +50,12 @@ public interface MemberService extends RemoteService
      * Fetch the n most Popular Places data in JSON-serialized form.
      */
     public String serializePopularPlaces (WebIdent ident, int n)
+        throws ServiceException;
+
+    /**
+     * Get data for the MyWhirled view for the current user.
+     */
+    public Whirled getMyWhirled (WebIdent ident)
         throws ServiceException;
 
     /**

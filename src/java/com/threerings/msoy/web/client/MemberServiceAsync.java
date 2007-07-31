@@ -41,6 +41,11 @@ public interface MemberServiceAsync
     public void serializePopularPlaces (WebIdent ident, int n, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link MemberService#getMyWhirled}.
+     */
+    public void getMyWhirled (WebIdent ident, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link MemberService#getInvitationStatus}.
      */
     public void getInvitationsStatus (WebIdent ident, AsyncCallback callback);

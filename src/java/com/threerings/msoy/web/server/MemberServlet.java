@@ -50,6 +50,7 @@ import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.data.Whirled;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -194,6 +195,15 @@ public class MemberServlet extends MsoyServiceServlet
             }
         });
         return waiter.waitForResult();
+    }
+
+    // from MemberService 
+    public Whirled getMyWhirled (WebIdent ident)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(ident);
+
+        return new Whirled();
     }
 
     // from MemberService
