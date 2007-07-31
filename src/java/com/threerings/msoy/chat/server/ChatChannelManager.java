@@ -10,9 +10,6 @@ import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelCodes;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.chat.data.ChatterInfo;
-import com.threerings.msoy.chat.server.ChannelWrapper;
-import com.threerings.msoy.chat.server.ChatChannelDispatcher;
-import com.threerings.msoy.chat.server.ChatChannelProvider;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.ChannelName;
@@ -34,8 +31,10 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
+import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.server.PresentsClient;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
@@ -60,6 +59,20 @@ public class ChatChannelManager
         InvocationMarshaller marshaller = invmgr.registerDispatcher(new PeerChatDispatcher(this));
         MsoyNodeObject me = (MsoyNodeObject) MsoyServer.peerMan.getNodeObject();
         me.setPeerChatService((PeerChatMarshaller)marshaller);
+
+        // monitor player disconnects
+        MsoyServer.clmgr.addClientObserver(new ClientManager.ClientObserver() {
+            public void clientSessionDidEnd (PresentsClient client) {
+                ClientObject cobj = client.getClientObject();
+                if (cobj instanceof MemberObject) {
+                    // remove the client from all channels
+                    removeChatter((MemberObject)cobj); 
+                }
+            }
+            public void clientSessionDidStart (PresentsClient client) {
+                // no op. perhaps reinstate recently disconnected clients?
+            }
+        });
     }
 
     // from interface ChatChannelProvider
@@ -287,20 +300,40 @@ public class ChatChannelManager
     }
         
     /**
-     * Removes participants from a channel. Removal may trigger channel cleanup.
+     * Removes participant from a channel. Removal may trigger channel cleanup.
      */
     protected void removeChatter (ChannelWrapper wrapper, MemberObject user)
     {
         ChatterInfo userInfo = new ChatterInfo(user);
         ChatChannelObject ccobj = wrapper.getCCObj();
 
-        if (! ccobj.chatters.containsKey(user.memberName)) {
+        if (! wrapper.hasMember(userInfo)) {
             log.warning("User not in chat channel, cannot remove [user=" + user.who() +
                         ", channel=" + ccobj.channel + "].");
             return;
         }
 
         wrapper.removeChatter(userInfo);
+    }
+
+    /**
+     * Removes participant from all channels. Removal may trigger channel cleanup.
+     */
+    protected void removeChatter (MemberObject user)
+    {
+        int count = 0;
+        ChatterInfo userInfo = new ChatterInfo(user);
+        for (ChannelWrapper wrapper : _wrappers.values()) {
+            if (wrapper.hasMember(userInfo)) {
+                wrapper.removeChatter(userInfo);
+                count++;
+            }
+        }
+
+        if (count > 0) {  // just for testing
+            log.info("Chatter was removed from all channels [user=" + user.who() +
+                     ", count=" + count + "].");
+        }
     }
     
     /** Contains a mapping of all chat channels we know about, hosted or subscribed. */

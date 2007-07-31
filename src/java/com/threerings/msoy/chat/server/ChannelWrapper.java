@@ -61,6 +61,12 @@ public abstract class ChannelWrapper
     /** Asks the hosting server to remove the speficied user from the wrapped channel. */
     public abstract void removeChatter (ChatterInfo userInfo);
 
+    /** Does this channel contain the specified chatter? */
+    public boolean hasMember (ChatterInfo userInfo)
+    {
+        return ready() && _ccobj.chatters.containsKey(userInfo.name);
+    }
+    
     /** Links a newly created distributed channel object to the channel definition. */
     protected static void initializeCCObj (final ChatChannelObject ccobj, ChatChannel channel)
     {
