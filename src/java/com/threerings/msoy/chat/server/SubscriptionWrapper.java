@@ -103,8 +103,6 @@ public class SubscriptionWrapper extends ChannelWrapper
         }
         public void requestProcessed () {
             _localChatterCount += _delta;
-            log.info("Subscription channel: chatter action successful [channel=" + _channel
-                     + ", user=" + _userInfo.name + ", count=" + _localChatterCount + "].");
             if (_localChatterCount <= 0) {
                 shutdown();
                 _mgr.removeWrapper(SubscriptionWrapper.this);

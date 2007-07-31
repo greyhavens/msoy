@@ -102,9 +102,6 @@ public class HostedWrapper extends ChannelWrapper
             _userInfo = userInfo;
         }
         public void requestProcessed () {
-            log.info("Hosted channel: chatter change successful [channel=" + _channel +
-                     ", user=" + _userInfo.name + ", chatterCount=" +
-                     _ccobj.chatters.size() + "].");
         }
         public void requestFailed (String cause) {
             log.info("Hosted channel: chatter action failed [channel=" + _channel +
