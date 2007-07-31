@@ -239,7 +239,7 @@ public class MailApplication extends DockPanel
         _massDelete.setEnabled(false);
         _massDelete.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                deleteMessages(_checkedMessages.toArray());
+                deleteMessages(_checkedMessages.toArray(), null);
                 _massDelete.setEnabled(false);
             }
         });
@@ -335,7 +335,7 @@ public class MailApplication extends DockPanel
         deleteButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 deleteButton.setEnabled(false);
-                deleteMessages(new MailHeaders[] { _message.headers });
+                deleteMessages(new MailHeaders[] { _message.headers }, deleteButton);
             }
         });
         messageControls.add(deleteButton);
@@ -640,7 +640,7 @@ public class MailApplication extends DockPanel
     }
 
     // since collection-to-array type checking is a lost cause anyway, just accept Object[] here
-    protected void deleteMessages (Object[] objects)
+    protected void deleteMessages (Object[] objects, final Button deleteButton)
     {
         if (objects.length == 0) {
             return;
@@ -661,9 +661,15 @@ public class MailApplication extends DockPanel
         CMail.mailsvc.deleteMessages(CMail.ident, folderId, msgIds, new AsyncCallback() {
             public void onSuccess (Object result) {
                 // if it went well, refresh the folder view and whatnot
+                if (deleteButton != null) {
+                    deleteButton.setEnabled(true);
+                }
                 refresh();
             }
             public void onFailure (Throwable caught) {
+                if (deleteButton != null) {
+                    deleteButton.setEnabled(true);
+                }
                 addError("Failed to delete messages: " + caught.getMessage());
             }
         });
