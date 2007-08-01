@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.chat.server;
 
+import com.threerings.crowd.chat.data.SpeakMarshaller;
+import com.threerings.crowd.chat.server.SpeakDispatcher;
+import com.threerings.crowd.chat.server.SpeakHandler;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.chat.data.ChatterInfo;
@@ -10,6 +13,8 @@ import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DObject;
 
 import static com.threerings.msoy.Log.log;
 
@@ -30,12 +35,21 @@ public class HostedWrapper extends ChannelWrapper
 
         // create and initialize a new chat channel object
         _ccobj = MsoyServer.omgr.registerObject(new ChatChannelObject());
+        _ccobj.channel = _channel;
 
         // and advertise to other peers that we're hosting this channel
         HostedChannel hosted = new HostedChannel(_channel, _ccobj.getOid());
         ((MsoyNodeObject) MsoyServer.peerMan.getNodeObject()).addToHostedChannels(hosted);
 
-        initializeCCObj(_ccobj, _channel);
+        // initialize speak service
+        SpeakHandler.SpeakerValidator validator = new SpeakHandler.SpeakerValidator() {
+            public boolean isValidSpeaker (DObject speakObj, ClientObject speaker, byte mode) {
+                return speakObj == _ccobj && hasMember(speaker);
+            }
+        };
+        SpeakDispatcher sd = new SpeakDispatcher(new SpeakHandler(_ccobj, validator));
+        _ccobj.setSpeakService((SpeakMarshaller)MsoyServer.invmgr.registerDispatcher(sd));
+
         cccont.creationSucceeded(this);
     }
 
@@ -45,7 +59,9 @@ public class HostedWrapper extends ChannelWrapper
         log.info("Shutting down hosted chat channel: " + _channel + ".");
         MsoyNodeObject host = (MsoyNodeObject) MsoyServer.peerMan.getNodeObject();
         host.removeFromHostedChannels(HostedChannel.getKey(_channel));
-        deinitializeCCObj(_ccobj);
+
+        // clean up the hosted dobject
+        MsoyServer.invmgr.clearDispatcher(_ccobj.speakService);
         MsoyServer.omgr.destroyObject(_ccobj.getOid());
     }
 
@@ -79,7 +95,7 @@ public class HostedWrapper extends ChannelWrapper
      * @param chatter user to be added or removed from this channel
      * @param addAction if true, the user will be added, otherwise they will be removed
      */
-    public void updateDistributedObject (ChatterInfo chatter, boolean addAction)
+    protected void updateDistributedObject (ChatterInfo chatter, boolean addAction)
     {
         if (addAction) {
             _ccobj.addToChatters(chatter);
@@ -91,7 +107,7 @@ public class HostedWrapper extends ChannelWrapper
             }
         }
     }
-    
+
     /**
      * Called when chatter list is changed, deletes the channel if nobody is
      * participating in it anymore.

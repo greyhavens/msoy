@@ -47,6 +47,13 @@ public class PeerChatDispatcher extends InvocationDispatcher
             );
             return;
 
+        case PeerChatMarshaller.FORWARD_SPEAK:
+            ((PeerChatProvider)provider).forwardSpeak(
+                source,
+                (ChatterInfo)args[0], (ChatChannel)args[1], (String)args[2], ((Byte)args[3]).byteValue(), (InvocationService.ConfirmListener)args[4]
+            );
+            return;
+
         case PeerChatMarshaller.REMOVE_USER:
             ((PeerChatProvider)provider).removeUser(
                 source,

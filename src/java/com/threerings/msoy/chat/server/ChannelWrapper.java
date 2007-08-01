@@ -9,13 +9,7 @@ import com.threerings.msoy.chat.data.ChatterInfo;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.crowd.chat.data.SpeakMarshaller;
-import com.threerings.crowd.chat.server.SpeakDispatcher;
-import com.threerings.crowd.chat.server.SpeakHandler;
-
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.DObject;
-import com.threerings.presents.dobj.SetAdapter;
 
 import static com.threerings.msoy.Log.log;
 
@@ -62,35 +56,16 @@ public abstract class ChannelWrapper
     public abstract void removeChatter (ChatterInfo userInfo);
 
     /** Does this channel contain the specified chatter? */
-    public boolean hasMember (ChatterInfo userInfo)
+    public boolean hasMember (ChatterInfo chatter)
     {
-        return ready() && _ccobj.chatters.containsKey(userInfo.name);
+        return ready() && _ccobj.chatters.containsKey(chatter.name);
     }
     
-    /** Links a newly created distributed channel object to the channel definition. */
-    protected static void initializeCCObj (final ChatChannelObject ccobj, ChatChannel channel)
-    {
-        ccobj.channel = channel;
-        SpeakHandler.SpeakerValidator validator = new SpeakHandler.SpeakerValidator() {
-            public boolean isValidSpeaker (DObject speakObj, ClientObject speaker, byte mode) {
-                MemberObject who = (MemberObject)speaker;
-                return (who == null || ccobj.chatters.containsKey(who.memberName));
-            }
-        };
-        SpeakDispatcher sd = new SpeakDispatcher(new SpeakHandler(ccobj, validator));
-        ccobj.setSpeakService((SpeakMarshaller)MsoyServer.invmgr.registerDispatcher(sd));
-    }
-
-    /** Clears any initialization performed on the distributed channel object, and
-     *  unregisters the listener. */
-    protected static void deinitializeCCObj (ChatChannelObject ccobj)
-    {
-        if (ccobj == null) {
-            log.warning("Deinitializing null channel object!"); // something went horribly wrong
-            return;
-        }
-
-        MsoyServer.invmgr.clearDispatcher(ccobj.speakService);
+    /** Does this channel contain the specified chatter? */
+    public boolean hasMember (ClientObject chatter) 
+    { 
+        MemberObject who = (MemberObject)chatter;
+        return ready() && (who == null || _ccobj.chatters.containsKey(who.memberName));
     }
 
     protected ChatChannel _channel;

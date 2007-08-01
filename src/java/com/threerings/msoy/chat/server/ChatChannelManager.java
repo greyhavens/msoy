@@ -5,6 +5,7 @@ package com.threerings.msoy.chat.server;
 
 import java.util.HashMap;
 
+import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.msoy.chat.client.ChatChannelService;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelCodes;
@@ -161,6 +162,25 @@ public class ChatChannelManager
 
         resolveAndJoinChannel(user, channel, listener);
     }
+
+    // from interface PeerChatProvider
+    public void forwardSpeak (ClientObject caller, ChatterInfo chatter, ChatChannel channel,
+                              String message, byte mode,
+                              ChatChannelService.ConfirmListener listener)
+        throws InvocationException
+    {
+        ChannelWrapper wrapper = _wrappers.get(channel);
+        if (wrapper == null || ! wrapper.ready()) {
+            listener.requestFailed("Channel not found or not initialized.");
+            return;
+        }
+        
+        // all that's left is forwarding the request to the speak service.
+        ChatChannelObject ccobj = wrapper.getCCObj();
+        SpeakUtil.sendSpeak(ccobj, chatter.name, null, message, mode);
+        listener.requestProcessed();
+    }
+
 
     // from interface PeerChatProvider
     public void addUser (ClientObject caller, ChatterInfo chatter, ChatChannel channel,

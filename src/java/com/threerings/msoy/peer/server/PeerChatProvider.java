@@ -24,6 +24,12 @@ public interface PeerChatProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link PeerChatService#forwardSpeak} request.
+     */
+    public void forwardSpeak (ClientObject caller, ChatterInfo arg1, ChatChannel arg2, String arg3, byte arg4, InvocationService.ConfirmListener arg5)
+        throws InvocationException;
+
+    /**
      * Handles a {@link PeerChatService#removeUser} request.
      */
     public void removeUser (ClientObject caller, ChatterInfo arg1, ChatChannel arg2, InvocationService.ConfirmListener arg3)

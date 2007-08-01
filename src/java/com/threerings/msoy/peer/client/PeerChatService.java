@@ -17,6 +17,12 @@ import com.threerings.presents.client.InvocationService;
 public interface PeerChatService extends InvocationService
 {
     /**
+     * Asks the host to forward the specified chat message on the channel's speak object.
+     */
+    public void forwardSpeak (Client client, ChatterInfo chatter, ChatChannel channel,
+                              String message, byte mode, PeerChatService.ConfirmListener listener);
+        
+    /**
      * Asks the host to add a new user to the channel.
      */
     public void addUser (Client client, ChatterInfo chatter, ChatChannel channel,

@@ -34,8 +34,21 @@ public class PeerChatMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #forwardSpeak} requests. */
+    public static final int FORWARD_SPEAK = 2;
+
+    // from interface PeerChatService
+    public void forwardSpeak (Client arg1, ChatterInfo arg2, ChatChannel arg3, String arg4, byte arg5, InvocationService.ConfirmListener arg6)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener6 = new InvocationMarshaller.ConfirmMarshaller();
+        listener6.listener = arg6;
+        sendRequest(arg1, FORWARD_SPEAK, new Object[] {
+            arg2, arg3, arg4, Byte.valueOf(arg5), listener6
+        });
+    }
+
     /** The method id used to dispatch {@link #removeUser} requests. */
-    public static final int REMOVE_USER = 2;
+    public static final int REMOVE_USER = 3;
 
     // from interface PeerChatService
     public void removeUser (Client arg1, ChatterInfo arg2, ChatChannel arg3, InvocationService.ConfirmListener arg4)
