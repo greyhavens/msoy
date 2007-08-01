@@ -162,6 +162,11 @@ public class FlashClients
         return pets;
     }
 
+    public static void goMemberScene (int memberId)
+    {
+        goMemberSceneNative(memberId);
+    }
+
     /**
      * Fetches the id for the given itemType, where itemType can be type that the scene can have
      * only one of, such as decor or audio.
@@ -375,6 +380,16 @@ public class FlashClients
             return client.getPets();
         }
         return [];
+    }-*/;
+
+    /**
+     * Does the actual <code>goMemberScene()</code> call.
+     */
+    protected static native void goMemberSceneNative (int memberId) /*-{
+        var client = $doc.getElementById("asclient");
+        if (client) {
+            client.goMemberScene(memberId);
+        }
     }-*/;
 
     // TODO: put this in Application?

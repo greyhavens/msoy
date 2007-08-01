@@ -5,6 +5,7 @@ package client.whirled;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -21,6 +22,7 @@ import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.SceneCard;
 import com.threerings.msoy.web.data.Whirled;
 
+import client.util.FlashClients;
 import client.util.MediaUtil;
 
 public class MyWhirled extends FlexTable
@@ -101,10 +103,16 @@ public class MyWhirled extends FlexTable
 
     protected static class PersonWidget extends HorizontalPanel
     {
-        public PersonWidget (MemberCard card)
+        public PersonWidget (final MemberCard card)
         {
             add(MediaUtil.createMediaView(card.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
-            add(new Label("" + card.name));
+            Label nameLabel = new Label("" + card.name);
+            nameLabel.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    FlashClients.goMemberScene(card.name.getMemberId());
+                }
+            });
+            add(nameLabel);
         }
     }
 
