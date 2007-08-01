@@ -91,7 +91,7 @@ $JAVA_VM $JAVA_ARGS $CLASS $PORT >>$LOGFILE 2>&1
 EXIT_CODE=$?
 
 # Mail out warnings from the logs
-FILTLOG=/tmp/msoyfiltered-$PORT.log
+FILTLOG=`mktemp /tmp/msoyfiltered-$PORT-XXXXXX.log` || exit 1
 cat $LOGFILE | $MSOY_HOME/tools/bin/lfilter > $FILTLOG
 if [ -s $FILTLOG ]; then
     cat $FILTLOG | $MAIL -s "$HOSTNAME: $MSOY_HOME p$PORT filtered log" $LOG_EMAIL
