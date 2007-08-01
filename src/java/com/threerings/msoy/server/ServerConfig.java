@@ -39,6 +39,9 @@ public class ServerConfig
     /** The port on which we are listening for HTTP connections. */
     public static int httpPort;
 
+    /** The port on which game servers start listening. */
+    public static int gameServerPort;
+
     /** The secret used to authenticate other servers in our cluster. */
     public static String sharedSecret;
 
@@ -123,6 +126,7 @@ public class ServerConfig
         serverHost = config.getValue("server_host", "localhost");
         serverPorts = config.getValue("server_ports", Client.DEFAULT_SERVER_PORTS);
         httpPort = config.getValue("http_port", 8080);
+        gameServerPort = config.getValue("game_server_port", 47625);
 
         // if we're a server node (not the webapp or a tool) do some extra stuff
         if (Boolean.getBoolean("is_node")) {

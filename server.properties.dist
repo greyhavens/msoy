@@ -25,6 +25,12 @@ server_host = game.metasoy.com
 http_port = 8080
 
 #
+# The lowest port on which to host game server instances; ports above this port
+# may also be used if multiple game servers are running at the same time
+
+game_server_port = 47625
+
+#
 # When running in clustered mode, we must override the server_host for each
 # node and we can optionally override the ports on which this node listens for
 # Presents and HTTP connections
