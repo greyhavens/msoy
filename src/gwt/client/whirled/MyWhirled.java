@@ -60,6 +60,9 @@ public class MyWhirled extends FlexTable
             protected String getHeaderText (int start, int limit, int total) {
                 return CWhirled.msgs.headerRooms();
             }
+            protected boolean alwaysDisplayHeader () {
+                return true;
+            }
         });
 
         setWidget(row++, 0, _games = new PagedGrid(GAMES_ROWS, GAMES_COLUMS) {
@@ -72,6 +75,9 @@ public class MyWhirled extends FlexTable
             protected String getHeaderText (int start, int limit, int total) {
                 return CWhirled.msgs.headerGames();
             }
+            protected boolean alwaysDisplayHeader () {
+                return true;
+            }
         });
 
         setWidget(row++, 0, _people = new PagedGrid(PEOPLE_ROWS, PEOPLE_COLUMS) {
@@ -83,6 +89,9 @@ public class MyWhirled extends FlexTable
             }
             protected String getHeaderText (int start, int limit, int total) {
                 return CWhirled.msgs.headerPeople();
+            }
+            protected boolean alwaysDisplayHeader () {
+                return true;
             }
         });
     }

@@ -8,25 +8,25 @@ package client.whirled;
 public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "Active People".
+   * Translated "My Online Friends".
    * 
-   * @return translated "Active People"
+   * @return translated "My Online Friends"
    * @gwt.key headerPeople
    */
   String headerPeople();
 
   /**
-   * Translated "Active Games".
+   * Translated "What My Friends are Playing".
    * 
-   * @return translated "Active Games"
+   * @return translated "What My Friends are Playing"
    * @gwt.key headerGames
    */
   String headerGames();
 
   /**
-   * Translated "Active Rooms".
+   * Translated "My Friend''s Locations".
    * 
-   * @return translated "Active Rooms"
+   * @return translated "My Friend''s Locations"
    * @gwt.key headerRooms
    */
   String headerRooms();
@@ -40,9 +40,9 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String titleMyWhirled();
 
   /**
-   * Translated "No Active Games".
+   * Translated "No Friends Playing Games".
    * 
-   * @return translated "No Active Games"
+   * @return translated "No Friends Playing Games"
    * @gwt.key noGames
    */
   String noGames();
@@ -56,17 +56,17 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String titleWhirledwide();
 
   /**
-   * Translated "No Active People".
+   * Translated "No Online Friends".
    * 
-   * @return translated "No Active People"
+   * @return translated "No Online Friends"
    * @gwt.key noPeople
    */
   String noPeople();
 
   /**
-   * Translated "No Active Rooms".
+   * Translated "No Friends in Rooms".
    * 
-   * @return translated "No Active Rooms"
+   * @return translated "No Friends in Rooms"
    * @gwt.key noRooms
    */
   String noRooms();
