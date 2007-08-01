@@ -23,9 +23,9 @@ import com.threerings.msoy.web.data.Invitation;
  * Contains persistent data stored for every member of MetaSOY.
  */
 @Entity(indices={
-        @Index(name="ixInviter", columns={"inviterId"}),
-        @Index(name="ixInvitee", columns={"inviteeId"}), 
-        @Index(name="ixInvite", columns={"inviteId"})})
+        @Index(name="ixInviter", columns={InvitationRecord.INVITER_ID}),
+        @Index(name="ixInvitee", columns={InvitationRecord.INVITEE_ID}),
+        @Index(name="ixInvite", columns={InvitationRecord.INVITE_ID})})
 public class InvitationRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -80,7 +80,7 @@ public class InvitationRecord extends PersistentRecord
     public String inviteeEmail;
 
     /** The inviter's member Id */
-    public int inviterId; 
+    public int inviterId;
 
     /** A randomly generated string of numbers and characters that is used to uniquely identify
      * this invitation. */
@@ -118,7 +118,7 @@ public class InvitationRecord extends PersistentRecord
         return StringUtil.fieldsToString(this);
     }
 
-    public Invitation toInvitationObject () 
+    public Invitation toInvitationObject ()
         throws PersistenceException
     {
         Invitation inv = new Invitation();
