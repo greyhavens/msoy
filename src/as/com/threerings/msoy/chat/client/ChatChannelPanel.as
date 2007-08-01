@@ -92,7 +92,7 @@ public class ChatChannelPanel extends VBox
 
         return tab.getOverlay();
     }
-
+    
     /**
      * Iterates over chat tabs, returning the first one that passes the /predicate/ function.
      * @param predicate Function of the form: <pre>function (tab :ChatTab) :Boolean</pre>
@@ -111,7 +111,7 @@ public class ChatChannelPanel extends VBox
     /**
      * Find the ChannelChatTab instance being used for the specified ChatChannel.
      */
-    protected function findChatTab (channel :ChatChannel) :ChannelChatTab
+    public function findChatTab (channel :ChatChannel) :ChannelChatTab
     {
         return findAnyTab(function (tab :ChatTab) :Boolean {
                 var channeltab :ChannelChatTab = tab as ChannelChatTab;

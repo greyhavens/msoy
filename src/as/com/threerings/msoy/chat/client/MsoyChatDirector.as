@@ -98,10 +98,16 @@ public class MsoyChatDirector extends ChatDirector
         }
 
         // otherwise we have to subscribe to the channel first
-        var displayFn :Function = function () :void {
+        var showTabFn :Function = function (ccobj :ChatChannelObject) :void {
+            // once the subscription went through, show the chat history
             _ccpanel.getChatDisplay(channel, getHistory(channel), true);
+            // if this is a tabbed channel, make sure to update its distributed object reference
+            var tab :ChannelChatTab = _ccpanel.findChatTab(channel);
+            if (tab != null) {
+                tab.reinit(ccobj);
+            }
         };
-        _chandlers.put(channel.toLocalType(), new ChannelHandler(_wctx, channel, displayFn));
+        _chandlers.put(channel.toLocalType(), new ChannelHandler(_wctx, channel, showTabFn));
     }
 
     /**
@@ -346,11 +352,11 @@ class ChannelHandler implements Subscriber
     public var channel :ChatChannel;
     public var chanobj :ChatChannelObject;
 
-    public function ChannelHandler (ctx :WorldContext, channel :ChatChannel, displayFn :Function)
+    public function ChannelHandler (ctx :WorldContext, channel :ChatChannel, showTabFn :Function)
     {
         this.channel = channel;
         _ctx = ctx;
-        _displayFn = displayFn;
+        _showTabFn = showTabFn;
         _ccsvc = (_ctx.getClient().requireService(ChatChannelService) as ChatChannelService);
 
         connect();
@@ -391,7 +397,7 @@ class ChannelHandler implements Subscriber
     {
         chanobj = (obj as ChatChannelObject);
         _ctx.getChatDirector().addAuxiliarySource(chanobj, channel.toLocalType());
-        _displayFn();
+        _showTabFn(chanobj);
     }
 
     // from Subscriber
@@ -419,7 +425,7 @@ class ChannelHandler implements Subscriber
     }
 
     protected var _ctx :WorldContext;
-    protected var _displayFn :Function;
+    protected var _showTabFn :Function;
     protected var _isShutdown :Boolean = false;
     protected var _isConnected :Boolean = false;
 

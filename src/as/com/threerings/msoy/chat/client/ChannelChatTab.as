@@ -72,6 +72,14 @@ public class ChannelChatTab extends ChatTab
         }
     }
 
+    public function reinit (ccobj :ChatChannelObject) :void
+    {
+        if (ccobj != _ccobj) {
+            shutdown();
+            init(ccobj);
+        }
+    }
+    
     public function getOverlay () :ChatOverlay
     {
         return _overlay;
