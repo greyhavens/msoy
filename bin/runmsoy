@@ -106,7 +106,7 @@ EXIT_CODE=$?
 #     sort -nr | $MAIL -s "$HOSTNAME: $MSOY_HOME error summary" $LOG_EMAIL
 
 # Mail out warnings from the logs
-FILTLOG=`mktemp /tmp/msoyfiltered.XXXXXX.log` || exit 1
+FILTLOG=`mktemp /tmp/msoyfiltered.log.XXXXXX` || exit 1
 cat $LOGFILE | $MSOY_HOME/tools/bin/lfilter > $FILTLOG
 if [ -s $FILTLOG ]; then
     cat $FILTLOG | $MAIL -s "$HOSTNAME: $MSOY_HOME filtered log" $LOG_EMAIL

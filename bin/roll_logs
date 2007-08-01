@@ -14,7 +14,7 @@ if [ -f $MSOY_HOME/server.conf ]; then
 fi
 
 NOW=`date "+%F-%H:%M"`
-FILTLOG=`mktemp /tmp/msoyfiltered.XXXXXX.log` || exit 1
+FILTLOG=`mktemp /tmp/msoyfiltered.log.XXXXXX` || exit 1
 HOSTNAME=`hostname`
 
 # make sure we have a log of non-zero size
