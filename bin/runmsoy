@@ -6,7 +6,7 @@
 # eventually exits.
 
 NAME=msoy
-DESC="MetaSOY game server"
+DESC="MetaSOY world server"
 
 MSOY_HOME=`dirname $0 | sed s:/bin$::`
 MSOY_USER=www-data
