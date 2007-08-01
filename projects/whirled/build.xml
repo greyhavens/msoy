@@ -40,7 +40,7 @@
   </target>
 
   <!-- wipes the entire build directory clean -->
-  <target name="distclean" depends="clean">
+  <target name="distclean">
     <delete dir="${deploy.dir}"/>
   </target>
 
