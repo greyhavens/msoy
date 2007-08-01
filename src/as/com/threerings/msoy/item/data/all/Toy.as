@@ -34,20 +34,6 @@ public class Toy extends Item
         return TOY;
     }
 
-    // from interface Streamable
-    override public function readObject (ins :ObjectInputStream) :void
-    {
-        super.readObject(ins);
-        // nothing for now
-    }
-
-    // from interface Streamable
-    override public function writeObject (out :ObjectOutputStream) :void
-    {
-        super.writeObject(out);
-        // nothing for now
-    }
-
     // from Item
     override protected function getDefaultThumbnailMedia () :MediaDesc
     {

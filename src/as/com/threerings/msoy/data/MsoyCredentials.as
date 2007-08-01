@@ -16,8 +16,7 @@ import com.threerings.io.ObjectOutputStream;
  */
 public class MsoyCredentials extends UsernamePasswordCreds
 {
-    /** A session token that identifies a user without requiring username
-     * or password. */
+    /** A session token that identifies a user without requiring username or password. */
     public var sessionToken :String;
 
     /** The machine identifier of the client, if one is known. */

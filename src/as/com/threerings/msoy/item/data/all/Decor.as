@@ -24,7 +24,7 @@ public class Decor extends Item
 
     /** Type constant for a room with non-standard, flat layout. */
     public static const FLAT_LAYOUT :int = 3;
-    
+
     /** The number of type constants. */
     public static const TYPE_COUNT :int = 4;
 
@@ -52,7 +52,6 @@ public class Decor extends Item
     /** Bitmap offset along the y axis, in room units. */
     public var offsetY :Number;
 
-    
     public function Decor ()
     {
     }

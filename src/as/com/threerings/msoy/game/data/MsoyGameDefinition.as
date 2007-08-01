@@ -14,6 +14,9 @@ import com.threerings.ezgame.data.GameDefinition;
  */
 public class MsoyGameDefinition extends GameDefinition
 {
+    /** If true, the game requires the LWJGL libraries. */
+    public var lwjgl :Boolean;
+
     public function MsoyGameDefinition ()
     {
     }
@@ -32,18 +35,18 @@ public class MsoyGameDefinition extends GameDefinition
         digest = path;
     }
 
+    // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-
-        ins.readBoolean(); // the "lwjgl" variable is unused here...
+        lwjgl = ins.readBoolean();
     }
 
+    // from interface Streamable
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-
-        out.writeBoolean(false); // no, we don't need the lwjgl library...
+        out.writeBoolean(lwjgl);
     }
 }
 }

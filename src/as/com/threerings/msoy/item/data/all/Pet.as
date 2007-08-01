@@ -51,20 +51,6 @@ public class Pet extends Item
         return PET;
     }
 
-    override public function writeObject (out :ObjectOutputStream) :void
-    {
-        super.writeObject(out);
-
-        // nada for now
-    }
-
-    override public function readObject (ins :ObjectInputStream) :void
-    {
-        super.readObject(ins);
-
-        // nada for now
-    }
-
     // from Item
     override protected function getDefaultThumbnailMedia () :MediaDesc
     {
