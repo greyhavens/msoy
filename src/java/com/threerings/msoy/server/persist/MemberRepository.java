@@ -697,8 +697,7 @@ public class MemberRepository extends DepotRepository
         List<MemberNameRecord> records = findAll(
             MemberNameRecord.class,
             new FromOverride(FriendRecord.class),
-            new Join(MemberRecord.class, condition),
-            OrderBy.ascending(MemberRecord.NAME_C));
+            new Join(MemberRecord.class, condition));
         
         List<FriendEntry> list = new ArrayList<FriendEntry>();
         for (MemberNameRecord record : records) {

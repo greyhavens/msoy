@@ -14,7 +14,14 @@ import com.threerings.gwt.ui.PagedGrid;
 
 import com.threerings.gwt.util.SimpleDataModel;
 
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.MediaDesc;
+
+import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.data.SceneCard;
 import com.threerings.msoy.web.data.Whirled;
+
+import client.util.MediaUtil;
 
 public class MyWhirled extends FlexTable
 {
@@ -33,7 +40,6 @@ public class MyWhirled extends FlexTable
                 _errorContainer.add(new Label(CWhirled.serverError(caught)));
             }
         });
-
     }
 
     protected void buildUi ()
@@ -44,7 +50,7 @@ public class MyWhirled extends FlexTable
 
         setWidget(row++, 0, _rooms = new PagedGrid(ROOMS_ROWS, ROOMS_COLUMS) {
             protected Widget createWidget (Object item) {
-                return new Label((String) item);
+                return new RoomWidget((SceneCard) item);
             }
             protected String getEmptyMessage () {
                 return CWhirled.msgs.noRooms();
@@ -56,7 +62,7 @@ public class MyWhirled extends FlexTable
 
         setWidget(row++, 0, _games = new PagedGrid(GAMES_ROWS, GAMES_COLUMS) {
             protected Widget createWidget (Object item) {
-                return new Label((String) item);
+                return new GameWidget((Game) item);
             }
             protected String getEmptyMessage () {
                 return CWhirled.msgs.noGames();
@@ -68,7 +74,7 @@ public class MyWhirled extends FlexTable
 
         setWidget(row++, 0, _people = new PagedGrid(PEOPLE_ROWS, PEOPLE_COLUMS) {
             protected Widget createWidget (Object item) {
-                return new Label((String) item);
+                return new PersonWidget((MemberCard) item);
             }
             protected String getEmptyMessage () {
                 return CWhirled.msgs.noPeople();
@@ -77,6 +83,29 @@ public class MyWhirled extends FlexTable
                 return CWhirled.msgs.headerPeople();
             }
         });
+    }
+
+    protected static class RoomWidget extends HorizontalPanel
+    {
+        public RoomWidget (SceneCard scene) 
+        {
+        }
+    }
+
+    protected static class GameWidget extends HorizontalPanel
+    {
+        public GameWidget (Game game)
+        {
+        }
+    }
+
+    protected static class PersonWidget extends HorizontalPanel
+    {
+        public PersonWidget (MemberCard card)
+        {
+            add(MediaUtil.createMediaView(card.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
+            add(new Label("" + card.name));
+        }
     }
 
     protected static final int ROOMS_ROWS = 1;

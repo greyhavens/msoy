@@ -37,6 +37,8 @@ import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+
 import com.threerings.msoy.peer.data.MemberLocation;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 
@@ -47,6 +49,7 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
+import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.MemberInvites;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
@@ -202,8 +205,62 @@ public class MemberServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
+        final List<FriendEntry> friends;
 
-        return new Whirled();
+        try {
+            friends = MsoyServer.memberRepo.loadFriends(memrec.memberId);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Fetching friend list failed! [memberId=" + 
+                memrec.memberId + "]", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
+        // filter out who's not online on the dobj thread
+        final HashIntMap<MemberCard> onlineFriends = new HashIntMap<MemberCard>();
+        final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
+            "getMyWhirled [memberId=" + memrec.memberId + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                try {
+                    MsoyServer.peerMan.applyToNodes(new PeerManager.Operation() {
+                        public void apply (NodeObject nodeobj) {
+                            MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
+                            for (FriendEntry friend : friends) {
+                                MemberLocation memLoc = 
+                                    mnobj.memberLocs.get(friend.name.getMemberId());
+                                if (memLoc != null) {
+                                    MemberCard card = new MemberCard();
+                                    card.name = friend.name;
+                                    onlineFriends.put(card.name.getMemberId(), card);
+                                }
+                            }
+                        }
+                    });
+                    waiter.requestCompleted(null);
+                } catch (Exception e) {
+                    waiter.requestFailed(e);
+                    return;
+                }
+            }
+        });
+        waiter.waitForResult();
+
+        // flesh out profile data for the online friends
+        try {
+            for (ProfileRecord profile : MsoyServer.profileRepo.loadProfiles(
+                    onlineFriends.intKeySet().toIntArray())) {
+                MemberCard card = onlineFriends.get(profile.memberId);
+                card.photo = profile.getPhoto();
+                card.headline = profile.headline;
+            }
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to fill member cards", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
+        Whirled mywhirled = new Whirled();
+        mywhirled.people = new ArrayList<MemberCard>(onlineFriends.values());
+        return mywhirled;
     }
 
     // from MemberService
