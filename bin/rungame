@@ -1,0 +1,108 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Runs a game hosting server.
+
+NAME=msoy
+DESC="MetaSOY game server"
+
+MSOY_HOME=`dirname $0 | sed s:/bin$::`
+MSOY_USER=www-data
+HOSTNAME=`hostname`
+
+# Make sure our game id and port were properly supplied.
+if [ -z "$1" ]; then
+    echo "Usage: $0 port"
+    exit 255
+fi
+PORT=$1
+
+LOGFILE=$MSOY_HOME/log/stdout-p$PORT.log
+LOG_EMAIL=nightly-logs@threerings.net
+LOGLEVEL=info
+
+# Override settings with those from MSOY_HOME/server.conf
+if [ -f $MSOY_HOME/server.conf ]; then
+    . $MSOY_HOME/server.conf
+else
+    echo "Can't load $MSOY_HOME/server.conf; can't run server."
+    exit 255
+fi
+
+# Make sure we're running as the correct user
+WHOAMI=`whoami`
+if [ "$WHOAMI" != "$MSOY_USER" ]; then
+    echo "This script must be run as $MSOY_USER."
+    exit 255
+fi
+
+CLASS=com.threerings.msoy.game.server.MsoyGameServer
+JAVA_ARGS="-server \
+    -Dhostname=$HOSTNAME \
+    -Dresource_dir=$MSOY_HOME/rsrc \
+    -Drsrc_cache_dir=/tmp -Dlog_level=$LOGLEVEL \
+    -Djava.security.manager -Djava.security.policy=$MSOY_HOME/dist/security.policy"
+
+# set up a custom SMTP host
+if [ ! -z "$SMTP_HOST" ]; then
+    JAVA_ARGS="$JAVA_ARGS -Dmail.smtp.host=$SMTP_HOST"
+fi
+
+umask 002
+
+JAVA_VM="$JAVA_HOME/bin/java"
+if [ ! -e $JAVA_VM ]; then
+    echo "$0: Cannot find JVM in $JAVA_HOME. Exiting."
+    exit 255
+fi
+
+# Some temporary business for multiprocessor FreeBSD machines
+NEEDS_MEMBAR=`$JAVA_VM -fullversion 2>&1 | grep diablo`
+if [ ! -z "$NEEDS_MEMBAR" ]; then
+     JAVA_ARGS="$JAVA_ARGS -XX:+UseMembar"
+fi
+
+# Start with the standard Java classes
+CLASSPATH="$JAVA_HOME/jre/lib/rt.jar"
+
+# Add all necessary JAR files to the CLASSPATH
+for JAR in $MSOY_HOME/dist/lib/*.jar $MSOY_HOME/dist/msoy-*.jar; do
+    if [ -e $JAR ]; then
+        CLASSPATH=$JAR:$CLASSPATH
+    fi
+done
+
+# Add the deployment directory to the CLASSPATH (for our config files)
+CLASSPATH=$MSOY_HOME/dist:$CLASSPATH
+export CLASSPATH
+
+# Create the logfile
+touch $LOGFILE
+
+# Start up the server
+echo "Running MetaSOY game server: $PORT" >>$LOGFILE
+echo " Deployment root: $MSOY_HOME" >>$LOGFILE
+echo "         Java VM: $JAVA_VM" >>$LOGFILE
+echo "       Java args: $JAVA_ARGS" >>$LOGFILE
+echo "    Server class: $CLASS" >>$LOGFILE
+
+$JAVA_VM $JAVA_ARGS $CLASS $PORT >>$LOGFILE 2>&1
+EXIT_CODE=$?
+
+# Mail out warnings from the logs
+FILTLOG=/tmp/msoyfiltered-$PORT.log
+cat $LOGFILE | $MSOY_HOME/tools/bin/lfilter > $FILTLOG
+if [ -s $FILTLOG ]; then
+    cat $FILTLOG | $MAIL -s "$HOSTNAME: $MSOY_HOME p$PORT filtered log" $LOG_EMAIL
+fi
+rm -f $FILTLOG
+
+# Archive the server log
+NOW=`date "+%F-%H:%M"`
+mv $LOGFILE $LOGFILE.$NOW
+
+# Prune old logs
+find $MSOY_HOME/log -name 'stdout-$NODE.log*' -a -mtime +7 | xargs rm -f
+
+exit $EXIT_CODE
