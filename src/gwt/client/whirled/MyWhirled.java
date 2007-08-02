@@ -121,7 +121,9 @@ public class MyWhirled extends FlexTable
     {
         public SceneWidget (SceneCard scene)
         {
-            add(MediaUtil.createMediaView(scene.logo, MediaDesc.HALF_THUMBNAIL_SIZE));
+            if (scene.logo != null) {
+                add(MediaUtil.createMediaView(scene.logo, MediaDesc.HALF_THUMBNAIL_SIZE));
+            }
             Label nameLabel = new Label("" + scene.name);
             nameLabel.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
