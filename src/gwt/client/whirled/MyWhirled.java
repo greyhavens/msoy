@@ -22,6 +22,7 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.SceneCard;
@@ -123,6 +124,9 @@ public class MyWhirled extends FlexTable
         {
             if (scene.logo != null) {
                 add(MediaUtil.createMediaView(scene.logo, MediaDesc.HALF_THUMBNAIL_SIZE));
+            } else if (scene.sceneType == SceneCard.GAME) {
+                MediaDesc logo = Item.getDefaultThumbnailMediaFor(Item.GAME);
+                add(MediaUtil.createMediaView(logo, MediaDesc.HALF_THUMBNAIL_SIZE));
             }
             Label nameLabel = new Label("" + scene.name);
             nameLabel.addClickListener(new ClickListener() {

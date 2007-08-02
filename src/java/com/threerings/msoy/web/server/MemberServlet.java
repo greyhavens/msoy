@@ -36,6 +36,7 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 import com.threerings.msoy.server.util.MailSender;
 
@@ -49,6 +50,7 @@ import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.ServiceException;
@@ -64,8 +66,6 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
-
-import com.threerings.msoy.item.data.all.Item;
 
 import static com.threerings.msoy.Log.log;
 
@@ -410,7 +410,7 @@ public class MemberServlet extends MsoyServiceServlet
                 }
             }
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "failed to fill in SceneCards...", pe);
+            log.log(Level.WARNING, "failed to fill in SceneCards for rooms...", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
     
@@ -421,9 +421,29 @@ public class MemberServlet extends MsoyServiceServlet
      * fills an array list of SceneCards, using the map to fill up the SceneCard's friends list.
      */
     protected ArrayList<SceneCard> getGameSceneCards (HashIntMap<ArrayList<Integer>> map)
+        throws ServiceException
     {
-        ArrayList<SceneCard> list = new ArrayList<SceneCard>();
-        return list;
+        ArrayList<SceneCard> cards = new ArrayList<SceneCard>();
+
+        try {
+            for (GameRecord gameRec : MsoyServer.itemMan.getGameRepository().loadItems(
+                    map.intKeySet().toIntArray())) {
+                SceneCard card = new SceneCard();
+                card.sceneId = gameRec.itemId;
+                card.name = gameRec.name;
+                card.sceneType = SceneCard.GAME;
+                card.friends = map.get(card.sceneId);
+                card.logo = gameRec.thumbMediaHash == null ? null : 
+                    new MediaDesc(gameRec.thumbMediaHash, gameRec.thumbMimeType, 
+                                  gameRec.thumbConstraint);
+                cards.add(card);
+            }
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "failed to fill in SceneCards for games...", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
+        return cards;
     }
 
     /**
