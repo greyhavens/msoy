@@ -156,19 +156,19 @@ public class CreateAccountDialog extends BorderedDialog
         String email = _email.getText().trim(), name = _name.getText().trim();
         String password = _password.getText().trim(), confirm = _confirm.getText().trim();
         if (email.length() == 0) {
-            _status.setText(CShell.cmsgs.createMissingEmail());
+            setStatus(CShell.cmsgs.createMissingEmail());
         } else if (password.length() == 0) {
-            _status.setText(CShell.cmsgs.createMissingPassword());
+            setStatus(CShell.cmsgs.createMissingPassword());
         } else if (confirm.length() == 0) {
-            _status.setText(CShell.cmsgs.createMissingConfirm());
+            setStatus(CShell.cmsgs.createMissingConfirm());
         } else if (!password.equals(confirm)) {
-            _status.setText(CShell.cmsgs.createPasswordMismatch());
+            setError(CShell.cmsgs.createPasswordMismatch());
         } else if (name.length() == 0) {
-            _status.setText(CShell.cmsgs.createMissingName());
+            setStatus(CShell.cmsgs.createMissingName());
         } else if (_dateOfBirth.getDate() == null) {
-            _status.setText(CShell.cmsgs.createMissingDoB());
+            setStatus(CShell.cmsgs.createMissingDoB());
         } else {
-            _status.setText(CShell.cmsgs.createReady());
+            setStatus(CShell.cmsgs.createReady());
             valid = true;
         }
         _go.setEnabled(valid);
@@ -180,7 +180,7 @@ public class CreateAccountDialog extends BorderedDialog
         String password = _password.getText().trim();
         AccountInfo info = new AccountInfo();
         info.realName = _rname.getText().trim();
-        _status.setText(CShell.cmsgs.creatingAccount());
+        setStatus(CShell.cmsgs.creatingAccount());
         CShell.usersvc.register(DeploymentConfig.version, email, CShell.md5hex(password), name, 
             _dateOfBirth.getDate(), info, 1, _invite, new AsyncCallback() {
                 public void onSuccess (Object result) {
@@ -191,9 +191,21 @@ public class CreateAccountDialog extends BorderedDialog
                     _parent.didLogon((SessionData)result);
                 }
                 public void onFailure (Throwable caught) {
-                    _status.setText(CShell.serverError(caught));
+                    setError(CShell.serverError(caught));
                 }
             });
+    }
+
+    protected void setStatus (String text)
+    {
+        _status.removeStyleName("Error");
+        _status.setText(text);
+    }
+
+    protected void setError (String text)
+    {
+        _status.addStyleName("Error");
+        _status.setText(text);
     }
 
     protected KeyboardListener _validator = new KeyboardListenerAdapter() {

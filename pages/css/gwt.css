@@ -251,6 +251,10 @@ a:visited {
   width: 400px;
 }
 
+.formDialog .Error {
+  color: red;
+}
+
 .editAccount .Header {
   font-weight: bold;
 }
