@@ -3,19 +3,24 @@
 
 package client.whirled;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
 
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 import com.threerings.msoy.web.data.MemberCard;
@@ -34,6 +39,9 @@ public class MyWhirled extends FlexTable
         CWhirled.membersvc.getMyWhirled(CWhirled.ident, new AsyncCallback() {
             public void onSuccess (Object result) {
                 Whirled data = (Whirled) result;
+                _friendLocations = new HashMap();
+                fillFriendLocations(data.rooms);
+                fillFriendLocations(data.games);
                 _rooms.setModel(new SimpleDataModel(data.rooms), 0);
                 _games.setModel(new SimpleDataModel(data.games), 0);
                 _people.setModel(new SimpleDataModel(data.people), 0);
@@ -52,7 +60,7 @@ public class MyWhirled extends FlexTable
 
         setWidget(row++, 0, _rooms = new PagedGrid(ROOMS_ROWS, ROOMS_COLUMS) {
             protected Widget createWidget (Object item) {
-                return new RoomWidget((SceneCard) item);
+                return new SceneWidget((SceneCard) item);
             }
             protected String getEmptyMessage () {
                 return CWhirled.msgs.noRooms();
@@ -67,7 +75,7 @@ public class MyWhirled extends FlexTable
 
         setWidget(row++, 0, _games = new PagedGrid(GAMES_ROWS, GAMES_COLUMS) {
             protected Widget createWidget (Object item) {
-                return new GameWidget((Game) item);
+                return new SceneWidget((SceneCard) item);
             }
             protected String getEmptyMessage () {
                 return CWhirled.msgs.noGames();
@@ -82,7 +90,7 @@ public class MyWhirled extends FlexTable
 
         setWidget(row++, 0, _people = new PagedGrid(PEOPLE_ROWS, PEOPLE_COLUMS) {
             protected Widget createWidget (Object item) {
-                return new PersonWidget((MemberCard) item);
+                return new PersonWidget((MemberCard) item, _friendLocations);
             }
             protected String getEmptyMessage () {
                 return CWhirled.msgs.noPeople();
@@ -96,32 +104,50 @@ public class MyWhirled extends FlexTable
         });
     }
 
-    protected static class RoomWidget extends HorizontalPanel
-    {
-        public RoomWidget (SceneCard scene) 
-        {
+    protected void fillFriendLocations (List scenes) {
+        Iterator sceneIter = scenes.iterator();
+        while (sceneIter.hasNext()) {
+            SceneCard card = (SceneCard) sceneIter.next();
+            String text = card.sceneType == SceneCard.ROOM ? 
+                CWhirled.msgs.inRoom("" + card.name) : CWhirled.msgs.inGame("" + card.name);
+            Iterator friendIter = card.friends.iterator();
+            while (friendIter.hasNext()) {
+                _friendLocations.put(friendIter.next(), text);
+            }
         }
     }
 
-    protected static class GameWidget extends HorizontalPanel
+    protected static class SceneWidget extends HorizontalPanel
     {
-        public GameWidget (Game game)
+        public SceneWidget (SceneCard scene)
         {
+            add(MediaUtil.createMediaView(scene.logo, MediaDesc.HALF_THUMBNAIL_SIZE));
+            Label nameLabel = new Label("" + scene.name);
+            nameLabel.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    // TODO
+                }
+            });
+            add(nameLabel);
         }
     }
 
     protected static class PersonWidget extends HorizontalPanel
     {
-        public PersonWidget (final MemberCard card)
+        public PersonWidget (final MemberCard card, Map friendLocations)
         {
             add(MediaUtil.createMediaView(card.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
+
+            VerticalPanel text = new VerticalPanel();
             Label nameLabel = new Label("" + card.name);
             nameLabel.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
                     FlashClients.goMemberScene(card.name.getMemberId());
                 }
             });
-            add(nameLabel);
+            text.add(nameLabel);
+            text.add(new Label("" + friendLocations.get(new Integer(card.name.getMemberId()))));
+            add(text);
         }
     }
 
@@ -137,4 +163,6 @@ public class MyWhirled extends FlexTable
     protected PagedGrid _people;
 
     protected HorizontalPanel _errorContainer;
+
+    protected HashMap _friendLocations;
 }

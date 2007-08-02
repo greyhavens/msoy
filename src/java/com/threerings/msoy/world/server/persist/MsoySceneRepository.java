@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -171,6 +172,20 @@ public class MsoySceneRepository extends DepotRepository
         }
 
         return model;
+    }
+
+    /**
+     * Load the SceneRecords for the given sceneIds.
+     */
+    public List<SceneRecord> loadScenes (int[] sceneIds)
+        throws PersistenceException
+    {
+        // In() requires at least one value
+        if (sceneIds == null || sceneIds.length == 0) {
+            return new ArrayList<SceneRecord>();
+        }
+        return findAll(SceneRecord.class,
+                new Where(new In(SceneRecord.SCENE_ID_C, IntListUtil.box(sceneIds))));
     }
 
     /**

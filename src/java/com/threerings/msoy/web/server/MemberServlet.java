@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntIntMap;
 
 import org.apache.velocity.VelocityContext;
 
@@ -35,6 +36,7 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.world.server.persist.SceneRecord;
 import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
@@ -47,13 +49,16 @@ import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.MemberInvites;
+import com.threerings.msoy.web.data.SceneCard;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.Whirled;
+import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -217,6 +222,8 @@ public class MemberServlet extends MsoyServiceServlet
 
         // filter out who's not online on the dobj thread
         final HashIntMap<MemberCard> onlineFriends = new HashIntMap<MemberCard>();
+        final HashIntMap<ArrayList<Integer>> rooms = new HashIntMap<ArrayList<Integer>>();
+        final HashIntMap<ArrayList<Integer>> games = new HashIntMap<ArrayList<Integer>>();
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
             "getMyWhirled [memberId=" + memrec.memberId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
@@ -228,11 +235,22 @@ public class MemberServlet extends MsoyServiceServlet
                             for (FriendEntry friend : friends) {
                                 MemberLocation memLoc = 
                                     mnobj.memberLocs.get(friend.name.getMemberId());
-                                if (memLoc != null) {
-                                    MemberCard card = new MemberCard();
-                                    card.name = friend.name;
-                                    onlineFriends.put(card.name.getMemberId(), card);
+                                if (memLoc == null) {
+                                    continue;
                                 }
+
+                                MemberCard memberCard = new MemberCard();
+                                memberCard.name = friend.name;
+                                onlineFriends.put(memberCard.name.getMemberId(), memberCard);
+
+                                HashIntMap<ArrayList<Integer>> map = 
+                                    memLoc.type == MemberLocation.SCENE ? rooms : games;
+                                ArrayList<Integer> list = map.get(memLoc.locationId);
+                                if (list == null) {
+                                    list = new ArrayList<Integer>();
+                                    map.put(memLoc.locationId, list);
+                                }
+                                list.add(memberCard.name.getMemberId());
                             }
                         }
                     });
@@ -259,6 +277,8 @@ public class MemberServlet extends MsoyServiceServlet
         }
 
         Whirled mywhirled = new Whirled();
+        mywhirled.rooms = getRoomSceneCards(rooms);
+        mywhirled.games = getGameSceneCards(games);
         mywhirled.people = new ArrayList<MemberCard>(onlineFriends.values());
         return mywhirled;
     }
@@ -337,6 +357,69 @@ public class MemberServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "optOut failed [inviteId=" + invite.inviteId + "]", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
+    }
+
+    /**
+     * fills an array list of SceneCards, using the map to fill up the SceneCard's friends list.
+     */
+    protected ArrayList<SceneCard> getRoomSceneCards (HashIntMap<ArrayList<Integer>> map)
+        throws ServiceException
+    {
+        HashIntMap<SceneCard> cards = new HashIntMap<SceneCard>();
+
+        try {
+            // maps group id to the scene that is owned by it
+            IntIntMap groupIds = new IntIntMap();
+            // maps member id to the scene that is owned by them
+            IntIntMap memberIds = new IntIntMap();
+            for (SceneRecord sceneRec : 
+                    MsoyServer.sceneRepo.loadScenes(map.intKeySet().toIntArray())) {
+                SceneCard card = new SceneCard();
+                card.sceneId = sceneRec.sceneId;
+                card.name = sceneRec.name;
+                card.sceneType = SceneCard.ROOM;
+                card.friends = map.get(card.sceneId);
+                cards.put(card.sceneId, card);
+                if (sceneRec.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+                    groupIds.put(sceneRec.ownerId, sceneRec.sceneId);
+                } else if (sceneRec.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
+                    memberIds.put(sceneRec.ownerId, sceneRec.sceneId);
+                }
+            }
+
+            // fill in logos for group-owned scenes
+            for (GroupRecord groupRec : MsoyServer.groupRepo.loadGroups(groupIds.getKeys())) {
+                SceneCard card = cards.get(groupIds.get(groupRec.groupId));
+                if (card != null) {
+                    card.logo = new MediaDesc(groupRec.logoMediaHash, groupRec.logoMimeType, 
+                                              groupRec.logoMediaConstraint);
+                } 
+            }
+
+            // fill in logos for member-owned scenes
+            for (ProfileRecord profileRec : 
+                    MsoyServer.profileRepo.loadProfiles(memberIds.getKeys())) {
+                SceneCard card = cards.get(memberIds.get(profileRec.memberId));
+                if (card != null) {
+                    card.logo = new MediaDesc(
+                        profileRec.photoHash, profileRec.photoMimeType, profileRec.photoConstraint);
+                }
+            }
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "failed to fill in SceneCards...", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+    
+        return new ArrayList<SceneCard>(cards.values());
+    }
+
+    /**
+     * fills an array list of SceneCards, using the map to fill up the SceneCard's friends list.
+     */
+    protected ArrayList<SceneCard> getGameSceneCards (HashIntMap<ArrayList<Integer>> map)
+    {
+        ArrayList<SceneCard> list = new ArrayList<SceneCard>();
+        return list;
     }
 
     /**

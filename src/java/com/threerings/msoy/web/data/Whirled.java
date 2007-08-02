@@ -28,7 +28,7 @@ public class Whirled
     /** 
      * The list of games for this view.
      * 
-     * @gwt.typeArgs <com.threerings.msoy.item.data.all.Game>
+     * @gwt.typeArgs <com.threerings.msoy.web.data.SceneCard>
      */
     public List games = new ArrayList();
 

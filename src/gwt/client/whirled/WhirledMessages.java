@@ -32,12 +32,28 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String headerRooms();
 
   /**
+   * Translated "Playin' {0}".
+   * 
+   * @return translated "Playin' {0}"
+   * @gwt.key inGame
+   */
+  String inGame(String arg0);
+
+  /**
    * Translated "My Whirled".
    * 
    * @return translated "My Whirled"
    * @gwt.key titleMyWhirled
    */
   String titleMyWhirled();
+
+  /**
+   * Translated "Chillin' in {0}".
+   * 
+   * @return translated "Chillin' in {0}"
+   * @gwt.key inRoom
+   */
+  String inRoom(String arg0);
 
   /**
    * Translated "No Friends Playing Games".

@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.web.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
@@ -14,6 +17,12 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 public class SceneCard
     implements IsSerializable
 {
+    /** constant to indicate that this scene is a room */
+    public static final int ROOM = 1;
+
+    /** constant to indicate that this scene is a game */
+    public static final int GAME = 2;
+
     /** The scene's id. */
     public int sceneId;
 
@@ -25,4 +34,14 @@ public class SceneCard
      * their profile pic.
      */
     public MediaDesc logo;
+
+    /** The scene's type. */
+    public int sceneType;
+
+    /**
+     * A list of the friend ids that are in this scene.
+     *
+     * @gwt.typeArgs <java.lang.Integer>
+     */
+    public List friends = new ArrayList();
 }
