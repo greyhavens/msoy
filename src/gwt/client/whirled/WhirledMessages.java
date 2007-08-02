@@ -32,9 +32,9 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String headerRooms();
 
   /**
-   * Translated "Playin' {0}".
+   * Translated "Playin'' {0}".
    * 
-   * @return translated "Playin' {0}"
+   * @return translated "Playin'' {0}"
    * @gwt.key inGame
    */
   String inGame(String arg0);
@@ -48,9 +48,9 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String titleMyWhirled();
 
   /**
-   * Translated "Chillin' in {0}".
+   * Translated "Chillin'' in {0}".
    * 
-   * @return translated "Chillin' in {0}"
+   * @return translated "Chillin'' in {0}"
    * @gwt.key inRoom
    */
   String inRoom(String arg0);

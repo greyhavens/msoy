@@ -50,10 +50,12 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.MemberInvites;
+import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.SceneCard;
 import com.threerings.msoy.web.data.InvitationResults;
 import com.threerings.msoy.web.data.Invitation;
@@ -391,8 +393,9 @@ public class MemberServlet extends MsoyServiceServlet
             for (GroupRecord groupRec : MsoyServer.groupRepo.loadGroups(groupIds.getKeys())) {
                 SceneCard card = cards.get(groupIds.get(groupRec.groupId));
                 if (card != null) {
-                    card.logo = new MediaDesc(groupRec.logoMediaHash, groupRec.logoMimeType, 
-                                              groupRec.logoMediaConstraint);
+                    card.logo = groupRec.logoMediaHash == null ? Group.getDefaultGroupLogoMedia() :
+                        new MediaDesc(groupRec.logoMediaHash, groupRec.logoMimeType, 
+                                      groupRec.logoMediaConstraint);
                 } 
             }
 
@@ -401,8 +404,9 @@ public class MemberServlet extends MsoyServiceServlet
                     MsoyServer.profileRepo.loadProfiles(memberIds.getKeys())) {
                 SceneCard card = cards.get(memberIds.get(profileRec.memberId));
                 if (card != null) {
-                    card.logo = new MediaDesc(
-                        profileRec.photoHash, profileRec.photoMimeType, profileRec.photoConstraint);
+                    card.logo = profileRec.photoHash == null ? Profile.DEFAULT_PHOTO : 
+                        new MediaDesc(profileRec.photoHash, profileRec.photoMimeType, 
+                                      profileRec.photoConstraint);
                 }
             }
         } catch (PersistenceException pe) {
