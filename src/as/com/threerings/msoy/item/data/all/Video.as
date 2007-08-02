@@ -19,6 +19,12 @@ public class Video extends Item
     }
 
     // from Item
+    override public function getFurniMedia () :MediaDesc
+    {
+        return videoMedia != null ? videoMedia : getDefaultFurniMedia();
+    }
+
+    // from Item
     override public function getPreviewMedia () :MediaDesc
     {
         return getThumbnailMedia(); // TODO: support preview image
