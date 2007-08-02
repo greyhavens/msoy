@@ -16,9 +16,9 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String headerPeople();
 
   /**
-   * Translated "What My Friends are Playing".
+   * Translated "Active Games".
    * 
-   * @return translated "What My Friends are Playing"
+   * @return translated "Active Games"
    * @gwt.key headerGames
    */
   String headerGames();
@@ -56,9 +56,9 @@ public interface WhirledMessages extends com.google.gwt.i18n.client.Messages {
   String inRoom(String arg0);
 
   /**
-   * Translated "No Friends Playing Games".
+   * Translated "Nobody Playing Games".
    * 
-   * @return translated "No Friends Playing Games"
+   * @return translated "Nobody Playing Games"
    * @gwt.key noGames
    */
   String noGames();
