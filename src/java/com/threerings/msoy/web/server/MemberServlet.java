@@ -42,6 +42,7 @@ import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
+import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.MemberLocation;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 
@@ -253,6 +254,13 @@ public class MemberServlet extends MsoyServiceServlet
                                     map.put(memLoc.locationId, list);
                                 }
                                 list.add(memberCard.name.getMemberId());
+                            }
+
+                            // for now, we're going to list all active games...
+                            for (HostedGame game : mnobj.hostedGames) {
+                                if (games.get(game.placeId) == null) {
+                                    games.put(game.placeId, new ArrayList<Integer>());
+                                }
                             }
                         }
                     });
