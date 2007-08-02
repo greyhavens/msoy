@@ -269,6 +269,10 @@ a:visited {
   width: 400px;
 }
 
+.editAccount .Error {
+  color: red;
+}
+
 .imageChooser {
   width: 800px;
 }

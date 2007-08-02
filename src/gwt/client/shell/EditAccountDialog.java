@@ -152,13 +152,13 @@ public class EditAccountDialog extends BorderedDialog
             public void onSuccess (Object result) {
                 _rname.setEnabled(true);
                 _uprname.setEnabled(false);
-                _status.setText(CShell.cmsgs.realNameUpdated());
+                setStatus(CShell.cmsgs.realNameUpdated());
             }
             public void onFailure (Throwable cause) {
                 _rname.setText(_accountInfo.realName = oldRealName);
                 _rname.setEnabled(true);
                 _uprname.setEnabled(true);
-                _status.setText(CShell.serverError(cause));
+                setError(CShell.serverError(cause));
             }
         });
     }
@@ -172,12 +172,12 @@ public class EditAccountDialog extends BorderedDialog
             public void onSuccess (Object result) {
                 _email.setEnabled(true);
                 CShell.creds.accountName = email;
-                _status.setText(CShell.cmsgs.emailUpdated());
+                setStatus(CShell.cmsgs.emailUpdated());
             }
             public void onFailure (Throwable cause) {
                 _email.setEnabled(true);
                 _upemail.setEnabled(true);
-                _status.setText(CShell.serverError(cause));
+                setError(CShell.serverError(cause));
             }
         });
     }
@@ -194,13 +194,13 @@ public class EditAccountDialog extends BorderedDialog
                 _password.setEnabled(true);
                 _confirm.setText("");
                 _confirm.setEnabled(true);
-                _status.setText(CShell.cmsgs.passwordUpdated());
+                setStatus(CShell.cmsgs.passwordUpdated());
             }
             public void onFailure (Throwable cause) {
                 _password.setEnabled(true);
                 _confirm.setEnabled(true);
                 _uppass.setEnabled(true);
-                _status.setText(CShell.serverError(cause));
+                setError(CShell.serverError(cause));
             }
         });
     }
@@ -218,12 +218,12 @@ public class EditAccountDialog extends BorderedDialog
                 contents.setText(_permaRow, 1, pname);
                 contents.setText(_permaRow, 2, "");
                 contents.setText(_permaRow+1, 0, "");
-                _status.setText(CShell.cmsgs.permaNameConfigured());
+                setStatus(CShell.cmsgs.permaNameConfigured());
             }
             public void onFailure (Throwable cause) {
                 _pname.setEnabled(true);
                 _uppname.setEnabled(true);
-                _status.setText(CShell.serverError(cause));
+                setError(CShell.serverError(cause));
             }
         });
     }
@@ -233,10 +233,10 @@ public class EditAccountDialog extends BorderedDialog
         String realName = _rname.getText().trim();
         boolean valid = false;
         if (!_accountInfo.realName.equals(realName)) {
-            _status.setText(CShell.cmsgs.editNameReady());
+            setStatus(CShell.cmsgs.editNameReady());
             valid = true;
         } else {
-            _status.setText("");
+            setStatus("");
         }
         _uprname.setEnabled(valid);
     }
@@ -247,9 +247,9 @@ public class EditAccountDialog extends BorderedDialog
         boolean valid = false;
         if (email.length() < 4 || email.indexOf("@") == -1 ||
             email.equals(CShell.creds.accountName)) {
-            _status.setText("");
+            setStatus("");
         } else {
-            _status.setText(CShell.cmsgs.editEmailReady());
+            setStatus(CShell.cmsgs.editEmailReady());
             valid = true;
         }
         _upemail.setEnabled(valid);
@@ -260,11 +260,11 @@ public class EditAccountDialog extends BorderedDialog
         boolean valid = false;
         String password = _password.getText().trim(), confirm = _confirm.getText().trim();
         if (confirm.length() == 0) {
-            _status.setText(CShell.cmsgs.editMissingConfirm());
+            setError(CShell.cmsgs.editMissingConfirm());
         } else if (!password.equals(confirm)) {
-            _status.setText(CShell.cmsgs.editPasswordMismatch());
+            setError(CShell.cmsgs.editPasswordMismatch());
         } else {
-            _status.setText(CShell.cmsgs.editPasswordReady());
+            setStatus(CShell.cmsgs.editPasswordReady());
             valid = true;
         }
         _uppass.setEnabled(valid);
@@ -277,7 +277,7 @@ public class EditAccountDialog extends BorderedDialog
             char c = pname.charAt(ii);
             if ((ii == 0 && !Character.isLetter(c)) ||
                 (!Character.isLetter(c) && !Character.isDigit(c) && c != '_')) {
-                _status.setText(CShell.cmsgs.editPermaInvalid());
+                setError(CShell.cmsgs.editPermaInvalid());
                 _uppname.setEnabled(false);
                 return;
             }
@@ -285,13 +285,13 @@ public class EditAccountDialog extends BorderedDialog
 
         boolean valid = false;
         if (pname.length() == 0) {
-            _status.setText("");
+            setStatus("");
         } else if (pname.length() < MemberName.MINIMUM_PERMANAME_LENGTH) {
-            _status.setText(CShell.cmsgs.editPermaShort());
+            setError(CShell.cmsgs.editPermaShort());
         } else if (pname.length() > MemberName.MAXIMUM_PERMANAME_LENGTH) {
-            _status.setText(CShell.cmsgs.editPermaLong());
+            setError(CShell.cmsgs.editPermaLong());
         } else {
-            _status.setText(CShell.cmsgs.editPermaReady());
+            setStatus(CShell.cmsgs.editPermaReady());
             valid = true;
         }
         _uppname.setEnabled(valid);
@@ -301,6 +301,18 @@ public class EditAccountDialog extends BorderedDialog
     protected Widget createContents ()
     {
         return new FlexTable();
+    }
+
+    protected void setError (String text) 
+    {
+        _status.addStyleName("Error");
+        _status.setText(text);
+    }
+
+    protected void setStatus (String text) 
+    {
+        _status.removeStyleName("Error");
+        _status.setText(text);
     }
 
     protected KeyboardListener _valrname = new KeyboardListenerAdapter() {
