@@ -18,7 +18,7 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.ContextHandlerCollection;
 import org.mortbay.jetty.handler.HandlerCollection;
 import org.mortbay.jetty.handler.RequestLogHandler;
-import org.mortbay.jetty.nio.BlockingChannelConnector;
+import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.jetty.servlet.ServletHolder;
@@ -40,7 +40,7 @@ public class MsoyHttpServer extends Server
     public MsoyHttpServer (File logdir)
         throws IOException
     {
-        BlockingChannelConnector conn = new BlockingChannelConnector();
+        SelectChannelConnector conn = new SelectChannelConnector();
         conn.setPort(ServerConfig.httpPort);
         setConnectors(new Connector[] { conn });
 
