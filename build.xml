@@ -58,8 +58,8 @@
 
   <!-- declare the libraries needed by the MSOY runtime -->
   <filelist dir="." id="dist.libs">
-    <file name="${extlibs.dir}/ant.jar"/>
     <file name="${extlibs.dir}/activation.jar"/>
+    <file name="${extlibs.dir}/ant.jar"/>
     <file name="${extlibs.dir}/args4j-2.0.7.jar"/>
     <file name="${extlibs.dir}/commons-beanutils.jar"/>
     <file name="${extlibs.dir}/commons-codec.jar"/>
@@ -70,6 +70,8 @@
     <file name="${extlibs.dir}/commons-io.jar"/>
     <file name="${extlibs.dir}/commons-lang.jar"/>
     <file name="${extlibs.dir}/commons-logging.jar"/>
+    <file name="${extlibs.dir}/ehcache-1.2.jar"/>
+    <file name="${extlibs.dir}/ganymed.jar"/>
     <file name="${extlibs.dir}/getdown.jar"/>
     <file name="${extlibs.dir}/gwt-user.jar"/>
     <file name="${extlibs.dir}/gwt-widgets.jar"/>
@@ -77,16 +79,15 @@
     <file name="${extlibs.dir}/junit-3.7.jar"/>
     <file name="${extlibs.dir}/mail.jar"/>
     <file name="${extlibs.dir}/mysql-connector-java.jar"/>
+    <file name="${extlibs.dir}/postgresql-8.1-407.jdbc3.jar"/>
     <file name="${extlibs.dir}/proguard.jar"/>
-    <file name="${extlibs.dir}/ganymed.jar"/>
     <file name="${extlibs.dir}/svnClientAdapter.jar"/>
     <file name="${extlibs.dir}/svnjavahl.jar"/>
-    <file name="${extlibs.dir}/svnkit.jar"/>
-    <file name="${extlibs.dir}/svnkit-javahl.jar"/>
     <file name="${extlibs.dir}/svnkit-cli.jar"/>
-    <file name="${extlibs.dir}/ws-commons-util-1.0.1.jar"/>
+    <file name="${extlibs.dir}/svnkit-javahl.jar"/>
+    <file name="${extlibs.dir}/svnkit.jar"/>
     <file name="${extlibs.dir}/velocity-1.5-dev.jar"/>
-    <file name="${extlibs.dir}/ehcache-1.2.jar"/>
+    <file name="${extlibs.dir}/ws-commons-util-1.0.1.jar"/>
 
     <file name="lib/json.jar"/>
     <file name="lib/jswiff-8.0-beta-2-threerings.jar"/>
