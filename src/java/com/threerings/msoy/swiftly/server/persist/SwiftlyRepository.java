@@ -11,7 +11,6 @@ import java.util.Set;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -111,17 +110,7 @@ public class SwiftlyRepository extends DepotRepository
         record.remixable = remixable;
         record.creationDate = new Timestamp(System.currentTimeMillis());
 
-        try {
-            insert(record);
-        } catch (DuplicateKeyException dke) {
-            // TODO: Throw an exception here? If someone is expecting this to *create* a
-            // repository, returning an existing one isn't likely to be what they expect.
-
-            // ownerId,projectName already exists, return it
-            return load(SwiftlyProjectRecord.class,
-                        new Where(SwiftlyProjectRecord.OWNER_ID_C, record.ownerId,
-                                  SwiftlyProjectRecord.PROJECT_NAME_C, record.projectName));
-        }
+        insert(record);
         return record;
     }
 

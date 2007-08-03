@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.DuplicateKeyException;
 
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
@@ -126,6 +127,9 @@ public class SwiftlyServlet extends MsoyServiceServlet
 
             // Set the creator as the first collaborator.
             MsoyServer.swiftlyRepo.joinCollaborators(pRec.projectId, memrec.memberId);
+
+        } catch (DuplicateKeyException dke) {
+            throw new ServiceException(SwiftlyCodes.E_PROJECT_NAME_EXISTS);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Creating new project failed.", pe);

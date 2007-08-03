@@ -18,4 +18,7 @@ public interface SwiftlyCodes extends InvocationCodes
 
     /** An error code returned by the Swiftly services. */
     public static final String E_NO_SUCH_PROJECT = "m.no_such_project";
+
+    /** An error code returned by the Swiftly services. */
+    public static final String E_PROJECT_NAME_EXISTS = "m.project_name_exists";
 }
