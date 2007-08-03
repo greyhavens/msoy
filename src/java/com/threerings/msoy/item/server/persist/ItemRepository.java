@@ -596,7 +596,8 @@ public abstract class ItemRepository<
                     });
                 }
             };
-            deleteAll(getRatingClass(), new Where(RatingRecord.ITEM_ID_C, itemId), inv);
+            deleteAll(getRatingClass(),
+                      new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId), inv);
 
 //             // invalidate and delete tag records for this item
 //             inv = new CacheInvalidator() {
@@ -783,7 +784,7 @@ public abstract class ItemRepository<
 
         if (tag > 0) {
             // join against TagRecord
-            clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID, 
+            clauses.add(new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
                                  getTagRepository().getTagClass(), TagRecord.TARGET_ID));
             // and add a condition
             whereBits.add(new Equals(getTagColumn(TagRecord.TAG_ID), tag));
@@ -836,6 +837,11 @@ public abstract class ItemRepository<
     protected ColumnExp getCloneColumn (String cname)
     {
         return new ColumnExp(getCloneClass(), cname);
+    }
+
+    protected ColumnExp getRatingColumn (String cname)
+    {
+        return new ColumnExp(getRatingClass(), cname);
     }
 
     protected ColumnExp getTagColumn (String cname)
