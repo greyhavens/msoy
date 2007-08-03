@@ -182,7 +182,7 @@ public class MsoyGameServer extends CrowdServer
         DictionaryManager.init("data/dictionary");
 
         // connect back to our parent world server
-        worldClient.init(_listenPort);
+        worldClient.init(this, _listenPort);
 
         log.info("Game server initialized.");
     }

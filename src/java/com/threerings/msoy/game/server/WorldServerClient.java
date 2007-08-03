@@ -21,8 +21,9 @@ import static com.threerings.msoy.Log.log;
  */
 public class WorldServerClient
 {
-    public void init (int port)
+    public void init (MsoyGameServer server, int port)
     {
+        _server = server;
         _port = port;
 
         // create our client and connect to the server
@@ -74,10 +75,12 @@ public class WorldServerClient
         public void clientDidLogoff (Client client) {
             log.info("Logged off of world server.");
             _gssvc = null;
-            // TODO: if we're not shutting down, should we periodically try to reconnect?
+            // TEMP: for now shut ourselves down
+            _server.shutdown();
         }
     };
 
+    protected MsoyGameServer _server;
     protected int _port;
     protected Client _client;
     protected GameServerService _gssvc;
