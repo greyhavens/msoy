@@ -147,6 +147,7 @@ public class ServerConfig
             serverHost = config.getValue(nodeName + ".server_host", serverHost);
             serverPorts = config.getValue(nodeName + ".server_ports", serverPorts);
             httpPort = config.getValue(nodeName + ".http_port", httpPort);
+            gameServerPort = config.getValue(nodeName + ".game_server_port", gameServerPort);
         }
 
         // fill in our standard properties
