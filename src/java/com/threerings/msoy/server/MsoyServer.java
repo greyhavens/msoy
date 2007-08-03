@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.jdbc.TransitionRepository;
+import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.samskivert.servlet.user.UserRepository;
@@ -332,10 +333,9 @@ public class MsoyServer extends WhirledServer
         // create our JDBC bits before calling super.init() because our superclass will attempt to
         // create our authenticator and we need that ready by then
         _conProv = new StaticConnectionProvider(ServerConfig.getJDBCConfig());
-        perCtx = new PersistenceContext("msoy", _conProv, ServerConfig.createCacheAdapter());
-
-        userCtx = new PersistenceContext(
-            UserRepository.USER_REPOSITORY_IDENT, _conProv, ServerConfig.createCacheAdapter());
+        CacheAdapter cacher = ServerConfig.createCacheAdapter();
+        perCtx = new PersistenceContext("msoy", _conProv, cacher);
+        userCtx = new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT, _conProv, cacher);
 
         // create our transition manager prior to doing anything else
         transitRepo = new TransitionRepository(_conProv);
