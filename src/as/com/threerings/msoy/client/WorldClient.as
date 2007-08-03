@@ -99,7 +99,7 @@ public class WorldClient extends BaseClient
      */
     public static const EMBEDDED_STATE_KNOWN :String = "clientEmbedded";
 
-    public static const log :Log = Log.getLog(BaseClient);
+    public static const log :Log = Log.getLog(WorldClient);
 
     public function WorldClient (stage :Stage)
     {
