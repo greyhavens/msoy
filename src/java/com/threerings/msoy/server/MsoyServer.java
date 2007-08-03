@@ -64,8 +64,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.chat.server.ChatChannelManager;
-import com.threerings.msoy.game.server.HostedGameManager;
-import com.threerings.msoy.game.server.LobbyRegistry;
+import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.notify.server.NotificationManager;
@@ -174,8 +173,8 @@ public class MsoyServer extends WhirledServer
     /** Our runtime swiftly editor manager. */
     public static SwiftlyManager swiftlyMan = new SwiftlyManager();
 
-    /** The lobby registry for this server. */
-    public static LobbyRegistry lobbyReg = new LobbyRegistry();
+    /** Manages our external game servers. */
+    public static MsoyGameRegistry gameReg = new MsoyGameRegistry();
 
     /** The in-world game registry for this server. */
     public static WorldGameRegistry worldGameReg = new WorldGameRegistry();
@@ -185,9 +184,6 @@ public class MsoyServer extends WhirledServer
 
     /** Handles HTTP servlet requests. */
     public static MsoyHttpServer httpServer;
-
-    /** Handles sandboxed game server code. */
-    public static HostedGameManager hostedMan = new HostedGameManager();
 
     /** Handles our cuddly little pets. */
     public static PetManager petMan = new PetManager();
@@ -434,17 +430,6 @@ public class MsoyServer extends WhirledServer
     }
 
     @Override // from CrowdServer
-    protected PlaceRegistry createPlaceRegistry (InvocationManager invmgr, RootDObjectManager omgr)
-    {
-        return new PlaceRegistry(invmgr, omgr) {
-            public ClassLoader getClassLoader (PlaceConfig config) {
-                ClassLoader loader = hostedMan.getClassLoader(config);
-                return (loader == null) ? super.getClassLoader(config) : loader;
-            }
-        };
-    }
-
-    @Override // from CrowdServer
     protected BodyLocator createBodyLocator ()
     {
         return new BodyLocator() {
@@ -496,7 +481,7 @@ public class MsoyServer extends WhirledServer
         itemMan.init(perCtx);
         swiftlyMan.init(invmgr);
         petMan.init(invmgr);
-        lobbyReg.init(omgr, invmgr, itemMan.getGameRepository());
+        gameReg.init(invmgr, itemMan.getGameRepository());
         worldGameReg.init(invmgr);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {

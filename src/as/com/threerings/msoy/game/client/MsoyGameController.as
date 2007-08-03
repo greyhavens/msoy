@@ -15,7 +15,6 @@ import com.threerings.crowd.util.CrowdContext;
 import com.threerings.ezgame.client.EZGameController;
 
 import com.threerings.msoy.client.OccupantReporter;
-import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.game.data.MsoyGameObject;
 
@@ -71,7 +70,7 @@ public class MsoyGameController extends EZGameController
             return 0;
         }
         var elapsed :int = (getTimer() - _startStamp) / 1000;
-        var humanity :Number = (_pctx as WorldContext).getMemberObject().getHumanity();
+        var humanity :Number = (_pctx as GameContext).getPlayerObject().getHumanity();
         var flowPerMinute :int = (_gobj as MsoyGameObject).flowPerMinute;
         return int((humanity * flowPerMinute * elapsed) / 60) - _flowAwarded;
     }
@@ -110,7 +109,7 @@ public class MsoyGameController extends EZGameController
 
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
-        return new MsoyGamePanel((ctx as WorldContext), this);
+        return new MsoyGamePanel((ctx as GameContext), this);
     }
 
     override protected function gameDidStart () :void

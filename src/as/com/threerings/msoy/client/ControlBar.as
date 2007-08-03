@@ -27,6 +27,8 @@ import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientAdapter;
 
+import com.threerings.crowd.chat.client.ChatDirector;
+
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
 
@@ -105,6 +107,16 @@ public class ControlBar extends HBox
     {
         if (_chatControl != null) {
             _chatControl.setEnabled(enabled);
+        }
+    }
+
+    /**
+     * Redirects our chat input to the specified chat director.
+     */
+    public function setChatDirector (chatDtr :ChatDirector) :void
+    {
+        if (_chatControl != null) {
+            _chatControl.setChatDirector(chatDtr);
         }
     }
 
@@ -379,10 +391,12 @@ public class ControlBar extends HBox
         }
     }
 
-    /** Changes the visibility and parameters of the navigation widgets.
-     *  @param visible controls visibility of both the name and the back button
-     *  @param name specifies the location name to be displayed on the control bar
-     *  @param backEnabled specifies whether the back button should be enabled
+    /**
+     * Changes the visibility and parameters of the navigation widgets.
+     *
+     * @param visible controls visibility of both the name and the back button
+     * @param name specifies the location name to be displayed on the control bar
+     * @param backEnabled specifies whether the back button should be enabled
      */
     public function updateNavigationWidgets (
         visible :Boolean, name :String, backEnabled :Boolean) :void

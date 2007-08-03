@@ -23,12 +23,9 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.peer.server.CrowdPeerManager;
 import com.threerings.crowd.server.PlaceManager;
 
-import com.threerings.parlor.game.server.GameManager;
-
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.server.RoomManager;
 
@@ -90,6 +87,22 @@ public class MsoyPeerManager extends CrowdPeerManager
                 return ((MsoyNodeObject)nodeobj).memberLocs.get(memberId);
             }
         });
+    }
+
+    /**
+     * Reports the new location of a member on this server.
+     */
+    public void updateMemberLocation (int memberId, byte type, int locationId)
+    {
+        MemberLocation newloc = new MemberLocation();
+        newloc.memberId = memberId;
+        newloc.type = type;
+        newloc.locationId = locationId;
+        if (_mnobj.memberLocs.contains(newloc)) {
+            _mnobj.updateMemberLocs(newloc);
+        } else {
+            _mnobj.addToMemberLocs(newloc);
+        }
     }
 
     /**
@@ -263,8 +276,8 @@ public class MsoyPeerManager extends CrowdPeerManager
     protected class LocationTracker implements AttributeChangeListener
     {
         public void attributeChanged (AttributeChangedEvent event) {
-            // skip "location=-1" updates as the client will either logoff or arrive at their real
-            // location immediately following and that will trigger the real update
+            // skip "location=null" updates as the client will either logoff or arrive at their
+            // real location immediately following and that will trigger the real update
             if (event.getName().equals(MemberObject.LOCATION) &&
                 event.getValue() != null) {
                 MemberObject memobj = (MemberObject)MsoyServer.omgr.getObject(event.getTargetOid());
@@ -273,22 +286,10 @@ public class MsoyPeerManager extends CrowdPeerManager
                     return;
                 }
 
-                MemberLocation newloc = new MemberLocation();
-                newloc.memberId = memobj.getMemberId();
-
                 PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(memobj.getPlaceOid());
-                if (pmgr instanceof GameManager) {
-                    newloc.type = MemberLocation.GAME;
-                    newloc.locationId = ((MsoyGameConfig)pmgr.getConfig()).getGameId();
-                } else if (pmgr instanceof RoomManager) {
-                    newloc.type = MemberLocation.SCENE;
-                    newloc.locationId = ((RoomManager)pmgr).getScene().getId();
-                }
-
-                if (_mnobj.memberLocs.contains(newloc)) {
-                    _mnobj.updateMemberLocs(newloc);
-                } else {
-                    _mnobj.addToMemberLocs(newloc);
+                if (pmgr instanceof RoomManager) {
+                    updateMemberLocation(memobj.getMemberId(), MemberLocation.SCENE,
+                                         ((RoomManager)pmgr).getScene().getId());
                 }
             }
         }

@@ -33,7 +33,7 @@ import mx.controls.VScrollBar;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
-import com.threerings.util.MessageBundle;
+import com.threerings.util.MessageManager;
 import com.threerings.util.StringUtil;
 
 import com.threerings.crowd.chat.client.ChatDisplay;
@@ -59,9 +59,9 @@ public class ChatOverlay
 {
     public var log :Log = Log.getLog(this);
 
-    public function ChatOverlay (ctx :WorldContext)
+    public function ChatOverlay (msgMan :MessageManager)
     {
-        _ctx = ctx;
+        _msgMan = msgMan;
 
         _overlay = new Sprite();
 //        _overlay.mouseChildren = false;
@@ -459,8 +459,8 @@ public class ChatOverlay
             var format :String = msg.getFormat();
             if (format != null) {
                 var umsg :UserMessage = (msg as UserMessage);
-                var prefix :String = _ctx.xlate(
-                    MsoyCodes.CHAT_MSGS, format, umsg.getSpeakerDisplayName()) + " ";
+                var prefix :String = _msgMan.getBundle(MsoyCodes.CHAT_MSGS).get(
+                    format, umsg.getSpeakerDisplayName()) + " ";
 
                 if (useQuotes(type)) {
                     prefix += "\"";
@@ -1216,8 +1216,8 @@ public class ChatOverlay
         return w;
     }
 
-    /** The light of our life. */
-    protected var _ctx :WorldContext;
+    /** Used to translate messages. */
+    protected var _msgMan :MessageManager;
 
     /** The overlay we place on top of our target that contains all the chat glyphs. */
     protected var _overlay :Sprite;

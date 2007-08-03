@@ -56,7 +56,7 @@ public class MsoyGameClientResolver extends CrowdClientResolver
 //         userObj.flow = member.flow;
 //         userObj.accFlow = member.accFlow;
 //         userObj.level = member.level;
-//         userObj.humanity = member.humanity;
+        userObj.humanity = member.humanity;
 
         // load up their selected avatar, we'll configure it later
 // TODO

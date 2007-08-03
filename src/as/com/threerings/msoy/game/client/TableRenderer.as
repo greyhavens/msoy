@@ -38,8 +38,8 @@ import com.threerings.msoy.game.data.MsoyTable;
 
 public class TableRenderer extends HBox
 {
-    /** The context, initialized by our ClassFactory. */
-    public var ctx :WorldContext;
+    /** The game context, initialized by our ClassFactory. */
+    public var gctx :GameContext;
 
     /** The panel we're rendering to. */
     public var panel :LobbyPanel;
@@ -127,7 +127,7 @@ public class TableRenderer extends HBox
         var table :MsoyTable = (data as MsoyTable);
         if (table == null) {
             if (_creationPanel == null) {
-                _creationPanel = new TableCreationPanel(ctx, panel);
+                _creationPanel = new TableCreationPanel(gctx, panel);
             } 
             removeChildren();
             addChild(_creationPanel);
@@ -184,7 +184,7 @@ public class TableRenderer extends HBox
             } else {
                 seat = (_seatsGrid.getChildAt(ii) as SeatRenderer);
             }
-            seat.update(ctx, table, ii, panel.isSeated());
+            seat.update(gctx, table, ii, panel.isSeated());
         }
     }
 
@@ -194,7 +194,7 @@ public class TableRenderer extends HBox
 
         // if we are the creator, add a button for starting the game now
         if (table.occupants != null && table.occupants.length > 0 &&
-                ctx.getMemberObject().getVisibleName().equals(table.occupants[0]) &&
+                gctx.getPlayerObject().getVisibleName().equals(table.occupants[0]) &&
                 (table.tconfig.desiredPlayerCount > table.tconfig.minimumPlayerCount)) {
             var box :HBox = new HBox();
             box.styleName = "seatRenderer";
@@ -269,8 +269,8 @@ public class TableRenderer extends HBox
         }
     }
 
-    protected function getConfigRow (name :String, value :String, nameTip :String = "", 
-        valueTip :String = "") :UIComponent
+    protected function getConfigRow (
+        name :String, value :String, nameTip :String = "", valueTip :String = "") :UIComponent
     {
         var row :HBox = new HBox();
         row.setStyle("horizontalGap", 2);
@@ -316,16 +316,11 @@ public class TableRenderer extends HBox
 }
 
 import mx.containers.HBox;
-
 import mx.controls.Label;
-
-import mx.core.UIComponent;
 
 import com.threerings.flex.CommandButton;
 
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.Msgs;
-
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.ui.MediaWrapper;
@@ -333,6 +328,7 @@ import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.item.data.all.MediaDesc;
 
+import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.client.LobbyController;
 import com.threerings.msoy.game.data.MsoyTable;
 
@@ -345,7 +341,7 @@ class SeatRenderer extends HBox
         percentHeight = 100;
     }
 
-    public function update (ctx :WorldContext, table :MsoyTable, index :int, 
+    public function update (ctx :GameContext, table :MsoyTable, index :int, 
         weAreSeated :Boolean) :void
     {
         _ctx = ctx;
@@ -357,7 +353,7 @@ class SeatRenderer extends HBox
             prepareOccupant();
             _headShot.setMediaDesc((_table.headShots[_index] as MediaDesc));
             _name.text = occupant.toString();
-            if (occupant.equals(_ctx.getMemberObject().memberName)) {
+            if (occupant.equals(_ctx.getPlayerObject().memberName)) {
                 _leaveBtn.setCommand(LobbyController.LEAVE_TABLE, _table.tableId);
                 _leaveBtn.visible = _leaveBtn.includeInLayout = true;
             } else {
@@ -402,7 +398,7 @@ class SeatRenderer extends HBox
         setStyle("horizontalAlign", "center");
     }
 
-    protected var _ctx :WorldContext;
+    protected var _ctx :GameContext;
     protected var _table :MsoyTable;
     protected var _index :int;
 

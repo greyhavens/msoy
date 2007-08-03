@@ -17,7 +17,7 @@ public class ChatContainer extends Container
     public function ChatContainer (ctx :WorldContext)
     {
         _ctx = ctx;
-        _overlay = new ChatOverlay(ctx);
+        _overlay = new ChatOverlay(ctx.getMessageManager());
         _overlay.setClickableGlyphs(true);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);

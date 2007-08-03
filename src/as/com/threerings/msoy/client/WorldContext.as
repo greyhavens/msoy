@@ -18,9 +18,6 @@ import com.threerings.presents.client.Client;
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.client.PlaceView;
 
-import com.threerings.parlor.client.ParlorDirector;
-import com.threerings.parlor.util.ParlorContext;
-
 import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.spot.client.SpotSceneDirector;
 import com.threerings.whirled.util.WhirledContext;
@@ -29,6 +26,7 @@ import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.client.persist.RuntimeSceneRepository;
 
 import com.threerings.msoy.game.client.GameDirector;
+import com.threerings.msoy.game.client.WhirledGameContext;
 import com.threerings.msoy.notify.client.NotificationDirector;
 import com.threerings.msoy.world.client.MsoySceneDirector;
 import com.threerings.msoy.world.client.WorldDirector;
@@ -37,7 +35,7 @@ import com.threerings.msoy.world.client.WorldDirector;
  * Defines services for the main virtual world and game clients. TODO: make GameContext?
  */
 public class WorldContext extends BaseContext
-    implements WhirledContext, ParlorContext
+    implements WhirledContext, WhirledGameContext
 {
     /** Contains non-persistent properties that are set in various places and can be bound to to be
      * notified when they change. */
@@ -49,7 +47,6 @@ public class WorldContext extends BaseContext
 
         _sceneDir = new MsoySceneDirector(this, _locDir, new RuntimeSceneRepository());
         _spotDir = new SpotSceneDirector(this, _locDir, _sceneDir);
-        _parlorDir = new ParlorDirector(this);
         _mediaDir = new MediaDirector(this);
         _gameDir = new GameDirector(this);
         _worldDir = new WorldDirector(this);
@@ -60,24 +57,30 @@ public class WorldContext extends BaseContext
         _controller = new MsoyController(this, _topPanel);
     }
 
-    /**
-     * Returns our client casted to a WorldClient.
-     */
-    public function getWorldClient () :WorldClient
-    {
-        return (getClient() as WorldClient);
-    }
-
     // from WhirledContext
     public function getSceneDirector () :SceneDirector
     {
         return _sceneDir;
     }
 
-    // from ParlorContext
-    public function getParlorDirector () :ParlorDirector
+    // from WhirledGameContext
+    public function getTopPanel () :TopPanel
     {
-        return _parlorDir;
+        return _topPanel;
+    }
+
+    // from WhirledGameContext
+    public function displayLobby (gameId :int) :void
+    {
+        getMsoyController().handleJoinGameLobby(gameId);
+    }
+
+    /**
+     * Returns our client casted to a WorldClient.
+     */
+    public function getWorldClient () :WorldClient
+    {
+        return (getClient() as WorldClient);
     }
 
     /**
@@ -140,11 +143,6 @@ public class WorldContext extends BaseContext
         _topPanel.clearPlaceView(view);
     }
 
-    public function getTopPanel () :TopPanel
-    {
-        return _topPanel;
-    }
-
     override protected function createChatDirector () :ChatDirector
     {
         return new MsoyChatDirector(this);
@@ -155,7 +153,6 @@ public class WorldContext extends BaseContext
 
     protected var _sceneDir :SceneDirector;
     protected var _spotDir :SpotSceneDirector;
-    protected var _parlorDir :ParlorDirector;
     protected var _gameDir :GameDirector;
     protected var _mediaDir :MediaDirector;
     protected var _worldDir :WorldDirector;

@@ -95,7 +95,7 @@ public class ControlBarController extends Controller
         // if we're not in a scene, just go to the previous scene on the stack
         if (_ctx.getSceneDirector().getScene() == null) {
             if (_backstack.length > 0) {
-                CommandEvent.dispatch(trigger, MsoyController.GO_SCENE, _backstack.pop());
+                _ctx.getMsoyController().handleGoScene(int(_backstack.pop()));
             }
 
         // otherwise the first item on the back stack is the current location
@@ -104,7 +104,7 @@ public class ControlBarController extends Controller
             _backstack.pop();
             // ...and pop the previous location and move to it. When we arrive in the previous
             // location, it will be pushed back onto the location stack.
-            CommandEvent.dispatch(trigger, MsoyController.GO_SCENE, _backstack.pop());
+            _ctx.getMsoyController().handleGoScene(int(_backstack.pop()));
         }
     }
 
@@ -121,8 +121,9 @@ public class ControlBarController extends Controller
 
     // IMPLEMENTATION DETAILS
 
-    /** When location changes, and it's to the scene that we thought
-        we should be entering, set the label appropriately. */
+    /**
+     * Update our back button when our location changes.
+     */
     protected function locationChanged (place :PlaceObject) :void
     {
         // is this a valid scene?
@@ -141,10 +142,9 @@ public class ControlBarController extends Controller
         }
 
         // if we're in a game, display the game name and send the back button to the lobby
-        var ctrl :PlaceController = _ctx.getLocationDirector().getPlaceController();
-        if (ctrl != null && ctrl.getPlaceConfig() is MsoyGameConfig) {
-            _controlBar.updateNavigationWidgets(
-                true, (ctrl.getPlaceConfig() as MsoyGameConfig).name, true);
+        var cfg :MsoyGameConfig = _ctx.getGameDirector().getGameConfig();
+        if (cfg != null) {
+            _controlBar.updateNavigationWidgets(true, cfg.name, true);
         } else {
             _controlBar.updateNavigationWidgets(false, "", false);
         }

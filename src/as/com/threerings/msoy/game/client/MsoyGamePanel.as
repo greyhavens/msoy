@@ -10,8 +10,8 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.ezgame.client.EZGamePanel;
 import com.threerings.ezgame.client.GameControlBackend;
 
-import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.chat.client.ChatOverlay;
+import com.threerings.msoy.chat.client.HistoryList;
 import com.threerings.msoy.game.data.MsoyGameObject;
 
 import com.threerings.flash.MediaContainer;
@@ -22,11 +22,11 @@ import mx.events.ResizeEvent;
 
 public class MsoyGamePanel extends EZGamePanel
 {
-    public function MsoyGamePanel (ctx :WorldContext, ctrl :MsoyGameController)
+    public function MsoyGamePanel (ctx :GameContext, ctrl :MsoyGameController)
     {
         super(ctx, ctrl);
 
-        _chatOverlay = new ChatOverlay(ctx);
+        _chatOverlay = new ChatOverlay(ctx.getMessageManager());
     }
 
     /**
@@ -40,7 +40,7 @@ public class MsoyGamePanel extends EZGamePanel
             _ctx.getChatDirector().removeChatDisplay(_chatOverlay);
         }
         _chatOverlay.setTarget(enabled ? this : null);
-        (_ctx as WorldContext).getTopPanel().getControlBar().setChatEnabled(enabled);
+        (_ctx as GameContext).getTopPanel().getControlBar().setChatEnabled(enabled);
     }
 
     /**
@@ -74,13 +74,13 @@ public class MsoyGamePanel extends EZGamePanel
         super.didLeavePlace(plobj);
 
         // reenable chat
-        (_ctx as WorldContext).getTopPanel().getControlBar().setChatEnabled(true);
+        (_ctx as GameContext).getTopPanel().getControlBar().setChatEnabled(true);
     }
 
     override protected function createBackend () :GameControlBackend
     {
         return new WhirledGameControlBackend(
-            (_ctx as WorldContext), (_ezObj as MsoyGameObject), (_ctrl as MsoyGameController));
+            (_ctx as GameContext), (_ezObj as MsoyGameObject), (_ctrl as MsoyGameController));
     }
 
     protected function handleMediaContainerResize (event :ValueEvent) :void

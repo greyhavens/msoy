@@ -1,18 +1,28 @@
 //
 // $Id$
 
-package com.threerings.msoy.server;
+package com.threerings.msoy.game.server;
 
+import java.util.logging.Level;
+
+import com.samskivert.io.PersistenceException;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.Invoker;
 
-import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.server.MsoyServer;
+
+import com.threerings.msoy.game.data.PlayerObject;
 
 import static com.threerings.msoy.Log.log;
 
+/**
+ * Handles the tracking and award of flow during a game. This is somewhat complexified by the fact
+ * that we might be running in an AVR game on a world server or in a normal game on a game server
+ * and we have to magically do the right thing. Yay magic.
+ */
 public class FlowAwardTracker
 {
     /**
@@ -100,15 +110,33 @@ public class FlowAwardTracker
         }
 
         // create a flow record for this occupant
-        MemberObject member = (MemberObject) MsoyServer.omgr.getObject(oid);
-        if (member == null) { // this should never happen
+        int memberId = 0;
+        double humanity = 0;
+
+        // this is messy, but we'll sort it out later
+        if (MsoyGameServer.omgr != null) {
+            PlayerObject player = (PlayerObject) MsoyGameServer.omgr.getObject(oid);
+            if (player != null) {
+                memberId = player.getMemberId();
+                humanity = player.getHumanity();
+            }
+
+        } else if (MsoyServer.omgr != null) {
+            MemberObject member = (MemberObject) MsoyServer.omgr.getObject(oid);
+            if (member != null) {
+                memberId = member.getMemberId();
+                humanity = member.getHumanity();
+            }
+        }
+
+        if (memberId == 0) { // this should never happen
             log.warning("Failed to lookup member [oid=" + oid + "]");
             return;
         }
 
         // create a flow record to track awarded flow and remember things about the member we'll
         // need to know when they're gone
-        FlowRecord record = new FlowRecord(member);
+        FlowRecord record = new FlowRecord(memberId, humanity);
         _flowRecords.put(oid, record);
 
         // if we're currently tracking, note that they're "starting" immediately
@@ -124,7 +152,7 @@ public class FlowAwardTracker
     public void removeMember (int oid)
     {
         // remove their flow record and grant them the flow
-        FlowRecord record = _flowRecords.remove(oid);
+        final FlowRecord record = _flowRecords.remove(oid);
         if (record == null) {
             log.warning("No flow record found [oid=" + oid + "]");
             return;
@@ -153,12 +181,29 @@ public class FlowAwardTracker
 
         // see how much they actually get (also uses their secondsPlayed)
         int flowBudget = (int) ((record.humanity * _flowPerMinute * record.secondsPlayed) / 60);
-        int awarded = Math.min(record.awarded, flowBudget);
+        final int awarded = Math.min(record.awarded, flowBudget);
+        final String details = _detailsPrefix + " " + record.secondsPlayed;
 
-        // award it
+        // actually grant their flow award
         if (awarded > 0) {
-            MsoyServer.memberMan.grantFlow(record.memberId, awarded, _grantAction,
-                _detailsPrefix + " " + record.secondsPlayed);
+            if (MsoyServer.omgr != null) {
+                MsoyServer.memberMan.grantFlow(record.memberId, awarded, _grantAction, details);
+
+            } else if (MsoyGameServer.omgr != null) {
+                MsoyGameServer.invoker.postUnit(new Invoker.Unit("FlowAwardTracker.grantFlow") {
+                    public boolean invoke () {
+                        try {
+                            MsoyGameServer.memberRepo.getFlowRepository().grantFlow(
+                                record.memberId, awarded, _grantAction, details);
+                        } catch (PersistenceException pe) {
+                            log.log(Level.WARNING, "Failed to grant flow [mid=" + record.memberId +
+                                    ", amount=" + awarded + ", action=" + _grantAction +
+                                    ", details=" + details + "].", pe);
+                        }
+                        return false;
+                    }
+                });
+            }
         }
     }
 
@@ -182,11 +227,11 @@ public class FlowAwardTracker
     /**
      * Award an absolute amount of flow to the specified player.
      *
-     * @return the actual flow awarded, or -1 if the memberOid is unknown.
+     * @return the actual flow awarded, or -1 if the playerOid is unknown.
      */
-    public int awardFlow (int memberOid, int amount)
+    public int awardFlow (int playerOid, int amount)
     {
-        FlowRecord record = _flowRecords.get(memberOid);
+        FlowRecord record = _flowRecords.get(playerOid);
         if (record == null) {
             return -1;
         }
@@ -201,9 +246,7 @@ public class FlowAwardTracker
         // taking the cap into account
         int cappedAmount = Math.min(available, amount);
         if (cappedAmount > 0) {
-            MemberObject mObj = (MemberObject) MsoyServer.omgr.getObject(memberOid);
-            mObj.setFlow(mObj.flow + cappedAmount);
-            mObj.setAccFlow(mObj.accFlow + cappedAmount);
+            reportFlowAward(record.memberId, cappedAmount);
         }
         return cappedAmount;
     }
@@ -213,9 +256,9 @@ public class FlowAwardTracker
      *
      * @param percentage a number between 0 and 1, indicating the player's performance.
      */
-    public int awardFlowPercentage (int memberOid, float percentage)
+    public int awardFlowPercentage (int playerOid, float percentage)
     {
-        FlowRecord record = _flowRecords.get(memberOid);
+        FlowRecord record = _flowRecords.get(playerOid);
         if (record == null) {
             return -1;
         }
@@ -226,9 +269,7 @@ public class FlowAwardTracker
         int amount = (int) Math.round(percentage * getAwardableFlow(record));
         if (amount > 0) {
             record.awarded += amount;
-            MemberObject mObj = (MemberObject) MsoyServer.omgr.getObject(memberOid);
-            mObj.setFlow(mObj.flow + amount);
-            mObj.setAccFlow(mObj.accFlow + amount);
+            reportFlowAward(record.memberId, amount);
         }
         return amount;
     }
@@ -236,9 +277,9 @@ public class FlowAwardTracker
     /**
      * Get the amount of flow that may be awarded to the specified player.
      */
-    public int getAwardableFlow (int memberOid)
+    public int getAwardableFlow (int playerOid)
     {
-        FlowRecord record = _flowRecords.get(memberOid);
+        FlowRecord record = _flowRecords.get(playerOid);
         return (record == null) ? 0 : getAwardableFlow(record);
     }
 
@@ -265,6 +306,20 @@ public class FlowAwardTracker
         return (int) (System.currentTimeMillis() / 1000);
     }
 
+    protected void reportFlowAward (int memberId, int deltaFlow)
+    {
+        if (MsoyGameServer.omgr != null) {
+            MsoyGameServer.worldClient.reportFlowAward(memberId, deltaFlow);
+
+        } else if (MsoyServer.omgr != null) {
+            MsoyServer.gameReg.reportFlowAward(null, memberId, deltaFlow);
+
+        } else {
+            log.warning("Can't report flow award, where the hell are we? [id=" + memberId +
+                        ", flow=" + deltaFlow + "].");
+        }
+    }
+
     /**
      * A record of flow awarded, even for guests.
      */
@@ -276,10 +331,10 @@ public class FlowAwardTracker
         protected int beganStamp;
         protected int secondsPlayed;
 
-        protected FlowRecord (MemberObject memObj)
+        protected FlowRecord (int memberId, double humanity)
         {
-            this.humanity = memObj.getHumanity();
-            this.memberId = memObj.getMemberId();
+            this.humanity = humanity;
+            this.memberId = memberId;
             this.awarded = 0;
         }
     }
@@ -296,6 +351,7 @@ public class FlowAwardTracker
      * for each tracked member that is no longer present with a FlowRecord. */
     protected int _totalTrackedSeconds = 0;
 
+    /** Passed along when granting flow. */
     protected String _detailsPrefix;
 
     protected HashIntMap<FlowRecord> _flowRecords = new HashIntMap<FlowRecord>();

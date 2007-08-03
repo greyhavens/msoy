@@ -64,9 +64,6 @@ import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
-import com.threerings.msoy.game.client.FloatingTableDisplay;
-import com.threerings.msoy.game.client.LobbyController;
-import com.threerings.msoy.game.client.LobbyService;
 import com.threerings.msoy.game.client.WorldGameService;
 
 import com.threerings.msoy.world.client.RoomView;
@@ -442,15 +439,9 @@ public class MsoyController extends Controller
     /**
      * Handle the GO_GAME command to go to a non-Flash game.
      */
-    public function handleGoGame (gameId :int, placeOid :int) :void
+    public function handleGoGame (gameId :int, placeOid :int) :Boolean
     {
-        if (!handleInternalGo("game", gameId + "_" + placeOid)) {
-            // fall back to breaking the back button
-            _ctx.getLocationDirector().moveTo(placeOid);
-            // TODO: if this is a Java game and we're in embedded mode, try popping up a new
-            // browser window
-            // NetUtil.navigateToURL("/#game-" + gameId + "_" + placeOid, false);
-        }
+        return handleInternalGo("game", gameId + "_" + placeOid);
     }
 
     /**
@@ -458,24 +449,7 @@ public class MsoyController extends Controller
      */
     public function handleJoinGameLobby (gameId :int) :void
     {
-        var disp :FloatingTableDisplay = _ctx.getTopPanel().getTableDisplay();
-        if (disp != null && disp.getGameId() == gameId) {
-            // if we're already in a table for this game id, just rejoin the current lobby
-            CommandEvent.dispatch(disp.getRenderer(), LobbyController.JOIN_LOBBY);
-            return;
-        }
-
-        var lsvc :LobbyService = (_ctx.getClient().requireService(LobbyService) as LobbyService);
-        var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
-            log.warning("fetching LobbyObject oid failed: " + cause);
-//             _gameId = -1;
-        },
-        function (result :Object) :void {
-            // this will create a panel and add it to the side panel on the top level
-            new LobbyController(_ctx, int(result));
-            gameLobbyShown(gameId);
-        });
-        lsvc.identifyLobby(_ctx.getClient(), gameId, cb);
+        _ctx.getGameDirector().displayLobby(gameId);
     }
 
     /**
@@ -579,6 +553,10 @@ public class MsoyController extends Controller
             _sceneIdString = null;
             _ctx.getLocationDirector().moveTo(int(params["location"]));
 
+        } else if (null != params["gameLocation"]) {
+            _sceneIdString = null;
+            _ctx.getGameDirector().enterGame(int(params["gameLocation"]));
+
         } else if (null != params["noplace"]) {
             // go to no place- we just want to chat with our friends
             _ctx.getTopPanel().setPlaceView(new NoPlaceView(_ctx));
@@ -589,9 +567,7 @@ public class MsoyController extends Controller
                 var idx :int = sceneIdString.indexOf("g");
                 var gameId :int = int(sceneIdString.substring(idx + 1));
                 sceneIdString = sceneIdString.substring(0, idx);
-//                 if (_gameId == -1 || _gameId != gameId) {
-                    handleJoinGameLobby(gameId);
-//                 }
+                handleJoinGameLobby(gameId);
 
             } else if (sceneIdString == null && null != params["gameLobby"]) {
                 // we want to stay in our current room, if we're in one
@@ -605,7 +581,7 @@ public class MsoyController extends Controller
             if (sceneId == 0) {
                 sceneId = _ctx.getMemberObject().homeSceneId;
                 if (sceneId == 0) {
-                    sceneId = 1; // for "packwards combatability"
+                    sceneId = 1; // for "backwards combatability"
                 }
             }
             _ctx.getSceneDirector().moveTo(sceneId);
@@ -624,7 +600,6 @@ public class MsoyController extends Controller
     {
         // this will result in another request to move to the scene we're already in, but we'll
         // ignore it because we're already there
-//         var scene :String = sceneId + (_gameId != -1 ? "g" + _gameId : "");
         var scene :String = sceneId + "";
         if (_sceneIdString != null) {
             handleInternalGo("world", "s" + scene);
@@ -693,41 +668,6 @@ public class MsoyController extends Controller
     public function clientDidClear (event :ClientEvent) :void
     {
         // nada
-    }
-
-    /**
-     * Called by the lobby controller when we've entered a game lobby.
-     */
-    public function gameLobbyShown (gameId :int) :void
-    {
-// TEMP: disabled until we decide if this is what we want, in which case then we need to figure out
-// how to deal with the pesky race condition
-//         if (gameId != _gameId) {
-//             _gameId = gameId;
-//             // perform our bookmarkable URL magic
-//             var scene :Scene = _ctx.getSceneDirector().getScene();
-//             if (scene != null) {
-//                 wentToScene(scene.getId());
-//             }
-//         }
-    }
-
-    /**
-     * Called by LobbyController to indicate that there is no longer a game lobby visible
-     */
-    public function gameLobbyCleared (gameId :int, playerInitiated :Boolean) :void
-    {
-//         if (gameId == _gameId) {
-//             _gameId = -1;
-//             // if the player initiated the close, restore the URL to point to the current scene,
-//             // otherwise we were minimized or are heading into a game, so don't mess with the URL
-//             if (playerInitiated) {
-//                 var scene :Scene = _ctx.getSceneDirector().getScene();
-//                 if (scene != null) {
-//                     wentToScene(scene.getId());
-//                 }
-//             }
-//         }
     }
 
     /**
@@ -930,9 +870,6 @@ public class MsoyController extends Controller
 
     /** A special logoff message to use when we disconnect. */
     protected var _logoffMessage :String;
-
-//     /** The currently loaded game lobby, used for magic URL bookmarkable gamelobbies */
-//     protected var _gameId :int = -1;
 
     /** Whether we think we're idle or not. */
     protected var _idle :Boolean = false;

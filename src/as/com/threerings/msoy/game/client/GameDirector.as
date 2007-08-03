@@ -7,15 +7,14 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.dobj.Subscriber;
 
-import com.threerings.parlor.client.GameReadyObserver;
 import com.threerings.parlor.game.client.GameController;
-import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.data.GameObject;
 
 import com.threerings.msoy.client.WorldContext;
@@ -26,14 +25,18 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.GameCodes;
+import com.threerings.msoy.game.data.LobbyMarshaller;
+import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
+import com.threerings.msoy.game.data.MsoyGameMarshaller;
+import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.WorldGameConfig;
 
 /**
  * A director that manages game related bits.
  */
 public class GameDirector extends BasicDirector
-    implements AttributeChangeListener, Subscriber, GameReadyObserver
+    implements AttributeChangeListener, Subscriber
 {
     public static const log :Log = Log.getLog(GameDirector);
 
@@ -42,11 +45,53 @@ public class GameDirector extends BasicDirector
         super(ctx);
         _mctx = ctx;
 
-        // handle gameReady so that we can enter games in a browser history friendly manner
-        ctx.getParlorDirector().addGameReadyObserver(this);
-
         // let the compiler know that these must be compiled into the client
         var c :Class = MsoyGameDefinition;
+        c = MsoyGameMarshaller;
+        c = LobbyMarshaller;
+        c = LobbyController;
+        c = PlayerObject;
+    }
+
+    /**
+     * Requests that the lobby for the specified game be joined and displayed.
+     */
+    public function displayLobby (gameId :int) :void
+    {
+        if (_liaison != null) {
+            if (_liaison.gameId == gameId) {
+                _liaison.showLobbyUI();
+            } else {
+                // TODO: close current game and open new one?
+                log.info("Zoiks, asked to switch to new lobby [in=" + _liaison.gameId +
+                         ", want=" + gameId + "].");
+            }
+            return;
+        }
+
+        // create our new liaison, which will resolve the lobby and do all the business
+        _liaison = new GameLiaison(_mctx, gameId);
+    }
+
+    /**
+     * Requests that we move to the specified game location.
+     */
+    public function enterGame (gameOid :int) :void
+    {
+        if (_liaison == null) {
+            log.warning("Requested to enter game but have no liaison?! [oid=" + gameOid + "].");
+        } else {
+            _liaison.enterGame(gameOid);
+        }
+    }
+
+    /**
+     * Returns the configuration of the (non-world) game we currently occupy if we're in a game.
+     * Returns null otherwise.
+     */
+    public function getGameConfig () :MsoyGameConfig
+    {
+        return (_liaison == null) ? null : _liaison.getGameConfig();
     }
 
     /**
@@ -56,6 +101,18 @@ public class GameDirector extends BasicDirector
     public function setMatchingGame (game :Game) :void
     {
         _matchingGame = game;
+    }
+
+    /**
+     * Called by the GameLiaison when it has shutdown and gone away.
+     */
+    public function liaisonCleared (liaison :GameLiaison) : void
+    {
+        if (_liaison != liaison) {
+            log.warning("Bogus liaison cleared? [have=" + _liaison + ", got=" + liaison + "].");
+        } else {
+            _liaison = null;
+        }
     }
 
     // from interface AttributeChangeListener
@@ -96,17 +153,15 @@ public class GameDirector extends BasicDirector
         _worldGameOid = 0;
     }
 
-    // from GameReadyObserver
-    public function receivedGameReady (gameOid :int) :Boolean
+    // from BasicDirector
+    override public function clientDidLogoff (event :ClientEvent) :void
     {
-        _mctx.getTopPanel().clearTableDisplay();
-        if (_matchingGame == null) {
-            log.warning("Got game ready but we were never in a table? [oid=" + gameOid + "].");
-        } else {
-            // route our entry to the game through GWT so that we can handle non-Flash games
-            _mctx.getMsoyController().handleGoGame(_matchingGame.itemId, gameOid);
+        super.clientDidLogoff(event);
+
+        // shutdown and game connection we might have going
+        if (_liaison != null) {
+            _liaison.shutdown();
         }
-        return true;
     }
 
     override protected function clientObjectUpdated (client :Client) :void
@@ -155,6 +210,9 @@ public class GameDirector extends BasicDirector
 
     /** A casted ref to the msoy context. */
     protected var _mctx :WorldContext;
+
+    /** Handles our connection to the game server. */
+    protected var _liaison :GameLiaison;
 
     /** Tracks the game id of the last game of which we joined a table. We need to remember this
      * because by the time we get around to entering that game, we no longer have this info. */

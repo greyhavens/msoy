@@ -15,6 +15,7 @@ import com.samskivert.util.OneLineLogFormatter;
 
 import com.threerings.util.Name;
 
+import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.Authenticator;
@@ -37,8 +38,6 @@ import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.server.ParlorManager;
 
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -51,10 +50,9 @@ import com.threerings.msoy.game.data.PlayerObject;
 import static com.threerings.msoy.Log.log;
 
 /**
- * A bare bones server that does nothing but host a particular game.
+ * A server that does nothing but host games.
  */
 public class MsoyGameServer extends CrowdServer
-    implements LobbyManager.ShutdownObserver
 {
     /** Provides database access to all of our repositories. */
     public static PersistenceContext perCtx;
@@ -83,11 +81,14 @@ public class MsoyGameServer extends CrowdServer
     /** The parlor manager in operation on this server. */
     public static ParlorManager parlorMan = new ParlorManager();
 
-    /** The lobby for the game hosted on this server. */
-    public static LobbyManager lobbyMgr;
+    /** Manages lobbies on this server. */
+    public static LobbyRegistry lobbyReg = new LobbyRegistry();
 
     /** Handles sandboxed game server code. */
     public static HostedGameManager hostedMan = new HostedGameManager();
+
+    /** Manages our connection back to our parent world server. */
+    public static WorldServerClient worldClient = new WorldServerClient();
 
     /**
      * Called when a player starts their session to associate the name with the player's
@@ -111,8 +112,8 @@ public class MsoyGameServer extends CrowdServer
      */
     public static void main (String[] args)
     {
-        if (args.length < 2) {
-            System.err.println("Usage: MsoyGameServer gameId port");
+        if (args.length < 1) {
+            System.err.println("Usage: MsoyGameServer port");
             System.exit(-1);
         }
 
@@ -122,8 +123,7 @@ public class MsoyGameServer extends CrowdServer
 
         MsoyGameServer server = new MsoyGameServer();
         try {
-            server._gameId = Integer.parseInt(args[0]);
-            server._listenPort = Integer.parseInt(args[1]);
+            server._listenPort = Integer.parseInt(args[0]);
             server.init();
             server.run();
 
@@ -172,6 +172,7 @@ public class MsoyGameServer extends CrowdServer
 
         // intialize various services
         parlorMan.init(invmgr, plreg);
+        lobbyReg.init(omgr, invmgr, gameRepo);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
@@ -180,14 +181,10 @@ public class MsoyGameServer extends CrowdServer
         });
         DictionaryManager.init("data/dictionary");
 
-        // resolve our game metadata and create our lobby
-        GameRecord rec = gameRepo.loadItem(_gameId);
-        if (rec == null) {
-            throw new Exception("Unknown game [id=" + _gameId + "].");
-        }
-        lobbyMgr = new LobbyManager(omgr, (Game)rec.toItem(), this);
+        // connect back to our parent world server
+        worldClient.init(_listenPort);
 
-        log.info("Game server initialized for " + rec.name + " (" + rec.itemId + ").");
+        log.info("Game server initialized.");
     }
 
     @Override
@@ -205,12 +202,6 @@ public class MsoyGameServer extends CrowdServer
                         pmgr.where() + "].", e);
             }
         }
-    }
-
-    // from interface LobbyManager.ShutdownObserver
-    public void lobbyDidShutdown (Game game)
-    {
-        // TODO: shut the whole server down
     }
 
     @Override // from CrowdServer
@@ -263,9 +254,6 @@ public class MsoyGameServer extends CrowdServer
         // close our audit logs
 //         _glog.close();
     }
-
-    /** The game we're hosting. */
-    protected int _gameId;
 
     /** The port on which we listen for client connections. */
     protected int _listenPort;

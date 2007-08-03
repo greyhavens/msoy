@@ -602,11 +602,13 @@
         <exclude name="**/web/**"/>
         <exclude name="**/peer/**"/>
         <exclude name="**/swiftly/**"/>
+        <exclude name="**/GameServerService.java"/>
       </fileset>
     </service>
     <service header="lib/SOURCE_HEADER" classpathref="classpath">
-      <fileset dir="${src.dir}" includes="**/swiftly/client/*Service.java"/>
       <fileset dir="${src.dir}" includes="**/peer/client/*Service.java"/>
+      <fileset dir="${src.dir}" includes="**/swiftly/client/*Service.java"/>
+      <fileset dir="${src.dir}" includes="**/GameServerService.java"/>
     </service>
   </target>
 

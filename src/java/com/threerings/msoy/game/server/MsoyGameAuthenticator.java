@@ -23,7 +23,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
-import com.threerings.msoy.game.data.MsoyGameAuthResponseData;
 import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.web.client.DeploymentConfig;
 import com.threerings.msoy.web.data.ServiceException;
@@ -45,7 +44,7 @@ public class MsoyGameAuthenticator extends Authenticator
         throws PersistenceException
     {
         AuthRequest req = conn.getAuthRequest();
-        MsoyGameAuthResponseData rdata = (MsoyGameAuthResponseData)rsp.getData();
+        AuthResponseData rdata = rsp.getData();
         MsoyGameCredentials creds = null;
 
         try {
@@ -81,7 +80,7 @@ public class MsoyGameAuthenticator extends Authenticator
                     new MemberName(MsoyAuthCodes.GUEST_USERNAME_PREFIX + (++_guestCount),
                                    MemberName.GUEST_ID));
                 rsp.authdata = null;
-                rdata.code = MsoyGameAuthResponseData.SUCCESS;
+                rdata.code = AuthResponseData.SUCCESS;
                 return;
             }
 
@@ -105,21 +104,12 @@ public class MsoyGameAuthenticator extends Authenticator
             rsp.authdata = new MsoyTokenRing(tokens);
 
             // log.info("User logged on [user=" + user.username + "].");
-            rdata.code = MsoyGameAuthResponseData.SUCCESS;
-
-            // fill in our game's lobby oid in the auth response
-            rdata.lobbyOid = MsoyGameServer.lobbyMgr.getLobbyObject().getOid();
+            rdata.code = AuthResponseData.SUCCESS;
 
         } catch (ServiceException se) {
             rdata.code = se.getMessage();
             log.info("Rejecting authentication [creds=" + creds + ", code=" + rdata.code + "].");
         }
-    }
-
-    @Override
-    protected AuthResponseData createResponseData ()
-    {
-        return new MsoyGameAuthResponseData();
     }
 
     protected MemberRepository _memberRepo;

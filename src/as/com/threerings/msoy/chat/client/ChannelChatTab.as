@@ -39,7 +39,7 @@ public class ChannelChatTab extends ChatTab
         super(ctx);
         this.channel = channel;
 
-        _overlay = new ChatOverlay(ctx);
+        _overlay = new ChatOverlay(ctx.getMessageManager());
         _overlay.setClickableGlyphs(true);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);

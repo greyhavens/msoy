@@ -5,7 +5,7 @@ package com.threerings.msoy.server.persist;
 
 import com.samskivert.util.IntIntMap;
 
-import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
 
 import static com.threerings.msoy.Log.log;
@@ -53,8 +53,8 @@ public class HumanityHelper
         adjust += computeGameplayAdjustment(memberId, secsSinceLast);
 
         // actually adjust their current value and bound it
-        currentHumanity += (int)Math.round(MemberObject.MAX_HUMANITY * adjust);
-        return Math.max(Math.min(currentHumanity, MemberObject.MAX_HUMANITY), 0);
+        currentHumanity += (int)Math.round(MsoyCodes.MAX_HUMANITY * adjust);
+        return Math.max(Math.min(currentHumanity, MsoyCodes.MAX_HUMANITY), 0);
     }
 
     protected double computeGameplayAdjustment (int memberId, int secsSinceLast)

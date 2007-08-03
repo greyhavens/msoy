@@ -41,7 +41,8 @@ public class ComicOverlay extends ChatOverlay
      */
     public function ComicOverlay (ctx :WorldContext)
     {
-        super(ctx);
+        super(ctx.getMessageManager());
+        _ctx = ctx;
     }
 
     /**
@@ -727,6 +728,9 @@ public class ComicOverlay extends ChatOverlay
         // normalize the duration returned by super. Annoying.
         return super.getDisplayDurationIndex() - 1;
     }
+
+    /** Giver of life, context. */
+    protected var _ctx :WorldContext;
 
     /** The provider of info about laying out bubbles. */ 
     protected var _provider :ChatInfoProvider;

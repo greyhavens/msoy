@@ -32,7 +32,7 @@ public class MsoyGameManager extends EZGameManager
     @Override
     protected GameCookieManager createCookieManager ()
     {
-        return new GameCookieManager(MsoyServer.gameCookieRepo);
+        return new GameCookieManager(MsoyGameServer.gameCookieRepo);
     }
 
     protected WhirledGameDelegate _whirledDelegate;

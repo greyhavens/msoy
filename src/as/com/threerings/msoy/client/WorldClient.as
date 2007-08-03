@@ -53,8 +53,6 @@ import com.threerings.msoy.world.data.MsoySceneMarshaller;
 import com.threerings.msoy.world.data.PetMarshaller;
 import com.threerings.msoy.world.data.RoomConfig;
 
-import com.threerings.msoy.game.client.LobbyController;
-import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.WorldGameConfig;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
 
@@ -142,9 +140,7 @@ public class WorldClient extends BaseClient
         c = Furniture;
         c = Game;
         c = ItemMarshaller;
-        c = LobbyMarshaller;
         c = WorldGameMarshaller;
-        c = LobbyController;
         c = ToyBoxMarshaller;
         c = PetMarshaller;
         c = WorldGameConfig;

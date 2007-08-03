@@ -177,11 +177,11 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
-     * Return our assessment of how likely this member is to be human, in [0, 1).
+     * Return our assessment of how likely this member is to be human, in [0, 1].
      */
     public function getHumanity () :Number
     {
-        return humanity / 256;
+        return humanity / 255;
     }
 
     // documentation inherited

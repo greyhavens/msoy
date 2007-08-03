@@ -96,7 +96,7 @@ public class index extends Page
             if (gameOid <= 0) {
                 WorldClient.displayFlash("gameLobby=" + config.gameId);
             } else {
-                WorldClient.displayFlash("location=" + gameOid);
+                WorldClient.displayFlash("gameLocation=" + gameOid);
             }
             break;
 

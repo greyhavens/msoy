@@ -47,7 +47,7 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
-import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -272,7 +272,7 @@ public class MemberRepository extends DepotRepository
             member.created = new Date(now);
             member.lastSession = new Timestamp(now);
             member.lastHumanityAssessment = new Timestamp(now);
-            member.humanity = MemberObject.MAX_HUMANITY/2;
+            member.humanity = MsoyCodes.MAX_HUMANITY/2;
         }
         insert(member);
     }

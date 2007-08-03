@@ -72,9 +72,10 @@ public class LobbyPanel extends VBox
     /**
      * Create a new LobbyPanel.
      */
-    public function LobbyPanel (ctx :WorldContext, ctrl :LobbyController)
+    public function LobbyPanel (ctx :WorldContext, gctx :GameContext, ctrl :LobbyController)
     {
         _ctx = ctx;
+        _gctx = gctx;
         controller = ctrl;
 
         width = LOBBY_PANEL_WIDTH;
@@ -354,7 +355,7 @@ public class LobbyPanel extends VBox
         list.percentWidth = 100;
         list.selectable = false;
         var factory :ClassFactory = new ClassFactory(TableRenderer);
-        factory.properties = { ctx: _ctx, panel: this };
+        factory.properties = { gctx: _gctx, panel: this };
         list.itemRenderer = factory;
         _formingTables = new ArrayCollection();
         list.dataProvider = _formingTables;
@@ -399,7 +400,7 @@ public class LobbyPanel extends VBox
             runningList.percentWidth = 100;
             runningList.selectable = false;
             var runningFactory :ClassFactory = new ClassFactory(TableRenderer);
-            runningFactory.properties = { ctx: _ctx, panel: this };
+            runningFactory.properties = { gctx: _gctx, panel: this };
             runningList.itemRenderer = runningFactory;
             _runningTables = new ArrayCollection();
             runningList.dataProvider = _runningTables;
@@ -409,6 +410,7 @@ public class LobbyPanel extends VBox
             runningBox.label = Msgs.GAME.get("t.running");
             runningBox.addChild(runningList);
             tabViews.addChild(runningBox);
+
         } else {
             var bar :HBox = new HBox();
             bar.styleName = "tabsFillerBox"; 
@@ -417,6 +419,7 @@ public class LobbyPanel extends VBox
             _tablesBox.addChild(bar);
             _tablesBox.addChild(list);
         }
+
         if (_formingTables.source.length > 0) {
             _formingTables.setItemAt(null, 0);
         } else {
@@ -426,8 +429,11 @@ public class LobbyPanel extends VBox
 
     protected static const LOBBY_PANEL_WIDTH :int = 500; // in px
 
-    /** Buy one get one free. */
+    /** Provides world client services. */
     protected var _ctx :WorldContext;
+
+    /** Buy one get one free. */
+    protected var _gctx :GameContext;
 
     /** Our lobby object. */
     protected var _lobbyObj :LobbyObject;

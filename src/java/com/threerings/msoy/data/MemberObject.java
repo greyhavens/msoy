@@ -104,9 +104,6 @@ public class MemberObject extends MsoyBodyObject
     public static final String NOTIFICATIONS = "notifications";
     // AUTO-GENERATED: FIELDS END
 
-    /** The {@link #humanity} value for a fully actualized human. */
-    public static final int MAX_HUMANITY = 255;
-
     /** The ideal size of the avatar cache. */
     public static final int AVATAR_CACHE_SIZE = 5;
 
@@ -131,7 +128,7 @@ public class MemberObject extends MsoyBodyObject
     public int level;
 
     /** Our current assessment of how likely to be human this member is, in [0, {@link
-     * #MAX_HUMANITY}]. */
+     * MsoyCodes#MAX_HUMANITY}]. */
     public int humanity;
 
     /** The recent scenes we've been through. */
@@ -205,7 +202,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public float getHumanity ()
     {
-        return humanity / (float)MAX_HUMANITY;
+        return humanity / (float)MsoyCodes.MAX_HUMANITY;
     }
 
     // documentation inherited

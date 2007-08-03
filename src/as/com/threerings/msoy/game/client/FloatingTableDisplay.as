@@ -26,10 +26,12 @@ import com.threerings.util.CommandEvent;
 public class FloatingTableDisplay extends FloatingPanel 
     implements TableObserver
 {
-    public function FloatingTableDisplay (ctx :WorldContext, panel :LobbyPanel, 
-        tableDir :TableDirector, gameName :String)
+    public function FloatingTableDisplay (ctx :WorldContext, gctx :GameContext, panel :LobbyPanel, 
+                                          tableDir :TableDirector, gameName :String)
     {
         super(ctx, Msgs.GAME.get("t.table_display") + gameName);
+
+        _gctx = gctx;
         _panel = panel;
         _tableDir = tableDir;
         _tableDir.addTableObserver(this);
@@ -106,17 +108,17 @@ public class FloatingTableDisplay extends FloatingPanel
         var btnBox :VBox = new VBox();
         btnBox.styleName = "backToLobbyBtnBox";
         row.addChild(btnBox);
-        var joinLobbyBtn :CommandButton = new CommandButton();
-        joinLobbyBtn.setCallback(_panel.controller.handleJoinLobby);
-        joinLobbyBtn.styleName = "backToLobbyBtn";
-        btnBox.addChild(joinLobbyBtn);
+        var restoreBtn :CommandButton = new CommandButton();
+        restoreBtn.setCallback(_panel.controller.restoreLobbyUI);
+        restoreBtn.styleName = "backToLobbyBtn";
+        btnBox.addChild(restoreBtn);
         var padding :VBox = new VBox();
         padding.setStyle("backgroundColor", 0xE0E7EE);
         padding.width = 2;
         padding.percentHeight = 100;
         row.addChild(padding);
         _tableRender = new TableRenderer(true);
-        _tableRender.ctx = _ctx;
+        _tableRender.gctx = _gctx;
         _tableRender.panel = _panel;
         row.addChild(_tableRender);
         _tableRender.data = _table;
@@ -128,16 +130,11 @@ public class FloatingTableDisplay extends FloatingPanel
         width = _tableRender.width + extraSpace;
     }
 
-    /** controlled panel to dispatch LobbyController events on */
+    protected var _gctx :GameContext;
     protected var _panel :LobbyPanel;
-
-    /** The table we're displaying */
     protected var _table :Table;
-
     protected var _tableRender :TableRenderer;
-
     protected var _tableDir :TableDirector;
-
     protected var _hasBeenShutDown :Boolean = false;
 }
 }

@@ -3,9 +3,12 @@
 
 package com.threerings.msoy.game.data;
 
+import com.threerings.util.Name;
+
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.TokenRing;
 
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -27,6 +30,9 @@ public class PlayerObject extends BodyObject
 
     /** The field name of the <code>avatar</code> field. */
     public static final String AVATAR = "avatar";
+
+    /** The field name of the <code>humanity</code> field. */
+    public static final String HUMANITY = "humanity";
     // AUTO-GENERATED: FIELDS END
 
     /** The name and id information for this user. */
@@ -38,10 +44,20 @@ public class PlayerObject extends BodyObject
     /** The avatar that the user has chosen, or null for guests. */
     public Avatar avatar;
 
+    /** Our current assessment of how likely to be human this member is, in [0, {@link
+     * MsoyCodes#MAX_HUMANITY}]. */
+    public int humanity;
+
     @Override // from BodyObject
     public TokenRing getTokens ()
     {
         return tokens;
+    }
+
+    @Override // from BodyObject
+    public Name getVisibleName ()
+    {
+        return memberName;
     }
 
     /**
@@ -69,6 +85,14 @@ public class PlayerObject extends BodyObject
             return avatar.getThumbnailMedia();
         }
         return Avatar.getDefaultThumbnailMediaFor(Item.AVATAR);
+    }
+
+    /**
+     * Return our assessment of how likely this member is to be human, in [0, 1).
+     */
+    public float getHumanity ()
+    {
+        return humanity / (float)MsoyCodes.MAX_HUMANITY;
     }
 
     // AUTO-GENERATED: METHODS START
@@ -118,6 +142,22 @@ public class PlayerObject extends BodyObject
         requestAttributeChange(
             AVATAR, value, ovalue);
         this.avatar = value;
+    }
+
+    /**
+     * Requests that the <code>humanity</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setHumanity (int value)
+    {
+        int ovalue = this.humanity;
+        requestAttributeChange(
+            HUMANITY, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.humanity = value;
     }
     // AUTO-GENERATED: METHODS END
 }

@@ -11,8 +11,6 @@ import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableConfig;
 import com.threerings.parlor.game.data.GameConfig;
 
-import com.threerings.msoy.data.MemberObject;
-
 import com.threerings.msoy.item.data.all.MediaDesc;
 
 /**
@@ -42,7 +40,7 @@ public class MsoyTable extends Table
     {
         super.setOccupantPos(position, body);
 
-        MemberObject member = (MemberObject) body;
+        PlayerObject member = (PlayerObject) body;
         headShots[position] = member.getHeadShotMedia();
     }
 

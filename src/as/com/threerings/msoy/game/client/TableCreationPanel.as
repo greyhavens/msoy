@@ -12,20 +12,16 @@ import mx.containers.VBox;
 import com.threerings.flex.CommandButton;
 import com.threerings.util.CommandEvent;
 
-import com.threerings.parlor.data.TableConfig;
-
-import com.threerings.parlor.client.TableConfigurator;
 import com.threerings.parlor.client.DefaultFlexTableConfigurator;
-
-import com.threerings.parlor.game.data.GameConfig;
-
+import com.threerings.parlor.client.TableConfigurator;
+import com.threerings.parlor.data.TableConfig;
 import com.threerings.parlor.game.client.GameConfigurator;
+import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.ezgame.client.EZGameConfigurator;
 import com.threerings.ezgame.data.GameDefinition;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.item.data.all.Game;
 
@@ -34,7 +30,7 @@ import com.threerings.msoy.game.data.MsoyMatchConfig;
 
 public class TableCreationPanel extends HBox
 {
-    public function TableCreationPanel (ctx :WorldContext, panel :LobbyPanel)
+    public function TableCreationPanel (ctx :GameContext, panel :LobbyPanel)
     {
         _ctx = ctx;
         _game = panel.getGame();
@@ -109,7 +105,7 @@ public class TableCreationPanel extends HBox
         _cont.width = w - 20;
     }
 
-    protected var _ctx :WorldContext;
+    protected var _ctx :GameContext;
 
     /** The game item, for configuration reference. */
     protected var _game :Game;

@@ -112,6 +112,10 @@ public class LobbyRegistry
                 if (list != null) {
                     list.requestFailed(reason);
                 }
+
+                // clear out the hosting record that our world server assigned to us when it sent
+                // this client our way to resolve this game
+                MsoyGameServer.worldClient.stoppedHostingGame(gameId);
             }
 
             protected Game _game;
@@ -133,6 +137,9 @@ public class LobbyRegistry
         // destroy our record of that lobby
         _lobbies.remove(game.itemId);
         _loading.remove(game.itemId); // just in case
+
+        // let our world server know we're audi
+        MsoyGameServer.worldClient.stoppedHostingGame(game.itemId);
     }
 
     /** The distributed object manager that we work with. */

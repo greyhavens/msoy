@@ -30,6 +30,7 @@ import com.threerings.flex.CommandMenu;
 import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.msoy.client.ControlBar;
@@ -47,9 +48,20 @@ import com.threerings.msoy.data.all.MemberName;
  */
 public class ChatControl extends HBox
 {
+    /**
+     * Request focus for the oldest ChatControl.
+     */
+    public static function grabFocus () :void
+    {
+        if (_controls.length > 0) {
+            (_controls[0] as ChatControl).setFocus();
+        }
+    }
+
     public function ChatControl (ctx :WorldContext, height :int)
     {
         _ctx = ctx;
+        _chatDtr = _ctx.getChatDirector();
 
         this.height = height;
         styleName = "chatControl";
@@ -69,16 +81,6 @@ public class ChatControl extends HBox
     }
 
     /**
-     * Request focus for the oldest ChatControl.
-     */
-    public static function grabFocus () :void
-    {
-        if (_controls.length > 0) {
-            (_controls[0] as ChatControl).setFocus();
-        }
-    }
-
-    /**
      * Request focus to this chat control.
      */
     override public function setFocus () :void
@@ -93,6 +95,15 @@ public class ChatControl extends HBox
     {
         _txt.enabled = enabled;
         _but.enabled = enabled;
+    }
+
+    /**
+     * Configures the chat director to which we should send our chat. Pass null to restore our
+     * default chat director.
+     */
+    public function setChatDirector (chatDtr :ChatDirector) :void
+    {
+        _chatDtr = (chatDtr == null) ? _ctx.getChatDirector() : chatDtr;
     }
 
     override public function parentChanged (p :DisplayObjectContainer) :void
@@ -129,7 +140,7 @@ public class ChatControl extends HBox
             return;
         }
 
-        var result :String = _ctx.getChatDirector().requestChat(null, message, true);
+        var result :String = _chatDtr.requestChat(null, message, true);
         if (result != ChatCodes.SUCCESS) {
             _ctx.displayFeedback(null, result);
             return;
@@ -158,6 +169,9 @@ public class ChatControl extends HBox
 
     /** Our client-side context. */
     protected var _ctx :WorldContext;
+
+    /** The director to which we are sending chat requests. */
+    protected var _chatDtr :ChatDirector;
 
     /** Our location observer. */
     protected var _locObs :LocationAdapter;

@@ -12,8 +12,6 @@ import flash.utils.Dictionary;
 
 import com.threerings.ezgame.client.GameControlBackend;
 
-import com.threerings.msoy.client.WorldContext;
-
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameObject;
 import com.threerings.msoy.game.data.GameMemberInfo;
@@ -24,7 +22,7 @@ import com.threerings.msoy.game.data.GameMemberInfo;
 public class WhirledGameControlBackend extends GameControlBackend
 {
     public function WhirledGameControlBackend (
-        ctx :WorldContext, gameObj :MsoyGameObject, ctrl :MsoyGameController)
+        ctx :WhirledGameContext, gameObj :MsoyGameObject, ctrl :MsoyGameController)
     {
         super(ctx, gameObj, ctrl);
     }
@@ -63,15 +61,15 @@ public class WhirledGameControlBackend extends GameControlBackend
 
     protected function getStageBounds_v1 () :Rectangle
     {
-        return (_ctx as WorldContext).getTopPanel().getPlaceViewBounds();
+        return (_ctx as WhirledGameContext).getTopPanel().getPlaceViewBounds();
     }
 
     protected function backToWhirled_v1 (showLobby :Boolean = false) :void
     {
-        (_ctx as WorldContext).getTopPanel().getControlBar().moveBack();
+        (_ctx as WhirledGameContext).getTopPanel().getControlBar().moveBack();
         if (showLobby) {
             var cfg :MsoyGameConfig = _ctrl.getPlaceConfig() as MsoyGameConfig;
-            (_ctx as WorldContext).getMsoyController().handleJoinGameLobby(cfg.getGameId());
+            (_ctx as WhirledGameContext).displayLobby(cfg.getGameId());
         }
     }
 
@@ -92,7 +90,7 @@ public class WhirledGameControlBackend extends GameControlBackend
 //        var perf :Number = amount / 100;
 //        var flow :int = (_ctrl as MsoyGameController).awardFlow_v2(perf, null);
 //        if (flow != amount) {
-//            (_ctx as WorldContext).displayFeedback(null, "Actual flow awarded: " + flow);
+//            (_ctx as WhirledGameContext).displayFeedback(null, "Actual flow awarded: " + flow);
 //        }
 
         // we still support the old way, for now
