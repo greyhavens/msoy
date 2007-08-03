@@ -8,7 +8,6 @@ NAME=msoy
 DESC="MetaSOY game server"
 
 MSOY_HOME=`dirname $0 | sed s:/bin$::`
-MSOY_USER=www-data
 HOSTNAME=`hostname`
 
 # Make sure our game id and port were properly supplied.
@@ -27,13 +26,6 @@ if [ -f $MSOY_HOME/server.conf ]; then
     . $MSOY_HOME/server.conf
 else
     echo "Can't load $MSOY_HOME/server.conf; can't run server."
-    exit 255
-fi
-
-# Make sure we're running as the correct user
-WHOAMI=`whoami`
-if [ "$WHOAMI" != "$MSOY_USER" ]; then
-    echo "This script must be run as $MSOY_USER."
     exit 255
 fi
 
