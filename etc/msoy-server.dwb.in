@@ -22,6 +22,7 @@
         Path        @PREFIX@/run
         Path        @PREFIX@/tmp
         Path        @PREFIX@/pages/media
+        Path        @PREFIX@/pages/stats
         Path        @PREFIX@/data/swiftly/projects
         Path        @PREFIX@/data/swiftly/build
         Path        @PREFIX@/pages/buildresults

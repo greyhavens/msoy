@@ -861,6 +861,7 @@
       <fileset dir="data" includes="whirled_sdk*.zip"/>
     </copy>
     <mkdir dir="${pkg.base}/pages/buildresults"/>
+    <mkdir dir="${pkg.base}/pages/stats"/>
   </target>
 
 </project>
