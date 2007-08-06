@@ -72,6 +72,8 @@ public class WorldServerClient
     public void messageReceived (MessageEvent event)
     {
         if (event.getName().equals(SHUTDOWN_MESSAGE)) {
+            // TODO: we could just stop listening for client connections and shut ourselves down
+            // once all the games on this server have finally ended; might be fiddly
             log.info("Got shutdown notification from world server.");
             _server.shutdown();
         }
