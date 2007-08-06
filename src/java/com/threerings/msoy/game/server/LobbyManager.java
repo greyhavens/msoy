@@ -19,7 +19,6 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.LobbyObject;
-import com.threerings.msoy.game.data.SubscriberListener;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 
 import static com.threerings.msoy.Log.log;
@@ -28,7 +27,7 @@ import static com.threerings.msoy.Log.log;
  * Manages a lobby room.
  */
 public class LobbyManager
-    implements SubscriberListener
+    implements LobbyObject.SubscriberListener
 {
     public interface ShutdownObserver
     {
@@ -108,8 +107,8 @@ public class LobbyManager
         return _lobj;
     }
 
-    // from SubscriberListener
-    public void subscriberCountChanged (DObject target)
+    // from LobbyObject.SubscriberListener
+    public void subscriberCountChanged (LobbyObject lobj)
     {
         recheckShutdownInterval();
     }
@@ -123,10 +122,8 @@ public class LobbyManager
         GameDefinition gameDef;
         try {
             gameDef = new MsoyGameParser().parseGame(game);
-
         } catch (Exception e) {
-            log.warning("Error parsing new game definition [gameId=" + game.itemId +
-                ", err=" + e + "].");
+            log.warning("Error parsing game definition [id=" + game.itemId + ", err=" + e + "].");
             return;
         }
 

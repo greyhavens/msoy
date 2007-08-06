@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.server;
 
 import com.threerings.msoy.game.client.GameServerService;
+import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
@@ -30,7 +31,7 @@ public interface GameServerProvider extends InvocationProvider
     public void sayHello (ClientObject caller, int arg1);
 
     /**
-     * Handles a {@link GameServerService#updateGameInfo} request.
+     * Handles a {@link GameServerService#updatePlayer} request.
      */
-    public void updateGameInfo (ClientObject caller, int arg1, int arg2);
+    public void updatePlayer (ClientObject caller, int arg1, GameSummary arg2);
 }

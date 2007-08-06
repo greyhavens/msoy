@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.data;
 
 import com.threerings.msoy.game.client.GameServerService;
+import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
@@ -51,14 +52,14 @@ public class GameServerMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #updateGameInfo} requests. */
-    public static final int UPDATE_GAME_INFO = 4;
+    /** The method id used to dispatch {@link #updatePlayer} requests. */
+    public static final int UPDATE_PLAYER = 4;
 
     // from interface GameServerService
-    public void updateGameInfo (Client arg1, int arg2, int arg3)
+    public void updatePlayer (Client arg1, int arg2, GameSummary arg3)
     {
-        sendRequest(arg1, UPDATE_GAME_INFO, new Object[] {
-            Integer.valueOf(arg2), Integer.valueOf(arg3)
+        sendRequest(arg1, UPDATE_PLAYER, new Object[] {
+            Integer.valueOf(arg2), arg3
         });
     }
 }

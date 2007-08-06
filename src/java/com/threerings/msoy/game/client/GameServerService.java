@@ -6,6 +6,8 @@ package com.threerings.msoy.game.client;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
+import com.threerings.msoy.game.data.GameSummary;
+
 /**
  * Invocation services called by our external game servers.
  */
@@ -17,9 +19,9 @@ public interface GameServerService extends InvocationService
     public void sayHello (Client client, int port);
 
     /**
-     * Updates the number of players playing (or lobbying for) the specified game.
+     * Notes that a player is either lobbying for, playing or no longer playing the specified game.
      */
-    public void updateGameInfo (Client client, int gameId, int players);
+    public void updatePlayer (Client client, int playerId, GameSummary game);
 
     /**
      * Reports that the game server on the specified port is no longer hosting the specified game.

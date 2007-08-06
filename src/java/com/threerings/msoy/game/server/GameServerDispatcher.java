@@ -5,6 +5,7 @@ package com.threerings.msoy.game.server;
 
 import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.data.GameServerMarshaller;
+import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -58,10 +59,10 @@ public class GameServerDispatcher extends InvocationDispatcher
             );
             return;
 
-        case GameServerMarshaller.UPDATE_GAME_INFO:
-            ((GameServerProvider)provider).updateGameInfo(
+        case GameServerMarshaller.UPDATE_PLAYER:
+            ((GameServerProvider)provider).updatePlayer(
                 source,
-                ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue()
+                ((Integer)args[0]).intValue(), (GameSummary)args[1]
             );
             return;
 

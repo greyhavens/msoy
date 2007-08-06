@@ -23,6 +23,8 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.peer.server.CrowdPeerManager;
 import com.threerings.crowd.server.PlaceManager;
 
+import com.threerings.whirled.data.ScenePlace;
+
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
@@ -92,12 +94,13 @@ public class MsoyPeerManager extends CrowdPeerManager
     /**
      * Reports the new location of a member on this server.
      */
-    public void updateMemberLocation (int memberId, byte type, int locationId)
+    public void updateMemberLocation (MemberObject memobj)
     {
         MemberLocation newloc = new MemberLocation();
-        newloc.memberId = memberId;
-        newloc.type = type;
-        newloc.locationId = locationId;
+        newloc.memberId = memobj.getMemberId();
+        newloc.sceneId = Math.max(ScenePlace.getSceneId(memobj), 0); // we use 0 for no scene
+        newloc.gameId = (memobj.pendingGame == null) ? 0 : memobj.pendingGame.gameId;
+
         if (_mnobj.memberLocs.contains(newloc)) {
             _mnobj.updateMemberLocs(newloc);
         } else {
@@ -279,18 +282,13 @@ public class MsoyPeerManager extends CrowdPeerManager
             // skip "location=null" updates as the client will either logoff or arrive at their
             // real location immediately following and that will trigger the real update
             if (event.getName().equals(MemberObject.LOCATION) &&
-                event.getValue() != null) {
+                event.getValue() instanceof ScenePlace) {
                 MemberObject memobj = (MemberObject)MsoyServer.omgr.getObject(event.getTargetOid());
                 if (memobj == null) {
                     log.warning("Got location change for unregistered member!? " + event);
                     return;
                 }
-
-                PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(memobj.getPlaceOid());
-                if (pmgr instanceof RoomManager) {
-                    updateMemberLocation(memobj.getMemberId(), MemberLocation.SCENE,
-                                         ((RoomManager)pmgr).getScene().getId());
-                }
+                updateMemberLocation(memobj);
             }
         }
     }

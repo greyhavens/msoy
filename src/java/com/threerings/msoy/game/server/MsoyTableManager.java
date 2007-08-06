@@ -11,10 +11,11 @@ import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.parlor.server.TableManager;
 
+import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyTable;
-import com.threerings.msoy.game.data.GameSummary;
+import com.threerings.msoy.game.data.PlayerObject;
 
 import com.threerings.msoy.item.data.all.Game;
 
@@ -35,7 +36,6 @@ public class MsoyTableManager extends TableManager
      */
     public void gameUpdated ()
     {
-//         _summary = null; // clear old ref, so we will lazy-create new ones
     }
 
     @Override 
@@ -46,38 +46,28 @@ public class MsoyTableManager extends TableManager
         return config;
     }
 
-// TODO: if we end up keeping this, forward these on to our world server
+    @Override 
+    protected void notePlayerAdded (Table table, BodyObject body) 
+    {
+        super.notePlayerAdded(table, body);
 
-//     @Override 
-//     protected void notePlayerAdded (Table table, BodyObject body) 
-//     {
-//         super.notePlayerAdded(table, body);
+        // mark this player as "in" this game
+        PlayerObject plobj = (PlayerObject) body;
+        MsoyGameServer.worldClient.updatePlayer(plobj.getMemberId(), _lobj.game);
+    }
 
-//         if (_summary == null) {
-//             _summary = new GameSummary(_lobj.game);
-//         }
+    @Override 
+    protected Table notePlayerRemoved (int playerOid, BodyObject body)
+    {
+        // mark this player as no longer "in" this game (TODO: if they are playing the game, keep
+        // them in it?)
+        if (body != null) {
+            PlayerObject plobj = (PlayerObject) body;
+            MsoyGameServer.worldClient.updatePlayer(plobj.getMemberId(), null);
+        }
 
-//         // attach the GameSummary to our MemberObject, and update our occupant info 
-//         MemberObject member = (MemberObject) body;
-//         member.setPendingGame(_summary);
-//         MsoyServer.memberMan.updateOccupantInfo(member);
-//     }
-
-//     @Override 
-//     protected Table notePlayerRemoved (int playerOid, BodyObject body)
-//     {
-//         // remove the GameSummary from our MemberObject, and update our occupant info
-//         if (body != null) {
-//             MemberObject member = (MemberObject) body;
-//             member.setPendingGame(null);
-//             MsoyServer.memberMan.updateOccupantInfo(member);
-//         }
-
-//         return super.notePlayerRemoved(playerOid, body);
-//     }
+        return super.notePlayerRemoved(playerOid, body);
+    }
 
     protected LobbyObject _lobj;
-
-//     /** The single GameSummary used for all members at pending tables. Lazy-created. */
-//     protected GameSummary _summary = null;
 }

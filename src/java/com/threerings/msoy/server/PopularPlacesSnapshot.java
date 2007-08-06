@@ -98,12 +98,12 @@ public class PopularPlacesSnapshot
                 MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
                 for (MemberLocation memloc : mnobj.memberLocs) {
                     _totalPopulation++;
-                    if (memloc.type == MemberLocation.SCENE) {
-                        increment(_scenes, _sclist, mnobj.hostedScenes.get(memloc.locationId));
-                    } else if (memloc.type == MemberLocation.GAME) {
-                        increment(_games, _glist, mnobj.hostedGames.get(memloc.locationId));
+                    if (memloc.sceneId > 0) {
+                        increment(_scenes, _sclist, mnobj.hostedScenes.get(memloc.sceneId));
                     }
-                    // TODO: handle players also in game lobbies
+                    if (memloc.gameId > 0) {
+                        increment(_games, _glist, mnobj.hostedGames.get(memloc.gameId));
+                    }
                 }
             }
 

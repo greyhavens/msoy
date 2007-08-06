@@ -20,6 +20,13 @@ import com.threerings.msoy.item.data.all.Game;
  */
 public class LobbyObject extends DObject implements TableLobbyObject
 {
+    /** Used on the server to listen to subscriber count changes to a lobby object. */
+    public interface SubscriberListener
+    {
+        /** Called when the number of subscribers has changed. */
+        public void subscriberCountChanged (LobbyObject target);
+    }
+
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>game</code> field. */
     public static final String GAME = "game";
@@ -70,19 +77,19 @@ public class LobbyObject extends DObject implements TableLobbyObject
         return _scount;
     }
 
-    @Override
-    public void removeSubscriber (Subscriber sub)
+    @Override // from DObject
+    public void addSubscriber (Subscriber sub)
     {
-        super.removeSubscriber(sub);
+        super.addSubscriber(sub);
         if (subscriberListener != null) {
             subscriberListener.subscriberCountChanged(this);
         }
     }
 
-    @Override
-    public void addSubscriber (Subscriber sub)
+    @Override // from DObject
+    public void removeSubscriber (Subscriber sub)
     {
-        super.addSubscriber(sub);
+        super.removeSubscriber(sub);
         if (subscriberListener != null) {
             subscriberListener.subscriberCountChanged(this);
         }

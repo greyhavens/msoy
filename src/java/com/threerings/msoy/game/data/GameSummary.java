@@ -49,11 +49,10 @@ public class GameSummary extends SimpleStreamableObject
      */
     public MediaDesc getThumbMedia ()
     {
-        return thumbMedia != null ? thumbMedia : Item.getDefaultThumbnailMediaFor(Item.GAME);
+        return thumbMedia != null ? thumbMedia : Item.getDefaultThumbnailMediaFor (Item.GAME);
     }
 
-    // documentation inherited
-    @Override
+    @Override // from Object
     public boolean equals (Object other)
     {
         if (other instanceof GameSummary) {
@@ -63,14 +62,11 @@ public class GameSummary extends SimpleStreamableObject
         return false;
     }
 
-    // documentation inherited
-    @Override
+    @Override // from Object
     public Object clone ()
     {
         try {
-            GameSummary data = (GameSummary) super.clone();
-
-            return data;
+            return (GameSummary) super.clone();
         } catch (CloneNotSupportedException cnse) {
             throw new RuntimeException(cnse); // not going to happen
         }

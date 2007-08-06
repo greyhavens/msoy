@@ -245,13 +245,14 @@ public class MemberServlet extends MsoyServiceServlet
                                 MemberCard memberCard = new MemberCard();
                                 memberCard.name = friend.name;
                                 onlineFriends.put(memberCard.name.getMemberId(), memberCard);
+                                if (memLoc.sceneId == 0) {
+                                    continue;
+                                }
 
-                                HashIntMap<ArrayList<Integer>> map = 
-                                    memLoc.type == MemberLocation.SCENE ? rooms : games;
-                                ArrayList<Integer> list = map.get(memLoc.locationId);
+                                ArrayList<Integer> list = rooms.get(memLoc.sceneId);
                                 if (list == null) {
                                     list = new ArrayList<Integer>();
-                                    map.put(memLoc.locationId, list);
+                                    rooms.put(memLoc.sceneId, list);
                                 }
                                 list.add(memberCard.name.getMemberId());
                             }
@@ -516,10 +517,11 @@ public class MemberServlet extends MsoyServiceServlet
                     if (memloc == null) {
                         continue;
                     }
-                    if (memloc.type == MemberLocation.SCENE) {
-                        noteFriend(scenes, entry, snap.getScene(memloc.locationId));
-                    } else if (memloc.type == MemberLocation.GAME) {
-                        noteFriend(games, entry, snap.getGame(memloc.locationId));
+                    if (memloc.sceneId > 0) {
+                        noteFriend(scenes, entry, snap.getScene(memloc.sceneId));
+                    }
+                    if (memloc.gameId > 0) {
+                        noteFriend(games, entry, snap.getGame(memloc.gameId));
                     }
                 }
             }

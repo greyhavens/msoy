@@ -29,8 +29,10 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
-import com.threerings.msoy.game.client.MsoyGameService;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+
+import com.threerings.msoy.game.client.MsoyGameService;
+import com.threerings.msoy.game.data.GameSummary;
 
 import static com.threerings.msoy.Log.log;
 
@@ -115,13 +117,27 @@ public class MsoyGameRegistry
     }
 
     // from interface GameServerProvider
-    public void updateGameInfo (ClientObject caller, int gameId, int players)
+    public void updatePlayer (ClientObject caller, int playerId, GameSummary game)
     {
-        if (!checkCallerAccess(caller, "updateGameInfo(" + gameId + ", " + players + ")")) {
+        if (!checkCallerAccess(caller, "updatePlayer(" + playerId + ")")) {
             return;
         }
 
-        // TODO
+        MemberObject memobj = MsoyServer.lookupMember(playerId);
+        if (memobj == null) {
+            // they went bye bye, oh well
+            log.info("Dropping update for departee [pid=" + playerId + ", game=" + game + "].");
+            return;
+        }
+
+        // set or clear their pending game
+        memobj.setPendingGame(game);
+
+        // update their occupant info if they're in a scene
+        MsoyServer.memberMan.updateOccupantInfo(memobj);
+
+        // update their published location in our peer object
+        MsoyServer.peerMan.updateMemberLocation(memobj);
     }
 
     // from interface GameServerProvider

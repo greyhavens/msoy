@@ -15,6 +15,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.game.client.GameServerService;
+import com.threerings.msoy.game.data.GameSummary;
 
 import static com.threerings.msoy.Log.log;
 
@@ -41,12 +42,12 @@ public class WorldServerClient
         _client.logon();
     }
 
-    public void updateHostedGame (int gameId, int players)
+    public void updatePlayer (int playerId, Game game)
     {
         if (_gssvc == null) {
-            log.warning("Dropping update notification [id=" + gameId + ", pl=" + players + "].");
-        } else {
-            _gssvc.updateGameInfo(_client, gameId, players);
+            log.warning("Dropping update notification [id=" + playerId + ", game=" + game + "].");
+        } else if (playerId > 0) { // don't update guests
+            _gssvc.updatePlayer(_client, playerId, game == null ? null : new GameSummary(game));
         }
     }
 

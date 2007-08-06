@@ -260,10 +260,10 @@ public class MemberManager
         if (memloc == null) {
             throw new InvocationException(MessageBundle.tcompose("e.not_online", entry.name));
         }
-        if (memloc.type != MemberLocation.SCENE || memloc.locationId == 0) {
+        if (memloc.sceneId == 0) {
             throw new InvocationException("e.not_in_room");
         }
-        listener.requestProcessed(memloc.locationId);
+        listener.requestProcessed(memloc.sceneId);
     }
 
     // from interface MemberProvider
