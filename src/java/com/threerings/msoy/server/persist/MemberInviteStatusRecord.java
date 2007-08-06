@@ -11,7 +11,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.web.data.MemberInviteStatus;
 
 /**
- * A computed persistent entity that's used to fetch (and cache) information about members and 
+ * A computed persistent entity that's used to fetch (and cache) information about members and
  * their invitations, as well as who invited them.
  */
 @Entity
@@ -26,12 +26,12 @@ public class MemberInviteStatusRecord extends PersistentRecord
     public static final ColumnExp MEMBER_ID_C =
         new ColumnExp(MemberInviteStatusRecord.class, MEMBER_ID);
 
-    /** The column identifier for the {@link #permaname} field. */
-    public static final String PERMANAME = "permaname";
+    /** The column identifier for the {@link #permaName} field. */
+    public static final String PERMA_NAME = "permaName";
 
-    /** The qualified column identifier for the {@link #permaname} field. */
-    public static final ColumnExp PERMANAME_C =
-        new ColumnExp(MemberInviteStatusRecord.class, PERMANAME);
+    /** The qualified column identifier for the {@link #permaName} field. */
+    public static final ColumnExp PERMA_NAME_C =
+        new ColumnExp(MemberInviteStatusRecord.class, PERMA_NAME);
 
     /** The column identifier for the {@link #name} field. */
     public static final String NAME = "name";
@@ -61,13 +61,13 @@ public class MemberInviteStatusRecord extends PersistentRecord
     public static final ColumnExp INVITES_SENT_C =
         new ColumnExp(MemberInviteStatusRecord.class, INVITES_SENT);
     // AUTO-GENERATED: FIELDS END
-    
+
     /** See {@MemberRecord#memberId}. */
     @Id
     public int memberId;
 
-    /** See {@MemberRecord#permaname}. */
-    public String permaname = "";
+    /** See {@MemberRecord#permaName}. */
+    public String permaName = "";
 
     /** See {@MemberRecord#name}. */
     public String name = "";
@@ -85,7 +85,7 @@ public class MemberInviteStatusRecord extends PersistentRecord
     {
         MemberInviteStatus webObj = new MemberInviteStatus();
         webObj.memberId = memberId;
-        webObj.name = permaname == null || permaname.equals("") ? name : permaname;
+        webObj.name = permaName == null || permaName.equals("") ? name : permaName;
         webObj.invitingFriendId = invitingFriendId;
         webObj.invitesGranted = invitesGranted;
         webObj.invitesSent = invitesSent;
