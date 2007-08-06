@@ -63,7 +63,7 @@ public class SwiftlyManager
 
     // from interface SwiftlyProvider
     public void enterProject (ClientObject caller, final int projectId,
-                              SwiftlyService.ResultListener listener)
+                              final SwiftlyService.ResultListener listener)
         throws InvocationException
     {
         ProjectRoomManager curmgr = _managers.get(projectId);
@@ -81,7 +81,7 @@ public class SwiftlyManager
 
             log.info("Created project room [project=" + projectId +
                      ", room=" + mgr.getPlaceObject().getOid() + "].");
-            listener.requestProcessed(mgr.getPlaceObject().getOid());
+
 
         } catch (InstantiationException e) {
             log.log(Level.WARNING, "Failed to create project room [config=" + config + "].", e);
@@ -107,7 +107,7 @@ public class SwiftlyManager
                         log.warning("Project missing storage record [projectId=" +
                             projectId + "].");
                         return false;
-                    }                 
+                    }
                     _storage = new ProjectSVNStorage(_project, storageRecord);
 
                     _collaborators = new HashIntMap<SwiftlyCollaboratorsRecord>();
@@ -131,6 +131,7 @@ public class SwiftlyManager
 
             public void handleResult () {
                 mgr.init(_project, _collaborators, _storage);
+                listener.requestProcessed(mgr.getPlaceObject().getOid());
             }
 
             protected SwiftlyProject _project;
@@ -150,7 +151,7 @@ public class SwiftlyManager
         // TODO: wait for our serial executors to finish, but timeout if they take more than 90
         // seconds or so
     }
-    
+
     /**
      * Return the ProjectRoomManager for the given projectId. May return null.
      */
