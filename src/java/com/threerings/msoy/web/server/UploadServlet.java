@@ -133,6 +133,10 @@ public class UploadServlet extends AbstractUploadServlet
             limit = LARGE_MEDIA_MAX_SIZE;
             break;
 
+        case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
+            limit = MEDIUM_MEDIA_MAX_SIZE;
+            break;
+
         default:
             limit = SMALL_MEDIA_MAX_SIZE;
             break;
@@ -146,6 +150,7 @@ public class UploadServlet extends AbstractUploadServlet
     }
 
     /** Prevent Captain Insano from showing up to fill our drives. */
-    protected static final int SMALL_MEDIA_MAX_SIZE = 5 * MEGABYTE; // TODO: back to 4megs soon!
+    protected static final int SMALL_MEDIA_MAX_SIZE = 5 * MEGABYTE;
+    protected static final int MEDIUM_MEDIA_MAX_SIZE = 10 * MEGABYTE;
     protected static final int LARGE_MEDIA_MAX_SIZE = 100 * MEGABYTE;
 }
