@@ -39,7 +39,7 @@ import static com.threerings.msoy.Log.log;
  * they host lobbies and games.
  */
 public class MsoyGameRegistry
-    implements MsoyGameProvider, GameServerProvider
+    implements MsoyGameProvider, GameServerProvider, MsoyGameServer.Shutdowner
 {
     /** The invocation services group for game server services. */
     public static final String GAME_SERVER_GROUP = "game_server";
@@ -52,6 +52,9 @@ public class MsoyGameRegistry
         _gameRepo = gameRepo;
         invmgr.registerDispatcher(new MsoyGameDispatcher(this), MsoyCodes.GAME_GROUP);
         invmgr.registerDispatcher(new GameServerDispatcher(this), GAME_SERVER_GROUP);
+
+        // register to hear when the server is shutdown
+        MsoyGameServer.registerShutdowner(this);
 
         // start up our game server handlers (and hence our game servers)
         for (int ii = 0; ii < _handlers.length; ii++) {
@@ -95,6 +98,23 @@ public class MsoyGameRegistry
     }
 
     // from interface GameServerProvider
+    public void sayHello (ClientObject caller, int port)
+    {
+        if (!checkCallerAccess(caller, "sayHello(" + port + ")")) {
+            return;
+        }
+
+        for (GameServerHandler handler : _handlers) {
+            if (handler != null && handler.port == port) {
+                handler.setClientObject(caller);
+                return;
+            }
+        }
+
+        log.warning("Got hello from unknown game server [port=" + port + "].");
+    }
+
+    // from interface GameServerProvider
     public void updateGameInfo (ClientObject caller, int gameId, int players)
     {
         if (!checkCallerAccess(caller, "updateGameInfo(" + gameId + ", " + players + ")")) {
@@ -134,6 +154,17 @@ public class MsoyGameRegistry
 
         } else {
             // TODO: locate the peer that is hosting this member and forward the flow update there
+        }
+    }
+
+    // from interface MsoyGameServer.Shutdowner
+    public void shutdown ()
+    {
+        // shutdown our game server handlers
+        for (GameServerHandler handler : _handlers) {
+            if (handler != null) {
+                handler.shutdown();
+            }
         }
     }
 
@@ -232,6 +263,10 @@ public class MsoyGameRegistry
             });
         }
 
+        public void setClientObject (ClientObject clobj) {
+            _clobj = clobj;
+        }
+
         public void hostGame (Game game) {
             if (!_games.add(game.itemId)) {
                 log.warning("Requested to host game that we're already hosting? [port=" + port +
@@ -250,6 +285,16 @@ public class MsoyGameRegistry
             }
         }
 
+        public void shutdown () {
+            if (_clobj != null && _clobj.isActive()) {
+                log.info("Shutting down game server " + port + "...");
+                _clobj.postMessage(WorldServerClient.SHUTDOWN_MESSAGE);
+            } else {
+                log.info("Not shutting down game server " + port + "...");
+            }
+        }
+
+        protected ClientObject _clobj;
         protected ArrayIntSet _games = new ArrayIntSet();
     }
 

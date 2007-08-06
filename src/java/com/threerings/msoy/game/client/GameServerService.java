@@ -12,6 +12,11 @@ import com.threerings.presents.client.InvocationService;
 public interface GameServerService extends InvocationService
 {
     /**
+     * Lets our world server know who we are so that it can send us messages as desired.
+     */
+    public void sayHello (Client client, int port);
+
+    /**
      * Updates the number of players playing (or lobbying for) the specified game.
      */
     public void updateGameInfo (Client client, int gameId, int players);

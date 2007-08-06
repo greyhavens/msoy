@@ -51,6 +51,13 @@ public class GameServerDispatcher extends InvocationDispatcher
             );
             return;
 
+        case GameServerMarshaller.SAY_HELLO:
+            ((GameServerProvider)provider).sayHello(
+                source,
+                ((Integer)args[0]).intValue()
+            );
+            return;
+
         case GameServerMarshaller.UPDATE_GAME_INFO:
             ((GameServerProvider)provider).updateGameInfo(
                 source,

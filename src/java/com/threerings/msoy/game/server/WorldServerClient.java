@@ -7,6 +7,8 @@ import java.util.logging.Level;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
+import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.peer.net.PeerCreds;
 
 import com.threerings.msoy.item.data.all.Game;
@@ -20,7 +22,11 @@ import static com.threerings.msoy.Log.log;
  * Connects back to our parent world server and keeps it up to date as to our goings on.
  */
 public class WorldServerClient
+    implements MessageListener
 {
+    /** A message sent by our world server to let us know to shut down. */
+    public static final String SHUTDOWN_MESSAGE = "shutdown";
+
     public void init (MsoyGameServer server, int port)
     {
         _server = server;
@@ -62,6 +68,15 @@ public class WorldServerClient
         }
     }
 
+    // from interface MessageListener
+    public void messageReceived (MessageEvent event)
+    {
+        if (event.getName().equals(SHUTDOWN_MESSAGE)) {
+            log.info("Got shutdown notification from world server.");
+            _server.shutdown();
+        }
+    }
+
     protected ClientAdapter _clientObs = new ClientAdapter() {
         public void clientFailedToLogon (Client client, Exception cause) {
             log.log(Level.WARNING, "Failed to connect to world server.", cause);
@@ -70,13 +85,13 @@ public class WorldServerClient
         public void clientDidLogon (Client client) {
             log.info("Connected to world server.");
             _gssvc = (GameServerService)_client.requireService(GameServerService.class);
+            _gssvc.sayHello(client, _port);
+            client.getClientObject().addListener(WorldServerClient.this);
         }
 
         public void clientDidLogoff (Client client) {
             log.info("Logged off of world server.");
             _gssvc = null;
-            // TEMP: for now shut ourselves down
-            _server.shutdown();
         }
     };
 

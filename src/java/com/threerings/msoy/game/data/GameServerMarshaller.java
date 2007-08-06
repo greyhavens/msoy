@@ -40,8 +40,19 @@ public class GameServerMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #sayHello} requests. */
+    public static final int SAY_HELLO = 3;
+
+    // from interface GameServerService
+    public void sayHello (Client arg1, int arg2)
+    {
+        sendRequest(arg1, SAY_HELLO, new Object[] {
+            Integer.valueOf(arg2)
+        });
+    }
+
     /** The method id used to dispatch {@link #updateGameInfo} requests. */
-    public static final int UPDATE_GAME_INFO = 3;
+    public static final int UPDATE_GAME_INFO = 4;
 
     // from interface GameServerService
     public void updateGameInfo (Client arg1, int arg2, int arg3)

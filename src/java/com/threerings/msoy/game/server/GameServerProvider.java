@@ -25,6 +25,11 @@ public interface GameServerProvider extends InvocationProvider
     public void reportFlowAward (ClientObject caller, int arg1, int arg2);
 
     /**
+     * Handles a {@link GameServerService#sayHello} request.
+     */
+    public void sayHello (ClientObject caller, int arg1);
+
+    /**
      * Handles a {@link GameServerService#updateGameInfo} request.
      */
     public void updateGameInfo (ClientObject caller, int arg1, int arg2);
