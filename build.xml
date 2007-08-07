@@ -744,10 +744,6 @@
       <include name="rsrc/**/*.properties"/>
       <include name="rsrc/**/*.tmpl"/>
     </jar>
-    <!-- (TEMP) stick our exported code into a jar file -->
-    <jar file="${deploy.dir}/whirled-code.jar" basedir="${classes.dir}">
-      <include name="com/whirled/**"/>
-    </jar>
     <!-- and all of our configuration and media in another -->
     <jar file="${deploy.dir}/${app.name}-media.jar" basedir="${classes.dir}" includes="rsrc/**"/>
     <!-- and our server-only data in yet another -->
