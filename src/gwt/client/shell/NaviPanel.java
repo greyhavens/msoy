@@ -151,8 +151,7 @@ public class NaviPanel extends FlexTable
             protected void populateMenu (Widget sender, MenuBar menu) {
                 for (int ii = 0; ii < Item.TYPES.length; ii++) {
                     byte type = Item.TYPES[ii];
-                    addLink(menu, CShell.dmsgs.getString("pItemType" + type),
-                            "catalog", "" + type);
+                    addLink(menu, CShell.dmsgs.getString("pItemType" + type), "catalog", "" + type);
                 }
             }
         });
@@ -176,31 +175,35 @@ public class NaviPanel extends FlexTable
                 _status.showLogonPopup(sender.getAbsoluteLeft(), getMenuY(sender));
             }
         });
+
         setMenu(menuidx++, "Places", CShell.cmsgs.menuPlaces(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "Whirledwide", "world", "p");
             }
         });
+
         setMenu(menuidx++, "People", CShell.cmsgs.menuPeople(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "Groups", "group", "");
             }
         });
+
         setMenu(menuidx++, "Catalog", CShell.cmsgs.menuCatalog(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 for (int ii = 0; ii < Item.TYPES.length; ii++) {
                     byte type = Item.TYPES[ii];
-                    addLink(menu, CShell.dmsgs.getString("pItemType" + type),
-                            "catalog", "" + type);
+                    addLink(menu, CShell.dmsgs.getString("pItemType" + type), "catalog", "" + type);
                 }
             }
         });
+
         setMenu(menuidx++, "Help", CShell.cmsgs.menuHelp(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
                 addLink(menu, "About Whirled", "wrap", "w");
                 addLink(menu, "Tutorials", "wrap", "w-Category:Tutorials");
             }
         });
+
         setText(0, menuidx++, ""); // clear the last menu
         _friends.clear();
     }
