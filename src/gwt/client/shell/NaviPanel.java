@@ -178,7 +178,7 @@ public class NaviPanel extends FlexTable
         });
         setMenu(menuidx++, "Places", CShell.cmsgs.menuPlaces(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "My Whirled", "world", "p");
+                addLink(menu, "Whirledwide", "world", "p");
             }
         });
         setMenu(menuidx++, "People", CShell.cmsgs.menuPeople(), new MenuPopper() {
@@ -186,16 +186,22 @@ public class NaviPanel extends FlexTable
                 addLink(menu, "Groups", "group", "");
             }
         });
-        setMenu(menuidx++, "Stuff", CShell.cmsgs.menuStuff(), new MenuPopper() {
+        setMenu(menuidx++, "Catalog", CShell.cmsgs.menuCatalog(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "Catalog", "catalog", "");
+                for (int ii = 0; ii < Item.TYPES.length; ii++) {
+                    byte type = Item.TYPES[ii];
+                    addLink(menu, CShell.dmsgs.getString("pItemType" + type),
+                            "catalog", "" + type);
+                }
             }
         });
-        setMenu(menuidx++, "Games", CShell.cmsgs.menuGames(), new MenuPopper() {
+        setMenu(menuidx++, "Help", CShell.cmsgs.menuHelp(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "Browse", "catalog", "" + Item.GAME);
+                addLink(menu, "About Whirled", "wrap", "w");
+                addLink(menu, "Tutorials", "wrap", "w-Category:Tutorials");
             }
         });
+        setText(0, menuidx++, ""); // clear the last menu
         _friends.clear();
     }
 
