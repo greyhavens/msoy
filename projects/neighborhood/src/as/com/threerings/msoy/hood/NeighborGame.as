@@ -20,9 +20,6 @@ public class NeighborGame extends Neighbor
     public static function fromJSON (JSON: Object) :NeighborGame
     {
         var game: NeighborGame = new NeighborGame();
-        if (JSON.name == null || JSON.id == null) {
-            throw new Error("Missing name/id in JSON");
-        }
         Neighbor.fromJSON(game, JSON);
         game.gameLogo = JSON.logo;
         return game;
