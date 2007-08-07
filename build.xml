@@ -81,7 +81,7 @@
     <file name="${extlibs.dir}/junit-3.7.jar"/>
     <file name="${extlibs.dir}/mail.jar"/>
     <file name="${extlibs.dir}/mysql-connector-java.jar"/>
-    <file name="${extlibs.dir}/postgresql-8.2-506.jdbc3.jar"/>
+    <file name="${extlibs.dir}/postgresql-jdbc.jar"/>
     <file name="${extlibs.dir}/proguard.jar"/>
     <file name="${extlibs.dir}/svnClientAdapter.jar"/>
     <file name="${extlibs.dir}/svnjavahl.jar"/>
