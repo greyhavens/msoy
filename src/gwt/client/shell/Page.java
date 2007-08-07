@@ -10,6 +10,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -291,6 +292,7 @@ public abstract class Page
         _content.getFlexCellFormatter().setStyleName(0, 3, "pageHeaderSep");
         _content.getFlexCellFormatter().setColSpan(1, 0, 4);
         _content.getFlexCellFormatter().setHeight(1, 0, "100%");
+        _content.getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_TOP);
 
         setCloseButton();
     }
