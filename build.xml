@@ -818,8 +818,6 @@
   <target name="preppkg">
     <antcallback target="prepare-server" return="pkg.base"/>
     <antcall target="prepare-server-extra"/>
-    <antcallback target="prepare-pages" return="pkg.base"/>
-    <antcall target="prepare-pages-extra"/>
     <antcall target="prepare-docs"/>
   </target>
 
@@ -853,10 +851,17 @@
         <filter token="PREFIX" value="${prefix.app}"/>
       </filterset>
     </copy>
-  </target>
-
-  <!-- install extra pages stuff into ${pkg.base} -->
-  <target name="prepare-pages-extra">
+    <!-- set up our pages/ contents -->
+    <copy todir="${pkg.base}/pages">
+      <fileset dir="pages">
+        <exclude name="**/*.in"/>
+        <exclude name="source/**"/>
+        <exclude name="**/source/**"/>
+      </fileset>
+    </copy>
+    <antcall target="maintainer-scripts">
+      <param name="install.type" value="pages"/>
+    </antcall>
     <copy todir="${pkg.base}/pages">
       <fileset dir="data" includes="whirled_sdk*.zip"/>
     </copy>
