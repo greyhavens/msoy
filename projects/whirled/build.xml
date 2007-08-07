@@ -66,7 +66,7 @@
   <!-- wipes the entire build directory clean -->
   <target name="distclean">
     <delete dir="${deploy.dir}"/>
-    <delete file="${swiftly.sdk.path}/whirled-config.xml"/>
+    <delete file="${swiftly.sdk.path}/etc/whirled-config.xml"/>
     <delete file="${swiftly.sdk.path}/lib/whirled.swc"/>
   </target>
 
