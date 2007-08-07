@@ -215,22 +215,22 @@ public class FacebookRestClient {
    * Call the specified method, with the given parameters, and return a DOM tree with the results.
    *
    * @param method the fieldName of the method
-   * @param paramPairs a list of arguments to the method
+   * @param params a list of arguments to the method
    * @throws Exception with a description of any errors given to us by the server.
    */
-  protected Document callMethod(FacebookMethod method, Parameter... paramPairs) throws FacebookException, IOException {
-    return callMethod(method, Arrays.asList(paramPairs));
+  protected Document callMethod(FacebookMethod method, Parameter... params) throws FacebookException, IOException {
+    return callMethod(method, Arrays.asList(params));
   }
 
   /**
    * Call the specified method, with the given parameters, and return a DOM tree with the results.
    *
    * @param method the fieldName of the method
-   * @param paramPairs a list of arguments to the method
+   * @param params a list of arguments to the method
    * @throws Exception with a description of any errors given to us by the server.
    */
   protected Document callMethod(FacebookMethod method,
-                                Collection<Parameter> paramPairs) throws FacebookException, IOException {
+                                Collection<Parameter> params) throws FacebookException, IOException {
     HashMap<String, CharSequence> params =
       new HashMap<String, CharSequence>(2 * method.numTotalParams());
 
@@ -242,7 +242,7 @@ public class FacebookRestClient {
       params.put("session_key", _sessionKey);
     }
     CharSequence oldVal;
-    for (Parameter p: paramPairs) {
+    for (Parameter p: params) {
       oldVal = params.put(p.first, p.second);
       if (oldVal != null)
         System.err.printf("For parameter %s, overwrote old value %s with new value %s.", p.first,
