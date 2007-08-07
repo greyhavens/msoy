@@ -138,7 +138,7 @@ public abstract class ItemGift
                 final ListBox box = new ListBox();
                 final byte[] types = new byte[] {
                     Item.PHOTO, Item.DOCUMENT, Item.FURNITURE, Item.GAME, Item.AVATAR,
-                    Item.PET, Item.AUDIO, Item.VIDEO
+                    Item.PET, Item.AUDIO, Item.VIDEO, Item.DECOR, Item.TOY
                 };
                 for (int i = 0; i < types.length; i ++) {
                     box.addItem(capitalizeString(Item.getTypeName(types[i])));
