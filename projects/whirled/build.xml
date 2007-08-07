@@ -13,6 +13,10 @@
   <property name="flex.path"     value="../../tools/extern/flex_sdk"/>
   <import file="etc/libs-incl.xml"/>
 
+  <!-- the path to the flex sdk for the Swiftly build location -->
+  <property name="swiftly.flex.path" value="../flex_sdk"/>
+  <property name="swiftly.sdk.path"  value="../../data/swiftly/whirled_sdk"/>
+
   <!-- include bits to do the necessary Flex SDK path jockeying -->
   <import file="etc/flex-include.xml"/>
 
@@ -44,6 +48,13 @@
         <filter token="flex_path" value="${flex.path}"/>
       </filterset>
     </copy>
+    <!-- generate the Swiftly whirled-config.xml file using the swiftly.flex.path -->
+    <copy tofile="${deploy.dir}/swiftly-whirled-config.xml" file="etc/whirled-config.xml.in" 
+          overwrite="true">
+      <filterset>
+        <filter token="flex_path" value="${swiftly.flex.path}"/>
+      </filterset>
+    </copy>
   </target>
 
   <!-- cleans out the intermediate build files -->
@@ -55,6 +66,8 @@
   <!-- wipes the entire build directory clean -->
   <target name="distclean">
     <delete dir="${deploy.dir}"/>
+    <delete file="${swiftly.sdk.path}/whirled-config.xml"/>
+    <delete file="${swiftly.sdk.path}/lib/whirled.swc"/>
   </target>
 
   <!-- builds our whirled.swc Flash library -->
@@ -95,5 +108,9 @@
   <!-- builds our jar file -->
   <target name="dist" depends="prepare,compile,aslib">
     <jar destfile="${deploy.dir}/${app.name}.jar" basedir="${deploy.dir}/classes"/>
+    <!-- copy the bits needed for Swiftly project building into the right location -->
+    <copy file="${deploy.dir}/swiftly-whirled-config.xml"
+          tofile="${swiftly.sdk.path}/whirled-config.xml"/> 
+    <copy file="${deploy.dir}/whirled.swc" todir="${swiftly.sdk.path}/lib"/> 
   </target>
 </project>
