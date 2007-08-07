@@ -4,10 +4,7 @@
 package com.threerings.msoy.server.persist;
 
 import java.io.Serializable;
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 
 import java.util.ArrayList;
@@ -22,11 +19,9 @@ import com.samskivert.util.IntListUtil;
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.jdbc.DuplicateKeyException;
-import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheTraverser;
@@ -170,7 +165,7 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Returns name information for all members that match the supplied search string. 
+     * Returns name information for all members that match the supplied search string.
      * Display names are searched for exact matches.
      */
     public List<MemberNameRecord> findMemberNames (String search, int limit)
@@ -433,7 +428,6 @@ public class MemberRepository extends DepotRepository
             return Collections.emptyList();
         }
         Comparable[] idArr = IntListUtil.box(memberIds);
-        // OK, we definitely need some kind of default class for computed classes...
         return findAll(
             NeighborFriendRecord.class,
             new FromOverride(MemberRecord.class),
@@ -460,7 +454,7 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Grants the given number of invites to all users who's last session expired after the given
+     * Grants the given number of invites to all users whose last session expired after the given
      * Timestamp.
      *
      * @param lastSession Anybody who's been logged in since this timestamp will get the invites.
@@ -517,7 +511,7 @@ public class MemberRepository extends DepotRepository
             tries++;
         }
         if (tries > 5) {
-            log.warning("InvitationRecord.inviteId space is getting saturated, it took " + tries + 
+            log.warning("InvitationRecord.inviteId space is getting saturated, it took " + tries +
                 " tries to find a free id");
         }
         return inviteId;
@@ -554,8 +548,7 @@ public class MemberRepository extends DepotRepository
     public void linkInvite (Invitation invite, MemberRecord member)
         throws PersistenceException
     {
-        InvitationRecord invRec = load(InvitationRecord.class, 
-            InvitationRecord.getKey(invite.inviteId));
+        InvitationRecord invRec = load(InvitationRecord.class, invite.inviteId);
         invRec.inviteeId = member.memberId;
         update(invRec, InvitationRecord.INVITEE_ID);
 
@@ -569,9 +562,10 @@ public class MemberRepository extends DepotRepository
     public List<InvitationRecord> loadPendingInvites (int memberId)
         throws PersistenceException
     {
-        return findAll(InvitationRecord.class, new Where(new And(new Equals(
-            InvitationRecord.INVITER_ID_C, memberId), new Equals(InvitationRecord.INVITEE_ID_C,
-            0))));
+        return findAll(
+            InvitationRecord.class,
+            new Where(InvitationRecord.INVITER_ID_C, memberId,
+                      InvitationRecord.INVITEE_ID_C, 0));
     }
 
     /**
@@ -595,6 +589,7 @@ public class MemberRepository extends DepotRepository
     public InvitationRecord loadInvite (String inviteeEmail, int inviterId)
         throws PersistenceException
     {
+        // TODO: This does a row scan on email after using ixInviter. Should be OK, but let's check.
         return load(InvitationRecord.class, new Where(
             InvitationRecord.INVITEE_EMAIL_C, inviteeEmail,
             InvitationRecord.INVITER_ID_C, inviterId));
@@ -650,7 +645,7 @@ public class MemberRepository extends DepotRepository
                        new Join(MemberRecord.MEMBER_ID_C, InviterRecord.MEMBER_ID_C).
                             setType(Join.Type.LEFT_OUTER),
                        new Where(MemberRecord.INVITING_FRIEND_ID_C, memberId),
-                       new FieldOverride(MemberInviteStatusRecord.INVITES_GRANTED, 
+                       new FieldOverride(MemberInviteStatusRecord.INVITES_GRANTED,
                             InviterRecord.INVITES_GRANTED_C),
                        new FieldOverride(MemberInviteStatusRecord.INVITES_SENT,
                             InviterRecord.INVITES_SENT_C));
@@ -682,7 +677,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads the FriendEntry record for all friends (pending, too) of the specified memberId. The
      * online status of each friend will be false.
-     * 
+     *
      * TODO: Bring back full collection caching to this method.
      */
     public List<FriendEntry> loadFriends (final int memberId)
@@ -698,12 +693,12 @@ public class MemberRepository extends DepotRepository
             MemberNameRecord.class,
             new FromOverride(FriendRecord.class),
             new Join(MemberRecord.class, condition));
-        
+
         List<FriendEntry> list = new ArrayList<FriendEntry>();
         for (MemberNameRecord record : records) {
             list.add(new FriendEntry(new MemberName(record.name, record.memberId), false));
         }
-        
+
         return list;
     }
 
