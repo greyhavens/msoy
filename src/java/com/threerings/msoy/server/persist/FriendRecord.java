@@ -13,7 +13,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
  */
 @Entity(indices={
     @Index(name="ixInviterId", columns={ FriendRecord.INVITER_ID }),
-    @Index(name="ixInviteeId", columns={ FriendRecord.INVITEE_ID }),
+    @Index(name="ixInviteeId", columns={ FriendRecord.INVITEE_ID })
 })
 @Table(uniqueConstraints =
        {@UniqueConstraint(fieldNames={FriendRecord.INVITER_ID, FriendRecord.INVITEE_ID })})
