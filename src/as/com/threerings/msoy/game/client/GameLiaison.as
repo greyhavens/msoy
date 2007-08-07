@@ -116,7 +116,8 @@ public class GameLiaison
         // join the lobby
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
         var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
-            log.warning("fetching LobbyObject oid failed: " + cause);
+            _ctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
+            shutdown();
         }, gotLobbyOid);
         lsvc.identifyLobby(_gctx.getClient(), _gameId, cb);
     }
