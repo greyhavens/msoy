@@ -22,7 +22,9 @@
   <property name="build_version" value="0"/>
 
   <!-- define our subprojects and include the standard build system -->
-  <property name="projects" value="samskivert,narya,nenya,vilya,toybox,s3lib,threerings,whirled"/>
+  <property name="projects1" value="samskivert,narya,nenya,vilya,toybox,threerings,whirled"/>
+  <property name="projects2" value="s3lib,facebook"/>
+  <property name="projects" value="${projects1},${projects2}"/>
   <import file="build/etc/build-support.xml"/>
   <fileset dir="." id="check.paths">
     <include name="projects/s3lib/java/src/java/**/*.java"/>
@@ -335,6 +337,7 @@
         <filter token="build_version" value="${build_version}"/>
         <filter token="server_host" value="${server_host}"/>
         <filter token="server_ports" value="${server_ports}"/>
+        <filter token="server_http_port" value="${http_port}"/>
         <filter token="media_url" value="${media_url}"/>
         <filter token="dev_deployment" value="${dev_deployment}"/>
         <filter token="static_media_url" value="${static_media_url}"/>
@@ -723,10 +726,11 @@
   <target name="toybox">
     <antcall target="distprojects"><param name="projects" value="toybox"/></antcall>
   </target>
-
-  <!-- convenience targets that build specific projects and copy the results -->
   <target name="whirled">
     <antcall target="distprojects"><param name="projects" value="whirled"/></antcall>
+  </target>
+  <target name="facebook">
+    <antcall target="distprojects"><param name="projects" value="facebook"/></antcall>
   </target>
 
   <!-- a target for rebuilding everything -->
