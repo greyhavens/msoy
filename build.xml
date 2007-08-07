@@ -858,11 +858,6 @@
         <exclude name="source/**"/>
         <exclude name="**/source/**"/>
       </fileset>
-    </copy>
-    <antcall target="maintainer-scripts">
-      <param name="install.type" value="pages"/>
-    </antcall>
-    <copy todir="${pkg.base}/pages">
       <fileset dir="data" includes="whirled_sdk*.zip"/>
     </copy>
     <mkdir dir="${pkg.base}/pages/buildresults"/>
