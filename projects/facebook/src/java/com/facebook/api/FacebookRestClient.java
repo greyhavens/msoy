@@ -110,6 +110,11 @@ public class FacebookRestClient {
     }
   }
 
+  protected class Parameter extends Pair<String, CharSequence> {
+    public Parameter(String name, CharSequence value) {
+      super(name, value);
+    }
+  }
 
   public FacebookRestClient(String apiKey, String secret) {
     this(SERVER_URL, apiKey, secret, null);
@@ -213,9 +218,7 @@ public class FacebookRestClient {
    * @param paramPairs a list of arguments to the method
    * @throws Exception with a description of any errors given to us by the server.
    */
-  protected Document callMethod(FacebookMethod method,
-                                Pair<String, CharSequence>... paramPairs) throws FacebookException,
-                                                                                 IOException {
+  protected Document callMethod(FacebookMethod method, Parameter... paramPairs) throws FacebookException, IOException {
     return callMethod(method, Arrays.asList(paramPairs));
   }
 
@@ -227,8 +230,7 @@ public class FacebookRestClient {
    * @throws Exception with a description of any errors given to us by the server.
    */
   protected Document callMethod(FacebookMethod method,
-                                Collection<Pair<String, CharSequence>> paramPairs) throws FacebookException,
-                                                                                          IOException {
+                                Collection<Parameter> paramPairs) throws FacebookException, IOException {
     HashMap<String, CharSequence> params =
       new HashMap<String, CharSequence>(2 * method.numTotalParams());
 
@@ -240,7 +242,7 @@ public class FacebookRestClient {
       params.put("session_key", _sessionKey);
     }
     CharSequence oldVal;
-    for (Pair<String, CharSequence> p: paramPairs) {
+    for (Parameter p: paramPairs) {
       oldVal = params.put(p.first, p.second);
       if (oldVal != null)
         System.err.printf("For parameter %s, overwrote old value %s with new value %s.", p.first,
@@ -358,8 +360,8 @@ public class FacebookRestClient {
   public boolean profile_setFBML(CharSequence fbmlMarkup, Integer userId) throws FacebookException, IOException {
   
     return extractBoolean(this.callMethod(FacebookMethod.PROFILE_SET_FBML,
-                          new Pair<String, CharSequence>("uid", Integer.toString(userId)),
-                          new Pair<String, CharSequence>("markup", fbmlMarkup)));
+                          new Parameter("uid", Integer.toString(userId)),
+                          new Parameter("markup", fbmlMarkup)));
 
   }
 
@@ -371,7 +373,7 @@ public class FacebookRestClient {
    */
   public Document profile_getFBML(Integer userId) throws FacebookException, IOException {
     return this.callMethod(FacebookMethod.PROFILE_GET_FBML,
-                          new Pair<String, CharSequence>("uid", Integer.toString(userId)));
+                          new Parameter("uid", Integer.toString(userId)));
 
   }
 
@@ -391,7 +393,7 @@ public class FacebookRestClient {
    */
   public boolean fbml_refreshRefUrl(URL url) throws FacebookException, IOException {
     return extractBoolean(this.callMethod(FacebookMethod.FBML_REFRESH_REF_URL,
-                                          new Pair<String, CharSequence>("url", url.toString())));
+                                          new Parameter("url", url.toString())));
   }
 
   /**
@@ -410,7 +412,7 @@ public class FacebookRestClient {
    */
   public boolean fbml_refreshImgSrc(URL imageUrl) throws FacebookException, IOException {
     return extractBoolean(this.callMethod(FacebookMethod.FBML_REFRESH_IMG_SRC,
-                          new Pair<String, CharSequence>("url", imageUrl.toString())));
+                          new Parameter("url", imageUrl.toString())));
   }
 
   /**
@@ -501,24 +503,21 @@ public class FacebookRestClient {
                                  Integer priority) throws FacebookException, IOException {
     assert (images == null || images.size() <= 4);
 
-    ArrayList<Pair<String, CharSequence>> params =
-      new ArrayList<Pair<String, CharSequence>>(feedMethod.numParams());
+    ArrayList<Parameter> params = new ArrayList<Parameter>(feedMethod.numParams());
 
-    params.add(new Pair<String, CharSequence>("title", title));
+    params.add(new Parameter("title", title));
     if (null != body)
-      params.add(new Pair<String, CharSequence>("body", body));
+      params.add(new Parameter("body", body));
     if (null != priority)
-      params.add(new Pair<String, CharSequence>("priority", priority.toString()));
+      params.add(new Parameter("priority", priority.toString()));
     if (null != images && !images.isEmpty()) {
       int image_count = 0;
       for (Pair<URL, URL> image: images) {
         ++image_count;
         assert (image.first != null);
-        params.add(new Pair<String, CharSequence>(String.format("image_%d", image_count),
-                                                  image.first.toString()));
+        params.add(new Parameter(String.format("image_%d", image_count), image.first.toString()));
         if (image.second != null)
-          params.add(new Pair<String, CharSequence>(String.format("image_%d_link", image_count),
-                                                    image.second.toString()));
+          params.add(new Parameter(String.format("image_%d_link", image_count), image.second.toString()));
       }
     }
     return this.callMethod(feedMethod, params);
@@ -534,8 +533,7 @@ public class FacebookRestClient {
    */
   public Document events_get(Integer userId, Collection<Long> eventIds, Long startTime,
                              Long endTime) throws FacebookException, IOException {
-    ArrayList<Pair<String, CharSequence>> params =
-      new ArrayList<Pair<String, CharSequence>>(FacebookMethod.EVENTS_GET.numParams());
+    ArrayList<Parameter> params = new ArrayList<Parameter>(FacebookMethod.EVENTS_GET.numParams());
 
     boolean hasUserId = null != userId && 0 != userId;
     boolean hasEventIds = null != eventIds && !eventIds.isEmpty();
@@ -543,13 +541,13 @@ public class FacebookRestClient {
     boolean hasEnd = null != endTime && 0 != endTime;
 
     if (hasUserId)
-      params.add(new Pair<String, CharSequence>("uid", Integer.toString(userId)));
+      params.add(new Parameter("uid", Integer.toString(userId)));
     if (hasEventIds)
-      params.add(new Pair<String, CharSequence>("eids", delimit(eventIds)));
+      params.add(new Parameter("eids", delimit(eventIds)));
     if (hasStart)
-      params.add(new Pair<String, CharSequence>("start_time", startTime.toString()));
+      params.add(new Parameter("start_time", startTime.toString()));
     if (hasEnd)
-      params.add(new Pair<String, CharSequence>("end_time", endTime.toString()));
+      params.add(new Parameter("end_time", endTime.toString()));
     return this.callMethod(FacebookMethod.EVENTS_GET, params);
   }
 
@@ -562,7 +560,7 @@ public class FacebookRestClient {
   public Document events_getMembers(Number eventId) throws FacebookException, IOException {
     assert (null != eventId);
     return this.callMethod(FacebookMethod.EVENTS_GET_MEMBERS,
-                           new Pair<String, CharSequence>("eid", eventId.toString()));
+                           new Parameter("eid", eventId.toString()));
   }
 
 
@@ -573,8 +571,8 @@ public class FacebookRestClient {
   public Document friends_areFriends(int userId1, int userId2) throws FacebookException,
                                                                       IOException {
     return this.callMethod(FacebookMethod.FRIENDS_ARE_FRIENDS,
-                           new Pair<String, CharSequence>("uids1", Integer.toString(userId1)),
-                           new Pair<String, CharSequence>("uids2", Integer.toString(userId2)));
+                           new Parameter("uids1", Integer.toString(userId1)),
+                           new Parameter("uids2", Integer.toString(userId2)));
   }
 
   public Document friends_areFriends(Collection<Integer> userIds1,
@@ -585,8 +583,8 @@ public class FacebookRestClient {
     assert (userIds1.size() == userIds2.size());
 
     return this.callMethod(FacebookMethod.FRIENDS_ARE_FRIENDS,
-                           new Pair<String, CharSequence>("uids1", delimit(userIds1)),
-                           new Pair<String, CharSequence>("uids2", delimit(userIds2)));
+                           new Parameter("uids1", delimit(userIds1)),
+                           new Parameter("uids2", delimit(userIds2)));
   }
 
   /**
@@ -622,8 +620,8 @@ public class FacebookRestClient {
     assert (!fields.isEmpty());
 
     return this.callMethod(FacebookMethod.USERS_GET_INFO,
-                           new Pair<String, CharSequence>("uids", delimit(userIds)),
-                           new Pair<String, CharSequence>("fields", delimit(fields)));
+                           new Parameter("uids", delimit(userIds)),
+                           new Parameter("fields", delimit(fields)));
   }
 
   /**
@@ -641,8 +639,8 @@ public class FacebookRestClient {
     assert (!fields.isEmpty());
 
     return this.callMethod(FacebookMethod.USERS_GET_INFO,
-                           new Pair<String, CharSequence>("uids", delimit(userIds)),
-                           new Pair<String, CharSequence>("fields", delimit(fields)));
+                           new Parameter("uids", delimit(userIds)),
+                           new Parameter("fields", delimit(fields)));
   }
 
   /**
@@ -675,8 +673,7 @@ public class FacebookRestClient {
    */
   public Document photos_get(Integer subjId, Long albumId,
                              Collection<Long> photoIds) throws FacebookException, IOException {
-    ArrayList<Pair<String, CharSequence>> params =
-      new ArrayList<Pair<String, CharSequence>>(FacebookMethod.PHOTOS_GET.numParams());
+    ArrayList<Parameter> params = new ArrayList<Parameter>(FacebookMethod.PHOTOS_GET.numParams());
 
     boolean hasUserId = null != subjId && 0 != subjId;
     boolean hasAlbumId = null != albumId && 0 != albumId;
@@ -684,11 +681,11 @@ public class FacebookRestClient {
     assert (hasUserId || hasAlbumId || hasPhotoIds);
 
     if (hasUserId)
-      params.add(new Pair<String, CharSequence>("subj_id", Integer.toString(subjId)));
+      params.add(new Parameter("subj_id", Integer.toString(subjId)));
     if (hasAlbumId)
-      params.add(new Pair<String, CharSequence>("aid", Long.toString(albumId)));
+      params.add(new Parameter("aid", Long.toString(albumId)));
     if (hasPhotoIds)
-      params.add(new Pair<String, CharSequence>("pids", delimit(photoIds)));
+      params.add(new Parameter("pids", delimit(photoIds)));
 
     return this.callMethod(FacebookMethod.PHOTOS_GET, params);
   }
@@ -736,14 +733,13 @@ public class FacebookRestClient {
 
     if (hasUserId)
       return (hasAlbumIds) ?
-             this.callMethod(FacebookMethod.PHOTOS_GET_ALBUMS, new Pair<String, CharSequence>("uid",
-                                                                                              Integer.toString(userId)),
-                             new Pair<String, CharSequence>("aids", delimit(albumIds))) :
+             this.callMethod(FacebookMethod.PHOTOS_GET_ALBUMS, new Parameter("uid", Integer.toString(userId)),
+                             new Parameter("aids", delimit(albumIds))) :
              this.callMethod(FacebookMethod.PHOTOS_GET_ALBUMS,
-                             new Pair<String, CharSequence>("uid", Integer.toString(userId)));
+                             new Parameter("uid", Integer.toString(userId)));
     else
       return this.callMethod(FacebookMethod.PHOTOS_GET_ALBUMS,
-                             new Pair<String, CharSequence>("aids", delimit(albumIds)));
+                             new Parameter("aids", delimit(albumIds)));
   }
 
   public Document photos_getAlbums(Integer userId) throws FacebookException, IOException {
@@ -762,7 +758,7 @@ public class FacebookRestClient {
    */
   public Document photos_getTags(Collection<Long> photoIds) throws FacebookException, IOException {
     return this.callMethod(FacebookMethod.PHOTOS_GET_TAGS,
-                           new Pair<String, CharSequence>("pids", delimit(photoIds)));
+                           new Parameter("pids", delimit(photoIds)));
   }
 
   /**
@@ -784,13 +780,13 @@ public class FacebookRestClient {
   public Document photos_createAlbum(String name, String description,
                                      String location) throws FacebookException, IOException {
     assert (null != name && !"".equals(name));
-    ArrayList<Pair<String, CharSequence>> params =
-      new ArrayList<Pair<String, CharSequence>>(FacebookMethod.PHOTOS_CREATE_ALBUM.numParams());
-    params.add(new Pair<String, CharSequence>("name", name));
+    ArrayList<Parameter> params =
+      new ArrayList<Parameter>(FacebookMethod.PHOTOS_CREATE_ALBUM.numParams());
+    params.add(new Parameter("name", name));
     if (null != description)
-      params.add(new Pair<String, CharSequence>("description", description));
+      params.add(new Parameter("description", description));
     if (null != location)
-      params.add(new Pair<String, CharSequence>("location", location));
+      params.add(new Parameter("location", location));
     return this.callMethod(FacebookMethod.PHOTOS_CREATE_ALBUM, params);
   }
 
@@ -810,8 +806,8 @@ public class FacebookRestClient {
     String tagStr = tagsJSON.endArray().toString();
 
     return this.callMethod(FacebookMethod.PHOTOS_ADD_TAG,
-                           new Pair<String, CharSequence>("pid", photoId.toString()),
-                           new Pair<String, CharSequence>("tags", tagStr));
+                           new Parameter("pid", photoId.toString()),
+                           new Parameter("tags", tagStr));
   }
 
   /**
@@ -847,11 +843,10 @@ public class FacebookRestClient {
     assert (null != xPct && xPct >= 0 && xPct <= 100);
     assert (null != yPct && yPct >= 0 && yPct <= 100);
     Document d =
-      this.callMethod(FacebookMethod.PHOTOS_ADD_TAG, new Pair<String, CharSequence>("pid",
-                                                                                    photoId.toString()),
-                      new Pair<String, CharSequence>("tag_uid", taggedUserId.toString()),
-                      new Pair<String, CharSequence>("x", xPct.toString()),
-                      new Pair<String, CharSequence>("y", yPct.toString()));
+      this.callMethod(FacebookMethod.PHOTOS_ADD_TAG, new Parameter("pid", photoId.toString()),
+                      new Parameter("tag_uid", taggedUserId.toString()),
+                      new Parameter("x", xPct.toString()),
+                      new Parameter("y", yPct.toString()));
     return extractBoolean(d);
   }
 
@@ -869,14 +864,13 @@ public class FacebookRestClient {
 
   public Document photos_upload(File photo, String caption, Long albumId) throws FacebookException,
                                                                                  IOException {
-    ArrayList<Pair<String, CharSequence>> params =
-      new ArrayList<Pair<String, CharSequence>>(FacebookMethod.PHOTOS_UPLOAD.numParams());
+    ArrayList<Parameter> params = new ArrayList<Parameter>(FacebookMethod.PHOTOS_UPLOAD.numParams());
     assert (photo.exists() && photo.canRead());
     this._uploadFile = photo;
     if (null != albumId)
-      params.add(new Pair<String, CharSequence>("aid", Long.toString(albumId)));
+      params.add(new Parameter("aid", Long.toString(albumId)));
     if (null != caption)
-      params.add(new Pair<String, CharSequence>("caption", caption));
+      params.add(new Parameter("caption", caption));
     return callMethod(FacebookMethod.PHOTOS_UPLOAD, params);
   }
 
@@ -893,15 +887,13 @@ public class FacebookRestClient {
     boolean hasGroups = (null != groupIds && !groupIds.isEmpty());
     if (null != userId)
       return hasGroups ?
-             this.callMethod(FacebookMethod.GROUPS_GET, new Pair<String, CharSequence>("uid",
-                                                                                       userId.toString()),
-                             new Pair<String, CharSequence>("gids", delimit(groupIds))) :
+             this.callMethod(FacebookMethod.GROUPS_GET, new Parameter("uid", userId.toString()),
+                             new Parameter("gids", delimit(groupIds))) :
              this.callMethod(FacebookMethod.GROUPS_GET,
-                             new Pair<String, CharSequence>("uid", userId.toString()));
+                             new Parameter("uid", userId.toString()));
     else
       return hasGroups ?
-             this.callMethod(FacebookMethod.GROUPS_GET, new Pair<String, CharSequence>("gids",
-                                                                                       delimit(groupIds))) :
+             this.callMethod(FacebookMethod.GROUPS_GET, new Parameter("gids", delimit(groupIds))) :
              this.callMethod(FacebookMethod.GROUPS_GET);
   }
 
@@ -914,7 +906,7 @@ public class FacebookRestClient {
   public Document groups_getMembers(Number groupId) throws FacebookException, IOException {
     assert (null != groupId);
     return this.callMethod(FacebookMethod.GROUPS_GET_MEMBERS,
-                           new Pair<String, CharSequence>("gid", groupId.toString()));
+                           new Parameter("gid", groupId.toString()));
   }
 
   /**
@@ -925,7 +917,7 @@ public class FacebookRestClient {
   public Document fql_query(CharSequence query) throws FacebookException, IOException {
     assert (null != query);
     return this.callMethod(FacebookMethod.FQL_QUERY,
-                           new Pair<String, CharSequence>("query", query));
+                           new Parameter("query", query));
   }
 
   /**
@@ -959,11 +951,11 @@ public class FacebookRestClient {
 
     Document d =
       this.callMethod(FacebookMethod.NOTIFICATIONS_SEND_REQUEST, 
-                      new Pair<String, CharSequence>("to_ids", delimit(recipientIds)),
-                      new Pair<String, CharSequence>("type", type),
-                      new Pair<String, CharSequence>("content", content),
-                      new Pair<String, CharSequence>("image", image.toString()),
-                      new Pair<String, CharSequence>("invite", isInvite ? "1" : "0"));
+                      new Parameter("to_ids", delimit(recipientIds)),
+                      new Parameter("type", type),
+                      new Parameter("content", content),
+                      new Parameter("image", image.toString()),
+                      new Parameter("invite", isInvite ? "1" : "0"));
     String url = d.getFirstChild().getTextContent();
     return (null == url || "".equals(url)) ? null : new URL(url);
   }
@@ -982,11 +974,11 @@ public class FacebookRestClient {
                                 CharSequence email) throws FacebookException, IOException {
     assert (null != recipientIds && !recipientIds.isEmpty());
     assert (null != notification);
-    ArrayList<Pair<String, CharSequence>> args = new ArrayList<Pair<String,CharSequence>>(3);
-    args.add(new Pair<String, CharSequence>("to_ids", delimit(recipientIds)));
-    args.add(new Pair<String, CharSequence>("notification", email));
+    ArrayList<Parameter> args = new ArrayList<Parameter>(3);
+    args.add(new Parameter("to_ids", delimit(recipientIds)));
+    args.add(new Parameter("notification", email));
     if (null != email)
-      args.add(new Pair<String, CharSequence>("email", email));
+      args.add(new Parameter("email", email));
     Document d = this.callMethod(FacebookMethod.NOTIFICATIONS_SEND, args);
     String url = d.getFirstChild().getTextContent();
     return (null == url || "".equals(url)) ? null : new URL(url);
@@ -1074,9 +1066,8 @@ public class FacebookRestClient {
 	if (null != this._sessionKey) {
       return this._sessionKey;
 	}
-    Document d =
-      this.callMethod(FacebookMethod.AUTH_GET_SESSION, new Pair<String, CharSequence>("auth_token",
-                                                                                      authToken.toString()));
+    Document d = this.callMethod(FacebookMethod.AUTH_GET_SESSION,
+                                 new Parameter("auth_token", authToken.toString()));
     this._sessionKey =
         d.getElementsByTagName("session_key").item(0).getFirstChild().getTextContent();
     this._userId =
