@@ -20,7 +20,11 @@ import com.threerings.msoy.web.data.WebCreds;
 /**
  * Contains persistent data stored for every member of MetaSOY.
  */
-@Entity
+@Entity(indices={
+    @Index(name="ixLastSession", columns={ MemberRecord.LAST_SESSION }),
+    @Index(name="ixName", columns={ MemberRecord.NAME }),
+    @Index(name="ixInvitingFriend", columns={ MemberRecord.INVITING_FRIEND_ID })
+})
 public class MemberRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -146,7 +150,7 @@ public class MemberRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 9;
+    public static final int SCHEMA_VERSION = 10;
 
     /** A flag denoting this user as having support privileges. */
     public static final int SUPPORT_FLAG = 1 << 0;
@@ -174,7 +178,7 @@ public class MemberRecord extends PersistentRecord
 
     /** The quantity of flow possessed by this member. */
     public int flow;
-    
+
     /** The total amount of flow ever accumulated by this member. */
     public int accFlow;
 

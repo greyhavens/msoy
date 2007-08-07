@@ -11,7 +11,10 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 /**
  * Represents a friendship between two members.
  */
-@Entity
+@Entity(indices={
+    @Index(name="ixInviterId", columns={ FriendRecord.INVITER_ID }),
+    @Index(name="ixInviteeId", columns={ FriendRecord.INVITEE_ID }),
+})
 @Table(uniqueConstraints =
        {@UniqueConstraint(fieldNames={FriendRecord.INVITER_ID, FriendRecord.INVITEE_ID })})
 public class FriendRecord extends PersistentRecord
@@ -32,7 +35,7 @@ public class FriendRecord extends PersistentRecord
         new ColumnExp(FriendRecord.class, INVITEE_ID);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The member id of the inviter. */
     @Id
