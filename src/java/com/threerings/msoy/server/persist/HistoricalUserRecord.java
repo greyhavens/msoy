@@ -46,6 +46,8 @@ public class HistoricalUserRecord extends PersistentRecord
         new ColumnExp(HistoricalUserRecord.class, SITE_ID);
     // AUTO-GENERATED: FIELDS END
 
+    public static final int SCHEMA_VERSION = 1;
+
     /** The user's assigned integer userid. */
     public int userId;
 
