@@ -233,6 +233,8 @@ public abstract class TagRepository extends DepotRepository
      *        SELECT 153567, tagId
      *          FROM PhotoTagRecord
      *         WHERE targetId = 89736;
+     *
+     * TODO: Depot is very very close to being able to handle this.
      */
     public int copyTags (final int fromTargetId, final int toTargetId, int ownerId, long now)
         throws PersistenceException
