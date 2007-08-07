@@ -3,6 +3,7 @@
 
 package client.shell;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -80,7 +81,10 @@ public class WorldClient extends Widget
         Page.displayingFlash = false;
 
         if (_isFlashClientPresent || _jclient != null) {
-            RootPanel.get("client").setWidth("300px");
+            int clientWidth = Math.max(
+                MIN_CLIENT_WIDTH, Window.getClientWidth() - MAX_CONTENT_WIDTH);
+            RootPanel.get("client").setWidth(clientWidth + "px");
+            RootPanel.get("content").setWidth(Window.getClientWidth() - clientWidth + "px");
             clientMinimized(true);
         }
     }
@@ -161,4 +165,10 @@ public class WorldClient extends Widget
 
     /** Our default world server. Configured the first time Flash is used. */
     protected static ConnectConfig _defaultServer;
+
+    /** The minimum width allowed for the minimized client. */
+    protected static final int MIN_CLIENT_WIDTH = 300;
+
+    /** The maximum width of our content UI, the remainder is used by the world client. */
+    protected static final int MAX_CONTENT_WIDTH = 700;
 }

@@ -160,9 +160,9 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String doListRarityBlurb();
 
   /**
-   * Translated "Please logon above to view your Inventory.".
+   * Translated "Please logon above to view Your Stuff.".
    * 
-   * @return translated "Please logon above to view your Inventory."
+   * @return translated "Please logon above to view Your Stuff."
    * @gwt.key logon
    */
   String logon();
@@ -176,9 +176,9 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String detailListTip();
 
   /**
-   * Translated "Inventory".
+   * Translated "My Stuff".
    * 
-   * @return translated "Inventory"
+   * @return translated "My Stuff"
    * @gwt.key inventoryTitle
    */
   String inventoryTitle();
