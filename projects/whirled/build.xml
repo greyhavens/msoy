@@ -5,10 +5,16 @@
   <!-- configuration properties -->
   <property name="app.name"   value="whirled"/>
   <property name="deploy.dir" value="dist"/>
+  <property name="asrc.dir"   value="src/as"/>
 
   <!-- import some targets to enumerate library dependencies -->
-  <property name="libs.dir" value="../../${deploy.dir}/lib"/>
+  <property name="libs.dir"      value="../../${deploy.dir}/lib"/>
+  <property name="projects.dir"  value="../../projects"/>
+  <property name="flex.path"     value="../../tools/extern/flex_sdk"/>
   <import file="etc/libs-incl.xml"/>
+
+  <!-- include bits to do the necessary Flex SDK path jockeying -->
+  <import file="etc/flex-include.xml"/>
 
   <!-- declare our classpath -->
   <path id="classpath">
@@ -31,6 +37,13 @@
     <copy todir="${deploy.dir}/lib" flatten="true">
       <fileset refid="${app.name}.libs"/>
     </copy>
+    <!-- generate the whirled-config.xml file using the flex.path -->
+    <copy tofile="${deploy.dir}/whirled-config.xml" file="etc/whirled-config.xml.in" 
+          overwrite="true">
+      <filterset>
+        <filter token="flex_path" value="${flex.path}"/>
+      </filterset>
+    </copy>
   </target>
 
   <!-- cleans out the intermediate build files -->
@@ -42,6 +55,28 @@
   <!-- wipes the entire build directory clean -->
   <target name="distclean">
     <delete dir="${deploy.dir}"/>
+  </target>
+
+  <!-- builds our whirled.swc Flash library -->
+  <target name="aslib" unless="aslib_is_up_to_date" depends="prepare,checkaslib">
+    <java jar="${flex.path}/lib/compc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${deploy.dir}/whirled-config.xml"/>
+      <arg value="-external-library-path"/>
+      <arg value="${flex.path}/frameworks/libs"/>
+      <arg value="-compiler.optimize"/>
+      <arg value="-compiler.source-path=${projects.dir}/narya/src/as/"/>
+      <arg value="-compiler.source-path=${projects.dir}/nenya/src/as/"/>
+      <arg value="-compiler.source-path=${projects.dir}/vilya/src/as/"/>
+      <arg value="-compiler.source-path=${asrc.dir}/"/>
+      <arg value="-include-sources=${projects.dir}/narya/src/as/"/>
+      <arg value="-include-sources=${projects.dir}/nenya/src/as/com/threerings/flash/"/>
+      <arg value="-include-sources=${projects.dir}/vilya/src/as/com/threerings/parlor/"/>
+      <arg value="-include-sources=${projects.dir}/vilya/src/as/com/threerings/ezgame/"/>
+      <arg value="-include-sources=${asrc.dir}/"/>
+      <arg value="-output"/>
+      <arg value="${deploy.dir}/whirled.swc"/>
+    </java>
   </target>
 
   <!-- build the java class files -->
@@ -58,7 +93,7 @@
   <target name="all" depends="clean,prepare,compile"/>
 
   <!-- builds our jar file -->
-  <target name="dist" depends="prepare,compile">
+  <target name="dist" depends="prepare,compile,aslib">
     <jar destfile="${deploy.dir}/${app.name}.jar" basedir="${deploy.dir}/classes"/>
   </target>
 </project>
