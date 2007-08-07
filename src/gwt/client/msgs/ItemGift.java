@@ -81,7 +81,7 @@ public abstract class ItemGift
                 super();
                 buildUI();
             }
-            
+
             protected void buildUI ()
             {
                 DockPanel panel = new DockPanel();
@@ -174,20 +174,20 @@ public abstract class ItemGift
                     public void onFailure (Throwable caught) {
                         CMsgs.log("Failed to load inventory [type=" + type + "]", caught);
                         _status.setText(CMsgs.serverError(caught));
-                        
+
                     }
                 });
             }
-            
+
             protected Label _status;
             protected Label _title;
             protected SimplePanel _left, _right;
 
             protected AsyncCallback _imageChooser;
         }
-        
+
         protected MailComposition _composer;
-        
+
         protected Item _item;
     }
 
@@ -220,7 +220,7 @@ public abstract class ItemGift
             }
             return CMsgs.mmsgs.giftNoDelete();
         }
-        
+
         protected class DisplayWidget extends DockPanel
         {
             public DisplayWidget (boolean enabled)
@@ -229,18 +229,18 @@ public abstract class ItemGift
                 _enabled = enabled;
                 buildUI();
             }
-            
+
             protected void buildUI ()
             {
                 clear();
-                
+
                 if (_giftObject.item == null) {
                     _title = new Label(CMsgs.mmsgs.giftGone());
                     _title.addStyleName("Title");
                     add(_title, DockPanel.NORTH);
                     return;
                 }
-                
+
                 _title = new Label(CMsgs.mmsgs.giftItem());
                 add(_title, DockPanel.NORTH);
 
@@ -254,7 +254,7 @@ public abstract class ItemGift
                         unwrapItem();
                     }
                 };
-                
+
                 CMsgs.itemsvc.loadItem(CShell.ident, _giftObject.item, new AsyncCallback() {
                     public void onSuccess (Object result) {
                          _content.add(new ItemThumbnail((Item) result, listener));
@@ -294,7 +294,7 @@ public abstract class ItemGift
             };
 
             protected boolean _enabled;
-            
+
             protected Label _status, _title;
             protected FlowPanel _content;
         }
