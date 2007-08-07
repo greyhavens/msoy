@@ -219,6 +219,7 @@ public abstract class ItemRepository<
     public List<T> loadItemsByFlag (byte flagMask, boolean all, int count)
         throws PersistenceException
     {
+        // TODO: Change FLAGS to FLAGGED & MATURE
         return findAll(
             getItemClass(),
             new Where(all ?
@@ -663,8 +664,8 @@ public abstract class ItemRepository<
                  new FieldOverride("count", "count(*)"),
                  new FieldOverride("sum", "sum(" + RatingRecord.RATING + ")"),
                  new FromOverride(getRatingClass()),
-                 new Where(new Equals(new ColumnExp(getRatingClass(), RatingRecord.ITEM_ID),
-                                      itemId)));
+                 new Where(new ColumnExp(getRatingClass(), RatingRecord.ITEM_ID), itemId));
+
         float newRating = (float) ((average.count == 0) ? 0.0 : average.sum/average.count);
         // and then smack the new value into the item using yummy depot code
         updatePartial(getItemClass(), itemId, ItemRecord.RATING, newRating,
@@ -785,6 +786,7 @@ public abstract class ItemRepository<
         ArrayList<SQLOperator> whereBits = new ArrayList<SQLOperator>();
 
         if (search != null && search.length() > 0) {
+            // TODO: does not scale at all, convert to FTS
             whereBits.add(new Like(
                 getItemColumn(ItemRecord.NAME), "%" + search + "%"));
         }
