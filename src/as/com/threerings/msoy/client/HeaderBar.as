@@ -27,6 +27,12 @@ public class HeaderBar extends HBox
         _ctx = ctx;
         styleName = "headerBar";
 
+        // TODO: possibly compile a separate stylesheet for each "partner" and load it at runtime;
+        // oh the additional complexity; for now we hack
+        if ("facebook" == ctx.getPartner()) {
+            setStyle("backgroundColor", "#6D84B4");
+        }
+
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 

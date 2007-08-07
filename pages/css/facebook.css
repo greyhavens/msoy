@@ -1,0 +1,15 @@
+/** 
+ * $Id$
+ *
+ * Style overrides for the Facebook cobrand. Yay stylesheets.
+ */
+
+.pageHeaderTitle {
+  background: #6D84B4;
+}
+.pageHeaderContent {
+  background: #6D84B4;
+}
+.pageHeaderClose {
+  background: #6D84B4;
+}

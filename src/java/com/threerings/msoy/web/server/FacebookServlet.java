@@ -22,21 +22,22 @@ public class FacebookServlet extends HttpServlet
         throws ServletException, IOException
     {
         log.info("Got HEAD request " + req.getRequestURL());
-        dumpParameters(req);
+//         dumpParameters(req);
     }
 
     protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
         throws ServletException, IOException
     {
         log.info("Got GET request " + req.getRequestURL());
-        dumpParameters(req);
+        // TODO: swizzle their cookie if possible; auto creating an account for them if necessary
+        rsp.sendRedirect("/facebook.html");
     }
 
     protected void doPost (HttpServletRequest req, HttpServletResponse rsp)
         throws ServletException, IOException
     {
         log.info("Got POST request " + req.getRequestURL());
-        dumpParameters(req);
+//         dumpParameters(req);
     }
 
     protected void dumpParameters (HttpServletRequest req)

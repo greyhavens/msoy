@@ -96,6 +96,14 @@ public class Application
         _currentToken = token;
     }
 
+    /**
+     * Returns a partner identifier when we're running in partner cobrand mode, null when we're
+     * running in the full Whirled environment.
+     */
+    public static native String getPartner () /*-{
+        return $doc.whirledPartner;
+    }-*/;
+
     // from interface EntryPoint
     public void onModuleLoad ()
     {
@@ -110,10 +118,18 @@ public class Application
         configureCallbacks(this);
 
         // create our status/logon panel
-        RootPanel.get("status").add(_status = new StatusPanel(this));
+        _status = new StatusPanel(this);
+        RootPanel status = RootPanel.get("status");
+        if (status != null) {
+            status.add(_status);
+        }
 
         // create our standard navigation panel
-        RootPanel.get("navigation").add(_navi = new NaviPanel(_status));
+        _navi = new NaviPanel(_status);
+        RootPanel navi = RootPanel.get("navigation");
+        if (navi != null) {
+            navi.add(_navi);
+        }
 
         // wire ourselves up to the history-based navigation mechanism
         History.addHistoryListener(this);

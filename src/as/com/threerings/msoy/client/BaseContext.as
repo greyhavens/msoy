@@ -56,6 +56,15 @@ public /*abstract*/ class BaseContext
     }
 
     /**
+     * Returns the Whirled cobrand partner in effect or null if we're running in the standard
+     * Whirled webapp or emebedded mode.
+     */
+    public function getPartner () :String
+    {
+        return getStage().loaderInfo.parameters["partner"];
+    }
+
+    /**
      * Convenience method.
      */
     public function displayFeedback (bundle :String, message :String) :void
