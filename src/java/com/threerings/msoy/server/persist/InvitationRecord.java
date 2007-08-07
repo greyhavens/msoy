@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.server.persist;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.samskivert.io.PersistenceException;
@@ -24,8 +23,8 @@ import com.threerings.msoy.web.data.Invitation;
  */
 @Entity(indices={
         @Index(name="ixInviter", columns={InvitationRecord.INVITER_ID}),
-        @Index(name="ixInvitee", columns={InvitationRecord.INVITEE_ID}),
-        @Index(name="ixInvite", columns={InvitationRecord.INVITE_ID})})
+        @Index(name="ixInvitee", columns={InvitationRecord.INVITEE_ID})
+})
 public class InvitationRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
