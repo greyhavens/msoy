@@ -101,6 +101,7 @@ public class NaviPanel extends FlexTable
                 if (CShell.isSupport()) {
                     addLink(menu, "Admin Console", "admin", "");
                 }
+                addLink(menu, "Projects", "swiftly", "");
             }
         });
 
@@ -138,30 +139,28 @@ public class NaviPanel extends FlexTable
 
         setMenu(menuidx++, "Stuff", CShell.cmsgs.menuStuff(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                MenuBar imenu = new MenuBar(true);
                 for (int ii = 0; ii < Item.TYPES.length; ii++) {
                     byte type = Item.TYPES[ii];
-                    // TODO: proper i18n
-                    addLink(imenu, "My " + CShell.dmsgs.getString("pItemType" + type),
+                    addLink(menu, CShell.dmsgs.getString("pItemType" + type),
                             "inventory", "" + type);
                 }
-                menu.addItem("My Stuff", imenu);
-                MenuBar cmenu = new MenuBar(true);
-                for (int ii = 0; ii < Item.TYPES.length; ii++) {
-                    byte type = Item.TYPES[ii];
-                    addLink(cmenu, CShell.dmsgs.getString("pItemType" + type),
-                            "catalog", "" + type);
-                }
-                menu.addItem("Catalog", cmenu);
-                addLink(menu, "Wiki", "wrap", "w");
-                addLink(menu, "Projects", "swiftly", "");
             }
         });
 
-        setMenu(menuidx++, "Games", CShell.cmsgs.menuGames(), new MenuPopper() {
+        setMenu(menuidx++, "Catalog", CShell.cmsgs.menuCatalog(), new MenuPopper() {
             protected void populateMenu (Widget sender, MenuBar menu) {
-                addLink(menu, "My Games", "inventory", "" + Item.GAME);
-                addLink(menu, "Browse Games", "catalog", "" + Item.GAME);
+                for (int ii = 0; ii < Item.TYPES.length; ii++) {
+                    byte type = Item.TYPES[ii];
+                    addLink(menu, CShell.dmsgs.getString("pItemType" + type),
+                            "catalog", "" + type);
+                }
+            }
+        });
+
+        setMenu(menuidx++, "Help", CShell.cmsgs.menuHelp(), new MenuPopper() {
+            protected void populateMenu (Widget sender, MenuBar menu) {
+                addLink(menu, "About Whirled", "wrap", "w");
+                addLink(menu, "Tutorials", "wrap", "w-Category:Tutorials");
             }
         });
     }

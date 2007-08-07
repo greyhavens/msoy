@@ -48,6 +48,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String createDateOfBirth();
 
   /**
+   * Translated "Help".
+   * 
+   * @return translated "Help"
+   * @gwt.key menuHelp
+   */
+  String menuHelp();
+
+  /**
    * Translated "Here you can update your account information.".
    * 
    * @return translated "Here you can update your account information."
@@ -616,6 +624,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String createPasswordTip();
 
   /**
+   * Translated "Catalog".
+   * 
+   * @return translated "Catalog"
+   * @gwt.key menuCatalog
+   */
+  String menuCatalog();
+
+  /**
    * Translated "Please enter a display name.".
    * 
    * @return translated "Please enter a display name."
@@ -712,9 +728,9 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String forgotEmailSent();
 
   /**
-   * Translated "Stuff".
+   * Translated "My Stuff".
    * 
-   * @return translated "Stuff"
+   * @return translated "My Stuff"
    * @gwt.key menuStuff
    */
   String menuStuff();
@@ -888,20 +904,20 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String optOutTitle();
 
   /**
-   * Translated "Email Address:".
-   * 
-   * @return translated "Email Address:"
-   * @gwt.key logonEmail
-   */
-  String logonEmail();
-
-  /**
    * Translated "You''ll use your email address to logon.".
    * 
    * @return translated "You''ll use your email address to logon."
    * @gwt.key createEmailTip
    */
   String createEmailTip();
+
+  /**
+   * Translated "Email Address:".
+   * 
+   * @return translated "Email Address:"
+   * @gwt.key logonEmail
+   */
+  String logonEmail();
 
   /**
    * Translated "Choose a Photo from your Inventory:".

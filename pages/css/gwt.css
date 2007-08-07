@@ -183,11 +183,25 @@ a:visited {
   background: url(/images/header/navi/stuff_over.png);
 }
 
+.naviPanel .Catalog {
+  background: url(/images/header/navi/catalog.png);
+}
+.naviPanel .CatalogHover {
+  background: url(/images/header/navi/catalog_over.png);
+}
+
 .naviPanel .Games {
   background: url(/images/header/navi/games.png);
 }
 .naviPanel .GamesHover {
   background: url(/images/header/navi/games_over.png);
+}
+
+.naviPanel .Help {
+  background: url(/images/header/navi/help.png);
+}
+.naviPanel .HelpHover {
+  background: url(/images/header/navi/help_over.png);
 }
 
 .naviPanel .SelLink {
