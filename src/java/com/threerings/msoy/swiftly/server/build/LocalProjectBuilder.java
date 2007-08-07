@@ -3,22 +3,18 @@
 
 package com.threerings.msoy.swiftly.server.build;
 
-import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
-import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.CompilerOutput;
 import com.threerings.msoy.swiftly.data.FlexCompilerOutput;
-
+import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
+import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 import com.threerings.msoy.web.data.SwiftlyProject;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.IOException;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Server-local project builder.
@@ -26,7 +22,7 @@ import static com.threerings.msoy.Log.log;
  */
 public class LocalProjectBuilder
     implements ProjectBuilder
-{    
+{
     /**
      * Create a new local project builder.
      * @param flexSDK: Local path to the Flex SDK.
@@ -45,7 +41,7 @@ public class LocalProjectBuilder
     {
         // Export the project data
         try {
-            _storage.export(buildRoot);            
+            _storage.export(buildRoot);
         } catch (ProjectStorageException pse) {
             throw new ProjectBuilderException("Exporting project data from storage failed: " + pse,
                 pse);
@@ -61,13 +57,13 @@ public class LocalProjectBuilder
             BufferedReader bufferedOutput;
             BuildResult result = new BuildResult();
             String line;
-            
+
             // Refer the to "Using the Flex Compilers" documentation
             // http://livedocs.adobe.com/flex/2/docs/00001477.html
             procBuilder = new ProcessBuilder(
                 _flexSDK.getAbsolutePath() + "/bin/mxmlc",
                 "-load-config",
-                _whirledSDK.getAbsolutePath() + "/whirled-config.xml",
+                _whirledSDK.getAbsolutePath() + "/etc/whirled-config.xml",
                 "-compiler.source-path=.",
                 "+flex_sdk=" + _flexSDK.getAbsolutePath(),
                 "+whirled_sdk=" + _whirledSDK.getAbsolutePath(),
@@ -114,7 +110,7 @@ public class LocalProjectBuilder
 
     /** Reference to our backing project storage. */
     protected ProjectStorage _storage;
-    
+
     /** Path to the Flex SDK. */
     protected File _flexSDK;
 

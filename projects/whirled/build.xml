@@ -14,7 +14,7 @@
   <import file="etc/libs-incl.xml"/>
 
   <!-- the path to the flex sdk for the Swiftly build location -->
-  <property name="swiftly.flex.path" value="../flex_sdk"/>
+  <property name="swiftly.flex.path" value="../../flex_sdk"/>
   <property name="swiftly.sdk.path"  value="../../data/swiftly/whirled_sdk"/>
 
   <!-- include bits to do the necessary Flex SDK path jockeying -->
@@ -110,7 +110,7 @@
     <jar destfile="${deploy.dir}/${app.name}.jar" basedir="${deploy.dir}/classes"/>
     <!-- copy the bits needed for Swiftly project building into the right location -->
     <copy file="${deploy.dir}/swiftly-whirled-config.xml"
-          tofile="${swiftly.sdk.path}/whirled-config.xml"/> 
+          tofile="${swiftly.sdk.path}/etc/whirled-config.xml"/> 
     <copy file="${deploy.dir}/whirled.swc" todir="${swiftly.sdk.path}/lib"/> 
   </target>
 </project>
