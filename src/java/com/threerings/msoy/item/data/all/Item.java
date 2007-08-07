@@ -70,13 +70,12 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
 
     /** Indicates that somebody has flagged this item as mature content. */
     public static final byte FLAG_FLAGGED_MATURE = 0x1 << 0;
-    
+
     /** Indicates that somebody has flagged this item as copyrighted content. */
     public static final byte FLAG_FLAGGED_COPYRIGHT= 0x1 << 1;
-    
+
     /** Indicates that this item has been flagged by an administrator as mature content. */
     public static final byte FLAG_MATURE = 0x1 << 2;
-
 
     // == Instance variables follow =========================================
 
@@ -122,7 +121,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
 
     /** The media used to display this item's furniture representation. */
     public MediaDesc furniMedia;
-    
+
     /**
      * Returns a {@link MediaDesc} configured to display the default furniture media for items of
      * the specified type.
