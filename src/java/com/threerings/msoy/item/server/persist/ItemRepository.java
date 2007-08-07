@@ -704,19 +704,26 @@ public abstract class ItemRepository<
         switch(record.rarity) {
         case CatalogListing.RARITY_PLENTIFUL:
             C = 100;
-            targetPopulation = U*10; break;
+            targetPopulation = U*10;
+            break;
         case CatalogListing.RARITY_COMMON:
             C = 300;
-            targetPopulation = U; break;
+            targetPopulation = U;
+            break;
         case CatalogListing.RARITY_NORMAL:
             C = 500;
-            targetPopulation = U/10; break;
+            targetPopulation = U/10;
+            break;
         case CatalogListing.RARITY_UNCOMMON:
             C = 700;
-            targetPopulation = U/100; break;
+            // targetPopulation = U/100;
+            targetPopulation = U/50; // TEMP: while population is small
+            break;
         case CatalogListing.RARITY_RARE:
             C = 900;
-            targetPopulation = U/1000; break;
+//             targetPopulation = U/1000;
+            targetPopulation = U/100; // TEMP: while population is small
+            break;
         default:
             throw new PersistenceException(
                 "Unknown rarity [class=" + record.getClass() + ", itemId=" + record.itemId +
