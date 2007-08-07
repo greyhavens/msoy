@@ -25,6 +25,7 @@ import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
@@ -46,39 +47,35 @@ public class ChannelChatTab extends ChatTab
         _overlay = new ChatOverlay(ctx.getMessageManager());
         _overlay.setClickableGlyphs(true);
 
-        _timer = new Timer(1000);
+        _departing = new ExpiringSet(3.0, handleDeparted);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
         addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
     }
 
-    public function init (ccobj :ChatChannelObject) :void
+    public function init (ccobj :ChatChannelObject, serverSwitch :Boolean = false) :void
     {
         if (ccobj != null) {
             _ccobj = ccobj;
             _ccobj.addListener(this);
 
-            // report on the current occupants of the channel
-            var occs :String = "";
-            for each (var ci :ChatterInfo in _ccobj.chatters.toArray()) {
-                if (occs.length > 0) {
-                    occs += ", ";
+            if (!serverSwitch) {
+                // report on the current occupants of the channel
+                var occs :String = "";
+                for each (var ci :ChatterInfo in _ccobj.chatters.toArray()) {
+                    if (occs.length > 0) {
+                        occs += ", ";
+                    }
+                    occs += ci.name;
                 }
-                occs += ci.name;
+                displayFeedback(MessageBundle.tcompose("m.channel_occs", occs));
             }
-            displayFeedback(MessageBundle.tcompose("m.channel_occs", occs));
-
-            _timer.addEventListener(TimerEvent.TIMER, handleTick);
-            _timer.start();
         }
     }
 
     public function shutdown () :void
     {
         if (_ccobj != null) {
-            _timer.stop();
-            _timer.removeEventListener(TimerEvent.TIMER, handleTick);
-            
             _ccobj.removeListener(this);
             _ccobj = null;
         }
@@ -88,7 +85,7 @@ public class ChannelChatTab extends ChatTab
     {
         if (ccobj != _ccobj) {
             shutdown();
-            init(ccobj);
+            init(ccobj, true);
         }
     }
 
@@ -102,7 +99,10 @@ public class ChannelChatTab extends ChatTab
     {
         if (event.getName() == ChatChannelObject.CHATTERS) {
             var ci :ChatterInfo = (event.getEntry() as ChatterInfo);
-            if (! _departed.contains(ci)) {
+            if (_departing.contains(ci.name)) {
+                // the departing chatter came back! remove them from the expiring set
+                _departing.remove(ci.name);
+            } else {
                 displayFeedback(MessageBundle.tcompose("m.channel_entered", ci.name));
             }
         }
@@ -118,7 +118,7 @@ public class ChannelChatTab extends ChatTab
     {
         if (event.getName() == ChatChannelObject.CHATTERS) {
             var ci :ChatterInfo = (event.getOldEntry() as ChatterInfo);
-            _departed.enqueue(ci);
+            _departing.add(ci.name);
         }
     }
 
@@ -153,18 +153,9 @@ public class ChannelChatTab extends ChatTab
         }
     }
 
-    protected function handleTick (event :TimerEvent) :void
+    protected function handleDeparted (name :MemberName) :void
     {
-        while (_departed.ready()) {
-            // get the departure log
-            var di :DepartureInfo = _departed.dequeue();
-            // is the "departed" chatter still in the room? 
-            var returnedIndex :int = ArrayUtil.indexIf(_ccobj.chatters.toArray(), di.equals);
-            if (returnedIndex == -1) {
-                // this departed chatter had not returned. tell the player.
-                displayFeedback(MessageBundle.tcompose("m.channel_left", di.chatter.name));
-            }
-        }
+        displayFeedback(MessageBundle.tcompose("m.channel_left", name));
     }        
 
     /** Actually renders chat. */
@@ -174,74 +165,6 @@ public class ChannelChatTab extends ChatTab
     protected var _ccobj :ChatChannelObject;
 
     /** Queue of DepartureInfo objects, holding on to those recently departed. */
-    protected var _departed :Departures = new Departures();
-
-    /** Handles delayed notifications about chatters' departures. */
-    protected var _timer :Timer;
-    
+    protected var _departing :ExpiringSet;
 }
-}
-
-
-import flash.utils.getTimer; // function import
-
-import com.threerings.msoy.chat.data.ChatterInfo;
-import com.threerings.util.Util;
-
-internal class DepartureInfo
-{
-    /** How long chatter departure information gets delayed, in milliseconds. */
-    public static const DELAY :int = 2000;
-    public var timestamp :int;
-    public var chatter :ChatterInfo;
-
-    public function DepartureInfo (ci :ChatterInfo)
-    {
-        this.timestamp = getTimer();
-        this.chatter = ci;
-    }
-
-    public function ready () :Boolean
-    {
-        return ((getTimer() - timestamp) > DELAY);
-    }
-
-    public function equals (ci :ChatterInfo) :Boolean {
-        return Util.equals(chatter.getKey(), ci.getKey());
-    }
-}
-
-internal class Departures 
-{
-    public function empty () :Boolean
-    {
-        return _data.length == 0;
-    }
-
-    public function enqueue (ci :ChatterInfo) :void
-    {
-        _data.push(new DepartureInfo(ci));
-    }
-
-    public function dequeue () :DepartureInfo
-    {
-        return (empty() ? null : (_data.shift() as DepartureInfo));
-    }
-
-    public function ready () :Boolean
-    {
-        return (empty() ? false : (_data[0] as DepartureInfo).ready());
-    }
-    
-    public function contains (ci :ChatterInfo) :Boolean
-    {
-        for each (var di :DepartureInfo in _data) {
-            if (di.equals(ci)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected var _data :Array = new Array(); // of DepartureInfo
 }
