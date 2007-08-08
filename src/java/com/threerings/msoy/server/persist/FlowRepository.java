@@ -15,7 +15,6 @@ import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -52,11 +51,6 @@ public class FlowRepository extends DepotRepository
     public FlowRepository (PersistenceContext ctx)
     {
         super(ctx);
-
-        // let this long long column name be replaced by something more sensible
-        _ctx.registerMigration(
-            GameAbuseRecord.class,
-            new EntityMigration.Rename(2, "accumMinutesSinceLastAssessment", "accumMinutes"));
 
         // add a cache invalidator that listens to MemberRecord updates
         _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {

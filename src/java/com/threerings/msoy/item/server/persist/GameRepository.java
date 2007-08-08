@@ -6,7 +6,6 @@ package com.threerings.msoy.item.server.persist;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.EntityMigration;
 
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
@@ -35,13 +34,6 @@ public class GameRepository extends ItemRepository<
     public GameRepository (PersistenceContext ctx)
     {
         super(ctx);
-
-        // TEMP
-        _ctx.registerMigration(GameRecord.class, new EntityMigration.Drop(8007, "gameType"));
-        _ctx.registerMigration(GameRecord.class, new EntityMigration.Drop(8007, "minPlayers"));
-        _ctx.registerMigration(GameRecord.class, new EntityMigration.Drop(8007, "maxPlayers"));
-        _ctx.registerMigration(GameRecord.class, new EntityMigration.Drop(8007, "unwatchable"));
-        // END TEMP
     }
 
     @Override
