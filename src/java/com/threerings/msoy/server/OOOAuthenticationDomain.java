@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server;
 
+import java.util.Arrays;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.StringUtil;
@@ -13,12 +15,13 @@ import com.samskivert.servlet.user.UserExistsException;
 import com.samskivert.servlet.user.Username;
 
 import com.threerings.user.OOOUser;
-import com.threerings.user.OOOUserRepository;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
-import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
 import com.threerings.msoy.web.data.ServiceException;
+
+import com.threerings.msoy.server.persist.OOOUserRecord;
+import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -40,16 +43,14 @@ public class OOOAuthenticationDomain
         throws ServiceException, PersistenceException
     {
         // make sure this account is not already in use
-        if (_authrep.loadUserByEmail(accountName, false) != null) {
+        if (_authrep.loadUserByEmail(accountName) != null) {
             throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
         }
 
         // create a new account record
         int userId;
         try {
-            userId = _authrep.createUser(
-                new MsoyUsername(accountName), Password.makeFromCrypto(password), accountName,
-                OOOUser.METASOY_SITE_ID, 0);
+            userId = _authrep.createUser(new MsoyUsername(accountName), password, accountName);
         } catch (InvalidUsernameException iue) {
             throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
         } catch (UserExistsException uee) {
@@ -57,11 +58,10 @@ public class OOOAuthenticationDomain
         }
 
         // load up our newly created record
-        OOOUser user = _authrep.loadUser(userId);
+        OOOUserRecord user = _authrep.loadUser(userId);
         if (user == null) {
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
-        _authrep.loadMachineIdents(user);
 
         // create and return an account metadata record
         OOOAccount account = new OOOAccount();
@@ -77,7 +77,7 @@ public class OOOAuthenticationDomain
         throws ServiceException, PersistenceException
     {
         // load up their user account record
-        OOOUser user = _authrep.loadUserByEmail(accountName, false);
+        OOOUserRecord user = _authrep.loadUserByEmail(accountName);
         if (user == null) {
             throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
         }
@@ -96,12 +96,11 @@ public class OOOAuthenticationDomain
 
         // update their bits and store the record back to the database
         if (newAccountName != null) {
-            user.setEmail(newAccountName);
+            _authrep.changeEmail(user.userId, newAccountName);
         }
         if (newPassword != null) {
-            user.setPassword(Password.makeFromCrypto(newPassword));
+            _authrep.changePassword(user.userId, newPassword);
         }
-        _authrep.updateUser(user);
     }
 
     // from interface MsoyAuthenticator.Domain
@@ -109,7 +108,7 @@ public class OOOAuthenticationDomain
         throws ServiceException, PersistenceException
     {
         // load up their user account record
-        OOOUser user = _authrep.loadUserByEmail(accountName, true);
+        OOOUserRecord user = _authrep.loadUserByEmail(accountName);
         if (user == null) {
             throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
         }
@@ -141,15 +140,35 @@ public class OOOAuthenticationDomain
         throws ServiceException, PersistenceException
     {
         OOOAccount oooacc = (OOOAccount)account;
-        int rv = _authrep.validateUser(
-            OOOUser.METASOY_SITE_ID, oooacc.record, machIdent, account.firstLogon);
-        switch (rv) {
-        case OOOUserRepository.ACCOUNT_BANNED:
+        OOOUserRecord user = oooacc.record;
+        String[] machIdents = _authrep.loadMachineIdents(user.userId);
+
+        // if we have never seen them before...
+        if (machIdents == null) {
+            _authrep.addUserIdent(user.userId, machIdent);
+
+        } else if (Arrays.binarySearch(machIdents, machIdent) < 0) {
+            // and slap it in the db
+            _authrep.addUserIdent(user.userId, machIdent);
+        }
+
+        // if this is a banned user, mark that ident
+        if (user.holdsToken(OOOUser.MSOY_BANNED)) {
+            _authrep.addTaintedIdent(machIdent);
             throw new ServiceException(MsoyAuthCodes.BANNED);
-        case OOOUserRepository.NEW_ACCOUNT_TAINTED:
+        }
+
+        // don't let those bastards grief us.
+        if (account.firstLogon && (_authrep.isTaintedIdent(machIdent)) ) {
             throw new ServiceException(MsoyAuthCodes.MACHINE_TAINTED);
         }
-        // TODO: do we care about other badness like DEADBEAT?
+
+        // if the user has bounced a check or reversed payment, let them know
+        if (user.holdsToken(OOOUser.MSOY_DEADBEAT)) {
+            throw new ServiceException(MsoyAuthCodes.DEADBEAT);
+        }
+
+        // you're all clear kid...
     }
 
     // from interface MsoyAuthenticator.Domain
@@ -157,7 +176,7 @@ public class OOOAuthenticationDomain
         throws ServiceException, PersistenceException
     {
         OOOAccount oooacc = (OOOAccount)account;
-        if (oooacc.record.isBanned(OOOUser.METASOY_SITE_ID)) {
+        if (oooacc.record.holdsToken(OOOUser.MSOY_BANNED)) {
             throw new ServiceException(MsoyAuthCodes.BANNED);
         }
         // TODO: do we care about other badness like DEADBEAT?
@@ -167,7 +186,7 @@ public class OOOAuthenticationDomain
     public String generatePasswordResetCode (String accountName)
         throws ServiceException, PersistenceException
     {
-        OOOUser user = _authrep.loadUserByEmail(accountName, false);
+        OOOUserRecord user = _authrep.loadUserByEmail(accountName);
         return (user == null) ? null : StringUtil.md5hex(user.username + user.password);
     }
 
@@ -180,7 +199,7 @@ public class OOOAuthenticationDomain
 
     protected static class OOOAccount extends MsoyAuthenticator.Account
     {
-        public OOOUser record;
+        public OOOUserRecord record;
     }
 
     protected static class MsoyUsername extends Username

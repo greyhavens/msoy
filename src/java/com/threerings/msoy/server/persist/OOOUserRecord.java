@@ -175,4 +175,20 @@ public class OOOUserRecord extends PersistentRecord
                 new Comparable[] { userId });
     }
     // AUTO-GENERATED: METHODS END
+
+    /**
+     * Returns true if this user holds the specified token.
+     */
+    public boolean holdsToken (byte token)
+    {
+        if (tokens == null) {
+            return false;
+        }
+        for (byte heldTok : tokens) {
+            if (heldTok == token) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
