@@ -124,6 +124,11 @@ public class FacebookRestClient {
     this(SERVER_URL, apiKey, secret, sessionKey);
   }
 
+  public FacebookRestClient(String apiKey, String secret, String sessionKey, int userId) {
+    this(SERVER_URL, apiKey, secret, sessionKey);
+    _userId = userId;
+  }
+
   public FacebookRestClient(String serverAddr, String apiKey, String secret,
                             String sessionKey) throws MalformedURLException {
     this(new URL(serverAddr), apiKey, secret, sessionKey);
