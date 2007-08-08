@@ -83,8 +83,7 @@ public /*abstract*/ class BaseClient extends Client
         }
 
         // allow connecting to the game server
-        Security.loadPolicyFile("http://" + getServerHost(stage) + ":" +
-                                DeploymentConfig.serverHttpPort + "/crossdomain.xml");
+        Security.loadPolicyFile("http://" + getServerHost(stage) + "/crossdomain.xml");
         // and the media server if it differs from the game server
         if (DeploymentConfig.mediaURL.indexOf(DeploymentConfig.serverHost) == -1) {
             Security.loadPolicyFile(DeploymentConfig.mediaURL + "crossdomain.xml");
