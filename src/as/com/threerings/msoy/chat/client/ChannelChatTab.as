@@ -11,6 +11,7 @@ import flash.utils.getTimer; // function import
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
+import com.threerings.util.Util;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -24,6 +25,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.WorldContext;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -99,12 +101,21 @@ public class ChannelChatTab extends ChatTab
     {
         if (event.getName() == ChatChannelObject.CHATTERS) {
             var ci :ChatterInfo = (event.getEntry() as ChatterInfo);
+
+            // did the departing chatter come back? if so, just remove them from the expiring set
             if (_departing.contains(ci.name)) {
-                // the departing chatter came back! remove them from the expiring set
                 _departing.remove(ci.name);
-            } else {
-                displayFeedback(MessageBundle.tcompose("m.channel_entered", ci.name));
+                return;
             }
+
+            // if I just saw myself entering the channel, ignore the event
+            var me :MemberObject = _ctx.getMemberObject();
+            if (Util.equals(ci.name, me.memberName)) {
+                return;
+            }
+
+            // someone new just entered. display a message.
+            displayFeedback(MessageBundle.tcompose("m.channel_entered", ci.name));           
         }
     }
 
