@@ -40,7 +40,7 @@ public class OOOAuthenticationDomain
         throws ServiceException, PersistenceException
     {
         // make sure this account is not already in use
-        if (MsoyServer.memberRepo.loadMember(accountName) != null) {
+        if (_authrep.loadUserByEmail(accountName, false) != null) {
             throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
         }
 
@@ -77,7 +77,7 @@ public class OOOAuthenticationDomain
         throws ServiceException, PersistenceException
     {
         // load up their user account record
-        OOOUser user = _authrep.loadUserByEmail(accountName, true);
+        OOOUser user = _authrep.loadUserByEmail(accountName, false);
         if (user == null) {
             throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
         }
@@ -177,8 +177,6 @@ public class OOOAuthenticationDomain
     {
         return code.equals(generatePasswordResetCode(accountName));
     }
-    
-    protected MsoyOOOUserRepository _authrep;
 
     protected static class OOOAccount extends MsoyAuthenticator.Account
     {
@@ -197,4 +195,6 @@ public class OOOAuthenticationDomain
             }
         }
     }
+
+    protected MsoyOOOUserRepository _authrep;
 }
