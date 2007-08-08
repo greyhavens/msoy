@@ -52,32 +52,6 @@ public class MailManager
     {
         _mailRepo = new MailRepository(ctx);
         _memberRepo = memberRepo;
-
-        // TEMP: make sure everyone has the stock folders
-        try {
-            for (MemberRecord memrec : memberRepo.loadAllMembers()) {
-                ArrayIntSet fids = new ArrayIntSet();
-                for (MailFolderRecord frec : _mailRepo.getFolders(memrec.memberId)) {
-                    fids.add(frec.folderId);
-                }
-                for (int folderId : MailFolder.STOCK_FOLDERS) {
-                    if (fids.contains(folderId)) {
-                        continue;
-                    }
-                    MailFolderRecord record = new MailFolderRecord();
-                    record.nextMessageId = 1;
-                    record.ownerId = memrec.memberId;
-                    record.folderId = folderId;
-                    record.name = MsoyServer.msgMan.getBundle("server").get(
-                        "m.mail_folder_" + folderId);
-                    log.info("Creating " + record.name + " for " + memrec.accountName);
-                    _mailRepo.createFolder(record);
-                }
-            }
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed creating missing folders.", pe);
-        }
-        // END TEMP
     }
 
     /**

@@ -85,6 +85,9 @@ public class MemberRepository extends DepotRepository
         });
     }
 
+    /**
+     * Returns the repository used by this repository to manage flow.
+     */
     public FlowRepository getFlowRepository ()
     {
         return _flowRepo;
@@ -109,14 +112,6 @@ public class MemberRepository extends DepotRepository
     {
         return load(MemberRecord.class, memberId);
     }
-
-    // TEMP
-    public List<MemberRecord> loadAllMembers ()
-        throws PersistenceException
-    {
-        return findAll(MemberRecord.class);
-    }
-    // END TEMP
 
     /**
      * Calculate a count of the active member population, currently defined as anybody
@@ -797,6 +792,32 @@ public class MemberRepository extends DepotRepository
                   invalidator);
     }
 
+    /**
+     * Returns the id of the account associated with the supplied external account (the caller is
+     * responsible for confirming the authenticity of the external id information) or 0 if no
+     * account is associated with that external account.
+     */
+    public int lookupExternalAccount (int partnerId, String externalId)
+        throws PersistenceException
+    {
+        ExternalMapRecord record =
+            load(ExternalMapRecord.class, ExternalMapRecord.getKey(partnerId, externalId));
+        return (record == null) ? 0 : record.memberId;
+    }
+
+    /**
+     * Notes that the specified Whirled account is associated with the specified external account.
+     */
+    public void mapExternalAccount (int partnerId, String externalId, int memberId)
+        throws PersistenceException
+    {
+        ExternalMapRecord record = new ExternalMapRecord();
+        record.partnerId = partnerId;
+        record.externalId = externalId;
+        record.memberId = memberId;
+        insert(record);
+    }
+
     protected String randomInviteId ()
     {
         String rand = "";
@@ -816,6 +837,7 @@ public class MemberRepository extends DepotRepository
         classes.add(InvitationRecord.class);
         classes.add(InviterRecord.class);
         classes.add(OptOutRecord.class);
+        classes.add(ExternalMapRecord.class);
     }
 
     protected static final int INVITE_ID_LENGTH = 10;
