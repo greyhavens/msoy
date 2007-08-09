@@ -5,6 +5,7 @@ package com.threerings.msoy.server.util;
 
 import java.io.StringWriter;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.Invoker;
@@ -59,6 +60,22 @@ public class MailSender
     }
 
     /**
+     * Returns true if the supplied address is not actually a valid address but rather a
+     * placeholder to which we should not send email. Because we use email address for our
+     * authentication username, we sometimes have to generate placeholder addresses for accounts
+     * created on behest of a partner who does not provide the user's actual email address.
+     */
+    public static boolean isPlaceholderAddress (String address)
+    {
+        for (Pattern pattern : PLACEHOLDER_PATTERNS) {
+            if (pattern.matcher(address).matches()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Delivers an email using the supplied template and context. The first line of the template
      * should be the subject and the remaining lines the body.
      *
@@ -67,6 +84,11 @@ public class MailSender
     public static String sendEmail (String recip, String sender, String template,
                                     VelocityContext ctx)
     {
+        // skip emails to placeholder addresses
+        if (isPlaceholderAddress(recip)) {
+            return null; // feign success
+        }
+
         VelocityEngine ve;
         try {
             ve = VelocityUtil.createEngine();
@@ -88,4 +110,9 @@ public class MailSender
             return e.getMessage();
         }
     }
+
+    /** Used by {@link #isPlaceholderAddress}. */
+    protected static final Pattern[] PLACEHOLDER_PATTERNS = {
+        Pattern.compile("[0-9]+@facebook.com"),
+    };
 }
