@@ -77,7 +77,7 @@ public class UploadServlet extends AbstractUploadServlet
             UploadUtil.publishUploadFile(uploadFile);
 
             // the full media info is just the item and a blank thumbnail
-            fullInfo = new FullMediaInfo(info, mediaId);
+            fullInfo = new FullMediaInfo(info, new MediaInfo(), mediaId);
         }
 
         // display the full media info in GWT Javascript land
