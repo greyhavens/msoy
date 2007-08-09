@@ -14,11 +14,6 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface AdminServiceAsync
 {
-    /**
-     * The asynchronous version of {@link AdminService#registerAndInvite}.
-     */
-    public void registerAndInvite (WebIdent ident, String[] emails, AsyncCallback callback);
-
     /** 
      * The asynchronous version of {@link grantInvitations}.
      */
