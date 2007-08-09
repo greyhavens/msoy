@@ -16,13 +16,6 @@ import com.threerings.msoy.web.data.WebIdent;
  */
 public interface AdminService extends RemoteService
 {
-    /**
-     * Creates accounts for the supplied email addresses and sends invitation emails to same.
-     * Returns a string for each address denoting success or failure.
-     */
-    public String[] registerAndInvite (WebIdent ident, String[] emails)
-        throws ServiceException;
-
     /** 
      * Grants the given number of invitations to the indicated user set.
      *

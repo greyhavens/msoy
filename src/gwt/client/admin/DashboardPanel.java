@@ -63,13 +63,6 @@ public class DashboardPanel extends FlexTable
         controls.setSpacing(10);
         setWidget(row++, 0, controls);
         controls.add(new Label(CAdmin.msgs.inviteControls()));
-        if (CAdmin.creds.isSupport) {
-            controls.add(new Button(CAdmin.msgs.invitePlayers(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    new InvitePlayersPopup().show();
-                }
-            }));
-        }
         if (CAdmin.isAdmin()) {
             controls.add(new Button(CAdmin.msgs.issueInvites(), new ClickListener() {
                 public void onClick (Widget sender) {
