@@ -32,8 +32,72 @@ import com.threerings.s3.client.S3FileObject;
 import com.threerings.s3.client.S3ServerException;
 import com.threerings.s3.client.acl.AccessControlList;
 
+/**
+ * Contains routines for receiving and publishing uploaded media files.
+ */
 public class UploadUtil
 {
+    /**
+     * A class to hold an item and its generated thumbnail, if needed.
+     */
+    public static class FullMediaInfo
+    {
+        public final MediaInfo item;
+        public final MediaInfo thumb;
+        public final String mediaId;
+
+        public FullMediaInfo (MediaInfo item, MediaInfo thumb, String mediaId)
+        {
+            this.item = item;
+            this.thumb = thumb;
+            this.mediaId = mediaId;
+        }
+    }
+
+    /**
+     * A data class used when generating the item javascript.
+     */
+    public static class MediaInfo
+    {
+        public final String hash;
+        public final byte mimeType;
+        public final byte constraint;
+        public final int width;
+        public final int height;
+
+        // a "blank" thumbnail
+        public MediaInfo ()
+        {
+            this("", (byte)0);
+        }
+
+        // for non image data
+        public MediaInfo (String hash, byte mimeType)
+        {
+            this(hash, mimeType, (byte)0, 0, 0);
+        }
+
+        // for image data
+        public MediaInfo (String hash, byte mimeType, byte constraint, int width, int height)
+        {
+            this.hash = hash;
+            this.mimeType = mimeType;
+            this.constraint = constraint;
+            this.width = width;
+            this.height = height;
+        }
+
+        // for thumbnails
+        public MediaInfo (MediaInfo other, byte constraint)
+        {
+            this.hash = other.hash;
+            this.mimeType = other.mimeType;
+            this.constraint = constraint;
+            this.width = other.width;
+            this.height = other.height;
+        }
+    }
+
     /**
      * Publishes a file. Currently this is to the filesystem first, and then s3 if enabled.
      */
@@ -44,7 +108,7 @@ public class UploadUtil
         String name = hash + MediaDesc.mimeTypeToSuffix(mimeType);
         File target = new File(ServerConfig.mediaDir, name);
 
-        // copy the uploaded file data to the local file system media store. eventually we will 
+        // copy the uploaded file data to the local file system media store. eventually we will
         // only be keeping a local file on developer's machines
         IOUtils.copy(input, new FileOutputStream(target));
 
@@ -52,22 +116,21 @@ public class UploadUtil
         // TODO: check if this hash is already in the media store and skip the upload if found
         if (ServerConfig.mediaS3Enable) {
             try {
-                S3Connection conn = new S3Connection(ServerConfig.mediaS3Id,
-                    ServerConfig.mediaS3Key);
-
-                S3FileObject uploadTarget = new S3FileObject(name, target,
-                    MediaDesc.mimeTypeToString(mimeType));
-
+                S3Connection conn = new S3Connection(
+                    ServerConfig.mediaS3Id, ServerConfig.mediaS3Key);
+                S3FileObject uploadTarget = new S3FileObject(
+                    name, target, MediaDesc.mimeTypeToString(mimeType));
                 conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget,
-                    AccessControlList.StandardPolicy.PUBLIC_READ);
+                               AccessControlList.StandardPolicy.PUBLIC_READ);
+                log.info("Uploaded media to S3 [bucket=" + ServerConfig.mediaS3Bucket +
+                         ", name=" + name + "].");
 
-                log.info("Uploaded media to S3 [bucket=" + ServerConfig.mediaS3Bucket + ", name="
-                    + name + "].");
             } catch (S3ServerException e) {
                 // S3 Server-side Exception
-                log.warning("S3 upload failed [code=" + e.getClass().getName() + ", requestId="
-                    + e.getRequestId() + ", hostId=" + e.getHostId() + ", message="
-                    + e.getMessage() + "].");
+                log.warning("S3 upload failed [code=" + e.getClass().getName() +
+                            ", requestId=" + e.getRequestId() + ", hostId=" + e.getHostId() +
+                            ", message=" + e.getMessage() + "].");
+
             } catch (S3Exception e) {
                 // S3 Client-side Exception
                 log.warning("S3 upload failed: " + e);
@@ -83,7 +146,7 @@ public class UploadUtil
     {
         publishStream(uploadFile.getInputStream(), uploadFile.getHash(), uploadFile.getMimeType());
     }
-    
+
     /**
      * Computes and fills in the constraints on the supplied image, generates a thumbnail
      * representation, and publishes the image data to the media store.
@@ -100,27 +163,29 @@ public class UploadUtil
         }
 
         // create the media info object for this image
-        byte constraint = MediaDesc.computeConstraint(MediaDesc.PREVIEW_SIZE, image.getWidth(),
-            image.getHeight());
+        byte constraint = MediaDesc.computeConstraint(
+            MediaDesc.PREVIEW_SIZE, image.getWidth(), image.getHeight());
         MediaInfo info = new MediaInfo(uploadFile.getHash(), uploadFile.getMimeType(),
-            constraint, image.getWidth(), image.getHeight());
+                                       constraint, image.getWidth(), image.getHeight());
 
         // generate a thumbnail for this image
-        byte tconstraint = MediaDesc.computeConstraint(MediaDesc.THUMBNAIL_SIZE,
-            image.getWidth(), image.getHeight());
+        byte tconstraint = MediaDesc.computeConstraint(
+            MediaDesc.THUMBNAIL_SIZE, image.getWidth(), image.getHeight());
         MediaInfo tinfo = null;
 
-        if (tconstraint == MediaDesc.NOT_CONSTRAINED
-            || tconstraint == MediaDesc.HALF_HORIZONTALLY_CONSTRAINED
-            || tconstraint == MediaDesc.HALF_VERTICALLY_CONSTRAINED) {
-            // if it's really small, we can use the original as the thumbnail
-            tinfo = (MediaInfo)info.clone();
+        if (tconstraint == MediaDesc.NOT_CONSTRAINED ||
+            tconstraint == MediaDesc.HALF_HORIZONTALLY_CONSTRAINED ||
+            tconstraint == MediaDesc.HALF_VERTICALLY_CONSTRAINED) {
+            // if it's really small, we can use the original as the thumbnail, but preserve
+            // tconstraint because that might be different because we compute thumbnail image
+            // constraints using half-thumbnail sizes; whee!
+            tinfo = new MediaInfo(info, tconstraint);
 
         } else {
             // scale the image to thumbnail size
-            float scale = (tconstraint == MediaDesc.HORIZONTALLY_CONSTRAINED)
-                ? (float)MediaDesc.THUMBNAIL_WIDTH / image.getWidth()
-                : (float)MediaDesc.THUMBNAIL_HEIGHT / image.getHeight();
+            float scale = (tconstraint == MediaDesc.HORIZONTALLY_CONSTRAINED) ?
+                (float)MediaDesc.THUMBNAIL_WIDTH / image.getWidth() :
+                (float)MediaDesc.THUMBNAIL_HEIGHT / image.getHeight();
             int twidth = Math.round(scale * image.getWidth());
             int theight = Math.round(scale * image.getHeight());
             BufferedImage timage = new BufferedImage(twidth, theight, BufferedImage.TYPE_INT_ARGB);
@@ -148,8 +213,7 @@ public class UploadUtil
             tinfo = new MediaInfo(thash, THUMBNAIL_MIME_TYPE, tconstraint, twidth, theight);
 
             // publish the thumbnail
-            publishStream(
-                new ByteArrayInputStream(bout.toByteArray()), tinfo.hash, tinfo.mimeType);
+            publishStream(new ByteArrayInputStream(bout.toByteArray()), tinfo.hash, tinfo.mimeType);
             bout.close();
         }
 
@@ -157,83 +221,13 @@ public class UploadUtil
         // abandon their original uploaded file data
         if (!tinfo.hash.equals(info.hash) && mediaId.equals(Item.THUMB_MEDIA)) {
             // the generated thumbnail is the item, leave the thumbnail element blank
-            return new FullMediaInfo(tinfo, mediaId);
+            return new FullMediaInfo(tinfo, new MediaInfo(), mediaId);
 
         } else {
             // publish the image
             publishUploadFile(uploadFile);
-
             return new FullMediaInfo(info, tinfo, mediaId);
         }
-    }
-
-    /**
-     * A class to hold an item and its generated thumbnail, if needed.
-     */
-    public static class FullMediaInfo
-    {
-        public final MediaInfo item;
-        public final MediaInfo thumb;
-        public final String mediaId;
-
-        public FullMediaInfo (MediaInfo item, String mediaId)
-        {
-            // create a blank thumbnail
-            this(item, new MediaInfo(), mediaId);
-        }
-
-        public FullMediaInfo (MediaInfo item, MediaInfo thumb, String mediaId)
-        {
-            this.item = item;
-            this.thumb = thumb;
-            this.mediaId = mediaId;
-        }
-    }
-
-    /**
-     * A data class used when generating the item javascript.
-     */
-    public static class MediaInfo
-        implements Cloneable
-    {
-        public final String hash;
-        public final byte mimeType;
-        public final byte constraint;
-        public final int width;
-        public final int height;
-        
-        // a "blank" thumbnail
-        public MediaInfo ()
-        {
-            this("", (byte)0);
-        }
-
-        // for non image data
-        public MediaInfo (String hash, byte mimeType)
-        {
-            this(hash, mimeType, (byte)0, 0, 0);
-        }
-
-        // for image data
-        public MediaInfo (String hash, byte mimeType, byte constraint, int width, int height)
-        {
-            this.hash = hash;
-            this.mimeType = mimeType;
-            this.constraint = constraint;
-            this.width = width;
-            this.height = height;
-        }
-
-        @Override // from Object
-        public Object clone ()
-        {
-            try {
-                return super.clone();
-            } catch (CloneNotSupportedException cnse) {
-                throw new RuntimeException(cnse);
-            }
-        }
-
     }
 
     protected static final byte THUMBNAIL_MIME_TYPE = MediaDesc.IMAGE_PNG;
