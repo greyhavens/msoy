@@ -37,6 +37,10 @@ public class ExternalMapRecord extends PersistentRecord
         new ColumnExp(ExternalMapRecord.class, MEMBER_ID);
     // AUTO-GENERATED: FIELDS END
 
+    /** Increment this value if you modify the definition of this persistent object in a way that
+     * will result in a change to its SQL counterpart. */
+    public static final int SCHEMA_VERSION = 1;
+
     /** The {@link #partnerId} constant for Facebook accounts. */
     public static final int FACEBOOK = 1;
 
