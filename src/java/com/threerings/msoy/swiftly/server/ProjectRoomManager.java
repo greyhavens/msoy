@@ -8,14 +8,15 @@ import static com.threerings.msoy.Log.log;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.apache.commons.io.FileUtils;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
-import com.samskivert.util.IntIntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SerialExecutor;
@@ -78,7 +79,7 @@ public class ProjectRoomManager extends PlaceManager
                       final List<MemberName> collaborators, ProjectStorage storage)
     {
         _storage = storage;
-        _resultItems = new IntIntMap();
+        _resultItems = new HashMap<MemberName, Integer>();
 
         // References to our on-disk SDKs
         File flexSdk = new File(ServerConfig.serverRoot + FLEX_SDK);
@@ -325,8 +326,15 @@ public class ProjectRoomManager extends PlaceManager
         // inform all the clients that a build is starting
         _roomObj.setBuilding(true);
 
-        ExportData exportData = new ExportData(
-            _roomObj.project, memobj.memberName, _resultItems.get(memobj.getMemberId()));
+        ExportData exportData = null;
+        // look up the build result id if we have already resolved it
+        Integer resultId = _resultItems.get(memobj.memberName);
+        if (resultId == null) {
+            exportData = new ExportData(_roomObj.project, memobj.memberName);
+        } else {
+            exportData = new ExportData(_roomObj.project, memobj.memberName, resultId.intValue());
+        }
+
         BuildProjectTask buildTask = new BuildProjectTask(_roomObj.project, exportData, listener);
         MsoyServer.swiftlyMan.svnExecutor.addTask(new CommitProjectTask(buildTask, listener));
     }
@@ -742,7 +750,7 @@ public class ProjectRoomManager extends PlaceManager
                     MsoyServer.itemMan.itemUpdated(_record);
                 }
                 // update the build result id cache
-                _resultItems.put(_exportData.memberId, _exportData.buildResultItemId);
+                _resultItems.put(_exportData.member, _exportData.buildResultItemId);
             }
 
             // inform the listener that the build service call worked. the caller will need to
@@ -1002,11 +1010,17 @@ public class ProjectRoomManager extends PlaceManager
 
         public final int projectId;
         public final int memberId;
+        public final MemberName member;
         public final String projectName;
         public final int projectType;
         public int buildResultItemId;
 
-        // store information needed for building and exporting the result
+        // the build result item id has not yet been resolved into the room cache
+        public ExportData (SwiftlyProject project, MemberName member)
+        {
+            this(project, member, RECORD_NOT_LOADED);
+        }
+        // the build result item id has been resolved into the room cache
         public ExportData (SwiftlyProject project, MemberName member, int buildResultItemId)
         {
             // since GWT does not support clone, we'll pull off the primitives we want from
@@ -1016,6 +1030,7 @@ public class ProjectRoomManager extends PlaceManager
             this.projectType = project.projectType;
 
             this.memberId = member.getMemberId();
+            this.member = member;
             this.buildResultItemId = buildResultItemId;
         }
 
@@ -1028,7 +1043,7 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         /**
-         * Returns true if the buildResultItemId has been resolved from the database.
+         * Returns true if the buildResultItemId has not yet been resolved from the database.
          */
         public boolean noBuildResult ()
         {
@@ -1049,7 +1064,7 @@ public class ProjectRoomManager extends PlaceManager
     protected static final String LOCAL_BUILD_DIRECTORY = "/data/swiftly/build";
 
     /** Cache the memberId to build result itemId mapping used for exporting results */
-    protected IntIntMap _resultItems;
+    protected Map<MemberName, Integer> _resultItems;
 
     protected ProjectRoomObject _roomObj;
     protected ProjectStorage _storage;
