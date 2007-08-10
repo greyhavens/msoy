@@ -4,10 +4,7 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
-import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.Toy;
 import com.threerings.msoy.item.data.all.Item;
@@ -16,8 +13,6 @@ import com.threerings.msoy.item.data.all.Item;
  * Represents a piece of furniture (any prop really) that a user can place into
  * a virtual world scene and potentially interact with.
  */
-@Entity
-@Table
 @TableGenerator(name="itemId", pkColumnValue="FURNITURE")
 public class ToyRecord extends ItemRecord
 {

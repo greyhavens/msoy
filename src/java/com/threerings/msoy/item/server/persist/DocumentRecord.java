@@ -4,8 +4,6 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
@@ -16,8 +14,6 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 /**
  * A digital item representing a simple text document.
  */
-@Entity
-@Table
 @TableGenerator(name="itemId", pkColumnValue="DOCUMENT")
 public class DocumentRecord extends ItemRecord
 {

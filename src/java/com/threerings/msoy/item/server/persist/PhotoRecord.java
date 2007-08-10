@@ -4,8 +4,6 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
@@ -17,8 +15,6 @@ import com.threerings.msoy.item.data.all.Photo;
  * Represents an uploaded photograph for display in albums or for use as a
  * profile picture.
  */
-@Entity
-@Table
 @TableGenerator(name="itemId", pkColumnValue="PHOTO")
 public class PhotoRecord extends ItemRecord
 {

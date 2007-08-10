@@ -5,8 +5,6 @@ package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.annotation.Column;
-import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
@@ -17,8 +15,6 @@ import com.threerings.msoy.item.data.all.MediaDesc;
 /**
  * Extends Item with game info.
  */
-@Entity
-@Table
 @TableGenerator(name="itemId", pkColumnValue="GAME")
 public class GameRecord extends ItemRecord
 {

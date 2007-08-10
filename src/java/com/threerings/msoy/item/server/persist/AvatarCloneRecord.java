@@ -5,14 +5,10 @@ package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.annotation.Column;
-import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 /** Clone records for Avatars. */
-@Entity
-@Table
 @TableGenerator(name="cloneId", pkColumnValue="AVATAR_CLONE")
 public class AvatarCloneRecord extends CloneRecord<AvatarRecord>
 {

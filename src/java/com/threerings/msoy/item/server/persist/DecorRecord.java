@@ -4,8 +4,6 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
@@ -16,8 +14,6 @@ import com.threerings.msoy.item.data.all.Item;
  * Represents a piece of decor (any prop really) that a user can place into
  * a virtual world scene and potentially interact with.
  */
-@Entity
-@Table
 @TableGenerator(name="itemId", pkColumnValue="DECOR")
 public class DecorRecord extends ItemRecord
 {
@@ -81,16 +77,16 @@ public class DecorRecord extends ItemRecord
 
     /** Room type. Controls how the background wallpaper image is handled. */
     public byte type;
-    
+
     /** Room height, in pixels. */
     public short height;
-    
+
     /** Room width, in pixels. */
     public short width;
-    
+
     /** Room depth, in pixels. */
     public short depth;
-    
+
     /** Horizon position, in [0, 1]. */
     public float horizon;
 

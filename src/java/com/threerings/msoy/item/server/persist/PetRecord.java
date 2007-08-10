@@ -4,8 +4,6 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 
 import com.threerings.msoy.item.data.all.Pet;
@@ -14,8 +12,6 @@ import com.threerings.msoy.item.data.all.Item;
 /**
  * Represents a pet that a user can place into a virtual world scene and potentially interact with.
  */
-@Entity
-@Table
 @TableGenerator(name="itemId", pkColumnValue="PET")
 public class PetRecord extends ItemRecord
 {
