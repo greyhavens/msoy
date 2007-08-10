@@ -516,7 +516,7 @@ public class GroupView extends VerticalPanel
     {
         if (member1.rank == GroupMembership.RANK_MANAGER && 
             (member2.rank == GroupMembership.RANK_MEMBER || 
-            member1.rankAssignedDate < member2.rankAssignedDate)) {
+             member1.rankAssignedDate.longValue() < member2.rankAssignedDate.longValue())) {
             return true;
         } else {
             return false;

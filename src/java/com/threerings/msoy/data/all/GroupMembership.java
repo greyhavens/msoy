@@ -38,7 +38,7 @@ public class GroupMembership
     public byte rank;
 
     /** The date this member's rank was assigned, as represented by java.util.Date.getTime() */
-    public long rankAssignedDate;
+    public Long rankAssignedDate;
 
     /**
      * Returns true if the supplied rank is a valid rank (not {@link #RANK_NON_MEMBER} or an
@@ -54,7 +54,7 @@ public class GroupMembership
      */
     public Date getRankAssignedDate ()
     {
-        return new Date(rankAssignedDate);
+        return new Date(rankAssignedDate.longValue());
     }
 
     // from DSet.Entry

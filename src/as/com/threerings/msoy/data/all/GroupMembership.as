@@ -73,7 +73,7 @@ public class GroupMembership
         member = (ins.readObject() as MemberName);
         group = (ins.readObject() as GroupName);
         rank = ins.readByte();
-        rankAssignedDate = new Long(ins.readInt(), ins.readInt());
+        rankAssignedDate = (ins.readField(Long) as Long);
     }
 
     // from Streamable
@@ -82,8 +82,7 @@ public class GroupMembership
         out.writeObject(member);
         out.writeObject(group);
         out.writeByte(rank);
-        out.writeInt(rankAssignedDate == null ? 0 : rankAssignedDate.low);
-        out.writeInt(rankAssignedDate == null ? 0 : rankAssignedDate.high);
+        out.writeField(rankAssignedDate);
     }
 }
 }
