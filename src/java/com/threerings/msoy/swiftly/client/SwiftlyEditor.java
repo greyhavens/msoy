@@ -3,12 +3,11 @@
 
 package com.threerings.msoy.swiftly.client;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -23,8 +22,20 @@ import com.samskivert.swing.GroupLayout;
 import com.samskivert.swing.HGroupLayout;
 import com.samskivert.swing.VGroupLayout;
 import com.samskivert.util.StringUtil;
-import com.threerings.util.MessageBundle;
-
+import com.threerings.crowd.client.OccupantAdapter;
+import com.threerings.crowd.client.PlacePanel;
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
+import com.threerings.micasa.client.ChatPanel;
+import com.threerings.micasa.client.OccupantList;
+import com.threerings.msoy.item.data.all.MediaDesc;
+import com.threerings.msoy.swiftly.data.PathElement;
+import com.threerings.msoy.swiftly.data.ProjectRoomObject;
+import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.data.SwiftlyDocument;
+import com.threerings.msoy.swiftly.data.SwiftlyImageDocument;
+import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
+import com.threerings.msoy.swiftly.util.SwiftlyContext;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -34,23 +45,7 @@ import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetListener;
-
-import com.threerings.crowd.client.OccupantAdapter;
-import com.threerings.crowd.client.PlacePanel;
-import com.threerings.crowd.data.OccupantInfo;
-import com.threerings.crowd.data.PlaceObject;
-
-import com.threerings.micasa.client.ChatPanel;
-import com.threerings.micasa.client.OccupantList;
-import com.threerings.msoy.item.data.all.MediaDesc;
-
-import com.threerings.msoy.swiftly.data.PathElement;
-import com.threerings.msoy.swiftly.data.ProjectRoomObject;
-import com.threerings.msoy.swiftly.data.SwiftlyCodes;
-import com.threerings.msoy.swiftly.data.SwiftlyDocument;
-import com.threerings.msoy.swiftly.data.SwiftlyImageDocument;
-import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
-import com.threerings.msoy.swiftly.util.SwiftlyContext;
+import com.threerings.util.MessageBundle;
 
 public class SwiftlyEditor extends PlacePanel
     implements SwiftlyDocumentEditor, AttributeChangeListener, SetListener
@@ -331,7 +326,7 @@ public class SwiftlyEditor extends PlacePanel
         // otherwise we'll wait for the message that the project has been resolved later
         if (_roomObj.project != null) {
             _projectPanel.setProject(_roomObj);
-            updateReadOnlyStatus();
+            updateEditorAccess();
         }
 
         // set the room object in the console now that it is available
@@ -365,7 +360,7 @@ public class SwiftlyEditor extends PlacePanel
         // the project has been loaded or changed. tell the project panel to make the project tree
         } else if (event.getName().equals(ProjectRoomObject.PROJECT)) {
             _projectPanel.setProject(_roomObj);
-            updateReadOnlyStatus();
+            updateEditorAccess();
         }
     }
 
@@ -376,6 +371,8 @@ public class SwiftlyEditor extends PlacePanel
             final SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
             // Re-bind transient instance variables
             element.lazarus(_roomObj.pathElements);
+        } else if (event.getName().equals(ProjectRoomObject.COLLABORATORS)) {
+            updateEditorAccess();
         }
     }
 
@@ -387,6 +384,8 @@ public class SwiftlyEditor extends PlacePanel
             final SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
             // Re-bind transient instance variables
             element.lazarus(_roomObj.pathElements);
+        } else if (event.getName().equals(ProjectRoomObject.COLLABORATORS)) {
+            updateEditorAccess();
         }
     }
 
@@ -397,6 +396,8 @@ public class SwiftlyEditor extends PlacePanel
         // ever happen.
         if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
             // final int elementId = (Integer)event.getKey();
+        } else if (event.getName().equals(ProjectRoomObject.COLLABORATORS)) {
+            updateEditorAccess();
         }
     }
 
@@ -426,12 +427,21 @@ public class SwiftlyEditor extends PlacePanel
     }
 
     /**
-     * Called whenever any data changes that would affect whether the editor should be in read only
-     * mode or not
+     * Called whenever any data changes that would affect the clients rights in the project
+     * being edited.
      */
-    protected void updateReadOnlyStatus ()
+    protected void updateEditorAccess ()
     {
-        // TODO:
+        if (_roomObj.hasWriteAccess(_ctx.getMemberObject().memberName)) {
+            // TODO: enable all the write functionality.
+
+        } else if (_roomObj.hasReadAccess(_ctx.getMemberObject().memberName)) {
+            // TODO: disable all the write functionality.
+
+        } else {
+            // the user no longer has access to anything, log them off.
+            _ctx.getClient().logoff(false);
+        }
     }
 
     /** Displays the build result on the console */

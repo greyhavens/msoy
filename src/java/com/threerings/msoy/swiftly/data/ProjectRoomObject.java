@@ -159,6 +159,31 @@ public class ProjectRoomObject extends PlaceObject
         return null;
     }
 
+    /**
+     * Returns true if the supplied MemberName has write access on the project.
+     */
+    public boolean hasWriteAccess (MemberName member)
+    {
+        if (collaborators.contains(member)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if the supplied MemberName has read access on the project.
+     */
+    public boolean hasReadAccess (MemberName member)
+    {
+        if (project.remixable) {
+            return true;
+        }
+        if (hasWriteAccess(member)) {
+            return true;
+        }
+        return false;
+    }
+
     // AUTO-GENERATED: METHODS START
     /**
      * Requests that the <code>project</code> field be set to the

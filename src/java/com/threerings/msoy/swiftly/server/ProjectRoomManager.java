@@ -434,7 +434,7 @@ public class ProjectRoomManager extends PlaceManager
         throws InvocationException
     {
         MemberObject memobj = (MemberObject)caller;
-        if (!_roomObj.collaborators.contains(memobj.memberName)) {
+        if (!_roomObj.hasWriteAccess(memobj.memberName)) {
             throw new InvocationException(SwiftlyCodes.E_ACCESS_DENIED);
         }
     }
@@ -445,12 +445,10 @@ public class ProjectRoomManager extends PlaceManager
     public void requireReadPermissions (ClientObject caller)
         throws InvocationException
     {
-        // if the project is remixable, anyone can read. otherwise, check to see if the caller
-        // has write permissions on the project.
-        if (_roomObj.project.remixable) {
-            return;
+        MemberObject memobj = (MemberObject)caller;
+        if (!_roomObj.hasReadAccess(memobj.memberName)) {
+            throw new InvocationException(SwiftlyCodes.E_ACCESS_DENIED);
         }
-        requireWritePermissions(caller);
     }
 
     // from interface SetListener

@@ -13,7 +13,6 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.SerialExecutor;
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -137,16 +136,11 @@ public class SwiftlyManager
                     return;
                 }
 
-                // verify the user has rights to at the very least read this project either because
-                // the project is remixable or they are a collaborator on the project
-                MemberObject memobj = (MemberObject)caller;
-                if (!(_collaborators.contains(memobj.memberName) || _project.remixable)) {
-                    listener.requestFailed(SwiftlyCodes.E_ACCESS_DENIED);
-                    // remove the manager from the list since it is not fully resolved and we know
-                    // this was the first user trying to resolve it.
-                    mgr.shutdown();
-                    return;
-                }
+                // if it was cheap and easy, we would check the users rights at this point to make
+                // sure they should be able to resolve the room manager. but the cleanest way to
+                // do that would be after the mgr.init() which is not a free operation. we could
+                // redefine what read access means at this point, but that's just nasty. so we'll
+                // rely on all the service checks we have in the manager to protect us.
 
                 // all the necessary bits of data have been loaded, initialize the room manager
                 mgr.init(_project, _collaborators, _storage);

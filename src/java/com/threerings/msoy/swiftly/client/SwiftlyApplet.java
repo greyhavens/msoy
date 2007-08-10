@@ -3,13 +3,15 @@
 
 package com.threerings.msoy.swiftly.client;
 
+import static com.threerings.msoy.Log.log;
+
 import java.applet.AppletContext;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
+
 import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -18,37 +20,31 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicBorders;
 
+import org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel;
+
+import com.samskivert.servlet.user.Password;
+import com.samskivert.swing.util.SwingUtil;
 import com.samskivert.util.Config;
 import com.samskivert.util.Interval;
 import com.samskivert.util.OneLineLogFormatter;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
-import com.samskivert.swing.util.SwingUtil;
-import com.samskivert.servlet.user.Password;
-
-import com.threerings.util.IdentUtil;
-import com.threerings.util.MessageBundle;
-import com.threerings.util.MessageManager;
-import com.threerings.util.Name;
-
-import com.threerings.presents.client.Client;
-import com.threerings.presents.client.ClientObserver;
-import com.threerings.presents.dobj.DObjectManager;
-
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.client.OccupantDirector;
 import com.threerings.crowd.client.PlaceView;
-
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.web.client.DeploymentConfig;
-
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
-
-import org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel;
-
-import static com.threerings.msoy.Log.log;
+import com.threerings.msoy.web.client.DeploymentConfig;
+import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ClientObserver;
+import com.threerings.presents.dobj.DObjectManager;
+import com.threerings.util.IdentUtil;
+import com.threerings.util.MessageBundle;
+import com.threerings.util.MessageManager;
+import com.threerings.util.Name;
 
 public class SwiftlyApplet extends JApplet
     implements RunQueue, ClientObserver
@@ -257,6 +253,9 @@ public class SwiftlyApplet extends JApplet
 
         public Client getClient () {
             return _client;
+        }
+        public MemberObject getMemberObject () {
+            return (MemberObject)getClient().getClientObject();
         }
         public DObjectManager getDObjectManager () {
             return _client.getDObjectManager();
