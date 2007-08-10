@@ -95,6 +95,7 @@ public class WorldServerClient
         public void clientDidLogoff (Client client) {
             log.info("Logged off of world server.");
             _gssvc = null;
+            _server.shutdown(); // TODO: see SHUTDOWN_MESSAGE handler
         }
     };
 
