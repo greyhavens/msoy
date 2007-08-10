@@ -302,28 +302,38 @@ public class ItemServlet extends MsoyServiceServlet
             }
 
         } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to wrap item [item=" + iident + ", wrap=" + wrap + "]");
+            log.log(Level.WARNING, "Failed to wrap item [item=" + iident +
+                    ", wrap=" + wrap + "]", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
     }
 
     // from interface ItemService
-    public void setFlags (final WebIdent ident, final ItemIdent item, final byte mask,
-                          final byte value)
+    public void setFlags (WebIdent ident, ItemIdent iid, byte mask, byte value)
         throws ServiceException
     {
         MemberRecord mRec = requireAuthedUser(ident);
         if (!mRec.isSupport() && (mask & Item.FLAG_MATURE) != 0) {
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
-        final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
-                "setFlags[" + item + ", " + mask + ", " + value + "]");
-            MsoyServer.omgr.postRunnable(new Runnable() {
-                public void run () {
-                    MsoyServer.itemMan.setFlags(item, mask, value, waiter);
-                }
-            });
-            waiter.waitForResult();
+
+        try {
+            ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iid.type);
+            // TODO: If things get really tight, this could use updatePartial() later.
+            ItemRecord item = repo.loadItem(iid.itemId);
+            if (item == null) {
+                log.warning("Missing item for setFlags() [item=" + iid + ", mask=" + mask +
+                            ", value=" + value + "].");
+                throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            }
+            item.flags = (byte) ((item.flags & ~mask) | value);
+            repo.updateOriginalItem(item);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to set flags [item=" + iid + ", mask=" + mask +
+                    ", value=" + value + "]", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
     }
 
     // from interface ItemService
