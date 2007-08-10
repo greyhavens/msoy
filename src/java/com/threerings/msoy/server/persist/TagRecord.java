@@ -3,18 +3,20 @@
 
 package com.threerings.msoy.server.persist;
 
-import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Index;
 
 import com.threerings.io.Streamable;
 
 /**
  * Represents which tags have been added to which targets.
  */
-@Entity
+@Entity(indices={
+  @Index(name="ixTarget", columns={ TagRecord.TARGET_ID })
+})
 public abstract class TagRecord extends PersistentRecord
     implements Streamable
 {
@@ -34,7 +36,7 @@ public abstract class TagRecord extends PersistentRecord
         new ColumnExp(TagRecord.class, TARGET_ID);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The ID of the tag. */
     @Id

@@ -11,6 +11,7 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.annotation.Table;
 
 import com.samskivert.jdbc.depot.expression.ColumnExp;
@@ -21,7 +22,9 @@ import com.threerings.msoy.data.all.TagCodes;
 /**
  * Maps a tag's id to the tag itself.
  */
-@Entity
+@Entity(indices={
+    @Index(name="ixTag", columns={ TagNameRecord.TAG })
+})
 @Table
 public class TagNameRecord extends PersistentRecord
     implements Streamable
@@ -42,7 +45,7 @@ public class TagNameRecord extends PersistentRecord
         new ColumnExp(TagNameRecord.class, TAG);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** A regexp pattern to validate tags */
     public static final Pattern VALID_TAG = Pattern.compile(
