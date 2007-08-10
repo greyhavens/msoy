@@ -4,6 +4,7 @@
 package com.threerings.msoy.chat.client {
 
 import com.threerings.presents.client.ClientEvent;
+import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.MessageBundle;
@@ -22,7 +23,9 @@ import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.chat.data.ChatChannelCodes;
 import com.threerings.msoy.chat.data.ChatChannelMarshaller;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.chat.data.ChatterInfo;
@@ -212,6 +215,20 @@ public class MsoyChatDirector extends ChatDirector
     {
         super.clearDisplays();
         _roomHistory.clear();
+    }
+
+    // from ChatDirector
+    override public function messageReceived (event :MessageEvent) :void
+    {
+        // check if this is our custom chat message, unknown to the parent class
+        if (ChatChannelCodes.CHAT_MESSAGE === event.getName()) {
+            var msg :ChannelMessage = (event.getArgs()[0] as ChannelMessage);
+            var localtype :String = getLocalType(event.getTargetOid());
+            processReceivedMessage(msg, localtype);
+        } else {
+            // some other message - let the parent deal with it
+            super.messageReceived(event);
+        }
     }
 
     // from ChatDirector

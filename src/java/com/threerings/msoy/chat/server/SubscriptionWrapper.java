@@ -8,6 +8,9 @@ import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.SpeakMarshaller;
 import com.threerings.crowd.chat.server.SpeakDispatcher;
 import com.threerings.crowd.chat.server.SpeakHandler;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DObject;
+
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.chat.data.ChatterInfo;
@@ -16,8 +19,6 @@ import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.DObject;
 
 import static com.threerings.msoy.Log.log;
 
@@ -59,10 +60,12 @@ public class SubscriptionWrapper extends ChannelWrapper
                 // *different* value of speakService from that on other peers, including the host.
                 // we need this so that our clients will always talk to the local service,
                 // instead of the service initialized by the host. (todo: move this out of dobj?)
-                SpeakDispatcher sd = new SpeakDispatcher(makePeerSpeakHandler());
+                SubscriptionWrapper superthis = SubscriptionWrapper.this;
+                SpeakDispatcher sd = new SpeakDispatcher(new SubscriptionSpeakHandler(superthis));
                 _ccobj.speakService = (SpeakMarshaller)MsoyServer.invmgr.registerDispatcher(sd);
+                _ccobj.addListener(superthis);
                 // we're so done.
-                cccont.creationSucceeded(SubscriptionWrapper.this);
+                cccont.creationSucceeded(superthis);
             }
             public void requestFailed (Exception cause) {
                 log.warning("Channel subscription failed [cause=" + cause.getMessage() + "].");
@@ -77,6 +80,10 @@ public class SubscriptionWrapper extends ChannelWrapper
     // from abstract class ChannelWrapper 
     public void shutdown ()
     {
+        // clean up the object
+        _ccobj.removeListener(this);
+        MsoyServer.invmgr.clearDispatcher(_ccobj.speakService);
+
         // unsubscribe from the proxy
         MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
         if (host == null) {
@@ -86,7 +93,6 @@ public class SubscriptionWrapper extends ChannelWrapper
         
         HostedChannel hostedInfo = host.hostedChannels.get(HostedChannel.getKey(_channel));
 
-        MsoyServer.invmgr.clearDispatcher(_ccobj.speakService);
         MsoyServer.peerMan.unproxyRemoteObject(host.nodeName, hostedInfo.oid);
     }
     
@@ -108,43 +114,6 @@ public class SubscriptionWrapper extends ChannelWrapper
             new ChatterListener(userInfo, -1));
     }
 
-    /**
-     * Helper function to create a speak handler which forwards speak requests to the hosting
-     * peer, instead of pushing them through the distributed object's local speak service.
-     * This handler should not be registered as the speak service on the distributed object.
-     */
-    protected SpeakHandler makePeerSpeakHandler ()
-    {
-        SpeakHandler.SpeakerValidator validator = new SpeakHandler.SpeakerValidator() {
-            public boolean isValidSpeaker (DObject speakObj, ClientObject speaker, byte mode) {
-                if (! (speaker instanceof MemberObject)) {
-                    return false;
-                }
-                MemberObject member = (MemberObject)speaker;
-                String errmsg = member.checkAccess(ChatCodes.CHAT_ACCESS, null);
-                return speakObj == _ccobj && hasMember(member) && errmsg == null;
-            }
-        };
-        return new SpeakHandler(_ccobj, validator){
-            public void speak (ClientObject caller, String message, byte mode) {
-                // ensure that the speaker is valid
-                if (mode == ChatCodes.BROADCAST_MODE ||
-                    !_validator.isValidSpeaker(_speakObj, caller, mode)) {
-                    log.warning("Refusing invalid speak request [caller=" + caller.who() +
-                                ", speakObj=" + _speakObj.which() +
-                                ", message=" + message + ", mode=" + mode + "].");
-                } else {
-                    // ask the hosting server to speak
-                    MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
-                    ChatterInfo chatter = new ChatterInfo((MemberObject)caller);
-                    host.peerChatService.forwardSpeak(
-                        MsoyServer.peerMan.getPeerClient(host.nodeName),
-                        chatter, _channel, message, mode, new ReportListener(chatter));
-                }
-            }
-        };
-    }
-    
     /**
      * Called when chatter list is changed, it updates the count of local chat clients
      * participating in the channel through this peer.
@@ -169,24 +138,6 @@ public class SubscriptionWrapper extends ChannelWrapper
         }
         protected ChatterInfo _userInfo;
         protected int _delta;
-    };
-
-    /**
-     * No-op, error-reporting listener
-     */
-    protected class ReportListener implements PeerChatService.ConfirmListener
-    {
-        public ReportListener (ChatterInfo userInfo) {
-            _userInfo = userInfo;
-        }
-        public void requestProcessed () {
-            // nothing to do
-        }
-        public void requestFailed (String cause) {
-            log.info("Subscription channel: channel action failed [channel=" + _channel
-                     + ", user=" + _userInfo.name + ", cause = " + cause + "].");
-        }
-        protected ChatterInfo _userInfo;
     };
 
     protected int _localChatterCount;

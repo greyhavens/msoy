@@ -6,6 +6,9 @@ package com.threerings.msoy.chat.server;
 import com.threerings.crowd.chat.data.SpeakMarshaller;
 import com.threerings.crowd.chat.server.SpeakDispatcher;
 import com.threerings.crowd.chat.server.SpeakHandler;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DObject;
+
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.chat.data.ChatterInfo;
@@ -13,8 +16,6 @@ import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.DObject;
 
 import static com.threerings.msoy.Log.log;
 
@@ -42,26 +43,24 @@ public class HostedWrapper extends ChannelWrapper
         ((MsoyNodeObject) MsoyServer.peerMan.getNodeObject()).addToHostedChannels(hosted);
 
         // initialize speak service
-        SpeakHandler.SpeakerValidator validator = new SpeakHandler.SpeakerValidator() {
-            public boolean isValidSpeaker (DObject speakObj, ClientObject speaker, byte mode) {
-                return speakObj == _ccobj && hasMember(speaker);
-            }
-        };
-        SpeakDispatcher sd = new SpeakDispatcher(new SpeakHandler(_ccobj, validator));
+        SpeakDispatcher sd = new SpeakDispatcher(new HostedSpeakHandler(this, _mgr));
         _ccobj.setSpeakService((SpeakMarshaller)MsoyServer.invmgr.registerDispatcher(sd));
-
+        _ccobj.addListener(this);
+        
         cccont.creationSucceeded(this);
     }
 
     // from abstract class ChannelWrapper 
     public void shutdown ()
     {
+        _ccobj.removeListener(this);
+        MsoyServer.invmgr.clearDispatcher(_ccobj.speakService);
+
         log.info("Shutting down hosted chat channel: " + _channel + ".");
         MsoyNodeObject host = (MsoyNodeObject) MsoyServer.peerMan.getNodeObject();
         host.removeFromHostedChannels(HostedChannel.getKey(_channel));
 
         // clean up the hosted dobject
-        MsoyServer.invmgr.clearDispatcher(_ccobj.speakService);
         MsoyServer.omgr.destroyObject(_ccobj.getOid());
     }
 

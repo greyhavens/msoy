@@ -16,6 +16,8 @@ import com.threerings.util.Util;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.crowd.chat.data.ChatCodes;
@@ -37,7 +39,7 @@ import com.threerings.msoy.chat.data.ChatterInfo;
  * Displays an actual chat channel.
  */
 public class ChannelChatTab extends ChatTab
-    implements SetListener
+    implements SetListener, MessageListener
 {
     public var channel :ChatChannel;
 
@@ -131,6 +133,12 @@ public class ChannelChatTab extends ChatTab
             var ci :ChatterInfo = (event.getOldEntry() as ChatterInfo);
             _departing.add(ci.name);
         }
+    }
+
+    // from interface MessageListener
+    public function messageReceived (event :MessageEvent) :void
+    {
+        // todo: react to the ChannelChat messages
     }
 
     // @Override // from ChatTab

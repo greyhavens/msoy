@@ -3,13 +3,18 @@
 
 package com.threerings.msoy.chat.server;
 
+import com.samskivert.util.ArrayUtil;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.MessageListener;
+
+import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.chat.data.ChatChannelCodes;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.chat.data.ChatterInfo;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
-
-import com.threerings.presents.data.ClientObject;
 
 import static com.threerings.msoy.Log.log;
 
@@ -18,6 +23,7 @@ import static com.threerings.msoy.Log.log;
  * and various functions for adding and removing channel occupants.
  */
 public abstract class ChannelWrapper
+    implements MessageListener
 {
     public ChannelWrapper (ChatChannelManager mgr, ChatChannel channel)
     {
@@ -68,6 +74,42 @@ public abstract class ChannelWrapper
         return ready() && (who == null || _ccobj.chatters.containsKey(who.memberName));
     }
 
+    // from interface MessageListener
+    public void messageReceived (MessageEvent event)
+    {
+        // please note: this abstract class does not automatically register itself as a listener on
+        // the distributed object. subclasses should register themselves if desired.
+        if (event.getName().equals(ChatChannelCodes.CHAT_MESSAGE)) {
+            Object[] args = event.getArgs();
+            if (! (args.length == 1 && args[0] instanceof ChannelMessage)) {
+                log.warning("Invalid chat message event [event=" + event + "].");
+                return;
+            }
+            recordChatMessage((ChannelMessage)args[0]);
+        }
+    }
+
+    /** Updates the peer-local chat storage with the new message. */
+    protected void recordChatMessage (ChannelMessage msg)
+    {
+        // count up old messages to be removed. 
+        long now = System.currentTimeMillis();
+        int removeCount = 0;
+        for (ChannelMessage old : _ccobj.recentMessages) {
+            if ((now - old.creationTime) < MAX_RECENT_MESSAGE_AGE) {
+                break;
+            }
+            removeCount++;
+        }
+
+        // remove old messages, add the new one
+        _ccobj.recentMessages = ArrayUtil.append(
+            ArrayUtil.splice(_ccobj.recentMessages, 0, removeCount), msg);
+    }
+
+    /** How long a chat message should stay in channel history (in milliseconds). */
+    protected static final int MAX_RECENT_MESSAGE_AGE = 5 * 1000;
+    
     protected ChatChannel _channel;
     protected ChatChannelManager _mgr;
     protected ChatChannelObject _ccobj;
