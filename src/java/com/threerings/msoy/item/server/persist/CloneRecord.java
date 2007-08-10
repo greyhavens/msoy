@@ -5,12 +5,15 @@ package com.threerings.msoy.item.server.persist;
 
 import java.sql.Timestamp;
 
-import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
-@Entity
+@Entity(indices={
+    @Index(name="ixOwner", columns={ CloneRecord.OWNER_ID }),
+    @Index(name="ixOriginalItem", columns={ CloneRecord.ORIGINAL_ITEM_ID }),
+    @Index(name="ixLocation", columns={ CloneRecord.LOCATION })
+})
 @Table
 public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
 {
@@ -79,7 +82,7 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
         new ColumnExp(CloneRecord.class, LAST_TOUCHED);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int BASE_SCHEMA_VERSION = 4;
+    public static final int BASE_SCHEMA_VERSION = 5;
     public static final int BASE_MULTIPLIER = 1000;
     public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
@@ -97,10 +100,10 @@ public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
 
     /** The time at which this clone was purchased from the catalog. */
     public Timestamp purchaseTime;
-    
+
     /** The amount of flow that was paid for this item. */
     public int flowPaid;
-    
+
     /** The amount of gold that was paid for this item. */
     public int goldPaid;
 
