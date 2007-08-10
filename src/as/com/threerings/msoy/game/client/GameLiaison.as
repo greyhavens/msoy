@@ -13,6 +13,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.client.GameReadyObserver;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
 
@@ -95,6 +96,7 @@ public class GameLiaison
     {
         log.info("Got server for " + _gameId + " [host=" + hostname + ", port=" + port + "].");
         _gctx.getClient().setServer(hostname, [ port ]);
+        _gctx.getClient().setVersion(DeploymentConfig.version);
         _gctx.getClient().logon();
     }
 
