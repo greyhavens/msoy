@@ -121,7 +121,8 @@ public abstract class TagRepository extends DepotRepository
     public List<TagHistoryRecord> getTagHistoryByTarget (int targetId)
         throws PersistenceException
     {
-        return findAll(_tagHistoryClass, new Where(TagHistoryRecord.TARGET_ID_C, targetId));
+        return findAll(getTagHistoryClass(),
+                       new Where(getTagHistoryColumn(TagHistoryRecord.TARGET_ID), targetId));
     }
 
     /**
@@ -130,7 +131,8 @@ public abstract class TagRepository extends DepotRepository
     public List<TagHistoryRecord> getTagHistoryByMember (int memberId)
         throws PersistenceException
     {
-        return findAll(_tagHistoryClass, new Where(TagHistoryRecord.MEMBER_ID_C, memberId));
+        return findAll(getTagHistoryClass(),
+                       new Where(getTagHistoryColumn(TagHistoryRecord.MEMBER_ID), memberId));
     }
 
     /**
@@ -290,7 +292,7 @@ public abstract class TagRepository extends DepotRepository
                 });
             }
         };
-        deleteAll(getTagClass(), new Where(TagRecord.TARGET_ID_C, targetId), inv);
+        deleteAll(getTagClass(), new Where(getTagColumn(TagRecord.TARGET_ID), targetId), inv);
 
         // invalidate and delete tag history records for this target
         inv = new CacheInvalidator() {
@@ -303,12 +305,18 @@ public abstract class TagRepository extends DepotRepository
                 });
             }
         };
-        deleteAll(getTagHistoryClass(), new Where(TagHistoryRecord.TARGET_ID_C, targetId), inv);
+        deleteAll(getTagHistoryClass(),
+                  new Where(getTagHistoryColumn(TagHistoryRecord.TARGET_ID), targetId), inv);
     }
 
     protected ColumnExp getTagColumn (String cname)
     {
         return new ColumnExp(getTagClass(), cname);
+    }
+
+    protected ColumnExp getTagHistoryColumn (String cname)
+    {
+        return new ColumnExp(getTagHistoryClass(), cname);
     }
 
     @Override // from DepotRepository
