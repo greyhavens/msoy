@@ -304,6 +304,14 @@ public class MsoyServer extends WhirledServer
     }
 
     /**
+     * Returns true if this server is running, false if not.
+     */
+    public static boolean isActive ()
+    {
+        return (memberRepo != null);
+    }
+
+    /**
      * Starts everything a runnin'.
      */
     public static void main (String[] args)

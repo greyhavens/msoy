@@ -114,14 +114,14 @@ public class FlowAwardTracker
         double humanity = 0;
 
         // this is messy, but we'll sort it out later
-        if (MsoyGameServer.omgr != null) {
+        if (MsoyGameServer.isActive()) {
             PlayerObject player = (PlayerObject) MsoyGameServer.omgr.getObject(oid);
             if (player != null) {
                 memberId = player.getMemberId();
                 humanity = player.getHumanity();
             }
 
-        } else if (MsoyServer.omgr != null) {
+        } else if (MsoyServer.isActive()) {
             MemberObject member = (MemberObject) MsoyServer.omgr.getObject(oid);
             if (member != null) {
                 memberId = member.getMemberId();
@@ -186,10 +186,10 @@ public class FlowAwardTracker
 
         // actually grant their flow award
         if (awarded > 0) {
-            if (MsoyServer.omgr != null) {
+            if (MsoyServer.isActive()) {
                 MsoyServer.memberMan.grantFlow(record.memberId, awarded, _grantAction, details);
 
-            } else if (MsoyGameServer.omgr != null) {
+            } else if (MsoyGameServer.isActive()) {
                 MsoyGameServer.invoker.postUnit(new Invoker.Unit("FlowAwardTracker.grantFlow") {
                     public boolean invoke () {
                         try {
@@ -308,10 +308,10 @@ public class FlowAwardTracker
 
     protected void reportFlowAward (int memberId, int deltaFlow)
     {
-        if (MsoyGameServer.omgr != null) {
+        if (MsoyGameServer.isActive()) {
             MsoyGameServer.worldClient.reportFlowAward(memberId, deltaFlow);
 
-        } else if (MsoyServer.omgr != null) {
+        } else if (MsoyServer.isActive()) {
             MsoyServer.gameReg.reportFlowAward(null, memberId, deltaFlow);
 
         } else {
