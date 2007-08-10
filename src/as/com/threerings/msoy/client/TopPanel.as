@@ -43,6 +43,7 @@ public class TopPanel extends Canvas
 {
     public static const DECORATIVE_MARGIN_HEIGHT :int = 4;
 
+    public static const LEFT_PANEL_WIDTH :int = 700;
     public static const RIGHT_SIDEBAR_WIDTH :int = 300;
 
     /**
@@ -272,10 +273,15 @@ public class TopPanel extends Canvas
      */
     public function setLeftPanel (side :UIComponent) :void
     {
+        // make sure we're not minimized
+        if (_ctx.getWorldClient().isMinimized()) {
+            _ctx.getWorldClient().restoreClient();
+        }
+
         clearLeftPanel(null);
         _leftPanel = side;
         _leftPanel.includeInLayout = false;
-        _leftPanel.width = side.width;
+        _leftPanel.width = LEFT_PANEL_WIDTH;
 
         if (_tableDisp != null) {
             _tableDisp.x += _leftPanel.width;
@@ -403,6 +409,21 @@ public class TopPanel extends Canvas
         }
     }
 
+    public function getLeftPanelWidth () :int
+    {
+        return (_leftPanel == null ? 0 : _leftPanel.width);
+    }
+
+    public function getRightPanelWidth () :int
+    {
+        return (_rightPanel == null ? 0 : _rightPanel.width);
+    }
+
+    public function getBottomPanelHeight () :int
+    {
+        return (_bottomPanel == null ? 0 : _bottomPanel.height);
+    }
+
     protected function stageResized (event :Event) :void
     {
         layoutPanels();
@@ -427,11 +448,9 @@ public class TopPanel extends Canvas
             _leftPanel.setStyle("top", 0);
             _leftPanel.setStyle("bottom", getBottomPanelHeight());
             _leftPanel.setStyle("left", 0);
+            _leftPanel.width = LEFT_PANEL_WIDTH;
             _controlBar.setStyle("left", _leftPanel.width);
             _headerBar.setStyle("left", _leftPanel.width);
-            if (_rightPanel != null) {
-                _leftPanel.width = width - _rightPanel.width;
-            }
             _ctx.getWorldClient().setSeparator(_leftPanel.width - 1);
         } else {
             _controlBar.setStyle("left", 0);
@@ -496,21 +515,6 @@ public class TopPanel extends Canvas
         _placeBox.setStyle("left", getLeftPanelWidth());
         _placeBox.setStyle("right", getRightPanelWidth());
         _placeBox.wasResized(w, h);
-    }
-
-    protected function getLeftPanelWidth () :int
-    {
-        return (_leftPanel == null ? 0 : _leftPanel.width);
-    }
-
-    protected function getRightPanelWidth () :int
-    {
-        return (_rightPanel == null ? 0 : _rightPanel.width);
-    }
-
-    protected function getBottomPanelHeight () :int
-    {
-        return (_bottomPanel == null ? 0 : _bottomPanel.height);
     }
 
     /** The giver of life. */

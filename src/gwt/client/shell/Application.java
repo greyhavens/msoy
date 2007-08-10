@@ -272,6 +272,11 @@ public class Application
         return openChannelNative(type, name, id);
     }
 
+    protected void restoreClient (boolean deferred)
+    {
+        Page.closePage();
+    }
+
     protected void clearClient (boolean deferred)
     {
         if (deferred) {
@@ -350,6 +355,9 @@ public class Application
        };
        $wnd.helloWhirled = function () {
             return true;
+       }
+       $wnd.restoreClient = function () {
+            app.@client.shell.Application::restoreClient(Z)(true);
        }
        $wnd.clearClient = function () {
             app.@client.shell.Application::clearClient(Z)(true);

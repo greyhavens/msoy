@@ -172,6 +172,20 @@ public class WorldClient extends BaseClient
     }
 
     /**
+     * Notifies our JavaScript shell that the flash client should be made full size.
+     */
+    public function restoreClient () :void
+    {
+        try {
+            if (ExternalInterface.available && !_embedded) {
+                ExternalInterface.call("restoreClient");
+            }
+        } catch (err :Error) {
+            log.warning("ExternalInterface.call('restoreClient') failed: " + err);
+        }
+    }
+
+    /**
      * Notifies our JavaScript shell that the flash client should be cleared out.
      */
     public function closeClient () :void

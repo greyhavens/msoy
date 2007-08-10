@@ -92,7 +92,7 @@ public class ChatChannelPanel extends VBox
 
         return tab.getOverlay();
     }
-    
+
     /**
      * Iterates over chat tabs, returning the first one that passes the /predicate/ function.
      * @param predicate Function of the form: <pre>function (tab :ChatTab) :Boolean</pre>
@@ -107,7 +107,7 @@ public class ChatChannelPanel extends VBox
         }
         return null;
     }
-    
+
     /**
      * Find the ChannelChatTab instance being used for the specified ChatChannel.
      */
@@ -139,7 +139,7 @@ public class ChatChannelPanel extends VBox
             tab.init();
             _tabnav.addChild(tab);
         }
-        
+
         // start loading the page
         CommandEvent.dispatch(tab, PageDisplayController.HELP_PAGE_DISPLAY_COMMAND, pageUrl);
 
@@ -149,11 +149,11 @@ public class ChatChannelPanel extends VBox
             var cssUrl :String = String(segments[1] + ".css");
             CommandEvent.dispatch(tab, PageDisplayController.HELP_PAGE_SET_STYLE_COMMAND, cssUrl);
         }
-        
+
         selectTab(tab, select);
 
         return tab;
-    }    
+    }
 
     public function sendRoomToTab () :void
     {
@@ -170,6 +170,8 @@ public class ChatChannelPanel extends VBox
             selectTab(_wtab);
         }
         _ctx.getTopPanel().getControlBar().setTabMode(true);
+        // expand to take up the entire width of the client (minus the left panel)
+        width = stage.stageWidth - _ctx.getTopPanel().getLeftPanelWidth();
     }
 
     public function removeRoomTab () :void
@@ -178,11 +180,13 @@ public class ChatChannelPanel extends VBox
             var wtab :WorldChatTab = _wtab;
             // calling shutdown on WorldChatTab causes the RoomView to call containsRoomTab() to
             // see what aspect ratio it should use, therefore _wtab needs to be null
-            _wtab = null; 
+            _wtab = null;
             _ctx.getTopPanel().getControlBar().setTabMode(false);
             _tabnav.removeChild(wtab);
             wtab.shutdown();
         }
+        // back to our default width
+        width = TopPanel.RIGHT_SIDEBAR_WIDTH;
     }
 
     public function containsRoomTab () :Boolean
@@ -194,7 +198,7 @@ public class ChatChannelPanel extends VBox
     {
         // select this tab if requested
         if (select) {
-            // We need to defer the action of selecting a tab.  If the tab is newly added, 
+            // We need to defer the action of selecting a tab.  If the tab is newly added,
             // attempting to select it immediately does not work, for some wacky reason.
             callLater(function () :void {
                 _tabnav.selectedChild = tab;
@@ -207,7 +211,7 @@ public class ChatChannelPanel extends VBox
             _ctx.getTopPanel().getControlBar().setChannelChatInput(_inputBox);
         }
     }
-    
+
     protected function tabRemoved (event :ChildExistenceChangedEvent) :void
     {
         if (event.relatedObject is ChatTab) {

@@ -910,6 +910,12 @@ public class RoomController extends SceneController
      */
     protected function checkMouse (event :Event) :void
     {
+        // no mouse fiddling while we're minimized
+        if ((_mctx.getChatDirector() as MsoyChatDirector).containsRoomTab()) {
+            setHoverSprite(null);
+            return;
+        }
+
         // in case a mouse event was captured by an entity, prevent it from adding a popup later
         _entityAllowedToPop = null;
 
@@ -1103,6 +1109,18 @@ public class RoomController extends SceneController
 
     protected function mouseClicked (event :MouseEvent) :void
     {
+        // if we're minimized, then request to be unminimized
+        if (_mctx.getWorldClient().isMinimized()) {
+            _mctx.getWorldClient().restoreClient();
+            return;
+        }
+
+        // if a left panel is open and we're minimized that way, close it and unminimize
+        if ((_mctx.getChatDirector() as MsoyChatDirector).containsRoomTab()) {
+            _mctx.getTopPanel().clearLeftPanel(null);
+            return;
+        }
+
         // at this point, the mouse click is bubbling back out, and the entity is no
         // longer allowed to pop up a popup.
         _entityAllowedToPop = null;
@@ -1111,17 +1129,16 @@ public class RoomController extends SceneController
         // skip looking for hitSprites.
         var hit :* = (_shiftDownSpot == null) ?
             getHitSprite(event.stageX, event.stageY, isRoomEditing()) : null;
-
         if (hit === undefined) {
             return;
         }
 
-        var hitter :MsoySprite = (hit as MsoySprite);
-
         // deal with the target
+        var hitter :MsoySprite = (hit as MsoySprite);
         if (hitter != null) {
             // let the sprite decide what to do with it
             hitter.mouseClick(event);
+
         } else if (_mctx.worldProps.userControlsAvatar) {
             var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();
             if (curLoc == null) {
@@ -1131,9 +1148,8 @@ public class RoomController extends SceneController
             // calculate where the location is
             var cloc :ClickLocation = _roomView.layout.pointToAvatarLocation(
                 event.stageX, event.stageY, _shiftDownSpot, RoomMetrics.N_UP);
-
-            if (cloc != null &&
-                cloc.loc.z >= 0) { // disallow clicking in "front" of the scene when minimized
+            // disallow clicking in "front" of the scene when minimized
+            if (cloc != null && cloc.loc.z >= 0) {
                 // orient the location as appropriate
                 addAvatarYOffset(cloc);
                 var newLoc :MsoyLocation = cloc.loc;
@@ -1149,7 +1165,6 @@ public class RoomController extends SceneController
         if (isRoomEditing()) {
             _editor.mouseClickOnSprite(hitter, event);
         }
-
     }
 
     protected function keyEvent (event :KeyboardEvent) :void

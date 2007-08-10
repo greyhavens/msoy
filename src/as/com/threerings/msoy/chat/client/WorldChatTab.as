@@ -78,16 +78,17 @@ public class WorldChatTab extends ChatTab
             return; // sometimes RESIZE comes in before ADDED_TO_STAGE
         }
 
+        var width :int = stage.stageWidth - _ctx.getTopPanel().getLeftPanelWidth();
         var height :int = stage.stageHeight - ControlBar.HEIGHT - HeaderBar.HEIGHT -
             TopPanel.DECORATIVE_MARGIN_HEIGHT;
         // we don't have our proper width yet (the stage has not yet resized), so we have to
         // hardcode the width to the one we know we'll be receiving
-        _placeBox.width = TopPanel.RIGHT_SIDEBAR_WIDTH;
+        _placeBox.width = width;
         _placeBox.height = height / 2;
         _placeBox.move(0, 0);
-        _placeBox.wasResized(TopPanel.RIGHT_SIDEBAR_WIDTH, height);
+        _placeBox.wasResized(width, height);
 
-        _chatContainer.width = TopPanel.RIGHT_SIDEBAR_WIDTH;
+        _chatContainer.width = width;
         _chatContainer.height = height / 2;
         _chatContainer.move(0, height/2);
     }
