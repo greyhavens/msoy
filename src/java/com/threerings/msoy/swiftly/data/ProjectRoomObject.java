@@ -3,11 +3,10 @@
 
 package com.threerings.msoy.swiftly.data;
 
-import com.threerings.presents.dobj.DSet;
-
 import com.threerings.crowd.data.PlaceObject;
-
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.SwiftlyProject;
+import com.threerings.presents.dobj.DSet;
 
 /**
  * Maintains the distributed state for a Swiftly project.
@@ -23,6 +22,9 @@ public class ProjectRoomObject extends PlaceObject
 
     /** The field name of the <code>documents</code> field. */
     public static final String DOCUMENTS = "documents";
+
+    /** The field name of the <code>collaborators</code> field. */
+    public static final String COLLABORATORS = "collaborators";
 
     /** The field name of the <code>result</code> field. */
     public static final String RESULT = "result";
@@ -42,6 +44,9 @@ public class ProjectRoomObject extends PlaceObject
 
     /** All loaded Swiftly Documents in this project. */
     public DSet<SwiftlyDocument> documents = new DSet<SwiftlyDocument>();
+
+    /** All the collaborators for this project. */
+    public DSet<MemberName> collaborators = new DSet<MemberName>();
 
     /** The build result. */
     public BuildResult result;
@@ -80,7 +85,7 @@ public class ProjectRoomObject extends PlaceObject
     {
         for (PathElement elem : pathElements) {
             PathElement foundParent = elem.getParent();
-            
+
             // the root was found, but caller was not asking for the root so continue
             if (foundParent == null && parent != null) {
                 continue;
@@ -89,7 +94,7 @@ public class ProjectRoomObject extends PlaceObject
             // if foundParent is null, elem is the root. If the requested parent is also null,
             // the caller was looking for the root, so compare the names. otherwise, check to see
             // if the found elements parent matches the supplied parent and then check the names
-            if ((foundParent == null && parent == null) || 
+            if ((foundParent == null && parent == null) ||
                  foundParent.equals(parent)) {
                 // if that element's name matches the name provided, we have found the element
                 if (elem.getName().equals(name)) {
@@ -97,7 +102,7 @@ public class ProjectRoomObject extends PlaceObject
                 }
             }
         }
-        
+
         // return null if we did not find the element
         return null;
     }
@@ -113,7 +118,7 @@ public class ProjectRoomObject extends PlaceObject
                 return elem;
             }
         }
-        
+
         // return null if we did not find the element
         return null;
     }
@@ -265,6 +270,54 @@ public class ProjectRoomObject extends PlaceObject
         @SuppressWarnings("unchecked") DSet<com.threerings.msoy.swiftly.data.SwiftlyDocument> clone =
             (value == null) ? null : value.typedClone();
         this.documents = clone;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>collaborators</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToCollaborators (MemberName elem)
+    {
+        requestEntryAdd(COLLABORATORS, collaborators, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>collaborators</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromCollaborators (Comparable key)
+    {
+        requestEntryRemove(COLLABORATORS, collaborators, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>collaborators</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateCollaborators (MemberName elem)
+    {
+        requestEntryUpdate(COLLABORATORS, collaborators, elem);
+    }
+
+    /**
+     * Requests that the <code>collaborators</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setCollaborators (DSet<com.threerings.msoy.data.all.MemberName> value)
+    {
+        requestAttributeChange(COLLABORATORS, value, this.collaborators);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.all.MemberName> clone =
+            (value == null) ? null : value.typedClone();
+        this.collaborators = clone;
     }
 
     /**

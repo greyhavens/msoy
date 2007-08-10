@@ -3,8 +3,9 @@
 
 package com.threerings.msoy.web.server;
 
-import java.io.File;
+import static com.threerings.msoy.Log.log;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,29 +13,22 @@ import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DuplicateKeyException;
-
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
-
-import com.threerings.msoy.item.data.all.Item;
-
+import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.server.ProjectRoomManager;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
+import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
+import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
+import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 import com.threerings.msoy.web.client.SwiftlyService;
-import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebIdent;
-
-import com.threerings.msoy.swiftly.data.SwiftlyCodes;
-import com.threerings.msoy.swiftly.server.ProjectRoomManager;
-import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord;
-import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
-import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
-import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
-import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the server implementation of {@link SwiftlyService}.
@@ -183,7 +177,10 @@ public class SwiftlyServlet extends MsoyServiceServlet
             Map<String, Object> updates = pRec.findUpdates(project);
             if (updates.size() > 0) {
                 MsoyServer.swiftlyRepo.updateProject(project.projectId, updates);
+                // inform the room manager, if resolved, that the project has changed
+                updateRoomProject(project);
             }
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Updating project failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
@@ -238,9 +235,9 @@ public class SwiftlyServlet extends MsoyServiceServlet
         ArrayList<MemberName> members = new ArrayList<MemberName>();
 
         try {
-            for (SwiftlyCollaboratorsRecord cRec :
+            for (MemberRecord mRec :
                 MsoyServer.swiftlyRepo.getCollaborators(projectId)) {
-                members.add(MsoyServer.memberRepo.loadMember(cRec.memberId).getName());
+                members.add(mRec.getName());
             }
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Getting project's collaborators failed.", pe);
@@ -339,6 +336,34 @@ public class SwiftlyServlet extends MsoyServiceServlet
                 }
 
                 manager.updateCollaborators(waiter);
+            }
+        });
+
+        // block the servlet waiting for the dobject thread
+        waiter.waitForResult();
+    }
+
+    /**
+     * Informs the room manager for this project, if resolved, that the project has been modified.
+     */
+    protected void updateRoomProject (final SwiftlyProject project)
+        throws ServiceException
+    {
+        // run a task on the dobject thread that first finds the ProjectRoomManager for this
+        // project if it exists, and then tells it to update its local swiftly project
+        final ServletWaiter<Void> waiter =
+            new ServletWaiter<Void>("updateProject[" + project.projectId + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                ProjectRoomManager manager =
+                    MsoyServer.swiftlyMan.getRoomManager(project.projectId);
+                // the room manager is not resolved, no problem, we updated the database
+                if (manager == null) {
+                    waiter.requestCompleted(null);
+                    return;
+                }
+
+                manager.updateProject(waiter, project);
             }
         });
 

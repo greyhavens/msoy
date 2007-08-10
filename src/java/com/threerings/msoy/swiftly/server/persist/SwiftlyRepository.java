@@ -18,6 +18,7 @@ import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Logic.And;
+import com.threerings.msoy.server.persist.MemberRecord;
 
 /**
  * Manages the persistent information associated with a member's projects.
@@ -64,6 +65,18 @@ public class SwiftlyRepository extends DepotRepository
         throws PersistenceException
     {
         return load(SwiftlyProjectRecord.class, projectId);
+    }
+
+    /**
+     * Loads the collaborator record for the specified project and member. Returns null if no
+     * record has been created for that project and member.
+     */
+    public SwiftlyCollaboratorsRecord loadCollaborator (int projectId, int memberId)
+        throws PersistenceException
+    {
+        Key<SwiftlyCollaboratorsRecord> key =
+            SwiftlyCollaboratorsRecord.getKey(projectId, memberId);
+        return load(SwiftlyCollaboratorsRecord.class, key);
     }
 
     /**
@@ -203,11 +216,13 @@ public class SwiftlyRepository extends DepotRepository
     /**
      * Fetches the collaborators for a given project.
      */
-    public List<SwiftlyCollaboratorsRecord> getCollaborators (int projectId)
+    public List<MemberRecord> getCollaborators (int projectId)
         throws PersistenceException
     {
-        return findAll(SwiftlyCollaboratorsRecord.class,
-                       new Where(SwiftlyCollaboratorsRecord.PROJECT_ID_C, projectId));
+        return findAll(MemberRecord.class,
+            new Join(MemberRecord.MEMBER_ID_C,
+                     SwiftlyCollaboratorsRecord.MEMBER_ID_C),
+            new Where(new Equals(SwiftlyCollaboratorsRecord.PROJECT_ID_C, projectId)));
     }
 
     /**
@@ -258,10 +273,18 @@ public class SwiftlyRepository extends DepotRepository
     /**
      * Updates the buildResultItemId for a SwiftlyCollaboratorRecord.
      */
-    public void updateBuildResultItem (SwiftlyCollaboratorsRecord record)
+    public void updateBuildResultItem (int projectId, int memberId, int buildResultItemId)
         throws PersistenceException
     {
-        update(record, SwiftlyCollaboratorsRecord.BUILD_RESULT_ITEM_ID);
+        Key<SwiftlyCollaboratorsRecord> key =
+            SwiftlyCollaboratorsRecord.getKey(projectId, memberId);
+        int rows = updatePartial(SwiftlyCollaboratorsRecord.class, key, key,
+            SwiftlyCollaboratorsRecord.BUILD_RESULT_ITEM_ID, buildResultItemId);
+        if (rows == 0) {
+            throw new PersistenceException(
+                "Couldn't find swiftly collaborator record for build result update [projectId=" +
+                    projectId + "memberId=" + memberId + "]");
+        }
     }
 
     @Override // from DepotRepository

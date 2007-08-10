@@ -171,8 +171,7 @@ public class SwiftlyApplet extends JApplet
                 _locdtr.moveTo((Integer)result);
             }
             public void requestFailed (String result) {
-                log.warning("Oh crap, it's too hot today. " + result);
-                // TODO: warning
+                appletError(result);
             }
         });
     }
@@ -208,8 +207,8 @@ public class SwiftlyApplet extends JApplet
     // from interface ClientObserver
     public void clientFailedToLogon (Client client, Exception cause)
     {
-        setContentPane(new JLabel(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.logon_failed")));
         log.log(Level.WARNING, "Couldn't log on!", cause);
+        appletError("m.logon_failed");
     }
 
     // from interface ClientObserver
@@ -223,6 +222,17 @@ public class SwiftlyApplet extends JApplet
     public void clientDidClear (Client client)
     {
         // nada
+    }
+
+    /**
+     * Display an error message directly onto the applet root panel. Use for errors that prevent
+     * the editor to be resolved.
+     * @param msg the i18n key to translate for the error message.
+     */
+    protected void appletError (String msg)
+    {
+        setContentPane(new JLabel(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, msg)));
+        SwingUtil.refresh(getRootPane());
     }
 
     protected void createGUI ()

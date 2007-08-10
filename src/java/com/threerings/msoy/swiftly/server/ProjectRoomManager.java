@@ -15,13 +15,14 @@ import org.apache.commons.io.FileUtils;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
-import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntIntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SerialExecutor;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Game;
@@ -36,6 +37,7 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PetRecord;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.PathElement;
@@ -56,6 +58,7 @@ import com.threerings.msoy.web.server.UploadUtil;
 import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -72,10 +75,10 @@ public class ProjectRoomManager extends PlaceManager
      * Called by the {@link SwiftlyManager} after creating this project room manager.
      */
     public void init (final SwiftlyProject project,
-                      HashIntMap<SwiftlyCollaboratorsRecord> collaborators, ProjectStorage storage)
+                      final List<MemberName> collaborators, ProjectStorage storage)
     {
         _storage = storage;
-        _collaborators = collaborators;
+        _resultItems = new IntIntMap();
 
         // References to our on-disk SDKs
         File flexSdk = new File(ServerConfig.serverRoot + FLEX_SDK);
@@ -109,6 +112,9 @@ public class ProjectRoomManager extends PlaceManager
                 }
                 // Inform any listeners that the project has been loaded by adding it to the dobj
                 _roomObj.setProject(project);
+
+                // set the list of collaborators in the dobj as well
+                _roomObj.setCollaborators(new DSet<MemberName>(collaborators));
             }
 
             protected List<PathElement> _projectTree;
@@ -121,7 +127,7 @@ public class ProjectRoomManager extends PlaceManager
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
-        checkPermissions(caller);
+        requireWritePermissions(caller);
 
         // for now just update the room object
         _roomObj.addPathElement(element);
@@ -133,7 +139,7 @@ public class ProjectRoomManager extends PlaceManager
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
-        checkPermissions(caller);
+        requireWritePermissions(caller);
 
         _roomObj.updatePathElements(element);
     }
@@ -144,11 +150,11 @@ public class ProjectRoomManager extends PlaceManager
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
-        checkPermissions(caller);
+        requireWritePermissions(caller);
 
         final PathElement element = _roomObj.pathElements.get(elementId);
         if (element == null) {
-            throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
+            throw new InvocationException(SwiftlyCodes.E_INTERNAL_ERROR);
         }
 
         // if the document associated with this element is resolved, unload it (if the removal
@@ -201,11 +207,11 @@ public class ProjectRoomManager extends PlaceManager
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
-        checkPermissions(caller);
+        requireWritePermissions(caller);
 
         final PathElement element = _roomObj.pathElements.get(elementId);
         if (element == null) {
-            throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
+            throw new InvocationException(SwiftlyCodes.E_INTERNAL_ERROR);
         }
 
         // if the path element was not committed to the repository, just rename it in the DSet
@@ -253,7 +259,7 @@ public class ProjectRoomManager extends PlaceManager
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
-        checkPermissions(caller);
+        requireWritePermissions(caller);
 
         PathElement element = PathElement.createFile(fileName, parent, mimeType);
 
@@ -278,7 +284,7 @@ public class ProjectRoomManager extends PlaceManager
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
-        checkPermissions(caller);
+        requireWritePermissions(caller);
 
         _roomObj.postEvent(
             new DocumentUpdatedEvent(_roomObj.getOid(), caller.getOid(), elementId, text));
@@ -289,7 +295,7 @@ public class ProjectRoomManager extends PlaceManager
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
-        checkPermissions(caller);
+        requireWritePermissions(caller);
 
         _roomObj.removeFromDocuments(elementId);
     }
@@ -299,10 +305,13 @@ public class ProjectRoomManager extends PlaceManager
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
-        checkPermissions(caller);
+        requireWritePermissions(caller);
 
-        // perform a commit first. if that works, it will run the build
-        doCommitAndBuild(listener);
+        // inform all the clients that a build is starting
+        _roomObj.setBuilding(true);
+
+        BuildProjectTask buildTask = new BuildProjectTask(_roomObj.project, listener);
+        MsoyServer.swiftlyMan.svnExecutor.addTask(new CommitProjectTask(buildTask, listener));
     }
 
     // from interface ProjectRoomProvider
@@ -310,14 +319,16 @@ public class ProjectRoomManager extends PlaceManager
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
-        checkPermissions(caller);
+        requireWritePermissions(caller);
         MemberObject memobj = (MemberObject)caller;
 
-        // grab the collaborator record on the dobject thread
-        SwiftlyCollaboratorsRecord record = _collaborators.get(memobj.getMemberId());
+        // inform all the clients that a build is starting
+        _roomObj.setBuilding(true);
 
-        // perform a commit first. if that works, it will run the build and export the result
-        doCommitAndBuildAndExport(listener, record);
+        ExportData exportData = new ExportData(
+            _roomObj.project, memobj.memberName, _resultItems.get(memobj.getMemberId()));
+        BuildProjectTask buildTask = new BuildProjectTask(_roomObj.project, exportData, listener);
+        MsoyServer.swiftlyMan.svnExecutor.addTask(new CommitProjectTask(buildTask, listener));
     }
 
     // from interface ProjectRoomProvider
@@ -326,10 +337,7 @@ public class ProjectRoomManager extends PlaceManager
         throws InvocationException
     {
         // check that the caller has the correct permissions to perform this action
-        // TODO: this only protects the initial loading of the document. Once loaded into the dset
-        // any user in the room can load the file from the dset. For read only mode we're going
-        // to want to allow anyone to load a document anyway so this is going to have to change.
-        checkPermissions(caller);
+        requireReadPermissions(caller);
 
         // Load the document from the storage provider
         MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit("loadDocument") {
@@ -389,25 +397,60 @@ public class ProjectRoomManager extends PlaceManager
     public void updateCollaborators (ResultListener<Void> lner)
     {
         final int projectId = _roomObj.project.projectId;
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("getCollaborators", lner) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("updateCollaborators", lner) {
             @Override
             public Void invokePersistResult () throws PersistenceException {
-                _newCollaborators = new HashIntMap<SwiftlyCollaboratorsRecord>();
-                for (SwiftlyCollaboratorsRecord record :
+                _newCollaborators = new ArrayList<MemberName>();
+                for (MemberRecord mRec :
                     MsoyServer.swiftlyRepo.getCollaborators(projectId)) {
-                    _newCollaborators.put(record.memberId, record);
+                    _newCollaborators.add(mRec.getName());
                 }
                 return null;
             }
 
             @Override
             public void handleResult () {
-                _collaborators = _newCollaborators;
+                _roomObj.setCollaborators(new DSet<MemberName>(_newCollaborators));
                 _listener.requestCompleted(null);
             }
 
-            protected HashIntMap<SwiftlyCollaboratorsRecord> _newCollaborators;
+            protected List<MemberName> _newCollaborators;
         });
+    }
+
+    /**
+     * Used by the SwiftlyServlet to update the room object project object.
+     */
+    public void updateProject (ResultListener<Void> lner, final SwiftlyProject project)
+    {
+        _roomObj.setProject(project);
+        lner.requestCompleted(null);
+    }
+
+    /**
+     * Throws an InvocationException if the caller should not be able to modify the project.
+     */
+    public void requireWritePermissions (ClientObject caller)
+        throws InvocationException
+    {
+        MemberObject memobj = (MemberObject)caller;
+        if (!_roomObj.collaborators.contains(memobj.memberName)) {
+            throw new InvocationException(SwiftlyCodes.E_ACCESS_DENIED);
+        }
+    }
+
+    /**
+     * Throws an InvocationException if the caller should not be able to view the project.
+     */
+    public void requireReadPermissions (ClientObject caller)
+        throws InvocationException
+    {
+        // if the project is remixable, anyone can read. otherwise, check to see if the caller
+        // has write permissions on the project.
+        if (_roomObj.project.remixable) {
+            return;
+        }
+        requireWritePermissions(caller);
     }
 
     // from interface SetListener
@@ -490,7 +533,7 @@ public class ProjectRoomManager extends PlaceManager
      */
     protected void onShutdownCommit ()
     {
-        doCommitOnly(new ConfirmListener() {
+        ConfirmListener listener = new ConfirmListener() {
             public void requestProcessed ()
             {
                 // nada. no result will be provided to the user.
@@ -499,52 +542,8 @@ public class ProjectRoomManager extends PlaceManager
                 // nada. no result will be provided to the user.
             }
 
-        });
-    }
-
-    /**
-     * Just commit the project, no build.
-     */
-    protected void doCommitOnly (ConfirmListener listener)
-    {
+        };
         MsoyServer.swiftlyMan.svnExecutor.addTask(new CommitProjectTask(listener));
-    }
-
-    /**
-     * Commit the project and then build.
-     */
-    protected void doCommitAndBuild (ConfirmListener listener)
-    {
-        // inform all the clients that a build is starting
-        _roomObj.setBuilding(true);
-
-        MsoyServer.swiftlyMan.svnExecutor.addTask(
-            new CommitProjectTask(new BuildData(_roomObj.project), listener));
-    }
-
-    /**
-     * Commit the project and then build and export the result.
-     */
-    protected void doCommitAndBuildAndExport (ConfirmListener listener,
-                                              SwiftlyCollaboratorsRecord collabRecord)
-    {
-        // inform all the clients that a build is starting
-        _roomObj.setBuilding(true);
-
-        MsoyServer.swiftlyMan.svnExecutor.addTask(
-            new CommitProjectTask(new BuildData(_roomObj.project, collabRecord), listener));
-    }
-
-    /**
-     * Throws an InvocationException if the supplied caller is not a collaborator on the project.
-     */
-    protected void checkPermissions (ClientObject caller)
-        throws InvocationException
-    {
-        MemberObject memobj = (MemberObject)caller;
-        if (!_collaborators.containsKey(memobj.getMemberId())) {
-            throw new InvocationException("e.access_denied");
-        }
     }
 
     /** Handles a request to commit our project. */
@@ -562,9 +561,9 @@ public class ProjectRoomManager extends PlaceManager
         /**
          * Commit the project, then perform a build.
          */
-        public CommitProjectTask (BuildData buildData, ConfirmListener listener)
+        public CommitProjectTask (BuildProjectTask buildTask, ConfirmListener listener)
         {
-            _buildData = buildData;
+            _buildTask = buildTask;
             _listener = listener;
             // take a snapshot of certain items while we're on the dobj thread
             this.projectId = ((ProjectRoomConfig)_config).projectId;
@@ -621,8 +620,8 @@ public class ProjectRoomManager extends PlaceManager
 
             // if the commit worked, run the build if instructed
             if (buildRequested()) {
-                MsoyServer.swiftlyMan.buildExecutor.addTask(
-                    new BuildProjectTask(_buildData, _listener));
+                MsoyServer.swiftlyMan.buildExecutor.addTask(_buildTask);
+
             } else {
                 _listener.requestProcessed();
             }
@@ -636,14 +635,14 @@ public class ProjectRoomManager extends PlaceManager
 
         protected boolean buildRequested ()
         {
-            return (_buildData != null);
+            return (_buildTask != null);
         }
 
-        protected SwiftlyDocument[] _allDocs;
-        protected ArrayList<SwiftlyDocument> _modDocs = new ArrayList<SwiftlyDocument>();
+        protected final SwiftlyDocument[] _allDocs;
+        protected final ArrayList<SwiftlyDocument> _modDocs = new ArrayList<SwiftlyDocument>();
 
-        protected BuildData _buildData;
-        protected ConfirmListener _listener;
+        protected final BuildProjectTask _buildTask;
+        protected final ConfirmListener _listener;
         protected Throwable _error;
     }
 
@@ -652,11 +651,17 @@ public class ProjectRoomManager extends PlaceManager
     {
         public final int projectId;
 
-        public BuildProjectTask (BuildData buildData, ConfirmListener listener)
+        public BuildProjectTask (SwiftlyProject project, ConfirmListener listener)
         {
-            _buildData = buildData;
+            this(project, null, listener);
+        }
+
+        public BuildProjectTask (SwiftlyProject project, ExportData exportData,
+                                 ConfirmListener listener)
+        {
+            _exportData = exportData;
             _listener = listener;
-            this.projectId = buildData.projectId;
+            this.projectId = project.projectId;
         }
 
         public boolean merge (SerialExecutor.ExecutorTask other)
@@ -681,8 +686,8 @@ public class ProjectRoomManager extends PlaceManager
                 File topBuildDir = new File(ServerConfig.serverRoot + LOCAL_BUILD_DIRECTORY);
 
                 // Create a temporary build directory
-                _buildDir = File.createTempFile(
-                    "localbuilder", String.valueOf(_buildData.projectId), topBuildDir);
+                _buildDir = File.createTempFile("localbuilder", String.valueOf(projectId),
+                    topBuildDir);
                 _buildDir.delete();
                 if (_buildDir.mkdirs() != true) {
                     // This should -never- happen, try to exit gracefully.
@@ -694,7 +699,7 @@ public class ProjectRoomManager extends PlaceManager
                 _result = _builder.build(_buildDir);
 
                 // Only publish the result if the build succeeded and the caller asked
-                if (_result.buildSuccessful() && _buildData.exportResults()) {
+                if (_result.buildSuccessful() && exportResult()) {
                     publishResult();
                 }
 
@@ -705,114 +710,14 @@ public class ProjectRoomManager extends PlaceManager
             } finally {
                 // finally clean up the build results.
                 try {
-                    FileUtils.deleteDirectory(_buildDir);
+                    if (_buildDir != null) {
+                        FileUtils.deleteDirectory(_buildDir);
+                    }
                 } catch (IOException ioe) {
                     // only log to the server if this fails, client doesn't care.
                     log.log(Level.WARNING,
                         "Failed to delete temporary build results directory.", ioe);
                 }
-            }
-        }
-
-        protected void publishResult ()
-            throws Exception
-        {
-            // First, publish the results into the media store
-            UploadFile uploadFile = new GenericUploadFile(_result.getOutputFile());
-            UploadUtil.publishUploadFile(uploadFile);
-
-            // load the correct item repository
-            ItemRepository<ItemRecord, ?, ?, ?> repo =
-                MsoyServer.itemMan.getRepository(_buildData.itemType());
-
-            // if the user already has an item, look it up
-            if (_buildData.record.buildResultItemId > 0) {
-                _record = repo.loadItem(_buildData.record.buildResultItemId);
-            }
-
-            // if the item was null [meaning they never had one or it was deleted] or
-            // the user is no longer the owner, then create a new item.
-            if (_record == null || _record.ownerId != _buildData.record.memberId) {
-                Item item = null;
-                // can't use switch since Item.* are not constants
-                if (_buildData.itemType() == Item.AVATAR) {
-                    Avatar avatar = new Avatar();
-                    avatar.avatarMedia = new MediaDesc(
-                        MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
-                    item = avatar;
-
-                } else if (_buildData.itemType() == Item.GAME) {
-                    Game game = new Game();
-                    game.gameMedia = new MediaDesc(
-                        MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
-                    // game.config cannot be null so just set it to blank and the user can
-                    // tweak the config settings through the item editor
-                    game.config = "";
-                    item = game;
-
-                } else if (_buildData.itemType() == Item.FURNITURE) {
-                    Furniture furniture = new Furniture();
-                    furniture.furniMedia = new MediaDesc(
-                        MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
-                    item = furniture;
-
-                } else if (_buildData.itemType() == Item.PET) {
-                    Pet pet = new Pet();
-                    pet.furniMedia = new MediaDesc(
-                        MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
-                    item = pet;
-
-                } else {
-                    throw new Exception(
-                        "Unsupported itemType encountered during Swiftly item exporting.");
-                }
-
-                // setup the rest of the generic item fields
-                // TODO: Figure out a way to i18n this string
-                item.name = _buildData.projectName + " Swiftly Result";
-                // description cannot be NULL
-                item.description = "";
-                item.ownerId = _buildData.record.memberId;
-                item.creatorId = _buildData.record.memberId;
-                _record = ItemRecord.newRecord(item);
-
-                // insert the new item into the repository
-                repo.insertOriginalItem(_record);
-
-                // update the collaborator record with the new itemId
-                _buildData.record.buildResultItemId = _record.itemId;
-                MsoyServer.swiftlyRepo.updateBuildResultItem(_buildData.record);
-
-            // otherwise, update the existing item
-            } else {
-                // can't use switch since Item.* are not constants
-                ItemRecord updateRecord = null;
-                if (_buildData.itemType() == Item.AVATAR) {
-                    AvatarRecord avatarRecord = (AvatarRecord) _record;
-                    avatarRecord.avatarMediaHash = MediaDesc.stringToHash(uploadFile.getHash());
-                    updateRecord = avatarRecord;
-
-                } else if (_buildData.itemType() == Item.GAME) {
-                    GameRecord gameRecord = (GameRecord) _record;
-                    gameRecord.gameMediaHash = MediaDesc.stringToHash(uploadFile.getHash());
-                    updateRecord = gameRecord;
-
-                } else if (_buildData.itemType() == Item.FURNITURE) {
-                    FurnitureRecord furnitureRecord = (FurnitureRecord) _record;
-                    furnitureRecord.furniMediaHash = MediaDesc.stringToHash(uploadFile.getHash());
-                    updateRecord = furnitureRecord;
-
-                } else if (_buildData.itemType() == Item.PET) {
-                    PetRecord petRecord = (PetRecord) _record;
-                    petRecord.furniMediaHash = MediaDesc.stringToHash(uploadFile.getHash());
-                    updateRecord = petRecord;
-
-                } else {
-                    throw new Exception(
-                        "Unsupported itemType encountered during Swiftly item exporting.");
-                }
-
-                repo.updateOriginalItem(updateRecord);
             }
         }
 
@@ -831,13 +736,15 @@ public class ProjectRoomManager extends PlaceManager
             // Provide build output
             _roomObj.setResult(_result);
 
-            if (_result.buildSuccessful() && _buildData.exportResults()) {
+            if (_result.buildSuccessful() && exportResult()) {
                 // inform the item manager of the new or updated item
                 if (_record.itemId == 0) {
                     MsoyServer.itemMan.itemCreated(_record);
                 } else {
                     MsoyServer.itemMan.itemUpdated(_record);
                 }
+                // update the build result id cache
+                _resultItems.put(_exportData.memberId, _exportData.buildResultItemId);
             }
 
             // inform the listener that the build service call worked. the caller will need to
@@ -851,12 +758,139 @@ public class ProjectRoomManager extends PlaceManager
             _listener.requestFailed("e.build_timed_out");
         }
 
-        protected BuildData _buildData;
-        protected ConfirmListener _listener;
+        /**
+         * Returns true if the build result should be exported.
+         */
+        protected boolean exportResult ()
+        {
+            return (_exportData != null);
+        }
+
+        /**
+         * Publish the build results into the media store.
+         * @throws Exception
+         */
+        protected void publishResult ()
+            throws Exception
+        {
+            // First, publish the results into the media store
+            UploadFile uploadFile = new GenericUploadFile(_result.getOutputFile());
+            UploadUtil.publishUploadFile(uploadFile);
+
+            // load the correct item repository
+            ItemRepository<ItemRecord, ?, ?, ?> repo =
+                MsoyServer.itemMan.getRepository(_exportData.itemType());
+
+            // if the build result id was not in the room cache, load the record
+            if (_exportData.noBuildResult()) {
+                SwiftlyCollaboratorsRecord sRec = MsoyServer.swiftlyRepo.loadCollaborator(
+                    _exportData.projectId, _exportData.memberId);
+                if (sRec == null) {
+                    throw new PersistenceException("No collaborator record found when expected. " +
+                        "[projectId=" + _exportData.projectId + ", memberId=" +
+                        _exportData.memberId + "].");
+                }
+                _exportData.buildResultItemId = sRec.buildResultItemId;
+            }
+
+            // if the user already has an item, look it up
+            if (_exportData.buildResultItemId > 0) {
+                _record = repo.loadItem(_exportData.buildResultItemId);
+            }
+
+            // if the item was null [meaning they never had one or it was deleted] or
+            // the user is no longer the owner, then create a new item.
+            if (_record == null || _record.ownerId != _exportData.memberId) {
+                Item item = null;
+                // can't use switch since Item.* are not constants
+                if (_exportData.itemType() == Item.AVATAR) {
+                    Avatar avatar = new Avatar();
+                    avatar.avatarMedia = new MediaDesc(
+                        MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
+                    item = avatar;
+
+                } else if (_exportData.itemType() == Item.GAME) {
+                    Game game = new Game();
+                    game.gameMedia = new MediaDesc(
+                        MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
+                    // game.config cannot be null so just set it to blank and the user can
+                    // tweak the config settings through the item editor
+                    game.config = "";
+                    item = game;
+
+                } else if (_exportData.itemType() == Item.FURNITURE) {
+                    Furniture furniture = new Furniture();
+                    furniture.furniMedia = new MediaDesc(
+                        MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
+                    item = furniture;
+
+                } else if (_exportData.itemType() == Item.PET) {
+                    Pet pet = new Pet();
+                    pet.furniMedia = new MediaDesc(
+                        MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
+                    item = pet;
+
+                } else {
+                    throw new Exception(
+                        "Unsupported itemType encountered during Swiftly item exporting.");
+                }
+
+                // setup the rest of the generic item fields
+                // TODO: Figure out a way to i18n this string
+                item.name = _exportData.projectName + " Swiftly Result";
+                // description cannot be NULL
+                item.description = "";
+                item.ownerId = _exportData.memberId;
+                item.creatorId = _exportData.memberId;
+                _record = ItemRecord.newRecord(item);
+
+                // insert the new item into the repository
+                repo.insertOriginalItem(_record);
+
+                // update the collaborator record with the new itemId
+                _exportData.buildResultItemId = _record.itemId;
+                MsoyServer.swiftlyRepo.updateBuildResultItem(
+                    _exportData.projectId, _exportData.memberId, _record.itemId);
+
+            // otherwise, update the existing item
+            } else {
+                // can't use switch since Item.* are not constants
+                ItemRecord updateRecord = null;
+                if (_exportData.itemType() == Item.AVATAR) {
+                    AvatarRecord avatarRecord = (AvatarRecord) _record;
+                    avatarRecord.avatarMediaHash = MediaDesc.stringToHash(uploadFile.getHash());
+                    updateRecord = avatarRecord;
+
+                } else if (_exportData.itemType() == Item.GAME) {
+                    GameRecord gameRecord = (GameRecord) _record;
+                    gameRecord.gameMediaHash = MediaDesc.stringToHash(uploadFile.getHash());
+                    updateRecord = gameRecord;
+
+                } else if (_exportData.itemType() == Item.FURNITURE) {
+                    FurnitureRecord furnitureRecord = (FurnitureRecord) _record;
+                    furnitureRecord.furniMediaHash = MediaDesc.stringToHash(uploadFile.getHash());
+                    updateRecord = furnitureRecord;
+
+                } else if (_exportData.itemType() == Item.PET) {
+                    PetRecord petRecord = (PetRecord) _record;
+                    petRecord.furniMediaHash = MediaDesc.stringToHash(uploadFile.getHash());
+                    updateRecord = petRecord;
+
+                } else {
+                    throw new Exception(
+                        "Unsupported itemType encountered during Swiftly item exporting.");
+                }
+
+                repo.updateOriginalItem(updateRecord);
+            }
+        }
+
+        protected final ExportData _exportData;
+        protected final ConfirmListener _listener;
+        protected BuildResult _result;
         protected ItemRecord _record;
         protected File _buildDir;
         protected Throwable _error;
-        protected BuildResult _result;
     }
 
     /** Handles inserting the upload file data into svn and the room object. */
@@ -963,23 +997,19 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     /**
-     * Small data class to hold dobject thread objects needed during the build process.
+     * Small data class to hold dobject thread objects needed during the build export process.
      */
-    protected static class BuildData
+    protected static class ExportData
     {
+
         public final int projectId;
+        public final int memberId;
         public final String projectName;
         public final int projectType;
-        public final SwiftlyCollaboratorsRecord record;
-
-        // only store information needed for building
-        public BuildData (SwiftlyProject project)
-        {
-            this(project, null);
-        }
+        public int buildResultItemId;
 
         // store information needed for building and exporting the result
-        public BuildData (SwiftlyProject project, SwiftlyCollaboratorsRecord record)
+        public ExportData (SwiftlyProject project, MemberName member, int buildResultItemId)
         {
             // since GWT does not support clone, we'll pull off the primitives we want from
             // the project object, which came from the dobject thread.
@@ -987,8 +1017,8 @@ public class ProjectRoomManager extends PlaceManager
             this.projectName = project.projectName;
             this.projectType = project.projectType;
 
-            // we can't call clone here it looks like or else we will get a new row in the database
-            this.record = record;
+            this.memberId = member.getMemberId();
+            this.buildResultItemId = buildResultItemId;
         }
 
         /**
@@ -1000,12 +1030,15 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         /**
-         * Whether this instance of BuildData should have its results exported.
+         * Returns true if the buildResultItemId has been resolved from the database.
          */
-        public boolean exportResults ()
+        public boolean noBuildResult ()
         {
-            return (this.record != null);
+            return (this.buildResultItemId == RECORD_NOT_LOADED);
         }
+
+        /** indicates that the collaborator record has not been looked up yet */
+        protected static final int RECORD_NOT_LOADED = -1;
     }
 
     /** Server-root relative path to the Whirled SDK. */
@@ -1017,8 +1050,10 @@ public class ProjectRoomManager extends PlaceManager
     /** Server-root relative path to the server build directory. */
     protected static final String LOCAL_BUILD_DIRECTORY = "/data/swiftly/build";
 
+    /** Cache the memberId to build result itemId mapping used for exporting results */
+    protected IntIntMap _resultItems;
+
     protected ProjectRoomObject _roomObj;
-    protected HashIntMap<SwiftlyCollaboratorsRecord> _collaborators;
     protected ProjectStorage _storage;
     protected LocalProjectBuilder _builder;
     protected File _buildDir;

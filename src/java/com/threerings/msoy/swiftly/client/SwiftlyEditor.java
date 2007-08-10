@@ -331,6 +331,7 @@ public class SwiftlyEditor extends PlacePanel
         // otherwise we'll wait for the message that the project has been resolved later
         if (_roomObj.project != null) {
             _projectPanel.setProject(_roomObj);
+            updateReadOnlyStatus();
         }
 
         // set the room object in the console now that it is available
@@ -364,6 +365,7 @@ public class SwiftlyEditor extends PlacePanel
         // the project has been loaded or changed. tell the project panel to make the project tree
         } else if (event.getName().equals(ProjectRoomObject.PROJECT)) {
             _projectPanel.setProject(_roomObj);
+            updateReadOnlyStatus();
         }
     }
 
@@ -423,6 +425,14 @@ public class SwiftlyEditor extends PlacePanel
         _rightPane.setDividerLocation(getHeight());
     }
 
+    /**
+     * Called whenever any data changes that would affect whether the editor should be in read only
+     * mode or not
+     */
+    protected void updateReadOnlyStatus ()
+    {
+        // TODO:
+    }
 
     /** Displays the build result on the console */
     protected void displayBuildResult ()

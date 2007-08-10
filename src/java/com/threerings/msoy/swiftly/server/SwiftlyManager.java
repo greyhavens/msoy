@@ -3,33 +3,31 @@
 
 package com.threerings.msoy.swiftly.server;
 
+import static com.threerings.msoy.Log.log;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.SerialExecutor;
-
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.server.InvocationManager;
-
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.swiftly.client.SwiftlyService;
 import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
-import com.threerings.msoy.web.data.SwiftlyProject;
-
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
-import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
-
-import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
-import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
-
-import static com.threerings.msoy.Log.log;
+import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
+import com.threerings.msoy.web.data.SwiftlyProject;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.InvocationManager;
 
 /**
  * Handles the collection of Swiftly project information
@@ -62,17 +60,19 @@ public class SwiftlyManager
     }
 
     // from interface SwiftlyProvider
-    public void enterProject (ClientObject caller, final int projectId,
+    public void enterProject (final ClientObject caller, final int projectId,
                               final SwiftlyService.ResultListener listener)
         throws InvocationException
     {
         ProjectRoomManager curmgr = _managers.get(projectId);
-        final ProjectRoomManager mgr;
         if (curmgr != null) {
+            // verify the caller has at least read permissions on the resolved room manager
+            curmgr.requireReadPermissions(caller);
             listener.requestProcessed(curmgr.getPlaceObject().getOid());
             return;
         }
 
+        final ProjectRoomManager mgr;
         ProjectRoomConfig config = new ProjectRoomConfig();
         try {
             config.projectId = projectId;
@@ -82,61 +82,81 @@ public class SwiftlyManager
             log.info("Created project room [project=" + projectId +
                      ", room=" + mgr.getPlaceObject().getOid() + "].");
 
-
         } catch (InstantiationException e) {
             log.log(Level.WARNING, "Failed to create project room [config=" + config + "].", e);
-            throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
+            throw new InvocationException(SwiftlyCodes.E_INTERNAL_ERROR);
         }
 
         // Load the project storage on the invoker thread, initialize the ProjectRoomManager
         MsoyServer.invoker.postUnit(new Invoker.Unit("loadProjectStorage") {
             public boolean invoke () {
                 try {
+                    // first load the project record
                     SwiftlyProjectRecord projectRecord =
                         MsoyServer.swiftlyRepo.loadProject(projectId);
                     if (projectRecord == null) {
-                        log.warning("Failed to load project record [projectId=" +
+                        throw new PersistenceException("Failed to load project record [projectId=" +
                             projectId + "].");
-                        return false;
                     }
                     _project = projectRecord.toSwiftlyProject();
 
+                    // then the storage record
                     SwiftlySVNStorageRecord storageRecord =
                         MsoyServer.swiftlyRepo.loadStorageRecordForProject(projectId);
                     if (storageRecord == null) {
-                        log.warning("Project missing storage record [projectId=" +
-                            projectId + "].");
-                        return false;
+                        throw new PersistenceException("Project missing storage record " +
+                            " [projectId=" + projectId + "].");
                     }
                     _storage = new ProjectSVNStorage(_project, storageRecord);
 
-                    _collaborators = new HashIntMap<SwiftlyCollaboratorsRecord>();
-                    for (SwiftlyCollaboratorsRecord record :
+                    // and finally the list of collaborators
+                    _collaborators = new ArrayList<MemberName>();
+                    for (MemberRecord mRec :
                         MsoyServer.swiftlyRepo.getCollaborators(projectId)) {
-                        _collaborators.put(record.memberId, record);
+                        _collaborators.add(mRec.getName());
                     }
-                    return true;
+                    if (_collaborators.size() <= 0) {
+                        throw new PersistenceException("No collaborators found for project " +
+                            " [projectId=" + projectId + "].");
+                    }
 
-                } catch (ProjectStorageException pse) {
-                    log.log(Level.WARNING, "Failed to open swiftly project storage [projectId=" +
-                        projectId + "].", pse);
-                    return false;
-
-                } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to find project storage record [projectId=" +
-                        projectId + "].", pe);
-                    return false;
+                } catch (Exception e) {
+                    _error = e;
                 }
+
+                return true;
             }
 
             public void handleResult () {
+                if (_error != null) {
+                    log.log(Level.WARNING, "Failed initializing room manager. ", _error);
+                    listener.requestFailed(SwiftlyCodes.E_INTERNAL_ERROR);
+                    // remove the manager from the list since it is not fully resolved and we know
+                    // this was the first user trying to resolve it.
+                    mgr.shutdown();
+                    return;
+                }
+
+                // verify the user has rights to at the very least read this project either because
+                // the project is remixable or they are a collaborator on the project
+                MemberObject memobj = (MemberObject)caller;
+                if (!(_collaborators.contains(memobj.memberName) || _project.remixable)) {
+                    listener.requestFailed(SwiftlyCodes.E_ACCESS_DENIED);
+                    // remove the manager from the list since it is not fully resolved and we know
+                    // this was the first user trying to resolve it.
+                    mgr.shutdown();
+                    return;
+                }
+
+                // all the necessary bits of data have been loaded, initialize the room manager
                 mgr.init(_project, _collaborators, _storage);
                 listener.requestProcessed(mgr.getPlaceObject().getOid());
             }
 
             protected SwiftlyProject _project;
             protected ProjectStorage _storage;
-            protected HashIntMap<SwiftlyCollaboratorsRecord> _collaborators;
+            protected List<MemberName> _collaborators;
+            protected Exception _error;
         });
     }
 
