@@ -191,15 +191,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="WhirledGameControl.html#awardFlow()">awardFlow</a>(amount:int):void</div>
-<div class="summaryTableDescription">
-     Award flow to this occupant.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="WhirledGameControl.html#backToWhirled()">backToWhirled</a>():void</div>
+<a class="signatureLink" href="WhirledGameControl.html#backToWhirled()">backToWhirled</a>(showLobby:Boolean = false):void</div>
 <div class="summaryTableDescription">
      Instructs the game client to return to Whirled.</div>
 </td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
@@ -272,19 +264,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#get()">get</a>(propName:String, index:int = -1):Object</div>
+<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#filter()">filter</a>(text:String):String</div>
 <div class="summaryTableDescription">
-     Get a property from data.</div>
+     Run the specified text through the user's chat filter.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="WhirledGameControl.html#getAvailableFlow()">getAvailableFlow</a>():int</div>
+<a class="signatureLink" href="../threerings/ezgame/EZGameControl.html#get()">get</a>(propName:String, index:int = -1):Object</div>
 <div class="summaryTableDescription">
-     Get the amount of flow that's <i>currently</i> available to award to the occupant who has
-     instantiated this game control.</div>
-</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
+     Get a property from data.</div>
+</td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -389,6 +380,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Get the user-specific game data for the specified user.</div>
 </td><td class="summaryTableOwnerCol"><a href="../threerings/ezgame/EZGameControl.html">EZGameControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="WhirledGameControl.html#grantFlowAward()">grantFlowAward</a>(score:int):int</div>
+<div class="summaryTableDescription">
+     Grant a flow award to the player.</div>
+</td><td class="summaryTableOwnerCol"><a href="WhirledGameControl.html">WhirledGameControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">

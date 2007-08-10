@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="AvatarControl,com.whirled.AvatarControl,_actions,_states,registerActions,registerStates,setPreferredY,setState,getState,populateProperties,avatarSpoke_v1,getActions_v1,getStates_v1,verifyActionsOrStates,isAbstract" name="keywords">
+<meta content="AvatarControl,com.whirled.AvatarControl,_actions,_states,_isSleeping,registerActions,registerStates,isSleeping,setPreferredY,setState,getState,populateProperties,gotInitProperties,avatarSpoke_v1,getActions_v1,getStates_v1,appearanceChanged_v2,verifyActionsOrStates,isAbstract" name="keywords">
 <title>com.whirled.AvatarControl</title>
 </head>
 <body>
@@ -74,6 +74,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="ActorControl.html#_isMoving">_isMoving</a> : Boolean<div class="summaryTableDescription"> Indicates whether or not we're currently moving.</div>
 </td><td class="summaryTableOwnerCol"><a href="ActorControl.html">ActorControl</a></td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_isSleeping">_isSleeping</a> : Boolean<div class="summaryTableDescription"> Is this avatar asleep? </div>
+</td><td class="summaryTableOwnerCol">AvatarControl</td>
+</tr>
 <tr class="hideInheritedProtectedProperty">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EntityControl.html#_location">_location</a> : Array<div class="summaryTableDescription"> Contains our current location in the scene [x, y, z], or null.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
@@ -126,9 +130,24 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="EntityControl.html#addControl()">addControl</a>(control:Sprite):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#canEditRoom()">canEditRoom</a>():Boolean</div>
 <div class="summaryTableDescription">
      Returns true if the local client has editing privileges in the current room.</div>
+</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="EntityControl.html#clearPopup()">clearPopup</a>():void</div>
+<div class="summaryTableDescription">
+     Clear any showing popup.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -145,6 +164,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="EntityControl.html#getLogicalLocation()">getLogicalLocation</a>():Array</div>
 <div class="summaryTableDescription">
      Returns our current logical location in the scene.</div>
+</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="EntityControl.html#getMemories()">getMemories</a>():Object</div>
+<div class="summaryTableDescription">
+     Return an associative hash of all the memories.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -183,8 +210,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#hasControl()">hasControl</a>():Boolean</div>
 <div class="summaryTableDescription">
-     Is this instance in control?
-     </div>
+     Is this client in control? Note: entity control is <em>not</em> automatically assigned.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -205,10 +231,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Returns whether the mobile is currently moving between locations in the scene.</div>
 </td><td class="summaryTableOwnerCol"><a href="ActorControl.html">ActorControl</a></td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#isSleeping()">isSleeping</a>():Boolean</div>
+<div class="summaryTableDescription">
+     Is this avatar "sleeping"? An avatar is sleeping either when a user has intentially gone AFK
+     (away from keyboard) or have let their client go idle, and zzz's appear over their head.</div>
+</td><td class="summaryTableOwnerCol">AvatarControl</td>
+</tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#lookupMemory()">lookupMemory</a>(key:String, defval:Object):Object</div>
+<a class="signatureLink" href="EntityControl.html#lookupMemory()">lookupMemory</a>(key:String, defval:Object = null):Object</div>
 <div class="summaryTableDescription">
      Returns the value associated with the supplied key in this item's memory.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
@@ -216,7 +251,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#registerActions()">registerActions</a>(actionName:String, ... moreActions):void</div>
+<a class="signatureLink" href="#registerActions()">registerActions</a>(... actions):void</div>
 <div class="summaryTableDescription">
      Register the named actions that can be used to animate the avatar.</div>
 </td><td class="summaryTableOwnerCol">AvatarControl</td>
@@ -224,7 +259,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#registerStates()">registerStates</a>(normalState:String, ... moreStates):void</div>
+<a class="signatureLink" href="#registerStates()">registerStates</a>(... states):void</div>
 <div class="summaryTableDescription">
      Register the named states that this actor may be in.</div>
 </td><td class="summaryTableOwnerCol">AvatarControl</td>
@@ -232,9 +267,16 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="EntityControl.html#removeControl()">removeControl</a>(control:Sprite):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#requestControl()">requestControl</a>():void</div>
 <div class="summaryTableDescription">
-     Request to have this instance of the object control all the instances in the room.</div>
+     Request to have this client control all the instances of this entity.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -312,6 +354,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="EntityControl.html#showPopup()">showPopup</a>(title:String, panel:DisplayObject, width:Number, height:Number):Boolean</div>
+<div class="summaryTableDescription">
+     Show a popup to the current user in the whirled.</div>
+</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#triggerAction()">triggerAction</a>(name:String, arg:Object = null):void</div>
 <div class="summaryTableDescription">
      Triggers an action on this scene object.</div>
@@ -342,13 +392,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr>
 <th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="ActorControl.html#appearanceChanged_v1()">appearanceChanged_v1</a>(location:Array, orient:Number, moving:Boolean):void</div>
-<div class="summaryTableDescription">
-     Called when we start or stop moving or change orientation.</div>
-</td><td class="summaryTableOwnerCol"><a href="ActorControl.html">ActorControl</a></td>
+<a class="signatureLink" href="#appearanceChanged_v2()">appearanceChanged_v2</a>(location:Array, orient:Number, moving:Boolean, sleeping:Boolean):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">AvatarControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -398,12 +447,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Called when this client has been assigned control of this object.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="ActorControl.html#gotInitProperties()">gotInitProperties</a>(o:Object):void</div>
+<a class="signatureLink" href="#gotInitProperties()">gotInitProperties</a>(o:Object):void</div>
 <div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol"><a href="ActorControl.html">ActorControl</a></td>
+</td><td class="summaryTableOwnerCol">AvatarControl</td>
 </tr>
 <tr class="hideInheritedProtectedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -581,6 +630,14 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected var _actions:Array</code><p> An array of all action names. </p></div>
+<a name="_isSleeping"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_isSleeping</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _isSleeping:Boolean</code><p> Is this avatar asleep? </p></div>
 <a name="_states"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -608,10 +665,42 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
+<a name="appearanceChanged_v2()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">appearanceChanged_v2</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected override function appearanceChanged_v2(location:Array, orient:Number, moving:Boolean, sleeping:Boolean):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">location</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">orient</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">moving</span>:Boolean</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">sleeping</span>:Boolean</code></td>
+</tr>
+</table>
+</div>
 <a name="avatarSpoke_v1()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">avatarSpoke_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">avatarSpoke_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -667,6 +756,20 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="gotInitProperties()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">gotInitProperties</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected override function gotInitProperties(o:Object):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">o</span>:Object</code></td>
+</tr>
+</table>
+</div>
 <a name="isAbstract()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -676,6 +779,27 @@ showHideInherited();
 <div class="detailBody">
 <code>protected override function isAbstract():Boolean</code>
 <p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="isSleeping()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isSleeping</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function isSleeping():Boolean</code><p>
+     Is this avatar "sleeping"? An avatar is sleeping either when a user has intentially gone AFK
+     (away from keyboard) or have let their client go idle, and zzz's appear over their head. You
+     may react to isSleeping (if you want) to render a sleep state, or transition to an
+     unregistered state that looks like sleeping.
+          Whenever this value changes an APPEARANCE_CHANGED event will be generated.
+     </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -704,23 +828,16 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function registerActions(actionName:String, ... moreActions):void</code><p>
-     Register the named actions that can be used to animate the avatar.
-     Actions are "one-time" events that cause the avatar to do something
-     in the whirled, like laugh, play a sound, or do a quick animation.
-     Actions are different from states- states are persistent and do
-     not go away if you walk, talk, or play actions.
+<code>public function registerActions(... actions):void</code><p>
+     Register the named actions that can be used to animate the avatar.  Actions are "one-time"
+     events that cause the avatar to do something in the whirled, like laugh, play a sound, or do
+     a quick animation.  Actions are different from states- states are persistent and do not go
+     away if you walk, talk, or play actions.
           Note: actions must be 64 characters or less.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">actionName</span>:String</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code>... <span class="label">moreActions</span></code></td>
+<td width="20px"></td><td><code>... <span class="label">actions</span></code></td>
 </tr>
 </table>
 </div>
@@ -731,32 +848,23 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function registerStates(normalState:String, ... moreStates):void</code><p>
+<code>public function registerStates(... states):void</code><p>
      Register the named states that this actor may be in.
-     States are persistent. An actor may only be in one state at a time.
-     If the actor is in a state and then needs to walk, talk, or play
-     an action, then it should still be in the state during and after
-     those actions.
-     When an actor is first instantiated, it is in the normal state.
-     If no states are registered then there is an implicit unnamed normal
-     state.
-     States are different from actions- actions are not persistent and
-     are instantly forgotten as soon as you play them. If an action is
-     a laugh animation that plays for 5 seconds, someone who walks in the
-     room 1 second after you laugh will see nothing.
-          The first registered state will be your "default" state. If you call
-     getState() without registering states you will get null.
+          States are persistent. An actor may only be in one state at a time.  If the actor is in a
+     state and then needs to walk, talk, or play an action, then it should still be in the state
+     during and after those actions.
+          When an actor is first instantiated, it is in the normal state.  If no states are registered
+     then there is an implicit unnamed normal state.
+          States are different from actions- actions are not persistent and are instantly forgotten as
+     soon as you play them. If an action is a laugh animation that plays for 5 seconds, someone
+     who walks in the room 1 second after you laugh will see nothing.
+          The first registered state will be your "default" state. If you call getState() without
+     registering states you will get null.
           Note: states must be 64 characters or less.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">normalState</span>:String</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code>... <span class="label">moreStates</span></code></td>
+<td width="20px"></td><td><code>... <span class="label">states</span></code></td>
 </tr>
 </table>
 </div>
@@ -768,8 +876,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function setPreferredY(pixels:int):void</code><p>
-     Set this avatar's preferred height off the ground, in pixels.
-     If unset, it defaults to 0, meaning that it walks on the ground.
+     Set this avatar's preferred height off the ground, in pixels.  If unset, it defaults to 0,
+     meaning that it walks on the ground.
           Calling this does not adjust the current location.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -843,8 +951,8 @@ showHideInherited();
 <br>
 <span class="label">ControlEvent.type property = </span><a href="../whirled/ControlEvent.html#AVATAR_SPOKE"><code>com.whirled.ControlEvent.AVATAR_SPOKE</code></a>
 <br><p>
- Dispatched when the user controlling this avatar speaks. You may
- trigger a speak animation off of this event.
+ Dispatched when the user controlling this avatar speaks. You may trigger a speak animation off
+ of this event.
  
  </p><p> An event type dispatched when this avatar speaks.
      name: unused

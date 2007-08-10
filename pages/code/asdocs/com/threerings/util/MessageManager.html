@@ -1,0 +1,234 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
+<meta content="MessageManager,com.threerings.util.MessageManager,GLOBAL_BUNDLE,_cache,_global,MBUNDLE_CLASS_KEY,getBundle" name="keywords">
+<title>com.threerings.util.MessageManager</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'MessageManager - API Documentation';
+				var baseRef = '../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/threerings/util/MessageManager.html&amp;com/threerings/util/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;MessageManager</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class MessageManager"); titleBar_setSubNav(true,true,false,false,false,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.threerings.util</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class MessageManager</td>
+</tr>
+</table>
+<p></p>
+ The message manager provides a thin wrapper around Java's built-in
+ localization support, supporting a policy of dividing up localization
+ resources into logical units, all of the translations for which are
+ contained in a single messages file.
+  <p> The message manager assumes that the locale remains constant for
+ the duration of its operation. If the locale were to change during the
+ operation of the client, a call to {<p></p>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a><a name="protectedPropertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Properties</div>
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_cache">_cache</a> : <a href="../util/HashMap.html">HashMap</a>
+<div class="summaryTableDescription"> A cache of instantiated message bundles.</div>
+</td><td class="summaryTableOwnerCol">MessageManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_global">_global</a> : <a href="../util/MessageBundle.html">MessageBundle</a>
+<div class="summaryTableDescription"> Our top-level message bundle, from which others obtain messages if
+     they can't find them within themselves.</div>
+</td><td class="summaryTableOwnerCol">MessageManager</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#MessageManager()">MessageManager</a>()</div>
+<div class="summaryTableDescription">
+     Constructs a message manager with the supplied resource prefix and
+     the default locale.</div>
+</td><td class="summaryTableOwnerCol">MessageManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getBundle()">getBundle</a>(path:String):<a href="../util/MessageBundle.html">MessageBundle</a>
+</div>
+<div class="summaryTableDescription">
+     Fetches the message bundle for the specified path.</div>
+</td><td class="summaryTableOwnerCol">MessageManager</td>
+</tr>
+</table>
+</div>
+<a name="constantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Constants</div>
+<table id="summaryTableConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#GLOBAL_BUNDLE">GLOBAL_BUNDLE</a> : String = "global"<div class="summaryTableDescription">[static] The name of the global resource bundle (which other bundles revert
+     to if they can't locate a message within themselves).</div>
+</td><td class="summaryTableOwnerCol">MessageManager</td>
+</tr>
+</table>
+</div>
+<a name="protectedConstantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Constants</div>
+<table id="summaryTableProtectedConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#MBUNDLE_CLASS_KEY">MBUNDLE_CLASS_KEY</a> : String = "msgbundle_class"<div class="summaryTableDescription">[static] A key that can contain the classname of a custom message bundle
+     class to be used to handle messages for a particular bundle.</div>
+</td><td class="summaryTableOwnerCol">MessageManager</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="_cache"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_cache</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _cache:<a href="../util/HashMap.html">HashMap</a></code><p> A cache of instantiated message bundles. </p></div>
+<a name="_global"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_global</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _global:<a href="../util/MessageBundle.html">MessageBundle</a></code><p> Our top-level message bundle, from which others obtain messages if
+     they can't find them within themselves. </p></div>
+<a name="constructorDetail"></a>
+<div class="detailSectionHeader">Constructor detail</div>
+<a name="MessageManager()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">MessageManager</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function MessageManager()</code><p>
+     Constructs a message manager with the supplied resource prefix and
+     the default locale. The prefix will be prepended to the path of all
+     resource bundles prior to their resolution. For example, if a
+     prefix of <code>rsrc.messages</code> was provided and a message
+     bundle with the name <code>game.chess</code> was later requested,
+     the message manager would attempt to load a resource bundle with
+     the path <code>rsrc.messages.game.chess</code> and would eventually
+     search for a file in the classpath with the path
+     <code>rsrc/messages/game/chess.properties</code>.
+          </p><p> See the documentation for {</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="getBundle()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getBundle</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getBundle(path:String):<a href="../util/MessageBundle.html">MessageBundle</a></code><p>
+     Fetches the message bundle for the specified path. If no bundle can
+     be located with the specified path, a special bundle is returned
+     that returns the untranslated message identifiers instead of an
+     associated translation. This is done so that error code to handle a
+     failed bundle load need not be replicated wherever bundles are
+     used. Instead an error will be logged and the requesting service
+     can continue to function in an impaired state.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">path</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../util/MessageBundle.html">MessageBundle</a></code></td>
+</tr>
+</table>
+</div>
+<a name="constantDetail"></a>
+<div class="detailSectionHeader">Constant detail</div>
+<a name="GLOBAL_BUNDLE"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">GLOBAL_BUNDLE</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const GLOBAL_BUNDLE:String = "global"</code><p> The name of the global resource bundle (which other bundles revert
+     to if they can't locate a message within themselves). It must be
+     named <code>global.properties</code> and live at the top of the
+     bundle hierarchy. </p></div>
+<a name="MBUNDLE_CLASS_KEY"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">MBUNDLE_CLASS_KEY</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const MBUNDLE_CLASS_KEY:String = "msgbundle_class"</code><p> A key that can contain the classname of a custom message bundle
+     class to be used to handle messages for a particular bundle. </p></div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright"> 
+</center>
+</div>
+</body>
+</html>
+<!-- -->
