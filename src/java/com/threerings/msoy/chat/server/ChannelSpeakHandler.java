@@ -14,7 +14,7 @@ import com.threerings.util.MessageManager;
 
 import static com.threerings.msoy.Log.log;
 
-abstract public class ChannelSpeakHandler
+public abstract class ChannelSpeakHandler
     implements SpeakProvider
 {
     public ChannelSpeakHandler (ChannelWrapper wrapper)
@@ -22,7 +22,7 @@ abstract public class ChannelSpeakHandler
         _ch = wrapper;
     }
 
-    abstract public void speak (ClientObject caller, String message, byte mode);
+    public abstract void speak (ClientObject caller, String message, byte mode);
 
     /**
      * Ensures that the chat object is initialized, and the speaker has access to it.
