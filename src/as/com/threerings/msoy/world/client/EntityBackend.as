@@ -99,7 +99,7 @@ public class EntityBackend extends ControlBackend
 
     protected function getRoomBounds_v1 () :Array
     {
-        return (_sprite == null) ? null : _sprite.getRoomBounds();
+        return (_sprite == null) ? [ 1, 1, 1] : _sprite.getRoomBounds();
     }
 
     protected function canEditRoom_v1 () :Boolean
