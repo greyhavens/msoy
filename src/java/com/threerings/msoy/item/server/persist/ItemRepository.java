@@ -658,8 +658,8 @@ public abstract class ItemRepository<
             new Key<T>(getItemClass(), ItemRecord.ITEM_ID, item.itemId);
         int modifiedRows =  updatePartial(
             item.itemId < 0 ? getCloneClass() : getItemClass(),
-            new Where(ItemRecord.ITEM_ID_C, item.itemId,
-                      ItemRecord.OWNER_ID_C, item.ownerId),
+            new Where(getItemColumn(ItemRecord.ITEM_ID), item.itemId,
+                      getItemColumn(ItemRecord.OWNER_ID), item.ownerId),
             key,
             ItemRecord.OWNER_ID, newOwnerId,
             ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
