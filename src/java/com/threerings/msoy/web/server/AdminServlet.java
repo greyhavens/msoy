@@ -99,6 +99,7 @@ public class AdminServlet extends MsoyServiceServlet
                 players.add(rec.toWebObject());
             }
             res.invitees = players;
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "getPlayerList failed [inviterId=" + inviterId + "]", pe);
             throw new ServiceException(pe.getMessage());
