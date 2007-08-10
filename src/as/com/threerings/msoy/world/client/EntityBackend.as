@@ -58,59 +58,70 @@ public class EntityBackend extends ControlBackend
 
     protected function requestControl_v1 () :void
     {
-        _sprite.requestControl();
+        if (_sprite != null) {
+            _sprite.requestControl();
+        }
     }
 
     protected function getInstanceId_v1 () :int
     {
-        return _sprite.getInstanceId();
+        return (_sprite == null) ? -1 : _sprite.getInstanceId();
     }
 
     protected function getMemories_v1 () :Object
     {
-        return _sprite.getMemories();
+        return (_sprite == null) ? {} : _sprite.getMemories();
     }
 
     protected function lookupMemory_v1 (key :String) :Object
     {
-        return _sprite.lookupMemory(key);
+        return (_sprite == null) ? null : _sprite.lookupMemory(key);
     }
 
     protected function updateMemory_v1 (key :String, value :Object) :Boolean
     {
-        return _sprite.updateMemory(key, value);
+        return (_sprite == null) ? false : _sprite.updateMemory(key, value);
     }
 
     protected function setHotSpot_v1 (x :Number, y :Number, height :Number = NaN) :void
     {
-        _sprite.setHotSpot(x, y, height);
+        if (_sprite != null) {
+            _sprite.setHotSpot(x, y, height);
+        }
     }
 
     protected function sendMessage_v1 (name :String, arg :Object, isAction :Boolean) :void
     {
-        _sprite.sendMessage(name, arg, isAction);
+        if (_sprite != null) {
+            _sprite.sendMessage(name, arg, isAction);
+        }
     }
 
     protected function getRoomBounds_v1 () :Array
     {
-        return _sprite.getRoomBounds();
+        return (_sprite == null) ? null : _sprite.getRoomBounds();
     }
 
     protected function canEditRoom_v1 () :Boolean
     {
-        return _sprite.canEditRoom();
+        return (_sprite == null) ? false : _sprite.canEditRoom();
     }
 
     protected function showPopup_v1 (
         title :String, panel :DisplayObject, w :Number, h :Number) :Boolean
     {
+        if (_sprite == null) {
+            return false;
+        }
         return (_sprite.parent as RoomView).getRoomController().showEntityPopup(
             _sprite, title, panel, w, h);
     }
 
     protected function clearPopup_v1 () :void
     {
-        (_sprite.parent as RoomView).getRoomController().clearEntityPopup(_sprite);
+        if (_sprite != null) {
+            (_sprite.parent as RoomView).getRoomController().clearEntityPopup(_sprite);
+        }
     }
 
     // Deprecated on 2007-03-12
