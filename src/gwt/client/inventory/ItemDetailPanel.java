@@ -81,21 +81,27 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             });
             _details.add(button);
 
-        } else /* TODO: if (remixable) */ {
-            _details.add(WidgetUtil.makeShim(1, 10));
-            _details.add(new Label(CInventory.msgs.detailRemixTip()));
-            button = new Button(CInventory.msgs.detailRemix());
-            new ClickCallback(button) {
-                public boolean callService () {
-                    CInventory.itemsvc.remixItem(CInventory.ident, _item.getIdent(), this);
-                    return true;
-                }
-                public boolean gotResult (Object result) {
-                    _parent.itemRemixed (_item, (Item) result);
-                    return false;
-                }
-            };
-            _details.add(button);
+// TODO: we want to handle remixing in a more sophisticated way, most likely we'll link items to a
+// project where the item's source files are available (even if they're not built by swiftly) and
+// where collaborators can talk about the project, etc. and where the item's remixing policy can be
+// more clearly detailed and generally things can be much more sophisticated than a random remix
+// button in the middle of one's inventory
+//
+//         } else /* TODO: if (remixable) */ {
+//             _details.add(WidgetUtil.makeShim(1, 10));
+//             _details.add(new Label(CInventory.msgs.detailRemixTip()));
+//             button = new Button(CInventory.msgs.detailRemix());
+//             new ClickCallback(button) {
+//                 public boolean callService () {
+//                     CInventory.itemsvc.remixItem(CInventory.ident, _item.getIdent(), this);
+//                     return true;
+//                 }
+//                 public boolean gotResult (Object result) {
+//                     _parent.itemRemixed (_item, (Item) result);
+//                     return false;
+//                 }
+//             };
+//             _details.add(button);
         }
 
         // TODO: When catalog browsing is fully URL-friendly, browsing catalog by creator from here
