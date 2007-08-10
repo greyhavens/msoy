@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -15,6 +16,7 @@ import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
+import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Modifier;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -269,6 +271,39 @@ public abstract class TagRepository extends DepotRepository
         history.time = new Timestamp(now);
         insert(history);
         return rows;
+    }
+
+    /**
+     * Deletes all tag and history records associated with the specified target.
+     */
+    public void deleteTags (final int targetId)
+        throws PersistenceException
+    {
+        // invalidate and delete tag records for this target
+        CacheInvalidator inv = new CacheInvalidator() {
+            public void invalidate (PersistenceContext ctx) {
+                ctx.cacheTraverse(getTagClass().getName(),
+                                  new PersistenceContext.CacheEvictionFilter<TagRecord>() {
+                    public boolean testForEviction (Serializable key, TagRecord record) {
+                        return record != null && record.targetId == targetId;
+                    }
+                });
+            }
+        };
+        deleteAll(getTagClass(), new Where(TagRecord.TARGET_ID_C, targetId), inv);
+
+        // invalidate and delete tag history records for this target
+        inv = new CacheInvalidator() {
+            public void invalidate (PersistenceContext ctx) {
+                ctx.cacheTraverse(getTagHistoryClass().getName(),
+                                  new PersistenceContext.CacheEvictionFilter<TagHistoryRecord>() {
+                    public boolean testForEviction (Serializable key, TagHistoryRecord record) {
+                        return record != null && record.targetId == targetId;
+                    }
+                });
+            }
+        };
+        deleteAll(getTagHistoryClass(), new Where(TagHistoryRecord.TARGET_ID_C, targetId), inv);
     }
 
     protected ColumnExp getTagColumn (String cname)

@@ -38,7 +38,7 @@ public class ToyRepository extends ItemRepository<
     {
         return ToyRecord.class;
     }
-    
+
     @Override
     protected Class<ToyCatalogRecord> getCatalogClass ()
     {
@@ -50,7 +50,7 @@ public class ToyRepository extends ItemRepository<
     {
         return ToyCloneRecord.class;
     }
-    
+
     @Override
     protected Class<ToyRatingRecord> getRatingClass ()
     {

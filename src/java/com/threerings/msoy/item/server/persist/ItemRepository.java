@@ -596,30 +596,8 @@ public abstract class ItemRepository<
             deleteAll(getRatingClass(),
                       new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId), inv);
 
-//             // invalidate and delete tag records for this item
-//             inv = new CacheInvalidator() {
-//                 public void invalidate (PersistenceContext ctx) {
-//                     ctx.cacheTraverse(getTagClass().getName(), new CacheEvictionFilter<TT>() {
-//                         public boolean testForEviction (Serializable key, TT record) {
-//                             return record != null && record.itemId == itemId;
-//                         }
-//                     });
-//                 }
-//             };
-//             deleteAll(getTagClass(), new Where(TagRecord.ITEM_ID, itemId), inv);
-
-//             // invalidate and delete tag history records for this item
-//             inv = new CacheInvalidator() {
-//                 public void invalidate (PersistenceContext ctx) {
-//                     String cacheName = getTagHistoryClass().getName();
-//                     ctx.cacheTraverse(cacheName, new CacheEvictionFilter<THT>() {
-//                         public boolean testForEviction (Serializable key, THT record) {
-//                             return record != null && record.itemId == itemId;
-//                         }
-//                     });
-//                 }
-//             };
-//             deleteAll(getTagHistoryClass(), new Where(TagHistoryRecord.ITEM_ID, itemId), inv);
+            // delete tag records relating to this item
+            _tagRepo.deleteTags(itemId);
         }
     }
 
