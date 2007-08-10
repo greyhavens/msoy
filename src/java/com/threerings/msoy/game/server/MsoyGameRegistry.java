@@ -281,6 +281,8 @@ public class MsoyGameRegistry
 
         public void setClientObject (ClientObject clobj) {
             _clobj = clobj;
+            // TODO: if our client object is destroyed and we aren't shutting down, restart the
+            // game server?
         }
 
         public void hostGame (Game game) {
