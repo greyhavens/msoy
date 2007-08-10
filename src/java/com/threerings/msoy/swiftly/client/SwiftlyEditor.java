@@ -379,7 +379,6 @@ public class SwiftlyEditor extends PlacePanel
     // from interface SetListener
     public void entryUpdated (EntryUpdatedEvent event)
     {
-        // TODO do we actually want to do anything here?
         if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
             final SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
             // Re-bind transient instance variables
@@ -427,7 +426,7 @@ public class SwiftlyEditor extends PlacePanel
     }
 
     /**
-     * Called whenever any data changes that would affect the clients rights in the project
+     * Called whenever any data changes that would affect the client's rights in the project
      * being edited.
      */
     protected void updateEditorAccess ()
