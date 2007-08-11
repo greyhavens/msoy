@@ -124,6 +124,14 @@ public class ChatOverlay
     }
 
     /**
+     * History list accessor.
+     */
+    public function getHistory () :HistoryList
+    {
+        return _history;
+    }
+
+    /**
      * Set the target container where this chat should add its overlay. This resets any custom
      * target bounds previously set via {@link #setTargetBounds}.
      *

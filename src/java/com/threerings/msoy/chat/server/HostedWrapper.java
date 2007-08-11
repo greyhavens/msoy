@@ -68,6 +68,7 @@ public class HostedWrapper extends ChannelWrapper
     public void addChatter (ChatterInfo userInfo)
     {
         try {
+            removeStaleMessagesFromHistory();
             _mgr.addUser(null, userInfo, _channel, new ChatterListener(userInfo));
         } catch (Exception ex) {
             log.warning("Host failed to add a new user [user=" + userInfo +

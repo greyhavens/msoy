@@ -99,6 +99,7 @@ public class SubscriptionWrapper extends ChannelWrapper
     // from abstract class ChannelWrapper 
     public void addChatter (ChatterInfo userInfo)
     {
+        removeStaleMessagesFromHistory();
         MsoyNodeObject host = MsoyServer.peerMan.getChannelHost(_channel);
         host.peerChatService.addUser(
             MsoyServer.peerMan.getPeerClient(host.nodeName), userInfo, _channel,

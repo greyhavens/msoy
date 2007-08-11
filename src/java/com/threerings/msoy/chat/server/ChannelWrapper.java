@@ -88,27 +88,35 @@ public abstract class ChannelWrapper
             recordChatMessage((ChannelMessage)args[0]);
         }
     }
-
-    /** Updates the peer-local chat storage with the new message. */
-    protected void recordChatMessage (ChannelMessage msg)
+        
+    /** Cleans up old chat messages. */
+    protected void removeStaleMessagesFromHistory ()
     {
-        // count up old messages to be removed. 
+        // bring out your dead!
         long now = System.currentTimeMillis();
         int removeCount = 0;
         for (ChannelMessage old : _ccobj.recentMessages) {
             if ((now - old.creationTime) < MAX_RECENT_MESSAGE_AGE) {
-                break;
+                break; // but i'm not dead yet!
             }
             removeCount++;
         }
 
+        if (removeCount > 0) {
+            _ccobj.recentMessages = ArrayUtil.splice(_ccobj.recentMessages, 0, removeCount);
+        }
+    }
+
+    /** Updates the peer-local chat storage with the new message. */
+    protected void recordChatMessage (ChannelMessage msg)
+    {
         // remove old messages, add the new one
-        _ccobj.recentMessages = ArrayUtil.append(
-            ArrayUtil.splice(_ccobj.recentMessages, 0, removeCount), msg);
+        removeStaleMessagesFromHistory();
+        _ccobj.recentMessages = ArrayUtil.append(_ccobj.recentMessages, msg);
     }
 
     /** How long a chat message should stay in channel history (in milliseconds). */
-    protected static final int MAX_RECENT_MESSAGE_AGE = 5 * 1000;
+    protected static final int MAX_RECENT_MESSAGE_AGE = 15 * 1000;
     
     protected ChatChannel _channel;
     protected ChatChannelManager _mgr;

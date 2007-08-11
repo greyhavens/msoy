@@ -31,6 +31,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.chat.data.ChatterInfo;
@@ -63,6 +64,7 @@ public class ChannelChatTab extends ChatTab
             _ccobj = ccobj;
             _ccobj.addListener(this);
 
+            redispatchMissedMessages();
             if (!serverSwitch) {
                 // report on the current occupants of the channel
                 var occs :String = "";
@@ -73,7 +75,7 @@ public class ChannelChatTab extends ChatTab
                     occs += ci.name;
                 }
                 displayFeedback(MessageBundle.tcompose("m.channel_occs", occs));
-            }
+            }                 
         }
     }
 
@@ -175,7 +177,43 @@ public class ChannelChatTab extends ChatTab
     protected function handleDeparted (name :MemberName) :void
     {
         displayFeedback(MessageBundle.tcompose("m.channel_left", name));
-    }        
+    }
+
+    protected function redispatchMissedMessages () :void
+    {
+        var history :HistoryList = _overlay.getHistory();
+        var recentMessageCount :int = _ccobj.recentMessages.length;
+        var missedMessages :Array = new Array();
+
+        // find the last chat message this client knows about
+        var lastHistoryMessage :ChannelMessage = null;
+        for (var hc :int = history.size(), hi :int = hc - 1; hi >= 0; hi--) {
+            lastHistoryMessage = history.get(hi) as ChannelMessage;
+            if (lastHistoryMessage != null) {
+                break;
+            }
+        }
+        
+        // now try to find it in the server's recent history. looking backwards from newest to
+        // olders, remember all messages up to the one we've already seen.
+        for (var ii :int = _ccobj.recentMessages.length - 1; ii >= 0; ii--) {
+            var serverMessage :ChannelMessage = _ccobj.recentMessages[ii];
+            // compare by timestamp - since those have millisecond resolution, there's minimal
+            // chance of false positives. also, if history is empty, just store all server messages
+            if (lastHistoryMessage != null &&
+                lastHistoryMessage.creationTime.equals(serverMessage.creationTime)) {
+                break;
+            } else {
+                missedMessages.push(serverMessage);
+            }
+        }
+
+        // we have them all - redispatch on this channel
+        while (missedMessages.length > 0) {
+            var msg :ChannelMessage = missedMessages.pop() as ChannelMessage;
+            _ctx.getChatDirector().dispatchMessage(msg, channel.toLocalType());
+        }
+    }
 
     /** Actually renders chat. */
     protected var _overlay :ChatOverlay;
