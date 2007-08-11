@@ -867,9 +867,11 @@ public class ChiyogamiManager extends GameManager
                     if (oid == bossOid) {
                         continue;
                     }
-                    BodyObject player = (BodyObject) MsoyServer.omgr.getObject(
-                        _gameObj.occupants.get(ii));
-                    updatePlayerState(player, now);
+                    BodyObject player = (BodyObject)
+                        MsoyServer.omgr.getObject(_gameObj.occupants.get(ii));
+                    if (player != null) {
+                        updatePlayerState(player, now);
+                    }
                 }
                 // then, update the boss
                 if (_gameObj.bossHealth > 0) {
