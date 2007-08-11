@@ -73,6 +73,9 @@ public class GameLiaison
     {
         _gameOid = gameOid;
         _gctx.getLocationDirector().moveTo(gameOid);
+
+        // clear out our lobby side panel in case it has not been cleared already
+        _ctx.getTopPanel().clearLeftPanel(null);
     }
 
     public function shutdown () :void
@@ -86,7 +89,7 @@ public class GameLiaison
         log.info("Lobby cleared [in=" + inGame + "].");
 
         // if we're not about to go to a game, shutdown, otherwise stick around
-        if (!inGame) {
+        if (!inGame && _gameOid == 0) {
             shutdown();
         }
     }

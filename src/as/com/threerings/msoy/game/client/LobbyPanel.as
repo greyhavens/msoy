@@ -35,7 +35,6 @@ import com.threerings.flash.TextFieldUtil;
 import com.threerings.flex.CommandButton;
 
 import com.threerings.parlor.client.SeatednessObserver;
-import com.threerings.parlor.client.TableDirector;
 import com.threerings.parlor.client.TableObserver;
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.game.data.GameConfig;
