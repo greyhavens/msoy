@@ -653,14 +653,19 @@ public abstract class ItemRepository<
     public void updateOwnerId (ItemRecord item, int newOwnerId)
         throws PersistenceException
     {
-        Key key = item.itemId < 0 ?
-            new Key<CLT>(getCloneClass(), CloneRecord.ITEM_ID, item.itemId) :
-            new Key<T>(getItemClass(), ItemRecord.ITEM_ID, item.itemId);
+        Where where;
+        Key key;
+        if (item.itemId < 0) {
+            where = new Where(getCloneColumn(ItemRecord.ITEM_ID), item.itemId,
+                              getCloneColumn(ItemRecord.OWNER_ID), item.ownerId);
+            key = new Key<CLT>(getCloneClass(), CloneRecord.ITEM_ID, item.itemId);
+        } else {
+            where = new Where(getItemColumn(ItemRecord.ITEM_ID), item.itemId,
+                              getItemColumn(ItemRecord.OWNER_ID), item.ownerId);
+            key = new Key<T>(getItemClass(), ItemRecord.ITEM_ID, item.itemId);
+        }
         int modifiedRows =  updatePartial(
-            item.itemId < 0 ? getCloneClass() : getItemClass(),
-            new Where(getItemColumn(ItemRecord.ITEM_ID), item.itemId,
-                      getItemColumn(ItemRecord.OWNER_ID), item.ownerId),
-            key,
+            item.itemId < 0 ? getCloneClass() : getItemClass(), where, key,
             ItemRecord.OWNER_ID, newOwnerId,
             ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
         if (modifiedRows == 0) {
