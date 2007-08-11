@@ -32,6 +32,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String remixable();
 
   /**
+   * Translated "Close".
+   * 
+   * @return translated "Close"
+   * @gwt.key close
+   */
+  String close();
+
+  /**
    * Translated "Uploading file.".
    * 
    * @return translated "Uploading file."

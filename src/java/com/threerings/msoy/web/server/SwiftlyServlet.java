@@ -214,6 +214,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
                 throw new ServiceException(SwiftlyCodes.E_NO_SUCH_PROJECT);
             }
             // verify the user has permission to view this project
+            // TODO: another place we have access controls defined. Can we simplify this?
             if (!pRec.remixable && !isCollaborator(pRec.projectId, memrec.memberId)) {
                 throw new ServiceException(SwiftlyCodes.ACCESS_DENIED);
             }
@@ -262,70 +263,66 @@ public class SwiftlyServlet extends MsoyServiceServlet
     }
 
     // from SwiftlyService
-    public void leaveCollaborators (WebIdent ident, int projectId, int memberId)
+    public void leaveCollaborators (WebIdent ident, int projectId, MemberName name)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
         requireOwner(projectId, memrec.memberId);
 
         // Don't let the owner remove themselves.
-        if (isOwner(projectId, memberId)) {
-            log.warning("Refusing to remove the project owner from collaborators. [projectId=" +
-                projectId + "]");
-            return;
+        if (isOwner(projectId, name.getMemberId())) {
+            log.warning("Refusing to remove the project owner from collaborators. Aborting " +
+                "request. [projectId=" + projectId + "]");
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
         try {
-            MsoyServer.swiftlyRepo.leaveCollaborators(projectId, memberId);
+            MsoyServer.swiftlyRepo.leaveCollaborators(projectId, name.getMemberId());
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Removing project's collaborators failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
         // inform the project room manager of the change in collaborators
-        updateRoomCollaborators(projectId);
+        removeFromRoomCollaborators(projectId, name);
     }
 
     // from SwiftlyService
-    public MemberName joinCollaborators (WebIdent ident, int projectId, int memberId)
+    public void joinCollaborators (WebIdent ident, int projectId, MemberName name)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(ident);
         requireOwner(projectId, memrec.memberId);
 
         // if the user is already a collaborator, do nothing
-        if (isCollaborator(projectId, memberId)) {
-            log.warning("Refusing to add an existing collaborator to project. [projectId=" +
-                projectId + ", memberId=" + memberId + "]");
-            return null;
+        if (isCollaborator(projectId, name.getMemberId())) {
+            log.warning("Refusing to add an existing collaborator to project. Aborting request. " +
+                "[projectId="+ projectId + ", memberId=" + name.getMemberId() + "]");
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
-        MemberName member = null;
         try {
-            MsoyServer.swiftlyRepo.joinCollaborators(projectId, memberId);
-            member = MsoyServer.memberRepo.loadMember(memberId).getName();
+            MsoyServer.swiftlyRepo.joinCollaborators(projectId, name.getMemberId());
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Joining project's collaborators failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
         // inform the project room manager of the change in collaborators
-        updateRoomCollaborators(projectId);
-
-        return member;
+        addToRoomCollaborators(projectId, name);
     }
 
     /**
-     * Informs the room manager for this project, if resolved, that the collaborators have
-     * been modified.
+     * Informs the room manager for this project, if resolved, that a collaborator has
+     * been added.
      */
-    protected void updateRoomCollaborators (final int projectId)
+    protected void addToRoomCollaborators (final int projectId, final MemberName name)
         throws ServiceException
     {
         // run a task on the dobject thread that first finds the ProjectRoomManager for this
         // project if it exists, and then tells it to update its local list of collaborators
         final ServletWaiter<Void> waiter =
-            new ServletWaiter<Void>("updateCollaborators[" + projectId + "]");
+            new ServletWaiter<Void>("addToRoomCollaborators[" + projectId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 ProjectRoomManager manager = MsoyServer.swiftlyMan.getRoomManager(projectId);
@@ -335,7 +332,35 @@ public class SwiftlyServlet extends MsoyServiceServlet
                     return;
                 }
 
-                manager.updateCollaborators(waiter);
+                manager.addCollaborator(name, waiter);
+            }
+        });
+
+        // block the servlet waiting for the dobject thread
+        waiter.waitForResult();
+    }
+
+    /**
+     * Informs the room manager for this project, if resolved, that a collaborator has
+     * been removed.
+     */
+    protected void removeFromRoomCollaborators (final int projectId, final MemberName name)
+        throws ServiceException
+    {
+        // run a task on the dobject thread that first finds the ProjectRoomManager for this
+        // project if it exists, and then tells it to update its local list of collaborators
+        final ServletWaiter<Void> waiter =
+            new ServletWaiter<Void>("removeFromRoomCollaborators[" + projectId + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                ProjectRoomManager manager = MsoyServer.swiftlyMan.getRoomManager(projectId);
+                // the room manager is not resolved, no problem, we updated the database
+                if (manager == null) {
+                    waiter.requestCompleted(null);
+                    return;
+                }
+
+                manager.removeCollaborator(name, waiter);
             }
         });
 

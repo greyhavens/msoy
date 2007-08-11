@@ -16,7 +16,6 @@ import java.util.logging.Level;
 import org.apache.commons.io.FileUtils;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SerialExecutor;
@@ -38,7 +37,6 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PetRecord;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.data.DocumentUpdatedEvent;
 import com.threerings.msoy.swiftly.data.PathElement;
@@ -402,28 +400,21 @@ public class ProjectRoomManager extends PlaceManager
     /**
      * Used by the SwiftlyServlet to update the local list of collaborators.
      */
-    public void updateCollaborators (ResultListener<Void> lner)
+    public void addCollaborator (MemberName name, ResultListener<Void> lner)
     {
-        final int projectId = _roomObj.project.projectId;
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("updateCollaborators", lner) {
-            @Override
-            public Void invokePersistResult () throws PersistenceException {
-                _newCollaborators = new ArrayList<MemberName>();
-                for (MemberRecord mRec :
-                    MsoyServer.swiftlyRepo.getCollaborators(projectId)) {
-                    _newCollaborators.add(mRec.getName());
-                }
-                return null;
-            }
 
-            @Override
-            public void handleResult () {
-                _roomObj.setCollaborators(new DSet<MemberName>(_newCollaborators));
-                _listener.requestCompleted(null);
-            }
+        _roomObj.addToCollaborators(name);
+        lner.requestCompleted(null);
+    }
 
-            protected List<MemberName> _newCollaborators;
-        });
+    /**
+     * Used by the SwiftlyServlet to update the local list of collaborators.
+     */
+    public void removeCollaborator (MemberName name, ResultListener<Void> lner)
+    {
+        _roomObj.removeFromCollaborators(name.getKey());
+        _resultItems.remove(name);
+        lner.requestCompleted(null);
     }
 
     /**

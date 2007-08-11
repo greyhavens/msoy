@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -56,12 +57,12 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#leaveCollaborators}.
      */
-    public void leaveCollaborators (WebIdent ident, int projectId, int memberId,
+    public void leaveCollaborators (WebIdent ident, int projectId, MemberName name,
                                     AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#joinCollaborators}.
      */
-    public void joinCollaborators (WebIdent ident, int projectId, int memberId,
+    public void joinCollaborators (WebIdent ident, int projectId, MemberName name,
                                    AsyncCallback callback);
 }

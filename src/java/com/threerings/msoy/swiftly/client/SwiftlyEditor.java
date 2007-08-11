@@ -358,8 +358,13 @@ public class SwiftlyEditor extends PlacePanel
             _ctrl.buildExportAction.setEnabled(!_roomObj.building);
 
         // the project has been loaded or changed. tell the project panel to make the project tree
+        // and adjust the editor for any access changes.
         } else if (event.getName().equals(ProjectRoomObject.PROJECT)) {
             _projectPanel.setProject(_roomObj);
+            updateEditorAccess();
+
+        // the collaborators have been changed. adjust the editor for any access changes
+        } else if (event.getName().equals(ProjectRoomObject.COLLABORATORS)) {
             updateEditorAccess();
         }
     }

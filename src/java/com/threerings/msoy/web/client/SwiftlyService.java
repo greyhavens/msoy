@@ -76,13 +76,13 @@ public interface SwiftlyService extends RemoteService
     /**
      * Removes a collaborator from a project
      */
-    public void leaveCollaborators (WebIdent ident, int projectId, int memberId)
+    public void leaveCollaborators (WebIdent ident, int projectId, MemberName name)
         throws ServiceException;
 
     /**
      * Adds a collaborator from a project
      * @return the MemberName record of the member that just joined.
      */
-    public MemberName joinCollaborators (WebIdent ident, int projectId, int memberId)
+    public void joinCollaborators (WebIdent ident, int projectId, MemberName name)
         throws ServiceException;
 }
