@@ -44,6 +44,7 @@ import static com.threerings.msoy.Log.log;
  * Represents a connected msoy user.
  */
 public class MemberObject extends MsoyBodyObject
+    implements MsoyUserObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>memberName</code> field. */
@@ -171,14 +172,6 @@ public class MemberObject extends MsoyBodyObject
     public transient StatSet stats;
 
     /**
-     * Returns this member's unique id.
-     */
-    public int getMemberId ()
-    {
-        return (memberName == null) ? MemberName.GUEST_ID : memberName.getMemberId();
-    }
-
-    /**
      * Return true if this user is merely a guest.
      */
     public boolean isGuest ()
@@ -198,45 +191,6 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
-     * Return our assessment of how likely this member is to be human, in [0, 1).
-     */
-    public float getHumanity ()
-    {
-        return humanity / (float)MsoyCodes.MAX_HUMANITY;
-    }
-
-    // documentation inherited
-    public OccupantInfo createOccupantInfo (PlaceObject plobj)
-    {
-        if (plobj instanceof RoomObject) {
-            return new WorldMemberInfo(this);
-        } else if (plobj instanceof GameObject) {
-            return new GameMemberInfo(this);
-        } else {
-            return new MemberInfo(this);
-        }
-    }
-
-    @Override // from BodyObject
-    protected void addWhoData (StringBuilder buf)
-    {
-        buf.append("id=").append(getMemberId()).append(" oid=");
-        super.addWhoData(buf);
-    }
-
-    @Override // from BodyObject
-    public TokenRing getTokens ()
-    {
-        return tokens;
-    }
-
-    @Override // from BodyObject
-    public Name getVisibleName ()
-    {
-        return memberName;
-    }
-
-    /**
      * Is this user a member of the specified group?
      */
     public boolean isGroupMember (int groupId)
@@ -253,8 +207,7 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
-     * @return true if the user has at least the specified rank in the
-     * specified group.
+     * @return true if the user has at least the specified rank in the specified group.
      */
     public boolean isGroupRank (int groupId, byte requiredRank)
     {
@@ -310,8 +263,8 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
-     * Add the specified notification instance to the member's notification queue.
-     * The notification's id field will be modify with a unique value.
+     * Add the specified notification instance to the member's notification queue.  The
+     * notification's id field will be modify with a unique value.
      */
     public void notify (Notification notification)
     {
@@ -320,9 +273,9 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
-     * Processes notification acknowledgement by removing in from the user's queue.
-     * Returns true if the notification was removed successfully, false otherwise (e.g. if the
-     * notification was not present in the queue).
+     * Processes notification acknowledgement by removing in from the user's queue.  Returns true
+     * if the notification was removed successfully, false otherwise (e.g. if the notification was
+     * not present in the queue).
      */
     public boolean acknowledgeNotification (int id)
     {
@@ -332,6 +285,42 @@ public class MemberObject extends MsoyBodyObject
         } else {
             return false;
         }
+    }
+
+    // from interface MsoyUserObject
+    public int getMemberId ()
+    {
+        return (memberName == null) ? MemberName.GUEST_ID : memberName.getMemberId();
+    }
+
+    // from interface MsoyUserObject
+    public float getHumanity ()
+    {
+        return humanity / (float)MsoyCodes.MAX_HUMANITY;
+    }
+
+    @Override // from BodyObject
+    public OccupantInfo createOccupantInfo (PlaceObject plobj)
+    {
+        if (plobj instanceof RoomObject) {
+            return new WorldMemberInfo(this);
+        } else if (plobj instanceof GameObject) {
+            return new GameMemberInfo(this);
+        } else {
+            return new MemberInfo(this);
+        }
+    }
+
+    @Override // from BodyObject
+    public TokenRing getTokens ()
+    {
+        return tokens;
+    }
+
+    @Override // from BodyObject
+    public Name getVisibleName ()
+    {
+        return memberName;
     }
 
     // AUTO-GENERATED: METHODS START
@@ -863,6 +852,13 @@ public class MemberObject extends MsoyBodyObject
         this.notifications = clone;
     }
     // AUTO-GENERATED: METHODS END
+
+    @Override // from BodyObject
+    protected void addWhoData (StringBuilder buf)
+    {
+        buf.append("id=").append(getMemberId()).append(" oid=");
+        super.addWhoData(buf);
+    }
 
     /** Used for tracking the number of notifications processed on the member object. */
     protected transient int _notificationCount = 0;

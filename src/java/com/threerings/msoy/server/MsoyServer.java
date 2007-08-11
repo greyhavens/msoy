@@ -4,15 +4,11 @@
 package com.threerings.msoy.server;
 
 import java.io.File;
-import java.security.Security;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
 
-import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.jdbc.TransitionRepository;
-import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.samskivert.servlet.user.UserRepository;
@@ -22,7 +18,6 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.LoggingLogProvider;
 import com.samskivert.util.OneLineLogFormatter;
 
-import com.threerings.util.MessageManager;
 import com.threerings.util.Name;
 
 import com.threerings.presents.data.ClientObject;
@@ -35,21 +30,13 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
-import com.threerings.admin.server.AdminProvider;
-import com.threerings.admin.server.ConfigRegistry;
-import com.threerings.admin.server.DatabaseConfigRegistry;
-
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.ezgame.server.DictionaryManager;
-import com.threerings.ezgame.server.persist.GameCookieRepository;
-
 import com.threerings.parlor.game.server.GameManager;
-import com.threerings.parlor.rating.server.persist.RatingRepository;
-import com.threerings.parlor.server.ParlorManager;
 
 import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.whirled.server.WhirledServer;
@@ -57,13 +44,7 @@ import com.threerings.whirled.spot.data.SpotCodes;
 import com.threerings.whirled.spot.server.SpotDispatcher;
 import com.threerings.whirled.spot.server.SpotProvider;
 
-import com.threerings.stats.server.persist.StatRepository;
-
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.admin.server.MsoyAdminManager;
-import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
@@ -73,37 +54,28 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 import com.threerings.msoy.web.server.MsoyHttpServer;
+
 import com.threerings.msoy.world.server.MsoySceneRegistry;
 import com.threerings.msoy.world.server.PetManager;
-
-import com.threerings.msoy.server.persist.GroupRepository;
-import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 import com.threerings.msoy.world.server.persist.MemoryRepository;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
+
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.persist.GroupRepository;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import static com.threerings.msoy.Log.log;
 
 /**
- * Msoy server class.
+ * Brings together all of the services needed by the World server.
  */
-public class MsoyServer extends WhirledServer
+public class MsoyServer extends MsoyBaseServer
 {
-    /** Provides database access to all of our repositories. */
-    public static PersistenceContext perCtx;
-    
     /** TODO: Provides database access to the user databases. This should probably be removed. */
     public static PersistenceContext userCtx;
-
-    /** Maintains a registry of runtime configuration information. */
-    public static ConfigRegistry confReg;
-
-    /** Provides a mechanism for translating strings on the server. <em>Note:</em> avoid using this
-     * if at all possible. Delay translation to the client so that we can properly react to the
-     * client's locale. Translating on the server means that we treat all clients as if they are
-     * using the default locale of the server. */
-    public static MessageManager msgMan = new MessageManager("rsrc.i18n");
 
     /** All blocking Swiftly subversion actions must occur on this thread. */
     public static Invoker swiftlyInvoker;
@@ -135,9 +107,6 @@ public class MsoyServer extends WhirledServer
     /** Our runtime chat channel manager. */
     public static ChatChannelManager channelMan = new ChatChannelManager();
 
-    /** Contains information on our members. */
-    public static MemberRepository memberRepo;
-
     /** Contains information on our member profiles. */
     public static ProfileRepository profileRepo;
 
@@ -147,29 +116,14 @@ public class MsoyServer extends WhirledServer
     /** Contains information on our swiftly projects. */
     public static SwiftlyRepository swiftlyRepo;
 
-    /** Contains the rating data for each player and game. */
-    public static RatingRepository ratingRepo;
-
     /** The Msoy scene repository. */
     public static MsoySceneRepository sceneRepo;
-
-    /** Maintains "smart" digital item memories. */
-    public static MemoryRepository memoryRepo;
-
-    /** Manages the persistent repository of stats. */
-    public static StatRepository statRepo;
-
-    /** Stores user's game cookies. */
-    public static GameCookieRepository gameCookieRepo;
 
     /** The Msoy item manager. */
     public static ItemManager itemMan = new ItemManager();
 
     /** Provides spot-related services. */
     public static SpotProvider spotProv;
-
-    /** The parlor manager in operation on this server. */
-    public static ParlorManager parlorMan = new ParlorManager();
 
     /** Our runtime swiftly editor manager. */
     public static SwiftlyManager swiftlyMan = new SwiftlyManager();
@@ -180,9 +134,6 @@ public class MsoyServer extends WhirledServer
     /** The in-world game registry for this server. */
     public static WorldGameRegistry worldGameReg = new WorldGameRegistry();
 
-    /** Our transition repository. */
-    public static TransitionRepository transitRepo;
-
     /** Handles HTTP servlet requests. */
     public static MsoyHttpServer httpServer;
 
@@ -191,27 +142,6 @@ public class MsoyServer extends WhirledServer
 
     /** Handles notifications to clients. */
     public static NotificationManager notifyMan = new NotificationManager();
-
-    /**
-     * Creates an audit log with the specified name (which should not include
-     * the <code>.log</code> suffix) in our server log directory.
-     */
-    public static AuditLogger createAuditLog (String logname)
-    {
-        // qualify our log file with the nodename to avoid collisions
-        if (ServerConfig.nodeName != null) {
-            logname = logname + "_" + ServerConfig.nodeName;
-        }
-        return new AuditLogger(_logdir, logname + ".log");
-    }
-
-    /**
-     * Logs a message to the general audit log.
-     */
-    public static void generalLog (String message)
-    {
-        _glog.log(message);
-    }
 
     /**
      * Logs a message to the item audit log.
@@ -280,35 +210,11 @@ public class MsoyServer extends WhirledServer
     }
 
     /**
-     * Ensures that the calling thread is the distributed object event dispatch thread, throwing an
-     * {@link IllegalStateException} if it is not.
-     */
-    public static void requireDObjThread ()
-    {
-        if (!omgr.isDispatchThread()) {
-            String errmsg = "This method must be called on the distributed object thread.";
-            throw new IllegalStateException(errmsg);
-        }
-    }
-
-    /**
-     * Ensures that the calling thread <em>is not</em> the distributed object event dispatch
-     * thread, throwing an {@link IllegalStateException} if it is.
-     */
-    public static void refuseDObjThread ()
-    {
-        if (omgr.isDispatchThread()) {
-            String errmsg = "This method must not be called on the distributed object thread.";
-            throw new IllegalStateException(errmsg);
-        }
-    }
-
-    /**
-     * Returns true if this server is running, false if not.
+     * Returns true if we are running in a World server.
      */
     public static boolean isActive ()
     {
-        return (memberRepo != null);
+        return (mailInvoker != null);
     }
 
     /**
@@ -334,21 +240,11 @@ public class MsoyServer extends WhirledServer
     public void init ()
         throws Exception
     {
-        // before doing anything else, let's ensure that we don't cache DNS queries forever -- this
-        // breaks Amazon S3, specifically.
-        Security.setProperty("networkaddress.cache.ttl" , "30");
-
-        // create our JDBC bits before calling super.init() because our superclass will attempt to
-        // create our authenticator and we need that ready by then
-        _conProv = new StaticConnectionProvider(ServerConfig.getJDBCConfig());
-        CacheAdapter cacher = ServerConfig.createCacheAdapter();
-        perCtx = new PersistenceContext("msoy", _conProv, cacher);
-        userCtx = new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT, _conProv, cacher);
-
-        // create our transition manager prior to doing anything else
-        transitRepo = new TransitionRepository(_conProv);
-
         super.init();
+
+        // we use this on dev to work with the dev ooouser database; TODO: nix
+        userCtx = new PersistenceContext(
+            UserRepository.USER_REPOSITORY_IDENT, _conProv, perCtx.getCacheAdapter());
 
         // set up the right client factory
         clmgr.setClientFactory(new ClientFactory() {
@@ -360,22 +256,14 @@ public class MsoyServer extends WhirledServer
             }
         });
 
-        // set up our default object access controller
-        omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
+        // this is not public because it should not be referenced statically, it should always be
+        // passed in to whatever manager needs to handle transitions
+        _transitRepo = new TransitionRepository(_conProv);
 
         // create our various repositories
-        memberRepo = new MemberRepository(perCtx);
         profileRepo = new ProfileRepository(perCtx);
         groupRepo = new GroupRepository(perCtx);
         swiftlyRepo = new SwiftlyRepository(perCtx);
-        ratingRepo = new RatingRepository(perCtx);
-        memoryRepo = new MemoryRepository(perCtx);
-        statRepo = new StatRepository(perCtx);
-        gameCookieRepo = new GameCookieRepository(perCtx);
-
-        // create and set up our configuration registry and admin service
-        confReg = new DatabaseConfigRegistry(perCtx, invoker);
-        AdminProvider.init(invmgr, confReg);
 
         // start up our peer manager
         log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
@@ -390,37 +278,12 @@ public class MsoyServer extends WhirledServer
         mailInvoker = new Invoker("mail_invoker", omgr);
         mailInvoker.setDaemon(true);
         mailInvoker.start();
-
-        // now initialize our runtime configuration, postponing the remaining server initialization
-        // until our configuration objects are available
-        RuntimeConfig.init(omgr);
-        omgr.postRunnable(new PresentsDObjectMgr.LongRunnable () {
-            public void run () {
-                try {
-                    finishInit();
-                } catch (Exception e) {
-                    log.log(Level.WARNING, "Server initialization failed.", e);
-                    System.exit(-1);
-                }
-            }
-        });
     }
 
     @Override
     public void shutdown ()
     {
         super.shutdown();
-
-        // shut down all active games and rooms
-        for (Iterator<PlaceManager> iter = plreg.enumeratePlaceManagers(); iter.hasNext(); ) {
-            PlaceManager pmgr = iter.next();
-            try {
-                pmgr.shutdown();
-            } catch (Exception e) {
-                log.log(Level.WARNING, "Place manager failed shutting down [where=" +
-                        pmgr.where() + "].", e);
-            }
-        }
 
         // shut down our http server
         try {
@@ -474,7 +337,6 @@ public class MsoyServer extends WhirledServer
         // intialize various services
         spotProv = new SpotProvider(omgr, plreg, screg);
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), SpotCodes.WHIRLED_GROUP);
-        parlorMan.init(invmgr, plreg);
         adminMan.init(this);
         if (peerMan != null) {
             peerMan.init(ServerConfig.nodeName, ServerConfig.sharedSecret,
@@ -533,18 +395,16 @@ public class MsoyServer extends WhirledServer
         super.invokerDidShutdown();
 
         // shutdown our persistence context (cache, JDBC connections)
-        perCtx.shutdown();
         userCtx.shutdown();
 
         // close our audit logs
-        _glog.close();
         _ilog.close();
         _stlog.close();
     }
 
     /**
-     * Check the filesystem and return the newest timestamp for any of
-     * our code jars. This method should remain safe to run on any thread.
+     * Check the filesystem and return the newest timestamp for any of our code jars. This method
+     * should remain safe to run on any thread.
      */
     protected long codeModifiedTime ()
     {
@@ -574,6 +434,9 @@ public class MsoyServer extends WhirledServer
         adminMan.scheduleReboot(playersOnline ? 2 : 0, "codeUpdateAutoRestart");
     }
 
+    /** Our transition repository. */
+    protected static TransitionRepository _transitRepo;
+
     /** A mapping from member name to member object for all online members. */
     protected static HashMap<MemberName,MemberObject> _online =
         new HashMap<MemberName,MemberObject>();
@@ -581,12 +444,6 @@ public class MsoyServer extends WhirledServer
     /** Used to auto-restart the development server when its code is updated. */
     protected long _codeModified;
 
-    /** The connection provider used to access our JDBC databases. Don't use this; rather use
-     * {@link #perCtx}. */
-    protected static ConnectionProvider _conProv;
-
-    protected static File _logdir = new File(ServerConfig.serverRoot, "log");
-    protected static AuditLogger _glog = createAuditLog("server");
     protected static AuditLogger _ilog = createAuditLog("item");
     protected static AuditLogger _flog = createAuditLog("flow");
     protected static AuditLogger _stlog = createAuditLog("state");

@@ -13,10 +13,12 @@ import com.threerings.presents.dobj.ObjectAccessException;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.dobj.Subscriber;
 
+import com.threerings.admin.server.ConfigRegistry;
+
 import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyClient;
-import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.MsoyBaseServer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -31,7 +33,7 @@ public class RuntimeConfig
     /**
      * Creates and registers the runtime configuration objects.
      */
-    public static void init (RootDObjectManager omgr)
+    public static void init (RootDObjectManager omgr, ConfigRegistry confReg)
     {
         Field[] fields = RuntimeConfig.class.getDeclaredFields();
         for (int ii = 0; ii < fields.length; ii++) {
@@ -50,7 +52,7 @@ public class RuntimeConfig
                 object.setAccessController(ADMIN_CONTROLLER);
 
                 // register the object with the config object registry
-                MsoyServer.confReg.registerObject(key, key, object);
+                confReg.registerObject(key, key, object);
 
                 // and set our static field
                 field.set(null, object);
@@ -82,7 +84,7 @@ public class RuntimeConfig
             }
 
             // make sure the originator is an admin
-            DObject obj = MsoyServer.omgr.getObject(sourceOid);
+            DObject obj = MsoyBaseServer.omgr.getObject(sourceOid);
             if (!(obj instanceof MemberObject)) {
                 return false;
             }
@@ -92,8 +94,8 @@ public class RuntimeConfig
             }
 
             // admins are allowed to change things, but let's log it
-            MsoyServer.generalLog("admin_config changed " + user.username + " " +
-                                  object.getClass().getName() + " " + event);
+            MsoyBaseServer.generalLog("admin_config changed " + user.username + " " +
+                                      object.getClass().getName() + " " + event);
             return true;
         }
     };

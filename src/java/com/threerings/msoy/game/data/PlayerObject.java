@@ -10,6 +10,7 @@ import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Avatar;
@@ -20,6 +21,7 @@ import com.threerings.msoy.item.data.all.MediaDesc;
  * Contains information on a player logged on to an MSOY Game server.
  */
 public class PlayerObject extends BodyObject
+    implements MsoyUserObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>memberName</code> field. */
@@ -48,26 +50,6 @@ public class PlayerObject extends BodyObject
      * MsoyCodes#MAX_HUMANITY}]. */
     public int humanity;
 
-    @Override // from BodyObject
-    public TokenRing getTokens ()
-    {
-        return tokens;
-    }
-
-    @Override // from BodyObject
-    public Name getVisibleName ()
-    {
-        return memberName;
-    }
-
-    /**
-     * Returns this member's unique id.
-     */
-    public int getMemberId ()
-    {
-        return (memberName == null) ? MemberName.GUEST_ID : memberName.getMemberId();
-    }
-
     /**
      * Return true if this user is merely a guest.
      */
@@ -87,12 +69,28 @@ public class PlayerObject extends BodyObject
         return Avatar.getDefaultThumbnailMediaFor(Item.AVATAR);
     }
 
-    /**
-     * Return our assessment of how likely this member is to be human, in [0, 1).
-     */
+    // from interface MsoyUserObject
+    public int getMemberId ()
+    {
+        return (memberName == null) ? MemberName.GUEST_ID : memberName.getMemberId();
+    }
+
+    // from interface MsoyUserObject
     public float getHumanity ()
     {
         return humanity / (float)MsoyCodes.MAX_HUMANITY;
+    }
+
+    @Override // from BodyObject
+    public TokenRing getTokens ()
+    {
+        return tokens;
+    }
+
+    @Override // from BodyObject
+    public Name getVisibleName ()
+    {
+        return memberName;
     }
 
     // AUTO-GENERATED: METHODS START

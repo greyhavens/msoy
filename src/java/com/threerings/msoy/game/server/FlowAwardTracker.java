@@ -10,8 +10,10 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MsoyBaseServer;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.game.data.PlayerObject;
@@ -114,25 +116,13 @@ public class FlowAwardTracker
         double humanity = 0;
 
         // this is messy, but we'll sort it out later
-        if (MsoyGameServer.isActive()) {
-            PlayerObject player = (PlayerObject) MsoyGameServer.omgr.getObject(oid);
-            if (player != null) {
-                memberId = player.getMemberId();
-                humanity = player.getHumanity();
-            }
-
-        } else if (MsoyServer.isActive()) {
-            MemberObject member = (MemberObject) MsoyServer.omgr.getObject(oid);
-            if (member != null) {
-                memberId = member.getMemberId();
-                humanity = member.getHumanity();
-            }
-        }
-
-        if (memberId == 0) { // this should never happen
+        MsoyUserObject uobj = (MsoyUserObject) MsoyBaseServer.omgr.getObject(oid);
+        if (uobj == null) {
             log.warning("Failed to lookup member [oid=" + oid + "]");
             return;
         }
+        memberId = uobj.getMemberId();
+        humanity = uobj.getHumanity();
 
         // create a flow record to track awarded flow and remember things about the member we'll
         // need to know when they're gone
@@ -189,7 +179,7 @@ public class FlowAwardTracker
             if (MsoyServer.isActive()) {
                 MsoyServer.memberMan.grantFlow(record.memberId, awarded, _grantAction, details);
 
-            } else if (MsoyGameServer.isActive()) {
+            } else {
                 MsoyGameServer.invoker.postUnit(new Invoker.Unit("FlowAwardTracker.grantFlow") {
                     public boolean invoke () {
                         try {
@@ -308,15 +298,10 @@ public class FlowAwardTracker
 
     protected void reportFlowAward (int memberId, int deltaFlow)
     {
-        if (MsoyGameServer.isActive()) {
-            MsoyGameServer.worldClient.reportFlowAward(memberId, deltaFlow);
-
-        } else if (MsoyServer.isActive()) {
+        if (MsoyServer.isActive()) {
             MsoyServer.gameReg.reportFlowAward(null, memberId, deltaFlow);
-
         } else {
-            log.warning("Can't report flow award, where the hell are we? [id=" + memberId +
-                        ", flow=" + deltaFlow + "].");
+            MsoyGameServer.worldClient.reportFlowAward(memberId, deltaFlow);
         }
     }
 

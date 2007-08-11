@@ -27,6 +27,7 @@ import com.whirled.server.WhirledGameDispatcher;
 import com.whirled.server.WhirledGameProvider;
 
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.server.MsoyBaseServer;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
@@ -62,17 +63,17 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         // wire up our WhirledGameService
         if (plobj instanceof WhirledGame) {
             _wgame = (WhirledGame)plobj;
-            _invmarsh = MsoyGameServer.invmgr.registerDispatcher(new WhirledGameDispatcher(this));
+            _invmarsh = MsoyBaseServer.invmgr.registerDispatcher(new WhirledGameDispatcher(this));
             _wgame.setWhirledGameService((WhirledGameMarshaller)_invmarsh);
         }
 
         // then load up our anti-abuse factor
         final int gameId = getGameId();
-        MsoyGameServer.invoker.postUnit(new Invoker.Unit() {
+        MsoyBaseServer.invoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 try {
                     _antiAbuseFactor =
-                        MsoyGameServer.memberRepo.getFlowRepository().getAntiAbuseFactor(gameId);
+                        MsoyBaseServer.memberRepo.getFlowRepository().getAntiAbuseFactor(gameId);
 
                 } catch (PersistenceException pe) {
                     log.log(Level.WARNING, "Failed to fetch game's anti-abuse factor [where=" +
@@ -99,7 +100,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     {
         super.didShutdown();
         if (_invmarsh != null) {
-            MsoyGameServer.invmgr.clearDispatcher(_invmarsh);
+            MsoyBaseServer.invmgr.clearDispatcher(_invmarsh);
         }
         tracker.shutdown();
     }
@@ -141,10 +142,10 @@ public class WhirledGameDelegate extends RatingManagerDelegate
         if (totalMinutes > 0) {
             final int playerMins = totalMinutes;
             final int gameId = getGameId();
-            MsoyGameServer.invoker.postUnit(new Invoker.Unit() {
+            MsoyBaseServer.invoker.postUnit(new Invoker.Unit() {
                 public boolean invoke () {
                     try {
-                        MsoyGameServer.memberRepo.noteGameEnded(gameId, playerMins);
+                        MsoyBaseServer.memberRepo.noteGameEnded(gameId, playerMins);
                     } catch (PersistenceException pe) {
                         log.log(Level.WARNING,
                             "Failed to note end of game [where=" + where() + "]", pe);
@@ -165,7 +166,7 @@ public class WhirledGameDelegate extends RatingManagerDelegate
     @Override
     protected RatingRepository getRatingRepository ()
     {
-        return MsoyGameServer.ratingRepo;
+        return MsoyBaseServer.ratingRepo;
     }
 
     @Override
