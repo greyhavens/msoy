@@ -17,6 +17,7 @@ import com.samskivert.jdbc.depot.annotation.FullTextIndex;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.io.PersistenceException;
 
@@ -28,7 +29,9 @@ import com.threerings.msoy.web.data.GroupExtras;
 /**
  * Contains the details of a group.
  */
-@Entity
+@Entity(indices={
+    @Index(name="ixPolicy", columns={ GroupRecord.POLICY })
+})
 @Table(fullTextIndexes = {
     @FullTextIndex(name = "NBC", fieldNames = {
         GroupRecord.NAME, GroupRecord.BLURB, GroupRecord.CHARTER }) })
@@ -327,7 +330,7 @@ public class GroupRecord extends PersistentRecord
 
     /** The mime type for the upper cap image on the people area */
     public byte peopleUpperCapMimeType;
-    
+
     /** The upper cap for the people area */
     @Column(nullable=true)
     public byte[] peopleUpperCapHash;
@@ -412,7 +415,7 @@ public class GroupRecord extends PersistentRecord
      * all of the entries that are not null, and are different from what's in this object
      * currently.  Returns null if the group is not found.
      */
-    public Map<String, Object> findUpdates (Group groupDef, GroupExtras extrasDef) 
+    public Map<String, Object> findUpdates (Group groupDef, GroupExtras extrasDef)
         throws PersistenceException
     {
         HashMap<String, Object> updates = new HashMap<String, Object>();
@@ -422,8 +425,8 @@ public class GroupRecord extends PersistentRecord
         if (groupDef.blurb != null && !groupDef.blurb.equals(blurb)) {
             updates.put(BLURB, groupDef.blurb);
         }
-        if (groupDef.logo != null && (logoMediaHash == null || 
-            !groupDef.logo.equals(new MediaDesc(logoMediaHash, logoMimeType, 
+        if (groupDef.logo != null && (logoMediaHash == null ||
+            !groupDef.logo.equals(new MediaDesc(logoMediaHash, logoMimeType,
             logoMediaConstraint)))) {
             updates.put(LOGO_MEDIA_HASH, groupDef.logo.hash);
             updates.put(LOGO_MIME_TYPE, groupDef.logo.mimeType);
@@ -436,7 +439,7 @@ public class GroupRecord extends PersistentRecord
             updates.put(BACKGROUND_CONTROL, extrasDef.backgroundControl);
         }
         if (extrasDef.infoBackground != null && (infoBackgroundHash == null ||
-            !extrasDef.infoBackground.equals(new MediaDesc(infoBackgroundHash, 
+            !extrasDef.infoBackground.equals(new MediaDesc(infoBackgroundHash,
             infoBackgroundMimeType, infoBackgroundThumbConstraint)))) {
             updates.put(INFO_BACKGROUND_HASH, extrasDef.infoBackground.hash);
             updates.put(INFO_BACKGROUND_MIME_TYPE, extrasDef.infoBackground.mimeType);
@@ -460,14 +463,14 @@ public class GroupRecord extends PersistentRecord
             updates.put(PEOPLE_BACKGROUND_MIME_TYPE, extrasDef.peopleBackground.mimeType);
             updates.put(PEOPLE_BACKGROUND_THUMB_CONSTRAINT, extrasDef.peopleBackground.constraint);
         }
-        if (extrasDef.peopleUpperCap != null && (peopleUpperCapHash == null || 
+        if (extrasDef.peopleUpperCap != null && (peopleUpperCapHash == null ||
             !extrasDef.peopleUpperCap.equals(new MediaDesc(peopleUpperCapHash,
             peopleUpperCapMimeType)))) {
             updates.put(PEOPLE_UPPER_CAP_HASH, extrasDef.peopleUpperCap.hash);
             updates.put(PEOPLE_UPPER_CAP_MIME_TYPE, extrasDef.peopleUpperCap.mimeType);
             updates.put(PEOPLE_UPPER_CAP_HEIGHT, extrasDef.peopleUpperCapHeight);
         }
-        if (extrasDef.peopleLowerCap != null && (peopleLowerCapHash == null || 
+        if (extrasDef.peopleLowerCap != null && (peopleLowerCapHash == null ||
             !extrasDef.peopleLowerCap.equals(new MediaDesc(peopleLowerCapHash,
             peopleLowerCapMimeType)))) {
             updates.put(PEOPLE_LOWER_CAP_HASH, extrasDef.peopleLowerCap.hash);
@@ -480,7 +483,7 @@ public class GroupRecord extends PersistentRecord
         if (extrasDef.homepageUrl != null && !extrasDef.homepageUrl.equals(homepageUrl)) {
             updates.put(HOMEPAGE_URL, extrasDef.homepageUrl);
         }
-    
+
         return updates;
     }
 
