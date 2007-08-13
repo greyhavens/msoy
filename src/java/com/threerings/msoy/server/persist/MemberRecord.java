@@ -21,9 +21,9 @@ import com.threerings.msoy.web.data.WebCreds;
  * Contains persistent data stored for every member of MetaSOY.
  */
 @Entity(indices={
-    @Index(name="ixLastSession", columns={ MemberRecord.LAST_SESSION }),
-    @Index(name="ixName", columns={ MemberRecord.NAME }),
-    @Index(name="ixInvitingFriend", columns={ MemberRecord.INVITING_FRIEND_ID })
+    @Index(name="ixLastSession", fields={ MemberRecord.LAST_SESSION }),
+    @Index(name="ixName", fields={ MemberRecord.NAME }),
+    @Index(name="ixInvitingFriend", fields={ MemberRecord.INVITING_FRIEND_ID })
     // Note: PERMA_NAME and ACCOUNT_NAME are automatically indexed by their uniqueness constraint
 })
 public class MemberRecord extends PersistentRecord

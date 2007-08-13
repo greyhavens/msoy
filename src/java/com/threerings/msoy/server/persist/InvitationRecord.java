@@ -22,8 +22,8 @@ import com.threerings.msoy.web.data.Invitation;
  * Contains persistent data stored for every member of MetaSOY.
  */
 @Entity(indices={
-        @Index(name="ixInviter", columns={InvitationRecord.INVITER_ID}),
-        @Index(name="ixInvitee", columns={InvitationRecord.INVITEE_ID})
+        @Index(name="ixInviter", fields={InvitationRecord.INVITER_ID}),
+        @Index(name="ixInvitee", fields={InvitationRecord.INVITEE_ID})
 })
 public class InvitationRecord extends PersistentRecord
 {

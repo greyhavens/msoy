@@ -18,7 +18,7 @@ import com.samskivert.util.StringUtil;
  * Represents a named folder belonging to a member.
  */
 @Entity(indices={
-    @Index(name="ixOwner", columns={ MailFolderRecord.OWNER_ID })
+    @Index(name="ixOwner", fields={ MailFolderRecord.OWNER_ID })
 })
 @Table(uniqueConstraints={
     @UniqueConstraint(fieldNames={MailFolderRecord.OWNER_ID, MailFolderRecord.NAME })})

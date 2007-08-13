@@ -19,7 +19,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 
 @Table
-@Entity(indices={ @Index(name="ixMember", columns={"memberId"}) })
+@Entity(indices={ @Index(name="ixMember", fields={"memberId"}) })
 public class ItemListInfoRecord extends PersistentRecord
     implements Streamable
 {

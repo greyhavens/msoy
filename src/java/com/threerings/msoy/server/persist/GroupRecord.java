@@ -30,7 +30,7 @@ import com.threerings.msoy.web.data.GroupExtras;
  * Contains the details of a group.
  */
 @Entity(indices={
-    @Index(name="ixPolicy", columns={ GroupRecord.POLICY })
+    @Index(name="ixPolicy", fields={ GroupRecord.POLICY })
 })
 @Table(fullTextIndexes = {
     @FullTextIndex(name = "NBC", fieldNames = {

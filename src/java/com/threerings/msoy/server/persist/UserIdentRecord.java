@@ -16,7 +16,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
  * business.
  */
 @Entity(name="USER_IDENTS", indices={
-    @Index(name="ixUser", columns={ "USER_ID" })
+    @Index(name="ixUser", fields={ UserIdentRecord.USER_ID })
 })
 public class UserIdentRecord extends PersistentRecord
 {

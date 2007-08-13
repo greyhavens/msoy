@@ -22,7 +22,7 @@ import com.threerings.msoy.data.all.GroupName;
  * Contains the details of person's membership in a group.
  */
 @Entity(indices={
-    @Index(name="ixGroup", columns={ GroupMembershipRecord.GROUP_ID })
+    @Index(name="ixGroup", fields={ GroupMembershipRecord.GROUP_ID })
 })
 public class GroupMembershipRecord extends PersistentRecord
 {

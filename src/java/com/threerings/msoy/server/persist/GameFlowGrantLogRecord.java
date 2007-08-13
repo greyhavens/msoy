@@ -11,7 +11,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
  * Maintains a per-member-and-game log of awarded flow.
  */
 @Entity(indices={
-    @Index(name="ixGame", columns={ GameFlowGrantLogRecord.GAME_ID })
+    @Index(name="ixGame", fields={ GameFlowGrantLogRecord.GAME_ID })
 })
 public class GameFlowGrantLogRecord extends PersistentRecord
 {

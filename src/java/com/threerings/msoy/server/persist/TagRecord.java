@@ -15,7 +15,7 @@ import com.threerings.io.Streamable;
  * Represents which tags have been added to which targets.
  */
 @Entity(indices={
-  @Index(name="ixTarget", columns={ TagRecord.TARGET_ID })
+  @Index(name="ixTarget", fields={ TagRecord.TARGET_ID })
 })
 public abstract class TagRecord extends PersistentRecord
     implements Streamable

@@ -23,7 +23,7 @@ import com.threerings.msoy.data.all.TagCodes;
  * Maps a tag's id to the tag itself.
  */
 @Entity(indices={
-    @Index(name="ixTag", columns={ TagNameRecord.TAG })
+    @Index(name="ixTag", fields={ TagNameRecord.TAG })
 })
 @Table
 public class TagNameRecord extends PersistentRecord

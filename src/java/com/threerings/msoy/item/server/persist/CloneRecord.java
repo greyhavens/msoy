@@ -10,9 +10,9 @@ import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 @Entity(indices={
-    @Index(name="ixOwner", columns={ CloneRecord.OWNER_ID }),
-    @Index(name="ixOriginalItem", columns={ CloneRecord.ORIGINAL_ITEM_ID }),
-    @Index(name="ixLocation", columns={ CloneRecord.LOCATION })
+    @Index(name="ixOwner", fields={ CloneRecord.OWNER_ID }),
+    @Index(name="ixOriginalItem", fields={ CloneRecord.ORIGINAL_ITEM_ID }),
+    @Index(name="ixLocation", fields={ CloneRecord.LOCATION })
 })
 @Table
 public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord

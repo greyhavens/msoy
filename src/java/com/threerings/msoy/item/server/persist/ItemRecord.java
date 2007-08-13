@@ -37,11 +37,11 @@ import com.threerings.msoy.item.data.all.Decor;
  */
 @Table
 @Entity(indices={
-    @Index(name="locationIndex", columns={ ItemRecord.LOCATION } ),
-    @Index(name="ixFlagged", columns={ ItemRecord.FLAGGED } ),
-    @Index(name="ixMature", columns={ ItemRecord.MATURE } ),
-    @Index(name="ixOwner", columns={ ItemRecord.OWNER_ID }),
-    @Index(name="ixCreator", columns={ ItemRecord.CREATOR_ID })
+    @Index(name="locationIndex", fields={ ItemRecord.LOCATION } ),
+    @Index(name="ixFlagged", fields={ ItemRecord.FLAGGED } ),
+    @Index(name="ixMature", fields={ ItemRecord.MATURE } ),
+    @Index(name="ixOwner", fields={ ItemRecord.OWNER_ID }),
+    @Index(name="ixCreator", fields={ ItemRecord.CREATOR_ID })
 })
 public abstract class ItemRecord extends PersistentRecord implements Streamable
 {

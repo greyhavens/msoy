@@ -40,7 +40,7 @@ import com.threerings.msoy.data.all.MemberName;
  */
 @Entity(indices={
     // this index takes care both of owner and owner/folder queries
-    @Index(name="ixOwnerFolder", columns={
+    @Index(name="ixOwnerFolder", fields={
         MailMessageRecord.OWNER_ID, MailMessageRecord.FOLDER_ID })
 })
 @Table

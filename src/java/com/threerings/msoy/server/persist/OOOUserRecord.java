@@ -21,7 +21,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
  * Emulates {@link OOOUser} for the Depot.
  */
 @Entity(name="users", indices={
-    @Index(name="ixEmail", columns={ OOOUserRecord.EMAIL })
+    @Index(name="ixEmail", fields={ OOOUserRecord.EMAIL })
 })
 @Table(uniqueConstraints={ @UniqueConstraint(fieldNames={ OOOUserRecord.USERNAME })})
 public class OOOUserRecord extends PersistentRecord

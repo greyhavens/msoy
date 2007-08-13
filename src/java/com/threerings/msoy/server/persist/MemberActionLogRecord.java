@@ -14,7 +14,7 @@ import com.samskivert.util.StringUtil;
  * Maintains a per-member log of timestamped actions with optional extra data.
  */
 @Entity(indices={
-    @Index(name="ixMember", columns={ MemberActionLogRecord.MEMBER_ID })
+    @Index(name="ixMember", fields={ MemberActionLogRecord.MEMBER_ID })
 })
 public class MemberActionLogRecord extends PersistentRecord
 {

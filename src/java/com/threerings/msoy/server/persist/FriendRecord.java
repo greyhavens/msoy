@@ -12,8 +12,8 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
  * Represents a friendship between two members.
  */
 @Entity(indices={
-    @Index(name="ixInviterId", columns={ FriendRecord.INVITER_ID }),
-    @Index(name="ixInviteeId", columns={ FriendRecord.INVITEE_ID })
+    @Index(name="ixInviterId", fields={ FriendRecord.INVITER_ID }),
+    @Index(name="ixInviteeId", fields={ FriendRecord.INVITEE_ID })
 })
 @Table(uniqueConstraints =
        {@UniqueConstraint(fieldNames={FriendRecord.INVITER_ID, FriendRecord.INVITEE_ID })})

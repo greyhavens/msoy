@@ -21,7 +21,7 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 /**
  * Contains metadata for a scene in the Whirled.
  */
-@Entity(indices={@Index(name="ixOwnerId", columns={"ownerId"})})
+@Entity(indices={@Index(name="ixOwnerId", fields={"ownerId"})})
 public class SceneRecord extends PersistentRecord
 {
     /** Enumerates our various stock scenes. */
