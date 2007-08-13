@@ -64,7 +64,7 @@ public class SwiftlyRepository extends DepotRepository
     public SwiftlyProjectRecord loadProject (int projectId)
         throws PersistenceException
     {
-        return load(SwiftlyProjectRecord.class, projectId);
+        return load(SwiftlyProjectRecord.class, SwiftlyProjectRecord.getKey(projectId));
     }
 
     /**
@@ -171,7 +171,12 @@ public class SwiftlyRepository extends DepotRepository
         throws PersistenceException
     {
         SwiftlyProjectRecord project = loadProject(projectId);
-        return (project == null) ? null : load(SwiftlySVNStorageRecord.class, project.storageId);
+        // we found no ProjectRecord, we are unable to locate a StorageRecord
+        if (project == null) {
+            return null;
+        }
+        return load(SwiftlySVNStorageRecord.class,
+            SwiftlySVNStorageRecord.getKey(project.storageId));
     }
 
 
