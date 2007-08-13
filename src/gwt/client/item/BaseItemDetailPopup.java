@@ -64,7 +64,7 @@ public class BaseItemDetailPopup extends BorderedDialog
                 CItem.itemsvc.setFlags(CItem.ident, _item.getIdent(), flag, flag,
                                        new AsyncCallback () {
                     public void onSuccess (Object result) {
-                        _item.flags |= flag;
+                        _item.flagged |= flag;
                     }
                     public void onFailure (Throwable caught) {
                         CItem.log("Failed to update item flags [item=" + _item.getIdent() +

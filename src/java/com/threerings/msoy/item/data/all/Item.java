@@ -74,9 +74,6 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
     /** Indicates that somebody has flagged this item as copyrighted content. */
     public static final byte FLAG_FLAGGED_COPYRIGHT= 0x1 << 1;
 
-    /** Indicates that this item has been flagged by an administrator as mature content. */
-    public static final byte FLAG_MATURE = 0x1 << 2;
-
     // == Instance variables follow =========================================
 
     /** This item's unique identifier. <em>Note:</em> this identifier is not globally unique among
@@ -88,7 +85,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
 
     /** A bit-mask of flags that we need to know about every digital item without doing further
      * database lookups or network requests. */
-    public byte flags;
+    public byte flagged;
 
     /** The member id of the member that created this item. */
     public int creatorId;
@@ -115,6 +112,9 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
 
     /** The user provided description for this item. */
     public String description;
+
+    /** Whether or not this item represents mature content. */
+    public boolean mature;
 
     /** The media used to display this item's thumbnail representation. */
     public MediaDesc thumbMedia;
@@ -218,7 +218,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
      */
     public boolean isSet (byte flag)
     {
-        return (flags & flag) != 0;
+        return (flagged & flag) != 0;
     }
 
     /**
@@ -226,7 +226,7 @@ public abstract class Item implements Comparable, Streamable, IsSerializable, DS
      */
     public void setFlag (byte flag, boolean value)
     {
-        flags = (byte) (value ? flags | flag : flags ^ ~flag);
+        flagged = (byte) (value ? flagged | flag : flagged ^ ~flag);
     }
 
     /**

@@ -19,7 +19,6 @@ import com.threerings.msoy.person.server.persist.MailMessageRecord;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
@@ -309,14 +308,37 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public void setFlags (WebIdent ident, ItemIdent iid, byte mask, byte value)
+    public void setMature (WebIdent ident, ItemIdent iid, boolean value)
         throws ServiceException
     {
         MemberRecord mRec = requireAuthedUser(ident);
-        if (!mRec.isSupport() && (mask & Item.FLAG_MATURE) != 0) {
+        if (!mRec.isSupport()) {
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
 
+        try {
+            ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iid.type);
+            // TODO: If things get really tight, this could use updatePartial() later.
+            ItemRecord item = repo.loadItem(iid.itemId);
+            if (item == null) {
+                log.warning("Missing item for setFlags() [item=" + iid + ", value=" + value + "].");
+                throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            }
+            item.mature = value;
+            repo.updateOriginalItem(item);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING,
+                "Failed to set flags [item=" + iid + ", value=" + value + "]", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
+    }
+
+    // from interface ItemService
+    public void setFlags (WebIdent ident, ItemIdent iid, byte mask, byte value)
+        throws ServiceException
+    {
+        requireAuthedUser(ident);
         try {
             ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(iid.type);
             // TODO: If things get really tight, this could use updatePartial() later.
@@ -326,7 +348,7 @@ public class ItemServlet extends MsoyServiceServlet
                             ", value=" + value + "].");
                 throw new ServiceException(ItemCodes.INTERNAL_ERROR);
             }
-            item.flags = (byte) ((item.flags & ~mask) | value);
+            item.flagged = (byte) ((item.flagged & ~mask) | value);
             repo.updateOriginalItem(item);
 
         } catch (PersistenceException pe) {
@@ -351,8 +373,7 @@ public class ItemServlet extends MsoyServiceServlet
         try {
             for (byte type : MsoyServer.itemMan.getRepositoryTypes()) {
                 ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
-                byte mask = (byte) (Item.FLAG_FLAGGED_COPYRIGHT | Item.FLAG_FLAGGED_MATURE);
-                for (ItemRecord record : repo.loadItemsByFlag(mask, false, count)) {
+                for (ItemRecord record : repo.loadFlaggedItems(count)) {
                     Item item = record.toItem();
 
                     // get auxillary info and construct an ItemDetail

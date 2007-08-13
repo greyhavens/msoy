@@ -5,7 +5,6 @@ package com.threerings.msoy.item.server.persist;
 
 import java.sql.Timestamp;
 
-import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.Column;
@@ -37,7 +36,13 @@ import com.threerings.msoy.item.data.all.Decor;
  * The base class for all digital items in the MSOY system.
  */
 @Table
-@Entity(indices={ @Index(name="locationIndex", columns={"location"} )})
+@Entity(indices={
+    @Index(name="locationIndex", columns={ ItemRecord.LOCATION } ),
+    @Index(name="ixFlagged", columns={ ItemRecord.FLAGGED } ),
+    @Index(name="ixMature", columns={ ItemRecord.MATURE } ),
+    @Index(name="ixOwner", columns={ ItemRecord.OWNER_ID }),
+    @Index(name="ixCreator", columns={ ItemRecord.CREATOR_ID })
+})
 public abstract class ItemRecord extends PersistentRecord implements Streamable
 {
     // AUTO-GENERATED: FIELDS START
@@ -55,12 +60,12 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public static final ColumnExp PARENT_ID_C =
         new ColumnExp(ItemRecord.class, PARENT_ID);
 
-    /** The column identifier for the {@link #flags} field. */
-    public static final String FLAGS = "flags";
+    /** The column identifier for the {@link #flagged} field. */
+    public static final String FLAGGED = "flagged";
 
-    /** The qualified column identifier for the {@link #flags} field. */
-    public static final ColumnExp FLAGS_C =
-        new ColumnExp(ItemRecord.class, FLAGS);
+    /** The qualified column identifier for the {@link #flagged} field. */
+    public static final ColumnExp FLAGGED_C =
+        new ColumnExp(ItemRecord.class, FLAGGED);
 
     /** The column identifier for the {@link #creatorId} field. */
     public static final String CREATOR_ID = "creatorId";
@@ -118,6 +123,13 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public static final ColumnExp DESCRIPTION_C =
         new ColumnExp(ItemRecord.class, DESCRIPTION);
 
+    /** The column identifier for the {@link #mature} field. */
+    public static final String MATURE = "mature";
+
+    /** The qualified column identifier for the {@link #mature} field. */
+    public static final ColumnExp MATURE_C =
+        new ColumnExp(ItemRecord.class, MATURE);
+
     /** The column identifier for the {@link #thumbMediaHash} field. */
     public static final String THUMB_MEDIA_HASH = "thumbMediaHash";
 
@@ -161,7 +173,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         new ColumnExp(ItemRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int BASE_SCHEMA_VERSION = 9;
+    public static final int BASE_SCHEMA_VERSION = 10;
     public static final int BASE_MULTIPLIER = 1000;
 
     public static ItemRecord newRecord (Item item) {
@@ -203,7 +215,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
 
     /** A bit-mask of flags that we need to know about every digital item
      * without doing further database lookups or network requests. */
-    public byte flags;
+    public byte flagged;
 
     /** The member id of the member that created this item. */
     public int creatorId;
@@ -229,6 +241,9 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
 
     /** A user supplied description for this item. */
     public String description;
+
+    /** Whether or not this item represents mature content. */
+    public boolean mature;
 
     /** A hash code identifying the media used to display this item's thumbnail
      * representation. */
@@ -266,7 +281,8 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         parentId = item.parentId;
         rating = item.rating;
         creatorId = item.creatorId;
-        flags = item.flags;
+        flagged = item.flagged;
+        mature = item.mature;
         used = item.used;
         location = item.location;
         lastTouched = new Timestamp(System.currentTimeMillis());
@@ -311,7 +327,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
      */
     public boolean isSet (byte flag)
     {
-    	return (flags & flag) != 0;
+        return (flagged & flag) != 0;
     }
 
     /**
@@ -319,7 +335,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
      */
     public void setFlag (byte flag, boolean value)
     {
-        flags = (byte) (value ? flags | flag : flags ^ ~flag);
+        flagged = (byte) (value ? flagged | flag : flagged ^ ~flag);
     }
 
     /**
@@ -364,7 +380,8 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         item.name = name;
         item.description = description;
         item.creatorId = creatorId;
-        item.flags = flags;
+        item.flagged = flagged;
+        item.mature = mature;
         item.furniMedia = (furniMediaHash == null) ?
             null : new MediaDesc(furniMediaHash, furniMimeType, furniConstraint);
         item.thumbMedia = (thumbMediaHash == null) ?

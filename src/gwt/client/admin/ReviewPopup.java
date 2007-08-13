@@ -192,8 +192,7 @@ public class ReviewPopup extends BorderedDialog
                             // should not happen, but let's be careful
                             return false;
                         }
-                        CAdmin.itemsvc.setFlags(CAdmin.ident, _item.getIdent(), Item.FLAG_MATURE,
-                            Item.FLAG_MATURE, this);
+                        CAdmin.itemsvc.setMature(CAdmin.ident, _item.getIdent(), true, this);
                         return true;
                     }
                     public boolean gotResult (Object result) {

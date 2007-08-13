@@ -116,18 +116,24 @@ public interface ItemService extends RemoteService
      */
     public TagHistory tagItem (WebIdent ident, ItemIdent item, String tag, boolean set)
         throws ServiceException;
-    
+
     /**
      * Wraps an item up as a gift, i.e. clears its ownership. If 'wrap' is false, we
      * unwrap the item instead (settings its owner to the unwrapper).
      */
     public void wrapItem (WebIdent ident, ItemIdent item, boolean wrap)
         throws ServiceException;
-    
+
     /**
      * Atomically sets or clears one or more flags on an item.
      */
     public void setFlags (WebIdent ident, ItemIdent item, byte mask, byte values)
+        throws ServiceException;
+
+    /**
+     * Designates the given item mature content or not.
+     */
+    public void setMature (WebIdent ident, ItemIdent item, boolean value)
         throws ServiceException;
 
     /**
@@ -141,7 +147,7 @@ public interface ItemService extends RemoteService
     /**
      * Deletes an item and notifies people who care with the given message.
      * If the item is listed in the catalog, also delists it and deletes any clones.
-     * @throws ServiceException 
+     * @throws ServiceException
      */
     public Integer deleteItemAdmin (WebIdent ident, ItemIdent item, String subject, String body)
         throws ServiceException;

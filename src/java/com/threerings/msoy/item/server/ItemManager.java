@@ -1076,6 +1076,56 @@ public class ItemManager
         });
     }
 
+    /**
+     * Atomically sets or clears one or more flags on an item.
+     * TODO: If things get really tight, this could use updatePartial() later.
+     */
+    public void setFlags (final ItemIdent ident, final byte mask, final byte value,
+                          ResultListener<Void> lner)
+    {
+        // locate the appropriate repository
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
+        if (repo == null) {
+            return;
+        }
+
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("setFlags", lner) {
+            public Void invokePersistResult () throws PersistenceException {
+                ItemRecord item = repo.loadItem(ident.itemId);
+                if (item == null) {
+                    throw new PersistenceException("Can't find item [item=" + ident + "]");
+                }
+                item.flagged = (byte) ((item.flagged & ~mask) | value);
+                repo.updateOriginalItem(item);
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Sets or clears the 'mature' flag.
+     */
+    public void setMature (final ItemIdent ident, final boolean value, ResultListener<Void> lner)
+    {
+        // locate the appropriate repository
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
+        if (repo == null) {
+            return;
+        }
+
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("setMature", lner) {
+            public Void invokePersistResult () throws PersistenceException {
+                ItemRecord item = repo.loadItem(ident.itemId);
+                if (item == null) {
+                    throw new PersistenceException("Can't find item [item=" + ident + "]");
+                }
+                item.mature = value;
+                repo.updateOriginalItem(item);
+                return null;
+            }
+        });
+    }
+
     // from ItemProvider
     public void getItemNames (ClientObject caller, final ItemIdent[] idents,
                               InvocationService.ResultListener rl)

@@ -84,12 +84,17 @@ public interface ItemServiceAsync
      * The asynchronous version of {@link ItemService.wrapItem}.
      */
     public void wrapItem (WebIdent ident, ItemIdent item, boolean wrap, AsyncCallback callback);
-    
+
     /**
      * The asynchronous version of {@link ItemService.setFlags}.
      */
     public void setFlags (WebIdent ident, ItemIdent item, byte mask, byte values,
                           AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link ItemService.setMature}.
+     */
+    public void setMature (WebIdent ident, ItemIdent item, boolean value, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link ItemService.getFlaggedItems}.
@@ -101,4 +106,5 @@ public interface ItemServiceAsync
      */
     public void deleteItemAdmin (WebIdent ident, ItemIdent item, String subject, String body,
                                  AsyncCallback callback);
+
 }

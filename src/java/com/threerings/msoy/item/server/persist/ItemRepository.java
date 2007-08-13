@@ -16,12 +16,12 @@ import java.util.Set;
 import com.samskivert.Log;
 import com.samskivert.io.PersistenceException;
 
-import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.QuickSort;
 
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheEvictionFilter;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -49,7 +49,6 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.gwt.CatalogListing;
 
 import static com.threerings.msoy.Log.log;
@@ -84,6 +83,9 @@ public abstract class ItemRepository<
                 return ItemRepository.this.createTagHistoryRecord();
             }
         };
+
+        _ctx.registerMigration(
+            getItemClass(), new EntityMigration.Rename(10007, "flags", "flagged"));
     }
 
     /**
@@ -212,15 +214,12 @@ public abstract class ItemRepository<
      * number of rows. This method can either require all flags to be set, or merely at
      * least one of them.
      */
-    public List<T> loadItemsByFlag (byte flagMask, boolean all, int count)
+    public List<T> loadFlaggedItems (int count)
         throws PersistenceException
     {
-        // TODO: Change FLAGS to FLAGGED & MATURE
         return findAll(
             getItemClass(),
-            new Where(all ?
-                      new Equals(new BitAnd(ItemRecord.FLAGS_C, flagMask), flagMask) :
-                      new GreaterThan(new BitAnd(ItemRecord.FLAGS_C, flagMask), 0)),
+            new Where(new GreaterThan(new ColumnExp(getItemClass(), ItemRecord.FLAGGED), 0)),
             new Limit(0, count));
     }
 
@@ -240,7 +239,9 @@ public abstract class ItemRepository<
     public List<CLT> loadCloneRecords (int itemId)
         throws PersistenceException
     {
-        return findAll(getCloneClass(), new Where(CloneRecord.ORIGINAL_ITEM_ID_C, itemId));
+        return findAll(
+            getCloneClass(),
+            new Where(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID), itemId));
     }
 
     /**
@@ -322,15 +323,13 @@ public abstract class ItemRepository<
         }
 
         List<CAT> records = findAll(getCatalogClass(),
-            new QueryClause[] {
-                new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
-                    getItemClass(), ItemRecord.ITEM_ID),
-                new Limit(0, 1),
-                OrderBy.random(),
-                new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
-                    getTagRepository().getTagClass(), TagRecord.TARGET_ID),
-                new Where(new In(TagRecord.TAG_ID_C, tagIds))
-            });
+            new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+                     getItemClass(), ItemRecord.ITEM_ID),
+            new Limit(0, 1),
+            OrderBy.random(),
+            new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+                     getTagRepository().getTagClass(), TagRecord.TARGET_ID),
+            new Where(new In(getTagColumn(TagRecord.TAG_ID), tagIds)));
 
         if (records.isEmpty()) {
             return null;
@@ -784,9 +783,7 @@ public abstract class ItemRepository<
 
         if (!mature) {
             // add a check to make sure ItemRecord.FLAG_MATURE is not set on any returned items
-            whereBits.add(new Equals(
-                new BitAnd(getItemColumn(ItemRecord.FLAGS), Item.FLAG_MATURE),
-                0));
+            whereBits.add(new Equals(getItemColumn(ItemRecord.MATURE), false));
         }
 
         if (whereBits.size() > 0) {
