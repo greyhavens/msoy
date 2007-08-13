@@ -19,19 +19,11 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
-import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.expression.FunctionExp;
-import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
-import com.samskivert.jdbc.depot.operator.SQLOperator;
-import com.samskivert.jdbc.depot.operator.Conditionals.*;
-import com.samskivert.jdbc.depot.operator.Logic.*;
 
-import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntIntMap;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
