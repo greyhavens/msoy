@@ -159,6 +159,7 @@ public class FacebookServlet extends HttpServlet
             return null;
         }
 
+        ArrayIntSet friendIds = new ArrayIntSet();
         Document info = null;
         try {
             // look up information from this user's facebook profile
@@ -169,29 +170,42 @@ public class FacebookServlet extends HttpServlet
                 ProfileField.BIRTHDAY);
             info = fbclient.users_getInfo(ids, fields);
 
+            // look up their friends' facebook ids
+            Document finfo = fbclient.friends_get();
+            Node fnode = findNode(finfo, "friends_get_response");
+            NodeList flist = fnode.getChildNodes();
+            for (int ii = 0, ll = flist.getLength(); ii < ll; ii++) {
+                Node friend = flist.item(ii);
+                try {
+                    friendIds.add(Integer.parseInt(friend.getTextContent()));
+                } catch (Exception e) {
+                    log.info("Failed to parse friend info [fbid=" + fbUserId +
+                             ", node=" + friend.getNodeName() +
+                             ", text=" + friend.getTextContent() + "].");
+                }
+            }
+
         } catch (Exception e) {
             log.warning("Facebook getInfo() failed [fbid=" + fbUserId + ", error=" + e + "].");
             return null;
         }
 
+        // create a Whirled account for this Facebook user
+        MemberRecord mrec = null;
+        Tuple<Integer,String> creds = null;
         try {
             Node first = findNode(info, "users_getInfo_response.user.first_name");
             String name = (first == null) ? "" : first.getTextContent();
             String email = fbUserId + "@facebook.com";
             String password = ""; // TODO?
 
-            // create a Whirled account for this Facebook user
             log.info("Creating Facebook account [name=" + name + ", id=" + fbUserId + "].");
-            MemberRecord mrec = MsoyServer.author.createAccount(email, password, name, true, 0);
+            mrec = MsoyServer.author.createAccount(email, password, name, true, 0);
             MsoyServer.memberRepo.mapExternalAccount(
                 ExternalMapRecord.FACEBOOK, String.valueOf(fbUserId), mrec.memberId);
 
-            ProfileRecord prec = createProfile(info);
-            prec.memberId = mrec.memberId;
-            MsoyServer.profileRepo.storeProfile(prec);
-
             sessionCreds = MsoyServer.memberRepo.startOrJoinSession(mrec.memberId, FB_SESSION_DAYS);
-            return new Tuple<Integer,String>(fbUserId, sessionCreds);
+            creds = new Tuple<Integer,String>(fbUserId, sessionCreds);
 
         } catch (ServiceException se) {
             log.warning("Failed to create account [id=" + fbUserId +
@@ -202,6 +216,35 @@ public class FacebookServlet extends HttpServlet
             log.log(Level.WARNING, "Failed to create account [id=" + fbUserId + "].", pe);
             return null;
         }
+
+        // create their profile based on info from their Facebook profile
+        ProfileRecord prec = createProfile(info);
+        try {
+            prec.memberId = mrec.memberId;
+            MsoyServer.profileRepo.storeProfile(prec);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to store profile [id=" + fbUserId +
+                    ", prec=" + prec + "].", pe);
+        }
+
+        // connect them up to their Facebook friends who also have a Whirled account
+        for (Integer friendFbId : friendIds) {
+            int friendId = 0;
+            try {
+                friendId = MsoyServer.memberRepo.lookupExternalAccount(
+                    ExternalMapRecord.FACEBOOK, friendFbId.toString());
+                if (friendId == 0) {
+                    continue;
+                }
+                MsoyServer.memberRepo.noteFriendship(mrec.memberId, friendId);
+            } catch (PersistenceException pe) {
+                log.log(Level.WARNING, "Failed to link Facebook user to friend " +
+                        "[mid=" + mrec.memberId + ", fid=" + friendId +
+                        ", mfbid=" + fbUserId + ", ffbid=" + friendFbId + "].", pe);
+            }
+        }
+
+        return creds;
     }
 
     protected void dumpParameters (HttpServletRequest req)

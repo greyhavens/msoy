@@ -188,6 +188,12 @@ public class ProfileRecord extends PersistentRecord
             new MediaDesc(photoHash, photoMimeType, photoConstraint) : Profile.DEFAULT_PHOTO;
     }
 
+    @Override // from Object
+    public String toString ()
+    {
+        return StringUtil.fieldsToString(this);
+    }
+
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link #ProfileRecord}

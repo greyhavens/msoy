@@ -646,14 +646,6 @@ public class MemberRepository extends DepotRepository
                             InviterRecord.INVITES_SENT_C));
     }
 
-    @Entity @Computed
-    protected static class FriendCount extends PersistentRecord
-    {
-        public static final String COUNT = "count";
-        @Computed
-        public int count;
-    }
-
     /**
      * Determine what the friendship status is between one member and another.
      */
@@ -838,6 +830,14 @@ public class MemberRepository extends DepotRepository
         classes.add(InviterRecord.class);
         classes.add(OptOutRecord.class);
         classes.add(ExternalMapRecord.class);
+    }
+
+    @Entity @Computed
+    protected static class FriendCount extends PersistentRecord
+    {
+        public static final String COUNT = "count";
+        @Computed
+        public int count;
     }
 
     protected static final int INVITE_ID_LENGTH = 10;
