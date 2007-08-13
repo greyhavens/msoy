@@ -41,7 +41,7 @@ import com.threerings.msoy.data.all.MemberName;
 @Entity(indices={
     // this index takes care both of owner and owner/folder queries
     @Index(name="ixOwnerFolder", columns={
-        MailMessageRecord.OWNER_ID, MailMessageRecord.FOLDER_ID }),
+        MailMessageRecord.OWNER_ID, MailMessageRecord.FOLDER_ID })
 })
 @Table
 public class MailMessageRecord extends PersistentRecord
