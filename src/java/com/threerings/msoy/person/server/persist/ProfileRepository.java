@@ -7,27 +7,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntListUtil;
 
-import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Conditionals.In;
 import com.samskivert.jdbc.depot.operator.Conditionals.Like;
-import com.samskivert.jdbc.depot.operator.Logic.And;
 
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -84,6 +75,8 @@ public class ProfileRepository extends DepotRepository
      * Finds the member name records for the members who's first and last names match the search
      * parameter.  This currently assumes the first word in <code>search</code> is the first name,
      * and the last word is the last name.
+     *
+     * TODO: This needs to use FTS.
      */
     public List<MemberNameRecord> findMemberNames (String search, int maxRecords)
         throws PersistenceException
