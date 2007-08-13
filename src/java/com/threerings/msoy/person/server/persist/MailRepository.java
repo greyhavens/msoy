@@ -18,7 +18,6 @@ import com.samskivert.jdbc.depot.MultiKey;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
-import com.samskivert.jdbc.depot.clause.ForUpdate;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.OrderBy;

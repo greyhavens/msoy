@@ -7,6 +7,7 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
@@ -16,7 +17,9 @@ import com.samskivert.util.StringUtil;
 /**
  * Represents a named folder belonging to a member.
  */
-@Entity
+@Entity(indices={
+    @Index(name="ixOwner", columns={ MailFolderRecord.OWNER_ID })
+})
 @Table(uniqueConstraints={
     @UniqueConstraint(fieldNames={MailFolderRecord.OWNER_ID, MailFolderRecord.NAME })})
 public class MailFolderRecord extends PersistentRecord
@@ -60,13 +63,13 @@ public class MailFolderRecord extends PersistentRecord
     /** The id of the member who owns this folder. */
     @Id
     public int ownerId;
-    
+
     /** The name of this folder. */
     public String name;
 
     /** The next available message id within this folder. */
     public int nextMessageId;
-    
+
     /**
      * Generates a string representation of this instance.
      */

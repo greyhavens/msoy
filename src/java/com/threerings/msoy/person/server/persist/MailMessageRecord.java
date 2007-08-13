@@ -13,6 +13,7 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
@@ -37,7 +38,11 @@ import com.threerings.msoy.data.all.MemberName;
  * TODO: How do we deal with messages that do not have a real sender? System messages of
  *       various kinds, for example.
  */
-@Entity
+@Entity(indices={
+    // this index takes care both of owner and owner/folder queries
+    @Index(name="ixOwnerFolder", columns={
+        MailMessageRecord.OWNER_ID, MailMessageRecord.FOLDER_ID }),
+})
 @Table
 public class MailMessageRecord extends PersistentRecord
 {
