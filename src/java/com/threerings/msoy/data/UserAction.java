@@ -15,7 +15,7 @@ import com.threerings.util.ActionScript;
 public enum UserAction
 {
     CREATED_PROFILE(1, 500),
-    UPDATED_PROFILE(2, 50),
+    UPDATED_PROFILE(2, 0),
 
     SENT_FRIEND_INVITE(10, 300),
     ACCEPTED_FRIEND_INVITE(11, 200),
