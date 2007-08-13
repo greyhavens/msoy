@@ -10,7 +10,9 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 /**
  * Maintains a per-member-and-game log of awarded flow.
  */
-@Entity
+@Entity(indices={
+    @Index(name="ixGame", columns={ GameFlowGrantLogRecord.GAME_ID })
+})
 public class GameFlowGrantLogRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START

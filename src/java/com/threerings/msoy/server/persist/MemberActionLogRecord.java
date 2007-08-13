@@ -13,7 +13,9 @@ import com.samskivert.util.StringUtil;
 /**
  * Maintains a per-member log of timestamped actions with optional extra data.
  */
-@Entity
+@Entity(indices={
+    @Index(name="ixMember", columns={ MemberActionLogRecord.MEMBER_ID })
+})
 public class MemberActionLogRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -50,10 +52,10 @@ public class MemberActionLogRecord extends PersistentRecord
 
     /** The id of the member who performed the action. */
     public int memberId;
-    
+
     /** The action performed. */
     public int actionId;
-    
+
     /** When this action occured. */
     public Timestamp actionTime;
 

@@ -24,6 +24,7 @@ import com.threerings.msoy.web.data.WebCreds;
     @Index(name="ixLastSession", columns={ MemberRecord.LAST_SESSION }),
     @Index(name="ixName", columns={ MemberRecord.NAME }),
     @Index(name="ixInvitingFriend", columns={ MemberRecord.INVITING_FRIEND_ID })
+    // Note: PERMA_NAME and ACCOUNT_NAME are automatically indexed by their uniqueness constraint
 })
 public class MemberRecord extends PersistentRecord
 {
