@@ -125,7 +125,7 @@ public class MailMessageRecord extends PersistentRecord
         new ColumnExp(MailMessageRecord.class, PAYLOAD_STATE);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     /** The id of this message, unique within its current folder. */
     @Id

@@ -36,7 +36,7 @@ public class UserIdentRecord extends PersistentRecord
         new ColumnExp(UserIdentRecord.class, MACH_IDENT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The id of the user in question. */
     @Id

@@ -256,7 +256,7 @@ public class GroupRecord extends PersistentRecord
         new ColumnExp(GroupRecord.class, MEMBER_COUNT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 14;
+    public static final int SCHEMA_VERSION = 15;
 
     /** The unique id of this group. */
     @Id

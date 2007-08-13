@@ -38,7 +38,7 @@ public class GameFlowGrantLogRecord extends PersistentRecord
         new ColumnExp(GameFlowGrantLogRecord.class, AMOUNT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The id of the game for which we're logging flow. */
     public int gameId;

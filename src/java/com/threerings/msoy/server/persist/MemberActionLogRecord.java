@@ -48,7 +48,7 @@ public class MemberActionLogRecord extends PersistentRecord
         new ColumnExp(MemberActionLogRecord.class, DATA);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The id of the member who performed the action. */
     public int memberId;

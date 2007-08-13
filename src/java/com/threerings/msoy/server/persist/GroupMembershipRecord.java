@@ -56,7 +56,7 @@ public class GroupMembershipRecord extends PersistentRecord
         new ColumnExp(GroupMembershipRecord.class, RANK_ASSIGNED);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The id of the member in the group membership. */
     @Id

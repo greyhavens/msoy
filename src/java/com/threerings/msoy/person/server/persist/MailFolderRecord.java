@@ -54,7 +54,7 @@ public class MailFolderRecord extends PersistentRecord
         new ColumnExp(MailFolderRecord.class, NEXT_MESSAGE_ID);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The id of this folder, unique relative to this member. */
     @Id

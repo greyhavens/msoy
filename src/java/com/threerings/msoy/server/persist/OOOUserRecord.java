@@ -119,7 +119,7 @@ public class OOOUserRecord extends PersistentRecord
         new ColumnExp(OOOUserRecord.class, SHUN_LEFT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The user's assigned integer userid. */
     @Id @GeneratedValue(strategy=GenerationType.AUTO)
