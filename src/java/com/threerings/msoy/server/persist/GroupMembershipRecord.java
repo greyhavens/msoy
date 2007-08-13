@@ -8,11 +8,9 @@ import java.sql.Timestamp;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
-import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
-import com.samskivert.jdbc.depot.annotation.Table;
-import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
+import com.samskivert.jdbc.depot.annotation.Index;
 
 import com.samskivert.util.StringUtil;
 
@@ -23,9 +21,9 @@ import com.threerings.msoy.data.all.GroupName;
 /**
  * Contains the details of person's membership in a group.
  */
-@Entity
-@Table(uniqueConstraints=@UniqueConstraint(fieldNames={
-    GroupMembershipRecord.MEMBER_ID, GroupMembershipRecord.GROUP_ID }))
+@Entity(indices={
+    @Index(name="ixGroup", columns={ GroupMembershipRecord.GROUP_ID }),
+})
 public class GroupMembershipRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
