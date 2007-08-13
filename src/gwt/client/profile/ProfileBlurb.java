@@ -124,9 +124,9 @@ public class ProfileBlurb extends Blurb
             _ename = new TextBox();
             _ename.setMaxLength(Profile.MAX_DISPLAY_NAME_LENGTH);
             _eheadline = new TextBox();
-            _eheadline.setVisibleLength(50);
+            _eheadline.setVisibleLength(35);
             _ehomepage = new TextBox();
-            _ehomepage.setVisibleLength(50);
+            _ehomepage.setVisibleLength(35);
         }
 
         _ename.setText(_name.toString());
