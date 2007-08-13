@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.chat.server;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.threerings.crowd.chat.server.SpeakUtil;
@@ -68,7 +69,7 @@ public class ChatChannelManager
                 ClientObject cobj = client.getClientObject();
                 if (cobj instanceof MemberObject) {
                     // remove the client from all channels
-                    removeChatter((MemberObject)cobj); 
+                    removeChatter((MemberObject)cobj);
                 }
             }
             public void clientSessionDidStart (PresentsClient client) {
@@ -132,7 +133,7 @@ public class ChatChannelManager
         // if we made it this far, we can do our joining immediately
         resolveAndJoinChannel(user, channel, listener);
     }
-    
+
     // from interface ChatChannelProvider
     public void leaveChannel (ClientObject caller, ChatChannel channel)
     {
@@ -197,7 +198,7 @@ public class ChatChannelManager
 
         listener.requestFailed("Channel not found or not initialized.");
     }
-    
+
     // from interface PeerChatProvider
     public void removeUser (ClientObject caller, ChatterInfo chatter, ChatChannel channel,
                             PeerChatService.ConfirmListener listener)
@@ -212,7 +213,7 @@ public class ChatChannelManager
 
         listener.requestFailed("Channel not found or not initialized.");
     }
-        
+
     /**
      * Enumerate all the existing chat channels, both subscribed and hosted.
      */
@@ -238,7 +239,7 @@ public class ChatChannelManager
             }
         });
     }
-    
+
     /**
      * Ensures that the channel exists and is available (either by subscribing to it,
      * or by creating it from scratch). When the channel is ready, calls the listener.
@@ -283,7 +284,7 @@ public class ChatChannelManager
     }
 
     /**
-     * Used by channel wrappers to add themselves to this manager. 
+     * Used by channel wrappers to add themselves to this manager.
      */
     protected void addWrapper (ChannelWrapper wrapper)
     {
@@ -302,7 +303,7 @@ public class ChatChannelManager
                         ", removed=" + removed + "].");
         }
     }
-        
+
     /**
      * Adds a new participants to a resolved channel object.
      */
@@ -310,7 +311,7 @@ public class ChatChannelManager
     {
         ChatterInfo userInfo = new ChatterInfo(user);
         ChatChannelObject ccobj = wrapper.getCCObj();
-            
+
         if (ccobj.chatters.containsKey(user.memberName)) {
             log.warning("User already in chat channel, cannot add [user=" + user.who() +
                         ", channel=" + ccobj.channel + "].");
@@ -319,7 +320,7 @@ public class ChatChannelManager
 
         wrapper.addChatter(userInfo);
     }
-        
+
     /**
      * Removes participant from a channel. Removal may trigger channel cleanup.
      */
@@ -342,23 +343,26 @@ public class ChatChannelManager
      */
     protected void removeChatter (MemberObject user)
     {
-        int count = 0;
+        // do this in two phases because removeChatter() can result in the wrapper itself being
+        // removed which would then break our iterator due to concurrent modification
+        ArrayList<ChannelWrapper> toRemove = new ArrayList<ChannelWrapper>();
         ChatterInfo userInfo = new ChatterInfo(user);
         for (ChannelWrapper wrapper : _wrappers.values()) {
             if (wrapper.hasMember(userInfo)) {
-                wrapper.removeChatter(userInfo);
-                count++;
+                toRemove.add(wrapper);
             }
         }
+        for (ChannelWrapper wrapper : toRemove) {
+            wrapper.removeChatter(userInfo);
+        }
 
-        if (count > 0) {  // just for testing
+        if (toRemove.size() > 0) {  // just for testing
             log.info("Chatter was removed from all channels [user=" + user.who() +
-                     ", count=" + count + "].");
+                     ", count=" + toRemove.size() + "].");
         }
     }
-    
+
     /** Contains a mapping of all chat channels we know about, hosted or subscribed. */
     protected HashMap<ChatChannel, ChannelWrapper> _wrappers =
         new HashMap<ChatChannel, ChannelWrapper>();
-    
 }
