@@ -12,12 +12,18 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Index;
+import com.samskivert.jdbc.depot.annotation.Table;
+import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 /**
  * Emulates {@link OOOUser} for the Depot.
  */
-@Entity(name="users")
+@Entity(name="users", indices={
+    @Index(name="ixEmail", columns={ OOOUserRecord.EMAIL })
+})
+@Table(uniqueConstraints={ @UniqueConstraint(fieldNames={ OOOUserRecord.USERNAME })})
 public class OOOUserRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -114,7 +120,7 @@ public class OOOUserRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1;
-    
+
     /** The user's assigned integer userid. */
     @Id @GeneratedValue(strategy=GenerationType.AUTO)
     public int userId;

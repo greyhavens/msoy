@@ -8,13 +8,16 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 /**
  * Extends the basic samskivert user record with special Three Rings
  * business.
  */
-@Entity(name="USER_IDENTS")
+@Entity(name="USER_IDENTS", indices={
+    @Index(name="ixUser", columns={ UserIdentRecord.USER_ID })
+})
 public class UserIdentRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -34,7 +37,7 @@ public class UserIdentRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1;
-    
+
     /** The id of the user in question. */
     @Id
     @Column(name="USER_ID")
