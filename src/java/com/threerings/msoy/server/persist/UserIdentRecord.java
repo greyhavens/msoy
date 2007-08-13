@@ -16,7 +16,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
  * business.
  */
 @Entity(name="USER_IDENTS", indices={
-    @Index(name="ixUser", columns={ UserIdentRecord.USER_ID })
+    @Index(name="ixUser", columns={ "USER_ID" })
 })
 public class UserIdentRecord extends PersistentRecord
 {
@@ -36,7 +36,7 @@ public class UserIdentRecord extends PersistentRecord
         new ColumnExp(UserIdentRecord.class, MACH_IDENT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The id of the user in question. */
     @Id
