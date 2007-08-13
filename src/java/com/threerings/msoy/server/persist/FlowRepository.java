@@ -87,7 +87,7 @@ public class FlowRepository extends DepotRepository
     /**
      * Logs an action for a member with optional action-specific data, which may be null.
      *
-     * @return null if no flow was granted as a result of this action, the member's new 
+     * @return null if no flow was granted as a result of this action, the member's new
      * MemberFlowRecord if flow was granted by the action.
      */
     public MemberFlowRecord logUserAction (int memberId, UserAction action, String details)
@@ -126,7 +126,7 @@ public class FlowRepository extends DepotRepository
             // tell our humanity helper about the record
             helper.noteRecord(record);
         }
-        
+
         Map<String, SQLExpression> fieldMap = new HashMap<String, SQLExpression>();
 
         // update their action summary counts
@@ -175,7 +175,7 @@ public class FlowRepository extends DepotRepository
 //                    new FieldOverride(GameFlowSummaryRecord.AMOUNT,
 //                                      new FunctionExp("sum", GameFlowGrantLogRecord.AMOUNT_C)),
 //                    new GroupBy(GameFlowGrantLogRecord.GAME_ID_C));
-            
+
             // write an algorithm that actually does something with 'records' here
             gameRecord.abuseFactor = 123;
             gameRecord.accumMinutes = 0;
@@ -271,8 +271,6 @@ public class FlowRepository extends DepotRepository
                 "Illegal flow " + type + " [memberId=" + memberId + ", amount=" + amount + "]");
         }
 
-        String op = grant ? "+" : "-";
-
         Map<String, SQLExpression> fieldMap = new HashMap<String, SQLExpression>();
         fieldMap.put(MemberRecord.FLOW, grant ?
             new Arithmetic.Add(MemberRecord.FLOW_C, amount) :
@@ -299,10 +297,8 @@ public class FlowRepository extends DepotRepository
             fieldMap.clear();
             fieldMap.put(
                 DailyFlowRecord.AMOUNT, new Arithmetic.Add(DailyFlowRecord.AMOUNT_C, amount));
-            mods = updateLiteral(
-                DailyFlowRecord.class,
-                new Where(DailyFlowRecord.TYPE_C, type, DailyFlowRecord.DATE_C, date),
-                null, fieldMap);
+            Key<DailyFlowRecord> dailyFlowKey = DailyFlowRecord.getKey(type, date);
+            mods = updateLiteral(DailyFlowRecord.class, dailyFlowKey, dailyFlowKey, fieldMap);
             if (mods == 0) {
                 // if this is the second time we tried that update, flip out.
                 if (again) {
