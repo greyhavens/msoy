@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
@@ -39,7 +40,7 @@ import static com.threerings.msoy.Log.log;
  * they host lobbies and games.
  */
 public class MsoyGameRegistry
-    implements MsoyGameProvider, GameServerProvider, MsoyGameServer.Shutdowner
+    implements MsoyGameProvider, GameServerProvider, MsoyServer.Shutdowner
 {
     /** The invocation services group for game server services. */
     public static final String GAME_SERVER_GROUP = "game_server";
@@ -54,17 +55,25 @@ public class MsoyGameRegistry
         invmgr.registerDispatcher(new GameServerDispatcher(this), GAME_SERVER_GROUP);
 
         // register to hear when the server is shutdown
-        MsoyGameServer.registerShutdowner(this);
+        MsoyServer.registerShutdowner(this);
 
-        // start up our game server handlers (and hence our game servers)
-        for (int ii = 0; ii < _handlers.length; ii++) {
-            int port = ServerConfig.gameServerPort + ii;
-            try {
-                _handlers[ii] = new GameServerHandler(port);
-            } catch (Exception e) {
-                log.log(Level.WARNING, "Failed to start up game server [port=" + port + "].", e);
+        // start up our servers after the rest of server initialization is completed (and we know
+        // that we're listening for client connections)
+        MsoyServer.invoker.postUnit(new Invoker.Unit("startGameServers") {
+            public boolean invoke () {
+                // start up our game server handlers (and hence our game servers)
+                for (int ii = 0; ii < _handlers.length; ii++) {
+                    int port = ServerConfig.gameServerPort + ii;
+                    try {
+                        _handlers[ii] = new GameServerHandler(port);
+                    } catch (Exception e) {
+                        log.log(Level.WARNING, "Failed to start up game server " +
+                                "[port=" + port + "].", e);
+                    }
+                }
+                return false;
             }
-        }
+        });
     }
 
     // from interface MsoyGameProvider
@@ -171,7 +180,7 @@ public class MsoyGameRegistry
         }
     }
 
-    // from interface MsoyGameServer.Shutdowner
+    // from interface MsoyServer.Shutdowner
     public void shutdown ()
     {
         // shutdown our game server handlers
