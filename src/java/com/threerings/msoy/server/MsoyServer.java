@@ -324,10 +324,6 @@ public class MsoyServer extends MsoyBaseServer
     protected void finishInit ()
         throws Exception
     {
-        // resolve all of our database schemas now that our repostories have been created
-        perCtx.initializeManagedRecords();
-        userCtx.initializeManagedRecords();
-
         // intialize various services
         spotProv = new SpotProvider(omgr, plreg, screg);
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), SpotCodes.WHIRLED_GROUP);
@@ -378,6 +374,12 @@ public class MsoyServer extends MsoyBaseServer
                     return "checkAutoRestart interval";
                 }
             }.schedule(AUTO_RESTART_CHECK_INTERVAL, true);
+        }
+
+        // resolve any remaining database schemas that have not yet been loaded
+        if (!ServerConfig.config.getValue("depot.lazy_init", true)) {
+            perCtx.initializeManagedRecords();
+            userCtx.initializeManagedRecords();
         }
 
         log.info("Msoy server initialized.");
