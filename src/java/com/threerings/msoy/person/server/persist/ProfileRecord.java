@@ -10,17 +10,20 @@ import com.samskivert.util.StringUtil;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
+import com.samskivert.jdbc.depot.annotation.FullTextIndex;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.StaticMediaDesc;
 import com.threerings.msoy.web.data.Profile;
 
 /**
  * Contains a member's profile data.
  */
+@Table(fullTextIndexes={
+    @FullTextIndex(name=ProfileRecord.FTS_REAL_NAME, fieldNames={ ProfileRecord.REAL_NAME })
+})
 public class ProfileRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -102,9 +105,12 @@ public class ProfileRecord extends PersistentRecord
         new ColumnExp(ProfileRecord.class, REAL_NAME);
     // AUTO-GENERATED: FIELDS END
 
+    /** The identifier for the full text search index on Real Name */
+    public static final String FTS_REAL_NAME = "RN";
+
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 5;
+    public static final int SCHEMA_VERSION = 6;
 
     /** The unique id of the memory with whom this profile is associated. */
     @Id public int memberId;
