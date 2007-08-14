@@ -504,7 +504,7 @@ public class ItemManager
 
             public void handleSuccess () {
                 super.handleSuccess();
-                final double lastTouched = (double) System.currentTimeMillis();
+                final double lastTouched = System.currentTimeMillis();
                 if (oldItemId != 0) {
                     updateUserCache(memberId, itemType, oldItemIds, new ItemUpdateOp() {
                         public void update (Item item) {
@@ -603,7 +603,7 @@ public class ItemManager
                 // #4 is currently unhandled- we don't know who the
                 // owner of those items is without reading that out of the DB.
                 Iterator<Tuple<Byte, int[]>> itr = unused.typeIterator();
-                final double lastTouched = (double) System.currentTimeMillis();
+                final double lastTouched = System.currentTimeMillis();
                 while (itr.hasNext()) {
                     Tuple<Byte, int[]> tup = itr.next();
                     updateUserCache(editorMemberId, tup.left, tup.right, new ItemUpdateOp() {
