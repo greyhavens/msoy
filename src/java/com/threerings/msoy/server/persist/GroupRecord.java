@@ -32,9 +32,10 @@ import com.threerings.msoy.web.data.GroupExtras;
 @Entity(indices={
     @Index(name="ixPolicy", fields={ GroupRecord.POLICY })
 })
-@Table(fullTextIndexes = {
-    @FullTextIndex(name = "NBC", fieldNames = {
-        GroupRecord.NAME, GroupRecord.BLURB, GroupRecord.CHARTER }) })
+@Table(fullTextIndexes={
+    @FullTextIndex(name=GroupRecord.FTS_NBC, fieldNames={
+        GroupRecord.NAME, GroupRecord.BLURB, GroupRecord.CHARTER })
+})
 public class GroupRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -255,6 +256,9 @@ public class GroupRecord extends PersistentRecord
     public static final ColumnExp MEMBER_COUNT_C =
         new ColumnExp(GroupRecord.class, MEMBER_COUNT);
     // AUTO-GENERATED: FIELDS END
+
+    /** The identifier for the full text search index on Name, Blurb, Charter */
+    public static final String FTS_NBC = "NBC";
 
     public static final int SCHEMA_VERSION = 15;
 

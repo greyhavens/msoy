@@ -90,14 +90,14 @@ public class GroupRepository extends DepotRepository
      * Searches all public and inv-only groups for the search string against the indexed blurb,
      * charter and name fields.  Results are returned in order of relevance.
      */
-    public List<GroupRecord> searchGroups (String searchString)
+    public List<GroupRecord> searchGroups (String search)
         throws PersistenceException
     {
         // for now, always operate with boolean searching enabled, without query expansion
         return findAll(
             GroupRecord.class,
             new Where(new And(new Not(new Equals(GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE)),
-                              new FullTextMatch(GroupRecord.class, "NBC", searchString))));
+                              new FullTextMatch(GroupRecord.class, GroupRecord.FTS_NBC, search))));
     }
 
     /**
