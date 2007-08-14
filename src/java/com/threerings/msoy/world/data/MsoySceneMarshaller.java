@@ -7,6 +7,7 @@ import com.threerings.msoy.world.client.MsoySceneService;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.dobj.InvocationResponseEvent;
 import com.threerings.whirled.client.SceneService;
 import com.threerings.whirled.data.SceneMarshaller;
 

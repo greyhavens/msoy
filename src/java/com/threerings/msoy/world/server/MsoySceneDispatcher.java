@@ -3,13 +3,16 @@
 
 package com.threerings.msoy.world.server;
 
+import com.threerings.msoy.world.client.MsoySceneService;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoySceneMarshaller;
+import com.threerings.presents.client.Client;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.whirled.client.SceneService;
+import com.threerings.whirled.data.SceneMarshaller;
 
 /**
  * Dispatches requests to the {@link MsoySceneProvider}.

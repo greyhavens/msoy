@@ -5,6 +5,7 @@ package com.threerings.msoy.item.server;
 
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
