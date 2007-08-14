@@ -448,12 +448,11 @@ public class MsoyController extends Controller
      */
     public function handleJoinGameLobby (gameId :int) :void
     {
-        if (!inGWTApp()) {
-            if (displayPage("game", "" + gameId)) {
-                return;
-            }
+        // if we're not running in the GWT app, we need to display a page externally
+        if (!inGWTApp() && displayPage("game", "" + gameId)) {
+            return;
         }
-        // fall back to going straight in
+        // if we're running in the GWT app, or the external display failed, go straight in
         _ctx.getGameDirector().displayLobby(gameId);
     }
 
