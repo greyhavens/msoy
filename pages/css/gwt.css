@@ -66,16 +66,13 @@ a:visited {
 
 /** Form element styles. */
 .gwt-Button {
-  border-top: none;
-  border-bottom: none;
-  border-left: 1px double #000000;
-  border-right: 1px double  #000000;
+  border: 1px double #000000;
   background-image: url(/images/ui/button_middle.png);
   background-repeat: repeat-x;
   font-size: 12px;
   height: 20px;
   vertical-align: top;
-  padding-bottom: 2px;
+  padding-bottom: 1px;
   cursor: pointer;
 }
 
