@@ -324,6 +324,10 @@ public class MsoyServer extends MsoyBaseServer
     protected void finishInit ()
         throws Exception
     {
+        // resolve all of our database schemas now that our repostories have been created
+        perCtx.initializeManagedRecords();
+        userCtx.initializeManagedRecords();
+
         // intialize various services
         spotProv = new SpotProvider(omgr, plreg, screg);
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), SpotCodes.WHIRLED_GROUP);
