@@ -349,7 +349,7 @@ public class MsoyController extends Controller
     public function handleViewItem (ident :ItemIdent) :void
     {
         // TODO: use a proper item info page
-        handleInternalGo("inventory", ident.type + "_0_" + ident.itemId);
+        displayPage("inventory", ident.type + "_0_" + ident.itemId);
     }
 
     /**
@@ -357,7 +357,7 @@ public class MsoyController extends Controller
      */
     public function handleViewMember (memberId :int) :void
     {
-        handleInternalGo("profile", "" + memberId);
+        displayPage("profile", "" + memberId);
     }
 
     /**
@@ -365,7 +365,7 @@ public class MsoyController extends Controller
      */
     public function handleViewGroup (groupId :int) :void
     {
-        handleInternalGo("group", "" + groupId);
+        displayPage("group", "" + groupId);
     }
 
     /**
@@ -373,7 +373,7 @@ public class MsoyController extends Controller
      */
     public function handleViewMyAvatars () :void
     {
-        handleInternalGo("inventory", "" + Item.AVATAR);
+        displayPage("inventory", "" + Item.AVATAR);
     }
 
     /**
@@ -381,7 +381,7 @@ public class MsoyController extends Controller
      */
     public function handleViewMyFurniture () :void
     {
-        handleInternalGo("inventory", "" + Item.FURNITURE);
+        displayPage("inventory", "" + Item.FURNITURE);
     }
 
     /**
@@ -389,7 +389,7 @@ public class MsoyController extends Controller
      */
     public function handleViewMail () :void
     {
-        handleInternalGo("mail", "");
+        displayPage("mail", "");
     }
 
     /**
@@ -429,7 +429,7 @@ public class MsoyController extends Controller
      */
     public function handleGoLocation (placeOid :int) :void
     {
-        if (!handleInternalGo("world", "l" + placeOid)) {
+        if (!displayPageGWT("world", "l" + placeOid)) {
             // fall back to breaking the back button
             _ctx.getLocationDirector().moveTo(placeOid);
         }
@@ -440,7 +440,7 @@ public class MsoyController extends Controller
      */
     public function handleGoGame (gameId :int, placeOid :int) :Boolean
     {
-        return handleInternalGo("game", gameId + "_" + placeOid);
+        return displayPage("game", gameId + "_" + placeOid);
     }
 
     /**
@@ -448,7 +448,11 @@ public class MsoyController extends Controller
      */
     public function handleJoinGameLobby (gameId :int) :void
     {
-        _ctx.getGameDirector().displayLobby(gameId);
+        if (inGWTApp()) {
+            _ctx.getGameDirector().displayLobby(gameId);
+        } else {
+            displayPage("game", "" + gameId);
+        }
     }
 
     /**
@@ -592,7 +596,7 @@ public class MsoyController extends Controller
         // ignore it because we're already there
         var scene :String = sceneId + "";
         if (_sceneIdString != null) {
-            handleInternalGo("world", "s" + scene);
+            displayPageGWT("world", "s" + scene);
         }
         _sceneIdString = scene;
     }
@@ -682,9 +686,9 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Return true if we should attempt to load sections of Whirled by visiting a new page.
+     * Return true if we are running in the GWT application shell, false otherwise.
      */
-    protected function shouldLoadNewPages () :Boolean
+    protected function inGWTApp () :Boolean
     {
         var pt :String = Capabilities.playerType;
         if (pt == "StandAlone" || pt == "External") {
@@ -700,42 +704,50 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Moves to a new location (scene, game room, etc.) by changing the URL of the browser so that
-     * our history mechanism is preserved. Returns true if we did so, false if we couldn't do so
-     * for whatever reason (are in the standalone client) and the caller should just go there
-     * directly.
+     * Calls our GWT application and requests that the specified page be displayed.
      */
-    protected function handleInternalGo (page :String, args :String) :Boolean
+    protected function displayPageGWT (page :String, args :String) :Boolean
     {
-        try {
-            if (shouldLoadNewPages()) {
-                // the external interface will not be available when running in standalone
-                // debugger, so let's look before we leap. :)
+        if (inGWTApp()) {
+            try {
                 if (ExternalInterface.available) {
                     ExternalInterface.call("displayPage", page, args);
                     return true;
                 }
-
-            } else {
-                var fullURL :String;
-                var scene :Scene = _ctx.getSceneDirector().getScene();
-                if (scene == null) {
-                    fullURL = "/#" + page + "-" + args;
-                } else {
-                    fullURL = "/#world-s" + scene.getId() + "-" + page + "-" + args;
-                }
-                log.info("Showing external URL " + fullURL);
-                try {
-                    navigateToURL(new URLRequest(fullURL), "_top");
-                } catch (err :SecurityError) {
-                    // pants
-                }
+            } catch (e :Error) {
+                log.warning("Unable to display page via Javascript [page=" + page +
+                            ", args=" + args +"]: " + e);
             }
-
-        } catch (e :Error) {
-            log.warning("Unable to send update to Javascript: " + e);
         }
         return false;
+    }
+
+    /**
+     * Displays a new page either in our GWT application or by reloading the current web page with
+     * the full GWT application, restoring our current location and then displaying the page.
+     */
+    protected function displayPage (page :String, args :String) :Boolean
+    {
+        if (inGWTApp()) {
+            return displayPageGWT(page, args);
+
+        } else {
+            var fullURL :String;
+            var scene :Scene = _ctx.getSceneDirector().getScene();
+            if (scene == null) {
+                fullURL = "/#" + page + "-" + args;
+            } else {
+                fullURL = "/#world-s" + scene.getId() + "-" + page + "-" + args;
+            }
+            log.info("Showing external URL " + fullURL);
+            try {
+                navigateToURL(new URLRequest(fullURL), "_top");
+                return true;
+            } catch (e :Error) {
+                log.warning("Failed to display URL [url=" + fullURL + "]: " + e);
+            }
+            return false;
+        }
     }
 
     /**
