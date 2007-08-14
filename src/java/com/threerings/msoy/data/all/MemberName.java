@@ -18,7 +18,7 @@ public class MemberName extends Name
     /** A comparator for sorting Names by their display portion, case insensitively. */
     public static final Comparator BY_DISPLAY_NAME = new Comparator() {
         public int compare (Object o1, Object o2) {
-            return compare((MemberName)o1, (MemberName)o2);
+            return compare(o1, o2);
         }
     };
 

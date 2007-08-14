@@ -36,7 +36,6 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.peer.data.MemberLocation;
 import com.threerings.msoy.web.data.FriendInviteObject;
-import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.server.persist.GroupRecord;

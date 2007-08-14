@@ -8,9 +8,6 @@ import com.threerings.ezgame.server.EZGameManager;
 import com.threerings.ezgame.server.GameCookieManager;
 
 import com.threerings.msoy.game.data.MsoyGameObject;
-import com.threerings.msoy.server.MsoyServer;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Manages a MetaSOY game.

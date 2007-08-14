@@ -13,8 +13,6 @@ import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatSet;
 
 import com.threerings.crowd.data.BodyObject;
-import com.threerings.crowd.server.CrowdObjectAccess;
-
 import com.threerings.whirled.server.WhirledClient;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -22,7 +20,6 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyTokenRing;
-import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
 import static com.threerings.msoy.Log.log;

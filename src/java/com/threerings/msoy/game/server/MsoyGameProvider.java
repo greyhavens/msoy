@@ -4,7 +4,6 @@
 package com.threerings.msoy.game.server;
 
 import com.threerings.msoy.game.client.MsoyGameService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;

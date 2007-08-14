@@ -4,8 +4,6 @@
 package com.threerings.msoy.person.server;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 
 import org.apache.velocity.VelocityContext;
@@ -13,7 +11,6 @@ import org.apache.velocity.VelocityContext;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
@@ -21,11 +18,8 @@ import com.samskivert.util.Tuple;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.web.data.MailFolder;
-import com.threerings.msoy.web.data.MailHeaders;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
-import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;

@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import java.util.List;
-import java.util.ArrayList;
-
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ResultListener;
@@ -19,10 +16,7 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.GroupRepository;
-import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Manage msoy groups.

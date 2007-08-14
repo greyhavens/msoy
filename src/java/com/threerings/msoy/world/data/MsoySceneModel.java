@@ -59,7 +59,7 @@ public class MsoySceneModel extends SceneModel
      */
     public void addFurni (FurniData furni)
     {
-        furnis = (FurniData[]) ArrayUtil.append(furnis, furni);
+        furnis = ArrayUtil.append(furnis, furni);
         invalidatePortalInfo(furni);
     }
 
@@ -70,7 +70,7 @@ public class MsoySceneModel extends SceneModel
     {
         int idx = ListUtil.indexOf(furnis, furni);
         if (idx != -1) {
-            furnis = (FurniData[]) ArrayUtil.splice(furnis, idx, 1);
+            furnis = ArrayUtil.splice(furnis, idx, 1);
             invalidatePortalInfo(furni);
         }
     }

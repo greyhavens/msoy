@@ -10,8 +10,6 @@ import com.threerings.parlor.game.server.GameManagerDelegate;
 
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.game.data.WorldGameConfig;
-
 public class WorldGameManagerDelegate extends GameManagerDelegate
 {
     public WorldGameManagerDelegate (GameManager gmgr)

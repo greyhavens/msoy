@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.data;
 
-import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 

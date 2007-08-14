@@ -11,15 +11,10 @@ import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.parlor.server.TableManager;
 
-import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyTable;
 import com.threerings.msoy.game.data.PlayerObject;
-
-import com.threerings.msoy.item.data.all.Game;
-
-import com.threerings.msoy.server.MsoyServer;
 
 public class MsoyTableManager extends TableManager
 {

@@ -6,7 +6,6 @@ package com.threerings.msoy.chat.server;
 import com.threerings.msoy.chat.client.ChatChannelService;
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelCodes;
-import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.data.MemberObject;
 
 import static com.threerings.msoy.Log.log;

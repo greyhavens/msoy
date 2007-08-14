@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.web.data;
 
-import java.util.List;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /** 

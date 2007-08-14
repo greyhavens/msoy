@@ -8,7 +8,6 @@ import com.threerings.io.SimpleStreamableObject;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.StaticMediaDesc;
 
 /**
  * Contains metadata about a game for which a player is currently matchmaking.
@@ -66,7 +65,7 @@ public class GameSummary extends SimpleStreamableObject
     public Object clone ()
     {
         try {
-            return (GameSummary) super.clone();
+            return super.clone();
         } catch (CloneNotSupportedException cnse) {
             throw new RuntimeException(cnse); // not going to happen
         }

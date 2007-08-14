@@ -5,7 +5,6 @@ package com.threerings.msoy.world.server;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -14,13 +13,10 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
-import com.samskivert.util.StringUtil;
-
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -28,8 +24,6 @@ import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.SetListener;
 import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.util.ResultAdapter;
-
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;

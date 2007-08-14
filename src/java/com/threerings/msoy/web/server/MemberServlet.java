@@ -8,10 +8,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -65,7 +63,6 @@ import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.Whirled;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
 
 import static com.threerings.msoy.Log.log;
@@ -471,7 +468,7 @@ public class MemberServlet extends MsoyServiceServlet
                 break;
             }
             if (channel.type == ChatChannel.GROUP_CHANNEL &&
-                groups.contains((GroupName) channel.ident)) {
+                groups.contains(channel.ident)) {
                 JSONObject cObj = new JSONObject();
                 cObj.put("name", ((GroupName) channel.ident).toString());
                 cObj.put("id", ((GroupName) channel.ident).getGroupId());
@@ -484,7 +481,7 @@ public class MemberServlet extends MsoyServiceServlet
                 break;
             }
             if (channel.type == ChatChannel.GROUP_CHANNEL &&
-                !groups.contains((GroupName) channel.ident)) {
+                !groups.contains(channel.ident)) {
                 JSONObject cObj = new JSONObject();
                 cObj.put("name", ((GroupName) channel.ident).toString());
                 cObj.put("id", ((GroupName) channel.ident).getGroupId());

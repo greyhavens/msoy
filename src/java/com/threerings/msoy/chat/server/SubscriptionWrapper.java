@@ -4,17 +4,11 @@
 package com.threerings.msoy.chat.server;
 
 import com.samskivert.util.ResultListener;
-import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.SpeakMarshaller;
 import com.threerings.crowd.chat.server.SpeakDispatcher;
-import com.threerings.crowd.chat.server.SpeakHandler;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.DObject;
-
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.chat.data.ChatterInfo;
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.peer.client.PeerChatService;
 import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.MsoyNodeObject;

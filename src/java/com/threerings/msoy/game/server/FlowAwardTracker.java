@@ -9,14 +9,11 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
 
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyBaseServer;
 import com.threerings.msoy.server.MsoyServer;
-
-import com.threerings.msoy.game.data.PlayerObject;
 
 import static com.threerings.msoy.Log.log;
 
@@ -256,7 +253,7 @@ public class FlowAwardTracker
         // bound the percentage in
         percentage = Math.max(0, Math.min(1, percentage));
 
-        int amount = (int) Math.round(percentage * getAwardableFlow(record));
+        int amount = Math.round(percentage * getAwardableFlow(record));
         if (amount > 0) {
             record.awarded += amount;
             reportFlowAward(record.memberId, amount);

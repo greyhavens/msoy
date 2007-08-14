@@ -6,12 +6,9 @@ package com.threerings.msoy.admin.server;
 import com.samskivert.util.Interval;
 import com.threerings.util.MessageBundle;
 
-import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DObject;
-import com.threerings.presents.dobj.ObjectAccessException;
-import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.server.RebootManager;
 
 import com.threerings.msoy.data.MemberObject;

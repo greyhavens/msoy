@@ -9,8 +9,6 @@ import com.threerings.crowd.data.PlaceConfig;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.item.data.all.MediaDesc;
-
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneImpl;
 import com.threerings.whirled.spot.data.Portal;

@@ -13,7 +13,6 @@ import com.threerings.util.Name;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.net.AuthResponse;
 import com.threerings.presents.net.AuthResponseData;
-import com.threerings.presents.net.Credentials;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.net.AuthingConnection;
 

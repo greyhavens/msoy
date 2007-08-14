@@ -11,8 +11,6 @@ import com.threerings.crowd.chat.data.SpeakObject;
 
 import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Used to distribute chat messages to all participants in a chat channel.

@@ -26,8 +26,6 @@ import org.mortbay.jetty.servlet.ServletHolder;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.client.DeploymentConfig;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Handles HTTP requests made of the Msoy server by the AJAX client and other entities.
  */

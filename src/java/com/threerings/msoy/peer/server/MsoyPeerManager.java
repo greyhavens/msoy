@@ -19,18 +19,13 @@ import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerNode;
 import com.threerings.presents.peer.server.persist.NodeRecord;
 
-import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.peer.server.CrowdPeerManager;
-import com.threerings.crowd.server.PlaceManager;
-
 import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.world.server.RoomManager;
-
 import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedPlace;

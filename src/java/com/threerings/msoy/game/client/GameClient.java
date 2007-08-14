@@ -4,9 +4,6 @@
 package com.threerings.msoy.game.client;
 
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.logging.Level;
-
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import javax.swing.JComponent;
@@ -14,13 +11,9 @@ import javax.swing.JPanel;
 
 import com.samskivert.util.Config;
 import com.samskivert.util.RunQueue;
-import com.samskivert.util.StringUtil;
-
 import com.threerings.util.IdleTracker;
 import com.threerings.util.KeyDispatcher;
 import com.threerings.util.MessageManager;
-import com.threerings.util.Name;
-
 import com.threerings.media.FrameManager;
 import com.threerings.media.image.ImageManager;
 import com.threerings.media.sound.SoundManager;
@@ -36,11 +29,7 @@ import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.client.BodyService;
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.client.OccupantDirector;
-import com.threerings.crowd.client.PlaceController;
 import com.threerings.crowd.client.PlaceView;
-import com.threerings.crowd.data.PlaceConfig;
-
-import com.threerings.ezgame.data.GameDefinition;
 import com.threerings.parlor.client.ParlorDirector;
 
 import com.threerings.toybox.client.ToyBoxDirector;
@@ -48,7 +37,6 @@ import com.threerings.toybox.client.ToyBoxDirector;
 import com.whirled.util.WhirledContext;
 
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.web.client.DeploymentConfig;
 

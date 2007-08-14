@@ -16,13 +16,10 @@ import com.threerings.whirled.data.SceneCodes;
 import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.spot.data.Portal;
-import com.threerings.whirled.util.SceneFactory;
-
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.world.client.MsoySceneService;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomCodes;

@@ -4,10 +4,6 @@
 package com.threerings.msoy.game.data;
 
 import com.threerings.util.ActionScript;
-import com.threerings.util.MessageBundle;
-
-import com.threerings.crowd.client.PlaceController;
-
 import com.threerings.ezgame.data.GameDefinition;
 
 import com.threerings.toybox.data.ToyBoxGameConfig;

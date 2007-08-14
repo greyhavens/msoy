@@ -10,8 +10,6 @@ import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.presents.data.ClientObject;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  */
 public class SubscriptionSpeakHandler extends ChannelSpeakHandler

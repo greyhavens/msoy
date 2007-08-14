@@ -21,25 +21,18 @@ import com.samskivert.util.OneLineLogFormatter;
 import com.threerings.util.Name;
 
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
-import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.crowd.data.BodyObject;
-import com.threerings.crowd.data.PlaceConfig;
-import com.threerings.crowd.server.PlaceManager;
-import com.threerings.crowd.server.PlaceRegistry;
-
 import com.threerings.ezgame.server.DictionaryManager;
 import com.threerings.parlor.game.server.GameManager;
 
 import com.threerings.whirled.server.SceneRegistry;
-import com.threerings.whirled.server.WhirledServer;
 import com.threerings.whirled.spot.data.SpotCodes;
 import com.threerings.whirled.spot.server.SpotDispatcher;
 import com.threerings.whirled.spot.server.SpotProvider;
@@ -59,14 +52,11 @@ import com.threerings.msoy.web.server.MsoyHttpServer;
 
 import com.threerings.msoy.world.server.MsoySceneRegistry;
 import com.threerings.msoy.world.server.PetManager;
-import com.threerings.msoy.world.server.persist.MemoryRepository;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.GroupRepository;
-import com.threerings.msoy.server.persist.MemberRepository;
-
 import static com.threerings.msoy.Log.log;
 
 /**

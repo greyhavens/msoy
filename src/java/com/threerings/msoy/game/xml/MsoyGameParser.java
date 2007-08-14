@@ -11,8 +11,6 @@ import org.xml.sax.SAXException;
 
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
-import com.samskivert.xml.SetFieldRule;
-
 import com.threerings.ezgame.data.GameDefinition;
 import com.threerings.ezgame.data.TableMatchConfig;
 import com.threerings.ezgame.xml.GameParser;

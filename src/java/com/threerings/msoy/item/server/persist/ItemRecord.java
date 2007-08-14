@@ -376,7 +376,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         item.rating = rating;
         item.used = used;
         item.location = location;
-        item.lastTouched = (double) lastTouched.getTime();
+        item.lastTouched = lastTouched.getTime();
         item.name = name;
         item.description = description;
         item.creatorId = creatorId;

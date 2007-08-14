@@ -152,7 +152,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
 
         // Attempt to refetch the document. If the commit was not aborted safely,
         // svnkit will throw a re-entrancy exception.
-        brokenDoc = (SwiftlyDocument)storage.getDocument(path);
+        brokenDoc = storage.getDocument(path);
     }
 
     public void testDeleteDocument ()

@@ -8,7 +8,6 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
-import com.threerings.msoy.data.all.GroupMembership;
 import com.threerings.msoy.data.all.MemberName;
 
 /**

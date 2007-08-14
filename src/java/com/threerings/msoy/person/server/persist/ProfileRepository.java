@@ -22,8 +22,6 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Manages the persistent store of profile profile data.
  */

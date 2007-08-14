@@ -24,8 +24,6 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.data.GameObject;
 import com.threerings.parlor.game.server.GameManager;
 
-import com.threerings.whirled.data.ScenePlace;
-
 import com.threerings.ezgame.data.GameDefinition;
 import com.threerings.ezgame.data.TableMatchConfig;
 

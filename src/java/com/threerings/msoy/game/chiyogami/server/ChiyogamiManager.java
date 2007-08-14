@@ -4,20 +4,13 @@
 package com.threerings.msoy.game.chiyogami.server;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-
-import java.util.logging.Level;
-
 import com.samskivert.util.Interval;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.QuickSort;
 import com.samskivert.util.RandomUtil;
-import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.util.MessageBundle;
-import com.threerings.util.Name;
-
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.ObjectAddedEvent;
@@ -26,7 +19,6 @@ import com.threerings.presents.dobj.OidListListener;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.BodyObject;
-import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.crowd.chat.server.SpeakUtil;
@@ -34,17 +26,12 @@ import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.parlor.game.server.GameManager;
 
 import com.threerings.whirled.client.SceneMoveAdapter;
-import com.threerings.whirled.data.SceneModel;
-import com.threerings.whirled.data.SceneUpdate;
-
 import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.item.data.all.Audio;
-import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
@@ -53,7 +40,6 @@ import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomObject;
-import com.threerings.msoy.world.data.WorldOccupantInfo;
 import com.threerings.msoy.world.server.RoomManager;
 
 import com.threerings.msoy.game.data.PerfRecord;
@@ -653,7 +639,7 @@ public class ChiyogamiManager extends GameManager
         QuickSort.sort(list);
 
         @SuppressWarnings("unchecked")
-        ArrayList<PlayerRec>[] sides = (ArrayList<PlayerRec>[]) new ArrayList[2];
+        ArrayList<PlayerRec>[] sides = new ArrayList[2];
         sides[0] = new ArrayList<PlayerRec>(list.size());
         sides[1] = new ArrayList<PlayerRec>(list.size());
 

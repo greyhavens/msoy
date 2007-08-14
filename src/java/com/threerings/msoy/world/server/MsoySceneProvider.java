@@ -5,12 +5,10 @@ package com.threerings.msoy.world.server;
 
 import com.threerings.msoy.world.client.MsoySceneService;
 import com.threerings.msoy.world.data.MsoyLocation;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
 import com.threerings.whirled.client.SceneService;
-import com.threerings.whirled.data.SceneMarshaller;
 
 /**
  * Defines the server-side of the {@link MsoySceneService}.

@@ -5,7 +5,6 @@ package com.threerings.msoy.peer.client;
 
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatterInfo;
-import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 

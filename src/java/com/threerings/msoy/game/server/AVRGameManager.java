@@ -20,7 +20,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.server.persist.MemoryRecord;
 
-import com.threerings.msoy.game.data.WorldGameConfig;
 import com.threerings.msoy.game.data.AVRGameObject;
 
 import static com.threerings.msoy.Log.*;

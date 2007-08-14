@@ -4,7 +4,6 @@
 package com.threerings.msoy.world.server;
 
 import com.threerings.msoy.world.client.PetService;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;

@@ -10,7 +10,6 @@ import com.samskivert.net.MailUtil;
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.servlet.user.InvalidUsernameException;
-import com.samskivert.servlet.user.Password;
 import com.samskivert.servlet.user.UserExistsException;
 import com.samskivert.servlet.user.Username;
 

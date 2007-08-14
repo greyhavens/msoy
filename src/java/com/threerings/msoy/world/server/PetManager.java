@@ -13,8 +13,6 @@ import com.samskivert.util.HashIntMap;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
-import com.threerings.util.Name;
-
 import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.data.OccupantInfo;

@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.game.data;
 
-import com.threerings.presents.dobj.DSet;
-
 import com.threerings.ezgame.data.EZGameObject;
 
 import com.whirled.data.WhirledGame;

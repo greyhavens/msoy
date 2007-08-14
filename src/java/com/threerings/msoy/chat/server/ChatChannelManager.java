@@ -6,7 +6,6 @@ package com.threerings.msoy.chat.server;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.msoy.chat.client.ChatChannelService;
 import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
@@ -88,7 +87,7 @@ public class ChatChannelManager
         // ensure this member has access to this channel
         switch (channel.type) {
         case ChatChannel.GROUP_CHANNEL:
-            GroupMembership gm = user.groups.get((GroupName) channel.ident);
+            GroupMembership gm = user.groups.get(channel.ident);
             if (gm != null) {
                 // we're already members, no need to check further
                 break;

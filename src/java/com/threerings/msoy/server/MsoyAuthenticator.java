@@ -326,7 +326,7 @@ public class MsoyAuthenticator extends Authenticator
                 if (rsp.authdata != null) {
                     Account act = (Account) rsp.authdata;
                     // for members, we set it to their auth username
-                    creds.setUsername(new Name((String) act.accountName));
+                    creds.setUsername(new Name(act.accountName));
 
                 } else {
                     // for guests, we use the same Name object as their username and their display

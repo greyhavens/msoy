@@ -5,9 +5,6 @@ package com.threerings.msoy.world.client;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
-import com.threerings.util.Name;
-
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Pet;
 
 /**

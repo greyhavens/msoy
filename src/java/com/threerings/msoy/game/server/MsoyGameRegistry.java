@@ -3,13 +3,11 @@
 
 package com.threerings.msoy.game.server;
 
-import java.util.ArrayList;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
-import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 

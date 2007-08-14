@@ -5,7 +5,6 @@ package com.threerings.msoy.game.server;
 
 import com.samskivert.util.Interval;
 
-import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
@@ -14,8 +13,6 @@ import com.threerings.presents.dobj.SetAdapter;
 import com.threerings.ezgame.data.GameDefinition;
 
 import com.threerings.msoy.item.server.ItemManager;
-import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.LobbyObject;

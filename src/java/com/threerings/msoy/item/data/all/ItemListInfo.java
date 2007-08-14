@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.item.data.all;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;

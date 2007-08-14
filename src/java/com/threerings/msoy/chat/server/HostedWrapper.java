@@ -5,10 +5,6 @@ package com.threerings.msoy.chat.server;
 
 import com.threerings.crowd.chat.data.SpeakMarshaller;
 import com.threerings.crowd.chat.server.SpeakDispatcher;
-import com.threerings.crowd.chat.server.SpeakHandler;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.DObject;
-
 import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.chat.data.ChatterInfo;

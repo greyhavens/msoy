@@ -12,7 +12,6 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;

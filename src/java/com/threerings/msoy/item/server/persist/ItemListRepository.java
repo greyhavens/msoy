@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import java.sql.SQLException;
-
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -13,7 +10,6 @@ import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 
-import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;

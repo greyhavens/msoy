@@ -437,7 +437,7 @@ public class MediaDesc implements Streamable, IsSerializable
     public MediaDesc (String filename)
     {
         this(stringToHash(filename.substring(0, filename.indexOf('.'))),
-             (byte) suffixToMimeType(filename));
+             suffixToMimeType(filename));
     }
 
     /**

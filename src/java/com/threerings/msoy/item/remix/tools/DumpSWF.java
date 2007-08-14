@@ -4,7 +4,6 @@
 package com.threerings.msoy.item.remix.tools;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,9 +13,7 @@ import javax.imageio.ImageIO;
 
 import com.jswiff.SWFDocument;
 import com.jswiff.SWFReader;
-import com.jswiff.io.OutputBitStream;
 import com.jswiff.listeners.SWFDocumentReader;
-import com.jswiff.listeners.SWFListener;
 import com.jswiff.swfrecords.Pix15;
 import com.jswiff.swfrecords.Pix24;
 import com.jswiff.swfrecords.Rect;
@@ -30,9 +27,7 @@ import com.jswiff.swfrecords.tags.DefineBitsJPEG2;
 import com.jswiff.swfrecords.tags.DefineBitsJPEG3;
 import com.jswiff.swfrecords.tags.DefineBitsLossless;
 import com.jswiff.swfrecords.tags.DefineBitsLossless2;
-import com.jswiff.swfrecords.tags.Tag;
 import com.jswiff.swfrecords.tags.TagConstants;
-import com.jswiff.util.ImageUtilities;
 
 public class DumpSWF
 {

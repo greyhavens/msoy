@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.game.chiyogami.server;
 
-import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 

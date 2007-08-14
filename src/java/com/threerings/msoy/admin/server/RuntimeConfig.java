@@ -4,12 +4,9 @@
 package com.threerings.msoy.admin.server;
 
 import java.lang.reflect.Field;
-import java.util.logging.Level;
-
 import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
-import com.threerings.presents.dobj.ObjectAccessException;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.dobj.Subscriber;
 

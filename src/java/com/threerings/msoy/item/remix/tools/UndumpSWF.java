@@ -4,7 +4,6 @@
 package com.threerings.msoy.item.remix.tools;
     
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,14 +17,11 @@ import com.jswiff.SWFDocument;
 import com.jswiff.SWFReader;
 import com.jswiff.SWFWriter;
 import com.jswiff.listeners.SWFDocumentReader;
-import com.jswiff.listeners.SWFListener;
 import com.jswiff.swfrecords.AlphaBitmapData;
 import com.jswiff.swfrecords.Rect;
 import com.jswiff.swfrecords.RGBA;
 import com.jswiff.swfrecords.tags.DefinitionTag;
 import com.jswiff.swfrecords.tags.DefineBitsJPEG2;
-import com.jswiff.swfrecords.tags.DefineBitsJPEG3;
-import com.jswiff.swfrecords.tags.DefineBitsLossless;
 import com.jswiff.swfrecords.tags.DefineBitsLossless2;
 import com.jswiff.swfrecords.tags.Tag;
 import com.jswiff.swfrecords.tags.TagConstants;
@@ -98,7 +94,7 @@ public class UndumpSWF
     protected void replaceImages (SWFDocument doc, File inputDir)
         throws IOException
     {
-        @SuppressWarnings("unchecked") List<Object> tags = (List<Object>)doc.getTags();
+        @SuppressWarnings("unchecked") List<Object> tags = doc.getTags();
         for (int ii=0; ii < tags.size(); ii++) {
             Object tagObj = tags.get(ii);
             if (tagObj instanceof DefinitionTag) {

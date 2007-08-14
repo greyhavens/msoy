@@ -13,32 +13,11 @@ import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
-import com.samskivert.servlet.user.UserRepository;
 import com.samskivert.util.AuditLogger;
-import com.samskivert.util.Interval;
-import com.samskivert.util.Invoker;
-import com.samskivert.util.LoggingLogProvider;
-import com.samskivert.util.OneLineLogFormatter;
-
 import com.threerings.util.MessageManager;
-import com.threerings.util.Name;
-
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.RootDObjectManager;
-import com.threerings.presents.net.AuthRequest;
-import com.threerings.presents.server.Authenticator;
-import com.threerings.presents.server.ClientFactory;
-import com.threerings.presents.server.ClientResolver;
-import com.threerings.presents.server.InvocationManager;
-import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
-import com.threerings.crowd.data.BodyObject;
-import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.server.PlaceManager;
-import com.threerings.crowd.server.PlaceRegistry;
-
-import com.threerings.ezgame.server.DictionaryManager;
 import com.threerings.ezgame.server.persist.GameCookieRepository;
 
 import com.threerings.parlor.rating.server.persist.RatingRepository;
@@ -50,8 +29,6 @@ import com.threerings.admin.server.DatabaseConfigRegistry;
 import com.threerings.whirled.server.WhirledServer;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.world.server.persist.MemoryRepository;
 

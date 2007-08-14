@@ -3,13 +3,9 @@
 
 package com.threerings.msoy.world.data;
 
-import com.samskivert.util.ObjectUtil;
-
 import com.threerings.io.SimpleStreamableObject;
 
-import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.StaticMediaDesc;
 

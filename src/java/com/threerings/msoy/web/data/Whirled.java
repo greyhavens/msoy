@@ -8,10 +8,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.item.data.all.MediaDesc;
-
 /** 
  * Contains the data that we need for the My Whirled or Whirledwide views.
  */

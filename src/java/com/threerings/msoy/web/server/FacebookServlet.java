@@ -29,7 +29,6 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
-import com.facebook.api.FacebookException;
 import com.facebook.api.FacebookRestClient;
 import com.facebook.api.ProfileField;
 

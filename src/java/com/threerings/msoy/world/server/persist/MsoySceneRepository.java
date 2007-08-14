@@ -3,17 +3,11 @@
 
 package com.threerings.msoy.world.server.persist;
 
-import java.sql.Connection;
-import java.sql.Statement;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-
 import com.samskivert.io.PersistenceException;
 
-import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -24,8 +18,6 @@ import com.samskivert.jdbc.depot.operator.Logic.And;
 
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntListUtil;
-import com.samskivert.util.StringUtil;
-
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.server.persist.SceneRepository;
@@ -33,17 +25,12 @@ import com.threerings.whirled.server.persist.SceneUpdateMarshaller;
 import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
 
-import com.threerings.msoy.server.MsoyServer;
-
 import com.threerings.msoy.data.SceneBookmarkEntry;
 
 import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.StaticMediaDesc;
 import com.threerings.msoy.item.server.persist.DecorRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
-import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoySceneModel;

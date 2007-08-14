@@ -5,7 +5,6 @@ package com.threerings.msoy.game.server;
 
 import com.threerings.msoy.game.client.MsoyGameService;
 import com.threerings.msoy.game.data.MsoyGameMarshaller;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;

@@ -14,8 +14,6 @@ import com.threerings.msoy.chat.data.ChatChannelCodes;
 import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.chat.data.ChatterInfo;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.server.MsoyServer;
-
 import static com.threerings.msoy.Log.log;
 
 /**

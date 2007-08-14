@@ -6,15 +6,12 @@ package com.threerings.msoy.game.server;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 
 import com.threerings.crowd.data.PlaceConfig;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.msoy.web.client.DeploymentConfig;
-
 import static com.threerings.msoy.Log.log;
 
 /**

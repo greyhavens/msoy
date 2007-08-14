@@ -21,8 +21,6 @@ import com.threerings.presents.server.PresentsClient;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceConfig;
-import com.threerings.crowd.server.CrowdServer;
-import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.whirled.server.SceneRegistry;

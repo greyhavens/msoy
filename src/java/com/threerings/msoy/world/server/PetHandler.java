@@ -11,12 +11,7 @@ import com.threerings.util.Name;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
 
-import com.threerings.crowd.data.PlaceConfig;
-
 import com.threerings.whirled.client.SceneMoveAdapter;
-import com.threerings.whirled.data.SceneModel;
-import com.threerings.whirled.data.SceneUpdate;
-
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PetObject;
 import com.threerings.msoy.item.data.all.ItemIdent;

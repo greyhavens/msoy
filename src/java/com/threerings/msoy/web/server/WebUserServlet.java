@@ -16,7 +16,6 @@ import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.ResultListener;
 
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.server.MsoyServer;

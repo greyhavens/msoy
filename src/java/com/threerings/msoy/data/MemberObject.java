@@ -3,14 +3,9 @@
 
 package com.threerings.msoy.data;
 
-import java.util.Iterator;
-
-import com.samskivert.util.Predicate;
-
 import com.threerings.io.Streamable;
 import com.threerings.parlor.game.data.GameObject;
 import com.threerings.presents.dobj.DSet;
-import com.threerings.presents.dobj.Subscriber;
 import com.threerings.util.Name;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -37,8 +32,6 @@ import com.threerings.msoy.game.data.GameMemberInfo;
 import com.threerings.msoy.game.data.GameSummary;
 
 import com.threerings.msoy.notify.data.Notification;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Represents a connected msoy user.

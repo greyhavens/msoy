@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.game.server;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 
 import java.util.logging.Level;
@@ -12,8 +11,6 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
-import com.samskivert.util.ResultListener;
-
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;

@@ -5,19 +5,7 @@ package com.threerings.msoy.server;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-
-import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.RepositoryListenerUnit;
-import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.HashIntMap;
-import com.samskivert.util.ResultListener;
-
-import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.dobj.DSet;
-import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.util.ConfirmAdapter;
-
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;

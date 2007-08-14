@@ -8,7 +8,6 @@ import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.dobj.InvocationResponseEvent;
 
 /**
  * Provides the implementation of the {@link WorldGameService} interface
