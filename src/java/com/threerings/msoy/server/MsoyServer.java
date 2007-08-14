@@ -325,6 +325,7 @@ public class MsoyServer extends MsoyBaseServer
         throws Exception
     {
         // intialize various services
+        author.init();
         spotProv = new SpotProvider(omgr, plreg, screg);
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), SpotCodes.WHIRLED_GROUP);
         adminMan.init(this);

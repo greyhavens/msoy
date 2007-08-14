@@ -143,6 +143,17 @@ public class MsoyAuthenticator extends Authenticator
             throws ServiceException, PersistenceException;
     }
 
+    /**
+     * Called during server initialization.
+     */
+    public void init ()
+        throws PersistenceException
+    {
+        // create our default authentication domain
+        _defaultDomain = new OOOAuthenticationDomain();
+        _defaultDomain.init();
+    }
+
     @Override
     protected AuthResponseData createResponseData ()
     {
@@ -461,16 +472,7 @@ public class MsoyAuthenticator extends Authenticator
     protected Domain getDomain (String accountName)
         throws PersistenceException
     {
-        // if we have not yet created our default authentication domain, do so
-        if (_defaultDomain == null) {
-            Domain domain = new OOOAuthenticationDomain();
-            domain.init();
-            // don't assign the reference until we've successfully init()ed
-            _defaultDomain = domain;
-        }
-
         // TODO: fancy things based on the user's email domain for our various exciting partners
-
         return _defaultDomain;
     }
 
