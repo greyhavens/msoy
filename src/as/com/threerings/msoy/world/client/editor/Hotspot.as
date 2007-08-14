@@ -190,6 +190,8 @@ public class Hotspot extends Sprite
                 addChild(_currentDisplay);
                 _currentDisplay.x = - _currentDisplay.width / 2;
                 _currentDisplay.y = - _currentDisplay.height / 2;
+                _currentDisplay.scaleX = 1 / _editor.roomView.scaleX;
+                _currentDisplay.scaleY = 1 / _editor.roomView.scaleY;
             }
         }
     }
