@@ -55,6 +55,9 @@ public class FlowRepository extends DepotRepository
             public void entryCached (CacheKey key, MemberRecord newEntry, MemberRecord oldEntry) {
                 // TODO: To be fancy, construct & cache our own MemberFlowRecord here
             }
+            public String toString () {
+                return "MemberRecord -> MemberFlowRecord";
+            }
         });
     }
 

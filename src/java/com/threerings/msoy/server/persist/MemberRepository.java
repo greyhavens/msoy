@@ -73,6 +73,9 @@ public class MemberRepository extends DepotRepository
             public void entryCached (CacheKey key, FriendRecord newEntry, FriendRecord oldEntry) {
                 // nothing to do here
             }
+            public String toString () {
+                return "FriendRecord -> FriendsCache";
+            }
         });
 
         // add a cache invalidator that listens to MemberRecord updates
@@ -81,6 +84,9 @@ public class MemberRepository extends DepotRepository
                 _ctx.cacheInvalidate(MemberNameRecord.getKey(member.memberId));
             }
             public void entryCached (CacheKey key, MemberRecord newEntry, MemberRecord oldEntry) {
+            }
+            public String toString () {
+                return "MemberRecord -> MemberNameRecord";
             }
         });
     }
