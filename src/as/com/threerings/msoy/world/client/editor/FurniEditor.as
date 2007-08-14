@@ -60,7 +60,7 @@ public class FurniEditor extends FurniHighlight
     override public function set target (sprite :FurniSprite) :void
     {
         super.target = sprite;
-        _controller.updateDeleteStatus(_target != null);
+        _controller.updateDeleteStatus(_target != null && ! (_target is EntranceSprite));
     }
 
     /** Accessor to the room view. */
