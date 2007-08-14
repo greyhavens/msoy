@@ -92,6 +92,14 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
+     * Retrieve the room entrance.
+     */
+    public MsoyLocation getEntrance () 
+    {
+        return _model.entrance;
+    }
+    
+    /**
      * Retrieve the room decor.
      */
     public Decor getDecor ()

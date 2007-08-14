@@ -101,6 +101,14 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
+     * Retrieve the room entrance.
+     */
+    public function getEntrance () :MsoyLocation
+    {
+        return _msoyModel.entrance;
+    }
+    
+    /**
      * Retrieve the room decor.
      */
     public function getDecor () :Decor

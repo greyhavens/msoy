@@ -33,6 +33,7 @@ import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
 
 /**
@@ -94,6 +95,11 @@ public class RoomEditorController
         // clear out the names cache, and ping the server
         _names = new HashMap();
         queryServerForNames(this.scene.getFurni());
+
+        // make the fake entrance
+        _entranceSprite = new EntranceSprite(scene.getEntrance());
+        _entranceSprite.setEditing(true);
+        _view.addOtherSprite(_entranceSprite);
     }
 
     /**
@@ -113,6 +119,13 @@ public class RoomEditorController
     {
         if (! isEditing()) {
             // don't care about updates if we're not actually editing.
+            return;
+        }
+        
+        if (update is SceneAttrsUpdate) {
+            var up :SceneAttrsUpdate = update as SceneAttrsUpdate;
+            _entranceSprite.setLocation(up.entrance);
+            refreshTarget();
             return;
         }
         
@@ -164,16 +177,25 @@ public class RoomEditorController
     }
 
     /**
-     * Requests that the specified furni update be applied to the scene.
+     * Called by the targetting system, applies a furni change to the scene.
      */
     public function updateFurni (toRemove :FurniData, toAdd :FurniData) :void
     {
-        _view.getRoomController().applyUpdate(new FurniUpdateAction(_ctx, toRemove, toAdd));
+        if (toAdd is EntranceFurniData) {
+            // entrace is actually a fake furni, and entrance data lives in the scene model
+            var newscene :MsoyScene = scene.clone() as MsoyScene;
+            var newmodel :MsoySceneModel = newscene.getSceneModel() as MsoySceneModel;
+            newmodel.entrance = toAdd.loc;
+            updateScene(scene, newscene);
+        } else {
+            // it's a genuine furni update - apply it 
+            _view.getRoomController().applyUpdate(new FurniUpdateAction(_ctx, toRemove, toAdd));
+        }
         updateUndoStatus(true);
     }
 
     /**
-     * Requests that the specified scene update be applied to the scene.
+     * Called by the panel, applies a property change to the scene.
      */
     public function updateScene (oldScene :MsoyScene, newScene :MsoyScene) :void
     {
@@ -247,6 +269,10 @@ public class RoomEditorController
         if (_panel != null && _panel.isOpen) {
             Log.getLog(this).warning("Room editor failed to close!");
         }
+
+        _entranceSprite.setEditing(false);
+        _view.removeOtherSprite(_entranceSprite);
+        _entranceSprite = null;
 
         _edit.end();
         _hover.end();
@@ -405,6 +431,13 @@ public class RoomEditorController
     /** Forces the target sprite to be re-read from the room. */
     protected function refreshTarget () :void
     {
+        // if the player selected the singleton entrance sprite, our work is done
+        if (_edit.target is EntranceSprite) {
+            setTarget(_entranceSprite);
+            return;
+        }
+
+        // otherwise, try to find the right sprite in the room, and refresh the target from that
         if (_edit.target != null) {
             var sprites :HashMap = _view.getFurniSprites();
             setTarget(sprites.get(_edit.target.getFurniData().id) as FurniSprite);
@@ -426,5 +459,7 @@ public class RoomEditorController
     protected var _hover :FurniHighlight;
     protected var _panel :RoomEditorPanel;
     protected var _wrapupFn :Function;   // will be called when ending editing
+
+    protected var _entranceSprite :EntranceSprite;
 }
 }
