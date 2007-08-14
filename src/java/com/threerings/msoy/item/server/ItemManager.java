@@ -662,7 +662,7 @@ public class ItemManager
     }
 
     /**
-     * Informs the runimte world that an item was created and inserted into the database.
+     * Informs the runtime world that an item was created and inserted into the database.
      */
     public void itemCreated (ItemRecord record)
     {
