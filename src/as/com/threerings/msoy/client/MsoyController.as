@@ -529,12 +529,6 @@ public class MsoyController extends Controller
      */
     public function goToPlace (params :Object) :void
     {
-        // check for gameLobby first, so that the handleInternalGo call resulting from moveTo
-        // adds the correct parameters to the external URL
-        if (null != params["gameLobby"]) {
-            handleJoinGameLobby(params["gameLobby"])
-        }
-
         // first, see if we should hit a specific scene
         if (null != params["memberHome"]) {
             _sceneIdString = null;
@@ -560,23 +554,14 @@ public class MsoyController extends Controller
             // go to no place- we just want to chat with our friends
             _ctx.getTopPanel().setPlaceView(new NoPlaceView(_ctx));
 
-        } else {
-            var sceneIdString :String = params["sceneId"];
-            if (sceneIdString != null && sceneIdString.indexOf("g") != -1) {
-                var idx :int = sceneIdString.indexOf("g");
-                var gameId :int = int(sceneIdString.substring(idx + 1));
-                sceneIdString = sceneIdString.substring(0, idx);
-                handleJoinGameLobby(gameId);
+        } else if (null != params["gameLobby"]) {
+            handleJoinGameLobby(int(params["gameLobby"]));
 
-            } else if (sceneIdString == null && null != params["gameLobby"]) {
-                // we want to stay in our current room, if we're in one
-                var scene :Scene = _ctx.getSceneDirector().getScene();
-                if (scene != null) {
-                    sceneIdString = "" + scene.getId();
-                }
-            }
+        } else if (null != params["worldGame"]) {
+            handleJoinWorldGame(int(params["worldGame"]));
 
-            var sceneId :int = int(sceneIdString);
+        } else if (null != params["sceneId"]) {
+            var sceneId :int = int(params["sceneId"]);
             if (sceneId == 0) {
                 sceneId = _ctx.getMemberObject().homeSceneId;
                 if (sceneId == 0) {
@@ -584,11 +569,17 @@ public class MsoyController extends Controller
                 }
             }
             _ctx.getSceneDirector().moveTo(sceneId);
-        }
 
-        // see if we should join a world game
-        if (null != params["worldGame"]) {
-            handleJoinWorldGame(int(params["worldGame"]));
+            // if we have a redirect page we need to show, do that (we do this by hand to avoid
+            // potential infinite loops if something goes awry with opening external pages)
+            try {
+                var redirect :String = params["page"];
+                if (redirect != null && ExternalInterface.available) {
+                    ExternalInterface.call("displayPage", redirect, "");
+                }
+            } catch (error :Error) {
+                // nothing we can do here...
+            }
         }
     }
 
@@ -731,7 +722,7 @@ public class MsoyController extends Controller
                 if (scene == null) {
                     fullURL = "/#" + page + "-" + args;
                 } else {
-                    fullURL = "/#world-r" + scene.getId() + "-" + page + "-" + args;
+                    fullURL = "/#world-s" + scene.getId() + "-" + page + "-" + args;
                 }
                 log.info("Showing external URL " + fullURL);
                 try {
@@ -765,8 +756,7 @@ public class MsoyController extends Controller
         _tipTimer = null;
     }
 
-    override protected function setControlledPanel (
-        panel :IEventDispatcher) :void
+    override protected function setControlledPanel (panel :IEventDispatcher) :void
     {
         // in addition to listening for command events, let's listen
         // for LINK events and handle them all here.

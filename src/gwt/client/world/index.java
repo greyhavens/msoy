@@ -57,21 +57,26 @@ public class index extends Page
 
         try {
             if (token.startsWith("s")) {
-                // go to a specific scene - don't parse out an int here, because a gameId may
-                // be encoded in the token
-                WorldClient.displayFlash("sceneId=" + token.substring(1));
+                int didx = token.indexOf("-");
+                if (didx == -1) {
+                    WorldClient.displayFlash("sceneId=" + token.substring(1));
+                } else {
+                    // if we have sNN-extra-args we want the close button to use just "sNN"
+                    String sceneId = token.substring(1, didx), page = token.substring(didx+1);
+                    WorldClient.displayFlash("sceneId=" + sceneId + "&page=" + page, "s" + sceneId);
+                }
 
             } else if (token.startsWith("g")) {
                 // go to a specific group's scene group
-                WorldClient.displayFlash("groupHome=" + id(token, 1));
+                WorldClient.displayFlash("groupHome=" + token.substring(1));
 
             } else if (token.startsWith("m")) {
                 // go to a specific member's home
-                WorldClient.displayFlash("memberHome=" + id(token, 1));
+                WorldClient.displayFlash("memberHome=" + token.substring(1));
 
             } else if (token.startsWith("l")) {
                 // go to a specific member's home
-                WorldClient.displayFlash("location=" + id(token, 1));
+                WorldClient.displayFlash("location=" + token.substring(1));
 
             } else if (token.startsWith("p") || CWorld.ident != null) {
                 // display popular places by request or if we're logged in
@@ -162,11 +167,6 @@ public class index extends Page
         HTML content = setFlashContent(FlashClients.createPopularPlacesDefinition(hotSpots));
         setCloseButton();
         return content;
-    }
-
-    protected int id (String token, int index)
-    {
-        return Integer.valueOf(token.substring(index)).intValue();
     }
 
     // @Override // from Page

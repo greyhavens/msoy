@@ -99,13 +99,14 @@ public abstract class Page
      * @return true if we're displaying a different page (or the same page with different
      * arguments) than the last time we entered "showing client" mode.
      */
-    public static boolean setShowingClient (boolean clientIsFlash, boolean clientIsJava)
+    public static boolean setShowingClient (
+        boolean clientIsFlash, boolean clientIsJava, String closeToken)
     {
         // determine whether or not we're showing a new page
-        boolean newPage = !History.getToken().equals(_closeToken);
+        boolean newPage = !closeToken.equals(_closeToken);
 
         // note the current history token so that we can restore it if needed
-        _closeToken = History.getToken();
+        _closeToken = closeToken;
 
         // note whether we need to hack our popups
         displayingFlash = clientIsFlash;

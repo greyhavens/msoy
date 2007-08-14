@@ -3,6 +3,7 @@
 
 package client.shell;
 
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -21,6 +22,11 @@ public class WorldClient extends Widget
 {
     public static void displayFlash (String flashArgs)
     {
+        displayFlash(flashArgs, History.getToken());
+    }
+
+    public static void displayFlash (String flashArgs, String pageToken)
+    {
         // if we have not yet determined our default server, find that out now
         if (_defaultServer == null) {
             final String savedArgs = flashArgs;
@@ -37,7 +43,7 @@ public class WorldClient extends Widget
         }
 
         // let the page know that we're displaying a client
-        boolean newPage = Page.setShowingClient(true, false);
+        boolean newPage = Page.setShowingClient(true, false, pageToken);
 
         // create our client if necessary
         if (! _isFlashClientPresent) {
@@ -66,7 +72,7 @@ public class WorldClient extends Widget
     public static void displayJava (Widget client)
     {
         // let the page know that we're displaying a client
-        boolean newPage = Page.setShowingClient(false, true);
+        boolean newPage = Page.setShowingClient(false, true, History.getToken());
 
         if (_jclient != client) {
             if (newPage) {
