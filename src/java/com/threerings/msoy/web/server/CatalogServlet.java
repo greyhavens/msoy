@@ -235,7 +235,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 repo.getTagRepository().copyTags(item.itemId, listItem.itemId, mrec.memberId, now);
 
                 // and finally create & insert the catalog record
-                CatalogRecord record= repo.insertListing(listItem, rarity, now);
+                CatalogRecord record = repo.insertListing(listItem, rarity, now);
 
                 String details = item.type + " " + item.itemId + " " + rarity;
                 if (price > 0) {
