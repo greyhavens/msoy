@@ -25,6 +25,8 @@ public class TaintedIdentRecord extends PersistentRecord
         new ColumnExp(TaintedIdentRecord.class, MACH_IDENT);
     // AUTO-GENERATED: FIELDS END
 
+    public static final int SCHEMA_VERSION = 1;
+
     /** A 'unique' id for a specific machine we have seen. */
     @Id @Column(name="MACH_IDENT")
     public String machIdent;
