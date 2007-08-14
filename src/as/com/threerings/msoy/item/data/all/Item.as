@@ -81,7 +81,7 @@ public /*abstract*/ class Item
 
     /** A bit-mask of flags that we need to know about every digital item
      * without doing further database lookups or network requests. */
-    public var flags :int;
+    public var flagged :int;
 
     /** The member id of the member that created this item. */
     public var creatorId :int;
@@ -108,6 +108,9 @@ public /*abstract*/ class Item
 
     /** A description for this item (max length 255 characters). */
     public var description :String;
+
+    /** Whether or not this item represents mature content. */
+    public var mature :Boolean;
 
     /** The media used to display this item's thumbnail representation. */
     public var thumbMedia :MediaDesc;
@@ -310,7 +313,7 @@ public /*abstract*/ class Item
     {
         out.writeInt(itemId);
         out.writeInt(parentId);
-        out.writeByte(flags);
+        out.writeByte(flagged);
         out.writeInt(creatorId);
         out.writeInt(ownerId);
         out.writeFloat(rating);
@@ -319,6 +322,7 @@ public /*abstract*/ class Item
         out.writeDouble(lastTouched);
         out.writeField(name);
         out.writeField(description);
+        out.writeBoolean(mature);
         out.writeObject(thumbMedia);
         out.writeObject(furniMedia);
     }
@@ -328,7 +332,7 @@ public /*abstract*/ class Item
     {
         itemId = ins.readInt();
         parentId = ins.readInt();
-        flags = ins.readByte();
+        flagged = ins.readByte();
         creatorId = ins.readInt();
         ownerId = ins.readInt();
         rating = ins.readFloat();
@@ -337,6 +341,7 @@ public /*abstract*/ class Item
         lastTouched = ins.readDouble();
         name = (ins.readField(String) as String);
         description = (ins.readField(String) as String);
+        mature = ins.readBoolean();
         thumbMedia = (ins.readObject() as MediaDesc);
         furniMedia = (ins.readObject() as MediaDesc);
     }
