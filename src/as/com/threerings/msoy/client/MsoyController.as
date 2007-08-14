@@ -448,11 +448,13 @@ public class MsoyController extends Controller
      */
     public function handleJoinGameLobby (gameId :int) :void
     {
-        if (inGWTApp()) {
-            _ctx.getGameDirector().displayLobby(gameId);
-        } else {
-            displayPage("game", "" + gameId);
+        if (!inGWTApp()) {
+            if (displayPage("game", "" + gameId)) {
+                return;
+            }
         }
+        // fall back to going straight in
+        _ctx.getGameDirector().displayLobby(gameId);
     }
 
     /**
@@ -584,6 +586,13 @@ public class MsoyController extends Controller
             } catch (error :Error) {
                 // nothing we can do here...
             }
+
+        } else if (_ctx.getMemberObject().getMemberId() != 0) {
+            _ctx.getWorldDirector().goToMemberHome(_ctx.getMemberObject().getMemberId());
+
+        } else {
+            // this only happens in the standalone client when we have no credentials
+            _ctx.getSceneDirector().moveTo(1);
         }
     }
 
