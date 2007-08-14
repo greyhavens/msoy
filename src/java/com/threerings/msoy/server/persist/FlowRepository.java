@@ -17,12 +17,15 @@ import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
-import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.WhereClause;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
+import com.samskivert.jdbc.depot.operator.Conditionals;
+import com.samskivert.jdbc.depot.operator.Logic;
 
 import com.samskivert.util.IntIntMap;
 
@@ -269,26 +272,45 @@ public class FlowRepository extends DepotRepository
             new Arithmetic.Sub(MemberRecord.FLOW_C, amount));
         if (grant && accumulate) {
             // accumulate positive flow updates in its own field
-            fieldMap.put(MemberRecord.ACC_FLOW, new Arithmetic.Add(MemberRecord.ACC_FLOW_C, amount));
+            fieldMap.put(MemberRecord.ACC_FLOW,
+                         new Arithmetic.Add(MemberRecord.ACC_FLOW_C, amount));
         }
 
         Key key = MemberFlowRecord.getKey(memberId);
-        int mods = updateLiteral(MemberRecord.class, key, key, fieldMap);
-        if (mods == 0) {
-            throw new PersistenceException(
-                "Flow " + type + " modified zero rows " +
-                "[memberId" + memberId + ", amount=" + amount + "]");
-        } else if (mods > 1) {
-            log.warning("Flow " + type + " modified multiple rows " + "[memberId=" + memberId +
-                        ", amount=" + amount +                 ", mods=" + mods + "].");
-        }
-        Date date = new Date(System.currentTimeMillis());
+        int mods;
+        if (grant) {
+            mods = updateLiteral(MemberRecord.class, key, key, fieldMap);
+            if (mods == 0) {
+                throw new PersistenceException(
+                    "Grant modified zero rows!? [mid=" + memberId + ", amount=" + amount + "]");
+            }
 
+        } else {
+            mods = updateLiteral(
+                MemberRecord.class,
+                new Where(new Logic.And(
+                              new Conditionals.Equals(MemberRecord.MEMBER_ID_C, memberId),
+                              new Conditionals.GreaterThanEquals(MemberRecord.FLOW_C, amount))),
+                key, fieldMap);
+            if (mods == 0) {
+                throw new PersistenceException(
+                    "Spend modified zero rows (probably NSF) " +
+                    "[mid=" + memberId + ", amount=" + amount + "]");
+            }
+        }
+
+        // sanity check
+        if (mods > 1) {
+            log.warning("Flow " + type + " modified multiple rows [mid=" + memberId +
+                        ", amount=" + amount + ", mods=" + mods + "].");
+        }
+
+        Date date = new Date(System.currentTimeMillis());
         boolean again = false;
         do {
             fieldMap.clear();
-            fieldMap.put(
-                DailyFlowRecord.AMOUNT, new Arithmetic.Add(DailyFlowRecord.AMOUNT_C, amount));
+            fieldMap.put(DailyFlowRecord.AMOUNT,
+                         new Arithmetic.Add(DailyFlowRecord.AMOUNT_C, amount));
             Key<DailyFlowRecord> dailyFlowKey = DailyFlowRecord.getKey(type, date);
             mods = updateLiteral(DailyFlowRecord.class, dailyFlowKey, dailyFlowKey, fieldMap);
             if (mods == 0) {
