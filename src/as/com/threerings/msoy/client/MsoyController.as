@@ -10,15 +10,14 @@ import flash.events.TextEvent;
 import flash.events.TimerEvent;
 
 import flash.external.ExternalInterface;
-
 import flash.system.Capabilities;
-
 import flash.text.TextField;
-
 import flash.ui.Keyboard;
 
-import flash.utils.getTimer; // function import
+import flash.net.URLRequest;
+import flash.net.navigateToURL; // function import
 import flash.utils.Timer;
+import flash.utils.getTimer; // function import
 
 import mx.controls.Button;
 
@@ -692,12 +691,21 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Return true if we should attempt to load sections of whirled by visiting a new page.
+     * Return true if we should attempt to load sections of Whirled by visiting a new page.
      */
     protected function shouldLoadNewPages () :Boolean
     {
         var pt :String = Capabilities.playerType;
-        return !_ctx.getWorldClient().isEmbedded() && (pt !== "StandAlone") && (pt !== "External")
+        if (pt == "StandAlone" || pt == "External") {
+            return false;
+        }
+        if (_ctx.getWorldClient().isEmbedded()) {
+            return false;
+        }
+        if (_ctx.getPartner() == "facebook") {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -716,7 +724,22 @@ public class MsoyController extends Controller
                     ExternalInterface.call("displayPage", page, args);
                     return true;
                 }
-            } // else { TODO: use showExternalURL since we're embedded? }
+
+            } else {
+                var fullURL :String;
+                var scene :Scene = _ctx.getSceneDirector().getScene();
+                if (scene == null) {
+                    fullURL = "/#" + page + "-" + args;
+                } else {
+                    fullURL = "/#world-r" + scene.getId() + "-" + page + "-" + args;
+                }
+                log.info("Showing external URL " + fullURL);
+                try {
+                    navigateToURL(new URLRequest(fullURL), "_top");
+                } catch (err :SecurityError) {
+                    // pants
+                }
+            }
 
         } catch (e :Error) {
             log.warning("Unable to send update to Javascript: " + e);
