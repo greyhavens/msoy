@@ -379,8 +379,8 @@ public class MsoyServer extends MsoyBaseServer
 
         // resolve any remaining database schemas that have not yet been loaded
         if (!ServerConfig.config.getValue("depot.lazy_init", true)) {
-            perCtx.initializeManagedRecords();
-            userCtx.initializeManagedRecords();
+            perCtx.initializeManagedRecords(true);
+            userCtx.initializeManagedRecords(true);
         }
 
         log.info("Msoy server initialized.");
