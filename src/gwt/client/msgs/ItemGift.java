@@ -269,6 +269,12 @@ public abstract class ItemGift
 
             protected void unwrapItem ()
             {
+                if (_giftObject.item == null) {
+                    // this happens if the user clicks the thumbnail a second time after the
+                    // unwrapping suceeds, but before the payload state is updated on the
+                    // server; just swallow the click.
+                    return;
+                }
                 CMsgs.itemsvc.wrapItem(CMsgs.ident, _giftObject.item, false, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         // the item is unwrapped, just update the payload
