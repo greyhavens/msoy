@@ -56,12 +56,12 @@ public class MovementXZHotspot extends Hotspot
     /** Moves the furni over to the new location. */
     protected function updateTargetLocation (sx :Number, sy :Number) :void
     {
-        var cloc :ClickLocation = _editor.roomView.layout.pointToAvatarLocation(sx, sy);
+        var loc :MsoyLocation = _editor.roomView.layout.pointToLocationAtHeight(sx, sy, 0);
 
-        if (cloc != null) {
+        if (loc != null) {
             // and since click location is now on the floor, don't forget to restore stem height
-            cloc.loc.y = _editor.target.getLocation().y;
-            _editor.updateTargetLocation(cloc.loc);
+            loc.y = _editor.target.getLocation().y;
+            _editor.updateTargetLocation(loc);
         }
     }
 

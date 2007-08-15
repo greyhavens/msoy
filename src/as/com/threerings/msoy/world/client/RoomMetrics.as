@@ -196,18 +196,7 @@ public class RoomMetrics
      */
     public function screenToWallProjection (x :Number, y :Number, wall :int) :ClickLocation
     {
-        var def :Object = null;
-        for each (var o :Object in walldefs) {
-                if (o.type == wall) {
-                    def = o;
-                }
-            }
-
-        // sanity check
-        if (def == null) {
-            throw new ArgumentError ("Wall identifier " + wall + " is not supported.");
-        }
-
+        var def :Object = getWallDef(wall);
         var pos :WorldVector = screenToPlane(x, y, def.worldpoint, def.worldnormal);
         return (pos != null) ?
             new ClickLocation(def.type, toMsoyLocation(worldToRoom(pos).v)) :
@@ -222,17 +211,40 @@ public class RoomMetrics
      * intersection lies behind the front wall (in z < 0 half-space)). The resulting location's
      * /click/ parameter is not meaningful.
      */
-    public function screenToPlaneProjection (x :Number, y :Number, point :Vector3)
+    public function screenToWallPlaneProjection (x :Number, y :Number, point :Vector3)
         :ClickLocation
     {
         // convert room point to world coords
         var worldpoint :WorldVector = roomToWorld(new RoomVector(point));
 
-        var worldnormal :WorldVector = new WorldVector(N_NEAR);
+        var def :Object = getWallDef(ClickLocation.BACK_WALL);
+        var worldnormal :WorldVector = new WorldVector(def.n);
         var intersection :WorldVector = screenToPlane(x, y, worldpoint, worldnormal);
         return (intersection != null) ?
-            new ClickLocation(
-                ClickLocation.BACK_WALL, toMsoyLocation(worldToRoom(intersection).v)) :
+            new ClickLocation(def.type, toMsoyLocation(worldToRoom(intersection).v)) :
+            null;
+    }
+
+    /**
+     * Given a screen location and an anchor point (in room coordinates), draws a line of sight
+     * vector, and tries to intersect it with a plane parallel to the floor, passing through
+     * the anchor point. Returns a point of intersection in room coordinates in the z >= 0
+     * half-space, or null if the intersection is invalid (the wall is parallel, or point of
+     * intersection lies behind the front wall (in z < 0 half-space)). The resulting location's
+     * /click/ parameter is not meaningful.
+     */
+    public function screenToFloorPlaneProjection (x :Number, y :Number, point :Vector3)
+        :ClickLocation
+    {
+        // convert room point to world coords
+        var worldpoint :WorldVector = roomToWorld(new RoomVector(point));
+
+        var def :Object = getWallDef(ClickLocation.FLOOR);
+        var worldnormal :WorldVector = new WorldVector(def.n);
+        var intersection :WorldVector = screenToPlane(x, y, worldpoint, worldnormal);
+
+        return (intersection != null) ?
+            new ClickLocation(def.type, toMsoyLocation(worldToRoom(intersection).v)) :
             null;
     }
 
@@ -325,6 +337,25 @@ public class RoomMetrics
 
     // IMPLEMENTATION DETAILS
 
+    /**
+     * Returns wall definition for the specified wall type.
+     */
+    protected function getWallDef (wall :int) :Object
+    {
+        var def :Object = null;
+        for each (var o :Object in walldefs) {
+                if (o.type == wall) {
+                    def = o;
+                }
+            }
+
+        // sanity check
+        if (def == null) {
+            throw new ArgumentError ("Wall identifier " + wall + " is not supported.");
+        }
+        return def;
+    }
+    
     /** Accessor that converts position from room space to world space. */
     protected function roomToWorld (r :RoomVector) :WorldVector
     {

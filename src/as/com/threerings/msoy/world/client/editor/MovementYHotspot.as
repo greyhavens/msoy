@@ -54,7 +54,7 @@ public class MovementYHotspot extends Hotspot
         sy -= (_anchor.y - _originalHotspot.y);
 
         var cloc :ClickLocation = _editor.roomView.layout.pointToFurniLocation(
-            sx, sy, _editor.target.getLocation(), RoomMetrics.N_UP);
+            sx, sy, _editor.target.getLocation(), RoomMetrics.N_UP, false);
 
         _editor.updateTargetLocation(cloc.loc);
     }

@@ -52,13 +52,14 @@ public interface RoomLayout {
      *   @param anchorAxis   The axis of the constraint line, as one of the following constants:
      *                       RoomMetrics.{N_UP|N_RIGHT|N_AWAY}. This parameter is only
      *                       used in conjunction with anchorPoint.
+     *   @param clampToRoom  When true, the result will be clamped to the room unit box.
      *
      * @returns A ClickLocation valid for this room layout, or null if no valid location was found.
      *
      */
     function pointToAvatarLocation (
-        stageX :Number, stageY :Number, anchorPoint :Object = null, anchorAxis :Vector3 = null)
-        :ClickLocation;
+        stageX :Number, stageY :Number, anchorPoint :Object = null,
+        anchorAxis :Vector3 = null, clampToRoom :Boolean = true) :ClickLocation;
     
     /**
      * Finds a room location for furni placement, based on a screen position.
@@ -74,18 +75,20 @@ public interface RoomLayout {
      *   @param anchorAxis   The axis of the constraint line, as one of the following constants:
      *                       RoomMetrics.{N_UP|N_RIGHT|N_AWAY}. This parameter is only
      *                       used in conjunction with anchorPoint.
+     *   @param clampToRoom  When true, the result will be clamped to the room unit box.
      *
      * @returns A ClickLocation valid for this room layout, or null if no valid location was found.
      *
      */
     function pointToFurniLocation (
-        stageX :Number, stageY :Number, anchorPoint :Object = null, anchorAxis :Vector3 = null)
-        :ClickLocation;
+        stageX :Number, stageY :Number, anchorPoint :Object = null,
+        anchorAxis :Vector3 = null, clampToRoom :Boolean = true) :ClickLocation;
     
     /**
      * Finds the projection of mouse coordinates onto a plane in the room, parallel with the
      * front wall, intersecting the room at specified depth. This type of functionality is useful
-     * for converting mouse position into room position at some constant depth.
+     * for converting mouse position into room position at some constant depth. The result is
+     * not constrained to be inside the room unit box.
      *
      *   @param stageX       Mouse x position, in stage coordinate space
      *   @param stageY       Mouse y position, in stage coordinate space
@@ -96,6 +99,22 @@ public interface RoomLayout {
      *
      */
     function pointToLocationAtDepth (stageX :Number, stageY :Number, depth :Number) :MsoyLocation;
+    
+    /**
+     * Finds the projection of mouse coordinates onto a plane in the room, parallel with the
+     * floor, intersecting the room at specified height. This type of functionality is useful
+     * for converting mouse position into room position at some constant height. The result is
+     * not constrained to be inside the room unit box.
+     *
+     *   @param stageX       Mouse x position, in stage coordinate space
+     *   @param stageY       Mouse y position, in stage coordinate space
+     *   @param height       Y position of the intersection wall, in room coordinate space.
+     *
+     * @returns An MsoyLocation for this intersection (with y value equal to height), or null
+     * if no valid location was found.
+     *
+     */
+    function pointToLocationAtHeight (stageX :Number, stageY :Number, height :Number) :MsoyLocation;
     
     /**
      * Given a position in room space, this function finds its projection in screen space, and

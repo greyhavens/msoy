@@ -29,10 +29,11 @@ public class RoomLayoutFlatworld extends RoomLayoutStandard {
 
     // from interface RoomLayout
     override public function pointToAvatarLocation (
-        stageX :Number, stageY :Number, anchorPoint :Object = null, anchorAxis :Vector3 = null)
-        :ClickLocation
+        stageX :Number, stageY :Number, anchorPoint :Object = null,
+        anchorAxis :Vector3 = null, clampToRoom :Boolean = true) :ClickLocation
     {
-        var cloc :ClickLocation = pointToFurniLocation(stageX, stageY, anchorPoint, anchorAxis);
+        var cloc :ClickLocation = pointToFurniLocation(
+            stageX, stageY, anchorPoint, anchorAxis, clampToRoom);
         // Take the location on the front plane and call it a floor location instead.
         cloc.click = ClickLocation.FLOOR;
         // If the user isn't selecting a custom Y, make it an actual floor location..
@@ -46,8 +47,8 @@ public class RoomLayoutFlatworld extends RoomLayoutStandard {
     
     // from interface RoomLayout
     override public function pointToFurniLocation (
-        stageX :Number, stageY :Number, anchorPoint :Object = null, anchorAxis :Vector3 = null)
-        :ClickLocation
+        stageX :Number, stageY :Number, anchorPoint :Object = null,
+        anchorAxis :Vector3 = null, clampToRoom :Boolean = true) :ClickLocation
     {
         // this version drops everything onto the front plane, completely ignoring constraints.
         // there's no depth at all.
@@ -55,7 +56,9 @@ public class RoomLayoutFlatworld extends RoomLayoutStandard {
         var cloc :ClickLocation =
             _metrics.screenToWallProjection(p.x, p.y, ClickLocation.FRONT_WALL);
 
-        clampClickLocation(cloc);
+        if (clampToRoom) {
+            clampClickLocation(cloc);
+        }
         return cloc;
     }
 

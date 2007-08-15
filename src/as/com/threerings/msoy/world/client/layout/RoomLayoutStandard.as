@@ -54,19 +54,20 @@ public class RoomLayoutStandard implements RoomLayout
 
     // from interface RoomLayout
     public function pointToAvatarLocation (
-        stageX :Number, stageY :Number, anchorPoint :Object = null, anchorAxis :Vector3 = null)
-        :ClickLocation
+        stageX :Number, stageY :Number, anchorPoint :Object = null,
+        anchorAxis :Vector3 = null, clampToRoom :Boolean = true) :ClickLocation
     {
-        var loc :ClickLocation = pointToLocation(stageX, stageY, anchorPoint, anchorAxis);
+        var loc :ClickLocation = pointToLocation(
+            stageX, stageY, anchorPoint, anchorAxis, clampToRoom);
         return (loc.click == ClickLocation.FLOOR) ? loc : null;
     }
 
     // from interface RoomLayout
     public function pointToFurniLocation (
-        stageX :Number, stageY :Number, anchorPoint :Object = null, anchorAxis :Vector3 = null)
-        :ClickLocation
+        stageX :Number, stageY :Number, anchorPoint :Object = null,
+        anchorAxis :Vector3 = null, clampToRoom :Boolean = true) :ClickLocation
     {
-        return pointToLocation(stageX, stageY, anchorPoint, anchorAxis);
+        return pointToLocation(stageX, stageY, anchorPoint, anchorAxis, clampToRoom);
     }
 
     // from interface RoomLayout
@@ -81,7 +82,24 @@ public class RoomLayoutStandard implements RoomLayout
         var anchor :Vector3 = new Vector3(0, 0, depth);
 
         // find the intersection of the line of sight with the plane
-        var cloc :ClickLocation = _metrics.screenToPlaneProjection(p.x, p.y, anchor);
+        var cloc :ClickLocation = _metrics.screenToWallPlaneProjection(p.x, p.y, anchor);
+
+        return (cloc != null) ? cloc.loc : null;
+    }
+
+    // from interface RoomLayout
+    public function pointToLocationAtHeight (
+        stageX :Number, stageY :Number, height :Number) :MsoyLocation
+    {
+        // get click location, in screen coords
+        var p :Point = new Point(stageX, stageY);
+        p = _parentView.globalToLocal(p);
+
+        // let's make an anchor point
+        var anchor :Vector3 = new Vector3(0, height, 0);
+
+        // find the intersection of the line of sight with the plane
+        var cloc :ClickLocation = _metrics.screenToFloorPlaneProjection(p.x, p.y, anchor);
 
         return (cloc != null) ? cloc.loc : null;
     }
@@ -90,8 +108,8 @@ public class RoomLayoutStandard implements RoomLayout
      * Turn the screen coordinate into an MsoyLocation, with the orient field set to 0.
      */
     protected function pointToLocation (
-        globalX :Number, globalY :Number, anchorPoint :Object = null, anchorAxis :Vector3 = null)
-        :ClickLocation
+        globalX :Number, globalY :Number, anchorPoint :Object = null,
+        anchorAxis :Vector3 = null, clampToRoom :Boolean = true) :ClickLocation
     {
         // get click location, in screen coords
         var p :Point = new Point(globalX, globalY);
@@ -132,13 +150,18 @@ public class RoomLayoutStandard implements RoomLayout
             }
 
             // now find a point on the constraint line pointed to by the mouse
-            var yLocation :Vector3 = fn(p.x, p.y, anchorLocation).clampToUnitBox();
+            var cLocation :Vector3 = fn(p.x, p.y, anchorLocation);
+            if (clampToRoom) {
+                cLocation = cLocation.clampToUnitBox();
+            }
 
             // we're done - make a fake "floor" location
-            cloc = new ClickLocation(ClickLocation.FLOOR, _metrics.toMsoyLocation(yLocation));
+            cloc = new ClickLocation(ClickLocation.FLOOR, _metrics.toMsoyLocation(cLocation));
         }
 
-        clampClickLocation(cloc);
+        if (clampToRoom) {
+            clampClickLocation(cloc);
+        }
 
         return cloc;
     }
