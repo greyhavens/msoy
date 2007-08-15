@@ -85,7 +85,7 @@ public class MailComposition extends BorderedDialog
         // TODO: give us focus if this is a reply (otherwise the subject line)
         _messageBox = new TextArea();
         _messageBox.setCharacterWidth(60);
-        _messageBox.setVisibleLines(20);
+        _messageBox.setVisibleLines(10);
         _messageBox.addStyleName("Body");
         _messageBox.setText(bodyText);
         _panel.add(_messageBox);
