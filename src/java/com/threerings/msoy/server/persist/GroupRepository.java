@@ -68,6 +68,9 @@ public class GroupRepository extends DepotRepository
         };
     }
 
+    /**
+     * Returns the repository used to track tags on groups.
+     */
     public TagRepository getTagRepository ()
     {
         return _tagRepo;
@@ -85,7 +88,6 @@ public class GroupRepository extends DepotRepository
                 new SQLExpression[] { GroupRecord.MEMBER_COUNT_C, GroupRecord.CREATION_DATE_C },
                 new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.ASC }));
     }
-
 
     /**
      * Searches all public and inv-only groups for the search string against the indexed blurb,
