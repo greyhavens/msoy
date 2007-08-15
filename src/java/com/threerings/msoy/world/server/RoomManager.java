@@ -385,7 +385,6 @@ public class RoomManager extends SpotSceneManager
 //            return;
 //        }
 
-
         // TODO: verify that the caller is in the scene with this item, other item specific
         // restrictions
 
